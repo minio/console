@@ -32,7 +32,7 @@ import (
 
 func registerConfigHandlers(api *operations.McsAPI) {
 	// List Configurations
-	api.AdminAPIListConfigHandler = admin_api.ListConfigHandlerFunc(func(params admin_api.ListConfigParams, principal interface{}) middleware.Responder {
+	api.AdminAPIListConfigHandler = admin_api.ListConfigHandlerFunc(func(params admin_api.ListConfigParams, principal *models.Principal) middleware.Responder {
 		configListResp, err := getListConfigResponse()
 		if err != nil {
 			return admin_api.NewListConfigDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
@@ -40,7 +40,7 @@ func registerConfigHandlers(api *operations.McsAPI) {
 		return admin_api.NewListConfigOK().WithPayload(configListResp)
 	})
 	// Configuration Info
-	api.AdminAPIConfigInfoHandler = admin_api.ConfigInfoHandlerFunc(func(params admin_api.ConfigInfoParams, principal interface{}) middleware.Responder {
+	api.AdminAPIConfigInfoHandler = admin_api.ConfigInfoHandlerFunc(func(params admin_api.ConfigInfoParams, principal *models.Principal) middleware.Responder {
 		config, err := getConfigResponse(params)
 		if err != nil {
 			return admin_api.NewConfigInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
@@ -48,7 +48,7 @@ func registerConfigHandlers(api *operations.McsAPI) {
 		return admin_api.NewConfigInfoOK().WithPayload(config)
 	})
 	// Set Configuration
-	api.AdminAPISetConfigHandler = admin_api.SetConfigHandlerFunc(func(params admin_api.SetConfigParams, principal interface{}) middleware.Responder {
+	api.AdminAPISetConfigHandler = admin_api.SetConfigHandlerFunc(func(params admin_api.SetConfigParams, principal *models.Principal) middleware.Responder {
 		if err := setConfigResponse(params.Name, params.Body); err != nil {
 			return admin_api.NewSetConfigDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}

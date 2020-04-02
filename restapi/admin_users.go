@@ -31,7 +31,7 @@ import (
 
 func registerUsersHandlers(api *operations.McsAPI) {
 	// List Users
-	api.AdminAPIListUsersHandler = admin_api.ListUsersHandlerFunc(func(params admin_api.ListUsersParams, principal interface{}) middleware.Responder {
+	api.AdminAPIListUsersHandler = admin_api.ListUsersHandlerFunc(func(params admin_api.ListUsersParams, principal *models.Principal) middleware.Responder {
 		listUsersResponse, err := getListUsersResponse()
 		if err != nil {
 			return admin_api.NewListUsersDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
@@ -39,7 +39,7 @@ func registerUsersHandlers(api *operations.McsAPI) {
 		return admin_api.NewListUsersOK().WithPayload(listUsersResponse)
 	})
 	// Add User
-	api.AdminAPIAddUserHandler = admin_api.AddUserHandlerFunc(func(params admin_api.AddUserParams, principal interface{}) middleware.Responder {
+	api.AdminAPIAddUserHandler = admin_api.AddUserHandlerFunc(func(params admin_api.AddUserParams, principal *models.Principal) middleware.Responder {
 		userResponse, err := getUserAddResponse(params)
 		if err != nil {
 			return admin_api.NewAddUserDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})

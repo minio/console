@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // MakeBucketHandlerFunc turns a function with the right signature into a make bucket handler
-type MakeBucketHandlerFunc func(MakeBucketParams, interface{}) middleware.Responder
+type MakeBucketHandlerFunc func(MakeBucketParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn MakeBucketHandlerFunc) Handle(params MakeBucketParams, principal interface{}) middleware.Responder {
+func (fn MakeBucketHandlerFunc) Handle(params MakeBucketParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // MakeBucketHandler interface for that can handle valid make bucket params
 type MakeBucketHandler interface {
-	Handle(MakeBucketParams, interface{}) middleware.Responder
+	Handle(MakeBucketParams, *models.Principal) middleware.Responder
 }
 
 // NewMakeBucket creates a new http.Handler for the make bucket operation
@@ -71,9 +73,9 @@ func (o *MakeBucket) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

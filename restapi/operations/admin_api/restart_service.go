@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // RestartServiceHandlerFunc turns a function with the right signature into a restart service handler
-type RestartServiceHandlerFunc func(RestartServiceParams, interface{}) middleware.Responder
+type RestartServiceHandlerFunc func(RestartServiceParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn RestartServiceHandlerFunc) Handle(params RestartServiceParams, principal interface{}) middleware.Responder {
+func (fn RestartServiceHandlerFunc) Handle(params RestartServiceParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // RestartServiceHandler interface for that can handle valid restart service params
 type RestartServiceHandler interface {
-	Handle(RestartServiceParams, interface{}) middleware.Responder
+	Handle(RestartServiceParams, *models.Principal) middleware.Responder
 }
 
 // NewRestartService creates a new http.Handler for the restart service operation
@@ -71,9 +73,9 @@ func (o *RestartService) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

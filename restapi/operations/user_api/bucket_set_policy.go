@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // BucketSetPolicyHandlerFunc turns a function with the right signature into a bucket set policy handler
-type BucketSetPolicyHandlerFunc func(BucketSetPolicyParams, interface{}) middleware.Responder
+type BucketSetPolicyHandlerFunc func(BucketSetPolicyParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn BucketSetPolicyHandlerFunc) Handle(params BucketSetPolicyParams, principal interface{}) middleware.Responder {
+func (fn BucketSetPolicyHandlerFunc) Handle(params BucketSetPolicyParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // BucketSetPolicyHandler interface for that can handle valid bucket set policy params
 type BucketSetPolicyHandler interface {
-	Handle(BucketSetPolicyParams, interface{}) middleware.Responder
+	Handle(BucketSetPolicyParams, *models.Principal) middleware.Responder
 }
 
 // NewBucketSetPolicy creates a new http.Handler for the bucket set policy operation
@@ -71,9 +73,9 @@ func (o *BucketSetPolicy) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

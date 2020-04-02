@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // UpdateGroupHandlerFunc turns a function with the right signature into a update group handler
-type UpdateGroupHandlerFunc func(UpdateGroupParams, interface{}) middleware.Responder
+type UpdateGroupHandlerFunc func(UpdateGroupParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn UpdateGroupHandlerFunc) Handle(params UpdateGroupParams, principal interface{}) middleware.Responder {
+func (fn UpdateGroupHandlerFunc) Handle(params UpdateGroupParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // UpdateGroupHandler interface for that can handle valid update group params
 type UpdateGroupHandler interface {
-	Handle(UpdateGroupParams, interface{}) middleware.Responder
+	Handle(UpdateGroupParams, *models.Principal) middleware.Responder
 }
 
 // NewUpdateGroup creates a new http.Handler for the update group operation
@@ -71,9 +73,9 @@ func (o *UpdateGroup) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

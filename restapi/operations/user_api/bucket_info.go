@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // BucketInfoHandlerFunc turns a function with the right signature into a bucket info handler
-type BucketInfoHandlerFunc func(BucketInfoParams, interface{}) middleware.Responder
+type BucketInfoHandlerFunc func(BucketInfoParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn BucketInfoHandlerFunc) Handle(params BucketInfoParams, principal interface{}) middleware.Responder {
+func (fn BucketInfoHandlerFunc) Handle(params BucketInfoParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // BucketInfoHandler interface for that can handle valid bucket info params
 type BucketInfoHandler interface {
-	Handle(BucketInfoParams, interface{}) middleware.Responder
+	Handle(BucketInfoParams, *models.Principal) middleware.Responder
 }
 
 // NewBucketInfo creates a new http.Handler for the bucket info operation
@@ -71,9 +73,9 @@ func (o *BucketInfo) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

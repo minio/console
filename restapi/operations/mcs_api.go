@@ -36,6 +36,7 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
+	"github.com/minio/m3/mcs/models"
 	"github.com/minio/m3/mcs/restapi/operations/admin_api"
 	"github.com/minio/m3/mcs/restapi/operations/user_api"
 )
@@ -62,46 +63,46 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		BinProducer:  runtime.ByteStreamProducer(),
 		JSONProducer: runtime.JSONProducer(),
 
-		AdminAPIAddGroupHandler: admin_api.AddGroupHandlerFunc(func(params admin_api.AddGroupParams, principal interface{}) middleware.Responder {
+		AdminAPIAddGroupHandler: admin_api.AddGroupHandlerFunc(func(params admin_api.AddGroupParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.AddGroup has not yet been implemented")
 		}),
-		AdminAPIAddPolicyHandler: admin_api.AddPolicyHandlerFunc(func(params admin_api.AddPolicyParams, principal interface{}) middleware.Responder {
+		AdminAPIAddPolicyHandler: admin_api.AddPolicyHandlerFunc(func(params admin_api.AddPolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.AddPolicy has not yet been implemented")
 		}),
-		AdminAPIAddUserHandler: admin_api.AddUserHandlerFunc(func(params admin_api.AddUserParams, principal interface{}) middleware.Responder {
+		AdminAPIAddUserHandler: admin_api.AddUserHandlerFunc(func(params admin_api.AddUserParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.AddUser has not yet been implemented")
 		}),
-		UserAPIBucketInfoHandler: user_api.BucketInfoHandlerFunc(func(params user_api.BucketInfoParams, principal interface{}) middleware.Responder {
+		UserAPIBucketInfoHandler: user_api.BucketInfoHandlerFunc(func(params user_api.BucketInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.BucketInfo has not yet been implemented")
 		}),
-		UserAPIBucketSetPolicyHandler: user_api.BucketSetPolicyHandlerFunc(func(params user_api.BucketSetPolicyParams, principal interface{}) middleware.Responder {
+		UserAPIBucketSetPolicyHandler: user_api.BucketSetPolicyHandlerFunc(func(params user_api.BucketSetPolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.BucketSetPolicy has not yet been implemented")
 		}),
-		AdminAPIConfigInfoHandler: admin_api.ConfigInfoHandlerFunc(func(params admin_api.ConfigInfoParams, principal interface{}) middleware.Responder {
+		AdminAPIConfigInfoHandler: admin_api.ConfigInfoHandlerFunc(func(params admin_api.ConfigInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ConfigInfo has not yet been implemented")
 		}),
-		UserAPIDeleteBucketHandler: user_api.DeleteBucketHandlerFunc(func(params user_api.DeleteBucketParams, principal interface{}) middleware.Responder {
+		UserAPIDeleteBucketHandler: user_api.DeleteBucketHandlerFunc(func(params user_api.DeleteBucketParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteBucket has not yet been implemented")
 		}),
-		AdminAPIGroupInfoHandler: admin_api.GroupInfoHandlerFunc(func(params admin_api.GroupInfoParams, principal interface{}) middleware.Responder {
+		AdminAPIGroupInfoHandler: admin_api.GroupInfoHandlerFunc(func(params admin_api.GroupInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GroupInfo has not yet been implemented")
 		}),
-		UserAPIListBucketEventsHandler: user_api.ListBucketEventsHandlerFunc(func(params user_api.ListBucketEventsParams, principal interface{}) middleware.Responder {
+		UserAPIListBucketEventsHandler: user_api.ListBucketEventsHandlerFunc(func(params user_api.ListBucketEventsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.ListBucketEvents has not yet been implemented")
 		}),
-		UserAPIListBucketsHandler: user_api.ListBucketsHandlerFunc(func(params user_api.ListBucketsParams, principal interface{}) middleware.Responder {
+		UserAPIListBucketsHandler: user_api.ListBucketsHandlerFunc(func(params user_api.ListBucketsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.ListBuckets has not yet been implemented")
 		}),
-		AdminAPIListConfigHandler: admin_api.ListConfigHandlerFunc(func(params admin_api.ListConfigParams, principal interface{}) middleware.Responder {
+		AdminAPIListConfigHandler: admin_api.ListConfigHandlerFunc(func(params admin_api.ListConfigParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListConfig has not yet been implemented")
 		}),
-		AdminAPIListGroupsHandler: admin_api.ListGroupsHandlerFunc(func(params admin_api.ListGroupsParams, principal interface{}) middleware.Responder {
+		AdminAPIListGroupsHandler: admin_api.ListGroupsHandlerFunc(func(params admin_api.ListGroupsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListGroups has not yet been implemented")
 		}),
-		AdminAPIListPoliciesHandler: admin_api.ListPoliciesHandlerFunc(func(params admin_api.ListPoliciesParams, principal interface{}) middleware.Responder {
+		AdminAPIListPoliciesHandler: admin_api.ListPoliciesHandlerFunc(func(params admin_api.ListPoliciesParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListPolicies has not yet been implemented")
 		}),
-		AdminAPIListUsersHandler: admin_api.ListUsersHandlerFunc(func(params admin_api.ListUsersParams, principal interface{}) middleware.Responder {
+		AdminAPIListUsersHandler: admin_api.ListUsersHandlerFunc(func(params admin_api.ListUsersParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListUsers has not yet been implemented")
 		}),
 		UserAPILoginHandler: user_api.LoginHandlerFunc(func(params user_api.LoginParams) middleware.Responder {
@@ -110,38 +111,38 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		UserAPILoginDetailHandler: user_api.LoginDetailHandlerFunc(func(params user_api.LoginDetailParams) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.LoginDetail has not yet been implemented")
 		}),
-		UserAPIMakeBucketHandler: user_api.MakeBucketHandlerFunc(func(params user_api.MakeBucketParams, principal interface{}) middleware.Responder {
+		UserAPIMakeBucketHandler: user_api.MakeBucketHandlerFunc(func(params user_api.MakeBucketParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.MakeBucket has not yet been implemented")
 		}),
-		AdminAPIPolicyInfoHandler: admin_api.PolicyInfoHandlerFunc(func(params admin_api.PolicyInfoParams, principal interface{}) middleware.Responder {
+		AdminAPIPolicyInfoHandler: admin_api.PolicyInfoHandlerFunc(func(params admin_api.PolicyInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.PolicyInfo has not yet been implemented")
 		}),
-		AdminAPIProfilingStartHandler: admin_api.ProfilingStartHandlerFunc(func(params admin_api.ProfilingStartParams, principal interface{}) middleware.Responder {
+		AdminAPIProfilingStartHandler: admin_api.ProfilingStartHandlerFunc(func(params admin_api.ProfilingStartParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ProfilingStart has not yet been implemented")
 		}),
-		AdminAPIProfilingStopHandler: admin_api.ProfilingStopHandlerFunc(func(params admin_api.ProfilingStopParams, principal interface{}) middleware.Responder {
+		AdminAPIProfilingStopHandler: admin_api.ProfilingStopHandlerFunc(func(params admin_api.ProfilingStopParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ProfilingStop has not yet been implemented")
 		}),
-		AdminAPIRemoveGroupHandler: admin_api.RemoveGroupHandlerFunc(func(params admin_api.RemoveGroupParams, principal interface{}) middleware.Responder {
+		AdminAPIRemoveGroupHandler: admin_api.RemoveGroupHandlerFunc(func(params admin_api.RemoveGroupParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.RemoveGroup has not yet been implemented")
 		}),
-		AdminAPIRemovePolicyHandler: admin_api.RemovePolicyHandlerFunc(func(params admin_api.RemovePolicyParams, principal interface{}) middleware.Responder {
+		AdminAPIRemovePolicyHandler: admin_api.RemovePolicyHandlerFunc(func(params admin_api.RemovePolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.RemovePolicy has not yet been implemented")
 		}),
-		AdminAPIRestartServiceHandler: admin_api.RestartServiceHandlerFunc(func(params admin_api.RestartServiceParams, principal interface{}) middleware.Responder {
+		AdminAPIRestartServiceHandler: admin_api.RestartServiceHandlerFunc(func(params admin_api.RestartServiceParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.RestartService has not yet been implemented")
 		}),
-		AdminAPISetConfigHandler: admin_api.SetConfigHandlerFunc(func(params admin_api.SetConfigParams, principal interface{}) middleware.Responder {
+		AdminAPISetConfigHandler: admin_api.SetConfigHandlerFunc(func(params admin_api.SetConfigParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.SetConfig has not yet been implemented")
 		}),
-		AdminAPISetPolicyHandler: admin_api.SetPolicyHandlerFunc(func(params admin_api.SetPolicyParams, principal interface{}) middleware.Responder {
+		AdminAPISetPolicyHandler: admin_api.SetPolicyHandlerFunc(func(params admin_api.SetPolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.SetPolicy has not yet been implemented")
 		}),
-		AdminAPIUpdateGroupHandler: admin_api.UpdateGroupHandlerFunc(func(params admin_api.UpdateGroupParams, principal interface{}) middleware.Responder {
+		AdminAPIUpdateGroupHandler: admin_api.UpdateGroupHandlerFunc(func(params admin_api.UpdateGroupParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.UpdateGroup has not yet been implemented")
 		}),
 
-		KeyAuth: func(token string, scopes []string) (interface{}, error) {
+		KeyAuth: func(token string, scopes []string) (*models.Principal, error) {
 			return nil, errors.NotImplemented("oauth2 bearer auth (key) has not yet been implemented")
 		},
 		// default authorizer is authorized meaning no requests are blocked
@@ -184,7 +185,7 @@ type McsAPI struct {
 
 	// KeyAuth registers a function that takes an access token and a collection of required scopes and returns a principal
 	// it performs authentication based on an oauth2 bearer token provided in the request
-	KeyAuth func(string, []string) (interface{}, error)
+	KeyAuth func(string, []string) (*models.Principal, error)
 
 	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
 	APIAuthorizer runtime.Authorizer
@@ -411,7 +412,9 @@ func (o *McsAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[s
 	for name := range schemes {
 		switch name {
 		case "key":
-			result[name] = o.BearerAuthenticator(name, o.KeyAuth)
+			result[name] = o.BearerAuthenticator(name, func(token string, scopes []string) (interface{}, error) {
+				return o.KeyAuth(token, scopes)
+			})
 
 		}
 	}

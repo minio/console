@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // RemovePolicyHandlerFunc turns a function with the right signature into a remove policy handler
-type RemovePolicyHandlerFunc func(RemovePolicyParams, interface{}) middleware.Responder
+type RemovePolicyHandlerFunc func(RemovePolicyParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn RemovePolicyHandlerFunc) Handle(params RemovePolicyParams, principal interface{}) middleware.Responder {
+func (fn RemovePolicyHandlerFunc) Handle(params RemovePolicyParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // RemovePolicyHandler interface for that can handle valid remove policy params
 type RemovePolicyHandler interface {
-	Handle(RemovePolicyParams, interface{}) middleware.Responder
+	Handle(RemovePolicyParams, *models.Principal) middleware.Responder
 }
 
 // NewRemovePolicy creates a new http.Handler for the remove policy operation
@@ -71,9 +73,9 @@ func (o *RemovePolicy) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

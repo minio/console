@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // PolicyInfoHandlerFunc turns a function with the right signature into a policy info handler
-type PolicyInfoHandlerFunc func(PolicyInfoParams, interface{}) middleware.Responder
+type PolicyInfoHandlerFunc func(PolicyInfoParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn PolicyInfoHandlerFunc) Handle(params PolicyInfoParams, principal interface{}) middleware.Responder {
+func (fn PolicyInfoHandlerFunc) Handle(params PolicyInfoParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // PolicyInfoHandler interface for that can handle valid policy info params
 type PolicyInfoHandler interface {
-	Handle(PolicyInfoParams, interface{}) middleware.Responder
+	Handle(PolicyInfoParams, *models.Principal) middleware.Responder
 }
 
 // NewPolicyInfo creates a new http.Handler for the policy info operation
@@ -71,9 +73,9 @@ func (o *PolicyInfo) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
