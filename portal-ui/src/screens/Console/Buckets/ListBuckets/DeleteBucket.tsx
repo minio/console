@@ -25,8 +25,8 @@ import {
   DialogTitle,
   LinearProgress
 } from "@material-ui/core";
-import api from "../../../common/api";
-import { BucketList } from "./types";
+import api from "../../../../common/api";
+import { BucketList } from "../types";
 import Typography from "@material-ui/core/Typography";
 
 const styles = (theme: Theme) =>

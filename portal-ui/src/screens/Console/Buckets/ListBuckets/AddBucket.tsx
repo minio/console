@@ -16,7 +16,7 @@
 
 import React from "react";
 import Grid from "@material-ui/core/Grid";
-import Title from "../../../common/Title";
+import Title from "../../../../common/Title";
 import Typography from "@material-ui/core/Typography";
 import {
   Button,
@@ -31,7 +31,7 @@ import {
   TextField
 } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import api from "../../../common/api";
+import api from "../../../../common/api";
 
 const styles = (theme: Theme) =>
   createStyles({
