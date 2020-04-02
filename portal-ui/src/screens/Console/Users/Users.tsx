@@ -136,7 +136,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
           this.setState({
             loading: false,
             records: res.users,
-            totalRecords: res.total_users,
+            totalRecords: res.users.length,
             error: ""
           });
           // if we get 0 results, and page > 0 , go down 1 page
