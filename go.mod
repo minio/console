@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/elazarl/go-bindata-assetfs v1.0.0
+	github.com/go-bindata/go-bindata v3.1.2+incompatible // indirect
 	github.com/go-openapi/errors v0.19.4
 	github.com/go-openapi/loads v0.19.5
 	github.com/go-openapi/runtime v0.19.12
