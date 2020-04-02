@@ -169,6 +169,15 @@ class Console extends React.Component<
 > {
   componentDidMount(): void {
     //TODO: verify the session is still valid
+    api
+      .invoke("GET", `/api/v1/session`)
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        storage.removeItem("token");
+        history.push("/");
+      });
   }
 
   render() {

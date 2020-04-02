@@ -574,6 +574,21 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+  /api/v1/session:
+    get:
+      summary: Endpoint to check if your session is still valid
+      operationId: SessionCheck
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/sessionResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
 definitions:
   bucketAccess:
     type: string
@@ -921,3 +936,9 @@ definitions:
     properties:
       type:
         $ref: "#/definitions/profilerType"
+  sessionResponse:
+    type: object
+    properties:
+      status:
+        type: string
+        enum: [ok]
