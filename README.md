@@ -54,11 +54,12 @@ $ mc admin policy set myminio mcsAdmin user=mcs
 To run the server:
 
 ```
-$ MCS_ACCESS_KEY=mcs \
-MCS_SECRET_KEY=YOURMCSSECRET \
-MCS_MINIO_SERVER=http://localhost:9000 \
-./mcs-server --port=52300
+export MCS_ACCESS_KEY=mcs
+export MCS_SECRET_KEY=YOURMCSSECRET
+export MCS_MINIO_SERVER=http://localhost:9000
+./mcs --port=52300
 ```
+
 You can verify that the apis work by doing the request on `localhost:52300/api/v1/...`
 
 # Development
@@ -88,5 +89,5 @@ This will update all the necessary code.
 
 To run tests:
 ```
- go test ./restapi
+go test ./restapi
 ```
