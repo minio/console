@@ -42,6 +42,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import Checkbox from "@material-ui/core/Checkbox";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ViewIcon from "@material-ui/icons/Visibility";
+import GroupIcon from "@material-ui/icons/Group";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -107,6 +108,7 @@ interface IUsersState {
   rowsPerPage: number;
   deleteOpen: boolean;
   selectedUser: User | null;
+  addGroupOpen: boolean;
 }
 
 class Users extends React.Component<IUsersProps, IUsersState> {
@@ -120,7 +122,8 @@ class Users extends React.Component<IUsersProps, IUsersState> {
     page: 0,
     rowsPerPage: 10,
     deleteOpen: false,
-    selectedUser: null
+    selectedUser: null,
+    addGroupOpen: false,
   };
 
   fetchRecords() {
@@ -236,6 +239,18 @@ class Users extends React.Component<IUsersProps, IUsersState> {
             <Button
               variant="contained"
               color="primary"
+              startIcon={<GroupIcon />}
+              onClick={() => {
+                this.setState({
+                  addGroupOpen: true
+                });
+              }}
+            >
+              Add to Group
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
               startIcon={<CreateIcon />}
               onClick={() => {
                 this.setState({
@@ -264,7 +279,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
                   </TableHead>
                   <TableBody>
                     {records.map(row => (
-                      <TableRow key={row.name}>
+                      <TableRow key={`user-${row.accessKey}`}>
                         <TableCell padding="checkbox">
                           <Checkbox
                             value="secondary"
@@ -278,16 +293,18 @@ class Users extends React.Component<IUsersProps, IUsersState> {
                         <TableCell align="right">
                             <IconButton
                                 aria-label="view"
-                                onClick={() => {
-                                    console.log('View User')
+                                user-id={row.accessKey}
+                                onClick={(e) => {
+                                    console.log('View User', e.target)
                                 }}
                             >
                                 <ViewIcon />
                             </IconButton>
                             <IconButton
                                 aria-label="delete"
-                                onClick={() => {
-                                    console.log('Delete User')
+                                user-id={row.accessKey}
+                                onClick={(e) => {
+                                    console.log('Delete User', e)
                                 }}
                             >
                                 <DeleteIcon />

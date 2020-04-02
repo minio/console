@@ -183,11 +183,13 @@ class AddUserContent extends React.Component<
                 <TextField
                   id="standard-multiline-static"
                   label="Secret Key"
+                  type="password"
                   fullWidth
                   value={secretKey}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     this.setState({ secretKey: e.target.value });
                   }}
+                  autoComplete="current-password"
                 />
               </Grid>
               <Grid item xs={12}>
