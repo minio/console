@@ -302,7 +302,10 @@ class Users extends React.Component<IUsersProps, IUsersState> {
                             <IconButton
                                 aria-label="delete"
                                 onClick={() => {
-
+                                    this.setState({
+                                        deleteOpen: true,
+                                        selectedUser: row,
+                                    });
                                 }}
                             >
                                 <DeleteIcon />

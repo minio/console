@@ -114,7 +114,7 @@ class DeleteUser extends React.Component<
                 <DialogContent>
                     {deleteLoading && <LinearProgress />}
                     <DialogContentText id="alert-dialog-description">
-                        Are you sure you want to delete user{" "}<b>{selectedUser.name}</b>?
+                        Are you sure you want to delete user{" "}<b>{selectedUser.accessKey}</b>?
                         {deleteError !== "" && (
                             <React.Fragment>
                                 <br />
