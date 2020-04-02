@@ -67,7 +67,7 @@ class AddUserContent extends React.Component<
       console.log('selUsr', selectedUser);
       this.setState({
         accessKey: selectedUser.accessKey,
-        secretKey: selectedUser.secretKey
+        secretKey: ""
       });
     }
   }
@@ -82,10 +82,9 @@ class AddUserContent extends React.Component<
     this.setState({ addLoading: true }, () => {
       if (selectedUser !== null) {
         api
-          .invoke("PUT", `/api/v1/users/${selectedUser.id}`, {
-            id: selectedUser.id,
+          .invoke("PUT", `/api/v1/users/${selectedUser.accessKey}`, {
             accessKey,
-            secretKey,
+            secretKey: (secretKey != "" ? null : secretKey),
           })
           .then(res => {
             this.setState(
@@ -182,7 +181,7 @@ class AddUserContent extends React.Component<
               <Grid item xs={12}>
                 <TextField
                   id="standard-multiline-static"
-                  label="Secret Key"
+                  label={selectedUser !== null ? 'New Secret Key': 'Secret Key'}
                   type="password"
                   fullWidth
                   value={secretKey}

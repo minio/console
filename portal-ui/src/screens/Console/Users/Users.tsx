@@ -293,18 +293,15 @@ class Users extends React.Component<IUsersProps, IUsersState> {
                         <TableCell align="right">
                             <IconButton
                                 aria-label="view"
-                                user-id={row.accessKey}
-                                onClick={(e) => {
-                                    console.log('View User', e.target)
+                                onClick={() => {
                                 }}
                             >
                                 <ViewIcon />
                             </IconButton>
                             <IconButton
                                 aria-label="delete"
-                                user-id={row.accessKey}
-                                onClick={(e) => {
-                                    console.log('Delete User', e)
+                                onClick={() => {
+
                                 }}
                             >
                                 <DeleteIcon />
