@@ -780,6 +780,29 @@ func init() {
         }
       }
     },
+    "/api/v1/session": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Endpoint to check if your session is still valid",
+        "operationId": "SessionCheck",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/sessionResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/set-policy/{name}": {
       "put": {
         "tags": [
@@ -1264,6 +1287,17 @@ func init() {
       "properties": {
         "type": {
           "$ref": "#/definitions/profilerType"
+        }
+      }
+    },
+    "sessionResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok"
+          ]
         }
       }
     },
@@ -2161,6 +2195,29 @@ func init() {
         }
       }
     },
+    "/api/v1/session": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Endpoint to check if your session is still valid",
+        "operationId": "SessionCheck",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/sessionResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/set-policy/{name}": {
       "put": {
         "tags": [
@@ -2645,6 +2702,17 @@ func init() {
       "properties": {
         "type": {
           "$ref": "#/definitions/profilerType"
+        }
+      }
+    },
+    "sessionResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok"
+          ]
         }
       }
     },

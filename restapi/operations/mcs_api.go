@@ -132,6 +132,9 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		AdminAPIRestartServiceHandler: admin_api.RestartServiceHandlerFunc(func(params admin_api.RestartServiceParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.RestartService has not yet been implemented")
 		}),
+		UserAPISessionCheckHandler: user_api.SessionCheckHandlerFunc(func(params user_api.SessionCheckParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.SessionCheck has not yet been implemented")
+		}),
 		AdminAPISetConfigHandler: admin_api.SetConfigHandlerFunc(func(params admin_api.SetConfigParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.SetConfig has not yet been implemented")
 		}),
@@ -236,6 +239,8 @@ type McsAPI struct {
 	AdminAPIRemovePolicyHandler admin_api.RemovePolicyHandler
 	// AdminAPIRestartServiceHandler sets the operation handler for the restart service operation
 	AdminAPIRestartServiceHandler admin_api.RestartServiceHandler
+	// UserAPISessionCheckHandler sets the operation handler for the session check operation
+	UserAPISessionCheckHandler user_api.SessionCheckHandler
 	// AdminAPISetConfigHandler sets the operation handler for the set config operation
 	AdminAPISetConfigHandler admin_api.SetConfigHandler
 	// AdminAPISetPolicyHandler sets the operation handler for the set policy operation
@@ -383,6 +388,9 @@ func (o *McsAPI) Validate() error {
 	}
 	if o.AdminAPIRestartServiceHandler == nil {
 		unregistered = append(unregistered, "admin_api.RestartServiceHandler")
+	}
+	if o.UserAPISessionCheckHandler == nil {
+		unregistered = append(unregistered, "user_api.SessionCheckHandler")
 	}
 	if o.AdminAPISetConfigHandler == nil {
 		unregistered = append(unregistered, "admin_api.SetConfigHandler")
@@ -585,6 +593,10 @@ func (o *McsAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/api/v1/service/restart"] = admin_api.NewRestartService(o.context, o.AdminAPIRestartServiceHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/api/v1/session"] = user_api.NewSessionCheck(o.context, o.UserAPISessionCheckHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
