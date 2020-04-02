@@ -35,6 +35,4 @@ jobs:
           $(go env GOPATH)/bin/golangci-lint run --timeout=5m --config ./.golangci.yml
           go mod vendor
           go test -v -race ./...
-          pwd
-          ls
           make mcs
