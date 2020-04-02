@@ -295,6 +295,10 @@ class Users extends React.Component<IUsersProps, IUsersState> {
                             <IconButton
                                 aria-label="view"
                                 onClick={() => {
+                                    this.setState({
+                                        addScreenOpen: true,
+                                        selectedUser: row,
+                                    });
                                 }}
                             >
                                 <ViewIcon />
