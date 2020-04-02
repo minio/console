@@ -68,7 +68,7 @@ class DeleteUser extends React.Component<
         }
         this.setState({ deleteLoading: true }, () => {
             api
-                .invoke("DELETE", `/api/v1/users/${selectedUser.id}`, {
+                .invoke("DELETE", `/api/v1/users/${selectedUser.accessKey}`, {
                     id: selectedUser.id
                 })
                 .then((res: UsersList) => {
