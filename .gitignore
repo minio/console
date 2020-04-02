@@ -1,0 +1,21 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+.DS_Store
+*.swp
+
+# Test binary, build with `go test -c`
+*.test
+
+.idea/
+vendor/
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Ignore executables
+target/
+mcs-server
