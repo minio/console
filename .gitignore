@@ -18,5 +18,5 @@ vendor/
 
 # Ignore executables
 target/
-mcs-server
-!mcs-server/
+mcs
+!mcs/

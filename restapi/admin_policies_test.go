@@ -60,6 +60,7 @@ func (ac adminClientMock) setPolicy(ctx context.Context, policyName, entityName 
 }
 
 func TestListPolicies(t *testing.T) {
+	ctx := context.Background()
 	assert := assert.New(t)
 	adminClient := adminClientMock{}
 	mockPoliciesList := map[string][]byte{
@@ -116,7 +117,7 @@ func TestListPolicies(t *testing.T) {
 	}
 	// Test-1 : listPolicies() Get response from minio client with three Canned Policies and return the same number on listPolicies()
 	function := "listPolicies()"
-	policiesList, err := listPolicies(adminClient)
+	policiesList, err := listPolicies(ctx, adminClient)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -147,7 +148,7 @@ func TestListPolicies(t *testing.T) {
 	minioListPoliciesMock = func() (map[string][]byte, error) {
 		return nil, errors.New("error")
 	}
-	_, err = listPolicies(adminClient)
+	_, err = listPolicies(ctx, adminClient)
 	if assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
@@ -158,13 +159,15 @@ func TestListPolicies(t *testing.T) {
 		}
 		return malformedData, nil
 	}
-	_, err = listPolicies(adminClient)
+	_, err = listPolicies(ctx, adminClient)
 	if assert.Error(err) {
 		assert.NotEmpty(err.Error())
 	}
 }
 
 func TestRemovePolicy(t *testing.T) {
+	ctx := context.Background()
+
 	assert := assert.New(t)
 	adminClient := adminClientMock{}
 	// Test-1 : removePolicy() remove an existing policy
@@ -173,19 +176,20 @@ func TestRemovePolicy(t *testing.T) {
 		return nil
 	}
 	function := "removePolicy()"
-	if err := removePolicy(adminClient, policyToRemove); err != nil {
+	if err := removePolicy(ctx, adminClient, policyToRemove); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	// Test-2 : removePolicy() Return error and see that the error is handled correctly and returned
 	minioRemovePolicyMock = func(name string) error {
 		return errors.New("error")
 	}
-	if err := removePolicy(adminClient, policyToRemove); assert.Error(err) {
+	if err := removePolicy(ctx, adminClient, policyToRemove); assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
 }
 
 func TestAddPolicy(t *testing.T) {
+	ctx := context.Background()
 	assert := assert.New(t)
 	adminClient := adminClientMock{}
 	policyName := "new-policy"
@@ -209,7 +213,7 @@ func TestAddPolicy(t *testing.T) {
 	}
 	// Test-1 : addPolicy() adds a new policy
 	function := "addPolicy()"
-	policy, err := addPolicy(adminClient, policyName, policyDefinition)
+	policy, err := addPolicy(ctx, adminClient, policyName, policyDefinition)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -220,7 +224,7 @@ func TestAddPolicy(t *testing.T) {
 	minioAddPolicyMock = func(name, policy string) error {
 		return errors.New("error")
 	}
-	if _, err := addPolicy(adminClient, policyName, policyDefinition); assert.Error(err) {
+	if _, err := addPolicy(ctx, adminClient, policyName, policyDefinition); assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
 	// Test-3 : addPolicy() got an error while retrieving policy
@@ -230,19 +234,20 @@ func TestAddPolicy(t *testing.T) {
 	minioGetPolicyMock = func(name string) (bytes []byte, err error) {
 		return nil, errors.New("error")
 	}
-	if _, err := addPolicy(adminClient, policyName, policyDefinition); assert.Error(err) {
+	if _, err := addPolicy(ctx, adminClient, policyName, policyDefinition); assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
 	// Test-4 : addPolicy() got an error while parsing policy
 	minioGetPolicyMock = func(name string) (bytes []byte, err error) {
 		return []byte("eaeaeaeae"), nil
 	}
-	if _, err := addPolicy(adminClient, policyName, policyDefinition); assert.Error(err) {
+	if _, err := addPolicy(ctx, adminClient, policyName, policyDefinition); assert.Error(err) {
 		assert.NotEmpty(err.Error())
 	}
 }
 
 func TestSetPolicy(t *testing.T) {
+	ctx := context.Background()
 	assert := assert.New(t)
 	adminClient := adminClientMock{}
 	policyName := "readOnly"
@@ -253,13 +258,13 @@ func TestSetPolicy(t *testing.T) {
 	}
 	// Test-1 : setPolicy() set policy to user
 	function := "setPolicy()"
-	err := setPolicy(adminClient, policyName, entityName, entityObject)
+	err := setPolicy(ctx, adminClient, policyName, entityName, entityObject)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	// Test-2 : setPolicy() set policy to group
 	entityObject = models.PolicyEntityGroup
-	err = setPolicy(adminClient, policyName, entityName, entityObject)
+	err = setPolicy(ctx, adminClient, policyName, entityName, entityObject)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -268,7 +273,7 @@ func TestSetPolicy(t *testing.T) {
 	minioSetPolicyMock = func(policyName, entityName string, isGroup bool) error {
 		return errors.New("error")
 	}
-	if err := setPolicy(adminClient, policyName, entityName, entityObject); assert.Error(err) {
+	if err := setPolicy(ctx, adminClient, policyName, entityName, entityObject); assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
 	// Test-4 : setPolicy() set policy to group and get error
@@ -276,7 +281,7 @@ func TestSetPolicy(t *testing.T) {
 	minioSetPolicyMock = func(policyName, entityName string, isGroup bool) error {
 		return errors.New("error")
 	}
-	if err := setPolicy(adminClient, policyName, entityName, entityObject); assert.Error(err) {
+	if err := setPolicy(ctx, adminClient, policyName, entityName, entityObject); assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
 }

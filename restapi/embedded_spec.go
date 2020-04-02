@@ -701,6 +701,65 @@ func init() {
         }
       }
     },
+    "/api/v1/profiling/start": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Start recording profile data",
+        "operationId": "ProfilingStart",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/profilingStartRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/startProfilingList"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/profiling/stop": {
+      "post": {
+        "produces": [
+          "application/octet-stream"
+        ],
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Stop and download profile data",
+        "operationId": "ProfilingStop",
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/service/restart": {
       "post": {
         "tags": [
@@ -1185,6 +1244,29 @@ func init() {
     "principal": {
       "type": "string"
     },
+    "profilerType": {
+      "type": "string",
+      "enum": [
+        "cpu",
+        "mem",
+        "block",
+        "mutex",
+        "trace",
+        "threads",
+        "goroutines"
+      ]
+    },
+    "profilingStartRequest": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/profilerType"
+        }
+      }
+    },
     "setBucketPolicyRequest": {
       "type": "object",
       "required": [
@@ -1227,6 +1309,36 @@ func init() {
         },
         "entityType": {
           "$ref": "#/definitions/policyEntity"
+        }
+      }
+    },
+    "startProfilingItem": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "nodeName": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "startProfilingList": {
+      "type": "object",
+      "properties": {
+        "startResults": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/startProfilingItem"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "title": "number of start results"
         }
       }
     },
@@ -1970,6 +2082,65 @@ func init() {
         }
       }
     },
+    "/api/v1/profiling/start": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Start recording profile data",
+        "operationId": "ProfilingStart",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/profilingStartRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/startProfilingList"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/profiling/stop": {
+      "post": {
+        "produces": [
+          "application/octet-stream"
+        ],
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Stop and download profile data",
+        "operationId": "ProfilingStop",
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/service/restart": {
       "post": {
         "tags": [
@@ -2454,6 +2625,29 @@ func init() {
     "principal": {
       "type": "string"
     },
+    "profilerType": {
+      "type": "string",
+      "enum": [
+        "cpu",
+        "mem",
+        "block",
+        "mutex",
+        "trace",
+        "threads",
+        "goroutines"
+      ]
+    },
+    "profilingStartRequest": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/profilerType"
+        }
+      }
+    },
     "setBucketPolicyRequest": {
       "type": "object",
       "required": [
@@ -2496,6 +2690,36 @@ func init() {
         },
         "entityType": {
           "$ref": "#/definitions/policyEntity"
+        }
+      }
+    },
+    "startProfilingItem": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "nodeName": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "startProfilingList": {
+      "type": "object",
+      "properties": {
+        "startResults": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/startProfilingItem"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "title": "number of start results"
         }
       }
     },
