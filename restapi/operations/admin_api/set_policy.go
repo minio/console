@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // SetPolicyHandlerFunc turns a function with the right signature into a set policy handler
-type SetPolicyHandlerFunc func(SetPolicyParams, interface{}) middleware.Responder
+type SetPolicyHandlerFunc func(SetPolicyParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn SetPolicyHandlerFunc) Handle(params SetPolicyParams, principal interface{}) middleware.Responder {
+func (fn SetPolicyHandlerFunc) Handle(params SetPolicyParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // SetPolicyHandler interface for that can handle valid set policy params
 type SetPolicyHandler interface {
-	Handle(SetPolicyParams, interface{}) middleware.Responder
+	Handle(SetPolicyParams, *models.Principal) middleware.Responder
 }
 
 // NewSetPolicy creates a new http.Handler for the set policy operation
@@ -71,9 +73,9 @@ func (o *SetPolicy) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

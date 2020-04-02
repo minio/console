@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // ListBucketsHandlerFunc turns a function with the right signature into a list buckets handler
-type ListBucketsHandlerFunc func(ListBucketsParams, interface{}) middleware.Responder
+type ListBucketsHandlerFunc func(ListBucketsParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn ListBucketsHandlerFunc) Handle(params ListBucketsParams, principal interface{}) middleware.Responder {
+func (fn ListBucketsHandlerFunc) Handle(params ListBucketsParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // ListBucketsHandler interface for that can handle valid list buckets params
 type ListBucketsHandler interface {
-	Handle(ListBucketsParams, interface{}) middleware.Responder
+	Handle(ListBucketsParams, *models.Principal) middleware.Responder
 }
 
 // NewListBuckets creates a new http.Handler for the list buckets operation
@@ -71,9 +73,9 @@ func (o *ListBuckets) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // ListConfigHandlerFunc turns a function with the right signature into a list config handler
-type ListConfigHandlerFunc func(ListConfigParams, interface{}) middleware.Responder
+type ListConfigHandlerFunc func(ListConfigParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn ListConfigHandlerFunc) Handle(params ListConfigParams, principal interface{}) middleware.Responder {
+func (fn ListConfigHandlerFunc) Handle(params ListConfigParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // ListConfigHandler interface for that can handle valid list config params
 type ListConfigHandler interface {
-	Handle(ListConfigParams, interface{}) middleware.Responder
+	Handle(ListConfigParams, *models.Principal) middleware.Responder
 }
 
 // NewListConfig creates a new http.Handler for the list config operation
@@ -71,9 +73,9 @@ func (o *ListConfig) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

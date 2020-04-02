@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // AddGroupHandlerFunc turns a function with the right signature into a add group handler
-type AddGroupHandlerFunc func(AddGroupParams, interface{}) middleware.Responder
+type AddGroupHandlerFunc func(AddGroupParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn AddGroupHandlerFunc) Handle(params AddGroupParams, principal interface{}) middleware.Responder {
+func (fn AddGroupHandlerFunc) Handle(params AddGroupParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // AddGroupHandler interface for that can handle valid add group params
 type AddGroupHandler interface {
-	Handle(AddGroupParams, interface{}) middleware.Responder
+	Handle(AddGroupParams, *models.Principal) middleware.Responder
 }
 
 // NewAddGroup creates a new http.Handler for the add group operation
@@ -71,9 +73,9 @@ func (o *AddGroup) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

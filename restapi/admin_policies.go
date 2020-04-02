@@ -32,7 +32,7 @@ import (
 
 func registersPoliciesHandler(api *operations.McsAPI) {
 	// List Policies
-	api.AdminAPIListPoliciesHandler = admin_api.ListPoliciesHandlerFunc(func(params admin_api.ListPoliciesParams, principal interface{}) middleware.Responder {
+	api.AdminAPIListPoliciesHandler = admin_api.ListPoliciesHandlerFunc(func(params admin_api.ListPoliciesParams, principal *models.Principal) middleware.Responder {
 		listPoliciesResponse, err := getListPoliciesResponse()
 		if err != nil {
 			return admin_api.NewListPoliciesDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
@@ -40,7 +40,7 @@ func registersPoliciesHandler(api *operations.McsAPI) {
 		return admin_api.NewListPoliciesOK().WithPayload(listPoliciesResponse)
 	})
 	// Policy Info
-	api.AdminAPIPolicyInfoHandler = admin_api.PolicyInfoHandlerFunc(func(params admin_api.PolicyInfoParams, principal interface{}) middleware.Responder {
+	api.AdminAPIPolicyInfoHandler = admin_api.PolicyInfoHandlerFunc(func(params admin_api.PolicyInfoParams, principal *models.Principal) middleware.Responder {
 		policyInfo, err := getPolicyInfoResponse(params)
 		if err != nil {
 			return admin_api.NewPolicyInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
@@ -48,7 +48,7 @@ func registersPoliciesHandler(api *operations.McsAPI) {
 		return admin_api.NewPolicyInfoOK().WithPayload(policyInfo)
 	})
 	// Add Policy
-	api.AdminAPIAddPolicyHandler = admin_api.AddPolicyHandlerFunc(func(params admin_api.AddPolicyParams, principal interface{}) middleware.Responder {
+	api.AdminAPIAddPolicyHandler = admin_api.AddPolicyHandlerFunc(func(params admin_api.AddPolicyParams, principal *models.Principal) middleware.Responder {
 		policyResponse, err := getAddPolicyResponse(params.Body)
 		if err != nil {
 			return admin_api.NewAddPolicyDefault(500).WithPayload(&models.Error{
@@ -59,14 +59,14 @@ func registersPoliciesHandler(api *operations.McsAPI) {
 		return admin_api.NewAddPolicyCreated().WithPayload(policyResponse)
 	})
 	// Remove Policy
-	api.AdminAPIRemovePolicyHandler = admin_api.RemovePolicyHandlerFunc(func(params admin_api.RemovePolicyParams, principal interface{}) middleware.Responder {
+	api.AdminAPIRemovePolicyHandler = admin_api.RemovePolicyHandlerFunc(func(params admin_api.RemovePolicyParams, principal *models.Principal) middleware.Responder {
 		if err := getRemovePolicyResponse(params); err != nil {
 			return admin_api.NewRemovePolicyDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return admin_api.NewRemovePolicyNoContent()
 	})
 	// Set Policy
-	api.AdminAPISetPolicyHandler = admin_api.SetPolicyHandlerFunc(func(params admin_api.SetPolicyParams, principal interface{}) middleware.Responder {
+	api.AdminAPISetPolicyHandler = admin_api.SetPolicyHandlerFunc(func(params admin_api.SetPolicyParams, principal *models.Principal) middleware.Responder {
 		if err := getSetPolicyResponse(params.Name, params.Body); err != nil {
 			return admin_api.NewSetPolicyDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}

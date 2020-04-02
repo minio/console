@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // AddPolicyHandlerFunc turns a function with the right signature into a add policy handler
-type AddPolicyHandlerFunc func(AddPolicyParams, interface{}) middleware.Responder
+type AddPolicyHandlerFunc func(AddPolicyParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn AddPolicyHandlerFunc) Handle(params AddPolicyParams, principal interface{}) middleware.Responder {
+func (fn AddPolicyHandlerFunc) Handle(params AddPolicyParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // AddPolicyHandler interface for that can handle valid add policy params
 type AddPolicyHandler interface {
-	Handle(AddPolicyParams, interface{}) middleware.Responder
+	Handle(AddPolicyParams, *models.Principal) middleware.Responder
 }
 
 // NewAddPolicy creates a new http.Handler for the add policy operation
@@ -71,9 +73,9 @@ func (o *AddPolicy) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

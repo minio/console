@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // RemoveGroupHandlerFunc turns a function with the right signature into a remove group handler
-type RemoveGroupHandlerFunc func(RemoveGroupParams, interface{}) middleware.Responder
+type RemoveGroupHandlerFunc func(RemoveGroupParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn RemoveGroupHandlerFunc) Handle(params RemoveGroupParams, principal interface{}) middleware.Responder {
+func (fn RemoveGroupHandlerFunc) Handle(params RemoveGroupParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // RemoveGroupHandler interface for that can handle valid remove group params
 type RemoveGroupHandler interface {
-	Handle(RemoveGroupParams, interface{}) middleware.Responder
+	Handle(RemoveGroupParams, *models.Principal) middleware.Responder
 }
 
 // NewRemoveGroup creates a new http.Handler for the remove group operation
@@ -71,9 +73,9 @@ func (o *RemoveGroup) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
