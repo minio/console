@@ -20,6 +20,8 @@ export interface User {
     email: string;
     is_me: boolean;
     enabled: boolean;
+    accessKey: string;
+    secretKey: string;
 }
 
 export interface UsersList {

@@ -46,8 +46,8 @@ interface IAddUserContentProps {
 interface IAddUserContentState {
   addLoading: boolean;
   addError: string;
-  name: string;
-  email: string;
+  accessKey: string;
+  secretKey: string;
 }
 
 class AddUserContent extends React.Component<
@@ -57,23 +57,24 @@ class AddUserContent extends React.Component<
   state: IAddUserContentState = {
     addLoading: false,
     addError: "",
-    name: "",
-    email: ""
+    accessKey: "",
+    secretKey: ""
   };
 
   componentDidMount(): void {
     const { selectedUser } = this.props;
     if (selectedUser !== null) {
+      console.log('selUsr', selectedUser);
       this.setState({
-        name: selectedUser.name,
-        email: selectedUser.email
+        accessKey: selectedUser.accessKey,
+        secretKey: ""
       });
     }
   }
 
   saveRecord(event: React.FormEvent) {
     event.preventDefault();
-    const { name, addLoading, email } = this.state;
+    const { accessKey, addLoading, secretKey } = this.state;
     const { selectedUser } = this.props;
     if (addLoading) {
       return;
@@ -81,10 +82,9 @@ class AddUserContent extends React.Component<
     this.setState({ addLoading: true }, () => {
       if (selectedUser !== null) {
         api
-          .invoke("PUT", `/api/v1/users/${selectedUser.id}`, {
-            id: selectedUser.id,
-            name: name,
-            email: email
+          .invoke("PUT", `/api/v1/users/${selectedUser.accessKey}`, {
+            accessKey,
+            secretKey: (secretKey != "" ? null : secretKey),
           })
           .then(res => {
             this.setState(
@@ -106,8 +106,8 @@ class AddUserContent extends React.Component<
       } else {
         api
           .invoke("POST", "/api/v1/users", {
-            name: name,
-            email: email
+            accessKey,
+            secretKey,
           })
           .then(res => {
             this.setState(
@@ -121,6 +121,7 @@ class AddUserContent extends React.Component<
             );
           })
           .catch(err => {
+            console.log(err);
             this.setState({
               addLoading: false,
               addError: err
@@ -132,7 +133,7 @@ class AddUserContent extends React.Component<
 
   render() {
     const { classes, selectedUser } = this.props;
-    const { addLoading, addError, name, email } = this.state;
+    const { addLoading, addError, accessKey, secretKey } = this.state;
 
     return (
       <React.Fragment>
@@ -170,22 +171,24 @@ class AddUserContent extends React.Component<
                 <TextField
                   id="standard-basic"
                   fullWidth
-                  label="Name"
-                  value={name}
+                  label="Access Key"
+                  value={accessKey}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    this.setState({ name: e.target.value });
+                    this.setState({ accessKey: e.target.value });
                   }}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   id="standard-multiline-static"
-                  label="Description"
+                  label={selectedUser !== null ? 'New Secret Key': 'Secret Key'}
+                  type="password"
                   fullWidth
-                  value={email}
+                  value={secretKey}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    this.setState({ email: e.target.value });
+                    this.setState({ secretKey: e.target.value });
                   }}
+                  autoComplete="current-password"
                 />
               </Grid>
               <Grid item xs={12}>

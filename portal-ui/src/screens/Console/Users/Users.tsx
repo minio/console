@@ -25,10 +25,10 @@ import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import api from "../../../common/api";
 import {
-  Button,
-  LinearProgress,
-  TableFooter,
-  TablePagination
+    Button, IconButton,
+    LinearProgress,
+    TableFooter,
+    TablePagination
 } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { User, UsersList } from "./types";
@@ -40,6 +40,9 @@ import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import Checkbox from "@material-ui/core/Checkbox";
+import DeleteIcon from "@material-ui/icons/Delete";
+import ViewIcon from "@material-ui/icons/Visibility";
+import GroupIcon from "@material-ui/icons/Group";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -105,6 +108,7 @@ interface IUsersState {
   rowsPerPage: number;
   deleteOpen: boolean;
   selectedUser: User | null;
+  addGroupOpen: boolean;
 }
 
 class Users extends React.Component<IUsersProps, IUsersState> {
@@ -118,7 +122,8 @@ class Users extends React.Component<IUsersProps, IUsersState> {
     page: 0,
     rowsPerPage: 10,
     deleteOpen: false,
-    selectedUser: null
+    selectedUser: null,
+    addGroupOpen: false,
   };
 
   fetchRecords() {
@@ -234,6 +239,18 @@ class Users extends React.Component<IUsersProps, IUsersState> {
             <Button
               variant="contained"
               color="primary"
+              startIcon={<GroupIcon />}
+              onClick={() => {
+                this.setState({
+                  addGroupOpen: true
+                });
+              }}
+            >
+              Add to Group
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
               startIcon={<CreateIcon />}
               onClick={() => {
                 this.setState({
@@ -256,14 +273,13 @@ class Users extends React.Component<IUsersProps, IUsersState> {
                   <TableHead className={classes.minTableHeader}>
                     <TableRow>
                       <TableCell>Select</TableCell>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Email</TableCell>
-                      <TableCell align="right"></TableCell>
+                      <TableCell>Access Key</TableCell>
+                      <TableCell align="right">Actions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {records.map(row => (
-                      <TableRow key={row.name}>
+                      <TableRow key={`user-${row.accessKey}`}>
                         <TableCell padding="checkbox">
                           <Checkbox
                             value="secondary"
@@ -272,12 +288,25 @@ class Users extends React.Component<IUsersProps, IUsersState> {
                           />
                         </TableCell>
                         <TableCell className={classes.wrapCell}>
-                          {row.name}
+                          {row.accessKey}
                         </TableCell>
-                        <TableCell className={classes.wrapCell}>
-                          {row.email}
+                        <TableCell align="right">
+                            <IconButton
+                                aria-label="view"
+                                onClick={() => {
+                                }}
+                            >
+                                <ViewIcon />
+                            </IconButton>
+                            <IconButton
+                                aria-label="delete"
+                                onClick={() => {
+
+                                }}
+                            >
+                                <DeleteIcon />
+                            </IconButton>
                         </TableCell>
-                        <TableCell align="right"></TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
