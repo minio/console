@@ -20,6 +20,7 @@ import (
 	"context"
 	"crypto/tls"
 	"hash/fnv"
+	"io"
 	"net"
 	"net/http"
 	"net/url"
@@ -141,7 +142,7 @@ type MinioAdmin interface {
 	addUser(ctx context.Context, acessKey, SecretKey string) error
 	listGroups(ctx context.Context) ([]string, error)
 	updateGroupMembers(ctx context.Context, greq madmin.GroupAddRemove) error
-	getGroupDescription(ctx context.Context, grouo string) (*madmin.GroupDesc, error)
+	getGroupDescription(ctx context.Context, group string) (*madmin.GroupDesc, error)
 	setGroupStatus(ctx context.Context, group string, status madmin.GroupStatus) error
 	listPolicies(ctx context.Context) (map[string][]byte, error)
 	getPolicy(ctx context.Context, name string) ([]byte, error)
@@ -153,6 +154,8 @@ type MinioAdmin interface {
 	setConfigKV(ctx context.Context, kv string) (err error)
 	serviceRestart(ctx context.Context) error
 	serverInfo(ctx context.Context) (madmin.InfoMessage, error)
+	startProfiling(ctx context.Context, profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error)
+	stopProfiling(ctx context.Context) (io.ReadCloser, error)
 }
 
 // Interface implementation
@@ -241,6 +244,16 @@ func (ac adminClient) serviceRestart(ctx context.Context) (err error) {
 // implements madmin.ServerInfo()
 func (ac adminClient) serverInfo(ctx context.Context) (madmin.InfoMessage, error) {
 	return ac.client.ServerInfo(ctx)
+}
+
+// implements madmin.StartProfiling()
+func (ac adminClient) startProfiling(ctx context.Context, profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error) {
+	return ac.client.StartProfiling(ctx, profiler)
+}
+
+// implements madmin.DownloadProfilingData()
+func (ac adminClient) stopProfiling(ctx context.Context) (io.ReadCloser, error) {
+	return ac.client.DownloadProfilingData(ctx)
 }
 
 func newMAdminClient() (*madmin.AdminClient, error) {

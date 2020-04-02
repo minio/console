@@ -69,7 +69,6 @@ func login(mc McCmd, accessKey, secretKey *string) (*string, error) {
 	// Probe the credentials
 	cfg, pErr := mc.BuildS3Config(getMinIOServer(), *accessKey, *secretKey, "", "auto")
 	if pErr != nil {
-		log.Println(pErr)
 		return nil, ErrInvalidCredentials
 	}
 	// if we made it here, the credentials work, generate a session

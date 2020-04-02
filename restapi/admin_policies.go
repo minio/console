@@ -111,8 +111,7 @@ func parseRawPolicy(rawPolicy *rawPolicy) *models.Policy {
 // listPolicies() converts the map[string][]byte returned by client.listPolicies()
 // to []*models.Policy by iterating over each key in policyRawMap and
 // then using Unmarshal on the raw bytes to create a *models.Policy
-func listPolicies(client MinioAdmin) ([]*models.Policy, error) {
-	ctx := context.Background()
+func listPolicies(ctx context.Context, client MinioAdmin) ([]*models.Policy, error) {
 	policyRawMap, err := client.listPolicies(ctx)
 	var policies []*models.Policy
 	if err != nil {
@@ -132,6 +131,7 @@ func listPolicies(client MinioAdmin) ([]*models.Policy, error) {
 
 // getListPoliciesResponse performs listPolicies() and serializes it to the handler's output
 func getListPoliciesResponse() (*models.ListPoliciesResponse, error) {
+	ctx := context.Background()
 	mAdmin, err := newMAdminClient()
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
@@ -141,7 +141,7 @@ func getListPoliciesResponse() (*models.ListPoliciesResponse, error) {
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
 
-	policies, err := listPolicies(adminClient)
+	policies, err := listPolicies(ctx, adminClient)
 	if err != nil {
 		log.Println("error listing policies:", err)
 		return nil, err
@@ -155,8 +155,7 @@ func getListPoliciesResponse() (*models.ListPoliciesResponse, error) {
 }
 
 // removePolicy() calls MinIO server to remove a policy based on name.
-func removePolicy(client MinioAdmin, name string) error {
-	ctx := context.Background()
+func removePolicy(ctx context.Context, client MinioAdmin, name string) error {
 	err := client.removePolicy(ctx, name)
 	if err != nil {
 		return err
@@ -166,6 +165,7 @@ func removePolicy(client MinioAdmin, name string) error {
 
 // getRemovePolicyResponse() performs removePolicy() and serializes it to the handler's output
 func getRemovePolicyResponse(params admin_api.RemovePolicyParams) error {
+	ctx := context.Background()
 	if params.Name == "" {
 		log.Println("error policy name not in request")
 		return errors.New(500, "error policy name not in request")
@@ -179,7 +179,7 @@ func getRemovePolicyResponse(params admin_api.RemovePolicyParams) error {
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
 
-	if err := removePolicy(adminClient, params.Name); err != nil {
+	if err := removePolicy(ctx, adminClient, params.Name); err != nil {
 		log.Println("error removing policy:", err)
 		return err
 	}
@@ -190,12 +190,11 @@ func getRemovePolicyResponse(params admin_api.RemovePolicyParams) error {
 // addPolicy() takes name and policy in string format, policy
 // policy must be string in json format, in the future this will change
 // to a Policy struct{} - https://github.com/minio/minio/issues/9171
-func addPolicy(client MinioAdmin, name, policy string) (*models.Policy, error) {
-	ctx := context.Background()
+func addPolicy(ctx context.Context, client MinioAdmin, name, policy string) (*models.Policy, error) {
 	if err := client.addPolicy(ctx, name, policy); err != nil {
 		return nil, err
 	}
-	policyObject, err := policyInfo(client, name)
+	policyObject, err := policyInfo(ctx, client, name)
 	if err != nil {
 		return nil, err
 	}
@@ -204,6 +203,7 @@ func addPolicy(client MinioAdmin, name, policy string) (*models.Policy, error) {
 
 // getAddPolicyResponse performs addPolicy() and serializes it to the handler's output
 func getAddPolicyResponse(params *models.AddPolicyRequest) (*models.Policy, error) {
+	ctx := context.Background()
 	if params == nil {
 		log.Println("error AddPolicy body not in request")
 		return nil, errors.New(500, "error AddPolicy body not in request")
@@ -217,7 +217,7 @@ func getAddPolicyResponse(params *models.AddPolicyRequest) (*models.Policy, erro
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
-	policy, err := addPolicy(adminClient, *params.Name, params.Definition)
+	policy, err := addPolicy(ctx, adminClient, *params.Name, params.Definition)
 	if err != nil {
 		log.Println("error adding policy")
 		return nil, err
@@ -229,8 +229,7 @@ func getAddPolicyResponse(params *models.AddPolicyRequest) (*models.Policy, erro
 // policyInfo() takes a policy name, obtains an []byte (represents a string in JSON format)
 // from the MinIO server and then convert it to *models.Policy , in the future this will change
 // to a Policy struct{} - https://github.com/minio/minio/issues/9171
-func policyInfo(client MinioAdmin, name string) (*models.Policy, error) {
-	ctx := context.Background()
+func policyInfo(ctx context.Context, client MinioAdmin, name string) (*models.Policy, error) {
 	policyRaw, err := client.getPolicy(ctx, name)
 	if err != nil {
 		return nil, err
@@ -246,6 +245,7 @@ func policyInfo(client MinioAdmin, name string) (*models.Policy, error) {
 
 // getPolicyInfoResponse performs policyInfo() and serializes it to the handler's output
 func getPolicyInfoResponse(params admin_api.PolicyInfoParams) (*models.Policy, error) {
+	ctx := context.Background()
 	mAdmin, err := newMAdminClient()
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
@@ -254,7 +254,7 @@ func getPolicyInfoResponse(params admin_api.PolicyInfoParams) (*models.Policy, e
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
-	policy, err := policyInfo(adminClient, params.Name)
+	policy, err := policyInfo(ctx, adminClient, params.Name)
 	if err != nil {
 		log.Println("error getting  group info:", err)
 		return nil, err
@@ -263,12 +263,11 @@ func getPolicyInfoResponse(params admin_api.PolicyInfoParams) (*models.Policy, e
 }
 
 // setPolicy() calls MinIO server to assign policy to a group or user.
-func setPolicy(client MinioAdmin, name, entityName string, entityType models.PolicyEntity) error {
+func setPolicy(ctx context.Context, client MinioAdmin, name, entityName string, entityType models.PolicyEntity) error {
 	isGroup := false
 	if entityType == "group" {
 		isGroup = true
 	}
-	ctx := context.Background()
 	if err := client.setPolicy(ctx, name, entityName, isGroup); err != nil {
 		return err
 	}
@@ -277,6 +276,7 @@ func setPolicy(client MinioAdmin, name, entityName string, entityType models.Pol
 
 // getSetPolicyResponse() performs setPolicy() and serializes it to the handler's output
 func getSetPolicyResponse(name string, params *models.SetPolicyRequest) error {
+	ctx := context.Background()
 	if name == "" {
 		log.Println("error policy name not in request")
 		return errors.New(500, "error policy name not in request")
@@ -290,7 +290,7 @@ func getSetPolicyResponse(name string, params *models.SetPolicyRequest) error {
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
 
-	if err := setPolicy(adminClient, name, *params.EntityName, params.EntityType); err != nil {
+	if err := setPolicy(ctx, adminClient, name, *params.EntityName, params.EntityType); err != nil {
 		log.Println("error setting policy:", err)
 		return err
 	}

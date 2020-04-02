@@ -59,6 +59,7 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 
 		JSONConsumer: runtime.JSONConsumer(),
 
+		BinProducer:  runtime.ByteStreamProducer(),
 		JSONProducer: runtime.JSONProducer(),
 
 		AdminAPIAddGroupHandler: admin_api.AddGroupHandlerFunc(func(params admin_api.AddGroupParams, principal interface{}) middleware.Responder {
@@ -115,6 +116,12 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		AdminAPIPolicyInfoHandler: admin_api.PolicyInfoHandlerFunc(func(params admin_api.PolicyInfoParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.PolicyInfo has not yet been implemented")
 		}),
+		AdminAPIProfilingStartHandler: admin_api.ProfilingStartHandlerFunc(func(params admin_api.ProfilingStartParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.ProfilingStart has not yet been implemented")
+		}),
+		AdminAPIProfilingStopHandler: admin_api.ProfilingStopHandlerFunc(func(params admin_api.ProfilingStopParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.ProfilingStop has not yet been implemented")
+		}),
 		AdminAPIRemoveGroupHandler: admin_api.RemoveGroupHandlerFunc(func(params admin_api.RemoveGroupParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.RemoveGroup has not yet been implemented")
 		}),
@@ -168,6 +175,9 @@ type McsAPI struct {
 	//   - application/json
 	JSONConsumer runtime.Consumer
 
+	// BinProducer registers a producer for the following mime types:
+	//   - application/octet-stream
+	BinProducer runtime.Producer
 	// JSONProducer registers a producer for the following mime types:
 	//   - application/json
 	JSONProducer runtime.Producer
@@ -215,6 +225,10 @@ type McsAPI struct {
 	UserAPIMakeBucketHandler user_api.MakeBucketHandler
 	// AdminAPIPolicyInfoHandler sets the operation handler for the policy info operation
 	AdminAPIPolicyInfoHandler admin_api.PolicyInfoHandler
+	// AdminAPIProfilingStartHandler sets the operation handler for the profiling start operation
+	AdminAPIProfilingStartHandler admin_api.ProfilingStartHandler
+	// AdminAPIProfilingStopHandler sets the operation handler for the profiling stop operation
+	AdminAPIProfilingStopHandler admin_api.ProfilingStopHandler
 	// AdminAPIRemoveGroupHandler sets the operation handler for the remove group operation
 	AdminAPIRemoveGroupHandler admin_api.RemoveGroupHandler
 	// AdminAPIRemovePolicyHandler sets the operation handler for the remove policy operation
@@ -289,6 +303,9 @@ func (o *McsAPI) Validate() error {
 		unregistered = append(unregistered, "JSONConsumer")
 	}
 
+	if o.BinProducer == nil {
+		unregistered = append(unregistered, "BinProducer")
+	}
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
 	}
@@ -350,6 +367,12 @@ func (o *McsAPI) Validate() error {
 	}
 	if o.AdminAPIPolicyInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.PolicyInfoHandler")
+	}
+	if o.AdminAPIProfilingStartHandler == nil {
+		unregistered = append(unregistered, "admin_api.ProfilingStartHandler")
+	}
+	if o.AdminAPIProfilingStopHandler == nil {
+		unregistered = append(unregistered, "admin_api.ProfilingStopHandler")
 	}
 	if o.AdminAPIRemoveGroupHandler == nil {
 		unregistered = append(unregistered, "admin_api.RemoveGroupHandler")
@@ -423,6 +446,8 @@ func (o *McsAPI) ProducersFor(mediaTypes []string) map[string]runtime.Producer {
 	result := make(map[string]runtime.Producer, len(mediaTypes))
 	for _, mt := range mediaTypes {
 		switch mt {
+		case "application/octet-stream":
+			result["application/octet-stream"] = o.BinProducer
 		case "application/json":
 			result["application/json"] = o.JSONProducer
 		}
@@ -537,6 +562,14 @@ func (o *McsAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/api/v1/policies/{name}"] = admin_api.NewPolicyInfo(o.context, o.AdminAPIPolicyInfoHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/api/v1/profiling/start"] = admin_api.NewProfilingStart(o.context, o.AdminAPIProfilingStartHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/api/v1/profiling/stop"] = admin_api.NewProfilingStop(o.context, o.AdminAPIProfilingStopHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}

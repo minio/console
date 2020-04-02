@@ -270,7 +270,7 @@ paths:
       tags:
         - AdminAPI
     delete:
-      summary: Remove group 
+      summary: Remove group
       operationId: RemoveGroup
       parameters:
         - name: name
@@ -536,6 +536,44 @@ paths:
       security: []
       tags:
         - UserAPI
+  /api/v1/profiling/start:
+    post:
+      summary: Start recording profile data
+      operationId: ProfilingStart
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/profilingStartRequest'
+      responses:
+        201:
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/startProfilingList'
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+  /api/v1/profiling/stop:
+    post:
+      summary: Stop and download profile data
+      operationId: ProfilingStop
+      produces:
+        - application/octet-stream
+      responses:
+        201:
+          description: A successful response.
+          schema:
+            type: file
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
 definitions:
   bucketAccess:
     type: string
@@ -819,7 +857,7 @@ definitions:
       - access
     properties:
       access:
-         $ref: "#/definitions/bucketAccess"
+        $ref: "#/definitions/bucketAccess"
   loginDetails:
     type: object
     properties:
@@ -846,3 +884,40 @@ definitions:
   # Structure that holds the `Bearer {TOKEN}` present on authenticated requests
   principal:
     type: string
+  startProfilingItem:
+    type: object
+    properties:
+      nodeName:
+        type: string
+      success:
+        type: boolean
+      error:
+        type: string
+  startProfilingList:
+    type: object
+    properties:
+      total:
+        type: integer
+        format: int64
+        title: number of start results
+      startResults:
+        type: array
+        items:
+          $ref: "#/definitions/startProfilingItem"
+  profilerType:
+    type: string
+    enum:
+      - cpu
+      - mem
+      - block
+      - mutex
+      - trace
+      - threads
+      - goroutines
+  profilingStartRequest:
+    type: object
+    required:
+      - type
+    properties:
+      type:
+        $ref: "#/definitions/profilerType"
