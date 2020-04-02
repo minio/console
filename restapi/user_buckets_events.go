@@ -29,7 +29,7 @@ import (
 )
 
 func registerBucketEventsHandlers(api *operations.McsAPI) {
-	api.UserAPIListBucketEventsHandler = user_api.ListBucketEventsHandlerFunc(func(params user_api.ListBucketEventsParams, principal interface{}) middleware.Responder {
+	api.UserAPIListBucketEventsHandler = user_api.ListBucketEventsHandlerFunc(func(params user_api.ListBucketEventsParams, principal *models.Principal) middleware.Responder {
 		listBucketEventsResponse, err := getListBucketEventsResponse(params)
 		if err != nil {
 			return user_api.NewListBucketEventsDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})

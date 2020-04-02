@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // ConfigInfoHandlerFunc turns a function with the right signature into a config info handler
-type ConfigInfoHandlerFunc func(ConfigInfoParams, interface{}) middleware.Responder
+type ConfigInfoHandlerFunc func(ConfigInfoParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn ConfigInfoHandlerFunc) Handle(params ConfigInfoParams, principal interface{}) middleware.Responder {
+func (fn ConfigInfoHandlerFunc) Handle(params ConfigInfoParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // ConfigInfoHandler interface for that can handle valid config info params
 type ConfigInfoHandler interface {
-	Handle(ConfigInfoParams, interface{}) middleware.Responder
+	Handle(ConfigInfoParams, *models.Principal) middleware.Responder
 }
 
 // NewConfigInfo creates a new http.Handler for the config info operation
@@ -71,9 +73,9 @@ func (o *ConfigInfo) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

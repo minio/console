@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // ListBucketEventsHandlerFunc turns a function with the right signature into a list bucket events handler
-type ListBucketEventsHandlerFunc func(ListBucketEventsParams, interface{}) middleware.Responder
+type ListBucketEventsHandlerFunc func(ListBucketEventsParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn ListBucketEventsHandlerFunc) Handle(params ListBucketEventsParams, principal interface{}) middleware.Responder {
+func (fn ListBucketEventsHandlerFunc) Handle(params ListBucketEventsParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // ListBucketEventsHandler interface for that can handle valid list bucket events params
 type ListBucketEventsHandler interface {
-	Handle(ListBucketEventsParams, interface{}) middleware.Responder
+	Handle(ListBucketEventsParams, *models.Principal) middleware.Responder
 }
 
 // NewListBucketEvents creates a new http.Handler for the list bucket events operation
@@ -71,9 +73,9 @@ func (o *ListBucketEvents) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

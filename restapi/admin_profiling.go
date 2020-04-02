@@ -34,7 +34,7 @@ import (
 
 func registerProfilingHandler(api *operations.McsAPI) {
 	// Start Profiling
-	api.AdminAPIProfilingStartHandler = admin_api.ProfilingStartHandlerFunc(func(params admin_api.ProfilingStartParams, principal interface{}) middleware.Responder {
+	api.AdminAPIProfilingStartHandler = admin_api.ProfilingStartHandlerFunc(func(params admin_api.ProfilingStartParams, principal *models.Principal) middleware.Responder {
 		profilingStartResponse, err := getProfilingStartResponse(params.Body)
 		if err != nil {
 			return admin_api.NewProfilingStartDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
@@ -42,7 +42,7 @@ func registerProfilingHandler(api *operations.McsAPI) {
 		return admin_api.NewProfilingStartCreated().WithPayload(profilingStartResponse)
 	})
 	// Stop and download profiling data
-	api.AdminAPIProfilingStopHandler = admin_api.ProfilingStopHandlerFunc(func(params admin_api.ProfilingStopParams, principal interface{}) middleware.Responder {
+	api.AdminAPIProfilingStopHandler = admin_api.ProfilingStopHandlerFunc(func(params admin_api.ProfilingStopParams, principal *models.Principal) middleware.Responder {
 		profilingStopResponse, err := getProfilingStopResponse()
 		if err != nil {
 			return admin_api.NewProfilingStopDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})

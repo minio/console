@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // ProfilingStartHandlerFunc turns a function with the right signature into a profiling start handler
-type ProfilingStartHandlerFunc func(ProfilingStartParams, interface{}) middleware.Responder
+type ProfilingStartHandlerFunc func(ProfilingStartParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn ProfilingStartHandlerFunc) Handle(params ProfilingStartParams, principal interface{}) middleware.Responder {
+func (fn ProfilingStartHandlerFunc) Handle(params ProfilingStartParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // ProfilingStartHandler interface for that can handle valid profiling start params
 type ProfilingStartHandler interface {
-	Handle(ProfilingStartParams, interface{}) middleware.Responder
+	Handle(ProfilingStartParams, *models.Principal) middleware.Responder
 }
 
 // NewProfilingStart creates a new http.Handler for the profiling start operation
@@ -71,9 +73,9 @@ func (o *ProfilingStart) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

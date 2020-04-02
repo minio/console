@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // ListPoliciesHandlerFunc turns a function with the right signature into a list policies handler
-type ListPoliciesHandlerFunc func(ListPoliciesParams, interface{}) middleware.Responder
+type ListPoliciesHandlerFunc func(ListPoliciesParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn ListPoliciesHandlerFunc) Handle(params ListPoliciesParams, principal interface{}) middleware.Responder {
+func (fn ListPoliciesHandlerFunc) Handle(params ListPoliciesParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // ListPoliciesHandler interface for that can handle valid list policies params
 type ListPoliciesHandler interface {
-	Handle(ListPoliciesParams, interface{}) middleware.Responder
+	Handle(ListPoliciesParams, *models.Principal) middleware.Responder
 }
 
 // NewListPolicies creates a new http.Handler for the list policies operation
@@ -71,9 +73,9 @@ func (o *ListPolicies) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // ProfilingStopHandlerFunc turns a function with the right signature into a profiling stop handler
-type ProfilingStopHandlerFunc func(ProfilingStopParams, interface{}) middleware.Responder
+type ProfilingStopHandlerFunc func(ProfilingStopParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn ProfilingStopHandlerFunc) Handle(params ProfilingStopParams, principal interface{}) middleware.Responder {
+func (fn ProfilingStopHandlerFunc) Handle(params ProfilingStopParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // ProfilingStopHandler interface for that can handle valid profiling stop params
 type ProfilingStopHandler interface {
-	Handle(ProfilingStopParams, interface{}) middleware.Responder
+	Handle(ProfilingStopParams, *models.Principal) middleware.Responder
 }
 
 // NewProfilingStop creates a new http.Handler for the profiling stop operation
@@ -71,9 +73,9 @@ func (o *ProfilingStop) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

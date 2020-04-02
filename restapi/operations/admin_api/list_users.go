@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // ListUsersHandlerFunc turns a function with the right signature into a list users handler
-type ListUsersHandlerFunc func(ListUsersParams, interface{}) middleware.Responder
+type ListUsersHandlerFunc func(ListUsersParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn ListUsersHandlerFunc) Handle(params ListUsersParams, principal interface{}) middleware.Responder {
+func (fn ListUsersHandlerFunc) Handle(params ListUsersParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // ListUsersHandler interface for that can handle valid list users params
 type ListUsersHandler interface {
-	Handle(ListUsersParams, interface{}) middleware.Responder
+	Handle(ListUsersParams, *models.Principal) middleware.Responder
 }
 
 // NewListUsers creates a new http.Handler for the list users operation
@@ -71,9 +73,9 @@ func (o *ListUsers) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
