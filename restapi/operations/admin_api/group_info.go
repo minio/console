@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // GroupInfoHandlerFunc turns a function with the right signature into a group info handler
-type GroupInfoHandlerFunc func(GroupInfoParams, interface{}) middleware.Responder
+type GroupInfoHandlerFunc func(GroupInfoParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn GroupInfoHandlerFunc) Handle(params GroupInfoParams, principal interface{}) middleware.Responder {
+func (fn GroupInfoHandlerFunc) Handle(params GroupInfoParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // GroupInfoHandler interface for that can handle valid group info params
 type GroupInfoHandler interface {
-	Handle(GroupInfoParams, interface{}) middleware.Responder
+	Handle(GroupInfoParams, *models.Principal) middleware.Responder
 }
 
 // NewGroupInfo creates a new http.Handler for the group info operation
@@ -71,9 +73,9 @@ func (o *GroupInfo) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

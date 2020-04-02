@@ -31,7 +31,7 @@ import (
 
 func registerServiceHandlers(api *operations.McsAPI) {
 	// Restart Service
-	api.AdminAPIRestartServiceHandler = admin_api.RestartServiceHandlerFunc(func(params admin_api.RestartServiceParams, principal interface{}) middleware.Responder {
+	api.AdminAPIRestartServiceHandler = admin_api.RestartServiceHandlerFunc(func(params admin_api.RestartServiceParams, principal *models.Principal) middleware.Responder {
 		if err := getRestartServiceResponse(); err != nil {
 			return admin_api.NewRestartServiceDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}

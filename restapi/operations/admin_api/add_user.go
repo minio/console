@@ -26,19 +26,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/minio/m3/mcs/models"
 )
 
 // AddUserHandlerFunc turns a function with the right signature into a add user handler
-type AddUserHandlerFunc func(AddUserParams, interface{}) middleware.Responder
+type AddUserHandlerFunc func(AddUserParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn AddUserHandlerFunc) Handle(params AddUserParams, principal interface{}) middleware.Responder {
+func (fn AddUserHandlerFunc) Handle(params AddUserParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
 // AddUserHandler interface for that can handle valid add user params
 type AddUserHandler interface {
-	Handle(AddUserParams, interface{}) middleware.Responder
+	Handle(AddUserParams, *models.Principal) middleware.Responder
 }
 
 // NewAddUser creates a new http.Handler for the add user operation
@@ -71,9 +73,9 @@ func (o *AddUser) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if aCtx != nil {
 		r = aCtx
 	}
-	var principal interface{}
+	var principal *models.Principal
 	if uprinc != nil {
-		principal = uprinc
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
 	}
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params

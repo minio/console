@@ -36,7 +36,7 @@ import (
 
 func registerBucketsHandlers(api *operations.McsAPI) {
 	// list buckets
-	api.UserAPIListBucketsHandler = user_api.ListBucketsHandlerFunc(func(params user_api.ListBucketsParams, principal interface{}) middleware.Responder {
+	api.UserAPIListBucketsHandler = user_api.ListBucketsHandlerFunc(func(params user_api.ListBucketsParams, principal *models.Principal) middleware.Responder {
 		listBucketsResponse, err := getListBucketsResponse()
 		if err != nil {
 			return user_api.NewListBucketsDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
@@ -44,14 +44,14 @@ func registerBucketsHandlers(api *operations.McsAPI) {
 		return user_api.NewListBucketsOK().WithPayload(listBucketsResponse)
 	})
 	// make bucket
-	api.UserAPIMakeBucketHandler = user_api.MakeBucketHandlerFunc(func(params user_api.MakeBucketParams, principal interface{}) middleware.Responder {
+	api.UserAPIMakeBucketHandler = user_api.MakeBucketHandlerFunc(func(params user_api.MakeBucketParams, principal *models.Principal) middleware.Responder {
 		if err := getMakeBucketResponse(params.Body); err != nil {
 			return user_api.NewMakeBucketDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return user_api.NewMakeBucketCreated()
 	})
 	// delete bucket
-	api.UserAPIDeleteBucketHandler = user_api.DeleteBucketHandlerFunc(func(params user_api.DeleteBucketParams, principal interface{}) middleware.Responder {
+	api.UserAPIDeleteBucketHandler = user_api.DeleteBucketHandlerFunc(func(params user_api.DeleteBucketParams, principal *models.Principal) middleware.Responder {
 		if err := getDeleteBucketResponse(params); err != nil {
 			return user_api.NewMakeBucketDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 
@@ -59,7 +59,7 @@ func registerBucketsHandlers(api *operations.McsAPI) {
 		return user_api.NewDeleteBucketNoContent()
 	})
 	// get bucket info
-	api.UserAPIBucketInfoHandler = user_api.BucketInfoHandlerFunc(func(params user_api.BucketInfoParams, principal interface{}) middleware.Responder {
+	api.UserAPIBucketInfoHandler = user_api.BucketInfoHandlerFunc(func(params user_api.BucketInfoParams, principal *models.Principal) middleware.Responder {
 		bucketInfoResp, err := getBucketInfoResponse(params)
 		if err != nil {
 			return user_api.NewBucketInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
@@ -68,7 +68,7 @@ func registerBucketsHandlers(api *operations.McsAPI) {
 		return user_api.NewBucketInfoOK().WithPayload(bucketInfoResp)
 	})
 	// set bucket policy
-	api.UserAPIBucketSetPolicyHandler = user_api.BucketSetPolicyHandlerFunc(func(params user_api.BucketSetPolicyParams, principal interface{}) middleware.Responder {
+	api.UserAPIBucketSetPolicyHandler = user_api.BucketSetPolicyHandlerFunc(func(params user_api.BucketSetPolicyParams, principal *models.Principal) middleware.Responder {
 		bucketSetPolicyResp, err := getBucketSetPolicyResponse(params.Name, params.Body)
 		if err != nil {
 			return user_api.NewBucketSetPolicyDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})

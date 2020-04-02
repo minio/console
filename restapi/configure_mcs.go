@@ -58,7 +58,7 @@ func configureAPI(api *operations.McsAPI) http.Handler {
 	api.JSONProducer = runtime.JSONProducer()
 	// Applies when the "x-token" header is set
 
-	api.KeyAuth = func(token string, scopes []string) (interface{}, error) {
+	api.KeyAuth = func(token string, scopes []string) (*models.Principal, error) {
 		if sessions.GetInstance().ValidSession(token) {
 			prin := models.Principal(token)
 			return &prin, nil
