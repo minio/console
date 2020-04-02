@@ -138,7 +138,11 @@ class AddUserContent extends React.Component<
     return (
       <React.Fragment>
         <DialogTitle id="alert-dialog-title">
-          Create User
+          {selectedUser !== null ? (
+              <Title>Edit User</Title>
+          ) : (
+              <Title>Add User</Title>
+          )}
         </DialogTitle>
         <DialogContent>
           <form
@@ -149,13 +153,6 @@ class AddUserContent extends React.Component<
             }}
           >
             <Grid container>
-              <Grid item xs={12}>
-                {selectedUser !== null ? (
-                  <Title>Edit User</Title>
-                ) : (
-                  <Title>Add User</Title>
-                )}
-              </Grid>
               {addError !== "" && (
                 <Grid item xs={12}>
                   <Typography
