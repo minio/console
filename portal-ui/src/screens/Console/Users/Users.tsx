@@ -32,6 +32,7 @@ import {
 } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { User, UsersList } from "./types";
+import { usersSort } from '../../../utils/sortFunctions';
 import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
 import AddUser from "./AddUser";
 import DeleteUser from "./DeleteUser";
@@ -135,8 +136,8 @@ class Users extends React.Component<IUsersProps, IUsersState> {
         .then((res: UsersList) => {
           this.setState({
             loading: false,
-            records: res.users,
-            totalRecords: res.total_users,
+            records: res.users.sort(usersSort),
+            totalRecords: res.users.length,
             error: ""
           });
           // if we get 0 results, and page > 0 , go down 1 page
