@@ -255,7 +255,8 @@ class Users extends React.Component<IUsersProps, IUsersState> {
               startIcon={<CreateIcon />}
               onClick={() => {
                 this.setState({
-                  addScreenOpen: true
+                  addScreenOpen: true,
+                  selectedUser: null,
                 });
               }}
             >
