@@ -48,7 +48,7 @@ func NewProfilingStop(ctx *middleware.Context, handler ProfilingStopHandler) *Pr
 	return &ProfilingStop{Context: ctx, Handler: handler}
 }
 
-/*ProfilingStop swagger:route POST /api/v1/profiling/stop AdminAPI profilingStop
+/*ProfilingStop swagger:route POST /profiling/stop AdminAPI profilingStop
 
 Stop and download profile data
 

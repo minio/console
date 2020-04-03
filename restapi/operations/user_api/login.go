@@ -46,7 +46,7 @@ func NewLogin(ctx *middleware.Context, handler LoginHandler) *Login {
 	return &Login{Context: ctx, Handler: handler}
 }
 
-/*Login swagger:route POST /api/v1/login UserAPI login
+/*Login swagger:route POST /login UserAPI login
 
 Login to mcs
 

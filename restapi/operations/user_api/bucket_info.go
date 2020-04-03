@@ -48,7 +48,7 @@ func NewBucketInfo(ctx *middleware.Context, handler BucketInfoHandler) *BucketIn
 	return &BucketInfo{Context: ctx, Handler: handler}
 }
 
-/*BucketInfo swagger:route GET /api/v1/buckets/{name} UserAPI bucketInfo
+/*BucketInfo swagger:route GET /buckets/{name} UserAPI bucketInfo
 
 Bucket Info
 

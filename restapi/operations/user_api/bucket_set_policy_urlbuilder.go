@@ -57,7 +57,7 @@ func (o *BucketSetPolicyURL) SetBasePath(bp string) {
 func (o *BucketSetPolicyURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/api/v1/buckets/{name}/set-policy"
+	var _path = "/buckets/{name}/set-policy"
 
 	name := o.Name
 	if name != "" {
@@ -67,6 +67,9 @@ func (o *BucketSetPolicyURL) Build() (*url.URL, error) {
 	}
 
 	_basePath := o._basePath
+	if _basePath == "" {
+		_basePath = "/api/v1"
+	}
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	return &_result, nil

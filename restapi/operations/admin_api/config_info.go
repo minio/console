@@ -48,7 +48,7 @@ func NewConfigInfo(ctx *middleware.Context, handler ConfigInfoHandler) *ConfigIn
 	return &ConfigInfo{Context: ctx, Handler: handler}
 }
 
-/*ConfigInfo swagger:route GET /api/v1/configs/{name} AdminAPI configInfo
+/*ConfigInfo swagger:route GET /configs/{name} AdminAPI configInfo
 
 Configuration info
 

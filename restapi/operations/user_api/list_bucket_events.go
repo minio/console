@@ -48,7 +48,7 @@ func NewListBucketEvents(ctx *middleware.Context, handler ListBucketEventsHandle
 	return &ListBucketEvents{Context: ctx, Handler: handler}
 }
 
-/*ListBucketEvents swagger:route GET /api/v1/buckets/{bucket_name}/events UserAPI listBucketEvents
+/*ListBucketEvents swagger:route GET /buckets/{bucket_name}/events UserAPI listBucketEvents
 
 List Bucket Events
 

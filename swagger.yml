@@ -8,6 +8,7 @@ produces:
   - application/json
 schemes:
   - http
+basePath: /api/v1
 # We are going to be taking `Authorization: Bearer TOKEN` header for our authentication
 securityDefinitions:
   key:
@@ -19,7 +20,7 @@ securityDefinitions:
 security:
   - key: []
 paths:
-  /api/v1/buckets:
+  /buckets:
     get:
       summary: List Buckets
       operationId: ListBuckets
@@ -67,7 +68,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-  /api/v1/buckets/{name}:
+  /buckets/{name}:
     get:
       summary: Bucket Info
       operationId: BucketInfo
@@ -104,7 +105,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-  /api/v1/buckets/{name}/set-policy:
+  /buckets/{name}/set-policy:
     put:
       summary: Bucket Set Policy
       operationId: BucketSetPolicy
@@ -129,7 +130,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-  /api/v1/buckets/{bucket_name}/events:
+  /buckets/{bucket_name}/events:
     get:
       summary: List Bucket Events
       operationId: ListBucketEvents
@@ -181,7 +182,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-  /api/v1/users:
+  /users:
     get:
       summary: List Users
       operationId: ListUsers
@@ -227,7 +228,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-  /api/v1/groups:
+  /groups:
     get:
       summary: List Groups
       operationId: ListGroups
@@ -271,7 +272,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-  /api/v1/groups/{name}:
+  /groups/{name}:
     get:
       summary: Group info
       operationId: GroupInfo
@@ -332,7 +333,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-  /api/v1/policies:
+  /policies:
     get:
       summary: List Policies
       operationId: ListPolicies
@@ -378,7 +379,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-  /api/v1/policies/{name}:
+  /policies/{name}:
     delete:
       summary: Remove policy
       operationId: RemovePolicy
@@ -415,7 +416,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-  /api/v1/configs:
+  /configs:
     get:
       summary: List Configurations
       operationId: ListConfig
@@ -441,7 +442,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-  /api/v1/set-policy/{name}:
+  /set-policy/{name}:
     put:
       summary: Set policy
       operationId: SetPolicy
@@ -464,7 +465,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-  /api/v1/configs/{name}:
+  /configs/{name}:
     get:
       summary: Configuration info
       operationId: ConfigInfo
@@ -506,7 +507,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-  /api/v1/service/restart:
+  /service/restart:
     post:
       summary: Restart Service
       operationId: RestartService
@@ -519,7 +520,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-  /api/v1/login:
+  /login:
     get:
       summary: Returns login strategy, form or sso.
       operationId: LoginDetail
@@ -558,7 +559,7 @@ paths:
       security: []
       tags:
         - UserAPI
-  /api/v1/profiling/start:
+  /profiling/start:
     post:
       summary: Start recording profile data
       operationId: ProfilingStart
@@ -579,7 +580,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-  /api/v1/profiling/stop:
+  /profiling/stop:
     post:
       summary: Stop and download profile data
       operationId: ProfilingStop
@@ -596,7 +597,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-  /api/v1/session:
+  /session:
     get:
       summary: Endpoint to check if your session is still valid
       operationId: SessionCheck
@@ -611,7 +612,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-  /api/v1/admin/info:
+  /admin/info:
     get:
       summary: Returns information about the deployment
       operationId: AdminInfo

@@ -49,8 +49,9 @@ func init() {
     "title": "MinIO Console Server",
     "version": "0.1.0"
   },
+  "basePath": "/api/v1",
   "paths": {
-    "/api/v1/admin/info": {
+    "/admin/info": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -73,7 +74,7 @@ func init() {
         }
       }
     },
-    "/api/v1/buckets": {
+    "/buckets": {
       "get": {
         "tags": [
           "UserAPI"
@@ -143,7 +144,7 @@ func init() {
         }
       }
     },
-    "/api/v1/buckets/{bucket_name}/events": {
+    "/buckets/{bucket_name}/events": {
       "get": {
         "tags": [
           "UserAPI"
@@ -220,7 +221,7 @@ func init() {
         }
       }
     },
-    "/api/v1/buckets/{name}": {
+    "/buckets/{name}": {
       "get": {
         "tags": [
           "UserAPI"
@@ -277,7 +278,7 @@ func init() {
         }
       }
     },
-    "/api/v1/buckets/{name}/set-policy": {
+    "/buckets/{name}/set-policy": {
       "put": {
         "tags": [
           "UserAPI"
@@ -316,7 +317,7 @@ func init() {
         }
       }
     },
-    "/api/v1/configs": {
+    "/configs": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -353,7 +354,7 @@ func init() {
         }
       }
     },
-    "/api/v1/configs/{name}": {
+    "/configs/{name}": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -418,7 +419,7 @@ func init() {
         }
       }
     },
-    "/api/v1/groups": {
+    "/groups": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -483,7 +484,7 @@ func init() {
         }
       }
     },
-    "/api/v1/groups/{name}": {
+    "/groups/{name}": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -577,7 +578,7 @@ func init() {
         }
       }
     },
-    "/api/v1/login": {
+    "/login": {
       "get": {
         "security": [],
         "tags": [
@@ -633,7 +634,7 @@ func init() {
         }
       }
     },
-    "/api/v1/policies": {
+    "/policies": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -701,7 +702,7 @@ func init() {
         }
       }
     },
-    "/api/v1/policies/{name}": {
+    "/policies/{name}": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -758,7 +759,7 @@ func init() {
         }
       }
     },
-    "/api/v1/profiling/start": {
+    "/profiling/start": {
       "post": {
         "tags": [
           "AdminAPI"
@@ -791,7 +792,7 @@ func init() {
         }
       }
     },
-    "/api/v1/profiling/stop": {
+    "/profiling/stop": {
       "post": {
         "produces": [
           "application/octet-stream"
@@ -817,7 +818,7 @@ func init() {
         }
       }
     },
-    "/api/v1/service/restart": {
+    "/service/restart": {
       "post": {
         "tags": [
           "AdminAPI"
@@ -837,7 +838,7 @@ func init() {
         }
       }
     },
-    "/api/v1/session": {
+    "/session": {
       "get": {
         "tags": [
           "UserAPI"
@@ -860,7 +861,7 @@ func init() {
         }
       }
     },
-    "/api/v1/set-policy/{name}": {
+    "/set-policy/{name}": {
       "put": {
         "tags": [
           "AdminAPI"
@@ -896,7 +897,7 @@ func init() {
         }
       }
     },
-    "/api/v1/users": {
+    "/users": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -1552,8 +1553,9 @@ func init() {
     "title": "MinIO Console Server",
     "version": "0.1.0"
   },
+  "basePath": "/api/v1",
   "paths": {
-    "/api/v1/admin/info": {
+    "/admin/info": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -1576,7 +1578,7 @@ func init() {
         }
       }
     },
-    "/api/v1/buckets": {
+    "/buckets": {
       "get": {
         "tags": [
           "UserAPI"
@@ -1646,7 +1648,7 @@ func init() {
         }
       }
     },
-    "/api/v1/buckets/{bucket_name}/events": {
+    "/buckets/{bucket_name}/events": {
       "get": {
         "tags": [
           "UserAPI"
@@ -1723,7 +1725,7 @@ func init() {
         }
       }
     },
-    "/api/v1/buckets/{name}": {
+    "/buckets/{name}": {
       "get": {
         "tags": [
           "UserAPI"
@@ -1780,7 +1782,7 @@ func init() {
         }
       }
     },
-    "/api/v1/buckets/{name}/set-policy": {
+    "/buckets/{name}/set-policy": {
       "put": {
         "tags": [
           "UserAPI"
@@ -1819,7 +1821,7 @@ func init() {
         }
       }
     },
-    "/api/v1/configs": {
+    "/configs": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -1856,7 +1858,7 @@ func init() {
         }
       }
     },
-    "/api/v1/configs/{name}": {
+    "/configs/{name}": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -1921,7 +1923,7 @@ func init() {
         }
       }
     },
-    "/api/v1/groups": {
+    "/groups": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -1986,7 +1988,7 @@ func init() {
         }
       }
     },
-    "/api/v1/groups/{name}": {
+    "/groups/{name}": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -2080,7 +2082,7 @@ func init() {
         }
       }
     },
-    "/api/v1/login": {
+    "/login": {
       "get": {
         "security": [],
         "tags": [
@@ -2136,7 +2138,7 @@ func init() {
         }
       }
     },
-    "/api/v1/policies": {
+    "/policies": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -2204,7 +2206,7 @@ func init() {
         }
       }
     },
-    "/api/v1/policies/{name}": {
+    "/policies/{name}": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -2261,7 +2263,7 @@ func init() {
         }
       }
     },
-    "/api/v1/profiling/start": {
+    "/profiling/start": {
       "post": {
         "tags": [
           "AdminAPI"
@@ -2294,7 +2296,7 @@ func init() {
         }
       }
     },
-    "/api/v1/profiling/stop": {
+    "/profiling/stop": {
       "post": {
         "produces": [
           "application/octet-stream"
@@ -2320,7 +2322,7 @@ func init() {
         }
       }
     },
-    "/api/v1/service/restart": {
+    "/service/restart": {
       "post": {
         "tags": [
           "AdminAPI"
@@ -2340,7 +2342,7 @@ func init() {
         }
       }
     },
-    "/api/v1/session": {
+    "/session": {
       "get": {
         "tags": [
           "UserAPI"
@@ -2363,7 +2365,7 @@ func init() {
         }
       }
     },
-    "/api/v1/set-policy/{name}": {
+    "/set-policy/{name}": {
       "put": {
         "tags": [
           "AdminAPI"
@@ -2399,7 +2401,7 @@ func init() {
         }
       }
     },
-    "/api/v1/users": {
+    "/users": {
       "get": {
         "tags": [
           "AdminAPI"

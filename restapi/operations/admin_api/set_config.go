@@ -48,7 +48,7 @@ func NewSetConfig(ctx *middleware.Context, handler SetConfigHandler) *SetConfig 
 	return &SetConfig{Context: ctx, Handler: handler}
 }
 
-/*SetConfig swagger:route PUT /api/v1/configs/{name} AdminAPI setConfig
+/*SetConfig swagger:route PUT /configs/{name} AdminAPI setConfig
 
 Set Configuration
 

@@ -48,7 +48,7 @@ func NewCreateBucketEvent(ctx *middleware.Context, handler CreateBucketEventHand
 	return &CreateBucketEvent{Context: ctx, Handler: handler}
 }
 
-/*CreateBucketEvent swagger:route POST /api/v1/buckets/{bucket_name}/events UserAPI createBucketEvent
+/*CreateBucketEvent swagger:route POST /buckets/{bucket_name}/events UserAPI createBucketEvent
 
 Create Bucket Event
 
