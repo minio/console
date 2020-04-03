@@ -68,7 +68,7 @@ class DeleteUser extends React.Component<
         }
         this.setState({ deleteLoading: true }, () => {
             api
-                .invoke("DELETE", `/api/v1/users/${selectedUser.id}`, {
+                .invoke("DELETE", `/api/v1/users/${selectedUser.accessKey}`, {
                     id: selectedUser.id
                 })
                 .then((res: UsersList) => {
@@ -114,7 +114,7 @@ class DeleteUser extends React.Component<
                 <DialogContent>
                     {deleteLoading && <LinearProgress />}
                     <DialogContentText id="alert-dialog-description">
-                        Are you sure you want to delete user{" "}<b>{selectedUser.name}</b>?
+                        Are you sure you want to delete user{" "}<b>{selectedUser.accessKey}</b>?
                         {deleteError !== "" && (
                             <React.Fragment>
                                 <br />

@@ -255,7 +255,8 @@ class Users extends React.Component<IUsersProps, IUsersState> {
               startIcon={<CreateIcon />}
               onClick={() => {
                 this.setState({
-                  addScreenOpen: true
+                  addScreenOpen: true,
+                  selectedUser: null,
                 });
               }}
             >
@@ -295,6 +296,10 @@ class Users extends React.Component<IUsersProps, IUsersState> {
                             <IconButton
                                 aria-label="view"
                                 onClick={() => {
+                                    this.setState({
+                                        addScreenOpen: true,
+                                        selectedUser: row,
+                                    });
                                 }}
                             >
                                 <ViewIcon />
@@ -302,7 +307,10 @@ class Users extends React.Component<IUsersProps, IUsersState> {
                             <IconButton
                                 aria-label="delete"
                                 onClick={() => {
-
+                                    this.setState({
+                                        deleteOpen: true,
+                                        selectedUser: row,
+                                    });
                                 }}
                             >
                                 <DeleteIcon />
