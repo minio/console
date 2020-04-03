@@ -120,7 +120,7 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
     deleteOpen: false,
     selectedPolicy: "",
     filterPolicies: "",
-    policyEdit: null,
+    policyEdit: null
   };
 
   fetchRecords() {
@@ -187,7 +187,7 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
       deleteOpen,
       selectedPolicy,
       filterPolicies,
-      policyEdit,
+      policyEdit
     } = this.state;
 
     const offset = page * rowsPerPage;
@@ -250,7 +250,7 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
               onClick={() => {
                 this.setState({
                   addScreenOpen: true,
-                  policyEdit: null,
+                  policyEdit: null
                 });
               }}
             >
@@ -294,7 +294,7 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
                               onClick={() => {
                                 this.setState({
                                   addScreenOpen: true,
-                                  policyEdit: row,
+                                  policyEdit: row
                                 });
                               }}
                             >

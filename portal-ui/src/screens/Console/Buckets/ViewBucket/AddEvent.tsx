@@ -126,9 +126,13 @@ class AddEvent extends React.Component<IAddEventProps, IAddEventState> {
       api
         .invoke("GET", `/api/v1/admin/arns`)
         .then((res: ArnList) => {
+          let arns: string[] = [];
+          if (res.arns !== null) {
+            arns = res.arns;
+          }
           this.setState({
             addLoading: false,
-            arnList: res.arns,
+            arnList: arns,
             addError: ""
           });
         })

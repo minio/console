@@ -32,7 +32,7 @@ import api from "../../../common/api";
 import "codemirror/lib/codemirror.css";
 import "codemirror/theme/material.css";
 import PolicyBuilder from "./PolicyBuilder";
-import {Policy} from "./types";
+import { Policy } from "./types";
 require("codemirror/mode/javascript/javascript");
 
 const styles = (theme: Theme) =>
@@ -144,7 +144,6 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
                   id="standard-basic"
                   fullWidth
                   label="Policy Name"
-                  value={policyEdit ? policyEdit.name : ""}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     this.setState({ policyName: e.target.value });
                   }}
@@ -170,17 +169,19 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
               <Grid item xs={12}>
                 <br />
               </Grid>
-              {!policyEdit && <Grid item xs={12}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  disabled={addLoading}
-                >
-                  Save
-                </Button>
-              </Grid>}
+              {!policyEdit && (
+                <Grid item xs={12}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    disabled={addLoading}
+                  >
+                    Save
+                  </Button>
+                </Grid>
+              )}
               {addLoading && (
                 <Grid item xs={12}>
                   <LinearProgress />

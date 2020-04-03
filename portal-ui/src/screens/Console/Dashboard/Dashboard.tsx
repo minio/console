@@ -136,13 +136,25 @@ const Dashboard = ({ classes }: IDashboardProps) => {
         isLoading(false);
       });
   };
-  const prettyUsage = (usage: number | undefined) => {
+  const prettyUsage = (usage: string | undefined) => {
     if (usage == undefined) {
-      return 0;
+      return "0";
     }
-    return usage;
+    return niceBytes(usage);
   };
+  const units = ["bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
 
+  const niceBytes = (x: string) => {
+    let l = 0,
+      n = parseInt(x, 10) || 0;
+
+    while (n >= 1024 && ++l) {
+      n = n / 1024;
+    }
+    //include a decimal point and a tenths-place digit if presenting
+    //less than ten of KB or greater units
+    return n.toFixed(n < 10 && l > 0 ? 1 : 0) + " " + units[l];
+  };
   const prettyNumber = (usage: number | undefined) => {
     if (usage == undefined) {
       return 0;
@@ -198,7 +210,7 @@ const Dashboard = ({ classes }: IDashboardProps) => {
                 </Grid>
               </Grid>
               <Typography className={classes.consumptionValue}>
-                {usage ? prettyUsage(usage.usage) : 0}
+                {usage ? prettyUsage(usage.usage + "") : 0}
               </Typography>
             </Paper>
           </Grid>
