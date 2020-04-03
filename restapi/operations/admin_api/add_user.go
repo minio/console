@@ -48,7 +48,7 @@ func NewAddUser(ctx *middleware.Context, handler AddUserHandler) *AddUser {
 	return &AddUser{Context: ctx, Handler: handler}
 }
 
-/*AddUser swagger:route POST /api/v1/users AdminAPI addUser
+/*AddUser swagger:route POST /users AdminAPI addUser
 
 Add User
 

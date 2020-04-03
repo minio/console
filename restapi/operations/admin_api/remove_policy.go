@@ -48,7 +48,7 @@ func NewRemovePolicy(ctx *middleware.Context, handler RemovePolicyHandler) *Remo
 	return &RemovePolicy{Context: ctx, Handler: handler}
 }
 
-/*RemovePolicy swagger:route DELETE /api/v1/policies/{name} AdminAPI removePolicy
+/*RemovePolicy swagger:route DELETE /policies/{name} AdminAPI removePolicy
 
 Remove policy
 

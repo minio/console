@@ -52,9 +52,12 @@ func (o *RestartServiceURL) SetBasePath(bp string) {
 func (o *RestartServiceURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/api/v1/service/restart"
+	var _path = "/service/restart"
 
 	_basePath := o._basePath
+	if _basePath == "" {
+		_basePath = "/api/v1"
+	}
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	return &_result, nil

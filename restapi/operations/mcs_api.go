@@ -520,119 +520,119 @@ func (o *McsAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/api/v1/groups"] = admin_api.NewAddGroup(o.context, o.AdminAPIAddGroupHandler)
+	o.handlers["POST"]["/groups"] = admin_api.NewAddGroup(o.context, o.AdminAPIAddGroupHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/api/v1/policies"] = admin_api.NewAddPolicy(o.context, o.AdminAPIAddPolicyHandler)
+	o.handlers["POST"]["/policies"] = admin_api.NewAddPolicy(o.context, o.AdminAPIAddPolicyHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/api/v1/users"] = admin_api.NewAddUser(o.context, o.AdminAPIAddUserHandler)
+	o.handlers["POST"]["/users"] = admin_api.NewAddUser(o.context, o.AdminAPIAddUserHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/v1/admin/info"] = admin_api.NewAdminInfo(o.context, o.AdminAPIAdminInfoHandler)
+	o.handlers["GET"]["/admin/info"] = admin_api.NewAdminInfo(o.context, o.AdminAPIAdminInfoHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/v1/buckets/{name}"] = user_api.NewBucketInfo(o.context, o.UserAPIBucketInfoHandler)
+	o.handlers["GET"]["/buckets/{name}"] = user_api.NewBucketInfo(o.context, o.UserAPIBucketInfoHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/api/v1/buckets/{name}/set-policy"] = user_api.NewBucketSetPolicy(o.context, o.UserAPIBucketSetPolicyHandler)
+	o.handlers["PUT"]["/buckets/{name}/set-policy"] = user_api.NewBucketSetPolicy(o.context, o.UserAPIBucketSetPolicyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/v1/configs/{name}"] = admin_api.NewConfigInfo(o.context, o.AdminAPIConfigInfoHandler)
+	o.handlers["GET"]["/configs/{name}"] = admin_api.NewConfigInfo(o.context, o.AdminAPIConfigInfoHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/api/v1/buckets/{bucket_name}/events"] = user_api.NewCreateBucketEvent(o.context, o.UserAPICreateBucketEventHandler)
+	o.handlers["POST"]["/buckets/{bucket_name}/events"] = user_api.NewCreateBucketEvent(o.context, o.UserAPICreateBucketEventHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/api/v1/buckets/{name}"] = user_api.NewDeleteBucket(o.context, o.UserAPIDeleteBucketHandler)
+	o.handlers["DELETE"]["/buckets/{name}"] = user_api.NewDeleteBucket(o.context, o.UserAPIDeleteBucketHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/v1/groups/{name}"] = admin_api.NewGroupInfo(o.context, o.AdminAPIGroupInfoHandler)
+	o.handlers["GET"]["/groups/{name}"] = admin_api.NewGroupInfo(o.context, o.AdminAPIGroupInfoHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/v1/buckets/{bucket_name}/events"] = user_api.NewListBucketEvents(o.context, o.UserAPIListBucketEventsHandler)
+	o.handlers["GET"]["/buckets/{bucket_name}/events"] = user_api.NewListBucketEvents(o.context, o.UserAPIListBucketEventsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/v1/buckets"] = user_api.NewListBuckets(o.context, o.UserAPIListBucketsHandler)
+	o.handlers["GET"]["/buckets"] = user_api.NewListBuckets(o.context, o.UserAPIListBucketsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/v1/configs"] = admin_api.NewListConfig(o.context, o.AdminAPIListConfigHandler)
+	o.handlers["GET"]["/configs"] = admin_api.NewListConfig(o.context, o.AdminAPIListConfigHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/v1/groups"] = admin_api.NewListGroups(o.context, o.AdminAPIListGroupsHandler)
+	o.handlers["GET"]["/groups"] = admin_api.NewListGroups(o.context, o.AdminAPIListGroupsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/v1/policies"] = admin_api.NewListPolicies(o.context, o.AdminAPIListPoliciesHandler)
+	o.handlers["GET"]["/policies"] = admin_api.NewListPolicies(o.context, o.AdminAPIListPoliciesHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/v1/users"] = admin_api.NewListUsers(o.context, o.AdminAPIListUsersHandler)
+	o.handlers["GET"]["/users"] = admin_api.NewListUsers(o.context, o.AdminAPIListUsersHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/api/v1/login"] = user_api.NewLogin(o.context, o.UserAPILoginHandler)
+	o.handlers["POST"]["/login"] = user_api.NewLogin(o.context, o.UserAPILoginHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/v1/login"] = user_api.NewLoginDetail(o.context, o.UserAPILoginDetailHandler)
+	o.handlers["GET"]["/login"] = user_api.NewLoginDetail(o.context, o.UserAPILoginDetailHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/api/v1/buckets"] = user_api.NewMakeBucket(o.context, o.UserAPIMakeBucketHandler)
+	o.handlers["POST"]["/buckets"] = user_api.NewMakeBucket(o.context, o.UserAPIMakeBucketHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/v1/policies/{name}"] = admin_api.NewPolicyInfo(o.context, o.AdminAPIPolicyInfoHandler)
+	o.handlers["GET"]["/policies/{name}"] = admin_api.NewPolicyInfo(o.context, o.AdminAPIPolicyInfoHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/api/v1/profiling/start"] = admin_api.NewProfilingStart(o.context, o.AdminAPIProfilingStartHandler)
+	o.handlers["POST"]["/profiling/start"] = admin_api.NewProfilingStart(o.context, o.AdminAPIProfilingStartHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/api/v1/profiling/stop"] = admin_api.NewProfilingStop(o.context, o.AdminAPIProfilingStopHandler)
+	o.handlers["POST"]["/profiling/stop"] = admin_api.NewProfilingStop(o.context, o.AdminAPIProfilingStopHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/api/v1/groups/{name}"] = admin_api.NewRemoveGroup(o.context, o.AdminAPIRemoveGroupHandler)
+	o.handlers["DELETE"]["/groups/{name}"] = admin_api.NewRemoveGroup(o.context, o.AdminAPIRemoveGroupHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/api/v1/policies/{name}"] = admin_api.NewRemovePolicy(o.context, o.AdminAPIRemovePolicyHandler)
+	o.handlers["DELETE"]["/policies/{name}"] = admin_api.NewRemovePolicy(o.context, o.AdminAPIRemovePolicyHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/api/v1/service/restart"] = admin_api.NewRestartService(o.context, o.AdminAPIRestartServiceHandler)
+	o.handlers["POST"]["/service/restart"] = admin_api.NewRestartService(o.context, o.AdminAPIRestartServiceHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/v1/session"] = user_api.NewSessionCheck(o.context, o.UserAPISessionCheckHandler)
+	o.handlers["GET"]["/session"] = user_api.NewSessionCheck(o.context, o.UserAPISessionCheckHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/api/v1/configs/{name}"] = admin_api.NewSetConfig(o.context, o.AdminAPISetConfigHandler)
+	o.handlers["PUT"]["/configs/{name}"] = admin_api.NewSetConfig(o.context, o.AdminAPISetConfigHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/api/v1/set-policy/{name}"] = admin_api.NewSetPolicy(o.context, o.AdminAPISetPolicyHandler)
+	o.handlers["PUT"]["/set-policy/{name}"] = admin_api.NewSetPolicy(o.context, o.AdminAPISetPolicyHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/api/v1/groups/{name}"] = admin_api.NewUpdateGroup(o.context, o.AdminAPIUpdateGroupHandler)
+	o.handlers["PUT"]["/groups/{name}"] = admin_api.NewUpdateGroup(o.context, o.AdminAPIUpdateGroupHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP

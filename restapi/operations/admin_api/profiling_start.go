@@ -48,7 +48,7 @@ func NewProfilingStart(ctx *middleware.Context, handler ProfilingStartHandler) *
 	return &ProfilingStart{Context: ctx, Handler: handler}
 }
 
-/*ProfilingStart swagger:route POST /api/v1/profiling/start AdminAPI profilingStart
+/*ProfilingStart swagger:route POST /profiling/start AdminAPI profilingStart
 
 Start recording profile data
 

@@ -57,7 +57,7 @@ func (o *CreateBucketEventURL) SetBasePath(bp string) {
 func (o *CreateBucketEventURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/api/v1/buckets/{bucket_name}/events"
+	var _path = "/buckets/{bucket_name}/events"
 
 	bucketName := o.BucketName
 	if bucketName != "" {
@@ -67,6 +67,9 @@ func (o *CreateBucketEventURL) Build() (*url.URL, error) {
 	}
 
 	_basePath := o._basePath
+	if _basePath == "" {
+		_basePath = "/api/v1"
+	}
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	return &_result, nil

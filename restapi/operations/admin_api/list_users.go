@@ -48,7 +48,7 @@ func NewListUsers(ctx *middleware.Context, handler ListUsersHandler) *ListUsers 
 	return &ListUsers{Context: ctx, Handler: handler}
 }
 
-/*ListUsers swagger:route GET /api/v1/users AdminAPI listUsers
+/*ListUsers swagger:route GET /users AdminAPI listUsers
 
 List Users
 
