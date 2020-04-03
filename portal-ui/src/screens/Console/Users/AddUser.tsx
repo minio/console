@@ -29,6 +29,7 @@ import {
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../common/api";
 import { User } from "./types";
+import GroupsSelectors from "./GroupsSelectors";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -48,6 +49,9 @@ interface IAddUserContentState {
   addError: string;
   accessKey: string;
   secretKey: string;
+  selectedGroups: string[];
+  loadingGroups: boolean;
+  groupsList: any[];
 }
 
 class AddUserContent extends React.Component<
@@ -58,7 +62,10 @@ class AddUserContent extends React.Component<
     addLoading: false,
     addError: "",
     accessKey: "",
-    secretKey: ""
+    secretKey: "",
+    selectedGroups: [],
+    loadingGroups: false,
+    groupsList: [],
   };
 
   componentDidMount(): void {
@@ -74,7 +81,7 @@ class AddUserContent extends React.Component<
 
   saveRecord(event: React.FormEvent) {
     event.preventDefault();
-    const { accessKey, addLoading, secretKey } = this.state;
+    const { accessKey, addLoading, secretKey, selectedGroups } = this.state;
     const { selectedUser } = this.props;
     if (addLoading) {
       return;
@@ -133,16 +140,12 @@ class AddUserContent extends React.Component<
 
   render() {
     const { classes, selectedUser } = this.props;
-    const { addLoading, addError, accessKey, secretKey } = this.state;
+    const { addLoading, addError, accessKey, secretKey, selectedGroups, loadingGroups, groupsList } = this.state;
 
     return (
       <React.Fragment>
         <DialogTitle id="alert-dialog-title">
-          {selectedUser !== null ? (
-              <Title>Edit User</Title>
-          ) : (
-              <Title>Add User</Title>
-          )}
+          {selectedUser !== null ? 'Edit User' : 'Add User'}
         </DialogTitle>
         <DialogContent>
           <form
@@ -190,6 +193,20 @@ class AddUserContent extends React.Component<
               </Grid>
               <Grid item xs={12}>
                 <br />
+              </Grid>
+              <Grid item xs={12}>
+                <GroupsSelectors
+                    selectedGroups={selectedGroups}
+                    setSelectedGroups={
+                      (elements: string[]) => {
+                        this.setState({
+                          selectedGroups: elements
+                        })
+                      }
+                    }
+                    loading={loadingGroups}
+                    records={groupsList}
+                />
               </Grid>
               <Grid item xs={12}>
                 <Button
