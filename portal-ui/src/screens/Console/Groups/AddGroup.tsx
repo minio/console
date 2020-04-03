@@ -48,14 +48,15 @@ const AddGroup = ({
       closeModalAndRefresh,
       classes,
   }: IGroupProps) => {
+
+    //Local States
     const [groupName, setGroupName] = useState<string>("");
-    const [userList, setUserList] = useState<any[]>([]);
     const [usersSelected, setUsersSelected] = useState<string[]>([]);
     const [saving, isSaving] = useState<boolean>(false);
     const [addError, setError] = useState<string>("");
-    const [userListLoading, setUserListLoading] = useState(false);
     const [selectedUsers, setSelectedUsers] = useState([]);
 
+    //Effects
     useEffect(() => {
         if(selectedGroup) {
             setGroupName(selectedGroup);
@@ -68,6 +69,11 @@ const AddGroup = ({
         }
     }, [saving]);
 
+    useEffect(() => {
+        console.log(selectedUsers)
+    }, [selectedUsers]);
+
+    //Fetch Actions
     const setSaving = (event: React.FormEvent) => {
         event.preventDefault();
 
@@ -106,6 +112,8 @@ const AddGroup = ({
                 });
         }
     }
+
+    console.log('selectedGroup', selectedGroup);
 
     return (<Dialog
         open={open}
@@ -160,11 +168,12 @@ const AddGroup = ({
                     </Grid>
                     <Grid item xs={12}>
                         <UsersSelectors
-                            records={userList}
                             selectedUsers={selectedUsers}
                             setSelectedUsers={setSelectedUsers}
-                            loading={userListLoading}
                         />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <br />
                     </Grid>
                     <Grid item xs={12}>
                         <Button

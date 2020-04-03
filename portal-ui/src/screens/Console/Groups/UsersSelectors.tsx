@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { LinearProgress } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
@@ -26,13 +26,14 @@ import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Title from "../../../common/Title";
 import Checkbox from "@material-ui/core/Checkbox";
+import { UsersList } from "../Users/types";
+import { usersSort } from "../../../utils/sortFunctions";
+import api from "../../../common/api";
 
 interface IGroupsProps {
     classes: any;
     selectedUsers: string[];
     setSelectedUsers: any;
-    records: any[];
-    loading: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -93,14 +94,25 @@ const UsersSelectors = ({
      classes,
      selectedUsers,
      setSelectedUsers,
-     records,
-     loading
  }: IGroupsProps) => {
 
-    if(!records) {
-        return null;
-    }
+    //Local States
+    const [records, setRecords] = useState<any[]>([]);
+    const [loading, isLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string>("");
 
+    //Effects
+    useEffect(() => {
+        isLoading(true);
+    }, []);
+
+    useEffect(() => {
+        if(loading) {
+            fetchUsers();
+        }
+    },[loading]);
+
+    //Fetch Actions
     const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
         const targetD = e.target;
         const value = targetD.value;
@@ -116,6 +128,20 @@ const UsersSelectors = ({
         setSelectedUsers(elements);
 
         return elements;
+    };
+
+    const fetchUsers = () => {
+        api
+            .invoke("GET", `/api/v1/users`)
+            .then((res: UsersList) => {
+                setRecords(res.users.sort(usersSort));
+                setError("");
+                isLoading(false);
+            })
+            .catch(err => {
+                setError(err);
+                isLoading(false);
+            });
     };
 
     return (
@@ -135,16 +161,16 @@ const UsersSelectors = ({
                                 </TableHead>
                                 <TableBody>
                                     {records.map(row => (
-                                        <TableRow key={`group-${row.accessName}`}>
+                                        <TableRow key={`group-${row.accessKey}`}>
                                             <TableCell padding="checkbox">
                                                 <Checkbox
-                                                    value={row.accessName}
+                                                    value={row.accessKey}
                                                     color="primary"
                                                     inputProps={{
                                                         'aria-label': 'secondary checkbox'
                                                     }}
                                                     onChange={ selectionChanged }
-                                                    checked={selectedUsers.includes(row.accessName)}
+                                                    checked={selectedUsers.includes(row.accessKey)}
                                                 />
                                             </TableCell>
                                             <TableCell className={classes.wrapCell}>

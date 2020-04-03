@@ -35,7 +35,8 @@ import {CreateIcon} from "../../../icons";
 import api from "../../../common/api";
 import {MinTablePaginationActions} from "../../../common/MinTablePaginationActions";
 import {GroupsList} from "./types";
-import {groupsSort} from "../../../utils/sortFunctions";
+import {groupsSort, usersSort} from "../../../utils/sortFunctions";
+import {UsersList} from "../Users/types";
 import AddGroup from "../Groups/AddGroup";
 
 interface IGroupsProps {
@@ -153,6 +154,8 @@ const Groups = ({
                 isLoading(false);
             });
     };
+
+
 
     const closeAddModalAndRefresh = () => {
         setGroupOpen(false);
