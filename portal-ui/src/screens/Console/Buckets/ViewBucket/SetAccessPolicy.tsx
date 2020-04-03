@@ -1,4 +1,4 @@
-// This file is part of MinIO Kubernetes Cloud
+// This file is part of MinIO Console Server
 // Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -13,71 +13,66 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 import React from "react";
 import Grid from "@material-ui/core/Grid";
-import { UnControlled as CodeMirror } from "react-codemirror2";
+import Title from "../../../../common/Title";
 import Typography from "@material-ui/core/Typography";
 import {
   Button,
   Dialog,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
   LinearProgress,
+  MenuItem,
+  Select,
   TextField
 } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Title from "../../../common/Title";
-import api from "../../../common/api";
-import "codemirror/lib/codemirror.css";
-import "codemirror/theme/material.css";
-require("codemirror/mode/javascript/javascript");
+import api from "../../../../common/api";
 
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
       color: "red"
-    },
-    jsonPolicyEditor: {
-      minHeight: 400,
-      width: "100%"
-    },
-    codeMirror: {
-      fontSize: 14
     }
   });
 
-interface IAddPolicyProps {
+interface ISetAccessPolicyProps {
   classes: any;
   open: boolean;
+  bucketName: string;
   closeModalAndRefresh: () => void;
 }
 
-interface IAddPolicyState {
+interface ISetAccessPolicyState {
   addLoading: boolean;
   addError: string;
-  policyName: string;
-  policyDefinition: string;
+  accessPolicy: string;
 }
 
-class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
-  state: IAddPolicyState = {
+class SetAccessPolicy extends React.Component<
+  ISetAccessPolicyProps,
+  ISetAccessPolicyState
+> {
+  state: ISetAccessPolicyState = {
     addLoading: false,
     addError: "",
-    policyName: "",
-    policyDefinition: ""
+    accessPolicy: ""
   };
+
   addRecord(event: React.FormEvent) {
     event.preventDefault();
-    const { policyName, addLoading, policyDefinition } = this.state;
+    const { addLoading, accessPolicy } = this.state;
+    const { bucketName } = this.props;
     if (addLoading) {
       return;
     }
     this.setState({ addLoading: true }, () => {
       api
-        .invoke("POST", "/api/v1/policies", {
-          name: policyName,
-          definition: policyDefinition
+        .invoke("PUT", `/api/v1/buckets/${bucketName}/set-policy`, {
+          access: accessPolicy
         })
         .then(res => {
           this.setState(
@@ -98,12 +93,12 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
         });
     });
   }
+
   render() {
     const { classes, open } = this.props;
-    const { addLoading, addError, policyName, policyDefinition } = this.state;
+    const { addLoading, addError, accessPolicy } = this.state;
     return (
       <Dialog
-        fullWidth
         open={open}
         onClose={() => {
           this.setState({ addError: "" }, () => {
@@ -114,7 +109,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          <Title>Create Policy</Title>
+          <Title>Change Access Policy</Title>
         </DialogTitle>
         <DialogContent>
           <form
@@ -137,31 +132,23 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
                 </Grid>
               )}
               <Grid item xs={12}>
-                <TextField
-                  id="standard-basic"
-                  fullWidth
-                  label="Policy Name"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    this.setState({ policyName: e.target.value });
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <br />
-              </Grid>
-              <Grid item xs={12}>
-                <CodeMirror
-                  className={classes.codeMirror}
-                  value=""
-                  options={{
-                    mode: "javascript",
-                    theme: "material",
-                    lineNumbers: true
-                  }}
-                  onChange={(editor, data, value) => {
-                    this.setState({ policyDefinition: value });
-                  }}
-                />
+                <FormControl className={classes.formControl} fullWidth>
+                  <InputLabel id="select-access-policy">
+                    Access Policy
+                  </InputLabel>
+                  <Select
+                    labelId="select-access-policy"
+                    id="select-access-policy"
+                    value={accessPolicy}
+                    onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                      this.setState({ accessPolicy: e.target.value as string });
+                    }}
+                  >
+                    <MenuItem value="PRIVATE">Private</MenuItem>
+                    <MenuItem value="PUBLIC">Public</MenuItem>
+                    <MenuItem value="CUSTOM">Custom</MenuItem>
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item xs={12}>
                 <br />
@@ -174,7 +161,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
                   fullWidth
                   disabled={addLoading}
                 >
-                  Save
+                  Set
                 </Button>
               </Grid>
               {addLoading && (
@@ -190,4 +177,4 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
   }
 }
 
-export default withStyles(styles)(AddPolicy);
+export default withStyles(styles)(SetAccessPolicy);

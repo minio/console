@@ -1,4 +1,4 @@
-// This file is part of MinIO Kubernetes Cloud
+// This file is part of MinIO Console Server
 // Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -23,6 +23,8 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
+import api from "../../../../common/api";
+import { Bucket, BucketList } from "../types";
 import {
   Button,
   IconButton,
@@ -30,19 +32,18 @@ import {
   TableFooter,
   TablePagination
 } from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
 import Typography from "@material-ui/core/Typography";
+import DeleteIcon from "@material-ui/icons/Delete";
+import AddBucket from "./AddBucket";
+import DeleteBucket from "./DeleteBucket";
+import { MinTablePaginationActions } from "../../../../common/MinTablePaginationActions";
+import { CreateIcon } from "../../../../icons";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import Moment from "react-moment";
-import { PolicyList, Policy } from "./types";
-import AddPolicy from "./AddPolicy";
-import DeletePolicy from "./DeletePolicy";
-import api from "../../../common/api";
-import { CreateIcon } from "../../../icons";
-import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
-import VisibilityIcon from "@material-ui/icons/Visibility";
+import { Link } from "react-router-dom";
+import ViewIcon from "@material-ui/icons/Visibility";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -88,12 +89,12 @@ const styles = (theme: Theme) =>
     }
   });
 
-interface IPoliciesProps {
+interface IListBucketsProps {
   classes: any;
 }
 
-interface IPoliciesState {
-  records: Policy[];
+interface IListBucketsState {
+  records: Bucket[];
   totalRecords: number;
   loading: boolean;
   error: string;
@@ -102,12 +103,15 @@ interface IPoliciesState {
   page: number;
   rowsPerPage: number;
   deleteOpen: boolean;
-  selectedPolicy: string;
-  filterPolicies: string;
+  selectedBucket: string;
+  filterBuckets: string;
 }
 
-class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
-  state: IPoliciesState = {
+class ListBuckets extends React.Component<
+  IListBucketsProps,
+  IListBucketsState
+> {
+  state: IListBucketsState = {
     records: [],
     totalRecords: 0,
     loading: false,
@@ -117,8 +121,8 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
     page: 0,
     rowsPerPage: 10,
     deleteOpen: false,
-    selectedPolicy: "",
-    filterPolicies: ""
+    selectedBucket: "",
+    filterBuckets: ""
   };
 
   fetchRecords() {
@@ -126,19 +130,19 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
       const { page, rowsPerPage } = this.state;
       const offset = page * rowsPerPage;
       api
-        .invoke("GET", `/api/v1/policies?offset=${offset}&limit=${rowsPerPage}`)
-        .then((res: PolicyList) => {
+        .invoke("GET", `/api/v1/buckets?offset=${offset}&limit=${rowsPerPage}`)
+        .then((res: BucketList) => {
           this.setState({
             loading: false,
-            records: res.policies,
+            records: res.buckets,
             totalRecords: res.total,
             error: ""
           });
           // if we get 0 results, and page > 0 , go down 1 page
           if (
-            (res.policies === undefined ||
-              res.policies == null ||
-              res.policies.length === 0) &&
+            (res.buckets === undefined ||
+              res.buckets == null ||
+              res.buckets.length === 0) &&
             page > 0
           ) {
             const newPage = page - 1;
@@ -147,7 +151,7 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
             });
           }
         })
-        .catch(err => {
+        .catch((err: any) => {
           this.setState({ loading: false, error: err });
         });
     });
@@ -167,11 +171,11 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
     });
   }
 
-  policyFilter(): void {}
-
   componentDidMount(): void {
     this.fetchRecords();
   }
+
+  bucketFilter(): void {}
 
   render() {
     const { classes } = this.props;
@@ -183,8 +187,8 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
       page,
       rowsPerPage,
       deleteOpen,
-      selectedPolicy,
-      filterPolicies
+      selectedBucket,
+      filterBuckets
     } = this.state;
 
     const offset = page * rowsPerPage;
@@ -200,13 +204,13 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
       this.setState({ page: 0, rowsPerPage: rPP });
     };
 
-    const confirmDeletePolicy = (policy: string) => {
-      this.setState({ deleteOpen: true, selectedPolicy: policy });
+    const confirmDeleteBucket = (bucket: string) => {
+      this.setState({ deleteOpen: true, selectedBucket: bucket });
     };
 
     return (
       <React.Fragment>
-        <AddPolicy
+        <AddBucket
           open={addScreenOpen}
           closeModalAndRefresh={() => {
             this.closeAddModalAndRefresh();
@@ -214,20 +218,20 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
         />
         <Grid container>
           <Grid item xs={12}>
-            <Typography variant="h6">Policies</Typography>
+            <Typography variant="h6">Buckets</Typography>
           </Grid>
           <Grid item xs={12}>
             <br />
           </Grid>
           <Grid item xs={12} className={classes.actionsTray}>
             <TextField
-              placeholder="Search Policies"
+              placeholder="Search Buckets"
               className={classes.searchField}
               id="search-resource"
               label=""
               onChange={val => {
                 this.setState({
-                  filterPolicies: val.target.value
+                  filterBuckets: val.target.value
                 });
               }}
               InputProps={{
@@ -249,7 +253,7 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
                 });
               }}
             >
-              Create Policy
+              Create Bucket
             </Button>
           </Grid>
           <Grid item xs={12}>
@@ -263,17 +267,18 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
                   <TableHead className={classes.minTableHeader}>
                     <TableRow>
                       <TableCell>Name</TableCell>
+                      <TableCell>Creation Date</TableCell>
                       <TableCell align="right">Actions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {records
                       .slice(offset, offset + rowsPerPage)
-                      .filter((b: Policy) => {
-                        if (filterPolicies === "") {
+                      .filter((b: Bucket) => {
+                        if (filterBuckets === "") {
                           return true;
                         } else {
-                          if (b.name.indexOf(filterPolicies) >= 0) {
+                          if (b.name.indexOf(filterBuckets) >= 0) {
                             return true;
                           } else {
                             return false;
@@ -283,19 +288,19 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
                       .map(row => (
                         <TableRow key={row.name}>
                           <TableCell>{row.name}</TableCell>
+                          <TableCell>
+                            <Moment>{row.creation_date}</Moment>
+                          </TableCell>
                           <TableCell align="right">
-                            <IconButton
-                              aria-label="view"
-                              onClick={() => {
-                                confirmDeletePolicy(row.name);
-                              }}
-                            >
-                              <VisibilityIcon />
-                            </IconButton>
+                            <Link to={`/buckets/${row.name}`}>
+                              <IconButton aria-label="delete">
+                                <ViewIcon />
+                              </IconButton>
+                            </Link>
                             <IconButton
                               aria-label="delete"
                               onClick={() => {
-                                confirmDeletePolicy(row.name);
+                                confirmDeleteBucket(row.name);
                               }}
                             >
                               <DeleteIcon />
@@ -324,15 +329,15 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
                   </TableFooter>
                 </Table>
               ) : (
-                <div>No Policies</div>
+                <div>No Buckets</div>
               )}
             </Paper>
           </Grid>
         </Grid>
 
-        <DeletePolicy
+        <DeleteBucket
           deleteOpen={deleteOpen}
-          selectedPolicy={selectedPolicy}
+          selectedBucket={selectedBucket}
           closeDeleteModalAndRefresh={(refresh: boolean) => {
             this.closeDeleteModalAndRefresh(refresh);
           }}
@@ -342,4 +347,4 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
   }
 }
 
-export default withStyles(styles)(Policies);
+export default withStyles(styles)(ListBuckets);

@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2019 MinIO, Inc.
+// Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -19,7 +19,25 @@ export interface Bucket {
   creation_date: Date;
 }
 
+export interface BucketInfo {
+  name: string;
+  access: string;
+}
+
 export interface BucketList {
   buckets: Bucket[];
+  total: number;
+}
+
+export interface BucketEvent {
+  id: string;
+  arn: string;
+  events: string[];
+  prefix: string;
+  suffix: string;
+}
+
+export interface BucketEventList {
+  events: BucketEvent[];
   total: number;
 }

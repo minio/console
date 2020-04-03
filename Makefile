@@ -10,7 +10,7 @@ swagger-gen:
 	@swagger generate server -A mcs --main-package=mcs --exclude-main -P models.Principal -f ./swagger.yml -r NOTICE
 
 build:
-	@(cd portal-ui; yarn install; make build; cd ..)
+	@(cd portal-ui; yarn install; make build-static; cd ..)
 	@(CGO_ENABLED=0 go build --tags kqueue --ldflags "-s -w" -o mcs ./cmd/mcs)
 
 test:

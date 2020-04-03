@@ -25,8 +25,8 @@ import {
   DialogTitle,
   LinearProgress
 } from "@material-ui/core";
-import api from "../../../common/api";
-import { BucketList } from "./types";
+import api from "../../../../common/api";
+import { BucketList } from "../types";
 import Typography from "@material-ui/core/Typography";
 
 const styles = (theme: Theme) =>
@@ -96,7 +96,7 @@ class DeleteBucket extends React.Component<
       <Dialog
         open={deleteOpen}
         onClose={() => {
-          this.setState({deleteError:""},()=>{
+          this.setState({ deleteError: "" }, () => {
             this.props.closeDeleteModalAndRefresh(false);
           });
         }}
@@ -126,7 +126,7 @@ class DeleteBucket extends React.Component<
         <DialogActions>
           <Button
             onClick={() => {
-              this.setState({deleteError:""},()=>{
+              this.setState({ deleteError: "" }, () => {
                 this.props.closeDeleteModalAndRefresh(false);
               });
             }}
