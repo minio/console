@@ -17,12 +17,16 @@
 import React, { useState, useEffect } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import {Button, Dialog, DialogContent, DialogTitle, LinearProgress, TextField} from "@material-ui/core";
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import api from "../../../common/api";
 import UsersSelectors from "./UsersSelectors";
 import {GroupsList} from "./types";
 import {groupsSort} from "../../../utils/sortFunctions";
+import Title from "../../../common/Title";
 
 interface IGroupProps {
     open: boolean;
@@ -100,6 +104,7 @@ const AddGroup = ({
                 .invoke("PUT", `/api/v1/groups/${groupName}`, {
                     group: groupName,
                     members: selectedUsers,
+                    status: groupEnabled,
                 })
                 .then(res => {
                     isSaving(false);
@@ -148,7 +153,7 @@ const AddGroup = ({
         aria-describedby="alert-dialog-description"
     >
         <DialogTitle id="alert-dialog-title">
-            {selectedGroup !== null ? 'Edit Group' : 'Add Group'}
+            {selectedGroup !== null ? `Group Edit - ${groupName}` : 'Add Group'}
         </DialogTitle>
         <DialogContent>
             <form
@@ -171,8 +176,20 @@ const AddGroup = ({
 
                     {selectedGroup !== null ? (
                         <React.Fragment>
-                            <span className={classes.strongText}>Group Name:</span>
-                            <span className={classes.keyName}>{` ${groupName}`}</span>
+                            <Grid item xs={12}>
+                                <Title>Status</Title>
+                                <RadioGroup
+                                    aria-label="status"
+                                    name="status"
+                                    value={groupEnabled}
+                                    onChange={(e) => {
+                                        setGroupEnabled(e.target.value);
+                                    }}
+                                >
+                                    <FormControlLabel value="enabled" control={<Radio color={'primary'} />} label="Enabled" />
+                                    <FormControlLabel value="disabled" control={<Radio color={'primary'} />} label="Disabled" />
+                                </RadioGroup>
+                            </Grid>
                         </React.Fragment>
                     ) : (
                         <React.Fragment>
