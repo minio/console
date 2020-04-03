@@ -104,7 +104,6 @@ interface IViewBucketState {
   rowsPerPage: number;
   deleteOpen: boolean;
   selectedBucket: string;
-  filterBuckets: string;
 }
 
 class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
@@ -119,14 +118,12 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     page: 0,
     rowsPerPage: 10,
     deleteOpen: false,
-    selectedBucket: "",
-    filterBuckets: ""
+    selectedBucket: ""
   };
 
   fetchRecords() {
     this.setState({ loading: true }, () => {
       const { page, rowsPerPage } = this.state;
-      const offset = page * rowsPerPage;
       const { match } = this.props;
       const bucketName = match.params["bucketName"];
       api
@@ -200,8 +197,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       page,
       rowsPerPage,
       deleteOpen,
-      selectedBucket,
-      filterBuckets
+      selectedBucket
     } = this.state;
 
     const offset = page * rowsPerPage;
