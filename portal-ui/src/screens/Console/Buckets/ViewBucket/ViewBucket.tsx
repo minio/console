@@ -1,4 +1,4 @@
-// This file is part of MinIO Kubernetes Cloud
+// This file is part of MinIO Console Server
 // Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -23,6 +23,8 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
+import api from "../../../../common/api";
+import { BucketEvent, BucketEventList, BucketInfo } from "../types";
 import {
   Button,
   IconButton,
@@ -30,19 +32,11 @@ import {
   TableFooter,
   TablePagination
 } from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
 import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
-import Moment from "react-moment";
-import { PolicyList, Policy } from "./types";
-import AddPolicy from "./AddPolicy";
-import DeletePolicy from "./DeletePolicy";
-import api from "../../../common/api";
-import { CreateIcon } from "../../../icons";
-import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
-import VisibilityIcon from "@material-ui/icons/Visibility";
+import DeleteIcon from "@material-ui/icons/Delete";
+import SetAccessPolicy from "./SetAccessPolicy";
+import DeleteBucket from "../ListBuckets/DeleteBucket";
+import { MinTablePaginationActions } from "../../../../common/MinTablePaginationActions";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -85,60 +79,67 @@ const styles = (theme: Theme) =>
       padding: 12,
       borderRadius: 5,
       boxShadow: "0px 3px 6px #00000012"
+    },
+    noRecords: {
+      lineHeight: "24px",
+      textAlign: "center",
+      padding: "20px"
     }
   });
 
-interface IPoliciesProps {
+interface IViewBucketProps {
   classes: any;
+  match: any;
 }
 
-interface IPoliciesState {
-  records: Policy[];
+interface IViewBucketState {
+  info: BucketInfo | null;
+  records: BucketEvent[];
   totalRecords: number;
   loading: boolean;
   error: string;
   deleteError: string;
-  addScreenOpen: boolean;
+  setAccessPolicyScreenOpen: boolean;
   page: number;
   rowsPerPage: number;
   deleteOpen: boolean;
-  selectedPolicy: string;
-  filterPolicies: string;
+  selectedBucket: string;
 }
 
-class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
-  state: IPoliciesState = {
+class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
+  state: IViewBucketState = {
+    info: null,
     records: [],
     totalRecords: 0,
     loading: false,
     error: "",
     deleteError: "",
-    addScreenOpen: false,
+    setAccessPolicyScreenOpen: false,
     page: 0,
     rowsPerPage: 10,
     deleteOpen: false,
-    selectedPolicy: "",
-    filterPolicies: ""
+    selectedBucket: ""
   };
 
   fetchRecords() {
     this.setState({ loading: true }, () => {
       const { page, rowsPerPage } = this.state;
-      const offset = page * rowsPerPage;
+      const { match } = this.props;
+      const bucketName = match.params["bucketName"];
       api
-        .invoke("GET", `/api/v1/policies?offset=${offset}&limit=${rowsPerPage}`)
-        .then((res: PolicyList) => {
+        .invoke("GET", `/api/v1/buckets/${bucketName}/events`)
+        .then((res: BucketEventList) => {
           this.setState({
             loading: false,
-            records: res.policies,
+            records: res.events,
             totalRecords: res.total,
             error: ""
           });
           // if we get 0 results, and page > 0 , go down 1 page
           if (
-            (res.policies === undefined ||
-              res.policies == null ||
-              res.policies.length === 0) &&
+            (res.events === undefined ||
+              res.events == null ||
+              res.events.length === 0) &&
             page > 0
           ) {
             const newPage = page - 1;
@@ -147,15 +148,15 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
             });
           }
         })
-        .catch(err => {
+        .catch((err: any) => {
           this.setState({ loading: false, error: err });
         });
     });
   }
 
   closeAddModalAndRefresh() {
-    this.setState({ addScreenOpen: false }, () => {
-      this.fetchRecords();
+    this.setState({ setAccessPolicyScreenOpen: false }, () => {
+      this.loadInfo();
     });
   }
 
@@ -167,27 +168,41 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
     });
   }
 
-  policyFilter(): void {}
+  loadInfo() {
+    const { match } = this.props;
+    const bucketName = match.params["bucketName"];
+    api
+      .invoke("GET", `/api/v1/buckets/${bucketName}`)
+      .then((res: BucketInfo) => {
+        this.setState({ info: res });
+      })
+      .catch(err => {});
+  }
 
   componentDidMount(): void {
+    this.loadInfo();
     this.fetchRecords();
   }
 
+  bucketFilter(): void {}
+
   render() {
-    const { classes } = this.props;
+    const { classes, match } = this.props;
     const {
+      info,
       records,
       totalRecords,
-      addScreenOpen,
+      setAccessPolicyScreenOpen,
       loading,
       page,
       rowsPerPage,
       deleteOpen,
-      selectedPolicy,
-      filterPolicies
+      selectedBucket
     } = this.state;
 
     const offset = page * rowsPerPage;
+
+    const bucketName = match.params["bucketName"];
 
     const handleChangePage = (event: unknown, newPage: number) => {
       this.setState({ page: newPage });
@@ -200,58 +215,59 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
       this.setState({ page: 0, rowsPerPage: rPP });
     };
 
-    const confirmDeletePolicy = (policy: string) => {
-      this.setState({ deleteOpen: true, selectedPolicy: policy });
+    const confirmDeleteEvent = (bucket: string) => {
+      this.setState({ deleteOpen: true, selectedBucket: bucket });
     };
+
+    let accessPolicy = "n/a";
+    if (info !== null) {
+      accessPolicy = info.access;
+    }
 
     return (
       <React.Fragment>
-        <AddPolicy
-          open={addScreenOpen}
+        <SetAccessPolicy
+          bucketName={bucketName}
+          open={setAccessPolicyScreenOpen}
           closeModalAndRefresh={() => {
             this.closeAddModalAndRefresh();
           }}
         />
         <Grid container>
           <Grid item xs={12}>
-            <Typography variant="h6">Policies</Typography>
+            <Typography variant="h6">
+              Bucket > {match.params["bucketName"]}
+            </Typography>
           </Grid>
           <Grid item xs={12}>
             <br />
           </Grid>
-          <Grid item xs={12} className={classes.actionsTray}>
-            <TextField
-              placeholder="Search Policies"
-              className={classes.searchField}
-              id="search-resource"
-              label=""
-              onChange={val => {
-                this.setState({
-                  filterPolicies: val.target.value
-                });
-              }}
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                )
-              }}
-            />
+          <Grid item xs={12}>
+            Access Policy: {accessPolicy}
+            {"   "}
             <Button
               variant="contained"
+              size="small"
               color="primary"
-              startIcon={<CreateIcon />}
               onClick={() => {
                 this.setState({
-                  addScreenOpen: true
+                  setAccessPolicyScreenOpen: true
                 });
               }}
             >
-              Create Policy
+              Change Access Policy
             </Button>
+            <br />
+            Reported Usage: 0 bytes
+            <br />
           </Grid>
+          <Grid item xs={12}>
+            <br />
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="h6">Events</Typography>
+          </Grid>
+          <Grid item xs={6} className={classes.actionsTray} />
           <Grid item xs={12}>
             <br />
           </Grid>
@@ -262,47 +278,32 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
                 <Table size="medium">
                   <TableHead className={classes.minTableHeader}>
                     <TableRow>
-                      <TableCell>Name</TableCell>
+                      <TableCell>SQS</TableCell>
+                      <TableCell>Events</TableCell>
+                      <TableCell>Prefix</TableCell>
+                      <TableCell>Suffix</TableCell>
                       <TableCell align="right">Actions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {records
-                      .slice(offset, offset + rowsPerPage)
-                      .filter((b: Policy) => {
-                        if (filterPolicies === "") {
-                          return true;
-                        } else {
-                          if (b.name.indexOf(filterPolicies) >= 0) {
-                            return true;
-                          } else {
-                            return false;
-                          }
-                        }
-                      })
-                      .map(row => (
-                        <TableRow key={row.name}>
-                          <TableCell>{row.name}</TableCell>
-                          <TableCell align="right">
-                            <IconButton
-                              aria-label="view"
-                              onClick={() => {
-                                confirmDeletePolicy(row.name);
-                              }}
-                            >
-                              <VisibilityIcon />
-                            </IconButton>
-                            <IconButton
-                              aria-label="delete"
-                              onClick={() => {
-                                confirmDeletePolicy(row.name);
-                              }}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                    {records.slice(offset, offset + rowsPerPage).map(row => (
+                      <TableRow key={row.id}>
+                        <TableCell>{row.arn}</TableCell>
+                        <TableCell>{row.events.join(", ")}</TableCell>
+                        <TableCell>{row.prefix}</TableCell>
+                        <TableCell>{row.suffix}</TableCell>
+                        <TableCell align="right">
+                          <IconButton
+                            aria-label="delete"
+                            onClick={() => {
+                              confirmDeleteEvent(row.id);
+                            }}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                   </TableBody>
                   <TableFooter>
                     <TableRow>
@@ -324,15 +325,15 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
                   </TableFooter>
                 </Table>
               ) : (
-                <div>No Policies</div>
+                <div className={classes.noRecords}>No Events</div>
               )}
             </Paper>
           </Grid>
         </Grid>
 
-        <DeletePolicy
+        <DeleteBucket
           deleteOpen={deleteOpen}
-          selectedPolicy={selectedPolicy}
+          selectedBucket={selectedBucket}
           closeDeleteModalAndRefresh={(refresh: boolean) => {
             this.closeDeleteModalAndRefresh(refresh);
           }}
@@ -342,4 +343,4 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
   }
 }
 
-export default withStyles(styles)(Policies);
+export default withStyles(styles)(ViewBucket);

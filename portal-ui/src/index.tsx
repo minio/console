@@ -29,11 +29,15 @@ const GlobalCss = withStyles({
   // @global is handled by jss-plugin-global.
   "@global": {
     // You should target [class*="MuiButton-root"] instead if you nest themes.
-    ".MuiButton-root": {
+    ".MuiButton-contained": {
       fontSize: "14px",
       textTransform: "capitalize",
       padding: "16px 25px 16px 25px",
       borderRadius: "3px"
+    },
+    ".MuiButton-sizeSmall": {
+      padding: "4px 10px",
+      fontSize: "0.8125rem"
     },
     ".MuiTableCell-head": {
       borderRadius: "3px 3px 0px 0px",

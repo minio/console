@@ -37,7 +37,7 @@ const styles = (theme: Theme) =>
       color: "red"
     },
     strongText: {
-      fontWeight: 700,
+      fontWeight: 700
     },
     keyName: {
       marginLeft: 5
@@ -71,13 +71,13 @@ class AddUserContent extends React.Component<
     secretKey: "",
     selectedGroups: [],
     loadingGroups: false,
-    groupsList: [],
+    groupsList: []
   };
 
   componentDidMount(): void {
     const { selectedUser } = this.props;
     if (selectedUser !== null) {
-      console.log('selUsr', selectedUser);
+      console.log("selUsr", selectedUser);
       this.setState({
         accessKey: selectedUser.accessKey,
         secretKey: ""
@@ -97,7 +97,7 @@ class AddUserContent extends React.Component<
         api
           .invoke("PUT", `/api/v1/users/${selectedUser.accessKey}`, {
             accessKey,
-            secretKey: (secretKey != "" ? null : secretKey),
+            secretKey: secretKey != "" ? null : secretKey
           })
           .then(res => {
             this.setState(
@@ -120,7 +120,7 @@ class AddUserContent extends React.Component<
         api
           .invoke("POST", "/api/v1/users", {
             accessKey,
-            secretKey,
+            secretKey
           })
           .then(res => {
             this.setState(
@@ -146,12 +146,20 @@ class AddUserContent extends React.Component<
 
   render() {
     const { classes, selectedUser } = this.props;
-    const { addLoading, addError, accessKey, secretKey, selectedGroups, loadingGroups, groupsList } = this.state;
+    const {
+      addLoading,
+      addError,
+      accessKey,
+      secretKey,
+      selectedGroups,
+      loadingGroups,
+      groupsList
+    } = this.state;
 
     return (
       <React.Fragment>
         <DialogTitle id="alert-dialog-title">
-          {selectedUser !== null ? 'Edit User' : 'Add User'}
+          {selectedUser !== null ? "Edit User" : "Add User"}
         </DialogTitle>
         <DialogContent>
           <form
@@ -175,37 +183,39 @@ class AddUserContent extends React.Component<
               )}
 
               {selectedUser !== null ? (
-                  <React.Fragment>
-                    <span className={classes.strongText}>Access Key:</span>
-                    <span className={classes.keyName}>{` ${accessKey}`}</span>
-                  </React.Fragment>
+                <React.Fragment>
+                  <span className={classes.strongText}>Access Key:</span>
+                  <span className={classes.keyName}>{` ${accessKey}`}</span>
+                </React.Fragment>
               ) : (
-                  <React.Fragment>
-                    <Grid item xs={12}>
-                      <TextField
-                          id="standard-basic"
-                          fullWidth
-                          label="Access Key"
-                          value={accessKey}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            this.setState({ accessKey: e.target.value });
-                          }}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                          id="standard-multiline-static"
-                          label={selectedUser !== null ? 'New Secret Key': 'Secret Key'}
-                          type="password"
-                          fullWidth
-                          value={secretKey}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            this.setState({ secretKey: e.target.value });
-                          }}
-                          autoComplete="current-password"
-                      />
-                    </Grid>
-                  </React.Fragment>
+                <React.Fragment>
+                  <Grid item xs={12}>
+                    <TextField
+                      id="standard-basic"
+                      fullWidth
+                      label="Access Key"
+                      value={accessKey}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        this.setState({ accessKey: e.target.value });
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      id="standard-multiline-static"
+                      label={
+                        selectedUser !== null ? "New Secret Key" : "Secret Key"
+                      }
+                      type="password"
+                      fullWidth
+                      value={secretKey}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        this.setState({ secretKey: e.target.value });
+                      }}
+                      autoComplete="current-password"
+                    />
+                  </Grid>
+                </React.Fragment>
               )}
 
               <Grid item xs={12}>
@@ -213,16 +223,14 @@ class AddUserContent extends React.Component<
               </Grid>
               <Grid item xs={12}>
                 <GroupsSelectors
-                    selectedGroups={selectedGroups}
-                    setSelectedGroups={
-                      (elements: string[]) => {
-                        this.setState({
-                          selectedGroups: elements
-                        })
-                      }
-                    }
-                    loading={loadingGroups}
-                    records={groupsList}
+                  selectedGroups={selectedGroups}
+                  setSelectedGroups={(elements: string[]) => {
+                    this.setState({
+                      selectedGroups: elements
+                    });
+                  }}
+                  loading={loadingGroups}
+                  records={groupsList}
                 />
               </Grid>
               <Grid item xs={12}>
