@@ -51,15 +51,17 @@ const AddGroup = ({
 
     //Local States
     const [groupName, setGroupName] = useState<string>("");
-    const [usersSelected, setUsersSelected] = useState<string[]>([]);
     const [saving, isSaving] = useState<boolean>(false);
     const [addError, setError] = useState<string>("");
-    const [selectedUsers, setSelectedUsers] = useState([]);
+    const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
     //Effects
     useEffect(() => {
         if(selectedGroup) {
             setGroupName(selectedGroup);
+        } else {
+            setGroupName("");
+            setSelectedUsers([]);
         }
     }, [selectedGroup]);
 
@@ -85,7 +87,7 @@ const AddGroup = ({
             api
                 .invoke("PUT", `/api/v1/groups/${selectedGroup.name}`, {
                     group: groupName,
-                    members: usersSelected,
+                    members: selectedUsers,
                 })
                 .then(res => {
                     isSaving(false);
@@ -99,7 +101,7 @@ const AddGroup = ({
         } else {
             api.invoke("POST", "/api/v1/groups", {
                     group: groupName,
-                    members: usersSelected,
+                    members: selectedUsers,
                 })
                 .then(res => {
                     isSaving(false);
@@ -112,8 +114,6 @@ const AddGroup = ({
                 });
         }
     }
-
-    console.log('selectedGroup', selectedGroup);
 
     return (<Dialog
         open={open}
