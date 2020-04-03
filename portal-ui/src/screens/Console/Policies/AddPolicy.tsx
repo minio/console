@@ -156,7 +156,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
               <Grid item xs={12}>
                 <CodeMirror
                   className={classes.codeMirror}
-                  value={policyEdit ? JSON.stringify(policyEdit) : ""}
+                  value={policyEdit ? JSON.stringify(policyEdit, null, 4) : ""}
                   options={{
                     mode: "javascript",
                     theme: "material",
