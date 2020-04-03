@@ -171,11 +171,13 @@ const Groups = ({
     };
 
     return (<React.Fragment>
-        <AddGroup
-            open={addGroupOpen}
-            selectedGroup={selectedGroup}
-            closeModalAndRefresh={closeAddModalAndRefresh}
-        />
+        { addGroupOpen &&
+            <AddGroup
+                open={addGroupOpen}
+                selectedGroup={selectedGroup}
+                closeModalAndRefresh={closeAddModalAndRefresh}
+            />
+        }
         <Grid container>
             <Grid item xs={12}>
                 <Typography variant="h6">Groups</Typography>
@@ -221,7 +223,6 @@ const Groups = ({
                         <Table size="medium">
                             <TableHead className={classes.minTableHeader}>
                                 <TableRow>
-                                    <TableCell>Select</TableCell>
                                     <TableCell>Name</TableCell>
                                     <TableCell align="right">Actions</TableCell>
                                 </TableRow>
@@ -229,13 +230,6 @@ const Groups = ({
                             <TableBody>
                                 {records.map(group => (
                                     <TableRow key={`user-${group}`}>
-                                        <TableCell padding="checkbox">
-                                            <Checkbox
-                                                value="secondary"
-                                                color="primary"
-                                                inputProps={{ 'aria-label': 'secondary checkbox' }}
-                                            />
-                                        </TableCell>
                                         <TableCell className={classes.wrapCell}>
                                             {group}
                                         </TableCell>

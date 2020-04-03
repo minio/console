@@ -21,12 +21,20 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import api from "../../../common/api";
 import UsersSelectors from "./UsersSelectors";
+import {GroupsList} from "./types";
+import {groupsSort} from "../../../utils/sortFunctions";
 
 interface IGroupProps {
     open: boolean;
     selectedGroup: any;
     closeModalAndRefresh: any;
     classes: any;
+}
+
+interface MainGroupProps {
+    members: string[];
+    name: string;
+    status: string;
 }
 
 const styles = (theme: Theme) =>
@@ -51,14 +59,16 @@ const AddGroup = ({
 
     //Local States
     const [groupName, setGroupName] = useState<string>("");
+    const [groupEnabled, setGroupEnabled] = useState<string>("");
     const [saving, isSaving] = useState<boolean>(false);
     const [addError, setError] = useState<string>("");
     const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+    const [loadingGroup, isLoadingGroup] = useState<boolean>(false);
 
     //Effects
     useEffect(() => {
-        if(selectedGroup) {
-            setGroupName(selectedGroup);
+        if(selectedGroup !== null) {
+            isLoadingGroup(true);
         } else {
             setGroupName("");
             setSelectedUsers([]);
@@ -72,8 +82,10 @@ const AddGroup = ({
     }, [saving]);
 
     useEffect(() => {
-        console.log(selectedUsers)
-    }, [selectedUsers]);
+        if(selectedGroup && loadingGroup) {
+            fetchGroupInfo();
+        }
+    }, [loadingGroup]);
 
     //Fetch Actions
     const setSaving = (event: React.FormEvent) => {
@@ -85,7 +97,7 @@ const AddGroup = ({
     const saveRecord = () => {
         if (selectedGroup !== null) {
             api
-                .invoke("PUT", `/api/v1/groups/${selectedGroup.name}`, {
+                .invoke("PUT", `/api/v1/groups/${groupName}`, {
                     group: groupName,
                     members: selectedUsers,
                 })
@@ -113,7 +125,21 @@ const AddGroup = ({
                     setError(err);
                 });
         }
-    }
+    };
+
+    const fetchGroupInfo = () => {
+        api
+            .invoke("GET", `/api/v1/groups/${selectedGroup}`)
+            .then((res: MainGroupProps) => {
+                setGroupEnabled(res.status);
+                setGroupName(res.name);
+                setSelectedUsers(res.members);
+            })
+            .catch(err => {
+                setError(err);
+                isLoadingGroup(false);
+            });
+    };
 
     return (<Dialog
         open={open}

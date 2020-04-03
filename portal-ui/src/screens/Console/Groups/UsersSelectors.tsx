@@ -146,7 +146,7 @@ const UsersSelectors = ({
 
     return (
         <React.Fragment>
-            <Title>Users</Title>
+            <Title>Members</Title>
             <Grid item xs={12}>
                 <Paper className={classes.paper}>
                     {loading && <LinearProgress />}
