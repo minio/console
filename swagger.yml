@@ -159,6 +159,28 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
+    post:
+      summary: Create Bucket Event
+      operationId: CreateBucketEvent
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/bucketEventRequest'
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
   /api/v1/users:
     get:
       summary: List Users
@@ -839,6 +861,8 @@ definitions:
       - get
   notificationConfig:
     type: object
+    required: 
+      - arn
     properties:
       id:
         type: string
@@ -855,6 +879,15 @@ definitions:
       suffix:
         type: string
         title: "filter event associated to the specified suffix"
+  bucketEventRequest:
+    type: object
+    required: 
+      - configuration
+    properties:
+      configuration:
+        $ref: "#/definitions/notificationConfig"
+      ignoreExisting:
+        type: boolean
   listBucketEventsResponse:
     type: object
     properties:

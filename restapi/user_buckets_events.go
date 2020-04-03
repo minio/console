@@ -36,6 +36,12 @@ func registerBucketEventsHandlers(api *operations.McsAPI) {
 		}
 		return user_api.NewListBucketEventsOK().WithPayload(listBucketEventsResponse)
 	})
+	api.UserAPICreateBucketEventHandler = user_api.CreateBucketEventHandlerFunc(func(params user_api.CreateBucketEventParams, principal *models.Principal) middleware.Responder {
+		if err := getCreateBucketEventsResponse(params.BucketName, params.Body); err != nil {
+			return user_api.NewCreateBucketEventDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
+		return user_api.NewCreateBucketEventCreated()
+	})
 }
 
 // listBucketEvents fetches a list of all events set for a bucket and serializes them for a proper output
@@ -83,7 +89,7 @@ func listBucketEvents(client MinioClient, bucketName string) ([]*models.Notifica
 	for _, config := range bn.TopicConfigs {
 		prefix, suffix := getFilters(config.NotificationConfig)
 		configs = append(configs, &models.NotificationConfig{ID: config.ID,
-			Arn:    config.Topic,
+			Arn:    swag.String(config.Topic),
 			Events: prettyEventNames(config.Events),
 			Prefix: prefix,
 			Suffix: suffix})
@@ -91,7 +97,7 @@ func listBucketEvents(client MinioClient, bucketName string) ([]*models.Notifica
 	for _, config := range bn.QueueConfigs {
 		prefix, suffix := getFilters(config.NotificationConfig)
 		configs = append(configs, &models.NotificationConfig{ID: config.ID,
-			Arn:    config.Queue,
+			Arn:    swag.String(config.Queue),
 			Events: prettyEventNames(config.Events),
 			Prefix: prefix,
 			Suffix: suffix})
@@ -99,7 +105,7 @@ func listBucketEvents(client MinioClient, bucketName string) ([]*models.Notifica
 	for _, config := range bn.LambdaConfigs {
 		prefix, suffix := getFilters(config.NotificationConfig)
 		configs = append(configs, &models.NotificationConfig{ID: config.ID,
-			Arn:    config.Lambda,
+			Arn:    swag.String(config.Lambda),
 			Events: prettyEventNames(config.Events),
 			Prefix: prefix,
 			Suffix: suffix})
@@ -129,4 +135,51 @@ func getListBucketEventsResponse(params user_api.ListBucketEventsParams) (*model
 		Total:  int64(len(bucketEvents)),
 	}
 	return listBucketsResponse, nil
+}
+
+// createBucketEvent calls mc AddNotificationConfig() to create a bucket nofication
+//
+// If notificationEvents is empty, by default will set [get, put, delete], else the provided
+// ones will be set.
+// this function follows same behavior as minio/mc for adding a bucket event
+func createBucketEvent(client MCS3Client, arn string, notificationEvents []models.NotificationEventType, prefix, suffix string, ignoreExisting bool) error {
+	var events []string
+	if len(notificationEvents) == 0 {
+		// default event values are [get, put, delete]
+		events = []string{
+			string(models.NotificationEventTypeGet),
+			string(models.NotificationEventTypePut),
+			string(models.NotificationEventTypeDelete),
+		}
+	} else {
+		// else use defined events in request
+		// cast type models.NotificationEventType to string
+		for _, e := range notificationEvents {
+			events = append(events, string(e))
+		}
+	}
+
+	perr := client.addNotificationConfig(arn, events, prefix, suffix, ignoreExisting)
+	if perr != nil {
+		return perr.Cause
+	}
+	return nil
+}
+
+// getCreateBucketEventsResponse calls createBucketEvent to add a bucket event notification
+func getCreateBucketEventsResponse(bucketName string, eventReq *models.BucketEventRequest) error {
+	s3Client, err := newS3BucketClient(swag.String(bucketName))
+	if err != nil {
+		log.Println("error creating MinIO Client:", err)
+		return err
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	mcS3Client := mcS3Client{client: s3Client}
+	err = createBucketEvent(mcS3Client, *eventReq.Configuration.Arn, eventReq.Configuration.Events, eventReq.Configuration.Prefix, eventReq.Configuration.Suffix, eventReq.IgnoreExisting)
+	if err != nil {
+		log.Println("error creating bucket event:", err)
+		return err
+	}
+	return nil
 }

@@ -22,7 +22,9 @@ import (
 
 	"errors"
 
+	"github.com/go-openapi/swag"
 	"github.com/minio/m3/mcs/models"
+	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v6"
 	"github.com/stretchr/testify/assert"
 )
@@ -33,6 +35,61 @@ var minioGetBucketNotificationMock func(bucketName string) (bucketNotification m
 // mock function of getBucketNotification()
 func (mc minioClientMock) getBucketNotification(bucketName string) (bucketNotification minio.BucketNotification, err error) {
 	return minioGetBucketNotificationMock(bucketName)
+}
+
+//// Mock mc S3Client functions ////
+var mcAddNotificationConfigMock func(arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error
+
+// Define a mock struct of mc S3Client interface implementation
+type s3ClientMock struct {
+}
+
+// implements mc.S3Client.AddNotificationConfigMock(ctx)
+func (c s3ClientMock) addNotificationConfig(arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
+	return mcAddNotificationConfigMock(arn, events, prefix, suffix, ignoreExisting)
+}
+
+func TestAddBucketNotification(t *testing.T) {
+	assert := assert.New(t)
+	// mock minIO client
+	client := s3ClientMock{}
+	function := "createBucketEvent()"
+	// Test-1: createBucketEvent() set an event with empty parameters and events, should set default values with no error
+	testArn := "arn:minio:sqs::test:postgresql"
+	testNotificationEvents := []models.NotificationEventType{}
+	testPrefix := ""
+	testSuffix := ""
+	testIgnoreExisting := false
+	mcAddNotificationConfigMock = func(arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
+		return nil
+	}
+	if err := createBucketEvent(client, testArn, testNotificationEvents, testPrefix, testSuffix, testIgnoreExisting); err != nil {
+		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+	}
+
+	// Test-2: createBucketEvent() with different even types in list shouls create event with no errors
+	testArn = "arn:minio:sqs::test:postgresql"
+	testNotificationEvents = []models.NotificationEventType{
+		models.NotificationEventTypePut,
+		models.NotificationEventTypeGet,
+	}
+	testPrefix = "photos/"
+	testSuffix = ".jpg"
+	testIgnoreExisting = true
+	mcAddNotificationConfigMock = func(arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
+		return nil
+	}
+	if err := createBucketEvent(client, testArn, testNotificationEvents, testPrefix, testSuffix, testIgnoreExisting); err != nil {
+		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+	}
+
+	// Test-3 createBucketEvent() S3Client.AddNotificationConfig returns an error and is handled correctly
+	mcAddNotificationConfigMock = func(arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
+		return probe.NewError(errors.New("error"))
+	}
+	if err := createBucketEvent(client, testArn, testNotificationEvents, testPrefix, testSuffix, testIgnoreExisting); assert.Error(err) {
+		assert.Equal("error", err.Error())
+	}
 }
 
 func TestListBucketEvents(t *testing.T) {
@@ -76,7 +133,7 @@ func TestListBucketEvents(t *testing.T) {
 	}
 	expectedOutput := []*models.NotificationConfig{
 		&models.NotificationConfig{
-			Arn:    "arn:minio:sqs::test:postgresql",
+			Arn:    swag.String("arn:minio:sqs::test:postgresql"),
 			ID:     "",
 			Prefix: "file/",
 			Suffix: ".jpg",
@@ -125,7 +182,7 @@ func TestListBucketEvents(t *testing.T) {
 	}
 	expectedOutput = []*models.NotificationConfig{
 		&models.NotificationConfig{
-			Arn:    "arn:minio:sqs::test:postgresql",
+			Arn:    swag.String("arn:minio:sqs::test:postgresql"),
 			ID:     "",
 			Prefix: "",
 			Suffix: "",
@@ -226,7 +283,7 @@ func TestListBucketEvents(t *testing.T) {
 	// order matters in output: topic,queue then lambda are given respectively
 	expectedOutput = []*models.NotificationConfig{
 		&models.NotificationConfig{
-			Arn:    "topic",
+			Arn:    swag.String("topic"),
 			ID:     "",
 			Prefix: "topic/",
 			Suffix: ".gif",
@@ -235,7 +292,7 @@ func TestListBucketEvents(t *testing.T) {
 			},
 		},
 		&models.NotificationConfig{
-			Arn:    "arn:minio:sqs::test:postgresql",
+			Arn:    swag.String("arn:minio:sqs::test:postgresql"),
 			ID:     "",
 			Prefix: "",
 			Suffix: "",
@@ -244,7 +301,7 @@ func TestListBucketEvents(t *testing.T) {
 			},
 		},
 		&models.NotificationConfig{
-			Arn:    "lambda",
+			Arn:    swag.String("lambda"),
 			ID:     "",
 			Prefix: "lambda/",
 			Suffix: ".png",
