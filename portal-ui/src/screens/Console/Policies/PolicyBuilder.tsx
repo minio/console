@@ -15,16 +15,24 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import {createStyles, Theme, withStyles} from "@material-ui/core/styles";
+import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import remove from "lodash/remove";
-import {Checkbox, FormControlLabel, FormGroup, FormLabel, Paper, Radio, RadioGroup} from "@material-ui/core";
-import {Statement} from "./types";
+import {
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
+  Paper,
+  Radio,
+  RadioGroup
+} from "@material-ui/core";
+import { Statement } from "./types";
 
 const styles = (theme: Theme) =>
   createStyles({
     root: {
-      flexGrow: 1,
+      flexGrow: 1
     },
     errorBlock: {
       color: "red"
@@ -38,9 +46,9 @@ const styles = (theme: Theme) =>
     },
     paper: {
       padding: theme.spacing(1),
-      textAlign: 'center',
-      color: theme.palette.text.secondary,
-    },
+      textAlign: "center",
+      color: theme.palette.text.secondary
+    }
   });
 
 interface IPolicyBuilderProps {
@@ -56,22 +64,29 @@ interface IPolicyBuilderState {
   currentStatementRead: boolean;
 }
 
-class PolicyBuilder extends React.Component<IPolicyBuilderProps, IPolicyBuilderState> {
+class PolicyBuilder extends React.Component<
+  IPolicyBuilderProps,
+  IPolicyBuilderState
+> {
   state: IPolicyBuilderState = {
     policyString: "",
     statements: [],
     currentStatement: {
       effect: "",
       actions: [],
-      resources: [],
+      resources: []
     },
     currentStatementWrite: false,
-    currentStatementRead: false,
+    currentStatementRead: false
   };
 
   render() {
     const { classes, policyDefinition } = this.props;
-    const { currentStatement,currentStatementWrite, currentStatementRead } = this.state;
+    const {
+      currentStatement,
+      currentStatementWrite,
+      currentStatementRead
+    } = this.state;
     console.log(currentStatement);
     return (
       <div className={classes.root}>
@@ -85,12 +100,25 @@ class PolicyBuilder extends React.Component<IPolicyBuilderProps, IPolicyBuilderS
                     aria-label="effect"
                     name="effect"
                     value={currentStatement.effect}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>, value: string) => {
-                      this.setState( { currentStatement: { ...currentStatement, effect: value }});
+                    onChange={(
+                      e: React.ChangeEvent<HTMLInputElement>,
+                      value: string
+                    ) => {
+                      this.setState({
+                        currentStatement: { ...currentStatement, effect: value }
+                      });
                     }}
                   >
-                    <FormControlLabel value="Deny" control={<Radio />} label="Deny" />
-                    <FormControlLabel value="Allow" control={<Radio />} label="Allow" />
+                    <FormControlLabel
+                      value="Deny"
+                      control={<Radio />}
+                      label="Deny"
+                    />
+                    <FormControlLabel
+                      value="Allow"
+                      control={<Radio />}
+                      label="Allow"
+                    />
                   </RadioGroup>
                 </Paper>
               </Grid>
@@ -102,16 +130,30 @@ class PolicyBuilder extends React.Component<IPolicyBuilderProps, IPolicyBuilderS
                       control={
                         <Checkbox
                           checked={currentStatementRead}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-                            const readActions = ["s3:ListBucket", "s3:GetObject", "s3:GetBucketLocation"];
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>,
+                            checked: boolean
+                          ) => {
+                            const readActions = [
+                              "s3:ListBucket",
+                              "s3:GetObject",
+                              "s3:GetBucketLocation"
+                            ];
                             let actions = currentStatement.actions;
                             if (checked) {
-                              actions.push(...readActions)
+                              actions.push(...readActions);
                             } else {
-                              actions = remove(actions, (action) => readActions.includes(action))
+                              actions = remove(actions, action =>
+                                readActions.includes(action)
+                              );
                             }
-                            this.setState( { currentStatement: { ...currentStatement, actions: actions }});
-                            this.setState( { currentStatementRead: checked });
+                            this.setState({
+                              currentStatement: {
+                                ...currentStatement,
+                                actions: actions
+                              }
+                            });
+                            this.setState({ currentStatementRead: checked });
                           }}
                           name="read"
                         />
@@ -122,16 +164,26 @@ class PolicyBuilder extends React.Component<IPolicyBuilderProps, IPolicyBuilderS
                       control={
                         <Checkbox
                           checked={currentStatementWrite}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>,
+                            checked: boolean
+                          ) => {
                             const writeActions = ["s3:PutObject"];
                             let actions = currentStatement.actions;
                             if (checked) {
-                              actions.push(...writeActions)
+                              actions.push(...writeActions);
                             } else {
-                              actions = remove(actions, (action) => writeActions.includes(action))
+                              actions = remove(actions, action =>
+                                writeActions.includes(action)
+                              );
                             }
-                            this.setState( { currentStatement: { ...currentStatement, actions: actions }});
-                            this.setState( { currentStatementWrite: checked });
+                            this.setState({
+                              currentStatement: {
+                                ...currentStatement,
+                                actions: actions
+                              }
+                            });
+                            this.setState({ currentStatementWrite: checked });
                           }}
                           name="write"
                         />
@@ -150,7 +202,7 @@ class PolicyBuilder extends React.Component<IPolicyBuilderProps, IPolicyBuilderS
           </Grid>
         </Grid>
       </div>
-    )
+    );
   }
 }
 
