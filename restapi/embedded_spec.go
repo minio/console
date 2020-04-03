@@ -50,6 +50,29 @@ func init() {
     "version": "0.1.0"
   },
   "paths": {
+    "/api/v1/admin/info": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Returns information about the deployment",
+        "operationId": "AdminInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/adminInfoResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/buckets": {
       "get": {
         "tags": [
@@ -153,6 +176,40 @@ func init() {
             "schema": {
               "$ref": "#/definitions/listBucketEventsResponse"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Create Bucket Event",
+        "operationId": "CreateBucketEvent",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bucketEventRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
@@ -956,6 +1013,20 @@ func init() {
         }
       }
     },
+    "adminInfoResponse": {
+      "type": "object",
+      "properties": {
+        "buckets": {
+          "type": "integer"
+        },
+        "objects": {
+          "type": "integer"
+        },
+        "usage": {
+          "type": "integer"
+        }
+      }
+    },
     "bucket": {
       "type": "object",
       "required": [
@@ -986,6 +1057,20 @@ func init() {
         "PUBLIC",
         "CUSTOM"
       ]
+    },
+    "bucketEventRequest": {
+      "type": "object",
+      "required": [
+        "configuration"
+      ],
+      "properties": {
+        "configuration": {
+          "$ref": "#/definitions/notificationConfig"
+        },
+        "ignoreExisting": {
+          "type": "boolean"
+        }
+      }
     },
     "configDescription": {
       "type": "object",
@@ -1207,6 +1292,9 @@ func init() {
     },
     "notificationConfig": {
       "type": "object",
+      "required": [
+        "arn"
+      ],
       "properties": {
         "arn": {
           "type": "string"
@@ -1465,6 +1553,29 @@ func init() {
     "version": "0.1.0"
   },
   "paths": {
+    "/api/v1/admin/info": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Returns information about the deployment",
+        "operationId": "AdminInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/adminInfoResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/buckets": {
       "get": {
         "tags": [
@@ -1568,6 +1679,40 @@ func init() {
             "schema": {
               "$ref": "#/definitions/listBucketEventsResponse"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Create Bucket Event",
+        "operationId": "CreateBucketEvent",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bucketEventRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
@@ -2371,6 +2516,20 @@ func init() {
         }
       }
     },
+    "adminInfoResponse": {
+      "type": "object",
+      "properties": {
+        "buckets": {
+          "type": "integer"
+        },
+        "objects": {
+          "type": "integer"
+        },
+        "usage": {
+          "type": "integer"
+        }
+      }
+    },
     "bucket": {
       "type": "object",
       "required": [
@@ -2401,6 +2560,20 @@ func init() {
         "PUBLIC",
         "CUSTOM"
       ]
+    },
+    "bucketEventRequest": {
+      "type": "object",
+      "required": [
+        "configuration"
+      ],
+      "properties": {
+        "configuration": {
+          "$ref": "#/definitions/notificationConfig"
+        },
+        "ignoreExisting": {
+          "type": "boolean"
+        }
+      }
     },
     "configDescription": {
       "type": "object",
@@ -2622,6 +2795,9 @@ func init() {
     },
     "notificationConfig": {
       "type": "object",
+      "required": [
+        "arn"
+      ],
       "properties": {
         "arn": {
           "type": "string"

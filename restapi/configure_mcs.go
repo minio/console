@@ -87,6 +87,8 @@ func configureAPI(api *operations.McsAPI) http.Handler {
 	registerProfilingHandler(api)
 	// Register session handlers
 	registerSessionHandlers(api)
+	// Register admin info handlers
+	registerAdminInfoHandlers(api)
 
 	api.PreServerShutdown = func() {}
 

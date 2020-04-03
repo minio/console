@@ -18,105 +18,21 @@ package restapi
 
 import (
 	"context"
-	"crypto/tls"
-	"hash/fnv"
-	"io"
-	"net"
-	"net/http"
-	"net/url"
-	"path/filepath"
-	"runtime"
-	"sync"
-	"time"
-
-	"github.com/minio/mc/pkg/httptracer"
+	mcCmd "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio/pkg/madmin"
+	"io"
+	"path/filepath"
+	"runtime"
 )
 
-const globalAppName = "orchestrator portal"
-
-// newAdminFactory encloses New function with client cache.
-func newAdminFactory() func(config *Config) (*madmin.AdminClient, *probe.Error) {
-	clientCache := make(map[uint32]*madmin.AdminClient)
-	mutex := &sync.Mutex{}
-
-	// Return New function.
-	return func(config *Config) (*madmin.AdminClient, *probe.Error) {
-		// Creates a parsed URL.
-		targetURL, e := url.Parse(config.HostURL)
-		if e != nil {
-			return nil, probe.NewError(e)
-		}
-		// By default enable HTTPs.
-		useTLS := true
-		if targetURL.Scheme == "http" {
-			useTLS = false
-		}
-
-		// Save if target supports virtual host style.
-		hostName := targetURL.Host
-
-		// Generate a hash out of s3Conf.
-		confHash := fnv.New32a()
-		confHash.Write([]byte(hostName + config.AccessKey + config.SecretKey))
-		confSum := confHash.Sum32()
-
-		// Lookup previous cache by hash.
-		mutex.Lock()
-		defer mutex.Unlock()
-		var api *madmin.AdminClient
-		var found bool
-		if api, found = clientCache[confSum]; !found {
-			// Not found. Instantiate a new MinIO
-			var e error
-			api, e = madmin.New(hostName, config.AccessKey, config.SecretKey, useTLS)
-			if e != nil {
-				return nil, probe.NewError(e)
-			}
-
-			// Keep TLS config.
-			tlsConfig := &tls.Config{}
-			if config.Insecure {
-				tlsConfig.InsecureSkipVerify = true
-			}
-
-			var transport http.RoundTripper = &http.Transport{
-				Proxy: http.ProxyFromEnvironment,
-				DialContext: (&net.Dialer{
-					Timeout:   30 * time.Second,
-					KeepAlive: 30 * time.Second,
-				}).DialContext,
-				MaxIdleConns:          100,
-				IdleConnTimeout:       90 * time.Second,
-				TLSHandshakeTimeout:   10 * time.Second,
-				ExpectContinueTimeout: 1 * time.Second,
-				TLSClientConfig:       tlsConfig,
-			}
-
-			if config.Debug {
-				transport = httptracer.GetNewTraceTransport(newTraceV4(), transport)
-			}
-
-			// Set custom transport.
-			api.SetCustomTransport(transport)
-
-			// Set app info.
-			api.SetAppInfo(config.AppName, config.AppVersion)
-
-			// Cache the new MinIO Client with hash of config as key.
-			clientCache[confSum] = api
-		}
-
-		// Store the new api object.
-		return api, nil
-	}
-}
+const globalAppName = "mcs"
 
 // NewAdminClient gives a new client interface
-func NewAdminClient(url string, accessKey string, secretKey string) (*madmin.AdminClient, *probe.Error) {
+func NewAdminClient(url, accessKey, secretKey string) (*madmin.AdminClient, *probe.Error) {
 	appName := filepath.Base(globalAppName)
-	s3Client, err := s3AdminNew(&Config{
+
+	s3Client, err := s3AdminNew(&mcCmd.Config{
 		HostURL:     url,
 		AccessKey:   accessKey,
 		SecretKey:   secretKey,
@@ -132,7 +48,7 @@ func NewAdminClient(url string, accessKey string, secretKey string) (*madmin.Adm
 
 // s3AdminNew returns an initialized minioAdmin structure. If debug is enabled,
 // it also enables an internal trace transport.
-var s3AdminNew = newAdminFactory()
+var s3AdminNew = mcCmd.NewAdminFactory()
 
 // Define MinioAdmin interface with all functions to be implemented
 // by mock when testing, it should include all MinioAdmin respective api calls

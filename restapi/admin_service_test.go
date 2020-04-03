@@ -28,16 +28,10 @@ import (
 
 // assigning mock at runtime instead of compile time
 var minioServiceRestartMock func(ctx context.Context) error
-var minioServerInfoMock func(ctx context.Context) (madmin.InfoMessage, error)
 
 // mock function of serviceRestart()
 func (ac adminClientMock) serviceRestart(ctx context.Context) error {
 	return minioServiceRestartMock(ctx)
-}
-
-// mock function of serverInfo()
-func (ac adminClientMock) serverInfo(ctx context.Context) (madmin.InfoMessage, error) {
-	return minioServerInfoMock(ctx)
 }
 
 func TestServiceRestart(t *testing.T) {

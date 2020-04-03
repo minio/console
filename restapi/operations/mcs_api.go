@@ -72,6 +72,9 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		AdminAPIAddUserHandler: admin_api.AddUserHandlerFunc(func(params admin_api.AddUserParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.AddUser has not yet been implemented")
 		}),
+		AdminAPIAdminInfoHandler: admin_api.AdminInfoHandlerFunc(func(params admin_api.AdminInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.AdminInfo has not yet been implemented")
+		}),
 		UserAPIBucketInfoHandler: user_api.BucketInfoHandlerFunc(func(params user_api.BucketInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.BucketInfo has not yet been implemented")
 		}),
@@ -80,6 +83,9 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		}),
 		AdminAPIConfigInfoHandler: admin_api.ConfigInfoHandlerFunc(func(params admin_api.ConfigInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ConfigInfo has not yet been implemented")
+		}),
+		UserAPICreateBucketEventHandler: user_api.CreateBucketEventHandlerFunc(func(params user_api.CreateBucketEventParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.CreateBucketEvent has not yet been implemented")
 		}),
 		UserAPIDeleteBucketHandler: user_api.DeleteBucketHandlerFunc(func(params user_api.DeleteBucketParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteBucket has not yet been implemented")
@@ -199,12 +205,16 @@ type McsAPI struct {
 	AdminAPIAddPolicyHandler admin_api.AddPolicyHandler
 	// AdminAPIAddUserHandler sets the operation handler for the add user operation
 	AdminAPIAddUserHandler admin_api.AddUserHandler
+	// AdminAPIAdminInfoHandler sets the operation handler for the admin info operation
+	AdminAPIAdminInfoHandler admin_api.AdminInfoHandler
 	// UserAPIBucketInfoHandler sets the operation handler for the bucket info operation
 	UserAPIBucketInfoHandler user_api.BucketInfoHandler
 	// UserAPIBucketSetPolicyHandler sets the operation handler for the bucket set policy operation
 	UserAPIBucketSetPolicyHandler user_api.BucketSetPolicyHandler
 	// AdminAPIConfigInfoHandler sets the operation handler for the config info operation
 	AdminAPIConfigInfoHandler admin_api.ConfigInfoHandler
+	// UserAPICreateBucketEventHandler sets the operation handler for the create bucket event operation
+	UserAPICreateBucketEventHandler user_api.CreateBucketEventHandler
 	// UserAPIDeleteBucketHandler sets the operation handler for the delete bucket operation
 	UserAPIDeleteBucketHandler user_api.DeleteBucketHandler
 	// AdminAPIGroupInfoHandler sets the operation handler for the group info operation
@@ -329,6 +339,9 @@ func (o *McsAPI) Validate() error {
 	if o.AdminAPIAddUserHandler == nil {
 		unregistered = append(unregistered, "admin_api.AddUserHandler")
 	}
+	if o.AdminAPIAdminInfoHandler == nil {
+		unregistered = append(unregistered, "admin_api.AdminInfoHandler")
+	}
 	if o.UserAPIBucketInfoHandler == nil {
 		unregistered = append(unregistered, "user_api.BucketInfoHandler")
 	}
@@ -337,6 +350,9 @@ func (o *McsAPI) Validate() error {
 	}
 	if o.AdminAPIConfigInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.ConfigInfoHandler")
+	}
+	if o.UserAPICreateBucketEventHandler == nil {
+		unregistered = append(unregistered, "user_api.CreateBucketEventHandler")
 	}
 	if o.UserAPIDeleteBucketHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteBucketHandler")
@@ -516,6 +532,10 @@ func (o *McsAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/api/v1/admin/info"] = admin_api.NewAdminInfo(o.context, o.AdminAPIAdminInfoHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/api/v1/buckets/{name}"] = user_api.NewBucketInfo(o.context, o.UserAPIBucketInfoHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
@@ -525,6 +545,10 @@ func (o *McsAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/api/v1/configs/{name}"] = admin_api.NewConfigInfo(o.context, o.AdminAPIConfigInfoHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/api/v1/buckets/{bucket_name}/events"] = user_api.NewCreateBucketEvent(o.context, o.UserAPICreateBucketEventHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}

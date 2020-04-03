@@ -28,6 +28,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // NotificationConfig notification config
@@ -36,7 +37,8 @@ import (
 type NotificationConfig struct {
 
 	// arn
-	Arn string `json:"arn,omitempty"`
+	// Required: true
+	Arn *string `json:"arn"`
 
 	// filter specific type of event. Defaults to all event (default: '[put,delete,get]')
 	Events []NotificationEventType `json:"events"`
@@ -55,6 +57,10 @@ type NotificationConfig struct {
 func (m *NotificationConfig) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateArn(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateEvents(formats); err != nil {
 		res = append(res, err)
 	}
@@ -62,6 +68,15 @@ func (m *NotificationConfig) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *NotificationConfig) validateArn(formats strfmt.Registry) error {
+
+	if err := validate.Required("arn", "body", m.Arn); err != nil {
+		return err
+	}
+
 	return nil
 }
 

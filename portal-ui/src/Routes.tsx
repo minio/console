@@ -15,17 +15,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import {Route, Router, Switch} from "react-router-dom";
+import { Route, Router, Switch } from "react-router-dom";
 import history from "./history";
 import Login from "./screens/LoginPage";
-import Signup from "./screens/SignupPage";
 import Console from "./screens/Console/Console";
 import NotFoundPage from "./screens/NotFoundPage";
 import storage from "local-storage-fallback";
-import CreatePassword from "./screens/CreatePassword";
-import {connect} from "react-redux";
-import {AppState} from "./store";
-import {userLoggedIn} from "./actions";
+import { connect } from "react-redux";
+import { AppState } from "./store";
+import { userLoggedIn } from "./actions";
 
 const isLoggedIn = () => {
   return (
@@ -57,9 +55,7 @@ class Routes extends React.Component<RoutesProps> {
     return (
       <Router history={history}>
         <Switch>
-          <Route exact path="/create-password" component={CreatePassword} />
           <Route exact path="/login" component={Login} />
-          <Route exact path="/signup" component={Signup} />
           {this.props.loggedIn ? (
             <Switch>
               <Route path="/*" component={Console} />
