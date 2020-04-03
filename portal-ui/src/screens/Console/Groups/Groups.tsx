@@ -38,6 +38,7 @@ import {GroupsList} from "./types";
 import {groupsSort, usersSort} from "../../../utils/sortFunctions";
 import {UsersList} from "../Users/types";
 import AddGroup from "../Groups/AddGroup";
+import DeleteGroup from "./DeleteGroup";
 
 interface IGroupsProps {
     classes: any;
@@ -176,6 +177,13 @@ const Groups = ({
                 open={addGroupOpen}
                 selectedGroup={selectedGroup}
                 closeModalAndRefresh={closeAddModalAndRefresh}
+            />
+        }
+        { deleteOpen &&
+            <DeleteGroup
+                deleteOpen={deleteOpen}
+                selectedGroup={selectedGroup}
+                closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
             />
         }
         <Grid container>
