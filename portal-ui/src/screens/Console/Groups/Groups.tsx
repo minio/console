@@ -36,6 +36,7 @@ import api from "../../../common/api";
 import {MinTablePaginationActions} from "../../../common/MinTablePaginationActions";
 import {GroupsList} from "./types";
 import {groupsSort} from "../../../utils/sortFunctions";
+import AddGroup from "../Groups/AddGroup";
 
 interface IGroupsProps {
     classes: any;
@@ -131,7 +132,6 @@ const Groups = ({
         }
     }, [loading]);
 
-
     const fetchRecords = () => {
         const offset = page * rowsPerPage;
         api
@@ -152,9 +152,27 @@ const Groups = ({
                 setError(err);
                 isLoading(false);
             });
-    }
+    };
+
+    const closeAddModalAndRefresh = () => {
+        setGroupOpen(false);
+        isLoading(true);
+    };
+
+    const closeDeleteModalAndRefresh = (refresh: boolean) => {
+        setDeleteOpen(false);
+
+        if (refresh) {
+            isLoading(true);
+        }
+    };
 
     return (<React.Fragment>
+        <AddGroup
+            open={addGroupOpen}
+            selectedGroup={selectedGroup}
+            closeModalAndRefresh={closeAddModalAndRefresh}
+        />
         <Grid container>
             <Grid item xs={12}>
                 <Typography variant="h6">Groups</Typography>
