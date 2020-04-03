@@ -20,6 +20,7 @@ import {Button, Dialog, DialogContent, DialogTitle, LinearProgress, TextField} f
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import api from "../../../common/api";
+import UsersSelectors from "./UsersSelectors";
 
 interface IGroupProps {
     open: boolean;
@@ -53,6 +54,7 @@ const AddGroup = ({
     const [saving, isSaving] = useState<boolean>(false);
     const [addError, setError] = useState<string>("");
     const [userListLoading, setUserListLoading] = useState(false);
+    const [selectedUsers, setSelectedUsers] = useState([]);
 
     useEffect(() => {
         if(selectedGroup) {
@@ -157,6 +159,12 @@ const AddGroup = ({
                         <br />
                     </Grid>
                     <Grid item xs={12}>
+                        <UsersSelectors
+                            records={userList}
+                            selectedUsers={selectedUsers}
+                            setSelectedUsers={setSelectedUsers}
+                            loading={userListLoading}
+                        />
                     </Grid>
                     <Grid item xs={12}>
                         <Button
