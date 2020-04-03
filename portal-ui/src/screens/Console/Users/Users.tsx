@@ -111,6 +111,7 @@ interface IUsersState {
   deleteOpen: boolean;
   selectedUser: User | null;
   addGroupOpen: boolean;
+  filter: string;
 }
 
 class Users extends React.Component<IUsersProps, IUsersState> {
@@ -125,7 +126,8 @@ class Users extends React.Component<IUsersProps, IUsersState> {
     rowsPerPage: 10,
     deleteOpen: false,
     selectedUser: null,
-    addGroupOpen: false
+    addGroupOpen: false,
+    filter: "",
   };
 
   fetchRecords() {
@@ -188,7 +190,8 @@ class Users extends React.Component<IUsersProps, IUsersState> {
       page,
       rowsPerPage,
       deleteOpen,
-      selectedUser
+      selectedUser,
+      filter,
     } = this.state;
 
     const handleChangePage = (event: unknown, newPage: number) => {
@@ -205,6 +208,8 @@ class Users extends React.Component<IUsersProps, IUsersState> {
         this.fetchRecords();
       });
     };
+
+    const filteredRecords = records.filter((elementItem) => elementItem.accessKey.includes(filter));
 
     return (
       <React.Fragment>
@@ -236,6 +241,9 @@ class Users extends React.Component<IUsersProps, IUsersState> {
                     <SearchIcon />
                   </InputAdornment>
                 )
+              }}
+              onChange={(e) => {
+                  this.setState({filter: e.target.value});
               }}
             />
             <Button
@@ -281,7 +289,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {records.map(row => (
+                    {filteredRecords.map(row => (
                       <TableRow key={`user-${row.accessKey}`}>
                         <TableCell padding="checkbox">
                           <Checkbox
