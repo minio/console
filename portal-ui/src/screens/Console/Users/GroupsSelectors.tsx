@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { LinearProgress } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
@@ -29,6 +29,10 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
+import api from "../../../common/api";
+import {UsersList} from "./types";
+import {groupsSort, usersSort} from "../../../utils/sortFunctions";
+import {GroupsList} from "../Groups/types";
 
 interface IGroupsProps {
   classes: any;
@@ -96,12 +100,37 @@ const GroupsSelectors = ({
   classes,
   selectedGroups,
   setSelectedGroups,
-  records,
-  loading
 }: IGroupsProps) => {
-  if (!records) {
-    return null;
-  }
+    // Local State
+    const [records, setRecords] = useState<any[]>([]);
+    const [loading, isLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string>("");
+    const [filter, setFilter] = useState<string>("");
+
+    //Effects
+    useEffect(() => {
+        isLoading(true);
+    }, []);
+
+    useEffect(() => {
+        if(loading) {
+            fetchGroups();
+        }
+    },[loading]);
+
+    const fetchGroups = () => {
+        api
+            .invoke("GET", `/api/v1/groups`)
+            .then((res: GroupsList) => {
+                setRecords(res.groups.sort(groupsSort));
+                setError("");
+                isLoading(false);
+            })
+            .catch(err => {
+                setError(err);
+                isLoading(false);
+            });
+    };
 
   const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     const targetD = e.target;
@@ -121,6 +150,8 @@ const GroupsSelectors = ({
 
     return elements;
   };
+
+  const filteredRecords = records.filter((elementItem) => elementItem.includes(filter));
 
   return (
     <React.Fragment>
@@ -144,6 +175,9 @@ const GroupsSelectors = ({
                       </InputAdornment>
                     )
                   }}
+                  onChange={(e) => {
+                      setFilter(e.target.value);
+                  }}
                 />
               </Grid>
               <Table size="medium">
@@ -154,21 +188,21 @@ const GroupsSelectors = ({
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {records.map(row => (
-                    <TableRow key={`group-${row.groupName}`}>
+                  {filteredRecords.map(groupName => (
+                    <TableRow key={`group-${groupName}`}>
                       <TableCell padding="checkbox">
                         <Checkbox
-                          value={row.groupName}
+                          value={groupName}
                           color="primary"
                           inputProps={{
                             "aria-label": "secondary checkbox"
                           }}
                           onChange={selectionChanged}
-                          checked={selectedGroups.includes(row.groupName)}
+                          checked={selectedGroups.includes(groupName)}
                         />
                       </TableCell>
                       <TableCell className={classes.wrapCell}>
-                        {row.groupName}
+                        {groupName}
                       </TableCell>
                     </TableRow>
                   ))}

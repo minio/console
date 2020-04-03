@@ -234,6 +234,9 @@ class AddUserContent extends React.Component<
                 />
               </Grid>
               <Grid item xs={12}>
+                <br />
+              </Grid>
+              <Grid item xs={12}>
                 <Button
                   type="submit"
                   variant="contained"
