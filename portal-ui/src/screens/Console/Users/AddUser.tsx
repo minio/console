@@ -35,6 +35,12 @@ const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
       color: "red"
+    },
+    strongText: {
+      fontWeight: 700,
+    },
+    keyName: {
+      marginLeft: 5
     }
   });
 
@@ -167,30 +173,41 @@ class AddUserContent extends React.Component<
                   </Typography>
                 </Grid>
               )}
-              <Grid item xs={12}>
-                <TextField
-                  id="standard-basic"
-                  fullWidth
-                  label="Access Key"
-                  value={accessKey}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    this.setState({ accessKey: e.target.value });
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  id="standard-multiline-static"
-                  label={selectedUser !== null ? 'New Secret Key': 'Secret Key'}
-                  type="password"
-                  fullWidth
-                  value={secretKey}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    this.setState({ secretKey: e.target.value });
-                  }}
-                  autoComplete="current-password"
-                />
-              </Grid>
+
+              {selectedUser !== null ? (
+                  <React.Fragment>
+                    <span className={classes.strongText}>Access Key:</span>
+                    <span className={classes.keyName}>{` ${accessKey}`}</span>
+                  </React.Fragment>
+              ) : (
+                  <React.Fragment>
+                    <Grid item xs={12}>
+                      <TextField
+                          id="standard-basic"
+                          fullWidth
+                          label="Access Key"
+                          value={accessKey}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            this.setState({ accessKey: e.target.value });
+                          }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                          id="standard-multiline-static"
+                          label={selectedUser !== null ? 'New Secret Key': 'Secret Key'}
+                          type="password"
+                          fullWidth
+                          value={secretKey}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            this.setState({ secretKey: e.target.value });
+                          }}
+                          autoComplete="current-password"
+                      />
+                    </Grid>
+                  </React.Fragment>
+              )}
+
               <Grid item xs={12}>
                 <br />
               </Grid>
