@@ -107,6 +107,7 @@ const Groups = ({
     const [rowsPerPage, setRowsPerPage] = useState<number>(10);
     const [page, setPage] = useState<number>(0);
     const [error, setError] = useState<string>("");
+    const [filter, setFilter] = useState<string>("");
 
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
@@ -171,6 +172,8 @@ const Groups = ({
         }
     };
 
+    const filteredRecords = records.filter((elementItem) => elementItem.includes(filter));
+
     return (<React.Fragment>
         { addGroupOpen &&
             <AddGroup
@@ -207,6 +210,9 @@ const Groups = ({
                             </InputAdornment>
                         ),
                     }}
+                    onChange={(e) => {
+                        setFilter(e.target.value);
+                    }}
                 />
                 <Button
                     variant="contained"
@@ -236,7 +242,7 @@ const Groups = ({
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {records.map(group => (
+                                {filteredRecords.map(group => (
                                     <TableRow key={`user-${group}`}>
                                         <TableCell className={classes.wrapCell}>
                                             {group}
