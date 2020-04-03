@@ -223,6 +223,11 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       this.setState({ deleteOpen: true, selectedBucket: bucket });
     };
 
+    let accessPolicy = "n/a";
+    if (info !== null) {
+      accessPolicy = info.access;
+    }
+
     return (
       <React.Fragment>
         <SetAccessPolicy
@@ -242,7 +247,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
             <br />
           </Grid>
           <Grid item xs={12}>
-            Access Policy: {info?.access}
+            Access Policy: {accessPolicy}
             {"   "}
             <Button
               variant="contained"
