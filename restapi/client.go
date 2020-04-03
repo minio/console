@@ -19,7 +19,6 @@ package restapi
 import (
 	"context"
 	"fmt"
-	"log"
 
 	mc "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
@@ -129,7 +128,6 @@ func newS3BucketClient(bucketName *string) (*mc.S3Client, error) {
 	if bucketName != nil {
 		endpoint += fmt.Sprintf("/%s", *bucketName)
 	}
-	log.Println(endpoint)
 	s3Config := newS3Config(endpoint, accessKeyID, secretAccessKey, !useSSL)
 	client, err := mc.S3New(s3Config)
 	if err != nil {
