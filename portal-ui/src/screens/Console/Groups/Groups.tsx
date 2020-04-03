@@ -201,13 +201,13 @@ const Groups = ({
                             <TableHead className={classes.minTableHeader}>
                                 <TableRow>
                                     <TableCell>Select</TableCell>
-                                    <TableCell>Access Key</TableCell>
+                                    <TableCell>Name</TableCell>
                                     <TableCell align="right">Actions</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {records.map(row => (
-                                    <TableRow key={`user-${row.accessKey}`}>
+                                    <TableRow key={`user-${row.name}`}>
                                         <TableCell padding="checkbox">
                                             <Checkbox
                                                 value="secondary"
@@ -216,7 +216,7 @@ const Groups = ({
                                             />
                                         </TableCell>
                                         <TableCell className={classes.wrapCell}>
-                                            {row.accessKey}
+                                            {row.name}
                                         </TableCell>
                                         <TableCell align="right">
                                             <IconButton
