@@ -16,17 +16,27 @@
 
 package restapi
 
-// DifferenceArrays returns the elements in `a` that aren't in `b`.
-func DifferenceArrays(a, b []string) []string {
-	mb := make(map[string]struct{}, len(b))
-	for _, x := range b {
-		mb[x] = struct{}{}
+import (
+	"github.com/go-openapi/runtime/middleware"
+	"github.com/minio/m3/mcs/models"
+	"github.com/minio/m3/mcs/restapi/operations"
+	"github.com/minio/m3/mcs/restapi/operations/user_api"
+)
+
+func registerSessionHandlers(api *operations.McsAPI) {
+	// session check
+	api.UserAPISessionCheckHandler = user_api.SessionCheckHandlerFunc(func(params user_api.SessionCheckParams, principal *models.Principal) middleware.Responder {
+		sessionResp := getSessionResponse()
+		return user_api.NewSessionCheckOK().WithPayload(sessionResp)
+	})
+
+}
+
+// getSessionResponse returns only if the session is valid
+func getSessionResponse() *models.SessionResponse {
+	// serialize output
+	sessionResp := &models.SessionResponse{
+		Status: models.SessionResponseStatusOk,
 	}
-	var diff []string
-	for _, x := range a {
-		if _, found := mb[x]; !found {
-			diff = append(diff, x)
-		}
-	}
-	return diff
+	return sessionResp
 }

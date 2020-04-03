@@ -1,4 +1,4 @@
-// This file is part of MinIO Kubernetes Cloud
+// This file is part of MinIO Console Server
 // Copyright (c) 2019 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -121,6 +121,12 @@ class Menu extends React.Component<MenuProps> {
               <PermissionIcon />
             </ListItemIcon>
             <ListItemText primary="Permissions" />
+          </ListItem>
+          <ListItem button component={NavLink} to="/policies">
+            <ListItemIcon>
+              <PermissionIcon />
+            </ListItemIcon>
+            <ListItemText primary="policies" />
           </ListItem>
           <ListItem button component={NavLink} to="/service_accounts">
             <ListItemIcon>

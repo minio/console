@@ -1,5 +1,5 @@
-// This file is part of MinIO Console Server
-// Copyright (c) 2019 MinIO, Inc.
+// This file is part of MinIO Kubernetes Cloud
+// Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -26,7 +26,7 @@ import {
   LinearProgress
 } from "@material-ui/core";
 import api from "../../../common/api";
-import { Permission, PermissionList } from "./types";
+import { PolicyList } from "./types";
 import Typography from "@material-ui/core/Typography";
 
 const styles = (theme: Theme) =>
@@ -36,42 +36,33 @@ const styles = (theme: Theme) =>
     }
   });
 
-interface IDeletePermissionProps {
+interface IDeletePolicyProps {
   classes: any;
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
-  selectedPermission: Permission | null;
+  selectedPolicy: string;  
 }
 
-interface IDeletePermissionState {
+interface IDeletePolicyState {
   deleteLoading: boolean;
   deleteError: string;
 }
 
-class DeletePermission extends React.Component<
-  IDeletePermissionProps,
-  IDeletePermissionState
-> {
-  state: IDeletePermissionState = {
+class DeletePolicy extends React.Component<IDeletePolicyProps, IDeletePolicyState> {
+  state: IDeletePolicyState = {
     deleteLoading: false,
     deleteError: ""
   };
-
   removeRecord() {
     const { deleteLoading } = this.state;
-    const { selectedPermission } = this.props;
+    const { selectedPolicy } = this.props;
     if (deleteLoading) {
-      return;
-    }
-    if (selectedPermission == null) {
       return;
     }
     this.setState({ deleteLoading: true }, () => {
       api
-        .invoke("DELETE", `/api/v1/permissions/${selectedPermission.id}`, {
-          id: selectedPermission.id
-        })
-        .then((res: PermissionList) => {
+        .invoke("DELETE", `/api/v1/policies/${selectedPolicy}`)
+        .then((res: PolicyList) => {
           this.setState(
             {
               deleteLoading: false,
@@ -90,31 +81,25 @@ class DeletePermission extends React.Component<
         });
     });
   }
-
   render() {
-    const { classes, deleteOpen, selectedPermission } = this.props;
+    const { classes, deleteOpen, selectedPolicy } = this.props;
     const { deleteLoading, deleteError } = this.state;
-
-    if (selectedPermission === null) {
-      return <div />;
-    }
-
     return (
       <Dialog
         open={deleteOpen}
         onClose={() => {
-          this.setState({ deleteError: "" }, () => {
+          this.setState({deleteError:""},()=>{
             this.props.closeDeleteModalAndRefresh(false);
           });
         }}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">Delete Permission</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Delete Bucket</DialogTitle>
         <DialogContent>
           {deleteLoading && <LinearProgress />}
           <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete permission{" "}<b>{selectedPermission.name}</b>?
+            Are you sure you want to delete policy <b>{selectedPolicy}</b>?.
             {deleteError !== "" && (
               <React.Fragment>
                 <br />
@@ -132,7 +117,7 @@ class DeletePermission extends React.Component<
         <DialogActions>
           <Button
             onClick={() => {
-              this.setState({ deleteError: "" }, () => {
+              this.setState({deleteError:""},()=>{
                 this.props.closeDeleteModalAndRefresh(false);
               });
             }}
@@ -156,4 +141,4 @@ class DeletePermission extends React.Component<
   }
 }
 
-export default withStyles(styles)(DeletePermission);
+export default withStyles(styles)(DeletePolicy);

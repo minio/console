@@ -1,4 +1,4 @@
-// This file is part of MinIO Kubernetes Cloud
+// This file is part of MinIO Console Server
 // Copyright (c) 2019 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -43,6 +43,7 @@ import { AppState } from "../../store";
 import { setMenuOpen } from "../../actions";
 import { ThemedComponentProps } from "@material-ui/core/styles/withTheme";
 import Buckets from "./Buckets/Buckets";
+import Policies from "./Policies/Policies";
 import Permissions from "./Permissions/Permissions";
 import Dashboard from "./Dashboard/Dashboard";
 import Menu from "./Menu";
@@ -169,6 +170,15 @@ class Console extends React.Component<
 > {
   componentDidMount(): void {
     //TODO: verify the session is still valid
+    api
+      .invoke("GET", `/api/v1/session`)
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        storage.removeItem("token");
+        history.push("/");
+      });
   }
 
   render() {
@@ -204,6 +214,7 @@ class Console extends React.Component<
               <Switch>
                 <Route exact path="/buckets" component={Buckets} />
                 <Route exact path="/permissions" component={Permissions} />
+                <Route exact path="/policies" component={Policies} />
                 <Route
                   exact
                   path="/service_accounts"

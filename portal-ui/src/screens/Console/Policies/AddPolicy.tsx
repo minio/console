@@ -1,4 +1,4 @@
-// This file is part of MinIO Console Server
+// This file is part of MinIO Kubernetes Cloud
 // Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -16,62 +16,68 @@
 
 import React from "react";
 import Grid from "@material-ui/core/Grid";
-import Title from "../../../common/Title";
+import {UnControlled as CodeMirror} from 'react-codemirror2'
 import Typography from "@material-ui/core/Typography";
 import {
   Button,
   Dialog,
   DialogContent,
   DialogTitle,
-  FormControl,
-  InputLabel,
   LinearProgress,
-  MenuItem,
-  Select,
   TextField
 } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import Title from "../../../common/Title";
 import api from "../../../common/api";
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/material.css';
+require('codemirror/mode/javascript/javascript');
 
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
       color: "red"
-    }
+    },
+    jsonPolicyEditor: {
+      minHeight: 400,
+      width: "100%",
+    },
+    codeMirror: {
+      fontSize: 14,
+    },
   });
 
-interface IAddBucketProps {
+interface IAddPolicyProps {
   classes: any;
   open: boolean;
   closeModalAndRefresh: () => void;
 }
 
-interface IAddBucketState {
+interface IAddPolicyState {
   addLoading: boolean;
   addError: string;
-  bucketName: string;
-  accessPolicy: string;
+  policyName: string;
+  policyDefinition: string;
 }
 
-class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
-  state: IAddBucketState = {
+class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
+  state: IAddPolicyState = {
     addLoading: false,
     addError: "",
-    bucketName: "",
-    accessPolicy: ""
+    policyName: "",
+    policyDefinition: "",
   };
-
   addRecord(event: React.FormEvent) {
     event.preventDefault();
-    const { bucketName, addLoading, accessPolicy } = this.state;
+    const { policyName, addLoading, policyDefinition } = this.state;
     if (addLoading) {
       return;
     }
     this.setState({ addLoading: true }, () => {
       api
-        .invoke("POST", "/api/v1/buckets", {
-          name: bucketName,
-          access: accessPolicy
+        .invoke("POST", "/api/v1/policies", {
+          name: policyName,
+          definition: policyDefinition,
         })
         .then(res => {
           this.setState(
@@ -92,12 +98,12 @@ class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
         });
     });
   }
-
   render() {
     const { classes, open } = this.props;
-    const { addLoading, addError, accessPolicy } = this.state;
+    const { addLoading, addError, policyName, policyDefinition} = this.state;
     return (
       <Dialog
+        fullWidth
         open={open}
         onClose={() => {
           this.setState({ addError: "" }, () => {
@@ -108,7 +114,7 @@ class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          <Title>Create Bucket</Title>
+          <Title>Create Policy</Title>
         </DialogTitle>
         <DialogContent>
           <form
@@ -134,30 +140,28 @@ class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
                 <TextField
                   id="standard-basic"
                   fullWidth
-                  label="Bucket Name"
+                  label="Policy Name"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    this.setState({ bucketName: e.target.value });
+                    this.setState({ policyName: e.target.value });
                   }}
                 />
               </Grid>
               <Grid item xs={12}>
-                <FormControl className={classes.formControl} fullWidth>
-                  <InputLabel id="select-access-policy">
-                    Access Policy
-                  </InputLabel>
-                  <Select
-                    labelId="select-access-policy"
-                    id="select-access-policy"
-                    value={accessPolicy}
-                    onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                      this.setState({ accessPolicy: e.target.value as string });
-                    }}
-                  >
-                    <MenuItem value="PRIVATE">Private</MenuItem>
-                    <MenuItem value="PUBLIC">Public</MenuItem>
-                    <MenuItem value="CUSTOM">Custom</MenuItem>
-                  </Select>
-                </FormControl>
+                <br />
+              </Grid>
+              <Grid item xs={12}>
+                <CodeMirror
+                  className={classes.codeMirror}
+                  value=""
+                  options={{
+                    mode: 'javascript',
+                    theme: 'material',
+                    lineNumbers: true
+                  }}
+                  onChange={(editor, data, value) => {
+                    this.setState({ policyDefinition: value });
+                  }}
+                />
               </Grid>
               <Grid item xs={12}>
                 <br />
@@ -186,4 +190,4 @@ class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
   }
 }
 
-export default withStyles(styles)(AddBucket);
+export default withStyles(styles)(AddPolicy);

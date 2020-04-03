@@ -1,4 +1,4 @@
-// This file is part of MinIO Kubernetes Cloud
+// This file is part of MinIO Console Server
 // Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -85,6 +85,8 @@ func configureAPI(api *operations.McsAPI) http.Handler {
 	registerServiceHandlers(api)
 	// Register profiling handlers
 	registerProfilingHandler(api)
+	// Register session handlers
+	registerSessionHandlers(api)
 
 	api.PreServerShutdown = func() {}
 

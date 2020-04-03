@@ -1,5 +1,5 @@
-// This file is part of MinIO Console Server
-// Copyright (c) 2019 MinIO, Inc.
+// This file is part of MinIO Kubernetes Cloud
+// Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import {createStyles, Theme, withStyles} from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -23,7 +23,6 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import api from "../../../common/api";
 import {
   Button,
   IconButton,
@@ -31,21 +30,19 @@ import {
   TableFooter,
   TablePagination
 } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { Permission, PermissionList } from "./types";
-import AddPermission from "./AddPermission";
-import DeletePermission from "./DeletePermission";
-import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
-import EditIcon from "@material-ui/icons/Edit";
-import Checkbox from "@material-ui/core/Checkbox";
-import { CreateIcon } from "../../../icons";
-import TextField from '@material-ui/core/TextField';
-import InputBase from '@material-ui/core/InputBase';
-import SearchIcon from '@material-ui/icons/Search';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import PlayArrowRoundedIcon from "@material-ui/icons/PlayArrowRounded";
-
+import Typography from "@material-ui/core/Typography";
+import TextField from "@material-ui/core/TextField";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import SearchIcon from "@material-ui/icons/Search";
+import Moment from "react-moment";
+import {PolicyList, Policy} from "./types";
+import AddPolicy from "./AddPolicy";
+import DeletePolicy from "./DeletePolicy";
+import api from "../../../common/api";
+import {CreateIcon} from "../../../icons";
+import {MinTablePaginationActions} from "../../../common/MinTablePaginationActions";
+import VisibilityIcon from '@material-ui/icons/Visibility';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -57,6 +54,7 @@ const styles = (theme: Theme) =>
       overflow: "auto",
       flexDirection: "column"
     },
+
     addSideBar: {
       width: "320px",
       padding: "20px"
@@ -67,11 +65,6 @@ const styles = (theme: Theme) =>
     tableToolbar: {
       paddingLeft: theme.spacing(2),
       paddingRight: theme.spacing(0)
-    },
-    wrapCell: {
-      maxWidth: "200px",
-      whiteSpace: "normal",
-      wordWrap: "break-word"
     },
     minTableHeader: {
       color: "#393939",
@@ -84,23 +77,23 @@ const styles = (theme: Theme) =>
     actionsTray: {
       textAlign: "right",
       "& button": {
-        marginLeft: 10,
-      },
+        marginLeft: 10
+      }
     },
     searchField: {
       background: "#FFFFFF",
       padding: 12,
       borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012",
+      boxShadow: "0px 3px 6px #00000012"
     }
   });
 
-interface IPermissionsProps {
+interface IPoliciesProps {
   classes: any;
 }
 
-interface IPermissionsState {
-  records: Permission[];
+interface IPoliciesState {
+  records: Policy[];
   totalRecords: number;
   loading: boolean;
   error: string;
@@ -109,14 +102,12 @@ interface IPermissionsState {
   page: number;
   rowsPerPage: number;
   deleteOpen: boolean;
-  selectedPermission: Permission | null;
+  selectedPolicy: string;
+  filterPolicies: string;
 }
 
-class Permissions extends React.Component<
-  IPermissionsProps,
-  IPermissionsState
-> {
-  state: IPermissionsState = {
+class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
+  state: IPoliciesState = {
     records: [],
     totalRecords: 0,
     loading: false,
@@ -126,7 +117,8 @@ class Permissions extends React.Component<
     page: 0,
     rowsPerPage: 10,
     deleteOpen: false,
-    selectedPermission: null
+    selectedPolicy: "",
+    filterPolicies: ""
   };
 
   fetchRecords() {
@@ -134,22 +126,19 @@ class Permissions extends React.Component<
       const { page, rowsPerPage } = this.state;
       const offset = page * rowsPerPage;
       api
-        .invoke(
-          "GET",
-          `/api/v1/permissions?offset=${offset}&limit=${rowsPerPage}`
-        )
-        .then((res: PermissionList) => {
+        .invoke("GET", `/api/v1/policies?offset=${offset}&limit=${rowsPerPage}`)
+        .then((res: PolicyList) => {
           this.setState({
             loading: false,
-            records: res.permissions,
+            records: res.policies,
             totalRecords: res.total,
             error: ""
           });
           // if we get 0 results, and page > 0 , go down 1 page
           if (
-            (res.permissions === undefined ||
-              res.permissions == null ||
-              res.permissions.length === 0) &&
+            (res.policies === undefined ||
+              res.policies == null ||
+              res.policies.length === 0) &&
             page > 0
           ) {
             const newPage = page - 1;
@@ -165,7 +154,7 @@ class Permissions extends React.Component<
   }
 
   closeAddModalAndRefresh() {
-    this.setState({ addScreenOpen: false, selectedPermission: null }, () => {
+    this.setState({ addScreenOpen: false }, () => {
       this.fetchRecords();
     });
   }
@@ -177,6 +166,8 @@ class Permissions extends React.Component<
       }
     });
   }
+
+  policyFilter(): void {}
 
   componentDidMount(): void {
     this.fetchRecords();
@@ -192,84 +183,60 @@ class Permissions extends React.Component<
       page,
       rowsPerPage,
       deleteOpen,
-      selectedPermission
+      selectedPolicy,
+      filterPolicies
     } = this.state;
 
+    const offset = page * rowsPerPage;
+
     const handleChangePage = (event: unknown, newPage: number) => {
-      this.setState({ page: newPage }, () => {
-        this.fetchRecords();
-      });
+      this.setState({ page: newPage });
     };
 
     const handleChangeRowsPerPage = (
       event: React.ChangeEvent<HTMLInputElement>
     ) => {
       const rPP = parseInt(event.target.value, 10);
-      this.setState({ page: 0, rowsPerPage: rPP }, () => {
-        this.fetchRecords();
-      });
+      this.setState({ page: 0, rowsPerPage: rPP });
     };
 
-    const confirmDeletePermission = (selectedPermission: Permission) => {
-      this.setState({
-        deleteOpen: true,
-        selectedPermission: selectedPermission
-      });
-    };
-
-    const editPermission = (selectedPermission: Permission) => {
-      this.setState({
-        addScreenOpen: true,
-        selectedPermission: selectedPermission
-      });
-    };
-
-    const actionLabel = (action: string) => {
-      switch (action) {
-        case "readwrite":
-          return "All Actions";
-        case "read":
-          return "Read Only";
-        case "write":
-          return "Write Only";
-        case "trace":
-          return "Tracing";
-        default:
-          return "n/a";
-      }
+    const confirmDeletePolicy = (policy: string) => {
+      this.setState({ deleteOpen: true, selectedPolicy: policy });
     };
 
     return (
       <React.Fragment>
-
-        <AddPermission
+        <AddPolicy
           open={addScreenOpen}
-          selectedPermission={selectedPermission}
           closeModalAndRefresh={() => {
             this.closeAddModalAndRefresh();
           }}
         />
-
         <Grid container>
           <Grid item xs={12}>
-            <Typography variant="h6">Permissions</Typography>
+            <Typography variant="h6">Policies</Typography>
           </Grid>
           <Grid item xs={12}>
             <br />
           </Grid>
           <Grid item xs={12} className={classes.actionsTray}>
             <TextField
-              placeholder="Search Permissions"
+              placeholder="Search Policies"
               className={classes.searchField}
               id="search-resource"
               label=""
+              onChange={val => {
+                this.setState({
+                  filterPolicies: val.target.value
+                });
+              }}
               InputProps={{
                 disableUnderline: true,
                 startAdornment: (
                   <InputAdornment position="start">
                     <SearchIcon />
                   </InputAdornment>
-                ),
+                )
               }}
             />
             <Button
@@ -278,24 +245,11 @@ class Permissions extends React.Component<
               startIcon={<CreateIcon />}
               onClick={() => {
                 this.setState({
-                  addScreenOpen: true,
-                  selectedPermission: null
-                });
-              }}
-            >
-              Create Permission
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<PlayArrowRoundedIcon />}
-              onClick={() => {
-                this.setState({
                   addScreenOpen: true
                 });
               }}
             >
-              Assign Permissions
+              Create Policy
             </Button>
           </Grid>
           <Grid item xs={12}>
@@ -308,64 +262,53 @@ class Permissions extends React.Component<
                 <Table size="medium">
                   <TableHead className={classes.minTableHeader}>
                     <TableRow>
-                      <TableCell>Select</TableCell>
                       <TableCell>Name</TableCell>
-                      <TableCell>Description</TableCell>
-                      <TableCell>Effect</TableCell>
-                      <TableCell>Resources</TableCell>
-                      <TableCell>Action</TableCell>
-                      <TableCell align="right"></TableCell>
+                      <TableCell align="right">Actions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {records.map(row => (
-                      <TableRow key={row.name}>
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            value="secondary"
-                            color="primary"
-                            inputProps={{ 'aria-label': 'secondary checkbox' }}
-                          />
-                        </TableCell>
-                        <TableCell className={classes.wrapCell}>
-                          {row.name}
-                        </TableCell>
-                        <TableCell className={classes.wrapCell}>
-                          {row.description}
-                        </TableCell>
-                        <TableCell>{row.effect}</TableCell>
-                        <TableCell className={classes.wrapCell}>
-                          {row.resources.map(r => r.bucket_name).join(", ")}
-                        </TableCell>
-                        <TableCell>
-                          {actionLabel(row.actions[0].type)}
-                        </TableCell>
-                        <TableCell align="right">
-                          <IconButton
-                            aria-label="edit"
-                            onClick={() => {
-                              editPermission(row);
-                            }}
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton
-                            aria-label="delete"
-                            onClick={() => {
-                              confirmDeletePermission(row);
-                            }}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {records
+                      .slice(offset, offset + rowsPerPage)
+                      .filter((b: Policy) => {
+                        if (filterPolicies === "") {
+                          return true;
+                        } else {
+                          if (b.name.indexOf(filterPolicies) >= 0) {
+                            return true;
+                          } else {
+                            return false;
+                          }
+                        }
+                      })
+                      .map(row => (
+                        <TableRow key={row.name}>
+                          <TableCell>{row.name}</TableCell>
+                          <TableCell align="right">
+                            <IconButton
+                              aria-label="view"
+                              onClick={() => {
+                                confirmDeletePolicy(row.name);
+                              }}
+                            >
+                              <VisibilityIcon />
+                            </IconButton>
+                            <IconButton
+                              aria-label="delete"
+                              onClick={() => {
+                                confirmDeletePolicy(row.name);
+                              }}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                   <TableFooter>
                     <TableRow>
                       <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
-                        colSpan={6}
+                        colSpan={3}
                         count={totalRecords}
                         rowsPerPage={rowsPerPage}
                         page={page}
@@ -381,14 +324,15 @@ class Permissions extends React.Component<
                   </TableFooter>
                 </Table>
               ) : (
-                <div>No Permissions</div>
+                <div>No Policies</div>
               )}
             </Paper>
           </Grid>
         </Grid>
-        <DeletePermission
+
+        <DeletePolicy
           deleteOpen={deleteOpen}
-          selectedPermission={selectedPermission}
+          selectedPolicy={selectedPolicy}
           closeDeleteModalAndRefresh={(refresh: boolean) => {
             this.closeDeleteModalAndRefresh(refresh);
           }}
@@ -398,4 +342,4 @@ class Permissions extends React.Component<
   }
 }
 
-export default withStyles(styles)(Permissions);
+export default withStyles(styles)(Policies);
