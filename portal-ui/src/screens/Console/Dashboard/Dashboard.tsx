@@ -210,7 +210,7 @@ const Dashboard = ({ classes }: IDashboardProps) => {
                 </Grid>
               </Grid>
               <Typography className={classes.consumptionValue}>
-                {usage ? prettyUsage(usage.usage + "") : 0}
+                {usage ? prettyUsage(usage.usage) : 0}
               </Typography>
             </Paper>
           </Grid>
