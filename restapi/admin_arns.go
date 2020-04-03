@@ -28,41 +28,32 @@ import (
 	"github.com/minio/m3/mcs/restapi/operations/admin_api"
 )
 
-func registerAdminInfoHandlers(api *operations.McsAPI) {
-	// return usage stats
-	api.AdminAPIAdminInfoHandler = admin_api.AdminInfoHandlerFunc(func(params admin_api.AdminInfoParams, principal *models.Principal) middleware.Responder {
-		infoResp, err := getAdminInfoResponse()
+func registerAdminArnsHandlers(api *operations.McsAPI) {
+	// return a list of arns
+	api.AdminAPIArnListHandler = admin_api.ArnListHandlerFunc(func(params admin_api.ArnListParams, principal *models.Principal) middleware.Responder {
+		arnsResp, err := getArnsResponse()
 		if err != nil {
-			return admin_api.NewAdminInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return admin_api.NewArnListDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
-		return admin_api.NewAdminInfoOK().WithPayload(infoResp)
+		return admin_api.NewArnListOK().WithPayload(arnsResp)
 	})
 
 }
 
-type UsageInfo struct {
-	Buckets int64
-	Objects int64
-	Usage   int64
-}
-
-// getAdminInfo invokes admin info and returns a parsed `UsageInfo` structure
-func getAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
+// getArns invokes admin info and returns a list of arns
+func getArns(ctx context.Context, client MinioAdmin) (*models.ArnsResponse, error) {
 	serverInfo, err := client.serverInfo(ctx)
 	if err != nil {
 		return nil, err
 	}
-	// we are trimming uint64 to int64 this will report an incorrect measurement for numbers greater than
-	// 9,223,372,036,854,775,807
-	return &UsageInfo{
-		Buckets: int64(serverInfo.Buckets.Count),
-		Objects: int64(serverInfo.Objects.Count),
-		Usage:   int64(serverInfo.Usage.Size),
+	// build response
+	return &models.ArnsResponse{
+		Arns: serverInfo.SQSARN,
 	}, nil
 }
 
-// getAdminInfoResponse returns the response containing total buckets, objects and usage.
-func getAdminInfoResponse() (*models.AdminInfoResponse, error) {
+// getArnsResponse returns a list of active arns in the instance
+func getArnsResponse() (*models.ArnsResponse, error) {
 	mAdmin, err := newMAdminClient()
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
@@ -75,15 +66,10 @@ func getAdminInfoResponse() (*models.AdminInfoResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	// serialize output
-	usage, err := getAdminInfo(ctx, adminClient)
+	arnsList, err := getArns(ctx, adminClient)
 	if err != nil {
-		log.Println("error getting information:", err)
+		log.Println("error getting arn list:", err)
 		return nil, err
 	}
-	sessionResp := &models.AdminInfoResponse{
-		Buckets: usage.Buckets,
-		Objects: usage.Objects,
-		Usage:   usage.Usage,
-	}
-	return sessionResp, nil
+	return arnsList, nil
 }

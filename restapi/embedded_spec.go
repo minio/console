@@ -51,6 +51,29 @@ func init() {
   },
   "basePath": "/api/v1",
   "paths": {
+    "/admin/arns": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Returns a list of active ARNs in the instance",
+        "operationId": "ArnList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/arnsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/admin/info": {
       "get": {
         "tags": [
@@ -1025,6 +1048,17 @@ func init() {
         },
         "usage": {
           "type": "integer"
+        }
+      }
+    },
+    "arnsResponse": {
+      "type": "object",
+      "properties": {
+        "arns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -1555,6 +1589,29 @@ func init() {
   },
   "basePath": "/api/v1",
   "paths": {
+    "/admin/arns": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Returns a list of active ARNs in the instance",
+        "operationId": "ArnList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/arnsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/admin/info": {
       "get": {
         "tags": [
@@ -2529,6 +2586,17 @@ func init() {
         },
         "usage": {
           "type": "integer"
+        }
+      }
+    },
+    "arnsResponse": {
+      "type": "object",
+      "properties": {
+        "arns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

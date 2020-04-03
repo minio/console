@@ -627,6 +627,21 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+  /admin/arns:
+    get:
+      summary: Returns a list of active ARNs in the instance
+      operationId: ArnList
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/arnsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
 definitions:
   bucketAccess:
     type: string
@@ -1000,3 +1015,10 @@ definitions:
         type: integer
       usage:
         type: integer
+  arnsResponse:
+    type: object
+    properties:
+      arns:
+        type: array
+        items:
+          type: string
