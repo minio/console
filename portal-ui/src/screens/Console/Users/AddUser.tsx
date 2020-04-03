@@ -29,11 +29,18 @@ import {
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../common/api";
 import { User } from "./types";
+import GroupsSelectors from "./GroupsSelectors";
 
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
       color: "red"
+    },
+    strongText: {
+      fontWeight: 700,
+    },
+    keyName: {
+      marginLeft: 5
     }
   });
 
@@ -48,6 +55,9 @@ interface IAddUserContentState {
   addError: string;
   accessKey: string;
   secretKey: string;
+  selectedGroups: string[];
+  loadingGroups: boolean;
+  groupsList: any[];
 }
 
 class AddUserContent extends React.Component<
@@ -58,7 +68,10 @@ class AddUserContent extends React.Component<
     addLoading: false,
     addError: "",
     accessKey: "",
-    secretKey: ""
+    secretKey: "",
+    selectedGroups: [],
+    loadingGroups: false,
+    groupsList: [],
   };
 
   componentDidMount(): void {
@@ -74,7 +87,7 @@ class AddUserContent extends React.Component<
 
   saveRecord(event: React.FormEvent) {
     event.preventDefault();
-    const { accessKey, addLoading, secretKey } = this.state;
+    const { accessKey, addLoading, secretKey, selectedGroups } = this.state;
     const { selectedUser } = this.props;
     if (addLoading) {
       return;
@@ -133,12 +146,12 @@ class AddUserContent extends React.Component<
 
   render() {
     const { classes, selectedUser } = this.props;
-    const { addLoading, addError, accessKey, secretKey } = this.state;
+    const { addLoading, addError, accessKey, secretKey, selectedGroups, loadingGroups, groupsList } = this.state;
 
     return (
       <React.Fragment>
         <DialogTitle id="alert-dialog-title">
-          Create User
+          {selectedUser !== null ? 'Edit User' : 'Add User'}
         </DialogTitle>
         <DialogContent>
           <form
@@ -149,13 +162,6 @@ class AddUserContent extends React.Component<
             }}
           >
             <Grid container>
-              <Grid item xs={12}>
-                {selectedUser !== null ? (
-                  <Title>Edit User</Title>
-                ) : (
-                  <Title>Add User</Title>
-                )}
-              </Grid>
               {addError !== "" && (
                 <Grid item xs={12}>
                   <Typography
@@ -167,32 +173,57 @@ class AddUserContent extends React.Component<
                   </Typography>
                 </Grid>
               )}
-              <Grid item xs={12}>
-                <TextField
-                  id="standard-basic"
-                  fullWidth
-                  label="Access Key"
-                  value={accessKey}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    this.setState({ accessKey: e.target.value });
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  id="standard-multiline-static"
-                  label={selectedUser !== null ? 'New Secret Key': 'Secret Key'}
-                  type="password"
-                  fullWidth
-                  value={secretKey}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    this.setState({ secretKey: e.target.value });
-                  }}
-                  autoComplete="current-password"
-                />
-              </Grid>
+
+              {selectedUser !== null ? (
+                  <React.Fragment>
+                    <span className={classes.strongText}>Access Key:</span>
+                    <span className={classes.keyName}>{` ${accessKey}`}</span>
+                  </React.Fragment>
+              ) : (
+                  <React.Fragment>
+                    <Grid item xs={12}>
+                      <TextField
+                          id="standard-basic"
+                          fullWidth
+                          label="Access Key"
+                          value={accessKey}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            this.setState({ accessKey: e.target.value });
+                          }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                          id="standard-multiline-static"
+                          label={selectedUser !== null ? 'New Secret Key': 'Secret Key'}
+                          type="password"
+                          fullWidth
+                          value={secretKey}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            this.setState({ secretKey: e.target.value });
+                          }}
+                          autoComplete="current-password"
+                      />
+                    </Grid>
+                  </React.Fragment>
+              )}
+
               <Grid item xs={12}>
                 <br />
+              </Grid>
+              <Grid item xs={12}>
+                <GroupsSelectors
+                    selectedGroups={selectedGroups}
+                    setSelectedGroups={
+                      (elements: string[]) => {
+                        this.setState({
+                          selectedGroups: elements
+                        })
+                      }
+                    }
+                    loading={loadingGroups}
+                    records={groupsList}
+                />
               </Grid>
               <Grid item xs={12}>
                 <Button
