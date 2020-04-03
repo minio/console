@@ -155,7 +155,7 @@ const Dashboard = ({ classes }: IDashboardProps) => {
       <Grid container xs={12}>
         <Grid container xs={12} spacing={3} className={classes.container}>
           <Grid container xs={12}>
-            <Typography variant="h2">MinIO Console Server</Typography>
+            <Typography variant="h2">MinIO Console</Typography>
           </Grid>
           <Grid item xs={12} md={4} lg={4}>
             <Paper className={fixedHeightPaper}>
