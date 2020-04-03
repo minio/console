@@ -18,12 +18,13 @@ package restapi
 
 import (
 	"context"
+	"log"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
 	"github.com/minio/m3/mcs/models"
 	"github.com/minio/m3/mcs/restapi/operations"
 	"github.com/minio/m3/mcs/restapi/operations/admin_api"
-	"log"
 )
 
 func registerAdminInfoHandlers(api *operations.McsAPI) {
@@ -70,11 +71,12 @@ func getAdminInfoResponse() (*models.AdminInfoResponse, error) {
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
 	// 20 seconds timeout
-	ctx, _ := context.WithTimeout(context.Background(), 20)
+	ctx, cancel := context.WithTimeout(context.Background(), 20)
+	defer cancel()
 	// serialize output
 	usage, err := getAdminInfo(ctx, adminClient)
 	if err != nil {
-		log.Println("error geting information:", err)
+		log.Println("error getting information:", err)
 		return nil, err
 	}
 	sessionResp := &models.AdminInfoResponse{

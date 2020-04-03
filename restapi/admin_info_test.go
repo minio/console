@@ -19,9 +19,10 @@ package restapi
 import (
 	"context"
 	"errors"
+	"testing"
+
 	"github.com/minio/minio/pkg/madmin"
 	asrt "github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestAdminInfo(t *testing.T) {
@@ -51,7 +52,7 @@ func TestAdminInfo(t *testing.T) {
 		return madmin.InfoMessage{}, errors.New("some reason")
 	}
 
-	serverInfo, err = getAdminInfo(adminClient)
+	serverInfo, err = getAdminInfo(ctx, adminClient)
 	assert.Nil(serverInfo, "server info was not returned nil")
 	assert.NotNil(err, "An error should have ben returned")
 
