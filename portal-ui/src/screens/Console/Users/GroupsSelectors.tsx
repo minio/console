@@ -105,6 +105,7 @@ const GroupsSelectors = ({
     const [records, setRecords] = useState<any[]>([]);
     const [loading, isLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>("");
+    const [filter, setFilter] = useState<string>("");
 
     //Effects
     useEffect(() => {
@@ -150,6 +151,8 @@ const GroupsSelectors = ({
     return elements;
   };
 
+  const filteredRecords = records.filter((elementItem) => elementItem.includes(filter));
+
   return (
     <React.Fragment>
       <Title>Groups</Title>
@@ -172,6 +175,9 @@ const GroupsSelectors = ({
                       </InputAdornment>
                     )
                   }}
+                  onChange={(e) => {
+                      setFilter(e.target.value);
+                  }}
                 />
               </Grid>
               <Table size="medium">
@@ -182,7 +188,7 @@ const GroupsSelectors = ({
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {records.map(groupName => (
+                  {filteredRecords.map(groupName => (
                     <TableRow key={`group-${groupName}`}>
                       <TableCell padding="checkbox">
                         <Checkbox
