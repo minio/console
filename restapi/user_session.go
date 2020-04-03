@@ -32,7 +32,7 @@ func registerSessionHandlers(api *operations.McsAPI) {
 
 }
 
-// getSessionResponse returns only if the session is valid
+// getAdminInfoResponse returns only if the session is valid
 func getSessionResponse() *models.SessionResponse {
 	// serialize output
 	sessionResp := &models.SessionResponse{
