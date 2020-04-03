@@ -23,7 +23,7 @@ export interface Statement {
 export interface Policy {
   name: string;
   version: string;
-  statements: Statement[]
+  statements: Statement[];
 }
 
 export interface PolicyList {

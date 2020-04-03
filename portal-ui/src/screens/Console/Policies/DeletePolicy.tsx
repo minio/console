@@ -40,7 +40,7 @@ interface IDeletePolicyProps {
   classes: any;
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
-  selectedPolicy: string;  
+  selectedPolicy: string;
 }
 
 interface IDeletePolicyState {
@@ -48,7 +48,10 @@ interface IDeletePolicyState {
   deleteError: string;
 }
 
-class DeletePolicy extends React.Component<IDeletePolicyProps, IDeletePolicyState> {
+class DeletePolicy extends React.Component<
+  IDeletePolicyProps,
+  IDeletePolicyState
+> {
   state: IDeletePolicyState = {
     deleteLoading: false,
     deleteError: ""
@@ -88,7 +91,7 @@ class DeletePolicy extends React.Component<IDeletePolicyProps, IDeletePolicyStat
       <Dialog
         open={deleteOpen}
         onClose={() => {
-          this.setState({deleteError:""},()=>{
+          this.setState({ deleteError: "" }, () => {
             this.props.closeDeleteModalAndRefresh(false);
           });
         }}
@@ -117,7 +120,7 @@ class DeletePolicy extends React.Component<IDeletePolicyProps, IDeletePolicyStat
         <DialogActions>
           <Button
             onClick={() => {
-              this.setState({deleteError:""},()=>{
+              this.setState({ deleteError: "" }, () => {
                 this.props.closeDeleteModalAndRefresh(false);
               });
             }}

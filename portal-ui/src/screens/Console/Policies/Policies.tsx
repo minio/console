@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import {createStyles, Theme, withStyles} from "@material-ui/core/styles";
+import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -36,13 +36,13 @@ import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import Moment from "react-moment";
-import {PolicyList, Policy} from "./types";
+import { PolicyList, Policy } from "./types";
 import AddPolicy from "./AddPolicy";
 import DeletePolicy from "./DeletePolicy";
 import api from "../../../common/api";
-import {CreateIcon} from "../../../icons";
-import {MinTablePaginationActions} from "../../../common/MinTablePaginationActions";
-import VisibilityIcon from '@material-ui/icons/Visibility';
+import { CreateIcon } from "../../../icons";
+import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
+import VisibilityIcon from "@material-ui/icons/Visibility";
 
 const styles = (theme: Theme) =>
   createStyles({

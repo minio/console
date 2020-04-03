@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2019 MinIO, Inc.
+// Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -212,7 +212,7 @@ class Console extends React.Component<
           <Container maxWidth="lg" className={classes.container}>
             <Router history={history}>
               <Switch>
-                <Route exact path="/buckets" component={Buckets} />
+                <Route path="/buckets" component={Buckets} />
                 <Route exact path="/permissions" component={Permissions} />
                 <Route exact path="/policies" component={Policies} />
                 <Route
