@@ -37,6 +37,9 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import SetAccessPolicy from "./SetAccessPolicy";
 import DeleteBucket from "../ListBuckets/DeleteBucket";
 import { MinTablePaginationActions } from "../../../../common/MinTablePaginationActions";
+import { CreateIcon } from "../../../../icons";
+import AddEvent from "./AddEvent";
+import DeleteEvent from "./DeleteEvent";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -102,8 +105,10 @@ interface IViewBucketState {
   setAccessPolicyScreenOpen: boolean;
   page: number;
   rowsPerPage: number;
+  addScreenOpen: boolean;
   deleteOpen: boolean;
   selectedBucket: string;
+  selectedEvent: BucketEvent | null;
 }
 
 class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
@@ -117,11 +122,13 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     setAccessPolicyScreenOpen: false,
     page: 0,
     rowsPerPage: 10,
+    addScreenOpen: false,
     deleteOpen: false,
-    selectedBucket: ""
+    selectedBucket: "",
+    selectedEvent: null
   };
 
-  fetchRecords() {
+  fetchEvents() {
     this.setState({ loading: true }, () => {
       const { page, rowsPerPage } = this.state;
       const { match } = this.props;
@@ -144,7 +151,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
           ) {
             const newPage = page - 1;
             this.setState({ page: newPage }, () => {
-              this.fetchRecords();
+              this.fetchEvents();
             });
           }
         })
@@ -163,7 +170,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
   closeDeleteModalAndRefresh(refresh: boolean) {
     this.setState({ deleteOpen: false }, () => {
       if (refresh) {
-        this.fetchRecords();
+        this.fetchEvents();
       }
     });
   }
@@ -181,7 +188,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
 
   componentDidMount(): void {
     this.loadInfo();
-    this.fetchRecords();
+    this.fetchEvents();
   }
 
   bucketFilter(): void {}
@@ -197,7 +204,9 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       page,
       rowsPerPage,
       deleteOpen,
-      selectedBucket
+      addScreenOpen,
+      selectedBucket,
+      selectedEvent
     } = this.state;
 
     const offset = page * rowsPerPage;
@@ -215,8 +224,8 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       this.setState({ page: 0, rowsPerPage: rPP });
     };
 
-    const confirmDeleteEvent = (bucket: string) => {
-      this.setState({ deleteOpen: true, selectedBucket: bucket });
+    const confirmDeleteEvent = (evnt: BucketEvent) => {
+      this.setState({ deleteOpen: true, selectedEvent: evnt });
     };
 
     let accessPolicy = "n/a";
@@ -226,6 +235,14 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
 
     return (
       <React.Fragment>
+        <AddEvent
+          open={addScreenOpen}
+          selectedBucket={bucketName}
+          closeModalAndRefresh={() => {
+            this.setState({ addScreenOpen: false });
+            this.fetchEvents();
+          }}
+        />
         <SetAccessPolicy
           bucketName={bucketName}
           open={setAccessPolicyScreenOpen}
@@ -267,7 +284,21 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
           <Grid item xs={6}>
             <Typography variant="h6">Events</Typography>
           </Grid>
-          <Grid item xs={6} className={classes.actionsTray} />
+          <Grid item xs={6} className={classes.actionsTray}>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              startIcon={<CreateIcon />}
+              onClick={() => {
+                this.setState({
+                  addScreenOpen: true
+                });
+              }}
+            >
+              Subcribe to Event
+            </Button>
+          </Grid>
           <Grid item xs={12}>
             <br />
           </Grid>
@@ -296,7 +327,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
                           <IconButton
                             aria-label="delete"
                             onClick={() => {
-                              confirmDeleteEvent(row.id);
+                              confirmDeleteEvent(row);
                             }}
                           >
                             <DeleteIcon />
@@ -331,9 +362,10 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
           </Grid>
         </Grid>
 
-        <DeleteBucket
+        <DeleteEvent
           deleteOpen={deleteOpen}
-          selectedBucket={selectedBucket}
+          selectedBucket={bucketName}
+          bucketEvent={selectedEvent}
           closeDeleteModalAndRefresh={(refresh: boolean) => {
             this.closeDeleteModalAndRefresh(refresh);
           }}

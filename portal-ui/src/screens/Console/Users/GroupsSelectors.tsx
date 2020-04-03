@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { LinearProgress } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
@@ -30,9 +30,9 @@ import SearchIcon from "@material-ui/icons/Search";
 import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
 import api from "../../../common/api";
-import {UsersList} from "./types";
-import {groupsSort, usersSort} from "../../../utils/sortFunctions";
-import {GroupsList} from "../Groups/types";
+import { UsersList } from "./types";
+import { groupsSort, usersSort } from "../../../utils/sortFunctions";
+import { GroupsList } from "../Groups/types";
 
 interface IGroupsProps {
   classes: any;
@@ -99,38 +99,38 @@ const styles = (theme: Theme) =>
 const GroupsSelectors = ({
   classes,
   selectedGroups,
-  setSelectedGroups,
+  setSelectedGroups
 }: IGroupsProps) => {
-    // Local State
-    const [records, setRecords] = useState<any[]>([]);
-    const [loading, isLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string>("");
-    const [filter, setFilter] = useState<string>("");
+  // Local State
+  const [records, setRecords] = useState<any[]>([]);
+  const [loading, isLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [filter, setFilter] = useState<string>("");
 
-    //Effects
-    useEffect(() => {
-        isLoading(true);
-    }, []);
+  //Effects
+  useEffect(() => {
+    isLoading(true);
+  }, []);
 
-    useEffect(() => {
-        if(loading) {
-            fetchGroups();
-        }
-    },[loading]);
+  useEffect(() => {
+    if (loading) {
+      fetchGroups();
+    }
+  }, [loading]);
 
-    const fetchGroups = () => {
-        api
-            .invoke("GET", `/api/v1/groups`)
-            .then((res: GroupsList) => {
-                setRecords(res.groups.sort(groupsSort));
-                setError("");
-                isLoading(false);
-            })
-            .catch(err => {
-                setError(err);
-                isLoading(false);
-            });
-    };
+  const fetchGroups = () => {
+    api
+      .invoke("GET", `/api/v1/groups`)
+      .then((res: GroupsList) => {
+        setRecords(res.groups.sort(groupsSort));
+        setError("");
+        isLoading(false);
+      })
+      .catch(err => {
+        setError(err);
+        isLoading(false);
+      });
+  };
 
   const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     const targetD = e.target;
@@ -151,7 +151,9 @@ const GroupsSelectors = ({
     return elements;
   };
 
-  const filteredRecords = records.filter((elementItem) => elementItem.includes(filter));
+  const filteredRecords = records.filter(elementItem =>
+    elementItem.includes(filter)
+  );
 
   return (
     <React.Fragment>
@@ -175,8 +177,8 @@ const GroupsSelectors = ({
                       </InputAdornment>
                     )
                   }}
-                  onChange={(e) => {
-                      setFilter(e.target.value);
+                  onChange={e => {
+                    setFilter(e.target.value);
                   }}
                 />
               </Grid>

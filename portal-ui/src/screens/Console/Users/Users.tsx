@@ -127,7 +127,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
     deleteOpen: false,
     selectedUser: null,
     addGroupOpen: false,
-    filter: "",
+    filter: ""
   };
 
   fetchRecords() {
@@ -191,7 +191,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
       rowsPerPage,
       deleteOpen,
       selectedUser,
-      filter,
+      filter
     } = this.state;
 
     const handleChangePage = (event: unknown, newPage: number) => {
@@ -209,7 +209,9 @@ class Users extends React.Component<IUsersProps, IUsersState> {
       });
     };
 
-    const filteredRecords = records.filter((elementItem) => elementItem.accessKey.includes(filter));
+    const filteredRecords = records.filter(elementItem =>
+      elementItem.accessKey.includes(filter)
+    );
 
     return (
       <React.Fragment>
@@ -242,8 +244,8 @@ class Users extends React.Component<IUsersProps, IUsersState> {
                   </InputAdornment>
                 )
               }}
-              onChange={(e) => {
-                  this.setState({filter: e.target.value});
+              onChange={e => {
+                this.setState({ filter: e.target.value });
               }}
             />
             <Button

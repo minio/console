@@ -16,228 +16,241 @@
 
 import React, { useState, useEffect } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import {Button, Dialog, DialogContent, DialogTitle, LinearProgress, TextField} from "@material-ui/core";
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  LinearProgress,
+  TextField
+} from "@material-ui/core";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import api from "../../../common/api";
 import UsersSelectors from "./UsersSelectors";
-import {GroupsList} from "./types";
-import {groupsSort} from "../../../utils/sortFunctions";
+import { GroupsList } from "./types";
+import { groupsSort } from "../../../utils/sortFunctions";
 import Title from "../../../common/Title";
 
 interface IGroupProps {
-    open: boolean;
-    selectedGroup: any;
-    closeModalAndRefresh: any;
-    classes: any;
+  open: boolean;
+  selectedGroup: any;
+  closeModalAndRefresh: any;
+  classes: any;
 }
 
 interface MainGroupProps {
-    members: string[];
-    name: string;
-    status: string;
+  members: string[];
+  name: string;
+  status: string;
 }
 
 const styles = (theme: Theme) =>
-    createStyles({
-        errorBlock: {
-            color: "red"
-        },
-        strongText: {
-            fontWeight: 700,
-        },
-        keyName: {
-            marginLeft: 5
-        }
-    });
+  createStyles({
+    errorBlock: {
+      color: "red"
+    },
+    strongText: {
+      fontWeight: 700
+    },
+    keyName: {
+      marginLeft: 5
+    }
+  });
 
 const AddGroup = ({
-      open,
-      selectedGroup,
-      closeModalAndRefresh,
-      classes,
-  }: IGroupProps) => {
+  open,
+  selectedGroup,
+  closeModalAndRefresh,
+  classes
+}: IGroupProps) => {
+  //Local States
+  const [groupName, setGroupName] = useState<string>("");
+  const [groupEnabled, setGroupEnabled] = useState<string>("");
+  const [saving, isSaving] = useState<boolean>(false);
+  const [addError, setError] = useState<string>("");
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [loadingGroup, isLoadingGroup] = useState<boolean>(false);
 
-    //Local States
-    const [groupName, setGroupName] = useState<string>("");
-    const [groupEnabled, setGroupEnabled] = useState<string>("");
-    const [saving, isSaving] = useState<boolean>(false);
-    const [addError, setError] = useState<string>("");
-    const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-    const [loadingGroup, isLoadingGroup] = useState<boolean>(false);
-
-    //Effects
-    useEffect(() => {
-        if(selectedGroup !== null) {
-            isLoadingGroup(true);
-        } else {
-            setGroupName("");
-            setSelectedUsers([]);
-        }
-    }, [selectedGroup]);
-
-    useEffect(() => {
-        if(saving) {
-            saveRecord();
-        }
-    }, [saving]);
-
-    useEffect(() => {
-        if(selectedGroup && loadingGroup) {
-            fetchGroupInfo();
-        }
-    }, [loadingGroup]);
-
-    //Fetch Actions
-    const setSaving = (event: React.FormEvent) => {
-        event.preventDefault();
-
-        isSaving(true);
+  //Effects
+  useEffect(() => {
+    if (selectedGroup !== null) {
+      isLoadingGroup(true);
+    } else {
+      setGroupName("");
+      setSelectedUsers([]);
     }
+  }, [selectedGroup]);
 
-    const saveRecord = () => {
-        if (selectedGroup !== null) {
-            api
-                .invoke("PUT", `/api/v1/groups/${groupName}`, {
-                    group: groupName,
-                    members: selectedUsers,
-                    status: groupEnabled,
-                })
-                .then(res => {
-                    isSaving(false);
-                    setError("");
-                    closeModalAndRefresh();
-                })
-                .catch(err => {
-                    isSaving(false);
-                    setError(err);
-                });
-        } else {
-            api.invoke("POST", "/api/v1/groups", {
-                    group: groupName,
-                    members: selectedUsers,
-                })
-                .then(res => {
-                    isSaving(false);
-                    setError("");
-                    closeModalAndRefresh();
-                })
-                .catch(err => {
-                    isSaving(false);
-                    setError(err);
-                });
-        }
-    };
+  useEffect(() => {
+    if (saving) {
+      saveRecord();
+    }
+  }, [saving]);
 
-    const fetchGroupInfo = () => {
-        api
-            .invoke("GET", `/api/v1/groups/${selectedGroup}`)
-            .then((res: MainGroupProps) => {
-                setGroupEnabled(res.status);
-                setGroupName(res.name);
-                setSelectedUsers(res.members);
-            })
-            .catch(err => {
-                setError(err);
-                isLoadingGroup(false);
-            });
-    };
+  useEffect(() => {
+    if (selectedGroup && loadingGroup) {
+      fetchGroupInfo();
+    }
+  }, [loadingGroup]);
 
-    return (<Dialog
-        open={open}
-        onClose={closeModalAndRefresh}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
+  //Fetch Actions
+  const setSaving = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    isSaving(true);
+  };
+
+  const saveRecord = () => {
+    if (selectedGroup !== null) {
+      api
+        .invoke("PUT", `/api/v1/groups/${groupName}`, {
+          group: groupName,
+          members: selectedUsers,
+          status: groupEnabled
+        })
+        .then(res => {
+          isSaving(false);
+          setError("");
+          closeModalAndRefresh();
+        })
+        .catch(err => {
+          isSaving(false);
+          setError(err);
+        });
+    } else {
+      api
+        .invoke("POST", "/api/v1/groups", {
+          group: groupName,
+          members: selectedUsers
+        })
+        .then(res => {
+          isSaving(false);
+          setError("");
+          closeModalAndRefresh();
+        })
+        .catch(err => {
+          isSaving(false);
+          setError(err);
+        });
+    }
+  };
+
+  const fetchGroupInfo = () => {
+    api
+      .invoke("GET", `/api/v1/groups/${selectedGroup}`)
+      .then((res: MainGroupProps) => {
+        setGroupEnabled(res.status);
+        setGroupName(res.name);
+        setSelectedUsers(res.members);
+      })
+      .catch(err => {
+        setError(err);
+        isLoadingGroup(false);
+      });
+  };
+
+  return (
+    <Dialog
+      open={open}
+      onClose={closeModalAndRefresh}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
     >
-        <DialogTitle id="alert-dialog-title">
-            {selectedGroup !== null ? `Group Edit - ${groupName}` : 'Add Group'}
-        </DialogTitle>
-        <DialogContent>
-            <form
-                noValidate
-                autoComplete="off"
-                onSubmit={setSaving}
-            >
-                <Grid container>
-                    {addError !== "" && (
-                        <Grid item xs={12}>
-                            <Typography
-                                component="p"
-                                variant="body1"
-                                className={classes.errorBlock}
-                            >
-                                {addError}
-                            </Typography>
-                        </Grid>
-                    )}
+      <DialogTitle id="alert-dialog-title">
+        {selectedGroup !== null ? `Group Edit - ${groupName}` : "Add Group"}
+      </DialogTitle>
+      <DialogContent>
+        <form noValidate autoComplete="off" onSubmit={setSaving}>
+          <Grid container>
+            {addError !== "" && (
+              <Grid item xs={12}>
+                <Typography
+                  component="p"
+                  variant="body1"
+                  className={classes.errorBlock}
+                >
+                  {addError}
+                </Typography>
+              </Grid>
+            )}
 
-                    {selectedGroup !== null ? (
-                        <React.Fragment>
-                            <Grid item xs={12}>
-                                <Title>Status</Title>
-                                <RadioGroup
-                                    aria-label="status"
-                                    name="status"
-                                    value={groupEnabled}
-                                    onChange={(e) => {
-                                        setGroupEnabled(e.target.value);
-                                    }}
-                                >
-                                    <FormControlLabel value="enabled" control={<Radio color={'primary'} />} label="Enabled" />
-                                    <FormControlLabel value="disabled" control={<Radio color={'primary'} />} label="Disabled" />
-                                </RadioGroup>
-                            </Grid>
-                        </React.Fragment>
-                    ) : (
-                        <React.Fragment>
-                            <Grid item xs={12}>
-                                <TextField
-                                    id="standard-basic"
-                                    fullWidth
-                                    label="Name"
-                                    value={groupName}
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                        setGroupName(e.target.value);
-                                    }}
-                                />
-                            </Grid>
-                        </React.Fragment>
-                    )}
-                    <Grid item xs={12}>
-                        <br />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <UsersSelectors
-                            selectedUsers={selectedUsers}
-                            setSelectedUsers={setSelectedUsers}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <br />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            fullWidth
-                            disabled={saving}
-                        >
-                            Save
-                        </Button>
-                    </Grid>
-                    {saving && (
-                        <Grid item xs={12}>
-                            <LinearProgress />
-                        </Grid>
-                    )}
+            {selectedGroup !== null ? (
+              <React.Fragment>
+                <Grid item xs={12}>
+                  <Title>Status</Title>
+                  <RadioGroup
+                    aria-label="status"
+                    name="status"
+                    value={groupEnabled}
+                    onChange={e => {
+                      setGroupEnabled(e.target.value);
+                    }}
+                  >
+                    <FormControlLabel
+                      value="enabled"
+                      control={<Radio color={"primary"} />}
+                      label="Enabled"
+                    />
+                    <FormControlLabel
+                      value="disabled"
+                      control={<Radio color={"primary"} />}
+                      label="Disabled"
+                    />
+                  </RadioGroup>
                 </Grid>
-            </form>
-        </DialogContent>
-    </Dialog>);
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <Grid item xs={12}>
+                  <TextField
+                    id="standard-basic"
+                    fullWidth
+                    label="Name"
+                    value={groupName}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setGroupName(e.target.value);
+                    }}
+                  />
+                </Grid>
+              </React.Fragment>
+            )}
+            <Grid item xs={12}>
+              <br />
+            </Grid>
+            <Grid item xs={12}>
+              <UsersSelectors
+                selectedUsers={selectedUsers}
+                setSelectedUsers={setSelectedUsers}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <br />
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                disabled={saving}
+              >
+                Save
+              </Button>
+            </Grid>
+            {saving && (
+              <Grid item xs={12}>
+                <LinearProgress />
+              </Grid>
+            )}
+          </Grid>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
 };
 
 export default withStyles(styles)(AddGroup);
