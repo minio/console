@@ -28,19 +28,6 @@ func init() {
 	minio.MaxRetry = 1
 }
 
-// Config - see http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?RESTAuthentication.html
-type Config struct {
-	AccessKey   string
-	SecretKey   string
-	Signature   string
-	HostURL     string
-	AppName     string
-	AppVersion  string
-	AppComments []string
-	Debug       bool
-	Insecure    bool
-	Lookup      minio.BucketLookupType
-}
 
 // Define MinioClient interface with all functions to be implemented
 // by mock when testing, it should include all MinioClient respective api calls
