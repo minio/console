@@ -14,8 +14,33 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import TextField from "@material-ui/core/TextField";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import SearchIcon from "@material-ui/icons/Search";
+import {Button, IconButton, LinearProgress, TableFooter, TablePagination} from "@material-ui/core";
+import Paper from "@material-ui/core/Paper";
+import Table from "@material-ui/core/Table";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import TableCell from "@material-ui/core/TableCell";
+import TableBody from "@material-ui/core/TableBody";
+import Checkbox from "@material-ui/core/Checkbox";
+import ViewIcon from "@material-ui/icons/Visibility";
+import DeleteIcon from "@material-ui/icons/Delete";
+import {CreateIcon} from "../../../icons";
+import api from "../../../common/api";
+import {MinTablePaginationActions} from "../../../common/MinTablePaginationActions";
+import {GroupsList} from "./types";
+import {groupsSort} from "../../../utils/sortFunctions";
+
+interface IGroupsProps {
+    classes: any;
+    openGroupModal: any;
+}
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -66,9 +91,181 @@ const styles = (theme: Theme) =>
         }
     });
 
-const Groups = () => {
+const Groups = ({
+    classes,
+    }: IGroupsProps) => {
+
+    const [addGroupOpen, setGroupOpen] = useState<boolean>(false);
+    const [selectedGroup, setSelectedGroup] = useState<any>(null);
+    const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+    const [loading, isLoading] = useState<boolean>(false);
+    const [records, setRecords] = useState<any[]>([]);
+    const [totalRecords, setTotalRecords] = useState<number>(0);
+    const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+    const [page, setPage] = useState<number>(0);
+    const [error, setError] = useState<string>("");
+
+    const handleChangePage = (event: unknown, newPage: number) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const rPP = parseInt(event.target.value, 10);
+        setPage(0);
+        setRowsPerPage(rPP);
+    };
+
+    useEffect(() => {
+        isLoading(true);
+    }, []);
+
+    useEffect(() => {
+        isLoading(true);
+    }, [page, rowsPerPage]);
+
+    useEffect(() => {
+        if(loading) {
+            fetchRecords();
+        }
+    }, [loading]);
+
+
+    const fetchRecords = () => {
+        const offset = page * rowsPerPage;
+        api
+            .invoke("GET", `/api/v1/groups?offset=${offset}&limit=${rowsPerPage}`)
+            .then((res: GroupsList) => {
+                setRecords(res.groups.sort(groupsSort));
+                setTotalRecords(res.groups.length);
+                setError("");
+                isLoading(false);
+
+                // if we get 0 results, and page > 0 , go down 1 page
+                if ((!res.groups || res.groups.length === 0) && page > 0) {
+                    const newPage = page - 1;
+                    setPage(newPage);
+                }
+            })
+            .catch(err => {
+                setError(err);
+                isLoading(false);
+            });
+    }
+
     return (<React.Fragment>
-        Groups Page
+        <Grid container>
+            <Grid item xs={12}>
+                <Typography variant="h6">Groups</Typography>
+            </Grid>
+            <Grid item xs={12}>
+                <br />
+            </Grid>
+            <Grid item xs={12} className={classes.actionsTray}>
+                <TextField
+                    placeholder="Search Groups"
+                    className={classes.searchField}
+                    id="search-resource"
+                    label=""
+                    InputProps={{
+                        disableUnderline: true,
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <SearchIcon />
+                            </InputAdornment>
+                        ),
+                    }}
+                />
+                <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={ <CreateIcon /> }
+                    onClick={() => {
+                        setSelectedGroup(null);
+                        setGroupOpen(true);
+                    }}
+                >
+                    Create Group
+                </Button>
+            </Grid>
+
+            <Grid item xs={12}>
+                <br />
+            </Grid>
+            <Grid item xs={12}>
+                <Paper className={classes.paper}>
+                    {loading && <LinearProgress />}
+                    {records != null && records.length > 0 ? (
+                        <Table size="medium">
+                            <TableHead className={classes.minTableHeader}>
+                                <TableRow>
+                                    <TableCell>Select</TableCell>
+                                    <TableCell>Access Key</TableCell>
+                                    <TableCell align="right">Actions</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {records.map(row => (
+                                    <TableRow key={`user-${row.accessKey}`}>
+                                        <TableCell padding="checkbox">
+                                            <Checkbox
+                                                value="secondary"
+                                                color="primary"
+                                                inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                            />
+                                        </TableCell>
+                                        <TableCell className={classes.wrapCell}>
+                                            {row.accessKey}
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            <IconButton
+                                                aria-label="view"
+                                                onClick={() => {
+                                                    setGroupOpen(true);
+                                                    setSelectedGroup(row);
+                                                }}
+                                            >
+                                                <ViewIcon />
+                                            </IconButton>
+                                            <IconButton
+                                                aria-label="delete"
+                                                onClick={() => {
+                                                    setDeleteOpen(true);
+                                                    setSelectedGroup(row);
+                                                }}
+                                            >
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                            <TableFooter>
+                                <TableRow>
+                                    <TablePagination
+                                        rowsPerPageOptions={[5, 10, 25]}
+                                        colSpan={3}
+                                        count={totalRecords}
+                                        rowsPerPage={rowsPerPage}
+                                        page={page}
+                                        SelectProps={{
+                                            inputProps: { "aria-label": "rows per page" },
+                                            native: true
+                                        }}
+                                        onChangePage={handleChangePage}
+                                        onChangeRowsPerPage={handleChangeRowsPerPage}
+                                        ActionsComponent={MinTablePaginationActions}
+                                    />
+                                </TableRow>
+                            </TableFooter>
+                        </Table>
+                    ) : (
+                        <div>No Groups Available</div>
+                    )}
+                </Paper>
+            </Grid>
+        </Grid>
     </React.Fragment>)
 };
 
