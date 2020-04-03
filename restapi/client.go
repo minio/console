@@ -18,7 +18,10 @@ package restapi
 
 import (
 	"context"
+	"fmt"
 
+	mc "github.com/minio/mc/cmd"
+	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v6"
 )
 
@@ -50,33 +53,53 @@ type minioClient struct {
 }
 
 // implements minio.ListBucketsWithContext(ctx)
-func (mc minioClient) listBucketsWithContext(ctx context.Context) ([]minio.BucketInfo, error) {
-	return mc.client.ListBucketsWithContext(ctx)
+func (c minioClient) listBucketsWithContext(ctx context.Context) ([]minio.BucketInfo, error) {
+	return c.client.ListBucketsWithContext(ctx)
 }
 
 // implements minio.MakeBucketWithContext(ctx, bucketName, location)
-func (mc minioClient) makeBucketWithContext(ctx context.Context, bucketName, location string) error {
-	return mc.client.MakeBucketWithContext(ctx, bucketName, location)
+func (c minioClient) makeBucketWithContext(ctx context.Context, bucketName, location string) error {
+	return c.client.MakeBucketWithContext(ctx, bucketName, location)
 }
 
 // implements minio.SetBucketPolicyWithContext(ctx, bucketName, policy)
-func (mc minioClient) setBucketPolicyWithContext(ctx context.Context, bucketName, policy string) error {
-	return mc.client.SetBucketPolicyWithContext(ctx, bucketName, policy)
+func (c minioClient) setBucketPolicyWithContext(ctx context.Context, bucketName, policy string) error {
+	return c.client.SetBucketPolicyWithContext(ctx, bucketName, policy)
 }
 
 // implements minio.RemoveBucket(bucketName)
-func (mc minioClient) removeBucket(bucketName string) error {
-	return mc.client.RemoveBucket(bucketName)
+func (c minioClient) removeBucket(bucketName string) error {
+	return c.client.RemoveBucket(bucketName)
 }
 
 // implements minio.GetBucketNotification(bucketName)
-func (mc minioClient) getBucketNotification(bucketName string) (bucketNotification minio.BucketNotification, err error) {
-	return mc.client.GetBucketNotification(bucketName)
+func (c minioClient) getBucketNotification(bucketName string) (bucketNotification minio.BucketNotification, err error) {
+	return c.client.GetBucketNotification(bucketName)
 }
 
 // implements minio.GetBucketPolicy(bucketName)
-func (mc minioClient) getBucketPolicy(bucketName string) (string, error) {
-	return mc.client.GetBucketPolicy(bucketName)
+func (c minioClient) getBucketPolicy(bucketName string) (string, error) {
+	return c.client.GetBucketPolicy(bucketName)
+}
+
+// Define MCS3Client interface with all functions to be implemented
+// by mock when testing, it should include all mc/S3Client respective api calls
+// that are used within this project.
+type MCS3Client interface {
+	addNotificationConfig(arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error
+}
+
+// Interface implementation
+//
+// Define the structure of a mc S3Client and define the functions that are actually used
+// from mcS3client api.
+type mcS3Client struct {
+	client *mc.S3Client
+}
+
+// implements minio.ListBucketsWithContext(ctx)
+func (c mcS3Client) addNotificationConfig(arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
+	return c.client.AddNotificationConfig(arn, events, prefix, suffix, ignoreExisting)
 }
 
 // newMinioClient creates a new MinIO client to talk to the server
@@ -84,7 +107,7 @@ func newMinioClient() (*minio.Client, error) {
 	endpoint := getMinIOEndpoint()
 	accessKeyID := getAccessKey()
 	secretAccessKey := getSecretKey()
-	useSSL := getMinIOEndpointSSL()
+	useSSL := getMinIOEndpointIsSecure()
 
 	// Initialize minio client object.
 	minioClient, err := minio.NewV4(endpoint, accessKeyID, secretAccessKey, useSSL)
@@ -93,4 +116,47 @@ func newMinioClient() (*minio.Client, error) {
 	}
 
 	return minioClient, nil
+}
+
+// newS3BucketClient creates a new mc S3Client to talk to the server based on a bucket
+func newS3BucketClient(bucketName *string) (*mc.S3Client, error) {
+	endpoint := getMinIOServer()
+	accessKeyID := getAccessKey()
+	secretAccessKey := getSecretKey()
+	useSSL := getMinIOEndpointIsSecure()
+
+	if bucketName != nil {
+		endpoint += fmt.Sprintf("/%s", *bucketName)
+	}
+	s3Config := newS3Config(endpoint, accessKeyID, secretAccessKey, !useSSL)
+	client, err := mc.S3New(s3Config)
+	if err != nil {
+		return nil, err.Cause
+	}
+	s3Client, ok := client.(*mc.S3Client)
+	if !ok {
+		return nil, fmt.Errorf("the provided url doesn't point to a S3 server")
+	}
+
+	return s3Client, nil
+}
+
+// newS3Config simply creates a new Config struct using the passed
+// parameters.
+func newS3Config(endpoint, accessKey, secretKey string, isSecure bool) *mc.Config {
+	// We have a valid alias and hostConfig. We populate the
+	// credentials from the match found in the config file.
+	s3Config := new(mc.Config)
+
+	s3Config.AppName = "mcs" // TODO: make this a constant
+	s3Config.AppVersion = "" // TODO: get this from constant or build
+	s3Config.AppComments = []string{}
+	s3Config.Debug = false
+	s3Config.Insecure = isSecure
+
+	s3Config.HostURL = endpoint
+	s3Config.AccessKey = accessKey
+	s3Config.SecretKey = secretKey
+	s3Config.Signature = "S3v4"
+	return s3Config
 }

@@ -79,8 +79,6 @@ github.com/docker/go-units v0.4.0 h1:3uh0PgVws3nIA0Q+MwDC8yjEPf9zjRfZZWXZYDct3Tw
 github.com/docker/go-units v0.4.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
 github.com/dustin/go-humanize v1.0.0 h1:VSnTsYCnlFHaM2/igO1h6X3HA71jcobQuxemgkq4zYo=
 github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
-github.com/dvaldivia/mc v0.0.0-20200402232537-1048833f1701 h1:TaXA4hNW3k99MbCKOFnXsaLr9xsx/kh9YXcUNQ/Q8Wk=
-github.com/dvaldivia/mc v0.0.0-20200402232537-1048833f1701/go.mod h1:IDy4dA4aFY6zFFNkYgdUztl0jcYuev/Ubg3NadoaMKc=
 github.com/eapache/go-resiliency v1.1.0/go.mod h1:kFI+JgMyC7bLPUVY133qvEBtVayf5mFgVsvEsIPBvNs=
 github.com/eapache/go-resiliency v1.2.0 h1:v7g92e/KSN71Rq7vSThKaWIq68fL4YHvWyiUKorFR1Q=
 github.com/eapache/go-resiliency v1.2.0/go.mod h1:kFI+JgMyC7bLPUVY133qvEBtVayf5mFgVsvEsIPBvNs=
@@ -385,7 +383,6 @@ github.com/minio/highwayhash v1.0.0 h1:iMSDhgUILCr0TNm8LWlSjF8N0ZIj2qbO8WHp6Q/J2
 github.com/minio/highwayhash v1.0.0/go.mod h1:xQboMTeM9nY9v/LlAOxFctujiv5+Aq2hR5dxBpaMbdc=
 github.com/minio/lsync v1.0.1 h1:AVvILxA976xc27hstd1oR+X9PQG0sPSom1MNb1ImfUs=
 github.com/minio/lsync v1.0.1/go.mod h1:tCFzfo0dlvdGl70IT4IAK/5Wtgb0/BrTmo/jE8pArKA=
-github.com/minio/mc v0.0.0-20200401220942-e05f02d9f459/go.mod h1:GWohdY5tXSiMnBCofmDRK5yRCihQH2FKNM0eh+UsY5Y=
 github.com/minio/mc v0.0.0-20200403024131-4d36c1f8b856 h1:4uIc5fw4tVr5glh2Mc8GFuiY04pTGEhmihPxJPUvCoU=
 github.com/minio/mc v0.0.0-20200403024131-4d36c1f8b856/go.mod h1:IDy4dA4aFY6zFFNkYgdUztl0jcYuev/Ubg3NadoaMKc=
 github.com/minio/minio v0.0.0-20200327214830-6f992134a25f h1:RoOBi0vhXkZqe2b6RTROOsVJUwMqLMoet9r7eL01euo=
