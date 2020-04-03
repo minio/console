@@ -43,6 +43,7 @@ import { AppState } from "../../store";
 import { setMenuOpen } from "../../actions";
 import { ThemedComponentProps } from "@material-ui/core/styles/withTheme";
 import Buckets from "./Buckets/Buckets";
+import Policies from "./Policies/Policies";
 import Permissions from "./Permissions/Permissions";
 import Dashboard from "./Dashboard/Dashboard";
 import Menu from "./Menu";
@@ -213,6 +214,7 @@ class Console extends React.Component<
               <Switch>
                 <Route exact path="/buckets" component={Buckets} />
                 <Route exact path="/permissions" component={Permissions} />
+                <Route exact path="/policies" component={Policies} />
                 <Route
                   exact
                   path="/service_accounts"
