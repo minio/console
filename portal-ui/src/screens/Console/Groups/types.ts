@@ -14,30 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-interface userInterface {
+export interface Group {
+    name: string;
+    id: string;
+    email: string;
+    is_me: boolean;
+    enabled: boolean;
     accessKey: string;
+    secretKey: string;
 }
 
-export const usersSort = (a: userInterface, b: userInterface) => {
-    if (a.accessKey > b.accessKey) {
-        return 1;
-    }
-    if (a.accessKey < b.accessKey) {
-        return -1;
-    }
-    // a must be equal to b
-    return 0;
-};
-
-export const groupsSort = (a: string, b: string) => {
-    if (a > b) {
-        return 1;
-    }
-    if (a < b) {
-        return -1;
-    }
-    // a must be equal to b
-    return 0;
-};
-
-
+export interface GroupsList {
+    groups: string[];
+    total:number;
+}

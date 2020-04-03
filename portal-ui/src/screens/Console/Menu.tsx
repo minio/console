@@ -120,13 +120,19 @@ class Menu extends React.Component<MenuProps> {
             <ListItemIcon>
               <PermissionIcon />
             </ListItemIcon>
-            <ListItemText primary="policies" />
+            <ListItemText primary="Policies" />
           </ListItem>
           <ListItem button component={NavLink} to="/users">
             <ListItemIcon>
               <UsersIcon />
             </ListItemIcon>
             <ListItemText primary="Users" />
+          </ListItem>
+          <ListItem button component={NavLink} to="/groups">
+            <ListItemIcon>
+              <UsersIcon />
+            </ListItemIcon>
+            <ListItemText primary="Groups" />
           </ListItem>
           <Divider />
           <ListItem

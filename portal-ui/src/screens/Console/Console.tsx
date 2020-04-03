@@ -52,6 +52,7 @@ import storage from "local-storage-fallback";
 import NotFoundPage from "../NotFoundPage";
 import ServiceAccounts from "./ServiceAccounts/ServiceAccounts";
 import Users from "./Users/Users";
+import Groups from "./Groups/Groups";
 
 function Copyright() {
   return (
@@ -222,6 +223,7 @@ class Console extends React.Component<
                 />
                 <Route exact path="/users" component={Users} />
                 <Route exact path="/dashboard" component={Dashboard} />
+                <Route exct path="/groups" component={Groups} />
                 <Route exact path="/">
                   <Redirect to="/dashboard" />
                 </Route>
