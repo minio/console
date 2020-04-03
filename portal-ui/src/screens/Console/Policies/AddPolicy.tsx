@@ -31,6 +31,8 @@ import Title from "../../../common/Title";
 import api from "../../../common/api";
 import "codemirror/lib/codemirror.css";
 import "codemirror/theme/material.css";
+import PolicyBuilder from "./PolicyBuilder";
+import {Policy} from "./types";
 require("codemirror/mode/javascript/javascript");
 
 const styles = (theme: Theme) =>
@@ -51,6 +53,7 @@ interface IAddPolicyProps {
   classes: any;
   open: boolean;
   closeModalAndRefresh: () => void;
+  policyEdit: Policy;
 }
 
 interface IAddPolicyState {
@@ -99,7 +102,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
     });
   }
   render() {
-    const { classes, open } = this.props;
+    const { classes, open, policyEdit } = this.props;
     const { addLoading, addError, policyName, policyDefinition } = this.state;
     return (
       <Dialog
@@ -114,7 +117,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          <Title>Create Policy</Title>
+          <Title>{policyEdit ? "Info" : "Create"} Policy</Title>
         </DialogTitle>
         <DialogContent>
           <form
@@ -141,6 +144,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
                   id="standard-basic"
                   fullWidth
                   label="Policy Name"
+                  value={policyEdit ? policyEdit.name : ""}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     this.setState({ policyName: e.target.value });
                   }}
@@ -152,7 +156,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
               <Grid item xs={12}>
                 <CodeMirror
                   className={classes.codeMirror}
-                  value=""
+                  value={policyEdit ? JSON.stringify(policyEdit, null, 4) : ""}
                   options={{
                     mode: "javascript",
                     theme: "material",
@@ -166,7 +170,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
               <Grid item xs={12}>
                 <br />
               </Grid>
-              <Grid item xs={12}>
+              {!policyEdit && <Grid item xs={12}>
                 <Button
                   type="submit"
                   variant="contained"
@@ -176,7 +180,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
                 >
                   Save
                 </Button>
-              </Grid>
+              </Grid>}
               {addLoading && (
                 <Grid item xs={12}>
                   <LinearProgress />
