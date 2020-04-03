@@ -32,10 +32,10 @@ import {
   BucketsIcon,
   DashboardIcon,
   PermissionIcon,
-  ServiceAccountIcon,
   UsersIcon
 } from "../../icons";
 import { createStyles, Theme } from "@material-ui/core/styles";
+import PersonIcon from "@material-ui/icons/Person";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -124,7 +124,7 @@ class Menu extends React.Component<MenuProps> {
           </ListItem>
           <ListItem button component={NavLink} to="/users">
             <ListItemIcon>
-              <UsersIcon />
+              <PersonIcon />
             </ListItemIcon>
             <ListItemText primary="Users" />
           </ListItem>
