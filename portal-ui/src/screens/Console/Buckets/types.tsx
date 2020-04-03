@@ -41,3 +41,7 @@ export interface BucketEventList {
   events: BucketEvent[];
   total: number;
 }
+
+export interface ArnList {
+  arns: string[];
+}
