@@ -56,7 +56,7 @@ const AddGroup = ({
 
     useEffect(() => {
         if(selectedGroup) {
-            setGroupName(selectedGroup.name);
+            setGroupName(selectedGroup);
         }
     }, [selectedGroup]);
 

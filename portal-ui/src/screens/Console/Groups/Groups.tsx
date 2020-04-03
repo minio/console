@@ -138,7 +138,7 @@ const Groups = ({
             .invoke("GET", `/api/v1/groups?offset=${offset}&limit=${rowsPerPage}`)
             .then((res: GroupsList) => {
                 setRecords(res.groups.sort(groupsSort));
-                setTotalRecords(res.groups.length);
+                setTotalRecords(res.total);
                 setError("");
                 isLoading(false);
 
@@ -224,8 +224,8 @@ const Groups = ({
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {records.map(row => (
-                                    <TableRow key={`user-${row.name}`}>
+                                {records.map(group => (
+                                    <TableRow key={`user-${group}`}>
                                         <TableCell padding="checkbox">
                                             <Checkbox
                                                 value="secondary"
@@ -234,14 +234,14 @@ const Groups = ({
                                             />
                                         </TableCell>
                                         <TableCell className={classes.wrapCell}>
-                                            {row.name}
+                                            {group}
                                         </TableCell>
                                         <TableCell align="right">
                                             <IconButton
                                                 aria-label="view"
                                                 onClick={() => {
                                                     setGroupOpen(true);
-                                                    setSelectedGroup(row);
+                                                    setSelectedGroup(group);
                                                 }}
                                             >
                                                 <ViewIcon />
@@ -250,7 +250,7 @@ const Groups = ({
                                                 aria-label="delete"
                                                 onClick={() => {
                                                     setDeleteOpen(true);
-                                                    setSelectedGroup(row);
+                                                    setSelectedGroup(group);
                                                 }}
                                             >
                                                 <DeleteIcon />

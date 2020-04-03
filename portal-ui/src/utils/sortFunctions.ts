@@ -18,10 +18,6 @@ interface userInterface {
     accessKey: string;
 }
 
-interface groupInterface {
-    name: string;
-}
-
 export const usersSort = (a: userInterface, b: userInterface) => {
     if (a.accessKey > b.accessKey) {
         return 1;
@@ -33,11 +29,11 @@ export const usersSort = (a: userInterface, b: userInterface) => {
     return 0;
 };
 
-export const groupsSort = (a: groupInterface, b: groupInterface) => {
-    if (a.name > b.name) {
+export const groupsSort = (a: string, b: string) => {
+    if (a > b) {
         return 1;
     }
-    if (a.name < b.name) {
+    if (a < b) {
         return -1;
     }
     // a must be equal to b

@@ -25,6 +25,6 @@ export interface Group {
 }
 
 export interface GroupsList {
-    groups: Group[];
-    total_groups:number;
+    groups: string[];
+    total:number;
 }
