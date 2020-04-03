@@ -52,9 +52,12 @@ func (o *MakeBucketURL) SetBasePath(bp string) {
 func (o *MakeBucketURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/api/v1/buckets"
+	var _path = "/buckets"
 
 	_basePath := o._basePath
+	if _basePath == "" {
+		_basePath = "/api/v1"
+	}
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	return &_result, nil

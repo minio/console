@@ -48,7 +48,7 @@ func NewRestartService(ctx *middleware.Context, handler RestartServiceHandler) *
 	return &RestartService{Context: ctx, Handler: handler}
 }
 
-/*RestartService swagger:route POST /api/v1/service/restart AdminAPI restartService
+/*RestartService swagger:route POST /service/restart AdminAPI restartService
 
 Restart Service
 

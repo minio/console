@@ -48,7 +48,7 @@ func NewRemoveGroup(ctx *middleware.Context, handler RemoveGroupHandler) *Remove
 	return &RemoveGroup{Context: ctx, Handler: handler}
 }
 
-/*RemoveGroup swagger:route DELETE /api/v1/groups/{name} AdminAPI removeGroup
+/*RemoveGroup swagger:route DELETE /groups/{name} AdminAPI removeGroup
 
 Remove group
 

@@ -48,7 +48,7 @@ func NewDeleteBucket(ctx *middleware.Context, handler DeleteBucketHandler) *Dele
 	return &DeleteBucket{Context: ctx, Handler: handler}
 }
 
-/*DeleteBucket swagger:route DELETE /api/v1/buckets/{name} UserAPI deleteBucket
+/*DeleteBucket swagger:route DELETE /buckets/{name} UserAPI deleteBucket
 
 Delete Bucket
 

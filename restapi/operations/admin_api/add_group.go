@@ -48,7 +48,7 @@ func NewAddGroup(ctx *middleware.Context, handler AddGroupHandler) *AddGroup {
 	return &AddGroup{Context: ctx, Handler: handler}
 }
 
-/*AddGroup swagger:route POST /api/v1/groups AdminAPI addGroup
+/*AddGroup swagger:route POST /groups AdminAPI addGroup
 
 Add Group
 

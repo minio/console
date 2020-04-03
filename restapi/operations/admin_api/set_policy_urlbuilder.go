@@ -57,7 +57,7 @@ func (o *SetPolicyURL) SetBasePath(bp string) {
 func (o *SetPolicyURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/api/v1/set-policy/{name}"
+	var _path = "/set-policy/{name}"
 
 	name := o.Name
 	if name != "" {
@@ -67,6 +67,9 @@ func (o *SetPolicyURL) Build() (*url.URL, error) {
 	}
 
 	_basePath := o._basePath
+	if _basePath == "" {
+		_basePath = "/api/v1"
+	}
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	return &_result, nil

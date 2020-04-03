@@ -48,7 +48,7 @@ func NewAddPolicy(ctx *middleware.Context, handler AddPolicyHandler) *AddPolicy 
 	return &AddPolicy{Context: ctx, Handler: handler}
 }
 
-/*AddPolicy swagger:route POST /api/v1/policies AdminAPI addPolicy
+/*AddPolicy swagger:route POST /policies AdminAPI addPolicy
 
 Add Policy
 

@@ -48,7 +48,7 @@ func NewBucketSetPolicy(ctx *middleware.Context, handler BucketSetPolicyHandler)
 	return &BucketSetPolicy{Context: ctx, Handler: handler}
 }
 
-/*BucketSetPolicy swagger:route PUT /api/v1/buckets/{name}/set-policy UserAPI bucketSetPolicy
+/*BucketSetPolicy swagger:route PUT /buckets/{name}/set-policy UserAPI bucketSetPolicy
 
 Bucket Set Policy
 

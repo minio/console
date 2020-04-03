@@ -48,7 +48,7 @@ func NewListConfig(ctx *middleware.Context, handler ListConfigHandler) *ListConf
 	return &ListConfig{Context: ctx, Handler: handler}
 }
 
-/*ListConfig swagger:route GET /api/v1/configs AdminAPI listConfig
+/*ListConfig swagger:route GET /configs AdminAPI listConfig
 
 List Configurations
 

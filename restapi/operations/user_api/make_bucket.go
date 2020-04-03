@@ -48,7 +48,7 @@ func NewMakeBucket(ctx *middleware.Context, handler MakeBucketHandler) *MakeBuck
 	return &MakeBucket{Context: ctx, Handler: handler}
 }
 
-/*MakeBucket swagger:route POST /api/v1/buckets UserAPI makeBucket
+/*MakeBucket swagger:route POST /buckets UserAPI makeBucket
 
 Make bucket
 
