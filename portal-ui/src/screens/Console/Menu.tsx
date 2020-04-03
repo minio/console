@@ -122,12 +122,6 @@ class Menu extends React.Component<MenuProps> {
             </ListItemIcon>
             <ListItemText primary="policies" />
           </ListItem>
-          {/*<ListItem button component={NavLink} to="/service_accounts">*/}
-          {/*  <ListItemIcon>*/}
-          {/*    <ServiceAccountIcon />*/}
-          {/*  </ListItemIcon>*/}
-          {/*  <ListItemText primary="Service Accounts" />*/}
-          {/*</ListItem>*/}
           <ListItem button component={NavLink} to="/users">
             <ListItemIcon>
               <UsersIcon />

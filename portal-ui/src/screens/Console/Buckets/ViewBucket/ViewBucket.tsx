@@ -267,21 +267,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
           <Grid item xs={6}>
             <Typography variant="h6">Events</Typography>
           </Grid>
-          <Grid item xs={6} className={classes.actionsTray}>
-            {/*<Button*/}
-            {/*  variant="contained"*/}
-            {/*  color="primary"*/}
-            {/*  size="small"*/}
-            {/*  startIcon={<CreateIcon />}*/}
-            {/*  onClick={() => {*/}
-            {/*    this.setState({*/}
-            {/*      setAccessPolicyScreenOpen: true*/}
-            {/*    });*/}
-            {/*  }}*/}
-            {/*>*/}
-            {/*  Subscribe to Event*/}
-            {/*</Button>*/}
-          </Grid>
+          <Grid item xs={6} className={classes.actionsTray} />
           <Grid item xs={12}>
             <br />
           </Grid>

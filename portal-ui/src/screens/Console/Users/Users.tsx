@@ -25,14 +25,15 @@ import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import api from "../../../common/api";
 import {
-    Button, IconButton,
-    LinearProgress,
-    TableFooter,
-    TablePagination
+  Button,
+  IconButton,
+  LinearProgress,
+  TableFooter,
+  TablePagination
 } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { User, UsersList } from "./types";
-import { usersSort } from '../../../utils/sortFunctions';
+import { usersSort } from "../../../utils/sortFunctions";
 import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
 import AddUser from "./AddUser";
 import DeleteUser from "./DeleteUser";
@@ -76,21 +77,21 @@ const styles = (theme: Theme) =>
       color: "#393939",
       "& tr": {
         "& th": {
-          fontWeight:'bold'
+          fontWeight: "bold"
         }
       }
     },
     actionsTray: {
       textAlign: "right",
       "& button": {
-        marginLeft: 10,
+        marginLeft: 10
       }
     },
     searchField: {
       background: "#FFFFFF",
       padding: 12,
       borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012",
+      boxShadow: "0px 3px 6px #00000012"
     }
   });
 
@@ -124,7 +125,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
     rowsPerPage: 10,
     deleteOpen: false,
     selectedUser: null,
-    addGroupOpen: false,
+    addGroupOpen: false
   };
 
   fetchRecords() {
@@ -234,7 +235,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
                   <InputAdornment position="start">
                     <SearchIcon />
                   </InputAdornment>
-                ),
+                )
               }}
             />
             <Button
@@ -256,7 +257,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
               onClick={() => {
                 this.setState({
                   addScreenOpen: true,
-                  selectedUser: null,
+                  selectedUser: null
                 });
               }}
             >
@@ -286,35 +287,35 @@ class Users extends React.Component<IUsersProps, IUsersState> {
                           <Checkbox
                             value="secondary"
                             color="primary"
-                            inputProps={{ 'aria-label': 'secondary checkbox' }}
+                            inputProps={{ "aria-label": "secondary checkbox" }}
                           />
                         </TableCell>
                         <TableCell className={classes.wrapCell}>
                           {row.accessKey}
                         </TableCell>
                         <TableCell align="right">
-                            <IconButton
-                                aria-label="view"
-                                onClick={() => {
-                                    this.setState({
-                                        addScreenOpen: true,
-                                        selectedUser: row,
-                                    });
-                                }}
-                            >
-                                <ViewIcon />
-                            </IconButton>
-                            <IconButton
-                                aria-label="delete"
-                                onClick={() => {
-                                    this.setState({
-                                        deleteOpen: true,
-                                        selectedUser: row,
-                                    });
-                                }}
-                            >
-                                <DeleteIcon />
-                            </IconButton>
+                          <IconButton
+                            aria-label="view"
+                            onClick={() => {
+                              this.setState({
+                                addScreenOpen: true,
+                                selectedUser: row
+                              });
+                            }}
+                          >
+                            <ViewIcon />
+                          </IconButton>
+                          <IconButton
+                            aria-label="delete"
+                            onClick={() => {
+                              this.setState({
+                                deleteOpen: true,
+                                selectedUser: row
+                              });
+                            }}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
                         </TableCell>
                       </TableRow>
                     ))}
