@@ -49,6 +49,7 @@ const AddGroup = ({
   }: IGroupProps) => {
     const [groupName, setGroupName] = useState<string>("");
     const [userList, setUserList] = useState<any[]>([]);
+    const [usersSelected, setUsersSelected] = useState<string[]>([]);
     const [saving, isSaving] = useState<boolean>(false);
     const [addError, setError] = useState<string>("");
     const [userListLoading, setUserListLoading] = useState(false);
@@ -75,7 +76,8 @@ const AddGroup = ({
         if (selectedGroup !== null) {
             api
                 .invoke("PUT", `/api/v1/groups/${selectedGroup.name}`, {
-                    name: groupName
+                    group: groupName,
+                    members: usersSelected,
                 })
                 .then(res => {
                     isSaving(false);
@@ -88,7 +90,8 @@ const AddGroup = ({
                 });
         } else {
             api.invoke("POST", "/api/v1/groups", {
-                    name: groupName
+                    group: groupName,
+                    members: usersSelected,
                 })
                 .then(res => {
                     isSaving(false);
