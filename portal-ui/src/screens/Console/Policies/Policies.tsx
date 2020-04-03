@@ -104,6 +104,7 @@ interface IPoliciesState {
   deleteOpen: boolean;
   selectedPolicy: string;
   filterPolicies: string;
+  policyEdit: any;
 }
 
 class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
@@ -118,7 +119,8 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
     rowsPerPage: 10,
     deleteOpen: false,
     selectedPolicy: "",
-    filterPolicies: ""
+    filterPolicies: "",
+    policyEdit: null,
   };
 
   fetchRecords() {
@@ -184,7 +186,8 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
       rowsPerPage,
       deleteOpen,
       selectedPolicy,
-      filterPolicies
+      filterPolicies,
+      policyEdit,
     } = this.state;
 
     const offset = page * rowsPerPage;
@@ -211,6 +214,7 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
           closeModalAndRefresh={() => {
             this.closeAddModalAndRefresh();
           }}
+          policyEdit={policyEdit}
         />
         <Grid container>
           <Grid item xs={12}>
@@ -245,7 +249,8 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
               startIcon={<CreateIcon />}
               onClick={() => {
                 this.setState({
-                  addScreenOpen: true
+                  addScreenOpen: true,
+                  policyEdit: null,
                 });
               }}
             >
@@ -287,7 +292,10 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
                             <IconButton
                               aria-label="view"
                               onClick={() => {
-                                confirmDeletePolicy(row.name);
+                                this.setState({
+                                  addScreenOpen: true,
+                                  policyEdit: row,
+                                });
                               }}
                             >
                               <VisibilityIcon />
