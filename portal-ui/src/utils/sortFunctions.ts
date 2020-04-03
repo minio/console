@@ -15,29 +15,27 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 interface userInterface {
-    accessKey: string;
+  accessKey: string;
 }
 
 export const usersSort = (a: userInterface, b: userInterface) => {
-    if (a.accessKey > b.accessKey) {
-        return 1;
-    }
-    if (a.accessKey < b.accessKey) {
-        return -1;
-    }
-    // a must be equal to b
-    return 0;
+  if (a.accessKey > b.accessKey) {
+    return 1;
+  }
+  if (a.accessKey < b.accessKey) {
+    return -1;
+  }
+  // a must be equal to b
+  return 0;
 };
 
 export const groupsSort = (a: string, b: string) => {
-    if (a > b) {
-        return 1;
-    }
-    if (a < b) {
-        return -1;
-    }
-    // a must be equal to b
-    return 0;
+  if (a > b) {
+    return 1;
+  }
+  if (a < b) {
+    return -1;
+  }
+  // a must be equal to b
+  return 0;
 };
-
-
