@@ -184,6 +184,40 @@ func init() {
             }
           }
         }
+      },
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Create Bucket Event",
+        "operationId": "CreateBucketEvent",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bucketEventRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
       }
     },
     "/api/v1/buckets/{name}": {
@@ -1024,6 +1058,20 @@ func init() {
         "CUSTOM"
       ]
     },
+    "bucketEventRequest": {
+      "type": "object",
+      "required": [
+        "configuration"
+      ],
+      "properties": {
+        "configuration": {
+          "$ref": "#/definitions/notificationConfig"
+        },
+        "ignoreExisting": {
+          "type": "boolean"
+        }
+      }
+    },
     "configDescription": {
       "type": "object",
       "properties": {
@@ -1244,6 +1292,9 @@ func init() {
     },
     "notificationConfig": {
       "type": "object",
+      "required": [
+        "arn"
+      ],
       "properties": {
         "arn": {
           "type": "string"
@@ -1636,6 +1687,40 @@ func init() {
             }
           }
         }
+      },
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Create Bucket Event",
+        "operationId": "CreateBucketEvent",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bucketEventRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
       }
     },
     "/api/v1/buckets/{name}": {
@@ -2476,6 +2561,20 @@ func init() {
         "CUSTOM"
       ]
     },
+    "bucketEventRequest": {
+      "type": "object",
+      "required": [
+        "configuration"
+      ],
+      "properties": {
+        "configuration": {
+          "$ref": "#/definitions/notificationConfig"
+        },
+        "ignoreExisting": {
+          "type": "boolean"
+        }
+      }
+    },
     "configDescription": {
       "type": "object",
       "properties": {
@@ -2696,6 +2795,9 @@ func init() {
     },
     "notificationConfig": {
       "type": "object",
+      "required": [
+        "arn"
+      ],
       "properties": {
         "arn": {
           "type": "string"

@@ -23,45 +23,30 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"strconv"
-
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
-// NotificationConfig notification config
+// BucketEventRequest bucket event request
 //
-// swagger:model notificationConfig
-type NotificationConfig struct {
+// swagger:model bucketEventRequest
+type BucketEventRequest struct {
 
-	// arn
+	// configuration
 	// Required: true
-	Arn *string `json:"arn"`
+	Configuration *NotificationConfig `json:"configuration"`
 
-	// filter specific type of event. Defaults to all event (default: '[put,delete,get]')
-	Events []NotificationEventType `json:"events"`
-
-	// id
-	ID string `json:"id,omitempty"`
-
-	// filter event associated to the specified prefix
-	Prefix string `json:"prefix,omitempty"`
-
-	// filter event associated to the specified suffix
-	Suffix string `json:"suffix,omitempty"`
+	// ignore existing
+	IgnoreExisting bool `json:"ignoreExisting,omitempty"`
 }
 
-// Validate validates this notification config
-func (m *NotificationConfig) Validate(formats strfmt.Registry) error {
+// Validate validates this bucket event request
+func (m *BucketEventRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateArn(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateEvents(formats); err != nil {
+	if err := m.validateConfiguration(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -71,37 +56,26 @@ func (m *NotificationConfig) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NotificationConfig) validateArn(formats strfmt.Registry) error {
+func (m *BucketEventRequest) validateConfiguration(formats strfmt.Registry) error {
 
-	if err := validate.Required("arn", "body", m.Arn); err != nil {
+	if err := validate.Required("configuration", "body", m.Configuration); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-func (m *NotificationConfig) validateEvents(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Events) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.Events); i++ {
-
-		if err := m.Events[i].Validate(formats); err != nil {
+	if m.Configuration != nil {
+		if err := m.Configuration.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("events" + "." + strconv.Itoa(i))
+				return ve.ValidateName("configuration")
 			}
 			return err
 		}
-
 	}
 
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *NotificationConfig) MarshalBinary() ([]byte, error) {
+func (m *BucketEventRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -109,8 +83,8 @@ func (m *NotificationConfig) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *NotificationConfig) UnmarshalBinary(b []byte) error {
-	var res NotificationConfig
+func (m *BucketEventRequest) UnmarshalBinary(b []byte) error {
+	var res BucketEventRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -45,7 +45,7 @@ func getMinIOEndpoint() string {
 	return server
 }
 
-func getMinIOEndpointSSL() bool {
+func getMinIOEndpointIsSecure() bool {
 	server := getMinIOServer()
 	if strings.Contains(server, "://") {
 		parts := strings.Split(server, "://")
