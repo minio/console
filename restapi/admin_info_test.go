@@ -35,8 +35,8 @@ func TestAdminInfo(t *testing.T) {
 			Usage:   madmin.Usage{Size: 10},
 		}, nil
 	}
-
-	serverInfo, err := getAdminInfo(adminClient)
+	ctx := context.Background()
+	serverInfo, err := getAdminInfo(ctx, adminClient)
 	assert.NotNil(serverInfo, "server info was returned nil")
 	if serverInfo != nil {
 		var actual64 int64 = 10

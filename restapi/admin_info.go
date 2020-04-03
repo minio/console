@@ -45,8 +45,7 @@ type UsageInfo struct {
 }
 
 // getAdminInfo invokes admin info and returns a parsed `UsageInfo` structure
-func getAdminInfo(client MinioAdmin) (*UsageInfo, error) {
-	ctx := context.Background()
+func getAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
 	serverInfo, err := client.serverInfo(ctx)
 	if err != nil {
 		return nil, err
@@ -60,7 +59,7 @@ func getAdminInfo(client MinioAdmin) (*UsageInfo, error) {
 	}, nil
 }
 
-// getAdminInfoResponse returns only if the session is valid
+// getAdminInfoResponse returns the response containing total buckets, objects and usage.
 func getAdminInfoResponse() (*models.AdminInfoResponse, error) {
 	mAdmin, err := newMAdminClient()
 	if err != nil {
@@ -70,8 +69,10 @@ func getAdminInfoResponse() (*models.AdminInfoResponse, error) {
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
+	// 20 seconds timeout
+	ctx, _ := context.WithTimeout(context.Background(), 20)
 	// serialize output
-	usage, err := getAdminInfo(adminClient)
+	usage, err := getAdminInfo(ctx, adminClient)
 	if err != nil {
 		log.Println("error geting information:", err)
 		return nil, err
