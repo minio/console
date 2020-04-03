@@ -96,7 +96,7 @@ class DeleteBucket extends React.Component<
       <Dialog
         open={deleteOpen}
         onClose={() => {
-          this.setState({deleteError:""},()=>{
+          this.setState({ deleteError: "" }, () => {
             this.props.closeDeleteModalAndRefresh(false);
           });
         }}
@@ -126,7 +126,7 @@ class DeleteBucket extends React.Component<
         <DialogActions>
           <Button
             onClick={() => {
-              this.setState({deleteError:""},()=>{
+              this.setState({ deleteError: "" }, () => {
                 this.props.closeDeleteModalAndRefresh(false);
               });
             }}

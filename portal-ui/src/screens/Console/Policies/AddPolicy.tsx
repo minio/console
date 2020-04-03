@@ -16,7 +16,7 @@
 
 import React from "react";
 import Grid from "@material-ui/core/Grid";
-import {UnControlled as CodeMirror} from 'react-codemirror2'
+import { UnControlled as CodeMirror } from "react-codemirror2";
 import Typography from "@material-ui/core/Typography";
 import {
   Button,
@@ -29,9 +29,9 @@ import {
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Title from "../../../common/Title";
 import api from "../../../common/api";
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/theme/material.css';
-require('codemirror/mode/javascript/javascript');
+import "codemirror/lib/codemirror.css";
+import "codemirror/theme/material.css";
+require("codemirror/mode/javascript/javascript");
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -40,11 +40,11 @@ const styles = (theme: Theme) =>
     },
     jsonPolicyEditor: {
       minHeight: 400,
-      width: "100%",
+      width: "100%"
     },
     codeMirror: {
-      fontSize: 14,
-    },
+      fontSize: 14
+    }
   });
 
 interface IAddPolicyProps {
@@ -65,7 +65,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
     addLoading: false,
     addError: "",
     policyName: "",
-    policyDefinition: "",
+    policyDefinition: ""
   };
   addRecord(event: React.FormEvent) {
     event.preventDefault();
@@ -77,7 +77,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
       api
         .invoke("POST", "/api/v1/policies", {
           name: policyName,
-          definition: policyDefinition,
+          definition: policyDefinition
         })
         .then(res => {
           this.setState(
@@ -100,7 +100,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
   }
   render() {
     const { classes, open } = this.props;
-    const { addLoading, addError, policyName, policyDefinition} = this.state;
+    const { addLoading, addError, policyName, policyDefinition } = this.state;
     return (
       <Dialog
         fullWidth
@@ -154,8 +154,8 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
                   className={classes.codeMirror}
                   value=""
                   options={{
-                    mode: 'javascript',
-                    theme: 'material',
+                    mode: "javascript",
+                    theme: "material",
                     lineNumbers: true
                   }}
                   onChange={(editor, data, value) => {
