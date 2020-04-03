@@ -50,6 +50,29 @@ func init() {
     "version": "0.1.0"
   },
   "paths": {
+    "/api/v1/admin/info": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Returns information about the deployment",
+        "operationId": "AdminInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/adminInfoResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/buckets": {
       "get": {
         "tags": [
@@ -987,6 +1010,20 @@ func init() {
         },
         "secretKey": {
           "type": "string"
+        }
+      }
+    },
+    "adminInfoResponse": {
+      "type": "object",
+      "properties": {
+        "buckets": {
+          "type": "integer"
+        },
+        "objects": {
+          "type": "integer"
+        },
+        "usage": {
+          "type": "integer"
         }
       }
     },
@@ -1516,6 +1553,29 @@ func init() {
     "version": "0.1.0"
   },
   "paths": {
+    "/api/v1/admin/info": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Returns information about the deployment",
+        "operationId": "AdminInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/adminInfoResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/buckets": {
       "get": {
         "tags": [
@@ -2453,6 +2513,20 @@ func init() {
         },
         "secretKey": {
           "type": "string"
+        }
+      }
+    },
+    "adminInfoResponse": {
+      "type": "object",
+      "properties": {
+        "buckets": {
+          "type": "integer"
+        },
+        "objects": {
+          "type": "integer"
+        },
+        "usage": {
+          "type": "integer"
         }
       }
     },

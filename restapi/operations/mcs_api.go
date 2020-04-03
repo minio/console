@@ -72,6 +72,9 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		AdminAPIAddUserHandler: admin_api.AddUserHandlerFunc(func(params admin_api.AddUserParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.AddUser has not yet been implemented")
 		}),
+		AdminAPIAdminInfoHandler: admin_api.AdminInfoHandlerFunc(func(params admin_api.AdminInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.AdminInfo has not yet been implemented")
+		}),
 		UserAPIBucketInfoHandler: user_api.BucketInfoHandlerFunc(func(params user_api.BucketInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.BucketInfo has not yet been implemented")
 		}),
@@ -202,6 +205,8 @@ type McsAPI struct {
 	AdminAPIAddPolicyHandler admin_api.AddPolicyHandler
 	// AdminAPIAddUserHandler sets the operation handler for the add user operation
 	AdminAPIAddUserHandler admin_api.AddUserHandler
+	// AdminAPIAdminInfoHandler sets the operation handler for the admin info operation
+	AdminAPIAdminInfoHandler admin_api.AdminInfoHandler
 	// UserAPIBucketInfoHandler sets the operation handler for the bucket info operation
 	UserAPIBucketInfoHandler user_api.BucketInfoHandler
 	// UserAPIBucketSetPolicyHandler sets the operation handler for the bucket set policy operation
@@ -333,6 +338,9 @@ func (o *McsAPI) Validate() error {
 	}
 	if o.AdminAPIAddUserHandler == nil {
 		unregistered = append(unregistered, "admin_api.AddUserHandler")
+	}
+	if o.AdminAPIAdminInfoHandler == nil {
+		unregistered = append(unregistered, "admin_api.AdminInfoHandler")
 	}
 	if o.UserAPIBucketInfoHandler == nil {
 		unregistered = append(unregistered, "user_api.BucketInfoHandler")
@@ -521,6 +529,10 @@ func (o *McsAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/api/v1/users"] = admin_api.NewAddUser(o.context, o.AdminAPIAddUserHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/api/v1/admin/info"] = admin_api.NewAdminInfo(o.context, o.AdminAPIAdminInfoHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
