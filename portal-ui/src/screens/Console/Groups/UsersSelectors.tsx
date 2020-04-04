@@ -29,6 +29,9 @@ import Checkbox from "@material-ui/core/Checkbox";
 import { UsersList } from "../Users/types";
 import { usersSort } from "../../../utils/sortFunctions";
 import api from "../../../common/api";
+import TextField from "@material-ui/core/TextField";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import SearchIcon from "@material-ui/icons/Search";
 
 interface IGroupsProps {
   classes: any;
@@ -99,6 +102,7 @@ const UsersSelectors = ({
   const [records, setRecords] = useState<any[]>([]);
   const [loading, isLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  const [filter, setFilter] = useState<string>("");
 
   //Effects
   useEffect(() => {
@@ -145,6 +149,10 @@ const UsersSelectors = ({
       });
   };
 
+    const filteredRecords = records.filter(elementItem =>
+        elementItem.accessKey.includes(filter)
+    );
+
   return (
     <React.Fragment>
       <Title>Members</Title>
@@ -153,6 +161,25 @@ const UsersSelectors = ({
           {loading && <LinearProgress />}
           {records != null && records.length > 0 ? (
             <React.Fragment>
+                <Grid item xs={12} className={classes.actionsTray}>
+                    <TextField
+                        placeholder="Filter Groups"
+                        className={classes.filterField}
+                        id="search-resource"
+                        label=""
+                        InputProps={{
+                            disableUnderline: true,
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon />
+                                </InputAdornment>
+                            )
+                        }}
+                        onChange={e => {
+                            setFilter(e.target.value);
+                        }}
+                    />
+                </Grid>
               <Table size="medium">
                 <TableHead className={classes.minTableHeader}>
                   <TableRow>
@@ -161,7 +188,7 @@ const UsersSelectors = ({
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {records.map(row => (
+                  {filteredRecords.map(row => (
                     <TableRow key={`group-${row.accessKey}`}>
                       <TableCell padding="checkbox">
                         <Checkbox
