@@ -149,9 +149,9 @@ const UsersSelectors = ({
       });
   };
 
-    const filteredRecords = records.filter(elementItem =>
-        elementItem.accessKey.includes(filter)
-    );
+  const filteredRecords = records.filter(elementItem =>
+    elementItem.accessKey.includes(filter)
+  );
 
   return (
     <React.Fragment>
@@ -161,25 +161,25 @@ const UsersSelectors = ({
           {loading && <LinearProgress />}
           {records != null && records.length > 0 ? (
             <React.Fragment>
-                <Grid item xs={12} className={classes.actionsTray}>
-                    <TextField
-                        placeholder="Filter Groups"
-                        className={classes.filterField}
-                        id="search-resource"
-                        label=""
-                        InputProps={{
-                            disableUnderline: true,
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <SearchIcon />
-                                </InputAdornment>
-                            )
-                        }}
-                        onChange={e => {
-                            setFilter(e.target.value);
-                        }}
-                    />
-                </Grid>
+              <Grid item xs={12} className={classes.actionsTray}>
+                <TextField
+                  placeholder="Filter Groups"
+                  className={classes.filterField}
+                  id="search-resource"
+                  label=""
+                  InputProps={{
+                    disableUnderline: true,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    )
+                  }}
+                  onChange={e => {
+                    setFilter(e.target.value);
+                  }}
+                />
+              </Grid>
               <Table size="medium">
                 <TableHead className={classes.minTableHeader}>
                   <TableRow>
