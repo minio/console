@@ -17,6 +17,7 @@
 import React, { useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { LinearProgress } from "@material-ui/core";
+import TableContainer from "@material-ui/core/TableContainer";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -93,6 +94,12 @@ const styles = (theme: Theme) =>
     noFound: {
       textAlign: "center",
       padding: "10px 0"
+    },
+    tableContainer: {
+      maxHeight: 250
+    },
+    stickyHeader: {
+      backgroundColor: "transparent"
     }
   });
 
@@ -182,34 +189,40 @@ const GroupsSelectors = ({
                   }}
                 />
               </Grid>
-              <Table size="medium">
-                <TableHead className={classes.minTableHeader}>
-                  <TableRow>
-                    <TableCell>Select</TableCell>
-                    <TableCell>Group</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredRecords.map(groupName => (
-                    <TableRow key={`group-${groupName}`}>
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          value={groupName}
-                          color="primary"
-                          inputProps={{
-                            "aria-label": "secondary checkbox"
-                          }}
-                          onChange={selectionChanged}
-                          checked={selectedGroups.includes(groupName)}
-                        />
+              <TableContainer className={classes.tableContainer}>
+                <Table size="small" stickyHeader aria-label="sticky table">
+                  <TableHead className={classes.minTableHeader}>
+                    <TableRow>
+                      <TableCell className={classes.stickyHeader}>
+                        Select
                       </TableCell>
-                      <TableCell className={classes.wrapCell}>
-                        {groupName}
+                      <TableCell className={classes.stickyHeader}>
+                        Group
                       </TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHead>
+                  <TableBody>
+                    {filteredRecords.map(groupName => (
+                      <TableRow key={`group-${groupName}`}>
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            value={groupName}
+                            color="primary"
+                            inputProps={{
+                              "aria-label": "secondary checkbox"
+                            }}
+                            onChange={selectionChanged}
+                            checked={selectedGroups.includes(groupName)}
+                          />
+                        </TableCell>
+                        <TableCell className={classes.wrapCell}>
+                          {groupName}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </React.Fragment>
           ) : (
             <div className={classes.noFound}>No Groups Available</div>

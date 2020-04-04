@@ -17,6 +17,7 @@
 import React, { useState, useEffect } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { LinearProgress } from "@material-ui/core";
+import TableContainer from "@material-ui/core/TableContainer";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -90,6 +91,12 @@ const styles = (theme: Theme) =>
     noFound: {
       textAlign: "center",
       padding: "10px 0"
+    },
+    tableContainer: {
+      maxHeight: 250
+    },
+    stickyHeader: {
+      backgroundColor: "transparent"
     }
   });
 
@@ -180,34 +187,40 @@ const UsersSelectors = ({
                   }}
                 />
               </Grid>
-              <Table size="medium">
-                <TableHead className={classes.minTableHeader}>
-                  <TableRow>
-                    <TableCell>Select</TableCell>
-                    <TableCell>Access Key</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredRecords.map(row => (
-                    <TableRow key={`group-${row.accessKey}`}>
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          value={row.accessKey}
-                          color="primary"
-                          inputProps={{
-                            "aria-label": "secondary checkbox"
-                          }}
-                          onChange={selectionChanged}
-                          checked={selectedUsers.includes(row.accessKey)}
-                        />
+              <TableContainer className={classes.tableContainer}>
+                <Table size="small" stickyHeader aria-label="sticky table">
+                  <TableHead className={classes.minTableHeader}>
+                    <TableRow>
+                      <TableCell className={classes.stickyHeader}>
+                        Select
                       </TableCell>
-                      <TableCell className={classes.wrapCell}>
-                        {row.accessKey}
+                      <TableCell className={classes.stickyHeader}>
+                        Access Key
                       </TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHead>
+                  <TableBody>
+                    {filteredRecords.map(row => (
+                      <TableRow key={`group-${row.accessKey}`}>
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            value={row.accessKey}
+                            color="primary"
+                            inputProps={{
+                              "aria-label": "secondary checkbox"
+                            }}
+                            onChange={selectionChanged}
+                            checked={selectedUsers.includes(row.accessKey)}
+                          />
+                        </TableCell>
+                        <TableCell className={classes.wrapCell}>
+                          {row.accessKey}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </React.Fragment>
           ) : (
             <div className={classes.noFound}>No Users Available</div>
