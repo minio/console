@@ -25,17 +25,12 @@ import (
 
 	"errors"
 
-	"github.com/stretchr/testify/assert"
 	asrt "github.com/stretchr/testify/assert"
 )
 
 // assigning mock at runtime instead of compile time
 var minioListUsersMock func() (map[string]madmin.UserInfo, error)
 var minioAddUserMock func(accessKey, secreyKey string) error
-var minioListGroupsMock func() ([]string, error)
-var minioUpdateGroupMembersMock func(madmin.GroupAddRemove) error
-var minioGetGroupDescriptionMock func(group string) (*madmin.GroupDesc, error)
-var minioSetGroupStatusMock func(group string, status madmin.GroupStatus) error
 
 // mock function of listUsers()
 func (ac adminClientMock) listUsers(ctx context.Context) (map[string]madmin.UserInfo, error) {
@@ -45,26 +40,6 @@ func (ac adminClientMock) listUsers(ctx context.Context) (map[string]madmin.User
 // mock function of addUser()
 func (ac adminClientMock) addUser(ctx context.Context, accessKey, secretKey string) error {
 	return minioAddUserMock(accessKey, secretKey)
-}
-
-// mock function of listGroups()
-func (ac adminClientMock) listGroups(ctx context.Context) ([]string, error) {
-	return minioListGroupsMock()
-}
-
-// mock function of updateGroupMembers()
-func (ac adminClientMock) updateGroupMembers(ctx context.Context, req madmin.GroupAddRemove) error {
-	return minioUpdateGroupMembersMock(req)
-}
-
-// mock function of getGroupDescription()
-func (ac adminClientMock) getGroupDescription(ctx context.Context, group string) (*madmin.GroupDesc, error) {
-	return minioGetGroupDescriptionMock(group)
-}
-
-// mock function setGroupStatus()
-func (ac adminClientMock) setGroupStatus(ctx context.Context, group string, status madmin.GroupStatus) error {
-	return minioSetGroupStatusMock(group, status)
 }
 
 func TestListUsers(t *testing.T) {
@@ -156,221 +131,6 @@ func TestAddUser(t *testing.T) {
 	assert.NotNil(err, "An error should have been returned")
 
 	if assert.Error(err) {
-		assert.Equal("error", err.Error())
-	}
-}
-
-func TestListGroups(t *testing.T) {
-	assert := assert.New(t)
-	adminClient := adminClientMock{}
-	ctx := context.Background()
-
-	// Test-1 : listGroups() Get response from minio client with two Groups and return the same number on listGroups()
-	mockGroupsList := []string{"group1", "group2"}
-
-	// mock function response from listGroups()
-	minioListGroupsMock = func() ([]string, error) {
-		return mockGroupsList, nil
-	}
-	// get list Groups response this response should have Name, CreationDate, Size and Access
-	// as part of of each Groups
-	function := "listGroups()"
-	groupsList, err := listGroups(ctx, adminClient)
-	if err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
-	}
-	// verify length of Groupss is correct
-	assert.Equal(len(mockGroupsList), len(*groupsList), fmt.Sprintf("Failed on %s: length of Groups's lists is not the same", function))
-
-	for i, g := range *groupsList {
-		assert.Equal(mockGroupsList[i], g)
-	}
-
-	// Test-2 : listGroups() Return error and see that the error is handled correctly and returned
-	minioListGroupsMock = func() ([]string, error) {
-		return nil, errors.New("error")
-	}
-	_, err = listGroups(ctx, adminClient)
-	if assert.Error(err) {
-		assert.Equal("error", err.Error())
-	}
-}
-
-func TestAddGroup(t *testing.T) {
-	assert := assert.New(t)
-	adminClient := adminClientMock{}
-	ctx := context.Background()
-
-	// Test-1 : addGroup() add a new group with two members
-	newGroup := "acmeGroup"
-	groupMembers := []string{"user1", "user2"}
-	// mock function response from updateGroupMembers()
-	minioUpdateGroupMembersMock = func(madmin.GroupAddRemove) error {
-		return nil
-	}
-	function := "addGroup()"
-	if err := addGroup(ctx, adminClient, newGroup, groupMembers); err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
-	}
-
-	// Test-2 : addGroup() Return error and see that the error is handled correctly and returned
-	minioUpdateGroupMembersMock = func(madmin.GroupAddRemove) error {
-		return errors.New("error")
-	}
-
-	if err := addGroup(ctx, adminClient, newGroup, groupMembers); assert.Error(err) {
-		assert.Equal("error", err.Error())
-	}
-}
-
-func TestRemoveGroup(t *testing.T) {
-	assert := assert.New(t)
-	adminClient := adminClientMock{}
-	ctx := context.Background()
-
-	// Test-1 : removeGroup() remove group assume it has no members
-	groupToRemove := "acmeGroup"
-	// mock function response from updateGroupMembers()
-	minioUpdateGroupMembersMock = func(madmin.GroupAddRemove) error {
-		return nil
-	}
-	function := "removeGroup()"
-	if err := removeGroup(ctx, adminClient, groupToRemove); err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
-	}
-
-	// Test-2 : removeGroup() Return error and see that the error is handled correctly and returned
-	minioUpdateGroupMembersMock = func(madmin.GroupAddRemove) error {
-		return errors.New("error")
-	}
-	if err := removeGroup(ctx, adminClient, groupToRemove); assert.Error(err) {
-		assert.Equal("error", err.Error())
-	}
-}
-
-func TestGroupInfo(t *testing.T) {
-	assert := assert.New(t)
-	adminClient := adminClientMock{}
-	ctx := context.Background()
-
-	// Test-1 : groupInfo() get group info
-	groupName := "acmeGroup"
-	mockResponse := &madmin.GroupDesc{
-		Name:    groupName,
-		Policy:  "policyTest",
-		Members: []string{"user1", "user2"},
-		Status:  "enabled",
-	}
-	// mock function response from updateGroupMembers()
-	minioGetGroupDescriptionMock = func(group string) (*madmin.GroupDesc, error) {
-		return mockResponse, nil
-	}
-	function := "groupInfo()"
-	info, err := groupInfo(ctx, adminClient, groupName)
-	if err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
-	}
-	assert.Equal(groupName, info.Name)
-	assert.Equal("policyTest", info.Policy)
-	assert.ElementsMatch([]string{"user1", "user2"}, info.Members)
-	assert.Equal("enabled", info.Status)
-
-	// Test-2 : groupInfo() Return error and see that the error is handled correctly and returned
-	minioGetGroupDescriptionMock = func(group string) (*madmin.GroupDesc, error) {
-		return nil, errors.New("error")
-	}
-	_, err = groupInfo(ctx, adminClient, groupName)
-	if assert.Error(err) {
-		assert.Equal("error", err.Error())
-	}
-}
-
-func TestUpdateGroupInfo(t *testing.T) {
-	assert := assert.New(t)
-	adminClient := adminClientMock{}
-	ctx := context.Background()
-
-	// Test-1 : addOrDeleteMembers()  update group members add user3 and delete user2
-	function := "addOrDeleteMembers()"
-	groupName := "acmeGroup"
-	mockGroupDesc := &madmin.GroupDesc{
-		Name:    groupName,
-		Policy:  "policyTest",
-		Members: []string{"user1", "user2"},
-		Status:  "enabled",
-	}
-	membersDesired := []string{"user3", "user1"}
-	minioUpdateGroupMembersMock = func(madmin.GroupAddRemove) error {
-		return nil
-	}
-	if err := addOrDeleteMembers(ctx, adminClient, mockGroupDesc, membersDesired); err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
-	}
-
-	// Test-2 : addOrDeleteMembers()  handle error correctly
-	minioUpdateGroupMembersMock = func(madmin.GroupAddRemove) error {
-		return errors.New("error")
-	}
-	if err := addOrDeleteMembers(ctx, adminClient, mockGroupDesc, membersDesired); assert.Error(err) {
-		assert.Equal("error", err.Error())
-	}
-
-	// Test-3 : addOrDeleteMembers()  only add members but handle error on adding
-	minioUpdateGroupMembersMock = func(madmin.GroupAddRemove) error {
-		return errors.New("error")
-	}
-	membersDesired = []string{"user3", "user1", "user2"}
-	if err := addOrDeleteMembers(ctx, adminClient, mockGroupDesc, membersDesired); assert.Error(err) {
-		assert.Equal("error", err.Error())
-	}
-
-	// Test-4: addOrDeleteMembers() no updates needed so error shall not be triggered or handled.
-	minioUpdateGroupMembersMock = func(madmin.GroupAddRemove) error {
-		return errors.New("error")
-	}
-	membersDesired = []string{"user1", "user2"}
-	if err := addOrDeleteMembers(ctx, adminClient, mockGroupDesc, membersDesired); err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
-	}
-}
-
-func TestSetGroupStatus(t *testing.T) {
-	assert := assert.New(t)
-	adminClient := adminClientMock{}
-	function := "setGroupStatus()"
-	groupName := "acmeGroup"
-	ctx := context.Background()
-
-	// Test-1: setGroupStatus() update valid disabled status
-	expectedStatus := "disabled"
-	minioSetGroupStatusMock = func(group string, status madmin.GroupStatus) error {
-		return nil
-	}
-	if err := setGroupStatus(ctx, adminClient, groupName, expectedStatus); err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
-	}
-	// Test-2: setGroupStatus() update valid enabled status
-	expectedStatus = "enabled"
-	minioSetGroupStatusMock = func(group string, status madmin.GroupStatus) error {
-		return nil
-	}
-	if err := setGroupStatus(ctx, adminClient, groupName, expectedStatus); err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
-	}
-	// Test-3: setGroupStatus() update invalid status, should send error
-	expectedStatus = "invalid"
-	minioSetGroupStatusMock = func(group string, status madmin.GroupStatus) error {
-		return nil
-	}
-	if err := setGroupStatus(ctx, adminClient, groupName, expectedStatus); assert.Error(err) {
-		assert.Equal("status not valid", err.Error())
-	}
-	// Test-4: setGroupStatus() handler error correctly
-	expectedStatus = "enabled"
-	minioSetGroupStatusMock = func(group string, status madmin.GroupStatus) error {
-		return errors.New("error")
-	}
-	if err := setGroupStatus(ctx, adminClient, groupName, expectedStatus); assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
 }

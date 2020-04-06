@@ -26,10 +26,10 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
+	mcCmd "github.com/minio/mc/cmd"
 	"github.com/minio/mcs/models"
 	"github.com/minio/mcs/restapi/operations"
 	"github.com/minio/mcs/restapi/operations/user_api"
-	mcCmd "github.com/minio/mc/cmd"
 )
 
 // Wraps the code at mc/cmd

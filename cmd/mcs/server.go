@@ -104,7 +104,7 @@ func startServer(ctx *cli.Context) error {
 	server.Port = ctx.Int("port")
 
 	restapi.Hostname = ctx.String("host")
-	restapi.Port = fmt.Sprintf("%v",ctx.Int("port"))
+	restapi.Port = fmt.Sprintf("%v", ctx.Int("port"))
 
 	tlsCertificatePath := ctx.String("tls-certificate")
 	tlsCertificateKeyPath := ctx.String("tls-key")
@@ -118,7 +118,7 @@ func startServer(ctx *cli.Context) error {
 		server.TLSPort = ctx.Int("tls-port")
 		server.TLSHost = ctx.String("tls-host")
 		// Need to store tls-port, tls-host un config variables so secure.middleware can read from there
-		restapi.TLSPort = fmt.Sprintf("%v",ctx.Int("tls-port"))
+		restapi.TLSPort = fmt.Sprintf("%v", ctx.Int("tls-port"))
 		restapi.TLSHostname = ctx.String("tls-host")
 		restapi.TLSRedirect = "on"
 	}
