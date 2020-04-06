@@ -6,6 +6,7 @@
 *.dylib
 .DS_Store
 *.swp
+*.orig
 
 # Test binary, build with `go test -c`
 *.test
