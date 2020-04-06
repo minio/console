@@ -159,7 +159,8 @@ const Dashboard = ({ classes }: IDashboardProps) => {
     if (usage == undefined) {
       return 0;
     }
-    return usage;
+
+    return usage.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
   return (

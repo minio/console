@@ -218,7 +218,7 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
         />
         <Grid container>
           <Grid item xs={12}>
-            <Typography variant="h6">Policies</Typography>
+            <Typography variant="h6">IAM Policies</Typography>
           </Grid>
           <Grid item xs={12}>
             <br />

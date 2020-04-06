@@ -120,7 +120,7 @@ class Menu extends React.Component<MenuProps> {
             <ListItemIcon>
               <PermissionIcon />
             </ListItemIcon>
-            <ListItemText primary="Policies" />
+            <ListItemText primary="IAM Policies" />
           </ListItem>
           <ListItem button component={NavLink} to="/users">
             <ListItemIcon>
