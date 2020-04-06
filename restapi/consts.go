@@ -17,8 +17,33 @@
 package restapi
 
 const (
-	Version        = `0.1.0`
-	McsAccessKey   = "MCS_ACCESS_KEY"
-	McsSecretKey   = "MCS_SECRET_KEY"
-	McsMinIOServer = "MCS_MINIO_SERVER"
+	McsVersion        = `0.1.0`
+	McsAccessKey      = "MCS_ACCESS_KEY"
+	McsSecretKey      = "MCS_SECRET_KEY"
+	McsMinIOServer    = "MCS_MINIO_SERVER"
+	McsProductionMode = "MCS_PRODUCTION_MODE"
+	McsHostname       = "MCS_HOSTNAME"
+	McsPort           = "MCS_PORT"
+	McsTLSHostname    = "MCS_TLS_HOSTNAME"
+	McsTLSPort        = "MCS_TLS_PORT"
+
+	McsSecureAllowedHosts                    = "MCS_SECURE_ALLOWED_HOSTS"
+	McsSecureAllowedHostsAreRegex            = "MCS_SECURE_ALLOWED_HOSTS_ARE_REGEX"
+	McsSecureFrameDeny                       = "MCS_SECURE_FRAME_DENY"
+	McsSecureContentTypeNoSniff              = "MCS_SECURE_CONTENT_TYPE_NO_SNIFF"
+	McsSecureBrowserXssFilter                = "MCS_SECURE_BROWSER_XSS_FILTER"
+	McsSecureContentSecurityPolicy           = "MCS_SECURE_CONTENT_SECURITY_POLICY"
+	McsSecureContentSecurityPolicyReportOnly = "MCS_SECURE_CONTENT_SECURITY_POLICY_REPORT_ONLY"
+	McsSecureHostsProxyHeaders               = "MCS_SECURE_HOSTS_PROXY_HEADERS"
+	McsSecureSTSSeconds                      = "MCS_SECURE_STS_SECONDS"
+	McsSecureSTSIncludeSubdomains            = "MCS_SECURE_STS_INCLUDE_SUB_DOMAINS"
+	McsSecureSTSPreload                      = "MCS_SECURE_STS_PRELOAD"
+	McsSecureSSLRedirect                     = "MCS_SECURE_SSL_REDIRECT"
+	McsSecureSSLHost                         = "MCS_SECURE_SSL_HOST"
+	McsSecureSSLTemporaryRedirect            = "MCS_SECURE_SSL_TEMPORARY_REDIRECT"
+	McsSecureForceSTSHeader                  = "MCS_SECURE_FORCE_STS_HEADER"
+	McsSecurePublicKey                       = "MCS_SECURE_PUBLIC_KEY"
+	McsSecureReferrerPolicy                  = "MCS_SECURE_REFERRER_POLICY"
+	McsSecureFeaturePolicy                   = "MCS_SECURE_FEATURE_POLICY"
+	McsSecureExpectCTHeader                  = "MCS_SECURE_EXPECT_CT_HEADER"
 )

@@ -38,7 +38,7 @@ func NewAdminClient(url, accessKey, secretKey string) (*madmin.AdminClient, *pro
 		AccessKey:   accessKey,
 		SecretKey:   secretKey,
 		AppName:     appName,
-		AppVersion:  Version,
+		AppVersion:  McsVersion,
 		AppComments: []string{appName, runtime.GOOS, runtime.GOARCH},
 	})
 	if err != nil {
