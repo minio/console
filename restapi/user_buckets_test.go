@@ -25,7 +25,7 @@ import (
 	"time"
 
 	"github.com/go-openapi/swag"
-	"github.com/minio/m3/mcs/models"
+	"github.com/minio/mcs/models"
 	"github.com/minio/minio-go/v6"
 	"github.com/stretchr/testify/assert"
 )

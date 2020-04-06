@@ -23,9 +23,9 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
-	"github.com/minio/m3/mcs/models"
-	"github.com/minio/m3/mcs/restapi/operations"
-	"github.com/minio/m3/mcs/restapi/operations/admin_api"
+	"github.com/minio/mcs/models"
+	"github.com/minio/mcs/restapi/operations"
+	"github.com/minio/mcs/restapi/operations/admin_api"
 )
 
 func registerAdminArnsHandlers(api *operations.McsAPI) {

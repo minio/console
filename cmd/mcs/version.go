@@ -14,29 +14,24 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package restapi
+package main
 
 import (
-	"github.com/go-openapi/runtime/middleware"
-	"github.com/minio/mcs/models"
-	"github.com/minio/mcs/restapi/operations"
-	"github.com/minio/mcs/restapi/operations/user_api"
+	"fmt"
+
+	"github.com/minio/cli"
+	"github.com/minio/mcs/pkg"
 )
 
-func registerSessionHandlers(api *operations.McsAPI) {
-	// session check
-	api.UserAPISessionCheckHandler = user_api.SessionCheckHandlerFunc(func(params user_api.SessionCheckParams, principal *models.Principal) middleware.Responder {
-		sessionResp := getSessionResponse()
-		return user_api.NewSessionCheckOK().WithPayload(sessionResp)
-	})
-
+// starts the server
+var versionCmd = cli.Command{
+	Name:   "version",
+	Usage:  "shows mcs version",
+	Action: version,
 }
 
-// getSessionResponse returns only if the session is valid
-func getSessionResponse() *models.SessionResponse {
-	// serialize output
-	sessionResp := &models.SessionResponse{
-		Status: models.SessionResponseStatusOk,
-	}
-	return sessionResp
+// starts the controller
+func version(ctx *cli.Context) error {
+	fmt.Printf("MCS version %s (%s - %s. Commit %s)", pkg.Version, pkg.ReleaseTag, pkg.ReleaseTime, pkg.CommitID)
+	return nil
 }

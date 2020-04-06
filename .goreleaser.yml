@@ -1,0 +1,75 @@
+# This is an example goreleaser.yaml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
+project_name: mcs
+
+before:
+  hooks:
+    # you may remove this if you don't use vgo
+    - go mod tidy
+builds:
+  -
+    goos:
+      - freebsd
+      - windows
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    env:
+      - CGO_ENABLED=0
+    main: ./cmd/mcs/
+    flags:
+      - -trimpath
+      - --tags=kqueue
+    ldflags:
+      - -s -w -X github.com/minio/mcs/pkg.ReleaseTag={{.Tag}} -X github.com/minio/warp/pkg.CommitID={{.FullCommit}} -X github.com/minio/warp/pkg.Version={{.Version}} -X github.com/minio/warp/pkg.ShortCommitID={{.ShortCommit}} -X github.com/minio/warp/pkg.ReleaseTime={{.Date}}
+archives:
+  -
+    replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      freebsd: FreeBSD
+      amd64: x86_64
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - README.md
+      - LICENSE
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: 'snapshot-{{ time "2006-01-02" }}'
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+nfpms:
+  -
+    vendor: MinIO Inc.
+    homepage: https://github.com/minio/mcs
+    maintainer: MinIO <minio@minio.io>
+    description: MinIO Console Server
+    license: GNU Affero General Public License v3.0
+    formats:
+      - deb
+      - rpm
+    replacements:
+      darwin: Darwin
+      linux: Linux
+      freebsd: FreeBSD
+      amd64: x86_64
+dockers:
+  -
+    # GOOS of the built binary that should be used.
+    goos: linux
+    # GOARCH of the built binary that should be used.
+    goarch: amd64
+    dockerfile: Dockerfile.release
+    image_templates:
+      - "minio/mcs:{{ .Tag }}"
+      - "minio/mcs:latest"

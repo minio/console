@@ -28,7 +28,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"github.com/minio/m3/mcs/models"
+	"github.com/minio/mcs/models"
 )
 
 // ProfilingStopCreatedCode is the HTTP code returned for type ProfilingStopCreated

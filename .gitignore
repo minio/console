@@ -20,3 +20,5 @@ vendor/
 target/
 mcs
 !mcs/
+
+dist/
