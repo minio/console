@@ -31,7 +31,7 @@ const (
 	McsSecureAllowedHostsAreRegex            = "MCS_SECURE_ALLOWED_HOSTS_ARE_REGEX"
 	McsSecureFrameDeny                       = "MCS_SECURE_FRAME_DENY"
 	McsSecureContentTypeNoSniff              = "MCS_SECURE_CONTENT_TYPE_NO_SNIFF"
-	McsSecureBrowserXssFilter                = "MCS_SECURE_BROWSER_XSS_FILTER"
+	McsSecureBrowserXSSFilter                = "MCS_SECURE_BROWSER_XSS_FILTER"
 	McsSecureContentSecurityPolicy           = "MCS_SECURE_CONTENT_SECURITY_POLICY"
 	McsSecureContentSecurityPolicyReportOnly = "MCS_SECURE_CONTENT_SECURITY_POLICY_REPORT_ONLY"
 	McsSecureHostsProxyHeaders               = "MCS_SECURE_HOSTS_PROXY_HEADERS"
