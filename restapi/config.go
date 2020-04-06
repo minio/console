@@ -25,9 +25,9 @@ import (
 )
 
 var Port = "9090"
-var TLSPort = "9443"
 var Hostname = "localhost"
 var TLSHostname = "localhost"
+var TLSPort = "9443"
 
 func getAccessKey() string {
 	return env.Get(McsAccessKey, "minioadmin")
@@ -147,7 +147,7 @@ func getSecureHostsProxyHeaders() []string {
 
 // If SSLRedirect is set to true, then only allow HTTPS requests. Default is true.
 func getSSLRedirect() bool {
-	return strings.ToLower(env.Get(McsSecureSSLRedirect, "on")) == "on"
+	return strings.ToLower(env.Get(McsSecureSSLRedirect, "off")) == "on"
 }
 
 // SSLHost is the host name that is used to redirect HTTP requests to HTTPS. Default is "", which indicates to use the same host.
