@@ -54,28 +54,27 @@ const DeleteGroup = ({
 
   useEffect(() => {
     if (isDeleting) {
+      const removeRecord = () => {
+        if (!selectedGroup) {
+          return;
+        }
+
+        api
+          .invoke("DELETE", `/api/v1/groups/${selectedGroup}`)
+          .then((res: UsersList) => {
+            setDeleteLoading(false);
+            setError("");
+
+            closeDeleteModalAndRefresh(true);
+          })
+          .catch(err => {
+            setDeleteLoading(false);
+            setError(err);
+          });
+      };
       removeRecord();
     }
-  }, [isDeleting]);
-
-  const removeRecord = () => {
-    if (!selectedGroup) {
-      return;
-    }
-
-    api
-      .invoke("DELETE", `/api/v1/groups/${selectedGroup}`)
-      .then((res: UsersList) => {
-        setDeleteLoading(false);
-        setError("");
-
-        closeDeleteModalAndRefresh(true);
-      })
-      .catch(err => {
-        setDeleteLoading(false);
-        setError(err);
-      });
-  };
+  }, [isDeleting, selectedGroup, closeDeleteModalAndRefresh]);
 
   const closeNoAction = () => {
     setError("");

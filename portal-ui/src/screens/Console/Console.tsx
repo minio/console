@@ -170,7 +170,6 @@ class Console extends React.Component<
   ConsoleProps & RouteComponentProps & StyledProps & ThemedComponentProps
 > {
   componentDidMount(): void {
-    //TODO: verify the session is still valid
     api
       .invoke("GET", `/api/v1/session`)
       .then(res => {

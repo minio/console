@@ -31,8 +31,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
 import api from "../../../common/api";
-import { UsersList } from "./types";
-import { groupsSort, usersSort } from "../../../utils/sortFunctions";
+import { groupsSort } from "../../../utils/sortFunctions";
 import { GroupsList } from "../Groups/types";
 
 interface IGroupsProps {
@@ -168,6 +167,7 @@ const GroupsSelectors = ({
       <Grid item xs={12}>
         <Paper className={classes.paper}>
           {loading && <LinearProgress />}
+          {error !== "" && <div>{error}</div>}
           {records != null && records.length > 0 ? (
             <React.Fragment>
               <Grid item xs={12} className={classes.actionsTray}>
