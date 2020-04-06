@@ -1,6 +1,6 @@
 # MCS Minio Console Service
 
-This is a REST portal server created using [go-swagger](https://github.com/go-swagger/go-swagger)
+A graphical user interface for [MinIO](https://github.com/minio/minio)
 
 ## Setup
 
@@ -57,12 +57,14 @@ To run the server:
 export MCS_ACCESS_KEY=mcs
 export MCS_SECRET_KEY=YOURMCSSECRET
 export MCS_MINIO_SERVER=http://localhost:9000
-./mcs
+./mcs server
 ```
 
 You can verify that the apis work by doing the request on `localhost:9090/api/v1/...`
 
 # Development
+
+This is a REST portal server created using [go-swagger](https://github.com/go-swagger/go-swagger)
 
 The API handlers are created using a YAML definition located in `swagger.YAML`.
 
