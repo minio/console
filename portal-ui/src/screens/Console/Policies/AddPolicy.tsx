@@ -31,8 +31,8 @@ import Title from "../../../common/Title";
 import api from "../../../common/api";
 import "codemirror/lib/codemirror.css";
 import "codemirror/theme/material.css";
-import PolicyBuilder from "./PolicyBuilder";
 import { Policy } from "./types";
+
 require("codemirror/mode/javascript/javascript");
 
 const styles = (theme: Theme) =>
@@ -70,6 +70,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
     policyName: "",
     policyDefinition: ""
   };
+
   addRecord(event: React.FormEvent) {
     event.preventDefault();
     const { policyName, addLoading, policyDefinition } = this.state;
@@ -101,9 +102,10 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
         });
     });
   }
+
   render() {
     const { classes, open, policyEdit } = this.props;
-    const { addLoading, addError, policyName, policyDefinition } = this.state;
+    const { addLoading, addError } = this.state;
     return (
       <Dialog
         fullWidth

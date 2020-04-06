@@ -137,7 +137,7 @@ const Dashboard = ({ classes }: IDashboardProps) => {
       });
   };
   const prettyUsage = (usage: string | undefined) => {
-    if (usage == undefined) {
+    if (usage === undefined) {
       return "0";
     }
     return niceBytes(usage);
@@ -156,7 +156,7 @@ const Dashboard = ({ classes }: IDashboardProps) => {
     return n.toFixed(n < 10 && l > 0 ? 1 : 0) + " " + units[l];
   };
   const prettyNumber = (usage: number | undefined) => {
-    if (usage == undefined) {
+    if (usage === undefined) {
       return 0;
     }
 
@@ -165,11 +165,12 @@ const Dashboard = ({ classes }: IDashboardProps) => {
 
   return (
     <React.Fragment>
-      <Grid container xs={12}>
-        <Grid container xs={12} spacing={3} className={classes.container}>
-          <Grid container xs={12}>
+      <Grid container>
+        <Grid container spacing={3} className={classes.container}>
+          <Grid container>
             <Typography variant="h2">MinIO Console</Typography>
           </Grid>
+          {error !== "" && <Grid container>{error}</Grid>}
           <Grid item xs={12} md={4} lg={4}>
             <Paper className={fixedHeightPaper}>
               <Grid container direction="row" alignItems="center">

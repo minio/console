@@ -24,7 +24,14 @@ export class API {
       .set("Authorization", `Bearer ${token}`)
       .send(data)
       .then(res => res.body)
-      .catch(err => this.onError(err));
+      .catch(err => {
+        // if we get unauthorized, kick out the user
+        if (err.status === 401) {
+          storage.removeItem("token");
+          window.location.href = "/";
+        }
+        this.onError(err);
+      });
   }
 
   onError(err: any) {
@@ -38,5 +45,6 @@ export class API {
     }
   }
 }
+
 const api = new API();
 export default api;

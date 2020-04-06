@@ -38,7 +38,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import Checkbox from "@material-ui/core/Checkbox";
 import Table from "@material-ui/core/Table";
-import { ArnList, BucketEventList } from "../types";
+import { ArnList } from "../types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -155,26 +155,6 @@ class AddEvent extends React.Component<IAddEventProps, IAddEventState> {
       { label: "GET - Object accessed", value: "get" },
       { label: "DELETE - Object Deleted", value: "delete" }
     ];
-
-    const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const targetD = e.target;
-      const value = targetD.value;
-      const checked = targetD.checked;
-
-      let elements: string[] = [...selectedEvents]; // We clone the selectedGroups array
-
-      if (checked) {
-        // If the user has checked this field we need to push this to selectedGroupsList
-        elements.push(value);
-      } else {
-        // User has unchecked this field, we need to remove it from the list
-        elements = elements.filter(element => element !== value);
-      }
-
-      this.setState({ selectedEvents: selectedEvents });
-
-      return elements;
-    };
 
     const handleClick = (
       event: React.MouseEvent<unknown> | ChangeEvent<unknown>,

@@ -26,8 +26,7 @@ import {
   InputLabel,
   LinearProgress,
   MenuItem,
-  Select,
-  TextField
+  Select
 } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../../common/api";
