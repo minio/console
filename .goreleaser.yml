@@ -18,6 +18,7 @@ builds:
       - arm64
     env:
       - CGO_ENABLED=0
+    main: ./cmd/mcs/
     flags:
       - -trimpath
     ldflags:
