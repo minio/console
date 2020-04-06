@@ -35,7 +35,6 @@ import {
 import Typography from "@material-ui/core/Typography";
 import DeleteIcon from "@material-ui/icons/Delete";
 import SetAccessPolicy from "./SetAccessPolicy";
-import DeleteBucket from "../ListBuckets/DeleteBucket";
 import { MinTablePaginationActions } from "../../../../common/MinTablePaginationActions";
 import { CreateIcon } from "../../../../icons";
 import AddEvent from "./AddEvent";
@@ -130,7 +129,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
 
   fetchEvents() {
     this.setState({ loading: true }, () => {
-      const { page, rowsPerPage } = this.state;
+      const { page } = this.state;
       const { match } = this.props;
       const bucketName = match.params["bucketName"];
       api
@@ -205,7 +204,6 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       rowsPerPage,
       deleteOpen,
       addScreenOpen,
-      selectedBucket,
       selectedEvent
     } = this.state;
 

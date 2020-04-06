@@ -97,7 +97,7 @@ class DeleteEvent extends React.Component<
   }
 
   render() {
-    const { classes, deleteOpen, selectedBucket } = this.props;
+    const { classes, deleteOpen } = this.props;
     const { deleteLoading, deleteError } = this.state;
 
     return (

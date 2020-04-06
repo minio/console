@@ -40,12 +40,10 @@ import { MinTablePaginationActions } from "../../../common/MinTablePaginationAct
 import EditIcon from "@material-ui/icons/Edit";
 import Checkbox from "@material-ui/core/Checkbox";
 import { CreateIcon } from "../../../icons";
-import TextField from '@material-ui/core/TextField';
-import InputBase from '@material-ui/core/InputBase';
-import SearchIcon from '@material-ui/icons/Search';
-import InputAdornment from '@material-ui/core/InputAdornment';
+import TextField from "@material-ui/core/TextField";
+import SearchIcon from "@material-ui/icons/Search";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import PlayArrowRoundedIcon from "@material-ui/icons/PlayArrowRounded";
-
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -84,14 +82,14 @@ const styles = (theme: Theme) =>
     actionsTray: {
       textAlign: "right",
       "& button": {
-        marginLeft: 10,
-      },
+        marginLeft: 10
+      }
     },
     searchField: {
       background: "#FFFFFF",
       padding: 12,
       borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012",
+      boxShadow: "0px 3px 6px #00000012"
     }
   });
 
@@ -241,7 +239,6 @@ class Permissions extends React.Component<
 
     return (
       <React.Fragment>
-
         <AddPermission
           open={addScreenOpen}
           selectedPermission={selectedPermission}
@@ -269,7 +266,7 @@ class Permissions extends React.Component<
                   <InputAdornment position="start">
                     <SearchIcon />
                   </InputAdornment>
-                ),
+                )
               }}
             />
             <Button
@@ -324,7 +321,7 @@ class Permissions extends React.Component<
                           <Checkbox
                             value="secondary"
                             color="primary"
-                            inputProps={{ 'aria-label': 'secondary checkbox' }}
+                            inputProps={{ "aria-label": "secondary checkbox" }}
                           />
                         </TableCell>
                         <TableCell className={classes.wrapCell}>

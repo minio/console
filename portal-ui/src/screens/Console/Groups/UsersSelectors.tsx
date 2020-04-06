@@ -163,6 +163,7 @@ const UsersSelectors = ({
   return (
     <React.Fragment>
       <Title>Members</Title>
+      {error !== "" ? <div>{error}</div> : <React.Fragment />}
       <Grid item xs={12}>
         <Paper className={classes.paper}>
           {loading && <LinearProgress />}

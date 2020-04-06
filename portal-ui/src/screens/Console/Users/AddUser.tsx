@@ -16,7 +16,6 @@
 
 import React from "react";
 import Grid from "@material-ui/core/Grid";
-import Title from "../../../common/Title";
 import Typography from "@material-ui/core/Typography";
 import {
   Button,
@@ -87,7 +86,7 @@ class AddUserContent extends React.Component<
 
   saveRecord(event: React.FormEvent) {
     event.preventDefault();
-    const { accessKey, addLoading, secretKey, selectedGroups } = this.state;
+    const { accessKey, addLoading, secretKey } = this.state;
     const { selectedUser } = this.props;
     if (addLoading) {
       return;
@@ -97,7 +96,7 @@ class AddUserContent extends React.Component<
         api
           .invoke("PUT", `/api/v1/users/${selectedUser.accessKey}`, {
             accessKey,
-            secretKey: secretKey != "" ? null : secretKey
+            secretKey: secretKey !== "" ? null : secretKey
           })
           .then(res => {
             this.setState(
@@ -272,6 +271,7 @@ interface IAddUserState {}
 
 class AddUser extends React.Component<IAddUserProps, IAddUserState> {
   state: IAddUserState = {};
+
   render() {
     const { open } = this.props;
     return (
