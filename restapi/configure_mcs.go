@@ -35,6 +35,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/minio/mcs/restapi/operations"
+	"github.com/unrolled/secure"
 )
 
 //go:generate swagger generate server --target ../../mcs --name Mcs --spec ../swagger.yml
@@ -122,7 +123,34 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	// serve static files
 	next := FileServerMiddleware(handler)
-	return next
+	// Secure middleware, this middleware wrap all the previous handlers and add
+	// HTTP security headers
+	secureOptions := secure.Options{
+		AllowedHosts:          getSecureAllowedHosts(),
+		AllowedHostsAreRegex:  getSecureAllowedHostsAreRegex(),
+		HostsProxyHeaders:     getSecureHostsProxyHeaders(),
+		SSLRedirect:           getSSLRedirect(),
+		SSLHost:               getSecureSSLHost(),
+		STSSeconds:            getSecureSTSSeconds(),
+		STSIncludeSubdomains:  getSecureSTSIncludeSubdomains(),
+		STSPreload:            getSecureSTSPreload(),
+		SSLTemporaryRedirect:  getSecureSSLTemporaryRedirect(),
+		SSLHostFunc:           nil,
+		ForceSTSHeader:        getSecureForceSTSHeader(),
+		FrameDeny:             getSecureFrameDeny(),
+		ContentTypeNosniff:    getSecureContentTypeNonSniff(),
+		BrowserXssFilter:      getSecureBrowserXssFilter(),
+		ContentSecurityPolicy: getSecureContentSecurityPolicy(),
+		ContentSecurityPolicyReportOnly: getSecureContentSecurityPolicyReportOnly(),
+		PublicKey:             getSecurePublicKey(),
+		ReferrerPolicy:        getSecureReferrerPolicy(),
+		FeaturePolicy:         getSecureFeaturePolicy(),
+		ExpectCTHeader:        getSecureExpectCTHeader(),
+		IsDevelopment:         !getProductionMode(),
+	}
+	secureMiddleware := secure.New(secureOptions)
+	app := secureMiddleware.Handler(next)
+	return app
 }
 
 // FileServerMiddleware serves files from the static folder
