@@ -18,56 +18,122 @@
 package main
 
 import (
-	"flag"
-	"log"
 	"os"
+	"path/filepath"
+	"sort"
 
-	"github.com/go-openapi/loads"
-	flags "github.com/jessevdk/go-flags"
-	"github.com/minio/m3/mcs/restapi"
-	"github.com/minio/m3/mcs/restapi/operations"
+	"github.com/minio/m3/mcs/pkg"
+
+	"github.com/minio/minio/pkg/console"
+	"github.com/minio/minio/pkg/trie"
+	"github.com/minio/minio/pkg/words"
+
+	"github.com/minio/cli"
 )
 
-var portFlag = flag.Int("port", 9090, "Port to run this service on")
+// Help template for m3.
+var mcsHelpTemplate = `NAME:
+  {{.Name}} - {{.Usage}}
 
-func main() {
+DESCRIPTION:
+  {{.Description}}
 
-	swaggerSpec, err := loads.Embedded(restapi.SwaggerJSON, restapi.FlatSwaggerJSON)
-	if err != nil {
-		log.Fatalln(err)
+USAGE:
+  {{.HelpName}} {{if .VisibleFlags}}[FLAGS] {{end}}COMMAND{{if .VisibleFlags}}{{end}} [ARGS...]
+
+COMMANDS:
+  {{range .VisibleCommands}}{{join .Names ", "}}{{ "\t" }}{{.Usage}}
+  {{end}}{{if .VisibleFlags}}
+FLAGS:
+  {{range .VisibleFlags}}{{.}}
+  {{end}}{{end}}
+VERSION:
+  {{.Version}}
+`
+
+var appCmds = []cli.Command{
+	serverCmd,
+	versionCmd,
+}
+
+func newApp(name string) *cli.App {
+	// Collection of m3 commands currently supported are.
+	commands := []cli.Command{}
+
+	// Collection of m3 commands currently supported in a trie tree.
+	commandsTree := trie.NewTrie()
+
+	// registerCommand registers a cli command.
+	registerCommand := func(command cli.Command) {
+		commands = append(commands, command)
+		commandsTree.Insert(command.Name)
 	}
 
-	api := operations.NewMcsAPI(swaggerSpec)
-	server := restapi.NewServer(api)
-	defer server.Shutdown()
+	// register commands
+	for _, cmd := range appCmds {
+		registerCommand(cmd)
+	}
 
-	parser := flags.NewParser(server, flags.Default)
-	parser.ShortDescription = "MinIO Console Server"
-	parser.LongDescription = swaggerSpec.Spec().Info.Description
-	server.ConfigureFlags()
-	for _, optsGroup := range api.CommandLineOptionsGroups {
-		_, err := parser.AddGroup(optsGroup.ShortDescription, optsGroup.LongDescription, optsGroup.Options)
-		if err != nil {
-			log.Fatalln(err)
+	findClosestCommands := func(command string) []string {
+		var closestCommands []string
+		for _, value := range commandsTree.PrefixMatch(command) {
+			closestCommands = append(closestCommands, value.(string))
 		}
-	}
 
-	if _, err := parser.Parse(); err != nil {
-		code := 1
-		if fe, ok := err.(*flags.Error); ok {
-			if fe.Type == flags.ErrHelp {
-				code = 0
+		sort.Strings(closestCommands)
+		// Suggest other close commands - allow missed, wrongly added and
+		// even transposed characters
+		for _, value := range commandsTree.Walk(commandsTree.Root()) {
+			if sort.SearchStrings(closestCommands, value.(string)) < len(closestCommands) {
+				continue
+			}
+			// 2 is arbitrary and represents the max
+			// allowed number of typed errors
+			if words.DamerauLevenshteinDistance(command, value.(string)) < 2 {
+				closestCommands = append(closestCommands, value.(string))
 			}
 		}
-		os.Exit(code)
-	}
-	// Parse flags
-	flag.Parse()
-	server.ConfigureAPI()
-	server.Port = *portFlag
 
-	if err := server.Serve(); err != nil {
-		log.Fatalln(err)
+		return closestCommands
 	}
 
+	cli.HelpFlag = cli.BoolFlag{
+		Name:  "help, h",
+		Usage: "show help",
+	}
+
+	app := cli.NewApp()
+	app.Name = name
+	app.Version = pkg.Version
+	app.Author = "MinIO, Inc."
+	app.Usage = "mcs COMMAND"
+	app.Description = `MinIO Console Server`
+	app.Commands = commands
+	app.HideHelpCommand = true // Hide `help, h` command, we already have `minio --help`.
+	app.CustomAppHelpTemplate = mcsHelpTemplate
+	app.CommandNotFound = func(ctx *cli.Context, command string) {
+		console.Printf("‘%s’ is not a mcs sub-command. See ‘mcs --help’.\n", command)
+		closestCommands := findClosestCommands(command)
+		if len(closestCommands) > 0 {
+			console.Println()
+			console.Println("Did you mean one of these?")
+			for _, cmd := range closestCommands {
+				console.Printf("\t‘%s’\n", cmd)
+			}
+		}
+
+		os.Exit(1)
+	}
+
+	return app
+}
+
+func main() {
+	args := os.Args
+	// Set the orchestrator app name.
+	appName := filepath.Base(args[0])
+	// Run the app - exit on error.
+	if err := newApp(appName).Run(args); err != nil {
+		os.Exit(1)
+	}
 }
