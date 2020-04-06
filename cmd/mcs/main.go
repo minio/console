@@ -58,7 +58,7 @@ var appCmds = []cli.Command{
 
 func newApp(name string) *cli.App {
 	// Collection of m3 commands currently supported are.
-	commands := []cli.Command{}
+	var commands []cli.Command
 
 	// Collection of m3 commands currently supported in a trie tree.
 	commandsTree := trie.NewTrie()

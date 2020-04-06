@@ -17,7 +17,6 @@
 package main
 
 import (
-	"flag"
 	"log"
 	"os"
 
@@ -35,10 +34,35 @@ var serverCmd = cli.Command{
 	Usage:   "starts mcs server",
 	Action:  startServer,
 	Flags: []cli.Flag{
+		cli.StringFlag{
+			Name:  "host",
+			Value: "localhost",
+			Usage: "HTTP server hostname",
+		},
 		cli.IntFlag{
 			Name:  "port",
 			Value: 9090,
-			Usage: "Server port",
+			Usage: "HTTP Server port",
+		},
+		cli.StringFlag{
+			Name:  "tls-host",
+			Value: "localhost",
+			Usage: "HTTPS server hostname",
+		},
+		cli.IntFlag{
+			Name:  "tls-port",
+			Value: 9443,
+			Usage: "HTTPS server port",
+		},
+		cli.StringFlag{
+			Name:  "tls-certificate",
+			Value: "",
+			Usage: "filename of public cert",
+		},
+		cli.StringFlag{
+			Name:  "tls-key",
+			Value: "",
+			Usage: "filename of private key",
 		},
 	},
 }
@@ -74,10 +98,28 @@ func startServer(ctx *cli.Context) error {
 		}
 		os.Exit(code)
 	}
-	// Parse flags
-	flag.Parse()
-	server.ConfigureAPI()
+
+
+
+	server.Host = ctx.String("host")
 	server.Port = ctx.Int("port")
+
+	tlsCertificatePath := ctx.String("tls-certificate")
+	tlsCertificateKeyPath := ctx.String("tls-key")
+
+	if tlsCertificatePath != "" && tlsCertificateKeyPath != "" {
+		server.TLSCertificate = flags.Filename(tlsCertificatePath)
+		server.TLSCertificateKey = flags.Filename(tlsCertificateKeyPath)
+		// If TLS certificates are provided enforce the HTTPS schema, meaning mcs will redirect
+		// plain HTTP connections to HTTPS server
+		server.EnabledListeners = []string{"http", "https"}
+		server.TLSPort = ctx.Int("tls-port")
+		server.TLSHost = ctx.String("tls-host")
+		// Need to store tls-port un config variable so secure.middleware can read from there
+		restapi.TLSPort = ctx.Int("tls-port")
+	}
+
+	server.ConfigureAPI()
 
 	if err := server.Serve(); err != nil {
 		log.Fatalln(err)
