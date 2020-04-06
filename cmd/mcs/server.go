@@ -17,7 +17,7 @@
 package main
 
 import (
-	"flag"
+	"fmt"
 	"log"
 	"os"
 
@@ -35,10 +35,35 @@ var serverCmd = cli.Command{
 	Usage:   "starts mcs server",
 	Action:  startServer,
 	Flags: []cli.Flag{
+		cli.StringFlag{
+			Name:  "host",
+			Value: restapi.GetHostname(),
+			Usage: "HTTP server hostname",
+		},
 		cli.IntFlag{
 			Name:  "port",
-			Value: 9090,
-			Usage: "Server port",
+			Value: restapi.GetPort(),
+			Usage: "HTTP Server port",
+		},
+		cli.StringFlag{
+			Name:  "tls-host",
+			Value: restapi.GetSSLHostname(),
+			Usage: "HTTPS server hostname",
+		},
+		cli.IntFlag{
+			Name:  "tls-port",
+			Value: restapi.GetSSLPort(),
+			Usage: "HTTPS server port",
+		},
+		cli.StringFlag{
+			Name:  "tls-certificate",
+			Value: "",
+			Usage: "filename of public cert",
+		},
+		cli.StringFlag{
+			Name:  "tls-key",
+			Value: "",
+			Usage: "filename of private key",
 		},
 	},
 }
@@ -74,10 +99,30 @@ func startServer(ctx *cli.Context) error {
 		}
 		os.Exit(code)
 	}
-	// Parse flags
-	flag.Parse()
-	server.ConfigureAPI()
+
+	server.Host = ctx.String("host")
 	server.Port = ctx.Int("port")
+
+	restapi.Hostname = ctx.String("host")
+	restapi.Port = fmt.Sprintf("%v",ctx.Int("port"))
+
+	tlsCertificatePath := ctx.String("tls-certificate")
+	tlsCertificateKeyPath := ctx.String("tls-key")
+
+	if tlsCertificatePath != "" && tlsCertificateKeyPath != "" {
+		server.TLSCertificate = flags.Filename(tlsCertificatePath)
+		server.TLSCertificateKey = flags.Filename(tlsCertificateKeyPath)
+		// If TLS certificates are provided enforce the HTTPS schema, meaning mcs will redirect
+		// plain HTTP connections to HTTPS server
+		server.EnabledListeners = []string{"http", "https"}
+		server.TLSPort = ctx.Int("tls-port")
+		server.TLSHost = ctx.String("tls-host")
+		// Need to store tls-port, tls-host un config variables so secure.middleware can read from there
+		restapi.TLSPort = fmt.Sprintf("%v",ctx.Int("tls-port"))
+		restapi.TLSHostname = ctx.String("tls-host")
+	}
+
+	server.ConfigureAPI()
 
 	if err := server.Serve(); err != nil {
 		log.Fatalln(err)

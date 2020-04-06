@@ -22,3 +22,7 @@ mcs
 !mcs/
 
 dist/
+
+# Ignore tls cert and key
+private.key
+public.crt
