@@ -120,6 +120,7 @@ func startServer(ctx *cli.Context) error {
 		// Need to store tls-port, tls-host un config variables so secure.middleware can read from there
 		restapi.TLSPort = fmt.Sprintf("%v",ctx.Int("tls-port"))
 		restapi.TLSHostname = ctx.String("tls-host")
+		restapi.TLSRedirect = "on"
 	}
 
 	server.ConfigureAPI()
