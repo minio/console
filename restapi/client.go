@@ -86,6 +86,7 @@ func (c minioClient) getBucketPolicy(bucketName string) (string, error) {
 // that are used within this project.
 type MCS3Client interface {
 	addNotificationConfig(arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error
+	removeNotificationConfig(arn string) *probe.Error
 }
 
 // Interface implementation
@@ -96,9 +97,14 @@ type mcS3Client struct {
 	client *mc.S3Client
 }
 
-// implements minio.ListBucketsWithContext(ctx)
+// implements S3Client.AddNotificationConfig()
 func (c mcS3Client) addNotificationConfig(arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
 	return c.client.AddNotificationConfig(arn, events, prefix, suffix, ignoreExisting)
+}
+
+// implements S3Client.RemoveNotificationConfig()
+func (c mcS3Client) removeNotificationConfig(arn string) *probe.Error {
+	return c.client.RemoveNotificationConfig(arn)
 }
 
 // newMinioClient creates a new MinIO client to talk to the server
