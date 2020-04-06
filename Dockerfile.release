@@ -1,0 +1,6 @@
+FROM scratch
+MAINTAINER MinIO Development "dev@min.io"
+EXPOSE 9090
+COPY warp /mcs
+
+ENTRYPOINT ["/mcs"]
