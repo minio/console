@@ -129,3 +129,21 @@ func getUserAddResponse(params admin_api.AddUserParams) (*models.User, error) {
 	}
 	return user, nil
 }
+
+//removeUser invokes removing an user on `MinioAdmin`, then we return the response from API
+
+func removeUser(client MinioAdmin, accessKey string) (*models.User, error) {
+	ctx := context.Background()
+
+	err := client.removeUser(ctx, accessKey)
+
+	if (err != nil) {
+		return nil, err
+	}
+
+	return accessKey, nil
+}
+
+func getRemoveUserResponse(params admin_api.RemoveUserParams) (*models.User, error){
+	return nil, nil
+}
