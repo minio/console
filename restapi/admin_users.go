@@ -134,10 +134,9 @@ func getUserAddResponse(params admin_api.AddUserParams) (*models.User, error) {
 
 func removeUser(client MinioAdmin, accessKey string) (*models.User, error) {
 	ctx := context.Background()
-
 	err := client.removeUser(ctx, accessKey)
 
-	if (err != nil) {
+	if err != nil {
 		return nil, err
 	}
 
@@ -145,5 +144,20 @@ func removeUser(client MinioAdmin, accessKey string) (*models.User, error) {
 }
 
 func getRemoveUserResponse(params admin_api.RemoveUserParams) (*models.User, error){
-	return nil, nil
+	mAdmin, err := newMAdminClient()
+	if err != nil {
+		log.Println("error creating Madmin Client:", err)
+		return nil, err
+	}
+
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := adminClient{client: mAdmin}
+
+	accessKey, err := removeUser(adminClient, params.Body.AccessKey)
+	if err != nil {
+		log.Println("error removing user:", err)
+		return nil, err
+	}
+	return accessKey, nil
 }
