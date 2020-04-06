@@ -1317,9 +1317,6 @@ func init() {
         "name"
       ],
       "properties": {
-        "access": {
-          "$ref": "#/definitions/bucketAccess"
-        },
         "name": {
           "type": "string"
         }
@@ -2855,9 +2852,6 @@ func init() {
         "name"
       ],
       "properties": {
-        "access": {
-          "$ref": "#/definitions/bucketAccess"
-        },
         "name": {
           "type": "string"
         }

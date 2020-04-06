@@ -31,7 +31,6 @@ func init() {
 	minio.MaxRetry = 1
 }
 
-
 // Define MinioClient interface with all functions to be implemented
 // by mock when testing, it should include all MinioClient respective api calls
 // that are used within this project.

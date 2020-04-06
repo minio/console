@@ -34,9 +34,6 @@ import (
 // swagger:model makeBucketRequest
 type MakeBucketRequest struct {
 
-	// access
-	Access BucketAccess `json:"access,omitempty"`
-
 	// name
 	// Required: true
 	Name *string `json:"name"`
@@ -46,10 +43,6 @@ type MakeBucketRequest struct {
 func (m *MakeBucketRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateAccess(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
@@ -57,22 +50,6 @@ func (m *MakeBucketRequest) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *MakeBucketRequest) validateAccess(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Access) { // not required
-		return nil
-	}
-
-	if err := m.Access.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("access")
-		}
-		return err
-	}
-
 	return nil
 }
 

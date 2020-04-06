@@ -112,49 +112,21 @@ func TestMakeBucket(t *testing.T) {
 	minClient := minioClientMock{}
 	function := "makeBucket()"
 	ctx := context.Background()
-	// Test-1: makeBucket() create a bucket with public access
+	// Test-1: makeBucket() create a bucket
 	// mock function response from makeBucketWithContext(ctx)
 	minioMakeBucketWithContextMock = func(ctx context.Context, bucketName, location string) error {
 		return nil
 	}
-	// mock function response from setBucketPolicyWithContext(ctx)
-	minioSetBucketPolicyWithContextMock = func(ctx context.Context, bucketName, policy string) error {
-		return nil
-	}
-	if err := makeBucket(ctx, minClient, "bucktest1", models.BucketAccessPUBLIC); err != nil {
+	if err := makeBucket(ctx, minClient, "bucktest1"); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 
-	// Test-2: makeBucket() create a bucket with private access
-	if err := makeBucket(ctx, minClient, "bucktest1", models.BucketAccessPRIVATE); err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
-	}
-
-	// Test-3: makeBucket() create a bucket with an invalid access, expected error
-	if err := makeBucket(ctx, minClient, "bucktest1", "other"); assert.Error(err) {
-		assert.Equal("bucket created but error occurred while setting policy: access: `other` not supported", err.Error())
-	}
-
-	// Test-4 makeBucket() make sure errors are handled correctly when error on MakeBucketWithContext
+	// Test-2 makeBucket() make sure errors are handled correctly when error on MakeBucketWithContext
 	minioMakeBucketWithContextMock = func(ctx context.Context, bucketName, location string) error {
 		return errors.New("error")
 	}
-	minioSetBucketPolicyWithContextMock = func(ctx context.Context, bucketName, policy string) error {
-		return nil
-	}
-	if err := makeBucket(ctx, minClient, "bucktest1", models.BucketAccessPUBLIC); assert.Error(err) {
+	if err := makeBucket(ctx, minClient, "bucktest1"); assert.Error(err) {
 		assert.Equal("error", err.Error())
-	}
-
-	// Test-5 makeBucket() make sure errors are handled correctly when error on SetBucketPolicyWithContext
-	minioMakeBucketWithContextMock = func(ctx context.Context, bucketName, location string) error {
-		return nil
-	}
-	minioSetBucketPolicyWithContextMock = func(ctx context.Context, bucketName, policy string) error {
-		return errors.New("error")
-	}
-	if err := makeBucket(ctx, minClient, "bucktest1", models.BucketAccessPUBLIC); assert.Error(err) {
-		assert.Equal("bucket created but error occurred while setting policy: error", err.Error())
 	}
 }
 

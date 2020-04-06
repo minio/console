@@ -124,13 +124,35 @@ func getListBucketsResponse() (*models.ListBucketsResponse, error) {
 }
 
 // makeBucket creates a bucket for an specific minio client
-func makeBucket(ctx context.Context, client MinioClient, bucketName string, access models.BucketAccess) error {
+func makeBucket(ctx context.Context, client MinioClient, bucketName string) error {
 	// creates a new bucket with bucketName with a context to control cancellations and timeouts.
 	if err := client.makeBucketWithContext(ctx, bucketName, "us-east-1"); err != nil {
 		return err
 	}
-	if err := setBucketAccessPolicy(ctx, client, bucketName, access); err != nil {
-		return fmt.Errorf("bucket created but error occurred while setting policy: %s", err.Error())
+	return nil
+}
+
+// getMakeBucketResponse performs makeBucket() to create a bucket with its access policy
+func getMakeBucketResponse(br *models.MakeBucketRequest) error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+	// bucket request needed to proceed
+	if br == nil {
+		log.Println("error bucket body not in request")
+		return errors.New(500, "error bucket body not in request")
+	}
+	mClient, err := newMinioClient()
+	if err != nil {
+		log.Println("error creating MinIO Client:", err)
+		return err
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+
+	if err := makeBucket(ctx, minioClient, *br.Name); err != nil {
+		log.Println("error making bucket:", err)
+		return err
 	}
 	return nil
 }
@@ -161,31 +183,6 @@ func setBucketAccessPolicy(ctx context.Context, client MinioClient, bucketName s
 		return err
 	}
 	return client.setBucketPolicyWithContext(ctx, bucketName, string(policyJSON))
-}
-
-// getMakeBucketResponse performs makeBucket() to create a bucket with its access policy
-func getMakeBucketResponse(br *models.MakeBucketRequest) error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
-	defer cancel()
-	// bucket request needed to proceed
-	if br == nil {
-		log.Println("error bucket body not in request")
-		return errors.New(500, "error bucket body not in request")
-	}
-	mClient, err := newMinioClient()
-	if err != nil {
-		log.Println("error creating MinIO Client:", err)
-		return err
-	}
-	// create a minioClient interface implementation
-	// defining the client to be used
-	minioClient := minioClient{client: mClient}
-
-	if err := makeBucket(ctx, minioClient, *br.Name, br.Access); err != nil {
-		log.Println("error making bucket:", err)
-		return err
-	}
-	return nil
 }
 
 // getBucketSetPolicyResponse calls setBucketAccessPolicy() to set a access policy to a bucket
