@@ -21,6 +21,7 @@ builds:
     main: ./cmd/mcs/
     flags:
       - -trimpath
+      - --tags=kqueue
     ldflags:
       - -s -w -X github.com/minio/mcs/pkg.ReleaseTag={{.Tag}} -X github.com/minio/warp/pkg.CommitID={{.FullCommit}} -X github.com/minio/warp/pkg.Version={{.Version}} -X github.com/minio/warp/pkg.ShortCommitID={{.ShortCommit}} -X github.com/minio/warp/pkg.ReleaseTime={{.Date}}
 archives:
@@ -68,7 +69,7 @@ dockers:
     goos: linux
     # GOARCH of the built binary that should be used.
     goarch: amd64
-    dockerfile: Dockerfile.release
+    dockerfile: Dockerfile
     image_templates:
       - "minio/mcs:{{ .Tag }}"
       - "minio/mcs:latest"

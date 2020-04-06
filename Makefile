@@ -3,7 +3,7 @@ default: mcs
 .PHONY: mcs
 mcs:
 	@echo "Building mcs binary to './mcs'"
-	@(CGO_ENABLED=0 go build --tags kqueue --ldflags "-s -w" -o mcs ./cmd/mcs)
+	@(CGO_ENABLED=0 go build --tags=kqueue --ldflags "-s -w" -o mcs ./cmd/mcs)
 
 swagger-gen:
 	@echo "Generating swagger server code from yaml"
