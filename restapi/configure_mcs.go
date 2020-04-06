@@ -24,17 +24,17 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/minio/m3/mcs/restapi/sessions"
+	"github.com/minio/mcs/restapi/sessions"
 
-	"github.com/minio/m3/mcs/models"
+	"github.com/minio/mcs/models"
 
 	assetfs "github.com/elazarl/go-bindata-assetfs"
 
-	portalUI "github.com/minio/m3/mcs/portal-ui"
+	portalUI "github.com/minio/mcs/portal-ui"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/minio/m3/mcs/restapi/operations"
+	"github.com/minio/mcs/restapi/operations"
 )
 
 //go:generate swagger generate server --target ../../mcs --name Mcs --spec ../swagger.yml

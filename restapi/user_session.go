@@ -18,9 +18,9 @@ package restapi
 
 import (
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/minio/m3/mcs/models"
-	"github.com/minio/m3/mcs/restapi/operations"
-	"github.com/minio/m3/mcs/restapi/operations/user_api"
+	"github.com/minio/mcs/models"
+	"github.com/minio/mcs/restapi/operations"
+	"github.com/minio/mcs/restapi/operations/user_api"
 )
 
 func registerSessionHandlers(api *operations.McsAPI) {

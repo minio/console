@@ -20,7 +20,7 @@ import (
 	"fmt"
 
 	"github.com/minio/cli"
-	"github.com/minio/m3/mcs/pkg"
+	"github.com/minio/mcs/pkg"
 )
 
 // starts the server
