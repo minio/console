@@ -98,9 +98,8 @@ func getSecureAllowedHosts() []string {
 	allowedHosts := env.Get(McsSecureAllowedHosts, "")
 	if allowedHosts != "" {
 		return strings.Split(allowedHosts, ",")
-	} else {
-		return []string{}
 	}
+	return []string{}
 }
 
 // AllowedHostsAreRegex determines, if the provided AllowedHosts slice contains valid regular expressions. Default is false.
@@ -119,8 +118,8 @@ func getSecureContentTypeNonSniff() bool {
 }
 
 // If BrowserXssFilter is true, adds the X-XSS-Protection header with the value `1; mode=block`. Default is true.
-func getSecureBrowserXssFilter() bool {
-	return strings.ToLower(env.Get(McsSecureBrowserXssFilter, "on")) == "on"
+func getSecureBrowserXSSFilter() bool {
+	return strings.ToLower(env.Get(McsSecureBrowserXSSFilter, "on")) == "on"
 }
 
 // ContentSecurityPolicy allows the Content-Security-Policy header value to be set with a custom value. Default is "".
@@ -140,9 +139,8 @@ func getSecureHostsProxyHeaders() []string {
 	allowedHosts := env.Get(McsSecureHostsProxyHeaders, "")
 	if allowedHosts != "" {
 		return strings.Split(allowedHosts, ",")
-	} else {
-		return []string{}
 	}
+	return []string{}
 }
 
 // If SSLRedirect is set to true, then only allow HTTPS requests. Default is true.
