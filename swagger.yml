@@ -228,6 +228,24 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+  /users/{name}:
+    delete:
+      summary: Remove user
+      operationId: RemoveUser
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
   /groups:
     get:
       summary: List Groups

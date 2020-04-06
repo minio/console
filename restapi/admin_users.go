@@ -46,6 +46,14 @@ func registerUsersHandlers(api *operations.McsAPI) {
 		}
 		return admin_api.NewAddUserCreated().WithPayload(userResponse)
 	})
+	// Remove User
+	api.AdminAPIRemoveUserHandler = admin_api.RemoveUserHandlerFunc(func(params admin_api.RemoveUserParams, principal *models.Principal) middleware.Responder {
+		_, err := getRemoveUserResponse(params)
+		if err != nil {
+			return admin_api.NewRemoveUserDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
+		return admin_api.NewRemoveUserNoContent()
+	})
 }
 
 func listUsers(client MinioAdmin) ([]*models.User, error) {
@@ -131,16 +139,12 @@ func getUserAddResponse(params admin_api.AddUserParams) (*models.User, error) {
 }
 
 //removeUser invokes removing an user on `MinioAdmin`, then we return the response from API
-
 func removeUser(client MinioAdmin, accessKey string) (*models.User, error) {
 	ctx := context.Background()
-	err := client.removeUser(ctx, accessKey)
-
-	if err != nil {
+	if err := client.removeUser(ctx, accessKey); err != nil {
 		return nil, err
 	}
-
-	return accessKey, nil
+	return nil, nil
 }
 
 func getRemoveUserResponse(params admin_api.RemoveUserParams) (*models.User, error){
@@ -154,7 +158,7 @@ func getRemoveUserResponse(params admin_api.RemoveUserParams) (*models.User, err
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
 
-	accessKey, err := removeUser(adminClient, params.Body.AccessKey)
+	accessKey, err := removeUser(adminClient, params.Name)
 	if err != nil {
 		log.Println("error removing user:", err)
 		return nil, err
