@@ -18,12 +18,13 @@ package restapi
 
 import (
 	"context"
-	mcCmd "github.com/minio/mc/cmd"
-	"github.com/minio/mc/pkg/probe"
-	"github.com/minio/minio/pkg/madmin"
 	"io"
 	"path/filepath"
 	"runtime"
+
+	mcCmd "github.com/minio/mc/cmd"
+	"github.com/minio/mc/pkg/probe"
+	"github.com/minio/minio/pkg/madmin"
 )
 
 const globalAppName = "mcs"
