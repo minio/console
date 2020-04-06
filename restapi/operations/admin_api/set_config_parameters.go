@@ -31,7 +31,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/minio/m3/mcs/models"
+	"github.com/minio/mcs/models"
 )
 
 // NewSetConfigParams creates a new SetConfigParams object

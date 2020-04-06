@@ -27,7 +27,7 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"github.com/minio/m3/mcs/models"
+	"github.com/minio/mcs/models"
 )
 
 // DeleteBucketHandlerFunc turns a function with the right signature into a delete bucket handler

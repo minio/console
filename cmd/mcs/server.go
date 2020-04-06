@@ -24,8 +24,8 @@ import (
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
 	"github.com/minio/cli"
-	"github.com/minio/m3/mcs/restapi"
-	"github.com/minio/m3/mcs/restapi/operations"
+	"github.com/minio/mcs/restapi"
+	"github.com/minio/mcs/restapi/operations"
 )
 
 // starts the server

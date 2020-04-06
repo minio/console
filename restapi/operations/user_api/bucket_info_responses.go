@@ -27,7 +27,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"github.com/minio/m3/mcs/models"
+	"github.com/minio/mcs/models"
 )
 
 // BucketInfoOKCode is the HTTP code returned for type BucketInfoOK

@@ -27,7 +27,7 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"github.com/minio/m3/mcs/models"
+	"github.com/minio/mcs/models"
 )
 
 // ListGroupsHandlerFunc turns a function with the right signature into a list groups handler

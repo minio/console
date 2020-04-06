@@ -30,7 +30,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 
-	"github.com/minio/m3/mcs/models"
+	"github.com/minio/mcs/models"
 )
 
 // NewAddPolicyParams creates a new AddPolicyParams object

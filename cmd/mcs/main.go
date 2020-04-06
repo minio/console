@@ -22,7 +22,7 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/minio/m3/mcs/pkg"
+	"github.com/minio/mcs/pkg"
 
 	"github.com/minio/minio/pkg/console"
 	"github.com/minio/minio/pkg/trie"
