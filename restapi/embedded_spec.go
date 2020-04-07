@@ -1039,13 +1039,14 @@ func init() {
     "addPolicyRequest": {
       "type": "object",
       "required": [
-        "name"
+        "name",
+        "policy"
       ],
       "properties": {
-        "definition": {
+        "name": {
           "type": "string"
         },
-        "name": {
+        "policy": {
           "type": "string"
         }
       }
@@ -1393,13 +1394,7 @@ func init() {
         "name": {
           "type": "string"
         },
-        "statements": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/statement"
-          }
-        },
-        "version": {
+        "policy": {
           "type": "string"
         }
       }
@@ -1521,26 +1516,6 @@ func init() {
           "type": "integer",
           "format": "int64",
           "title": "number of start results"
-        }
-      }
-    },
-    "statement": {
-      "type": "object",
-      "properties": {
-        "actions": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "effect": {
-          "type": "string"
-        },
-        "resources": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     },
@@ -2602,13 +2577,14 @@ func init() {
     "addPolicyRequest": {
       "type": "object",
       "required": [
-        "name"
+        "name",
+        "policy"
       ],
       "properties": {
-        "definition": {
+        "name": {
           "type": "string"
         },
-        "name": {
+        "policy": {
           "type": "string"
         }
       }
@@ -2956,13 +2932,7 @@ func init() {
         "name": {
           "type": "string"
         },
-        "statements": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/statement"
-          }
-        },
-        "version": {
+        "policy": {
           "type": "string"
         }
       }
@@ -3084,26 +3054,6 @@ func init() {
           "type": "integer",
           "format": "int64",
           "title": "number of start results"
-        }
-      }
-    },
-    "statement": {
-      "type": "object",
-      "properties": {
-        "actions": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "effect": {
-          "type": "string"
-        },
-        "resources": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     },

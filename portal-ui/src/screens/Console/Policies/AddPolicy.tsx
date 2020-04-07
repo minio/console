@@ -81,7 +81,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
       api
         .invoke("POST", "/api/v1/policies", {
           name: policyName,
-          definition: policyDefinition
+          policy: policyDefinition
         })
         .then(res => {
           this.setState(
@@ -143,6 +143,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
               )}
               <Grid item xs={12}>
                 <TextField
+                  defaultValue={policyEdit ? policyEdit.name : "" }
                   id="standard-basic"
                   fullWidth
                   label="Policy Name"
@@ -157,10 +158,9 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
               <Grid item xs={12}>
                 <CodeMirror
                   className={classes.codeMirror}
-                  value={policyEdit ? JSON.stringify(policyEdit, null, 4) : ""}
+                  value={policyEdit ? JSON.stringify(JSON.parse(policyEdit.policy), null, 4) : ""}
                   options={{
                     mode: "javascript",
-                    theme: "material",
                     lineNumbers: true
                   }}
                   onChange={(editor, data, value) => {

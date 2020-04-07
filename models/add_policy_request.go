@@ -34,12 +34,13 @@ import (
 // swagger:model addPolicyRequest
 type AddPolicyRequest struct {
 
-	// definition
-	Definition string `json:"definition,omitempty"`
-
 	// name
 	// Required: true
 	Name *string `json:"name"`
+
+	// policy
+	// Required: true
+	Policy *string `json:"policy"`
 }
 
 // Validate validates this add policy request
@@ -47,6 +48,10 @@ func (m *AddPolicyRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePolicy(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -59,6 +64,15 @@ func (m *AddPolicyRequest) Validate(formats strfmt.Registry) error {
 func (m *AddPolicyRequest) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *AddPolicyRequest) validatePolicy(formats strfmt.Registry) error {
+
+	if err := validate.Required("policy", "body", m.Policy); err != nil {
 		return err
 	}
 

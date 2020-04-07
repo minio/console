@@ -780,30 +780,13 @@ definitions:
         type: integer
         format: int64
         title: total number of groups
-  statement:
-    type: object
-    properties:
-      effect:
-        type: string
-      actions:
-        type: array
-        items:
-          type: string
-      resources:
-        type: array
-        items:
-          type: string
   policy:
     type: object
     properties:
       name:
         type: string
-      version:
+      policy:
         type: string
-      statements:
-        type: array
-        items:
-          $ref: "#/definitions/statement"
   policyEntity:
     type: string
     enum:
@@ -824,10 +807,11 @@ definitions:
     type: object
     required:
       - name
+      - policy
     properties:
       name:
         type: string
-      definition:
+      policy:
         type: string
   listPoliciesResponse:
     type: object
