@@ -1049,6 +1049,45 @@ func init() {
           }
         }
       }
+    },
+    "/users/{name}/groups": {
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Update Groups for a user",
+        "operationId": "UpdateUserGroups",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateUserGroups"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/group"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -1568,6 +1607,20 @@ func init() {
         },
         "status": {
           "type": "string"
+        }
+      }
+    },
+    "updateUserGroups": {
+      "type": "object",
+      "required": [
+        "groups"
+      ],
+      "properties": {
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -2621,6 +2674,45 @@ func init() {
           }
         }
       }
+    },
+    "/users/{name}/groups": {
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Update Groups for a user",
+        "operationId": "UpdateUserGroups",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateUserGroups"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/group"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -3140,6 +3232,20 @@ func init() {
         },
         "status": {
           "type": "string"
+        }
+      }
+    },
+    "updateUserGroups": {
+      "type": "object",
+      "required": [
+        "groups"
+      ],
+      "properties": {
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

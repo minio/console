@@ -143,7 +143,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
               )}
               <Grid item xs={12}>
                 <TextField
-                  defaultValue={policyEdit ? policyEdit.name : "" }
+                  defaultValue={policyEdit ? policyEdit.name : ""}
                   id="standard-basic"
                   fullWidth
                   label="Policy Name"
@@ -158,7 +158,11 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
               <Grid item xs={12}>
                 <CodeMirror
                   className={classes.codeMirror}
-                  value={policyEdit ? JSON.stringify(JSON.parse(policyEdit.policy), null, 4) : ""}
+                  value={
+                    policyEdit
+                      ? JSON.stringify(JSON.parse(policyEdit.policy), null, 4)
+                      : ""
+                  }
                   options={{
                     mode: "javascript",
                     lineNumbers: true
