@@ -35,30 +35,30 @@ const theme = createMuiTheme({
     }
   },
   typography: {
-    fontFamily: ["Questrial", "sans-serif"].join(','),
+    fontFamily: ["Lato", "sans-serif"].join(","),
     h1: {
       fontWeight: "bold",
-      color:"#201763"
+      color: "#201763"
     },
     h2: {
       fontWeight: "bold",
-      color:"#201763"
+      color: "#201763"
     },
     h3: {
       fontWeight: "bold",
-      color:"#201763"
+      color: "#201763"
     },
     h4: {
       fontWeight: "bold",
-      color:"#201763"
+      color: "#201763"
     },
     h5: {
       fontWeight: "bold",
-      color:"#201763"
+      color: "#201763"
     },
     h6: {
       fontWeight: "bold",
-      color:"#000000"
+      color: "#000000"
     }
   }
 });
