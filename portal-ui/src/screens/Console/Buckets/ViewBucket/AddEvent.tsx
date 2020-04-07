@@ -97,7 +97,7 @@ class AddEvent extends React.Component<IAddEventProps, IAddEventState> {
             arn: arn,
             events: selectedEvents,
             prefix: prefix,
-            sufix: suffix
+            suffix: suffix
           },
           ignoreExisting: true
         })
