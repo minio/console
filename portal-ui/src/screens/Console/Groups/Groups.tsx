@@ -137,8 +137,16 @@ const Groups = ({ classes }: IGroupsProps) => {
         api
           .invoke("GET", `/api/v1/groups?offset=${offset}&limit=${rowsPerPage}`)
           .then((res: GroupsList) => {
-            setRecords(res.groups.sort(groupsSort));
-            setTotalRecords(res.total);
+            let resGroups: string[] = [];
+            if (res.groups !== null) {
+              resGroups = res.groups.sort(groupsSort);
+            }
+            setRecords(resGroups);
+            let total = 0;
+            if (res.total !== null) {
+              total = res.total;
+            }
+            setTotalRecords(total);
             setError("");
             isLoading(false);
 
