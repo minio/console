@@ -39,14 +39,20 @@ func (mc minioClientMock) getBucketNotification(bucketName string) (bucketNotifi
 
 //// Mock mc S3Client functions ////
 var mcAddNotificationConfigMock func(arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error
+var mcRemoveNotificationConfigMock func(arn string) *probe.Error
 
 // Define a mock struct of mc S3Client interface implementation
 type s3ClientMock struct {
 }
 
-// implements mc.S3Client.AddNotificationConfigMock(ctx)
+// implements mc.S3Client.AddNotificationConfigMock()
 func (c s3ClientMock) addNotificationConfig(arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
 	return mcAddNotificationConfigMock(arn, events, prefix, suffix, ignoreExisting)
+}
+
+// implements mc.S3Client.DeleteBucketEventNotification()
+func (c s3ClientMock) removeNotificationConfig(arn string) *probe.Error {
+	return mcRemoveNotificationConfigMock(arn)
 }
 
 func TestAddBucketNotification(t *testing.T) {
@@ -88,6 +94,29 @@ func TestAddBucketNotification(t *testing.T) {
 		return probe.NewError(errors.New("error"))
 	}
 	if err := createBucketEvent(client, testArn, testNotificationEvents, testPrefix, testSuffix, testIgnoreExisting); assert.Error(err) {
+		assert.Equal("error", err.Error())
+	}
+}
+
+func TestDeleteBucketNotification(t *testing.T) {
+	assert := assert.New(t)
+	// mock minIO client
+	client := s3ClientMock{}
+	function := "deleteBucketEventNotification()"
+	// Test-1: deleteBucketEventNotification() delete a bucket event notification
+	testArn := "arn:minio:sqs::test:postgresql"
+	mcRemoveNotificationConfigMock = func(arn string) *probe.Error {
+		return nil
+	}
+	if err := deleteBucketEventNotification(client, testArn); err != nil {
+		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+	}
+
+	// Test-3 deleteBucketEventNotification() S3Client.DeleteBucketEventNotification returns an error and is handled correctly
+	mcRemoveNotificationConfigMock = func(arn string) *probe.Error {
+		return probe.NewError(errors.New("error"))
+	}
+	if err := deleteBucketEventNotification(client, testArn); assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
 }

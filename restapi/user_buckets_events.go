@@ -29,6 +29,7 @@ import (
 )
 
 func registerBucketEventsHandlers(api *operations.McsAPI) {
+	// list bucket events
 	api.UserAPIListBucketEventsHandler = user_api.ListBucketEventsHandlerFunc(func(params user_api.ListBucketEventsParams, principal *models.Principal) middleware.Responder {
 		listBucketEventsResponse, err := getListBucketEventsResponse(params)
 		if err != nil {
@@ -36,12 +37,21 @@ func registerBucketEventsHandlers(api *operations.McsAPI) {
 		}
 		return user_api.NewListBucketEventsOK().WithPayload(listBucketEventsResponse)
 	})
+	// create bucket event
 	api.UserAPICreateBucketEventHandler = user_api.CreateBucketEventHandlerFunc(func(params user_api.CreateBucketEventParams, principal *models.Principal) middleware.Responder {
 		if err := getCreateBucketEventsResponse(params.BucketName, params.Body); err != nil {
 			return user_api.NewCreateBucketEventDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return user_api.NewCreateBucketEventCreated()
 	})
+	// delete bucket event
+	api.UserAPIDeleteBucketEventHandler = user_api.DeleteBucketEventHandlerFunc(func(params user_api.DeleteBucketEventParams, principal *models.Principal) middleware.Responder {
+		if err := getDeleteBucketEventsResponse(params.BucketName, params.Name); err != nil {
+			return user_api.NewDeleteBucketEventDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
+		return user_api.NewDeleteBucketEventNoContent()
+	})
+
 }
 
 // listBucketEvents fetches a list of all events set for a bucket and serializes them for a proper output
@@ -170,15 +180,42 @@ func createBucketEvent(client MCS3Client, arn string, notificationEvents []model
 func getCreateBucketEventsResponse(bucketName string, eventReq *models.BucketEventRequest) error {
 	s3Client, err := newS3BucketClient(swag.String(bucketName))
 	if err != nil {
-		log.Println("error creating MinIO Client:", err)
+		log.Println("error creating S3Client:", err)
 		return err
 	}
-	// create a minioClient interface implementation
+	// create a mc S3Client interface implementation
 	// defining the client to be used
 	mcS3Client := mcS3Client{client: s3Client}
 	err = createBucketEvent(mcS3Client, *eventReq.Configuration.Arn, eventReq.Configuration.Events, eventReq.Configuration.Prefix, eventReq.Configuration.Suffix, eventReq.IgnoreExisting)
 	if err != nil {
 		log.Println("error creating bucket event:", err)
+		return err
+	}
+	return nil
+}
+
+// deleteBucketEventNotification calls S3Client.RemoveNotificationConfig to remove a bucket event notification
+func deleteBucketEventNotification(client MCS3Client, arn string) error {
+	perr := client.removeNotificationConfig(arn)
+	if perr != nil {
+		return perr.Cause
+	}
+	return nil
+}
+
+// getDeleteBucketEventsResponse calls deleteBucketEventNotification() to delete a bucket event notification
+func getDeleteBucketEventsResponse(bucketName string, arn string) error {
+	s3Client, err := newS3BucketClient(swag.String(bucketName))
+	if err != nil {
+		log.Println("error creating S3Client:", err)
+		return err
+	}
+	// create a mc S3Client interface implementation
+	// defining the client to be used
+	mcS3Client := mcS3Client{client: s3Client}
+	err = deleteBucketEventNotification(mcS3Client, arn)
+	if err != nil {
+		log.Println("error deleting bucket event:", err)
 		return err
 	}
 	return nil

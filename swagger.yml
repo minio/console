@@ -182,6 +182,28 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
+  /buckets/{bucket_name}/events/{name}:
+    delete:
+      summary: Delete Bucket Event
+      operationId: DeleteBucketEvent
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
   /users:
     get:
       summary: List Users
