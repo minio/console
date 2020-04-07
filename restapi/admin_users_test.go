@@ -167,4 +167,3 @@ func TestRemoveUser(t *testing.T) {
 		assert.Equal("error", err.Error())
 	}
 }
-
