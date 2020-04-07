@@ -35,9 +35,8 @@ import { AppState } from "../../../store";
 import { setMenuOpen } from "../../../actions";
 import { ThemedComponentProps } from "@material-ui/core/styles/withTheme";
 import NotFoundPage from "../../NotFoundPage";
-import BucketList from "./ListBuckets/ListBuckets";
-import ViewBucket from "./ViewBucket/ViewBucket";
 import ListBuckets from "./ListBuckets/ListBuckets";
+import ViewBucket from "./ViewBucket/ViewBucket";
 
 const styles = (theme: Theme) =>
   createStyles({

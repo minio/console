@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -34,15 +34,13 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
-import Checkbox from "@material-ui/core/Checkbox";
 import ViewIcon from "@material-ui/icons/Visibility";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { CreateIcon } from "../../../icons";
 import api from "../../../common/api";
 import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
 import { GroupsList } from "./types";
-import { groupsSort, usersSort } from "../../../utils/sortFunctions";
-import { UsersList } from "../Users/types";
+import { groupsSort } from "../../../utils/sortFunctions";
 import AddGroup from "../Groups/AddGroup";
 import DeleteGroup from "./DeleteGroup";
 
@@ -134,31 +132,30 @@ const Groups = ({ classes }: IGroupsProps) => {
 
   useEffect(() => {
     if (loading) {
+      const fetchRecords = () => {
+        const offset = page * rowsPerPage;
+        api
+          .invoke("GET", `/api/v1/groups?offset=${offset}&limit=${rowsPerPage}`)
+          .then((res: GroupsList) => {
+            setRecords(res.groups.sort(groupsSort));
+            setTotalRecords(res.total);
+            setError("");
+            isLoading(false);
+
+            // if we get 0 results, and page > 0 , go down 1 page
+            if ((!res.groups || res.groups.length === 0) && page > 0) {
+              const newPage = page - 1;
+              setPage(newPage);
+            }
+          })
+          .catch(err => {
+            setError(err);
+            isLoading(false);
+          });
+      };
       fetchRecords();
     }
-  }, [loading]);
-
-  const fetchRecords = () => {
-    const offset = page * rowsPerPage;
-    api
-      .invoke("GET", `/api/v1/groups?offset=${offset}&limit=${rowsPerPage}`)
-      .then((res: GroupsList) => {
-        setRecords(res.groups.sort(groupsSort));
-        setTotalRecords(res.total);
-        setError("");
-        isLoading(false);
-
-        // if we get 0 results, and page > 0 , go down 1 page
-        if ((!res.groups || res.groups.length === 0) && page > 0) {
-          const newPage = page - 1;
-          setPage(newPage);
-        }
-      })
-      .catch(err => {
-        setError(err);
-        isLoading(false);
-      });
-  };
+  }, [loading, page, rowsPerPage]);
 
   const closeAddModalAndRefresh = () => {
     setGroupOpen(false);
@@ -200,6 +197,7 @@ const Groups = ({ classes }: IGroupsProps) => {
         <Grid item xs={12}>
           <br />
         </Grid>
+        {error !== "" ? <Grid container>{error}</Grid> : <React.Fragment />}
         <Grid item xs={12} className={classes.actionsTray}>
           <TextField
             placeholder="Search Groups"

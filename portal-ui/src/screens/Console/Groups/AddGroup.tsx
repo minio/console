@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import {
   Button,
@@ -31,8 +31,6 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import api from "../../../common/api";
 import UsersSelectors from "./UsersSelectors";
-import { GroupsList } from "./types";
-import { groupsSort } from "../../../utils/sortFunctions";
 import Title from "../../../common/Title";
 
 interface IGroupProps {
@@ -87,70 +85,75 @@ const AddGroup = ({
 
   useEffect(() => {
     if (saving) {
+      const saveRecord = () => {
+        if (selectedGroup !== null) {
+          api
+            .invoke("PUT", `/api/v1/groups/${groupName}`, {
+              group: groupName,
+              members: selectedUsers,
+              status: groupEnabled
+            })
+            .then(res => {
+              isSaving(false);
+              setError("");
+              closeModalAndRefresh();
+            })
+            .catch(err => {
+              isSaving(false);
+              setError(err);
+            });
+        } else {
+          api
+            .invoke("POST", "/api/v1/groups", {
+              group: groupName,
+              members: selectedUsers
+            })
+            .then(res => {
+              isSaving(false);
+              setError("");
+              closeModalAndRefresh();
+            })
+            .catch(err => {
+              isSaving(false);
+              setError(err);
+            });
+        }
+      };
       saveRecord();
     }
-  }, [saving]);
+  }, [
+    saving,
+    groupName,
+    selectedUsers,
+    groupEnabled,
+    selectedGroup,
+    closeModalAndRefresh
+  ]);
 
   useEffect(() => {
     if (selectedGroup && loadingGroup) {
+      const fetchGroupInfo = () => {
+        api
+          .invoke("GET", `/api/v1/groups/${selectedGroup}`)
+          .then((res: MainGroupProps) => {
+            setGroupEnabled(res.status);
+            setGroupName(res.name);
+            setSelectedUsers(res.members);
+          })
+          .catch(err => {
+            setError(err);
+            isLoadingGroup(false);
+          });
+      };
       fetchGroupInfo();
     }
-  }, [loadingGroup]);
+  }, [loadingGroup, selectedGroup]);
 
   //Fetch Actions
   const setSaving = (event: React.FormEvent) => {
     event.preventDefault();
 
     isSaving(true);
-  };
-
-  const saveRecord = () => {
-    if (selectedGroup !== null) {
-      api
-        .invoke("PUT", `/api/v1/groups/${groupName}`, {
-          group: groupName,
-          members: selectedUsers,
-          status: groupEnabled
-        })
-        .then(res => {
-          isSaving(false);
-          setError("");
-          closeModalAndRefresh();
-        })
-        .catch(err => {
-          isSaving(false);
-          setError(err);
-        });
-    } else {
-      api
-        .invoke("POST", "/api/v1/groups", {
-          group: groupName,
-          members: selectedUsers
-        })
-        .then(res => {
-          isSaving(false);
-          setError("");
-          closeModalAndRefresh();
-        })
-        .catch(err => {
-          isSaving(false);
-          setError(err);
-        });
-    }
-  };
-
-  const fetchGroupInfo = () => {
-    api
-      .invoke("GET", `/api/v1/groups/${selectedGroup}`)
-      .then((res: MainGroupProps) => {
-        setGroupEnabled(res.status);
-        setGroupName(res.name);
-        setSelectedUsers(res.members);
-      })
-      .catch(err => {
-        setError(err);
-        isLoadingGroup(false);
-      });
   };
 
   return (
