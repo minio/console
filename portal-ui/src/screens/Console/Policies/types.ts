@@ -14,16 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface Statement {
-  effect: string;
-  actions: string[];
-  resources: string[];
-}
-
 export interface Policy {
   name: string;
-  version: string;
-  statements: Statement[];
+  policy: string;
 }
 
 export interface PolicyList {

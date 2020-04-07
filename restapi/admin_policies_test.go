@@ -70,45 +70,16 @@ func TestListPolicies(t *testing.T) {
 	}
 	assertPoliciesMap := map[string]models.Policy{
 		"readonly": {
-			Name: "readonly",
-			Statements: []*models.Statement{
-				{
-					Actions:   []string{"s3:GetBucketLocation", "s3:GetObject"},
-					Effect:    "Allow",
-					Resources: []string{"arn:aws:s3:::*"},
-				},
-			},
-			Version: "2012-10-17",
+			Name:   "readonly",
+			Policy: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"s3:GetBucketLocation\",\"s3:GetObject\"],\"Resource\":[\"arn:aws:s3:::*\"]}]}",
 		},
 		"readwrite": {
-			Name: "readwrite",
-			Statements: []*models.Statement{
-				{
-					Actions:   []string{"s3:*"},
-					Effect:    "Allow",
-					Resources: []string{"arn:aws:s3:::*"},
-				},
-			},
-			Version: "2012-10-17",
+			Name:   "readwrite",
+			Policy: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"s3:*\"],\"Resource\":[\"arn:aws:s3:::*\"]}]}",
 		},
 		"diagnostics": {
-			Name: "diagnostics",
-			Statements: []*models.Statement{
-				{
-					Actions: []string{
-						"admin:ServerInfo",
-						"admin:HardwareInfo",
-						"admin:TopLocksInfo",
-						"admin:PerfInfo",
-						"admin:Profiling",
-						"admin:ServerTrace",
-						"admin:ConsoleLog",
-					},
-					Effect:    "Allow",
-					Resources: []string{"arn:aws:s3:::*"},
-				},
-			},
-			Version: "2012-10-17",
+			Name:   "diagnostics",
+			Policy: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"admin:ServerInfo\",\"admin:HardwareInfo\",\"admin:TopLocksInfo\",\"admin:PerfInfo\",\"admin:Profiling\",\"admin:ServerTrace\",\"admin:ConsoleLog\"],\"Resource\":[\"arn:aws:s3:::*\"]}]}",
 		},
 	}
 	// mock function response from listPolicies()
@@ -128,21 +99,10 @@ func TestListPolicies(t *testing.T) {
 	// as part of each Policy
 	for _, policy := range policiesList {
 		assertPolicy := assertPoliciesMap[policy.Name]
-		// Check if policy statement has the same length as in the assertPoliciesMap
-		assert.Equal(len(policy.Statements), len(assertPolicy.Statements))
 		// Check if policy name is the same as in the assertPoliciesMap
 		assert.Equal(policy.Name, assertPolicy.Name)
-		// Check if policy version is the same as in the assertPoliciesMap
-		assert.Equal(policy.Version, assertPolicy.Version)
-		// Iterate over each policy statement
-		for i, statement := range policy.Statements {
-			// Check if each statement effect is the same as in the assertPoliciesMap statement
-			assert.Equal(statement.Effect, assertPolicy.Statements[i].Effect)
-			// Check if each statement action is the same as in the assertPoliciesMap statement
-			assert.Equal(statement.Actions, assertPolicy.Statements[i].Actions)
-			// Check if each statement resource is the same as in the assertPoliciesMap resource
-			assert.Equal(statement.Resources, assertPolicy.Statements[i].Resources)
-		}
+		// Check if policy definition is the same as in the assertPoliciesMap
+		assert.Equal(policy.Policy, assertPolicy.Policy)
 	}
 	// Test-3 : listPolicies() Return error and see that the error is handled correctly and returned
 	minioListPoliciesMock = func() (map[string][]byte, error) {
@@ -151,17 +111,6 @@ func TestListPolicies(t *testing.T) {
 	_, err = listPolicies(ctx, adminClient)
 	if assert.Error(err) {
 		assert.Equal("error", err.Error())
-	}
-	//Test-4 : listPolicies() handles malformed json
-	minioListPoliciesMock = func() (map[string][]byte, error) {
-		malformedData := map[string][]byte{
-			"malformed-policy": []byte("asdasdasdasdasd"),
-		}
-		return malformedData, nil
-	}
-	_, err = listPolicies(ctx, adminClient)
-	if assert.Error(err) {
-		assert.NotEmpty(err.Error())
 	}
 }
 
@@ -201,15 +150,8 @@ func TestAddPolicy(t *testing.T) {
 		return []byte(policyDefinition), nil
 	}
 	assertPolicy := models.Policy{
-		Name: "new-policy",
-		Statements: []*models.Statement{
-			{
-				Actions:   []string{"s3:GetBucketLocation", "s3:GetObject", "s3:ListAllMyBuckets"},
-				Effect:    "Allow",
-				Resources: []string{"arn:aws:s3:::*"},
-			},
-		},
-		Version: "2012-10-17",
+		Name:   "new-policy",
+		Policy: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"s3:GetBucketLocation\",\"s3:GetObject\",\"s3:ListAllMyBuckets\"],\"Resource\":[\"arn:aws:s3:::*\"]}]}",
 	}
 	// Test-1 : addPolicy() adds a new policy
 	function := "addPolicy()"
@@ -218,8 +160,7 @@ func TestAddPolicy(t *testing.T) {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	assert.Equal(policy.Name, assertPolicy.Name)
-	assert.Equal(policy.Version, assertPolicy.Version)
-	assert.Equal(len(policy.Statements), len(assertPolicy.Statements))
+	assert.Equal(policy.Policy, assertPolicy.Policy)
 	// Test-2 : addPolicy() got an error while adding policy
 	minioAddPolicyMock = func(name, policy string) error {
 		return errors.New("error")
@@ -236,13 +177,6 @@ func TestAddPolicy(t *testing.T) {
 	}
 	if _, err := addPolicy(ctx, adminClient, policyName, policyDefinition); assert.Error(err) {
 		assert.Equal("error", err.Error())
-	}
-	// Test-4 : addPolicy() got an error while parsing policy
-	minioGetPolicyMock = func(name string) (bytes []byte, err error) {
-		return []byte("eaeaeaeae"), nil
-	}
-	if _, err := addPolicy(ctx, adminClient, policyName, policyDefinition); assert.Error(err) {
-		assert.NotEmpty(err.Error())
 	}
 }
 
