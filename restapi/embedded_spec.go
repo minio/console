@@ -987,6 +987,34 @@ func init() {
           }
         }
       }
+    },
+    "/users/{name}": {
+      "delete": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Remove user",
+        "operationId": "RemoveUser",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -2513,6 +2541,34 @@ func init() {
             "schema": {
               "$ref": "#/definitions/user"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/users/{name}": {
+      "delete": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Remove user",
+        "operationId": "RemoveUser",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",

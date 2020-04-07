@@ -138,6 +138,9 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		AdminAPIRemovePolicyHandler: admin_api.RemovePolicyHandlerFunc(func(params admin_api.RemovePolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.RemovePolicy has not yet been implemented")
 		}),
+		AdminAPIRemoveUserHandler: admin_api.RemoveUserHandlerFunc(func(params admin_api.RemoveUserParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.RemoveUser has not yet been implemented")
+		}),
 		AdminAPIRestartServiceHandler: admin_api.RestartServiceHandlerFunc(func(params admin_api.RestartServiceParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.RestartService has not yet been implemented")
 		}),
@@ -252,6 +255,8 @@ type McsAPI struct {
 	AdminAPIRemoveGroupHandler admin_api.RemoveGroupHandler
 	// AdminAPIRemovePolicyHandler sets the operation handler for the remove policy operation
 	AdminAPIRemovePolicyHandler admin_api.RemovePolicyHandler
+	// AdminAPIRemoveUserHandler sets the operation handler for the remove user operation
+	AdminAPIRemoveUserHandler admin_api.RemoveUserHandler
 	// AdminAPIRestartServiceHandler sets the operation handler for the restart service operation
 	AdminAPIRestartServiceHandler admin_api.RestartServiceHandler
 	// UserAPISessionCheckHandler sets the operation handler for the session check operation
@@ -409,6 +414,9 @@ func (o *McsAPI) Validate() error {
 	}
 	if o.AdminAPIRemovePolicyHandler == nil {
 		unregistered = append(unregistered, "admin_api.RemovePolicyHandler")
+	}
+	if o.AdminAPIRemoveUserHandler == nil {
+		unregistered = append(unregistered, "admin_api.RemoveUserHandler")
 	}
 	if o.AdminAPIRestartServiceHandler == nil {
 		unregistered = append(unregistered, "admin_api.RestartServiceHandler")
@@ -625,6 +633,10 @@ func (o *McsAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/policies/{name}"] = admin_api.NewRemovePolicy(o.context, o.AdminAPIRemovePolicyHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/users/{name}"] = admin_api.NewRemoveUser(o.context, o.AdminAPIRemoveUserHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
