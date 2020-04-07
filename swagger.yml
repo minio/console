@@ -250,6 +250,24 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+  /users/{name}:
+    delete:
+      summary: Remove user
+      operationId: RemoveUser
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
   /groups:
     get:
       summary: List Groups
@@ -784,30 +802,13 @@ definitions:
         type: integer
         format: int64
         title: total number of groups
-  statement:
-    type: object
-    properties:
-      effect:
-        type: string
-      actions:
-        type: array
-        items:
-          type: string
-      resources:
-        type: array
-        items:
-          type: string
   policy:
     type: object
     properties:
       name:
         type: string
-      version:
+      policy:
         type: string
-      statements:
-        type: array
-        items:
-          $ref: "#/definitions/statement"
   policyEntity:
     type: string
     enum:
@@ -828,10 +829,11 @@ definitions:
     type: object
     required:
       - name
+      - policy
     properties:
       name:
         type: string
-      definition:
+      policy:
         type: string
   listPoliciesResponse:
     type: object

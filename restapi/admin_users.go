@@ -46,14 +46,21 @@ func registerUsersHandlers(api *operations.McsAPI) {
 		}
 		return admin_api.NewAddUserCreated().WithPayload(userResponse)
 	})
+	// Remove User
+	api.AdminAPIRemoveUserHandler = admin_api.RemoveUserHandlerFunc(func(params admin_api.RemoveUserParams, principal *models.Principal) middleware.Responder {
+		err := getRemoveUserResponse(params)
+		if err != nil {
+			return admin_api.NewRemoveUserDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
+		return admin_api.NewRemoveUserNoContent()
+	})
 }
 
-func listUsers(client MinioAdmin) ([]*models.User, error) {
+func listUsers(ctx context.Context, client MinioAdmin) ([]*models.User, error) {
 
 	// Get list of all users in the MinIO
 	// This call requires explicit authentication, no anonymous requests are
 	// allowed for listing users.
-	ctx := context.Background()
 	userMap, err := client.listUsers(ctx)
 	if err != nil {
 		return []*models.User{}, err
@@ -75,6 +82,7 @@ func listUsers(client MinioAdmin) ([]*models.User, error) {
 
 // getListUsersResponse performs listUsers() and serializes it to the handler's output
 func getListUsersResponse() (*models.ListUsersResponse, error) {
+	ctx := context.Background()
 	mAdmin, err := newMAdminClient()
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
@@ -84,7 +92,7 @@ func getListUsersResponse() (*models.ListUsersResponse, error) {
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
 
-	users, err := listUsers(adminClient)
+	users, err := listUsers(ctx, adminClient)
 	if err != nil {
 		log.Println("error listing users:", err)
 		return nil, err
@@ -97,9 +105,8 @@ func getListUsersResponse() (*models.ListUsersResponse, error) {
 }
 
 // addUser invokes adding a users on `MinioAdmin` and builds the response `models.User`
-func addUser(client MinioAdmin, accessKey, secretKey *string) (*models.User, error) {
+func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *string) (*models.User, error) {
 	// Calls into MinIO to add a new user if there's an error return it
-	ctx := context.Background()
 	err := client.addUser(ctx, *accessKey, *secretKey)
 	if err != nil {
 		return nil, err
@@ -113,6 +120,7 @@ func addUser(client MinioAdmin, accessKey, secretKey *string) (*models.User, err
 }
 
 func getUserAddResponse(params admin_api.AddUserParams) (*models.User, error) {
+	ctx := context.Background()
 	mAdmin, err := newMAdminClient()
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
@@ -122,10 +130,40 @@ func getUserAddResponse(params admin_api.AddUserParams) (*models.User, error) {
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
 
-	user, err := addUser(adminClient, params.Body.AccessKey, params.Body.SecretKey)
+	user, err := addUser(ctx, adminClient, params.Body.AccessKey, params.Body.SecretKey)
 	if err != nil {
 		log.Println("error adding user:", err)
 		return nil, err
 	}
 	return user, nil
+}
+
+//removeUser invokes removing an user on `MinioAdmin`, then we return the response from API
+func removeUser(ctx context.Context, client MinioAdmin, accessKey string) error {
+	if err := client.removeUser(ctx, accessKey); err != nil {
+		return err
+	}
+	return nil
+}
+
+func getRemoveUserResponse(params admin_api.RemoveUserParams) error {
+	ctx := context.Background()
+
+	mAdmin, err := newMAdminClient()
+	if err != nil {
+		log.Println("error creating Madmin Client:", err)
+		return err
+	}
+
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := adminClient{client: mAdmin}
+
+	if err := removeUser(ctx, adminClient, params.Name); err != nil {
+		log.Println("error removing user:", err)
+		return err
+	}
+
+	log.Println("User removed successfully:", params.Name)
+	return nil
 }

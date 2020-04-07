@@ -18,7 +18,6 @@ package restapi
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 
 	"github.com/go-openapi/errors"
@@ -74,39 +73,6 @@ func registersPoliciesHandler(api *operations.McsAPI) {
 	})
 }
 
-type rawStatement struct {
-	Action   []string `json:"Action"`
-	Effect   string   `json:"Effect"`
-	Resource []string `json:"Resource"`
-}
-
-type rawPolicy struct {
-	Name      string          `json:"Name"`
-	Statement []*rawStatement `json:"Statement"`
-	Version   string          `json:"Version"`
-}
-
-// parseRawPolicy() converts from *rawPolicy to *models.Policy
-// Iterates over the raw statements and copied them to models.policy
-// this is need it until fixed from minio/minio side: https://github.com/minio/minio/issues/9171
-func parseRawPolicy(rawPolicy *rawPolicy) *models.Policy {
-	var statements []*models.Statement
-	for _, rawStatement := range rawPolicy.Statement {
-		statement := &models.Statement{
-			Actions:   rawStatement.Action,
-			Effect:    rawStatement.Effect,
-			Resources: rawStatement.Resource,
-		}
-		statements = append(statements, statement)
-	}
-	policy := &models.Policy{
-		Name:       rawPolicy.Name,
-		Version:    rawPolicy.Version,
-		Statements: statements,
-	}
-	return policy
-}
-
 // listPolicies calls MinIO server to list all policy names present on the server.
 // listPolicies() converts the map[string][]byte returned by client.listPolicies()
 // to []*models.Policy by iterating over each key in policyRawMap and
@@ -118,13 +84,10 @@ func listPolicies(ctx context.Context, client MinioAdmin) ([]*models.Policy, err
 		return nil, err
 	}
 	for name, policyRaw := range policyRawMap {
-		var rawPolicy *rawPolicy
-		if err := json.Unmarshal(policyRaw, &rawPolicy); err != nil {
-			return nil, err
-		}
-		policy := parseRawPolicy(rawPolicy)
-		policy.Name = name
-		policies = append(policies, policy)
+		policies = append(policies, &models.Policy{
+			Name:   name,
+			Policy: string(policyRaw),
+		})
 	}
 	return policies, nil
 }
@@ -217,7 +180,7 @@ func getAddPolicyResponse(params *models.AddPolicyRequest) (*models.Policy, erro
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
-	policy, err := addPolicy(ctx, adminClient, *params.Name, params.Definition)
+	policy, err := addPolicy(ctx, adminClient, *params.Name, *params.Policy)
 	if err != nil {
 		log.Println("error adding policy")
 		return nil, err
@@ -226,21 +189,19 @@ func getAddPolicyResponse(params *models.AddPolicyRequest) (*models.Policy, erro
 }
 
 // policyInfo calls MinIO server to retrieve information of a canned policy.
-// policyInfo() takes a policy name, obtains an []byte (represents a string in JSON format)
-// from the MinIO server and then convert it to *models.Policy , in the future this will change
+// policyInfo() takes a policy name, obtains the []byte (represents a string in JSON format)
+// and return it as *models.Policy , in the future this will change
 // to a Policy struct{} - https://github.com/minio/minio/issues/9171
 func policyInfo(ctx context.Context, client MinioAdmin, name string) (*models.Policy, error) {
 	policyRaw, err := client.getPolicy(ctx, name)
 	if err != nil {
 		return nil, err
 	}
-	var rawPolicy *rawPolicy
-	if err := json.Unmarshal(policyRaw, &rawPolicy); err != nil {
-		return nil, err
+	policy := &models.Policy{
+		Name:   name,
+		Policy: string(policyRaw),
 	}
-	policyObject := parseRawPolicy(rawPolicy)
-	policyObject.Name = name
-	return policyObject, nil
+	return policy, nil
 }
 
 // getPolicyInfoResponse performs policyInfo() and serializes it to the handler's output
