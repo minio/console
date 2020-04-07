@@ -45,6 +45,12 @@ func GetInstance() *Singleton {
 	return instance
 }
 
+// The delete built-in function deletes the element with the specified key (m[key]) from the map.
+// If m is nil or there is no such element, delete is a no-op. https://golang.org/pkg/builtin/#delete
+func (s *Singleton) DeleteSession(sessionID string) {
+	delete(s.sessions, sessionID)
+}
+
 func (s *Singleton) NewSession(cfg *mcCmd.Config) string {
 	// genereate random session id
 	sessionID := RandomCharString(64)

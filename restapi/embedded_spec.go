@@ -691,6 +691,26 @@ func init() {
         }
       }
     },
+    "/logout": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Logout from mcs.",
+        "operationId": "Logout",
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/policies": {
       "get": {
         "tags": [
@@ -2253,6 +2273,26 @@ func init() {
             "schema": {
               "$ref": "#/definitions/loginResponse"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/logout": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Logout from mcs.",
+        "operationId": "Logout",
+        "responses": {
+          "200": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
