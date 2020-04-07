@@ -145,7 +145,6 @@ class SetAccessPolicy extends React.Component<
                   >
                     <MenuItem value="PRIVATE">Private</MenuItem>
                     <MenuItem value="PUBLIC">Public</MenuItem>
-                    <MenuItem value="CUSTOM">Custom</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
