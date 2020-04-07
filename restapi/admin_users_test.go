@@ -51,6 +51,7 @@ func (ac adminClientMock) removeUser(ctx context.Context, accessKey string) erro
 func TestListUsers(t *testing.T) {
 	assert := asrt.New(t)
 	adminClient := adminClientMock{}
+	ctx := context.Background()
 	// Test-1 : listUsers() Get response from minio client with two users and return the same number on listUsers()
 	// mock minIO client
 	mockUserMap := map[string]madmin.UserInfo{
@@ -75,7 +76,7 @@ func TestListUsers(t *testing.T) {
 	// get list users response this response should have Name, CreationDate, Size and Access
 	// as part of of each user
 	function := "listUsers()"
-	userMap, err := listUsers(adminClient)
+	userMap, err := listUsers(ctx, adminClient)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -93,7 +94,7 @@ func TestListUsers(t *testing.T) {
 	minioListUsersMock = func() (map[string]madmin.UserInfo, error) {
 		return nil, errors.New("error")
 	}
-	_, err = listUsers(adminClient)
+	_, err = listUsers(ctx, adminClient)
 	if assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
@@ -102,7 +103,7 @@ func TestListUsers(t *testing.T) {
 func TestAddUser(t *testing.T) {
 	assert := asrt.New(t)
 	adminClient := adminClientMock{}
-
+	ctx := context.Background()
 	// Test-1: valid case of adding a user with a proper access key
 	accessKey := "ABCDEFGHI"
 	secretKey := "ABCDEFGHIABCDEFGHI"
@@ -113,7 +114,7 @@ func TestAddUser(t *testing.T) {
 	}
 	// adds a valid user to MinIO
 	function := "addUser()"
-	user, err := addUser(adminClient, &accessKey, &secretKey)
+	user, err := addUser(ctx, adminClient, &accessKey, &secretKey)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -130,7 +131,7 @@ func TestAddUser(t *testing.T) {
 		return errors.New("error")
 	}
 
-	user, err = addUser(adminClient, &accessKey, &secretKey)
+	user, err = addUser(ctx, adminClient, &accessKey, &secretKey)
 
 	// no error should have been returned
 	assert.Nil(user, "User is not null")
@@ -145,6 +146,7 @@ func TestRemoveUser(t *testing.T) {
 	assert := asrt.New(t)
 	// mock minIO client
 	adminClient := adminClientMock{}
+	ctx := context.Background()
 	function := "removeUser()"
 
 	// Test-1: removeUser() delete a user
@@ -153,7 +155,7 @@ func TestRemoveUser(t *testing.T) {
 		return nil
 	}
 
-	if err := removeUser(adminClient, "ABCDEFGHI"); err != nil {
+	if err := removeUser(ctx, adminClient, "ABCDEFGHI"); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 
@@ -163,7 +165,7 @@ func TestRemoveUser(t *testing.T) {
 		return errors.New("error")
 	}
 
-	if err := removeUser(adminClient, "notexistentuser"); assert.Error(err) {
+	if err := removeUser(ctx, adminClient, "notexistentuser"); assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
 }
