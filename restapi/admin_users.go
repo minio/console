@@ -48,7 +48,7 @@ func registerUsersHandlers(api *operations.McsAPI) {
 	})
 	// Remove User
 	api.AdminAPIRemoveUserHandler = admin_api.RemoveUserHandlerFunc(func(params admin_api.RemoveUserParams, principal *models.Principal) middleware.Responder {
-		_, err := getRemoveUserResponse(params)
+		err := getRemoveUserResponse(params)
 		if err != nil {
 			return admin_api.NewRemoveUserDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
@@ -139,29 +139,30 @@ func getUserAddResponse(params admin_api.AddUserParams) (*models.User, error) {
 }
 
 //removeUser invokes removing an user on `MinioAdmin`, then we return the response from API
-func removeUser(client MinioAdmin, accessKey string) (*models.User, error) {
+func removeUser(client MinioAdmin, accessKey string) error {
 	ctx := context.Background()
 	if err := client.removeUser(ctx, accessKey); err != nil {
-		return nil, err
+		return err
 	}
-	return nil, nil
+	return nil
 }
 
-func getRemoveUserResponse(params admin_api.RemoveUserParams) (*models.User, error){
+func getRemoveUserResponse(params admin_api.RemoveUserParams) error {
 	mAdmin, err := newMAdminClient()
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
-		return nil, err
+		return err
 	}
 
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
 
-	accessKey, err := removeUser(adminClient, params.Name)
-	if err != nil {
+	if err := removeUser(adminClient, params.Name); err != nil {
 		log.Println("error removing user:", err)
-		return nil, err
+		return err
 	}
-	return accessKey, nil
+
+	log.Println("User removed successfully:", params.Name)
+	return nil
 }

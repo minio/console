@@ -31,6 +31,7 @@ import (
 // assigning mock at runtime instead of compile time
 var minioListUsersMock func() (map[string]madmin.UserInfo, error)
 var minioAddUserMock func(accessKey, secreyKey string) error
+var minioRemoveUserMock func(accessKey string) error
 
 // mock function of listUsers()
 func (ac adminClientMock) listUsers(ctx context.Context) (map[string]madmin.UserInfo, error) {
@@ -40,6 +41,11 @@ func (ac adminClientMock) listUsers(ctx context.Context) (map[string]madmin.User
 // mock function of addUser()
 func (ac adminClientMock) addUser(ctx context.Context, accessKey, secretKey string) error {
 	return minioAddUserMock(accessKey, secretKey)
+}
+
+// mock function of removeUser()
+func (ac adminClientMock) removeUser(ctx context.Context, accessKey string) error {
+	return minioRemoveUserMock(accessKey)
 }
 
 func TestListUsers(t *testing.T) {
@@ -134,3 +140,31 @@ func TestAddUser(t *testing.T) {
 		assert.Equal("error", err.Error())
 	}
 }
+
+func TestRemoveUser(t *testing.T) {
+	assert := asrt.New(t)
+	// mock minIO client
+	adminClient := adminClientMock{}
+	function := "removeUser()"
+
+	// Test-1: removeUser() delete a user
+	// mock function response from removeUser(accessKey)
+	minioRemoveUserMock = func(accessKey string) error {
+		return nil
+	}
+
+	if err := removeUser(adminClient, "ABCDEFGHI"); err != nil {
+		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+	}
+
+	// Test-2: removeUser() make sure errors are handled correctly when error on DeleteUser()
+	// mock function response from removeUser(accessKey)
+	minioRemoveUserMock = func(accessKey string) error {
+		return errors.New("error")
+	}
+
+	if err := removeUser(adminClient, "notexistentuser"); assert.Error(err) {
+		assert.Equal("error", err.Error())
+	}
+}
+
