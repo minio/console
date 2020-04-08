@@ -183,8 +183,8 @@ func getRemoveUserResponse(params admin_api.RemoveUserParams) error {
 // then we add/delete the user to the specified groups and return the response to the client
 
 func updateUserGroups(ctx context.Context, client MinioAdmin, user string, groupsToAssign []string) (*models.User, error) {
-	parallelUserUpdate := func(groupName string, originGroups []string) chan interface{} {
-		chProcess := make(chan interface{})
+	parallelUserUpdate := func(groupName string, originGroups []string) chan bool {
+		chProcess := make(chan bool)
 
 		go func() bool {
 			defer close(chProcess)
@@ -194,6 +194,8 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 			isInOriginGroups := IsElementInArray(originGroups, groupName)
 
 			if isGroupPersistent && isInOriginGroups { // Group is already assigned and doesn't need to be updated
+				chProcess <- true
+
 				return true
 			}
 
@@ -215,9 +217,12 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 			err := client.updateGroupMembers(ctx, gAddRemove)
 			if err != nil {
 				log.Println("Error updating", groupName, err)
+
+				chProcess <- false
 				return false
 			}
 
+			chProcess <- true
 			return true
 		}()
 
@@ -234,7 +239,7 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 	memberOf := userInfoOr.MemberOf
 	mergedGroupArray := UniqueKeys(append(memberOf, groupsToAssign...))
 
-	var listOfUpdates []chan interface{}
+	var listOfUpdates []chan bool
 
 	for _, groupN := range mergedGroupArray {
 		proc := parallelUserUpdate(groupN, memberOf)
@@ -244,9 +249,9 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 	channelHasError := false
 
 	for _, chanRet := range listOfUpdates {
-		errorRet := <-chanRet
+		success := <-chanRet
 
-		if errorRet != nil {
+		if !success {
 			channelHasError = true
 		}
 	}
