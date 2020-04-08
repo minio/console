@@ -24,10 +24,10 @@ import (
 func TestDifferenceArrays(t *testing.T) {
 	assert := assert.New(t)
 
-	exampleArrayAMock := []string {"a", "b", "c"}
-	exampleArrayBMock := []string {"b", "d"}
-	resultABArrayMock := []string {"a", "c"}
-	resultBAArrayMock := []string {"d"}
+	exampleArrayAMock := []string{"a", "b", "c"}
+	exampleArrayBMock := []string{"b", "d"}
+	resultABArrayMock := []string{"a", "c"}
+	resultBAArrayMock := []string{"d"}
 
 	// Test-1: test DifferenceArrays() with array a vs array b
 	diffArray := DifferenceArrays(exampleArrayAMock, exampleArrayBMock)
@@ -41,7 +41,7 @@ func TestDifferenceArrays(t *testing.T) {
 func TestIsElementInArray(t *testing.T) {
 	assert := assert.New(t)
 
-	exampleElementsArray := []string {"c", "a", "d", "b"}
+	exampleElementsArray := []string{"c", "a", "d", "b"}
 
 	// Test-1: test IsElementInArray() with element that is in the list
 	responseArray := IsElementInArray(exampleElementsArray, "a")
@@ -55,11 +55,10 @@ func TestIsElementInArray(t *testing.T) {
 func TestUniqueKeys(t *testing.T) {
 	assert := assert.New(t)
 
-	exampleMixedArray := []string {"a", "b", "c", "e", "d", "b", "c", "h", "f", "g"}
-	exampleUniqueArray := []string {"a", "b", "c", "e", "d", "h", "f", "g"}
+	exampleMixedArray := []string{"a", "b", "c", "e", "d", "b", "c", "h", "f", "g"}
+	exampleUniqueArray := []string{"a", "b", "c", "e", "d", "h", "f", "g"}
 
 	// Test-1 test UniqueKeys returns an array with unique elements
 	responseArray := UniqueKeys(exampleMixedArray)
 	assert.ElementsMatchf(responseArray, exampleUniqueArray, "returned array doesn't contain the correct elements %s")
 }
-
