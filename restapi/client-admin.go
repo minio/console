@@ -58,6 +58,7 @@ type MinioAdmin interface {
 	listUsers(ctx context.Context) (map[string]madmin.UserInfo, error)
 	addUser(ctx context.Context, acessKey, SecretKey string) error
 	removeUser(ctx context.Context, accessKey string) error
+	getUserInfo(ctx context.Context, accessKey string) (madmin.UserInfo, error)
 	listGroups(ctx context.Context) ([]string, error)
 	updateGroupMembers(ctx context.Context, greq madmin.GroupAddRemove) error
 	getGroupDescription(ctx context.Context, group string) (*madmin.GroupDesc, error)
@@ -97,6 +98,11 @@ func (ac adminClient) addUser(ctx context.Context, acessKey, secretKey string) e
 // implements madmin.RemoveUser()
 func (ac adminClient) removeUser(ctx context.Context, accessKey string) error {
 	return ac.client.RemoveUser(ctx, accessKey)
+}
+
+//implements madmin.GetUserInfo()
+func (ac adminClient) getUserInfo(ctx context.Context, accessKey string) (madmin.UserInfo, error) {
+	return ac.client.GetUserInfo(ctx, accessKey)
 }
 
 // implements madmin.ListGroups()

@@ -18,6 +18,8 @@ package restapi
 
 import (
 	"context"
+	"errors"
+	"github.com/minio/minio/pkg/madmin"
 	"log"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -166,4 +168,106 @@ func getRemoveUserResponse(params admin_api.RemoveUserParams) error {
 
 	log.Println("User removed successfully:", params.Name)
 	return nil
+}
+
+// updateUserGroups invokes getGroupDescription() to get the current users in the specified group on `MinioAdmin`,
+// then we add/delete the user to the specified groups and return the response to the client
+
+func updateUserGroups(ctx context.Context, client MinioAdmin, user string, groupsToAssign []string) (madmin.UserInfo, error) {
+	parallelUserUpdate := func(groupName string) chan interface{} {
+		chProcess := make(chan interface{})
+
+		go func() bool {
+			defer close(chProcess)
+
+			groupDesc, err := client.getGroupDescription(ctx, groupName)
+
+			if err != nil {
+				return false
+			}
+
+			isUserInOriginGroup := groupDesc.Members.contains(user)
+			isUserInNewGroups := groupsToAssign.contains(user)
+			isRemove := false // User is added by default
+
+			// User is deleted from the group
+			if isUserInOriginGroup && !isUserInNewGroups {
+				isRemove = true
+			}
+
+			if isUserInOriginGroup || isUserInNewGroups {
+				userToAddRemove := []string{user}
+
+				gAddRemove := madmin.GroupAddRemove{
+					Group:    groupName,
+					Members:  userToAddRemove,
+					IsRemove: isRemove,
+				}
+				err := client.updateGroupMembers(ctx, gAddRemove)
+				if err != nil {
+					log.Println("Error updating", groupName, err)
+					return false
+				}
+			}
+
+			return true
+		}()
+
+		return chProcess
+	}
+
+	var listOfUpdates []chan interface{}
+
+	for _, groupN := range groupsToAssign {
+		proc := parallelUserUpdate(groupN)
+		listOfUpdates = append(listOfUpdates, proc)
+	}
+
+	channelHasError := false
+
+	for _, chanRet := range listOfUpdates {
+		errorRet := <-chanRet
+
+		if errorRet != nil {
+			channelHasError = true
+		}
+	}
+
+	if channelHasError {
+		errRt := errors.New("There was an error updating the groups")
+		return nil, errRt
+	}
+
+	userInfo, err := client.getUserInfo(ctx, user)
+
+	if err != nil {
+		log.Println("error getting user:", err)
+		return nil, err
+	}
+
+	return userInfo, nil
+}
+
+func getUpdateUserGroupsResponse(params admin_api.UpdateUserGroupsParams) (madmin.UserInfo, error) {
+	ctx := context.Background()
+
+	mAdmin, err := newMAdminClient()
+	if err != nil {
+		log.Println("error creating Madmin Client:", err)
+		return nil, err
+	}
+
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := adminClient{client: mAdmin}
+
+	user, err := updateUserGroups(ctx, adminClient, params.Name, params.Body.groups)
+
+	if err != nil {
+		log.Println("error removing user:", err)
+		return nil, err
+	}
+
+	log.Println("User removed successfully:", params.Name)
+	return user, nil
 }
