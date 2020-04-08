@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Route, Router, Switch } from "react-router-dom";
+import { Redirect, Route, Router, Switch } from "react-router-dom";
 import history from "./history";
 import Login from "./screens/LoginPage";
 import Console from "./screens/Console/Console";
@@ -64,7 +64,7 @@ class Routes extends React.Component<RoutesProps> {
           ) : (
             <Switch>
               <Route exact path="/" component={Login} />
-              <Route component={NotFoundPage} />
+              <Redirect to="/" />
             </Switch>
           )}
         </Switch>
