@@ -34,7 +34,7 @@ func DifferenceArrays(a, b []string) []string {
 }
 
 // IsElementInSlice returns true if the string belongs to the slice
-func IsElementInSlice(a []string, b string) bool {
+func IsElementInArray(a []string, b string) bool {
 	sort.Strings(a)
 
 	for _, e := range a {
@@ -44,4 +44,17 @@ func IsElementInSlice(a []string, b string) bool {
 	}
 
 	return false
+}
+
+// UniqueKeys returns an array without duplicated keys
+func UniqueKeys(a []string) []string {
+	keys := make(map[string]bool)
+	list := []string{}
+	for _, entry := range a {
+		if _, value := keys[entry]; !value {
+			keys[entry] = true
+			list = append(list, entry)
+		}
+	}
+	return list
 }

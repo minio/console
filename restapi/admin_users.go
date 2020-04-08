@@ -183,40 +183,41 @@ func getRemoveUserResponse(params admin_api.RemoveUserParams) error {
 // then we add/delete the user to the specified groups and return the response to the client
 
 func updateUserGroups(ctx context.Context, client MinioAdmin, user string, groupsToAssign []string) (*models.User, error) {
-	parallelUserUpdate := func(groupName string) chan interface{} {
+	parallelUserUpdate := func(groupName string, originGroups []string) chan interface{} {
 		chProcess := make(chan interface{})
 
 		go func() bool {
 			defer close(chProcess)
 
-			groupDesc, err := client.getGroupDescription(ctx, groupName)
+			//Compare if groupName is in the arrays
+			isGroupPersistent := IsElementInArray(groupsToAssign, groupName)
+			isInOriginGroups := IsElementInArray(originGroups, groupName)
 
-			if err != nil {
-				return false
+			if isGroupPersistent && isInOriginGroups { // Group is already assigned and doesn't need to be updated
+				return true
 			}
 
-			isUserInOriginGroup := IsElementInSlice(groupDesc.Members, user)
-			isUserInNewGroups := IsElementInSlice(groupsToAssign, user)
 			isRemove := false // User is added by default
 
 			// User is deleted from the group
-			if isUserInOriginGroup && !isUserInNewGroups {
+			if !isGroupPersistent {
 				isRemove = true
 			}
 
-			if isUserInOriginGroup || isUserInNewGroups {
-				userToAddRemove := []string{user}
+			userToAddRemove := []string{user}
 
-				gAddRemove := madmin.GroupAddRemove{
-					Group:    groupName,
-					Members:  userToAddRemove,
-					IsRemove: isRemove,
-				}
-				err := client.updateGroupMembers(ctx, gAddRemove)
-				if err != nil {
-					log.Println("Error updating", groupName, err)
-					return false
-				}
+			gAddRemove := madmin.GroupAddRemove{
+				Group:    groupName,
+				Members:  userToAddRemove,
+				IsRemove: isRemove,
+			}
+
+			log.Println("Group:", groupName, "Members", userToAddRemove, "isRemove", isRemove)
+
+			err := client.updateGroupMembers(ctx, gAddRemove)
+			if err != nil {
+				log.Println("Error updating", groupName, err)
+				return false
 			}
 
 			return true
@@ -225,10 +226,20 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 		return chProcess
 	}
 
+	userInfoOr, err := client.getUserInfo(ctx, user)
+
+	if err != nil {
+		log.Println("error getting user:", err)
+		return nil, err
+	}
+
+	memberOf := userInfoOr.MemberOf
+	mergedGroupArray := UniqueKeys(append(memberOf, groupsToAssign...))
+
 	var listOfUpdates []chan interface{}
 
-	for _, groupN := range groupsToAssign {
-		proc := parallelUserUpdate(groupN)
+	for _, groupN := range mergedGroupArray {
+		proc := parallelUserUpdate(groupN, memberOf)
 		listOfUpdates = append(listOfUpdates, proc)
 	}
 
@@ -280,10 +291,10 @@ func getUpdateUserGroupsResponse(params admin_api.UpdateUserGroupsParams) (*mode
 	user, err := updateUserGroups(ctx, adminClient, params.Name, params.Body.Groups)
 
 	if err != nil {
-		log.Println("error removing user:", err)
+		log.Println("error updating user:", err)
 		return nil, err
 	}
 
-	log.Println("User removed successfully:", params.Name)
+	log.Println("User groups updated successfully:", params.Name)
 	return user, nil
 }
