@@ -212,8 +212,6 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 				IsRemove: isRemove,
 			}
 
-			log.Println("Group:", groupName, "Members", userToAddRemove, "isRemove", isRemove)
-
 			err := client.updateGroupMembers(ctx, gAddRemove)
 			if err != nil {
 				log.Println("Error updating", groupName, err)
@@ -291,10 +289,9 @@ func getUpdateUserGroupsResponse(params admin_api.UpdateUserGroupsParams) (*mode
 	user, err := updateUserGroups(ctx, adminClient, params.Name, params.Body.Groups)
 
 	if err != nil {
-		log.Println("error updating user:", err)
+		log.Println("error getting user", err)
 		return nil, err
 	}
 
-	log.Println("User groups updated successfully:", params.Name)
 	return user, nil
 }
