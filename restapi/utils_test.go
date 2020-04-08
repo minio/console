@@ -23,7 +23,6 @@ import (
 
 func TestDifferenceArrays(t *testing.T) {
 	assert := assert.New(t)
-
 	exampleArrayAMock := []string{"a", "b", "c"}
 	exampleArrayBMock := []string{"b", "d"}
 	resultABArrayMock := []string{"a", "c"}

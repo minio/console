@@ -17,11 +17,6 @@
 package restapi
 
 import (
-	"context"
-	"errors"
-	"github.com/minio/minio/pkg/madmin"
-	"log"
-
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
 	"github.com/minio/mcs/restapi/operations"
@@ -29,6 +24,11 @@ import (
 	"github.com/minio/mcs/restapi/operations/admin_api"
 
 	"github.com/minio/mcs/models"
+	"github.com/minio/minio/pkg/madmin"
+
+	"context"
+	"errors"
+	"log"
 )
 
 func registerUsersHandlers(api *operations.McsAPI) {
