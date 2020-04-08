@@ -42,7 +42,7 @@ type UpdateUserGroupsOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Group `json:"body,omitempty"`
+	Payload *models.User `json:"body,omitempty"`
 }
 
 // NewUpdateUserGroupsOK creates UpdateUserGroupsOK with default headers values
@@ -52,13 +52,13 @@ func NewUpdateUserGroupsOK() *UpdateUserGroupsOK {
 }
 
 // WithPayload adds the payload to the update user groups o k response
-func (o *UpdateUserGroupsOK) WithPayload(payload *models.Group) *UpdateUserGroupsOK {
+func (o *UpdateUserGroupsOK) WithPayload(payload *models.User) *UpdateUserGroupsOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the update user groups o k response
-func (o *UpdateUserGroupsOK) SetPayload(payload *models.Group) {
+func (o *UpdateUserGroupsOK) SetPayload(payload *models.User) {
 	o.Payload = payload
 }
 

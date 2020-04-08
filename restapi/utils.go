@@ -16,6 +16,8 @@
 
 package restapi
 
+import "sort"
+
 // DifferenceArrays returns the elements in `a` that aren't in `b`.
 func DifferenceArrays(a, b []string) []string {
 	mb := make(map[string]struct{}, len(b))
@@ -29,4 +31,17 @@ func DifferenceArrays(a, b []string) []string {
 		}
 	}
 	return diff
+}
+
+// IsElementInSlice returns true if the string belongs to the slice
+func IsElementInSlice(a []string, b string) bool {
+	sort.Strings(a)
+
+	for _, e := range a {
+		if e == b {
+			return true
+		}
+	}
+
+	return false
 }

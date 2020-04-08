@@ -286,7 +286,7 @@ paths:
         200:
           description: A successful response.
           schema:
-            $ref: "#/definitions/group"
+            $ref: "#/definitions/user"
         default:
           description: Generic error response.
           schema:

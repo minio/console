@@ -1077,7 +1077,7 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/group"
+              "$ref": "#/definitions/user"
             }
           },
           "default": {
@@ -2702,7 +2702,7 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/group"
+              "$ref": "#/definitions/user"
             }
           },
           "default": {

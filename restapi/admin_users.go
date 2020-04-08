@@ -56,6 +56,15 @@ func registerUsersHandlers(api *operations.McsAPI) {
 		}
 		return admin_api.NewRemoveUserNoContent()
 	})
+	// Update User-Groups
+	api.AdminAPIUpdateUserGroupsHandler = admin_api.UpdateUserGroupsHandlerFunc(func(params admin_api.UpdateUserGroupsParams, principal *models.Principal) middleware.Responder {
+		userUpdateResponse, err := getUpdateUserGroupsResponse(params)
+		if err != nil {
+			return admin_api.NewUpdateUserGroupsDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
+
+		return admin_api.NewUpdateUserGroupsOK().WithPayload(userUpdateResponse)
+	})
 }
 
 func listUsers(ctx context.Context, client MinioAdmin) ([]*models.User, error) {
@@ -173,7 +182,7 @@ func getRemoveUserResponse(params admin_api.RemoveUserParams) error {
 // updateUserGroups invokes getGroupDescription() to get the current users in the specified group on `MinioAdmin`,
 // then we add/delete the user to the specified groups and return the response to the client
 
-func updateUserGroups(ctx context.Context, client MinioAdmin, user string, groupsToAssign []string) (madmin.UserInfo, error) {
+func updateUserGroups(ctx context.Context, client MinioAdmin, user string, groupsToAssign []string) (*models.User, error) {
 	parallelUserUpdate := func(groupName string) chan interface{} {
 		chProcess := make(chan interface{})
 
@@ -186,8 +195,8 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 				return false
 			}
 
-			isUserInOriginGroup := groupDesc.Members.contains(user)
-			isUserInNewGroups := groupsToAssign.contains(user)
+			isUserInOriginGroup := IsElementInSlice(groupDesc.Members, user)
+			isUserInNewGroups := IsElementInSlice(groupsToAssign, user)
 			isRemove := false // User is added by default
 
 			// User is deleted from the group
@@ -234,7 +243,7 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 	}
 
 	if channelHasError {
-		errRt := errors.New("There was an error updating the groups")
+		errRt := errors.New("there was an error updating the groups")
 		return nil, errRt
 	}
 
@@ -245,10 +254,17 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 		return nil, err
 	}
 
-	return userInfo, nil
+	userReturn := &models.User{
+		AccessKey: user,
+		MemberOf:  userInfo.MemberOf,
+		Policy:    userInfo.PolicyName,
+		Status:    string(userInfo.Status),
+	}
+
+	return userReturn, nil
 }
 
-func getUpdateUserGroupsResponse(params admin_api.UpdateUserGroupsParams) (madmin.UserInfo, error) {
+func getUpdateUserGroupsResponse(params admin_api.UpdateUserGroupsParams) (*models.User, error) {
 	ctx := context.Background()
 
 	mAdmin, err := newMAdminClient()
@@ -261,7 +277,7 @@ func getUpdateUserGroupsResponse(params admin_api.UpdateUserGroupsParams) (madmi
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
 
-	user, err := updateUserGroups(ctx, adminClient, params.Name, params.Body.groups)
+	user, err := updateUserGroups(ctx, adminClient, params.Name, params.Body.Groups)
 
 	if err != nil {
 		log.Println("error removing user:", err)
