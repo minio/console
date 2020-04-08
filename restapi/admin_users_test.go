@@ -32,8 +32,7 @@ import (
 var minioListUsersMock func() (map[string]madmin.UserInfo, error)
 var minioAddUserMock func(accessKey, secreyKey string) error
 var minioRemoveUserMock func(accessKey string) error
-var minioUpdateUserGroupsMock func(user string, groupsToAssign []string) (*madmin.UserInfo, error)
-var minioGetUserInfo func(accessKey string) (madmin.UserInfo, error)
+var minioGetUserInfoMock func(accessKey string) (madmin.UserInfo, error)
 
 // mock function of listUsers()
 func (ac adminClientMock) listUsers(ctx context.Context) (map[string]madmin.UserInfo, error) {
@@ -50,14 +49,9 @@ func (ac adminClientMock) removeUser(ctx context.Context, accessKey string) erro
 	return minioRemoveUserMock(accessKey)
 }
 
-//mock function of updateUserGroups()
-func (ac adminClientMock) updateUserGroups(user string, groupsToAssign []string) (*madmin.UserInfo, error) {
-	return minioUpdateUserGroupsMock(user, groupsToAssign)
-}
-
 //mock function of getUserInfo()
 func (ac adminClientMock) getUserInfo(ctx context.Context, accessKey string) (madmin.UserInfo, error) {
-	return minioGetUserInfo(accessKey)
+	return minioGetUserInfoMock(accessKey)
 }
 
 func TestListUsers(t *testing.T) {
@@ -206,11 +200,8 @@ func TestUserGroups(t *testing.T) {
 
 	// Test-1: updateUserGroups() updates the groups for a user
 	// mock function response from updateUserGroups(accessKey, groupsToAssign)
-	minioUpdateUserGroupsMock = func(accessKey string, groupsToAssign []string) (*madmin.UserInfo, error) {
-		return mockResponse, nil
-	}
 
-	minioGetUserInfo = func(accessKey string) (madmin.UserInfo, error) {
+	minioGetUserInfoMock = func(accessKey string) (madmin.UserInfo, error) {
 		return *mockResponse, nil
 	}
 
@@ -224,9 +215,6 @@ func TestUserGroups(t *testing.T) {
 
 	// Test-2: updateUserGroups() make sure errors are handled correctly when error on DeleteUser()
 	// mock function response from removeUser(accessKey)
-	minioUpdateUserGroupsMock = func(accessKey string, groupsToAssign []string) (*madmin.UserInfo, error) {
-		return nil, errors.New("error")
-	}
 
 	minioUpdateGroupMembersMock = func(remove madmin.GroupAddRemove) error {
 		return errors.New("error")
@@ -237,16 +225,12 @@ func TestUserGroups(t *testing.T) {
 	}
 
 	// Test-3: updateUserGroups() make sure we return the correct error when getUserInfo returns error
-	minioGetUserInfo = func(accessKey string) (madmin.UserInfo, error) {
+	minioGetUserInfoMock = func(accessKey string) (madmin.UserInfo, error) {
 		return *mockEmptyResponse, errors.New("error getting user ")
 	}
 
 	minioUpdateGroupMembersMock = func(remove madmin.GroupAddRemove) error {
 		return nil
-	}
-
-	minioUpdateUserGroupsMock = func(accessKey string, groupsToAssign []string) (*madmin.UserInfo, error) {
-		return nil, errors.New("error")
 	}
 
 	if _, err := updateUserGroups(ctx, adminClient, mockUserName, mockUserGroups); assert.Error(err) {
