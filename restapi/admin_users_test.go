@@ -237,3 +237,48 @@ func TestUserGroups(t *testing.T) {
 		assert.Equal("error getting user ", err.Error())
 	}
 }
+
+func TestGetUserInfo(t *testing.T) {
+	assert := asrt.New(t)
+	adminClient := adminClientMock{}
+	ctx := context.Background()
+
+	// Test-1 : getUserInfo() get user info
+	userName := "userNameTest"
+	mockResponse := &madmin.UserInfo{
+		SecretKey:  userName,
+		PolicyName: "",
+		MemberOf:   []string{"group1", "group2", "group3"},
+		Status:     "enabled",
+	}
+	emptyMockResponse := &madmin.UserInfo{
+		SecretKey:  "",
+		PolicyName: "",
+		Status:     "",
+		MemberOf:   nil,
+	}
+
+	// mock function response from getUserInfo()
+	minioGetUserInfoMock = func(username string) (madmin.UserInfo, error) {
+		return *mockResponse, nil
+	}
+	function := "getUserInfo()"
+	info, err := getUserInfo(ctx, adminClient, userName)
+	if err != nil {
+		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+	}
+
+	assert.Equal(userName, info.SecretKey)
+	assert.Equal("", info.PolicyName)
+	assert.ElementsMatch([]string{"group1", "group2", "group3"}, info.MemberOf)
+	assert.Equal(mockResponse.Status, info.Status)
+
+	// Test-2 : getUserInfo() Return error and see that the error is handled correctly and returned
+	minioGetUserInfoMock = func(username string) (madmin.UserInfo, error) {
+		return *emptyMockResponse, errors.New("error")
+	}
+	_, err = getUserInfo(ctx, adminClient, userName)
+	if assert.Error(err) {
+		assert.Equal("error", err.Error())
+	}
+}

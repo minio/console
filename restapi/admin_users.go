@@ -19,12 +19,12 @@ package restapi
 import (
 	"context"
 	"errors"
+	"github.com/minio/minio/pkg/madmin"
 	"log"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
 	"github.com/minio/mcs/restapi/operations"
-	"github.com/minio/minio/pkg/madmin"
 
 	"github.com/minio/mcs/restapi/operations/admin_api"
 
@@ -179,14 +179,24 @@ func getRemoveUserResponse(params admin_api.RemoveUserParams) error {
 	return nil
 }
 
-// updateUserGroups invokes getGroupDescription() to get the current users in the specified group on `MinioAdmin`,
-// then we add/delete the user to the specified groups and return the response to the client
+// getUserInfo calls MinIO server get the User Information
+func getUserInfo(ctx context.Context, client MinioAdmin, accessKey string) (*madmin.UserInfo, error) {
+	userInfo, err := client.getUserInfo(ctx, accessKey)
 
+	if err != nil {
+		return nil, err
+	}
+	return &userInfo, nil
+}
+
+// updateUserGroups invokes getUserInfo() to get the old groups from the user,
+// then we merge the list with the new groups list to have a shorter iteration between groups and we do a comparison between the current and old groups.
+// We delete or update the groups according the location in each list and send the user with the new groups from `MinioAdmin` to the client
 func updateUserGroups(ctx context.Context, client MinioAdmin, user string, groupsToAssign []string) (*models.User, error) {
-	parallelUserUpdate := func(groupName string, originGroups []string) chan bool {
-		chProcess := make(chan bool)
+	parallelUserUpdate := func(groupName string, originGroups []string) chan error {
+		chProcess := make(chan error)
 
-		go func() bool {
+		go func() error {
 			defer close(chProcess)
 
 			//Compare if groupName is in the arrays
@@ -194,9 +204,9 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 			isInOriginGroups := IsElementInArray(originGroups, groupName)
 
 			if isGroupPersistent && isInOriginGroups { // Group is already assigned and doesn't need to be updated
-				chProcess <- true
+				chProcess <- nil
 
-				return true
+				return nil
 			}
 
 			isRemove := false // User is added by default
@@ -208,38 +218,25 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 
 			userToAddRemove := []string{user}
 
-			gAddRemove := madmin.GroupAddRemove{
-				Group:    groupName,
-				Members:  userToAddRemove,
-				IsRemove: isRemove,
-			}
+			updateReturn := updateGroupMembers(ctx, client, groupName, userToAddRemove, isRemove)
 
-			err := client.updateGroupMembers(ctx, gAddRemove)
-			if err != nil {
-				log.Println("Error updating", groupName, err)
+			chProcess <- updateReturn
 
-				chProcess <- false
-				return false
-			}
-
-			chProcess <- true
-			return true
+			return updateReturn
 		}()
 
 		return chProcess
 	}
 
-	userInfoOr, err := client.getUserInfo(ctx, user)
-
+	userInfoOr, err := getUserInfo(ctx, client, user)
 	if err != nil {
-		log.Println("error getting user:", err)
 		return nil, err
 	}
 
 	memberOf := userInfoOr.MemberOf
 	mergedGroupArray := UniqueKeys(append(memberOf, groupsToAssign...))
 
-	var listOfUpdates []chan bool
+	var listOfUpdates []chan error
 
 	// Each group must be updated individually because there is no way to update all the groups at once for a user,
 	// we are using the same logic as 'mc admin group add' command
@@ -251,9 +248,9 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 	channelHasError := false
 
 	for _, chanRet := range listOfUpdates {
-		success := <-chanRet
+		locError := <-chanRet
 
-		if !success {
+		if locError != nil {
 			channelHasError = true
 		}
 	}
@@ -263,10 +260,8 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 		return nil, errRt
 	}
 
-	userInfo, err := client.getUserInfo(ctx, user)
-
+	userInfo, err := getUserInfo(ctx, client, user)
 	if err != nil {
-		log.Println("error getting user:", err)
 		return nil, err
 	}
 
@@ -296,7 +291,7 @@ func getUpdateUserGroupsResponse(params admin_api.UpdateUserGroupsParams) (*mode
 	user, err := updateUserGroups(ctx, adminClient, params.Name, params.Body.Groups)
 
 	if err != nil {
-		log.Println("error getting user", err)
+		log.Println("error updating users's groups:", params.Body.Groups)
 		return nil, err
 	}
 
