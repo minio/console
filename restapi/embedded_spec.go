@@ -97,6 +97,60 @@ func init() {
         }
       }
     },
+    "/admin/notification_endpoints": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Returns a list of active notification endpoints",
+        "operationId": "NotificationEndpointList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/notifEndpointResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Allows to configure a new notification endpoint",
+        "operationId": "AddNotificationEndpoint",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/notificationEndpoint"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/notificationEndpoint"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets": {
       "get": {
         "tags": [
@@ -1444,6 +1498,32 @@ func init() {
         }
       }
     },
+    "nofiticationService": {
+      "type": "string",
+      "enum": [
+        "webhook",
+        "amqp",
+        "kafka",
+        "mqtt",
+        "nats",
+        "nsq",
+        "mysql",
+        "postgres",
+        "elasticsearch",
+        "redis"
+      ]
+    },
+    "notifEndpointResponse": {
+      "type": "object",
+      "properties": {
+        "notification_endpoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/notificationEndpointItem"
+          }
+        }
+      }
+    },
     "notificationConfig": {
       "type": "object",
       "required": [
@@ -1470,6 +1550,42 @@ func init() {
         "suffix": {
           "type": "string",
           "title": "filter event associated to the specified suffix"
+        }
+      }
+    },
+    "notificationEndpoint": {
+      "type": "object",
+      "required": [
+        "service",
+        "account_id",
+        "properties"
+      ],
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "service": {
+          "$ref": "#/definitions/nofiticationService"
+        }
+      }
+    },
+    "notificationEndpointItem": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "service": {
+          "$ref": "#/definitions/nofiticationService"
+        },
+        "status": {
+          "type": "string"
         }
       }
     },
@@ -1742,6 +1858,60 @@ func init() {
         }
       }
     },
+    "/admin/notification_endpoints": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Returns a list of active notification endpoints",
+        "operationId": "NotificationEndpointList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/notifEndpointResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Allows to configure a new notification endpoint",
+        "operationId": "AddNotificationEndpoint",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/notificationEndpoint"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/notificationEndpoint"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets": {
       "get": {
         "tags": [
@@ -3089,6 +3259,32 @@ func init() {
         }
       }
     },
+    "nofiticationService": {
+      "type": "string",
+      "enum": [
+        "webhook",
+        "amqp",
+        "kafka",
+        "mqtt",
+        "nats",
+        "nsq",
+        "mysql",
+        "postgres",
+        "elasticsearch",
+        "redis"
+      ]
+    },
+    "notifEndpointResponse": {
+      "type": "object",
+      "properties": {
+        "notification_endpoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/notificationEndpointItem"
+          }
+        }
+      }
+    },
     "notificationConfig": {
       "type": "object",
       "required": [
@@ -3115,6 +3311,42 @@ func init() {
         "suffix": {
           "type": "string",
           "title": "filter event associated to the specified suffix"
+        }
+      }
+    },
+    "notificationEndpoint": {
+      "type": "object",
+      "required": [
+        "service",
+        "account_id",
+        "properties"
+      ],
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "service": {
+          "$ref": "#/definitions/nofiticationService"
+        }
+      }
+    },
+    "notificationEndpointItem": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "service": {
+          "$ref": "#/definitions/nofiticationService"
+        },
+        "status": {
+          "type": "string"
         }
       }
     },

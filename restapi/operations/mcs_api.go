@@ -66,6 +66,9 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		AdminAPIAddGroupHandler: admin_api.AddGroupHandlerFunc(func(params admin_api.AddGroupParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.AddGroup has not yet been implemented")
 		}),
+		AdminAPIAddNotificationEndpointHandler: admin_api.AddNotificationEndpointHandlerFunc(func(params admin_api.AddNotificationEndpointParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.AddNotificationEndpoint has not yet been implemented")
+		}),
 		AdminAPIAddPolicyHandler: admin_api.AddPolicyHandlerFunc(func(params admin_api.AddPolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.AddPolicy has not yet been implemented")
 		}),
@@ -128,6 +131,9 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		}),
 		UserAPIMakeBucketHandler: user_api.MakeBucketHandlerFunc(func(params user_api.MakeBucketParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.MakeBucket has not yet been implemented")
+		}),
+		AdminAPINotificationEndpointListHandler: admin_api.NotificationEndpointListHandlerFunc(func(params admin_api.NotificationEndpointListParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.NotificationEndpointList has not yet been implemented")
 		}),
 		AdminAPIPolicyInfoHandler: admin_api.PolicyInfoHandlerFunc(func(params admin_api.PolicyInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.PolicyInfo has not yet been implemented")
@@ -216,6 +222,8 @@ type McsAPI struct {
 
 	// AdminAPIAddGroupHandler sets the operation handler for the add group operation
 	AdminAPIAddGroupHandler admin_api.AddGroupHandler
+	// AdminAPIAddNotificationEndpointHandler sets the operation handler for the add notification endpoint operation
+	AdminAPIAddNotificationEndpointHandler admin_api.AddNotificationEndpointHandler
 	// AdminAPIAddPolicyHandler sets the operation handler for the add policy operation
 	AdminAPIAddPolicyHandler admin_api.AddPolicyHandler
 	// AdminAPIAddUserHandler sets the operation handler for the add user operation
@@ -258,6 +266,8 @@ type McsAPI struct {
 	UserAPILogoutHandler user_api.LogoutHandler
 	// UserAPIMakeBucketHandler sets the operation handler for the make bucket operation
 	UserAPIMakeBucketHandler user_api.MakeBucketHandler
+	// AdminAPINotificationEndpointListHandler sets the operation handler for the notification endpoint list operation
+	AdminAPINotificationEndpointListHandler admin_api.NotificationEndpointListHandler
 	// AdminAPIPolicyInfoHandler sets the operation handler for the policy info operation
 	AdminAPIPolicyInfoHandler admin_api.PolicyInfoHandler
 	// AdminAPIProfilingStartHandler sets the operation handler for the profiling start operation
@@ -358,6 +368,9 @@ func (o *McsAPI) Validate() error {
 	if o.AdminAPIAddGroupHandler == nil {
 		unregistered = append(unregistered, "admin_api.AddGroupHandler")
 	}
+	if o.AdminAPIAddNotificationEndpointHandler == nil {
+		unregistered = append(unregistered, "admin_api.AddNotificationEndpointHandler")
+	}
 	if o.AdminAPIAddPolicyHandler == nil {
 		unregistered = append(unregistered, "admin_api.AddPolicyHandler")
 	}
@@ -420,6 +433,9 @@ func (o *McsAPI) Validate() error {
 	}
 	if o.UserAPIMakeBucketHandler == nil {
 		unregistered = append(unregistered, "user_api.MakeBucketHandler")
+	}
+	if o.AdminAPINotificationEndpointListHandler == nil {
+		unregistered = append(unregistered, "admin_api.NotificationEndpointListHandler")
 	}
 	if o.AdminAPIPolicyInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.PolicyInfoHandler")
@@ -564,6 +580,10 @@ func (o *McsAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
+	o.handlers["POST"]["/admin/notification_endpoints"] = admin_api.NewAddNotificationEndpoint(o.context, o.AdminAPIAddNotificationEndpointHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
 	o.handlers["POST"]["/policies"] = admin_api.NewAddPolicy(o.context, o.AdminAPIAddPolicyHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
@@ -645,6 +665,10 @@ func (o *McsAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/buckets"] = user_api.NewMakeBucket(o.context, o.UserAPIMakeBucketHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/admin/notification_endpoints"] = admin_api.NewNotificationEndpointList(o.context, o.AdminAPINotificationEndpointListHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

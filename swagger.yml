@@ -720,6 +720,41 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+  /admin/notification_endpoints:
+    get:
+      summary: Returns a list of active notification endpoints
+      operationId: NotificationEndpointList
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/notifEndpointResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    post:
+      summary: Allows to configure a new notification endpoint
+      operationId: AddNotificationEndpoint
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/notificationEndpoint'
+      responses:
+        201:
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/notificationEndpoint'
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
 definitions:
   bucketAccess:
     type: string
@@ -1091,3 +1126,47 @@ definitions:
         type: array
         items:
           type: string
+  nofiticationService:
+    type: string
+    enum:
+      - webhook
+      - amqp
+      - kafka
+      - mqtt
+      - nats
+      - nsq
+      - mysql
+      - postgres
+      - elasticsearch
+      - redis
+  notificationEndpointItem:
+    type: object
+    properties:
+      service:
+        $ref: "#/definitions/nofiticationService"
+      account_id:
+        type: string
+      status:
+        type: string
+  notificationEndpoint:
+    type: object
+    required:
+      - service
+      - account_id
+      - properties
+    properties:
+      service:
+        $ref: "#/definitions/nofiticationService"
+      account_id:
+        type: string
+      properties:
+        type: object
+        additionalProperties:
+          type: string
+  notifEndpointResponse:
+    type: object
+    properties:
+      notification_endpoints:
+        type: array
+        items:
+          $ref: "#/definitions/notificationEndpointItem"
