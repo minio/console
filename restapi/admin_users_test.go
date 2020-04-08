@@ -32,6 +32,7 @@ import (
 var minioListUsersMock func() (map[string]madmin.UserInfo, error)
 var minioAddUserMock func(accessKey, secreyKey string) error
 var minioRemoveUserMock func(accessKey string) error
+var minioUpdateUserGroupsMock func(user string, groupsToAssign []string) (*madmin.UserInfo, error)
 
 // mock function of listUsers()
 func (ac adminClientMock) listUsers(ctx context.Context) (map[string]madmin.UserInfo, error) {
@@ -46,6 +47,11 @@ func (ac adminClientMock) addUser(ctx context.Context, accessKey, secretKey stri
 // mock function of removeUser()
 func (ac adminClientMock) removeUser(ctx context.Context, accessKey string) error {
 	return minioRemoveUserMock(accessKey)
+}
+
+//mock function of updateUserGroups()
+func (ac adminClientMock) updateUserGroups(ctx context.Context, user string, groupsToAssign []string) (*madmin.UserInfo, error) {
+	return minioUpdateUserGroupsMock(user, groupsToAssign)
 }
 
 func TestListUsers(t *testing.T) {
@@ -166,6 +172,43 @@ func TestRemoveUser(t *testing.T) {
 	}
 
 	if err := removeUser(ctx, adminClient, "notexistentuser"); assert.Error(err) {
+		assert.Equal("error", err.Error())
+	}
+}
+
+func TestUserGroups(t *testing.T) {
+	assert := asrt.New(t)
+	// mock minIO client
+	adminClient := adminClientMock{}
+	ctx := context.Background()
+
+	function := "updateUserGroups()"
+	mockUserGroups := []string{"group1", "group2", "group3"}
+	mockUserName := "testUser"
+	mockResponse := &madmin.UserInfo{
+		MemberOf:   []string{"group1", "group2", "gropup3"},
+		PolicyName: null,
+		Status:     "enabled",
+		SecretKey:  mockUserName,
+	}
+
+	// Test-1: updateUserGroups() updates the groups for a user
+	// mock function response from updateUserGroups(accessKey, groupsToAssign)
+	minioUpdateUserGroupsMock = func(accessKey string, groupsToAssign []string) (*madmin.UserInfo, error) {
+		return mockResponse, nil
+	}
+
+	if _, err := updateUserGroups(ctx, adminClient, mockUserName, mockUserGroups); err != nil {
+		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+	}
+
+	// Test-2: removeUser() make sure errors are handled correctly when error on DeleteUser()
+	// mock function response from removeUser(accessKey)
+	minioUpdateUserGroupsMock = func(accessKey string, groupsToAssign []string) (*madmin.UserInfo, error) {
+		return nil, errors.New("error")
+	}
+
+	if _, err := updateUserGroups(ctx, adminClient, mockUserName, mockUserGroups); assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
 }
