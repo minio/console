@@ -30,7 +30,7 @@ export class API {
           storage.removeItem("token");
           window.location.href = "/";
         }
-        this.onError(err);
+        return this.onError(err);
       });
   }
 
