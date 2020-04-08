@@ -54,6 +54,14 @@ $ mc admin policy set myminio mcsAdmin user=mcs
 To run the server:
 
 ```
+export MCS_HMAC_JWT_SECRET=YOURJWTSIGNINGSECRET
+
+#required to encrypt jwet payload
+export MCS_PBKDF_PASSPHRASE=SECRET
+
+#required to encrypt jwet payload
+export MCS_PBKDF_SALT=SECRET
+
 export MCS_ACCESS_KEY=mcs
 export MCS_SECRET_KEY=YOURMCSSECRET
 export MCS_MINIO_SERVER=http://localhost:9000

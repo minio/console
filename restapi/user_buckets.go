@@ -37,7 +37,8 @@ import (
 func registerBucketsHandlers(api *operations.McsAPI) {
 	// list buckets
 	api.UserAPIListBucketsHandler = user_api.ListBucketsHandlerFunc(func(params user_api.ListBucketsParams, principal *models.Principal) middleware.Responder {
-		listBucketsResponse, err := getListBucketsResponse()
+		sessionID := string(*principal)
+		listBucketsResponse, err := getListBucketsResponse(sessionID)
 		if err != nil {
 			return user_api.NewListBucketsDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
@@ -45,14 +46,16 @@ func registerBucketsHandlers(api *operations.McsAPI) {
 	})
 	// make bucket
 	api.UserAPIMakeBucketHandler = user_api.MakeBucketHandlerFunc(func(params user_api.MakeBucketParams, principal *models.Principal) middleware.Responder {
-		if err := getMakeBucketResponse(params.Body); err != nil {
+		sessionID := string(*principal)
+		if err := getMakeBucketResponse(sessionID, params.Body); err != nil {
 			return user_api.NewMakeBucketDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return user_api.NewMakeBucketCreated()
 	})
 	// delete bucket
 	api.UserAPIDeleteBucketHandler = user_api.DeleteBucketHandlerFunc(func(params user_api.DeleteBucketParams, principal *models.Principal) middleware.Responder {
-		if err := getDeleteBucketResponse(params); err != nil {
+		sessionID := string(*principal)
+		if err := getDeleteBucketResponse(sessionID, params); err != nil {
 			return user_api.NewMakeBucketDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 
 		}
@@ -60,7 +63,8 @@ func registerBucketsHandlers(api *operations.McsAPI) {
 	})
 	// get bucket info
 	api.UserAPIBucketInfoHandler = user_api.BucketInfoHandlerFunc(func(params user_api.BucketInfoParams, principal *models.Principal) middleware.Responder {
-		bucketInfoResp, err := getBucketInfoResponse(params)
+		sessionID := string(*principal)
+		bucketInfoResp, err := getBucketInfoResponse(sessionID, params)
 		if err != nil {
 			return user_api.NewBucketInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
@@ -69,7 +73,8 @@ func registerBucketsHandlers(api *operations.McsAPI) {
 	})
 	// set bucket policy
 	api.UserAPIBucketSetPolicyHandler = user_api.BucketSetPolicyHandlerFunc(func(params user_api.BucketSetPolicyParams, principal *models.Principal) middleware.Responder {
-		bucketSetPolicyResp, err := getBucketSetPolicyResponse(params.Name, params.Body)
+		sessionID := string(*principal)
+		bucketSetPolicyResp, err := getBucketSetPolicyResponse(sessionID, params.Name, params.Body)
 		if err != nil {
 			return user_api.NewBucketSetPolicyDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
@@ -97,11 +102,10 @@ func listBuckets(ctx context.Context, client MinioClient) ([]*models.Bucket, err
 }
 
 // getListBucketsResponse performs listBuckets() and serializes it to the handler's output
-func getListBucketsResponse() (*models.ListBucketsResponse, error) {
+func getListBucketsResponse(sessionID string) (*models.ListBucketsResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
-
-	mClient, err := newMinioClient()
+	mClient, err := newMinioClient(sessionID)
 	if err != nil {
 		log.Println("error creating MinIO Client:", err)
 		return nil, err
@@ -133,7 +137,7 @@ func makeBucket(ctx context.Context, client MinioClient, bucketName string) erro
 }
 
 // getMakeBucketResponse performs makeBucket() to create a bucket with its access policy
-func getMakeBucketResponse(br *models.MakeBucketRequest) error {
+func getMakeBucketResponse(sessionID string, br *models.MakeBucketRequest) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 	// bucket request needed to proceed
@@ -141,7 +145,7 @@ func getMakeBucketResponse(br *models.MakeBucketRequest) error {
 		log.Println("error bucket body not in request")
 		return errors.New(500, "error bucket body not in request")
 	}
-	mClient, err := newMinioClient()
+	mClient, err := newMinioClient(sessionID)
 	if err != nil {
 		log.Println("error creating MinIO Client:", err)
 		return err
@@ -187,11 +191,11 @@ func setBucketAccessPolicy(ctx context.Context, client MinioClient, bucketName s
 
 // getBucketSetPolicyResponse calls setBucketAccessPolicy() to set a access policy to a bucket
 //   and returns the serialized output.
-func getBucketSetPolicyResponse(bucketName string, req *models.SetBucketPolicyRequest) (*models.Bucket, error) {
+func getBucketSetPolicyResponse(sessionID string, bucketName string, req *models.SetBucketPolicyRequest) (*models.Bucket, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
-	mClient, err := newMinioClient()
+	mClient, err := newMinioClient(sessionID)
 	if err != nil {
 		log.Println("error creating MinIO Client:", err)
 		return nil, err
@@ -223,14 +227,14 @@ func removeBucket(client MinioClient, bucketName string) error {
 }
 
 // getDeleteBucketResponse performs removeBucket() to delete a bucket
-func getDeleteBucketResponse(params user_api.DeleteBucketParams) error {
+func getDeleteBucketResponse(sessionID string, params user_api.DeleteBucketParams) error {
 	if params.Name == "" {
 		log.Println("error bucket name not in request")
 		return errors.New(500, "error bucket name not in request")
 	}
 	bucketName := params.Name
 
-	mClient, err := newMinioClient()
+	mClient, err := newMinioClient(sessionID)
 	if err != nil {
 		log.Println("error creating MinIO Client:", err)
 		return err
@@ -272,8 +276,8 @@ func getBucketInfo(client MinioClient, bucketName string) (*models.Bucket, error
 }
 
 // getBucketInfoResponse calls getBucketInfo() to get the bucket's info
-func getBucketInfoResponse(params user_api.BucketInfoParams) (*models.Bucket, error) {
-	mClient, err := newMinioClient()
+func getBucketInfoResponse(sessionID string, params user_api.BucketInfoParams) (*models.Bucket, error) {
+	mClient, err := newMinioClient(sessionID)
 	if err != nil {
 		log.Println("error creating MinIO Client:", err)
 		return nil, err

@@ -31,7 +31,8 @@ import (
 func registerBucketEventsHandlers(api *operations.McsAPI) {
 	// list bucket events
 	api.UserAPIListBucketEventsHandler = user_api.ListBucketEventsHandlerFunc(func(params user_api.ListBucketEventsParams, principal *models.Principal) middleware.Responder {
-		listBucketEventsResponse, err := getListBucketEventsResponse(params)
+		sessionID := string(*principal)
+		listBucketEventsResponse, err := getListBucketEventsResponse(sessionID, params)
 		if err != nil {
 			return user_api.NewListBucketEventsDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
@@ -124,8 +125,8 @@ func listBucketEvents(client MinioClient, bucketName string) ([]*models.Notifica
 }
 
 // getListBucketsResponse performs listBucketEvents() and serializes it to the handler's output
-func getListBucketEventsResponse(params user_api.ListBucketEventsParams) (*models.ListBucketEventsResponse, error) {
-	mClient, err := newMinioClient()
+func getListBucketEventsResponse(sessionID string, params user_api.ListBucketEventsParams) (*models.ListBucketEventsResponse, error) {
+	mClient, err := newMinioClient(sessionID)
 	if err != nil {
 		log.Println("error creating MinIO Client:", err)
 		return nil, err

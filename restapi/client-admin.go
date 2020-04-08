@@ -24,6 +24,8 @@ import (
 
 	mcCmd "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
+	"github.com/minio/mcs/pkg/auth"
+	"github.com/minio/minio-go/v6/pkg/credentials"
 	iampolicy "github.com/minio/minio/pkg/iam/policy"
 	"github.com/minio/minio/pkg/madmin"
 )
@@ -192,14 +194,17 @@ func (ac adminClient) stopProfiling(ctx context.Context) (io.ReadCloser, error) 
 	return ac.client.DownloadProfilingData(ctx)
 }
 
-func newMAdminClient() (*madmin.AdminClient, error) {
-	endpoint := getMinIOServer()
-	accessKeyID := getAccessKey()
-	secretAccessKey := getSecretKey()
-
-	adminClient, pErr := NewAdminClient(endpoint, accessKeyID, secretAccessKey)
-	if pErr != nil {
-		return nil, pErr.Cause
+func newMAdminClient(jwt string) (*madmin.AdminClient, error) {
+	claims, err := auth.JWTAuthenticate(jwt)
+	if err != nil {
+		return nil, err
+	}
+	adminClient, err := madmin.NewWithOptions(getMinIOEndpoint(), &madmin.Options{
+		Creds:  credentials.NewStaticV4(claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken),
+		Secure: getMinIOEndpointIsSecure(),
+	})
+	if err != nil {
+		return nil, err
 	}
 	return adminClient, nil
 }

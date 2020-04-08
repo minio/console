@@ -24,9 +24,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/minio/mcs/restapi/sessions"
-
 	"github.com/minio/mcs/models"
+	"github.com/minio/mcs/pkg/auth"
 
 	assetfs "github.com/elazarl/go-bindata-assetfs"
 
@@ -60,7 +59,7 @@ func configureAPI(api *operations.McsAPI) http.Handler {
 	// Applies when the "x-token" header is set
 
 	api.KeyAuth = func(token string, scopes []string) (*models.Principal, error) {
-		if sessions.GetInstance().ValidSession(token) {
+		if auth.IsJWTValid(token) {
 			prin := models.Principal(token)
 			return &prin, nil
 		}
