@@ -241,6 +241,8 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 
 	var listOfUpdates []chan bool
 
+	// Each group must be updated individually because there is no way to update all the groups at once for a user,
+	// we are using the same logic as 'mc admin group add' command
 	for _, groupN := range mergedGroupArray {
 		proc := parallelUserUpdate(groupN, memberOf)
 		listOfUpdates = append(listOfUpdates, proc)

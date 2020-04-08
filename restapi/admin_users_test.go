@@ -51,7 +51,7 @@ func (ac adminClientMock) removeUser(ctx context.Context, accessKey string) erro
 }
 
 //mock function of updateUserGroups()
-func (ac adminClientMock) updateUserGroups(ctx, user string, groupsToAssign []string) (*madmin.UserInfo, error) {
+func (ac adminClientMock) updateUserGroups(user string, groupsToAssign []string) (*madmin.UserInfo, error) {
 	return minioUpdateUserGroupsMock(user, groupsToAssign)
 }
 
