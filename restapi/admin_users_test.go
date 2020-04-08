@@ -51,7 +51,7 @@ func (ac adminClientMock) removeUser(ctx context.Context, accessKey string) erro
 }
 
 //mock function of updateUserGroups()
-func (ac adminClientMock) updateUserGroups(ctx context.Context, user string, groupsToAssign []string) (*madmin.UserInfo, error) {
+func (ac adminClientMock) updateUserGroups(ctx, user string, groupsToAssign []string) (*madmin.UserInfo, error) {
 	return minioUpdateUserGroupsMock(user, groupsToAssign)
 }
 
@@ -210,7 +210,7 @@ func TestUserGroups(t *testing.T) {
 		return mockResponse, nil
 	}
 
-	minioGetUserInfo = func (accessKey string) (madmin.UserInfo, error) {
+	minioGetUserInfo = func(accessKey string) (madmin.UserInfo, error) {
 		return *mockResponse, nil
 	}
 
@@ -237,7 +237,7 @@ func TestUserGroups(t *testing.T) {
 	}
 
 	// Test-3: updateUserGroups() make sure we return the correct error when getUserInfo returns error
-	minioGetUserInfo = func (accessKey string) (madmin.UserInfo, error) {
+	minioGetUserInfo = func(accessKey string) (madmin.UserInfo, error) {
 		return *mockEmptyResponse, errors.New("error getting user ")
 	}
 

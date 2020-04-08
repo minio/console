@@ -19,12 +19,12 @@ package restapi
 import (
 	"context"
 	"errors"
-	"github.com/minio/minio/pkg/madmin"
 	"log"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
 	"github.com/minio/mcs/restapi/operations"
+	"github.com/minio/minio/pkg/madmin"
 
 	"github.com/minio/mcs/restapi/operations/admin_api"
 
