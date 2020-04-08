@@ -49,29 +49,26 @@ interface IAddBucketProps {
 interface IAddBucketState {
   addLoading: boolean;
   addError: string;
-  bucketName: string;
-  accessPolicy: string;
+  bucketName: string; 
 }
 
 class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
   state: IAddBucketState = {
     addLoading: false,
     addError: "",
-    bucketName: "",
-    accessPolicy: ""
+    bucketName: ""
   };
 
   addRecord(event: React.FormEvent) {
     event.preventDefault();
-    const { bucketName, addLoading, accessPolicy } = this.state;
+    const { bucketName, addLoading } = this.state;
     if (addLoading) {
       return;
     }
     this.setState({ addLoading: true }, () => {
       api
         .invoke("POST", "/api/v1/buckets", {
-          name: bucketName,
-          access: accessPolicy
+          name: bucketName
         })
         .then(res => {
           this.setState(
@@ -95,7 +92,7 @@ class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
 
   render() {
     const { classes, open } = this.props;
-    const { addLoading, addError, accessPolicy } = this.state;
+    const { addLoading, addError} = this.state;
     return (
       <Dialog
         open={open}
@@ -141,25 +138,7 @@ class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
                 />
               </Grid>
               <Grid item xs={12}>
-                <FormControl className={classes.formControl} fullWidth>
-                  <InputLabel id="select-access-policy">
-                    Access Policy
-                  </InputLabel>
-                  <Select
-                    labelId="select-access-policy"
-                    id="select-access-policy"
-                    value={accessPolicy}
-                    onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                      this.setState({ accessPolicy: e.target.value as string });
-                    }}
-                  >
-                    <MenuItem value="PRIVATE">Private</MenuItem>
-                    <MenuItem value="PUBLIC">Public</MenuItem>
-                    <MenuItem value="CUSTOM">Custom</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
+                <br />
                 <br />
               </Grid>
               <Grid item xs={12}>
