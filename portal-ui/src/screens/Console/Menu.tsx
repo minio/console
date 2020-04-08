@@ -36,6 +36,7 @@ import {
 } from "../../icons";
 import { createStyles, Theme } from "@material-ui/core/styles";
 import PersonIcon from "@material-ui/icons/Person";
+import api from "../../common/api";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -91,9 +92,20 @@ interface MenuProps {
 
 class Menu extends React.Component<MenuProps> {
   logout() {
-    storage.removeItem("token");
-    this.props.userLoggedIn(false);
-    history.push("/");
+    const deleteSession = () => {
+      storage.removeItem("token");
+      this.props.userLoggedIn(false);
+      history.push("/");
+    }
+    api
+      .invoke("POST", `/api/v1/logout`)
+      .then(() => {
+        deleteSession();
+      })
+      .catch((err: any) => {
+        console.log(err);
+        deleteSession();
+      });
   }
 
   render() {

@@ -599,6 +599,19 @@ paths:
       security: []
       tags:
         - UserAPI
+  /logout:
+    post:
+      summary: Logout from mcs.
+      operationId: Logout
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
   /profiling/start:
     post:
       summary: Start recording profile data

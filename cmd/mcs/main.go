@@ -31,7 +31,7 @@ import (
 	"github.com/minio/cli"
 )
 
-// Help template for m3.
+// Help template for mcs.
 var mcsHelpTemplate = `NAME:
   {{.Name}} - {{.Usage}}
 
@@ -57,10 +57,10 @@ var appCmds = []cli.Command{
 }
 
 func newApp(name string) *cli.App {
-	// Collection of m3 commands currently supported are.
+	// Collection of mcs commands currently supported are.
 	var commands []cli.Command
 
-	// Collection of m3 commands currently supported in a trie tree.
+	// Collection of mcs commands currently supported in a trie tree.
 	commandsTree := trie.NewTrie()
 
 	// registerCommand registers a cli command.

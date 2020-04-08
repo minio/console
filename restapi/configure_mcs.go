@@ -70,6 +70,8 @@ func configureAPI(api *operations.McsAPI) http.Handler {
 
 	// Register login handlers
 	registerLoginHandlers(api)
+	// Register logout handlers
+	registerLogoutHandlers(api)
 	// Register bucket handlers
 	registerBucketsHandlers(api)
 	// Register all users handlers
