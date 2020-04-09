@@ -86,7 +86,7 @@ class AddUserContent extends React.Component<
 
   saveRecord(event: React.FormEvent) {
     event.preventDefault();
-    const { accessKey, addLoading, secretKey } = this.state;
+    const { accessKey, addLoading, secretKey, selectedGroups } = this.state;
     const { selectedUser } = this.props;
     if (addLoading) {
       return;
@@ -99,15 +99,7 @@ class AddUserContent extends React.Component<
             secretKey: secretKey !== "" ? null : secretKey
           })
           .then(res => {
-            this.setState(
-              {
-                addLoading: false,
-                addError: ""
-              },
-              () => {
-                this.props.closeModalAndRefresh();
-              }
-            );
+            this.saveUserGroups(accessKey, selectedGroups);
           })
           .catch(err => {
             this.setState({
@@ -122,15 +114,7 @@ class AddUserContent extends React.Component<
             secretKey
           })
           .then(res => {
-            this.setState(
-              {
-                addLoading: false,
-                addError: ""
-              },
-              () => {
-                this.props.closeModalAndRefresh();
-              }
-            );
+            this.saveUserGroups(accessKey, selectedGroups);
           })
           .catch(err => {
             console.log(err);
@@ -140,6 +124,32 @@ class AddUserContent extends React.Component<
             });
           });
       }
+    });
+  }
+
+  saveUserGroups(accessKey: string, groups: string[]) {
+    this.setState({ addLoading: true }, () => {
+      api
+        .invoke("PUT", `/api/v1/users/${accessKey}/groups`, {
+          groups
+        })
+        .then(res => {
+          this.setState(
+            {
+              addLoading: false,
+              addError: ""
+            },
+            () => {
+              this.props.closeModalAndRefresh();
+            }
+          );
+        })
+        .catch(err => {
+          this.setState({
+            addLoading: false,
+            addError: err
+          });
+        });
     });
   }
 
