@@ -62,6 +62,5 @@ export MCS_MINIO_SERVER=http://localhost:9000
 
 You can verify that the apis work by doing the request on `localhost:9090/api/v1/...`
 
-# Development
-
-For development on this project please refer to our [DEVELOPMENT.md](DEVELOPMENT.md)
+# Contribute to mcs Project
+Please follow mcs [Contributor's Guide](https://github.com/minio/mcs/blob/master/CONTRIBUTING.md)
