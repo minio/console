@@ -72,7 +72,6 @@ func registerUsersHandlers(api *operations.McsAPI) {
 			return admin_api.NewGetUserDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 
-		log.Println(userInfoResponse)
 
 		userInformation := models.User{
 			AccessKey: params.Name,
