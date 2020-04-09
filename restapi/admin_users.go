@@ -72,15 +72,7 @@ func registerUsersHandlers(api *operations.McsAPI) {
 			return admin_api.NewGetUserDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 
-
-		userInformation := models.User{
-			AccessKey: params.Name,
-			MemberOf:  userInfoResponse.MemberOf,
-			Policy:    userInfoResponse.PolicyName,
-			Status:    string(userInfoResponse.Status),
-		}
-
-		return admin_api.NewGetUserOK().WithPayload(&userInformation)
+		return admin_api.NewGetUserOK().WithPayload(userInfoResponse)
 	})
 }
 
@@ -206,7 +198,7 @@ func getUserInfo(ctx context.Context, client MinioAdmin, accessKey string) (*mad
 	return &userInfo, nil
 }
 
-func getUserInfoResponse(params admin_api.GetUserInfoParams) (*madmin.UserInfo, error) {
+func getUserInfoResponse(params admin_api.GetUserInfoParams) (*models.User, error) {
 	ctx := context.Background()
 
 	mAdmin, err := newMAdminClient()
@@ -225,7 +217,14 @@ func getUserInfoResponse(params admin_api.GetUserInfoParams) (*madmin.UserInfo, 
 		return nil, err
 	}
 
-	return user, nil
+	userInformation := &models.User{
+		AccessKey: params.Name,
+		MemberOf:  user.MemberOf,
+		Policy:    user.PolicyName,
+		Status:    string(user.Status),
+	}
+
+	return userInformation, nil
 }
 
 // updateUserGroups invokes getUserInfo() to get the old groups from the user,
