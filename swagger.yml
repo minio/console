@@ -251,6 +251,49 @@ paths:
       tags:
         - AdminAPI
   /users/{name}:
+    get:
+      summary: Get User Info
+      operationId: GetUserInfo
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/user"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+          - AdminAPI
+    put:
+      summary: Update User Info
+      operationId: UpdateUserInfo
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/updateUser"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/user"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
     delete:
       summary: Remove user
       operationId: RemoveUser
@@ -833,11 +876,16 @@ definitions:
     required:
       - accessKey
       - secretKey
+      - groups
     properties:
       accessKey:
         type: string
       secretKey:
         type: string
+      groups:
+        type: array
+        items:
+          type: string
   group:
     type: object
     properties:
@@ -1170,3 +1218,16 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/notificationEndpointItem"
+  updateUser:
+    type: object
+    required:
+      - status
+      - groups
+    properties:
+      status:
+        type: string
+      groups:
+        type: array
+        items:
+          type: string
+

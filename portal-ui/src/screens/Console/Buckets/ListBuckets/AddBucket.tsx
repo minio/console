@@ -23,11 +23,7 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  FormControl,
-  InputLabel,
   LinearProgress,
-  MenuItem,
-  Select,
   TextField
 } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
