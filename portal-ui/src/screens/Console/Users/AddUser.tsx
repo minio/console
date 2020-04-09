@@ -96,10 +96,19 @@ class AddUserContent extends React.Component<
         api
           .invoke("PUT", `/api/v1/users/${selectedUser.accessKey}`, {
             accessKey,
-            secretKey: secretKey !== "" ? null : secretKey
+            secretKey: secretKey !== "" ? null : secretKey,
+            groups: selectedGroups
           })
           .then(res => {
-            this.saveUserGroups(accessKey, selectedGroups);
+            this.setState(
+              {
+                addLoading: false,
+                addError: ""
+              },
+              () => {
+                this.props.closeModalAndRefresh();
+              }
+            );
           })
           .catch(err => {
             this.setState({
@@ -111,10 +120,19 @@ class AddUserContent extends React.Component<
         api
           .invoke("POST", "/api/v1/users", {
             accessKey,
-            secretKey
+            secretKey,
+            groups: selectedGroups
           })
           .then(res => {
-            this.saveUserGroups(accessKey, selectedGroups);
+            this.setState(
+              {
+                addLoading: false,
+                addError: ""
+              },
+              () => {
+                this.props.closeModalAndRefresh();
+              }
+            );
           })
           .catch(err => {
             console.log(err);
@@ -124,32 +142,6 @@ class AddUserContent extends React.Component<
             });
           });
       }
-    });
-  }
-
-  saveUserGroups(accessKey: string, groups: string[]) {
-    this.setState({ addLoading: true }, () => {
-      api
-        .invoke("PUT", `/api/v1/users/${accessKey}/groups`, {
-          groups
-        })
-        .then(res => {
-          this.setState(
-            {
-              addLoading: false,
-              addError: ""
-            },
-            () => {
-              this.props.closeModalAndRefresh();
-            }
-          );
-        })
-        .catch(err => {
-          this.setState({
-            addLoading: false,
-            addError: err
-          });
-        });
     });
   }
 

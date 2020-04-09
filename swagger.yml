@@ -239,6 +239,11 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/addUserRequest'
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/updateUserGroups"
       responses:
         201:
           description: A successful response.
