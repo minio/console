@@ -86,7 +86,7 @@ class AddUserContent extends React.Component<
 
   saveRecord(event: React.FormEvent) {
     event.preventDefault();
-    const { accessKey, addLoading, secretKey } = this.state;
+    const { accessKey, addLoading, secretKey, selectedGroups } = this.state;
     const { selectedUser } = this.props;
     if (addLoading) {
       return;
@@ -96,7 +96,8 @@ class AddUserContent extends React.Component<
         api
           .invoke("PUT", `/api/v1/users/${selectedUser.accessKey}`, {
             accessKey,
-            secretKey: secretKey !== "" ? null : secretKey
+            secretKey: secretKey !== "" ? null : secretKey,
+            groups: selectedGroups
           })
           .then(res => {
             this.setState(
@@ -119,7 +120,8 @@ class AddUserContent extends React.Component<
         api
           .invoke("POST", "/api/v1/users", {
             accessKey,
-            secretKey
+            secretKey,
+            groups: selectedGroups
           })
           .then(res => {
             this.setState(
