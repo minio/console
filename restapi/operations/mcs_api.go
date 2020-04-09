@@ -162,6 +162,9 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		AdminAPIUpdateGroupHandler: admin_api.UpdateGroupHandlerFunc(func(params admin_api.UpdateGroupParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.UpdateGroup has not yet been implemented")
 		}),
+		AdminAPIUpdateUserGroupsHandler: admin_api.UpdateUserGroupsHandlerFunc(func(params admin_api.UpdateUserGroupsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.UpdateUserGroups has not yet been implemented")
+		}),
 
 		KeyAuth: func(token string, scopes []string) (*models.Principal, error) {
 			return nil, errors.NotImplemented("oauth2 bearer auth (key) has not yet been implemented")
@@ -277,6 +280,8 @@ type McsAPI struct {
 	AdminAPISetPolicyHandler admin_api.SetPolicyHandler
 	// AdminAPIUpdateGroupHandler sets the operation handler for the update group operation
 	AdminAPIUpdateGroupHandler admin_api.UpdateGroupHandler
+	// AdminAPIUpdateUserGroupsHandler sets the operation handler for the update user groups operation
+	AdminAPIUpdateUserGroupsHandler admin_api.UpdateUserGroupsHandler
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
 	ServeError func(http.ResponseWriter, *http.Request, error)
@@ -448,6 +453,9 @@ func (o *McsAPI) Validate() error {
 	}
 	if o.AdminAPIUpdateGroupHandler == nil {
 		unregistered = append(unregistered, "admin_api.UpdateGroupHandler")
+	}
+	if o.AdminAPIUpdateUserGroupsHandler == nil {
+		unregistered = append(unregistered, "admin_api.UpdateUserGroupsHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -681,6 +689,10 @@ func (o *McsAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/groups/{name}"] = admin_api.NewUpdateGroup(o.context, o.AdminAPIUpdateGroupHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/users/{name}/groups"] = admin_api.NewUpdateUserGroups(o.context, o.AdminAPIUpdateUserGroupsHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP

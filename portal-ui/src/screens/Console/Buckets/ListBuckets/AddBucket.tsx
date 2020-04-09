@@ -49,7 +49,7 @@ interface IAddBucketProps {
 interface IAddBucketState {
   addLoading: boolean;
   addError: string;
-  bucketName: string; 
+  bucketName: string;
 }
 
 class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
@@ -92,7 +92,7 @@ class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
 
   render() {
     const { classes, open } = this.props;
-    const { addLoading, addError} = this.state;
+    const { addLoading, addError } = this.state;
     return (
       <Dialog
         open={open}

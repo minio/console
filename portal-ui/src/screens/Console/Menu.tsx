@@ -96,7 +96,7 @@ class Menu extends React.Component<MenuProps> {
       storage.removeItem("token");
       this.props.userLoggedIn(false);
       history.push("/");
-    }
+    };
     api
       .invoke("POST", `/api/v1/logout`)
       .then(() => {

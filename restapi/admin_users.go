@@ -17,9 +17,6 @@
 package restapi
 
 import (
-	"context"
-	"log"
-
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
 	"github.com/minio/mcs/restapi/operations"
@@ -27,6 +24,11 @@ import (
 	"github.com/minio/mcs/restapi/operations/admin_api"
 
 	"github.com/minio/mcs/models"
+	"github.com/minio/minio/pkg/madmin"
+
+	"context"
+	"errors"
+	"log"
 )
 
 func registerUsersHandlers(api *operations.McsAPI) {
@@ -53,6 +55,15 @@ func registerUsersHandlers(api *operations.McsAPI) {
 			return admin_api.NewRemoveUserDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return admin_api.NewRemoveUserNoContent()
+	})
+	// Update User-Groups
+	api.AdminAPIUpdateUserGroupsHandler = admin_api.UpdateUserGroupsHandlerFunc(func(params admin_api.UpdateUserGroupsParams, principal *models.Principal) middleware.Responder {
+		userUpdateResponse, err := getUpdateUserGroupsResponse(params)
+		if err != nil {
+			return admin_api.NewUpdateUserGroupsDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
+
+		return admin_api.NewUpdateUserGroupsOK().WithPayload(userUpdateResponse)
 	})
 }
 
@@ -166,4 +177,123 @@ func getRemoveUserResponse(params admin_api.RemoveUserParams) error {
 
 	log.Println("User removed successfully:", params.Name)
 	return nil
+}
+
+// getUserInfo calls MinIO server get the User Information
+func getUserInfo(ctx context.Context, client MinioAdmin, accessKey string) (*madmin.UserInfo, error) {
+	userInfo, err := client.getUserInfo(ctx, accessKey)
+
+	if err != nil {
+		return nil, err
+	}
+	return &userInfo, nil
+}
+
+// updateUserGroups invokes getUserInfo() to get the old groups from the user,
+// then we merge the list with the new groups list to have a shorter iteration between groups and we do a comparison between the current and old groups.
+// We delete or update the groups according the location in each list and send the user with the new groups from `MinioAdmin` to the client
+func updateUserGroups(ctx context.Context, client MinioAdmin, user string, groupsToAssign []string) (*models.User, error) {
+	parallelUserUpdate := func(groupName string, originGroups []string) chan error {
+		chProcess := make(chan error)
+
+		go func() error {
+			defer close(chProcess)
+
+			//Compare if groupName is in the arrays
+			isGroupPersistent := IsElementInArray(groupsToAssign, groupName)
+			isInOriginGroups := IsElementInArray(originGroups, groupName)
+
+			if isGroupPersistent && isInOriginGroups { // Group is already assigned and doesn't need to be updated
+				chProcess <- nil
+
+				return nil
+			}
+
+			isRemove := false // User is added by default
+
+			// User is deleted from the group
+			if !isGroupPersistent {
+				isRemove = true
+			}
+
+			userToAddRemove := []string{user}
+
+			updateReturn := updateGroupMembers(ctx, client, groupName, userToAddRemove, isRemove)
+
+			chProcess <- updateReturn
+
+			return updateReturn
+		}()
+
+		return chProcess
+	}
+
+	userInfoOr, err := getUserInfo(ctx, client, user)
+	if err != nil {
+		return nil, err
+	}
+
+	memberOf := userInfoOr.MemberOf
+	mergedGroupArray := UniqueKeys(append(memberOf, groupsToAssign...))
+
+	var listOfUpdates []chan error
+
+	// Each group must be updated individually because there is no way to update all the groups at once for a user,
+	// we are using the same logic as 'mc admin group add' command
+	for _, groupN := range mergedGroupArray {
+		proc := parallelUserUpdate(groupN, memberOf)
+		listOfUpdates = append(listOfUpdates, proc)
+	}
+
+	channelHasError := false
+
+	for _, chanRet := range listOfUpdates {
+		locError := <-chanRet
+
+		if locError != nil {
+			channelHasError = true
+		}
+	}
+
+	if channelHasError {
+		errRt := errors.New("there was an error updating the groups")
+		return nil, errRt
+	}
+
+	userInfo, err := getUserInfo(ctx, client, user)
+	if err != nil {
+		return nil, err
+	}
+
+	userReturn := &models.User{
+		AccessKey: user,
+		MemberOf:  userInfo.MemberOf,
+		Policy:    userInfo.PolicyName,
+		Status:    string(userInfo.Status),
+	}
+
+	return userReturn, nil
+}
+
+func getUpdateUserGroupsResponse(params admin_api.UpdateUserGroupsParams) (*models.User, error) {
+	ctx := context.Background()
+
+	mAdmin, err := newMAdminClient()
+	if err != nil {
+		log.Println("error creating Madmin Client:", err)
+		return nil, err
+	}
+
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := adminClient{client: mAdmin}
+
+	user, err := updateUserGroups(ctx, adminClient, params.Name, params.Body.Groups)
+
+	if err != nil {
+		log.Println("error updating users's groups:", params.Body.Groups)
+		return nil, err
+	}
+
+	return user, nil
 }
