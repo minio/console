@@ -96,6 +96,9 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		UserAPIDeleteBucketEventHandler: user_api.DeleteBucketEventHandlerFunc(func(params user_api.DeleteBucketEventParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteBucketEvent has not yet been implemented")
 		}),
+		AdminAPIGetUserInfoHandler: admin_api.GetUserInfoHandlerFunc(func(params admin_api.GetUserInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.GetUserInfo has not yet been implemented")
+		}),
 		AdminAPIGroupInfoHandler: admin_api.GroupInfoHandlerFunc(func(params admin_api.GroupInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GroupInfo has not yet been implemented")
 		}),
@@ -236,6 +239,8 @@ type McsAPI struct {
 	UserAPIDeleteBucketHandler user_api.DeleteBucketHandler
 	// UserAPIDeleteBucketEventHandler sets the operation handler for the delete bucket event operation
 	UserAPIDeleteBucketEventHandler user_api.DeleteBucketEventHandler
+	// AdminAPIGetUserInfoHandler sets the operation handler for the get user info operation
+	AdminAPIGetUserInfoHandler admin_api.GetUserInfoHandler
 	// AdminAPIGroupInfoHandler sets the operation handler for the group info operation
 	AdminAPIGroupInfoHandler admin_api.GroupInfoHandler
 	// UserAPIListBucketEventsHandler sets the operation handler for the list bucket events operation
@@ -387,6 +392,9 @@ func (o *McsAPI) Validate() error {
 	}
 	if o.UserAPIDeleteBucketEventHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteBucketEventHandler")
+	}
+	if o.AdminAPIGetUserInfoHandler == nil {
+		unregistered = append(unregistered, "admin_api.GetUserInfoHandler")
 	}
 	if o.AdminAPIGroupInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.GroupInfoHandler")
@@ -601,6 +609,10 @@ func (o *McsAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/buckets/{bucket_name}/events/{name}"] = user_api.NewDeleteBucketEvent(o.context, o.UserAPIDeleteBucketEventHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/users/{name}"] = admin_api.NewGetUserInfo(o.context, o.AdminAPIGetUserInfoHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

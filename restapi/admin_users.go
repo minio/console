@@ -65,6 +65,15 @@ func registerUsersHandlers(api *operations.McsAPI) {
 
 		return admin_api.NewUpdateUserGroupsOK().WithPayload(userUpdateResponse)
 	})
+	// Get User
+	api.AdminAPIGetUserInfoHandler = admin_api.GetUserInfoHandlerFunc(func(params admin_api.GetUserInfoParams, principal *models.Principal) middleware.Responder {
+		userInfoResponse, err := getUserInfoResponse(params)
+		if err != nil {
+			return admin_api.NewGetUserDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
+
+		return admin_api.NewGetUserOK().WithPayload(userInfoResponse)
+	})
 }
 
 func listUsers(ctx context.Context, client MinioAdmin) ([]*models.User, error) {
@@ -187,6 +196,35 @@ func getUserInfo(ctx context.Context, client MinioAdmin, accessKey string) (*mad
 		return nil, err
 	}
 	return &userInfo, nil
+}
+
+func getUserInfoResponse(params admin_api.GetUserInfoParams) (*models.User, error) {
+	ctx := context.Background()
+
+	mAdmin, err := newMAdminClient()
+	if err != nil {
+		log.Println("error creating Madmin Client:", err)
+		return nil, err
+	}
+
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := adminClient{client: mAdmin}
+
+	user, err := getUserInfo(ctx, adminClient, params.Name)
+	if err != nil {
+		log.Println("error adding user:", err)
+		return nil, err
+	}
+
+	userInformation := &models.User{
+		AccessKey: params.Name,
+		MemberOf:  user.MemberOf,
+		Policy:    user.PolicyName,
+		Status:    string(user.Status),
+	}
+
+	return userInformation, nil
 }
 
 // updateUserGroups invokes getUserInfo() to get the old groups from the user,
