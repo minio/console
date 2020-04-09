@@ -1043,6 +1043,35 @@ func init() {
       }
     },
     "/users/{name}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get User Info",
+        "operationId": "GetUserInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/user"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "AdminAPI"
@@ -2688,6 +2717,35 @@ func init() {
       }
     },
     "/users/{name}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get User Info",
+        "operationId": "GetUserInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/user"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "AdminAPI"
