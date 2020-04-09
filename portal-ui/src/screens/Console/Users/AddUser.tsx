@@ -99,7 +99,15 @@ class AddUserContent extends React.Component<
             secretKey: secretKey !== "" ? null : secretKey
           })
           .then(res => {
-            this.saveUserGroups(accessKey, selectedGroups);
+            this.setState(
+              {
+                addLoading: false,
+                addError: ""
+              },
+              () => {
+                this.props.closeModalAndRefresh();
+              }
+            );
           })
           .catch(err => {
             this.setState({
@@ -114,7 +122,15 @@ class AddUserContent extends React.Component<
             secretKey
           })
           .then(res => {
-            this.saveUserGroups(accessKey, selectedGroups);
+            this.setState(
+              {
+                addLoading: false,
+                addError: ""
+              },
+              () => {
+                this.props.closeModalAndRefresh();
+              }
+            );
           })
           .catch(err => {
             console.log(err);
@@ -124,32 +140,6 @@ class AddUserContent extends React.Component<
             });
           });
       }
-    });
-  }
-
-  saveUserGroups(accessKey: string, groups: string[]) {
-    this.setState({ addLoading: true }, () => {
-      api
-        .invoke("PUT", `/api/v1/users/${accessKey}/groups`, {
-          groups
-        })
-        .then(res => {
-          this.setState(
-            {
-              addLoading: false,
-              addError: ""
-            },
-            () => {
-              this.props.closeModalAndRefresh();
-            }
-          );
-        })
-        .catch(err => {
-          this.setState({
-            addLoading: false,
-            addError: err
-          });
-        });
     });
   }
 
