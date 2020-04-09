@@ -168,6 +168,9 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		AdminAPIUpdateUserGroupsHandler: admin_api.UpdateUserGroupsHandlerFunc(func(params admin_api.UpdateUserGroupsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.UpdateUserGroups has not yet been implemented")
 		}),
+		AdminAPIUpdateUserInfoHandler: admin_api.UpdateUserInfoHandlerFunc(func(params admin_api.UpdateUserInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.UpdateUserInfo has not yet been implemented")
+		}),
 
 		KeyAuth: func(token string, scopes []string) (*models.Principal, error) {
 			return nil, errors.NotImplemented("oauth2 bearer auth (key) has not yet been implemented")
@@ -287,6 +290,8 @@ type McsAPI struct {
 	AdminAPIUpdateGroupHandler admin_api.UpdateGroupHandler
 	// AdminAPIUpdateUserGroupsHandler sets the operation handler for the update user groups operation
 	AdminAPIUpdateUserGroupsHandler admin_api.UpdateUserGroupsHandler
+	// AdminAPIUpdateUserInfoHandler sets the operation handler for the update user info operation
+	AdminAPIUpdateUserInfoHandler admin_api.UpdateUserInfoHandler
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
 	ServeError func(http.ResponseWriter, *http.Request, error)
@@ -464,6 +469,9 @@ func (o *McsAPI) Validate() error {
 	}
 	if o.AdminAPIUpdateUserGroupsHandler == nil {
 		unregistered = append(unregistered, "admin_api.UpdateUserGroupsHandler")
+	}
+	if o.AdminAPIUpdateUserInfoHandler == nil {
+		unregistered = append(unregistered, "admin_api.UpdateUserInfoHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -705,6 +713,10 @@ func (o *McsAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/users/{name}/groups"] = admin_api.NewUpdateUserGroups(o.context, o.AdminAPIUpdateUserGroupsHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/users/{name}"] = admin_api.NewUpdateUserInfo(o.context, o.AdminAPIUpdateUserInfoHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP
