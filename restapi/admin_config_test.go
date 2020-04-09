@@ -19,9 +19,11 @@ package restapi
 import (
 	"context"
 	"fmt"
+	"reflect"
 	"testing"
 
 	"github.com/go-openapi/swag"
+
 	"github.com/minio/mcs/models"
 	"github.com/minio/minio/pkg/madmin"
 
@@ -173,19 +175,19 @@ func TestSetConfig(t *testing.T) {
 	}
 	configName := "notify_postgres"
 	kvs := []*models.ConfigurationKV{
-		&models.ConfigurationKV{
+		{
 			Key:   "enable",
 			Value: "off",
 		},
-		&models.ConfigurationKV{
+		{
 			Key:   "connection_string",
 			Value: "",
 		},
 	}
-	arnResourceID := ""
 
+	ctx := context.Background()
 	// Test-1 : setConfig() sets a config with two key value pairs
-	err := setConfig(adminClient, swag.String(configName), kvs, arnResourceID)
+	err := setConfig(ctx, adminClient, &configName, kvs)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -194,16 +196,153 @@ func TestSetConfig(t *testing.T) {
 	minioSetConfigKVMock = func(kv string) error {
 		return errors.New("error")
 	}
-	if err := setConfig(adminClient, swag.String(configName), kvs, arnResourceID); assert.Error(err) {
+	if err := setConfig(ctx, adminClient, &configName, kvs); assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
 
-	// Test-3: buildConfig() format correctly configuration as "config_name k=v k2=v2"
-	config := buildConfig(swag.String(configName), kvs, arnResourceID)
-	assert.Equal(fmt.Sprintf("%s enable=off connection_string=", configName), *config)
+}
 
-	// Test-4: buildConfig() format correctly configuration if it has a non empty arnResourceID as "config_name:resourceid k=v k2=v2"
-	arnResourceID = "postgres"
-	config = buildConfig(swag.String(configName), kvs, arnResourceID)
-	assert.Equal(fmt.Sprintf("%s:%s enable=off connection_string=", configName, arnResourceID), *config)
+func Test_buildConfig(t *testing.T) {
+	type args struct {
+		configName *string
+		kvs        []*models.ConfigurationKV
+	}
+	tests := []struct {
+		name string
+		args args
+		want *string
+	}{
+		// Test-1: buildConfig() format correctly configuration as "config_name k=v k2=v2"
+		{
+			name: "format correctly",
+			args: args{
+				configName: swag.String("notify_postgres"),
+				kvs: []*models.ConfigurationKV{
+					{
+						Key:   "enable",
+						Value: "off",
+					},
+					{
+						Key:   "connection_string",
+						Value: "",
+					},
+				},
+			},
+			want: swag.String("notify_postgres enable=off connection_string="),
+		},
+		// Test-2: buildConfig() format correctly configuration as "config_name k=v k2=v2 k2=v3" with duplicate keys
+		{
+			name: "duplicated keys in config",
+			args: args{
+				configName: swag.String("notify_postgres"),
+				kvs: []*models.ConfigurationKV{
+					{
+						Key:   "enable",
+						Value: "off",
+					},
+					{
+						Key:   "connection_string",
+						Value: "",
+					},
+					{
+						Key:   "connection_string",
+						Value: "x",
+					},
+				},
+			},
+			want: swag.String("notify_postgres enable=off connection_string= connection_string=x"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := buildConfig(tt.args.configName, tt.args.kvs); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("buildConfig() = %s, want %s", *got, *tt.want)
+			}
+		})
+	}
+}
+
+func Test_setConfigWithARN(t *testing.T) {
+	client := adminClientMock{}
+
+	type args struct {
+		ctx        context.Context
+		client     MinioAdmin
+		configName *string
+		kvs        []*models.ConfigurationKV
+		arn        string
+	}
+	tests := []struct {
+		name          string
+		args          args
+		mockSetConfig func(kv string) error
+		wantErr       bool
+	}{
+		{
+			name: "Set valid config with arn",
+			args: args{
+				ctx:        context.Background(),
+				client:     client,
+				configName: swag.String("notify_kafka"),
+				kvs: []*models.ConfigurationKV{
+					{
+						Key:   "brokers",
+						Value: "http://localhost:8080/broker1,http://localhost:8080/broker2",
+					},
+				},
+				arn: "1",
+			},
+			mockSetConfig: func(kv string) error {
+				return nil
+			},
+			wantErr: false,
+		},
+		{
+			name: "Set valid config without arn",
+			args: args{
+				ctx:        context.Background(),
+				client:     client,
+				configName: swag.String("region"),
+				kvs: []*models.ConfigurationKV{
+					{
+						Key:   "name",
+						Value: "us-west-1",
+					},
+				},
+				arn: "",
+			},
+			mockSetConfig: func(kv string) error {
+				return nil
+			},
+			wantErr: false,
+		},
+		{
+			name: "Setting an incorrect config",
+			args: args{
+				ctx:        context.Background(),
+				client:     client,
+				configName: swag.String("oorgle"),
+				kvs: []*models.ConfigurationKV{
+					{
+						Key:   "name",
+						Value: "us-west-1",
+					},
+				},
+				arn: "",
+			},
+			mockSetConfig: func(kv string) error {
+				return errors.New("error")
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// mock function response from setConfig()
+			minioSetConfigKVMock = tt.mockSetConfig
+			if err := setConfigWithARNAccountID(tt.args.ctx, tt.args.client, tt.args.configName, tt.args.kvs, tt.args.arn); (err != nil) != tt.wantErr {
+				t.Errorf("setConfigWithARNAccountID() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
 }
