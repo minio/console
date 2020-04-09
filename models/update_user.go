@@ -29,37 +29,29 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// AddUserRequest add user request
+// UpdateUser update user
 //
-// swagger:model addUserRequest
-type AddUserRequest struct {
-
-	// access key
-	// Required: true
-	AccessKey *string `json:"accessKey"`
+// swagger:model updateUser
+type UpdateUser struct {
 
 	// groups
 	// Required: true
 	Groups []string `json:"groups"`
 
-	// secret key
+	// status
 	// Required: true
-	SecretKey *string `json:"secretKey"`
+	Status *string `json:"status"`
 }
 
-// Validate validates this add user request
-func (m *AddUserRequest) Validate(formats strfmt.Registry) error {
+// Validate validates this update user
+func (m *UpdateUser) Validate(formats strfmt.Registry) error {
 	var res []error
-
-	if err := m.validateAccessKey(formats); err != nil {
-		res = append(res, err)
-	}
 
 	if err := m.validateGroups(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateSecretKey(formats); err != nil {
+	if err := m.validateStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -69,16 +61,7 @@ func (m *AddUserRequest) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *AddUserRequest) validateAccessKey(formats strfmt.Registry) error {
-
-	if err := validate.Required("accessKey", "body", m.AccessKey); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *AddUserRequest) validateGroups(formats strfmt.Registry) error {
+func (m *UpdateUser) validateGroups(formats strfmt.Registry) error {
 
 	if err := validate.Required("groups", "body", m.Groups); err != nil {
 		return err
@@ -87,9 +70,9 @@ func (m *AddUserRequest) validateGroups(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *AddUserRequest) validateSecretKey(formats strfmt.Registry) error {
+func (m *UpdateUser) validateStatus(formats strfmt.Registry) error {
 
-	if err := validate.Required("secretKey", "body", m.SecretKey); err != nil {
+	if err := validate.Required("status", "body", m.Status); err != nil {
 		return err
 	}
 
@@ -97,7 +80,7 @@ func (m *AddUserRequest) validateSecretKey(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *AddUserRequest) MarshalBinary() ([]byte, error) {
+func (m *UpdateUser) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -105,8 +88,8 @@ func (m *AddUserRequest) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *AddUserRequest) UnmarshalBinary(b []byte) error {
-	var res AddUserRequest
+func (m *UpdateUser) UnmarshalBinary(b []byte) error {
+	var res UpdateUser
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

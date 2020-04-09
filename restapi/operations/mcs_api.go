@@ -99,6 +99,9 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		UserAPIDeleteBucketEventHandler: user_api.DeleteBucketEventHandlerFunc(func(params user_api.DeleteBucketEventParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteBucketEvent has not yet been implemented")
 		}),
+		AdminAPIGetUserInfoHandler: admin_api.GetUserInfoHandlerFunc(func(params admin_api.GetUserInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.GetUserInfo has not yet been implemented")
+		}),
 		AdminAPIGroupInfoHandler: admin_api.GroupInfoHandlerFunc(func(params admin_api.GroupInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GroupInfo has not yet been implemented")
 		}),
@@ -170,6 +173,9 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		}),
 		AdminAPIUpdateUserGroupsHandler: admin_api.UpdateUserGroupsHandlerFunc(func(params admin_api.UpdateUserGroupsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.UpdateUserGroups has not yet been implemented")
+		}),
+		AdminAPIUpdateUserInfoHandler: admin_api.UpdateUserInfoHandlerFunc(func(params admin_api.UpdateUserInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.UpdateUserInfo has not yet been implemented")
 		}),
 
 		KeyAuth: func(token string, scopes []string) (*models.Principal, error) {
@@ -244,6 +250,8 @@ type McsAPI struct {
 	UserAPIDeleteBucketHandler user_api.DeleteBucketHandler
 	// UserAPIDeleteBucketEventHandler sets the operation handler for the delete bucket event operation
 	UserAPIDeleteBucketEventHandler user_api.DeleteBucketEventHandler
+	// AdminAPIGetUserInfoHandler sets the operation handler for the get user info operation
+	AdminAPIGetUserInfoHandler admin_api.GetUserInfoHandler
 	// AdminAPIGroupInfoHandler sets the operation handler for the group info operation
 	AdminAPIGroupInfoHandler admin_api.GroupInfoHandler
 	// UserAPIListBucketEventsHandler sets the operation handler for the list bucket events operation
@@ -292,6 +300,8 @@ type McsAPI struct {
 	AdminAPIUpdateGroupHandler admin_api.UpdateGroupHandler
 	// AdminAPIUpdateUserGroupsHandler sets the operation handler for the update user groups operation
 	AdminAPIUpdateUserGroupsHandler admin_api.UpdateUserGroupsHandler
+	// AdminAPIUpdateUserInfoHandler sets the operation handler for the update user info operation
+	AdminAPIUpdateUserInfoHandler admin_api.UpdateUserInfoHandler
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
 	ServeError func(http.ResponseWriter, *http.Request, error)
@@ -401,6 +411,9 @@ func (o *McsAPI) Validate() error {
 	if o.UserAPIDeleteBucketEventHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteBucketEventHandler")
 	}
+	if o.AdminAPIGetUserInfoHandler == nil {
+		unregistered = append(unregistered, "admin_api.GetUserInfoHandler")
+	}
 	if o.AdminAPIGroupInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.GroupInfoHandler")
 	}
@@ -472,6 +485,9 @@ func (o *McsAPI) Validate() error {
 	}
 	if o.AdminAPIUpdateUserGroupsHandler == nil {
 		unregistered = append(unregistered, "admin_api.UpdateUserGroupsHandler")
+	}
+	if o.AdminAPIUpdateUserInfoHandler == nil {
+		unregistered = append(unregistered, "admin_api.UpdateUserInfoHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -624,6 +640,10 @@ func (o *McsAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/users/{name}"] = admin_api.NewGetUserInfo(o.context, o.AdminAPIGetUserInfoHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/groups/{name}"] = admin_api.NewGroupInfo(o.context, o.AdminAPIGroupInfoHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -717,6 +737,10 @@ func (o *McsAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/users/{name}/groups"] = admin_api.NewUpdateUserGroups(o.context, o.AdminAPIUpdateUserGroupsHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/users/{name}"] = admin_api.NewUpdateUserInfo(o.context, o.AdminAPIUpdateUserInfoHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP

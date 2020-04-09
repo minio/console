@@ -1097,6 +1097,72 @@ func init() {
       }
     },
     "/users/{name}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get User Info",
+        "operationId": "GetUserInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/user"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Update User Info",
+        "operationId": "UpdateUserInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/user"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "AdminAPI"
@@ -1202,11 +1268,18 @@ func init() {
       "type": "object",
       "required": [
         "accessKey",
-        "secretKey"
+        "secretKey",
+        "groups"
       ],
       "properties": {
         "accessKey": {
           "type": "string"
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "secretKey": {
           "type": "string"
@@ -1736,6 +1809,24 @@ func init() {
       ],
       "properties": {
         "members": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "updateUser": {
+      "type": "object",
+      "required": [
+        "status",
+        "groups"
+      ],
+      "properties": {
+        "groups": {
           "type": "array",
           "items": {
             "type": "string"
@@ -2858,6 +2949,72 @@ func init() {
       }
     },
     "/users/{name}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get User Info",
+        "operationId": "GetUserInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/user"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Update User Info",
+        "operationId": "UpdateUserInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/user"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "AdminAPI"
@@ -2963,11 +3120,18 @@ func init() {
       "type": "object",
       "required": [
         "accessKey",
-        "secretKey"
+        "secretKey",
+        "groups"
       ],
       "properties": {
         "accessKey": {
           "type": "string"
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "secretKey": {
           "type": "string"
@@ -3497,6 +3661,24 @@ func init() {
       ],
       "properties": {
         "members": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "updateUser": {
+      "type": "object",
+      "required": [
+        "status",
+        "groups"
+      ],
+      "properties": {
+        "groups": {
           "type": "array",
           "items": {
             "type": "string"
