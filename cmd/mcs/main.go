@@ -53,7 +53,6 @@ VERSION:
 
 var appCmds = []cli.Command{
 	serverCmd,
-	versionCmd,
 }
 
 func newApp(name string) *cli.App {
@@ -106,7 +105,7 @@ func newApp(name string) *cli.App {
 	app.Name = name
 	app.Version = pkg.Version
 	app.Author = "MinIO, Inc."
-	app.Usage = "mcs COMMAND"
+	app.Usage = "mcs"
 	app.Description = `MinIO Console Server`
 	app.Commands = commands
 	app.HideHelpCommand = true // Hide `help, h` command, we already have `minio --help`.
