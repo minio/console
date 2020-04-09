@@ -125,15 +125,15 @@ func getListUsersResponse() (*models.ListUsersResponse, error) {
 }
 
 // addUser invokes adding a users on `MinioAdmin` and builds the response `models.User`
-func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *string) (*models.User, error) {
+func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *string, groups []string) (*models.User, error) {
 	// Calls into MinIO to add a new user if there's an error return it
-	err := client.addUser(ctx, *accessKey, *secretKey)
-	if err != nil {
+	if err := client.addUser(ctx, *accessKey, *secretKey); err != nil {
 		return nil, err
 	}
 
-	userElem := &models.User{
-		AccessKey: *accessKey,
+	userElem, errUG := updateUserGroups(ctx, client, *accessKey, groups)
+	if errUG != nil {
+		return nil, errUG
 	}
 
 	return userElem, nil
@@ -150,7 +150,7 @@ func getUserAddResponse(params admin_api.AddUserParams) (*models.User, error) {
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
 
-	user, err := addUser(ctx, adminClient, params.Body.AccessKey, params.Body.SecretKey)
+	user, err := addUser(ctx, adminClient, params.Body.AccessKey, params.Body.SecretKey, params.Body.Groups)
 	if err != nil {
 		log.Println("error adding user:", err)
 		return nil, err

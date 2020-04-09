@@ -79,6 +79,7 @@ func TestListUsers(t *testing.T) {
 	minioListUsersMock = func() (map[string]madmin.UserInfo, error) {
 		return mockUserMap, nil
 	}
+
 	// get list users response this response should have Name, CreationDate, Size and Access
 	// as part of of each user
 	function := "listUsers()"
@@ -113,14 +114,29 @@ func TestAddUser(t *testing.T) {
 	// Test-1: valid case of adding a user with a proper access key
 	accessKey := "ABCDEFGHI"
 	secretKey := "ABCDEFGHIABCDEFGHI"
+	groups := []string{"group1", "group2", "group3"}
+	mockResponse := &madmin.UserInfo{
+		MemberOf:   []string{"group1", "group2", "gropup3"},
+		PolicyName: "",
+		Status:     "enabled",
+		SecretKey:  "",
+	}
 
 	// mock function response from addUser() return no error
 	minioAddUserMock = func(accessKey, secretKey string) error {
 		return nil
 	}
+
+	minioGetUserInfoMock = func(accessKey string) (madmin.UserInfo, error) {
+		return *mockResponse, nil
+	}
+
+	minioUpdateGroupMembersMock = func(remove madmin.GroupAddRemove) error {
+		return nil
+	}
 	// adds a valid user to MinIO
 	function := "addUser()"
-	user, err := addUser(ctx, adminClient, &accessKey, &secretKey)
+	user, err := addUser(ctx, adminClient, &accessKey, &secretKey, groups)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -137,7 +153,22 @@ func TestAddUser(t *testing.T) {
 		return errors.New("error")
 	}
 
-	user, err = addUser(ctx, adminClient, &accessKey, &secretKey)
+	user, err = addUser(ctx, adminClient, &accessKey, &secretKey, groups)
+
+	// no error should have been returned
+	assert.Nil(user, "User is not null")
+	assert.NotNil(err, "An error should have been returned")
+
+	if assert.Error(err) {
+		assert.Equal("error", err.Error())
+	}
+
+	// add groups function returns an error
+	minioUpdateGroupMembersMock = func(remove madmin.GroupAddRemove) error {
+		return errors.New("error")
+	}
+
+	user, err = addUser(ctx, adminClient, &accessKey, &secretKey, groups)
 
 	// no error should have been returned
 	assert.Nil(user, "User is not null")
