@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState, useEffect } from "react";
+import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { LinearProgress } from "@material-ui/core";
 import TableContainer from "@material-ui/core/TableContainer";
@@ -86,7 +87,8 @@ const styles = (theme: Theme) =>
       padding: 12,
       borderRadius: 5,
       boxShadow: "0px 3px 6px #00000012",
-      width: "100%"
+      width: "100%",
+      zIndex: 500
     },
     noFound: {
       textAlign: "center",
@@ -96,7 +98,7 @@ const styles = (theme: Theme) =>
       maxHeight: 250
     },
     stickyHeader: {
-      backgroundColor: "transparent"
+      backgroundColor: "#fff"
     }
   });
 
@@ -122,13 +124,15 @@ const UsersSelectors = ({
     }
   }, [loading]);
 
+  const selUsers = !selectedUsers ? [] : selectedUsers;
+
   //Fetch Actions
   const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     const targetD = e.target;
     const value = targetD.value;
     const checked = targetD.checked;
 
-    let elements: string[] = [...selectedUsers]; // We clone the selectedGroups array
+    let elements: string[] = [...selUsers]; // We clone the selectedGroups array
 
     if (checked) {
       // If the user has checked this field we need to push this to selectedGroupsList
@@ -146,7 +150,13 @@ const UsersSelectors = ({
     api
       .invoke("GET", `/api/v1/users`)
       .then((res: UsersList) => {
-        setRecords(res.users.sort(usersSort));
+        let users = get(res, "users", []);
+
+        if (!users) {
+          users = [];
+        }
+
+        setRecords(users.sort(usersSort));
         setError("");
         isLoading(false);
       })
@@ -211,7 +221,7 @@ const UsersSelectors = ({
                               "aria-label": "secondary checkbox"
                             }}
                             onChange={selectionChanged}
-                            checked={selectedUsers.includes(row.accessKey)}
+                            checked={selUsers.includes(row.accessKey)}
                           />
                         </TableCell>
                         <TableCell className={classes.wrapCell}>

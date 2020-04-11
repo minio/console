@@ -215,14 +215,24 @@ class Users extends React.Component<IUsersProps, IUsersState> {
 
     return (
       <React.Fragment>
-        <AddUser
-          open={addScreenOpen}
-          selectedUser={selectedUser}
-          closeModalAndRefresh={() => {
-            this.closeAddModalAndRefresh();
-          }}
-        />
-
+        {addScreenOpen && (
+          <AddUser
+            open={addScreenOpen}
+            selectedUser={selectedUser}
+            closeModalAndRefresh={() => {
+              this.closeAddModalAndRefresh();
+            }}
+          />
+        )}
+        {deleteOpen && (
+          <DeleteUser
+            deleteOpen={deleteOpen}
+            selectedUser={selectedUser}
+            closeDeleteModalAndRefresh={(refresh: boolean) => {
+              this.closeDeleteModalAndRefresh(refresh);
+            }}
+          />
+        )}
         <Grid container>
           <Grid item xs={12}>
             <Typography variant="h6">Users</Typography>
@@ -355,13 +365,6 @@ class Users extends React.Component<IUsersProps, IUsersState> {
             </Paper>
           </Grid>
         </Grid>
-        <DeleteUser
-          deleteOpen={deleteOpen}
-          selectedUser={selectedUser}
-          closeDeleteModalAndRefresh={(refresh: boolean) => {
-            this.closeDeleteModalAndRefresh(refresh);
-          }}
-        />
       </React.Fragment>
     );
   }

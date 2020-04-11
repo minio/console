@@ -33,6 +33,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import api from "../../../common/api";
 import { groupsSort } from "../../../utils/sortFunctions";
 import { GroupsList } from "../Groups/types";
+import get from "lodash/get";
 
 interface IGroupsProps {
   classes: any;
@@ -88,17 +89,18 @@ const styles = (theme: Theme) =>
       padding: 12,
       borderRadius: 5,
       boxShadow: "0px 3px 6px #00000012",
-      width: "100%"
+      width: "100%",
+      zIndex: 500
     },
     noFound: {
       textAlign: "center",
       padding: "10px 0"
     },
     tableContainer: {
-      maxHeight: 250
+      maxHeight: 200
     },
     stickyHeader: {
-      backgroundColor: "transparent"
+      backgroundColor: "#fff"
     }
   });
 
@@ -124,11 +126,18 @@ const GroupsSelectors = ({
     }
   }, [loading]);
 
+  const selGroups = !selectedGroups ? [] : selectedGroups;
+
   const fetchGroups = () => {
     api
       .invoke("GET", `/api/v1/groups`)
       .then((res: GroupsList) => {
-        setRecords(res.groups.sort(groupsSort));
+        let groups = get(res, "groups", []);
+
+        if (!groups) {
+          groups = [];
+        }
+        setRecords(groups.sort(groupsSort));
         setError("");
         isLoading(false);
       })
@@ -143,7 +152,7 @@ const GroupsSelectors = ({
     const value = targetD.value;
     const checked = targetD.checked;
 
-    let elements: string[] = [...selectedGroups]; // We clone the selectedGroups array
+    let elements: string[] = [...selGroups]; // We clone the selectedGroups array
 
     if (checked) {
       // If the user has checked this field we need to push this to selectedGroupsList
@@ -212,7 +221,7 @@ const GroupsSelectors = ({
                               "aria-label": "secondary checkbox"
                             }}
                             onChange={selectionChanged}
-                            checked={selectedGroups.includes(groupName)}
+                            checked={selGroups.includes(groupName)}
                           />
                         </TableCell>
                         <TableCell className={classes.wrapCell}>
