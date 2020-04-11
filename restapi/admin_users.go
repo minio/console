@@ -17,6 +17,7 @@
 package restapi
 
 import (
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
 	"github.com/minio/mcs/restapi/operations"
@@ -27,7 +28,6 @@ import (
 	"github.com/minio/minio/pkg/madmin"
 
 	"context"
-	"errors"
 	"log"
 )
 
@@ -73,6 +73,15 @@ func registerUsersHandlers(api *operations.McsAPI) {
 		}
 
 		return admin_api.NewGetUserOK().WithPayload(userInfoResponse)
+	})
+	// Update User
+	api.AdminAPIUpdateUserInfoHandler = admin_api.UpdateUserInfoHandlerFunc(func(params admin_api.UpdateUserInfoParams, principal *models.Principal) middleware.Responder {
+		userUpdateResponse, err := getUpdateUserResponse(params)
+		if err != nil {
+			return admin_api.NewUpdateUserInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
+
+		return admin_api.NewUpdateUserInfoOK().WithPayload(userUpdateResponse)
 	})
 }
 
@@ -304,7 +313,7 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 	}
 
 	if channelHasError {
-		errRt := errors.New("there was an error updating the groups")
+		errRt := errors.New(500, "there was an error updating the groups")
 		return nil, errRt
 	}
 
@@ -344,4 +353,52 @@ func getUpdateUserGroupsResponse(params admin_api.UpdateUserGroupsParams) (*mode
 	}
 
 	return user, nil
+}
+
+// setUserStatus invokes setUserStatus from madmin to update user status
+func setUserStatus(ctx context.Context, client MinioAdmin, user string, status string) error {
+	var setStatus madmin.AccountStatus
+	switch status {
+	case "enabled":
+		setStatus = madmin.AccountEnabled
+	case "disabled":
+		setStatus = madmin.AccountDisabled
+	default:
+		return errors.New(500, "status not valid")
+	}
+
+	if err := client.setUserStatus(ctx, user, setStatus); err != nil {
+		return err
+	}
+	return nil
+}
+
+func getUpdateUserResponse(params admin_api.UpdateUserInfoParams) (*models.User, error) {
+	ctx := context.Background()
+
+	mAdmin, err := newMAdminClient()
+	if err != nil {
+		log.Println("error creating Madmin Client:", err)
+		return nil, err
+	}
+
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := adminClient{client: mAdmin}
+
+	name := params.Name
+	status := *params.Body.Status
+	groups := params.Body.Groups
+
+	if err := setUserStatus(ctx, adminClient, name, status); err != nil {
+		log.Println("error updating user status:", status)
+		return nil, err
+	}
+
+	userElem, errUG := updateUserGroups(ctx, adminClient, name, groups)
+
+	if errUG != nil {
+		return nil, errUG
+	}
+	return userElem, nil
 }

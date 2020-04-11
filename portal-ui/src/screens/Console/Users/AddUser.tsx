@@ -29,6 +29,9 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../common/api";
 import { User } from "./types";
 import GroupsSelectors from "./GroupsSelectors";
+import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
+import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import RadioGroupSelector from "../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -40,6 +43,9 @@ const styles = (theme: Theme) =>
     },
     keyName: {
       marginLeft: 5
+    },
+    buttonContainer: {
+      textAlign: "right"
     }
   });
 
@@ -47,6 +53,7 @@ interface IAddUserContentProps {
   classes: any;
   closeModalAndRefresh: () => void;
   selectedUser: User | null;
+  open: boolean;
 }
 
 interface IAddUserContentState {
@@ -57,6 +64,7 @@ interface IAddUserContentState {
   selectedGroups: string[];
   loadingGroups: boolean;
   groupsList: any[];
+  enabled: string;
 }
 
 class AddUserContent extends React.Component<
@@ -70,23 +78,32 @@ class AddUserContent extends React.Component<
     secretKey: "",
     selectedGroups: [],
     loadingGroups: false,
-    groupsList: []
+    groupsList: [],
+    enabled: "enabled"
   };
 
   componentDidMount(): void {
     const { selectedUser } = this.props;
-    if (selectedUser !== null) {
-      console.log("selUsr", selectedUser);
+    if (selectedUser == null) {
       this.setState({
-        accessKey: selectedUser.accessKey,
-        secretKey: ""
+        accessKey: "",
+        secretKey: "",
+        selectedGroups: []
       });
+    } else {
+      this.getUserInformation();
     }
   }
 
   saveRecord(event: React.FormEvent) {
     event.preventDefault();
-    const { accessKey, addLoading, secretKey, selectedGroups } = this.state;
+    const {
+      accessKey,
+      addLoading,
+      secretKey,
+      selectedGroups,
+      enabled
+    } = this.state;
     const { selectedUser } = this.props;
     if (addLoading) {
       return;
@@ -95,8 +112,7 @@ class AddUserContent extends React.Component<
       if (selectedUser !== null) {
         api
           .invoke("PUT", `/api/v1/users/${selectedUser.accessKey}`, {
-            accessKey,
-            secretKey: secretKey !== "" ? null : secretKey,
+            status: enabled,
             groups: selectedGroups
           })
           .then(res => {
@@ -145,6 +161,33 @@ class AddUserContent extends React.Component<
     });
   }
 
+  getUserInformation() {
+    const { selectedUser } = this.props;
+
+    if (!selectedUser) {
+      return null;
+    }
+
+    api
+      .invoke("GET", `/api/v1/users/${selectedUser.accessKey}`)
+      .then(res => {
+        console.log(res);
+        this.setState({
+          addLoading: false,
+          addError: "",
+          accessKey: res.accessKey,
+          selectedGroups: res.memberOf,
+          enabled: res.status
+        });
+      })
+      .catch(err => {
+        this.setState({
+          addLoading: false,
+          addError: err
+        });
+      });
+  }
+
   render() {
     const { classes, selectedUser } = this.props;
     const {
@@ -154,15 +197,19 @@ class AddUserContent extends React.Component<
       secretKey,
       selectedGroups,
       loadingGroups,
-      groupsList
+      groupsList,
+      enabled
     } = this.state;
 
     return (
-      <React.Fragment>
-        <DialogTitle id="alert-dialog-title">
-          {selectedUser !== null ? "Edit User" : "Add User"}
-        </DialogTitle>
-        <DialogContent>
+      <ModalWrapper
+        closeModalAndRefresh={() => {
+          this.props.closeModalAndRefresh();
+        }}
+        modalOpen={this.props.open}
+        title={selectedUser !== null ? "Edit User" : "Add User"}
+      >
+        <React.Fragment>
           <form
             noValidate
             autoComplete="off"
@@ -183,45 +230,44 @@ class AddUserContent extends React.Component<
                 </Grid>
               )}
 
-              {selectedUser !== null ? (
-                <React.Fragment>
-                  <span className={classes.strongText}>Access Key:</span>
-                  <span className={classes.keyName}>{` ${accessKey}`}</span>
-                </React.Fragment>
-              ) : (
-                <React.Fragment>
-                  <Grid item xs={12}>
-                    <TextField
-                      id="standard-basic"
-                      fullWidth
-                      label="Access Key"
-                      value={accessKey}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        this.setState({ accessKey: e.target.value });
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      id="standard-multiline-static"
-                      label={
-                        selectedUser !== null ? "New Secret Key" : "Secret Key"
-                      }
-                      type="password"
-                      fullWidth
-                      value={secretKey}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        this.setState({ secretKey: e.target.value });
-                      }}
-                      autoComplete="current-password"
-                    />
-                  </Grid>
-                </React.Fragment>
-              )}
+              <InputBoxWrapper
+                id="accesskey-input"
+                name="accesskey-input"
+                label="Access Key"
+                value={accessKey}
+                onChangeFunc={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  this.setState({ accessKey: e.target.value });
+                }}
+                disabled={selectedUser !== null}
+              />
 
-              <Grid item xs={12}>
-                <br />
-              </Grid>
+              {selectedUser !== null ? (
+                <RadioGroupSelector
+                  currentSelection={enabled}
+                  id="user-status"
+                  name="user-status"
+                  label="Status"
+                  onChange={e => {
+                    this.setState({ enabled: e.target.value });
+                  }}
+                  selectorOptions={[
+                    { label: "Enabled", value: "enabled" },
+                    { label: "Disabled", value: "disabled" }
+                  ]}
+                />
+              ) : (
+                <InputBoxWrapper
+                  id="standard-multiline-static"
+                  name="standard-multiline-static"
+                  label="Secret Key"
+                  type="password"
+                  value={secretKey}
+                  onChangeFunc={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    this.setState({ secretKey: e.target.value });
+                  }}
+                  autoComplete="current-password"
+                />
+              )}
               <Grid item xs={12}>
                 <GroupsSelectors
                   selectedGroups={selectedGroups}
@@ -237,12 +283,11 @@ class AddUserContent extends React.Component<
               <Grid item xs={12}>
                 <br />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.buttonContainer}>
                 <Button
                   type="submit"
                   variant="contained"
                   color="primary"
-                  fullWidth
                   disabled={addLoading}
                 >
                   Save
@@ -255,8 +300,8 @@ class AddUserContent extends React.Component<
               )}
             </Grid>
           </form>
-        </DialogContent>
-      </React.Fragment>
+        </React.Fragment>
+      </ModalWrapper>
     );
   }
 }
@@ -275,19 +320,7 @@ class AddUser extends React.Component<IAddUserProps, IAddUserState> {
   state: IAddUserState = {};
 
   render() {
-    const { open } = this.props;
-    return (
-      <Dialog
-        open={open}
-        onClose={() => {
-          this.props.closeModalAndRefresh();
-        }}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <AddUserWrapper {...this.props} />
-      </Dialog>
-    );
+    return <AddUserWrapper {...this.props} />;
   }
 }
 

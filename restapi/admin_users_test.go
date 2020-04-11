@@ -33,6 +33,7 @@ var minioListUsersMock func() (map[string]madmin.UserInfo, error)
 var minioAddUserMock func(accessKey, secreyKey string) error
 var minioRemoveUserMock func(accessKey string) error
 var minioGetUserInfoMock func(accessKey string) (madmin.UserInfo, error)
+var minioSetUserStatusMock func(accessKey string, status madmin.AccountStatus) error
 
 // mock function of listUsers()
 func (ac adminClientMock) listUsers(ctx context.Context) (map[string]madmin.UserInfo, error) {
@@ -52,6 +53,11 @@ func (ac adminClientMock) removeUser(ctx context.Context, accessKey string) erro
 //mock function of getUserInfo()
 func (ac adminClientMock) getUserInfo(ctx context.Context, accessKey string) (madmin.UserInfo, error) {
 	return minioGetUserInfoMock(accessKey)
+}
+
+//mock function of setUserStatus()
+func (ac adminClientMock) setUserStatus(ctx context.Context, accessKey string, status madmin.AccountStatus) error {
+	return minioSetUserStatusMock(accessKey, status)
 }
 
 func TestListUsers(t *testing.T) {
@@ -318,6 +324,47 @@ func TestGetUserInfo(t *testing.T) {
 	}
 	_, err = getUserInfo(ctx, adminClient, userName)
 	if assert.Error(err) {
+		assert.Equal("error", err.Error())
+	}
+}
+
+func TestSetUserStatus(t *testing.T) {
+	assert := asrt.New(t)
+	adminClient := adminClientMock{}
+	function := "setUserStatus()"
+	userName := "userName123"
+	ctx := context.Background()
+
+	// Test-1: setUserStatus() update valid disabled status
+	expectedStatus := "disabled"
+	minioSetUserStatusMock = func(accessKey string, status madmin.AccountStatus) error {
+		return nil
+	}
+	if err := setUserStatus(ctx, adminClient, userName, expectedStatus); err != nil {
+		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+	}
+	// Test-2: setUserStatus() update valid enabled status
+	expectedStatus = "enabled"
+	minioSetUserStatusMock = func(accessKey string, status madmin.AccountStatus) error {
+		return nil
+	}
+	if err := setUserStatus(ctx, adminClient, userName, expectedStatus); err != nil {
+		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+	}
+	// Test-3: setUserStatus() update invalid status, should send error
+	expectedStatus = "invalid"
+	minioSetUserStatusMock = func(accessKey string, status madmin.AccountStatus) error {
+		return nil
+	}
+	if err := setUserStatus(ctx, adminClient, userName, expectedStatus); assert.Error(err) {
+		assert.Equal("status not valid", err.Error())
+	}
+	// Test-4: setUserStatus() handler error correctly
+	expectedStatus = "enabled"
+	minioSetUserStatusMock = func(accessKey string, status madmin.AccountStatus) error {
+		return errors.New("error")
+	}
+	if err := setUserStatus(ctx, adminClient, userName, expectedStatus); assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
 }
