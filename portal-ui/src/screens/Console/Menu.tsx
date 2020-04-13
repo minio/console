@@ -27,7 +27,7 @@ import { userLoggedIn } from "../../actions";
 import List from "@material-ui/core/List";
 import storage from "local-storage-fallback";
 import history from "../../history";
-import logo from "../../icons/mkube_logo_temp.svg";
+import logo from "../../icons/minio_console_logo.svg";
 import {
   BucketsIcon,
   DashboardIcon,
@@ -45,7 +45,7 @@ const styles = (theme: Theme) =>
       marginBottom: "20px",
       textAlign: "center",
       "& img": {
-        width: "76px"
+        width: "160px"
       }
     },
     menuList: {
