@@ -15,21 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
 import Grid from "@material-ui/core/Grid";
-import Title from "../../../../common/Title";
 import Typography from "@material-ui/core/Typography";
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  InputLabel,
-  LinearProgress,
-  MenuItem,
-  Select
-} from "@material-ui/core";
+import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../../common/api";
+import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
+import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -97,80 +88,71 @@ class SetAccessPolicy extends React.Component<
     const { classes, open } = this.props;
     const { addLoading, addError, accessPolicy } = this.state;
     return (
-      <Dialog
-        open={open}
+      <ModalWrapper
+        title="Change Access Policy"
+        modalOpen={open}
         onClose={() => {
           this.setState({ addError: "" }, () => {
             this.props.closeModalAndRefresh();
           });
         }}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
-          <Title>Change Access Policy</Title>
-        </DialogTitle>
-        <DialogContent>
-          <form
-            noValidate
-            autoComplete="off"
-            onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-              this.addRecord(e);
-            }}
-          >
-            <Grid container>
-              {addError !== "" && (
-                <Grid item xs={12}>
-                  <Typography
-                    component="p"
-                    variant="body1"
-                    className={classes.errorBlock}
-                  >
-                    {addError}
-                  </Typography>
-                </Grid>
-              )}
+        <form
+          noValidate
+          autoComplete="off"
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+            this.addRecord(e);
+          }}
+        >
+          <Grid container>
+            {addError !== "" && (
               <Grid item xs={12}>
-                <FormControl className={classes.formControl} fullWidth>
-                  <InputLabel id="select-access-policy">
-                    Access Policy
-                  </InputLabel>
-                  <Select
-                    labelId="select-access-policy"
-                    id="select-access-policy"
-                    value={accessPolicy}
-                    onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                      this.setState({ accessPolicy: e.target.value as string });
-                    }}
-                  >
-                    <MenuItem value="PRIVATE">Private</MenuItem>
-                    <MenuItem value="PUBLIC">Public</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <br />
-              </Grid>
-              <Grid item xs={12}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  disabled={addLoading}
+                <Typography
+                  component="p"
+                  variant="body1"
+                  className={classes.errorBlock}
                 >
-                  Set
-                </Button>
+                  {addError}
+                </Typography>
               </Grid>
-              {addLoading && (
-                <Grid item xs={12}>
-                  <LinearProgress />
-                </Grid>
-              )}
+            )}
+            <Grid item xs={12}>
+              <SelectWrapper
+                value={accessPolicy}
+                label="Access Policy"
+                id="select-access-policy"
+                name="select-access-policy"
+                onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                  this.setState({ accessPolicy: e.target.value as string });
+                }}
+                options={[
+                  { value: "PRIVATE", label: "Private" },
+                  { value: "PUBLIC", label: "Public" }
+                ]}
+              />
             </Grid>
-          </form>
-        </DialogContent>
-      </Dialog>
+            <Grid item xs={12}>
+              <br />
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                disabled={addLoading}
+              >
+                Set
+              </Button>
+            </Grid>
+            {addLoading && (
+              <Grid item xs={12}>
+                <LinearProgress />
+              </Grid>
+            )}
+          </Grid>
+        </form>
+      </ModalWrapper>
     );
   }
 }

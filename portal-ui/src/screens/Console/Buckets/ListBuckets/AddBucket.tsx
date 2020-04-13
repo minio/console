@@ -16,23 +16,20 @@
 
 import React from "react";
 import Grid from "@material-ui/core/Grid";
-import Title from "../../../../common/Title";
 import Typography from "@material-ui/core/Typography";
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  LinearProgress,
-  TextField
-} from "@material-ui/core";
+import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../../common/api";
+import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
+import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
       color: "red"
+    },
+    buttonContainer: {
+      textAlign: "right"
     }
   });
 
@@ -88,10 +85,11 @@ class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
 
   render() {
     const { classes, open } = this.props;
-    const { addLoading, addError } = this.state;
+    const { addLoading, addError, bucketName } = this.state;
     return (
-      <Dialog
-        open={open}
+      <ModalWrapper
+        title="Create Bucket"
+        modalOpen={open}
         onClose={() => {
           this.setState({ addError: "" }, () => {
             this.props.closeModalAndRefresh();
@@ -100,63 +98,58 @@ class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
-          <Title>Create Bucket</Title>
-        </DialogTitle>
-        <DialogContent>
-          <form
-            noValidate
-            autoComplete="off"
-            onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-              this.addRecord(e);
-            }}
-          >
-            <Grid container>
-              {addError !== "" && (
-                <Grid item xs={12}>
-                  <Typography
-                    component="p"
-                    variant="body1"
-                    className={classes.errorBlock}
-                  >
-                    {addError}
-                  </Typography>
-                </Grid>
-              )}
+        <form
+          noValidate
+          autoComplete="off"
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+            this.addRecord(e);
+          }}
+        >
+          <Grid container>
+            {addError !== "" && (
               <Grid item xs={12}>
-                <TextField
-                  id="standard-basic"
-                  fullWidth
-                  label="Bucket Name"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    this.setState({ bucketName: e.target.value });
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <br />
-                <br />
-              </Grid>
-              <Grid item xs={12}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  disabled={addLoading}
+                <Typography
+                  component="p"
+                  variant="body1"
+                  className={classes.errorBlock}
                 >
-                  Save
-                </Button>
+                  {addError}
+                </Typography>
               </Grid>
-              {addLoading && (
-                <Grid item xs={12}>
-                  <LinearProgress />
-                </Grid>
-              )}
+            )}
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="bucket-name"
+                name="bucket-name"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  this.setState({ bucketName: e.target.value });
+                }}
+                label="Bucket Name"
+                value={bucketName}
+              />
             </Grid>
-          </form>
-        </DialogContent>
-      </Dialog>
+            <Grid item xs={12}>
+              <br />
+              <br />
+            </Grid>
+            <Grid item xs={12} className={classes.buttonContainer}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={addLoading}
+              >
+                Save
+              </Button>
+            </Grid>
+            {addLoading && (
+              <Grid item xs={12}>
+                <LinearProgress />
+              </Grid>
+            )}
+          </Grid>
+        </form>
+      </ModalWrapper>
     );
   }
 }

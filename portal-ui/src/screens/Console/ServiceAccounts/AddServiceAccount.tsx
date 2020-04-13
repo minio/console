@@ -17,15 +17,7 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  FormControlLabel,
-  LinearProgress,
-  TextField
-} from "@material-ui/core";
+import { Button, FormControlLabel, LinearProgress } from "@material-ui/core";
 import {
   createStyles,
   lighten,
@@ -54,6 +46,8 @@ import {
   ServiceAccountDetails
 } from "./types";
 import Switch from "@material-ui/core/Switch";
+import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
+import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 
 const useToolbarStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -209,7 +203,7 @@ class AddServiceAccountContent extends React.Component<
 
   saveRecord(event: React.FormEvent) {
     event.preventDefault();
-    const { name, addLoading, selectedPermissions,enabled } = this.state;
+    const { name, addLoading, selectedPermissions, enabled } = this.state;
     const { selectedServiceAccount } = this.props;
     if (addLoading) {
       return;
@@ -272,7 +266,12 @@ class AddServiceAccountContent extends React.Component<
   }
 
   render() {
-    const { classes, selectedServiceAccount } = this.props;
+    const {
+      classes,
+      selectedServiceAccount,
+      open,
+      closeModalAndRefresh
+    } = this.props;
     const {
       addLoading,
       addError,
@@ -342,177 +341,175 @@ class AddServiceAccountContent extends React.Component<
     const handleChange = (name: string) => (
       event: React.ChangeEvent<HTMLInputElement>
     ) => {
-      this.setState({enabled:event.target.checked})
+      this.setState({ enabled: event.target.checked });
     };
 
     return (
-      <React.Fragment>
-        <DialogTitle id="alert-dialog-title">
-          {selectedServiceAccount !== null ? (
-            <span>Edit Service Account</span>
-          ) : (
-            <span>Create Service Account</span>
-          )}
-        </DialogTitle>
-        <DialogContent>
-          <form
-            noValidate
-            autoComplete="off"
-            onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-              this.saveRecord(e);
-            }}
-          >
-            <Grid container>
-              {loadingServiceAccount && (
-                <Grid item xs={12}>
-                  <LinearProgress />
-                </Grid>
-              )}
-              {addError !== "" && (
-                <Grid item xs={12}>
-                  <Typography
-                    component="p"
-                    variant="body1"
-                    className={classes.errorBlock}
-                  >
-                    {addError}
-                  </Typography>
-                </Grid>
-              )}
+      <ModalWrapper
+        modalOpen={open}
+        onClose={() => {
+          this.setState({ addError: "" }, () => {
+            closeModalAndRefresh(null);
+          });
+        }}
+        title={
+          selectedServiceAccount !== null
+            ? "Edit Service Account"
+            : "Create Service Account"
+        }
+      >
+        <form
+          noValidate
+          autoComplete="off"
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+            this.saveRecord(e);
+          }}
+        >
+          <Grid container>
+            {loadingServiceAccount && (
               <Grid item xs={12}>
-                <TextField
-                  id="standard-basic"
-                  fullWidth
-                  label="Name"
-                  value={name}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    this.setState({ name: e.target.value });
-                  }}
-                />
+                <LinearProgress />
               </Grid>
+            )}
+            {addError !== "" && (
               <Grid item xs={12}>
-                <div className={classes.root}>
-                  <EnhancedTableToolbar
-                    numSelected={selectedPermissions.length}
-                  />
-                  <TableContainer>
-                    <Table
-                      className={classes.table}
-                      aria-labelledby="tableTitle"
-                      size={"small"}
-                      aria-label="enhanced table"
-                    >
-                      <TableHead>
-                        <TableRow>
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              indeterminate={
-                                selectedPermissions.length > 0 &&
-                                selectedPermissions.length < permissions.length
-                              }
-                              checked={
-                                selectedPermissions.length > 0 &&
-                                selectedPermissions.length ===
-                                  permissions.length
-                              }
-                              onChange={handleSelectAllClick}
-                              inputProps={{
-                                "aria-label": "select all desserts"
-                              }}
-                            />
-                          </TableCell>
-                          <TableCell>Permission</TableCell>
-                          <TableCell>Description</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {permissions
-                          .slice(
-                            page * rowsPerPage,
-                            page * rowsPerPage + rowsPerPage
-                          )
-                          .map((row, index) => {
-                            const isItemSelected = isSelected(row);
-                            const labelId = `enhanced-table-checkbox-${index}`;
-
-                            return (
-                              <TableRow
-                                hover
-                                onClick={event => handleClick(event, row)}
-                                role="checkbox"
-                                aria-checked={isItemSelected}
-                                tabIndex={-1}
-                                key={row.name}
-                                selected={isItemSelected}
-                              >
-                                <TableCell padding="checkbox">
-                                  <Checkbox
-                                    checked={isItemSelected}
-                                    inputProps={{ "aria-labelledby": labelId }}
-                                  />
-                                </TableCell>
-                                <TableCell id={labelId}>{row.name}</TableCell>
-                                <TableCell>{row.description}</TableCell>
-                              </TableRow>
-                            );
-                          })}
-                        {emptyRows > 0 && (
-                          <TableRow style={{ height: 33 * emptyRows }}>
-                            <TableCell colSpan={6} />
-                          </TableRow>
-                        )}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                  <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={permissions.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    labelRowsPerPage={null}
-                    onChangePage={handleChangePage}
-                    onChangeRowsPerPage={handleChangeRowsPerPage}
-                  />
-                </div>
-              </Grid>
-              <Grid item xs={12}>
-                <br />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      onChange={handleChange("enabled")}
-                      value="checkedA"
-                    />
-                  }
-                  label="Enabled"
-
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <br />
-              </Grid>
-              <Grid item xs={12}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  disabled={addLoading}
+                <Typography
+                  component="p"
+                  variant="body1"
+                  className={classes.errorBlock}
                 >
-                  Save
-                </Button>
+                  {addError}
+                </Typography>
               </Grid>
-              {addLoading && (
-                <Grid item xs={12}>
-                  <LinearProgress />
-                </Grid>
-              )}
+            )}
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="service-account-name"
+                name="service-account-name"
+                label="Name"
+                value={name}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  this.setState({ name: e.target.value });
+                }}
+              />
             </Grid>
-          </form>
-        </DialogContent>
-      </React.Fragment>
+            <Grid item xs={12}>
+              <div className={classes.root}>
+                <EnhancedTableToolbar
+                  numSelected={selectedPermissions.length}
+                />
+                <TableContainer>
+                  <Table
+                    className={classes.table}
+                    aria-labelledby="tableTitle"
+                    size={"small"}
+                    aria-label="enhanced table"
+                  >
+                    <TableHead>
+                      <TableRow>
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            indeterminate={
+                              selectedPermissions.length > 0 &&
+                              selectedPermissions.length < permissions.length
+                            }
+                            checked={
+                              selectedPermissions.length > 0 &&
+                              selectedPermissions.length === permissions.length
+                            }
+                            onChange={handleSelectAllClick}
+                            inputProps={{
+                              "aria-label": "select all desserts"
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell>Permission</TableCell>
+                        <TableCell>Description</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {permissions
+                        .slice(
+                          page * rowsPerPage,
+                          page * rowsPerPage + rowsPerPage
+                        )
+                        .map((row, index) => {
+                          const isItemSelected = isSelected(row);
+                          const labelId = `enhanced-table-checkbox-${index}`;
+
+                          return (
+                            <TableRow
+                              hover
+                              onClick={event => handleClick(event, row)}
+                              role="checkbox"
+                              aria-checked={isItemSelected}
+                              tabIndex={-1}
+                              key={row.name}
+                              selected={isItemSelected}
+                            >
+                              <TableCell padding="checkbox">
+                                <Checkbox
+                                  checked={isItemSelected}
+                                  inputProps={{ "aria-labelledby": labelId }}
+                                />
+                              </TableCell>
+                              <TableCell id={labelId}>{row.name}</TableCell>
+                              <TableCell>{row.description}</TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      {emptyRows > 0 && (
+                        <TableRow style={{ height: 33 * emptyRows }}>
+                          <TableCell colSpan={6} />
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25]}
+                  component="div"
+                  count={permissions.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  labelRowsPerPage={null}
+                  onChangePage={handleChangePage}
+                  onChangeRowsPerPage={handleChangeRowsPerPage}
+                />
+              </div>
+            </Grid>
+            <Grid item xs={12}>
+              <br />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Switch onChange={handleChange("enabled")} value="checkedA" />
+                }
+                label="Enabled"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <br />
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={addLoading}
+              >
+                Save
+              </Button>
+            </Grid>
+            {addLoading && (
+              <Grid item xs={12}>
+                <LinearProgress />
+              </Grid>
+            )}
+          </Grid>
+        </form>
+      </ModalWrapper>
     );
   }
 }
@@ -534,21 +531,7 @@ class AddServiceAccount extends React.Component<
   state: IAddServiceAccountState = {};
 
   render() {
-    const { open } = this.props;
-    return (
-      <Dialog
-        open={open}
-        onClose={() => {
-          this.setState({ addError: "" }, () => {
-            this.props.closeModalAndRefresh(null);
-          });
-        }}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <AddServiceAccountWrapper {...this.props} />
-      </Dialog>
-    );
+    return <AddServiceAccountWrapper {...this.props} />;
   }
 }
 

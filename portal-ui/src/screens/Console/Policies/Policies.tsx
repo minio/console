@@ -208,13 +208,24 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
 
     return (
       <React.Fragment>
-        <AddPolicy
-          open={addScreenOpen}
-          closeModalAndRefresh={() => {
-            this.closeAddModalAndRefresh();
-          }}
-          policyEdit={policyEdit}
-        />
+        {addScreenOpen && (
+          <AddPolicy
+            open={addScreenOpen}
+            closeModalAndRefresh={() => {
+              this.closeAddModalAndRefresh();
+            }}
+            policyEdit={policyEdit}
+          />
+        )}
+        {deleteOpen && (
+          <DeletePolicy
+            deleteOpen={deleteOpen}
+            selectedPolicy={selectedPolicy}
+            closeDeleteModalAndRefresh={(refresh: boolean) => {
+              this.closeDeleteModalAndRefresh(refresh);
+            }}
+          />
+        )}
         <Grid container>
           <Grid item xs={12}>
             <Typography variant="h6">IAM Policies</Typography>
@@ -336,14 +347,6 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
             </Paper>
           </Grid>
         </Grid>
-
-        <DeletePolicy
-          deleteOpen={deleteOpen}
-          selectedPolicy={selectedPolicy}
-          closeDeleteModalAndRefresh={(refresh: boolean) => {
-            this.closeDeleteModalAndRefresh(refresh);
-          }}
-        />
       </React.Fragment>
     );
   }

@@ -315,24 +315,28 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {records.slice(offset, offset + rowsPerPage).map(row => (
-                      <TableRow key={row.id}>
-                        <TableCell>{row.arn}</TableCell>
-                        <TableCell>{row.events.join(", ")}</TableCell>
-                        <TableCell>{row.prefix}</TableCell>
-                        <TableCell>{row.suffix}</TableCell>
-                        <TableCell align="right">
-                          <IconButton
-                            aria-label="delete"
-                            onClick={() => {
-                              confirmDeleteEvent(row);
-                            }}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {records
+                      .slice(offset, offset + rowsPerPage)
+                      .map((row, index) => (
+                        <TableRow
+                          key={`bucket-evt-${row.id}-${index.toString()}`}
+                        >
+                          <TableCell>{row.arn}</TableCell>
+                          <TableCell>{row.events.join(", ")}</TableCell>
+                          <TableCell>{row.prefix}</TableCell>
+                          <TableCell>{row.suffix}</TableCell>
+                          <TableCell align="right">
+                            <IconButton
+                              aria-label="delete"
+                              onClick={() => {
+                                confirmDeleteEvent(row);
+                              }}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                   <TableFooter>
                     <TableRow>

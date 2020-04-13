@@ -17,14 +17,7 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  LinearProgress,
-  TextField
-} from "@material-ui/core";
+import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../common/api";
 import { User } from "./types";
@@ -171,7 +164,6 @@ class AddUserContent extends React.Component<
     api
       .invoke("GET", `/api/v1/users/${selectedUser.accessKey}`)
       .then(res => {
-        console.log(res);
         this.setState({
           addLoading: false,
           addError: "",
@@ -203,7 +195,7 @@ class AddUserContent extends React.Component<
 
     return (
       <ModalWrapper
-        closeModalAndRefresh={() => {
+        onClose={() => {
           this.props.closeModalAndRefresh();
         }}
         modalOpen={this.props.open}
@@ -235,7 +227,7 @@ class AddUserContent extends React.Component<
                 name="accesskey-input"
                 label="Access Key"
                 value={accessKey}
-                onChangeFunc={(e: React.ChangeEvent<HTMLInputElement>) => {
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   this.setState({ accessKey: e.target.value });
                 }}
                 disabled={selectedUser !== null}
@@ -262,7 +254,7 @@ class AddUserContent extends React.Component<
                   label="Secret Key"
                   type="password"
                   value={secretKey}
-                  onChangeFunc={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     this.setState({ secretKey: e.target.value });
                   }}
                   autoComplete="current-password"

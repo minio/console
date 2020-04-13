@@ -14,15 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
-import Typography from "@material-ui/core/Typography";
 import { Dialog, DialogContent, DialogTitle } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 
 interface IModalProps {
   classes: any;
-  closeModalAndRefresh: () => void;
+  onClose: () => void;
   modalOpen: boolean;
   title: string;
   children: any;
@@ -87,7 +85,7 @@ const styles = (theme: Theme) =>
   });
 
 const ModalWrapper = ({
-  closeModalAndRefresh,
+  onClose,
   modalOpen,
   title,
   children,
@@ -96,7 +94,7 @@ const ModalWrapper = ({
   return (
     <Dialog
       open={modalOpen}
-      onClose={closeModalAndRefresh}
+      onClose={onClose}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
       maxWidth={"md"}
@@ -107,7 +105,7 @@ const ModalWrapper = ({
           <IconButton
             aria-label="close"
             className={classes.closeButton}
-            onClick={closeModalAndRefresh}
+            onClick={onClose}
             disableRipple
           >
             <span className={classes.closeIcon} />

@@ -19,7 +19,7 @@ export const fieldBasic = {
   inputLabel: {
     fontWeight: 500,
     marginRight: 16,
-    minWidth: 80,
+    minWidth: 90,
     fontSize: 14,
     color: "#393939"
   },
