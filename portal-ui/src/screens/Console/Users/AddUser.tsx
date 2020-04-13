@@ -17,14 +17,7 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  LinearProgress,
-  TextField
-} from "@material-ui/core";
+import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../common/api";
 import { User } from "./types";
@@ -171,7 +164,6 @@ class AddUserContent extends React.Component<
     api
       .invoke("GET", `/api/v1/users/${selectedUser.accessKey}`)
       .then(res => {
-        console.log(res);
         this.setState({
           addLoading: false,
           addError: "",

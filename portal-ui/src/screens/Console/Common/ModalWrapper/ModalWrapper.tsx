@@ -14,10 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
-import Typography from "@material-ui/core/Typography";
 import { Dialog, DialogContent, DialogTitle } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 
 interface IModalProps {

@@ -127,6 +127,7 @@ export const RadioGroupSelector = ({
             {selectorOptions.map(selectorOption => {
               return (
                 <FormControlLabel
+                  key={`rd-${name}-${selectorOption.value}`}
                   value={selectorOption.value}
                   control={<RadioButton />}
                   label={selectorOption.label}
