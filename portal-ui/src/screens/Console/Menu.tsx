@@ -19,7 +19,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import { NavLink } from "react-router-dom";
-import { Divider, withStyles } from "@material-ui/core";
+import { Divider, Typography, withStyles } from "@material-ui/core";
 import { ExitToApp } from "@material-ui/icons";
 import { AppState } from "../../store";
 import { connect } from "react-redux";
@@ -37,6 +37,7 @@ import {
 import { createStyles, Theme } from "@material-ui/core/styles";
 import PersonIcon from "@material-ui/icons/Person";
 import api from "../../common/api";
+import NotificationsIcon from "@material-ui/icons/Notifications";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -128,12 +129,8 @@ class Menu extends React.Component<MenuProps> {
             </ListItemIcon>
             <ListItemText primary="Buckets" />
           </ListItem>
-          <ListItem button component={NavLink} to="/policies">
-            <ListItemIcon>
-              <PermissionIcon />
-            </ListItemIcon>
-            <ListItemText primary="IAM Policies" />
-          </ListItem>
+          <Divider />
+          <ListItem component={Typography}>Admin</ListItem>
           <ListItem button component={NavLink} to="/users">
             <ListItemIcon>
               <PersonIcon />
@@ -145,6 +142,19 @@ class Menu extends React.Component<MenuProps> {
               <UsersIcon />
             </ListItemIcon>
             <ListItemText primary="Groups" />
+          </ListItem>
+          <ListItem button component={NavLink} to="/policies">
+            <ListItemIcon>
+              <PermissionIcon />
+            </ListItemIcon>
+            <ListItemText primary="IAM Policies" />
+          </ListItem>
+          <ListItem component={Typography}>Configuration</ListItem>
+          <ListItem button component={NavLink} to="/notification-endpoints">
+            <ListItemIcon>
+              <NotificationsIcon />
+            </ListItemIcon>
+            <ListItemText primary="Lambda Notifications" />
           </ListItem>
           <Divider />
           <ListItem

@@ -53,6 +53,7 @@ import NotFoundPage from "../NotFoundPage";
 import ServiceAccounts from "./ServiceAccounts/ServiceAccounts";
 import Users from "./Users/Users";
 import Groups from "./Groups/Groups";
+import ListNotificationEndpoints from "./NotificationEndopoints/ListNotificationEndpoints";
 
 function Copyright() {
   return (
@@ -223,6 +224,11 @@ class Console extends React.Component<
                 <Route exact path="/users" component={Users} />
                 <Route exact path="/dashboard" component={Dashboard} />
                 <Route exct path="/groups" component={Groups} />
+                <Route
+                  exct
+                  path="/notification-endpoints"
+                  component={ListNotificationEndpoints}
+                />
                 <Route exact path="/">
                   <Redirect to="/dashboard" />
                 </Route>
