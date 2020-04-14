@@ -20,7 +20,7 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 
 interface IModalProps {
   classes: any;
-  closeModalAndRefresh: () => void;
+  onClose: () => void;
   modalOpen: boolean;
   title: string;
   children: any;
@@ -85,7 +85,7 @@ const styles = (theme: Theme) =>
   });
 
 const ModalWrapper = ({
-  closeModalAndRefresh,
+  onClose,
   modalOpen,
   title,
   children,
@@ -94,7 +94,7 @@ const ModalWrapper = ({
   return (
     <Dialog
       open={modalOpen}
-      onClose={closeModalAndRefresh}
+      onClose={onClose}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
       maxWidth={"md"}
@@ -105,7 +105,7 @@ const ModalWrapper = ({
           <IconButton
             aria-label="close"
             className={classes.closeButton}
-            onClick={closeModalAndRefresh}
+            onClick={onClose}
             disableRipple
           >
             <span className={classes.closeIcon} />

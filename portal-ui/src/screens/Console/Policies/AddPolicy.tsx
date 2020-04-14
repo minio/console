@@ -18,20 +18,14 @@ import React from "react";
 import Grid from "@material-ui/core/Grid";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import Typography from "@material-ui/core/Typography";
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  LinearProgress,
-  TextField
-} from "@material-ui/core";
+import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Title from "../../../common/Title";
 import api from "../../../common/api";
 import "codemirror/lib/codemirror.css";
 import "codemirror/theme/material.css";
 import { Policy } from "./types";
+import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
+import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 
 require("codemirror/mode/javascript/javascript");
 
@@ -46,6 +40,9 @@ const styles = (theme: Theme) =>
     },
     codeMirror: {
       fontSize: 14
+    },
+    buttonContainer: {
+      textAlign: "right"
     }
   });
 
@@ -103,100 +100,103 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
     });
   }
 
+  componentDidMount() {
+    const { policyEdit } = this.props;
+
+    if (policyEdit) {
+      this.setState({
+        policyName: policyEdit.name
+      });
+    }
+  }
+
   render() {
     const { classes, open, policyEdit } = this.props;
-    const { addLoading, addError } = this.state;
+    const { addLoading, addError, policyName } = this.state;
     return (
-      <Dialog
-        fullWidth
-        open={open}
+      <ModalWrapper
+        modalOpen={open}
         onClose={() => {
           this.setState({ addError: "" }, () => {
             this.props.closeModalAndRefresh();
           });
         }}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
+        title={`${policyEdit ? "Info" : "Create"} Policy`}
       >
-        <DialogTitle id="alert-dialog-title">
-          <Title>{policyEdit ? "Info" : "Create"} Policy</Title>
-        </DialogTitle>
-        <DialogContent>
-          <form
-            noValidate
-            autoComplete="off"
-            onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-              this.addRecord(e);
-            }}
-          >
-            <Grid container>
-              {addError !== "" && (
-                <Grid item xs={12}>
-                  <Typography
-                    component="p"
-                    variant="body1"
-                    className={classes.errorBlock}
-                  >
-                    {addError}
-                  </Typography>
-                </Grid>
-              )}
+        <form
+          noValidate
+          autoComplete="off"
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+            this.addRecord(e);
+          }}
+        >
+          <Grid container>
+            {addError !== "" && (
               <Grid item xs={12}>
-                <TextField
-                  defaultValue={policyEdit ? policyEdit.name : ""}
-                  id="standard-basic"
-                  fullWidth
-                  label="Policy Name"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    this.setState({ policyName: e.target.value });
-                  }}
-                />
+                <Typography
+                  component="p"
+                  variant="body1"
+                  className={classes.errorBlock}
+                >
+                  {addError}
+                </Typography>
               </Grid>
-              <Grid item xs={12}>
-                <br />
-              </Grid>
-              <Grid item xs={12}>
-                <CodeMirror
-                  className={classes.codeMirror}
-                  value={
-                    policyEdit
-                      ? JSON.stringify(JSON.parse(policyEdit.policy), null, 4)
-                      : ""
-                  }
-                  options={{
-                    mode: "javascript",
-                    lineNumbers: true
-                  }}
-                  onChange={(editor, data, value) => {
-                    this.setState({ policyDefinition: value });
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <br />
-              </Grid>
-              {!policyEdit && (
-                <Grid item xs={12}>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    disabled={addLoading}
-                  >
-                    Save
-                  </Button>
-                </Grid>
-              )}
-              {addLoading && (
-                <Grid item xs={12}>
-                  <LinearProgress />
-                </Grid>
-              )}
+            )}
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="policy-name"
+                name="policy-name"
+                label="Policy Name"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  this.setState({ policyName: e.target.value });
+                }}
+                value={policyName}
+                disabled={!!policyEdit}
+              />
             </Grid>
-          </form>
-        </DialogContent>
-      </Dialog>
+            <Grid item xs={12}>
+              <br />
+            </Grid>
+            <Grid item xs={12}>
+              <CodeMirror
+                className={classes.codeMirror}
+                value={
+                  policyEdit
+                    ? JSON.stringify(JSON.parse(policyEdit.policy), null, 4)
+                    : ""
+                }
+                options={{
+                  mode: "javascript",
+                  lineNumbers: true
+                }}
+                onChange={(editor, data, value) => {
+                  this.setState({ policyDefinition: value });
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <br />
+            </Grid>
+            {!policyEdit && (
+              <Grid item xs={12} className={classes.buttonContainer}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={addLoading}
+                >
+                  Save
+                </Button>
+              </Grid>
+            )}
+            {addLoading && (
+              <Grid item xs={12}>
+                <LinearProgress />
+              </Grid>
+            )}
+          </Grid>
+        </form>
+      </ModalWrapper>
     );
   }
 }

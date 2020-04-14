@@ -19,13 +19,12 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { NewServiceAccount } from "./types";
 import {
   Button,
-  Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
-  DialogTitle
+  DialogContentText
 } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
+import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -49,18 +48,21 @@ class CredentialsPrompt extends React.Component<
 > {
   state: ICredentialsPromptState = {};
 
-    download(filename:string, text:string) {
-        var element = document.createElement('a');
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-        element.setAttribute('download', filename);
+  download(filename: string, text: string) {
+    var element = document.createElement("a");
+    element.setAttribute(
+      "href",
+      "data:text/plain;charset=utf-8," + encodeURIComponent(text)
+    );
+    element.setAttribute("download", filename);
 
-        element.style.display = 'none';
-        document.body.appendChild(element);
+    element.style.display = "none";
+    document.body.appendChild(element);
 
-        element.click();
+    element.click();
 
-        document.body.removeChild(element);
-    }
+    document.body.removeChild(element);
+  }
 
   render() {
     const { classes, open, newServiceAccount } = this.props;
@@ -70,60 +72,63 @@ class CredentialsPrompt extends React.Component<
     }
 
     return (
-      <Dialog
-        open={open}
+      <ModalWrapper
+        modalOpen={open}
         onClose={() => {
           this.props.closeModal();
         }}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
+        title="New Service Account"
       >
-        <DialogTitle id="alert-dialog-title">New Service Account</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            A new service account has been created with the following details:
-            <ul>
-              <li>
-                <b>Access Key:</b>{" "}
-                {newServiceAccount.service_account.access_key}
-              </li>
-              <li>
-                <b>Secret Key:</b> {newServiceAccount.secret_key}
-              </li>
-            </ul>
-            <Typography
-              component="p"
-              variant="body1"
-              className={classes.errorBlock}
+        <React.Fragment>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              A new service account has been created with the following details:
+              <ul>
+                <li>
+                  <b>Access Key:</b>{" "}
+                  {newServiceAccount.service_account.access_key}
+                </li>
+                <li>
+                  <b>Secret Key:</b> {newServiceAccount.secret_key}
+                </li>
+              </ul>
+              <Typography
+                component="p"
+                variant="body1"
+                className={classes.errorBlock}
+              >
+                Write these down, as this is the only time the secret will be
+                displayed.
+              </Typography>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => {
+                this.download(
+                  "credentials.json",
+                  JSON.stringify({
+                    access_key: newServiceAccount.service_account.access_key,
+                    secret_key: newServiceAccount.secret_key
+                  })
+                );
+              }}
+              color="primary"
             >
-              Write these down, as this is the only time the secret will be
-              displayed.
-            </Typography>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              this.download("credentials.json",JSON.stringify({
-                  access_key: newServiceAccount.service_account.access_key,
-                  secret_key: newServiceAccount.secret_key,
-              }))
-            }}
-            color="primary"
-          >
-            Download
-          </Button>
-          <Button
-            onClick={() => {
-              this.props.closeModal();
-            }}
-            color="secondary"
-            autoFocus
-          >
-            Done
-          </Button>
-        </DialogActions>
-      </Dialog>
+              Download
+            </Button>
+            <Button
+              onClick={() => {
+                this.props.closeModal();
+              }}
+              color="secondary"
+              autoFocus
+            >
+              Done
+            </Button>
+          </DialogActions>
+        </React.Fragment>
+      </ModalWrapper>
     );
   }
 }

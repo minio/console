@@ -210,12 +210,23 @@ class ListBuckets extends React.Component<
 
     return (
       <React.Fragment>
-        <AddBucket
-          open={addScreenOpen}
-          closeModalAndRefresh={() => {
-            this.closeAddModalAndRefresh();
-          }}
-        />
+        {addScreenOpen && (
+          <AddBucket
+            open={addScreenOpen}
+            closeModalAndRefresh={() => {
+              this.closeAddModalAndRefresh();
+            }}
+          />
+        )}
+        {deleteOpen && (
+          <DeleteBucket
+            deleteOpen={deleteOpen}
+            selectedBucket={selectedBucket}
+            closeDeleteModalAndRefresh={(refresh: boolean) => {
+              this.closeDeleteModalAndRefresh(refresh);
+            }}
+          />
+        )}
         <Grid container>
           <Grid item xs={12}>
             <Typography variant="h6">Buckets</Typography>
@@ -334,14 +345,6 @@ class ListBuckets extends React.Component<
             </Paper>
           </Grid>
         </Grid>
-
-        <DeleteBucket
-          deleteOpen={deleteOpen}
-          selectedBucket={selectedBucket}
-          closeDeleteModalAndRefresh={(refresh: boolean) => {
-            this.closeDeleteModalAndRefresh(refresh);
-          }}
-        />
       </React.Fragment>
     );
   }

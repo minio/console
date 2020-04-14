@@ -14,95 +14,99 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
-import { TextField, Grid, InputLabel, TextFieldProps } from "@material-ui/core";
-import { OutlinedInputProps } from "@material-ui/core/OutlinedInput";
+import Grid from "@material-ui/core/Grid";
 import {
-  createStyles,
-  makeStyles,
-  Theme,
-  withStyles
-} from "@material-ui/core/styles";
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  InputBase
+} from "@material-ui/core";
+import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { fieldBasic } from "../common/styleLibrary";
 
-interface InputBoxProps {
+interface selectorTypes {
   label: string;
-  classes: any;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   value: string;
+}
+
+interface SelectProps {
+  options: selectorTypes[];
+  value: string;
+  label: string;
   id: string;
   name: string;
-  disabled?: boolean;
-  type?: string;
-  autoComplete?: string;
+  onChange: (
+    e: React.ChangeEvent<{ name?: string | undefined; value: unknown }>
+  ) => void;
+  classes: any;
 }
 
 const styles = (theme: Theme) =>
   createStyles({
-    ...fieldBasic,
-    textBoxContainer: {
-      flexGrow: 1
-    }
+    ...fieldBasic
   });
 
-const inputStyles = makeStyles((theme: Theme) =>
+const SelectStyled = withStyles((theme: Theme) =>
   createStyles({
     root: {
-      borderColor: "#393939",
-      borderRadius: 0
+      "label + &": {
+        marginTop: theme.spacing(3)
+      }
     },
     input: {
-      padding: "11px 20px",
+      borderRadius: 0,
+      position: "relative",
       color: "#393939",
-      fontSize: 14
+      fontSize: 14,
+      padding: "11px 20px",
+      border: "1px solid #c4c4c4",
+      "&:hover": {
+        borderColor: "#393939"
+      },
+      "&:focus": {
+        backgroundColor: "#fff"
+      }
     }
   })
-);
+)(InputBase);
 
-function InputField(props: TextFieldProps) {
-  const classes = inputStyles();
-
-  return (
-    <TextField
-      InputProps={{ classes } as Partial<OutlinedInputProps>}
-      {...props}
-    />
-  );
-}
-
-const InputBoxWrapper = ({
-  label,
-  onChange,
-  value,
+const SelectWrapper = ({
+  classes,
   id,
   name,
-  type = "text",
-  autoComplete = "off",
-  disabled = false,
-  classes
-}: InputBoxProps) => {
+  onChange,
+  options,
+  label,
+  value
+}: SelectProps) => {
   return (
     <React.Fragment>
       <Grid item xs={12} className={classes.fieldContainer}>
         <InputLabel htmlFor={id} className={classes.inputLabel}>
           {label}
         </InputLabel>
-        <div className={classes.textBoxContainer}>
-          <InputField
-            className={classes.boxDesign}
+        <FormControl variant="outlined" fullWidth>
+          <Select
             id={id}
             name={name}
-            variant="outlined"
-            fullWidth
             value={value}
-            disabled={disabled}
             onChange={onChange}
-            type={type}
-            autoComplete={autoComplete}
-          />
-        </div>
+            input={<SelectStyled />}
+          >
+            {options.map(option => (
+              <MenuItem
+                value={option.value}
+                key={`select-${name}-${option.label}`}
+              >
+                {option.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </Grid>
     </React.Fragment>
   );
 };
 
-export default withStyles(styles)(InputBoxWrapper);
+export default withStyles(styles)(SelectWrapper);

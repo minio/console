@@ -16,22 +16,14 @@
 
 import React, { useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  LinearProgress,
-  TextField
-} from "@material-ui/core";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
+import { Button, LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import api from "../../../common/api";
 import UsersSelectors from "./UsersSelectors";
-import Title from "../../../common/Title";
+import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
+import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import RadioGroupSelector from "../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 
 interface IGroupProps {
   open: boolean;
@@ -56,6 +48,9 @@ const styles = (theme: Theme) =>
     },
     keyName: {
       marginLeft: 5
+    },
+    buttonContainer: {
+      textAlign: "right"
     }
   });
 
@@ -157,102 +152,88 @@ const AddGroup = ({
   };
 
   return (
-    <Dialog
-      open={open}
+    <ModalWrapper
+      modalOpen={open}
       onClose={closeModalAndRefresh}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
+      title={selectedGroup !== null ? `Group Edit - ${groupName}` : "Add Group"}
     >
-      <DialogTitle id="alert-dialog-title">
-        {selectedGroup !== null ? `Group Edit - ${groupName}` : "Add Group"}
-      </DialogTitle>
-      <DialogContent>
-        <form noValidate autoComplete="off" onSubmit={setSaving}>
-          <Grid container>
-            {addError !== "" && (
-              <Grid item xs={12}>
-                <Typography
-                  component="p"
-                  variant="body1"
-                  className={classes.errorBlock}
-                >
-                  {addError}
-                </Typography>
-              </Grid>
-            )}
-
-            {selectedGroup !== null ? (
-              <React.Fragment>
-                <Grid item xs={12}>
-                  <Title>Status</Title>
-                  <RadioGroup
-                    aria-label="status"
-                    name="status"
-                    value={groupEnabled}
-                    onChange={e => {
-                      setGroupEnabled(e.target.value);
-                    }}
-                  >
-                    <FormControlLabel
-                      value="enabled"
-                      control={<Radio color={"primary"} />}
-                      label="Enabled"
-                    />
-                    <FormControlLabel
-                      value="disabled"
-                      control={<Radio color={"primary"} />}
-                      label="Disabled"
-                    />
-                  </RadioGroup>
-                </Grid>
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                <Grid item xs={12}>
-                  <TextField
-                    id="standard-basic"
-                    fullWidth
-                    label="Name"
-                    value={groupName}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setGroupName(e.target.value);
-                    }}
-                  />
-                </Grid>
-              </React.Fragment>
-            )}
+      <form noValidate autoComplete="off" onSubmit={setSaving}>
+        <Grid container>
+          {addError !== "" && (
             <Grid item xs={12}>
-              <br />
-            </Grid>
-            <Grid item xs={12}>
-              <UsersSelectors
-                selectedUsers={selectedUsers}
-                setSelectedUsers={setSelectedUsers}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <br />
-            </Grid>
-            <Grid item xs={12}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-                disabled={saving}
+              <Typography
+                component="p"
+                variant="body1"
+                className={classes.errorBlock}
               >
-                Save
-              </Button>
+                {addError}
+              </Typography>
             </Grid>
-            {saving && (
+          )}
+
+          {selectedGroup !== null ? (
+            <React.Fragment>
               <Grid item xs={12}>
-                <LinearProgress />
+                <RadioGroupSelector
+                  currentSelection={groupEnabled}
+                  id="group-status"
+                  name="group-status"
+                  label="Status"
+                  onChange={e => {
+                    setGroupEnabled(e.target.value);
+                  }}
+                  selectorOptions={[
+                    { label: "Enabled", value: "enabled" },
+                    { label: "Disabled", value: "disabled" }
+                  ]}
+                />
               </Grid>
-            )}
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="group-name"
+                  name="group-name"
+                  label="Name"
+                  value={groupName}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setGroupName(e.target.value);
+                  }}
+                />
+              </Grid>
+            </React.Fragment>
+          )}
+          <Grid item xs={12}>
+            <br />
           </Grid>
-        </form>
-      </DialogContent>
-    </Dialog>
+          <Grid item xs={12}>
+            <UsersSelectors
+              selectedUsers={selectedUsers}
+              setSelectedUsers={setSelectedUsers}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <br />
+          </Grid>
+          <Grid item xs={12} className={classes.buttonContainer}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={saving}
+            >
+              Save
+            </Button>
+          </Grid>
+          {saving && (
+            <Grid item xs={12}>
+              <LinearProgress />
+            </Grid>
+          )}
+        </Grid>
+      </form>
+    </ModalWrapper>
   );
 };
 

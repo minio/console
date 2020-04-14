@@ -80,7 +80,7 @@ const styles = (theme: Theme) =>
       color: "#393939",
       "& tr": {
         "& th": {
-          fontWeight:'bold'
+          fontWeight: "bold"
         }
       }
     },
@@ -93,14 +93,14 @@ const styles = (theme: Theme) =>
     actionsTray: {
       textAlign: "right",
       "& button": {
-        marginLeft: 10,
-      },
+        marginLeft: 10
+      }
     },
     searchField: {
       background: "#FFFFFF",
       padding: 12,
       borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012",
+      boxShadow: "0px 3px 6px #00000012"
     }
   });
 
@@ -250,14 +250,33 @@ class ServiceAccounts extends React.Component<
 
     return (
       <React.Fragment>
-        <AddServiceAccount
-          open={addScreenOpen}
-          selectedServiceAccount={selectedServiceAccount}
-          closeModalAndRefresh={(res: NewServiceAccount | null) => {
-            this.closeAddModalAndRefresh(res);
-          }}
-        />
-
+        {addScreenOpen && (
+          <AddServiceAccount
+            open={addScreenOpen}
+            selectedServiceAccount={selectedServiceAccount}
+            closeModalAndRefresh={(res: NewServiceAccount | null) => {
+              this.closeAddModalAndRefresh(res);
+            }}
+          />
+        )}
+        {deleteOpen && (
+          <DeleteServiceAccount
+            deleteOpen={deleteOpen}
+            selectedServiceAccount={selectedServiceAccount}
+            closeDeleteModalAndRefresh={(refresh: boolean) => {
+              this.closeDeleteModalAndRefresh(refresh);
+            }}
+          />
+        )}
+        {showNewCredentials && (
+          <CredentialsPrompt
+            newServiceAccount={newServiceAccount}
+            open={showNewCredentials}
+            closeModal={() => {
+              this.closeCredentialsModal();
+            }}
+          />
+        )}
         <Grid container>
           <Grid item xs={12}>
             <Typography variant="h6">Service Accounts</Typography>
@@ -277,7 +296,7 @@ class ServiceAccounts extends React.Component<
                   <InputAdornment position="start">
                     <SearchIcon />
                   </InputAdornment>
-                ),
+                )
               }}
             />
             <Button
@@ -331,7 +350,7 @@ class ServiceAccounts extends React.Component<
                           <Checkbox
                             value="secondary"
                             color="primary"
-                            inputProps={{ 'aria-label': 'secondary checkbox' }}
+                            inputProps={{ "aria-label": "secondary checkbox" }}
                           />
                         </TableCell>
                         <TableCell className={classes.wrapCell}>
@@ -387,21 +406,6 @@ class ServiceAccounts extends React.Component<
             </Paper>
           </Grid>
         </Grid>
-
-        <DeleteServiceAccount
-          deleteOpen={deleteOpen}
-          selectedServiceAccount={selectedServiceAccount}
-          closeDeleteModalAndRefresh={(refresh: boolean) => {
-            this.closeDeleteModalAndRefresh(refresh);
-          }}
-        />
-        <CredentialsPrompt
-          newServiceAccount={newServiceAccount}
-          open={showNewCredentials}
-          closeModal={() => {
-            this.closeCredentialsModal();
-          }}
-        />
       </React.Fragment>
     );
   }
