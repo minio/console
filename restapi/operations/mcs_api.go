@@ -87,6 +87,9 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		UserAPIBucketSetPolicyHandler: user_api.BucketSetPolicyHandlerFunc(func(params user_api.BucketSetPolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.BucketSetPolicy has not yet been implemented")
 		}),
+		AdminAPIBulkUpdateUsersGroupsHandler: admin_api.BulkUpdateUsersGroupsHandlerFunc(func(params admin_api.BulkUpdateUsersGroupsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.BulkUpdateUsersGroups has not yet been implemented")
+		}),
 		AdminAPIConfigInfoHandler: admin_api.ConfigInfoHandlerFunc(func(params admin_api.ConfigInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ConfigInfo has not yet been implemented")
 		}),
@@ -242,6 +245,8 @@ type McsAPI struct {
 	UserAPIBucketInfoHandler user_api.BucketInfoHandler
 	// UserAPIBucketSetPolicyHandler sets the operation handler for the bucket set policy operation
 	UserAPIBucketSetPolicyHandler user_api.BucketSetPolicyHandler
+	// AdminAPIBulkUpdateUsersGroupsHandler sets the operation handler for the bulk update users groups operation
+	AdminAPIBulkUpdateUsersGroupsHandler admin_api.BulkUpdateUsersGroupsHandler
 	// AdminAPIConfigInfoHandler sets the operation handler for the config info operation
 	AdminAPIConfigInfoHandler admin_api.ConfigInfoHandler
 	// UserAPICreateBucketEventHandler sets the operation handler for the create bucket event operation
@@ -398,6 +403,9 @@ func (o *McsAPI) Validate() error {
 	}
 	if o.UserAPIBucketSetPolicyHandler == nil {
 		unregistered = append(unregistered, "user_api.BucketSetPolicyHandler")
+	}
+	if o.AdminAPIBulkUpdateUsersGroupsHandler == nil {
+		unregistered = append(unregistered, "admin_api.BulkUpdateUsersGroupsHandler")
 	}
 	if o.AdminAPIConfigInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.ConfigInfoHandler")
@@ -621,6 +629,10 @@ func (o *McsAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/buckets/{name}/set-policy"] = user_api.NewBucketSetPolicy(o.context, o.UserAPIBucketSetPolicyHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/users-groups-bulk"] = admin_api.NewBulkUpdateUsersGroups(o.context, o.AdminAPIBulkUpdateUsersGroupsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

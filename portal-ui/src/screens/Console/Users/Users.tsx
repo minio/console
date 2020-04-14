@@ -16,35 +16,36 @@
 
 import React from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
 import api from "../../../common/api";
 import {
   Button,
   IconButton,
   LinearProgress,
   TableFooter,
-  TablePagination
+  TablePagination,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Paper,
+  Grid,
+  Typography,
+  TextField,
+  InputAdornment
 } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
-import { User, UsersList } from "./types";
-import { usersSort } from "../../../utils/sortFunctions";
-import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
-import AddUser from "./AddUser";
-import DeleteUser from "./DeleteUser";
-import { CreateIcon } from "../../../icons";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import Checkbox from "@material-ui/core/Checkbox";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ViewIcon from "@material-ui/icons/Visibility";
 import GroupIcon from "@material-ui/icons/Group";
+import { User, UsersList } from "./types";
+import { usersSort } from "../../../utils/sortFunctions";
+import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
+import { CreateIcon } from "../../../icons";
+import AddUser from "./AddUser";
+import DeleteUser from "./DeleteUser";
+import AddToGroup from "./AddToGroup";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -112,6 +113,7 @@ interface IUsersState {
   selectedUser: User | null;
   addGroupOpen: boolean;
   filter: string;
+  checkedUsers: string[];
 }
 
 class Users extends React.Component<IUsersProps, IUsersState> {
@@ -127,7 +129,8 @@ class Users extends React.Component<IUsersProps, IUsersState> {
     deleteOpen: false,
     selectedUser: null,
     addGroupOpen: false,
-    filter: ""
+    filter: "",
+    checkedUsers: []
   };
 
   fetchRecords() {
@@ -176,6 +179,17 @@ class Users extends React.Component<IUsersProps, IUsersState> {
     });
   }
 
+  closeAddGroupBulk(unCheckAll: boolean = false) {
+    let newStates = { addGroupOpen: false };
+    let addUsers = {};
+
+    if (unCheckAll) {
+      addUsers = { checkedUsers: [] };
+    }
+
+    this.setState({ ...newStates, ...addUsers });
+  }
+
   componentDidMount(): void {
     this.fetchRecords();
   }
@@ -191,7 +205,9 @@ class Users extends React.Component<IUsersProps, IUsersState> {
       rowsPerPage,
       deleteOpen,
       selectedUser,
-      filter
+      filter,
+      checkedUsers,
+      addGroupOpen
     } = this.state;
 
     const handleChangePage = (event: unknown, newPage: number) => {
@@ -213,6 +229,28 @@ class Users extends React.Component<IUsersProps, IUsersState> {
       elementItem.accessKey.includes(filter)
     );
 
+    const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const targetD = e.target;
+      const value = targetD.value;
+      const checked = targetD.checked;
+
+      let elements: string[] = [...checkedUsers]; // We clone the checkedUsers array
+
+      if (checked) {
+        // If the user has checked this field we need to push this to checkedUsersList
+        elements.push(value);
+      } else {
+        // User has unchecked this field, we need to remove it from the list
+        elements = elements.filter(element => element !== value);
+      }
+
+      this.setState({
+        checkedUsers: elements
+      });
+
+      return elements;
+    };
+
     return (
       <React.Fragment>
         {addScreenOpen && (
@@ -233,6 +271,16 @@ class Users extends React.Component<IUsersProps, IUsersState> {
             }}
           />
         )}
+        {addGroupOpen && (
+          <AddToGroup
+            open={addGroupOpen}
+            checkedUsers={checkedUsers}
+            closeModalAndRefresh={(close: boolean) => {
+              this.closeAddGroupBulk(close);
+            }}
+          />
+        )}
+
         <Grid container>
           <Grid item xs={12}>
             <Typography variant="h6">Users</Typography>
@@ -262,10 +310,13 @@ class Users extends React.Component<IUsersProps, IUsersState> {
               variant="contained"
               color="primary"
               startIcon={<GroupIcon />}
+              disabled={checkedUsers.length <= 0}
               onClick={() => {
-                this.setState({
-                  addGroupOpen: true
-                });
+                if (checkedUsers.length > 0) {
+                  this.setState({
+                    addGroupOpen: true
+                  });
+                }
               }}
             >
               Add to Group
@@ -305,9 +356,11 @@ class Users extends React.Component<IUsersProps, IUsersState> {
                       <TableRow key={`user-${row.accessKey}`}>
                         <TableCell padding="checkbox">
                           <Checkbox
-                            value="secondary"
+                            value={row.accessKey}
                             color="primary"
                             inputProps={{ "aria-label": "secondary checkbox" }}
+                            checked={checkedUsers.includes(row.accessKey)}
+                            onChange={selectionChanged}
                           />
                         </TableCell>
                         <TableCell className={classes.wrapCell}>

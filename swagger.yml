@@ -336,6 +336,25 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+  /users-groups-bulk:
+    put:
+      summary: Bulk functionality to Add Users to Groups
+      operationId: BulkUpdateUsersGroups
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/bulkUserGroups"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
   /groups:
     get:
       summary: List Groups
@@ -1230,4 +1249,17 @@ definitions:
         type: array
         items:
           type: string
-
+  bulkUserGroups:
+    type: object
+    required:
+      - users
+      - groups
+    properties:
+      users:
+        type: array
+        items:
+          type: string
+      groups:
+        type: array
+        items:
+          type: string

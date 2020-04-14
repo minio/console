@@ -1096,6 +1096,36 @@ func init() {
         }
       }
     },
+    "/users-groups-bulk": {
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Bulk functionality to Add Users to Groups",
+        "operationId": "BulkUpdateUsersGroups",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulkUserGroups"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/users/{name}": {
       "get": {
         "tags": [
@@ -1353,6 +1383,27 @@ func init() {
         },
         "ignoreExisting": {
           "type": "boolean"
+        }
+      }
+    },
+    "bulkUserGroups": {
+      "type": "object",
+      "required": [
+        "users",
+        "groups"
+      ],
+      "properties": {
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "users": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -2948,6 +2999,36 @@ func init() {
         }
       }
     },
+    "/users-groups-bulk": {
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Bulk functionality to Add Users to Groups",
+        "operationId": "BulkUpdateUsersGroups",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulkUserGroups"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/users/{name}": {
       "get": {
         "tags": [
@@ -3205,6 +3286,27 @@ func init() {
         },
         "ignoreExisting": {
           "type": "boolean"
+        }
+      }
+    },
+    "bulkUserGroups": {
+      "type": "object",
+      "required": [
+        "users",
+        "groups"
+      ],
+      "properties": {
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "users": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
