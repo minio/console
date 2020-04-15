@@ -17,6 +17,7 @@
 package restapi
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"testing"
@@ -24,23 +25,24 @@ import (
 	"errors"
 
 	"github.com/minio/mcs/models"
+	iampolicy "github.com/minio/minio/pkg/iam/policy"
 	"github.com/stretchr/testify/assert"
 )
 
 // assigning mock at runtime instead of compile time
-var minioListPoliciesMock func() (map[string][]byte, error)
-var minioGetPolicyMock func(name string) ([]byte, error)
+var minioListPoliciesMock func() (map[string]*iampolicy.Policy, error)
+var minioGetPolicyMock func(name string) (*iampolicy.Policy, error)
 var minioRemovePolicyMock func(name string) error
-var minioAddPolicyMock func(name, policy string) error
+var minioAddPolicyMock func(name string, policy *iampolicy.Policy) error
 var minioSetPolicyMock func(policyName, entityName string, isGroup bool) error
 
 // mock function of listPolicies()
-func (ac adminClientMock) listPolicies(ctx context.Context) (map[string][]byte, error) {
+func (ac adminClientMock) listPolicies(ctx context.Context) (map[string]*iampolicy.Policy, error) {
 	return minioListPoliciesMock()
 }
 
 // mock function of getPolicy()
-func (ac adminClientMock) getPolicy(ctx context.Context, name string) ([]byte, error) {
+func (ac adminClientMock) getPolicy(ctx context.Context, name string) (*iampolicy.Policy, error) {
 	return minioGetPolicyMock(name)
 }
 
@@ -50,7 +52,7 @@ func (ac adminClientMock) removePolicy(ctx context.Context, name string) error {
 }
 
 // mock function of addPolicy()
-func (ac adminClientMock) addPolicy(ctx context.Context, name, policy string) error {
+func (ac adminClientMock) addPolicy(ctx context.Context, name string, policy *iampolicy.Policy) error {
 	return minioAddPolicyMock(name, policy)
 }
 
@@ -61,30 +63,15 @@ func (ac adminClientMock) setPolicy(ctx context.Context, policyName, entityName 
 
 func TestListPolicies(t *testing.T) {
 	ctx := context.Background()
-	assert := assert.New(t)
+	funcAssert := assert.New(t)
 	adminClient := adminClientMock{}
-	mockPoliciesList := map[string][]byte{
-		"readonly":    []byte("{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"s3:GetBucketLocation\",\"s3:GetObject\"],\"Resource\":[\"arn:aws:s3:::*\"]}]}"),
-		"readwrite":   []byte("{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"s3:*\"],\"Resource\":[\"arn:aws:s3:::*\"]}]}"),
-		"diagnostics": []byte("{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"admin:ServerInfo\",\"admin:HardwareInfo\",\"admin:TopLocksInfo\",\"admin:PerfInfo\",\"admin:Profiling\",\"admin:ServerTrace\",\"admin:ConsoleLog\"],\"Resource\":[\"arn:aws:s3:::*\"]}]}"),
-	}
-	assertPoliciesMap := map[string]models.Policy{
-		"readonly": {
-			Name:   "readonly",
-			Policy: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"s3:GetBucketLocation\",\"s3:GetObject\"],\"Resource\":[\"arn:aws:s3:::*\"]}]}",
-		},
-		"readwrite": {
-			Name:   "readwrite",
-			Policy: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"s3:*\"],\"Resource\":[\"arn:aws:s3:::*\"]}]}",
-		},
-		"diagnostics": {
-			Name:   "diagnostics",
-			Policy: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"admin:ServerInfo\",\"admin:HardwareInfo\",\"admin:TopLocksInfo\",\"admin:PerfInfo\",\"admin:Profiling\",\"admin:ServerTrace\",\"admin:ConsoleLog\"],\"Resource\":[\"arn:aws:s3:::*\"]}]}",
-		},
-	}
 	// mock function response from listPolicies()
-	minioListPoliciesMock = func() (map[string][]byte, error) {
-		return mockPoliciesList, nil
+	minioListPoliciesMock = func() (map[string]*iampolicy.Policy, error) {
+		return map[string]*iampolicy.Policy{
+			"readonly":    &iampolicy.ReadOnly,
+			"readwrite":   &iampolicy.ReadWrite,
+			"diagnostics": &iampolicy.AdminDiagnostics,
+		}, nil
 	}
 	// Test-1 : listPolicies() Get response from minio client with three Canned Policies and return the same number on listPolicies()
 	function := "listPolicies()"
@@ -93,31 +80,20 @@ func TestListPolicies(t *testing.T) {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	// verify length of Policies is correct
-	assert.Equal(len(mockPoliciesList), len(policiesList), fmt.Sprintf("Failed on %s: length of Policies's lists is not the same", function))
-	// Test-2 :
-	// get list policies response, this response should have Name, Version and Statement
-	// as part of each Policy
-	for _, policy := range policiesList {
-		assertPolicy := assertPoliciesMap[policy.Name]
-		// Check if policy name is the same as in the assertPoliciesMap
-		assert.Equal(policy.Name, assertPolicy.Name)
-		// Check if policy definition is the same as in the assertPoliciesMap
-		assert.Equal(policy.Policy, assertPolicy.Policy)
-	}
-	// Test-3 : listPolicies() Return error and see that the error is handled correctly and returned
-	minioListPoliciesMock = func() (map[string][]byte, error) {
+	funcAssert.Equal(3, len(policiesList), fmt.Sprintf("Failed on %s: length of Policies's lists is not the same", function))
+	// Test-2 : listPolicies() Return error and see that the error is handled correctly and returned
+	minioListPoliciesMock = func() (map[string]*iampolicy.Policy, error) {
 		return nil, errors.New("error")
 	}
 	_, err = listPolicies(ctx, adminClient)
-	if assert.Error(err) {
-		assert.Equal("error", err.Error())
+	if funcAssert.Error(err) {
+		funcAssert.Equal("error", err.Error())
 	}
 }
 
 func TestRemovePolicy(t *testing.T) {
 	ctx := context.Background()
-
-	assert := assert.New(t)
+	funcAssert := assert.New(t)
 	adminClient := adminClientMock{}
 	// Test-1 : removePolicy() remove an existing policy
 	policyToRemove := "mcs-policy"
@@ -132,22 +108,27 @@ func TestRemovePolicy(t *testing.T) {
 	minioRemovePolicyMock = func(name string) error {
 		return errors.New("error")
 	}
-	if err := removePolicy(ctx, adminClient, policyToRemove); assert.Error(err) {
-		assert.Equal("error", err.Error())
+	if err := removePolicy(ctx, adminClient, policyToRemove); funcAssert.Error(err) {
+		funcAssert.Equal("error", err.Error())
 	}
 }
 
 func TestAddPolicy(t *testing.T) {
 	ctx := context.Background()
-	assert := assert.New(t)
+	funcAssert := assert.New(t)
 	adminClient := adminClientMock{}
 	policyName := "new-policy"
 	policyDefinition := "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"s3:GetBucketLocation\",\"s3:GetObject\",\"s3:ListAllMyBuckets\"],\"Resource\":[\"arn:aws:s3:::*\"]}]}"
-	minioAddPolicyMock = func(name, policy string) error {
+	minioAddPolicyMock = func(name string, policy *iampolicy.Policy) error {
 		return nil
 	}
-	minioGetPolicyMock = func(name string) (bytes []byte, err error) {
-		return []byte(policyDefinition), nil
+	minioGetPolicyMock = func(name string) (*iampolicy.Policy, error) {
+		policy := "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"s3:GetBucketLocation\",\"s3:GetObject\",\"s3:ListAllMyBuckets\"],\"Resource\":[\"arn:aws:s3:::*\"]}]}"
+		iamp, err := iampolicy.ParseConfig(bytes.NewReader([]byte(policy)))
+		if err != nil {
+			return nil, err
+		}
+		return iamp, nil
 	}
 	assertPolicy := models.Policy{
 		Name:   "new-policy",
@@ -158,31 +139,32 @@ func TestAddPolicy(t *testing.T) {
 	policy, err := addPolicy(ctx, adminClient, policyName, policyDefinition)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+	} else {
+		funcAssert.Equal(policy.Name, assertPolicy.Name)
+		funcAssert.Equal(policy.Policy, assertPolicy.Policy)
 	}
-	assert.Equal(policy.Name, assertPolicy.Name)
-	assert.Equal(policy.Policy, assertPolicy.Policy)
 	// Test-2 : addPolicy() got an error while adding policy
-	minioAddPolicyMock = func(name, policy string) error {
+	minioAddPolicyMock = func(name string, policy *iampolicy.Policy) error {
 		return errors.New("error")
 	}
-	if _, err := addPolicy(ctx, adminClient, policyName, policyDefinition); assert.Error(err) {
-		assert.Equal("error", err.Error())
+	if _, err := addPolicy(ctx, adminClient, policyName, policyDefinition); funcAssert.Error(err) {
+		funcAssert.Equal("error", err.Error())
 	}
 	// Test-3 : addPolicy() got an error while retrieving policy
-	minioAddPolicyMock = func(name, policy string) error {
+	minioAddPolicyMock = func(name string, policy *iampolicy.Policy) error {
 		return nil
 	}
-	minioGetPolicyMock = func(name string) (bytes []byte, err error) {
+	minioGetPolicyMock = func(name string) (*iampolicy.Policy, error) {
 		return nil, errors.New("error")
 	}
-	if _, err := addPolicy(ctx, adminClient, policyName, policyDefinition); assert.Error(err) {
-		assert.Equal("error", err.Error())
+	if _, err := addPolicy(ctx, adminClient, policyName, policyDefinition); funcAssert.Error(err) {
+		funcAssert.Equal("error", err.Error())
 	}
 }
 
 func TestSetPolicy(t *testing.T) {
 	ctx := context.Background()
-	assert := assert.New(t)
+	funcAssert := assert.New(t)
 	adminClient := adminClientMock{}
 	policyName := "readOnly"
 	entityName := "alevsk"
@@ -207,15 +189,15 @@ func TestSetPolicy(t *testing.T) {
 	minioSetPolicyMock = func(policyName, entityName string, isGroup bool) error {
 		return errors.New("error")
 	}
-	if err := setPolicy(ctx, adminClient, policyName, entityName, entityObject); assert.Error(err) {
-		assert.Equal("error", err.Error())
+	if err := setPolicy(ctx, adminClient, policyName, entityName, entityObject); funcAssert.Error(err) {
+		funcAssert.Equal("error", err.Error())
 	}
 	// Test-4 : setPolicy() set policy to group and get error
 	entityObject = models.PolicyEntityGroup
 	minioSetPolicyMock = func(policyName, entityName string, isGroup bool) error {
 		return errors.New("error")
 	}
-	if err := setPolicy(ctx, adminClient, policyName, entityName, entityObject); assert.Error(err) {
-		assert.Equal("error", err.Error())
+	if err := setPolicy(ctx, adminClient, policyName, entityName, entityObject); funcAssert.Error(err) {
+		funcAssert.Equal("error", err.Error())
 	}
 }

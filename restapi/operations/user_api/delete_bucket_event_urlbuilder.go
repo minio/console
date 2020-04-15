@@ -31,8 +31,8 @@ import (
 
 // DeleteBucketEventURL generates an URL for the delete bucket event operation
 type DeleteBucketEventURL struct {
+	Arn        string
 	BucketName string
-	Name       string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -58,20 +58,20 @@ func (o *DeleteBucketEventURL) SetBasePath(bp string) {
 func (o *DeleteBucketEventURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/buckets/{bucket_name}/events/{name}"
+	var _path = "/buckets/{bucket_name}/events/{arn}"
+
+	arn := o.Arn
+	if arn != "" {
+		_path = strings.Replace(_path, "{arn}", arn, -1)
+	} else {
+		return nil, errors.New("arn is required on DeleteBucketEventURL")
+	}
 
 	bucketName := o.BucketName
 	if bucketName != "" {
 		_path = strings.Replace(_path, "{bucket_name}", bucketName, -1)
 	} else {
 		return nil, errors.New("bucketName is required on DeleteBucketEventURL")
-	}
-
-	name := o.Name
-	if name != "" {
-		_path = strings.Replace(_path, "{name}", name, -1)
-	} else {
-		return nil, errors.New("name is required on DeleteBucketEventURL")
 	}
 
 	_basePath := o._basePath

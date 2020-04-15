@@ -24,6 +24,7 @@ import (
 
 	mcCmd "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
+	iampolicy "github.com/minio/minio/pkg/iam/policy"
 	"github.com/minio/minio/pkg/madmin"
 )
 
@@ -64,12 +65,12 @@ type MinioAdmin interface {
 	updateGroupMembers(ctx context.Context, greq madmin.GroupAddRemove) error
 	getGroupDescription(ctx context.Context, group string) (*madmin.GroupDesc, error)
 	setGroupStatus(ctx context.Context, group string, status madmin.GroupStatus) error
-	listPolicies(ctx context.Context) (map[string][]byte, error)
-	getPolicy(ctx context.Context, name string) ([]byte, error)
+	listPolicies(ctx context.Context) (map[string]*iampolicy.Policy, error)
+	getPolicy(ctx context.Context, name string) (*iampolicy.Policy, error)
 	removePolicy(ctx context.Context, name string) error
-	addPolicy(ctx context.Context, name, policy string) error
+	addPolicy(ctx context.Context, name string, policy *iampolicy.Policy) error
 	setPolicy(ctx context.Context, policyName, entityName string, isGroup bool) error
-	getConfigKV(ctx context.Context, key string) (madmin.Targets, error)
+	getConfigKV(ctx context.Context, key string) ([]byte, error)
 	helpConfigKV(ctx context.Context, subSys, key string, envOnly bool) (madmin.Help, error)
 	setConfigKV(ctx context.Context, kv string) (err error)
 	serviceRestart(ctx context.Context) error
@@ -132,12 +133,12 @@ func (ac adminClient) setGroupStatus(ctx context.Context, group string, status m
 }
 
 // implements madmin.ListCannedPolicies()
-func (ac adminClient) listPolicies(ctx context.Context) (map[string][]byte, error) {
+func (ac adminClient) listPolicies(ctx context.Context) (map[string]*iampolicy.Policy, error) {
 	return ac.client.ListCannedPolicies(ctx)
 }
 
 // implements madmin.ListCannedPolicies()
-func (ac adminClient) getPolicy(ctx context.Context, name string) ([]byte, error) {
+func (ac adminClient) getPolicy(ctx context.Context, name string) (*iampolicy.Policy, error) {
 	return ac.client.InfoCannedPolicy(ctx, name)
 }
 
@@ -147,7 +148,7 @@ func (ac adminClient) removePolicy(ctx context.Context, name string) error {
 }
 
 // implements madmin.AddCannedPolicy()
-func (ac adminClient) addPolicy(ctx context.Context, name, policy string) error {
+func (ac adminClient) addPolicy(ctx context.Context, name string, policy *iampolicy.Policy) error {
 	return ac.client.AddCannedPolicy(ctx, name, policy)
 }
 
@@ -157,7 +158,7 @@ func (ac adminClient) setPolicy(ctx context.Context, policyName, entityName stri
 }
 
 // implements madmin.GetConfigKV()
-func (ac adminClient) getConfigKV(ctx context.Context, key string) (madmin.Targets, error) {
+func (ac adminClient) getConfigKV(ctx context.Context, key string) ([]byte, error) {
 	return ac.client.GetConfigKV(ctx, key)
 }
 

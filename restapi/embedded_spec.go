@@ -298,7 +298,7 @@ func init() {
         }
       }
     },
-    "/buckets/{bucket_name}/events/{name}": {
+    "/buckets/{bucket_name}/events/{arn}": {
       "delete": {
         "tags": [
           "UserAPI"
@@ -314,9 +314,17 @@ func init() {
           },
           {
             "type": "string",
-            "name": "name",
+            "name": "arn",
             "in": "path",
             "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/notificationDeleteRequest"
+            }
           }
         ],
         "responses": {
@@ -1677,6 +1685,32 @@ func init() {
         }
       }
     },
+    "notificationDeleteRequest": {
+      "type": "object",
+      "required": [
+        "events",
+        "prefix",
+        "suffix"
+      ],
+      "properties": {
+        "events": {
+          "type": "array",
+          "title": "filter specific type of event. Defaults to all event (default: '[put,delete,get]')",
+          "minLength": 1,
+          "items": {
+            "$ref": "#/definitions/notificationEventType"
+          }
+        },
+        "prefix": {
+          "type": "string",
+          "title": "filter event associated to the specified prefix"
+        },
+        "suffix": {
+          "type": "string",
+          "title": "filter event associated to the specified suffix"
+        }
+      }
+    },
     "notificationEndpoint": {
       "type": "object",
       "required": [
@@ -2201,7 +2235,7 @@ func init() {
         }
       }
     },
-    "/buckets/{bucket_name}/events/{name}": {
+    "/buckets/{bucket_name}/events/{arn}": {
       "delete": {
         "tags": [
           "UserAPI"
@@ -2217,9 +2251,17 @@ func init() {
           },
           {
             "type": "string",
-            "name": "name",
+            "name": "arn",
             "in": "path",
             "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/notificationDeleteRequest"
+            }
           }
         ],
         "responses": {
@@ -3569,6 +3611,32 @@ func init() {
         },
         "id": {
           "type": "string"
+        },
+        "prefix": {
+          "type": "string",
+          "title": "filter event associated to the specified prefix"
+        },
+        "suffix": {
+          "type": "string",
+          "title": "filter event associated to the specified suffix"
+        }
+      }
+    },
+    "notificationDeleteRequest": {
+      "type": "object",
+      "required": [
+        "events",
+        "prefix",
+        "suffix"
+      ],
+      "properties": {
+        "events": {
+          "type": "array",
+          "title": "filter specific type of event. Defaults to all event (default: '[put,delete,get]')",
+          "minLength": 1,
+          "items": {
+            "$ref": "#/definitions/notificationEventType"
+          }
         },
         "prefix": {
           "type": "string",

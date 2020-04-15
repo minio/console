@@ -20,6 +20,76 @@ securityDefinitions:
 security:
   - key: []
 paths:
+  /login:
+    get:
+      summary: Returns login strategy, form or sso.
+      operationId: LoginDetail
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/loginDetails"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      # Exclude this API from the authentication requirement
+      security: []
+      tags:
+        - UserAPI
+    post:
+      summary: Login to mcs
+      operationId: Login
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/loginRequest'
+      responses:
+        201:
+          description: A successful login.
+          schema:
+            $ref: '#/definitions/loginResponse'
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      # Exclude this API from the authentication requirement
+      security: []
+      tags:
+        - UserAPI
+
+  /logout:
+    post:
+      summary: Logout from mcs.
+      operationId: Logout
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /session:
+    get:
+      summary: Endpoint to check if your session is still valid
+      operationId: SessionCheck
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/sessionResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /buckets:
     get:
       summary: List Buckets
@@ -68,6 +138,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
+
   /buckets/{name}:
     get:
       summary: Bucket Info
@@ -105,6 +176,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
+
   /buckets/{name}/set-policy:
     put:
       summary: Bucket Set Policy
@@ -130,6 +202,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
+
   /buckets/{bucket_name}/events:
     get:
       summary: List Bucket Events
@@ -182,7 +255,8 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-  /buckets/{bucket_name}/events/{name}:
+
+  /buckets/{bucket_name}/events/{arn}:
     delete:
       summary: Delete Bucket Event
       operationId: DeleteBucketEvent
@@ -191,10 +265,15 @@ paths:
           in: path
           required: true
           type: string
-        - name: name
+        - name: arn
           in: path
           required: true
           type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/notificationDeleteRequest'
       responses:
         204:
           description: A successful response.
@@ -204,6 +283,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
+
   /users:
     get:
       summary: List Users
@@ -250,6 +330,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+
   /users/{name}:
     get:
       summary: Get User Info
@@ -311,6 +392,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+
   /users/{name}/groups:
     put:
       summary: Update Groups for a user
@@ -336,6 +418,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+
   /users-groups-bulk:
     put:
       summary: Bulk functionality to Add Users to Groups
@@ -355,6 +438,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+
   /groups:
     get:
       summary: List Groups
@@ -399,6 +483,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+
   /groups/{name}:
     get:
       summary: Group info
@@ -460,6 +545,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+
   /policies:
     get:
       summary: List Policies
@@ -506,6 +592,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+
   /policies/{name}:
     delete:
       summary: Remove policy
@@ -543,6 +630,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+
   /configs:
     get:
       summary: List Configurations
@@ -569,6 +657,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+
   /set-policy/{name}:
     put:
       summary: Set policy
@@ -592,6 +681,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+
   /configs/{name}:
     get:
       summary: Configuration info
@@ -634,6 +724,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+
   /service/restart:
     post:
       summary: Restart Service
@@ -647,58 +738,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-  /login:
-    get:
-      summary: Returns login strategy, form or sso.
-      operationId: LoginDetail
-      responses:
-        200:
-          description: A successful response.
-          schema:
-            $ref: "#/definitions/loginDetails"
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/error"
-      # Exclude this API from the authentication requirement
-      security: []
-      tags:
-        - UserAPI
-    post:
-      summary: Login to mcs
-      operationId: Login
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/loginRequest'
-      responses:
-        201:
-          description: A successful login.
-          schema:
-            $ref: '#/definitions/loginResponse'
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/error"
-      # Exclude this API from the authentication requirement
-      security: []
-      tags:
-        - UserAPI
-  /logout:
-    post:
-      summary: Logout from mcs.
-      operationId: Logout
-      responses:
-        200:
-          description: A successful response.
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/error"
-      tags:
-        - UserAPI
+
   /profiling/start:
     post:
       summary: Start recording profile data
@@ -720,6 +760,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+
   /profiling/stop:
     post:
       summary: Stop and download profile data
@@ -737,21 +778,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-  /session:
-    get:
-      summary: Endpoint to check if your session is still valid
-      operationId: SessionCheck
-      responses:
-        200:
-          description: A successful response.
-          schema:
-            $ref: "#/definitions/sessionResponse"
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/error"
-      tags:
-        - UserAPI
+
   /admin/info:
     get:
       summary: Returns information about the deployment
@@ -767,6 +794,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+
   /admin/arns:
     get:
       summary: Returns a list of active ARNs in the instance
@@ -782,6 +810,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+
   /admin/notification_endpoints:
     get:
       summary: Returns a list of active notification endpoints
@@ -817,6 +846,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+
 definitions:
   bucketAccess:
     type: string
@@ -1063,6 +1093,25 @@ definitions:
         type: string
       events:
         type: array
+        items:
+          $ref: "#/definitions/notificationEventType"
+        title: "filter specific type of event. Defaults to all event (default: '[put,delete,get]')"
+      prefix:
+        type: string
+        title: "filter event associated to the specified prefix"
+      suffix:
+        type: string
+        title: "filter event associated to the specified suffix"
+  notificationDeleteRequest:
+    type: object
+    required:
+      - events
+      - prefix
+      - suffix
+    properties:
+      events:
+        type: array
+        minLength: 1
         items:
           $ref: "#/definitions/notificationEventType"
         title: "filter specific type of event. Defaults to all event (default: '[put,delete,get]')"

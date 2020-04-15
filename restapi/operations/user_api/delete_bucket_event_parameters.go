@@ -23,11 +23,15 @@ package user_api
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"io"
 	"net/http"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
+
+	"github.com/minio/mcs/models"
 )
 
 // NewDeleteBucketEventParams creates a new DeleteBucketEventParams object
@@ -50,12 +54,17 @@ type DeleteBucketEventParams struct {
 	  Required: true
 	  In: path
 	*/
-	BucketName string
+	Arn string
+	/*
+	  Required: true
+	  In: body
+	*/
+	Body *models.NotificationDeleteRequest
 	/*
 	  Required: true
 	  In: path
 	*/
-	Name string
+	BucketName string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -67,19 +76,56 @@ func (o *DeleteBucketEventParams) BindRequest(r *http.Request, route *middleware
 
 	o.HTTPRequest = r
 
-	rBucketName, rhkBucketName, _ := route.Params.GetOK("bucket_name")
-	if err := o.bindBucketName(rBucketName, rhkBucketName, route.Formats); err != nil {
+	rArn, rhkArn, _ := route.Params.GetOK("arn")
+	if err := o.bindArn(rArn, rhkArn, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
-	rName, rhkName, _ := route.Params.GetOK("name")
-	if err := o.bindName(rName, rhkName, route.Formats); err != nil {
+	if runtime.HasBody(r) {
+		defer r.Body.Close()
+		var body models.NotificationDeleteRequest
+		if err := route.Consumer.Consume(r.Body, &body); err != nil {
+			if err == io.EOF {
+				res = append(res, errors.Required("body", "body"))
+			} else {
+				res = append(res, errors.NewParseError("body", "body", "", err))
+			}
+		} else {
+			// validate body object
+			if err := body.Validate(route.Formats); err != nil {
+				res = append(res, err)
+			}
+
+			if len(res) == 0 {
+				o.Body = &body
+			}
+		}
+	} else {
+		res = append(res, errors.Required("body", "body"))
+	}
+	rBucketName, rhkBucketName, _ := route.Params.GetOK("bucket_name")
+	if err := o.bindBucketName(rBucketName, rhkBucketName, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// bindArn binds and validates parameter Arn from path.
+func (o *DeleteBucketEventParams) bindArn(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: true
+	// Parameter is provided by construction from the route
+
+	o.Arn = raw
+
 	return nil
 }
 
@@ -94,21 +140,6 @@ func (o *DeleteBucketEventParams) bindBucketName(rawData []string, hasKey bool, 
 	// Parameter is provided by construction from the route
 
 	o.BucketName = raw
-
-	return nil
-}
-
-// bindName binds and validates parameter Name from path.
-func (o *DeleteBucketEventParams) bindName(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	var raw string
-	if len(rawData) > 0 {
-		raw = rawData[len(rawData)-1]
-	}
-
-	// Required: true
-	// Parameter is provided by construction from the route
-
-	o.Name = raw
 
 	return nil
 }
