@@ -95,6 +95,8 @@ func configureAPI(api *operations.McsAPI) http.Handler {
 	registerAdminArnsHandlers(api)
 	// Register admin notification endpoints handlers
 	registerAdminNotificationEndpointsHandlers(api)
+	// Register admin Service Account Handlers
+	registerServiceAccountsHandlers(api)
 
 	api.PreServerShutdown = func() {}
 

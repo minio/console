@@ -284,6 +284,28 @@ paths:
       tags:
         - UserAPI
 
+  /service-accounts:
+    post:
+      summary: Create Service Account
+      operationId: CreateServiceAccount
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/serviceAccount'
+      responses:
+        201:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/serviceAccountCreds"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /users:
     get:
       summary: List Users
@@ -1312,3 +1334,17 @@ definitions:
         type: array
         items:
           type: string
+  serviceAccount:
+    type: object
+    properties:
+      policy:
+        type: string
+        title : "policy to be applied to the Service Account if any"
+  serviceAccountCreds:
+    type: object
+    properties:
+      accessKey:
+        type: string
+      secretKey:
+        type: string
+

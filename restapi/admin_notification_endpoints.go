@@ -141,7 +141,6 @@ func addNotificationEndpoint(ctx context.Context, client MinioAdmin, params *adm
 
 	err := setConfigWithARNAccountID(ctx, client, &configName, configs, *params.Body.AccountID)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 

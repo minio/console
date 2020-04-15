@@ -52,6 +52,7 @@ func IsJWTValid(token string) bool {
 	return err == nil
 }
 
+// DecryptedClaims claims struct for decrypted credentials
 type DecryptedClaims struct {
 	AccessKeyID     string
 	SecretAccessKey string

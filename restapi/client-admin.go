@@ -26,6 +26,7 @@ import (
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/mcs/pkg/auth"
 	"github.com/minio/minio-go/v6/pkg/credentials"
+	mauth "github.com/minio/minio/pkg/auth"
 	iampolicy "github.com/minio/minio/pkg/iam/policy"
 	"github.com/minio/minio/pkg/madmin"
 )
@@ -79,6 +80,8 @@ type MinioAdmin interface {
 	serverInfo(ctx context.Context) (madmin.InfoMessage, error)
 	startProfiling(ctx context.Context, profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error)
 	stopProfiling(ctx context.Context) (io.ReadCloser, error)
+	// Service Accounts
+	addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (mauth.Credentials, error)
 }
 
 // Interface implementation
@@ -192,6 +195,11 @@ func (ac adminClient) startProfiling(ctx context.Context, profiler madmin.Profil
 // implements madmin.DownloadProfilingData()
 func (ac adminClient) stopProfiling(ctx context.Context) (io.ReadCloser, error) {
 	return ac.client.DownloadProfilingData(ctx)
+}
+
+// implements madmin.AddServiceAccount()
+func (ac adminClient) addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (mauth.Credentials, error) {
+	return ac.client.AddServiceAccount(ctx, policy)
 }
 
 func newMAdminClient(jwt string) (*madmin.AdminClient, error) {
