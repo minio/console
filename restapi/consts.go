@@ -17,6 +17,7 @@
 package restapi
 
 const (
+	// consts for common configuration
 	McsVersion        = `0.1.0`
 	McsAccessKey      = "MCS_ACCESS_KEY"
 	McsSecretKey      = "MCS_SECRET_KEY"
@@ -27,6 +28,7 @@ const (
 	McsTLSHostname    = "MCS_TLS_HOSTNAME"
 	McsTLSPort        = "MCS_TLS_PORT"
 
+	// consts for Secure middleware
 	McsSecureAllowedHosts                    = "MCS_SECURE_ALLOWED_HOSTS"
 	McsSecureAllowedHostsAreRegex            = "MCS_SECURE_ALLOWED_HOSTS_ARE_REGEX"
 	McsSecureFrameDeny                       = "MCS_SECURE_FRAME_DENY"

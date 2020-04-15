@@ -62,7 +62,7 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:9090",
+  "proxy": "http://localhost:9090/",
   "devDependencies": {
     "prettier": "^1.19.1"
   }

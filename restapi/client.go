@@ -119,9 +119,6 @@ type MCSCredentials interface {
 }
 
 // Interface implementation
-//
-// Define the structure of a mc S3Client and define the functions that are actually used
-// from mcsCredentials api.
 type mcsCredentials struct {
 	minioCredentials *credentials.Credentials
 }
