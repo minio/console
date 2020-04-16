@@ -46,7 +46,7 @@ func registerBucketEventsHandlers(api *operations.McsAPI) {
 	})
 	// delete bucket event
 	api.UserAPIDeleteBucketEventHandler = user_api.DeleteBucketEventHandlerFunc(func(params user_api.DeleteBucketEventParams, principal *models.Principal) middleware.Responder {
-		if err := getDeleteBucketEventsResponse(params.BucketName, params.Name); err != nil {
+		if err := getDeleteBucketEventsResponse(params.BucketName, params.Arn, params.Body.Events, params.Body.Prefix, params.Body.Suffix); err != nil {
 			return user_api.NewDeleteBucketEventDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return user_api.NewDeleteBucketEventNoContent()
@@ -195,16 +195,25 @@ func getCreateBucketEventsResponse(bucketName string, eventReq *models.BucketEve
 }
 
 // deleteBucketEventNotification calls S3Client.RemoveNotificationConfig to remove a bucket event notification
-func deleteBucketEventNotification(client MCS3Client, arn string) error {
-	perr := client.removeNotificationConfig(arn)
+func deleteBucketEventNotification(client MCS3Client, arn string, events []models.NotificationEventType, prefix, suffix *string) error {
+	eventSingleString := joinNotificationEvents(events)
+	perr := client.removeNotificationConfig(arn, eventSingleString, *prefix, *suffix)
 	if perr != nil {
 		return perr.Cause
 	}
 	return nil
 }
 
+func joinNotificationEvents(events []models.NotificationEventType) string {
+	var eventsArn []string
+	for _, e := range events {
+		eventsArn = append(eventsArn, string(e))
+	}
+	return strings.Join(eventsArn, ",")
+}
+
 // getDeleteBucketEventsResponse calls deleteBucketEventNotification() to delete a bucket event notification
-func getDeleteBucketEventsResponse(bucketName string, arn string) error {
+func getDeleteBucketEventsResponse(bucketName string, arn string, events []models.NotificationEventType, prefix, suffix *string) error {
 	s3Client, err := newS3BucketClient(swag.String(bucketName))
 	if err != nil {
 		log.Println("error creating S3Client:", err)
@@ -213,7 +222,7 @@ func getDeleteBucketEventsResponse(bucketName string, arn string) error {
 	// create a mc S3Client interface implementation
 	// defining the client to be used
 	mcS3Client := mcS3Client{client: s3Client}
-	err = deleteBucketEventNotification(mcS3Client, arn)
+	err = deleteBucketEventNotification(mcS3Client, arn, events, prefix, suffix)
 	if err != nil {
 		log.Println("error deleting bucket event:", err)
 		return err

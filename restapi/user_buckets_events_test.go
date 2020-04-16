@@ -39,7 +39,7 @@ func (mc minioClientMock) getBucketNotification(bucketName string) (bucketNotifi
 
 //// Mock mc S3Client functions ////
 var mcAddNotificationConfigMock func(arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error
-var mcRemoveNotificationConfigMock func(arn string) *probe.Error
+var mcRemoveNotificationConfigMock func(arn string, event string, prefix string, suffix string) *probe.Error
 
 // Define a mock struct of mc S3Client interface implementation
 type s3ClientMock struct {
@@ -51,8 +51,8 @@ func (c s3ClientMock) addNotificationConfig(arn string, events []string, prefix,
 }
 
 // implements mc.S3Client.DeleteBucketEventNotification()
-func (c s3ClientMock) removeNotificationConfig(arn string) *probe.Error {
-	return mcRemoveNotificationConfigMock(arn)
+func (c s3ClientMock) removeNotificationConfig(arn string, event string, prefix string, suffix string) *probe.Error {
+	return mcRemoveNotificationConfigMock(arn, event, prefix, suffix)
 }
 
 func TestAddBucketNotification(t *testing.T) {
@@ -105,20 +105,32 @@ func TestDeleteBucketNotification(t *testing.T) {
 	function := "deleteBucketEventNotification()"
 	// Test-1: deleteBucketEventNotification() delete a bucket event notification
 	testArn := "arn:minio:sqs::test:postgresql"
-	mcRemoveNotificationConfigMock = func(arn string) *probe.Error {
+	// arn string, events []models.NotificationEventType, prefix, suffix *string
+	events := []models.NotificationEventType{
+		models.NotificationEventTypeGet,
+		models.NotificationEventTypeDelete,
+		models.NotificationEventTypePut}
+	prefix := "/photos"
+	suffix := ".jpg"
+	mcRemoveNotificationConfigMock = func(arn string, event string, prefix string, suffix string) *probe.Error {
 		return nil
 	}
-	if err := deleteBucketEventNotification(client, testArn); err != nil {
+	if err := deleteBucketEventNotification(client, testArn, events, swag.String(prefix), swag.String(suffix)); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 
-	// Test-3 deleteBucketEventNotification() S3Client.DeleteBucketEventNotification returns an error and is handled correctly
-	mcRemoveNotificationConfigMock = func(arn string) *probe.Error {
+	// Test-2 deleteBucketEventNotification() S3Client.DeleteBucketEventNotification returns an error and is handled correctly
+	mcRemoveNotificationConfigMock = func(arn string, event string, prefix string, suffix string) *probe.Error {
 		return probe.NewError(errors.New("error"))
 	}
-	if err := deleteBucketEventNotification(client, testArn); assert.Error(err) {
+	if err := deleteBucketEventNotification(client, testArn, events, swag.String(prefix), swag.String(suffix)); assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
+
+	// Test-3 joinNotificationEvents() verify that it returns the events as a single string separated by commas
+	function = "joinNotificationEvents()"
+	eventString := joinNotificationEvents(events)
+	assert.Equal("get,delete,put", eventString, fmt.Sprintf("Failed on %s:", function))
 }
 
 func TestListBucketEvents(t *testing.T) {

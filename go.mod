@@ -13,11 +13,10 @@ require (
 	github.com/go-openapi/validate v0.19.7
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/minio/cli v1.22.0
-	github.com/minio/m3/mcs v0.0.0-20200402043742-b25a986a7344 // indirect
-	github.com/minio/mc v0.0.0-20200403024131-4d36c1f8b856
-	github.com/minio/minio v0.0.0-20200327214830-6f992134a25f
-	github.com/minio/minio-go/v6 v6.0.51-0.20200401083717-eadbcae2a0e6
+	github.com/minio/mc v0.0.0-20200415193718-68b638f2f96c
+	github.com/minio/minio v0.0.0-20200415191640-bde0f444dbab
+	github.com/minio/minio-go/v6 v6.0.53
 	github.com/stretchr/testify v1.5.1
 	github.com/unrolled/secure v1.0.7
-	golang.org/x/net v0.0.0-20200301022130-244492dfa37a
+	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
 )

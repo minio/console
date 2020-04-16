@@ -17,7 +17,9 @@
 package restapi
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"log"
 
 	"github.com/go-openapi/errors"
@@ -27,6 +29,7 @@ import (
 	"github.com/minio/mcs/models"
 	"github.com/minio/mcs/restapi/operations"
 	"github.com/minio/mcs/restapi/operations/admin_api"
+	iampolicy "github.com/minio/minio/pkg/iam/policy"
 )
 
 func registersPoliciesHandler(api *operations.McsAPI) {
@@ -78,16 +81,17 @@ func registersPoliciesHandler(api *operations.McsAPI) {
 // to []*models.Policy by iterating over each key in policyRawMap and
 // then using Unmarshal on the raw bytes to create a *models.Policy
 func listPolicies(ctx context.Context, client MinioAdmin) ([]*models.Policy, error) {
-	policyRawMap, err := client.listPolicies(ctx)
+	policyMap, err := client.listPolicies(ctx)
 	var policies []*models.Policy
 	if err != nil {
 		return nil, err
 	}
-	for name, policyRaw := range policyRawMap {
-		policies = append(policies, &models.Policy{
-			Name:   name,
-			Policy: string(policyRaw),
-		})
+	for name, policy := range policyMap {
+		policy, err := parsePolicy(name, policy)
+		if err != nil {
+			return nil, err
+		}
+		policies = append(policies, policy)
 	}
 	return policies, nil
 }
@@ -154,7 +158,11 @@ func getRemovePolicyResponse(params admin_api.RemovePolicyParams) error {
 // policy must be string in json format, in the future this will change
 // to a Policy struct{} - https://github.com/minio/minio/issues/9171
 func addPolicy(ctx context.Context, client MinioAdmin, name, policy string) (*models.Policy, error) {
-	if err := client.addPolicy(ctx, name, policy); err != nil {
+	iamp, err := iampolicy.ParseConfig(bytes.NewReader([]byte(policy)))
+	if err != nil {
+		return nil, err
+	}
+	if err := client.addPolicy(ctx, name, iamp); err != nil {
 		return nil, err
 	}
 	policyObject, err := policyInfo(ctx, client, name)
@@ -197,9 +205,9 @@ func policyInfo(ctx context.Context, client MinioAdmin, name string) (*models.Po
 	if err != nil {
 		return nil, err
 	}
-	policy := &models.Policy{
-		Name:   name,
-		Policy: string(policyRaw),
+	policy, err := parsePolicy(name, policyRaw)
+	if err != nil {
+		return nil, err
 	}
 	return policy, nil
 }
@@ -226,7 +234,7 @@ func getPolicyInfoResponse(params admin_api.PolicyInfoParams) (*models.Policy, e
 // setPolicy() calls MinIO server to assign policy to a group or user.
 func setPolicy(ctx context.Context, client MinioAdmin, name, entityName string, entityType models.PolicyEntity) error {
 	isGroup := false
-	if entityType == "group" {
+	if entityType == models.PolicyEntityGroup {
 		isGroup = true
 	}
 	if err := client.setPolicy(ctx, name, entityName, isGroup); err != nil {
@@ -256,4 +264,17 @@ func getSetPolicyResponse(name string, params *models.SetPolicyRequest) error {
 		return err
 	}
 	return nil
+}
+
+// parsePolicy() converts from *rawPolicy to *models.Policy
+func parsePolicy(name string, rawPolicy *iampolicy.Policy) (*models.Policy, error) {
+	stringPolicy, err := json.Marshal(rawPolicy)
+	if err != nil {
+		return nil, err
+	}
+	policy := &models.Policy{
+		Name:   name,
+		Policy: string(stringPolicy),
+	}
+	return policy, nil
 }

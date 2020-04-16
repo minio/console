@@ -22,7 +22,6 @@ import (
 	"log"
 	"strings"
 
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
 	"github.com/minio/mcs/models"
@@ -101,21 +100,25 @@ func getListConfigResponse() (*models.ListConfigResponse, error) {
 // getConfig gets the key values for a defined configuration
 func getConfig(client MinioAdmin, name string) ([]*models.ConfigurationKV, error) {
 	ctx := context.Background()
-	configTarget, err := client.getConfigKV(ctx, name)
+	// getConfigKV comes as []byte
+	configBytes, err := client.getConfigKV(ctx, name)
 	if err != nil {
+		log.Println("error on getConfigKV")
 		return nil, err
 	}
-	// configTarget comes as an array []madmin.Target
-	if len(configTarget) > 0 {
-		// return Key Values, first element contains info
-		var confkv []*models.ConfigurationKV
-		for _, kv := range configTarget[0].KVS {
-			confkv = append(confkv, &models.ConfigurationKV{Key: kv.Key, Value: kv.Value})
-		}
-		return confkv, nil
-	}
+	// if len(config) > 0 {
+	// 	// return Key Values, first element contains info
+	// 	var confkv []*models.ConfigurationKV
+	// 	for _, kv := range config[0].KVS {
+	// 		confkv = append(confkv, &models.ConfigurationKV{Key: kv.Key, Value: kv.Value})
+	// 	}
+	// 	return confkv, nil
+	// }
 
-	return nil, errors.New(500, "error getting config: empty info")
+	// TODO: Provisional until function to get key values is done
+	var confkv []*models.ConfigurationKV
+	confkv = append(confkv, &models.ConfigurationKV{Key: "configuration", Value: string(configBytes)})
+	return confkv, nil
 }
 
 // getConfigResponse performs getConfig() and serializes it to the handler's output
@@ -131,7 +134,7 @@ func getConfigResponse(params admin_api.ConfigInfoParams) (*models.Configuration
 
 	configkv, err := getConfig(adminClient, params.Name)
 	if err != nil {
-		log.Println("error listing configurations:", err)
+		log.Println("error getting configuration:", err)
 		return nil, err
 	}
 	configurationObj := &models.Configuration{
