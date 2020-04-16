@@ -258,7 +258,7 @@ func TestUserGroups(t *testing.T) {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 
-	// Test-2: updateUserGroups() make sure errors are handled correctly when error on DeleteUser()
+	// Test-2: updateUserGroups() make sure errors are handled correctly when error on UpdateGroupMembersMock()
 	// mock function response from removeUser(accessKey)
 
 	minioUpdateGroupMembersMock = func(remove madmin.GroupAddRemove) error {
@@ -366,5 +366,36 @@ func TestSetUserStatus(t *testing.T) {
 	}
 	if err := setUserStatus(ctx, adminClient, userName, expectedStatus); assert.Error(err) {
 		assert.Equal("error", err.Error())
+	}
+}
+
+func TestUserGroupsBulk(t *testing.T) {
+	assert := asrt.New(t)
+	// mock minIO client
+	adminClient := adminClientMock{}
+	ctx := context.Background()
+
+	function := "updateUserGroups()"
+	mockUserGroups := []string{"group1", "group2", "group3"}
+	mockUsers := []string{"testUser", "testUser2"}
+
+	// Test-1: addUsersListToGroups() updates the groups for a users list
+	// mock function response from updateUserGroups(accessKey, groupsToAssign)
+	minioUpdateGroupMembersMock = func(remove madmin.GroupAddRemove) error {
+		return nil
+	}
+
+	if err := addUsersListToGroups(ctx, adminClient, mockUsers, mockUserGroups); err != nil {
+		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+	}
+
+	// Test-2: addUsersListToGroups() make sure errors are handled correctly when error on updateGroupMembers()
+	// mock function response from removeUser(accessKey)
+	minioUpdateGroupMembersMock = func(remove madmin.GroupAddRemove) error {
+		return errors.New("error")
+	}
+
+	if err := addUsersListToGroups(ctx, adminClient, mockUsers, mockUserGroups); assert.Error(err) {
+		assert.Equal("error in users-groups assignation: \"error,error,error\"", err.Error())
 	}
 }

@@ -39,8 +39,6 @@ interface IGroupsProps {
   classes: any;
   selectedGroups: string[];
   setSelectedGroups: any;
-  records: any[];
-  loading: boolean;
 }
 
 const styles = (theme: Theme) =>

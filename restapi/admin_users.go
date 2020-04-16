@@ -20,15 +20,15 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
-	"github.com/minio/mcs/restapi/operations"
-
-	"github.com/minio/mcs/restapi/operations/admin_api"
-
 	"github.com/minio/mcs/models"
+	"github.com/minio/mcs/restapi/operations"
+	"github.com/minio/mcs/restapi/operations/admin_api"
 	"github.com/minio/minio/pkg/madmin"
 
 	"context"
+	"fmt"
 	"log"
+	"strings"
 )
 
 func registerUsersHandlers(api *operations.McsAPI) {
@@ -82,6 +82,15 @@ func registerUsersHandlers(api *operations.McsAPI) {
 		}
 
 		return admin_api.NewUpdateUserInfoOK().WithPayload(userUpdateResponse)
+	})
+	// Update User-Groups Bulk
+	api.AdminAPIBulkUpdateUsersGroupsHandler = admin_api.BulkUpdateUsersGroupsHandlerFunc(func(params admin_api.BulkUpdateUsersGroupsParams, principal *models.Principal) middleware.Responder {
+		error := getAddUsersListToGroupsResponse(params)
+		if error != nil {
+			return admin_api.NewBulkUpdateUsersGroupsDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(error.Error())})
+		}
+
+		return admin_api.NewBulkUpdateUsersGroupsOK()
 	})
 }
 
@@ -401,4 +410,71 @@ func getUpdateUserResponse(params admin_api.UpdateUserInfoParams) (*models.User,
 		return nil, errUG
 	}
 	return userElem, nil
+}
+
+// addUsersListToGroups iterates over the user list & assigns the requested groups to each user.
+func addUsersListToGroups(ctx context.Context, client MinioAdmin, usersToUpdate []string, groupsToAssign []string) error {
+	// We update each group with the complete usersList
+	parallelGroupsUpdate := func(groupToAssign string) chan error {
+		groupProcess := make(chan error)
+
+		go func() {
+			defer close(groupProcess)
+			// We add the users array to the group.
+			err := updateGroupMembers(ctx, client, groupToAssign, usersToUpdate, false)
+
+			groupProcess <- err
+		}()
+		return groupProcess
+	}
+
+	var groupsUpdateList []chan error
+
+	// We get each group name & add users accordingly
+	for _, groupName := range groupsToAssign {
+		// We update the group
+		proc := parallelGroupsUpdate(groupName)
+		groupsUpdateList = append(groupsUpdateList, proc)
+	}
+
+	errorsList := []string{} // We get the errors list because we want to have all errors at once.
+	for _, err := range groupsUpdateList {
+		errorFromUpdate := <-err // We store the error to avoid Data Race
+		if errorFromUpdate != nil {
+			// If there is an error, we store the errors strings so we can join them after we receive all errors
+			errorsList = append(errorsList, errorFromUpdate.Error()) // We wait until all the channels have been closed.
+		}
+	}
+
+	// If there are errors, we throw the final error with the errors inside
+	if len(errorsList) > 0 {
+		errGen := fmt.Errorf("error in users-groups assignation: %q", strings.Join(errorsList[:], ","))
+		return errGen
+	}
+
+	return nil
+}
+
+func getAddUsersListToGroupsResponse(params admin_api.BulkUpdateUsersGroupsParams) error {
+	ctx := context.Background()
+
+	mAdmin, err := newMAdminClient()
+	if err != nil {
+		log.Println("error creating Madmin Client:", err)
+		return err
+	}
+
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := adminClient{client: mAdmin}
+
+	usersList := params.Body.Users
+	groupsList := params.Body.Groups
+
+	if err := addUsersListToGroups(ctx, adminClient, usersList, groupsList); err != nil {
+		log.Println("error updating groups bulk users:", err.Error())
+		return err
+	}
+
+	return nil
 }

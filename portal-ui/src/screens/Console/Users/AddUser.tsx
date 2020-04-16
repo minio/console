@@ -55,8 +55,6 @@ interface IAddUserContentState {
   accessKey: string;
   secretKey: string;
   selectedGroups: string[];
-  loadingGroups: boolean;
-  groupsList: any[];
   enabled: string;
 }
 
@@ -69,10 +67,8 @@ class AddUserContent extends React.Component<
     addError: "",
     accessKey: "",
     secretKey: "",
-    selectedGroups: [],
-    loadingGroups: false,
-    groupsList: [],
-    enabled: "enabled"
+    enabled: "enabled",
+    selectedGroups: []
   };
 
   componentDidMount(): void {
@@ -188,8 +184,6 @@ class AddUserContent extends React.Component<
       accessKey,
       secretKey,
       selectedGroups,
-      loadingGroups,
-      groupsList,
       enabled
     } = this.state;
 
@@ -268,8 +262,6 @@ class AddUserContent extends React.Component<
                       selectedGroups: elements
                     });
                   }}
-                  loading={loadingGroups}
-                  records={groupsList}
                 />
               </Grid>
               <Grid item xs={12}>
