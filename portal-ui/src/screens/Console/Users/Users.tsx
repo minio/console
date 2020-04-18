@@ -19,25 +19,12 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../common/api";
 import {
   Button,
-  IconButton,
-  LinearProgress,
-  TableFooter,
-  TablePagination,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Paper,
   Grid,
   Typography,
   TextField,
   InputAdornment
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
-import Checkbox from "@material-ui/core/Checkbox";
-import DeleteIcon from "@material-ui/icons/Delete";
-import ViewIcon from "@material-ui/icons/Visibility";
 import GroupIcon from "@material-ui/icons/Group";
 import { User, UsersList } from "./types";
 import { usersSort } from "../../../utils/sortFunctions";
@@ -46,6 +33,7 @@ import { CreateIcon } from "../../../icons";
 import AddUser from "./AddUser";
 import DeleteUser from "./DeleteUser";
 import AddToGroup from "./AddToGroup";
+import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -251,6 +239,25 @@ class Users extends React.Component<IUsersProps, IUsersState> {
       return elements;
     };
 
+    const viewAction = (selectionElement: any): void => {
+      this.setState({
+        addScreenOpen: true,
+        selectedUser: selectionElement
+      });
+    };
+
+    const deleteAction = (selectionElement: any): void => {
+      this.setState({
+        deleteOpen: true,
+        selectedUser: selectionElement
+      });
+    };
+
+    const tableActions = [
+      { type: "view", onClick: viewAction },
+      { type: "delete", onClick: deleteAction }
+    ];
+
     return (
       <React.Fragment>
         {addScreenOpen && (
@@ -340,82 +347,30 @@ class Users extends React.Component<IUsersProps, IUsersState> {
             <br />
           </Grid>
           <Grid item xs={12}>
-            <Paper className={classes.paper}>
-              {loading && <LinearProgress />}
-              {records != null && records.length > 0 ? (
-                <Table size="medium">
-                  <TableHead className={classes.minTableHeader}>
-                    <TableRow>
-                      <TableCell>Select</TableCell>
-                      <TableCell>Access Key</TableCell>
-                      <TableCell align="right">Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {filteredRecords.map(row => (
-                      <TableRow key={`user-${row.accessKey}`}>
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            value={row.accessKey}
-                            color="primary"
-                            inputProps={{ "aria-label": "secondary checkbox" }}
-                            checked={checkedUsers.includes(row.accessKey)}
-                            onChange={selectionChanged}
-                          />
-                        </TableCell>
-                        <TableCell className={classes.wrapCell}>
-                          {row.accessKey}
-                        </TableCell>
-                        <TableCell align="right">
-                          <IconButton
-                            aria-label="view"
-                            onClick={() => {
-                              this.setState({
-                                addScreenOpen: true,
-                                selectedUser: row
-                              });
-                            }}
-                          >
-                            <ViewIcon />
-                          </IconButton>
-                          <IconButton
-                            aria-label="delete"
-                            onClick={() => {
-                              this.setState({
-                                deleteOpen: true,
-                                selectedUser: row
-                              });
-                            }}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                  <TableFooter>
-                    <TableRow>
-                      <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        colSpan={3}
-                        count={totalRecords}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        SelectProps={{
-                          inputProps: { "aria-label": "rows per page" },
-                          native: true
-                        }}
-                        onChangePage={handleChangePage}
-                        onChangeRowsPerPage={handleChangeRowsPerPage}
-                        ActionsComponent={MinTablePaginationActions}
-                      />
-                    </TableRow>
-                  </TableFooter>
-                </Table>
-              ) : (
-                <div>No Users</div>
-              )}
-            </Paper>
+            <TableWrapper
+              itemActions={tableActions}
+              columns={[{ label: "Access Key", elementKey: "accessKey" }]}
+              onSelect={selectionChanged}
+              selectedItems={checkedUsers}
+              isLoading={loading}
+              records={filteredRecords}
+              entityName="Users"
+              idField="accessKey"
+              paginatorConfig={{
+                rowsPerPageOptions: [5, 10, 25],
+                colSpan: 3,
+                count: totalRecords,
+                rowsPerPage: rowsPerPage,
+                page: page,
+                SelectProps: {
+                  inputProps: { "aria-label": "rows per page" },
+                  native: true
+                },
+                onChangePage: handleChangePage,
+                onChangeRowsPerPage: handleChangeRowsPerPage,
+                ActionsComponent: MinTablePaginationActions
+              }}
+            />
           </Grid>
         </Grid>
       </React.Fragment>
