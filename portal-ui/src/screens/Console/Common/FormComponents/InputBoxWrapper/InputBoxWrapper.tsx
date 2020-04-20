@@ -14,7 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
-import { TextField, Grid, InputLabel, TextFieldProps } from "@material-ui/core";
+import {
+  Grid,
+  InputLabel,
+  TextField,
+  TextFieldProps,
+  Tooltip
+} from "@material-ui/core";
 import { OutlinedInputProps } from "@material-ui/core/OutlinedInput";
 import {
   createStyles,
@@ -23,16 +29,19 @@ import {
   withStyles
 } from "@material-ui/core/styles";
 import { fieldBasic } from "../common/styleLibrary";
+import HelpIcon from "@material-ui/icons/Help";
 
 interface InputBoxProps {
   label: string;
   classes: any;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  value: string;
+  value: string | boolean;
   id: string;
   name: string;
   disabled?: boolean;
+  multiline?: boolean;
   type?: string;
+  tooltip?: string;
   autoComplete?: string;
 }
 
@@ -78,6 +87,8 @@ const InputBoxWrapper = ({
   type = "text",
   autoComplete = "off",
   disabled = false,
+  multiline = false,
+  tooltip = "",
   classes
 }: InputBoxProps) => {
   return (
@@ -97,9 +108,17 @@ const InputBoxWrapper = ({
             disabled={disabled}
             onChange={onChange}
             type={type}
+            multiline={multiline}
             autoComplete={autoComplete}
           />
         </div>
+        {tooltip !== "" && (
+          <div>
+            <Tooltip title={tooltip} placement="left">
+              <HelpIcon />
+            </Tooltip>
+          </div>
+        )}
       </Grid>
     </React.Fragment>
   );

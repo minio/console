@@ -14,13 +14,22 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import {MENU_OPEN, SystemActionTypes, SystemState, USER_LOGGED} from "./types";
+import {
+  MENU_OPEN,
+  SERVER_IS_LOADING,
+  SERVER_NEEDS_RESTART,
+  SystemActionTypes,
+  SystemState,
+  USER_LOGGED
+} from "./types";
 
 const initialState: SystemState = {
   loggedIn: false,
   session: "",
   userName: "",
-  sidebarOpen:true,
+  sidebarOpen: true,
+  serverNeedsRestart: false,
+  serverIsLoading: false
 };
 
 export function systemReducer(
@@ -37,6 +46,17 @@ export function systemReducer(
       return {
         ...state,
         sidebarOpen: action.open
+      };
+    case SERVER_NEEDS_RESTART:
+      return {
+        ...state,
+        serverNeedsRestart: action.needsRestart
+      };
+
+    case SERVER_IS_LOADING:
+      return {
+        ...state,
+        serverIsLoading: action.isLoading
       };
     default:
       return state;

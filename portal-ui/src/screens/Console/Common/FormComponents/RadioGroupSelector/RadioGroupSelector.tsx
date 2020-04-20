@@ -18,7 +18,7 @@ import Grid from "@material-ui/core/Grid";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio, { RadioProps } from "@material-ui/core/Radio";
-import { InputLabel } from "@material-ui/core";
+import { InputLabel, Tooltip } from "@material-ui/core";
 import {
   createStyles,
   Theme,
@@ -26,18 +26,20 @@ import {
   makeStyles
 } from "@material-ui/core/styles";
 import { fieldBasic } from "../common/styleLibrary";
+import HelpIcon from "@material-ui/icons/Help";
 
-interface selectorTypes {
+export interface SelectorTypes {
   label: string;
   value: string;
 }
 
 interface RadioGroupProps {
-  selectorOptions: selectorTypes[];
+  selectorOptions: SelectorTypes[];
   currentSelection: string;
   label: string;
   id: string;
   name: string;
+  tooltip?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   classes: any;
   displayInColumn?: boolean;
@@ -106,6 +108,7 @@ export const RadioGroupSelector = ({
   id,
   name,
   onChange,
+  tooltip = "",
   classes,
   displayInColumn = false
 }: RadioGroupProps) => {
@@ -136,6 +139,13 @@ export const RadioGroupSelector = ({
             })}
           </RadioGroup>
         </div>
+        {tooltip !== "" && (
+          <div>
+            <Tooltip title={tooltip} placement="left">
+              <HelpIcon />
+            </Tooltip>
+          </div>
+        )}
       </Grid>
     </React.Fragment>
   );
