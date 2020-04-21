@@ -128,11 +128,11 @@ class Users extends React.Component<IUsersProps, IUsersState> {
       api
         .invoke("GET", `/api/v1/users?offset=${offset}&limit=${rowsPerPage}`)
         .then((res: UsersList) => {
-          const usersList = !res.users ? [] : res.users;
+          const users = res.users === null ? [] : res.users;
           this.setState({
             loading: false,
-            records: usersList.sort(usersSort),
-            totalRecords: res.users.length,
+            records: users.sort(usersSort),
+            totalRecords: users.length,
             error: ""
           });
           // if we get 0 results, and page > 0 , go down 1 page
