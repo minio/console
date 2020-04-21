@@ -16,29 +16,17 @@
 
 import React from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import api from "../../../../common/api";
 import { BucketEvent, BucketEventList, BucketInfo } from "../types";
-import {
-  Button,
-  IconButton,
-  LinearProgress,
-  TableFooter,
-  TablePagination
-} from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
-import DeleteIcon from "@material-ui/icons/Delete";
 import SetAccessPolicy from "./SetAccessPolicy";
 import { MinTablePaginationActions } from "../../../../common/MinTablePaginationActions";
 import { CreateIcon } from "../../../../icons";
 import AddEvent from "./AddEvent";
 import DeleteEvent from "./DeleteEvent";
+import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -135,19 +123,16 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       api
         .invoke("GET", `/api/v1/buckets/${bucketName}/events`)
         .then((res: BucketEventList) => {
+          const events = res.events;
+
           this.setState({
             loading: false,
-            records: res.events,
+            records: events || [],
             totalRecords: res.total,
             error: ""
           });
           // if we get 0 results, and page > 0 , go down 1 page
-          if (
-            (res.events === undefined ||
-              res.events == null ||
-              res.events.length === 0) &&
-            page > 0
-          ) {
+          if ((!events || res.events.length === 0) && page > 0) {
             const newPage = page - 1;
             this.setState({ page: newPage }, () => {
               this.fetchEvents();
@@ -231,6 +216,14 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       accessPolicy = info.access;
     }
 
+    const eventsDisplay = (events: string[]) => {
+      return <React.Fragment>{events.join(", ")}</React.Fragment>;
+    };
+
+    const tableActions = [{ type: "delete", onClick: confirmDeleteEvent }];
+
+    const filteredRecords = records.slice(offset, offset + rowsPerPage);
+
     return (
       <React.Fragment>
         <AddEvent
@@ -301,66 +294,37 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
             <br />
           </Grid>
           <Grid item xs={12}>
-            <Paper className={classes.paper}>
-              {loading && <LinearProgress />}
-              {records != null && records.length > 0 ? (
-                <Table size="medium">
-                  <TableHead className={classes.minTableHeader}>
-                    <TableRow>
-                      <TableCell>SQS</TableCell>
-                      <TableCell>Events</TableCell>
-                      <TableCell>Prefix</TableCell>
-                      <TableCell>Suffix</TableCell>
-                      <TableCell align="right">Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {records
-                      .slice(offset, offset + rowsPerPage)
-                      .map((row, index) => (
-                        <TableRow
-                          key={`bucket-evt-${row.id}-${index.toString()}`}
-                        >
-                          <TableCell>{row.arn}</TableCell>
-                          <TableCell>{row.events.join(", ")}</TableCell>
-                          <TableCell>{row.prefix}</TableCell>
-                          <TableCell>{row.suffix}</TableCell>
-                          <TableCell align="right">
-                            <IconButton
-                              aria-label="delete"
-                              onClick={() => {
-                                confirmDeleteEvent(row);
-                              }}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                  <TableFooter>
-                    <TableRow>
-                      <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        colSpan={3}
-                        count={totalRecords}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        SelectProps={{
-                          inputProps: { "aria-label": "rows per page" },
-                          native: true
-                        }}
-                        onChangePage={handleChangePage}
-                        onChangeRowsPerPage={handleChangeRowsPerPage}
-                        ActionsComponent={MinTablePaginationActions}
-                      />
-                    </TableRow>
-                  </TableFooter>
-                </Table>
-              ) : (
-                <div className={classes.noRecords}>No Events</div>
-              )}
-            </Paper>
+            <TableWrapper
+              itemActions={tableActions}
+              columns={[
+                { label: "SQS", elementKey: "arn" },
+                {
+                  label: "Events",
+                  elementKey: "events",
+                  renderFunction: eventsDisplay
+                },
+                { label: "Prefix", elementKey: "prefix" },
+                { label: "Suffix", elementKey: "suffix" }
+              ]}
+              isLoading={loading}
+              records={filteredRecords}
+              entityName="Events"
+              idField="id"
+              paginatorConfig={{
+                rowsPerPageOptions: [5, 10, 25],
+                colSpan: 3,
+                count: totalRecords,
+                rowsPerPage: rowsPerPage,
+                page: page,
+                SelectProps: {
+                  inputProps: { "aria-label": "rows per page" },
+                  native: true
+                },
+                onChangePage: handleChangePage,
+                onChangeRowsPerPage: handleChangeRowsPerPage,
+                ActionsComponent: MinTablePaginationActions
+              }}
+            />
           </Grid>
         </Grid>
 

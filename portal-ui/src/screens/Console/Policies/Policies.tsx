@@ -16,21 +16,8 @@
 
 import React from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import {
-  Button,
-  IconButton,
-  LinearProgress,
-  TableFooter,
-  TablePagination
-} from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
+import { Button } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -41,7 +28,7 @@ import DeletePolicy from "./DeletePolicy";
 import api from "../../../common/api";
 import { CreateIcon } from "../../../icons";
 import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
-import VisibilityIcon from "@material-ui/icons/Visibility";
+import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -206,6 +193,32 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
       this.setState({ deleteOpen: true, selectedPolicy: policy });
     };
 
+    const viewAction = (row: any) => {
+      this.setState({
+        addScreenOpen: true,
+        policyEdit: row
+      });
+    };
+
+    const tableActions = [
+      { type: "view", onClick: viewAction },
+      { type: "delete", onClick: confirmDeletePolicy, sendOnlyId: true }
+    ];
+
+    const filteredRecords = records
+      .slice(offset, offset + rowsPerPage)
+      .filter((b: Policy) => {
+        if (filterPolicies === "") {
+          return true;
+        } else {
+          if (b.name.indexOf(filterPolicies) >= 0) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+      });
+
     return (
       <React.Fragment>
         {addScreenOpen && (
@@ -271,80 +284,28 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
             <br />
           </Grid>
           <Grid item xs={12}>
-            <Paper className={classes.paper}>
-              {loading && <LinearProgress />}
-              {records != null && records.length > 0 ? (
-                <Table size="medium">
-                  <TableHead className={classes.minTableHeader}>
-                    <TableRow>
-                      <TableCell>Name</TableCell>
-                      <TableCell align="right">Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {records
-                      .slice(offset, offset + rowsPerPage)
-                      .filter((b: Policy) => {
-                        if (filterPolicies === "") {
-                          return true;
-                        } else {
-                          if (b.name.indexOf(filterPolicies) >= 0) {
-                            return true;
-                          } else {
-                            return false;
-                          }
-                        }
-                      })
-                      .map(row => (
-                        <TableRow key={row.name}>
-                          <TableCell>{row.name}</TableCell>
-                          <TableCell align="right">
-                            <IconButton
-                              aria-label="view"
-                              onClick={() => {
-                                this.setState({
-                                  addScreenOpen: true,
-                                  policyEdit: row
-                                });
-                              }}
-                            >
-                              <VisibilityIcon />
-                            </IconButton>
-                            <IconButton
-                              aria-label="delete"
-                              onClick={() => {
-                                confirmDeletePolicy(row.name);
-                              }}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                  <TableFooter>
-                    <TableRow>
-                      <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        colSpan={3}
-                        count={totalRecords}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        SelectProps={{
-                          inputProps: { "aria-label": "rows per page" },
-                          native: true
-                        }}
-                        onChangePage={handleChangePage}
-                        onChangeRowsPerPage={handleChangeRowsPerPage}
-                        ActionsComponent={MinTablePaginationActions}
-                      />
-                    </TableRow>
-                  </TableFooter>
-                </Table>
-              ) : (
-                <div>No Policies</div>
-              )}
-            </Paper>
+            <TableWrapper
+              itemActions={tableActions}
+              columns={[{ label: "Name", elementKey: "name" }]}
+              isLoading={loading}
+              records={filteredRecords}
+              entityName="Policies"
+              idField="name"
+              paginatorConfig={{
+                rowsPerPageOptions: [5, 10, 25],
+                colSpan: 3,
+                count: totalRecords,
+                rowsPerPage: rowsPerPage,
+                page: page,
+                SelectProps: {
+                  inputProps: { "aria-label": "rows per page" },
+                  native: true
+                },
+                onChangePage: handleChangePage,
+                onChangeRowsPerPage: handleChangeRowsPerPage,
+                ActionsComponent: MinTablePaginationActions
+              }}
+            />
           </Grid>
         </Grid>
       </React.Fragment>

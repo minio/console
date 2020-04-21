@@ -16,34 +16,20 @@
 
 import React from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import api from "../../../../common/api";
-import { Bucket, BucketList } from "../types";
-import {
-  Button,
-  IconButton,
-  LinearProgress,
-  TableFooter,
-  TablePagination
-} from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
-import DeleteIcon from "@material-ui/icons/Delete";
-import AddBucket from "./AddBucket";
-import DeleteBucket from "./DeleteBucket";
-import { MinTablePaginationActions } from "../../../../common/MinTablePaginationActions";
-import { CreateIcon } from "../../../../icons";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import Moment from "react-moment";
-import { Link } from "react-router-dom";
-import ViewIcon from "@material-ui/icons/Visibility";
+import api from "../../../../common/api";
+import { Bucket, BucketList } from "../types";
+import TableWrapper from "../../Common/TableWrapper/TableWrapper";
+import AddBucket from "./AddBucket";
+import DeleteBucket from "./DeleteBucket";
+import { MinTablePaginationActions } from "../../../../common/MinTablePaginationActions";
+import { CreateIcon } from "../../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -134,8 +120,8 @@ class ListBuckets extends React.Component<
         .then((res: BucketList) => {
           this.setState({
             loading: false,
-            records: res.buckets,
-            totalRecords: res.total,
+            records: res.buckets || [],
+            totalRecords: !res.buckets ? 0 : res.total,
             error: ""
           });
           // if we get 0 results, and page > 0 , go down 1 page
@@ -208,6 +194,29 @@ class ListBuckets extends React.Component<
       this.setState({ deleteOpen: true, selectedBucket: bucket });
     };
 
+    const tableActions = [
+      { type: "view", to: `/buckets`, sendOnlyId: true },
+      { type: "delete", onClick: confirmDeleteBucket, sendOnlyId: true }
+    ];
+
+    const displayParsedDate = (date: string) => {
+      return <Moment>{date}</Moment>;
+    };
+
+    const filteredRecords = records
+      .slice(offset, offset + rowsPerPage)
+      .filter((b: Bucket) => {
+        if (filterBuckets === "") {
+          return true;
+        } else {
+          if (b.name.indexOf(filterBuckets) >= 0) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+      });
+
     return (
       <React.Fragment>
         {addScreenOpen && (
@@ -271,78 +280,35 @@ class ListBuckets extends React.Component<
             <br />
           </Grid>
           <Grid item xs={12}>
-            <Paper className={classes.paper}>
-              {loading && <LinearProgress />}
-              {records != null && records.length > 0 ? (
-                <Table size="medium">
-                  <TableHead className={classes.minTableHeader}>
-                    <TableRow>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Creation Date</TableCell>
-                      <TableCell align="right">Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {records
-                      .slice(offset, offset + rowsPerPage)
-                      .filter((b: Bucket) => {
-                        if (filterBuckets === "") {
-                          return true;
-                        } else {
-                          if (b.name.indexOf(filterBuckets) >= 0) {
-                            return true;
-                          } else {
-                            return false;
-                          }
-                        }
-                      })
-                      .map(row => (
-                        <TableRow key={row.name}>
-                          <TableCell>{row.name}</TableCell>
-                          <TableCell>
-                            <Moment>{row.creation_date}</Moment>
-                          </TableCell>
-                          <TableCell align="right">
-                            <Link to={`/buckets/${row.name}`}>
-                              <IconButton aria-label="delete">
-                                <ViewIcon />
-                              </IconButton>
-                            </Link>
-                            <IconButton
-                              aria-label="delete"
-                              onClick={() => {
-                                confirmDeleteBucket(row.name);
-                              }}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                  <TableFooter>
-                    <TableRow>
-                      <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        colSpan={3}
-                        count={totalRecords}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        SelectProps={{
-                          inputProps: { "aria-label": "rows per page" },
-                          native: true
-                        }}
-                        onChangePage={handleChangePage}
-                        onChangeRowsPerPage={handleChangeRowsPerPage}
-                        ActionsComponent={MinTablePaginationActions}
-                      />
-                    </TableRow>
-                  </TableFooter>
-                </Table>
-              ) : (
-                <div>No Buckets</div>
-              )}
-            </Paper>
+            <TableWrapper
+              itemActions={tableActions}
+              columns={[
+                { label: "Name", elementKey: "name" },
+                {
+                  label: "Creation Date",
+                  elementKey: "creation_date",
+                  renderFunction: displayParsedDate
+                }
+              ]}
+              isLoading={loading}
+              records={filteredRecords}
+              entityName="Buckets"
+              idField="name"
+              paginatorConfig={{
+                rowsPerPageOptions: [5, 10, 25],
+                colSpan: 3,
+                count: totalRecords,
+                rowsPerPage: rowsPerPage,
+                page: page,
+                SelectProps: {
+                  inputProps: { "aria-label": "rows per page" },
+                  native: true
+                },
+                onChangePage: handleChangePage,
+                onChangeRowsPerPage: handleChangeRowsPerPage,
+                ActionsComponent: MinTablePaginationActions
+              }}
+            />
           </Grid>
         </Grid>
       </React.Fragment>

@@ -21,21 +21,7 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
-import {
-  Button,
-  IconButton,
-  LinearProgress,
-  TableFooter,
-  TablePagination
-} from "@material-ui/core";
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
-import TableBody from "@material-ui/core/TableBody";
-import ViewIcon from "@material-ui/icons/Visibility";
-import DeleteIcon from "@material-ui/icons/Delete";
+import { Button } from "@material-ui/core";
 import { CreateIcon } from "../../../icons";
 import api from "../../../common/api";
 import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
@@ -43,6 +29,7 @@ import { GroupsList } from "./types";
 import { groupsSort } from "../../../utils/sortFunctions";
 import AddGroup from "../Groups/AddGroup";
 import DeleteGroup from "./DeleteGroup";
+import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
 interface IGroupsProps {
   classes: any;
@@ -142,10 +129,7 @@ const Groups = ({ classes }: IGroupsProps) => {
               resGroups = res.groups.sort(groupsSort);
             }
             setRecords(resGroups);
-            let total = 0;
-            if (res.total !== null) {
-              total = res.total;
-            }
+            const total = !res.total ? 0 : res.total;
             setTotalRecords(total);
             setError("");
             isLoading(false);
@@ -181,6 +165,21 @@ const Groups = ({ classes }: IGroupsProps) => {
   const filteredRecords = records.filter(elementItem =>
     elementItem.includes(filter)
   );
+
+  const viewAction = (group: any) => {
+    setGroupOpen(true);
+    setSelectedGroup(group);
+  };
+
+  const deleteAction = (group: any) => {
+    setDeleteOpen(true);
+    setSelectedGroup(group);
+  };
+
+  const tableActions = [
+    { type: "view", onClick: viewAction },
+    { type: "delete", onClick: deleteAction }
+  ];
 
   return (
     <React.Fragment>
@@ -241,68 +240,28 @@ const Groups = ({ classes }: IGroupsProps) => {
           <br />
         </Grid>
         <Grid item xs={12}>
-          <Paper className={classes.paper}>
-            {loading && <LinearProgress />}
-            {records != null && records.length > 0 ? (
-              <Table size="medium">
-                <TableHead className={classes.minTableHeader}>
-                  <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell align="right">Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredRecords.map(group => (
-                    <TableRow key={`user-${group}`}>
-                      <TableCell className={classes.wrapCell}>
-                        {group}
-                      </TableCell>
-                      <TableCell align="right">
-                        <IconButton
-                          aria-label="view"
-                          onClick={() => {
-                            setGroupOpen(true);
-                            setSelectedGroup(group);
-                          }}
-                        >
-                          <ViewIcon />
-                        </IconButton>
-                        <IconButton
-                          aria-label="delete"
-                          onClick={() => {
-                            setDeleteOpen(true);
-                            setSelectedGroup(group);
-                          }}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TablePagination
-                      rowsPerPageOptions={[5, 10, 25]}
-                      colSpan={3}
-                      count={totalRecords}
-                      rowsPerPage={rowsPerPage}
-                      page={page}
-                      SelectProps={{
-                        inputProps: { "aria-label": "rows per page" },
-                        native: true
-                      }}
-                      onChangePage={handleChangePage}
-                      onChangeRowsPerPage={handleChangeRowsPerPage}
-                      ActionsComponent={MinTablePaginationActions}
-                    />
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            ) : (
-              <div>No Groups Available</div>
-            )}
-          </Paper>
+          <TableWrapper
+            itemActions={tableActions}
+            columns={[{ label: "Name", elementKey: "" }]}
+            isLoading={loading}
+            records={filteredRecords}
+            entityName="Groups"
+            idField=""
+            paginatorConfig={{
+              rowsPerPageOptions: [5, 10, 25],
+              colSpan: 3,
+              count: totalRecords,
+              rowsPerPage: rowsPerPage,
+              page: page,
+              SelectProps: {
+                inputProps: { "aria-label": "rows per page" },
+                native: true
+              },
+              onChangePage: handleChangePage,
+              onChangeRowsPerPage: handleChangeRowsPerPage,
+              ActionsComponent: MinTablePaginationActions
+            }}
+          />
         </Grid>
       </Grid>
     </React.Fragment>

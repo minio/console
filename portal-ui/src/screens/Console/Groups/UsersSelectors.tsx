@@ -18,22 +18,16 @@ import React, { useState, useEffect } from "react";
 import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { LinearProgress } from "@material-ui/core";
-import TableContainer from "@material-ui/core/TableContainer";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Title from "../../../common/Title";
-import Checkbox from "@material-ui/core/Checkbox";
 import { UsersList } from "../Users/types";
 import { usersSort } from "../../../utils/sortFunctions";
 import api from "../../../common/api";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
+import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
 interface IGroupsProps {
   classes: any;
@@ -198,40 +192,17 @@ const UsersSelectors = ({
                   }}
                 />
               </Grid>
-              <TableContainer className={classes.tableContainer}>
-                <Table size="small" stickyHeader aria-label="sticky table">
-                  <TableHead className={classes.minTableHeader}>
-                    <TableRow>
-                      <TableCell className={classes.stickyHeader}>
-                        Select
-                      </TableCell>
-                      <TableCell className={classes.stickyHeader}>
-                        Access Key
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {filteredRecords.map(row => (
-                      <TableRow key={`group-${row.accessKey}`}>
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            value={row.accessKey}
-                            color="primary"
-                            inputProps={{
-                              "aria-label": "secondary checkbox"
-                            }}
-                            onChange={selectionChanged}
-                            checked={selUsers.includes(row.accessKey)}
-                          />
-                        </TableCell>
-                        <TableCell className={classes.wrapCell}>
-                          {row.accessKey}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              <Grid item xs={12}>
+                <TableWrapper
+                  columns={[{ label: "Access Key", elementKey: "accessKey" }]}
+                  onSelect={selectionChanged}
+                  selectedItems={selUsers}
+                  isLoading={loading}
+                  records={filteredRecords}
+                  entityName="Users"
+                  idField="accessKey"
+                />
+              </Grid>
             </React.Fragment>
           ) : (
             <div className={classes.noFound}>No Users Available</div>
