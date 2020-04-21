@@ -46,7 +46,7 @@ const styles = (theme: Theme) =>
       marginBottom: "20px",
       textAlign: "center",
       "& img": {
-        width: "160px"
+        width: "120px"
       }
     },
     menuList: {

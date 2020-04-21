@@ -19,10 +19,14 @@ export interface SystemState {
   sidebarOpen: boolean;
   session: string;
   userName: string;
+  serverNeedsRestart: boolean;
+  serverIsLoading: boolean;
 }
 
 export const USER_LOGGED = "USER_LOGGED";
 export const MENU_OPEN = "MENU_OPEN";
+export const SERVER_NEEDS_RESTART = "SERVER_NEEDS_RESTART";
+export const SERVER_IS_LOADING = "SERVER_IS_LOADING";
 
 interface UserLoggedAction {
   type: typeof USER_LOGGED;
@@ -34,4 +38,18 @@ interface SetMenuOpenAction {
   open: boolean;
 }
 
-export type SystemActionTypes = UserLoggedAction | SetMenuOpenAction;
+interface ServerNeedsRestartAction {
+  type: typeof SERVER_NEEDS_RESTART;
+  needsRestart: boolean;
+}
+
+interface ServerIsLoading {
+  type: typeof SERVER_IS_LOADING;
+  isLoading: boolean;
+}
+
+export type SystemActionTypes =
+  | UserLoggedAction
+  | SetMenuOpenAction
+  | ServerNeedsRestartAction
+  | ServerIsLoading;

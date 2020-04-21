@@ -17,6 +17,7 @@
 import React, { useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import {
+  Button,
   IconButton,
   LinearProgress,
   TableFooter,
@@ -27,6 +28,7 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
+import { CreateIcon } from "../../../icons";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
@@ -41,6 +43,7 @@ import { NotificationEndpointItem, NotificationEndpointsList } from "./types";
 import api from "../../../common/api";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 import { red } from "@material-ui/core/colors";
+import AddNotificationEndpoint from "./AddNotificationEndpoint";
 
 interface IListNotificationEndpoints {
   classes: any;
@@ -83,6 +86,7 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
   const [filter, setFilter] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
 
   //Effects
   // load records on mount
@@ -116,6 +120,15 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
 
   return (
     <React.Fragment>
+      {addScreenOpen && (
+        <AddNotificationEndpoint
+          open={addScreenOpen}
+          closeModalAndRefresh={() => {
+            setIsLoading(true);
+            setAddScreenOpen(false);
+          }}
+        />
+      )}
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="h6">Lambda Notification Targets</Typography>
@@ -142,6 +155,16 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
               )
             }}
           />
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<CreateIcon />}
+            onClick={() => {
+              setAddScreenOpen(true);
+            }}
+          >
+            Add Notification Target
+          </Button>
         </Grid>
         <Grid item xs={12}>
           <br />

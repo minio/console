@@ -168,7 +168,7 @@ func setConfigWithARNAccountID(ctx context.Context, client MinioAdmin, configNam
 func buildConfig(configName *string, kvs []*models.ConfigurationKV) *string {
 	configElements := []string{*configName}
 	for _, kv := range kvs {
-		configElements = append(configElements, kv.Key+"="+kv.Value)
+		configElements = append(configElements, fmt.Sprintf("%s=%s", kv.Key, kv.Value))
 	}
 	config := strings.Join(configElements, " ")
 	return &config

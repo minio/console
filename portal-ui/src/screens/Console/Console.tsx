@@ -40,7 +40,11 @@ import {
 } from "react-router-dom";
 import { connect } from "react-redux";
 import { AppState } from "../../store";
-import { setMenuOpen } from "../../actions";
+import {
+  serverIsLoading,
+  serverNeedsRestart,
+  setMenuOpen
+} from "../../actions";
 import { ThemedComponentProps } from "@material-ui/core/styles/withTheme";
 import Buckets from "./Buckets/Buckets";
 import Policies from "./Policies/Policies";
@@ -54,6 +58,7 @@ import ServiceAccounts from "./ServiceAccounts/ServiceAccounts";
 import Users from "./Users/Users";
 import Groups from "./Groups/Groups";
 import ListNotificationEndpoints from "./NotificationEndopoints/ListNotificationEndpoints";
+import { Button, LinearProgress } from "@material-ui/core";
 
 function Copyright() {
   return (
@@ -151,24 +156,42 @@ const styles = (theme: Theme) =>
     },
     fixedHeight: {
       minHeight: 240
+    },
+    warningBar: {
+      background: theme.palette.primary.main,
+      color: "white",
+      heigh: "60px",
+      widht: "100%",
+      lineHeight: "60px",
+      textAlign: "center"
     }
   });
 
 const mapState = (state: AppState) => ({
-  open: state.system.sidebarOpen
+  open: state.system.sidebarOpen,
+  needsRestart: state.system.serverNeedsRestart,
+  isServerLoading: state.system.serverIsLoading
 });
 
-const connector = connect(mapState, { setMenuOpen });
+const connector = connect(mapState, {
+  setMenuOpen,
+  serverNeedsRestart,
+  serverIsLoading
+});
 
-interface ConsoleProps {
+interface IConsoleProps {
   open: boolean;
+  needsRestart: boolean;
+  isServerLoading: boolean;
   title: string;
   classes: any;
   setMenuOpen: typeof setMenuOpen;
+  serverNeedsRestart: typeof serverNeedsRestart;
+  serverIsLoading: typeof serverIsLoading;
 }
 
 class Console extends React.Component<
-  ConsoleProps & RouteComponentProps & StyledProps & ThemedComponentProps
+  IConsoleProps & RouteComponentProps & StyledProps & ThemedComponentProps
 > {
   componentDidMount(): void {
     api
@@ -182,8 +205,25 @@ class Console extends React.Component<
       });
   }
 
+  restartServer() {
+    this.props.serverIsLoading(true);
+    api
+      .invoke("POST", "/api/v1/service/restart", {})
+      .then(res => {
+        console.log("success restarting service");
+        console.log(res);
+        this.props.serverIsLoading(false);
+        this.props.serverNeedsRestart(false);
+      })
+      .catch(err => {
+        this.props.serverIsLoading(false);
+        console.log("failure restarting service");
+        console.log(err);
+      });
+  }
+
   render() {
-    const { classes, open } = this.props;
+    const { classes, open, needsRestart, isServerLoading } = this.props;
     return (
       <div className={classes.root}>
         <CssBaseline />
@@ -209,6 +249,30 @@ class Console extends React.Component<
         </Drawer>
 
         <main className={classes.content}>
+          {needsRestart && (
+            <div className={classes.warningBar}>
+              {isServerLoading ? (
+                <React.Fragment>
+                  The server is restarting.
+                  <LinearProgress />
+                </React.Fragment>
+              ) : (
+                <React.Fragment>
+                  The instance needs to be restarted for configuration changes
+                  to take effect.{" "}
+                  <Button
+                    color="secondary"
+                    size="small"
+                    onClick={() => {
+                      this.restartServer();
+                    }}
+                  >
+                    Restart
+                  </Button>
+                </React.Fragment>
+              )}
+            </div>
+          )}
           <div className={classes.appBarSpacer} />
           <Container maxWidth="lg" className={classes.container}>
             <Router history={history}>

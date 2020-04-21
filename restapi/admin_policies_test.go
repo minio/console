@@ -19,6 +19,7 @@ package restapi
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"testing"
 
@@ -141,7 +142,14 @@ func TestAddPolicy(t *testing.T) {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	} else {
 		funcAssert.Equal(policy.Name, assertPolicy.Name)
-		funcAssert.Equal(policy.Policy, assertPolicy.Policy)
+
+		var expectedPolicy iampolicy.Policy
+		var actualPolicy iampolicy.Policy
+		err1 := json.Unmarshal([]byte(policy.Policy), &expectedPolicy)
+		funcAssert.NoError(err1)
+		err2 := json.Unmarshal([]byte(assertPolicy.Policy), &actualPolicy)
+		funcAssert.NoError(err2)
+		funcAssert.Equal(expectedPolicy, actualPolicy)
 	}
 	// Test-2 : addPolicy() got an error while adding policy
 	minioAddPolicyMock = func(name string, policy *iampolicy.Policy) error {
