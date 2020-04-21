@@ -20,6 +20,7 @@ import { FormControlLabel, Switch } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import RadioGroupSelector from "../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
+import SelectWrapper from "../Common/FormComponents/SelectWrapper/SelectWrapper";
 
 interface IConfPostgresProps {
   onChange: (newValue: Map<string, string>) => void;
@@ -39,7 +40,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
   const [port, setPort] = useState<string>("");
   const [user, setUser] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [sslMode, setSslMode] = useState<boolean>(true);
+  const [sslMode, setSslMode] = useState<string>("require");
 
   const [table, setTable] = useState<string>("");
   const [format, setFormat] = useState<string>("namespace");
@@ -120,8 +121,8 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
     if (port !== "") {
       strValue = `${strValue} port=${port}`;
     }
-    const sslModeVal = sslMode ? "enable" : "disable";
-    strValue = `${strValue} sslmode=${sslModeVal}`;
+
+    strValue = `${strValue} sslmode=${sslMode}`;
 
     return strValue.trim();
   }, [host, dbName, user, password, port, sslMode]);
@@ -208,7 +209,9 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
                   setPassword(
                     kv.get("password") ? kv.get("password") + "" : ""
                   );
-                  setSslMode(kv.get("sslmode") === "true");
+                  setSslMode(
+                    kv.get("sslmode") ? kv.get("sslmode") + "" : "require"
+                  );
                 }
 
                 setUseConnectionString(event.target.checked);
@@ -271,17 +274,21 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
           </Grid>
 
           <Grid item xs={12}>
-            <RadioGroupSelector
-              currentSelection={sslMode + ""}
+            <SelectWrapper
+              value={sslMode}
+              label="SSL Mode"
               id="sslmode"
               name="sslmode"
-              label="SSL Mode"
-              onChange={e => {
-                setSslMode(e.target.value === "true");
+              onChange={(e): void => {
+                if (e.target.value !== undefined) {
+                  setSslMode(e.target.value + "");
+                }
               }}
-              selectorOptions={[
-                { label: "Enabled", value: "true" },
-                { label: "Disabled", value: "false" }
+              options={[
+                { label: "Require", value: "require" },
+                { label: "Disable", value: "disable" },
+                { label: "Verify CA", value: "verify-ca" },
+                { label: "Verify Full", value: "verify-full" }
               ]}
             />
           </Grid>
