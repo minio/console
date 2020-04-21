@@ -17,23 +17,17 @@
 import React, { useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { LinearProgress } from "@material-ui/core";
-import TableContainer from "@material-ui/core/TableContainer";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Title from "../../../common/Title";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import TextField from "@material-ui/core/TextField";
-import Checkbox from "@material-ui/core/Checkbox";
 import api from "../../../common/api";
 import { groupsSort } from "../../../utils/sortFunctions";
 import { GroupsList } from "../Groups/types";
 import get from "lodash/get";
+import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
 interface IGroupsProps {
   classes: any;
@@ -196,40 +190,17 @@ const GroupsSelectors = ({
                   }}
                 />
               </Grid>
-              <TableContainer className={classes.tableContainer}>
-                <Table size="small" stickyHeader aria-label="sticky table">
-                  <TableHead className={classes.minTableHeader}>
-                    <TableRow>
-                      <TableCell className={classes.stickyHeader}>
-                        Select
-                      </TableCell>
-                      <TableCell className={classes.stickyHeader}>
-                        Group
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {filteredRecords.map(groupName => (
-                      <TableRow key={`group-${groupName}`}>
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            value={groupName}
-                            color="primary"
-                            inputProps={{
-                              "aria-label": "secondary checkbox"
-                            }}
-                            onChange={selectionChanged}
-                            checked={selGroups.includes(groupName)}
-                          />
-                        </TableCell>
-                        <TableCell className={classes.wrapCell}>
-                          {groupName}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              <Grid item xs={12}>
+                <TableWrapper
+                  columns={[{ label: "Group", elementKey: "" }]}
+                  onSelect={selectionChanged}
+                  selectedItems={selGroups}
+                  isLoading={loading}
+                  records={filteredRecords}
+                  entityName="Groups"
+                  idField=""
+                />
+              </Grid>
             </React.Fragment>
           ) : (
             <div className={classes.noFound}>No Groups Available</div>

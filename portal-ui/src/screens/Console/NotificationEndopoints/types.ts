@@ -26,6 +26,11 @@ export interface NotificationEndpointItem {
   status: string;
 }
 
+export interface TransformedEndpointItem {
+  service_name: string;
+  status: string;
+}
+
 export interface NotificationEndpointsList {
   notification_endpoints: NotificationEndpointItem[];
 }

@@ -67,6 +67,7 @@ class DeleteEvent extends React.Component<
     if (bucketEvent == null) {
       return;
     }
+
     this.setState({ deleteLoading: true }, () => {
       api
         .invoke(

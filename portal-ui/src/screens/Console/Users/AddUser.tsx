@@ -164,7 +164,7 @@ class AddUserContent extends React.Component<
           addLoading: false,
           addError: "",
           accessKey: res.accessKey,
-          selectedGroups: res.memberOf,
+          selectedGroups: res.memberOf || [],
           enabled: res.status
         });
       })

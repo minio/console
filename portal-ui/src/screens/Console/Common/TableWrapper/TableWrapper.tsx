@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
 import get from "lodash/get";
+import isString from "lodash/isString";
 import {
   LinearProgress,
   TablePagination,
@@ -31,15 +32,20 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { TablePaginationActionsProps } from "@material-ui/core/TablePagination/TablePaginationActions";
 import TableActionButton from "./TableActionButton";
 
+//Interfaces for table Items
+
 interface ItemActions {
   type: string;
-  onClick(valueToSend: any): any;
+  onClick?(valueToSend: any): any;
+  to?: string;
+  sendOnlyId?: boolean;
 }
 
 interface IColumns {
   label: string;
   elementKey: string;
   sortable?: boolean;
+  renderFunction?: (input: any) => any;
 }
 
 interface IPaginatorConfig {
@@ -144,59 +150,66 @@ const styles = (theme: Theme) =>
     }
   });
 
+// Function that renders Title Columns
 const titleColumnsMap = (columns: IColumns[]) => {
-  const columnsList = columns.map((column: IColumns, index: number) => {
+  return columns.map((column: IColumns, index: number) => {
     return (
       <TableCell key={`tbCT-${column.elementKey}-${index}`}>
         {column.label}
       </TableCell>
     );
   });
-
-  return columnsList;
 };
 
+// Function that renders Rows
 const rowColumnsMap = (
   columns: IColumns[],
   itemData: any,
   classes: any,
   isSelected: boolean
 ) => {
-  const rowElements = columns.map((column: IColumns, index: number) => {
-    const itemElement = get(itemData, column.elementKey, null);
+  return columns.map((column: IColumns, index: number) => {
+    const itemElement = isString(itemData)
+      ? itemData
+      : get(itemData, column.elementKey, null); // If the element is just a string, we render it as it is
+    const renderElement = column.renderFunction
+      ? column.renderFunction(itemElement)
+      : itemElement; // If render function is set, we send the value to the function.
     return (
       <TableCell
         key={`tbRE-${column.elementKey}-${index}`}
         className={isSelected ? classes.rowSelected : classes.rowUnselected}
       >
-        {itemElement}
+        {renderElement}
       </TableCell>
     );
   });
-
-  return rowElements;
 };
 
+// Function to render the action buttons
 const elementActions = (
   actions: ItemActions[],
   valueToSend: any,
-  selected: boolean
+  selected: boolean,
+  idField: string
 ) => {
-  const actionsElements = actions.map((action: ItemActions, index: number) => {
+  return actions.map((action: ItemActions, index: number) => {
     return (
       <TableActionButton
         type={action.type}
         onClick={action.onClick}
+        to={action.to}
         valueToSend={valueToSend}
         selected={selected}
         key={`actions-${action.type}-${index.toString()}`}
+        idField={idField}
+        sendOnlyId={!!action.sendOnlyId}
       />
     );
   });
-
-  return actionsElements;
 };
 
+// Main function to render the Table Wrapper
 const TableWrapper = ({
   itemActions,
   columns,
@@ -241,8 +254,11 @@ const TableWrapper = ({
             <TableBody>
               {records.map((record: any, index: number) => {
                 const isSelected = selectedItems
-                  ? selectedItems.includes(record[idField])
+                  ? selectedItems.includes(
+                      isString(record) ? record : record[idField]
+                    )
                   : false;
+
                 return (
                   <TableRow key={`tb-${entityName}-${index.toString()}`}>
                     {onSelect && selectedItems && (
@@ -252,7 +268,7 @@ const TableWrapper = ({
                         className={classes.checkBoxRow}
                       >
                         <Checkbox
-                          value={record[idField]}
+                          value={isString(record) ? record : record[idField]}
                           color="primary"
                           inputProps={{ "aria-label": "secondary checkbox" }}
                           checked={isSelected}
@@ -265,10 +281,15 @@ const TableWrapper = ({
                     {rowColumnsMap(columns, record, classes, isSelected)}
                     {itemActions && itemActions.length > 0 && (
                       <TableCell
-                        align="right"
+                        align="center"
                         className={classes.actionsContainer}
                       >
-                        {elementActions(itemActions, record, isSelected)}
+                        {elementActions(
+                          itemActions,
+                          record,
+                          isSelected,
+                          idField
+                        )}
                       </TableCell>
                     )}
                   </TableRow>
