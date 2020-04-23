@@ -55,7 +55,7 @@ func NewAdminClient(url, accessKey, secretKey string) (*madmin.AdminClient, *pro
 // it also enables an internal trace transport.
 var s3AdminNew = mcCmd.NewAdminFactory()
 
-// Define MinioAdmin interface with all functions to be implemented
+// MinioAdmin interface with all functions to be implemented
 // by mock when testing, it should include all MinioAdmin respective api calls
 // that are used within this project.
 type MinioAdmin interface {
@@ -80,6 +80,7 @@ type MinioAdmin interface {
 	serverInfo(ctx context.Context) (madmin.InfoMessage, error)
 	startProfiling(ctx context.Context, profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error)
 	stopProfiling(ctx context.Context) (io.ReadCloser, error)
+	serviceTrace(ctx context.Context, allTrace, errTrace bool) <-chan madmin.ServiceTraceInfo
 	// Service Accounts
 	addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (mauth.Credentials, error)
 }
@@ -197,6 +198,11 @@ func (ac adminClient) stopProfiling(ctx context.Context) (io.ReadCloser, error) 
 	return ac.client.DownloadProfilingData(ctx)
 }
 
+// implements madmin.ServiceTrace()
+func (ac adminClient) serviceTrace(ctx context.Context, allTrace, errTrace bool) <-chan madmin.ServiceTraceInfo {
+	return ac.client.ServiceTrace(ctx, allTrace, errTrace)
+}
+
 // implements madmin.AddServiceAccount()
 func (ac adminClient) addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (mauth.Credentials, error) {
 	return ac.client.AddServiceAccount(ctx, policy)
@@ -213,6 +219,17 @@ func newMAdminClient(jwt string) (*madmin.AdminClient, error) {
 	})
 	if err != nil {
 		return nil, err
+	}
+	return adminClient, nil
+}
+
+func newSuperMAdminClient() (*madmin.AdminClient, error) {
+	endpoint := getMinIOServer()
+	accessKeyID := getAccessKey()
+	secretAccessKey := getSecretKey()
+	adminClient, pErr := NewAdminClient(endpoint, accessKeyID, secretAccessKey)
+	if pErr != nil {
+		return nil, pErr.Cause
 	}
 	return adminClient, nil
 }
