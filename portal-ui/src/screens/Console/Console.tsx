@@ -58,7 +58,9 @@ import ServiceAccounts from "./ServiceAccounts/ServiceAccounts";
 import Users from "./Users/Users";
 import Groups from "./Groups/Groups";
 import ListNotificationEndpoints from "./NotificationEndopoints/ListNotificationEndpoints";
+import ConfigurationsList from "./Configurations/ConfigurationPanels/ConfigurationsList";
 import { Button, LinearProgress } from "@material-ui/core";
+import WebhookPanel from "./Configurations/ConfigurationPanels/WebhookPanel";
 
 function Copyright() {
   return (
@@ -289,10 +291,17 @@ class Console extends React.Component<
                 <Route exact path="/dashboard" component={Dashboard} />
                 <Route exct path="/groups" component={Groups} />
                 <Route
-                  exct
+                  exact
                   path="/notification-endpoints"
                   component={ListNotificationEndpoints}
                 />
+                <Route
+                  exact
+                  path="/configurations-list"
+                  component={ConfigurationsList}
+                />
+                <Route exact path="/webhook/logger" component={WebhookPanel} />
+                <Route exact path="/webhook/audit" component={WebhookPanel} />
                 <Route exact path="/">
                   <Redirect to="/dashboard" />
                 </Route>

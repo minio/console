@@ -65,15 +65,15 @@ const styles = (theme: Theme) =>
       borderTopLeftRadius: "3px",
       borderBottomLeftRadius: "3px",
       background:
-        "transparent linear-gradient(333deg, #281B6F 1%, #271260 13%, #120D53 83%) 0% 0% no-repeat padding-box;",
+        "transparent linear-gradient(333deg, #281B6F 1%, #271260 13%, #120D53 83%) 0% 0% no-repeat padding-box;"
     },
-      oceanBg:{
-          backgroundImage:'url(/images/BG_Illustration.svg)',
-          backgroundRepeat:'no-repeat',
-          backgroundPosition:'bottom left',
-          height:'100%',
-          width:'100%',
-      },
+    oceanBg: {
+      backgroundImage: "url(/images/BG_Illustration.svg)",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "bottom left",
+      height: "100%",
+      width: "100%"
+    },
     theLogin: {
       padding: "76px 62px 20px 62px"
     }
@@ -140,7 +140,7 @@ class Login extends React.Component<LoginProps> {
       <Paper className={classes.paper}>
         <Grid container className={classes.mainContainer}>
           <Grid item xs={7} className={classes.theOcean}>
-              <div className={classes.oceanBg}></div>
+            <div className={classes.oceanBg}></div>
           </Grid>
           <Grid item xs={5} className={classes.theLogin}>
             <Typography component="h1" variant="h6">
