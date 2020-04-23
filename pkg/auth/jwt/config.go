@@ -14,57 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package sessions
+package jwt
 
 import (
 	"crypto/rand"
 	"io"
+	"strconv"
 	"strings"
-	"sync"
+	"time"
 
-	mcCmd "github.com/minio/mc/cmd"
+	"github.com/minio/minio/pkg/env"
 )
-
-type Singleton struct {
-	sessions map[string]*mcCmd.Config
-}
-
-var instance *Singleton
-var once sync.Once
-
-// Returns a Singleton instance that keeps the sessions
-func GetInstance() *Singleton {
-	once.Do(func() {
-		//build sessions hash
-		sessions := make(map[string]*mcCmd.Config)
-
-		instance = &Singleton{
-			sessions: sessions,
-		}
-	})
-	return instance
-}
-
-// The delete built-in function deletes the element with the specified key (m[key]) from the map.
-// If m is nil or there is no such element, delete is a no-op. https://golang.org/pkg/builtin/#delete
-func (s *Singleton) DeleteSession(sessionID string) {
-	delete(s.sessions, sessionID)
-}
-
-func (s *Singleton) NewSession(cfg *mcCmd.Config) string {
-	// genereate random session id
-	sessionID := RandomCharString(64)
-	// store the cfg under that session id
-	s.sessions[sessionID] = cfg
-	return sessionID
-}
-
-func (s *Singleton) ValidSession(sessionID string) bool {
-	if _, ok := s.sessions[sessionID]; ok {
-		return true
-	}
-	return false
-}
 
 // Do not use:
 // https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go
@@ -92,4 +52,43 @@ func RandomCharString(n int) string {
 		s.WriteByte(letters[j])
 	}
 	return s.String()
+}
+
+// defaultHmacJWTPassphrase will be used by default if application is not configured with a custom MCS_HMAC_JWT_SECRET secret
+var defaultHmacJWTPassphrase = RandomCharString(64)
+
+// GetHmacJWTSecret returns the 64 bytes secret used for signing the generated JWT for the application
+func GetHmacJWTSecret() string {
+	return env.Get(McsHmacJWTSecret, defaultHmacJWTPassphrase)
+}
+
+// McsSTSAndJWTDurationSeconds returns the default session duration for the STS requested tokens and the generated JWTs.
+// Ideally both values should match so jwt and Minio sts sessions expires at the same time.
+func GetMcsSTSAndJWTDurationInSeconds() int {
+	duration, err := strconv.Atoi(env.Get(McsSTSAndJWTDurationSeconds, "3600"))
+	if err != nil {
+		duration = 3600
+	}
+	return duration
+}
+
+// GetMcsSTSAndJWTDurationTime returns GetMcsSTSAndJWTDurationInSeconds in duration format
+func GetMcsSTSAndJWTDurationTime() time.Duration {
+	duration := GetMcsSTSAndJWTDurationInSeconds()
+	return time.Duration(duration) * time.Second
+}
+
+// defaultPBKDFPassphrase
+var defaultPBKDFPassphrase = RandomCharString(64)
+
+// GetPBKDFPassphrase returns passphrase for the pbkdf2 function used to encrypt JWT payload
+func GetPBKDFPassphrase() string {
+	return env.Get(McsPBKDFPassphrase, defaultPBKDFPassphrase)
+}
+
+var defaultPBKDFSalt = RandomCharString(64)
+
+// GetPBKDFSalt returns salt for the pbkdf2 function used to encrypt JWT payload
+func GetPBKDFSalt() string {
+	return env.Get(McsPBKDFSalt, defaultPBKDFSalt)
 }

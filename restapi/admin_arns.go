@@ -31,7 +31,8 @@ import (
 func registerAdminArnsHandlers(api *operations.McsAPI) {
 	// return a list of arns
 	api.AdminAPIArnListHandler = admin_api.ArnListHandlerFunc(func(params admin_api.ArnListParams, principal *models.Principal) middleware.Responder {
-		arnsResp, err := getArnsResponse()
+		sessionID := string(*principal)
+		arnsResp, err := getArnsResponse(sessionID)
 		if err != nil {
 			return admin_api.NewArnListDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
@@ -53,8 +54,8 @@ func getArns(ctx context.Context, client MinioAdmin) (*models.ArnsResponse, erro
 }
 
 // getArnsResponse returns a list of active arns in the instance
-func getArnsResponse() (*models.ArnsResponse, error) {
-	mAdmin, err := newMAdminClient()
+func getArnsResponse(sessionID string) (*models.ArnsResponse, error) {
+	mAdmin, err := newMAdminClient(sessionID)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		return nil, err

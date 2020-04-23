@@ -14,16 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package restapi
+package jwt
 
-import "testing"
-
-// mock function of Get()
-func (ac mcsCredentialsMock) Expire() {
-	// Do nothing
-	// Implementing this method for the mcsCredentials interface
-}
-
-func TestLogout(t *testing.T) {
-	// There's nothing to test right now
-}
+const (
+	McsHmacJWTSecret            = "MCS_HMAC_JWT_SECRET"
+	McsSTSAndJWTDurationSeconds = "MCS_STS_AND_JWT_DURATION_SECONDS"
+	McsPBKDFPassphrase          = "MCS_PBKDF_PASSPHRASE"
+	McsPBKDFSalt                = "MCS_PBKDF_SALT"
+)

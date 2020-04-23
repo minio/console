@@ -17,14 +17,13 @@
 package restapi
 
 import (
-	"errors"
+	"log"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
 	"github.com/minio/mcs/models"
 	"github.com/minio/mcs/restapi/operations"
 	"github.com/minio/mcs/restapi/operations/user_api"
-	"github.com/minio/mcs/restapi/sessions"
 )
 
 func registerLogoutHandlers(api *operations.McsAPI) {
@@ -38,21 +37,23 @@ func registerLogoutHandlers(api *operations.McsAPI) {
 	})
 }
 
-// logout() deletes provided bearer token from in memory sessions map
-// then checks that the session actually got removed
-func logout(sessionID string) error {
-	sessionsMap := sessions.GetInstance()
-	sessionsMap.DeleteSession(sessionID)
-	if sessionsMap.ValidSession(sessionID) {
-		return errors.New("something went wrong deleting your session, please try again")
-	}
-	return nil
+// logout() call Expire() on the provided minioCredentials
+func logout(credentials MCSCredentials) {
+	credentials.Expire()
 }
 
 // getLogoutResponse performs logout() and returns nil or error
-func getLogoutResponse(sessionID string) error {
-	if err := logout(sessionID); err != nil {
+func getLogoutResponse(jwt string) error {
+	creds, err := getMcsCredentialsFromJWT(jwt)
+	if err != nil {
+		log.Println(err)
 		return err
 	}
+	credentials := mcsCredentials{minioCredentials: creds}
+	if err != nil {
+		log.Println("error creating MinIO Client:", err)
+		return err
+	}
+	logout(credentials)
 	return nil
 }

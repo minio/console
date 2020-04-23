@@ -32,7 +32,8 @@ import (
 func registerServiceHandlers(api *operations.McsAPI) {
 	// Restart Service
 	api.AdminAPIRestartServiceHandler = admin_api.RestartServiceHandlerFunc(func(params admin_api.RestartServiceParams, principal *models.Principal) middleware.Responder {
-		if err := getRestartServiceResponse(); err != nil {
+		sessionID := string(*principal)
+		if err := getRestartServiceResponse(sessionID); err != nil {
 			return admin_api.NewRestartServiceDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return admin_api.NewRestartServiceNoContent()
@@ -61,9 +62,9 @@ func serviceRestart(ctx context.Context, client MinioAdmin) error {
 }
 
 // getRestartServiceResponse performs serviceRestart()
-func getRestartServiceResponse() error {
+func getRestartServiceResponse(sessionID string) error {
 	ctx := context.Background()
-	mAdmin, err := newMAdminClient()
+	mAdmin, err := newMAdminClient(sessionID)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		return err

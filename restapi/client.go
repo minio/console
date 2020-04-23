@@ -22,7 +22,10 @@ import (
 
 	mc "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
+	"github.com/minio/mcs/pkg/auth"
+	xjwt "github.com/minio/mcs/pkg/auth/jwt"
 	"github.com/minio/minio-go/v6"
+	"github.com/minio/minio-go/v6/pkg/credentials"
 )
 
 func init() {
@@ -107,20 +110,67 @@ func (c mcS3Client) removeNotificationConfig(arn string, event string, prefix st
 	return c.client.RemoveNotificationConfig(arn, event, prefix, suffix)
 }
 
-// newMinioClient creates a new MinIO client to talk to the server
-func newMinioClient() (*minio.Client, error) {
-	endpoint := getMinIOEndpoint()
-	accessKeyID := getAccessKey()
-	secretAccessKey := getSecretKey()
-	useSSL := getMinIOEndpointIsSecure()
+// Define MCSCredentials interface with all functions to be implemented
+// by mock when testing, it should include all needed minioCredentials.Credentials api calls
+// that are used within this project.
+type MCSCredentials interface {
+	Get() (credentials.Value, error)
+	Expire()
+}
 
-	// Initialize minio client object.
-	minioClient, err := minio.NewV4(endpoint, accessKeyID, secretAccessKey, useSSL)
+// Interface implementation
+//
+// Define the structure of a mc S3Client and define the functions that are actually used
+// from mcsCredentials api.
+type mcsCredentials struct {
+	minioCredentials *credentials.Credentials
+}
+
+// implements *Credentials.Get()
+func (c mcsCredentials) Get() (credentials.Value, error) {
+	return c.minioCredentials.Get()
+}
+
+// implements *Credentials.Expire()
+func (c mcsCredentials) Expire() {
+	c.minioCredentials.Expire()
+}
+
+func newMcsCredentials(accessKey, secretKey, location string) (*credentials.Credentials, error) {
+	return credentials.NewSTSAssumeRole(getMinIOServer(), credentials.STSAssumeRoleOptions{
+		AccessKey:       accessKey,
+		SecretKey:       secretKey,
+		Location:        location,
+		DurationSeconds: xjwt.GetMcsSTSAndJWTDurationInSeconds(),
+	})
+}
+
+// getMcsCredentialsFromJWT returns the *minioCredentials.Credentials associated to the
+// provided jwt, this is useful for running the Expire() or IsExpired() operations
+func getMcsCredentialsFromJWT(jwt string) (*credentials.Credentials, error) {
+	claims, err := auth.JWTAuthenticate(jwt)
 	if err != nil {
 		return nil, err
 	}
+	creds := credentials.NewStaticV4(claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken)
+	return creds, nil
+}
 
-	return minioClient, nil
+// newMinioClient creates a new MinIO client based on the minioCredentials extracted
+// from the provided jwt
+func newMinioClient(jwt string) (*minio.Client, error) {
+	creds, err := getMcsCredentialsFromJWT(jwt)
+	if err != nil {
+		return nil, err
+	}
+	adminClient, err := minio.NewWithOptions(getMinIOEndpoint(), &minio.Options{
+		Creds:  creds,
+		Secure: getMinIOEndpointIsSecure(),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return adminClient, nil
 }
 
 // newS3BucketClient creates a new mc S3Client to talk to the server based on a bucket
@@ -150,7 +200,7 @@ func newS3BucketClient(bucketName *string) (*mc.S3Client, error) {
 // parameters.
 func newS3Config(endpoint, accessKey, secretKey string, isSecure bool) *mc.Config {
 	// We have a valid alias and hostConfig. We populate the
-	// credentials from the match found in the config file.
+	// minioCredentials from the match found in the config file.
 	s3Config := new(mc.Config)
 
 	s3Config.AppName = "mcs" // TODO: make this a constant

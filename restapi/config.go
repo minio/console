@@ -198,7 +198,6 @@ func getSecureFeaturePolicy() string {
 	return env.Get(McsSecureFeaturePolicy, "")
 }
 
-// FeaturePolicy allows the Feature-Policy header with the value to be set with a custom value. Default is "".
 func getSecureExpectCTHeader() string {
 	return env.Get(McsSecureExpectCTHeader, "")
 }

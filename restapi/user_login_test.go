@@ -20,43 +20,41 @@ import (
 	"errors"
 	"testing"
 
-	mcCmd "github.com/minio/mc/cmd"
-	"github.com/minio/mc/pkg/probe"
+	"github.com/minio/minio-go/v6/pkg/credentials"
 	"github.com/stretchr/testify/assert"
 )
 
-var mcBuildS3ConfigMock func(url, accessKey, secretKey, api, lookup string) (*mcCmd.Config, *probe.Error)
+// Define a mock struct of MCSCredentials interface implementation
+type mcsCredentialsMock struct{}
 
-type mcCmdMock struct{}
+// Common mocks
+var mcsCredentialsGetMock func() (credentials.Value, error)
 
-func (mc mcCmdMock) BuildS3Config(url, accessKey, secretKey, api, lookup string) (*mcCmd.Config, *probe.Error) {
-	return mcBuildS3ConfigMock(url, accessKey, secretKey, api, lookup)
+// mock function of Get()
+func (ac mcsCredentialsMock) Get() (credentials.Value, error) {
+	return mcsCredentialsGetMock()
 }
 
-// TestLogin tests the case of passing a valid and an invalid access/secret pair
 func TestLogin(t *testing.T) {
-	assert := assert.New(t)
-	// We will write a test against play
-	// Probe the credentials
-	mcx := mcCmdMock{}
-	access := "ABCDEFHIJK"
-	secret := "ABCDEFHIJKABCDEFHIJK"
-
-	// Test Case 1: Valid credentials
-	mcBuildS3ConfigMock = func(url, accessKey, secretKey, api, lookup string) (config *mcCmd.Config, p *probe.Error) {
-		return &mcCmd.Config{}, nil
+	funcAssert := assert.New(t)
+	mcsCredentials := mcsCredentialsMock{}
+	// Test Case 1: Valid mcsCredentials
+	mcsCredentialsGetMock = func() (credentials.Value, error) {
+		return credentials.Value{
+			AccessKeyID:     "fakeAccessKeyID",
+			SecretAccessKey: "fakeSecretAccessKey",
+			SessionToken:    "fakeSessionToken",
+			SignerType:      0,
+		}, nil
 	}
-
-	sessionID, err := login(mcx, &access, &secret)
-	assert.NotEmpty(sessionID, "Session ID was returned empty")
-	assert.Nil(err, "error creating a session")
+	jwt, err := login(mcsCredentials)
+	funcAssert.NotEmpty(jwt, "JWT was returned empty")
+	funcAssert.Nil(err, "error creating a session")
 
 	// Test Case 2: Invalid credentials
-	mcBuildS3ConfigMock = func(url, accessKey, secretKey, api, lookup string) (config *mcCmd.Config, p *probe.Error) {
-		return nil, probe.NewError(errors.New("Bad credentials"))
+	mcsCredentialsGetMock = func() (credentials.Value, error) {
+		return credentials.Value{}, errors.New("")
 	}
-
-	sessionID, err = login(mcx, &access, &secret)
-	assert.Empty(sessionID, "Session ID was not returned empty")
-	assert.NotNil(err, "not error returned creating a session")
+	_, err = login(mcsCredentials)
+	funcAssert.NotNil(err, "not error returned creating a session")
 }

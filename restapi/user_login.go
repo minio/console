@@ -20,30 +20,13 @@ import (
 	"errors"
 	"log"
 
-	"github.com/minio/mc/pkg/probe"
-
-	"github.com/minio/mcs/restapi/sessions"
-
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
-	mcCmd "github.com/minio/mc/cmd"
 	"github.com/minio/mcs/models"
+	"github.com/minio/mcs/pkg/auth"
 	"github.com/minio/mcs/restapi/operations"
 	"github.com/minio/mcs/restapi/operations/user_api"
 )
-
-// Wraps the code at mc/cmd
-type McCmd interface {
-	BuildS3Config(url, accessKey, secretKey, api, lookup string) (*mcCmd.Config, *probe.Error)
-}
-
-// Implementation of McCmd
-type mcCmdWrapper struct {
-}
-
-func (mc mcCmdWrapper) BuildS3Config(url, accessKey, secretKey, api, lookup string) (*mcCmd.Config, *probe.Error) {
-	return mcCmd.BuildS3Config(url, accessKey, secretKey, api, lookup)
-}
 
 func registerLoginHandlers(api *operations.McsAPI) {
 	// get login strategy
@@ -59,28 +42,34 @@ func registerLoginHandlers(api *operations.McsAPI) {
 		}
 		return user_api.NewLoginCreated().WithPayload(loginResponse)
 	})
-
 }
 
-var ErrInvalidCredentials = errors.New("invalid credentials")
+var ErrInvalidCredentials = errors.New("invalid minioCredentials")
 
-// login performs a check of credentials against MinIO
-func login(mc McCmd, accessKey, secretKey *string) (*string, error) {
-	// Probe the credentials
-	cfg, pErr := mc.BuildS3Config(getMinIOServer(), *accessKey, *secretKey, "", "auto")
-	if pErr != nil {
+// login performs a check of minioCredentials against MinIO
+func login(credentials MCSCredentials) (*string, error) {
+	// try to obtain minioCredentials,
+	tokens, err := credentials.Get()
+	if err != nil {
 		return nil, ErrInvalidCredentials
 	}
-	// if we made it here, the credentials work, generate a session
-	sessionID := sessions.GetInstance().NewSession(cfg)
-
-	return &sessionID, nil
+	// if we made it here, the minioCredentials work, generate a jwt with claims
+	jwt, err := auth.NewJWTWithClaimsForClient(&tokens, getMinIOServer())
+	if err != nil {
+		return nil, ErrInvalidCredentials
+	}
+	return &jwt, nil
 }
 
 // getLoginResponse performs login() and serializes it to the handler's output
 func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, error) {
-	mc := mcCmdWrapper{}
-	sessionID, err := login(&mc, lr.AccessKey, lr.SecretKey)
+	creds, err := newMcsCredentials(*lr.AccessKey, *lr.SecretKey, "")
+	if err != nil {
+		log.Println("error login:", err)
+		return nil, err
+	}
+	credentials := mcsCredentials{minioCredentials: creds}
+	sessionID, err := login(credentials)
 	if err != nil {
 		log.Println("error login:", err)
 		return nil, err

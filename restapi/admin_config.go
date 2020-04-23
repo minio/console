@@ -33,7 +33,8 @@ import (
 func registerConfigHandlers(api *operations.McsAPI) {
 	// List Configurations
 	api.AdminAPIListConfigHandler = admin_api.ListConfigHandlerFunc(func(params admin_api.ListConfigParams, principal *models.Principal) middleware.Responder {
-		configListResp, err := getListConfigResponse()
+		sessionID := string(*principal)
+		configListResp, err := getListConfigResponse(sessionID)
 		if err != nil {
 			return admin_api.NewListConfigDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
@@ -41,7 +42,8 @@ func registerConfigHandlers(api *operations.McsAPI) {
 	})
 	// Configuration Info
 	api.AdminAPIConfigInfoHandler = admin_api.ConfigInfoHandlerFunc(func(params admin_api.ConfigInfoParams, principal *models.Principal) middleware.Responder {
-		config, err := getConfigResponse(params)
+		sessionID := string(*principal)
+		config, err := getConfigResponse(sessionID, params)
 		if err != nil {
 			return admin_api.NewConfigInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
@@ -49,7 +51,8 @@ func registerConfigHandlers(api *operations.McsAPI) {
 	})
 	// Set Configuration
 	api.AdminAPISetConfigHandler = admin_api.SetConfigHandlerFunc(func(params admin_api.SetConfigParams, principal *models.Principal) middleware.Responder {
-		if err := setConfigResponse(params.Name, params.Body); err != nil {
+		sessionID := string(*principal)
+		if err := setConfigResponse(sessionID, params.Name, params.Body); err != nil {
 			return admin_api.NewSetConfigDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return admin_api.NewSetConfigNoContent()
@@ -75,8 +78,8 @@ func listConfig(client MinioAdmin) ([]*models.ConfigDescription, error) {
 }
 
 // getListConfigResponse performs listConfig() and serializes it to the handler's output
-func getListConfigResponse() (*models.ListConfigResponse, error) {
-	mAdmin, err := newMAdminClient()
+func getListConfigResponse(sessionID string) (*models.ListConfigResponse, error) {
+	mAdmin, err := newMAdminClient(sessionID)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		return nil, err
@@ -122,8 +125,8 @@ func getConfig(client MinioAdmin, name string) ([]*models.ConfigurationKV, error
 }
 
 // getConfigResponse performs getConfig() and serializes it to the handler's output
-func getConfigResponse(params admin_api.ConfigInfoParams) (*models.Configuration, error) {
-	mAdmin, err := newMAdminClient()
+func getConfigResponse(sessionID string, params admin_api.ConfigInfoParams) (*models.Configuration, error) {
+	mAdmin, err := newMAdminClient(sessionID)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		return nil, err
@@ -175,8 +178,8 @@ func buildConfig(configName *string, kvs []*models.ConfigurationKV) *string {
 }
 
 // setConfigResponse implements setConfig() to be used by handler
-func setConfigResponse(name string, configRequest *models.SetConfigRequest) error {
-	mAdmin, err := newMAdminClient()
+func setConfigResponse(sessionID string, name string, configRequest *models.SetConfigRequest) error {
+	mAdmin, err := newMAdminClient(sessionID)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		return err
