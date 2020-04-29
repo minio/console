@@ -26,6 +26,7 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/minio/mcs/models"
 	"github.com/minio/mcs/restapi/operations"
+	madmin "github.com/minio/minio/pkg/madmin"
 
 	"github.com/minio/mcs/restapi/operations/admin_api"
 )
@@ -103,25 +104,29 @@ func getListConfigResponse(sessionID string) (*models.ListConfigResponse, error)
 // getConfig gets the key values for a defined configuration
 func getConfig(client MinioAdmin, name string) ([]*models.ConfigurationKV, error) {
 	ctx := context.Background()
-	// getConfigKV comes as []byte
-	configBytes, err := client.getConfigKV(ctx, name)
+
+	configKeysHelp, err := client.helpConfigKV(ctx, name, "", false)
 	if err != nil {
-		log.Println("error on getConfigKV")
 		return nil, err
 	}
-	// if len(config) > 0 {
-	// 	// return Key Values, first element contains info
-	// 	var confkv []*models.ConfigurationKV
-	// 	for _, kv := range config[0].KVS {
-	// 		confkv = append(confkv, &models.ConfigurationKV{Key: kv.Key, Value: kv.Value})
-	// 	}
-	// 	return confkv, nil
-	// }
+	configBytes, err := client.getConfigKV(ctx, name)
+	if err != nil {
+		return nil, err
+	}
 
-	// TODO: Provisional until function to get key values is done
-	var confkv []*models.ConfigurationKV
-	confkv = append(confkv, &models.ConfigurationKV{Key: "configuration", Value: string(configBytes)})
-	return confkv, nil
+	target, err := madmin.ParseSubSysTarget(configBytes, configKeysHelp)
+	if err != nil {
+		return nil, err
+	}
+	if len(target.KVS) > 0 {
+		// return Key Values, first element contains info
+		var confkv []*models.ConfigurationKV
+		for _, kv := range target.KVS {
+			confkv = append(confkv, &models.ConfigurationKV{Key: kv.Key, Value: kv.Value})
+		}
+		return confkv, nil
+	}
+	return nil, fmt.Errorf("error retrieving configuration for: %s", name)
 }
 
 // getConfigResponse performs getConfig() and serializes it to the handler's output
