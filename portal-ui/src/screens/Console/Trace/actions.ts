@@ -14,26 +14,33 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { applyMiddleware, combineReducers, compose, createStore } from "redux";
-import thunk from "redux-thunk";
-import { systemReducer } from "./reducer";
-import { traceReducer } from "./screens/Console/Trace/reducers";
+import { TraceMessage } from "./types";
 
-const globalReducer = combineReducers({
-  system: systemReducer,
-  trace: traceReducer
-});
+export const TRACE_MESSAGE_RECEIVED = "TRACE_MESSAGE_RECEIVED";
+export const TRACE_RESET_MESSAGES = "TRACE_RESET_MESSAGES";
 
-declare global {
-  interface Window {
-    __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: typeof compose;
-  }
+interface TraceMessageReceivedAction {
+  type: typeof TRACE_MESSAGE_RECEIVED;
+  message: TraceMessage;
 }
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+interface TraceResetMessagesAction {
+  type: typeof TRACE_RESET_MESSAGES;
+}
 
-export type AppState = ReturnType<typeof globalReducer>;
+export type TraceActionTypes =
+  | TraceMessageReceivedAction
+  | TraceResetMessagesAction;
 
-export default function configureStore() {
-  return createStore(globalReducer, composeEnhancers(applyMiddleware(thunk)));
+export function traceMessageReceived(message: TraceMessage) {
+  return {
+    type: TRACE_MESSAGE_RECEIVED,
+    message: message
+  };
+}
+
+export function traceResetMessages() {
+  return {
+    type: TRACE_RESET_MESSAGES
+  };
 }

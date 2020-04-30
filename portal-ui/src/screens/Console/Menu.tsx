@@ -39,6 +39,7 @@ import PersonIcon from "@material-ui/icons/Person";
 import api from "../../common/api";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import ListAltIcon from "@material-ui/icons/ListAlt";
+import LoopIcon from "@material-ui/icons/Loop";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -149,6 +150,12 @@ class Menu extends React.Component<MenuProps> {
               <PermissionIcon />
             </ListItemIcon>
             <ListItemText primary="IAM Policies" />
+          </ListItem>
+          <ListItem button component={NavLink} to="/trace">
+            <ListItemIcon>
+              <LoopIcon />
+            </ListItemIcon>
+            <ListItemText primary="Trace" />
           </ListItem>
           <ListItem component={Typography}>Configuration</ListItem>
           <ListItem button component={NavLink} to="/notification-endpoints">

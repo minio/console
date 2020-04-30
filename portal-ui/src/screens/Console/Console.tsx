@@ -61,6 +61,7 @@ import ListNotificationEndpoints from "./NotificationEndopoints/ListNotification
 import ConfigurationsList from "./Configurations/ConfigurationPanels/ConfigurationsList";
 import { Button, LinearProgress } from "@material-ui/core";
 import WebhookPanel from "./Configurations/ConfigurationPanels/WebhookPanel";
+import Trace from "./Trace/Trace";
 
 function Copyright() {
   return (
@@ -302,6 +303,7 @@ class Console extends React.Component<
                 />
                 <Route exact path="/webhook/logger" component={WebhookPanel} />
                 <Route exact path="/webhook/audit" component={WebhookPanel} />
+                <Route exct path="/trace" component={Trace} />
                 <Route exact path="/">
                   <Redirect to="/dashboard" />
                 </Route>

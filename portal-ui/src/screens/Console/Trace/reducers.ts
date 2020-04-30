@@ -14,26 +14,37 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { applyMiddleware, combineReducers, compose, createStore } from "redux";
-import thunk from "redux-thunk";
-import { systemReducer } from "./reducer";
-import { traceReducer } from "./screens/Console/Trace/reducers";
+import {
+  TRACE_MESSAGE_RECEIVED,
+  TRACE_RESET_MESSAGES,
+  TraceActionTypes
+} from "./actions";
+import { TraceMessage } from "./types";
 
-const globalReducer = combineReducers({
-  system: systemReducer,
-  trace: traceReducer
-});
-
-declare global {
-  interface Window {
-    __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: typeof compose;
-  }
+export interface TraceState {
+  messages: TraceMessage[];
 }
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const initialState: TraceState = {
+  messages: []
+};
 
-export type AppState = ReturnType<typeof globalReducer>;
-
-export default function configureStore() {
-  return createStore(globalReducer, composeEnhancers(applyMiddleware(thunk)));
+export function traceReducer(
+  state = initialState,
+  action: TraceActionTypes
+): TraceState {
+  switch (action.type) {
+    case TRACE_MESSAGE_RECEIVED:
+      return {
+        ...state,
+        messages: [...state.messages, action.message]
+      };
+    case TRACE_RESET_MESSAGES:
+      return {
+        ...state,
+        messages: []
+      };
+    default:
+      return state;
+  }
 }
