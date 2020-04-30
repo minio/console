@@ -38,6 +38,7 @@ import { createStyles, Theme } from "@material-ui/core/styles";
 import PersonIcon from "@material-ui/icons/Person";
 import api from "../../common/api";
 import NotificationsIcon from "@material-ui/icons/Notifications";
+import ListAltIcon from "@material-ui/icons/ListAlt";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -155,6 +156,12 @@ class Menu extends React.Component<MenuProps> {
               <NotificationsIcon />
             </ListItemIcon>
             <ListItemText primary="Lambda Notifications" />
+          </ListItem>
+          <ListItem button component={NavLink} to="/configurations-list">
+            <ListItemIcon>
+              <ListAltIcon />
+            </ListItemIcon>
+            <ListItemText primary="Configurations List" />
           </ListItem>
           <Divider />
           <ListItem

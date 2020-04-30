@@ -43,6 +43,7 @@ interface InputBoxProps {
   type?: string;
   tooltip?: string;
   autoComplete?: string;
+  index?: number;
 }
 
 const styles = (theme: Theme) =>
@@ -89,14 +90,17 @@ const InputBoxWrapper = ({
   disabled = false,
   multiline = false,
   tooltip = "",
+  index = 0,
   classes
 }: InputBoxProps) => {
   return (
     <React.Fragment>
       <Grid item xs={12} className={classes.fieldContainer}>
-        <InputLabel htmlFor={id} className={classes.inputLabel}>
-          {label}
-        </InputLabel>
+        {label !== "" && (
+          <InputLabel htmlFor={id} className={classes.inputLabel}>
+            {label}
+          </InputLabel>
+        )}
         <div className={classes.textBoxContainer}>
           <InputField
             className={classes.boxDesign}
@@ -110,10 +114,11 @@ const InputBoxWrapper = ({
             type={type}
             multiline={multiline}
             autoComplete={autoComplete}
+            inputProps={{ "data-index": index }}
           />
         </div>
         {tooltip !== "" && (
-          <div>
+          <div className={classes.tooltipContainer}>
             <Tooltip title={tooltip} placement="left">
               <HelpIcon />
             </Tooltip>

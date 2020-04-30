@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // This object contains variables that will be used across form components.
+
 export const fieldBasic = {
   inputLabel: {
     fontWeight: 500,
@@ -27,5 +28,8 @@ export const fieldBasic = {
     display: "flex",
     alignItems: "center",
     marginBottom: 10
+  },
+  tooltipContainer: {
+    marginLeft: 5
   }
 };

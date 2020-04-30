@@ -26,7 +26,8 @@ export type KVFieldType =
   | "address"
   | "duration"
   | "uri"
-  | "sentence";
+  | "sentence"
+  | "csv";
 
 export interface KVField {
   name: string;
@@ -35,4 +36,16 @@ export interface KVField {
   required?: boolean;
   type: KVFieldType;
   options?: SelectorTypes[];
+  multiline?: boolean;
+}
+
+export interface IConfigurationElement {
+  configuration_id: string;
+  configuration_label: string;
+  url?: string;
+}
+
+export interface IElementValue {
+  key: string;
+  value: string;
 }
