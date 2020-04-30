@@ -21,6 +21,7 @@ import { connect } from "react-redux";
 import { traceMessageReceived, traceResetMessages } from "./actions";
 import { TraceMessage } from "./types";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { niceBytes, setCookie } from "../../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -61,18 +62,6 @@ const Trace = ({
     const isDev = process.env.NODE_ENV === "development";
     const port = isDev ? "9090" : url.port;
 
-    const setCookie = (name: string, val: string) => {
-      const date = new Date();
-      const value = val;
-
-      // Set it expire in 45 minutes
-      date.setTime(date.getTime() + 45 * 60 * 1000);
-
-      // Set it
-      document.cookie =
-        name + "=" + value + "; expires=" + date.toUTCString() + "; path=/";
-    };
-
     setCookie("token", token);
 
     const c = new W3CWebSocket(`ws://${url.hostname}:${port}/ws/trace`);
@@ -104,18 +93,6 @@ const Trace = ({
     }
   }, [traceMessageReceived]);
 
-  const units = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-  const niceBytes = (x: string) => {
-    let l = 0,
-      n = parseInt(x, 10) || 0;
-
-    while (n >= 1024 && ++l) {
-      n = n / 1024;
-    }
-    //include a decimal point and a tenths-place digit if presenting
-    //less than ten of KB or greater units
-    return n.toFixed(n < 10 && l > 0 ? 1 : 0) + " " + units[l];
-  };
   const timeFromdate = (d: Date) => {
     let h = d.getHours() < 10 ? `0${d.getHours()}` : `${d.getHours()}`;
     let m = d.getMinutes() < 10 ? `0${d.getMinutes()}` : `${d.getMinutes()}`;
