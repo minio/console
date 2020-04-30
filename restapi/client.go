@@ -34,7 +34,7 @@ func init() {
 	minio.MaxRetry = 1
 }
 
-// Define MinioClient interface with all functions to be implemented
+// MinioClient interface with all functions to be implemented
 // by mock when testing, it should include all MinioClient respective api calls
 // that are used within this project.
 type MinioClient interface {
@@ -84,7 +84,7 @@ func (c minioClient) getBucketPolicy(bucketName string) (string, error) {
 	return c.client.GetBucketPolicy(bucketName)
 }
 
-// Define MCS3Client interface with all functions to be implemented
+// MCS3Client interface with all functions to be implemented
 // by mock when testing, it should include all mc/S3Client respective api calls
 // that are used within this project.
 type MCS3Client interface {

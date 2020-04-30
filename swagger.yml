@@ -8,6 +8,7 @@ produces:
   - application/json
 schemes:
   - http
+  - ws
 basePath: /api/v1
 # We are going to be taking `Authorization: Bearer TOKEN` header for our authentication
 securityDefinitions:

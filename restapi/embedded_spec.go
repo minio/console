@@ -42,7 +42,8 @@ func init() {
     "application/json"
   ],
   "schemes": [
-    "http"
+    "http",
+    "ws"
   ],
   "swagger": "2.0",
   "info": {
@@ -2032,7 +2033,8 @@ func init() {
     "application/json"
   ],
   "schemes": [
-    "http"
+    "http",
+    "ws"
   ],
   "swagger": "2.0",
   "info": {
