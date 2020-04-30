@@ -31,7 +31,7 @@ func DifferenceArrays(a, b []string) []string {
 	return diff
 }
 
-// IsElementInSlice returns true if the string belongs to the slice
+// IsElementInArray returns true if the string belongs to the slice
 func IsElementInArray(a []string, b string) bool {
 	for _, e := range a {
 		if e == b {

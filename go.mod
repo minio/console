@@ -16,7 +16,7 @@ require (
 	github.com/json-iterator/go v1.1.9
 	github.com/minio/cli v1.22.0
 	github.com/minio/mc v0.0.0-20200415193718-68b638f2f96c
-	github.com/minio/minio v0.0.0-20200427162205-eff4127efd63
+	github.com/minio/minio v0.0.0-20200428222040-c3c3e9087bc1
 	github.com/minio/minio-go/v6 v6.0.55-0.20200424204115-7506d2996b22
 	github.com/satori/go.uuid v1.2.0
 	github.com/stretchr/testify v1.5.1

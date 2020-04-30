@@ -44,19 +44,19 @@ func registerLoginHandlers(api *operations.McsAPI) {
 	})
 }
 
-var ErrInvalidCredentials = errors.New("invalid minioCredentials")
+var errInvalidCredentials = errors.New("invalid minioCredentials")
 
 // login performs a check of minioCredentials against MinIO
 func login(credentials MCSCredentials) (*string, error) {
 	// try to obtain minioCredentials,
 	tokens, err := credentials.Get()
 	if err != nil {
-		return nil, ErrInvalidCredentials
+		return nil, errInvalidCredentials
 	}
 	// if we made it here, the minioCredentials work, generate a jwt with claims
 	jwt, err := auth.NewJWTWithClaimsForClient(&tokens, getMinIOServer())
 	if err != nil {
-		return nil, ErrInvalidCredentials
+		return nil, errInvalidCredentials
 	}
 	return &jwt, nil
 }

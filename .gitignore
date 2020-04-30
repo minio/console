@@ -27,3 +27,7 @@ dist/
 # Ignore tls cert and key
 private.key
 public.crt
+
+# Ignore VsCode files
+.vscode/
+*.code-workspace

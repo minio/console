@@ -957,6 +957,39 @@ func init() {
         }
       }
     },
+    "/service-accounts": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Create Service Account",
+        "operationId": "CreateServiceAccount",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serviceAccount"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceAccountCreds"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/service/restart": {
       "post": {
         "tags": [
@@ -1797,6 +1830,26 @@ func init() {
       "properties": {
         "type": {
           "$ref": "#/definitions/profilerType"
+        }
+      }
+    },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "policy": {
+          "type": "string",
+          "title": "policy to be applied to the Service Account if any"
+        }
+      }
+    },
+    "serviceAccountCreds": {
+      "type": "object",
+      "properties": {
+        "accessKey": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string"
         }
       }
     },
@@ -2894,6 +2947,39 @@ func init() {
         }
       }
     },
+    "/service-accounts": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Create Service Account",
+        "operationId": "CreateServiceAccount",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serviceAccount"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceAccountCreds"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/service/restart": {
       "post": {
         "tags": [
@@ -3734,6 +3820,26 @@ func init() {
       "properties": {
         "type": {
           "$ref": "#/definitions/profilerType"
+        }
+      }
+    },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "policy": {
+          "type": "string",
+          "title": "policy to be applied to the Service Account if any"
+        }
+      }
+    },
+    "serviceAccountCreds": {
+      "type": "object",
+      "properties": {
+        "accessKey": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string"
         }
       }
     },
