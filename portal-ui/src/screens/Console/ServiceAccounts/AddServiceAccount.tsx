@@ -472,7 +472,6 @@ class AddServiceAccountContent extends React.Component<
                   count={permissions.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
-                  labelRowsPerPage={null}
                   onChangePage={handleChangePage}
                   onChangeRowsPerPage={handleChangeRowsPerPage}
                 />

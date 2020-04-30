@@ -483,7 +483,6 @@ class AddPermissionContent extends React.Component<
                     count={buckets.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
-                    labelRowsPerPage={null}
                     onChangePage={handleChangePage}
                     onChangeRowsPerPage={handleChangeRowsPerPage}
                   />
@@ -521,28 +520,28 @@ class AddPermissionContent extends React.Component<
                       label="Write Only"
                     />
                     <FormControlLabel
-                        value="trace"
-                        control={<Radio />}
-                        label="Trace"
+                      value="trace"
+                      control={<Radio />}
+                      label="Trace"
                     />
                   </RadioGroup>
                 </FormControl>
               </Grid>
-              {action === 'trace' && (
-                  <React.Fragment>
-                    <Grid item xs={12}>
-                      <br />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Typography
-                          component="p"
-                          variant="body1"
-                          className={classes.errorBlock}
-                      >
-                        Trace displays tracing information for all buckets.
-                      </Typography>
-                    </Grid>
-                  </React.Fragment>
+              {action === "trace" && (
+                <React.Fragment>
+                  <Grid item xs={12}>
+                    <br />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Typography
+                      component="p"
+                      variant="body1"
+                      className={classes.errorBlock}
+                    >
+                      Trace displays tracing information for all buckets.
+                    </Typography>
+                  </Grid>
+                </React.Fragment>
               )}
               <Grid item xs={12}>
                 <br />
