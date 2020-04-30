@@ -17,9 +17,11 @@
 import { applyMiddleware, combineReducers, compose, createStore } from "redux";
 import thunk from "redux-thunk";
 import { systemReducer } from "./reducer";
+import { traceReducer } from "./screens/Console/Trace/reducers";
 
 const globalReducer = combineReducers({
-  system: systemReducer
+  system: systemReducer,
+  trace: traceReducer
 });
 
 declare global {
