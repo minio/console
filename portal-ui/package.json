@@ -5,7 +5,7 @@
   "dependencies": {
     "@babel/helper-create-regexp-features-plugin": "^7.7.4",
     "@babel/plugin-transform-react-jsx-development": "^7.9.0",
-    "@material-ui/core": "^4.9.8",
+    "@material-ui/core": "^4.9.12",
     "@material-ui/icons": "^4.9.1",
     "@types/history": "^4.7.3",
     "@types/jest": "24.0.23",

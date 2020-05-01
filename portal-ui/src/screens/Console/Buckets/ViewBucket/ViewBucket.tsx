@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
+import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import api from "../../../../common/api";
@@ -123,12 +124,13 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       api
         .invoke("GET", `/api/v1/buckets/${bucketName}/events`)
         .then((res: BucketEventList) => {
-          const events = res.events;
+          const events = get(res, "events", []);
+          const total = get(res, "total", 0);
 
           this.setState({
             loading: false,
             records: events || [],
-            totalRecords: res.total,
+            totalRecords: total,
             error: ""
           });
           // if we get 0 results, and page > 0 , go down 1 page

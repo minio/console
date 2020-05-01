@@ -61,7 +61,7 @@ const CSVMultiSelector = ({
   elements,
   name,
   label,
-  tooltip,
+  tooltip = "",
   onChange,
   classes
 }: ICSVMultiSelector) => {
