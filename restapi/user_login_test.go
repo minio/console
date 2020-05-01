@@ -17,9 +17,12 @@
 package restapi
 
 import (
+	"context"
 	"errors"
 	"testing"
 
+	"github.com/minio/mcs/pkg/auth"
+	"github.com/minio/mcs/pkg/auth/idp/oauth2"
 	"github.com/minio/minio-go/v6/pkg/credentials"
 	"github.com/stretchr/testify/assert"
 )
@@ -57,4 +60,44 @@ func TestLogin(t *testing.T) {
 	}
 	_, err = login(mcsCredentials)
 	funcAssert.NotNil(err, "not error returned creating a session")
+}
+
+type IdentityProviderClientMock struct{}
+
+var idpVerifyIdentityMock func(ctx context.Context, code, state string) (*oauth2.User, error)
+var idpGenerateLoginURLMock func() string
+
+func (ac IdentityProviderClientMock) VerifyIdentity(ctx context.Context, code, state string) (*oauth2.User, error) {
+	return idpVerifyIdentityMock(ctx, code, state)
+}
+
+func (ac IdentityProviderClientMock) GenerateLoginURL() string {
+	return idpGenerateLoginURLMock()
+}
+
+// TestLoginOauth2Auth is the main function that test the Oauth2 Authentication
+func TestLoginOauth2Auth(t *testing.T) {
+	ctx := context.Background()
+	funcAssert := assert.New(t)
+	// mock data
+	mockCode := "EAEAEAE"
+	mockState := "HUEHUEHUE"
+	idpClientMock := IdentityProviderClientMock{}
+	identityProvider := &auth.IdentityProvider{Client: idpClientMock}
+	// Test-1 : loginOauth2Auth() correctly authenticates the user
+	idpVerifyIdentityMock = func(ctx context.Context, code, state string) (*oauth2.User, error) {
+		return &oauth2.User{}, nil
+	}
+	function := "loginOauth2Auth()"
+	_, err := loginOauth2Auth(ctx, identityProvider, mockCode, mockState)
+	if err != nil {
+		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+	}
+	// Test-2 : loginOauth2Auth() returns an error
+	idpVerifyIdentityMock = func(ctx context.Context, code, state string) (*oauth2.User, error) {
+		return nil, errors.New("error")
+	}
+	if _, err := loginOauth2Auth(ctx, identityProvider, mockCode, mockState); funcAssert.Error(err) {
+		funcAssert.Equal("error", err.Error())
+	}
 }

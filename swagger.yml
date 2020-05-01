@@ -61,6 +61,29 @@ paths:
       tags:
         - UserAPI
 
+  /login/oauth2/auth:
+    post:
+      summary: Identity Provider oauth2 callback endpoint.
+      operationId: LoginOauth2Auth
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/loginOauth2AuthRequest'
+      responses:
+        201:
+          description: A successful login.
+          schema:
+            $ref: '#/definitions/loginResponse'
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      security: []
+      tags:
+        - UserAPI
+
   /logout:
     post:
       summary: Logout from mcs.
@@ -761,7 +784,6 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-
   /profiling/start:
     post:
       summary: Start recording profile data
@@ -1178,6 +1200,16 @@ definitions:
         type: string
         enum: [form,redirect]
       redirect:
+        type: string
+  loginOauth2AuthRequest:
+    type: object
+    required:
+      - state
+      - code
+    properties:
+      state:
+        type: string
+      code:
         type: string
   loginRequest:
     type: object

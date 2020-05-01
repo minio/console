@@ -22,7 +22,7 @@ assets:
 
 test:
 	@(go test -race -v github.com/minio/mcs/restapi/...)
-	@(go test -race -v github.com/minio/mcs/pkg/auth)
+	@(go test -race -v github.com/minio/mcs/pkg/auth/...)
 
 coverage:
 	@(go test -v -coverprofile=coverage.out github.com/minio/mcs/restapi/... && go tool cover -html=coverage.out && open coverage.html)

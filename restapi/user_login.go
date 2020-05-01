@@ -17,6 +17,7 @@
 package restapi
 
 import (
+	"context"
 	"errors"
 	"log"
 
@@ -24,6 +25,8 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/minio/mcs/models"
 	"github.com/minio/mcs/pkg/auth"
+	"github.com/minio/mcs/pkg/auth/idp/oauth2"
+	"github.com/minio/mcs/pkg/auth/utils"
 	"github.com/minio/mcs/restapi/operations"
 	"github.com/minio/mcs/restapi/operations/user_api"
 )
@@ -31,7 +34,10 @@ import (
 func registerLoginHandlers(api *operations.McsAPI) {
 	// get login strategy
 	api.UserAPILoginDetailHandler = user_api.LoginDetailHandlerFunc(func(params user_api.LoginDetailParams) middleware.Responder {
-		loginDetails := getLoginDetailsResponse()
+		loginDetails, err := getLoginDetailsResponse()
+		if err != nil {
+			return user_api.NewLoginDetailDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
 		return user_api.NewLoginDetailOK().WithPayload(loginDetails)
 	})
 	// post login
@@ -41,6 +47,13 @@ func registerLoginHandlers(api *operations.McsAPI) {
 			return user_api.NewLoginDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return user_api.NewLoginCreated().WithPayload(loginResponse)
+	})
+	api.UserAPILoginOauth2AuthHandler = user_api.LoginOauth2AuthHandlerFunc(func(params user_api.LoginOauth2AuthParams) middleware.Responder {
+		loginResponse, err := getLoginOauth2AuthResponse(params.Body)
+		if err != nil {
+			return user_api.NewLoginOauth2AuthDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
+		return user_api.NewLoginOauth2AuthCreated().WithPayload(loginResponse)
 	})
 }
 
@@ -81,12 +94,95 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, error) {
 	return loginResponse, nil
 }
 
-// getLoginDetailsResponse returns wether an IDP is configured or not.
-func getLoginDetailsResponse() *models.LoginDetails {
-	// TODO: Add support for login using external IDPs
-	// serialize output
-	loginDetails := &models.LoginDetails{
-		LoginStrategy: models.LoginDetailsLoginStrategyForm,
+// getLoginDetailsResponse returns information regarding the MCS authentication mechanism.
+func getLoginDetailsResponse() (*models.LoginDetails, error) {
+	ctx := context.Background()
+	loginStrategy := models.LoginDetailsLoginStrategyForm
+	redirectURL := ""
+	if oauth2.IsIdpEnabled() {
+		loginStrategy = models.LoginDetailsLoginStrategyRedirect
+		// initialize new oauth2 client
+		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil)
+		if err != nil {
+			return nil, err
+		}
+		// Validate user against IDP
+		identityProvider := &auth.IdentityProvider{Client: oauth2Client}
+		redirectURL = identityProvider.GenerateLoginURL()
 	}
-	return loginDetails
+	loginDetails := &models.LoginDetails{
+		LoginStrategy: loginStrategy,
+		Redirect:      redirectURL,
+	}
+	return loginDetails, nil
+}
+
+func loginOauth2Auth(ctx context.Context, provider *auth.IdentityProvider, code, state string) (*oauth2.User, error) {
+	userIdentity, err := provider.VerifyIdentity(ctx, code, state)
+	if err != nil {
+		return nil, err
+	}
+	return userIdentity, nil
+}
+
+func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.LoginResponse, error) {
+	ctx := context.Background()
+	if oauth2.IsIdpEnabled() {
+		// initialize new oauth2 client
+		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil)
+		if err != nil {
+			return nil, err
+		}
+		// initialize new identity provider
+		identityProvider := &auth.IdentityProvider{Client: oauth2Client}
+		// Validate user against IDP
+		identity, err := loginOauth2Auth(ctx, identityProvider, *lr.Code, *lr.State)
+		if err != nil {
+			return nil, err
+		}
+		mAdmin, err := newSuperMAdminClient()
+		if err != nil {
+			log.Println("error creating Madmin Client:", err)
+			return nil, err
+		}
+		adminClient := adminClient{client: mAdmin}
+		accessKey := identity.Email
+		secretKey := utils.RandomCharString(32)
+		// Create user in MinIO
+		if _, err := addUser(ctx, adminClient, &accessKey, &secretKey, []string{}); err != nil {
+			log.Println("error adding user:", err)
+			return nil, err
+		}
+		// rollback user if there's an error after this point
+		defer func() {
+			if err != nil {
+				if errRemove := removeUser(ctx, adminClient, accessKey); errRemove != nil {
+					log.Println("error removing user:", errRemove)
+				}
+			}
+		}()
+		// assign the "mcsAdmin" policy to this user
+		if err := setPolicy(ctx, adminClient, oauth2.GetIDPPolicyForUser(), accessKey, models.PolicyEntityUser); err != nil {
+			log.Println("error setting policy:", err)
+			return nil, err
+		}
+		// User was created correctly, create a new session/JWT
+		creds, err := newMcsCredentials(accessKey, secretKey, "")
+		if err != nil {
+			log.Println("error login:", err)
+			return nil, err
+		}
+		credentials := mcsCredentials{minioCredentials: creds}
+		jwt, err := login(credentials)
+		if err != nil {
+			log.Println("error login:", err)
+			return nil, err
+		}
+		// serialize output
+		loginResponse := &models.LoginResponse{
+			SessionID: *jwt,
+		}
+		return loginResponse, nil
+	}
+	return nil, errors.New("an error occurred, please try again")
 }

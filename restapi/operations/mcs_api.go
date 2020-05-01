@@ -135,6 +135,9 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		UserAPILoginDetailHandler: user_api.LoginDetailHandlerFunc(func(params user_api.LoginDetailParams) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.LoginDetail has not yet been implemented")
 		}),
+		UserAPILoginOauth2AuthHandler: user_api.LoginOauth2AuthHandlerFunc(func(params user_api.LoginOauth2AuthParams) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.LoginOauth2Auth has not yet been implemented")
+		}),
 		UserAPILogoutHandler: user_api.LogoutHandlerFunc(func(params user_api.LogoutParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.Logout has not yet been implemented")
 		}),
@@ -280,6 +283,8 @@ type McsAPI struct {
 	UserAPILoginHandler user_api.LoginHandler
 	// UserAPILoginDetailHandler sets the operation handler for the login detail operation
 	UserAPILoginDetailHandler user_api.LoginDetailHandler
+	// UserAPILoginOauth2AuthHandler sets the operation handler for the login oauth2 auth operation
+	UserAPILoginOauth2AuthHandler user_api.LoginOauth2AuthHandler
 	// UserAPILogoutHandler sets the operation handler for the logout operation
 	UserAPILogoutHandler user_api.LogoutHandler
 	// UserAPIMakeBucketHandler sets the operation handler for the make bucket operation
@@ -456,6 +461,9 @@ func (o *McsAPI) Validate() error {
 	}
 	if o.UserAPILoginDetailHandler == nil {
 		unregistered = append(unregistered, "user_api.LoginDetailHandler")
+	}
+	if o.UserAPILoginOauth2AuthHandler == nil {
+		unregistered = append(unregistered, "user_api.LoginOauth2AuthHandler")
 	}
 	if o.UserAPILogoutHandler == nil {
 		unregistered = append(unregistered, "user_api.LogoutHandler")
@@ -701,6 +709,10 @@ func (o *McsAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/login"] = user_api.NewLoginDetail(o.context, o.UserAPILoginDetailHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/login/oauth2/auth"] = user_api.NewLoginOauth2Auth(o.context, o.UserAPILoginOauth2AuthHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

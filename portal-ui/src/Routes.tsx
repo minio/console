@@ -17,13 +17,14 @@
 import React from "react";
 import { Redirect, Route, Router, Switch } from "react-router-dom";
 import history from "./history";
-import Login from "./screens/LoginPage";
+import Login from "./screens/LoginPage/LoginPage";
 import Console from "./screens/Console/Console";
 import NotFoundPage from "./screens/NotFoundPage";
 import storage from "local-storage-fallback";
 import { connect } from "react-redux";
 import { AppState } from "./store";
 import { userLoggedIn } from "./actions";
+import LoginCallback from "./screens/LoginPage/LoginCallback";
 
 const isLoggedIn = () => {
   return (
@@ -55,6 +56,7 @@ class Routes extends React.Component<RoutesProps> {
     return (
       <Router history={history}>
         <Switch>
+          <Route exact path="/oauth_callback" component={LoginCallback} />
           <Route exact path="/login" component={Login} />
           {this.props.loggedIn ? (
             <Switch>

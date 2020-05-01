@@ -754,6 +754,40 @@ func init() {
         }
       }
     },
+    "/login/oauth2/auth": {
+      "post": {
+        "security": [],
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Identity Provider oauth2 callback endpoint.",
+        "operationId": "LoginOauth2Auth",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/loginOauth2AuthRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful login.",
+            "schema": {
+              "$ref": "#/definitions/loginResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/logout": {
       "post": {
         "tags": [
@@ -1626,6 +1660,21 @@ func init() {
           ]
         },
         "redirect": {
+          "type": "string"
+        }
+      }
+    },
+    "loginOauth2AuthRequest": {
+      "type": "object",
+      "required": [
+        "state",
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "state": {
           "type": "string"
         }
       }
@@ -2745,6 +2794,40 @@ func init() {
         }
       }
     },
+    "/login/oauth2/auth": {
+      "post": {
+        "security": [],
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Identity Provider oauth2 callback endpoint.",
+        "operationId": "LoginOauth2Auth",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/loginOauth2AuthRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful login.",
+            "schema": {
+              "$ref": "#/definitions/loginResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/logout": {
       "post": {
         "tags": [
@@ -3617,6 +3700,21 @@ func init() {
           ]
         },
         "redirect": {
+          "type": "string"
+        }
+      }
+    },
+    "loginOauth2AuthRequest": {
+      "type": "object",
+      "required": [
+        "state",
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "state": {
           "type": "string"
         }
       }

@@ -3,6 +3,7 @@ module github.com/minio/mcs
 go 1.14
 
 require (
+	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/elazarl/go-bindata-assetfs v1.0.0
 	github.com/go-openapi/errors v0.19.4
@@ -19,9 +20,11 @@ require (
 	github.com/minio/mc v0.0.0-20200415193718-68b638f2f96c
 	github.com/minio/minio v0.0.0-20200428222040-c3c3e9087bc1
 	github.com/minio/minio-go/v6 v6.0.55-0.20200424204115-7506d2996b22
+	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/stretchr/testify v1.5.1
 	github.com/unrolled/secure v1.0.7
 	golang.org/x/crypto v0.0.0-20200214034016-1d94cc7ab1c6
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
+	golang.org/x/oauth2 v0.0.0-20190402181905-9f3314589c9a
 )

@@ -22,18 +22,20 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import { Paper } from "@material-ui/core";
+import { CircularProgress, Paper } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { SystemState } from "../types";
-import { userLoggedIn } from "../actions";
-import history from "../history";
+import { SystemState } from "../../types";
+import { userLoggedIn } from "../../actions";
+import history from "../../history";
+import api from "../../common/api";
+import { ILoginDetails } from "./types";
 
 const styles = (theme: Theme) =>
   createStyles({
     "@global": {
       body: {
-        backgroundColor: "#F4F4F4"
-      }
+        backgroundColor: "#F4F4F4",
+      },
     },
     paper: {
       marginTop: theme.spacing(16),
@@ -42,45 +44,48 @@ const styles = (theme: Theme) =>
       flexDirection: "column",
       alignItems: "center",
       width: "800px",
-      margin: "auto"
+      margin: "auto",
     },
     avatar: {
       margin: theme.spacing(1),
-      backgroundColor: theme.palette.secondary.main
+      backgroundColor: theme.palette.secondary.main,
     },
     form: {
       width: "100%", // Fix IE 11 issue.
-      marginTop: theme.spacing(3)
+      marginTop: theme.spacing(3),
     },
     submit: {
-      margin: theme.spacing(3, 0, 2)
+      margin: theme.spacing(3, 0, 2),
     },
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     mainContainer: {
-      borderRadius: "3px"
+      borderRadius: "3px",
     },
     theOcean: {
       borderTopLeftRadius: "3px",
       borderBottomLeftRadius: "3px",
       background:
-        "transparent linear-gradient(333deg, #281B6F 1%, #271260 13%, #120D53 83%) 0% 0% no-repeat padding-box;"
+        "transparent linear-gradient(333deg, #281B6F 1%, #271260 13%, #120D53 83%) 0% 0% no-repeat padding-box;",
     },
     oceanBg: {
       backgroundImage: "url(/images/BG_Illustration.svg)",
       backgroundRepeat: "no-repeat",
       backgroundPosition: "bottom left",
       height: "100%",
-      width: "100%"
+      width: "100%",
     },
     theLogin: {
-      padding: "76px 62px 20px 62px"
-    }
+      padding: "76px 62px 20px 62px",
+    },
+    loadingLoginStrategy: {
+      textAlign: "center",
+    },
   });
 
 const mapState = (state: SystemState) => ({
-  loggedIn: state.loggedIn
+  loggedIn: state.loggedIn,
 });
 
 const connector = connect(mapState, { userLoggedIn });
@@ -90,17 +95,50 @@ const connector = connect(mapState, { userLoggedIn });
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = PropsFromRedux & {};
 
-interface LoginProps {
+interface ILoginProps {
   userLoggedIn: typeof userLoggedIn;
   classes: any;
 }
 
-class Login extends React.Component<LoginProps> {
-  state = {
+interface ILoginState {
+  accessKey: string;
+  secretKey: string;
+  error: string;
+  loading: boolean;
+  loginStrategy: ILoginDetails;
+}
+
+class Login extends React.Component<ILoginProps, ILoginState> {
+  state: ILoginState = {
     accessKey: "",
     secretKey: "",
-    error: ""
+    error: "",
+    loading: false,
+    loginStrategy: {
+      loginStrategy: "",
+      redirect: "",
+    },
   };
+
+  fetchConfiguration() {
+    this.setState({ loading: true }, () => {
+      api
+        .invoke("GET", "/api/v1/login")
+        .then((loginDetails: ILoginDetails) => {
+          this.setState({
+            loading: false,
+          });
+          this.setState({
+            loading: false,
+            loginStrategy: loginDetails,
+            error: "",
+          });
+        })
+        .catch((err: any) => {
+          this.setState({ loading: false, error: err });
+        });
+    });
+  }
 
   formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -128,21 +166,25 @@ class Login extends React.Component<LoginProps> {
         // We push to history the new URL.
         history.push("/dashboard");
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({ error: `${err}` });
       });
   };
 
+  componentDidMount(): void {
+    this.fetchConfiguration();
+  }
+
   render() {
-    const { error, accessKey, secretKey } = this.state;
+    const { error, accessKey, secretKey, loginStrategy } = this.state;
     const { classes } = this.props;
-    return (
-      <Paper className={classes.paper}>
-        <Grid container className={classes.mainContainer}>
-          <Grid item xs={7} className={classes.theOcean}>
-            <div className={classes.oceanBg}></div>
-          </Grid>
-          <Grid item xs={5} className={classes.theLogin}>
+
+    let loginComponent = null;
+
+    switch (loginStrategy.loginStrategy) {
+      case "form": {
+        loginComponent = (
+          <React.Fragment>
             <Typography component="h1" variant="h6">
               Login
             </Typography>
@@ -203,6 +245,45 @@ class Login extends React.Component<LoginProps> {
                 Login
               </Button>
             </form>
+          </React.Fragment>
+        );
+        break;
+      }
+      case "redirect": {
+        loginComponent = (
+          <React.Fragment>
+            <Typography component="h1" variant="h6">
+              Login
+            </Typography>
+            <Button
+              component={"a"}
+              href={loginStrategy.redirect}
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+            >
+              Welcome
+            </Button>
+          </React.Fragment>
+        );
+        break;
+      }
+      default:
+        loginComponent = (
+          <CircularProgress className={classes.loadingLoginStrategy} />
+        );
+    }
+
+    return (
+      <Paper className={classes.paper}>
+        <Grid container className={classes.mainContainer}>
+          <Grid item xs={7} className={classes.theOcean}>
+            <div className={classes.oceanBg} />
+          </Grid>
+          <Grid item xs={5} className={classes.theLogin}>
+            {loginComponent}
           </Grid>
         </Grid>
       </Paper>
