@@ -309,6 +309,31 @@ paths:
         - UserAPI
 
   /service-accounts:
+    get:
+      summary: List User's Service Accounts
+      operationId: ListUserServiceAccounts
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/serviceAccounts"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
     post:
       summary: Create Service Account
       operationId: CreateServiceAccount
@@ -317,12 +342,31 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/serviceAccount'
+            $ref: '#/definitions/serviceAccountRequest'
       responses:
         201:
           description: A successful response.
           schema:
             $ref: "#/definitions/serviceAccountCreds"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+  
+  /service-accounts/{access_key}:
+    delete:
+      summary: Delete Service Account
+      operationId: DeleteServiceAccount
+      parameters:
+        - name: access_key
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
         default:
           description: Generic error response.
           schema:
@@ -1367,7 +1411,11 @@ definitions:
         type: array
         items:
           type: string
-  serviceAccount:
+  serviceAccounts:
+    type: array
+    items:
+      type: string
+  serviceAccountRequest:
     type: object
     properties:
       policy:

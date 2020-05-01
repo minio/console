@@ -993,6 +993,41 @@ func init() {
       }
     },
     "/service-accounts": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "List User's Service Accounts",
+        "operationId": "ListUserServiceAccounts",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceAccounts"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "UserAPI"
@@ -1005,7 +1040,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/serviceAccount"
+              "$ref": "#/definitions/serviceAccountRequest"
             }
           }
         ],
@@ -1015,6 +1050,34 @@ func init() {
             "schema": {
               "$ref": "#/definitions/serviceAccountCreds"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/service-accounts/{access_key}": {
+      "delete": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Service Account",
+        "operationId": "DeleteServiceAccount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "access_key",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
@@ -1883,15 +1946,6 @@ func init() {
         }
       }
     },
-    "serviceAccount": {
-      "type": "object",
-      "properties": {
-        "policy": {
-          "type": "string",
-          "title": "policy to be applied to the Service Account if any"
-        }
-      }
-    },
     "serviceAccountCreds": {
       "type": "object",
       "properties": {
@@ -1901,6 +1955,21 @@ func init() {
         "secretKey": {
           "type": "string"
         }
+      }
+    },
+    "serviceAccountRequest": {
+      "type": "object",
+      "properties": {
+        "policy": {
+          "type": "string",
+          "title": "policy to be applied to the Service Account if any"
+        }
+      }
+    },
+    "serviceAccounts": {
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     },
     "sessionResponse": {
@@ -3033,6 +3102,41 @@ func init() {
       }
     },
     "/service-accounts": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "List User's Service Accounts",
+        "operationId": "ListUserServiceAccounts",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceAccounts"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "UserAPI"
@@ -3045,7 +3149,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/serviceAccount"
+              "$ref": "#/definitions/serviceAccountRequest"
             }
           }
         ],
@@ -3055,6 +3159,34 @@ func init() {
             "schema": {
               "$ref": "#/definitions/serviceAccountCreds"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/service-accounts/{access_key}": {
+      "delete": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Service Account",
+        "operationId": "DeleteServiceAccount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "access_key",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
@@ -3923,15 +4055,6 @@ func init() {
         }
       }
     },
-    "serviceAccount": {
-      "type": "object",
-      "properties": {
-        "policy": {
-          "type": "string",
-          "title": "policy to be applied to the Service Account if any"
-        }
-      }
-    },
     "serviceAccountCreds": {
       "type": "object",
       "properties": {
@@ -3941,6 +4064,21 @@ func init() {
         "secretKey": {
           "type": "string"
         }
+      }
+    },
+    "serviceAccountRequest": {
+      "type": "object",
+      "properties": {
+        "policy": {
+          "type": "string",
+          "title": "policy to be applied to the Service Account if any"
+        }
+      }
+    },
+    "serviceAccounts": {
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     },
     "sessionResponse": {
