@@ -29,6 +29,7 @@ import { userLoggedIn } from "../../actions";
 import history from "../../history";
 import api from "../../common/api";
 import { ILoginDetails } from "./types";
+import { setCookie } from "../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -153,6 +154,7 @@ class Login extends React.Component<ILoginProps, ILoginState> {
 
         if (bodyResponse.sessionId) {
           // store the jwt token
+          setCookie("token", bodyResponse.sessionId);
           storage.setItem("token", bodyResponse.sessionId);
           //return res.body.sessionId;
         } else if (bodyResponse.error) {

@@ -17,6 +17,7 @@
 import React from "react";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
+import WebAssetIcon from '@material-ui/icons/WebAsset';
 import ListItemText from "@material-ui/core/ListItemText";
 import { NavLink } from "react-router-dom";
 import { Divider, Typography, withStyles } from "@material-ui/core";
@@ -156,6 +157,12 @@ class Menu extends React.Component<MenuProps> {
               <LoopIcon />
             </ListItemIcon>
             <ListItemText primary="Trace" />
+          </ListItem>
+          <ListItem button component={NavLink} to="/logs">
+            <ListItemIcon>
+              <WebAssetIcon />
+            </ListItemIcon>
+            <ListItemText primary="Console Logs" />
           </ListItem>
           <ListItem component={Typography}>Configuration</ListItem>
           <ListItem button component={NavLink} to="/notification-endpoints">

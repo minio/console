@@ -21,7 +21,7 @@ import { connect } from "react-redux";
 import { traceMessageReceived, traceResetMessages } from "./actions";
 import { TraceMessage } from "./types";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { niceBytes, setCookie } from "../../../common/utils";
+import { niceBytes } from "../../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -57,12 +57,9 @@ const Trace = ({
 }: ITrace) => {
   useEffect(() => {
     traceResetMessages();
-    const token: string = storage.getItem("token")!;
     const url = new URL(window.location.toString());
     const isDev = process.env.NODE_ENV === "development";
     const port = isDev ? "9090" : url.port;
-
-    setCookie("token", token);
 
     const c = new W3CWebSocket(`ws://${url.hostname}:${port}/ws/trace`);
 

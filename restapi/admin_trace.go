@@ -21,7 +21,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net"
 	"net/http"
 	"strings"
 	"sync"
@@ -48,37 +47,6 @@ type callStats struct {
 	Tx       int    `json:"tx"`
 	Duration string `json:"duration"`
 	Ttfb     string `json:"timeToFirstByte"`
-}
-
-// trace serves madmin.ServiceTraceInfo
-// on a Websocket connection.
-func (wsc *wsClient) trace() {
-	defer func() {
-		log.Println("trace stopped")
-		// close connection after return
-		wsc.conn.close()
-	}()
-	log.Println("trace started")
-
-	err := startTraceInfo(wsc.conn, wsc.madmin)
-	// Send Connection Close Message indicating the Status Code
-	// see https://tools.ietf.org/html/rfc6455#page-45
-	if err != nil {
-		// If connection exceeded read deadline send Close
-		// Message Policy Violation code since we don't want
-		// to let the receiver figure out the read deadline.
-		// This is a generic code designed if there is a
-		// need to hide specific details about the policy.
-		if nErr, ok := err.(net.Error); ok && nErr.Timeout() {
-			wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, ""))
-			return
-		}
-		// else, internal server error
-		wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseInternalServerErr, err.Error()))
-		return
-	}
-	// normal closure
-	wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 }
 
 // startTraceInfo starts trace of the servers
@@ -115,7 +83,7 @@ func startTraceInfo(conn WSConn, client MinioAdmin) (mError error) {
 		cancel()
 	}(&wg)
 
-	// wait for traceCh to finish
+	// get traceCh error on finish
 	if err := <-traceCh; err != nil {
 		mError = err
 	}
