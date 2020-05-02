@@ -34,8 +34,8 @@ const styles = (theme: Theme) =>
   createStyles({
     "@global": {
       body: {
-        backgroundColor: "#F4F4F4",
-      },
+        backgroundColor: "#F4F4F4"
+      }
     },
     paper: {
       marginTop: theme.spacing(16),
@@ -44,48 +44,48 @@ const styles = (theme: Theme) =>
       flexDirection: "column",
       alignItems: "center",
       width: "800px",
-      margin: "auto",
+      margin: "auto"
     },
     avatar: {
       margin: theme.spacing(1),
-      backgroundColor: theme.palette.secondary.main,
+      backgroundColor: theme.palette.secondary.main
     },
     form: {
       width: "100%", // Fix IE 11 issue.
-      marginTop: theme.spacing(3),
+      marginTop: theme.spacing(3)
     },
     submit: {
-      margin: theme.spacing(3, 0, 2),
+      margin: theme.spacing(3, 0, 2)
     },
     errorBlock: {
-      color: "red",
+      color: "red"
     },
     mainContainer: {
-      borderRadius: "3px",
+      borderRadius: "3px"
     },
     theOcean: {
       borderTopLeftRadius: "3px",
       borderBottomLeftRadius: "3px",
       background:
-        "transparent linear-gradient(333deg, #281B6F 1%, #271260 13%, #120D53 83%) 0% 0% no-repeat padding-box;",
+        "transparent linear-gradient(333deg, #281B6F 1%, #271260 13%, #120D53 83%) 0% 0% no-repeat padding-box;"
     },
     oceanBg: {
       backgroundImage: "url(/images/BG_Illustration.svg)",
       backgroundRepeat: "no-repeat",
       backgroundPosition: "bottom left",
       height: "100%",
-      width: "100%",
+      width: "100%"
     },
     theLogin: {
-      padding: "76px 62px 20px 62px",
+      padding: "76px 62px 20px 62px"
     },
     loadingLoginStrategy: {
-      textAlign: "center",
-    },
+      textAlign: "center"
+    }
   });
 
 const mapState = (state: SystemState) => ({
-  loggedIn: state.loggedIn,
+  loggedIn: state.loggedIn
 });
 
 const connector = connect(mapState, { userLoggedIn });
@@ -116,8 +116,8 @@ class Login extends React.Component<ILoginProps, ILoginState> {
     loading: false,
     loginStrategy: {
       loginStrategy: "",
-      redirect: "",
-    },
+      redirect: ""
+    }
   };
 
   fetchConfiguration() {
@@ -126,12 +126,12 @@ class Login extends React.Component<ILoginProps, ILoginState> {
         .invoke("GET", "/api/v1/login")
         .then((loginDetails: ILoginDetails) => {
           this.setState({
-            loading: false,
+            loading: false
           });
           this.setState({
             loading: false,
             loginStrategy: loginDetails,
-            error: "",
+            error: ""
           });
         })
         .catch((err: any) => {
@@ -166,7 +166,7 @@ class Login extends React.Component<ILoginProps, ILoginState> {
         // We push to history the new URL.
         history.push("/dashboard");
       })
-      .catch((err) => {
+      .catch(err => {
         this.setState({ error: `${err}` });
       });
   };

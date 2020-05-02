@@ -25,18 +25,41 @@ import CSVMultiSelector from "../Common/FormComponents/CSVMultiSelector/CSVMulti
 interface IConfGenericProps {
   onChange: (newValue: IElementValue[]) => void;
   fields: KVField[];
+  defaultVals?: IElementValue[];
   classes: any;
 }
 
 const styles = (theme: Theme) => createStyles({});
 
+// Function to get defined values,
+//we make this because the backed sometimes don't return all the keys when there is an initial configuration
+export const valueDef = (
+  key: string,
+  type: string,
+  defaults: IElementValue[]
+) => {
+  let defValue = type === "on|off" ? "false" : "";
+
+  if (defaults.length > 0) {
+    const storedConfig = defaults.find(element => element.key === key);
+
+    if (storedConfig) {
+      defValue = storedConfig.value;
+    }
+  }
+
+  return defValue;
+};
+
 const ConfTargetGeneric = ({
   onChange,
   fields,
+  defaultVals,
   classes
 }: IConfGenericProps) => {
   const [valueHolder, setValueHolder] = useState<IElementValue[]>([]);
   const fieldsElements = !fields ? [] : fields;
+  const defValList = !defaultVals ? [] : defaultVals;
 
   // Effect to create all the values to hold
   useEffect(() => {
@@ -44,13 +67,13 @@ const ConfTargetGeneric = ({
     fields.forEach(field => {
       const stateInsert: IElementValue = {
         key: field.name,
-        value: field.type === "on|off" ? "false" : ""
+        value: valueDef(field.name, field.type, defValList)
       };
       values.push(stateInsert);
     });
 
     setValueHolder(values);
-  }, [fields]);
+  }, [fields, defaultVals]);
 
   useEffect(() => {
     onChange(valueHolder);

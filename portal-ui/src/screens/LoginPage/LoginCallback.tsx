@@ -14,17 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, {FC, useEffect} from "react";
-import {RouteComponentProps} from "react-router";
+import React, { FC, useEffect } from "react";
+import { RouteComponentProps } from "react-router";
 import storage from "local-storage-fallback";
 import api from "../../common/api";
 
-const LoginCallback: FC<RouteComponentProps> = ({location}) => {
+const LoginCallback: FC<RouteComponentProps> = ({ location }) => {
   useEffect(() => {
     const code = (location.search.match(/code=([^&]+)/) || [])[1];
     const state = (location.search.match(/state=([^&]+)/) || [])[1];
     api
-      .invoke("POST", "/api/v1/login/oauth2/auth", {code, state})
+      .invoke("POST", "/api/v1/login/oauth2/auth", { code, state })
       .then((res: any) => {
         if (res && res.sessionId) {
           // store the jwt token

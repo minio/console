@@ -66,7 +66,6 @@ const ConfigurationsList = ({ classes }: IListConfiguration) => {
     configuration_id: "",
     configuration_label: ""
   });
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("");
 
@@ -99,7 +98,6 @@ const ConfigurationsList = ({ classes }: IListConfiguration) => {
         <EditConfiguration
           open={editScreenOpen}
           closeModalAndRefresh={() => {
-            setIsLoading(true);
             setEditScreenOpen(false);
           }}
           selectedConfiguration={selectedConfiguration}
@@ -141,7 +139,7 @@ const ConfigurationsList = ({ classes }: IListConfiguration) => {
             columns={[
               { label: "Configuration", elementKey: "configuration_id" }
             ]}
-            isLoading={isLoading}
+            isLoading={false}
             records={filteredRecords}
             entityName="Configurations"
             idField="configuration_id"
