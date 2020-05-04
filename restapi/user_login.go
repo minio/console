@@ -31,6 +31,10 @@ import (
 	"github.com/minio/mcs/restapi/operations/user_api"
 )
 
+var (
+	errorGeneric = errors.New("an error occurred, please try again")
+)
+
 func registerLoginHandlers(api *operations.McsAPI) {
 	// get login strategy
 	api.UserAPILoginDetailHandler = user_api.LoginDetailHandlerFunc(func(params user_api.LoginDetailParams) middleware.Responder {
@@ -74,9 +78,32 @@ func login(credentials MCSCredentials) (*string, error) {
 	return &jwt, nil
 }
 
+func getConfiguredRegion(client MinioAdmin) string {
+	location := ""
+	configuration, err := getConfig(client, "region")
+	if err != nil {
+		log.Println("error obtaining MinIO region:", err)
+		return location
+	}
+	// region is an array of 1 element
+	if len(configuration) > 0 {
+		location = configuration[0].Value
+	}
+	return location
+}
+
 // getLoginResponse performs login() and serializes it to the handler's output
 func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, error) {
-	creds, err := newMcsCredentials(*lr.AccessKey, *lr.SecretKey, "")
+	mAdmin, err := newSuperMAdminClient()
+	if err != nil {
+		log.Println("error creating Madmin Client:", err)
+		return nil, errorGeneric
+	}
+	adminClient := adminClient{client: mAdmin}
+	// obtain the configured MinIO region
+	// need it for user authentication
+	location := getConfiguredRegion(adminClient)
+	creds, err := newMcsCredentials(*lr.AccessKey, *lr.SecretKey, location)
 	if err != nil {
 		log.Println("error login:", err)
 		return nil, err
@@ -131,27 +158,32 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil)
 		if err != nil {
-			return nil, err
+			log.Println("error getting new oauth2 client:", err)
+			return nil, errorGeneric
 		}
 		// initialize new identity provider
 		identityProvider := &auth.IdentityProvider{Client: oauth2Client}
 		// Validate user against IDP
 		identity, err := loginOauth2Auth(ctx, identityProvider, *lr.Code, *lr.State)
 		if err != nil {
-			return nil, err
+			log.Println("error validating user identity against idp:", err)
+			return nil, errorGeneric
 		}
 		mAdmin, err := newSuperMAdminClient()
 		if err != nil {
 			log.Println("error creating Madmin Client:", err)
-			return nil, err
+			return nil, errorGeneric
 		}
 		adminClient := adminClient{client: mAdmin}
 		accessKey := identity.Email
 		secretKey := utils.RandomCharString(32)
-		// Create user in MinIO
+		// obtain the configured MinIO region
+		// need it for user authentication
+		location := getConfiguredRegion(adminClient)
+		// create user in MinIO
 		if _, err := addUser(ctx, adminClient, &accessKey, &secretKey, []string{}); err != nil {
 			log.Println("error adding user:", err)
-			return nil, err
+			return nil, errorGeneric
 		}
 		// rollback user if there's an error after this point
 		defer func() {
@@ -164,19 +196,19 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 		// assign the "mcsAdmin" policy to this user
 		if err := setPolicy(ctx, adminClient, oauth2.GetIDPPolicyForUser(), accessKey, models.PolicyEntityUser); err != nil {
 			log.Println("error setting policy:", err)
-			return nil, err
+			return nil, errorGeneric
 		}
 		// User was created correctly, create a new session/JWT
-		creds, err := newMcsCredentials(accessKey, secretKey, "")
+		creds, err := newMcsCredentials(accessKey, secretKey, location)
 		if err != nil {
 			log.Println("error login:", err)
-			return nil, err
+			return nil, errorGeneric
 		}
 		credentials := mcsCredentials{minioCredentials: creds}
 		jwt, err := login(credentials)
 		if err != nil {
 			log.Println("error login:", err)
-			return nil, err
+			return nil, errorGeneric
 		}
 		// serialize output
 		loginResponse := &models.LoginResponse{
@@ -184,5 +216,5 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 		}
 		return loginResponse, nil
 	}
-	return nil, errors.New("an error occurred, please try again")
+	return nil, errorGeneric
 }
