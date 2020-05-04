@@ -24,6 +24,8 @@ import (
 	"github.com/minio/mcs/pkg/auth"
 	"github.com/minio/mcs/pkg/auth/idp/oauth2"
 	"github.com/minio/minio-go/v6/pkg/credentials"
+	"github.com/minio/minio/cmd/config"
+	"github.com/minio/minio/pkg/madmin"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -99,5 +101,97 @@ func TestLoginOauth2Auth(t *testing.T) {
 	}
 	if _, err := loginOauth2Auth(ctx, identityProvider, mockCode, mockState); funcAssert.Error(err) {
 		funcAssert.Equal("error", err.Error())
+	}
+}
+
+func Test_getConfiguredRegion(t *testing.T) {
+	client := adminClientMock{}
+	type args struct {
+		client adminClientMock
+	}
+
+	tests := []struct {
+		name string
+		args args
+		want string
+		mock func()
+	}{
+		// If MinIO returns an error, we return empty region name
+		{
+			name: "region",
+			args: args{
+				client: client,
+			},
+			want: "",
+			mock: func() {
+				// mock function response from getConfig()
+				minioGetConfigKVMock = func(key string) ([]byte, error) {
+					return nil, errors.New("Invalid config")
+				}
+				// mock function response from listConfig()
+				minioHelpConfigKVMock = func(subSys, key string, envOnly bool) (madmin.Help, error) {
+					return madmin.Help{}, errors.New("no help")
+				}
+			},
+		},
+		// MinIO returns an empty region name
+		{
+			name: "region",
+			args: args{
+				client: client,
+			},
+			want: "",
+			mock: func() {
+				// mock function response from getConfig()
+				minioGetConfigKVMock = func(key string) ([]byte, error) {
+					return []byte("region name= "), nil
+				}
+				// mock function response from listConfig()
+				minioHelpConfigKVMock = func(subSys, key string, envOnly bool) (madmin.Help, error) {
+					return madmin.Help{
+						SubSys:          config.RegionSubSys,
+						Description:     "label the location of the server",
+						MultipleTargets: false,
+						KeysHelp: []madmin.HelpKV{
+							{
+								Key:             "name",
+								Description:     "name of the location of the server e.g. \"us-west-rack2\"",
+								Optional:        true,
+								Type:            "string",
+								MultipleTargets: false,
+							},
+							{
+								Key:             "comment",
+								Description:     "optionally add a comment to this setting",
+								Optional:        true,
+								Type:            "sentence",
+								MultipleTargets: false,
+							},
+						},
+					}, nil
+				}
+			},
+		},
+		// MinIO returns the asia region
+		{
+			name: "region",
+			args: args{
+				client: client,
+			},
+			want: "asia",
+			mock: func() {
+				minioGetConfigKVMock = func(key string) ([]byte, error) {
+					return []byte("region name=asia "), nil
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		tt.mock()
+		t.Run(tt.name, func(t *testing.T) {
+			if got := getConfiguredRegion(tt.args.client); got != tt.want {
+				t.Errorf("getConfiguredRegion() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
