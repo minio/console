@@ -110,7 +110,7 @@ func (c mcS3Client) removeNotificationConfig(arn string, event string, prefix st
 	return c.client.RemoveNotificationConfig(arn, event, prefix, suffix)
 }
 
-// Define MCSCredentials interface with all functions to be implemented
+// MCSCredentials interface with all functions to be implemented
 // by mock when testing, it should include all needed minioCredentials.Credentials api calls
 // that are used within this project.
 type MCSCredentials interface {
