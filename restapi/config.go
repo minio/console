@@ -24,10 +24,19 @@ import (
 	"github.com/minio/minio/pkg/env"
 )
 
+// Port mcs default port
 var Port = "9090"
+
+// Hostname mcs hostname
 var Hostname = "localhost"
+
+// TLSHostname mcs tls hostname
 var TLSHostname = "localhost"
+
+// TLSPort mcs tls port
 var TLSPort = "9443"
+
+// TLSRedirect mcs tls redirect rule
 var TLSRedirect = "off"
 
 func getAccessKey() string {
@@ -70,10 +79,14 @@ func getProductionMode() bool {
 	return strings.ToLower(env.Get(McsProductionMode, "on")) == "on"
 }
 
+// GetHostname gets mcs hostname set on env variable,
+// default one or defined on run command
 func GetHostname() string {
 	return strings.ToLower(env.Get(McsHostname, Hostname))
 }
 
+// GetPort gets mcs por set on env variable
+// or default one
 func GetPort() int {
 	port, err := strconv.Atoi(env.Get(McsPort, Port))
 	if err != nil {
@@ -82,10 +95,14 @@ func GetPort() int {
 	return port
 }
 
+// GetSSLHostname gets mcs ssl hostname set on env variable
+// or default one
 func GetSSLHostname() string {
 	return strings.ToLower(env.Get(McsTLSHostname, TLSHostname))
 }
 
+// GetSSLPort gets mcs ssl port set on env variable
+// or default one
 func GetSSLPort() int {
 	port, err := strconv.Atoi(env.Get(McsTLSPort, TLSPort))
 	if err != nil {
