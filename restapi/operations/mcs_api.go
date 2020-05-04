@@ -105,6 +105,9 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		UserAPIDeleteBucketEventHandler: user_api.DeleteBucketEventHandlerFunc(func(params user_api.DeleteBucketEventParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteBucketEvent has not yet been implemented")
 		}),
+		UserAPIDeleteServiceAccountHandler: user_api.DeleteServiceAccountHandlerFunc(func(params user_api.DeleteServiceAccountParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.DeleteServiceAccount has not yet been implemented")
+		}),
 		AdminAPIGetUserInfoHandler: admin_api.GetUserInfoHandlerFunc(func(params admin_api.GetUserInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetUserInfo has not yet been implemented")
 		}),
@@ -125,6 +128,9 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		}),
 		AdminAPIListPoliciesHandler: admin_api.ListPoliciesHandlerFunc(func(params admin_api.ListPoliciesParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListPolicies has not yet been implemented")
+		}),
+		UserAPIListUserServiceAccountsHandler: user_api.ListUserServiceAccountsHandlerFunc(func(params user_api.ListUserServiceAccountsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.ListUserServiceAccounts has not yet been implemented")
 		}),
 		AdminAPIListUsersHandler: admin_api.ListUsersHandlerFunc(func(params admin_api.ListUsersParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListUsers has not yet been implemented")
@@ -263,6 +269,8 @@ type McsAPI struct {
 	UserAPIDeleteBucketHandler user_api.DeleteBucketHandler
 	// UserAPIDeleteBucketEventHandler sets the operation handler for the delete bucket event operation
 	UserAPIDeleteBucketEventHandler user_api.DeleteBucketEventHandler
+	// UserAPIDeleteServiceAccountHandler sets the operation handler for the delete service account operation
+	UserAPIDeleteServiceAccountHandler user_api.DeleteServiceAccountHandler
 	// AdminAPIGetUserInfoHandler sets the operation handler for the get user info operation
 	AdminAPIGetUserInfoHandler admin_api.GetUserInfoHandler
 	// AdminAPIGroupInfoHandler sets the operation handler for the group info operation
@@ -277,6 +285,8 @@ type McsAPI struct {
 	AdminAPIListGroupsHandler admin_api.ListGroupsHandler
 	// AdminAPIListPoliciesHandler sets the operation handler for the list policies operation
 	AdminAPIListPoliciesHandler admin_api.ListPoliciesHandler
+	// UserAPIListUserServiceAccountsHandler sets the operation handler for the list user service accounts operation
+	UserAPIListUserServiceAccountsHandler user_api.ListUserServiceAccountsHandler
 	// AdminAPIListUsersHandler sets the operation handler for the list users operation
 	AdminAPIListUsersHandler admin_api.ListUsersHandler
 	// UserAPILoginHandler sets the operation handler for the login operation
@@ -432,6 +442,9 @@ func (o *McsAPI) Validate() error {
 	if o.UserAPIDeleteBucketEventHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteBucketEventHandler")
 	}
+	if o.UserAPIDeleteServiceAccountHandler == nil {
+		unregistered = append(unregistered, "user_api.DeleteServiceAccountHandler")
+	}
 	if o.AdminAPIGetUserInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetUserInfoHandler")
 	}
@@ -452,6 +465,9 @@ func (o *McsAPI) Validate() error {
 	}
 	if o.AdminAPIListPoliciesHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListPoliciesHandler")
+	}
+	if o.UserAPIListUserServiceAccountsHandler == nil {
+		unregistered = append(unregistered, "user_api.ListUserServiceAccountsHandler")
 	}
 	if o.AdminAPIListUsersHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListUsersHandler")
@@ -669,6 +685,10 @@ func (o *McsAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/buckets/{bucket_name}/events/{arn}"] = user_api.NewDeleteBucketEvent(o.context, o.UserAPIDeleteBucketEventHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/service-accounts/{access_key}"] = user_api.NewDeleteServiceAccount(o.context, o.UserAPIDeleteServiceAccountHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -697,6 +717,10 @@ func (o *McsAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/policies"] = admin_api.NewListPolicies(o.context, o.AdminAPIListPoliciesHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/service-accounts"] = user_api.NewListUserServiceAccounts(o.context, o.UserAPIListUserServiceAccountsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
