@@ -41,21 +41,21 @@ func registerAdminInfoHandlers(api *operations.McsAPI) {
 
 }
 
-type UsageInfo struct {
+type usageInfo struct {
 	Buckets int64
 	Objects int64
 	Usage   int64
 }
 
-// getAdminInfo invokes admin info and returns a parsed `UsageInfo` structure
-func getAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
+// getAdminInfo invokes admin info and returns a parsed `usageInfo` structure
+func getAdminInfo(ctx context.Context, client MinioAdmin) (*usageInfo, error) {
 	serverInfo, err := client.serverInfo(ctx)
 	if err != nil {
 		return nil, err
 	}
 	// we are trimming uint64 to int64 this will report an incorrect measurement for numbers greater than
 	// 9,223,372,036,854,775,807
-	return &UsageInfo{
+	return &usageInfo{
 		Buckets: int64(serverInfo.Buckets.Count),
 		Objects: int64(serverInfo.Objects.Count),
 		Usage:   int64(serverInfo.Usage.Size),

@@ -83,6 +83,8 @@ type MinioAdmin interface {
 	serviceTrace(ctx context.Context, allTrace, errTrace bool) <-chan madmin.ServiceTraceInfo
 	// Service Accounts
 	addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (mauth.Credentials, error)
+	listServiceAccounts(ctx context.Context) (madmin.ListServiceAccountsResp, error)
+	deleteServiceAccount(ctx context.Context, serviceAccount string) error
 }
 
 // Interface implementation
@@ -208,11 +210,30 @@ func (ac adminClient) addServiceAccount(ctx context.Context, policy *iampolicy.P
 	return ac.client.AddServiceAccount(ctx, policy)
 }
 
+// implements madmin.ListServiceAccounts()
+func (ac adminClient) listServiceAccounts(ctx context.Context) (madmin.ListServiceAccountsResp, error) {
+	return ac.client.ListServiceAccounts(ctx)
+}
+
+// implements madmin.DeleteServiceAccount()
+func (ac adminClient) deleteServiceAccount(ctx context.Context, serviceAccount string) error {
+	return ac.client.DeleteServiceAccount(ctx, serviceAccount)
+}
+
 func newMAdminClient(jwt string) (*madmin.AdminClient, error) {
 	claims, err := auth.JWTAuthenticate(jwt)
 	if err != nil {
 		return nil, err
 	}
+	adminClient, err := newAdminFromClaims(claims)
+	if err != nil {
+		return nil, err
+	}
+	return adminClient, nil
+}
+
+// newAdminFromClaims creates a minio admin from Decrypted claims using Assume role credentials
+func newAdminFromClaims(claims *auth.DecryptedClaims) (*madmin.AdminClient, error) {
 	adminClient, err := madmin.NewWithOptions(getMinIOEndpoint(), &madmin.Options{
 		Creds:  credentials.NewStaticV4(claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken),
 		Secure: getMinIOEndpointIsSecure(),

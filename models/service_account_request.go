@@ -27,22 +27,22 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// ServiceAccount service account
+// ServiceAccountRequest service account request
 //
-// swagger:model serviceAccount
-type ServiceAccount struct {
+// swagger:model serviceAccountRequest
+type ServiceAccountRequest struct {
 
 	// policy to be applied to the Service Account if any
 	Policy string `json:"policy,omitempty"`
 }
 
-// Validate validates this service account
-func (m *ServiceAccount) Validate(formats strfmt.Registry) error {
+// Validate validates this service account request
+func (m *ServiceAccountRequest) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *ServiceAccount) MarshalBinary() ([]byte, error) {
+func (m *ServiceAccountRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -50,8 +50,8 @@ func (m *ServiceAccount) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *ServiceAccount) UnmarshalBinary(b []byte) error {
-	var res ServiceAccount
+func (m *ServiceAccountRequest) UnmarshalBinary(b []byte) error {
+	var res ServiceAccountRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

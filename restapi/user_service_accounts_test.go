@@ -25,15 +25,28 @@ import (
 
 	"github.com/minio/minio/pkg/auth"
 	iampolicy "github.com/minio/minio/pkg/iam/policy"
+	"github.com/minio/minio/pkg/madmin"
 	"github.com/stretchr/testify/assert"
 )
 
 // assigning mock at runtime instead of compile time
 var minioAddServiceAccountMock func(ctx context.Context, policy *iampolicy.Policy) (auth.Credentials, error)
+var minioListServiceAccountsMock func(ctx context.Context) (madmin.ListServiceAccountsResp, error)
+var minioDeleteServiceAccountMock func(ctx context.Context, serviceAccount string) error
 
-// mock function of listUsers()
+// mock function of AddServiceAccount()
 func (ac adminClientMock) addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (auth.Credentials, error) {
 	return minioAddServiceAccountMock(ctx, policy)
+}
+
+// mock function of ListServiceAccounts()
+func (ac adminClientMock) listServiceAccounts(ctx context.Context) (madmin.ListServiceAccountsResp, error) {
+	return minioListServiceAccountsMock(ctx)
+}
+
+// mock function of DeleteServiceAccount()
+func (ac adminClientMock) deleteServiceAccount(ctx context.Context, serviceAccount string) error {
+	return minioDeleteServiceAccountMock(ctx, serviceAccount)
 }
 
 func TestAddServiceAccount(t *testing.T) {
@@ -81,6 +94,64 @@ func TestAddServiceAccount(t *testing.T) {
 	}
 	_, err = createServiceAccount(ctx, client, policyDefinition)
 	if assert.Error(err) {
+		assert.Equal("error", err.Error())
+	}
+}
+
+func TestListServiceAccounts(t *testing.T) {
+	assert := assert.New(t)
+	// mock minIO client
+	client := adminClientMock{}
+	function := "getUserServiceAccounts()"
+
+	// Test-1: getUserServiceAccounts list serviceaccounts for a user
+	ctx := context.Background()
+	mockResponse := madmin.ListServiceAccountsResp{
+		Accounts: []string{"accesskey1", "accesskey2"},
+	}
+	minioListServiceAccountsMock = func(ctx context.Context) (madmin.ListServiceAccountsResp, error) {
+		return mockResponse, nil
+	}
+	serviceAccounts, err := getUserServiceAccounts(ctx, client)
+	if err != nil {
+		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+	}
+	for i, sa := range serviceAccounts {
+		assert.Equal(mockResponse.Accounts[i], sa)
+	}
+
+	// Test-2: getUserServiceAccounts returns an error, handle it properly
+	minioListServiceAccountsMock = func(ctx context.Context) (madmin.ListServiceAccountsResp, error) {
+		return madmin.ListServiceAccountsResp{}, errors.New("error")
+	}
+	_, err = getUserServiceAccounts(ctx, client)
+	if assert.Error(err) {
+		assert.Equal("error", err.Error())
+	}
+}
+
+func TestDeleteServiceAccount(t *testing.T) {
+	assert := assert.New(t)
+	// mock minIO client
+	client := adminClientMock{}
+	function := "deleteServiceAccount()"
+	ctx := context.Background()
+
+	// Test-1: deleteServiceAccount receive a service account to delete
+	testServiceAccount := "accesskeytest"
+	minioDeleteServiceAccountMock = func(ctx context.Context, serviceAccount string) error {
+		return nil
+	}
+	if err := deleteServiceAccount(ctx, client, testServiceAccount); err != nil {
+		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+	}
+
+	// Test-2: if an invalid policy is assigned to the service account, this will raise an error
+	minioDeleteServiceAccountMock = func(ctx context.Context, serviceAccount string) error {
+		return errors.New("error")
+	}
+
+	if err := deleteServiceAccount(ctx, client, testServiceAccount); assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
 }
