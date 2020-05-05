@@ -81,6 +81,7 @@ type MinioAdmin interface {
 	startProfiling(ctx context.Context, profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error)
 	stopProfiling(ctx context.Context) (io.ReadCloser, error)
 	serviceTrace(ctx context.Context, allTrace, errTrace bool) <-chan madmin.ServiceTraceInfo
+	getLogs(ctx context.Context, node string, lineCnt int, logKind string) <-chan madmin.LogInfo
 	// Service Accounts
 	addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (mauth.Credentials, error)
 	listServiceAccounts(ctx context.Context) (madmin.ListServiceAccountsResp, error)
@@ -203,6 +204,11 @@ func (ac adminClient) stopProfiling(ctx context.Context) (io.ReadCloser, error) 
 // implements madmin.ServiceTrace()
 func (ac adminClient) serviceTrace(ctx context.Context, allTrace, errTrace bool) <-chan madmin.ServiceTraceInfo {
 	return ac.client.ServiceTrace(ctx, allTrace, errTrace)
+}
+
+// implements madmin.GetLogs()
+func (ac adminClient) getLogs(ctx context.Context, node string, lineCnt int, logKind string) <-chan madmin.LogInfo {
+	return ac.client.GetLogs(ctx, node, lineCnt, logKind)
 }
 
 // implements madmin.AddServiceAccount()

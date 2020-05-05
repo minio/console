@@ -19,6 +19,7 @@ package restapi
 import (
 	"context"
 	"log"
+	"net"
 	"net/http"
 	"strings"
 	"sync"
@@ -149,6 +150,8 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	switch strings.TrimPrefix(req.URL.Path, wsBasePath) {
 	case "/trace":
 		go wsClient.trace()
+	case "/console":
+		go wsClient.console()
 	default:
 		// path not found
 		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
@@ -204,4 +207,66 @@ func wsReadCheck(ctx context.Context, wg *sync.WaitGroup, conn WSConn) chan erro
 		}
 	}(ch)
 	return ch
+}
+
+// trace serves madmin.ServiceTraceInfo
+// on a Websocket connection.
+func (wsc *wsClient) trace() {
+	defer func() {
+		log.Println("trace stopped")
+		// close connection after return
+		wsc.conn.close()
+	}()
+	log.Println("trace started")
+
+	err := startTraceInfo(wsc.conn, wsc.madmin)
+	// Send Connection Close Message indicating the Status Code
+	// see https://tools.ietf.org/html/rfc6455#page-45
+	if err != nil {
+		// If connection exceeded read deadline send Close
+		// Message Policy Violation code since we don't want
+		// to let the receiver figure out the read deadline.
+		// This is a generic code designed if there is a
+		// need to hide specific details about the policy.
+		if nErr, ok := err.(net.Error); ok && nErr.Timeout() {
+			wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, ""))
+			return
+		}
+		// else, internal server error
+		wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseInternalServerErr, err.Error()))
+		return
+	}
+	// normal closure
+	wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+}
+
+// console serves madmin.GetLogs
+// on a Websocket connection.
+func (wsc *wsClient) console() {
+	defer func() {
+		log.Println("console logs stopped")
+		// close connection after return
+		wsc.conn.close()
+	}()
+	log.Println("console logs started")
+
+	err := startConsoleLog(wsc.conn, wsc.madmin)
+	// Send Connection Close Message indicating the Status Code
+	// see https://tools.ietf.org/html/rfc6455#page-45
+	if err != nil {
+		// If connection exceeded read deadline send Close
+		// Message Policy Violation code since we don't want
+		// to let the receiver figure out the read deadline.
+		// This is a generic code designed if there is a
+		// need to hide specific details about the policy.
+		if nErr, ok := err.(net.Error); ok && nErr.Timeout() {
+			wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, ""))
+			return
+		}
+		// else, internal server error
+		wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseInternalServerErr, err.Error()))
+		return
+	}
+	// normal closure
+	wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 }

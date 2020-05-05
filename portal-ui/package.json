@@ -20,6 +20,7 @@
     "@types/superagent": "^4.1.4",
     "@types/webpack-env": "^1.14.1",
     "@types/websocket": "^1.0.0",
+    "ansi-to-react": "^6.0.5",
     "codemirror": "^5.52.2",
     "history": "^4.10.1",
     "local-storage-fallback": "^4.1.1",
