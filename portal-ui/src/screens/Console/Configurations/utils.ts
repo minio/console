@@ -53,13 +53,11 @@ export const configurationElements: IConfigurationElement[] = [
   { configuration_id: "kms_kes", configuration_label: "KMS KES Configuration" },
   {
     configuration_id: "logger_webhook",
-    configuration_label: "Logger Webhook Configuration",
-    url: "/webhook/logger"
+    configuration_label: "Logger Webhook Configuration"
   },
   {
     configuration_id: "audit_webhook",
-    configuration_label: "Audit Webhook Configuration",
-    url: "/webhook/audit"
+    configuration_label: "Audit Webhook Configuration"
   }
 ];
 
@@ -120,6 +118,20 @@ export const fieldsConfigurations: any = {
       type: "number"
     },
     {
+      name: "watermark_low",
+      required: false,
+      label: "Watermark Low",
+      tooltip: "Watermark Low",
+      type: "number"
+    },
+    {
+      name: "watermark_high",
+      required: false,
+      label: "Watermark High",
+      tooltip: "Watermark High",
+      type: "number"
+    },
+    {
       name: "comment",
       required: false,
       label: "Comment",
@@ -129,12 +141,6 @@ export const fieldsConfigurations: any = {
     }
   ],
   compression: [
-    {
-      name: "minio_compress",
-      required: true,
-      label: "MinIO Compress",
-      type: "on|off"
-    },
     {
       name: "extensions",
       required: false,
@@ -200,16 +206,30 @@ export const fieldsConfigurations: any = {
   ],
   identity_openid: [
     {
+      name: "config_url",
+      required: false,
+      label: "Config URL",
+      tooltip: "Config URL for Client ID configuration",
+      type: "string"
+    },
+    {
       name: "client_id",
       required: false,
       label: "Client ID",
       type: "string"
     },
     {
-      name: "config_url",
+      name: "claim_name",
       required: false,
-      label: "Config URL",
-      tooltip: "Config URL for Client ID configuration",
+      label: "Claim Name",
+      tooltip: "Claim Name",
+      type: "string"
+    },
+    {
+      name: "claim_prefix",
+      required: false,
+      label: "Claim Prefix",
+      tooltip: "Claim Prefix",
       type: "string"
     }
   ],
@@ -294,9 +314,21 @@ export const fieldsConfigurations: any = {
   ],
   policy_opa: [
     {
-      name: "opa_url",
+      name: "url",
       required: true,
       label: "OPA URL",
+      type: "string"
+    },
+    {
+      name: "auth_token",
+      required: true,
+      label: "Auth Token",
+      type: "string"
+    },
+    {
+      name: "policy_opa",
+      required: true,
+      label: "Policy OPA",
       type: "string"
     }
   ],
@@ -304,43 +336,29 @@ export const fieldsConfigurations: any = {
   kms_kes: [],
   logger_webhook: [
     {
-      name: "name",
+      name: "endpoint",
       required: true,
-      label: "Name",
-      tooltip: "Name of the webhook",
+      label: "Endpoint",
       type: "string"
     },
     {
       name: "auth_token",
       required: true,
       label: "Auth Token",
-      type: "string"
-    },
-    {
-      name: "endpoint",
-      required: true,
-      label: "Endpoint",
       type: "string"
     }
   ],
   audit_webhook: [
     {
-      name: "name",
+      name: "endpoint",
       required: true,
-      label: "Name",
-      tooltip: "Name of the webhook",
+      label: "Endpoint",
       type: "string"
     },
     {
       name: "auth_token",
       required: true,
       label: "Auth Token",
-      type: "string"
-    },
-    {
-      name: "endpoint",
-      required: true,
-      label: "Endpoint",
       type: "string"
     }
   ]

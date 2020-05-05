@@ -15,8 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useCallback, useEffect, useState } from "react";
+import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button } from "@material-ui/core";
+import { Button, LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
@@ -64,9 +65,27 @@ const EditConfiguration = ({
   //Local States
   const [valuesObj, setValueObj] = useState<IElementValue[]>([]);
   const [saving, setSaving] = useState<boolean>(false);
-  const [addError, setError] = useState<string>("");
-
+  const [loadingConfig, setLoadingConfig] = useState<boolean>(true);
+  const [errorConfig, setErrorConfig] = useState<string>("");
+  const [configValues, setConfigValues] = useState<IElementValue[]>([]);
   //Effects
+  useEffect(() => {
+    const configId = get(selectedConfiguration, "configuration_id", false);
+
+    if (configId) {
+      api
+        .invoke("GET", `/api/v1/configs/${configId}`)
+        .then(res => {
+          const keyVals = get(res, "key_values", []);
+          setConfigValues(keyVals);
+        })
+        .catch(err => {
+          setLoadingConfig(false);
+          setErrorConfig(err);
+        });
+    }
+    setLoadingConfig(false);
+  }, [selectedConfiguration]);
 
   useEffect(() => {
     if (saving) {
@@ -81,14 +100,14 @@ const EditConfiguration = ({
         )
         .then(res => {
           setSaving(false);
-          setError("");
+          setErrorConfig("");
           serverNeedsRestart(true);
 
           closeModalAndRefresh();
         })
         .catch(err => {
           setSaving(false);
-          setError(err);
+          setErrorConfig(err);
         });
     }
   }, [
@@ -119,14 +138,14 @@ const EditConfiguration = ({
       title={selectedConfiguration.configuration_label}
     >
       <React.Fragment>
-        {addError !== "" && (
+        {errorConfig !== "" && (
           <Grid item xs={12}>
             <Typography
               component="p"
               variant="body1"
               className={classes.errorBlock}
             >
-              {addError}
+              {errorConfig}
             </Typography>
           </Grid>
         )}
@@ -136,6 +155,7 @@ const EditConfiguration = ({
               fieldsConfigurations[selectedConfiguration.configuration_id]
             }
             onChange={onValueChange}
+            defaultVals={configValues}
           />
           <Grid item xs={3} className={classes.buttonContainer}>
             <Button
@@ -148,6 +168,11 @@ const EditConfiguration = ({
               Save
             </Button>
           </Grid>
+          {loadingConfig && (
+            <Grid item xs={12}>
+              <LinearProgress />
+            </Grid>
+          )}
           <Grid item xs={9} />
         </form>
       </React.Fragment>

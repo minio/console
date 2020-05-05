@@ -13,13 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React, {
-  useState,
-  useEffect,
-  createRef,
-  ChangeEvent,
-  useCallback
-} from "react";
+import React, { useState, useEffect, createRef, ChangeEvent } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import get from "lodash/get";
@@ -69,15 +63,19 @@ const CSVMultiSelector = ({
   const bottomList = createRef<HTMLDivElement>();
 
   // Use effect to get the initial values from props
-  useCallback(() => {
-    if (currentElements.length === 1 && currentElements[0] === "") {
-      const elementsSplitted = elements.split(",");
-      if (elementsSplitted[elementsSplitted.length - 1].trim() !== "") {
-        elementsSplitted.push("");
-      }
-      setCurrentElements(elementsSplitted);
+  useEffect(() => {
+    if (
+      currentElements.length === 1 &&
+      currentElements[0] === "" &&
+      elements &&
+      elements !== ""
+    ) {
+      const elementsSplit = elements.split(",");
+      elementsSplit.push("");
+
+      setCurrentElements(elementsSplit);
     }
-  }, [elements, setCurrentElements, currentElements]);
+  }, [elements, currentElements]);
 
   // Use effect to send new values to onChange
   useEffect(() => {
