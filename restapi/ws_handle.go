@@ -109,9 +109,8 @@ func (c wsConn) readMessage() (messageType int, p []byte, err error) {
 //
 // TODO: Enable CORS
 func serveWS(w http.ResponseWriter, req *http.Request) {
-	// authenticate WS connection
-	// TODO: use this claims to create the adminClient
-	_, err := ws.Authenticate(req)
+	// authenticate WS connection with MCS
+	claims, err := ws.Authenticate(req)
 	if err != nil {
 		log.Print("error on ws authentication: ", err)
 		errors.ServeError(w, req, err)
@@ -126,13 +125,9 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// TODO: CHANGE ! to use newMAdminClient once Assume Role is
-	// allowed to do Trace use jwt on ws.
-
-	// Using newSuperMAdminClient in the meantime for sake of functionality
 	// Only start Websocket Interaction after user has been
-	// authenticated.
-	mAdmin, err := newSuperMAdminClient()
+	// authenticated with MinIO
+	mAdmin, err := newAdminFromClaims(claims)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		errors.ServeError(w, req, err)
