@@ -32,7 +32,8 @@ import (
 )
 
 var (
-	errorGeneric = errors.New("an error occurred, please try again")
+	errorGeneric          = errors.New("an error occurred, please try again")
+	errInvalidCredentials = errors.New("invalid Credentials")
 )
 
 func registerLoginHandlers(api *operations.McsAPI) {
@@ -61,35 +62,35 @@ func registerLoginHandlers(api *operations.McsAPI) {
 	})
 }
 
-var errInvalidCredentials = errors.New("invalid minioCredentials")
-
 // login performs a check of minioCredentials against MinIO
 func login(credentials MCSCredentials) (*string, error) {
 	// try to obtain minioCredentials,
 	tokens, err := credentials.Get()
 	if err != nil {
+		log.Println("error authenticating user", err)
 		return nil, errInvalidCredentials
 	}
 	// if we made it here, the minioCredentials work, generate a jwt with claims
 	jwt, err := auth.NewJWTWithClaimsForClient(&tokens, getMinIOServer())
 	if err != nil {
+		log.Println("error authenticating user", err)
 		return nil, errInvalidCredentials
 	}
 	return &jwt, nil
 }
 
-func getConfiguredRegion(client MinioAdmin) string {
+func getConfiguredRegionForLogin(client MinioAdmin) (string, error) {
 	location := ""
 	configuration, err := getConfig(client, "region")
 	if err != nil {
 		log.Println("error obtaining MinIO region:", err)
-		return location
+		return location, errorGeneric
 	}
 	// region is an array of 1 element
 	if len(configuration) > 0 {
 		location = configuration[0].Value
 	}
-	return location
+	return location, nil
 }
 
 // getLoginResponse performs login() and serializes it to the handler's output
@@ -102,16 +103,18 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, error) {
 	adminClient := adminClient{client: mAdmin}
 	// obtain the configured MinIO region
 	// need it for user authentication
-	location := getConfiguredRegion(adminClient)
+	location, err := getConfiguredRegionForLogin(adminClient)
+	if err != nil {
+		return nil, err
+	}
 	creds, err := newMcsCredentials(*lr.AccessKey, *lr.SecretKey, location)
 	if err != nil {
 		log.Println("error login:", err)
-		return nil, err
+		return nil, errInvalidCredentials
 	}
 	credentials := mcsCredentials{minioCredentials: creds}
 	sessionID, err := login(credentials)
 	if err != nil {
-		log.Println("error login:", err)
 		return nil, err
 	}
 	// serialize output
@@ -131,7 +134,8 @@ func getLoginDetailsResponse() (*models.LoginDetails, error) {
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil)
 		if err != nil {
-			return nil, err
+			log.Println("error getting new oauth2 provider client", err)
+			return nil, errorGeneric
 		}
 		// Validate user against IDP
 		identityProvider := &auth.IdentityProvider{Client: oauth2Client}
@@ -147,7 +151,8 @@ func getLoginDetailsResponse() (*models.LoginDetails, error) {
 func loginOauth2Auth(ctx context.Context, provider *auth.IdentityProvider, code, state string) (*oauth2.User, error) {
 	userIdentity, err := provider.VerifyIdentity(ctx, code, state)
 	if err != nil {
-		return nil, err
+		log.Println("error validating user identity against idp:", err)
+		return nil, errorGeneric
 	}
 	return userIdentity, nil
 }
@@ -166,8 +171,7 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 		// Validate user against IDP
 		identity, err := loginOauth2Auth(ctx, identityProvider, *lr.Code, *lr.State)
 		if err != nil {
-			log.Println("error validating user identity against idp:", err)
-			return nil, errorGeneric
+			return nil, err
 		}
 		mAdmin, err := newSuperMAdminClient()
 		if err != nil {
@@ -179,7 +183,10 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 		secretKey := utils.RandomCharString(32)
 		// obtain the configured MinIO region
 		// need it for user authentication
-		location := getConfiguredRegion(adminClient)
+		location, err := getConfiguredRegionForLogin(adminClient)
+		if err != nil {
+			return nil, err
+		}
 		// create user in MinIO
 		if _, err := addUser(ctx, adminClient, &accessKey, &secretKey, []string{}); err != nil {
 			log.Println("error adding user:", err)
@@ -207,8 +214,7 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 		credentials := mcsCredentials{minioCredentials: creds}
 		jwt, err := login(credentials)
 		if err != nil {
-			log.Println("error login:", err)
-			return nil, errorGeneric
+			return nil, err
 		}
 		// serialize output
 		loginResponse := &models.LoginResponse{

@@ -68,6 +68,15 @@ export MCS_MINIO_SERVER=http://localhost:9000
 ./mcs server
 ```
 
+## Connect MCS to a Minio using TLS and a self-signed certificate
+
+```
+...
+export MCS_MINIO_SERVER_TLS_SKIP_VERIFICATION=on
+export MCS_MINIO_SERVER=https://localhost:9000
+./mcs server
+```
+
 You can verify that the apis work by doing the request on `localhost:9090/api/v1/...`
 
 # Contribute to mcs Project
