@@ -49,14 +49,14 @@ func registerLoginHandlers(api *operations.McsAPI) {
 	api.UserAPILoginHandler = user_api.LoginHandlerFunc(func(params user_api.LoginParams) middleware.Responder {
 		loginResponse, err := getLoginResponse(params.Body)
 		if err != nil {
-			return user_api.NewLoginDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return user_api.NewLoginDefault(401).WithPayload(&models.Error{Code: 401, Message: swag.String(err.Error())})
 		}
 		return user_api.NewLoginCreated().WithPayload(loginResponse)
 	})
 	api.UserAPILoginOauth2AuthHandler = user_api.LoginOauth2AuthHandlerFunc(func(params user_api.LoginOauth2AuthParams) middleware.Responder {
 		loginResponse, err := getLoginOauth2AuthResponse(params.Body)
 		if err != nil {
-			return user_api.NewLoginOauth2AuthDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return user_api.NewLoginOauth2AuthDefault(401).WithPayload(&models.Error{Code: 401, Message: swag.String(err.Error())})
 		}
 		return user_api.NewLoginOauth2AuthCreated().WithPayload(loginResponse)
 	})

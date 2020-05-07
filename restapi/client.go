@@ -18,13 +18,15 @@ package restapi
 
 import (
 	"context"
-	"errors"
 	"fmt"
+
+	"errors"
 
 	mc "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/mcs/pkg/auth"
 	xjwt "github.com/minio/mcs/pkg/auth/jwt"
+	"github.com/minio/mcs/pkg/auth/ldap"
 	"github.com/minio/minio-go/v6"
 	"github.com/minio/minio-go/v6/pkg/credentials"
 )
@@ -153,26 +155,43 @@ func (s mcsSTSAssumeRole) IsExpired() bool {
 var STSClient = PrepareSTSClient()
 
 func newMcsCredentials(accessKey, secretKey, location string) (*credentials.Credentials, error) {
-	stsEndpoint := getMinIOServer()
-	if stsEndpoint == "" {
+	mcsEndpoint := getMinIOServer()
+	if mcsEndpoint == "" {
 		return nil, errors.New("STS endpoint cannot be empty")
 	}
 	if accessKey == "" || secretKey == "" {
 		return nil, errors.New("AssumeRole credentials access/secretkey is mandatory")
 	}
-	opts := credentials.STSAssumeRoleOptions{
-		AccessKey:       accessKey,
-		SecretKey:       secretKey,
-		Location:        location,
-		DurationSeconds: xjwt.GetMcsSTSAndJWTDurationInSeconds(),
+
+	// Future authentication methods can be added under this switch statement
+	switch {
+	// LDAP authentication for MCS
+	case ldap.GetLDAPEnabled():
+		{
+			creds, err := auth.GetMcsCredentialsFromLDAP(mcsEndpoint, accessKey, secretKey)
+			if err != nil {
+				return nil, err
+			}
+			return creds, nil
+		}
+	// default authentication for MCS is via STS (Security Token Service) against MinIO
+	default:
+		{
+			opts := credentials.STSAssumeRoleOptions{
+				AccessKey:       accessKey,
+				SecretKey:       secretKey,
+				Location:        location,
+				DurationSeconds: xjwt.GetMcsSTSAndJWTDurationInSeconds(),
+			}
+			stsAssumeRole := &credentials.STSAssumeRole{
+				Client:      STSClient,
+				STSEndpoint: mcsEndpoint,
+				Options:     opts,
+			}
+			mcsSTSWrapper := mcsSTSAssumeRole{stsAssumeRole: stsAssumeRole}
+			return credentials.New(mcsSTSWrapper), nil
+		}
 	}
-	stsAssumeRole := &credentials.STSAssumeRole{
-		Client:      STSClient,
-		STSEndpoint: stsEndpoint,
-		Options:     opts,
-	}
-	mcsSTSWrapper := mcsSTSAssumeRole{stsAssumeRole: stsAssumeRole}
-	return credentials.New(mcsSTSWrapper), nil
 }
 
 // getMcsCredentialsFromJWT returns the *minioCredentials.Credentials associated to the
