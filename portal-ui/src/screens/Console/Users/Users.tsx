@@ -195,23 +195,24 @@ class Users extends React.Component<IUsersProps, IUsersState> {
     } = this.state;
 
     const handleChangePage = (event: unknown, newPage: number) => {
-      this.setState({ page: newPage }, () => {
-        this.fetchRecords();
-      });
+      this.setState({ page: newPage });
     };
 
     const handleChangeRowsPerPage = (
       event: React.ChangeEvent<HTMLInputElement>
     ) => {
       const rPP = parseInt(event.target.value, 10);
-      this.setState({ page: 0, rowsPerPage: rPP }, () => {
-        this.fetchRecords();
-      });
+      this.setState({ page: 0, rowsPerPage: rPP });
     };
 
     const filteredRecords = records.filter(elementItem =>
       elementItem.accessKey.includes(filter)
     );
+
+    const beginRecord = page * rowsPerPage;
+    const endRecords = beginRecord + rowsPerPage;
+
+    const paginatedRecords = filteredRecords.slice(beginRecord, endRecords);
 
     const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
       const targetD = e.target;
@@ -306,7 +307,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
                 )
               }}
               onChange={e => {
-                this.setState({ filter: e.target.value });
+                this.setState({ filter: e.target.value, page: 0 });
               }}
             />
             <Button
@@ -349,13 +350,13 @@ class Users extends React.Component<IUsersProps, IUsersState> {
               onSelect={selectionChanged}
               selectedItems={checkedUsers}
               isLoading={loading}
-              records={filteredRecords}
+              records={paginatedRecords}
               entityName="Users"
               idField="accessKey"
               paginatorConfig={{
                 rowsPerPageOptions: [5, 10, 25],
                 colSpan: 3,
-                count: totalRecords,
+                count: filteredRecords.length,
                 rowsPerPage: rowsPerPage,
                 page: page,
                 SelectProps: {

@@ -28,9 +28,7 @@ interface LogResetMessagesAction {
   type: typeof LOG_RESET_MESSAGES;
 }
 
-export type LogActionTypes =
-  | LogMessageReceivedAction
-  | LogResetMessagesAction;
+export type LogActionTypes = LogMessageReceivedAction | LogResetMessagesAction;
 
 export function logMessageReceived(message: LogMessage) {
   return {
