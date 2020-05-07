@@ -57,7 +57,7 @@ const styles = (theme: Theme) =>
     },
     ansidefault: {
       color: "black"
-    },
+    }
   });
 
 interface ILogs {
@@ -118,7 +118,11 @@ const Logs = ({
   };
 
   // replaces a character of a string with other at a given index
-  const replaceWeirdChar = (origString: string, replaceChar: string, index: number) => {
+  const replaceWeirdChar = (
+    origString: string,
+    replaceChar: string,
+    index: number
+  ) => {
     let firstPart = origString.substr(0, index);
     let lastPart = origString.substr(index + 1);
 
@@ -126,24 +130,19 @@ const Logs = ({
     return newString;
   };
 
-
   const colorify = (str: string) => {
     // matches strings starting like: `[34mEndpoint: [0m`
     const colorRegex = /(\[[0-9]+m)(.*?)(\[0+m)/g;
-    let matches = colorRegex.exec(str)
+    let matches = colorRegex.exec(str);
     if (!isNullOrUndefined(matches)) {
       let start_color = matches[1];
       let text = matches[2];
 
       if (start_color === "[34m") {
-        return <span className={classes.ansiblue}>
-          {text}
-        </span>
+        return <span className={classes.ansiblue}>{text}</span>;
       }
       if (start_color === "[1m") {
-        return <span className={classes.ansidarkblue}>
-          {text}
-        </span>
+        return <span className={classes.ansidarkblue}>{text}</span>;
       }
     }
   };
@@ -154,11 +153,9 @@ const Logs = ({
       if (logElement.api && logElement.api.name) {
         errorElems.push(
           <li key={`api-${logElement.key}`}>
-            <span className={classes.logerror}>
-              API: {logElement.api.name}
-            </span>
+            <span className={classes.logerror}>API: {logElement.api.name}</span>
           </li>
-        )
+        );
       }
       if (logElement.time) {
         errorElems.push(
@@ -167,7 +164,7 @@ const Logs = ({
               Time: {timeFromdate(logElement.time)}
             </span>
           </li>
-        )
+        );
       }
       if (logElement.deploymentid) {
         errorElems.push(
@@ -176,7 +173,7 @@ const Logs = ({
               DeploymentID: {logElement.deploymentid}
             </span>
           </li>
-        )
+        );
       }
       if (logElement.requestID) {
         errorElems.push(
@@ -185,7 +182,7 @@ const Logs = ({
               RequestID: {logElement.requestID}
             </span>
           </li>
-        )
+        );
       }
       if (logElement.remotehost) {
         errorElems.push(
@@ -194,16 +191,14 @@ const Logs = ({
               RemoteHost: {logElement.remotehost}
             </span>
           </li>
-        )
+        );
       }
       if (logElement.host) {
         errorElems.push(
           <li key={`host-${logElement.key}`}>
-            <span className={classes.logerror}>
-              Host: {logElement.host}
-            </span>
+            <span className={classes.logerror}>Host: {logElement.host}</span>
           </li>
-        )
+        );
       }
       if (logElement.userAgent) {
         errorElems.push(
@@ -212,7 +207,7 @@ const Logs = ({
               UserAgent: {logElement.userAgent}
             </span>
           </li>
-        )
+        );
       }
       if (logElement.error.message) {
         errorElems.push(
@@ -221,7 +216,7 @@ const Logs = ({
               Error: {logElement.error.message}
             </span>
           </li>
-        )
+        );
       }
       if (logElement.error.source) {
         // for all sources add padding
@@ -232,11 +227,11 @@ const Logs = ({
                 {logElement.error.source[s]}
               </span>
             </li>
-          )
+          );
         }
       }
     }
-    return errorElems
+    return errorElems;
   };
 
   const renderLog = (logElement: LogMessage) => {
@@ -255,34 +250,36 @@ const Logs = ({
     const colorRegex = /(\[[0-9]+m)(.*?)(\[0+m)/g;
     let m = colorRegex.exec(logMessage);
 
-    // get substring if there was a match for to split what 
-    // is going to be colored and what not, here we add color 
+    // get substring if there was a match for to split what
+    // is going to be colored and what not, here we add color
     // only to the first match.
     let substr = logMessage.slice(colorRegex.lastIndex);
     substr = substr.replace(regexInit, "");
 
-    // strClean used for corner case when string has unicode 32 for 
+    // strClean used for corner case when string has unicode 32 for
     // space instead of normal space.
     let strClean = logMessage.replace(regexInit, "");
     // if starts with multiple spaces add padding
     if (strClean.startsWith("   ") || strClean.codePointAt(1) === 32) {
-      return <li key={logElement.key}>
-        <span className={classes.tab}>
-          {colorify(logMessage)} {substr}
-        </span>
-      </li>
+      return (
+        <li key={logElement.key}>
+          <span className={classes.tab}>
+            {colorify(logMessage)} {substr}
+          </span>
+        </li>
+      );
     } else if (!isNullOrUndefined(logElement.error)) {
       // list error message and all sources and error elems
-      return (
-        renderError(logElement)
-      )
+      return renderError(logElement);
     } else {
       // for all remaining set default class
-      return <li key={logElement.key}>
-        <span className={classes.ansidefault}>
-          {colorify(logMessage)} {substr}
-        </span>
-      </li>
+      return (
+        <li key={logElement.key}>
+          <span className={classes.ansidefault}>
+            {colorify(logMessage)} {substr}
+          </span>
+        </li>
+      );
     }
   };
 
@@ -292,7 +289,7 @@ const Logs = ({
       <div className={classes.logList}>
         <ul>
           {messages.map(m => {
-            return renderLog(m)
+            return renderLog(m);
           })}
         </ul>
       </div>
@@ -310,6 +307,3 @@ const connector = connect(mapState, {
 });
 
 export default connector(withStyles(styles)(Logs));
-
-
-
