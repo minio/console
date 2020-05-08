@@ -16,6 +16,7 @@
 
 import storage from "local-storage-fallback";
 import request from "superagent";
+import get from "lodash/get";
 
 export class API {
   invoke(method: string, url: string, data?: object) {
@@ -36,10 +37,16 @@ export class API {
 
   onError(err: any) {
     if (err.status) {
-      const errMessage: string =
-        (err.response.body && err.response.body.error) ||
-        err.status.toString(10);
-      return Promise.reject(errMessage);
+      const errMessage = get(
+        err.response,
+        "body.message",
+        err.status.toString()
+      );
+
+      const throwMessage =
+        errMessage.charAt(0).toUpperCase() + errMessage.slice(1);
+
+      return Promise.reject(throwMessage);
     } else {
       return Promise.reject("Unknown error");
     }
