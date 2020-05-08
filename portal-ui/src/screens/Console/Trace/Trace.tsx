@@ -22,6 +22,7 @@ import { traceMessageReceived, traceResetMessages } from "./actions";
 import { TraceMessage } from "./types";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { niceBytes } from "../../../common/utils";
+import { wsProtocol } from "../../../utils/wsUtils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -61,7 +62,8 @@ const Trace = ({
     const isDev = process.env.NODE_ENV === "development";
     const port = isDev ? "9090" : url.port;
 
-    const c = new W3CWebSocket(`ws://${url.hostname}:${port}/ws/trace`);
+    const wsProt = wsProtocol(url.protocol);
+    const c = new W3CWebSocket(`${wsProt}://${url.hostname}:${port}/ws/trace`);
 
     let interval: any | null = null;
     if (c !== null) {
