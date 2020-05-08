@@ -27,7 +27,7 @@ import (
 	"github.com/minio/mcs/models"
 	"github.com/minio/mcs/pkg/auth"
 
-	assetfs "github.com/elazarl/go-bindata-assetfs"
+	assetFS "github.com/elazarl/go-bindata-assetfs"
 
 	portalUI "github.com/minio/mcs/portal-ui"
 
@@ -167,11 +167,44 @@ func FileServerMiddleware(next http.Handler) http.Handler {
 		case strings.HasPrefix(r.URL.Path, "/api"):
 			next.ServeHTTP(w, r)
 		default:
-			http.FileServer(&assetfs.AssetFS{
+			assets := assetFS.AssetFS{
 				Asset:     portalUI.Asset,
 				AssetDir:  portalUI.AssetDir,
 				AssetInfo: portalUI.AssetInfo,
-				Prefix:    "build"}).ServeHTTP(w, r)
+				Prefix:    "build"}
+			wrapHandlerSinglePageApplication(http.FileServer(&assets)).ServeHTTP(w, r)
+
 		}
 	})
+}
+
+type notFoundRedirectRespWr struct {
+	http.ResponseWriter // We embed http.ResponseWriter
+	status              int
+}
+
+func (w *notFoundRedirectRespWr) WriteHeader(status int) {
+	w.status = status // Store the status for our own use
+	if status != http.StatusNotFound {
+		w.ResponseWriter.WriteHeader(status)
+	}
+}
+
+func (w *notFoundRedirectRespWr) Write(p []byte) (int, error) {
+	if w.status != http.StatusNotFound {
+		return w.ResponseWriter.Write(p)
+	}
+	return len(p), nil // Lie that we successfully wrote it
+}
+
+// wrapHandlerSinglePageApplication handles a http.FileServer returning a 404 and overrides it with index.html
+func wrapHandlerSinglePageApplication(h http.Handler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		nfrw := &notFoundRedirectRespWr{ResponseWriter: w}
+		h.ServeHTTP(nfrw, r)
+		if nfrw.status == 404 {
+			log.Printf("Redirecting %s to index.html.", r.RequestURI)
+			http.Redirect(w, r, "/index.html", http.StatusFound)
+		}
+	}
 }

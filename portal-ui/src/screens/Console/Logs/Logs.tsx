@@ -24,6 +24,7 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { niceBytes } from "../../../common/utils";
 import Ansi from "ansi-to-react";
 import { isNull, isNullOrUndefined } from "util";
+import { wsProtocol } from "../../../utils/wsUtils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -79,7 +80,11 @@ const Logs = ({
     const isDev = process.env.NODE_ENV === "development";
     const port = isDev ? "9090" : url.port;
 
-    const c = new W3CWebSocket(`ws://${url.hostname}:${port}/ws/console`);
+    const wsProt = wsProtocol(url.protocol);
+
+    const c = new W3CWebSocket(
+      `${wsProt}://${url.hostname}:${port}/ws/console`
+    );
 
     let interval: any | null = null;
     if (c !== null) {
