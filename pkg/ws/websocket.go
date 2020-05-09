@@ -22,13 +22,14 @@ import (
 	"strings"
 
 	"github.com/go-openapi/errors"
-	"github.com/minio/mcs/pkg/auth"
+	"github.com/go-openapi/swag"
 )
 
-// Authenticate validates websocket header and returns mcs jwt claims
+// GetTokenFromRequest returns a token from a http Request
+// either defined on a cookie `token` or on Authorization header.
 //
 // Authorization Header needs to be like "Authorization Bearer <jwt_token>"
-func Authenticate(r *http.Request) (*auth.DecryptedClaims, error) {
+func GetTokenFromRequest(r *http.Request) (*string, error) {
 	// Get Auth token
 	var reqToken string
 
@@ -46,11 +47,5 @@ func Authenticate(r *http.Request) (*auth.DecryptedClaims, error) {
 	} else {
 		reqToken = strings.TrimSpace(tokenCookie.Value)
 	}
-
-	// Perform authentication before upgrading to a Websocket Connection
-	claims, err := auth.JWTAuthenticate(reqToken)
-	if err != nil {
-		return nil, errors.New(http.StatusUnauthorized, err.Error())
-	}
-	return claims, nil
+	return swag.String(reqToken), nil
 }

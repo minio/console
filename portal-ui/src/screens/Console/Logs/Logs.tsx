@@ -15,15 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { useEffect } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import storage from "local-storage-fallback";
 import { AppState } from "../../../store";
 import { connect } from "react-redux";
 import { logMessageReceived, logResetMessages } from "./actions";
 import { LogMessage } from "./types";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { niceBytes } from "../../../common/utils";
-import Ansi from "ansi-to-react";
-import { isNull, isNullOrUndefined } from "util";
+import { timeFromDate } from "../../../common/utils";
+import { isNullOrUndefined } from "util";
 import { wsProtocol } from "../../../utils/wsUtils";
 
 const styles = (theme: Theme) =>
@@ -111,14 +109,6 @@ const Logs = ({
     }
   }, [logMessageReceived]);
 
-  const timeFromdate = (d: Date) => {
-    let h = d.getHours() < 10 ? `0${d.getHours()}` : `${d.getHours()}`;
-    let m = d.getMinutes() < 10 ? `0${d.getMinutes()}` : `${d.getMinutes()}`;
-    let s = d.getSeconds() < 10 ? `0${d.getSeconds()}` : `${d.getSeconds()}`;
-
-    return `${h}:${m}:${s}:${d.getMilliseconds()}`;
-  };
-
   // replaces a character of a string with other at a given index
   const replaceWeirdChar = (
     origString: string,
@@ -146,7 +136,7 @@ const Logs = ({
         errorElems.push(
           <li key={`time-${logElement.key}`}>
             <span className={classes.logerror}>
-              Time: {timeFromdate(logElement.time)}
+              Time: {timeFromDate(logElement.time)}
             </span>
           </li>
         );

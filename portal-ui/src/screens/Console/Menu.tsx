@@ -18,6 +18,7 @@ import React from "react";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import WebAssetIcon from "@material-ui/icons/WebAsset";
+import CenterFocusWeakIcon from '@material-ui/icons/CenterFocusWeak';
 import ListItemText from "@material-ui/core/ListItemText";
 import { NavLink } from "react-router-dom";
 import { Divider, Typography, withStyles } from "@material-ui/core";
@@ -131,6 +132,12 @@ class Menu extends React.Component<MenuProps> {
               <BucketsIcon />
             </ListItemIcon>
             <ListItemText primary="Buckets" />
+          </ListItem>
+          <ListItem button component={NavLink} to="/watch">
+            <ListItemIcon>
+              <CenterFocusWeakIcon />
+            </ListItemIcon>
+            <ListItemText primary="Watch" />
           </ListItem>
           <Divider />
           <ListItem component={Typography}>Admin</ListItem>

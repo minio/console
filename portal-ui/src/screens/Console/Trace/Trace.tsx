@@ -15,13 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { useEffect } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import storage from "local-storage-fallback";
 import { AppState } from "../../../store";
 import { connect } from "react-redux";
 import { traceMessageReceived, traceResetMessages } from "./actions";
 import { TraceMessage } from "./types";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { niceBytes } from "../../../common/utils";
+import { niceBytes, timeFromDate } from "../../../common/utils";
 import { wsProtocol } from "../../../utils/wsUtils";
 
 const styles = (theme: Theme) =>
@@ -92,14 +91,6 @@ const Trace = ({
     }
   }, [traceMessageReceived]);
 
-  const timeFromdate = (d: Date) => {
-    let h = d.getHours() < 10 ? `0${d.getHours()}` : `${d.getHours()}`;
-    let m = d.getMinutes() < 10 ? `0${d.getMinutes()}` : `${d.getMinutes()}`;
-    let s = d.getSeconds() < 10 ? `0${d.getSeconds()}` : `${d.getSeconds()}`;
-
-    return `${h}:${m}:${s}:${d.getMilliseconds()}`;
-  };
-
   return (
     <div>
       <h1>Trace</h1>
@@ -108,7 +99,7 @@ const Trace = ({
           {messages.map(m => {
             return (
               <li key={m.key}>
-                {timeFromdate(m.time)} - {m.api}[{m.statusCode} {m.statusMsg}]{" "}
+                {timeFromDate(m.time)} - {m.api}[{m.statusCode} {m.statusMsg}]{" "}
                 {m.api} {m.host} {m.client} {m.callStats.duration} ↑{" "}
                 {niceBytes(m.callStats.rx + "")} ↓{" "}
                 {niceBytes(m.callStats.tx + "")}

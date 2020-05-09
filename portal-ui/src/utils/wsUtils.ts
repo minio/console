@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 export const wsProtocol = (protocol: string): string => {
   let wsProtocol = "ws";
-  if (protocol == "https:") {
+  if (protocol === "https:") {
     wsProtocol = "wss";
   }
   return wsProtocol;
