@@ -44,7 +44,9 @@ func NewAdminClient(url, accessKey, secretKey string) (*madmin.AdminClient, *pro
 		AppName:     appName,
 		AppVersion:  McsVersion,
 		AppComments: []string{appName, runtime.GOOS, runtime.GOARCH},
+		Insecure:    false,
 	})
+	s3Client.SetCustomTransport(STSClient.Transport)
 	if err != nil {
 		return nil, err.Trace(url)
 	}
@@ -240,13 +242,15 @@ func newMAdminClient(jwt string) (*madmin.AdminClient, error) {
 
 // newAdminFromClaims creates a minio admin from Decrypted claims using Assume role credentials
 func newAdminFromClaims(claims *auth.DecryptedClaims) (*madmin.AdminClient, error) {
+	tlsEnabled := getMinIOEndpointIsSecure()
 	adminClient, err := madmin.NewWithOptions(getMinIOEndpoint(), &madmin.Options{
 		Creds:  credentials.NewStaticV4(claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken),
-		Secure: getMinIOEndpointIsSecure(),
+		Secure: tlsEnabled,
 	})
 	if err != nil {
 		return nil, err
 	}
+	adminClient.SetCustomTransport(STSClient.Transport)
 	return adminClient, nil
 }
 

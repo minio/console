@@ -18,15 +18,16 @@ package restapi
 
 const (
 	// consts for common configuration
-	McsVersion        = `0.1.0`
-	McsAccessKey      = "MCS_ACCESS_KEY"
-	McsSecretKey      = "MCS_SECRET_KEY"
-	McsMinIOServer    = "MCS_MINIO_SERVER"
-	McsProductionMode = "MCS_PRODUCTION_MODE"
-	McsHostname       = "MCS_HOSTNAME"
-	McsPort           = "MCS_PORT"
-	McsTLSHostname    = "MCS_TLS_HOSTNAME"
-	McsTLSPort        = "MCS_TLS_PORT"
+	McsVersion               = `0.1.0`
+	McsAccessKey             = "MCS_ACCESS_KEY"
+	McsSecretKey             = "MCS_SECRET_KEY"
+	McsMinIOServer           = "MCS_MINIO_SERVER"
+	McsMinIOServerTLSRootCAs = "MCS_MINIO_SERVER_TLS_ROOT_CAS"
+	McsProductionMode        = "MCS_PRODUCTION_MODE"
+	McsHostname              = "MCS_HOSTNAME"
+	McsPort                  = "MCS_PORT"
+	McsTLSHostname           = "MCS_TLS_HOSTNAME"
+	McsTLSPort               = "MCS_TLS_PORT"
 
 	// consts for Secure middleware
 	McsSecureAllowedHosts                    = "MCS_SECURE_ALLOWED_HOSTS"

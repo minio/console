@@ -18,6 +18,7 @@ package restapi
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	mc "github.com/minio/mc/cmd"
@@ -133,13 +134,45 @@ func (c mcsCredentials) Expire() {
 	c.minioCredentials.Expire()
 }
 
+// mcsSTSAssumeRole it's a STSAssumeRole wrapper, in general
+// there's no need to use this struct anywhere else in the project, it's only required
+// for passing a custom *http.Client to *credentials.STSAssumeRole
+type mcsSTSAssumeRole struct {
+	stsAssumeRole *credentials.STSAssumeRole
+}
+
+func (s mcsSTSAssumeRole) Retrieve() (credentials.Value, error) {
+	return s.stsAssumeRole.Retrieve()
+}
+
+func (s mcsSTSAssumeRole) IsExpired() bool {
+	return s.stsAssumeRole.IsExpired()
+}
+
+// STSClient contains http.client configuration need it by STSAssumeRole
+var STSClient = PrepareSTSClient()
+
 func newMcsCredentials(accessKey, secretKey, location string) (*credentials.Credentials, error) {
-	return credentials.NewSTSAssumeRole(getMinIOServer(), credentials.STSAssumeRoleOptions{
+	stsEndpoint := getMinIOServer()
+	if stsEndpoint == "" {
+		return nil, errors.New("STS endpoint cannot be empty")
+	}
+	if accessKey == "" || secretKey == "" {
+		return nil, errors.New("AssumeRole credentials access/secretkey is mandatory")
+	}
+	opts := credentials.STSAssumeRoleOptions{
 		AccessKey:       accessKey,
 		SecretKey:       secretKey,
 		Location:        location,
 		DurationSeconds: xjwt.GetMcsSTSAndJWTDurationInSeconds(),
-	})
+	}
+	stsAssumeRole := &credentials.STSAssumeRole{
+		Client:      STSClient,
+		STSEndpoint: stsEndpoint,
+		Options:     opts,
+	}
+	mcsSTSWrapper := mcsSTSAssumeRole{stsAssumeRole: stsAssumeRole}
+	return credentials.New(mcsSTSWrapper), nil
 }
 
 // getMcsCredentialsFromJWT returns the *minioCredentials.Credentials associated to the
@@ -160,14 +193,15 @@ func newMinioClient(jwt string) (*minio.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	adminClient, err := minio.NewWithOptions(getMinIOEndpoint(), &minio.Options{
+	minioClient, err := minio.NewWithOptions(getMinIOEndpoint(), &minio.Options{
 		Creds:  creds,
 		Secure: getMinIOEndpointIsSecure(),
 	})
 	if err != nil {
 		return nil, err
 	}
-	return adminClient, nil
+	minioClient.SetCustomTransport(STSClient.Transport)
+	return minioClient, nil
 }
 
 // newS3BucketClient creates a new mc S3Client to talk to the server based on a bucket

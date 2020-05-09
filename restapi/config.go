@@ -48,7 +48,17 @@ func getSecretKey() string {
 }
 
 func getMinIOServer() string {
-	return env.Get(McsMinIOServer, "http://localhost:9000")
+	return strings.TrimSpace(env.Get(McsMinIOServer, "http://localhost:9000"))
+}
+
+// If MCS_MINIO_SERVER_TLS_ROOT_CAS is true mcs will load a list of certificates into the
+// http.client rootCAs store, this is useful for testing or when working with self-signed certificates
+func getMinioServerTLSRootCAs() []string {
+	caCertFileNames := strings.TrimSpace(env.Get(McsMinIOServerTLSRootCAs, ""))
+	if caCertFileNames == "" {
+		return []string{}
+	}
+	return strings.Split(caCertFileNames, ",")
 }
 
 func getMinIOEndpoint() string {
@@ -67,7 +77,7 @@ func getMinIOEndpointIsSecure() bool {
 	if strings.Contains(server, "://") {
 		parts := strings.Split(server, "://")
 		if len(parts) > 1 {
-			if parts[1] == "https" {
+			if parts[0] == "https" {
 				return true
 			}
 		}

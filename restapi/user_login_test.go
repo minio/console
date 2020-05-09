@@ -100,7 +100,7 @@ func TestLoginOauth2Auth(t *testing.T) {
 		return nil, errors.New("error")
 	}
 	if _, err := loginOauth2Auth(ctx, identityProvider, mockCode, mockState); funcAssert.Error(err) {
-		funcAssert.Equal("error", err.Error())
+		funcAssert.Equal("an error occurred, please try again", err.Error())
 	}
 }
 
@@ -189,8 +189,8 @@ func Test_getConfiguredRegion(t *testing.T) {
 	for _, tt := range tests {
 		tt.mock()
 		t.Run(tt.name, func(t *testing.T) {
-			if got := getConfiguredRegion(tt.args.client); got != tt.want {
-				t.Errorf("getConfiguredRegion() = %v, want %v", got, tt.want)
+			if got, _ := getConfiguredRegionForLogin(tt.args.client); got != tt.want {
+				t.Errorf("getConfiguredRegionForLogin() = %v, want %v", got, tt.want)
 			}
 		})
 	}
