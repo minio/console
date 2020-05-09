@@ -228,21 +228,26 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
 
     return (
       <React.Fragment>
-        <AddEvent
-          open={addScreenOpen}
-          selectedBucket={bucketName}
-          closeModalAndRefresh={() => {
-            this.setState({ addScreenOpen: false });
-            this.fetchEvents();
-          }}
-        />
-        <SetAccessPolicy
-          bucketName={bucketName}
-          open={setAccessPolicyScreenOpen}
-          closeModalAndRefresh={() => {
-            this.closeAddModalAndRefresh();
-          }}
-        />
+        {addScreenOpen && (
+          <AddEvent
+            open={addScreenOpen}
+            selectedBucket={bucketName}
+            closeModalAndRefresh={() => {
+              this.setState({ addScreenOpen: false });
+              this.fetchEvents();
+            }}
+          />
+        )}
+        {setAccessPolicyScreenOpen && (
+          <SetAccessPolicy
+            bucketName={bucketName}
+            open={setAccessPolicyScreenOpen}
+            closeModalAndRefresh={() => {
+              this.closeAddModalAndRefresh();
+            }}
+          />
+        )}
+
         <Grid container>
           <Grid item xs={12}>
             <Typography variant="h6">

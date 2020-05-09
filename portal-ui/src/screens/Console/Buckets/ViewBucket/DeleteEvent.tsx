@@ -14,8 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import React from "react";
+import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import get from "lodash/get";
 import {
   Button,
   Dialog,
@@ -69,12 +70,17 @@ class DeleteEvent extends React.Component<
     }
 
     this.setState({ deleteLoading: true }, () => {
+      const events = get(bucketEvent, "events", []);
+      const prefix = get(bucketEvent, "prefix", "");
+      const suffix = get(bucketEvent, "suffix", "");
       api
         .invoke(
           "DELETE",
-          `/api/v1/buckets/${selectedBucket}/events/${bucketEvent.id}`,
+          `/api/v1/buckets/${selectedBucket}/events/${bucketEvent.arn}`,
           {
-            name: selectedBucket
+            events,
+            prefix,
+            suffix
           }
         )
         .then((res: BucketList) => {
