@@ -27,6 +27,7 @@ import TableBody from "@material-ui/core/TableBody";
 import Checkbox from "@material-ui/core/Checkbox";
 import Table from "@material-ui/core/Table";
 import { ArnList } from "../types";
+import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
@@ -46,7 +47,8 @@ const styles = (theme: Theme) =>
     },
     buttonContainer: {
       textAlign: "right"
-    }
+    },
+    ...modalBasic
   });
 
 interface IAddEventProps {
@@ -204,89 +206,91 @@ class AddEvent extends React.Component<IAddEventProps, IAddEventState> {
           }}
         >
           <Grid container>
-            {addError !== "" && (
+            <Grid item xs={12} className={classes.formScrollable}>
+              {addError !== "" && (
+                <Grid item xs={12}>
+                  <Typography
+                    component="p"
+                    variant="body1"
+                    className={classes.errorBlock}
+                  >
+                    {addError}
+                  </Typography>
+                </Grid>
+              )}
               <Grid item xs={12}>
-                <Typography
-                  component="p"
-                  variant="body1"
-                  className={classes.errorBlock}
-                >
-                  {addError}
-                </Typography>
+                <SelectWrapper
+                  onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                    this.setState({ arn: e.target.value as string });
+                  }}
+                  id="select-access-policy"
+                  name="select-access-policy"
+                  label={"ARN"}
+                  value={arn}
+                  options={arnValues}
+                />
               </Grid>
-            )}
-            <Grid item xs={12}>
-              <SelectWrapper
-                onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                  this.setState({ arn: e.target.value as string });
-                }}
-                id="select-access-policy"
-                name="select-access-policy"
-                label={"ARN"}
-                value={arn}
-                options={arnValues}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Table size="medium">
-                <TableHead className={classes.minTableHeader}>
-                  <TableRow>
-                    <TableCell>Select</TableCell>
-                    <TableCell>Event</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {events.map(row => (
-                    <TableRow
-                      key={`group-${row.value}`}
-                      onClick={event => handleClick(event, row.value)}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          value={row.value}
-                          color="primary"
-                          inputProps={{
-                            "aria-label": "secondary checkbox"
-                          }}
-                          onChange={event => handleClick(event, row.value)}
-                          checked={selectedEvents.includes(row.value)}
-                        />
-                      </TableCell>
-                      <TableCell className={classes.wrapCell}>
-                        {row.label}
-                      </TableCell>
+              <Grid item xs={12}>
+                <Table size="medium">
+                  <TableHead className={classes.minTableHeader}>
+                    <TableRow>
+                      <TableCell>Select</TableCell>
+                      <TableCell>Event</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Grid>
-            <Grid item xs={12}>
-              <br />
-            </Grid>
-            <Grid item xs={12}>
-              <InputBoxWrapper
-                id="prefix-input"
-                name="prefix-input"
-                label="Prefix"
-                value={prefix}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  this.setState({ prefix: e.target.value });
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <InputBoxWrapper
-                id="suffix-input"
-                name="suffix-input"
-                label="Suffix"
-                value={suffix}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  this.setState({ suffix: e.target.value });
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <br />
+                  </TableHead>
+                  <TableBody>
+                    {events.map(row => (
+                      <TableRow
+                        key={`group-${row.value}`}
+                        onClick={event => handleClick(event, row.value)}
+                      >
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            value={row.value}
+                            color="primary"
+                            inputProps={{
+                              "aria-label": "secondary checkbox"
+                            }}
+                            onChange={event => handleClick(event, row.value)}
+                            checked={selectedEvents.includes(row.value)}
+                          />
+                        </TableCell>
+                        <TableCell className={classes.wrapCell}>
+                          {row.label}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Grid>
+              <Grid item xs={12}>
+                <br />
+              </Grid>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="prefix-input"
+                  name="prefix-input"
+                  label="Prefix"
+                  value={prefix}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    this.setState({ prefix: e.target.value });
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="suffix-input"
+                  name="suffix-input"
+                  label="Suffix"
+                  value={suffix}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    this.setState({ suffix: e.target.value });
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <br />
+              </Grid>
             </Grid>
             <Grid item xs={12} className={classes.buttonContainer}>
               <Button

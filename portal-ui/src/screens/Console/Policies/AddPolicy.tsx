@@ -24,6 +24,7 @@ import api from "../../../common/api";
 import "codemirror/lib/codemirror.css";
 import "codemirror/theme/material.css";
 import { Policy } from "./types";
+import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 
@@ -43,7 +44,8 @@ const styles = (theme: Theme) =>
     },
     buttonContainer: {
       textAlign: "right"
-    }
+    },
+    ...modalBasic
   });
 
 interface IAddPolicyProps {
@@ -131,51 +133,50 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
           }}
         >
           <Grid container>
-            {addError !== "" && (
+            <Grid item xs={12} className={classes.formScrollable}>
+              {addError !== "" && (
+                <Grid item xs={12}>
+                  <Typography
+                    component="p"
+                    variant="body1"
+                    className={classes.errorBlock}
+                  >
+                    {addError}
+                  </Typography>
+                </Grid>
+              )}
               <Grid item xs={12}>
-                <Typography
-                  component="p"
-                  variant="body1"
-                  className={classes.errorBlock}
-                >
-                  {addError}
-                </Typography>
+                <InputBoxWrapper
+                  id="policy-name"
+                  name="policy-name"
+                  label="Policy Name"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    this.setState({ policyName: e.target.value });
+                  }}
+                  value={policyName}
+                  disabled={!!policyEdit}
+                />
               </Grid>
-            )}
-            <Grid item xs={12}>
-              <InputBoxWrapper
-                id="policy-name"
-                name="policy-name"
-                label="Policy Name"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  this.setState({ policyName: e.target.value });
-                }}
-                value={policyName}
-                disabled={!!policyEdit}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <br />
-            </Grid>
-            <Grid item xs={12}>
-              <CodeMirror
-                className={classes.codeMirror}
-                value={
-                  policyEdit
-                    ? JSON.stringify(JSON.parse(policyEdit.policy), null, 4)
-                    : ""
-                }
-                options={{
-                  mode: "javascript",
-                  lineNumbers: true
-                }}
-                onChange={(editor, data, value) => {
-                  this.setState({ policyDefinition: value });
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <br />
+              <Grid item xs={12}>
+                <br />
+              </Grid>
+              <Grid item xs={12}>
+                <CodeMirror
+                  className={classes.codeMirror}
+                  value={
+                    policyEdit
+                      ? JSON.stringify(JSON.parse(policyEdit.policy), null, 4)
+                      : ""
+                  }
+                  options={{
+                    mode: "javascript",
+                    lineNumbers: true
+                  }}
+                  onChange={(editor, data, value) => {
+                    this.setState({ policyDefinition: value });
+                  }}
+                />
+              </Grid>
             </Grid>
             {!policyEdit && (
               <Grid item xs={12} className={classes.buttonContainer}>

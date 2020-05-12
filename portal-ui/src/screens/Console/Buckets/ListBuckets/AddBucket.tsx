@@ -19,6 +19,7 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -30,7 +31,8 @@ const styles = (theme: Theme) =>
     },
     buttonContainer: {
       textAlign: "right"
-    }
+    },
+    ...modalBasic
   });
 
 interface IAddBucketProps {
@@ -106,31 +108,29 @@ class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
           }}
         >
           <Grid container>
-            {addError !== "" && (
+            <Grid item xs={12} className={classes.formScrollable}>
+              {addError !== "" && (
+                <Grid item xs={12}>
+                  <Typography
+                    component="p"
+                    variant="body1"
+                    className={classes.errorBlock}
+                  >
+                    {addError}
+                  </Typography>
+                </Grid>
+              )}
               <Grid item xs={12}>
-                <Typography
-                  component="p"
-                  variant="body1"
-                  className={classes.errorBlock}
-                >
-                  {addError}
-                </Typography>
+                <InputBoxWrapper
+                  id="bucket-name"
+                  name="bucket-name"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    this.setState({ bucketName: e.target.value });
+                  }}
+                  label="Bucket Name"
+                  value={bucketName}
+                />
               </Grid>
-            )}
-            <Grid item xs={12}>
-              <InputBoxWrapper
-                id="bucket-name"
-                name="bucket-name"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  this.setState({ bucketName: e.target.value });
-                }}
-                label="Bucket Name"
-                value={bucketName}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <br />
-              <br />
             </Grid>
             <Grid item xs={12} className={classes.buttonContainer}>
               <Button
