@@ -18,6 +18,7 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
@@ -26,7 +27,8 @@ const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
       color: "red"
-    }
+    },
+    ...modalBasic
   });
 
 interface ISetAccessPolicyProps {
@@ -105,34 +107,33 @@ class SetAccessPolicy extends React.Component<
           }}
         >
           <Grid container>
-            {addError !== "" && (
+            <Grid item xs={12} className={classes.formScrollable}>
+              {addError !== "" && (
+                <Grid item xs={12}>
+                  <Typography
+                    component="p"
+                    variant="body1"
+                    className={classes.errorBlock}
+                  >
+                    {addError}
+                  </Typography>
+                </Grid>
+              )}
               <Grid item xs={12}>
-                <Typography
-                  component="p"
-                  variant="body1"
-                  className={classes.errorBlock}
-                >
-                  {addError}
-                </Typography>
+                <SelectWrapper
+                  value={accessPolicy}
+                  label="Access Policy"
+                  id="select-access-policy"
+                  name="select-access-policy"
+                  onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                    this.setState({ accessPolicy: e.target.value as string });
+                  }}
+                  options={[
+                    { value: "PRIVATE", label: "Private" },
+                    { value: "PUBLIC", label: "Public" }
+                  ]}
+                />
               </Grid>
-            )}
-            <Grid item xs={12}>
-              <SelectWrapper
-                value={accessPolicy}
-                label="Access Policy"
-                id="select-access-policy"
-                name="select-access-policy"
-                onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                  this.setState({ accessPolicy: e.target.value as string });
-                }}
-                options={[
-                  { value: "PRIVATE", label: "Private" },
-                  { value: "PUBLIC", label: "Public" }
-                ]}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <br />
             </Grid>
             <Grid item xs={12}>
               <Button

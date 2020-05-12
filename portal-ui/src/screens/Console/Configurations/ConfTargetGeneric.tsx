@@ -17,9 +17,10 @@
 import React, { useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
+import { IElementValue, KVField } from "./types";
+import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import RadioGroupSelector from "../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
-import { IElementValue, KVField } from "./types";
 import CSVMultiSelector from "../Common/FormComponents/CSVMultiSelector/CSVMultiSelector";
 
 interface IConfGenericProps {
@@ -29,7 +30,10 @@ interface IConfGenericProps {
   classes: any;
 }
 
-const styles = (theme: Theme) => createStyles({});
+const styles = (theme: Theme) =>
+  createStyles({
+    ...modalBasic
+  });
 
 // Function to get defined values,
 //we make this because the backed sometimes don't return all the keys when there is an initial configuration
@@ -137,18 +141,14 @@ const ConfTargetGeneric = ({
 
   return (
     <Grid container>
-      {fieldsElements.map((field, item) => (
-        <React.Fragment key={field.name}>
-          <Grid item xs={12}>
-            {fieldDefinition(field, item)}
-          </Grid>
-        </React.Fragment>
-      ))}
-      <Grid item xs={12}>
-        <br />
-      </Grid>
-      <Grid item xs={12}>
-        <br />
+      <Grid xs={12} item className={classes.formScrollable}>
+        {fieldsElements.map((field, item) => (
+          <React.Fragment key={field.name}>
+            <Grid item xs={12}>
+              {fieldDefinition(field, item)}
+            </Grid>
+          </React.Fragment>
+        ))}
       </Grid>
     </Grid>
   );

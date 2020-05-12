@@ -19,6 +19,7 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
+import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import api from "../../../common/api";
 import UsersSelectors from "./UsersSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
@@ -51,7 +52,8 @@ const styles = (theme: Theme) =>
     },
     buttonContainer: {
       textAlign: "right"
-    }
+    },
+    ...modalBasic
   });
 
 const AddGroup = ({
@@ -159,62 +161,61 @@ const AddGroup = ({
     >
       <form noValidate autoComplete="off" onSubmit={setSaving}>
         <Grid container>
-          {addError !== "" && (
-            <Grid item xs={12}>
-              <Typography
-                component="p"
-                variant="body1"
-                className={classes.errorBlock}
-              >
-                {addError}
-              </Typography>
-            </Grid>
-          )}
+          <Grid item xs={12} className={classes.formScrollable}>
+            {addError !== "" && (
+              <Grid item xs={12}>
+                <Typography
+                  component="p"
+                  variant="body1"
+                  className={classes.errorBlock}
+                >
+                  {addError}
+                </Typography>
+              </Grid>
+            )}
 
-          {selectedGroup !== null ? (
-            <React.Fragment>
-              <Grid item xs={12}>
-                <RadioGroupSelector
-                  currentSelection={groupEnabled}
-                  id="group-status"
-                  name="group-status"
-                  label="Status"
-                  onChange={e => {
-                    setGroupEnabled(e.target.value);
-                  }}
-                  selectorOptions={[
-                    { label: "Enabled", value: "enabled" },
-                    { label: "Disabled", value: "disabled" }
-                  ]}
-                />
-              </Grid>
-            </React.Fragment>
-          ) : (
-            <React.Fragment>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="group-name"
-                  name="group-name"
-                  label="Name"
-                  value={groupName}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setGroupName(e.target.value);
-                  }}
-                />
-              </Grid>
-            </React.Fragment>
-          )}
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12}>
-            <UsersSelectors
-              selectedUsers={selectedUsers}
-              setSelectedUsers={setSelectedUsers}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <br />
+            {selectedGroup !== null ? (
+              <React.Fragment>
+                <Grid item xs={12}>
+                  <RadioGroupSelector
+                    currentSelection={groupEnabled}
+                    id="group-status"
+                    name="group-status"
+                    label="Status"
+                    onChange={e => {
+                      setGroupEnabled(e.target.value);
+                    }}
+                    selectorOptions={[
+                      { label: "Enabled", value: "enabled" },
+                      { label: "Disabled", value: "disabled" }
+                    ]}
+                  />
+                </Grid>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <Grid item xs={12}>
+                  <InputBoxWrapper
+                    id="group-name"
+                    name="group-name"
+                    label="Name"
+                    value={groupName}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setGroupName(e.target.value);
+                    }}
+                  />
+                </Grid>
+              </React.Fragment>
+            )}
+            <Grid item xs={12}>
+              <br />
+            </Grid>
+            <Grid item xs={12}>
+              <UsersSelectors
+                selectedUsers={selectedUsers}
+                setSelectedUsers={setSelectedUsers}
+              />
+            </Grid>
           </Grid>
           <Grid item xs={12} className={classes.buttonContainer}>
             <Button

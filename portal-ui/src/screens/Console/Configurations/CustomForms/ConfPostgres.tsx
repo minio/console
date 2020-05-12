@@ -22,13 +22,17 @@ import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBo
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { IElementValue } from "../types";
+import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 
 interface IConfPostgresProps {
   onChange: (newValue: IElementValue[]) => void;
   classes: any;
 }
 
-const styles = (theme: Theme) => createStyles({});
+const styles = (theme: Theme) =>
+  createStyles({
+    ...modalBasic
+  });
 
 const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
   //Local States
@@ -166,7 +170,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
   ]);
 
   return (
-    <Grid container>
+    <Grid container className={classes.formScrollable}>
       <Grid item xs={12}>
         <FormControlLabel
           control={
@@ -206,6 +210,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
             />
           }
           label="Enter Connection String"
+          className={classes.formSlider}
         />
       </Grid>
       {useConnectionString ? (
@@ -366,12 +371,6 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
             setComment(e.target.value);
           }}
         />
-      </Grid>
-      <Grid item xs={12}>
-        <br />
-      </Grid>
-      <Grid item xs={12}>
-        <br />
       </Grid>
     </Grid>
   );

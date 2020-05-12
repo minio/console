@@ -16,20 +16,22 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import get from "lodash/get";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import api from "../../../../common/api";
-import { serverNeedsRestart } from "../../../../actions";
-import { connect } from "react-redux";
 import ConfTargetGeneric from "../ConfTargetGeneric";
+import { serverNeedsRestart } from "../../../../actions";
+import { fieldBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { fieldsConfigurations, removeEmptyFields } from "../utils";
 import { IConfigurationElement, IElementValue } from "../types";
 
 const styles = (theme: Theme) =>
   createStyles({
+    ...fieldBasic,
     errorBlock: {
       color: "red"
     },
@@ -157,12 +159,11 @@ const EditConfiguration = ({
             onChange={onValueChange}
             defaultVals={configValues}
           />
-          <Grid item xs={3} className={classes.buttonContainer}>
+          <Grid item xs={12} className={classes.buttonContainer}>
             <Button
               type="submit"
               variant="contained"
               color="primary"
-              fullWidth
               disabled={saving}
             >
               Save

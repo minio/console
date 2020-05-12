@@ -21,13 +21,17 @@ import Grid from "@material-ui/core/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import { IElementValue } from "../types";
+import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 
 interface IConfMySqlProps {
   onChange: (newValue: IElementValue[]) => void;
   classes: any;
 }
 
-const styles = (theme: Theme) => createStyles({});
+const styles = (theme: Theme) =>
+  createStyles({
+    ...modalBasic
+  });
 
 const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
   //Local States
@@ -101,7 +105,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
   }, [user, dbName, password, port, host, setDsnString, configToDsnString]);
 
   return (
-    <Grid container>
+    <Grid container className={classes.formScrollable}>
       <Grid item xs={12}>
         <FormControlLabel
           control={
@@ -137,6 +141,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
             />
           }
           label="Enter DSN String"
+          className={classes.formSlider}
         />
       </Grid>
       {useDsnString ? (
@@ -278,12 +283,6 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
             setComment(e.target.value);
           }}
         />
-      </Grid>
-      <Grid item xs={12}>
-        <br />
-      </Grid>
-      <Grid item xs={12}>
-        <br />
       </Grid>
     </Grid>
   );

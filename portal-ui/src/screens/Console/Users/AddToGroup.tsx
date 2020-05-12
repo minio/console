@@ -18,6 +18,7 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
+import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import api from "../../../common/api";
 import GroupsSelectors from "./GroupsSelectors";
 import Title from "../../../common/Title";
@@ -43,7 +44,8 @@ const styles = (theme: Theme) =>
     },
     buttonContainer: {
       textAlign: "right"
-    }
+    },
+    ...modalBasic
   });
 
 const AddToGroup = ({
@@ -106,35 +108,34 @@ const AddToGroup = ({
     >
       <form noValidate autoComplete="off" onSubmit={setSaving}>
         <Grid container>
-          {updatingError !== "" && (
-            <Grid item xs={12}>
-              <Typography
-                component="p"
-                variant="body1"
-                className={classes.errorBlock}
-              >
-                {updatingError}
-              </Typography>
-            </Grid>
-          )}
+          <Grid item xs={12} className={classes.formScrollable}>
+            {updatingError !== "" && (
+              <Grid item xs={12}>
+                <Typography
+                  component="p"
+                  variant="body1"
+                  className={classes.errorBlock}
+                >
+                  {updatingError}
+                </Typography>
+              </Grid>
+            )}
 
-          <Grid item xs={12}>
-            <Title>Users to be altered</Title>
-          </Grid>
-          <Grid item xs={12}>
-            {checkedUsers.join(", ")}
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12}>
-            <GroupsSelectors
-              selectedGroups={selectedGroups}
-              setSelectedGroups={setSelectedGroups}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <br />
+            <Grid item xs={12}>
+              <Title>Users to be altered</Title>
+            </Grid>
+            <Grid item xs={12}>
+              {checkedUsers.join(", ")}
+            </Grid>
+            <Grid item xs={12}>
+              <br />
+            </Grid>
+            <Grid item xs={12}>
+              <GroupsSelectors
+                selectedGroups={selectedGroups}
+                setSelectedGroups={setSelectedGroups}
+              />
+            </Grid>
           </Grid>
           <Grid item xs={12} className={classes.buttonContainer}>
             <Button

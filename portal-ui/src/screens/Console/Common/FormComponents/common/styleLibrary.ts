@@ -33,3 +33,14 @@ export const fieldBasic = {
     marginLeft: 5
   }
 };
+
+export const modalBasic = {
+  formScrollable: {
+    maxHeight: "calc(100vh - 300px)" as const,
+    overflowY: "auto" as const,
+    marginBottom: 25
+  },
+  formSlider: {
+    marginLeft: 0
+  }
+};

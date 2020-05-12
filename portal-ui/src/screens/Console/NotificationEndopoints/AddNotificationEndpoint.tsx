@@ -342,14 +342,14 @@ const AddNotificationEndpoint = ({
             </Grid>
           )}
           <form noValidate onSubmit={submitForm}>
-            {srvComponent}
-
-            <Grid item xs={3} className={classes.buttonContainer}>
+            <Grid item xs={12}>
+              {srvComponent}
+            </Grid>
+            <Grid item xs={12} className={classes.buttonContainer}>
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
-                fullWidth
                 disabled={saving}
               >
                 Save

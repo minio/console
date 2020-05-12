@@ -19,8 +19,9 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import api from "../../../common/api";
+import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import { User } from "./types";
+import api from "../../../common/api";
 import GroupsSelectors from "./GroupsSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -39,7 +40,8 @@ const styles = (theme: Theme) =>
     },
     buttonContainer: {
       textAlign: "right"
-    }
+    },
+    ...modalBasic
   });
 
 interface IAddUserContentProps {
@@ -204,68 +206,67 @@ class AddUserContent extends React.Component<
             }}
           >
             <Grid container>
-              {addError !== "" && (
-                <Grid item xs={12}>
-                  <Typography
-                    component="p"
-                    variant="body1"
-                    className={classes.errorBlock}
-                  >
-                    {addError}
-                  </Typography>
-                </Grid>
-              )}
+              <Grid item xs={12} className={classes.formScrollable}>
+                {addError !== "" && (
+                  <Grid item xs={12}>
+                    <Typography
+                      component="p"
+                      variant="body1"
+                      className={classes.errorBlock}
+                    >
+                      {addError}
+                    </Typography>
+                  </Grid>
+                )}
 
-              <InputBoxWrapper
-                id="accesskey-input"
-                name="accesskey-input"
-                label="Access Key"
-                value={accessKey}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  this.setState({ accessKey: e.target.value });
-                }}
-                disabled={selectedUser !== null}
-              />
-
-              {selectedUser !== null ? (
-                <RadioGroupSelector
-                  currentSelection={enabled}
-                  id="user-status"
-                  name="user-status"
-                  label="Status"
-                  onChange={e => {
-                    this.setState({ enabled: e.target.value });
-                  }}
-                  selectorOptions={[
-                    { label: "Enabled", value: "enabled" },
-                    { label: "Disabled", value: "disabled" }
-                  ]}
-                />
-              ) : (
                 <InputBoxWrapper
-                  id="standard-multiline-static"
-                  name="standard-multiline-static"
-                  label="Secret Key"
-                  type="password"
-                  value={secretKey}
+                  id="accesskey-input"
+                  name="accesskey-input"
+                  label="Access Key"
+                  value={accessKey}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    this.setState({ secretKey: e.target.value });
+                    this.setState({ accessKey: e.target.value });
                   }}
-                  autoComplete="current-password"
+                  disabled={selectedUser !== null}
                 />
-              )}
-              <Grid item xs={12}>
-                <GroupsSelectors
-                  selectedGroups={selectedGroups}
-                  setSelectedGroups={(elements: string[]) => {
-                    this.setState({
-                      selectedGroups: elements
-                    });
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <br />
+
+                {selectedUser !== null ? (
+                  <RadioGroupSelector
+                    currentSelection={enabled}
+                    id="user-status"
+                    name="user-status"
+                    label="Status"
+                    onChange={e => {
+                      this.setState({ enabled: e.target.value });
+                    }}
+                    selectorOptions={[
+                      { label: "Enabled", value: "enabled" },
+                      { label: "Disabled", value: "disabled" }
+                    ]}
+                  />
+                ) : (
+                  <InputBoxWrapper
+                    id="standard-multiline-static"
+                    name="standard-multiline-static"
+                    label="Secret Key"
+                    type="password"
+                    value={secretKey}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      this.setState({ secretKey: e.target.value });
+                    }}
+                    autoComplete="current-password"
+                  />
+                )}
+                <Grid item xs={12}>
+                  <GroupsSelectors
+                    selectedGroups={selectedGroups}
+                    setSelectedGroups={(elements: string[]) => {
+                      this.setState({
+                        selectedGroups: elements
+                      });
+                    }}
+                  />
+                </Grid>
               </Grid>
               <Grid item xs={12} className={classes.buttonContainer}>
                 <Button
