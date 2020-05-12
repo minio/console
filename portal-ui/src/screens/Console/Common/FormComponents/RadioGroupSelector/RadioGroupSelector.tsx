@@ -25,7 +25,7 @@ import {
   withStyles,
   makeStyles
 } from "@material-ui/core/styles";
-import { fieldBasic } from "../common/styleLibrary";
+import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 import HelpIcon from "@material-ui/icons/Help";
 
 export interface SelectorTypes {
@@ -48,6 +48,7 @@ interface RadioGroupProps {
 const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
+    ...tooltipHelper,
     radioBoxContainer: {
       flexGrow: 1
     }
@@ -116,8 +117,16 @@ export const RadioGroupSelector = ({
     <React.Fragment>
       <Grid item xs={12} className={classes.fieldContainer}>
         <InputLabel htmlFor={id} className={classes.inputLabel}>
-          {label}
+          <span>{label}</span>
+          {tooltip !== "" && (
+            <div className={classes.tooltipContainer}>
+              <Tooltip title={tooltip} placement="top-start">
+                <HelpIcon className={classes.tooltip} />
+              </Tooltip>
+            </div>
+          )}
         </InputLabel>
+
         <div className={classes.radioBoxContainer}>
           <RadioGroup
             aria-label={id}
@@ -139,13 +148,6 @@ export const RadioGroupSelector = ({
             })}
           </RadioGroup>
         </div>
-        {tooltip !== "" && (
-          <div>
-            <Tooltip title={tooltip} placement="left">
-              <HelpIcon />
-            </Tooltip>
-          </div>
-        )}
       </Grid>
     </React.Fragment>
   );
