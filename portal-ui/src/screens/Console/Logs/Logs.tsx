@@ -46,14 +46,11 @@ const styles = (theme: Theme) =>
     tab: {
       padding: "25px"
     },
-    ansiblue: {
-      color: "blue"
-    },
     logerror: {
-      color: "red"
+      color: "#A52A2A"
     },
     logerror_tab: {
-      color: "red",
+      color: "#A52A2A",
       padding: "25px"
     },
     ansidefault: {
@@ -133,23 +130,6 @@ const Logs = ({
 
     let newString = firstPart + replaceChar + lastPart;
     return newString;
-  };
-
-  const colorify = (str: string) => {
-    // matches strings starting like: `[34mEndpoint: [0m`
-    const colorRegex = /(\[[0-9]+m)(.*?)(\[0+m)/g;
-    let matches = colorRegex.exec(str);
-    if (!isNullOrUndefined(matches)) {
-      let start_color = matches[1];
-      let text = matches[2];
-
-      if (start_color === "[34m") {
-        return <span className={classes.ansiblue}>{text}</span>;
-      }
-      if (start_color === "[1m") {
-        return <span className={classes.ansidarkblue}>{text}</span>;
-      }
-    }
   };
 
   const renderError = (logElement: LogMessage) => {
@@ -241,35 +221,23 @@ const Logs = ({
 
   const renderLog = (logElement: LogMessage) => {
     let logMessage = logElement.ConsoleMsg;
-    // if somehow after the color code starts with unicode 10 = Line feed
-    // delete it
-    const regexInit = /(\[[0-9]+m)/g;
-    let match = regexInit.exec(logMessage);
-    if (match) {
-      if (logMessage.slice(match[0].length).codePointAt(1) == 10) {
-        logMessage = replaceWeirdChar(logMessage, "", match[0].length + 1);
-      }
-    }
+    // remove any non ascii characters, exclude any control codes
+    logMessage = logMessage.replace(/([^\x20-\x7F])/g, "");
 
-    // Select what to add color and what not to.
-    const colorRegex = /(\[[0-9]+m)(.*?)(\[0+m)/g;
-    let m = colorRegex.exec(logMessage);
+    // regex for terminal colors like e.g. `[31;4m `
+    const tColorRegex = /((\[[0-9;]+m))/g;
 
     // get substring if there was a match for to split what
     // is going to be colored and what not, here we add color
     // only to the first match.
-    let substr = logMessage.slice(colorRegex.lastIndex);
-    substr = substr.replace(regexInit, "");
+    let substr = logMessage.replace(tColorRegex, "");
 
-    // strClean used for corner case when string has unicode 32 for
-    // space instead of normal space.
-    let strClean = logMessage.replace(regexInit, "");
     // if starts with multiple spaces add padding
-    if (strClean.startsWith("   ") || strClean.codePointAt(1) === 32) {
+    if (substr.startsWith("   ")) {
       return (
         <li key={logElement.key}>
           <span className={classes.tab}>
-            {colorify(logMessage)} {substr}
+            {substr}
           </span>
         </li>
       );
@@ -281,7 +249,7 @@ const Logs = ({
       return (
         <li key={logElement.key}>
           <span className={classes.ansidefault}>
-            {colorify(logMessage)} {substr}
+            {substr}
           </span>
         </li>
       );
