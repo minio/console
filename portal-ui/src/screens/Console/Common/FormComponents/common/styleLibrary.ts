@@ -20,9 +20,12 @@ export const fieldBasic = {
   inputLabel: {
     fontWeight: 500,
     marginRight: 16,
-    minWidth: 90,
+    width: 100,
     fontSize: 14,
-    color: "#393939"
+    color: "#393939",
+    textAlign: "right" as const,
+    textOverflow: "ellipsis",
+    overflow: "hidden"
   },
   fieldContainer: {
     display: "flex",

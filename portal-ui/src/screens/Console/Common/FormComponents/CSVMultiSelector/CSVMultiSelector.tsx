@@ -36,7 +36,8 @@ const styles = (theme: Theme) =>
     ...fieldBasic,
     inputLabel: {
       ...fieldBasic.inputLabel,
-      marginBottom: 10
+      marginBottom: 10,
+      width: 122
     },
     inputContainer: {
       height: 150,
