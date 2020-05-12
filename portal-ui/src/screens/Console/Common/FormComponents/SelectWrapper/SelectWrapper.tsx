@@ -48,7 +48,11 @@ interface SelectProps {
 const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
-    ...tooltipHelper
+    ...tooltipHelper,
+    inputLabel: {
+      ...fieldBasic.inputLabel,
+      width: 116
+    }
   });
 
 const SelectStyled = withStyles((theme: Theme) =>

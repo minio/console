@@ -35,6 +35,10 @@ const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
     ...tooltipHelper,
+    inputLabel: {
+      ...fieldBasic.inputLabel,
+      width: 116
+    },
     inputContainer: {
       height: 150,
       overflowY: "auto",

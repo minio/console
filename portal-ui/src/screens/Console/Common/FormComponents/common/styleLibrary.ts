@@ -25,6 +25,8 @@ export const fieldBasic = {
     color: "#393939",
     textAlign: "right" as const,
     display: "flex",
+    textOverflow: "ellipsis",
+    overflow: "hidden",
     justifyContent: "flex-end",
     "& span": {
       display: "flex",
