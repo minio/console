@@ -28,7 +28,7 @@ import {
   Theme,
   withStyles
 } from "@material-ui/core/styles";
-import { fieldBasic } from "../common/styleLibrary";
+import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 import HelpIcon from "@material-ui/icons/Help";
 
 interface InputBoxProps {
@@ -49,6 +49,7 @@ interface InputBoxProps {
 const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
+    ...tooltipHelper,
     textBoxContainer: {
       flexGrow: 1
     }
@@ -98,9 +99,17 @@ const InputBoxWrapper = ({
       <Grid item xs={12} className={classes.fieldContainer}>
         {label !== "" && (
           <InputLabel htmlFor={id} className={classes.inputLabel}>
-            {label}
+            <span>{label}</span>
+            {tooltip !== "" && (
+              <div className={classes.tooltipContainer}>
+                <Tooltip title={tooltip} placement="top-start">
+                  <HelpIcon className={classes.tooltip} />
+                </Tooltip>
+              </div>
+            )}
           </InputLabel>
         )}
+
         <div className={classes.textBoxContainer}>
           <InputField
             className={classes.boxDesign}
@@ -117,13 +126,6 @@ const InputBoxWrapper = ({
             inputProps={{ "data-index": index }}
           />
         </div>
-        {tooltip !== "" && (
-          <div className={classes.tooltipContainer}>
-            <Tooltip title={tooltip} placement="left">
-              <HelpIcon />
-            </Tooltip>
-          </div>
-        )}
       </Grid>
     </React.Fragment>
   );

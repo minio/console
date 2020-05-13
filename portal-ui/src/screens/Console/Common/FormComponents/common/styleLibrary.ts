@@ -19,13 +19,19 @@
 export const fieldBasic = {
   inputLabel: {
     fontWeight: 500,
-    marginRight: 16,
+    marginRight: 10,
     width: 100,
     fontSize: 14,
     color: "#393939",
     textAlign: "right" as const,
+    display: "flex",
     textOverflow: "ellipsis",
-    overflow: "hidden"
+    overflow: "hidden",
+    justifyContent: "flex-end",
+    "& span": {
+      display: "flex",
+      alignItems: "center"
+    }
   },
   fieldContainer: {
     display: "flex",
@@ -33,7 +39,9 @@ export const fieldBasic = {
     marginBottom: 10
   },
   tooltipContainer: {
-    marginLeft: 5
+    marginLeft: 5,
+    display: "flex",
+    alignItems: "center"
   }
 };
 
@@ -45,5 +53,11 @@ export const modalBasic = {
   },
   formSlider: {
     marginLeft: 0
+  }
+};
+
+export const tooltipHelper = {
+  tooltip: {
+    fontSize: 18
   }
 };

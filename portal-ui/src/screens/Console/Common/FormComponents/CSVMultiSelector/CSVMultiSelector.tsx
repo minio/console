@@ -19,7 +19,7 @@ import Grid from "@material-ui/core/Grid";
 import get from "lodash/get";
 import InputBoxWrapper from "../InputBoxWrapper/InputBoxWrapper";
 import { InputLabel, Tooltip } from "@material-ui/core";
-import { fieldBasic } from "../common/styleLibrary";
+import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 import HelpIcon from "@material-ui/icons/Help";
 
 interface ICSVMultiSelector {
@@ -34,18 +34,17 @@ interface ICSVMultiSelector {
 const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
+    ...tooltipHelper,
     inputLabel: {
       ...fieldBasic.inputLabel,
-      marginBottom: 10,
-      width: 122
+      width: 116
     },
     inputContainer: {
       height: 150,
       overflowY: "auto",
       padding: 15,
       position: "relative",
-      border: "1px solid #c4c4c4",
-      marginBottom: 10
+      border: "1px solid #c4c4c4"
     },
     labelContainer: {
       display: "flex"
@@ -130,18 +129,20 @@ const CSVMultiSelector = ({
   return (
     <React.Fragment>
       <Grid item xs={12} className={classes.fieldContainer}>
-        <InputLabel className={classes.inputLabel}>{label}</InputLabel>
+        <InputLabel className={classes.inputLabel}>
+          <span>{label}</span>
+          {tooltip !== "" && (
+            <div className={classes.tooltipContainer}>
+              <Tooltip title={tooltip} placement="top-start">
+                <HelpIcon className={classes.tooltip} />
+              </Tooltip>
+            </div>
+          )}
+        </InputLabel>
         <Grid item xs={12} className={classes.inputContainer}>
           {inputs}
           <div ref={bottomList} />
         </Grid>
-        {tooltip !== "" && (
-          <div className={classes.tooltipContainer}>
-            <Tooltip title={tooltip} placement="left">
-              <HelpIcon />
-            </Tooltip>
-          </div>
-        )}
       </Grid>
     </React.Fragment>
   );

@@ -20,10 +20,12 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  InputBase
+  InputBase,
+  Tooltip
 } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { fieldBasic } from "../common/styleLibrary";
+import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
+import HelpIcon from "@material-ui/icons/Help";
 
 interface selectorTypes {
   label: string;
@@ -36,6 +38,7 @@ interface SelectProps {
   label: string;
   id: string;
   name: string;
+  tooltip?: string;
   onChange: (
     e: React.ChangeEvent<{ name?: string | undefined; value: unknown }>
   ) => void;
@@ -45,6 +48,7 @@ interface SelectProps {
 const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
+    ...tooltipHelper,
     inputLabel: {
       ...fieldBasic.inputLabel,
       width: 116
@@ -82,13 +86,21 @@ const SelectWrapper = ({
   onChange,
   options,
   label,
+  tooltip = "",
   value
 }: SelectProps) => {
   return (
     <React.Fragment>
       <Grid item xs={12} className={classes.fieldContainer}>
         <InputLabel htmlFor={id} className={classes.inputLabel}>
-          {label}
+          <span>{label}</span>
+          {tooltip !== "" && (
+            <div className={classes.tooltipContainer}>
+              <Tooltip title={tooltip} placement="top-start">
+                <HelpIcon className={classes.tooltip} />
+              </Tooltip>
+            </div>
+          )}
         </InputLabel>
         <FormControl variant="outlined" fullWidth>
           <Select
