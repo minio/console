@@ -30,49 +30,50 @@ import AddBucket from "./AddBucket";
 import DeleteBucket from "./DeleteBucket";
 import { MinTablePaginationActions } from "../../../../common/MinTablePaginationActions";
 import { CreateIcon } from "../../../../icons";
+import { niceBytes } from "../../../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
     seeMore: {
-      marginTop: theme.spacing(3)
+      marginTop: theme.spacing(3),
     },
     paper: {
       display: "flex",
       overflow: "auto",
-      flexDirection: "column"
+      flexDirection: "column",
     },
 
     addSideBar: {
       width: "320px",
-      padding: "20px"
+      padding: "20px",
     },
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     tableToolbar: {
       paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0)
+      paddingRight: theme.spacing(0),
     },
     minTableHeader: {
       color: "#393939",
       "& tr": {
         "& th": {
-          fontWeight: "bold"
-        }
-      }
+          fontWeight: "bold",
+        },
+      },
     },
     actionsTray: {
       textAlign: "right",
       "& button": {
-        marginLeft: 10
-      }
+        marginLeft: 10,
+      },
     },
     searchField: {
       background: "#FFFFFF",
       padding: 12,
       borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012"
-    }
+      boxShadow: "0px 3px 6px #00000012",
+    },
   });
 
 interface IListBucketsProps {
@@ -108,7 +109,7 @@ class ListBuckets extends React.Component<
     rowsPerPage: 10,
     deleteOpen: false,
     selectedBucket: "",
-    filterBuckets: ""
+    filterBuckets: "",
   };
 
   fetchRecords() {
@@ -122,7 +123,7 @@ class ListBuckets extends React.Component<
             loading: false,
             records: res.buckets || [],
             totalRecords: !res.buckets ? 0 : res.total,
-            error: ""
+            error: "",
           });
           // if we get 0 results, and page > 0 , go down 1 page
           if (
@@ -174,7 +175,7 @@ class ListBuckets extends React.Component<
       rowsPerPage,
       deleteOpen,
       selectedBucket,
-      filterBuckets
+      filterBuckets,
     } = this.state;
 
     const offset = page * rowsPerPage;
@@ -196,7 +197,7 @@ class ListBuckets extends React.Component<
 
     const tableActions = [
       { type: "view", to: `/buckets`, sendOnlyId: true },
-      { type: "delete", onClick: confirmDeleteBucket, sendOnlyId: true }
+      { type: "delete", onClick: confirmDeleteBucket, sendOnlyId: true },
     ];
 
     const displayParsedDate = (date: string) => {
@@ -249,9 +250,9 @@ class ListBuckets extends React.Component<
               className={classes.searchField}
               id="search-resource"
               label=""
-              onChange={val => {
+              onChange={(val) => {
                 this.setState({
-                  filterBuckets: val.target.value
+                  filterBuckets: val.target.value,
                 });
               }}
               InputProps={{
@@ -260,7 +261,7 @@ class ListBuckets extends React.Component<
                   <InputAdornment position="start">
                     <SearchIcon />
                   </InputAdornment>
-                )
+                ),
               }}
             />
             <Button
@@ -269,7 +270,7 @@ class ListBuckets extends React.Component<
               startIcon={<CreateIcon />}
               onClick={() => {
                 this.setState({
-                  addScreenOpen: true
+                  addScreenOpen: true,
                 });
               }}
             >
@@ -287,8 +288,13 @@ class ListBuckets extends React.Component<
                 {
                   label: "Creation Date",
                   elementKey: "creation_date",
-                  renderFunction: displayParsedDate
-                }
+                  renderFunction: displayParsedDate,
+                },
+                {
+                  label: "Size",
+                  elementKey: "size",
+                  renderFunction: niceBytes,
+                },
               ]}
               isLoading={loading}
               records={filteredRecords}
@@ -302,11 +308,11 @@ class ListBuckets extends React.Component<
                 page: page,
                 SelectProps: {
                   inputProps: { "aria-label": "rows per page" },
-                  native: true
+                  native: true,
                 },
                 onChangePage: handleChangePage,
                 onChangeRowsPerPage: handleChangeRowsPerPage,
-                ActionsComponent: MinTablePaginationActions
+                ActionsComponent: MinTablePaginationActions,
               }}
             />
           </Grid>
