@@ -32,7 +32,7 @@ interface IConfGenericProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    ...modalBasic
+    ...modalBasic,
   });
 
 // Function to get defined values,
@@ -45,7 +45,7 @@ export const valueDef = (
   let defValue = type === "on|off" ? "false" : "";
 
   if (defaults.length > 0) {
-    const storedConfig = defaults.find(element => element.key === key);
+    const storedConfig = defaults.find((element) => element.key === key);
 
     if (storedConfig) {
       defValue = storedConfig.value;
@@ -59,7 +59,7 @@ const ConfTargetGeneric = ({
   onChange,
   fields,
   defaultVals,
-  classes
+  classes,
 }: IConfGenericProps) => {
   const [valueHolder, setValueHolder] = useState<IElementValue[]>([]);
   const fieldsElements = !fields ? [] : fields;
@@ -68,10 +68,10 @@ const ConfTargetGeneric = ({
   // Effect to create all the values to hold
   useEffect(() => {
     const values: IElementValue[] = [];
-    fields.forEach(field => {
+    fields.forEach((field) => {
       const stateInsert: IElementValue = {
         key: field.name,
-        value: valueDef(field.name, field.type, defValList)
+        value: valueDef(field.name, field.type, defValList),
       };
       values.push(stateInsert);
     });
@@ -106,7 +106,7 @@ const ConfTargetGeneric = ({
             }
             selectorOptions={[
               { label: "On", value: "true" },
-              { label: "Off", value: "false" }
+              { label: "Off", value: "false" },
             ]}
           />
         );

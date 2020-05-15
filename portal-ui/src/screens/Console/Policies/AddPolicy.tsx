@@ -33,19 +33,19 @@ require("codemirror/mode/javascript/javascript");
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     jsonPolicyEditor: {
       minHeight: 400,
-      width: "100%"
+      width: "100%",
     },
     codeMirror: {
-      fontSize: 14
+      fontSize: 14,
     },
     buttonContainer: {
-      textAlign: "right"
+      textAlign: "right",
     },
-    ...modalBasic
+    ...modalBasic,
   });
 
 interface IAddPolicyProps {
@@ -67,7 +67,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
     addLoading: false,
     addError: "",
     policyName: "",
-    policyDefinition: ""
+    policyDefinition: "",
   };
 
   addRecord(event: React.FormEvent) {
@@ -80,23 +80,23 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
       api
         .invoke("POST", "/api/v1/policies", {
           name: policyName,
-          policy: policyDefinition
+          policy: policyDefinition,
         })
-        .then(res => {
+        .then((res) => {
           this.setState(
             {
               addLoading: false,
-              addError: ""
+              addError: "",
             },
             () => {
               this.props.closeModalAndRefresh();
             }
           );
         })
-        .catch(err => {
+        .catch((err) => {
           this.setState({
             addLoading: false,
-            addError: err
+            addError: err,
           });
         });
     });
@@ -107,7 +107,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
 
     if (policyEdit) {
       this.setState({
-        policyName: policyEdit.name
+        policyName: policyEdit.name,
       });
     }
   }
@@ -170,7 +170,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
                   }
                   options={{
                     mode: "javascript",
-                    lineNumbers: true
+                    lineNumbers: true,
                   }}
                   onChange={(editor, data, value) => {
                     this.setState({ policyDefinition: value });

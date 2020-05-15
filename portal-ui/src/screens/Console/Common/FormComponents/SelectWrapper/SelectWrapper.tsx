@@ -21,7 +21,7 @@ import {
   MenuItem,
   Select,
   InputBase,
-  Tooltip
+  Tooltip,
 } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
@@ -51,16 +51,16 @@ const styles = (theme: Theme) =>
     ...tooltipHelper,
     inputLabel: {
       ...fieldBasic.inputLabel,
-      width: 116
-    }
+      width: 116,
+    },
   });
 
 const SelectStyled = withStyles((theme: Theme) =>
   createStyles({
     root: {
       "label + &": {
-        marginTop: theme.spacing(3)
-      }
+        marginTop: theme.spacing(3),
+      },
     },
     input: {
       borderRadius: 0,
@@ -70,12 +70,12 @@ const SelectStyled = withStyles((theme: Theme) =>
       padding: "11px 20px",
       border: "1px solid #c4c4c4",
       "&:hover": {
-        borderColor: "#393939"
+        borderColor: "#393939",
       },
       "&:focus": {
-        backgroundColor: "#fff"
-      }
-    }
+        backgroundColor: "#fff",
+      },
+    },
   })
 )(InputBase);
 
@@ -87,7 +87,7 @@ const SelectWrapper = ({
   options,
   label,
   tooltip = "",
-  value
+  value,
 }: SelectProps) => {
   return (
     <React.Fragment>
@@ -110,7 +110,7 @@ const SelectWrapper = ({
             onChange={onChange}
             input={<SelectStyled />}
           >
-            {options.map(option => (
+            {options.map((option) => (
               <MenuItem
                 value={option.value}
                 key={`select-${name}-${option.label}`}

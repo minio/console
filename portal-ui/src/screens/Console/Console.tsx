@@ -20,7 +20,7 @@ import {
   createStyles,
   StyledProps,
   Theme,
-  withStyles
+  withStyles,
 } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
@@ -36,14 +36,14 @@ import {
   RouteComponentProps,
   Router,
   Switch,
-  withRouter
+  withRouter,
 } from "react-router-dom";
 import { connect } from "react-redux";
 import { AppState } from "../../store";
 import {
   serverIsLoading,
   serverNeedsRestart,
-  setMenuOpen
+  setMenuOpen,
 } from "../../actions";
 import { ThemedComponentProps } from "@material-ui/core/styles/withTheme";
 import Buckets from "./Buckets/Buckets";
@@ -83,43 +83,43 @@ const drawerWidth = 254;
 const styles = (theme: Theme) =>
   createStyles({
     root: {
-      display: "flex"
+      display: "flex",
     },
     toolbar: {
       background: theme.palette.background.default,
       color: "black",
-      paddingRight: 24 // keep right padding when drawer closed
+      paddingRight: 24, // keep right padding when drawer closed
     },
     toolbarIcon: {
       display: "flex",
       alignItems: "center",
       justifyContent: "flex-end",
       padding: "0 8px",
-      ...theme.mixins.toolbar
+      ...theme.mixins.toolbar,
     },
     appBar: {
       zIndex: theme.zIndex.drawer + 1,
       transition: theme.transitions.create(["width", "margin"], {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen
-      })
+        duration: theme.transitions.duration.leavingScreen,
+      }),
     },
     appBarShift: {
       marginLeft: drawerWidth,
       width: `calc(100% - ${drawerWidth}px)`,
       transition: theme.transitions.create(["width", "margin"], {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen
-      })
+        duration: theme.transitions.duration.enteringScreen,
+      }),
     },
     menuButton: {
-      marginRight: 36
+      marginRight: 36,
     },
     menuButtonHidden: {
-      display: "none"
+      display: "none",
     },
     title: {
-      flexGrow: 1
+      flexGrow: 1,
     },
     drawerPaper: {
       position: "relative",
@@ -127,40 +127,40 @@ const styles = (theme: Theme) =>
       width: drawerWidth,
       transition: theme.transitions.create("width", {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen
-      })
+        duration: theme.transitions.duration.enteringScreen,
+      }),
     },
     drawerPaperClose: {
       overflowX: "hidden",
       transition: theme.transitions.create("width", {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen
+        duration: theme.transitions.duration.leavingScreen,
       }),
       width: theme.spacing(7),
       [theme.breakpoints.up("sm")]: {
-        width: theme.spacing(9)
-      }
+        width: theme.spacing(9),
+      },
     },
     appBarSpacer: {
-      height: "5px"
+      height: "5px",
     },
     content: {
       flexGrow: 1,
       height: "100vh",
-      overflow: "auto"
+      overflow: "auto",
     },
     container: {
       paddingTop: theme.spacing(4),
-      paddingBottom: theme.spacing(4)
+      paddingBottom: theme.spacing(4),
     },
     paper: {
       padding: theme.spacing(2),
       display: "flex",
       overflow: "auto",
-      flexDirection: "column"
+      flexDirection: "column",
     },
     fixedHeight: {
-      minHeight: 240
+      minHeight: 240,
     },
     warningBar: {
       background: theme.palette.primary.main,
@@ -168,20 +168,20 @@ const styles = (theme: Theme) =>
       heigh: "60px",
       widht: "100%",
       lineHeight: "60px",
-      textAlign: "center"
-    }
+      textAlign: "center",
+    },
   });
 
 const mapState = (state: AppState) => ({
   open: state.system.sidebarOpen,
   needsRestart: state.system.serverNeedsRestart,
-  isServerLoading: state.system.serverIsLoading
+  isServerLoading: state.system.serverIsLoading,
 });
 
 const connector = connect(mapState, {
   setMenuOpen,
   serverNeedsRestart,
-  serverIsLoading
+  serverIsLoading,
 });
 
 interface IConsoleProps {
@@ -201,10 +201,10 @@ class Console extends React.Component<
   componentDidMount(): void {
     api
       .invoke("GET", `/api/v1/session`)
-      .then(res => {
+      .then((res) => {
         console.log(res);
       })
-      .catch(err => {
+      .catch((err) => {
         storage.removeItem("token");
         history.push("/");
       });
@@ -214,13 +214,13 @@ class Console extends React.Component<
     this.props.serverIsLoading(true);
     api
       .invoke("POST", "/api/v1/service/restart", {})
-      .then(res => {
+      .then((res) => {
         console.log("success restarting service");
         console.log(res);
         this.props.serverIsLoading(false);
         this.props.serverNeedsRestart(false);
       })
-      .catch(err => {
+      .catch((err) => {
         this.props.serverIsLoading(false);
         console.log("failure restarting service");
         console.log(err);
@@ -235,7 +235,7 @@ class Console extends React.Component<
         <Drawer
           variant="permanent"
           classes={{
-            paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose)
+            paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
           }}
           open={open}
         >

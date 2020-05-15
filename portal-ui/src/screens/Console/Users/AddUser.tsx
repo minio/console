@@ -30,18 +30,18 @@ import RadioGroupSelector from "../Common/FormComponents/RadioGroupSelector/Radi
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     strongText: {
-      fontWeight: 700
+      fontWeight: 700,
     },
     keyName: {
-      marginLeft: 5
+      marginLeft: 5,
     },
     buttonContainer: {
-      textAlign: "right"
+      textAlign: "right",
     },
-    ...modalBasic
+    ...modalBasic,
   });
 
 interface IAddUserContentProps {
@@ -70,7 +70,7 @@ class AddUserContent extends React.Component<
     accessKey: "",
     secretKey: "",
     enabled: "enabled",
-    selectedGroups: []
+    selectedGroups: [],
   };
 
   componentDidMount(): void {
@@ -79,7 +79,7 @@ class AddUserContent extends React.Component<
       this.setState({
         accessKey: "",
         secretKey: "",
-        selectedGroups: []
+        selectedGroups: [],
       });
     } else {
       this.getUserInformation();
@@ -93,7 +93,7 @@ class AddUserContent extends React.Component<
       addLoading,
       secretKey,
       selectedGroups,
-      enabled
+      enabled,
     } = this.state;
     const { selectedUser } = this.props;
     if (addLoading) {
@@ -104,23 +104,23 @@ class AddUserContent extends React.Component<
         api
           .invoke("PUT", `/api/v1/users/${selectedUser.accessKey}`, {
             status: enabled,
-            groups: selectedGroups
+            groups: selectedGroups,
           })
-          .then(res => {
+          .then((res) => {
             this.setState(
               {
                 addLoading: false,
-                addError: ""
+                addError: "",
               },
               () => {
                 this.props.closeModalAndRefresh();
               }
             );
           })
-          .catch(err => {
+          .catch((err) => {
             this.setState({
               addLoading: false,
-              addError: err
+              addError: err,
             });
           });
       } else {
@@ -128,24 +128,24 @@ class AddUserContent extends React.Component<
           .invoke("POST", "/api/v1/users", {
             accessKey,
             secretKey,
-            groups: selectedGroups
+            groups: selectedGroups,
           })
-          .then(res => {
+          .then((res) => {
             this.setState(
               {
                 addLoading: false,
-                addError: ""
+                addError: "",
               },
               () => {
                 this.props.closeModalAndRefresh();
               }
             );
           })
-          .catch(err => {
+          .catch((err) => {
             console.log(err);
             this.setState({
               addLoading: false,
-              addError: err
+              addError: err,
             });
           });
       }
@@ -161,19 +161,19 @@ class AddUserContent extends React.Component<
 
     api
       .invoke("GET", `/api/v1/users/${selectedUser.accessKey}`)
-      .then(res => {
+      .then((res) => {
         this.setState({
           addLoading: false,
           addError: "",
           accessKey: res.accessKey,
           selectedGroups: res.memberOf || [],
-          enabled: res.status
+          enabled: res.status,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({
           addLoading: false,
-          addError: err
+          addError: err,
         });
       });
   }
@@ -186,7 +186,7 @@ class AddUserContent extends React.Component<
       accessKey,
       secretKey,
       selectedGroups,
-      enabled
+      enabled,
     } = this.state;
 
     return (
@@ -236,12 +236,12 @@ class AddUserContent extends React.Component<
                     id="user-status"
                     name="user-status"
                     label="Status"
-                    onChange={e => {
+                    onChange={(e) => {
                       this.setState({ enabled: e.target.value });
                     }}
                     selectorOptions={[
                       { label: "Enabled", value: "enabled" },
-                      { label: "Disabled", value: "disabled" }
+                      { label: "Disabled", value: "disabled" },
                     ]}
                   />
                 ) : (
@@ -262,7 +262,7 @@ class AddUserContent extends React.Component<
                     selectedGroups={selectedGroups}
                     setSelectedGroups={(elements: string[]) => {
                       this.setState({
-                        selectedGroups: elements
+                        selectedGroups: elements,
                       });
                     }}
                   />

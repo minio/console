@@ -37,18 +37,18 @@ const styles = (theme: Theme) =>
     ...tooltipHelper,
     inputLabel: {
       ...fieldBasic.inputLabel,
-      width: 116
+      width: 116,
     },
     inputContainer: {
       height: 150,
       overflowY: "auto",
       padding: 15,
       position: "relative",
-      border: "1px solid #c4c4c4"
+      border: "1px solid #c4c4c4",
     },
     labelContainer: {
-      display: "flex"
-    }
+      display: "flex",
+    },
   });
 
 const CSVMultiSelector = ({
@@ -57,7 +57,7 @@ const CSVMultiSelector = ({
   label,
   tooltip = "",
   onChange,
-  classes
+  classes,
 }: ICSVMultiSelector) => {
   const [currentElements, setCurrentElements] = useState<string[]>([""]);
   const bottomList = createRef<HTMLDivElement>();
@@ -80,7 +80,7 @@ const CSVMultiSelector = ({
   // Use effect to send new values to onChange
   useEffect(() => {
     const elementsString = currentElements
-      .filter(element => element.trim() !== "")
+      .filter((element) => element.trim() !== "")
       .join(",");
     onChange(elementsString);
     // eslint-disable-next-line react-hooks/exhaustive-deps

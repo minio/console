@@ -42,25 +42,25 @@ interface MainGroupProps {
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     strongText: {
-      fontWeight: 700
+      fontWeight: 700,
     },
     keyName: {
-      marginLeft: 5
+      marginLeft: 5,
     },
     buttonContainer: {
-      textAlign: "right"
+      textAlign: "right",
     },
-    ...modalBasic
+    ...modalBasic,
   });
 
 const AddGroup = ({
   open,
   selectedGroup,
   closeModalAndRefresh,
-  classes
+  classes,
 }: IGroupProps) => {
   //Local States
   const [groupName, setGroupName] = useState<string>("");
@@ -88,14 +88,14 @@ const AddGroup = ({
             .invoke("PUT", `/api/v1/groups/${groupName}`, {
               group: groupName,
               members: selectedUsers,
-              status: groupEnabled
+              status: groupEnabled,
             })
-            .then(res => {
+            .then((res) => {
               isSaving(false);
               setError("");
               closeModalAndRefresh();
             })
-            .catch(err => {
+            .catch((err) => {
               isSaving(false);
               setError(err);
             });
@@ -103,14 +103,14 @@ const AddGroup = ({
           api
             .invoke("POST", "/api/v1/groups", {
               group: groupName,
-              members: selectedUsers
+              members: selectedUsers,
             })
-            .then(res => {
+            .then((res) => {
               isSaving(false);
               setError("");
               closeModalAndRefresh();
             })
-            .catch(err => {
+            .catch((err) => {
               isSaving(false);
               setError(err);
             });
@@ -124,7 +124,7 @@ const AddGroup = ({
     selectedUsers,
     groupEnabled,
     selectedGroup,
-    closeModalAndRefresh
+    closeModalAndRefresh,
   ]);
 
   useEffect(() => {
@@ -137,7 +137,7 @@ const AddGroup = ({
             setGroupName(res.name);
             setSelectedUsers(res.members);
           })
-          .catch(err => {
+          .catch((err) => {
             setError(err);
             isLoadingGroup(false);
           });
@@ -182,12 +182,12 @@ const AddGroup = ({
                     id="group-status"
                     name="group-status"
                     label="Status"
-                    onChange={e => {
+                    onChange={(e) => {
                       setGroupEnabled(e.target.value);
                     }}
                     selectorOptions={[
                       { label: "Enabled", value: "enabled" },
-                      { label: "Disabled", value: "disabled" }
+                      { label: "Disabled", value: "disabled" },
                     ]}
                   />
                 </Grid>

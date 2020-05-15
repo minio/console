@@ -30,34 +30,34 @@ export const fieldBasic = {
     justifyContent: "flex-end",
     "& span": {
       display: "flex",
-      alignItems: "center"
-    }
+      alignItems: "center",
+    },
   },
   fieldContainer: {
     display: "flex",
     alignItems: "center",
-    marginBottom: 10
+    marginBottom: 10,
   },
   tooltipContainer: {
     marginLeft: 5,
     display: "flex",
-    alignItems: "center"
-  }
+    alignItems: "center",
+  },
 };
 
 export const modalBasic = {
   formScrollable: {
     maxHeight: "calc(100vh - 300px)" as const,
     overflowY: "auto" as const,
-    marginBottom: 25
+    marginBottom: 25,
   },
   formSlider: {
-    marginLeft: 0
-  }
+    marginLeft: 0,
+  },
 };
 
 export const tooltipHelper = {
   tooltip: {
-    fontSize: 18
-  }
+    fontSize: 18,
+  },
 };

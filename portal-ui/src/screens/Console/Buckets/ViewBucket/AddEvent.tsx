@@ -35,20 +35,20 @@ import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapp
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     minTableHeader: {
       color: "#393939",
       "& tr": {
         "& th": {
-          fontWeight: "bold"
-        }
-      }
+          fontWeight: "bold",
+        },
+      },
     },
     buttonContainer: {
-      textAlign: "right"
+      textAlign: "right",
     },
-    ...modalBasic
+    ...modalBasic,
   });
 
 interface IAddEventProps {
@@ -76,7 +76,7 @@ class AddEvent extends React.Component<IAddEventProps, IAddEventState> {
     suffix: "",
     arn: "",
     selectedEvents: [],
-    arnList: []
+    arnList: [],
   };
 
   addRecord(event: React.FormEvent) {
@@ -93,25 +93,25 @@ class AddEvent extends React.Component<IAddEventProps, IAddEventState> {
             arn: arn,
             events: selectedEvents,
             prefix: prefix,
-            suffix: suffix
+            suffix: suffix,
           },
-          ignoreExisting: true
+          ignoreExisting: true,
         })
-        .then(res => {
+        .then((res) => {
           this.setState(
             {
               addLoading: false,
-              addError: ""
+              addError: "",
             },
             () => {
               this.props.closeModalAndRefresh();
             }
           );
         })
-        .catch(err => {
+        .catch((err) => {
           this.setState({
             addLoading: false,
-            addError: err
+            addError: err,
           });
         });
     });
@@ -129,7 +129,7 @@ class AddEvent extends React.Component<IAddEventProps, IAddEventState> {
           this.setState({
             addLoading: false,
             arnList: arns,
-            addError: ""
+            addError: "",
           });
         })
         .catch((err: any) => {
@@ -151,13 +151,13 @@ class AddEvent extends React.Component<IAddEventProps, IAddEventState> {
       selectedEvents,
       arnList,
       prefix,
-      suffix
+      suffix,
     } = this.state;
 
     const events = [
       { label: "PUT - Object Uploaded", value: "put" },
       { label: "GET - Object accessed", value: "get" },
-      { label: "DELETE - Object Deleted", value: "delete" }
+      { label: "DELETE - Object Deleted", value: "delete" },
     ];
 
     const handleClick = (
@@ -183,9 +183,9 @@ class AddEvent extends React.Component<IAddEventProps, IAddEventState> {
       this.setState({ selectedEvents: newSelected });
     };
 
-    const arnValues = arnList.map(arnConstant => ({
+    const arnValues = arnList.map((arnConstant) => ({
       label: arnConstant,
-      value: arnConstant
+      value: arnConstant,
     }));
 
     return (
@@ -239,19 +239,19 @@ class AddEvent extends React.Component<IAddEventProps, IAddEventState> {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {events.map(row => (
+                    {events.map((row) => (
                       <TableRow
                         key={`group-${row.value}`}
-                        onClick={event => handleClick(event, row.value)}
+                        onClick={(event) => handleClick(event, row.value)}
                       >
                         <TableCell padding="checkbox">
                           <Checkbox
                             value={row.value}
                             color="primary"
                             inputProps={{
-                              "aria-label": "secondary checkbox"
+                              "aria-label": "secondary checkbox",
                             }}
-                            onChange={event => handleClick(event, row.value)}
+                            onChange={(event) => handleClick(event, row.value)}
                             checked={selectedEvents.includes(row.value)}
                           />
                         </TableCell>

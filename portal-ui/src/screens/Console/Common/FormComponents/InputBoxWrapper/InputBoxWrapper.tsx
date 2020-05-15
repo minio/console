@@ -19,14 +19,14 @@ import {
   InputLabel,
   TextField,
   TextFieldProps,
-  Tooltip
+  Tooltip,
 } from "@material-ui/core";
 import { OutlinedInputProps } from "@material-ui/core/OutlinedInput";
 import {
   createStyles,
   makeStyles,
   Theme,
-  withStyles
+  withStyles,
 } from "@material-ui/core/styles";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 import HelpIcon from "@material-ui/icons/Help";
@@ -51,21 +51,21 @@ const styles = (theme: Theme) =>
     ...fieldBasic,
     ...tooltipHelper,
     textBoxContainer: {
-      flexGrow: 1
-    }
+      flexGrow: 1,
+    },
   });
 
 const inputStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       borderColor: "#393939",
-      borderRadius: 0
+      borderRadius: 0,
     },
     input: {
       padding: "11px 20px",
       color: "#393939",
-      fontSize: 14
-    }
+      fontSize: 14,
+    },
   })
 );
 
@@ -92,7 +92,7 @@ const InputBoxWrapper = ({
   multiline = false,
   tooltip = "",
   index = 0,
-  classes
+  classes,
 }: InputBoxProps) => {
   return (
     <React.Fragment>
