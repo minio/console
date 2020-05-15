@@ -39,7 +39,6 @@ func TestAdminConsoleLog(t *testing.T) {
 	assert := assert.New(t)
 	adminClient := adminClientMock{}
 	mockWSConn := mockConn{}
-	wsClientMock := wsClientMock{madmin: adminClient}
 	function := "startConsoleLog()"
 
 	testReceiver := make(chan madmin.LogInfo, 5)
@@ -83,7 +82,7 @@ func TestAdminConsoleLog(t *testing.T) {
 		writesCount++
 		return nil
 	}
-	if err := startConsoleLog(mockWSConn, wsClientMock.madmin); err != nil {
+	if err := startConsoleLog(mockWSConn, adminClient); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	// check that the TestReceiver got the same number of data from Console.
@@ -95,7 +94,7 @@ func TestAdminConsoleLog(t *testing.T) {
 	connWriteMessageMock = func(messageType int, data []byte) error {
 		return fmt.Errorf("error on write")
 	}
-	if err := startConsoleLog(mockWSConn, wsClientMock.madmin); assert.Error(err) {
+	if err := startConsoleLog(mockWSConn, adminClient); assert.Error(err) {
 		assert.Equal("error on write", err.Error())
 	}
 
@@ -107,7 +106,7 @@ func TestAdminConsoleLog(t *testing.T) {
 	connReadMessageMock = func() (messageType int, p []byte, err error) {
 		return 0, []byte{}, &websocket.CloseError{Code: websocket.CloseAbnormalClosure, Text: ""}
 	}
-	if err := startConsoleLog(mockWSConn, wsClientMock.madmin); assert.Error(err) {
+	if err := startConsoleLog(mockWSConn, adminClient); assert.Error(err) {
 		assert.Equal("websocket: close 1006 (abnormal closure)", err.Error())
 	}
 
@@ -116,7 +115,7 @@ func TestAdminConsoleLog(t *testing.T) {
 	connReadMessageMock = func() (messageType int, p []byte, err error) {
 		return 0, []byte{}, &websocket.CloseError{Code: websocket.CloseNormalClosure, Text: ""}
 	}
-	if err := startConsoleLog(mockWSConn, wsClientMock.madmin); err != nil {
+	if err := startConsoleLog(mockWSConn, adminClient); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 
@@ -125,7 +124,7 @@ func TestAdminConsoleLog(t *testing.T) {
 	connReadMessageMock = func() (messageType int, p []byte, err error) {
 		return 0, []byte{}, &websocket.CloseError{Code: websocket.CloseGoingAway, Text: ""}
 	}
-	if err := startConsoleLog(mockWSConn, wsClientMock.madmin); err != nil {
+	if err := startConsoleLog(mockWSConn, adminClient); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 
@@ -134,7 +133,7 @@ func TestAdminConsoleLog(t *testing.T) {
 	connReadMessageMock = func() (messageType int, p []byte, err error) {
 		return 0, []byte{}, fmt.Errorf("error on read")
 	}
-	if err := startConsoleLog(mockWSConn, wsClientMock.madmin); assert.Error(err) {
+	if err := startConsoleLog(mockWSConn, adminClient); assert.Error(err) {
 		assert.Equal("error on read", err.Error())
 	}
 
@@ -162,7 +161,7 @@ func TestAdminConsoleLog(t *testing.T) {
 	connReadMessageMock = func() (messageType int, p []byte, err error) {
 		return 0, []byte{}, nil
 	}
-	if err := startConsoleLog(mockWSConn, wsClientMock.madmin); assert.Error(err) {
+	if err := startConsoleLog(mockWSConn, adminClient); assert.Error(err) {
 		assert.Equal("error on Console", err.Error())
 	}
 }

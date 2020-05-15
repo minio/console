@@ -63,6 +63,7 @@ import { Button, LinearProgress } from "@material-ui/core";
 import WebhookPanel from "./Configurations/ConfigurationPanels/WebhookPanel";
 import Trace from "./Trace/Trace";
 import Logs from "./Logs/Logs";
+import Watch from "./Watch/Watch";
 
 function Copyright() {
   return (
@@ -196,7 +197,7 @@ interface IConsoleProps {
 
 class Console extends React.Component<
   IConsoleProps & RouteComponentProps & StyledProps & ThemedComponentProps
-> {
+  > {
   componentDidMount(): void {
     api
       .invoke("GET", `/api/v1/session`)
@@ -261,20 +262,20 @@ class Console extends React.Component<
                   <LinearProgress />
                 </React.Fragment>
               ) : (
-                <React.Fragment>
-                  The instance needs to be restarted for configuration changes
+                  <React.Fragment>
+                    The instance needs to be restarted for configuration changes
                   to take effect.{" "}
-                  <Button
-                    color="secondary"
-                    size="small"
-                    onClick={() => {
-                      this.restartServer();
-                    }}
-                  >
-                    Restart
+                    <Button
+                      color="secondary"
+                      size="small"
+                      onClick={() => {
+                        this.restartServer();
+                      }}
+                    >
+                      Restart
                   </Button>
-                </React.Fragment>
-              )}
+                  </React.Fragment>
+                )}
             </div>
           )}
           <div className={classes.appBarSpacer} />
@@ -306,6 +307,7 @@ class Console extends React.Component<
                 <Route exact path="/webhook/audit" component={WebhookPanel} />
                 <Route exct path="/trace" component={Trace} />
                 <Route exct path="/logs" component={Logs} />
+                <Route exct path="/watch" component={Watch} />
                 <Route exact path="/">
                   <Redirect to="/dashboard" />
                 </Route>

@@ -19,11 +19,13 @@ import thunk from "redux-thunk";
 import { systemReducer } from "./reducer";
 import { traceReducer } from "./screens/Console/Trace/reducers";
 import { logReducer } from "./screens/Console/Logs/reducers";
+import { watchReducer } from "./screens/Console/Watch/reducers";
 
 const globalReducer = combineReducers({
   system: systemReducer,
   trace: traceReducer,
-  logs: logReducer
+  logs: logReducer,
+  watch: watchReducer,
 });
 
 declare global {

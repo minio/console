@@ -51,18 +51,3 @@ func (c mockConn) setReadDeadline(t time.Time) error {
 }
 func (c mockConn) setPongHandler(h func(appData string) error) {
 }
-
-// Common mocks for MCSWebsocket interface
-// assigning mock at runtime instead of compile time
-var wsTraceMock func()
-
-// Define a mock struct of wsClient interface implementation
-type wsClientMock struct {
-	// MinIO admin Client
-	madmin MinioAdmin
-}
-
-// mock function of wsc.trace()
-func (wsc wsClientMock) trace() {
-	wsTraceMock()
-}

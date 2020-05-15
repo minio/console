@@ -38,3 +38,12 @@ export const setCookie = (name: string, val: string) => {
   document.cookie =
     name + "=" + value + "; expires=" + date.toUTCString() + "; path=/";
 };
+
+// timeFromdate gets time string from date input
+export const timeFromDate = (d: Date) => {
+  let h = d.getHours() < 10 ? `0${d.getHours()}` : `${d.getHours()}`;
+  let m = d.getMinutes() < 10 ? `0${d.getMinutes()}` : `${d.getMinutes()}`;
+  let s = d.getSeconds() < 10 ? `0${d.getSeconds()}` : `${d.getSeconds()}`;
+
+  return `${h}:${m}:${s}:${d.getMilliseconds()}`;
+};

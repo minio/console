@@ -27,6 +27,7 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/gorilla/websocket"
+	"github.com/minio/mcs/pkg/auth"
 	"github.com/minio/mcs/pkg/ws"
 )
 
@@ -46,17 +47,29 @@ const (
 	maxMessageSize = 512
 )
 
-// MCSWebsocket interface of a Websocket Client
-type MCSWebsocket interface {
-	// start trace info from servers
+// MCSWebsocketAdmin interface of a Websocket Client
+type MCSWebsocketAdmin interface {
 	trace()
+	console()
 }
 
-type wsClient struct {
+type wsAdminClient struct {
 	// websocket connection.
 	conn wsConn
 	// MinIO admin Client
-	madmin MinioAdmin
+	client MinioAdmin
+}
+
+// MCSWebsocket interface of a Websocket Client
+type MCSWebsocket interface {
+	watch(options watchOptions)
+}
+
+type wsS3Client struct {
+	// websocket connection.
+	conn wsConn
+	// mcS3Client
+	client MCS3Client
 }
 
 // WSConn interface with all functions to be implemented
@@ -106,14 +119,18 @@ func (c wsConn) readMessage() (messageType int, p []byte, err error) {
 // Websocket communication will be done depending
 // on the path.
 // Request should come like ws://<host>:<port>/ws/<api>
-//
-// TODO: Enable CORS
 func serveWS(w http.ResponseWriter, req *http.Request) {
+	sessionID, err := ws.GetTokenFromRequest(req)
+	if err != nil {
+		errors.ServeError(w, req, err)
+		return
+	}
+	// Perform authentication before upgrading to a Websocket Connection
 	// authenticate WS connection with MCS
-	claims, err := ws.Authenticate(req)
+	claims, err := auth.JWTAuthenticate(*sessionID)
 	if err != nil {
 		log.Print("error on ws authentication: ", err)
-		errors.ServeError(w, req, err)
+		errors.ServeError(w, req, errors.New(http.StatusUnauthorized, err.Error()))
 		return
 	}
 
@@ -125,33 +142,80 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// Only start Websocket Interaction after user has been
-	// authenticated with MinIO
-	mAdmin, err := newAdminFromClaims(claims)
-	if err != nil {
-		log.Println("error creating Madmin Client:", err)
-		errors.ServeError(w, req, err)
-		return
-	}
-	// create a minioClient interface implementation
-	// defining the client to be used
-	adminClient := adminClient{client: mAdmin}
-	// create a websocket connection interface implementation
-	// defining the connection to be used
-	wsConnection := wsConn{conn: conn}
-
-	// create websocket client and handle request
-	wsClient := &wsClient{conn: wsConnection, madmin: adminClient}
-	switch strings.TrimPrefix(req.URL.Path, wsBasePath) {
-	case "/trace":
-		go wsClient.trace()
-	case "/console":
-		go wsClient.console()
+	wsPath := strings.TrimPrefix(req.URL.Path, wsBasePath)
+	switch {
+	case wsPath == "/trace":
+		wsAdminClient, err := newWebSocketAdminClient(conn, claims)
+		if err != nil {
+			errors.ServeError(w, req, err)
+			return
+		}
+		go wsAdminClient.trace()
+	case wsPath == "/console":
+		wsAdminClient, err := newWebSocketAdminClient(conn, claims)
+		if err != nil {
+			errors.ServeError(w, req, err)
+			return
+		}
+		go wsAdminClient.console()
+	case strings.HasPrefix(wsPath, `/watch`):
+		wOptions := getOptionsFromReq(req)
+		wsS3Client, err := newWebSocketS3Client(conn, *sessionID, wOptions.BucketName)
+		if err != nil {
+			errors.ServeError(w, req, err)
+			return
+		}
+		go wsS3Client.watch(wOptions)
 	default:
 		// path not found
 		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 		conn.Close()
 	}
+}
+
+// newWebSocketAdminClient returns a wsAdminClient authenticated as an admin user
+func newWebSocketAdminClient(conn *websocket.Conn, autClaims *auth.DecryptedClaims) (*wsAdminClient, error) {
+	// Only start Websocket Interaction after user has been
+	// authenticated with MinIO
+	mAdmin, err := newAdminFromClaims(autClaims)
+	if err != nil {
+		log.Println("error creating Madmin Client:", err)
+		// close connection
+		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+		conn.Close()
+		return nil, err
+	}
+	// create a websocket connection interface implementation
+	// defining the connection to be used
+	wsConnection := wsConn{conn: conn}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := adminClient{client: mAdmin}
+	// create websocket client and handle request
+	wsAdminClient := &wsAdminClient{conn: wsConnection, client: adminClient}
+	return wsAdminClient, nil
+}
+
+// newWebSocketS3Client returns a wsAdminClient authenticated as MCS admin
+func newWebSocketS3Client(conn *websocket.Conn, jwt, bucketName string) (*wsS3Client, error) {
+	// Only start Websocket Interaction after user has been
+	// authenticated with MinIO
+	s3Client, err := newS3BucketClient(jwt, bucketName)
+	if err != nil {
+		log.Println("error creating S3Client:", err)
+		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+		conn.Close()
+		return nil, err
+	}
+	// create a websocket connection interface implementation
+	// defining the connection to be used
+	wsConnection := wsConn{conn: conn}
+	// create a s3Client interface implementation
+	// defining the client to be used
+	mcS3C := mcS3Client{client: s3Client}
+	// create websocket client and handle request
+	wsS3Client := &wsS3Client{conn: wsConnection, client: mcS3C}
+	return wsS3Client, nil
 }
 
 // wsReadCheck ensures that the client is sending a message
@@ -206,7 +270,7 @@ func wsReadCheck(ctx context.Context, wg *sync.WaitGroup, conn WSConn) chan erro
 
 // trace serves madmin.ServiceTraceInfo
 // on a Websocket connection.
-func (wsc *wsClient) trace() {
+func (wsc *wsAdminClient) trace() {
 	defer func() {
 		log.Println("trace stopped")
 		// close connection after return
@@ -214,7 +278,7 @@ func (wsc *wsClient) trace() {
 	}()
 	log.Println("trace started")
 
-	err := startTraceInfo(wsc.conn, wsc.madmin)
+	err := startTraceInfo(wsc.conn, wsc.client)
 	// Send Connection Close Message indicating the Status Code
 	// see https://tools.ietf.org/html/rfc6455#page-45
 	if err != nil {
@@ -237,7 +301,7 @@ func (wsc *wsClient) trace() {
 
 // console serves madmin.GetLogs
 // on a Websocket connection.
-func (wsc *wsClient) console() {
+func (wsc *wsAdminClient) console() {
 	defer func() {
 		log.Println("console logs stopped")
 		// close connection after return
@@ -245,7 +309,36 @@ func (wsc *wsClient) console() {
 	}()
 	log.Println("console logs started")
 
-	err := startConsoleLog(wsc.conn, wsc.madmin)
+	err := startConsoleLog(wsc.conn, wsc.client)
+	// Send Connection Close Message indicating the Status Code
+	// see https://tools.ietf.org/html/rfc6455#page-45
+	if err != nil {
+		// If connection exceeded read deadline send Close
+		// Message Policy Violation code since we don't want
+		// to let the receiver figure out the read deadline.
+		// This is a generic code designed if there is a
+		// need to hide specific details about the policy.
+		if nErr, ok := err.(net.Error); ok && nErr.Timeout() {
+			wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, ""))
+			return
+		}
+		// else, internal server error
+		wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseInternalServerErr, err.Error()))
+		return
+	}
+	// normal closure
+	wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+}
+
+func (wsc *wsS3Client) watch(params watchOptions) {
+	defer func() {
+		log.Println("watch stopped")
+		// close connection after return
+		wsc.conn.close()
+	}()
+	log.Println("watch started")
+
+	err := startWatch(wsc.conn, wsc.client, params)
 	// Send Connection Close Message indicating the Status Code
 	// see https://tools.ietf.org/html/rfc6455#page-45
 	if err != nil {

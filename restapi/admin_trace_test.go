@@ -40,7 +40,6 @@ func TestAdminTrace(t *testing.T) {
 	assert := assert.New(t)
 	adminClient := adminClientMock{}
 	mockWSConn := mockConn{}
-	wsClientMock := wsClientMock{madmin: adminClient}
 	function := "startTraceInfo()"
 
 	testReceiver := make(chan shortTraceMsg, 5)
@@ -84,7 +83,7 @@ func TestAdminTrace(t *testing.T) {
 		writesCount++
 		return nil
 	}
-	if err := startTraceInfo(mockWSConn, wsClientMock.madmin); err != nil {
+	if err := startTraceInfo(mockWSConn, adminClient); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	// check that the TestReceiver got the same number of data from trace.
@@ -96,7 +95,7 @@ func TestAdminTrace(t *testing.T) {
 	connWriteMessageMock = func(messageType int, data []byte) error {
 		return fmt.Errorf("error on write")
 	}
-	if err := startTraceInfo(mockWSConn, wsClientMock.madmin); assert.Error(err) {
+	if err := startTraceInfo(mockWSConn, adminClient); assert.Error(err) {
 		assert.Equal("error on write", err.Error())
 	}
 
@@ -108,7 +107,7 @@ func TestAdminTrace(t *testing.T) {
 	connReadMessageMock = func() (messageType int, p []byte, err error) {
 		return 0, []byte{}, &websocket.CloseError{Code: websocket.CloseAbnormalClosure, Text: ""}
 	}
-	if err := startTraceInfo(mockWSConn, wsClientMock.madmin); assert.Error(err) {
+	if err := startTraceInfo(mockWSConn, adminClient); assert.Error(err) {
 		assert.Equal("websocket: close 1006 (abnormal closure)", err.Error())
 	}
 
@@ -117,7 +116,7 @@ func TestAdminTrace(t *testing.T) {
 	connReadMessageMock = func() (messageType int, p []byte, err error) {
 		return 0, []byte{}, &websocket.CloseError{Code: websocket.CloseNormalClosure, Text: ""}
 	}
-	if err := startTraceInfo(mockWSConn, wsClientMock.madmin); err != nil {
+	if err := startTraceInfo(mockWSConn, adminClient); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 
@@ -126,7 +125,7 @@ func TestAdminTrace(t *testing.T) {
 	connReadMessageMock = func() (messageType int, p []byte, err error) {
 		return 0, []byte{}, &websocket.CloseError{Code: websocket.CloseGoingAway, Text: ""}
 	}
-	if err := startTraceInfo(mockWSConn, wsClientMock.madmin); err != nil {
+	if err := startTraceInfo(mockWSConn, adminClient); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 
@@ -135,7 +134,7 @@ func TestAdminTrace(t *testing.T) {
 	connReadMessageMock = func() (messageType int, p []byte, err error) {
 		return 0, []byte{}, fmt.Errorf("error on read")
 	}
-	if err := startTraceInfo(mockWSConn, wsClientMock.madmin); assert.Error(err) {
+	if err := startTraceInfo(mockWSConn, adminClient); assert.Error(err) {
 		assert.Equal("error on read", err.Error())
 	}
 
@@ -163,7 +162,7 @@ func TestAdminTrace(t *testing.T) {
 	connReadMessageMock = func() (messageType int, p []byte, err error) {
 		return 0, []byte{}, nil
 	}
-	if err := startTraceInfo(mockWSConn, wsClientMock.madmin); assert.Error(err) {
+	if err := startTraceInfo(mockWSConn, adminClient); assert.Error(err) {
 		assert.Equal("error on trace", err.Error())
 	}
 }

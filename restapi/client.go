@@ -19,6 +19,7 @@ package restapi
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"errors"
 
@@ -93,6 +94,7 @@ func (c minioClient) getBucketPolicy(bucketName string) (string, error) {
 type MCS3Client interface {
 	addNotificationConfig(arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error
 	removeNotificationConfig(arn string, event string, prefix string, suffix string) *probe.Error
+	watch(options mc.WatchOptions) (*mc.WatchObject, *probe.Error)
 }
 
 // Interface implementation
@@ -111,6 +113,10 @@ func (c mcS3Client) addNotificationConfig(arn string, events []string, prefix, s
 // implements S3Client.RemoveNotificationConfig()
 func (c mcS3Client) removeNotificationConfig(arn string, event string, prefix string, suffix string) *probe.Error {
 	return c.client.RemoveNotificationConfig(arn, event, prefix, suffix)
+}
+
+func (c mcS3Client) watch(options mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
+	return c.client.Watch(options)
 }
 
 // MCSCredentials interface with all functions to be implemented
@@ -224,19 +230,23 @@ func newMinioClient(jwt string) (*minio.Client, error) {
 }
 
 // newS3BucketClient creates a new mc S3Client to talk to the server based on a bucket
-func newS3BucketClient(bucketName *string) (*mc.S3Client, error) {
+func newS3BucketClient(jwt string, bucketName string) (*mc.S3Client, error) {
 	endpoint := getMinIOServer()
-	accessKeyID := getAccessKey()
-	secretAccessKey := getSecretKey()
 	useSSL := getMinIOEndpointIsSecure()
 
-	if bucketName != nil {
-		endpoint += fmt.Sprintf("/%s", *bucketName)
-	}
-	s3Config := newS3Config(endpoint, accessKeyID, secretAccessKey, !useSSL)
-	client, err := mc.S3New(s3Config)
+	claims, err := auth.JWTAuthenticate(jwt)
 	if err != nil {
-		return nil, err.Cause
+		return nil, err
+	}
+
+	if strings.TrimSpace(bucketName) != "" {
+		endpoint += fmt.Sprintf("/%s", bucketName)
+	}
+
+	s3Config := newS3Config(endpoint, claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken, !useSSL)
+	client, pErr := mc.S3New(s3Config)
+	if pErr != nil {
+		return nil, pErr.Cause
 	}
 	s3Client, ok := client.(*mc.S3Client)
 	if !ok {
@@ -248,7 +258,7 @@ func newS3BucketClient(bucketName *string) (*mc.S3Client, error) {
 
 // newS3Config simply creates a new Config struct using the passed
 // parameters.
-func newS3Config(endpoint, accessKey, secretKey string, isSecure bool) *mc.Config {
+func newS3Config(endpoint, accessKey, secretKey, sessionToken string, isSecure bool) *mc.Config {
 	// We have a valid alias and hostConfig. We populate the
 	// minioCredentials from the match found in the config file.
 	s3Config := new(mc.Config)
@@ -262,6 +272,7 @@ func newS3Config(endpoint, accessKey, secretKey string, isSecure bool) *mc.Confi
 	s3Config.HostURL = endpoint
 	s3Config.AccessKey = accessKey
 	s3Config.SecretKey = secretKey
+	s3Config.SessionToken = sessionToken
 	s3Config.Signature = "S3v4"
 	return s3Config
 }
