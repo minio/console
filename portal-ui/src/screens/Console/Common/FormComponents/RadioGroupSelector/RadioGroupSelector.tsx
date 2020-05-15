@@ -23,7 +23,7 @@ import {
   createStyles,
   Theme,
   withStyles,
-  makeStyles
+  makeStyles,
 } from "@material-ui/core/styles";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 import HelpIcon from "@material-ui/icons/Help";
@@ -50,21 +50,21 @@ const styles = (theme: Theme) =>
     ...fieldBasic,
     ...tooltipHelper,
     radioBoxContainer: {
-      flexGrow: 1
-    }
+      flexGrow: 1,
+    },
   });
 
 const radioStyles = makeStyles({
   root: {
     "&:hover": {
-      backgroundColor: "transparent"
-    }
+      backgroundColor: "transparent",
+    },
   },
   icon: {
     borderRadius: "100%",
     width: 14,
     height: 14,
-    border: "1px solid #000"
+    border: "1px solid #000",
   },
   checkedIcon: {
     borderRadius: "100%",
@@ -82,9 +82,9 @@ const radioStyles = makeStyles({
       position: "absolute",
       backgroundColor: "#000",
       top: 2,
-      left: 2
-    }
-  }
+      left: 2,
+    },
+  },
 });
 
 const RadioButton = (props: RadioProps) => {
@@ -111,7 +111,7 @@ export const RadioGroupSelector = ({
   onChange,
   tooltip = "",
   classes,
-  displayInColumn = false
+  displayInColumn = false,
 }: RadioGroupProps) => {
   return (
     <React.Fragment>
@@ -136,7 +136,7 @@ export const RadioGroupSelector = ({
             onChange={onChange}
             row={!displayInColumn}
           >
-            {selectorOptions.map(selectorOption => {
+            {selectorOptions.map((selectorOption) => {
               return (
                 <FormControlLabel
                   key={`rd-${name}-${selectorOption.value}`}

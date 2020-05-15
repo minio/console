@@ -33,20 +33,20 @@ const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     strongText: {
-      fontWeight: 700
+      fontWeight: 700,
     },
     keyName: {
-      marginLeft: 5
+      marginLeft: 5,
     },
     buttonContainer: {
-      textAlign: "right"
+      textAlign: "right",
     },
     logoButton: {
-      height: "80px"
-    }
+      height: "80px",
+    },
   });
 
 interface IAddNotificationEndpointProps {
@@ -62,7 +62,7 @@ const EditConfiguration = ({
   closeModalAndRefresh,
   serverNeedsRestart,
   selectedConfiguration,
-  classes
+  classes,
 }: IAddNotificationEndpointProps) => {
   //Local States
   const [valuesObj, setValueObj] = useState<IElementValue[]>([]);
@@ -77,11 +77,11 @@ const EditConfiguration = ({
     if (configId) {
       api
         .invoke("GET", `/api/v1/configs/${configId}`)
-        .then(res => {
+        .then((res) => {
           const keyVals = get(res, "key_values", []);
           setConfigValues(keyVals);
         })
-        .catch(err => {
+        .catch((err) => {
           setLoadingConfig(false);
           setErrorConfig(err);
         });
@@ -92,7 +92,7 @@ const EditConfiguration = ({
   useEffect(() => {
     if (saving) {
       const payload = {
-        key_values: removeEmptyFields(valuesObj)
+        key_values: removeEmptyFields(valuesObj),
       };
       api
         .invoke(
@@ -100,14 +100,14 @@ const EditConfiguration = ({
           `/api/v1/configs/${selectedConfiguration.configuration_id}`,
           payload
         )
-        .then(res => {
+        .then((res) => {
           setSaving(false);
           setErrorConfig("");
           serverNeedsRestart(true);
 
           closeModalAndRefresh();
         })
-        .catch(err => {
+        .catch((err) => {
           setSaving(false);
           setErrorConfig(err);
         });
@@ -117,7 +117,7 @@ const EditConfiguration = ({
     serverNeedsRestart,
     selectedConfiguration,
     valuesObj,
-    closeModalAndRefresh
+    closeModalAndRefresh,
   ]);
 
   //Fetch Actions
@@ -127,7 +127,7 @@ const EditConfiguration = ({
   };
 
   const onValueChange = useCallback(
-    newValue => {
+    (newValue) => {
       setValueObj(newValue);
     },
     [setValueObj]

@@ -39,27 +39,27 @@ import {
   notifyElasticsearch,
   notifyWebhooks,
   notifyNsq,
-  removeEmptyFields
+  removeEmptyFields,
 } from "../Configurations/utils";
 import { IElementValue } from "../Configurations/types";
 
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     strongText: {
-      fontWeight: 700
+      fontWeight: 700,
     },
     keyName: {
-      marginLeft: 5
+      marginLeft: 5,
     },
     buttonContainer: {
-      textAlign: "right"
+      textAlign: "right",
     },
     logoButton: {
-      height: "80px"
-    }
+      height: "80px",
+    },
   });
 
 interface IAddNotificationEndpointProps {
@@ -73,7 +73,7 @@ const AddNotificationEndpoint = ({
   open,
   closeModalAndRefresh,
   serverNeedsRestart,
-  classes
+  classes,
 }: IAddNotificationEndpointProps) => {
   //Local States
   const [service, setService] = useState<string>("");
@@ -86,18 +86,18 @@ const AddNotificationEndpoint = ({
   useEffect(() => {
     if (saving) {
       const payload = {
-        key_values: removeEmptyFields(valuesArr)
+        key_values: removeEmptyFields(valuesArr),
       };
       api
         .invoke("PUT", `/api/v1/configs/${service}`, payload)
-        .then(res => {
+        .then((res) => {
           setSaving(false);
           setError("");
           serverNeedsRestart(true);
 
           closeModalAndRefresh();
         })
-        .catch(err => {
+        .catch((err) => {
           setSaving(false);
           setError(err);
         });
@@ -111,7 +111,7 @@ const AddNotificationEndpoint = ({
   };
 
   const onValueChange = useCallback(
-    newValue => {
+    (newValue) => {
       setValueArr(newValue);
     },
     [setValueArr]

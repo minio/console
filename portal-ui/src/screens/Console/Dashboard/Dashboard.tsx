@@ -26,86 +26,87 @@ import ViewHeadlineIcon from "@material-ui/icons/ViewHeadline";
 import { Usage } from "./types";
 import api from "../../../common/api";
 import { niceBytes } from "../../../common/utils";
+import { LinearProgress } from "@material-ui/core";
 
 const styles = (theme: Theme) =>
   createStyles({
     root: {
-      display: "flex"
+      display: "flex",
     },
     toolbar: {
-      paddingRight: 24 // keep right padding when drawer closed
+      paddingRight: 24, // keep right padding when drawer closed
     },
     toolbarIcon: {
       display: "flex",
       alignItems: "center",
       justifyContent: "flex-end",
       padding: "0 8px",
-      ...theme.mixins.toolbar
+      ...theme.mixins.toolbar,
     },
     appBar: {
       zIndex: theme.zIndex.drawer + 1,
       transition: theme.transitions.create(["width", "margin"], {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen
-      })
+        duration: theme.transitions.duration.leavingScreen,
+      }),
     },
 
     menuButton: {
-      marginRight: 36
+      marginRight: 36,
     },
     menuButtonHidden: {
-      display: "none"
+      display: "none",
     },
     title: {
-      flexGrow: 1
+      flexGrow: 1,
     },
     drawerPaperClose: {
       overflowX: "hidden",
       transition: theme.transitions.create("width", {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen
+        duration: theme.transitions.duration.leavingScreen,
       }),
       width: theme.spacing(7),
       [theme.breakpoints.up("sm")]: {
-        width: theme.spacing(9)
-      }
+        width: theme.spacing(9),
+      },
     },
     appBarSpacer: theme.mixins.toolbar,
     content: {
       flexGrow: 1,
       height: "100vh",
-      overflow: "auto"
+      overflow: "auto",
     },
     container: {
       paddingBottom: theme.spacing(4),
       "& h6": {
         color: "#777777",
-        fontSize: 14
+        fontSize: 14,
       },
       "& p": {
         "& span": {
-          fontSize: 16
-        }
-      }
+          fontSize: 16,
+        },
+      },
     },
     paper: {
       padding: theme.spacing(2),
       display: "flex",
       overflow: "auto",
-      flexDirection: "column"
+      flexDirection: "column",
     },
     fixedHeight: {
-      minHeight: 240
+      minHeight: 240,
     },
     consumptionValue: {
       color: "#000000",
       fontSize: "60px",
-      fontWeight: "bold"
+      fontWeight: "bold",
     },
     icon: {
       marginRight: 10,
-      color: "#777777"
-    }
+      color: "#777777",
+    },
   });
 
 interface IDashboardProps {
@@ -115,7 +116,7 @@ interface IDashboardProps {
 const Dashboard = ({ classes }: IDashboardProps) => {
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
   const [usage, setUsage] = useState<Usage | null>(null);
-  const [loading, isLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
@@ -130,11 +131,11 @@ const Dashboard = ({ classes }: IDashboardProps) => {
       .then((res: Usage) => {
         setUsage(res);
         setError("");
-        isLoading(false);
+        setLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
         setError(err);
-        isLoading(false);
+        setLoading(false);
       });
   };
   const prettyUsage = (usage: string | undefined) => {
@@ -143,7 +144,6 @@ const Dashboard = ({ classes }: IDashboardProps) => {
     }
     return niceBytes(usage);
   };
-  const units = ["bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
 
   const prettyNumber = (usage: number | undefined) => {
     if (usage === undefined) {
@@ -161,51 +161,59 @@ const Dashboard = ({ classes }: IDashboardProps) => {
             <Typography variant="h2">MinIO Console</Typography>
           </Grid>
           {error !== "" && <Grid container>{error}</Grid>}
-          <Grid item xs={12} md={4} lg={4}>
-            <Paper className={fixedHeightPaper}>
-              <Grid container direction="row" alignItems="center">
-                <Grid item className={classes.icon}>
-                  <ViewHeadlineIcon />
-                </Grid>
-                <Grid item>
-                  <Typography variant="h6">Total Buckets</Typography>
-                </Grid>
+          {loading ? (
+            <Grid item xs={12} md={12} lg={12}>
+              <LinearProgress />
+            </Grid>
+          ) : (
+            <React.Fragment>
+              <Grid item xs={12} md={4} lg={4}>
+                <Paper className={fixedHeightPaper}>
+                  <Grid container direction="row" alignItems="center">
+                    <Grid item className={classes.icon}>
+                      <ViewHeadlineIcon />
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="h6">Total Buckets</Typography>
+                    </Grid>
+                  </Grid>
+                  <Typography className={classes.consumptionValue}>
+                    {usage ? prettyNumber(usage.buckets) : 0}
+                  </Typography>
+                </Paper>
               </Grid>
-              <Typography className={classes.consumptionValue}>
-                {usage ? prettyNumber(usage.buckets) : 0}
-              </Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} md={4} lg={4}>
-            <Paper className={fixedHeightPaper}>
-              <Grid container direction="row" alignItems="center">
-                <Grid item className={classes.icon}>
-                  <NetworkCheckIcon />
-                </Grid>
-                <Grid item>
-                  <Typography variant="h6"> Total Objects</Typography>
-                </Grid>
+              <Grid item xs={12} md={4} lg={4}>
+                <Paper className={fixedHeightPaper}>
+                  <Grid container direction="row" alignItems="center">
+                    <Grid item className={classes.icon}>
+                      <NetworkCheckIcon />
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="h6"> Total Objects</Typography>
+                    </Grid>
+                  </Grid>
+                  <Typography className={classes.consumptionValue}>
+                    {usage ? prettyNumber(usage.objects) : 0}
+                  </Typography>
+                </Paper>
               </Grid>
-              <Typography className={classes.consumptionValue}>
-                {usage ? prettyNumber(usage.objects) : 0}
-              </Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} md={4} lg={4}>
-            <Paper className={fixedHeightPaper}>
-              <Grid container direction="row" alignItems="center">
-                <Grid item className={classes.icon}>
-                  <PieChartIcon />
-                </Grid>
-                <Grid item>
-                  <Typography variant="h6">Usage</Typography>
-                </Grid>
+              <Grid item xs={12} md={4} lg={4}>
+                <Paper className={fixedHeightPaper}>
+                  <Grid container direction="row" alignItems="center">
+                    <Grid item className={classes.icon}>
+                      <PieChartIcon />
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="h6">Usage</Typography>
+                    </Grid>
+                  </Grid>
+                  <Typography className={classes.consumptionValue}>
+                    {usage ? prettyUsage(usage.usage + "") : 0}
+                  </Typography>
+                </Paper>
               </Grid>
-              <Typography className={classes.consumptionValue}>
-                {usage ? prettyUsage(usage.usage + "") : 0}
-              </Typography>
-            </Paper>
-          </Grid>
+            </React.Fragment>
+          )}
         </Grid>
       </Grid>
     </React.Fragment>

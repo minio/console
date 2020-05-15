@@ -32,50 +32,50 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 const styles = (theme: Theme) =>
   createStyles({
     seeMore: {
-      marginTop: theme.spacing(3)
+      marginTop: theme.spacing(3),
     },
     paper: {
       display: "flex",
       overflow: "auto",
-      flexDirection: "column"
+      flexDirection: "column",
     },
 
     addSideBar: {
       width: "320px",
-      padding: "20px"
+      padding: "20px",
     },
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     tableToolbar: {
       paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0)
+      paddingRight: theme.spacing(0),
     },
     minTableHeader: {
       color: "#393939",
       "& tr": {
         "& th": {
-          fontWeight: "bold"
-        }
-      }
+          fontWeight: "bold",
+        },
+      },
     },
     actionsTray: {
       textAlign: "right",
       "& button": {
-        marginLeft: 10
-      }
+        marginLeft: 10,
+      },
     },
     searchField: {
       background: "#FFFFFF",
       padding: 12,
       borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012"
+      boxShadow: "0px 3px 6px #00000012",
     },
     noRecords: {
       lineHeight: "24px",
       textAlign: "center",
-      padding: "20px"
-    }
+      padding: "20px",
+    },
   });
 
 interface IViewBucketProps {
@@ -113,7 +113,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     addScreenOpen: false,
     deleteOpen: false,
     selectedBucket: "",
-    selectedEvent: null
+    selectedEvent: null,
   };
 
   fetchEvents() {
@@ -131,7 +131,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
             loading: false,
             records: events || [],
             totalRecords: total,
-            error: ""
+            error: "",
           });
           // if we get 0 results, and page > 0 , go down 1 page
           if ((!events || res.events.length === 0) && page > 0) {
@@ -169,7 +169,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       .then((res: BucketInfo) => {
         this.setState({ info: res });
       })
-      .catch(err => {});
+      .catch((err) => {});
   }
 
   componentDidMount(): void {
@@ -191,7 +191,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       rowsPerPage,
       deleteOpen,
       addScreenOpen,
-      selectedEvent
+      selectedEvent,
     } = this.state;
 
     const offset = page * rowsPerPage;
@@ -266,7 +266,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
               color="primary"
               onClick={() => {
                 this.setState({
-                  setAccessPolicyScreenOpen: true
+                  setAccessPolicyScreenOpen: true,
                 });
               }}
             >
@@ -290,7 +290,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
               startIcon={<CreateIcon />}
               onClick={() => {
                 this.setState({
-                  addScreenOpen: true
+                  addScreenOpen: true,
                 });
               }}
             >
@@ -308,10 +308,10 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
                 {
                   label: "Events",
                   elementKey: "events",
-                  renderFunction: eventsDisplay
+                  renderFunction: eventsDisplay,
                 },
                 { label: "Prefix", elementKey: "prefix" },
-                { label: "Suffix", elementKey: "suffix" }
+                { label: "Suffix", elementKey: "suffix" },
               ]}
               isLoading={loading}
               records={filteredRecords}
@@ -325,11 +325,11 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
                 page: page,
                 SelectProps: {
                   inputProps: { "aria-label": "rows per page" },
-                  native: true
+                  native: true,
                 },
                 onChangePage: handleChangePage,
                 onChangeRowsPerPage: handleChangeRowsPerPage,
-                ActionsComponent: MinTablePaginationActions
+                ActionsComponent: MinTablePaginationActions,
               }}
             />
           </Grid>

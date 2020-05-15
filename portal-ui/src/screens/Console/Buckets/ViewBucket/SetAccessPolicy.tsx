@@ -26,9 +26,9 @@ import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapp
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
+      color: "red",
     },
-    ...modalBasic
+    ...modalBasic,
   });
 
 interface ISetAccessPolicyProps {
@@ -51,7 +51,7 @@ class SetAccessPolicy extends React.Component<
   state: ISetAccessPolicyState = {
     addLoading: false,
     addError: "",
-    accessPolicy: ""
+    accessPolicy: "",
   };
 
   addRecord(event: React.FormEvent) {
@@ -64,23 +64,23 @@ class SetAccessPolicy extends React.Component<
     this.setState({ addLoading: true }, () => {
       api
         .invoke("PUT", `/api/v1/buckets/${bucketName}/set-policy`, {
-          access: accessPolicy
+          access: accessPolicy,
         })
-        .then(res => {
+        .then((res) => {
           this.setState(
             {
               addLoading: false,
-              addError: ""
+              addError: "",
             },
             () => {
               this.props.closeModalAndRefresh();
             }
           );
         })
-        .catch(err => {
+        .catch((err) => {
           this.setState({
             addLoading: false,
-            addError: err
+            addError: err,
           });
         });
     });
@@ -130,7 +130,7 @@ class SetAccessPolicy extends React.Component<
                   }}
                   options={[
                     { value: "PRIVATE", label: "Private" },
-                    { value: "PUBLIC", label: "Public" }
+                    { value: "PUBLIC", label: "Public" },
                   ]}
                 />
               </Grid>

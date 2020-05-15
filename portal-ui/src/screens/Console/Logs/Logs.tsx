@@ -32,28 +32,28 @@ const styles = (theme: Theme) =>
       overflow: "auto",
       "& ul": {
         margin: "4px",
-        padding: "0px"
+        padding: "0px",
       },
       "& ul li": {
         listStyle: "none",
         margin: "0px",
         padding: "0px",
-        borderBottom: "1px solid #dedede"
-      }
+        borderBottom: "1px solid #dedede",
+      },
     },
     tab: {
-      padding: "25px"
+      padding: "25px",
     },
     logerror: {
-      color: "#A52A2A"
+      color: "#A52A2A",
     },
     logerror_tab: {
       color: "#A52A2A",
-      padding: "25px"
+      padding: "25px",
     },
     ansidefault: {
-      color: "black"
-    }
+      color: "black",
+    },
   });
 
 interface ILogs {
@@ -67,7 +67,7 @@ const Logs = ({
   classes,
   logMessageReceived,
   logResetMessages,
-  messages
+  messages,
 }: ILogs) => {
   useEffect(() => {
     logResetMessages();
@@ -226,9 +226,7 @@ const Logs = ({
     if (substr.startsWith("   ")) {
       return (
         <li key={logElement.key}>
-          <span className={classes.tab}>
-            {substr}
-          </span>
+          <span className={classes.tab}>{substr}</span>
         </li>
       );
     } else if (!isNullOrUndefined(logElement.error)) {
@@ -238,9 +236,7 @@ const Logs = ({
       // for all remaining set default class
       return (
         <li key={logElement.key}>
-          <span className={classes.ansidefault}>
-            {substr}
-          </span>
+          <span className={classes.ansidefault}>{substr}</span>
         </li>
       );
     }
@@ -251,7 +247,7 @@ const Logs = ({
       <h1>Logs</h1>
       <div className={classes.logList}>
         <ul>
-          {messages.map(m => {
+          {messages.map((m) => {
             return renderLog(m);
           })}
         </ul>
@@ -261,12 +257,12 @@ const Logs = ({
 };
 
 const mapState = (state: AppState) => ({
-  messages: state.logs.messages
+  messages: state.logs.messages,
 });
 
 const connector = connect(mapState, {
   logMessageReceived: logMessageReceived,
-  logResetMessages: logResetMessages
+  logResetMessages: logResetMessages,
 });
 
 export default connector(withStyles(styles)(Logs));

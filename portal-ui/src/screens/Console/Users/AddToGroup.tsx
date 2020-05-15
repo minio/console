@@ -34,25 +34,25 @@ interface IAddToGroup {
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     strongText: {
-      fontWeight: 700
+      fontWeight: 700,
     },
     keyName: {
-      marginLeft: 5
+      marginLeft: 5,
     },
     buttonContainer: {
-      textAlign: "right"
+      textAlign: "right",
     },
-    ...modalBasic
+    ...modalBasic,
   });
 
 const AddToGroup = ({
   open,
   checkedUsers,
   closeModalAndRefresh,
-  classes
+  classes,
 }: IAddToGroup) => {
   //Local States
   const [saving, isSaving] = useState<boolean>(false);
@@ -66,14 +66,14 @@ const AddToGroup = ({
         api
           .invoke("PUT", "/api/v1/users-groups-bulk", {
             groups: selectedGroups,
-            users: checkedUsers
+            users: checkedUsers,
           })
-          .then(res => {
+          .then((res) => {
             isSaving(false);
             setError("");
             closeModalAndRefresh(true);
           })
-          .catch(err => {
+          .catch((err) => {
             isSaving(false);
             setError(err);
           });
@@ -88,7 +88,7 @@ const AddToGroup = ({
     setError,
     closeModalAndRefresh,
     selectedGroups,
-    checkedUsers
+    checkedUsers,
   ]);
 
   //Fetch Actions

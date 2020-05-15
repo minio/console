@@ -31,7 +31,7 @@ interface IConfPostgresProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    ...modalBasic
+    ...modalBasic,
   });
 
 const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
@@ -140,7 +140,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
         { key: "format", value: format },
         { key: "queue_dir", value: queueDir },
         { key: "queue_limit", value: queueLimit },
-        { key: "comment", value: comment }
+        { key: "comment", value: comment },
       ];
 
       onChange(formValues);
@@ -152,7 +152,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
     queueDir,
     queueLimit,
     comment,
-    onChange
+    onChange,
   ]);
 
   useEffect(() => {
@@ -166,7 +166,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
     sslMode,
     host,
     setConnectionString,
-    configToString
+    configToString,
   ]);
 
   return (
@@ -189,7 +189,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
                     "dbname",
                     "user",
                     "password",
-                    "sslmode"
+                    "sslmode",
                   ]);
                   setHostname(kv.get("host") ? kv.get("host") + "" : "");
                   setPort(kv.get("port") ? kv.get("port") + "" : "");
@@ -278,7 +278,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
                 { label: "Require", value: "require" },
                 { label: "Disable", value: "disable" },
                 { label: "Verify CA", value: "verify-ca" },
-                { label: "Verify Full", value: "verify-full" }
+                { label: "Verify Full", value: "verify-full" },
               ]}
             />
           </Grid>
@@ -325,13 +325,13 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
           id="format"
           name="format"
           label="Format"
-          onChange={e => {
+          onChange={(e) => {
             setFormat(e.target.value);
           }}
           tooltip="'namespace' reflects current bucket/object list and 'access' reflects a journal of object operations, defaults to 'namespace'"
           selectorOptions={[
             { label: "Namespace", value: "namespace" },
-            { label: "Access", value: "access" }
+            { label: "Access", value: "access" },
           ]}
         />
       </Grid>

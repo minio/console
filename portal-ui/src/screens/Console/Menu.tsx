@@ -34,7 +34,7 @@ import {
   BucketsIcon,
   DashboardIcon,
   PermissionIcon,
-  UsersIcon
+  UsersIcon,
 } from "../../icons";
 import { createStyles, Theme } from "@material-ui/core/styles";
 import PersonIcon from "@material-ui/icons/Person";
@@ -50,8 +50,8 @@ const styles = (theme: Theme) =>
       marginBottom: "20px",
       textAlign: "center",
       "& img": {
-        width: "120px"
-      }
+        width: "120px",
+      },
     },
     menuList: {
       "& .active": {
@@ -61,31 +61,31 @@ const styles = (theme: Theme) =>
         background:
           "transparent linear-gradient(90deg, #362585 0%, #362585 7%, #281B6F 39%, #1F1661 100%) 0% 0% no-repeat padding-box",
         "& .MuiSvgIcon-root": {
-          color: "white"
-        }
+          color: "white",
+        },
       },
       "& .MuiListItem-root": {
-        marginTop: "16px"
+        marginTop: "16px",
       },
       paddingLeft: "30px",
       "& .MuiSvgIcon-root": {
         fontSize: "18px",
-        color: "#393939"
+        color: "#393939",
       },
       "& .MuiListItemIcon-root": {
-        minWidth: "40px"
+        minWidth: "40px",
       },
       "& .MuiTypography-root": {
-        fontSize: "14px"
+        fontSize: "14px",
       },
       "& .MuiListItem-gutters": {
-        paddingRight: "0px"
-      }
-    }
+        paddingRight: "0px",
+      },
+    },
   });
 
 const mapState = (state: AppState) => ({
-  open: state.system.loggedIn
+  open: state.system.loggedIn,
 });
 
 const connector = connect(mapState, { userLoggedIn });

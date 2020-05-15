@@ -27,12 +27,12 @@ import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBo
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     buttonContainer: {
-      textAlign: "right"
+      textAlign: "right",
     },
-    ...modalBasic
+    ...modalBasic,
   });
 
 interface IAddBucketProps {
@@ -51,7 +51,7 @@ class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
   state: IAddBucketState = {
     addLoading: false,
     addError: "",
-    bucketName: ""
+    bucketName: "",
   };
 
   addRecord(event: React.FormEvent) {
@@ -63,23 +63,23 @@ class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
     this.setState({ addLoading: true }, () => {
       api
         .invoke("POST", "/api/v1/buckets", {
-          name: bucketName
+          name: bucketName,
         })
-        .then(res => {
+        .then((res) => {
           this.setState(
             {
               addLoading: false,
-              addError: ""
+              addError: "",
             },
             () => {
               this.props.closeModalAndRefresh();
             }
           );
         })
-        .catch(err => {
+        .catch((err) => {
           this.setState({
             addLoading: false,
-            addError: err
+            addError: err,
           });
         });
     });
