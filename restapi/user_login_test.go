@@ -52,7 +52,7 @@ func TestLogin(t *testing.T) {
 			SignerType:      0,
 		}, nil
 	}
-	jwt, err := login(mcsCredentials)
+	jwt, err := login(mcsCredentials, []string{""})
 	funcAssert.NotEmpty(jwt, "JWT was returned empty")
 	funcAssert.Nil(err, "error creating a session")
 
@@ -60,7 +60,7 @@ func TestLogin(t *testing.T) {
 	mcsCredentialsGetMock = func() (credentials.Value, error) {
 		return credentials.Value{}, errors.New("")
 	}
-	_, err = login(mcsCredentials)
+	_, err = login(mcsCredentials, []string{""})
 	funcAssert.NotNil(err, "not error returned creating a session")
 }
 

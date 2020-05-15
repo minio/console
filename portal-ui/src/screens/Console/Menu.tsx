@@ -18,7 +18,7 @@ import React from "react";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import WebAssetIcon from "@material-ui/icons/WebAsset";
-import CenterFocusWeakIcon from '@material-ui/icons/CenterFocusWeak';
+import CenterFocusWeakIcon from "@material-ui/icons/CenterFocusWeak";
 import ListItemText from "@material-ui/core/ListItemText";
 import { NavLink } from "react-router-dom";
 import { Divider, Typography, withStyles } from "@material-ui/core";
@@ -93,6 +93,7 @@ const connector = connect(mapState, { userLoggedIn });
 interface MenuProps {
   classes: any;
   userLoggedIn: typeof userLoggedIn;
+  pages: string[];
 }
 
 class Menu extends React.Component<MenuProps> {
@@ -114,77 +115,153 @@ class Menu extends React.Component<MenuProps> {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, pages } = this.props;
+    const allowedPages = pages.reduce((result: any, item: any, index: any) => {
+      result[item] = true;
+      return result;
+    }, {});
+
+    const menu = [
+      {
+        type: "item",
+        component: NavLink,
+        to: "/dashboard",
+        name: "Dashboard",
+        icon: <DashboardIcon />,
+      },
+      {
+        type: "item",
+        component: NavLink,
+        to: "/buckets",
+        name: "Buckets",
+        icon: <BucketsIcon />,
+      },
+      {
+        type: "item",
+        component: NavLink,
+        to: "/watch",
+        name: "Watch",
+        icon: <CenterFocusWeakIcon />,
+      },
+      {
+        type: "divider",
+        key: "divider-1",
+      },
+      {
+        type: "title",
+        name: "Admin",
+        component: Typography,
+      },
+      {
+        group: "Admin",
+        type: "item",
+        component: NavLink,
+        to: "/users",
+        name: "Users",
+        icon: <PersonIcon />,
+      },
+      {
+        group: "Admin",
+        type: "item",
+        component: NavLink,
+        to: "/groups",
+        name: "Groups",
+        icon: <UsersIcon />,
+      },
+      {
+        group: "Admin",
+        type: "item",
+        component: NavLink,
+        to: "/policies",
+        name: "IAM Policies",
+        icon: <PermissionIcon />,
+      },
+      {
+        group: "Admin",
+        type: "item",
+        component: NavLink,
+        to: "/trace",
+        name: "Trace",
+        icon: <LoopIcon />,
+      },
+      {
+        group: "Admin",
+        type: "item",
+        component: NavLink,
+        to: "/logs",
+        name: "Console Logs",
+        icon: <WebAssetIcon />,
+      },
+      {
+        type: "title",
+        name: "Configuration",
+        component: Typography,
+      },
+      {
+        group: "Configuration",
+        type: "item",
+        component: NavLink,
+        to: "/notification-endpoints",
+        name: "Lambda Notifications",
+        icon: <NotificationsIcon />,
+      },
+      {
+        group: "Configuration",
+        type: "item",
+        component: NavLink,
+        to: "/configurations-list",
+        name: "Configurations List",
+        icon: <ListAltIcon />,
+      },
+      {
+        type: "divider",
+        key: "divider-2",
+      },
+    ];
+
+    const allowedItems = menu.filter(
+      (item: any) =>
+        allowedPages[item.to] || item.forceDisplay || item.type !== "item"
+    );
+
     return (
       <React.Fragment>
         <div className={classes.logo}>
           <img src={logo} alt="logo" />
         </div>
         <List className={classes.menuList}>
-          <ListItem button component={NavLink} to="/dashboard">
-            <ListItemIcon>
-              <DashboardIcon />
-            </ListItemIcon>
-            <ListItemText primary="Dashboard" />
-          </ListItem>
-          <ListItem button component={NavLink} to="/buckets">
-            <ListItemIcon>
-              <BucketsIcon />
-            </ListItemIcon>
-            <ListItemText primary="Buckets" />
-          </ListItem>
-          <ListItem button component={NavLink} to="/watch">
-            <ListItemIcon>
-              <CenterFocusWeakIcon />
-            </ListItemIcon>
-            <ListItemText primary="Watch" />
-          </ListItem>
-          <Divider />
-          <ListItem component={Typography}>Admin</ListItem>
-          <ListItem button component={NavLink} to="/users">
-            <ListItemIcon>
-              <PersonIcon />
-            </ListItemIcon>
-            <ListItemText primary="Users" />
-          </ListItem>
-          <ListItem button component={NavLink} to="/groups">
-            <ListItemIcon>
-              <UsersIcon />
-            </ListItemIcon>
-            <ListItemText primary="Groups" />
-          </ListItem>
-          <ListItem button component={NavLink} to="/policies">
-            <ListItemIcon>
-              <PermissionIcon />
-            </ListItemIcon>
-            <ListItemText primary="IAM Policies" />
-          </ListItem>
-          <ListItem button component={NavLink} to="/trace">
-            <ListItemIcon>
-              <LoopIcon />
-            </ListItemIcon>
-            <ListItemText primary="Trace" />
-          </ListItem>
-          <ListItem button component={NavLink} to="/logs">
-            <ListItemIcon>
-              <WebAssetIcon />
-            </ListItemIcon>
-            <ListItemText primary="Console Logs" />
-          </ListItem>
-          <ListItem component={Typography}>Configuration</ListItem>
-          <ListItem button component={NavLink} to="/notification-endpoints">
-            <ListItemIcon>
-              <NotificationsIcon />
-            </ListItemIcon>
-            <ListItemText primary="Lambda Notifications" />
-          </ListItem>
-          <ListItem button component={NavLink} to="/configurations-list">
-            <ListItemIcon>
-              <ListAltIcon />
-            </ListItemIcon>
-            <ListItemText primary="Configurations List" />
-          </ListItem>
-          <Divider />
+          {allowedItems.map((page: any) => {
+            switch (page.type) {
+              case "divider": {
+                return <Divider key={page.key} />;
+              }
+              case "item": {
+                return (
+                  <ListItem
+                    key={page.to}
+                    button
+                    component={page.component}
+                    to={page.to}
+                  >
+                    {page.icon && <ListItemIcon>{page.icon}</ListItemIcon>}
+                    {page.name && <ListItemText primary={page.name} />}
+                  </ListItem>
+                );
+              }
+              case "title": {
+                return (
+                  (allowedItems || []).filter(
+                    (item: any) => item.group === page.name
+                  ).length > 0 && (
+                    <ListItem key={page.name} component={page.component}>
+                      {page.name}
+                    </ListItem>
+                  )
+                );
+              }
+              default:
+            }
+          })}
           <ListItem
             button
             onClick={() => {

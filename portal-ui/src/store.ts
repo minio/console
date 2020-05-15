@@ -20,12 +20,14 @@ import { systemReducer } from "./reducer";
 import { traceReducer } from "./screens/Console/Trace/reducers";
 import { logReducer } from "./screens/Console/Logs/reducers";
 import { watchReducer } from "./screens/Console/Watch/reducers";
+import { consoleReducer } from "./screens/Console/reducer";
 
 const globalReducer = combineReducers({
   system: systemReducer,
   trace: traceReducer,
   logs: logReducer,
   watch: watchReducer,
+  console: consoleReducer,
 });
 
 declare global {
