@@ -37,7 +37,7 @@ import (
 )
 
 var (
-	errAuthentication = errors.New("Authentication failed, check your access credentials")
+	errAuthentication = errors.New("authentication failed, check your access credentials")
 	errNoAuthToken    = errors.New("JWT token missing")
 	errReadingToken   = errors.New("JWT internal data is malformed")
 	errClaimsFormat   = errors.New("encrypted jwt claims not in the right format")

@@ -126,7 +126,7 @@ func Test_getConfiguredRegion(t *testing.T) {
 			mock: func() {
 				// mock function response from getConfig()
 				minioGetConfigKVMock = func(key string) ([]byte, error) {
-					return nil, errors.New("Invalid config")
+					return nil, errors.New("invalid config")
 				}
 				// mock function response from listConfig()
 				minioHelpConfigKVMock = func(subSys, key string, envOnly bool) (madmin.Help, error) {

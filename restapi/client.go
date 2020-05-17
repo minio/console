@@ -163,10 +163,10 @@ var STSClient = PrepareSTSClient()
 func newMcsCredentials(accessKey, secretKey, location string) (*credentials.Credentials, error) {
 	mcsEndpoint := getMinIOServer()
 	if mcsEndpoint == "" {
-		return nil, errors.New("STS endpoint cannot be empty")
+		return nil, errors.New("endpoint cannot be empty for AssumeRoleSTS")
 	}
 	if accessKey == "" || secretKey == "" {
-		return nil, errors.New("AssumeRole credentials access/secretkey is mandatory")
+		return nil, errors.New("creredentials access/secretkey is mandatory for AssumeRoleSTS")
 	}
 
 	// Future authentication methods can be added under this switch statement

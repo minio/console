@@ -1,4 +1,7 @@
 linters-settings:
+  golint:
+    min-confidence: 0
+
   misspell:
     locale: US
 
@@ -14,4 +17,8 @@ linters:
     - gosimple
     - deadcode
     - unparam
+    - unused
     - structcheck
+
+service:
+  golangci-lint-version: 1.21.0 # use the fixed version to not introduce new linters unexpectedly
