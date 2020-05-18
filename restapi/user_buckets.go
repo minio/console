@@ -82,22 +82,17 @@ func registerBucketsHandlers(api *operations.McsAPI) {
 	})
 }
 
-// listBuckets fetches a list of all buckets from MinIO Servers
-func listBuckets(ctx context.Context, client MinioClient) ([]*models.Bucket, error) {
-	// Get list of all buckets owned by an authenticated user.
-	// This call requires explicit authentication, no anonymous requests are
-	// allowed for listing buckets.
-	buckets, err := client.listBucketsWithContext(ctx)
+// getaAcountUsageInfo fetches a list of all buckets allowed to that particular client from MinIO Servers
+func getaAcountUsageInfo(ctx context.Context, client MinioAdmin) ([]*models.Bucket, error) {
+	info, err := client.accountUsageInfo(ctx)
 	if err != nil {
 		return []*models.Bucket{}, err
 	}
-
 	var bucketInfos []*models.Bucket
-	for _, bucket := range buckets {
-		bucketElem := &models.Bucket{Name: swag.String(bucket.Name), CreationDate: bucket.CreationDate.String()}
+	for _, bucket := range info.Buckets {
+		bucketElem := &models.Bucket{Name: swag.String(bucket.Name), CreationDate: bucket.Created.String(), Size: int64(bucket.Size)}
 		bucketInfos = append(bucketInfos, bucketElem)
 	}
-
 	return bucketInfos, nil
 }
 
@@ -105,20 +100,21 @@ func listBuckets(ctx context.Context, client MinioClient) ([]*models.Bucket, err
 func getListBucketsResponse(sessionID string) (*models.ListBucketsResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
-	mClient, err := newMinioClient(sessionID)
+
+	mAdmin, err := newMAdminClient(sessionID)
 	if err != nil {
-		log.Println("error creating MinIO Client:", err)
+		log.Println("error creating Madmin Client:", err)
 		return nil, err
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
-	minioClient := minioClient{client: mClient}
-
-	buckets, err := listBuckets(ctx, minioClient)
+	adminClient := adminClient{client: mAdmin}
+	buckets, err := getaAcountUsageInfo(ctx, adminClient)
 	if err != nil {
-		log.Println("error listing buckets:", err)
+		log.Println("error accountingUsageInfo:", err)
 		return nil, err
 	}
+
 	// serialize output
 	listBucketsResponse := &models.ListBucketsResponse{
 		Buckets: buckets,
