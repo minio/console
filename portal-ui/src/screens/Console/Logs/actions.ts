@@ -33,12 +33,12 @@ export type LogActionTypes = LogMessageReceivedAction | LogResetMessagesAction;
 export function logMessageReceived(message: LogMessage) {
   return {
     type: LOG_MESSAGE_RECEIVED,
-    message: message
+    message: message,
   };
 }
 
 export function logResetMessages() {
   return {
-    type: LOG_RESET_MESSAGES
+    type: LOG_RESET_MESSAGES,
   };
 }

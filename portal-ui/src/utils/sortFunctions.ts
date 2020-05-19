@@ -29,7 +29,7 @@ export const usersSort = (a: userInterface, b: userInterface) => {
   return 0;
 };
 
-export const groupsSort = (a: string, b: string) => {
+export const stringSort = (a: string, b: string) => {
   if (a > b) {
     return 1;
   }

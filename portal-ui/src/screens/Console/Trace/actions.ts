@@ -35,12 +35,12 @@ export type TraceActionTypes =
 export function traceMessageReceived(message: TraceMessage) {
   return {
     type: TRACE_MESSAGE_RECEIVED,
-    message: message
+    message: message,
   };
 }
 
 export function traceResetMessages() {
   return {
-    type: TRACE_RESET_MESSAGES
+    type: TRACE_RESET_MESSAGES,
   };
 }

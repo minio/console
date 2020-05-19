@@ -35,36 +35,36 @@ interface IListConfiguration {
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     strongText: {
-      fontWeight: 700
+      fontWeight: 700,
     },
     keyName: {
-      marginLeft: 5
+      marginLeft: 5,
     },
     actionsTray: {
       textAlign: "right",
       "& button": {
-        marginLeft: 10
-      }
+        marginLeft: 10,
+      },
     },
     searchField: {
       background: "#FFFFFF",
       padding: 12,
       borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012"
+      boxShadow: "0px 3px 6px #00000012",
     },
     iconText: {
-      lineHeight: "24px"
-    }
+      lineHeight: "24px",
+    },
   });
 
 const ConfigurationsList = ({ classes }: IListConfiguration) => {
   const [editScreenOpen, setEditScreenOpen] = useState(false);
   const [selectedConfiguration, setSelectedConfiguration] = useState({
     configuration_id: "",
-    configuration_label: ""
+    configuration_label: "",
   });
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("");
@@ -81,12 +81,12 @@ const ConfigurationsList = ({ classes }: IListConfiguration) => {
           setSelectedConfiguration(element);
           setEditScreenOpen(true);
         }
-      }
-    }
+      },
+    },
   ];
 
   const filteredRecords: IConfigurationElement[] = configurationElements.filter(
-    elementItem =>
+    (elementItem) =>
       elementItem.configuration_id
         .toLocaleLowerCase()
         .includes(filter.toLocaleLowerCase())
@@ -117,7 +117,7 @@ const ConfigurationsList = ({ classes }: IListConfiguration) => {
             className={classes.searchField}
             id="search-resource"
             label=""
-            onChange={event => {
+            onChange={(event) => {
               setFilter(event.target.value);
             }}
             InputProps={{
@@ -126,7 +126,7 @@ const ConfigurationsList = ({ classes }: IListConfiguration) => {
                 <InputAdornment position="start">
                   <SearchIcon />
                 </InputAdornment>
-              )
+              ),
             }}
           />
         </Grid>
@@ -137,7 +137,7 @@ const ConfigurationsList = ({ classes }: IListConfiguration) => {
           <TableWrapper
             itemActions={tableActions}
             columns={[
-              { label: "Configuration", elementKey: "configuration_id" }
+              { label: "Configuration", elementKey: "configuration_id" },
             ]}
             isLoading={false}
             records={filteredRecords}

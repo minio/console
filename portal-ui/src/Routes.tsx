@@ -35,7 +35,7 @@ const isLoggedIn = () => {
 };
 
 const mapState = (state: AppState) => ({
-  loggedIn: state.system.loggedIn
+  loggedIn: state.system.loggedIn,
 });
 
 const connector = connect(mapState, { userLoggedIn });

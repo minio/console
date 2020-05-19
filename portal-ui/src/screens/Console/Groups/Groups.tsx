@@ -26,7 +26,7 @@ import { CreateIcon } from "../../../icons";
 import api from "../../../common/api";
 import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
 import { GroupsList } from "./types";
-import { groupsSort } from "../../../utils/sortFunctions";
+import { stringSort } from "../../../utils/sortFunctions";
 import AddGroup from "../Groups/AddGroup";
 import DeleteGroup from "./DeleteGroup";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
@@ -39,50 +39,50 @@ interface IGroupsProps {
 const styles = (theme: Theme) =>
   createStyles({
     seeMore: {
-      marginTop: theme.spacing(3)
+      marginTop: theme.spacing(3),
     },
     paper: {
       // padding: theme.spacing(2),
       display: "flex",
       overflow: "auto",
-      flexDirection: "column"
+      flexDirection: "column",
     },
     addSideBar: {
       width: "320px",
-      padding: "20px"
+      padding: "20px",
     },
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     tableToolbar: {
       paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0)
+      paddingRight: theme.spacing(0),
     },
     wrapCell: {
       maxWidth: "200px",
       whiteSpace: "normal",
-      wordWrap: "break-word"
+      wordWrap: "break-word",
     },
     minTableHeader: {
       color: "#393939",
       "& tr": {
         "& th": {
-          fontWeight: "bold"
-        }
-      }
+          fontWeight: "bold",
+        },
+      },
     },
     actionsTray: {
       textAlign: "right",
       "& button": {
-        marginLeft: 10
-      }
+        marginLeft: 10,
+      },
     },
     searchField: {
       background: "#FFFFFF",
       padding: 12,
       borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012"
-    }
+      boxShadow: "0px 3px 6px #00000012",
+    },
   });
 
 const Groups = ({ classes }: IGroupsProps) => {
@@ -126,7 +126,7 @@ const Groups = ({ classes }: IGroupsProps) => {
           .then((res: GroupsList) => {
             let resGroups: string[] = [];
             if (res.groups !== null) {
-              resGroups = res.groups.sort(groupsSort);
+              resGroups = res.groups.sort(stringSort);
             }
             setRecords(resGroups);
             const total = !res.total ? 0 : res.total;
@@ -140,7 +140,7 @@ const Groups = ({ classes }: IGroupsProps) => {
               setPage(newPage);
             }
           })
-          .catch(err => {
+          .catch((err) => {
             setError(err);
             isLoading(false);
           });
@@ -162,7 +162,7 @@ const Groups = ({ classes }: IGroupsProps) => {
     }
   };
 
-  const filteredRecords = records.filter(elementItem =>
+  const filteredRecords = records.filter((elementItem) =>
     elementItem.includes(filter)
   );
 
@@ -178,7 +178,7 @@ const Groups = ({ classes }: IGroupsProps) => {
 
   const tableActions = [
     { type: "view", onClick: viewAction },
-    { type: "delete", onClick: deleteAction }
+    { type: "delete", onClick: deleteAction },
   ];
 
   return (
@@ -217,9 +217,9 @@ const Groups = ({ classes }: IGroupsProps) => {
                 <InputAdornment position="start">
                   <SearchIcon />
                 </InputAdornment>
-              )
+              ),
             }}
-            onChange={e => {
+            onChange={(e) => {
               setFilter(e.target.value);
             }}
           />
@@ -255,11 +255,11 @@ const Groups = ({ classes }: IGroupsProps) => {
               page: page,
               SelectProps: {
                 inputProps: { "aria-label": "rows per page" },
-                native: true
+                native: true,
               },
               onChangePage: handleChangePage,
               onChangeRowsPerPage: handleChangeRowsPerPage,
-              ActionsComponent: MinTablePaginationActions
+              ActionsComponent: MinTablePaginationActions,
             }}
           />
         </Grid>

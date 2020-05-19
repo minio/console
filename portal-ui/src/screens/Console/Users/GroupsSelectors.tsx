@@ -24,7 +24,7 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import TextField from "@material-ui/core/TextField";
 import api from "../../../common/api";
-import { groupsSort } from "../../../utils/sortFunctions";
+import { stringSort } from "../../../utils/sortFunctions";
 import { GroupsList } from "../Groups/types";
 import get from "lodash/get";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
@@ -38,43 +38,43 @@ interface IGroupsProps {
 const styles = (theme: Theme) =>
   createStyles({
     seeMore: {
-      marginTop: theme.spacing(3)
+      marginTop: theme.spacing(3),
     },
     paper: {
       // padding: theme.spacing(2),
       display: "flex",
       overflow: "auto",
-      flexDirection: "column"
+      flexDirection: "column",
     },
     addSideBar: {
       width: "320px",
-      padding: "20px"
+      padding: "20px",
     },
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     tableToolbar: {
       paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0)
+      paddingRight: theme.spacing(0),
     },
     wrapCell: {
       maxWidth: "200px",
       whiteSpace: "normal",
-      wordWrap: "break-word"
+      wordWrap: "break-word",
     },
     minTableHeader: {
       color: "#393939",
       "& tr": {
         "& th": {
-          fontWeight: "bold"
-        }
-      }
+          fontWeight: "bold",
+        },
+      },
     },
     actionsTray: {
       textAlign: "left",
       "& button": {
-        marginLeft: 10
-      }
+        marginLeft: 10,
+      },
     },
     filterField: {
       background: "#FFFFFF",
@@ -82,24 +82,24 @@ const styles = (theme: Theme) =>
       borderRadius: 5,
       boxShadow: "0px 3px 6px #00000012",
       width: "100%",
-      zIndex: 500
+      zIndex: 500,
     },
     noFound: {
       textAlign: "center",
-      padding: "10px 0"
+      padding: "10px 0",
     },
     tableContainer: {
-      maxHeight: 200
+      maxHeight: 200,
     },
     stickyHeader: {
-      backgroundColor: "#fff"
-    }
+      backgroundColor: "#fff",
+    },
   });
 
 const GroupsSelectors = ({
   classes,
   selectedGroups,
-  setSelectedGroups
+  setSelectedGroups,
 }: IGroupsProps) => {
   // Local State
   const [records, setRecords] = useState<any[]>([]);
@@ -129,11 +129,11 @@ const GroupsSelectors = ({
         if (!groups) {
           groups = [];
         }
-        setRecords(groups.sort(groupsSort));
+        setRecords(groups.sort(stringSort));
         setError("");
         isLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
         setError(err);
         isLoading(false);
       });
@@ -151,14 +151,14 @@ const GroupsSelectors = ({
       elements.push(value);
     } else {
       // User has unchecked this field, we need to remove it from the list
-      elements = elements.filter(element => element !== value);
+      elements = elements.filter((element) => element !== value);
     }
     setSelectedGroups(elements);
 
     return elements;
   };
 
-  const filteredRecords = records.filter(elementItem =>
+  const filteredRecords = records.filter((elementItem) =>
     elementItem.includes(filter)
   );
 
@@ -183,9 +183,9 @@ const GroupsSelectors = ({
                       <InputAdornment position="start">
                         <SearchIcon />
                       </InputAdornment>
-                    )
+                    ),
                   }}
-                  onChange={e => {
+                  onChange={(e) => {
                     setFilter(e.target.value);
                   }}
                 />

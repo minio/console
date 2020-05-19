@@ -28,7 +28,6 @@ interface WatchResetMessagesAction {
   type: typeof WATCH_RESET_MESSAGES;
 }
 
-
 export type WatchActionTypes =
   | WatchMessageReceivedAction
   | WatchResetMessagesAction;
@@ -36,12 +35,12 @@ export type WatchActionTypes =
 export function watchMessageReceived(message: EventInfo) {
   return {
     type: WATCH_MESSAGE_RECEIVED,
-    message: message
+    message: message,
   };
 }
 
 export function watchResetMessages() {
   return {
-    type: WATCH_RESET_MESSAGES
+    type: WATCH_RESET_MESSAGES,
   };
 }

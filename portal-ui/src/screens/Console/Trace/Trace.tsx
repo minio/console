@@ -31,15 +31,15 @@ const styles = (theme: Theme) =>
       overflow: "auto",
       "& ul": {
         margin: "4px",
-        padding: "0px"
+        padding: "0px",
       },
       "& ul li": {
         listStyle: "none",
         margin: "0px",
         padding: "0px",
-        borderBottom: "1px solid #dedede"
-      }
-    }
+        borderBottom: "1px solid #dedede",
+      },
+    },
   });
 
 interface ITrace {
@@ -53,7 +53,7 @@ const Trace = ({
   classes,
   traceMessageReceived,
   traceResetMessages,
-  messages
+  messages,
 }: ITrace) => {
   useEffect(() => {
     traceResetMessages();
@@ -96,7 +96,7 @@ const Trace = ({
       <h1>Trace</h1>
       <div className={classes.logList}>
         <ul>
-          {messages.map(m => {
+          {messages.map((m) => {
             return (
               <li key={m.key}>
                 {timeFromDate(m.time)} - {m.api}[{m.statusCode} {m.statusMsg}]{" "}
@@ -113,12 +113,12 @@ const Trace = ({
 };
 
 const mapState = (state: AppState) => ({
-  messages: state.trace.messages
+  messages: state.trace.messages,
 });
 
 const connector = connect(mapState, {
   traceMessageReceived: traceMessageReceived,
-  traceResetMessages: traceResetMessages
+  traceResetMessages: traceResetMessages,
 });
 
 export default connector(withStyles(styles)(Trace));

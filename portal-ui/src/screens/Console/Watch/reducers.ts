@@ -17,7 +17,7 @@
 import {
   WATCH_MESSAGE_RECEIVED,
   WATCH_RESET_MESSAGES,
-  WatchActionTypes
+  WatchActionTypes,
 } from "./actions";
 import { EventInfo } from "./types";
 
@@ -26,7 +26,7 @@ export interface WatchState {
 }
 
 const initialState: WatchState = {
-  messages: []
+  messages: [],
 };
 
 export function watchReducer(
@@ -37,12 +37,12 @@ export function watchReducer(
     case WATCH_MESSAGE_RECEIVED:
       return {
         ...state,
-        messages: [...state.messages, action.message]
+        messages: [...state.messages, action.message],
       };
     case WATCH_RESET_MESSAGES:
       return {
         ...state,
-        messages: []
+        messages: [],
       };
     default:
       return state;

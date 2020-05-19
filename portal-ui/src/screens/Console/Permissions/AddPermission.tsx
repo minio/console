@@ -31,14 +31,14 @@ import {
   Radio,
   RadioGroup,
   Select,
-  TextField
+  TextField,
 } from "@material-ui/core";
 import {
   createStyles,
   lighten,
   makeStyles,
   Theme,
-  withStyles
+  withStyles,
 } from "@material-ui/core/styles";
 import api from "../../../common/api";
 import clsx from "clsx";
@@ -61,21 +61,21 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(1)
+      paddingRight: theme.spacing(1),
     },
     highlight:
       theme.palette.type === "light"
         ? {
             color: theme.palette.secondary.main,
-            backgroundColor: lighten(theme.palette.secondary.light, 0.85)
+            backgroundColor: lighten(theme.palette.secondary.light, 0.85),
           }
         : {
             color: theme.palette.text.primary,
-            backgroundColor: theme.palette.secondary.dark
+            backgroundColor: theme.palette.secondary.dark,
           },
     title: {
-      flex: "1 1 100%"
-    }
+      flex: "1 1 100%",
+    },
   })
 );
 
@@ -90,7 +90,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   return (
     <Toolbar
       className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0
+        [classes.highlight]: numSelected > 0,
       })}
     >
       {numSelected > 0 ? (
@@ -122,8 +122,8 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
-    }
+      color: "red",
+    },
   });
 
 interface IAddPermissionContentProps {
@@ -164,7 +164,7 @@ class AddPermissionContent extends React.Component<
     resources: [],
     buckets: [],
     bucketsError: "",
-    loadingBuckets: false
+    loadingBuckets: false,
   };
 
   componentDidMount(): void {
@@ -176,10 +176,10 @@ class AddPermissionContent extends React.Component<
           this.setState({
             loadingBuckets: false,
             buckets: res.buckets,
-            bucketsError: ""
+            bucketsError: "",
           });
         })
-        .catch(err => {
+        .catch((err) => {
           this.setState({ loadingBuckets: false, bucketsError: err });
         });
     });
@@ -190,8 +190,8 @@ class AddPermissionContent extends React.Component<
         name: selectedPermission.name,
         description: selectedPermission.description,
         effect: selectedPermission.effect,
-        resources: selectedPermission.resources.map(r => r.bucket_name),
-        action: selectedPermission.actions[0].type
+        resources: selectedPermission.resources.map((r) => r.bucket_name),
+        action: selectedPermission.actions[0].type,
       });
     }
   }
@@ -204,7 +204,7 @@ class AddPermissionContent extends React.Component<
       resources,
       description,
       effect,
-      action
+      action,
     } = this.state;
     const { selectedPermission } = this.props;
     if (addLoading) {
@@ -219,23 +219,23 @@ class AddPermissionContent extends React.Component<
             description: description,
             effect: effect,
             resources: resources,
-            actions: [action]
+            actions: [action],
           })
-          .then(res => {
+          .then((res) => {
             this.setState(
               {
                 addLoading: false,
-                addError: ""
+                addError: "",
               },
               () => {
                 this.props.closeModalAndRefresh();
               }
             );
           })
-          .catch(err => {
+          .catch((err) => {
             this.setState({
               addLoading: false,
-              addError: err
+              addError: err,
             });
           });
       } else {
@@ -245,23 +245,23 @@ class AddPermissionContent extends React.Component<
             description: description,
             effect: effect,
             resources: resources,
-            actions: [action]
+            actions: [action],
           })
-          .then(res => {
+          .then((res) => {
             this.setState(
               {
                 addLoading: false,
-                addError: ""
+                addError: "",
               },
               () => {
                 this.props.closeModalAndRefresh();
               }
             );
           })
-          .catch(err => {
+          .catch((err) => {
             this.setState({
               addLoading: false,
-              addError: err
+              addError: err,
             });
           });
       }
@@ -280,14 +280,14 @@ class AddPermissionContent extends React.Component<
       name,
       description,
       effect,
-      action
+      action,
     } = this.state;
 
     const handleSelectAllClick = (
       event: React.ChangeEvent<HTMLInputElement>
     ) => {
       if (event.target.checked) {
-        const newSelecteds = buckets.map(n => n.name);
+        const newSelecteds = buckets.map((n) => n.name);
         this.setState({ resources: newSelecteds });
         return;
       }
@@ -432,7 +432,7 @@ class AddPermissionContent extends React.Component<
                               }
                               onChange={handleSelectAllClick}
                               inputProps={{
-                                "aria-label": "select all desserts"
+                                "aria-label": "select all desserts",
                               }}
                             />
                           </TableCell>
@@ -452,7 +452,9 @@ class AddPermissionContent extends React.Component<
                             return (
                               <TableRow
                                 hover
-                                onClick={event => handleClick(event, row.name)}
+                                onClick={(event) =>
+                                  handleClick(event, row.name)
+                                }
                                 role="checkbox"
                                 aria-checked={isItemSelected}
                                 tabIndex={-1}
@@ -500,7 +502,7 @@ class AddPermissionContent extends React.Component<
                     value={action}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       this.setState({
-                        action: (event.target as HTMLInputElement).value
+                        action: (event.target as HTMLInputElement).value,
                       });
                     }}
                   >
