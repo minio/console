@@ -14,31 +14,30 @@ $ mc admin user add myminio mcs YOURMCSSECRET
 $ set -o history
 ```
 
-2. Create a policy for `mcs`
+2. Create a policy for `mcs` with access to everything (for testing and debugging)
 
 ```
 $ cat > mcsAdmin.json << EOF
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "admin:*"
-      ],
-      "Effect": "Allow",
-      "Sid": ""
-    },
-    {
-      "Action": [
-        "s3:*"
-      ],
-      "Effect": "Allow",
-      "Resource": [
-        "arn:aws:s3:::*"
-      ],
-      "Sid": ""
-    }
-  ]
+	"Version": "2012-10-17",
+	"Statement": [{
+			"Action": [
+				"admin:*"
+			],
+			"Effect": "Allow",
+			"Sid": ""
+		},
+		{
+			"Action": [
+                "s3:*"
+			],
+			"Effect": "Allow",
+			"Resource": [
+				"arn:aws:s3:::*"
+			],
+			"Sid": ""
+		}
+	]
 }
 EOF
 $ mc admin policy add myminio mcsAdmin mcsAdmin.json
@@ -48,6 +47,49 @@ $ mc admin policy add myminio mcsAdmin mcsAdmin.json
 
 ```
 $ mc admin policy set myminio mcsAdmin user=mcs
+```
+
+
+### Note
+Additionally, you can create policies to limit the privileges for `mcs` users, for example, if you want the user to only have access to dashboard, buckets, notifications and watch page, the policy should look like this:
+```
+{
+	"Version": "2012-10-17",
+	"Statement": [{
+			"Action": [
+				"admin:ServerInfo",
+			],
+			"Effect": "Allow",
+			"Sid": ""
+		},
+		{
+			"Action": [
+				"s3:ListenBucketNotification",
+				"s3:PutBucketNotification",
+				"s3:GetBucketNotification",
+				"s3:ListMultipartUploadParts",
+				"s3:ListBucketMultipartUploads",
+				"s3:ListBucket",
+				"s3:HeadBucket",
+				"s3:GetObject",
+				"s3:GetBucketLocation",
+				"s3:AbortMultipartUpload",
+				"s3:CreateBucket",
+				"s3:PutObject",
+				"s3:DeleteObject",
+				"s3:DeleteBucket",
+				"s3:PutBucketPolicy",
+				"s3:DeleteBucketPolicy",
+				"s3:GetBucketPolicy"
+			],
+			"Effect": "Allow",
+			"Resource": [
+				"arn:aws:s3:::*"
+			],
+			"Sid": ""
+		}
+	]
+}
 ```
 
 ## Run MCS server

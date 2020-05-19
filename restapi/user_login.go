@@ -24,6 +24,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
 	"github.com/minio/mcs/models"
+	"github.com/minio/mcs/pkg/acl"
 	"github.com/minio/mcs/pkg/auth"
 	"github.com/minio/mcs/pkg/auth/idp/oauth2"
 	"github.com/minio/mcs/pkg/auth/utils"
@@ -62,8 +63,9 @@ func registerLoginHandlers(api *operations.McsAPI) {
 	})
 }
 
-// login performs a check of minioCredentials against MinIO
-func login(credentials MCSCredentials) (*string, error) {
+// login performs a check of minioCredentials against MinIO, generates some claims and returns the jwt
+// for subsequent authentication
+func login(credentials MCSCredentials, actions []string) (*string, error) {
 	// try to obtain minioCredentials,
 	tokens, err := credentials.Get()
 	if err != nil {
@@ -71,7 +73,7 @@ func login(credentials MCSCredentials) (*string, error) {
 		return nil, errInvalidCredentials
 	}
 	// if we made it here, the minioCredentials work, generate a jwt with claims
-	jwt, err := auth.NewJWTWithClaimsForClient(&tokens, getMinIOServer())
+	jwt, err := auth.NewJWTWithClaimsForClient(&tokens, actions, getMinIOServer())
 	if err != nil {
 		log.Println("error authenticating user", err)
 		return nil, errInvalidCredentials
@@ -95,6 +97,7 @@ func getConfiguredRegionForLogin(client MinioAdmin) (string, error) {
 
 // getLoginResponse performs login() and serializes it to the handler's output
 func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, error) {
+	ctx := context.Background()
 	mAdmin, err := newSuperMAdminClient()
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
@@ -113,7 +116,22 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, error) {
 		return nil, errInvalidCredentials
 	}
 	credentials := mcsCredentials{minioCredentials: creds}
-	sessionID, err := login(credentials)
+	// obtain the current policy assigned to this user
+	// necessary for generating the list of allowed endpoints
+	userInfo, err := adminClient.getUserInfo(ctx, *lr.AccessKey)
+	if err != nil {
+		log.Println("error login:", err)
+		return nil, errInvalidCredentials
+	}
+	policy, err := adminClient.getPolicy(ctx, userInfo.PolicyName)
+	if err != nil {
+		log.Println("error login:", err)
+		return nil, errInvalidCredentials
+	}
+
+	actions := acl.GetActionsStringFromPolicy(policy)
+
+	sessionID, err := login(credentials, actions)
 	if err != nil {
 		return nil, err
 	}
@@ -201,10 +219,18 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 			}
 		}()
 		// assign the "mcsAdmin" policy to this user
-		if err := setPolicy(ctx, adminClient, oauth2.GetIDPPolicyForUser(), accessKey, models.PolicyEntityUser); err != nil {
+		policyName := oauth2.GetIDPPolicyForUser()
+		if err := setPolicy(ctx, adminClient, policyName, accessKey, models.PolicyEntityUser); err != nil {
 			log.Println("error setting policy:", err)
 			return nil, errorGeneric
 		}
+		// obtain the current policy details, necessary for generating the list of allowed endpoints
+		policy, err := adminClient.getPolicy(ctx, policyName)
+		if err != nil {
+			log.Println("error reading policy:", err)
+			return nil, errorGeneric
+		}
+		actions := acl.GetActionsStringFromPolicy(policy)
 		// User was created correctly, create a new session/JWT
 		creds, err := newMcsCredentials(accessKey, secretKey, location)
 		if err != nil {
@@ -212,7 +238,7 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 			return nil, errorGeneric
 		}
 		credentials := mcsCredentials{minioCredentials: creds}
-		jwt, err := login(credentials)
+		jwt, err := login(credentials, actions)
 		if err != nil {
 			return nil, err
 		}

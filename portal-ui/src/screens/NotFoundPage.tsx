@@ -23,22 +23,21 @@ import Container from "@material-ui/core/Container";
 import Copyright from "../common/Copyright";
 import history from "../history";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   "@global": {
     body: {
-      backgroundColor: theme.palette.common.white
-    }
+      backgroundColor: theme.palette.common.white,
+    },
   },
   paper: {
     marginTop: theme.spacing(8),
     display: "flex",
     flexDirection: "column",
-    alignItems: "center"
-  }
+    alignItems: "center",
+  },
 }));
 const NotFound: React.FC = () => {
   const classes = useStyles();
-  console.log(history);
   return (
     <Container component="main">
       <CssBaseline />

@@ -1975,6 +1975,12 @@ func init() {
     "sessionResponse": {
       "type": "object",
       "properties": {
+        "pages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "status": {
           "type": "string",
           "enum": [
@@ -4084,6 +4090,12 @@ func init() {
     "sessionResponse": {
       "type": "object",
       "properties": {
+        "pages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "status": {
           "type": "string",
           "enum": [

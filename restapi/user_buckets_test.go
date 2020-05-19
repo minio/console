@@ -27,6 +27,7 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/minio/mcs/models"
 	"github.com/minio/minio-go/v6"
+	"github.com/minio/minio/pkg/madmin"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -66,41 +67,50 @@ func (mc minioClientMock) getBucketPolicy(bucketName string) (string, error) {
 	return minioGetBucketPolicyMock(bucketName)
 }
 
+var minioAccountUsageInfoMock func(ctx context.Context) (madmin.AccountUsageInfo, error)
+
+// mock function of dataUsageInfo() needed for list bucket's usage
+func (ac adminClientMock) accountUsageInfo(ctx context.Context) (madmin.AccountUsageInfo, error) {
+	return minioAccountUsageInfoMock(ctx)
+}
+
 func TestListBucket(t *testing.T) {
 	assert := assert.New(t)
-	minClient := minioClientMock{}
+	adminClient := adminClientMock{}
 	ctx := context.Background()
-	// Test-1 : listBuckets() Get response from minio client with two buckets and return the same number on listBuckets()
-	// mock minIO client
-	mockBucketList := []minio.BucketInfo{
-		minio.BucketInfo{Name: "bucket-1", CreationDate: time.Now()},
-		minio.BucketInfo{Name: "bucket-2", CreationDate: time.Now().Add(time.Hour * 1)},
+	// Test-1 : getaAcountUsageInfo() Get response from minio client with two buckets
+	mockBucketList := madmin.AccountUsageInfo{
+		AccountName: "test",
+		Buckets: []madmin.BucketUsageInfo{
+			madmin.BucketUsageInfo{Name: "bucket-1", Created: time.Now(), Size: 1024},
+			madmin.BucketUsageInfo{Name: "bucket-2", Created: time.Now().Add(time.Hour * 1), Size: 0},
+		},
 	}
-
 	// mock function response from listBucketsWithContext(ctx)
-	minioListBucketsWithContextMock = func(ctx context.Context) ([]minio.BucketInfo, error) {
+	minioAccountUsageInfoMock = func(ctx context.Context) (madmin.AccountUsageInfo, error) {
 		return mockBucketList, nil
 	}
 	// get list buckets response this response should have Name, CreationDate, Size and Access
 	// as part of of each bucket
-	function := "listBuckets()"
-	bucketList, err := listBuckets(ctx, minClient)
+	function := "getaAcountUsageInfo()"
+	bucketList, err := getaAcountUsageInfo(ctx, adminClient)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	// verify length of buckets is correct
-	assert.Equal(len(mockBucketList), len(bucketList), fmt.Sprintf("Failed on %s: length of bucket's lists is not the same", function))
-
+	assert.Equal(len(mockBucketList.Buckets), len(bucketList), fmt.Sprintf("Failed on %s: length of bucket's lists is not the same", function))
 	for i, b := range bucketList {
-		assert.Equal(mockBucketList[i].Name, *b.Name)
-		assert.Equal(mockBucketList[i].CreationDate.String(), b.CreationDate)
+		assert.Equal(mockBucketList.Buckets[i].Name, *b.Name)
+		assert.Equal(mockBucketList.Buckets[i].Created.String(), b.CreationDate)
+		assert.Equal(mockBucketList.Buckets[i].Name, *b.Name)
+		assert.Equal(int64(mockBucketList.Buckets[i].Size), b.Size)
 	}
 
-	// Test-2 : listBuckets() Return and see that the error is handled correctly and returned
-	minioListBucketsWithContextMock = func(ctx context.Context) ([]minio.BucketInfo, error) {
-		return nil, errors.New("error")
+	// Test-2 : getaAcountUsageInfo() Return and see that the error is handled correctly and returned
+	minioAccountUsageInfoMock = func(ctx context.Context) (madmin.AccountUsageInfo, error) {
+		return madmin.AccountUsageInfo{}, errors.New("error")
 	}
-	_, err = listBuckets(ctx, minClient)
+	_, err = getaAcountUsageInfo(ctx, adminClient)
 	if assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}

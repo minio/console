@@ -14,7 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export const units = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+export const units = [
+  "B",
+  "KiB",
+  "MiB",
+  "GiB",
+  "TiB",
+  "PiB",
+  "EiB",
+  "ZiB",
+  "YiB",
+];
 export const niceBytes = (x: string) => {
   let l = 0,
     n = parseInt(x, 10) || 0;

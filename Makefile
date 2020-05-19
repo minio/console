@@ -38,7 +38,7 @@ assets:
 
 test:
 	@(GO111MODULE=on go test -race -v github.com/minio/mcs/restapi/...)
-	@(GO111MODULE=on go test -race -v github.com/minio/mcs/pkg/auth/...)
+	@(GO111MODULE=on go test -race -v github.com/minio/mcs/pkg/...)
 
 coverage:
 	@(GO111MODULE=on go test -v -coverprofile=coverage.out github.com/minio/mcs/restapi/... && go tool cover -html=coverage.out && open coverage.html)

@@ -36,6 +36,9 @@ import (
 // swagger:model sessionResponse
 type SessionResponse struct {
 
+	// pages
+	Pages []string `json:"pages"`
+
 	// status
 	// Enum: [ok]
 	Status string `json:"status,omitempty"`

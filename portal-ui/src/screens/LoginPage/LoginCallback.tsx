@@ -30,7 +30,7 @@ const LoginCallback: FC<RouteComponentProps> = ({ location }) => {
           // store the jwt token
           storage.setItem("token", res.sessionId);
           // We push to history the new URL.
-          window.location.href = "/dashboard";
+          window.location.href = "/";
         }
       })
       .catch((res: any) => {

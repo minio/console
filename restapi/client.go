@@ -200,10 +200,19 @@ func newMcsCredentials(accessKey, secretKey, location string) (*credentials.Cred
 	}
 }
 
+// GetClaimsFromJWT decrypt and returns the claims associated to a provided jwt
+func GetClaimsFromJWT(jwt string) (*auth.DecryptedClaims, error) {
+	claims, err := auth.JWTAuthenticate(jwt)
+	if err != nil {
+		return nil, err
+	}
+	return claims, nil
+}
+
 // getMcsCredentialsFromJWT returns the *minioCredentials.Credentials associated to the
 // provided jwt, this is useful for running the Expire() or IsExpired() operations
 func getMcsCredentialsFromJWT(jwt string) (*credentials.Credentials, error) {
-	claims, err := auth.JWTAuthenticate(jwt)
+	claims, err := GetClaimsFromJWT(jwt)
 	if err != nil {
 		return nil, err
 	}
