@@ -17,19 +17,16 @@
 package restapi
 
 import (
-	"time"
+	"errors"
+	"testing"
+
+	"github.com/gorilla/websocket"
 )
 
 // Common mocks for WSConn interface
 // assigning mock at runtime instead of compile time
 var connWriteMessageMock func(messageType int, data []byte) error
 var connReadMessageMock func() (messageType int, p []byte, err error)
-
-// Uncomment and implement if needed
-// var connCloseMock func() error
-// var connSetReadLimitMock func(limit int64)
-// var connSetReadDeadlineMock func(t time.Time) error
-// var connSetPongHandlerMock func(h func(appData string) error)
 
 // The Conn type represents a WebSocket connection.
 type mockConn struct{}
@@ -44,10 +41,33 @@ func (c mockConn) readMessage() (messageType int, p []byte, err error) {
 func (c mockConn) close() error {
 	return nil
 }
-func (c mockConn) setReadLimit(limit int64) {
-}
-func (c mockConn) setReadDeadline(t time.Time) error {
-	return nil
-}
-func (c mockConn) setPongHandler(h func(appData string) error) {
+
+func TestWSHandle(t *testing.T) {
+	// assert := assert.New(t)
+	mockWSConn := mockConn{}
+
+	// mock function of conn.ReadMessage(), returns unexpected Close Error CloseAbnormalClosure
+	connReadMessageMock = func() (messageType int, p []byte, err error) {
+		return 0, []byte{}, &websocket.CloseError{Code: websocket.CloseAbnormalClosure, Text: ""}
+	}
+	ctx := wsReadClientCtx(mockWSConn)
+
+	<-ctx.Done()
+	// closed ctx correctly
+
+	// mock function of conn.ReadMessage(), returns unexpected Close Error CloseAbnormalClosure
+	connReadMessageMock = func() (messageType int, p []byte, err error) {
+		return 0, []byte{}, errors.New("error")
+	}
+	ctx2 := wsReadClientCtx(mockWSConn)
+	<-ctx2.Done()
+	// closed ctx correctly
+
+	// mock function of conn.ReadMessage(), returns unexpected Close Error CloseAbnormalClosure
+	connReadMessageMock = func() (messageType int, p []byte, err error) {
+		return 0, []byte{}, &websocket.CloseError{Code: websocket.CloseGoingAway, Text: ""}
+	}
+	ctx3 := wsReadClientCtx(mockWSConn)
+	<-ctx3.Done()
+	// closed ctx correctly
 }

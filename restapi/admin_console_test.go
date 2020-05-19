@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/gorilla/websocket"
 	"github.com/minio/minio/pkg/madmin"
 	"github.com/stretchr/testify/assert"
 )
@@ -39,11 +38,13 @@ func TestAdminConsoleLog(t *testing.T) {
 	assert := assert.New(t)
 	adminClient := adminClientMock{}
 	mockWSConn := mockConn{}
-	function := "startConsoleLog()"
+	function := "startConsoleLog(ctx, )"
+	ctx := context.Background()
 
 	testReceiver := make(chan madmin.LogInfo, 5)
 	textToReceive := "test message"
 	testStreamSize := 5
+	isClosed := false // testReceiver is closed?
 
 	// Test-1: Serve Console with no errors until Console finishes sending
 	// define mock function behavior for minio server Console
@@ -63,10 +64,6 @@ func TestAdminConsoleLog(t *testing.T) {
 		}(ch)
 		return ch
 	}
-	// mock function of conn.ReadMessage(), no error on read
-	connReadMessageMock = func() (messageType int, p []byte, err error) {
-		return 0, []byte{}, nil
-	}
 	writesCount := 1
 	// mock connection WriteMessage() no error
 	connWriteMessageMock = func(messageType int, data []byte) error {
@@ -74,15 +71,17 @@ func TestAdminConsoleLog(t *testing.T) {
 		var t madmin.LogInfo
 		_ = json.Unmarshal(data, &t)
 		if writesCount == testStreamSize {
-			// for testing we need to close the receiver channel
-			close(testReceiver)
+			if !isClosed {
+				close(testReceiver)
+				isClosed = true
+			}
 			return nil
 		}
 		testReceiver <- t
 		writesCount++
 		return nil
 	}
-	if err := startConsoleLog(mockWSConn, adminClient); err != nil {
+	if err := startConsoleLog(ctx, mockWSConn, adminClient); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	// check that the TestReceiver got the same number of data from Console.
@@ -94,50 +93,11 @@ func TestAdminConsoleLog(t *testing.T) {
 	connWriteMessageMock = func(messageType int, data []byte) error {
 		return fmt.Errorf("error on write")
 	}
-	if err := startConsoleLog(mockWSConn, adminClient); assert.Error(err) {
+	if err := startConsoleLog(ctx, mockWSConn, adminClient); assert.Error(err) {
 		assert.Equal("error on write", err.Error())
 	}
 
-	// Test-3: error happens while reading, unexpected Close Error should return error.
-	connWriteMessageMock = func(messageType int, data []byte) error {
-		return nil
-	}
-	// mock function of conn.ReadMessage(), returns unexpected Close Error CloseAbnormalClosure
-	connReadMessageMock = func() (messageType int, p []byte, err error) {
-		return 0, []byte{}, &websocket.CloseError{Code: websocket.CloseAbnormalClosure, Text: ""}
-	}
-	if err := startConsoleLog(mockWSConn, adminClient); assert.Error(err) {
-		assert.Equal("websocket: close 1006 (abnormal closure)", err.Error())
-	}
-
-	// Test-4: error happens while reading, expected Close Error NormalClosure
-	// 		   expected Close Error should not return an error, just end Console.
-	connReadMessageMock = func() (messageType int, p []byte, err error) {
-		return 0, []byte{}, &websocket.CloseError{Code: websocket.CloseNormalClosure, Text: ""}
-	}
-	if err := startConsoleLog(mockWSConn, adminClient); err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
-	}
-
-	// Test-5: error happens while reading, expected Close Error CloseGoingAway
-	// 		   expected Close Error should not return an error, just return.
-	connReadMessageMock = func() (messageType int, p []byte, err error) {
-		return 0, []byte{}, &websocket.CloseError{Code: websocket.CloseGoingAway, Text: ""}
-	}
-	if err := startConsoleLog(mockWSConn, adminClient); err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
-	}
-
-	// Test-6: error happens while reading, non Close Error Type should be returned as
-	//         error
-	connReadMessageMock = func() (messageType int, p []byte, err error) {
-		return 0, []byte{}, fmt.Errorf("error on read")
-	}
-	if err := startConsoleLog(mockWSConn, adminClient); assert.Error(err) {
-		assert.Equal("error on read", err.Error())
-	}
-
-	// Test-7: error happens on GetLogs Minio, Console should stop
+	// Test-3: error happens on GetLogs Minio, Console should stop
 	// and error shall be returned.
 	minioGetLogsMock = func(ctx context.Context, node string, lineCnt int, logKind string) <-chan madmin.LogInfo {
 		ch := make(chan madmin.LogInfo)
@@ -156,12 +116,10 @@ func TestAdminConsoleLog(t *testing.T) {
 		}(ch)
 		return ch
 	}
-	// mock function of conn.ReadMessage(), no error on read, should stay unless
-	// context is done.
-	connReadMessageMock = func() (messageType int, p []byte, err error) {
-		return 0, []byte{}, nil
+	connWriteMessageMock = func(messageType int, data []byte) error {
+		return nil
 	}
-	if err := startConsoleLog(mockWSConn, adminClient); assert.Error(err) {
+	if err := startConsoleLog(ctx, mockWSConn, adminClient); assert.Error(err) {
 		assert.Equal("error on Console", err.Error())
 	}
 }

@@ -17,13 +17,13 @@
 package restapi
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
 	"testing"
 
-	"github.com/gorilla/websocket"
 	mc "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/stretchr/testify/assert"
@@ -42,11 +42,13 @@ func TestWatch(t *testing.T) {
 
 	client := s3ClientMock{}
 	mockWSConn := mockConn{}
+	ctx := context.Background()
 
-	function := "startWatch()"
+	function := "startWatch(ctx, )"
 
 	testStreamSize := 5
 	testReceiver := make(chan []mc.EventInfo, testStreamSize)
+	isClosed := false // testReceiver is closed?
 	textToReceive := "test message"
 	testOptions := watchOptions{}
 	testOptions.BucketName = "bucktest"
@@ -77,10 +79,6 @@ func TestWatch(t *testing.T) {
 		}(wo)
 		return wo, nil
 	}
-	// mock function of conn.ReadMessage(), no error on read
-	connReadMessageMock = func() (messageType int, p []byte, err error) {
-		return 0, []byte{}, nil
-	}
 	writesCount := 1
 	// mock connection WriteMessage() no error
 	connWriteMessageMock = func(messageType int, data []byte) error {
@@ -89,14 +87,17 @@ func TestWatch(t *testing.T) {
 		_ = json.Unmarshal(data, &t)
 		if writesCount == testStreamSize {
 			// for testing we need to close the receiver channel
-			close(testReceiver)
+			if !isClosed {
+				close(testReceiver)
+				isClosed = true
+			}
 			return nil
 		}
 		testReceiver <- t
 		writesCount++
 		return nil
 	}
-	if err := startWatch(mockWSConn, client, testOptions); err != nil {
+	if err := startWatch(ctx, mockWSConn, client, testOptions); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	// check that the TestReceiver got the same number of data from Console.
@@ -110,50 +111,11 @@ func TestWatch(t *testing.T) {
 	connWriteMessageMock = func(messageType int, data []byte) error {
 		return fmt.Errorf("error on write")
 	}
-	if err := startWatch(mockWSConn, client, testOptions); assert.Error(err) {
+	if err := startWatch(ctx, mockWSConn, client, testOptions); assert.Error(err) {
 		assert.Equal("error on write", err.Error())
 	}
 
-	// Test-3: error happens while reading, unexpected Close Error should return error.
-	connWriteMessageMock = func(messageType int, data []byte) error {
-		return nil
-	}
-	// mock function of conn.ReadMessage(), returns unexpected Close Error CloseAbnormalClosure
-	connReadMessageMock = func() (messageType int, p []byte, err error) {
-		return 0, []byte{}, &websocket.CloseError{Code: websocket.CloseAbnormalClosure, Text: ""}
-	}
-	if err := startWatch(mockWSConn, client, testOptions); assert.Error(err) {
-		assert.Equal("websocket: close 1006 (abnormal closure)", err.Error())
-	}
-
-	// Test-4: error happens while reading, expected Close Error NormalClosure
-	// 		   expected Close Error should not return an error, just end Console.
-	connReadMessageMock = func() (messageType int, p []byte, err error) {
-		return 0, []byte{}, &websocket.CloseError{Code: websocket.CloseNormalClosure, Text: ""}
-	}
-	if err := startWatch(mockWSConn, client, testOptions); err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
-	}
-
-	// Test-5: error happens while reading, expected Close Error CloseGoingAway
-	// 		   expected Close Error should not return an error, just return.
-	connReadMessageMock = func() (messageType int, p []byte, err error) {
-		return 0, []byte{}, &websocket.CloseError{Code: websocket.CloseGoingAway, Text: ""}
-	}
-	if err := startWatch(mockWSConn, client, testOptions); err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
-	}
-
-	// Test-6: error happens while reading, non Close Error Type should be returned as
-	//         error
-	connReadMessageMock = func() (messageType int, p []byte, err error) {
-		return 0, []byte{}, fmt.Errorf("error on read")
-	}
-	if err := startWatch(mockWSConn, client, testOptions); assert.Error(err) {
-		assert.Equal("error on read", err.Error())
-	}
-
-	// Test-7: error happens on Watch, watch should stop
+	// Test-3: error happens on Watch, watch should stop
 	// and error shall be returned.
 	mcWatchMock = func(params mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
 		wo := &mc.WatchObject{
@@ -178,25 +140,23 @@ func TestWatch(t *testing.T) {
 		}(wo)
 		return wo, nil
 	}
-	// mock function of conn.ReadMessage(), no error on read, should stay unless
-	// context is done.
-	connReadMessageMock = func() (messageType int, p []byte, err error) {
-		return 0, []byte{}, nil
+	connWriteMessageMock = func(messageType int, data []byte) error {
+		return nil
 	}
-	if err := startWatch(mockWSConn, client, testOptions); assert.Error(err) {
+	if err := startWatch(ctx, mockWSConn, client, testOptions); assert.Error(err) {
 		assert.Equal("error on Watch", err.Error())
 	}
 
-	// Test-8: error happens on Watch, watch should stop
+	// Test-4: error happens on Watch, watch should stop
 	// and error shall be returned.
 	mcWatchMock = func(params mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
 		return nil, &probe.Error{Cause: fmt.Errorf("error on Watch")}
 	}
-	if err := startWatch(mockWSConn, client, testOptions); assert.Error(err) {
+	if err := startWatch(ctx, mockWSConn, client, testOptions); assert.Error(err) {
 		assert.Equal("error on Watch", err.Error())
 	}
 
-	// Test-9: return nil on error on Watch
+	// Test-5: return nil on error on Watch
 	mcWatchMock = func(params mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
 		wo := &mc.WatchObject{
 			EventInfoChan: make(chan []mc.EventInfo),
@@ -221,7 +181,7 @@ func TestWatch(t *testing.T) {
 		}(wo)
 		return wo, nil
 	}
-	if err := startWatch(mockWSConn, client, testOptions); err != nil {
+	if err := startWatch(ctx, mockWSConn, client, testOptions); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	// check that the TestReceiver got the same number of data from Console.
@@ -231,7 +191,7 @@ func TestWatch(t *testing.T) {
 		}
 	}
 
-	// Test-9: getOptionsFromReq return parameters from path
+	// Test-6: getOptionsFromReq return parameters from path
 	u, err := url.Parse("http://localhost/api/v1/watch/bucket1?prefix=&suffix=.jpg&events=put,get")
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", "url.Parse()", err.Error())
@@ -251,7 +211,7 @@ func TestWatch(t *testing.T) {
 	assert.Equal(expectedOptions.Suffix, opts.Suffix)
 	assert.Equal(expectedOptions.Events, opts.Events)
 
-	// Test-9: getOptionsFromReq return default events if not defined
+	// Test-7: getOptionsFromReq return default events if not defined
 	u, err = url.Parse("http://localhost/api/v1/watch/bucket1?prefix=&suffix=.jpg&events=")
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", "url.Parse()", err.Error())
@@ -271,7 +231,7 @@ func TestWatch(t *testing.T) {
 	assert.Equal(expectedOptions.Suffix, opts.Suffix)
 	assert.Equal(expectedOptions.Events, opts.Events)
 
-	// Test-10: getOptionsFromReq return default events if not defined
+	// Test-8: getOptionsFromReq return default events if not defined
 	u, err = url.Parse("http://localhost/api/v1/watch/bucket2?prefix=&suffix=")
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", "url.Parse()", err.Error())
