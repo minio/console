@@ -57,6 +57,7 @@ type DecryptedClaims struct {
 	AccessKeyID     string
 	SecretAccessKey string
 	SessionToken    string
+	Actions         []string
 }
 
 // JWTAuthenticate takes a jwt, decode it, extract claims and validate the signature
@@ -93,9 +94,9 @@ func JWTAuthenticate(token string) (*DecryptedClaims, error) {
 
 // NewJWTWithClaimsForClient generates a new jwt with claims based on the provided STS credentials, first
 // encrypts the claims and the sign them
-func NewJWTWithClaimsForClient(credentials *credentials.Value, audience string) (string, error) {
+func NewJWTWithClaimsForClient(credentials *credentials.Value, actions []string, audience string) (string, error) {
 	if credentials != nil {
-		encryptedClaims, err := encryptClaims(credentials.AccessKeyID, credentials.SecretAccessKey, credentials.SessionToken)
+		encryptedClaims, err := encryptClaims(credentials.AccessKeyID, credentials.SecretAccessKey, credentials.SessionToken, actions)
 		if err != nil {
 			return "", err
 		}
@@ -112,8 +113,8 @@ func NewJWTWithClaimsForClient(credentials *credentials.Value, audience string) 
 
 // encryptClaims() receives the 3 STS claims, concatenate them and encrypt them using AES-GCM
 // returns a base64 encoded ciphertext
-func encryptClaims(accessKeyID, secretAccessKey, sessionToken string) (string, error) {
-	payload := []byte(fmt.Sprintf("%s:%s:%s", accessKeyID, secretAccessKey, sessionToken))
+func encryptClaims(accessKeyID, secretAccessKey, sessionToken string, actions []string) (string, error) {
+	payload := []byte(fmt.Sprintf("%s#%s#%s#%s", accessKeyID, secretAccessKey, sessionToken, strings.Join(actions, ",")))
 	ciphertext, err := encrypt(payload)
 	if err != nil {
 		return "", err
@@ -133,16 +134,18 @@ func decryptClaims(ciphertext string) (*DecryptedClaims, error) {
 		log.Println(err)
 		return nil, errClaimsFormat
 	}
-	s := strings.Split(string(plaintext), ":")
+	s := strings.Split(string(plaintext), "#")
 	// Validate that the decrypted string has the right format "accessKeyID:secretAccessKey:sessionToken"
-	if len(s) != 3 {
+	if len(s) != 4 {
 		return nil, errClaimsFormat
 	}
-	accessKeyID, secretAccessKey, sessionToken := s[0], s[1], s[2]
+	accessKeyID, secretAccessKey, sessionToken, actions := s[0], s[1], s[2], s[3]
+	actionsList := strings.Split(actions, ",")
 	return &DecryptedClaims{
 		AccessKeyID:     accessKeyID,
 		SecretAccessKey: secretAccessKey,
 		SessionToken:    sessionToken,
+		Actions:         actionsList,
 	}, nil
 }
 

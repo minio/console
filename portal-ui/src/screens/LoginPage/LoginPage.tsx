@@ -165,8 +165,9 @@ class Login extends React.Component<ILoginProps, ILoginState> {
       .then(() => {
         // We set the state in redux
         this.props.userLoggedIn(true);
-        // We push to history the new URL.
-        history.push("/dashboard");
+        // There is a browser cache issue if we change the policy associated to an account and then logout and history.push("/") after login
+        // therefore after login we need to use window.location redirect
+        window.location.href = "/";
       })
       .catch(err => {
         this.setState({ error: `${err}` });

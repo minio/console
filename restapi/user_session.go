@@ -17,26 +17,45 @@
 package restapi
 
 import (
+	"errors"
+	"log"
+
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/swag"
 	"github.com/minio/mcs/models"
+	"github.com/minio/mcs/pkg/acl"
 	"github.com/minio/mcs/restapi/operations"
 	"github.com/minio/mcs/restapi/operations/user_api"
+)
+
+var (
+	errorGenericInvalidSession = errors.New("invalid session")
 )
 
 func registerSessionHandlers(api *operations.McsAPI) {
 	// session check
 	api.UserAPISessionCheckHandler = user_api.SessionCheckHandlerFunc(func(params user_api.SessionCheckParams, principal *models.Principal) middleware.Responder {
-		sessionResp := getSessionResponse()
+		sessionID := string(*principal)
+		sessionResp, err := getSessionResponse(sessionID)
+		if err != nil {
+			return user_api.NewSessionCheckDefault(401).WithPayload(&models.Error{Code: 401, Message: swag.String(err.Error())})
+		}
 		return user_api.NewSessionCheckOK().WithPayload(sessionResp)
 	})
 
 }
 
-// getSessionResponse returns only if the session is valid
-func getSessionResponse() *models.SessionResponse {
+// getSessionResponse parse the jwt of the current session and returns a list of allowed actions to render in the UI
+func getSessionResponse(sessionID string) (*models.SessionResponse, error) {
 	// serialize output
+	claims, err := GetClaimsFromJWT(sessionID)
+	if err != nil {
+		log.Println("error getting claims from JWT", err)
+		return nil, errorGenericInvalidSession
+	}
 	sessionResp := &models.SessionResponse{
+		Pages:  acl.GetAuthorizedEndpoints(claims.Actions),
 		Status: models.SessionResponseStatusOk,
 	}
-	return sessionResp
+	return sessionResp, nil
 }

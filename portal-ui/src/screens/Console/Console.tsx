@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { useEffect } from "react";
 import clsx from "clsx";
 import {
   createStyles,
@@ -28,7 +28,6 @@ import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import Link from "@material-ui/core/Link";
-
 import history from "../../history";
 import {
   Redirect,
@@ -64,6 +63,8 @@ import WebhookPanel from "./Configurations/ConfigurationPanels/WebhookPanel";
 import Trace from "./Trace/Trace";
 import Logs from "./Logs/Logs";
 import Watch from "./Watch/Watch";
+import { ISessionResponse } from "./types";
+import { saveSessionResponse } from "./actions";
 
 function Copyright() {
   return (
@@ -172,18 +173,6 @@ const styles = (theme: Theme) =>
     },
   });
 
-const mapState = (state: AppState) => ({
-  open: state.system.sidebarOpen,
-  needsRestart: state.system.serverNeedsRestart,
-  isServerLoading: state.system.serverIsLoading,
-});
-
-const connector = connect(mapState, {
-  setMenuOpen,
-  serverNeedsRestart,
-  serverIsLoading,
-});
-
 interface IConsoleProps {
   open: boolean;
   needsRestart: boolean;
@@ -193,143 +182,200 @@ interface IConsoleProps {
   setMenuOpen: typeof setMenuOpen;
   serverNeedsRestart: typeof serverNeedsRestart;
   serverIsLoading: typeof serverIsLoading;
+  saveSessionResponse: typeof saveSessionResponse;
+  session: ISessionResponse;
 }
 
-class Console extends React.Component<
-  IConsoleProps & RouteComponentProps & StyledProps & ThemedComponentProps
-  > {
-  componentDidMount(): void {
+const Console = ({
+  classes,
+  open,
+  needsRestart,
+  isServerLoading,
+  serverNeedsRestart,
+  serverIsLoading,
+  saveSessionResponse,
+  session,
+}: IConsoleProps) => {
+  useEffect(() => {
     api
       .invoke("GET", `/api/v1/session`)
       .then((res) => {
-        console.log(res);
+        saveSessionResponse(res);
       })
       .catch((err) => {
         storage.removeItem("token");
         history.push("/");
       });
-  }
+  }, [saveSessionResponse]);
 
-  restartServer() {
-    this.props.serverIsLoading(true);
+  const restartServer = () => {
+    serverIsLoading(true);
     api
       .invoke("POST", "/api/v1/service/restart", {})
       .then((res) => {
         console.log("success restarting service");
         console.log(res);
-        this.props.serverIsLoading(false);
-        this.props.serverNeedsRestart(false);
+        serverIsLoading(false);
+        serverNeedsRestart(false);
       })
       .catch((err) => {
-        this.props.serverIsLoading(false);
+        serverIsLoading(false);
         console.log("failure restarting service");
         console.log(err);
       });
-  }
+  };
+  const allowedPages = session.pages.reduce(
+    (result: any, item: any, index: any) => {
+      result[item] = true;
+      return result;
+    },
+    {}
+  );
+  const routes = [
+    {
+      component: Dashboard,
+      path: "/dashboard",
+    },
+    {
+      component: Buckets,
+      path: "/buckets",
+    },
+    {
+      component: Watch,
+      path: "/watch",
+    },
+    {
+      component: Users,
+      path: "/users",
+    },
+    {
+      component: Groups,
+      path: "/groups",
+    },
+    {
+      component: Policies,
+      path: "/policies",
+    },
+    {
+      component: Trace,
+      path: "/trace",
+    },
+    {
+      component: Logs,
+      path: "/logs",
+    },
+    {
+      component: ListNotificationEndpoints,
+      path: "/notification-endpoints",
+    },
+    {
+      component: ConfigurationsList,
+      path: "/configurations-list",
+    },
+    {
+      component: Permissions,
+      path: "/permissions",
+    },
+    {
+      component: ServiceAccounts,
+      path: "/service_accounts",
+    },
+    {
+      component: WebhookPanel,
+      path: "/webhook/logger",
+    },
+    {
+      component: WebhookPanel,
+      path: "/webhook/audit",
+    },
+  ];
+  const allowedRoutes = routes.filter((route: any) => allowedPages[route.path]);
+  return (
+    <React.Fragment>
+      {session.status == "ok" ? (
+        <div className={classes.root}>
+          <CssBaseline />
+          <Drawer
+            variant="permanent"
+            classes={{
+              paper: clsx(
+                classes.drawerPaper,
+                !open && classes.drawerPaperClose
+              ),
+            }}
+            open={open}
+          >
+            <Menu pages={session.pages} />
+          </Drawer>
 
-  render() {
-    const { classes, open, needsRestart, isServerLoading } = this.props;
-    return (
-      <div className={classes.root}>
-        <CssBaseline />
-        <Drawer
-          variant="permanent"
-          classes={{
-            paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-          }}
-          open={open}
-        >
-          {/*<div className={classes.toolbarIcon}>*/}
-          {/*  <IconButton*/}
-          {/*    onClick={() => {*/}
-          {/*      this.props.setMenuOpen(false);*/}
-          {/*    }}*/}
-          {/*  >*/}
-          {/*    <ChevronLeftIcon />*/}
-          {/*  </IconButton>*/}
-          {/*</div>*/}
-          {/*<Divider />*/}
-
-          <Menu />
-        </Drawer>
-
-        <main className={classes.content}>
-          {needsRestart && (
-            <div className={classes.warningBar}>
-              {isServerLoading ? (
-                <React.Fragment>
-                  The server is restarting.
-                  <LinearProgress />
-                </React.Fragment>
-              ) : (
+          <main className={classes.content}>
+            {needsRestart && (
+              <div className={classes.warningBar}>
+                {isServerLoading ? (
+                  <React.Fragment>
+                    The server is restarting.
+                    <LinearProgress />
+                  </React.Fragment>
+                ) : (
                   <React.Fragment>
                     The instance needs to be restarted for configuration changes
-                  to take effect.{" "}
+                    to take effect.{" "}
                     <Button
                       color="secondary"
                       size="small"
                       onClick={() => {
-                        this.restartServer();
+                        restartServer();
                       }}
                     >
                       Restart
-                  </Button>
+                    </Button>
                   </React.Fragment>
                 )}
-            </div>
-          )}
-          <div className={classes.appBarSpacer} />
-          <Container maxWidth="lg" className={classes.container}>
-            <Router history={history}>
-              <Switch>
-                <Route path="/buckets" component={Buckets} />
-                <Route exact path="/permissions" component={Permissions} />
-                <Route exact path="/policies" component={Policies} />
-                <Route
-                  exact
-                  path="/service_accounts"
-                  component={ServiceAccounts}
-                />
-                <Route exact path="/users" component={Users} />
-                <Route exact path="/dashboard" component={Dashboard} />
-                <Route exct path="/groups" component={Groups} />
-                <Route
-                  exact
-                  path="/notification-endpoints"
-                  component={ListNotificationEndpoints}
-                />
-                <Route
-                  exact
-                  path="/configurations-list"
-                  component={ConfigurationsList}
-                />
-                <Route exact path="/webhook/logger" component={WebhookPanel} />
-                <Route exact path="/webhook/audit" component={WebhookPanel} />
-                <Route exct path="/trace" component={Trace} />
-                <Route exct path="/logs" component={Logs} />
-                <Route exct path="/watch" component={Watch} />
-                <Route exact path="/">
-                  <Redirect to="/dashboard" />
-                </Route>
-                <Route component={NotFoundPage} />
-              </Switch>
-            </Router>
+              </div>
+            )}
+            <div className={classes.appBarSpacer} />
+            <Container maxWidth="lg" className={classes.container}>
+              <Router history={history}>
+                <Switch>
+                  {allowedRoutes.map((route: any) => (
+                    <Route
+                      key={route.path}
+                      exact
+                      path={route.path}
+                      component={route.component}
+                    />
+                  ))}
+                  {allowedRoutes.length > 0 ? (
+                    <Route exact path="/">
+                      <Redirect to={allowedRoutes[0].path} />
+                    </Route>
+                  ) : null}
+                </Switch>
+              </Router>
 
-            <Box pt={4}>
-              <Copyright />
-            </Box>
-          </Container>
-        </main>
-      </div>
-    );
-  }
-}
+              <Box pt={4}>
+                <Copyright />
+              </Box>
+            </Container>
+          </main>
+        </div>
+      ) : null}
+    </React.Fragment>
+  );
+};
 
-// );
+const mapState = (state: AppState) => ({
+  open: state.system.sidebarOpen,
+  needsRestart: state.system.serverNeedsRestart,
+  isServerLoading: state.system.serverIsLoading,
+  session: state.console.session,
+});
 
-export default withRouter(connector(withStyles(styles)(Console)));
-// export default withStyles(styles)(connector(Console));
-// export default compose(
-//     withStyles(styles),
-//     connector
-// )(withRouter(Console))
+const connector = connect(mapState, {
+  setMenuOpen,
+  serverNeedsRestart,
+  serverIsLoading,
+  saveSessionResponse,
+});
+
+export default connector(withStyles(styles)(Console));
