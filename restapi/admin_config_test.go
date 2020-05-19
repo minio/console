@@ -28,12 +28,9 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/minio/minio/pkg/event/target"
-
-	"github.com/minio/minio/cmd/config"
-
 	"github.com/minio/mcs/models"
-
+	"github.com/minio/minio/cmd/config"
+	"github.com/minio/minio/pkg/event/target"
 	"github.com/minio/minio/pkg/madmin"
 )
 
@@ -532,7 +529,7 @@ func Test_getConfig(t *testing.T) {
 
 				// mock function response from getConfig()
 				minioGetConfigKVMock = func(key string) ([]byte, error) {
-					return nil, errors.New("Invalid config")
+					return nil, errors.New("invalid config")
 				}
 
 				mockConfigList := madmin.Help{}
@@ -553,7 +550,7 @@ func Test_getConfig(t *testing.T) {
 			mock: func() {
 				// mock function response from getConfig()
 				minioGetConfigKVMock = func(key string) ([]byte, error) {
-					return nil, errors.New("Invalid config")
+					return nil, errors.New("invalid config")
 				}
 				// mock function response from listConfig()
 				minioHelpConfigKVMock = func(subSys, key string, envOnly bool) (madmin.Help, error) {

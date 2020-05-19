@@ -63,7 +63,7 @@ func TestJWTAuthenticate(t *testing.T) {
 	}
 	// Test-2 : JWTAuthenticate() return an error because of a tampered jwt
 	if _, err := JWTAuthenticate(badToken); err != nil {
-		funcAssert.Equal("Authentication failed, check your access credentials", err.Error())
+		funcAssert.Equal("authentication failed, check your access credentials", err.Error())
 	}
 	// Test-3 : JWTAuthenticate() return an error because of an empty jwt
 	if _, err := JWTAuthenticate(""); err != nil {
