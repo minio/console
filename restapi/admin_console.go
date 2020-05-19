@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"log"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -32,97 +31,46 @@ import (
 const logTimeFormat string = "15:04:05 MST 01/02/2006"
 
 // startConsoleLog starts log of the servers
-// by first setting a websocket reader that will
-// check for a heartbeat.
-//
-// A WaitGroup is used to handle goroutines and to ensure
-// all finish in the proper order. If any, sendConsoleLogInfo()
-// or wsReadCheck() returns, trace should end.
-func startConsoleLog(conn WSConn, client MinioAdmin) (mError error) {
-	// a WaitGroup waits for a collection of goroutines to finish
-	wg := sync.WaitGroup{}
-	// a cancel context is needed to end all goroutines used
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func startConsoleLog(ctx context.Context, conn WSConn, client MinioAdmin) error {
+	// TODO: accept parameters as variables
+	// name of node, default = "" (all)
+	node := ""
+	// number of log lines
+	lineCount := 100
+	// type of logs "minio"|"application"|"all" default = "all"
+	logKind := "all"
+	// Start listening on all Console Log activity.
+	logCh := client.getLogs(ctx, node, lineCount, logKind)
 
-	// Set number of goroutines to wait. wg.Wait()
-	// waitsuntil counter is zero (all are done)
-	wg.Add(3)
-	// start go routine for reading websocket heartbeat
-	readErr := wsReadCheck(ctx, &wg, conn)
-	// send Stream of Console Log Info to the ws c.connection
-	logCh := sendConsoleLogInfo(ctx, &wg, conn, client)
-	// If wsReadCheck returns it means that it is not possible to check
-	// ws heartbeat anymore so we stop from doing Console Log, cancel context
-	// for all goroutines.
-	go func(wg *sync.WaitGroup) {
-		defer wg.Done()
-		if err := <-readErr; err != nil {
-			log.Println("error on wsReadCheck:", err)
-			mError = err
-		}
-		// cancel context for all goroutines.
-		cancel()
-	}(&wg)
-
-	// get logCh err on finish
-	if err := <-logCh; err != nil {
-		mError = err
-	}
-
-	// if logCh closes for any reason,
-	// cancel context for all goroutines
-	cancel()
-	// wait all goroutines to finish
-	wg.Wait()
-	return mError
-}
-
-// sendlogInfo sends stream of Console Log Info to the ws connection
-func sendConsoleLogInfo(ctx context.Context, wg *sync.WaitGroup, conn WSConn, client MinioAdmin) <-chan error {
-	// decrements the WaitGroup counter
-	// by one when the function returns
-	defer wg.Done()
-	ch := make(chan error)
-	go func(ch chan<- error) {
-		defer close(ch)
-
-		// TODO: accept parameters as variables
-		// name of node, default = "" (all)
-		node := ""
-		// number of log lines
-		lineCount := 100
-		// type of logs "minio"|"application"|"all" default = "all"
-		logKind := "all"
-		// Start listening on all Console Log activity.
-		logCh := client.getLogs(ctx, node, lineCount, logKind)
-
-		for logInfo := range logCh {
+	for {
+		select {
+		case <-ctx.Done():
+			return nil
+		case logInfo, ok := <-logCh:
+			// zero value returned because the channel is closed and empty
+			if !ok {
+				return nil
+			}
 			if logInfo.Err != nil {
 				log.Println("error on console logs:", logInfo.Err)
-				ch <- logInfo.Err
-				return
+				return logInfo.Err
 			}
 
 			// Serialize message to be sent
 			bytes, err := json.Marshal(serializeConsoleLogInfo(&logInfo))
 			if err != nil {
 				fmt.Println("error on json.Marshal:", err)
-				ch <- err
-				return
+				return err
 			}
 
 			// Send Message through websocket connection
 			err = conn.writeMessage(websocket.TextMessage, bytes)
 			if err != nil {
 				log.Println("error writeMessage:", err)
-				ch <- err
-				return
+				return err
 			}
 		}
-	}(ch)
-
-	return ch
+	}
 }
 
 func serializeConsoleLogInfo(l *madmin.LogInfo) (logInfo madmin.LogInfo) {

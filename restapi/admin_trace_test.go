@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/gorilla/websocket"
 	"github.com/minio/minio/pkg/madmin"
 	trace "github.com/minio/minio/pkg/trace"
 	"github.com/stretchr/testify/assert"
@@ -40,11 +39,13 @@ func TestAdminTrace(t *testing.T) {
 	assert := assert.New(t)
 	adminClient := adminClientMock{}
 	mockWSConn := mockConn{}
-	function := "startTraceInfo()"
+	function := "startTraceInfo(ctx, )"
+	ctx := context.Background()
 
 	testReceiver := make(chan shortTraceMsg, 5)
 	textToReceive := "test"
 	testStreamSize := 5
+	isClosed := false // testReceiver is closed?
 
 	// Test-1: Serve Trace with no errors until trace finishes sending
 	// define mock function behavior for minio server Trace
@@ -64,10 +65,6 @@ func TestAdminTrace(t *testing.T) {
 		}(ch)
 		return ch
 	}
-	// mock function of conn.ReadMessage(), no error on read
-	connReadMessageMock = func() (messageType int, p []byte, err error) {
-		return 0, []byte{}, nil
-	}
 	writesCount := 1
 	// mock connection WriteMessage() no error
 	connWriteMessageMock = func(messageType int, data []byte) error {
@@ -76,14 +73,17 @@ func TestAdminTrace(t *testing.T) {
 		_ = json.Unmarshal(data, &t)
 		if writesCount == testStreamSize {
 			// for testing we need to close the receiver channel
-			close(testReceiver)
+			if !isClosed {
+				close(testReceiver)
+				isClosed = true
+			}
 			return nil
 		}
 		testReceiver <- t
 		writesCount++
 		return nil
 	}
-	if err := startTraceInfo(mockWSConn, adminClient); err != nil {
+	if err := startTraceInfo(ctx, mockWSConn, adminClient); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	// check that the TestReceiver got the same number of data from trace.
@@ -95,50 +95,11 @@ func TestAdminTrace(t *testing.T) {
 	connWriteMessageMock = func(messageType int, data []byte) error {
 		return fmt.Errorf("error on write")
 	}
-	if err := startTraceInfo(mockWSConn, adminClient); assert.Error(err) {
+	if err := startTraceInfo(ctx, mockWSConn, adminClient); assert.Error(err) {
 		assert.Equal("error on write", err.Error())
 	}
 
-	// Test-3: error happens while reading, unexpected Close Error should return error.
-	connWriteMessageMock = func(messageType int, data []byte) error {
-		return nil
-	}
-	// mock function of conn.ReadMessage(), returns unexpected Close Error CloseAbnormalClosure
-	connReadMessageMock = func() (messageType int, p []byte, err error) {
-		return 0, []byte{}, &websocket.CloseError{Code: websocket.CloseAbnormalClosure, Text: ""}
-	}
-	if err := startTraceInfo(mockWSConn, adminClient); assert.Error(err) {
-		assert.Equal("websocket: close 1006 (abnormal closure)", err.Error())
-	}
-
-	// Test-4: error happens while reading, expected Close Error NormalClosure
-	// 		   expected Close Error should not return an error, just end trace.
-	connReadMessageMock = func() (messageType int, p []byte, err error) {
-		return 0, []byte{}, &websocket.CloseError{Code: websocket.CloseNormalClosure, Text: ""}
-	}
-	if err := startTraceInfo(mockWSConn, adminClient); err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
-	}
-
-	// Test-5: error happens while reading, expected Close Error CloseGoingAway
-	// 		   expected Close Error should not return an error, just return.
-	connReadMessageMock = func() (messageType int, p []byte, err error) {
-		return 0, []byte{}, &websocket.CloseError{Code: websocket.CloseGoingAway, Text: ""}
-	}
-	if err := startTraceInfo(mockWSConn, adminClient); err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
-	}
-
-	// Test-6: error happens while reading, non Close Error Type should be returned as
-	//         error
-	connReadMessageMock = func() (messageType int, p []byte, err error) {
-		return 0, []byte{}, fmt.Errorf("error on read")
-	}
-	if err := startTraceInfo(mockWSConn, adminClient); assert.Error(err) {
-		assert.Equal("error on read", err.Error())
-	}
-
-	// Test-7: error happens on serviceTrace Minio, trace should stop
+	// Test-3: error happens on serviceTrace Minio, trace should stop
 	// and error shall be returned.
 	minioServiceTraceMock = func(ctx context.Context, allTrace, errTrace bool) <-chan madmin.ServiceTraceInfo {
 		ch := make(chan madmin.ServiceTraceInfo)
@@ -157,12 +118,10 @@ func TestAdminTrace(t *testing.T) {
 		}(ch)
 		return ch
 	}
-	// mock function of conn.ReadMessage(), no error on read, should stay unless
-	// context is done.
-	connReadMessageMock = func() (messageType int, p []byte, err error) {
-		return 0, []byte{}, nil
+	connWriteMessageMock = func(messageType int, data []byte) error {
+		return nil
 	}
-	if err := startTraceInfo(mockWSConn, adminClient); assert.Error(err) {
+	if err := startTraceInfo(ctx, mockWSConn, adminClient); assert.Error(err) {
 		assert.Equal("error on trace", err.Error())
 	}
 }

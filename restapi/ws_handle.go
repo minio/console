@@ -22,8 +22,6 @@ import (
 	"net"
 	"net/http"
 	"strings"
-	"sync"
-	"time"
 
 	"github.com/go-openapi/errors"
 	"github.com/gorilla/websocket"
@@ -39,12 +37,6 @@ var upgrader = websocket.Upgrader{
 const (
 	// websocket base path
 	wsBasePath = "/ws"
-
-	// Time allowed to read the next pong message from the peer.
-	pingWait = 15 * time.Second
-
-	// Maximum message size allowed from peer. 0 = unlimited
-	maxMessageSize = 512
 )
 
 // MCSWebsocketAdmin interface of a Websocket Client
@@ -78,9 +70,6 @@ type wsS3Client struct {
 type WSConn interface {
 	writeMessage(messageType int, data []byte) error
 	close() error
-	setReadLimit(limit int64)
-	setReadDeadline(t time.Time) error
-	setPongHandler(h func(appData string) error)
 	readMessage() (messageType int, p []byte, err error)
 }
 
@@ -99,17 +88,6 @@ func (c wsConn) close() error {
 	return c.conn.Close()
 }
 
-func (c wsConn) setReadLimit(limit int64) {
-	c.conn.SetReadLimit(limit)
-}
-
-func (c wsConn) setReadDeadline(t time.Time) error {
-	return c.conn.SetReadDeadline(t)
-}
-
-func (c wsConn) setPongHandler(h func(appData string) error) {
-	c.conn.SetPongHandler(h)
-}
 func (c wsConn) readMessage() (messageType int, p []byte, err error) {
 	return c.conn.ReadMessage()
 }
@@ -218,54 +196,35 @@ func newWebSocketS3Client(conn *websocket.Conn, jwt, bucketName string) (*wsS3Cl
 	return wsS3Client, nil
 }
 
-// wsReadCheck ensures that the client is sending a message
-// every `pingWait` seconds. If deadline exceeded or an error
-// happened this will return, meaning it won't be able to ensure
-// client heartbeat.
-func wsReadCheck(ctx context.Context, wg *sync.WaitGroup, conn WSConn) chan error {
-	// decrements the WaitGroup counter by one when the function returns
-	defer wg.Done()
-	ch := make(chan error)
-	go func(ch chan error) {
-		defer close(ch)
-
-		// set initial Limits and deadlines for the Reader
-		conn.setReadLimit(maxMessageSize)
-		conn.setReadDeadline(time.Now().Add(pingWait))
-		conn.setPongHandler(func(string) error { conn.setReadDeadline(time.Now().Add(pingWait)); return nil })
-
+// wsReadClientCtx reads the messages that come from the client
+// if the client sends a Close Message the context will be
+// canceled. If the connection is closed the goroutine inside
+// will return.
+func wsReadClientCtx(conn WSConn) context.Context {
+	// a cancel context is needed to end all goroutines used
+	ctx, cancel := context.WithCancel(context.Background())
+	go func() {
+		defer cancel()
 		for {
-			select {
-			case <-ctx.Done():
-				log.Println("context done inside wsReadCheck")
-				return
-			default:
-				_, _, err := conn.readMessage()
-				if err != nil {
-					// if error of type websocket.CloseError and is Unexpected
-					if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseNormalClosure) {
-						log.Println("error unexpected CloseError on ReadMessage:", err)
-						ch <- err
-						return
-					}
-					// Not all errors are of type websocket.CloseError.
-					// If not of type websocket.CloseError return error
-					if _, ok := err.(*websocket.CloseError); !ok {
-						log.Println("error on ReadMessage:", err)
-						ch <- err
-						return
-					}
-					// else is an expected Close Error
-					log.Println("closed conn.ReadMessage:", err)
+			_, _, err := conn.readMessage()
+			if err != nil {
+				// if error of type websocket.CloseError and is Unexpected
+				if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseNormalClosure) {
+					log.Println("error unexpected CloseError on ReadMessage:", err)
 					return
 				}
-				// Reset Read Deadline after each Read
-				conn.setReadDeadline(time.Now().Add(pingWait))
-				conn.setPongHandler(func(string) error { conn.setReadDeadline(time.Now().Add(pingWait)); return nil })
+				// Not all errors are of type websocket.CloseError.
+				if _, ok := err.(*websocket.CloseError); !ok {
+					log.Println("error on ReadMessage:", err)
+					return
+				}
+				// else is an expected Close Error
+				log.Println("closed conn.ReadMessage:", err)
+				return
 			}
 		}
-	}(ch)
-	return ch
+	}()
+	return ctx
 }
 
 // trace serves madmin.ServiceTraceInfo
@@ -278,10 +237,13 @@ func (wsc *wsAdminClient) trace() {
 	}()
 	log.Println("trace started")
 
-	err := startTraceInfo(wsc.conn, wsc.client)
+	ctx := wsReadClientCtx(wsc.conn)
+
+	err := startTraceInfo(ctx, wsc.conn, wsc.client)
 	// Send Connection Close Message indicating the Status Code
 	// see https://tools.ietf.org/html/rfc6455#page-45
 	if err != nil {
+		log.Println("err:", err)
 		// If connection exceeded read deadline send Close
 		// Message Policy Violation code since we don't want
 		// to let the receiver figure out the read deadline.
@@ -309,7 +271,9 @@ func (wsc *wsAdminClient) console() {
 	}()
 	log.Println("console logs started")
 
-	err := startConsoleLog(wsc.conn, wsc.client)
+	ctx := wsReadClientCtx(wsc.conn)
+
+	err := startConsoleLog(ctx, wsc.conn, wsc.client)
 	// Send Connection Close Message indicating the Status Code
 	// see https://tools.ietf.org/html/rfc6455#page-45
 	if err != nil {
@@ -338,7 +302,9 @@ func (wsc *wsS3Client) watch(params watchOptions) {
 	}()
 	log.Println("watch started")
 
-	err := startWatch(wsc.conn, wsc.client, params)
+	ctx := wsReadClientCtx(wsc.conn)
+
+	err := startWatch(ctx, wsc.conn, wsc.client, params)
 	// Send Connection Close Message indicating the Status Code
 	// see https://tools.ietf.org/html/rfc6455#page-45
 	if err != nil {

@@ -23,7 +23,6 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"sync"
 
 	"github.com/gorilla/websocket"
 	"github.com/minio/minio/pkg/madmin"
@@ -50,93 +49,40 @@ type callStats struct {
 }
 
 // startTraceInfo starts trace of the servers
-// by first setting a websocket reader that will
-// check for a heartbeat.
-//
-// A WaitGroup is used to handle goroutines and to ensure
-// all finish in the proper order. If any, sendTraceInfo()
-// or wsReadCheck() returns, trace should end.
-func startTraceInfo(conn WSConn, client MinioAdmin) (mError error) {
-	// a WaitGroup waits for a collection of goroutines to finish
-	wg := sync.WaitGroup{}
-	// a cancel context is needed to end all goroutines used
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	// Set number of goroutines to wait. wg.Wait()
-	// waitsuntil counter is zero (all are done)
-	wg.Add(3)
-	// start go routine for reading websocket heartbeat
-	readErr := wsReadCheck(ctx, &wg, conn)
-	// send Stream of Trace Info to the ws c.connection
-	traceCh := sendTraceInfo(ctx, &wg, conn, client)
-	// If wsReadCheck returns it means that it is not possible to check
-	// ws heartbeat anymore so we stop from doing trace, cancel context
-	// for all goroutines.
-	go func(wg *sync.WaitGroup) {
-		defer wg.Done()
-		if err := <-readErr; err != nil {
-			log.Println("error on wsReadCheck:", err)
-			mError = err
-		}
-		// cancel context for all goroutines.
-		cancel()
-	}(&wg)
-
-	// get traceCh error on finish
-	if err := <-traceCh; err != nil {
-		mError = err
-	}
-
-	// if traceCh closes for any reason,
-	// cancel context for all goroutines
-	cancel()
-	// wait all goroutines to finish
-	wg.Wait()
-	return mError
-}
-
-// sendTraceInfo sends stream of Trace Info to the ws connection
-func sendTraceInfo(ctx context.Context, wg *sync.WaitGroup, conn WSConn, client MinioAdmin) <-chan error {
-	// decrements the WaitGroup counter
-	// by one when the function returns
-	defer wg.Done()
-	ch := make(chan error)
-	go func(ch chan<- error) {
-		defer close(ch)
-
-		// trace all traffic
-		allTraffic := true
-		// Trace failed requests only
-		errOnly := false
-		// Start listening on all trace activity.
-		traceCh := client.serviceTrace(ctx, allTraffic, errOnly)
-
-		for traceInfo := range traceCh {
+func startTraceInfo(ctx context.Context, conn WSConn, client MinioAdmin) error {
+	// trace all traffic
+	allTraffic := true
+	// Trace failed requests only
+	errOnly := false
+	// Start listening on all trace activity.
+	traceCh := client.serviceTrace(ctx, allTraffic, errOnly)
+	for {
+		select {
+		case <-ctx.Done():
+			return nil
+		case traceInfo, ok := <-traceCh:
+			// zero value returned because the channel is closed and empty
+			if !ok {
+				return nil
+			}
 			if traceInfo.Err != nil {
 				log.Println("error on serviceTrace:", traceInfo.Err)
-				ch <- traceInfo.Err
-				return
+				return traceInfo.Err
 			}
 			// Serialize message to be sent
 			traceInfoBytes, err := json.Marshal(shortTrace(&traceInfo))
 			if err != nil {
 				fmt.Println("error on json.Marshal:", err)
-				ch <- err
-				return
+				return err
 			}
 			// Send Message through websocket connection
 			err = conn.writeMessage(websocket.TextMessage, traceInfoBytes)
 			if err != nil {
 				log.Println("error writeMessage:", err)
-				ch <- err
-				return
+				return err
 			}
 		}
-		// TODO: verbose
-	}(ch)
-
-	return ch
+	}
 }
 
 // shortTrace creates a shorter Trace Info message.
