@@ -123,14 +123,15 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, error) {
 		log.Println("error login:", err)
 		return nil, errInvalidCredentials
 	}
-	policy, err := adminClient.getPolicy(ctx, userInfo.PolicyName)
-	if err != nil {
-		log.Println("error login:", err)
-		return nil, errInvalidCredentials
+	policy, _ := adminClient.getPolicy(ctx, userInfo.PolicyName)
+	// by default every user starts with an empty array of available actions
+	// therefore we would have access only to pages that doesn't require any privilege
+	// ie: service-account page
+	actions := []string{}
+	// if a policy is assigned to this user we parse the actions from there
+	if policy != nil {
+		actions = acl.GetActionsStringFromPolicy(policy)
 	}
-
-	actions := acl.GetActionsStringFromPolicy(policy)
-
 	sessionID, err := login(credentials, actions)
 	if err != nil {
 		return nil, err
