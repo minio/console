@@ -37,7 +37,7 @@ func TestGetAuthorizedEndpoints(t *testing.T) {
 			args: args{
 				[]string{"admin:ServerInfo"},
 			},
-			want: 1,
+			want: 2,
 		},
 		{
 			name: "policies endpoint",
@@ -50,7 +50,7 @@ func TestGetAuthorizedEndpoints(t *testing.T) {
 					"admin:ListUserPolicies",
 				},
 			},
-			want: 1,
+			want: 2,
 		},
 		{
 			name: "all admin endpoints",
@@ -59,7 +59,7 @@ func TestGetAuthorizedEndpoints(t *testing.T) {
 					"admin:*",
 				},
 			},
-			want: 9,
+			want: 10,
 		},
 		{
 			name: "all s3 endpoints",
@@ -68,7 +68,7 @@ func TestGetAuthorizedEndpoints(t *testing.T) {
 					"s3:*",
 				},
 			},
-			want: 2,
+			want: 3,
 		},
 		{
 			name: "all admin and s3 endpoints",
@@ -78,7 +78,7 @@ func TestGetAuthorizedEndpoints(t *testing.T) {
 					"s3:*",
 				},
 			},
-			want: 11,
+			want: 12,
 		},
 		{
 			name: "no endpoints",

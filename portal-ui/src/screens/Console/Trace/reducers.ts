@@ -17,7 +17,7 @@
 import {
   TRACE_MESSAGE_RECEIVED,
   TRACE_RESET_MESSAGES,
-  TraceActionTypes
+  TraceActionTypes,
 } from "./actions";
 import { TraceMessage } from "./types";
 
@@ -26,7 +26,7 @@ export interface TraceState {
 }
 
 const initialState: TraceState = {
-  messages: []
+  messages: [],
 };
 
 export function traceReducer(
@@ -37,12 +37,12 @@ export function traceReducer(
     case TRACE_MESSAGE_RECEIVED:
       return {
         ...state,
-        messages: [...state.messages, action.message]
+        messages: [...state.messages, action.message],
       };
     case TRACE_RESET_MESSAGES:
       return {
         ...state,
-        messages: []
+        messages: [],
       };
     default:
       return state;

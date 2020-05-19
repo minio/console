@@ -17,7 +17,7 @@
 import {
   LOG_MESSAGE_RECEIVED,
   LOG_RESET_MESSAGES,
-  LogActionTypes
+  LogActionTypes,
 } from "./actions";
 import { LogMessage } from "./types";
 
@@ -26,7 +26,7 @@ export interface LogState {
 }
 
 const initialState: LogState = {
-  messages: []
+  messages: [],
 };
 
 export function logReducer(
@@ -37,12 +37,12 @@ export function logReducer(
     case LOG_MESSAGE_RECEIVED:
       return {
         ...state,
-        messages: [...state.messages, action.message]
+        messages: [...state.messages, action.message],
       };
     case LOG_RESET_MESSAGES:
       return {
         ...state,
-        messages: []
+        messages: [],
       };
     default:
       return state;

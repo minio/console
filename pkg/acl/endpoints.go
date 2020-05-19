@@ -20,17 +20,18 @@ import iampolicy "github.com/minio/minio/pkg/iam/policy"
 
 // endpoints definition
 var (
-	configuration = "/configurations-list"
-	users         = "/users"
-	groups        = "/groups"
-	iamPolicies   = "/policies"
-	dashboard     = "/dashboard"
-	profiling     = "/profiling"
-	trace         = "/trace"
-	logs          = "/logs"
-	watch         = "/watch"
-	notifications = "/notification-endpoints"
-	buckets       = "/buckets"
+	configuration   = "/configurations-list"
+	users           = "/users"
+	groups          = "/groups"
+	iamPolicies     = "/policies"
+	dashboard       = "/dashboard"
+	profiling       = "/profiling"
+	trace           = "/trace"
+	logs            = "/logs"
+	watch           = "/watch"
+	notifications   = "/notification-endpoints"
+	buckets         = "/buckets"
+	serviceAccounts = "/service-accounts"
 )
 
 type ConfigurationActionSet struct {
@@ -179,19 +180,26 @@ var bucketsActionSet = ConfigurationActionSet{
 	),
 }
 
+// serviceAccountsActionSet contains the list of admin actions required for this endpoint to work
+var serviceAccountsActionSet = ConfigurationActionSet{
+	actionTypes: iampolicy.NewActionSet(),
+	actions:     iampolicy.NewActionSet(),
+}
+
 // endpointRules contains the mapping between endpoints and ActionSets, additional rules can be added here
 var endpointRules = map[string]ConfigurationActionSet{
-	configuration: configurationActionSet,
-	users:         usersActionSet,
-	groups:        groupsActionSet,
-	iamPolicies:   iamPoliciesActionSet,
-	dashboard:     dashboardActionSet,
-	profiling:     profilingActionSet,
-	trace:         traceActionSet,
-	logs:          logsActionSet,
-	watch:         watchActionSet,
-	notifications: notificationsActionSet,
-	buckets:       bucketsActionSet,
+	configuration:   configurationActionSet,
+	users:           usersActionSet,
+	groups:          groupsActionSet,
+	iamPolicies:     iamPoliciesActionSet,
+	dashboard:       dashboardActionSet,
+	profiling:       profilingActionSet,
+	trace:           traceActionSet,
+	logs:            logsActionSet,
+	watch:           watchActionSet,
+	notifications:   notificationsActionSet,
+	buckets:         bucketsActionSet,
+	serviceAccounts: serviceAccountsActionSet,
 }
 
 // GetActionsStringFromPolicy extract the admin/s3 actions from a given policy and return them in []string format

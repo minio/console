@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2019 MinIO, Inc.
+// Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -17,20 +17,19 @@
 import React from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { NewServiceAccount } from "./types";
-import {
-  Button,
-  DialogActions,
-  DialogContent,
-  DialogContentText
-} from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
+import Grid from "@material-ui/core/Grid";
 
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
-    }
+      color: "red",
+    },
+    buttonContainer: {
+      textAlign: "right",
+    },
   });
 
 interface ICredentialsPromptProps {
@@ -40,76 +39,69 @@ interface ICredentialsPromptProps {
   closeModal: () => void;
 }
 
-interface ICredentialsPromptState {}
+const download = (filename: string, text: string) => {
+  let element = document.createElement("a");
+  element.setAttribute(
+    "href",
+    "data:text/plain;charset=utf-8," + encodeURIComponent(text)
+  );
+  element.setAttribute("download", filename);
 
-class CredentialsPrompt extends React.Component<
-  ICredentialsPromptProps,
-  ICredentialsPromptState
-> {
-  state: ICredentialsPromptState = {};
+  element.style.display = "none";
+  document.body.appendChild(element);
 
-  download(filename: string, text: string) {
-    var element = document.createElement("a");
-    element.setAttribute(
-      "href",
-      "data:text/plain;charset=utf-8," + encodeURIComponent(text)
-    );
-    element.setAttribute("download", filename);
+  element.click();
 
-    element.style.display = "none";
-    document.body.appendChild(element);
+  document.body.removeChild(element);
+};
 
-    element.click();
-
-    document.body.removeChild(element);
+const CredentialsPrompt = ({
+  classes,
+  newServiceAccount,
+  open,
+  closeModal,
+}: ICredentialsPromptProps) => {
+  if (!newServiceAccount) {
+    return null;
   }
 
-  render() {
-    const { classes, open, newServiceAccount } = this.props;
-
-    if (newServiceAccount === null) {
-      return <div />;
-    }
-
-    return (
-      <ModalWrapper
-        modalOpen={open}
-        onClose={() => {
-          this.props.closeModal();
-        }}
-        title="New Service Account"
-      >
-        <React.Fragment>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              A new service account has been created with the following details:
-              <ul>
-                <li>
-                  <b>Access Key:</b>{" "}
-                  {newServiceAccount.service_account.access_key}
-                </li>
-                <li>
-                  <b>Secret Key:</b> {newServiceAccount.secret_key}
-                </li>
-              </ul>
-              <Typography
-                component="p"
-                variant="body1"
-                className={classes.errorBlock}
-              >
-                Write these down, as this is the only time the secret will be
-                displayed.
-              </Typography>
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
+  return (
+    <ModalWrapper
+      modalOpen={open}
+      onClose={() => {
+        closeModal();
+      }}
+      title="New Service Account Created"
+    >
+      <React.Fragment>
+        <Grid container>
+          <Grid item xs={12} className={classes.formScrollable}>
+            A new service account has been created with the following details:
+            <ul>
+              <li>
+                <b>Access Key:</b> {newServiceAccount.accessKey}
+              </li>
+              <li>
+                <b>Secret Key:</b> {newServiceAccount.secretKey}
+              </li>
+            </ul>
+            <Typography
+              component="p"
+              variant="body1"
+              className={classes.errorBlock}
+            >
+              Write these down, as this is the only time the secret will be
+              displayed.
+            </Typography>
+          </Grid>
+          <Grid item xs={12} className={classes.buttonContainer}>
             <Button
               onClick={() => {
-                this.download(
+                download(
                   "credentials.json",
                   JSON.stringify({
-                    access_key: newServiceAccount.service_account.access_key,
-                    secret_key: newServiceAccount.secret_key
+                    access_key: newServiceAccount.accessKey,
+                    secret_key: newServiceAccount.secretKey,
                   })
                 );
               }}
@@ -119,18 +111,18 @@ class CredentialsPrompt extends React.Component<
             </Button>
             <Button
               onClick={() => {
-                this.props.closeModal();
+                closeModal();
               }}
               color="secondary"
               autoFocus
             >
               Done
             </Button>
-          </DialogActions>
-        </React.Fragment>
-      </ModalWrapper>
-    );
-  }
-}
+          </Grid>
+        </Grid>
+      </React.Fragment>
+    </ModalWrapper>
+  );
+};
 
 export default withStyles(styles)(CredentialsPrompt);

@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2019 MinIO, Inc.
+// Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,27 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import {Permission} from "../Permissions/types";
-
-export interface ServiceAccount {
-    id: string;
-    name: string;
-    slug: string;
-    access_key: string;
-    enabled: boolean;
-}
-
 export interface ServiceAccountsList {
-    service_accounts: ServiceAccount[];
-    total:number;
+  service_accounts: string[];
+  total: number;
 }
 
 export interface NewServiceAccount {
-    service_account: ServiceAccount,
-    secret_key:string,
-}
-
-export interface ServiceAccountDetails {
-    service_account: ServiceAccount,
-    permissions: Permission[],
+  accessKey: string;
+  secretKey: string;
 }

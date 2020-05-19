@@ -14,12 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Grid,
-  Typography,
-  TextField
-} from "@material-ui/core";
+import { Button, Grid, Typography, TextField } from "@material-ui/core";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { AppState } from "../../../store";
 import { connect } from "react-redux";
@@ -29,11 +24,7 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { niceBytes, timeFromDate } from "../../../common/utils";
 import { wsProtocol } from "../../../utils/wsUtils";
 import api from "../../../common/api";
-import {
-  FormControl,
-  MenuItem,
-  Select,
-} from "@material-ui/core";
+import { FormControl, MenuItem, Select } from "@material-ui/core";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -43,27 +34,27 @@ const styles = (theme: Theme) =>
       overflow: "auto",
       "& ul": {
         margin: "4px",
-        padding: "0px"
+        padding: "0px",
       },
       "& ul li": {
         listStyle: "none",
         margin: "0px",
         padding: "0px",
-        borderBottom: "1px solid #dedede"
-      }
+        borderBottom: "1px solid #dedede",
+      },
     },
     actionsTray: {
       textAlign: "right",
       "& button": {
         marginLeft: 10,
-      }
+      },
     },
     inputField: {
       background: "#FFFFFF",
       padding: 12,
       borderRadius: 5,
       marginLeft: 10,
-      boxShadow: "0px 3px 6px #00000012"
+      boxShadow: "0px 3px 6px #00000012",
     },
     fieldContainer: {
       background: "#FFFFFF",
@@ -72,8 +63,8 @@ const styles = (theme: Theme) =>
       marginLeft: 10,
       textAlign: "left",
       minWidth: "206px",
-      boxShadow: "0px 3px 6px #00000012"
-    }
+      boxShadow: "0px 3px 6px #00000012",
+    },
   });
 
 interface IWatch {
@@ -87,7 +78,7 @@ const Watch = ({
   classes,
   watchMessageReceived,
   watchResetMessages,
-  messages
+  messages,
 }: IWatch) => {
   const [start, setStart] = useState(false);
   const [bucketName, setBucketName] = useState("Select Bucket");
@@ -108,7 +99,7 @@ const Watch = ({
       .catch((err: any) => {
         console.log(err);
       });
-  }
+  };
   useEffect(() => {
     fetchBucketList();
   }, []);
@@ -116,13 +107,15 @@ const Watch = ({
   useEffect(() => {
     watchResetMessages();
     // begin watch if bucketName in bucketList and start pressed
-    if (start && bucketList.some(bucket => bucket.name === bucketName)) {
+    if (start && bucketList.some((bucket) => bucket.name === bucketName)) {
       const url = new URL(window.location.toString());
       const isDev = process.env.NODE_ENV === "development";
       const port = isDev ? "9090" : url.port;
 
       const wsProt = wsProtocol(url.protocol);
-      const c = new W3CWebSocket(`${wsProt}://${url.hostname}:${port}/ws/watch/${bucketName}?prefix=${prefix}&suffix=${suffix}`);
+      const c = new W3CWebSocket(
+        `${wsProt}://${url.hostname}:${port}/ws/watch/${bucketName}?prefix=${prefix}&suffix=${suffix}`
+      );
 
       let interval: any | null = null;
       if (c !== null) {
@@ -156,9 +149,9 @@ const Watch = ({
     }
   }, [watchMessageReceived, start]);
 
-  const bucketNames = bucketList.map(bucketName => ({
+  const bucketNames = bucketList.map((bucketName) => ({
     label: bucketName.name,
-    value: bucketName.name
+    value: bucketName.name,
   }));
   return (
     <React.Fragment>
@@ -175,7 +168,9 @@ const Watch = ({
               id="bucket-name"
               name="bucket-name"
               value={bucketName}
-              onChange={(e) => { setBucketName(e.target.value as string) }}
+              onChange={(e) => {
+                setBucketName(e.target.value as string);
+              }}
               className={classes.fieldContainer}
               disabled={start}
             >
@@ -185,8 +180,8 @@ const Watch = ({
                 disabled={true}
               >
                 Select Bucket
-                </MenuItem>
-              {bucketNames.map(option => (
+              </MenuItem>
+              {bucketNames.map((option) => (
                 <MenuItem
                   value={option.value}
                   key={`select-bucket-name-${option.label}`}
@@ -205,7 +200,9 @@ const Watch = ({
             InputProps={{
               disableUnderline: true,
             }}
-            onChange={(e) => { setPrefix(e.target.value) }}
+            onChange={(e) => {
+              setPrefix(e.target.value);
+            }}
           />
           <TextField
             placeholder="Suffix"
@@ -216,7 +213,9 @@ const Watch = ({
             InputProps={{
               disableUnderline: true,
             }}
-            onChange={(e) => { setSuffix(e.target.value) }}
+            onChange={(e) => {
+              setSuffix(e.target.value);
+            }}
           />
           <Button
             type="submit"
@@ -226,7 +225,7 @@ const Watch = ({
             onClick={() => setStart(true)}
           >
             Start
-            </Button>
+          </Button>
         </Grid>
         <Grid item xs={12}>
           <br />
@@ -234,10 +233,11 @@ const Watch = ({
       </Grid>
       <div className={classes.watchList}>
         <ul>
-          {messages.map(m => {
+          {messages.map((m) => {
             return (
               <li key={m.key}>
-                {timeFromDate(m.Time)} - {niceBytes(m.Size + "")} - {m.Type} - {m.Path}
+                {timeFromDate(m.Time)} - {niceBytes(m.Size + "")} - {m.Type} -{" "}
+                {m.Path}
               </li>
             );
           })}
@@ -248,12 +248,12 @@ const Watch = ({
 };
 
 const mapState = (state: AppState) => ({
-  messages: state.watch.messages
+  messages: state.watch.messages,
 });
 
 const connector = connect(mapState, {
   watchMessageReceived: watchMessageReceived,
-  watchResetMessages: watchResetMessages
+  watchResetMessages: watchResetMessages,
 });
 
 export default connector(withStyles(styles)(Watch));

@@ -224,6 +224,7 @@ const Console = ({
         console.log(err);
       });
   };
+
   const allowedPages = session.pages.reduce(
     (result: any, item: any, index: any) => {
       result[item] = true;
@@ -278,7 +279,7 @@ const Console = ({
     },
     {
       component: ServiceAccounts,
-      path: "/service_accounts",
+      path: "/service-accounts",
     },
     {
       component: WebhookPanel,
@@ -290,6 +291,7 @@ const Console = ({
     },
   ];
   const allowedRoutes = routes.filter((route: any) => allowedPages[route.path]);
+
   return (
     <React.Fragment>
       {session.status == "ok" ? (

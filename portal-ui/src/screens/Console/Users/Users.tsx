@@ -22,7 +22,7 @@ import {
   Grid,
   Typography,
   TextField,
-  InputAdornment
+  InputAdornment,
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import GroupIcon from "@material-ui/icons/Group";
@@ -38,50 +38,50 @@ import TableWrapper from "../Common/TableWrapper/TableWrapper";
 const styles = (theme: Theme) =>
   createStyles({
     seeMore: {
-      marginTop: theme.spacing(3)
+      marginTop: theme.spacing(3),
     },
     paper: {
       // padding: theme.spacing(2),
       display: "flex",
       overflow: "auto",
-      flexDirection: "column"
+      flexDirection: "column",
     },
     addSideBar: {
       width: "320px",
-      padding: "20px"
+      padding: "20px",
     },
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     tableToolbar: {
       paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0)
+      paddingRight: theme.spacing(0),
     },
     wrapCell: {
       maxWidth: "200px",
       whiteSpace: "normal",
-      wordWrap: "break-word"
+      wordWrap: "break-word",
     },
     minTableHeader: {
       color: "#393939",
       "& tr": {
         "& th": {
-          fontWeight: "bold"
-        }
-      }
+          fontWeight: "bold",
+        },
+      },
     },
     actionsTray: {
       textAlign: "right",
       "& button": {
-        marginLeft: 10
-      }
+        marginLeft: 10,
+      },
     },
     searchField: {
       background: "#FFFFFF",
       padding: 12,
       borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012"
-    }
+      boxShadow: "0px 3px 6px #00000012",
+    },
   });
 
 interface IUsersProps {
@@ -118,7 +118,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
     selectedUser: null,
     addGroupOpen: false,
     filter: "",
-    checkedUsers: []
+    checkedUsers: [],
   };
 
   fetchRecords() {
@@ -133,7 +133,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
             loading: false,
             records: users.sort(usersSort),
             totalRecords: users.length,
-            error: ""
+            error: "",
           });
           // if we get 0 results, and page > 0 , go down 1 page
           if ((!users || users.length === 0) && page > 0) {
@@ -143,7 +143,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
             });
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.setState({ loading: false, error: err });
         });
     });
@@ -191,7 +191,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
       selectedUser,
       filter,
       checkedUsers,
-      addGroupOpen
+      addGroupOpen,
     } = this.state;
 
     const handleChangePage = (event: unknown, newPage: number) => {
@@ -205,7 +205,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
       this.setState({ page: 0, rowsPerPage: rPP });
     };
 
-    const filteredRecords = records.filter(elementItem =>
+    const filteredRecords = records.filter((elementItem) =>
       elementItem.accessKey.includes(filter)
     );
 
@@ -226,11 +226,11 @@ class Users extends React.Component<IUsersProps, IUsersState> {
         elements.push(value);
       } else {
         // User has unchecked this field, we need to remove it from the list
-        elements = elements.filter(element => element !== value);
+        elements = elements.filter((element) => element !== value);
       }
 
       this.setState({
-        checkedUsers: elements
+        checkedUsers: elements,
       });
 
       return elements;
@@ -239,20 +239,20 @@ class Users extends React.Component<IUsersProps, IUsersState> {
     const viewAction = (selectionElement: any): void => {
       this.setState({
         addScreenOpen: true,
-        selectedUser: selectionElement
+        selectedUser: selectionElement,
       });
     };
 
     const deleteAction = (selectionElement: any): void => {
       this.setState({
         deleteOpen: true,
-        selectedUser: selectionElement
+        selectedUser: selectionElement,
       });
     };
 
     const tableActions = [
       { type: "view", onClick: viewAction },
-      { type: "delete", onClick: deleteAction }
+      { type: "delete", onClick: deleteAction },
     ];
 
     return (
@@ -304,9 +304,9 @@ class Users extends React.Component<IUsersProps, IUsersState> {
                   <InputAdornment position="start">
                     <SearchIcon />
                   </InputAdornment>
-                )
+                ),
               }}
-              onChange={e => {
+              onChange={(e) => {
                 this.setState({ filter: e.target.value, page: 0 });
               }}
             />
@@ -318,7 +318,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
               onClick={() => {
                 if (checkedUsers.length > 0) {
                   this.setState({
-                    addGroupOpen: true
+                    addGroupOpen: true,
                   });
                 }
               }}
@@ -332,7 +332,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
               onClick={() => {
                 this.setState({
                   addScreenOpen: true,
-                  selectedUser: null
+                  selectedUser: null,
                 });
               }}
             >
@@ -361,11 +361,11 @@ class Users extends React.Component<IUsersProps, IUsersState> {
                 page: page,
                 SelectProps: {
                   inputProps: { "aria-label": "rows per page" },
-                  native: true
+                  native: true,
                 },
                 onChangePage: handleChangePage,
                 onChangeRowsPerPage: handleChangeRowsPerPage,
-                ActionsComponent: MinTablePaginationActions
+                ActionsComponent: MinTablePaginationActions,
               }}
             />
           </Grid>

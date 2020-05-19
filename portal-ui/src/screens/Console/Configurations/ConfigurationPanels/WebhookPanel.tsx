@@ -44,29 +44,29 @@ interface IWebhook {
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     strongText: {
-      fontWeight: 700
+      fontWeight: 700,
     },
     keyName: {
-      marginLeft: 5
+      marginLeft: 5,
     },
     actionsTray: {
       textAlign: "right",
       "& button": {
-        marginLeft: 10
-      }
+        marginLeft: 10,
+      },
     },
     searchField: {
       background: "#FFFFFF",
       padding: 12,
       borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012"
+      boxShadow: "0px 3px 6px #00000012",
     },
     iconText: {
-      lineHeight: "24px"
-    }
+      lineHeight: "24px",
+    },
   });
 
 const panels = {
@@ -77,8 +77,8 @@ const panels = {
     apiURL: "",
     configuration: {
       configuration_id: "logger_webhook",
-      configuration_label: "Logger Webhook"
-    }
+      configuration_label: "Logger Webhook",
+    },
   },
   audit: {
     main: "audit",
@@ -87,9 +87,9 @@ const panels = {
     apiURL: "",
     configuration: {
       configuration_id: "audit_webhook",
-      configuration_label: "Audit Webhook"
-    }
-  }
+      configuration_label: "Audit Webhook",
+    },
+  },
 };
 
 const WebhookPanel = ({ match, classes }: IWebhookPanel) => {
@@ -107,15 +107,15 @@ const WebhookPanel = ({ match, classes }: IWebhookPanel) => {
     return null;
   }
 
-  const filteredRecords: IWebhook[] = webhooks.filter(elementItem =>
+  const filteredRecords: IWebhook[] = webhooks.filter((elementItem) =>
     elementItem.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
   );
 
   const tableActions = [
     {
       type: "edit",
-      onClick: () => {}
-    }
+      onClick: () => {},
+    },
   ];
 
   return (
@@ -144,7 +144,7 @@ const WebhookPanel = ({ match, classes }: IWebhookPanel) => {
             className={classes.searchField}
             id="search-resource"
             label=""
-            onChange={event => {
+            onChange={(event) => {
               setFilter(event.target.value);
             }}
             InputProps={{
@@ -153,7 +153,7 @@ const WebhookPanel = ({ match, classes }: IWebhookPanel) => {
                 <InputAdornment position="start">
                   <SearchIcon />
                 </InputAdornment>
-              )
+              ),
             }}
           />
           <Button

@@ -17,6 +17,7 @@
 import React from "react";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
+import RoomServiceIcon from "@material-ui/icons/RoomService";
 import WebAssetIcon from "@material-ui/icons/WebAsset";
 import CenterFocusWeakIcon from "@material-ui/icons/CenterFocusWeak";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -135,6 +136,14 @@ class Menu extends React.Component<MenuProps> {
         to: "/buckets",
         name: "Buckets",
         icon: <BucketsIcon />,
+      },
+      {
+        type: "item",
+        component: NavLink,
+        to: "/service-accounts",
+        name: "Service Accounts",
+        icon: <RoomServiceIcon />,
+        forceDisplay: true,
       },
       {
         type: "item",

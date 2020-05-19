@@ -24,8 +24,8 @@ export class API {
     return request(method, url)
       .set("Authorization", `Bearer ${token}`)
       .send(data)
-      .then(res => res.body)
-      .catch(err => {
+      .then((res) => res.body)
+      .catch((err) => {
         // if we get unauthorized, kick out the user
         if (err.status === 401) {
           storage.removeItem("token");
