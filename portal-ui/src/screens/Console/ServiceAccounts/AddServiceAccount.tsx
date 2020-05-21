@@ -18,7 +18,7 @@ import React, { useEffect, useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import Typography from "@material-ui/core/Typography";
-import { Button, LinearProgress } from "@material-ui/core";
+import { Button, LinearProgress, Tooltip } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
@@ -26,6 +26,7 @@ import api from "../../../common/api";
 import "codemirror/lib/codemirror.css";
 import "codemirror/theme/material.css";
 import { NewServiceAccount } from "./types";
+import HelpIcon from "@material-ui/icons/Help";
 
 require("codemirror/mode/javascript/javascript");
 
@@ -120,6 +121,15 @@ const AddServiceAccount = ({
               </Grid>
             )}
             <Grid item xs={12}>
+              <Typography component="h5">
+                Optional Policy
+                <Tooltip
+                  title="A policy that restricts this service account can be attached."
+                  placement="top-start"
+                >
+                  <HelpIcon />
+                </Tooltip>
+              </Typography>
               <CodeMirror
                 className={classes.codeMirror}
                 options={{
