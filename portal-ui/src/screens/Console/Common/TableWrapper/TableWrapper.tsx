@@ -27,6 +27,7 @@ import {
   Paper,
   Grid,
   Checkbox,
+  Typography,
 } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { TablePaginationActionsProps } from "@material-ui/core/TablePagination/TablePaginationActions";
@@ -103,6 +104,7 @@ const styles = (theme: Theme) =>
       overflow: "auto",
       flexDirection: "column",
       padding: "19px 38px",
+      minHeight: "200px",
     },
     minTableHeader: {
       color: "#393939",
@@ -147,6 +149,10 @@ const styles = (theme: Theme) =>
     },
     checkBoxRow: {
       borderColor: borderColor,
+    },
+    loadingBox: {
+      paddingTop: "100px",
+      paddingBottom: "100px",
     },
   });
 
@@ -226,7 +232,16 @@ const TableWrapper = ({
   return (
     <Grid item xs={12}>
       <Paper className={classes.paper}>
-        {isLoading && <LinearProgress />}
+        {isLoading && (
+          <Grid container className={classes.loadingBox}>
+            <Grid item xs={12} style={{ textAlign: "center" }}>
+              <Typography component="h3">Loading...</Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <LinearProgress />
+            </Grid>
+          </Grid>
+        )}
         {records && records.length > 0 ? (
           <Table size="small" stickyHeader={stickyHeader}>
             <TableHead className={classes.minTableHeader}>
@@ -298,7 +313,9 @@ const TableWrapper = ({
             </TableBody>
           </Table>
         ) : (
-          <div>{`There are no ${entityName} yet.`}</div>
+          <React.Fragment>
+            {!isLoading && <div>{`There are no ${entityName} yet.`}</div>}
+          </React.Fragment>
         )}
       </Paper>
       {paginatorConfig && (
