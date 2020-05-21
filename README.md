@@ -2,6 +2,11 @@
 
 A graphical user interface for [MinIO](https://github.com/minio/minio)
 
+
+| Dashboard  | Adding A User |
+| ------------- | ------------- |
+| ![Dashboard](images/pic1.png)  | ![Dashboard](images/pic2.png) |
+
 ## Setup
 
 All `mcs` needs is a MinIO user with admin privileges and URL pointing to your MinIO deployment.
