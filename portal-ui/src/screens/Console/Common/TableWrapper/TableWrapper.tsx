@@ -26,7 +26,7 @@ import {
   TableRow,
   Paper,
   Grid,
-  Checkbox
+  Checkbox,
 } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { TablePaginationActionsProps } from "@material-ui/core/TablePagination/TablePaginationActions";
@@ -84,25 +84,25 @@ const borderColor = "#eaeaea";
 const rowText = {
   fontWeight: 400,
   fontSize: 14,
-  borderColor: borderColor
+  borderColor: borderColor,
 };
 
 const checkBoxBasic = {
   width: 16,
   height: 16,
-  borderRadius: 3
+  borderRadius: 3,
 };
 
 const styles = (theme: Theme) =>
   createStyles({
     dialogContainer: {
-      padding: "12px 26px 22px"
+      padding: "12px 26px 22px",
     },
     paper: {
       display: "flex",
       overflow: "auto",
       flexDirection: "column",
-      padding: "19px 38px"
+      padding: "19px 38px",
     },
     minTableHeader: {
       color: "#393939",
@@ -111,43 +111,43 @@ const styles = (theme: Theme) =>
           fontWeight: 700,
           fontSize: 14,
           paddingBottom: 15,
-          borderColor: borderColor
-        }
-      }
+          borderColor: borderColor,
+        },
+      },
     },
     rowUnselected: {
-      ...rowText
+      ...rowText,
     },
     rowSelected: {
       ...rowText,
-      color: "#201763"
+      color: "#201763",
     },
     paginatorContainer: {
       display: "flex",
       justifyContent: "flex-end",
-      padding: "5px 38px"
+      padding: "5px 38px",
     },
     checkBoxHeader: {
       "&.MuiTableCell-paddingCheckbox": {
-        paddingBottom: 9
-      }
+        paddingBottom: 9,
+      },
     },
     actionsContainer: {
       width: 120,
-      borderColor: borderColor
+      borderColor: borderColor,
     },
     paginatorComponent: {
-      borderBottom: 0
+      borderBottom: 0,
     },
     unCheckedIcon: { ...checkBoxBasic, border: "1px solid #d0d0d0" },
     checkedIcon: {
       ...checkBoxBasic,
       border: "1px solid #201763",
-      backgroundColor: "#201763"
+      backgroundColor: "#201763",
     },
     checkBoxRow: {
-      borderColor: borderColor
-    }
+      borderColor: borderColor,
+    },
   });
 
 // Function that renders Title Columns
@@ -221,7 +221,7 @@ const TableWrapper = ({
   idField,
   classes,
   stickyHeader = false,
-  paginatorConfig
+  paginatorConfig,
 }: TableWrapperProps) => {
   return (
     <Grid item xs={12}>

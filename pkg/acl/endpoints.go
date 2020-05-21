@@ -31,6 +31,7 @@ var (
 	watch           = "/watch"
 	notifications   = "/notification-endpoints"
 	buckets         = "/buckets"
+	bucketDetails   = "/buckets/:bucketName"
 	serviceAccounts = "/service-accounts"
 )
 
@@ -199,6 +200,7 @@ var endpointRules = map[string]ConfigurationActionSet{
 	watch:           watchActionSet,
 	notifications:   notificationsActionSet,
 	buckets:         bucketsActionSet,
+	bucketDetails:   bucketsActionSet,
 	serviceAccounts: serviceAccountsActionSet,
 }
 

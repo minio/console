@@ -242,6 +242,10 @@ const Console = ({
       path: "/buckets",
     },
     {
+      component: Buckets,
+      path: "/buckets/:bucketName",
+    },
+    {
       component: Watch,
       path: "/watch",
     },
