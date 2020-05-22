@@ -5,7 +5,7 @@ import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import Grid from "@material-ui/core/Grid";
-import { factorForDropdown } from "../../../../common/utils";
+import { factorForDropdown, getTotalSize } from "../../../../common/utils";
 import { Button, LinearProgress } from "@material-ui/core";
 
 interface IAddZoneProps {
@@ -30,6 +30,29 @@ const styles = (theme: Theme) =>
     sizeFactorContainer: {
       marginLeft: 8,
     },
+    bottomContainer: {
+      display: "flex",
+      flexGrow: 1,
+      alignItems: "center",
+      "& div": {
+        flexGrow: 1,
+        width: "100%",
+      },
+    },
+    factorElements: {
+      display: "flex",
+      justifyContent: "flex-start",
+    },
+    sizeNumber: {
+      fontSize: 35,
+      fontWeight: 700,
+      textAlign: "center",
+    },
+    sizeDescription: {
+      fontSize: 14,
+      color: "#777",
+      textAlign: "center",
+    },
     ...modalBasic,
   });
 
@@ -45,6 +68,11 @@ const AddZoneModal = ({
   const [sizeFactor, setSizeFactor] = useState<string>("GiB");
   const [volumeConfiguration, setVolumeConfig] = useState<string>("");
   const [storageClass, setStorageClass] = useState<string>("");
+
+  const instanceCapacity: number =
+    parseFloat(volumeConfiguration) * volumesPerInstance;
+  const totalCapacity: number = instanceCapacity * numberOfInstances;
+
   return (
     <ModalWrapper
       onClose={() => onCloseZoneAndReload(false)}
@@ -133,15 +161,31 @@ const AddZoneModal = ({
               value={storageClass}
             />
           </Grid>
-          <Grid item xs={12} className={classes.buttonContainer}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={addSending}
-            >
-              Save
-            </Button>
+          <Grid item xs={12} className={classes.bottomContainer}>
+            <div className={classes.factorElements}>
+              <div>
+                <div className={classes.sizeNumber}>
+                  {getTotalSize(instanceCapacity.toString(10), sizeFactor)}
+                </div>
+                <div className={classes.sizeDescription}>Instance Capacity</div>
+              </div>
+              <div>
+                <div className={classes.sizeNumber}>
+                  {getTotalSize(totalCapacity.toString(10), sizeFactor)}
+                </div>
+                <div className={classes.sizeDescription}>Total Capacity</div>
+              </div>
+            </div>
+            <div className={classes.buttonContainer}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={addSending}
+              >
+                Save
+              </Button>
+            </div>
           </Grid>
           {addSending && (
             <Grid item xs={12}>

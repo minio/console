@@ -59,9 +59,28 @@ export const timeFromDate = (d: Date) => {
 };
 
 // units to be used in a dropdown
-
 export const factorForDropdown = () => {
   return units.map((unit) => {
     return { label: unit, value: unit };
   });
+};
+
+//getBytes, converts from a value and a unit from units array to bytes
+export const getBytes = (value: string, unit: string) => {
+  const vl: number = parseFloat(value);
+  const powFactor = units.findIndex((element) => element === unit);
+
+  if(powFactor == -1) {
+    return 0;
+  }
+  const factor = Math.pow(1024, powFactor);
+  const total = vl * factor;
+
+  return total.toString(10);
+};
+
+//getTotalSize gets the total size of a value & unit
+export const getTotalSize = (value: string, unit: string) => {
+  const bytes = getBytes(value, unit).toString(10);
+  return niceBytes(bytes);
 };
