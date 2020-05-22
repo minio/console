@@ -22,7 +22,7 @@ import Grid from "@material-ui/core/Grid";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import api from "../../../../common/api";
-import {BucketEvent, BucketEventList, BucketInfo, BucketList} from "../types";
+import { BucketEvent, BucketEventList, BucketInfo, BucketList } from "../types";
 import { Button } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import SetAccessPolicy from "./SetAccessPolicy";
@@ -31,7 +31,7 @@ import { CreateIcon } from "../../../../icons";
 import AddEvent from "./AddEvent";
 import DeleteEvent from "./DeleteEvent";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import {niceBytes} from "../../../../common/utils";
+import { niceBytes } from "../../../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -111,11 +111,11 @@ const styles = (theme: Theme) =>
     },
     headerContainer: {
       display: "flex",
-      justifyContent: "space-between"
+      justifyContent: "space-between",
     },
     capitalizeFirst: {
-      textTransform: "capitalize"
-    }
+      textTransform: "capitalize",
+    },
   });
 
 interface IViewBucketProps {
@@ -199,19 +199,25 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
 
     this.setState({ loadingSize: true }, () => {
       api
-          .invoke("GET", `/api/v1/buckets`)
-          .then((res: BucketList) => {
-            const resBuckets = get(res, "buckets", []);
+        .invoke("GET", `/api/v1/buckets`)
+        .then((res: BucketList) => {
+          const resBuckets = get(res, "buckets", []);
 
-            const bucketInfo = resBuckets.find(bucket => bucket.name === bucketName) ;
+          const bucketInfo = resBuckets.find(
+            (bucket) => bucket.name === bucketName
+          );
 
-            const size = get(bucketInfo, "size", "0");
+          const size = get(bucketInfo, "size", "0");
 
-            this.setState({ loadingSize: false, errorSize: "", bucketSize: size });
-          })
-          .catch((err: any) => {
-            this.setState({ loadingSize: false, errorSize: err });
+          this.setState({
+            loadingSize: false,
+            errorSize: "",
+            bucketSize: size,
           });
+        })
+        .catch((err: any) => {
+          this.setState({ loadingSize: false, errorSize: err });
+        });
     });
   }
 
@@ -330,26 +336,30 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
           </Grid>
           <Grid item xs={12}>
             <div className={classes.headerContainer}>
-              <div><Paper className={classes.paperContainer}>
-                <div className={classes.gridContainer}>
-                  <div>Access Policy:</div>
-                  <div className={classes.capitalizeFirst}>{accessPolicy.toLowerCase()}</div>
-                  <div>Reported Usage:</div>
-                  <div>{niceBytes(bucketSize)}</div>
-                </div>
-              </Paper></div>
+              <div>
+                <Paper className={classes.paperContainer}>
+                  <div className={classes.gridContainer}>
+                    <div>Access Policy:</div>
+                    <div className={classes.capitalizeFirst}>
+                      {accessPolicy.toLowerCase()}
+                    </div>
+                    <div>Reported Usage:</div>
+                    <div>{niceBytes(bucketSize)}</div>
+                  </div>
+                </Paper>
+              </div>
               <div className={classes.masterActions}>
                 <div>
                   <Button
-                      variant="contained"
-                      color="primary"
-                      fullWidth
-                      size="medium"
-                      onClick={() => {
-                        this.setState({
-                          setAccessPolicyScreenOpen: true,
-                        });
-                      }}
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    size="medium"
+                    onClick={() => {
+                      this.setState({
+                        setAccessPolicyScreenOpen: true,
+                      });
+                    }}
                   >
                     Change Access Policy
                   </Button>
@@ -362,10 +372,10 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
           </Grid>
           <Grid item xs={6}>
             <Tabs
-                value={0}
-                indicatorColor="primary"
-                textColor="primary"
-                aria-label="cluster-tabs"
+              value={0}
+              indicatorColor="primary"
+              textColor="primary"
+              aria-label="cluster-tabs"
             >
               <Tab label="Events" />
             </Tabs>
