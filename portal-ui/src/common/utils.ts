@@ -57,3 +57,11 @@ export const timeFromDate = (d: Date) => {
 
   return `${h}:${m}:${s}:${d.getMilliseconds()}`;
 };
+
+// units to be used in a dropdown
+
+export const factorForDropdown = () => {
+  return units.map((unit) => {
+    return { label: unit, value: unit };
+  });
+};

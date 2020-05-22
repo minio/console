@@ -63,8 +63,10 @@ import WebhookPanel from "./Configurations/ConfigurationPanels/WebhookPanel";
 import Trace from "./Trace/Trace";
 import Logs from "./Logs/Logs";
 import Watch from "./Watch/Watch";
+import ListClusters from "./Clusters/ListClusters/ListClusters";
 import { ISessionResponse } from "./types";
 import { saveSessionResponse } from "./actions";
+import ClusterDetails from "./Clusters/ClusterDetails/ClusterDetails";
 
 function Copyright() {
   return (
@@ -292,6 +294,14 @@ const Console = ({
     {
       component: WebhookPanel,
       path: "/webhook/audit",
+    },
+    {
+      component: ListClusters,
+      path: "/clusters",
+    },
+    {
+      component: ClusterDetails,
+      path: "/clusters/:clusterName",
     },
   ];
   const allowedRoutes = routes.filter((route: any) => allowedPages[route.path]);

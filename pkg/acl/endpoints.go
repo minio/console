@@ -31,8 +31,10 @@ var (
 	watch           = "/watch"
 	notifications   = "/notification-endpoints"
 	buckets         = "/buckets"
-	bucketDetails   = "/buckets/:bucketName"
+	bucketsDetail   = "/buckets/:bucketName"
 	serviceAccounts = "/service-accounts"
+	clusters        = "/clusters"
+	clustersDetail  = "/clusters/:clusterName"
 )
 
 type ConfigurationActionSet struct {
@@ -181,8 +183,14 @@ var bucketsActionSet = ConfigurationActionSet{
 	),
 }
 
-// serviceAccountsActionSet contains the list of admin actions required for this endpoint to work
+// serviceAccountsActionSet no actions needed for this module to work
 var serviceAccountsActionSet = ConfigurationActionSet{
+	actionTypes: iampolicy.NewActionSet(),
+	actions:     iampolicy.NewActionSet(),
+}
+
+// clustersActionSet temporally no actions needed for clusters sections to work
+var clustersActionSet = ConfigurationActionSet{
 	actionTypes: iampolicy.NewActionSet(),
 	actions:     iampolicy.NewActionSet(),
 }
@@ -200,8 +208,10 @@ var endpointRules = map[string]ConfigurationActionSet{
 	watch:           watchActionSet,
 	notifications:   notificationsActionSet,
 	buckets:         bucketsActionSet,
-	bucketDetails:   bucketsActionSet,
+	bucketsDetail:   bucketsActionSet,
 	serviceAccounts: serviceAccountsActionSet,
+	clusters:        clustersActionSet,
+	clustersDetail:  clustersActionSet,
 }
 
 // GetActionsStringFromPolicy extract the admin/s3 actions from a given policy and return them in []string format

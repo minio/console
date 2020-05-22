@@ -20,6 +20,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import RoomServiceIcon from "@material-ui/icons/RoomService";
 import WebAssetIcon from "@material-ui/icons/WebAsset";
 import CenterFocusWeakIcon from "@material-ui/icons/CenterFocusWeak";
+import StorageIcon from "@material-ui/icons/Storage";
 import ListItemText from "@material-ui/core/ListItemText";
 import { NavLink } from "react-router-dom";
 import { Divider, Typography, withStyles } from "@material-ui/core";
@@ -221,6 +222,20 @@ class Menu extends React.Component<MenuProps> {
         to: "/configurations-list",
         name: "Configurations List",
         icon: <ListAltIcon />,
+      },
+      {
+        type: "title",
+        name: "Operator",
+        component: Typography,
+      },
+      {
+        group: "Operator",
+        type: "item",
+        component: NavLink,
+        to: "/clusters",
+        name: "Clusters",
+        icon: <StorageIcon />,
+        forceDisplay: true,
       },
       {
         type: "divider",

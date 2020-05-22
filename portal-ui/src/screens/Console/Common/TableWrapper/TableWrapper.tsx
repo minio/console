@@ -32,6 +32,7 @@ import {
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { TablePaginationActionsProps } from "@material-ui/core/TablePagination/TablePaginationActions";
 import TableActionButton from "./TableActionButton";
+import { checkboxIcons } from "../FormComponents/common/styleLibrary";
 
 //Interfaces for table Items
 
@@ -88,12 +89,6 @@ const rowText = {
   borderColor: borderColor,
 };
 
-const checkBoxBasic = {
-  width: 16,
-  height: 16,
-  borderRadius: 3,
-};
-
 const styles = (theme: Theme) =>
   createStyles({
     dialogContainer: {
@@ -141,12 +136,6 @@ const styles = (theme: Theme) =>
     paginatorComponent: {
       borderBottom: 0,
     },
-    unCheckedIcon: { ...checkBoxBasic, border: "1px solid #d0d0d0" },
-    checkedIcon: {
-      ...checkBoxBasic,
-      border: "1px solid #201763",
-      backgroundColor: "#201763",
-    },
     checkBoxRow: {
       borderColor: borderColor,
     },
@@ -154,6 +143,7 @@ const styles = (theme: Theme) =>
       paddingTop: "100px",
       paddingBottom: "100px",
     },
+    ...checkboxIcons,
   });
 
 // Function that renders Title Columns

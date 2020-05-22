@@ -61,3 +61,18 @@ export const tooltipHelper = {
     fontSize: 18,
   },
 };
+
+const checkBoxBasic = {
+  width: 16,
+  height: 16,
+  borderRadius: 3,
+};
+
+export const checkboxIcons = {
+  unCheckedIcon: { ...checkBoxBasic, border: "1px solid #d0d0d0" },
+  checkedIcon: {
+    ...checkBoxBasic,
+    border: "1px solid #201763",
+    backgroundColor: "#201763",
+  },
+};

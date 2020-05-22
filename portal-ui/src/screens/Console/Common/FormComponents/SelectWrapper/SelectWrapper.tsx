@@ -92,16 +92,18 @@ const SelectWrapper = ({
   return (
     <React.Fragment>
       <Grid item xs={12} className={classes.fieldContainer}>
-        <InputLabel htmlFor={id} className={classes.inputLabel}>
-          <span>{label}</span>
-          {tooltip !== "" && (
-            <div className={classes.tooltipContainer}>
-              <Tooltip title={tooltip} placement="top-start">
-                <HelpIcon className={classes.tooltip} />
-              </Tooltip>
-            </div>
-          )}
-        </InputLabel>
+        {label !== "" && (
+          <InputLabel htmlFor={id} className={classes.inputLabel}>
+            <span>{label}</span>
+            {tooltip !== "" && (
+              <div className={classes.tooltipContainer}>
+                <Tooltip title={tooltip} placement="top-start">
+                  <HelpIcon className={classes.tooltip} />
+                </Tooltip>
+              </div>
+            )}
+          </InputLabel>
+        )}
         <FormControl variant="outlined" fullWidth>
           <Select
             id={id}
