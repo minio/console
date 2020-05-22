@@ -35,6 +35,7 @@ interface ISetAccessPolicyProps {
   classes: any;
   open: boolean;
   bucketName: string;
+  actualPolicy: string;
   closeModalAndRefresh: () => void;
 }
 
@@ -86,8 +87,14 @@ class SetAccessPolicy extends React.Component<
     });
   }
 
+  componentDidMount() {
+    const { actualPolicy } = this.props;
+
+    this.setState({accessPolicy: actualPolicy});
+  }
+
   render() {
-    const { classes, open } = this.props;
+    const { classes, open, actualPolicy } = this.props;
     const { addLoading, addError, accessPolicy } = this.state;
     return (
       <ModalWrapper

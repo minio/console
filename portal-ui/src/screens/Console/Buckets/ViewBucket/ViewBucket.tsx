@@ -17,9 +17,12 @@
 import React from "react";
 import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
 import api from "../../../../common/api";
-import { BucketEvent, BucketEventList, BucketInfo } from "../types";
+import {BucketEvent, BucketEventList, BucketInfo, BucketList} from "../types";
 import { Button } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import SetAccessPolicy from "./SetAccessPolicy";
@@ -28,6 +31,7 @@ import { CreateIcon } from "../../../../icons";
 import AddEvent from "./AddEvent";
 import DeleteEvent from "./DeleteEvent";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
+import {niceBytes} from "../../../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -76,6 +80,42 @@ const styles = (theme: Theme) =>
       textAlign: "center",
       padding: "20px",
     },
+    gridContainer: {
+      display: "grid",
+      gridTemplateColumns: "auto auto",
+      gridGap: 8,
+      justifyContent: "flex-start",
+      alignItems: "center",
+      "& div": {
+        display: "flex",
+        alignItems: "center",
+      },
+      "& div:nth-child(odd)": {
+        justifyContent: "flex-end",
+        fontWeight: 700,
+      },
+      "& div:nth-child(2n)": {
+        minWidth: 150,
+      },
+    },
+    masterActions: {
+      width: "25%",
+      minWidth: "120px",
+      "& div": {
+        margin: "5px 0px",
+      },
+    },
+    paperContainer: {
+      padding: 15,
+      paddingLeft: 23,
+    },
+    headerContainer: {
+      display: "flex",
+      justifyContent: "space-between"
+    },
+    capitalizeFirst: {
+      textTransform: "capitalize"
+    }
   });
 
 interface IViewBucketProps {
@@ -88,6 +128,7 @@ interface IViewBucketState {
   records: BucketEvent[];
   totalRecords: number;
   loading: boolean;
+  loadingSize: boolean;
   error: string;
   deleteError: string;
   setAccessPolicyScreenOpen: boolean;
@@ -97,6 +138,8 @@ interface IViewBucketState {
   deleteOpen: boolean;
   selectedBucket: string;
   selectedEvent: BucketEvent | null;
+  bucketSize: string;
+  errorSize: string;
 }
 
 class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
@@ -105,6 +148,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     records: [],
     totalRecords: 0,
     loading: false,
+    loadingSize: false,
     error: "",
     deleteError: "",
     setAccessPolicyScreenOpen: false,
@@ -114,6 +158,8 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     deleteOpen: false,
     selectedBucket: "",
     selectedEvent: null,
+    bucketSize: "0",
+    errorSize: "",
   };
 
   fetchEvents() {
@@ -147,6 +193,28 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     });
   }
 
+  fetchBucketsSize() {
+    const { match } = this.props;
+    const bucketName = match.params["bucketName"];
+
+    this.setState({ loadingSize: true }, () => {
+      api
+          .invoke("GET", `/api/v1/buckets`)
+          .then((res: BucketList) => {
+            const resBuckets = get(res, "buckets", []);
+
+            const bucketInfo = resBuckets.find(bucket => bucket.name === bucketName) ;
+
+            const size = get(bucketInfo, "size", "0");
+
+            this.setState({ loadingSize: false, errorSize: "", bucketSize: size });
+          })
+          .catch((err: any) => {
+            this.setState({ loadingSize: false, errorSize: err });
+          });
+    });
+  }
+
   closeAddModalAndRefresh() {
     this.setState({ setAccessPolicyScreenOpen: false }, () => {
       this.loadInfo();
@@ -175,6 +243,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
   componentDidMount(): void {
     this.loadInfo();
     this.fetchEvents();
+    this.fetchBucketsSize();
   }
 
   bucketFilter(): void {}
@@ -192,6 +261,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       deleteOpen,
       addScreenOpen,
       selectedEvent,
+      bucketSize,
     } = this.state;
 
     const offset = page * rowsPerPage;
@@ -242,6 +312,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
           <SetAccessPolicy
             bucketName={bucketName}
             open={setAccessPolicyScreenOpen}
+            actualPolicy={accessPolicy}
             closeModalAndRefresh={() => {
               this.closeAddModalAndRefresh();
             }}
@@ -258,36 +329,53 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
             <br />
           </Grid>
           <Grid item xs={12}>
-            Access Policy: {accessPolicy}
-            {"   "}
-            <Button
-              variant="contained"
-              size="small"
-              color="primary"
-              onClick={() => {
-                this.setState({
-                  setAccessPolicyScreenOpen: true,
-                });
-              }}
-            >
-              Change Access Policy
-            </Button>
-            <br />
-            Reported Usage: 0 bytes
-            <br />
+            <div className={classes.headerContainer}>
+              <div><Paper className={classes.paperContainer}>
+                <div className={classes.gridContainer}>
+                  <div>Access Policy:</div>
+                  <div className={classes.capitalizeFirst}>{accessPolicy.toLowerCase()}</div>
+                  <div>Reported Usage:</div>
+                  <div>{niceBytes(bucketSize)}</div>
+                </div>
+              </Paper></div>
+              <div className={classes.masterActions}>
+                <div>
+                  <Button
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      size="medium"
+                      onClick={() => {
+                        this.setState({
+                          setAccessPolicyScreenOpen: true,
+                        });
+                      }}
+                  >
+                    Change Access Policy
+                  </Button>
+                </div>
+              </div>
+            </div>
           </Grid>
           <Grid item xs={12}>
             <br />
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="h6">Events</Typography>
+            <Tabs
+                value={0}
+                indicatorColor="primary"
+                textColor="primary"
+                aria-label="cluster-tabs"
+            >
+              <Tab label="Events" />
+            </Tabs>
           </Grid>
           <Grid item xs={6} className={classes.actionsTray}>
             <Button
               variant="contained"
               color="primary"
-              size="small"
               startIcon={<CreateIcon />}
+              size="medium"
               onClick={() => {
                 this.setState({
                   addScreenOpen: true,
