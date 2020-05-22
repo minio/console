@@ -18,10 +18,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import {
   Button,
-  FormControlLabel,
   LinearProgress,
   Paper,
-  Switch,
   Table,
   TableBody,
   TableCell,
@@ -30,10 +28,7 @@ import {
   TableRow,
 } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { RadioGroupSelector } from "../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
-import { IElementValue } from "../Configurations/types";
 import { User } from "../Users/types";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import { Policy, PolicyList } from "./types";
@@ -50,6 +45,9 @@ interface ISetPolicyProps {
 const styles = (theme: Theme) =>
   createStyles({
     ...modalBasic,
+    buttonContainer: {
+      textAlign: "right",
+    },
   });
 
 const SetPolicy = ({
@@ -59,23 +57,6 @@ const SetPolicy = ({
   open,
 }: ISetPolicyProps) => {
   //Local States
-  const [useConnectionString, setUseConnectionString] = useState<boolean>(
-    false
-  );
-  const [connectionString, setConnectionString] = useState<string>("");
-  const [host, setHostname] = useState<string>("");
-  const [dbName, setDbName] = useState<string>("");
-  const [port, setPort] = useState<string>("");
-  const [user, setUser] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [sslMode, setSslMode] = useState<string>("require");
-
-  const [table, setTable] = useState<string>("");
-  const [format, setFormat] = useState<string>("namespace");
-  const [queueDir, setQueueDir] = useState<string>("");
-  const [queueLimit, setQueueLimit] = useState<string>("");
-  const [comment, setComment] = useState<string>("");
-
   const [records, setRecords] = useState<Policy[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
@@ -175,25 +156,24 @@ const SetPolicy = ({
             </Table>
           </TableContainer>
         </Grid>
-        <Grid item xs={12} className={classes.buttonContainer}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            size={"small"}
-            onClick={() => {
-              closeModalAndRefresh();
-            }}
-          >
-            Cancel
-          </Button>
-        </Grid>
-        {loading && (
-          <Grid item xs={12}>
-            <LinearProgress />
-          </Grid>
-        )}
       </Grid>
+      <Grid item xs={12} className={classes.buttonContainer}>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            closeModalAndRefresh();
+          }}
+        >
+          Cancel
+        </Button>
+      </Grid>
+      {loading && (
+        <Grid item xs={12}>
+          <LinearProgress />
+        </Grid>
+      )}
     </ModalWrapper>
   );
 };
