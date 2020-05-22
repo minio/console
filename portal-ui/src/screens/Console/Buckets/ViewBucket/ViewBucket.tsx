@@ -21,6 +21,7 @@ import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import api from "../../../../common/api";
 import { BucketEvent, BucketEventList, BucketInfo, BucketList } from "../types";
 import { Button } from "@material-ui/core";
@@ -86,7 +87,7 @@ const styles = (theme: Theme) =>
       gridGap: 8,
       justifyContent: "flex-start",
       alignItems: "center",
-      "& div": {
+      "& div:not(.MuiCircularProgress-root)": {
         display: "flex",
         alignItems: "center",
       },
@@ -127,10 +128,12 @@ interface IViewBucketState {
   info: BucketInfo | null;
   records: BucketEvent[];
   totalRecords: number;
-  loading: boolean;
+  loadingBucket: boolean;
+  loadingEvents: boolean;
   loadingSize: boolean;
   error: string;
   deleteError: string;
+  errBucket: string;
   setAccessPolicyScreenOpen: boolean;
   page: number;
   rowsPerPage: number;
@@ -147,10 +150,12 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     info: null,
     records: [],
     totalRecords: 0,
-    loading: false,
-    loadingSize: false,
+    loadingBucket: true,
+    loadingEvents: true,
+    loadingSize: true,
     error: "",
     deleteError: "",
+    errBucket: "",
     setAccessPolicyScreenOpen: false,
     page: 0,
     rowsPerPage: 10,
@@ -163,7 +168,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
   };
 
   fetchEvents() {
-    this.setState({ loading: true }, () => {
+    this.setState({ loadingBucket: true }, () => {
       const { page } = this.state;
       const { match } = this.props;
       const bucketName = match.params["bucketName"];
@@ -174,7 +179,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
           const total = get(res, "total", 0);
 
           this.setState({
-            loading: false,
+            loadingEvents: false,
             records: events || [],
             totalRecords: total,
             error: "",
@@ -188,7 +193,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
           }
         })
         .catch((err: any) => {
-          this.setState({ loading: false, error: err });
+          this.setState({ loadingEvents: false, error: err });
         });
     });
   }
@@ -221,6 +226,21 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     });
   }
 
+  loadInfo() {
+    const { match } = this.props;
+    const bucketName = match.params["bucketName"];
+    this.setState({ loadingBucket: true }, () => {
+      api
+        .invoke("GET", `/api/v1/buckets/${bucketName}`)
+        .then((res: BucketInfo) => {
+          this.setState({ loadingBucket: false, info: res });
+        })
+        .catch((err) => {
+          this.setState({ loadingBucket: false, errBucket: err });
+        });
+    });
+  }
+
   closeAddModalAndRefresh() {
     this.setState({ setAccessPolicyScreenOpen: false }, () => {
       this.loadInfo();
@@ -233,17 +253,6 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
         this.fetchEvents();
       }
     });
-  }
-
-  loadInfo() {
-    const { match } = this.props;
-    const bucketName = match.params["bucketName"];
-    api
-      .invoke("GET", `/api/v1/buckets/${bucketName}`)
-      .then((res: BucketInfo) => {
-        this.setState({ info: res });
-      })
-      .catch((err) => {});
   }
 
   componentDidMount(): void {
@@ -261,13 +270,15 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       records,
       totalRecords,
       setAccessPolicyScreenOpen,
-      loading,
+      loadingEvents,
+      loadingBucket,
       page,
       rowsPerPage,
       deleteOpen,
       addScreenOpen,
       selectedEvent,
       bucketSize,
+      loadingSize,
     } = this.state;
 
     const offset = page * rowsPerPage;
@@ -341,10 +352,28 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
                   <div className={classes.gridContainer}>
                     <div>Access Policy:</div>
                     <div className={classes.capitalizeFirst}>
-                      {accessPolicy.toLowerCase()}
+                      {loadingBucket ? (
+                        <CircularProgress
+                          color="primary"
+                          size={16}
+                          variant="indeterminate"
+                        />
+                      ) : (
+                        accessPolicy.toLowerCase()
+                      )}
                     </div>
                     <div>Reported Usage:</div>
-                    <div>{niceBytes(bucketSize)}</div>
+                    <div>
+                      {loadingSize ? (
+                        <CircularProgress
+                          color="primary"
+                          size={16}
+                          variant="indeterminate"
+                        />
+                      ) : (
+                        niceBytes(bucketSize)
+                      )}
+                    </div>
                   </div>
                 </Paper>
               </div>
@@ -411,7 +440,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
                 { label: "Prefix", elementKey: "prefix" },
                 { label: "Suffix", elementKey: "suffix" },
               ]}
-              isLoading={loading}
+              isLoading={loadingEvents}
               records={filteredRecords}
               entityName="Events"
               idField="id"
