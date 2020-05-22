@@ -20,6 +20,7 @@ import ViewIcon from "./TableActionIcons/ViewIcon";
 import PencilIcon from "./TableActionIcons/PencilIcon";
 import DeleteIcon from "./TableActionIcons/DeleteIcon";
 import { Link } from "react-router-dom";
+import DescriptionIcon from "@material-ui/icons/Description";
 
 interface IActionButton {
   type: string;
@@ -39,6 +40,8 @@ const defineIcon = (type: string, selected: boolean) => {
       return <PencilIcon active={selected} />;
     case "delete":
       return <DeleteIcon active={selected} />;
+    case "description":
+      return <DescriptionIcon />;
   }
 
   return null;
@@ -51,13 +54,14 @@ const TableActionButton = ({
   idField,
   selected,
   to,
-  sendOnlyId = false
+  sendOnlyId = false,
 }: IActionButton) => {
   const valueClick = sendOnlyId ? valueToSend[idField] : valueToSend;
 
   const buttonElement = (
     <IconButton
       aria-label={type}
+      size={"small"}
       onClick={
         onClick
           ? () => {

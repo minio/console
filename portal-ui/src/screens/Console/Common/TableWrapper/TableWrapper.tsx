@@ -130,7 +130,7 @@ const styles = (theme: Theme) =>
       },
     },
     actionsContainer: {
-      width: 120,
+      width: 150,
       borderColor: borderColor,
     },
     paginatorComponent: {

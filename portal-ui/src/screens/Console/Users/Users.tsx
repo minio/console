@@ -34,6 +34,8 @@ import AddUser from "./AddUser";
 import DeleteUser from "./DeleteUser";
 import AddToGroup from "./AddToGroup";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
+import DescriptionIcon from "@material-ui/icons/Description";
+import SetPolicy from "../Policies/SetPolicy";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -102,6 +104,7 @@ interface IUsersState {
   addGroupOpen: boolean;
   filter: string;
   checkedUsers: string[];
+  setPolicyOpen: boolean;
 }
 
 class Users extends React.Component<IUsersProps, IUsersState> {
@@ -119,6 +122,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
     addGroupOpen: false,
     filter: "",
     checkedUsers: [],
+    setPolicyOpen: false,
   };
 
   fetchRecords() {
@@ -192,6 +196,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
       filter,
       checkedUsers,
       addGroupOpen,
+      setPolicyOpen,
     } = this.state;
 
     const handleChangePage = (event: unknown, newPage: number) => {
@@ -243,6 +248,14 @@ class Users extends React.Component<IUsersProps, IUsersState> {
       });
     };
 
+    const setPolicyAction = (selectionElement: any): void => {
+      console.log("click");
+      this.setState({
+        setPolicyOpen: true,
+        selectedUser: selectionElement,
+      });
+    };
+
     const deleteAction = (selectionElement: any): void => {
       this.setState({
         deleteOpen: true,
@@ -251,6 +264,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
     };
 
     const tableActions = [
+      { type: "description", onClick: setPolicyAction },
       { type: "view", onClick: viewAction },
       { type: "delete", onClick: deleteAction },
     ];
@@ -263,6 +277,15 @@ class Users extends React.Component<IUsersProps, IUsersState> {
             selectedUser={selectedUser}
             closeModalAndRefresh={() => {
               this.closeAddModalAndRefresh();
+            }}
+          />
+        )}
+        {setPolicyOpen && (
+          <SetPolicy
+            open={setPolicyOpen}
+            selectedUser={selectedUser}
+            closeModalAndRefresh={() => {
+              this.setState({ setPolicyOpen: false });
             }}
           />
         )}
