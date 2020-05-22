@@ -19,8 +19,8 @@ import { IconButton } from "@material-ui/core";
 import ViewIcon from "./TableActionIcons/ViewIcon";
 import PencilIcon from "./TableActionIcons/PencilIcon";
 import DeleteIcon from "./TableActionIcons/DeleteIcon";
+import DescriptionIcon from "./TableActionIcons/DescriptionIcon";
 import { Link } from "react-router-dom";
-import DescriptionIcon from "@material-ui/icons/Description";
 
 interface IActionButton {
   type: string;
@@ -41,7 +41,7 @@ const defineIcon = (type: string, selected: boolean) => {
     case "delete":
       return <DeleteIcon active={selected} />;
     case "description":
-      return <DescriptionIcon />;
+      return <DescriptionIcon active={selected} />;
   }
 
   return null;

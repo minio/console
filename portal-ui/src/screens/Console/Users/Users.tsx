@@ -264,8 +264,8 @@ class Users extends React.Component<IUsersProps, IUsersState> {
     };
 
     const tableActions = [
-      { type: "description", onClick: setPolicyAction },
       { type: "view", onClick: viewAction },
+      { type: "description", onClick: setPolicyAction },
       { type: "delete", onClick: deleteAction },
     ];
 
