@@ -44,7 +44,7 @@ func TestWatch(t *testing.T) {
 	mockWSConn := mockConn{}
 	ctx := context.Background()
 
-	function := "startWatch(ctx, )"
+	function := "startWatch()"
 
 	testStreamSize := 5
 	testReceiver := make(chan []mc.EventInfo, testStreamSize)
@@ -191,7 +191,7 @@ func TestWatch(t *testing.T) {
 		}
 	}
 
-	// Test-6: getOptionsFromReq return parameters from path
+	// Test-6: getWatchOptionsFromReq return parameters from path
 	u, err := url.Parse("http://localhost/api/v1/watch/bucket1?prefix=&suffix=.jpg&events=put,get")
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", "url.Parse()", err.Error())
@@ -199,7 +199,7 @@ func TestWatch(t *testing.T) {
 	req := &http.Request{
 		URL: u,
 	}
-	opts := getOptionsFromReq(req)
+	opts := getWatchOptionsFromReq(req)
 	expectedOptions := watchOptions{
 		BucketName: "bucket1",
 	}
@@ -211,7 +211,7 @@ func TestWatch(t *testing.T) {
 	assert.Equal(expectedOptions.Suffix, opts.Suffix)
 	assert.Equal(expectedOptions.Events, opts.Events)
 
-	// Test-7: getOptionsFromReq return default events if not defined
+	// Test-7: getWatchOptionsFromReq return default events if not defined
 	u, err = url.Parse("http://localhost/api/v1/watch/bucket1?prefix=&suffix=.jpg&events=")
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", "url.Parse()", err.Error())
@@ -219,7 +219,7 @@ func TestWatch(t *testing.T) {
 	req = &http.Request{
 		URL: u,
 	}
-	opts = getOptionsFromReq(req)
+	opts = getWatchOptionsFromReq(req)
 	expectedOptions = watchOptions{
 		BucketName: "bucket1",
 	}
@@ -231,7 +231,7 @@ func TestWatch(t *testing.T) {
 	assert.Equal(expectedOptions.Suffix, opts.Suffix)
 	assert.Equal(expectedOptions.Events, opts.Events)
 
-	// Test-8: getOptionsFromReq return default events if not defined
+	// Test-8: getWatchOptionsFromReq return default events if not defined
 	u, err = url.Parse("http://localhost/api/v1/watch/bucket2?prefix=&suffix=")
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", "url.Parse()", err.Error())
@@ -239,7 +239,7 @@ func TestWatch(t *testing.T) {
 	req = &http.Request{
 		URL: u,
 	}
-	opts = getOptionsFromReq(req)
+	opts = getWatchOptionsFromReq(req)
 	expectedOptions = watchOptions{
 		BucketName: "bucket2",
 	}

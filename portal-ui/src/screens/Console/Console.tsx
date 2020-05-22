@@ -62,6 +62,7 @@ import { Button, LinearProgress } from "@material-ui/core";
 import WebhookPanel from "./Configurations/ConfigurationPanels/WebhookPanel";
 import Trace from "./Trace/Trace";
 import Logs from "./Logs/Logs";
+import Heal from "./Heal/Heal";
 import Watch from "./Watch/Watch";
 import ListClusters from "./Clusters/ListClusters/ListClusters";
 import { ISessionResponse } from "./types";
@@ -270,6 +271,10 @@ const Console = ({
     {
       component: Logs,
       path: "/logs",
+    },
+    {
+      component: Heal,
+      path: "/heal",
     },
     {
       component: ListNotificationEndpoints,

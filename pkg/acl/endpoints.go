@@ -35,6 +35,7 @@ var (
 	serviceAccounts = "/service-accounts"
 	clusters        = "/clusters"
 	clustersDetail  = "/clusters/:clusterName"
+	heal            = "/heal"
 )
 
 type ConfigurationActionSet struct {
@@ -195,6 +196,16 @@ var clustersActionSet = ConfigurationActionSet{
 	actions:     iampolicy.NewActionSet(),
 }
 
+// healActionSet contains the list of admin actions required for this endpoint to work
+var healActionSet = ConfigurationActionSet{
+	actionTypes: iampolicy.NewActionSet(
+		iampolicy.AllAdminActions,
+	),
+	actions: iampolicy.NewActionSet(
+		iampolicy.HealAdminAction,
+	),
+}
+
 // endpointRules contains the mapping between endpoints and ActionSets, additional rules can be added here
 var endpointRules = map[string]ConfigurationActionSet{
 	configuration:   configurationActionSet,
@@ -212,6 +223,7 @@ var endpointRules = map[string]ConfigurationActionSet{
 	serviceAccounts: serviceAccountsActionSet,
 	clusters:        clustersActionSet,
 	clustersDetail:  clustersActionSet,
+	heal:            healActionSet,
 }
 
 // GetActionsStringFromPolicy extract the admin/s3 actions from a given policy and return them in []string format
