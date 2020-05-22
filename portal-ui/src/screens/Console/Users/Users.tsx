@@ -249,7 +249,6 @@ class Users extends React.Component<IUsersProps, IUsersState> {
     };
 
     const setPolicyAction = (selectionElement: any): void => {
-      console.log("click");
       this.setState({
         setPolicyOpen: true,
         selectedUser: selectionElement,
@@ -284,6 +283,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
           <SetPolicy
             open={setPolicyOpen}
             selectedUser={selectedUser}
+            selectedGroup={null}
             closeModalAndRefresh={() => {
               this.setState({ setPolicyOpen: false });
             }}

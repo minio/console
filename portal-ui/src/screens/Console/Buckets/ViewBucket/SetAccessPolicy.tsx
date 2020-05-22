@@ -90,7 +90,7 @@ class SetAccessPolicy extends React.Component<
   componentDidMount() {
     const { actualPolicy } = this.props;
 
-    this.setState({accessPolicy: actualPolicy});
+    this.setState({ accessPolicy: actualPolicy });
   }
 
   render() {

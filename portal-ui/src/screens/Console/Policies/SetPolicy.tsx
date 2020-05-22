@@ -34,11 +34,13 @@ import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import { Policy, PolicyList } from "./types";
 import api from "../../../common/api";
 import { policySort } from "../../../utils/sortFunctions";
+import { Group } from "../Groups/types";
 
 interface ISetPolicyProps {
   classes: any;
   closeModalAndRefresh: () => void;
   selectedUser: User | null;
+  selectedGroup: string | null;
   open: boolean;
 }
 
@@ -54,6 +56,7 @@ const SetPolicy = ({
   classes,
   closeModalAndRefresh,
   selectedUser,
+  selectedGroup,
   open,
 }: ISetPolicyProps) => {
   //Local States
@@ -79,15 +82,23 @@ const SetPolicy = ({
   };
 
   const setPolicyAction = (policyName: string) => {
-    if (selectedUser === null) {
-      return;
+    let entity = "user";
+    let value = null;
+    if (selectedGroup !== null) {
+      entity = "group";
+      value = selectedGroup;
+    } else {
+      if (selectedUser !== null) {
+        value = selectedUser.accessKey;
+      }
     }
+
     setLoading(true);
 
     api
       .invoke("PUT", `/api/v1/set-policy/${policyName}`, {
-        entityName: selectedUser!.accessKey,
-        entityType: "user",
+        entityName: value,
+        entityType: entity,
       })
       .then((res: any) => {
         setLoading(false);
@@ -102,11 +113,9 @@ const SetPolicy = ({
 
   useEffect(() => {
     if (open) {
-      console.log("im open");
-      console.log(selectedUser);
       fetchRecords();
     }
-  }, []);
+  }, [open]);
 
   return (
     <ModalWrapper

@@ -30,6 +30,7 @@ import { stringSort } from "../../../utils/sortFunctions";
 import AddGroup from "../Groups/AddGroup";
 import DeleteGroup from "./DeleteGroup";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
+import SetPolicy from "../Policies/SetPolicy";
 
 interface IGroupsProps {
   classes: any;
@@ -96,6 +97,7 @@ const Groups = ({ classes }: IGroupsProps) => {
   const [page, setPage] = useState<number>(0);
   const [error, setError] = useState<string>("");
   const [filter, setFilter] = useState<string>("");
+  const [policyOpen, setPolicyOpen] = useState<boolean>(false);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -176,8 +178,14 @@ const Groups = ({ classes }: IGroupsProps) => {
     setSelectedGroup(group);
   };
 
+  const setPolicyAction = (selectionElement: any): void => {
+    setPolicyOpen(true);
+    setSelectedGroup(selectionElement);
+  };
+
   const tableActions = [
     { type: "view", onClick: viewAction },
+    { type: "description", onClick: setPolicyAction },
     { type: "delete", onClick: deleteAction },
   ];
 
@@ -195,6 +203,16 @@ const Groups = ({ classes }: IGroupsProps) => {
           deleteOpen={deleteOpen}
           selectedGroup={selectedGroup}
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
+        />
+      )}
+      {setPolicyOpen && (
+        <SetPolicy
+          open={policyOpen}
+          selectedGroup={selectedGroup}
+          selectedUser={null}
+          closeModalAndRefresh={() => {
+            setPolicyOpen(false);
+          }}
         />
       )}
       <Grid container>
