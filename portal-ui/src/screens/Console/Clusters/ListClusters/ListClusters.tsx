@@ -192,7 +192,6 @@ const ListClusters = ({ classes }: IClustersList) => {
           </Button>
         </Grid>
         <Grid item xs={12}>
-          REMOVE THIS:: <Link to={"/clusters/demoCluster"}>Test</Link>
           <br />
         </Grid>
         <Grid item xs={12}>

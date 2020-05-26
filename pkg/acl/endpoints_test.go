@@ -23,21 +23,34 @@ import (
 	iampolicy "github.com/minio/minio/pkg/iam/policy"
 )
 
-func TestGetAuthorizedEndpoints(t *testing.T) {
-	type args struct {
-		actions []string
+type args struct {
+	actions []string
+}
+
+type endpoint struct {
+	name string
+	args args
+	want int
+}
+
+func validateEndpoints(t *testing.T, configs []endpoint) {
+	for _, tt := range configs {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := GetAuthorizedEndpoints(tt.args.actions); !reflect.DeepEqual(len(got), tt.want) {
+				t.Errorf("GetAuthorizedEndpoints() = %v, want %v", len(got), tt.want)
+			}
+		})
 	}
-	tests := []struct {
-		name string
-		args args
-		want int
-	}{
+}
+
+func TestGetAuthorizedEndpoints(t *testing.T) {
+	tests := []endpoint{
 		{
 			name: "dashboard endpoint",
 			args: args{
 				[]string{"admin:ServerInfo"},
 			},
-			want: 4,
+			want: 2,
 		},
 		{
 			name: "policies endpoint",
@@ -50,7 +63,7 @@ func TestGetAuthorizedEndpoints(t *testing.T) {
 					"admin:ListUserPolicies",
 				},
 			},
-			want: 4,
+			want: 2,
 		},
 		{
 			name: "all admin endpoints",
@@ -59,7 +72,7 @@ func TestGetAuthorizedEndpoints(t *testing.T) {
 					"admin:*",
 				},
 			},
-			want: 13,
+			want: 11,
 		},
 		{
 			name: "all s3 endpoints",
@@ -68,7 +81,7 @@ func TestGetAuthorizedEndpoints(t *testing.T) {
 					"s3:*",
 				},
 			},
-			want: 6,
+			want: 4,
 		},
 		{
 			name: "all admin and s3 endpoints",
@@ -78,7 +91,7 @@ func TestGetAuthorizedEndpoints(t *testing.T) {
 					"s3:*",
 				},
 			},
-			want: 16,
+			want: 14,
 		},
 		{
 			name: "no endpoints",
@@ -88,13 +101,52 @@ func TestGetAuthorizedEndpoints(t *testing.T) {
 			want: 0,
 		},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := GetAuthorizedEndpoints(tt.args.actions); !reflect.DeepEqual(len(got), tt.want) {
-				t.Errorf("GetAuthorizedEndpoints() = %v, want %v", len(got), tt.want)
-			}
-		})
+
+	validateEndpoints(t, tests)
+}
+
+func TestOperatorOnlyEndpoints(t *testing.T) {
+	operatorOnly = "on"
+
+	tests := []endpoint{
+		{
+			name: "Operator Only - all admin endpoints",
+			args: args{
+				[]string{
+					"admin:*",
+				},
+			},
+			want: 2,
+		},
+		{
+			name: "Operator Only - all s3 endpoints",
+			args: args{
+				[]string{
+					"s3:*",
+				},
+			},
+			want: 2,
+		},
+		{
+			name: "Operator Only - all admin and s3 endpoints",
+			args: args{
+				[]string{
+					"admin:*",
+					"s3:*",
+				},
+			},
+			want: 2,
+		},
+		{
+			name: "Operator Only - no endpoints",
+			args: args{
+				[]string{},
+			},
+			want: 0,
+		},
 	}
+
+	validateEndpoints(t, tests)
 }
 
 func TestGetActionsStringFromPolicy(t *testing.T) {

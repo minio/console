@@ -53,6 +53,7 @@ func getSessionResponse(sessionID string) (*models.SessionResponse, error) {
 		log.Println("error getting claims from JWT", err)
 		return nil, errorGenericInvalidSession
 	}
+
 	sessionResp := &models.SessionResponse{
 		Pages:  acl.GetAuthorizedEndpoints(claims.Actions),
 		Status: models.SessionResponseStatusOk,

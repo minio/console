@@ -145,7 +145,6 @@ class Menu extends React.Component<MenuProps> {
         to: "/service-accounts",
         name: "Service Accounts",
         icon: <RoomServiceIcon />,
-        forceDisplay: true,
       },
       {
         type: "item",
@@ -244,7 +243,6 @@ class Menu extends React.Component<MenuProps> {
         to: "/clusters",
         name: "Clusters",
         icon: <StorageIcon />,
-        forceDisplay: true,
       },
       {
         type: "divider",
