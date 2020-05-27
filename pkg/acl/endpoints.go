@@ -16,7 +16,9 @@
 
 package acl
 
-import iampolicy "github.com/minio/minio/pkg/iam/policy"
+import (
+	iampolicy "github.com/minio/minio/pkg/iam/policy"
+)
 
 // endpoints definition
 var (
@@ -221,10 +223,17 @@ var endpointRules = map[string]ConfigurationActionSet{
 	buckets:         bucketsActionSet,
 	bucketsDetail:   bucketsActionSet,
 	serviceAccounts: serviceAccountsActionSet,
-	clusters:        clustersActionSet,
-	clustersDetail:  clustersActionSet,
 	heal:            healActionSet,
 }
+
+// operatorRules contains the mapping between endpoints and ActionSets for operator only mode
+var operatorRules = map[string]ConfigurationActionSet{
+	clusters:       clustersActionSet,
+	clustersDetail: clustersActionSet,
+}
+
+// operatorOnly ENV variable
+var operatorOnly = GetOperatorOnly()
 
 // GetActionsStringFromPolicy extract the admin/s3 actions from a given policy and return them in []string format
 //
@@ -275,13 +284,19 @@ func actionsStringToActionSet(actions []string) iampolicy.ActionSet {
 // GetAuthorizedEndpoints return a list of allowed endpoint based on a provided *iampolicy.Policy
 // ie: pages the user should have access based on his current privileges
 func GetAuthorizedEndpoints(actions []string) []string {
+	rangeTake := endpointRules
+
+	if operatorOnly == "on" {
+		rangeTake = operatorRules
+	}
+
 	if len(actions) == 0 {
 		return []string{}
 	}
 	// Prepare new ActionSet structure that will hold all the user actions
 	userAllowedAction := actionsStringToActionSet(actions)
 	allowedEndpoints := []string{}
-	for endpoint, rules := range endpointRules {
+	for endpoint, rules := range rangeTake {
 		// check if user policy matches s3:* or admin:* typesIntersection
 		endpointActionTypes := rules.actionTypes
 		typesIntersection := endpointActionTypes.Intersection(userAllowedAction)
