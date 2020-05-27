@@ -25,6 +25,7 @@ export const units = [
   "ZiB",
   "YiB",
 ];
+export const k8sUnits = ["Ki", "Mi", "Gi", "Ti", "Pi", "Ei"];
 export const niceBytes = (x: string) => {
   let l = 0,
     n = parseInt(x, 10) || 0;
@@ -61,6 +62,13 @@ export const timeFromDate = (d: Date) => {
 // units to be used in a dropdown
 export const factorForDropdown = () => {
   return units.map((unit) => {
+    return { label: unit, value: unit };
+  });
+};
+
+// units to be used in a dropdown
+export const k8sfactorForDropdown = () => {
+  return k8sUnits.map((unit) => {
     return { label: unit, value: unit };
   });
 };

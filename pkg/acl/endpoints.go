@@ -35,8 +35,8 @@ var (
 	buckets         = "/buckets"
 	bucketsDetail   = "/buckets/:bucketName"
 	serviceAccounts = "/service-accounts"
-	clusters        = "/clusters"
-	clustersDetail  = "/clusters/:clusterName"
+	tenants         = "/tenants"
+	tenantsDetail   = "/tenants/:tenantName"
 	heal            = "/heal"
 )
 
@@ -192,8 +192,8 @@ var serviceAccountsActionSet = ConfigurationActionSet{
 	actions:     iampolicy.NewActionSet(),
 }
 
-// clustersActionSet temporally no actions needed for clusters sections to work
-var clustersActionSet = ConfigurationActionSet{
+// tenantsActionSet temporally no actions needed for tenants sections to work
+var tenantsActionSet = ConfigurationActionSet{
 	actionTypes: iampolicy.NewActionSet(),
 	actions:     iampolicy.NewActionSet(),
 }
@@ -228,8 +228,8 @@ var endpointRules = map[string]ConfigurationActionSet{
 
 // operatorRules contains the mapping between endpoints and ActionSets for operator only mode
 var operatorRules = map[string]ConfigurationActionSet{
-	clusters:       clustersActionSet,
-	clustersDetail: clustersActionSet,
+	tenants:       tenantsActionSet,
+	tenantsDetail: tenantsActionSet,
 }
 
 // operatorOnly ENV variable

@@ -31,7 +31,7 @@ import AddZoneModal from "./AddZoneModal";
 import AddBucket from "../../Buckets/ListBuckets/AddBucket";
 import ReplicationSetup from "./ReplicationSetup";
 
-interface IClusterDetailsProps {
+interface ITenantDetailsProps {
   classes: any;
   match: any;
 }
@@ -101,7 +101,7 @@ const mainPagination = {
   ActionsComponent: MinTablePaginationActions,
 };
 
-const ClusterDetails = ({ classes, match }: IClusterDetailsProps) => {
+const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [capacity, setCapacity] = useState<number>(0);
   const [externalIDP, setExternalIDP] = useState<boolean>(false);
@@ -156,7 +156,7 @@ const ClusterDetails = ({ classes, match }: IClusterDetailsProps) => {
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="h6">
-            Cluster > {match.params["clusterName"]}
+            Tenant > {match.params["clusterName"]}
           </Typography>
         </Grid>
         <Grid item xs={12}>
@@ -233,7 +233,7 @@ const ClusterDetails = ({ classes, match }: IClusterDetailsProps) => {
             onChange={(_, newValue: number) => {
               setSelectedTab(newValue);
             }}
-            aria-label="cluster-tabs"
+            aria-label="tenant-tabs"
           >
             <Tab label="Zones" />
             <Tab label="Buckets" />
@@ -425,4 +425,4 @@ const ClusterDetails = ({ classes, match }: IClusterDetailsProps) => {
   );
 };
 
-export default withStyles(styles)(ClusterDetails);
+export default withStyles(styles)(TenantDetails);
