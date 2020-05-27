@@ -78,10 +78,10 @@ func startWatch(ctx context.Context, conn WSConn, wsc MCS3Client, options watchO
 	}
 }
 
-// getOptionsFromReq gets bucket name, events, prefix, suffix from a websocket
+// getWatchOptionsFromReq gets bucket name, events, prefix, suffix from a websocket
 // watch path if defined.
 // path come as : `/watch/bucket1` and query params come on request form
-func getOptionsFromReq(req *http.Request) watchOptions {
+func getWatchOptionsFromReq(req *http.Request) watchOptions {
 	wOptions := watchOptions{}
 	// Default Events if not defined
 	wOptions.Events = []string{"put", "get", "delete"}

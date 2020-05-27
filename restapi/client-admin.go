@@ -85,6 +85,8 @@ type MinioAdmin interface {
 	serviceTrace(ctx context.Context, allTrace, errTrace bool) <-chan madmin.ServiceTraceInfo
 	getLogs(ctx context.Context, node string, lineCnt int, logKind string) <-chan madmin.LogInfo
 	accountUsageInfo(ctx context.Context) (madmin.AccountUsageInfo, error)
+	heal(ctx context.Context, bucket, prefix string, healOpts madmin.HealOpts, clientToken string,
+		forceStart, forceStop bool) (healStart madmin.HealStartSuccess, healTaskStatus madmin.HealTaskStatus, err error)
 	// Service Accounts
 	addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (mauth.Credentials, error)
 	listServiceAccounts(ctx context.Context) (madmin.ListServiceAccountsResp, error)
@@ -234,6 +236,11 @@ func (ac adminClient) accountUsageInfo(ctx context.Context) (madmin.AccountUsage
 	return ac.client.AccountUsageInfo(ctx)
 }
 
+func (ac adminClient) heal(ctx context.Context, bucket, prefix string, healOpts madmin.HealOpts, clientToken string,
+	forceStart, forceStop bool) (healStart madmin.HealStartSuccess, healTaskStatus madmin.HealTaskStatus, err error) {
+	return ac.client.Heal(ctx, bucket, prefix, healOpts, clientToken, forceStart, forceStop)
+}
+
 func newMAdminClient(jwt string) (*madmin.AdminClient, error) {
 	claims, err := auth.JWTAuthenticate(jwt)
 	if err != nil {
@@ -249,7 +256,9 @@ func newMAdminClient(jwt string) (*madmin.AdminClient, error) {
 // newAdminFromClaims creates a minio admin from Decrypted claims using Assume role credentials
 func newAdminFromClaims(claims *auth.DecryptedClaims) (*madmin.AdminClient, error) {
 	tlsEnabled := getMinIOEndpointIsSecure()
-	adminClient, err := madmin.NewWithOptions(getMinIOEndpoint(), &madmin.Options{
+	endpoint := getMinIOEndpoint()
+
+	adminClient, err := madmin.NewWithOptions(endpoint, &madmin.Options{
 		Creds:  credentials.NewStaticV4(claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken),
 		Secure: tlsEnabled,
 	})

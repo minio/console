@@ -55,6 +55,7 @@ type wsAdminClient struct {
 // MCSWebsocket interface of a Websocket Client
 type MCSWebsocket interface {
 	watch(options watchOptions)
+	heal(opts healOptions)
 }
 
 type wsS3Client struct {
@@ -125,29 +126,41 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	case wsPath == "/trace":
 		wsAdminClient, err := newWebSocketAdminClient(conn, claims)
 		if err != nil {
-			errors.ServeError(w, req, err)
+			closeWsConn(conn)
 			return
 		}
 		go wsAdminClient.trace()
 	case wsPath == "/console":
 		wsAdminClient, err := newWebSocketAdminClient(conn, claims)
 		if err != nil {
-			errors.ServeError(w, req, err)
+			closeWsConn(conn)
 			return
 		}
 		go wsAdminClient.console()
+	case strings.HasPrefix(wsPath, `/heal`):
+		hOptions, err := getHealOptionsFromReq(req)
+		if err != nil {
+			log.Println("error getting heal options:", err)
+			closeWsConn(conn)
+			return
+		}
+		wsAdminClient, err := newWebSocketAdminClient(conn, claims)
+		if err != nil {
+			closeWsConn(conn)
+			return
+		}
+		go wsAdminClient.heal(hOptions)
 	case strings.HasPrefix(wsPath, `/watch`):
-		wOptions := getOptionsFromReq(req)
+		wOptions := getWatchOptionsFromReq(req)
 		wsS3Client, err := newWebSocketS3Client(conn, *sessionID, wOptions.BucketName)
 		if err != nil {
-			errors.ServeError(w, req, err)
+			closeWsConn(conn)
 			return
 		}
 		go wsS3Client.watch(wOptions)
 	default:
 		// path not found
-		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-		conn.Close()
+		closeWsConn(conn)
 	}
 }
 
@@ -227,6 +240,12 @@ func wsReadClientCtx(conn WSConn) context.Context {
 	return ctx
 }
 
+// closeWsConn sends Close Message and closes the websocket connection
+func closeWsConn(conn *websocket.Conn) {
+	conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+	conn.Close()
+}
+
 // trace serves madmin.ServiceTraceInfo
 // on a Websocket connection.
 func (wsc *wsAdminClient) trace() {
@@ -240,25 +259,8 @@ func (wsc *wsAdminClient) trace() {
 	ctx := wsReadClientCtx(wsc.conn)
 
 	err := startTraceInfo(ctx, wsc.conn, wsc.client)
-	// Send Connection Close Message indicating the Status Code
-	// see https://tools.ietf.org/html/rfc6455#page-45
-	if err != nil {
-		log.Println("err:", err)
-		// If connection exceeded read deadline send Close
-		// Message Policy Violation code since we don't want
-		// to let the receiver figure out the read deadline.
-		// This is a generic code designed if there is a
-		// need to hide specific details about the policy.
-		if nErr, ok := err.(net.Error); ok && nErr.Timeout() {
-			wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, ""))
-			return
-		}
-		// else, internal server error
-		wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseInternalServerErr, err.Error()))
-		return
-	}
-	// normal closure
-	wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+
+	sendWsCloseMessage(wsc.conn, err)
 }
 
 // console serves madmin.GetLogs
@@ -274,24 +276,8 @@ func (wsc *wsAdminClient) console() {
 	ctx := wsReadClientCtx(wsc.conn)
 
 	err := startConsoleLog(ctx, wsc.conn, wsc.client)
-	// Send Connection Close Message indicating the Status Code
-	// see https://tools.ietf.org/html/rfc6455#page-45
-	if err != nil {
-		// If connection exceeded read deadline send Close
-		// Message Policy Violation code since we don't want
-		// to let the receiver figure out the read deadline.
-		// This is a generic code designed if there is a
-		// need to hide specific details about the policy.
-		if nErr, ok := err.(net.Error); ok && nErr.Timeout() {
-			wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, ""))
-			return
-		}
-		// else, internal server error
-		wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseInternalServerErr, err.Error()))
-		return
-	}
-	// normal closure
-	wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+
+	sendWsCloseMessage(wsc.conn, err)
 }
 
 func (wsc *wsS3Client) watch(params watchOptions) {
@@ -305,8 +291,28 @@ func (wsc *wsS3Client) watch(params watchOptions) {
 	ctx := wsReadClientCtx(wsc.conn)
 
 	err := startWatch(ctx, wsc.conn, wsc.client, params)
-	// Send Connection Close Message indicating the Status Code
-	// see https://tools.ietf.org/html/rfc6455#page-45
+
+	sendWsCloseMessage(wsc.conn, err)
+}
+
+func (wsc *wsAdminClient) heal(opts *healOptions) {
+	defer func() {
+		log.Println("heal stopped")
+		// close connection after return
+		wsc.conn.close()
+	}()
+	log.Println("heal started")
+
+	ctx := wsReadClientCtx(wsc.conn)
+
+	err := startHeal(ctx, wsc.conn, wsc.client, opts)
+
+	sendWsCloseMessage(wsc.conn, err)
+}
+
+// sendWsCloseMessage sends Websocket Connection Close Message indicating the Status Code
+// see https://tools.ietf.org/html/rfc6455#page-45
+func sendWsCloseMessage(conn WSConn, err error) {
 	if err != nil {
 		// If connection exceeded read deadline send Close
 		// Message Policy Violation code since we don't want
@@ -314,13 +320,13 @@ func (wsc *wsS3Client) watch(params watchOptions) {
 		// This is a generic code designed if there is a
 		// need to hide specific details about the policy.
 		if nErr, ok := err.(net.Error); ok && nErr.Timeout() {
-			wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, ""))
+			conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, ""))
 			return
 		}
 		// else, internal server error
-		wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseInternalServerErr, err.Error()))
+		conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseInternalServerErr, err.Error()))
 		return
 	}
 	// normal closure
-	wsc.conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+	conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 }
