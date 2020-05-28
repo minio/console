@@ -228,3 +228,8 @@ func getSecureFeaturePolicy() string {
 func getSecureExpectCTHeader() string {
 	return env.Get(McsSecureExpectCTHeader, "")
 }
+
+// getM3Host returns the hostname of mkube
+func getM3Host() string {
+	return env.Get(McsM3Host, "http://m3:8787")
+}

@@ -164,6 +164,9 @@ func FileServerMiddleware(next http.Handler) http.Handler {
 		switch {
 		case strings.HasPrefix(r.URL.Path, "/ws"):
 			serveWS(w, r)
+		case strings.HasPrefix(r.URL.Path, "/api/v1/clusters"):
+			client := &http.Client{}
+			serverMkube(client, w, r)
 		case strings.HasPrefix(r.URL.Path, "/api"):
 			next.ServeHTTP(w, r)
 		default:
