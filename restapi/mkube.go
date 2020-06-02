@@ -20,6 +20,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 
@@ -35,6 +36,7 @@ func serverMkube(client *http.Client, w http.ResponseWriter, req *http.Request) 
 	m3Req, err := http.NewRequest(req.Method, targetURL, req.Body)
 	if err != nil {
 		apiErrors.ServeError(w, req, err)
+		log.Println("error creating m3 request:", err)
 		return
 	}
 
@@ -42,6 +44,7 @@ func serverMkube(client *http.Client, w http.ResponseWriter, req *http.Request) 
 	m3Req.Header = req.Header
 	resp, err := client.Do(m3Req)
 	if err != nil {
+		log.Println("error on m3 request:", err)
 		if strings.Contains(err.Error(), "connection refused") {
 			apiErrors.ServeError(w, req, errors.New("service M3 is not available"))
 			return
@@ -57,6 +60,7 @@ func serverMkube(client *http.Client, w http.ResponseWriter, req *http.Request) 
 		w.Write(scanner.Bytes())
 	}
 	if err := scanner.Err(); err != nil {
+		log.Println("error scanning m3 response:", err)
 		apiErrors.ServeError(w, req, err)
 	}
 
