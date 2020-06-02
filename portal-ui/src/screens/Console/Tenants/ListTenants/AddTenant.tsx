@@ -97,6 +97,7 @@ const AddTenant = ({
           volumes_per_server: volumesPerServer,
           volume_configuration: {
             size: `${volumeConfiguration.size}${sizeFactor}`,
+            storage_class: volumeConfiguration.storage_class,
           },
           zones: cleanZones,
         })
