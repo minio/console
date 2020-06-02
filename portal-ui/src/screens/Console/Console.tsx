@@ -64,10 +64,10 @@ import Trace from "./Trace/Trace";
 import Logs from "./Logs/Logs";
 import Heal from "./Heal/Heal";
 import Watch from "./Watch/Watch";
-import ListClusters from "./Clusters/ListClusters/ListClusters";
+import ListTenants from "./Tenants/ListTenants/ListTenants";
 import { ISessionResponse } from "./types";
 import { saveSessionResponse } from "./actions";
-import ClusterDetails from "./Clusters/ClusterDetails/ClusterDetails";
+import TenantDetails from "./Tenants/TenantDetails/TenantDetails";
 
 function Copyright() {
   return (
@@ -301,11 +301,11 @@ const Console = ({
       path: "/webhook/audit",
     },
     {
-      component: ListClusters,
-      path: "/clusters",
+      component: ListTenants,
+      path: "/tenants",
     },
     {
-      component: ClusterDetails,
+      component: TenantDetails,
       path: "/clusters/:clusterName",
     },
   ];

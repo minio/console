@@ -246,8 +246,8 @@ class Menu extends React.Component<MenuProps> {
         group: "Operator",
         type: "item",
         component: NavLink,
-        to: "/clusters",
-        name: "Clusters",
+        to: "/tenants",
+        name: "Tenants",
         icon: <StorageIcon />,
       },
       {

@@ -23,3 +23,19 @@ export interface IVolumeConfiguration {
   size: string;
   storage_class: string;
 }
+
+export interface ITenant {
+  name: string;
+  zone_count: number;
+  currentState: string;
+  instance_count: 4;
+  creation_date: Date;
+  volume_size: number;
+  volume_count: number;
+  // computed
+  capacity: string;
+}
+
+export interface ITenantsResponse {
+  tenants: ITenant[];
+}

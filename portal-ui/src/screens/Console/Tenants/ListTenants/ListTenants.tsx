@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
@@ -24,12 +24,14 @@ import { Button } from "@material-ui/core";
 import { CreateIcon } from "../../../../icons";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import { MinTablePaginationActions } from "../../../../common/MinTablePaginationActions";
-import AddCluster from "./AddCluster";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import DeleteCluster from "./DeleteCluster";
-import { Link } from "react-router-dom";
+import api from "../../../../common/api";
+import { ITenant, ITenantsResponse } from "./types";
+import { niceBytes } from "../../../../common/utils";
+import DeleteTenant from "./DeleteTenant";
+import AddTenant from "./AddTenant";
 
-interface IClustersList {
+interface ITenantsList {
   classes: any;
 }
 
@@ -77,19 +79,20 @@ const styles = (theme: Theme) =>
     },
   });
 
-const ListClusters = ({ classes }: IClustersList) => {
-  const [createClusterOpen, setCreateClusterOpen] = useState<boolean>(false);
+const ListTenants = ({ classes }: ITenantsList) => {
+  const [createTenantOpen, setCreateTenantOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
-  const [selectedCluster, setSelectedCluster] = useState<any>(null);
+  const [selectedTenant, setSelectedTenant] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [filterClusters, setFilterClusters] = useState<string>("");
+  const [filterTenants, setFilterTenants] = useState<string>("");
   const [records, setRecords] = useState<any[]>([]);
   const [offset, setOffset] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(0);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   const [page, setPage] = useState<number>(0);
+  const [error, setError] = useState<string>("");
 
   const closeAddModalAndRefresh = (reloadData: boolean) => {
-    setCreateClusterOpen(false);
+    setCreateTenantOpen(false);
 
     if (reloadData) {
       setIsLoading(true);
@@ -104,8 +107,8 @@ const ListClusters = ({ classes }: IClustersList) => {
     }
   };
 
-  const confirmDeleteCluster = (cluster: string) => {
-    setSelectedCluster(cluster);
+  const confirmDeleteTenant = (tenant: string) => {
+    setSelectedTenant(tenant);
     setDeleteOpen(true);
   };
 
@@ -122,17 +125,17 @@ const ListClusters = ({ classes }: IClustersList) => {
   };
 
   const tableActions = [
-    { type: "view", to: `/clusters`, sendOnlyId: true },
-    { type: "delete", onClick: confirmDeleteCluster, sendOnlyId: true },
+    { type: "view", to: `/tenants`, sendOnlyId: true },
+    { type: "delete", onClick: confirmDeleteTenant, sendOnlyId: true },
   ];
 
   const filteredRecords = records
     .slice(offset, offset + rowsPerPage)
     .filter((b: any) => {
-      if (filterClusters === "") {
+      if (filterTenants === "") {
         return true;
       } else {
-        if (b.name.indexOf(filterClusters) >= 0) {
+        if (b.name.indexOf(filterTenants) >= 0) {
           return true;
         } else {
           return false;
@@ -140,36 +143,84 @@ const ListClusters = ({ classes }: IClustersList) => {
       }
     });
 
+  useEffect(() => {
+    if (isLoading) {
+      const fetchRecords = () => {
+        const offset = page * rowsPerPage;
+        api
+          .invoke(
+            "GET",
+            `/api/v1/tenants?offset=${offset}&limit=${rowsPerPage}`
+          )
+          .then((res: ITenantsResponse) => {
+            if (res === null) {
+              setIsLoading(false);
+              return;
+            }
+            let resTenants: ITenant[] = [];
+            if (res.tenants !== null) {
+              resTenants = res.tenants;
+            }
+
+            for (let i = 0; i < resTenants.length; i++) {
+              const total =
+                resTenants[i].volume_count * resTenants[i].volume_size;
+              resTenants[i].capacity = niceBytes(total + "");
+            }
+
+            setRecords(resTenants);
+            setError("");
+            setIsLoading(false);
+
+            // if we get 0 results, and page > 0 , go down 1 page
+            if ((!res.tenants || res.tenants.length === 0) && page > 0) {
+              const newPage = page - 1;
+              setPage(newPage);
+            }
+          })
+          .catch((err) => {
+            setError(err);
+            setIsLoading(false);
+          });
+      };
+      fetchRecords();
+    }
+  }, [isLoading, page, rowsPerPage]);
+
+  useEffect(() => {
+    setIsLoading(true);
+  }, []);
+
   return (
     <React.Fragment>
-      {createClusterOpen && (
-        <AddCluster
-          open={createClusterOpen}
+      {createTenantOpen && (
+        <AddTenant
+          open={createTenantOpen}
           closeModalAndRefresh={closeAddModalAndRefresh}
         />
       )}
       {deleteOpen && (
-        <DeleteCluster
+        <DeleteTenant
           deleteOpen={deleteOpen}
-          selectedCluster={selectedCluster}
+          selectedTenant={selectedTenant}
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
       <Grid container>
         <Grid item xs={12}>
-          <Typography variant="h6">Clusters</Typography>
+          <Typography variant="h6">Tenants</Typography>
         </Grid>
         <Grid item xs={12}>
           <br />
         </Grid>
         <Grid item xs={12} className={classes.actionsTray}>
           <TextField
-            placeholder="Search Clusters"
+            placeholder="Search Tenants"
             className={classes.searchField}
             id="search-resource"
             label=""
             onChange={(val) => {
-              setFilterClusters(val.target.value);
+              setFilterTenants(val.target.value);
             }}
             InputProps={{
               disableUnderline: true,
@@ -185,10 +236,10 @@ const ListClusters = ({ classes }: IClustersList) => {
             color="primary"
             startIcon={<CreateIcon />}
             onClick={() => {
-              setCreateClusterOpen(true);
+              setCreateTenantOpen(true);
             }}
           >
-            Create Cluster
+            Create Tenant
           </Button>
         </Grid>
         <Grid item xs={12}>
@@ -200,11 +251,12 @@ const ListClusters = ({ classes }: IClustersList) => {
             columns={[
               { label: "Name", elementKey: "name" },
               { label: "Capacity", elementKey: "capacity" },
-              { label: "# of Zones", elementKey: "zones_counter" },
+              { label: "# of Zones", elementKey: "zone_count" },
+              { label: "State", elementKey: "currentState" },
             ]}
             isLoading={isLoading}
             records={filteredRecords}
-            entityName="Clusters"
+            entityName="Tenants"
             idField="name"
             paginatorConfig={{
               rowsPerPageOptions: [5, 10, 25],
@@ -227,4 +279,4 @@ const ListClusters = ({ classes }: IClustersList) => {
   );
 };
 
-export default withStyles(styles)(ListClusters);
+export default withStyles(styles)(ListTenants);

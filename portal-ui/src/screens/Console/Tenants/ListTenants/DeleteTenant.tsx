@@ -28,10 +28,10 @@ import Typography from "@material-ui/core/Typography";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../../common/api";
 
-interface IDeleteCluster {
+interface IDeleteTenant {
   classes: any;
   deleteOpen: boolean;
-  selectedCluster: string;
+  selectedTenant: string;
   closeDeleteModalAndRefresh: (refreshList: boolean) => any;
 }
 
@@ -42,27 +42,29 @@ const styles = (theme: Theme) =>
     },
   });
 
-const DeleteCluster = ({
+const DeleteTenant = ({
   classes,
   deleteOpen,
-  selectedCluster,
+  selectedTenant,
   closeDeleteModalAndRefresh,
-}: IDeleteCluster) => {
+}: IDeleteTenant) => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState("");
 
   useEffect(() => {
-    api
-      .invoke("DELETE", `/api/v1/clusters/${selectedCluster}`)
-      .then(() => {
-        setDeleteLoading(false);
-        setDeleteError("");
-        closeDeleteModalAndRefresh(true);
-      })
-      .catch((err) => {
-        setDeleteLoading(false);
-        setDeleteError(err);
-      });
+    if (deleteLoading) {
+      api
+        .invoke("DELETE", `/api/v1/clusters/${selectedTenant}`)
+        .then(() => {
+          setDeleteLoading(false);
+          setDeleteError("");
+          closeDeleteModalAndRefresh(true);
+        })
+        .catch((err) => {
+          setDeleteLoading(false);
+          setDeleteError(err);
+        });
+    }
   }, [deleteLoading]);
 
   const removeRecord = () => {
@@ -79,11 +81,11 @@ const DeleteCluster = ({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">Delete Cluster</DialogTitle>
+      <DialogTitle id="alert-dialog-title">Delete Tenant</DialogTitle>
       <DialogContent>
         {deleteLoading && <LinearProgress />}
         <DialogContentText id="alert-dialog-description">
-          Are you sure you want to delete cluster <b>{selectedCluster}</b>?
+          Are you sure you want to delete tenant <b>{selectedTenant}</b>?
           {deleteError !== "" && (
             <React.Fragment>
               <br />
@@ -117,4 +119,4 @@ const DeleteCluster = ({
   );
 };
 
-export default withStyles(styles)(DeleteCluster);
+export default withStyles(styles)(DeleteTenant);

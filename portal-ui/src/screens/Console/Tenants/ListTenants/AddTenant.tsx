@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -26,11 +26,11 @@ import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { IVolumeConfiguration, IZone } from "./types";
 import CheckboxWrapper from "../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { factorForDropdown, units } from "../../../../common/utils";
+import { k8sfactorForDropdown } from "../../../../common/utils";
 import ZonesMultiSelector from "./ZonesMultiSelector";
 import { storageClasses } from "../utils";
 
-interface IAddClusterProps {
+interface IAddTenantProps {
   open: boolean;
   closeModalAndRefresh: (reloadData: boolean) => any;
   classes: any;
@@ -55,14 +55,14 @@ const styles = (theme: Theme) =>
     ...modalBasic,
   });
 
-const AddCluster = ({
+const AddTenant = ({
   open,
   closeModalAndRefresh,
   classes,
-}: IAddClusterProps) => {
+}: IAddTenantProps) => {
   const [addSending, setAddSending] = useState<boolean>(false);
   const [addError, setAddError] = useState<string>("");
-  const [clusterName, setClusterName] = useState<string>("");
+  const [tenantName, setTenantName] = useState<string>("");
   const [imageName, setImageName] = useState<string>("");
   const [serviceName, setServiceName] = useState<string>("");
   const [zones, setZones] = useState<IZone[]>([]);
@@ -75,13 +75,30 @@ const AddCluster = ({
   const [secretKey, setSecretKey] = useState<string>("");
   const [enableMCS, setEnableMCS] = useState<boolean>(false);
   const [enableSSL, setEnableSSL] = useState<boolean>(false);
-  const [sizeFactor, setSizeFactor] = useState<string>("GiB");
+  const [sizeFactor, setSizeFactor] = useState<string>("Gi");
 
   useEffect(() => {
     if (addSending) {
+      let cleanZones: IZone[] = [];
+      for (let zone of zones) {
+        if (zone.name !== "") {
+          cleanZones.push(zone);
+        }
+      }
+
       api
-        .invoke("POST", `/api/v1/clusters`, {
-          name: clusterName,
+        .invoke("POST", `/api/v1/tenants`, {
+          name: tenantName,
+          service_name: tenantName,
+          enable_ssl: enableSSL,
+          enable_mcs: enableMCS,
+          access_key: accessKey,
+          secret_key: secretKey,
+          volumes_per_server: volumesPerServer,
+          volume_configuration: {
+            size: `${volumeConfiguration.size}${sizeFactor}`,
+          },
+          zones: cleanZones,
         })
         .then(() => {
           setAddSending(false);
@@ -107,7 +124,7 @@ const AddCluster = ({
 
   return (
     <ModalWrapper
-      title="Create Cluster"
+      title="Create Tenant"
       modalOpen={open}
       onClose={() => {
         setAddError("");
@@ -139,13 +156,13 @@ const AddCluster = ({
             )}
             <Grid item xs={12}>
               <InputBoxWrapper
-                id="cluster-name"
-                name="cluster-name"
+                id="tenant-name"
+                name="tenant-name"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setClusterName(e.target.value);
+                  setTenantName(e.target.value);
                 }}
-                label="Cluster Name"
-                value={clusterName}
+                label="Tenant Name"
+                value={tenantName}
               />
             </Grid>
             <Grid item xs={12}>
@@ -155,7 +172,7 @@ const AddCluster = ({
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setImageName(e.target.value);
                 }}
-                label="Image"
+                label="MinIO Image"
                 value={imageName}
               />
             </Grid>
@@ -175,7 +192,9 @@ const AddCluster = ({
                 <ZonesMultiSelector
                   label="Zones"
                   name="zones_selector"
-                  onChange={() => {}}
+                  onChange={(elements: IZone[]) => {
+                    setZones(elements);
+                  }}
                   elements={zones}
                 />
               </div>
@@ -220,7 +239,7 @@ const AddCluster = ({
                     onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
                       setSizeFactor(e.target.value as string);
                     }}
-                    options={factorForDropdown()}
+                    options={k8sfactorForDropdown()}
                   />
                 </div>
               </div>
@@ -322,4 +341,4 @@ const AddCluster = ({
   );
 };
 
-export default withStyles(styles)(AddCluster);
+export default withStyles(styles)(AddTenant);
