@@ -3,3 +3,4 @@ dist/
 target/
 mcs
 !mcs/
+portal-ui/node_modules/
