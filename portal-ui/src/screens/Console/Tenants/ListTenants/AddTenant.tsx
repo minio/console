@@ -28,7 +28,6 @@ import CheckboxWrapper from "../../Common/FormComponents/CheckboxWrapper/Checkbo
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { k8sfactorForDropdown } from "../../../../common/utils";
 import ZonesMultiSelector from "./ZonesMultiSelector";
-import { storageClasses } from "../utils";
 
 interface IAddTenantProps {
   open: boolean;
@@ -76,6 +75,11 @@ const AddTenant = ({
   const [enableMCS, setEnableMCS] = useState<boolean>(false);
   const [enableSSL, setEnableSSL] = useState<boolean>(false);
   const [sizeFactor, setSizeFactor] = useState<string>("Gi");
+  const [storageClasses, setStorageClassesList] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetchStorageClassList();
+  }, []);
 
   useEffect(() => {
     if (addSending) {
@@ -87,7 +91,7 @@ const AddTenant = ({
       }
 
       api
-        .invoke("POST", `/api/v1/tenants`, {
+        .invoke("POST", `/api/v1/mkube/tenants`, {
           name: tenantName,
           service_name: tenantName,
           image: imageName,
@@ -123,6 +127,26 @@ const AddTenant = ({
 
     setVolumeConfiguration(volumeCopy);
   };
+
+  const fetchStorageClassList = () => {
+    api
+      .invoke("GET", `/api/v1/mkube/storage-classes`)
+      .then((res: string[]) => {
+        let classes: string[] = [];
+        if (res !== null) {
+          classes = res;
+        }
+        setStorageClassesList(classes);
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
+  };
+
+  const storageClassesList = storageClasses.map((s: string) => ({
+    label: s,
+    value: s,
+  }));
 
   return (
     <ModalWrapper
@@ -255,7 +279,7 @@ const AddTenant = ({
                 }}
                 label="Storage Class"
                 value={volumeConfiguration.storage_class}
-                options={storageClasses}
+                options={storageClassesList}
               />
             </Grid>
             <Grid item xs={12}>

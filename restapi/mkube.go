@@ -30,6 +30,7 @@ import (
 // serverMkube handles calls for mkube
 func serverMkube(client *http.Client, w http.ResponseWriter, req *http.Request) {
 	// destination of the request, the mkube server
+	req.URL.Path = strings.Replace(req.URL.Path, "/mkube", "", 1)
 	targetURL := fmt.Sprintf("%s%s", getM3Host(), req.URL.String())
 
 	// set the HTTP method, url, and m3Req body
