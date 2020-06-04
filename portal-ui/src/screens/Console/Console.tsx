@@ -49,7 +49,7 @@ import Buckets from "./Buckets/Buckets";
 import Policies from "./Policies/Policies";
 import Permissions from "./Permissions/Permissions";
 import Dashboard from "./Dashboard/Dashboard";
-import Menu from "./Menu";
+import Menu from "./Menu/Menu";
 import api from "../../common/api";
 import storage from "local-storage-fallback";
 import NotFoundPage from "../NotFoundPage";
