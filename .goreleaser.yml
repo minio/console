@@ -23,7 +23,7 @@ builds:
       - -trimpath
       - --tags=kqueue
     ldflags:
-      - -s -w -X github.com/minio/mcs/pkg.ReleaseTag={{.Tag}} -X github.com/minio/warp/pkg.CommitID={{.FullCommit}} -X github.com/minio/warp/pkg.Version={{.Version}} -X github.com/minio/warp/pkg.ShortCommitID={{.ShortCommit}} -X github.com/minio/warp/pkg.ReleaseTime={{.Date}}
+      - -s -w -X github.com/minio/mcs/pkg.ReleaseTag={{.Tag}} -X github.com/minio/mcs/pkg.CommitID={{.FullCommit}} -X github.com/minio/mcs/pkg.Version={{.Version}} -X github.com/minio/mcs/pkg.ShortCommitID={{.ShortCommit}} -X github.com/minio/mcs/pkg.ReleaseTime={{.Date}}
 archives:
   -
     replacements:

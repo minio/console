@@ -326,7 +326,7 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
         <img src={logo} alt="logo" />
       </div>
       <List className={classes.menuList}>
-        {menuGroups.map((groupMember) => {
+        {menuGroups.map((groupMember, index) => {
           const filterByGroup = (allowedItems || []).filter(
             (item: any) => item.group === groupMember.group
           );
@@ -340,7 +340,7 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
           }
 
           return (
-            <React.Fragment>
+            <React.Fragment key={`menuElem-${index.toString()}`}>
               {groupMember.label !== "" && (
                 <ListItem
                   className={classes.groupTitle}

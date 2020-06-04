@@ -1,6 +1,6 @@
 module github.com/minio/mcs
 
-go 1.14
+go 1.13
 
 require (
 	github.com/coreos/go-oidc v2.2.1+incompatible
