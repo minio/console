@@ -28,10 +28,10 @@ import (
 var Port = "9090"
 
 // Hostname mcs hostname
-var Hostname = "localhost"
+var Hostname = "0.0.0.0"
 
 // TLSHostname mcs tls hostname
-var TLSHostname = "localhost"
+var TLSHostname = "0.0.0.0"
 
 // TLSPort mcs tls port
 var TLSPort = "9443"
