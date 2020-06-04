@@ -31,3 +31,4 @@ public.crt
 # Ignore VsCode files
 .vscode/
 *.code-workspace
+*~

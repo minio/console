@@ -1,8 +1,9 @@
-FROM golang:1.14.1
+FROM golang:1.13
 
 ADD go.mod /go/src/github.com/minio/mcs/go.mod
 ADD go.sum /go/src/github.com/minio/mcs/go.sum
 WORKDIR /go/src/github.com/minio/mcs/
+
 # Get dependencies - will also be cached if we won't change mod/sum
 RUN go mod download
 
