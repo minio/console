@@ -54,7 +54,7 @@ const DeleteTenant = ({
   useEffect(() => {
     if (deleteLoading) {
       api
-        .invoke("DELETE", `/api/v1/clusters/${selectedTenant}`)
+        .invoke("DELETE", `/api/v1/tenants/${selectedTenant}`)
         .then(() => {
           setDeleteLoading(false);
           setDeleteError("");

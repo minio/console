@@ -90,6 +90,7 @@ const AddTenant = ({
         .invoke("POST", `/api/v1/tenants`, {
           name: tenantName,
           service_name: tenantName,
+          image: imageName,
           enable_ssl: enableSSL,
           enable_mcs: enableMCS,
           access_key: accessKey,
