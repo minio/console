@@ -150,7 +150,7 @@ const ListTenants = ({ classes }: ITenantsList) => {
         api
           .invoke(
             "GET",
-            `/api/v1/tenants?offset=${offset}&limit=${rowsPerPage}`
+            `/api/v1/mkube/tenants?offset=${offset}&limit=${rowsPerPage}`
           )
           .then((res: ITenantsResponse) => {
             if (res === null) {
