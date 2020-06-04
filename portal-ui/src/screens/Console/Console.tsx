@@ -307,7 +307,7 @@ const Console = ({
     },
     {
       component: TenantDetails,
-      path: "/clusters/:clusterName",
+      path: "/tenants/:tenantName",
     },
   ];
   const allowedRoutes = routes.filter((route: any) => allowedPages[route.path]);

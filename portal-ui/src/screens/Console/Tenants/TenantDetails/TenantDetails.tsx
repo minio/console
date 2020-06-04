@@ -30,6 +30,9 @@ import { niceBytes } from "../../../../common/utils";
 import AddZoneModal from "./AddZoneModal";
 import AddBucket from "../../Buckets/ListBuckets/AddBucket";
 import ReplicationSetup from "./ReplicationSetup";
+import api from "../../../../common/api";
+import { BucketInfo } from "../../Buckets/types";
+import { ITenant, IZone } from "../ListTenants/types";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -106,12 +109,16 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
   const [capacity, setCapacity] = useState<number>(0);
   const [externalIDP, setExternalIDP] = useState<boolean>(false);
   const [externalKMS, setExternalKMS] = useState<boolean>(false);
-  const [zones, setZones] = useState<number>(0);
+  const [zoneCount, setZoneCount] = useState<number>(0);
+  const [zones, setZones] = useState<IZone[]>([]);
   const [instances, setInstances] = useState<number>(0);
-  const [drives, setDrives] = useState<number>(0);
+  const [volumes, setVolumes] = useState<number>(0);
   const [addZoneOpen, setAddZone] = useState<boolean>(false);
   const [addBucketOpen, setAddBucketOpen] = useState<boolean>(false);
   const [addReplicationOpen, setAddReplicationOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [tenant, setTenant] = useState<ITenant | null>(null);
 
   const onCloseZoneAndRefresh = (reload: boolean) => {
     setAddZone(false);
@@ -133,12 +140,50 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
     }
   };
 
+  const loadInfo = () => {
+    const tenantName = match.params["tenantName"];
+
+    setLoading(true);
+
+    api
+      .invoke("GET", `/api/v1/mkube/tenants/${tenantName}`)
+      .then((res: ITenant) => {
+        const total = res.volume_count * res.volume_size;
+
+        setCapacity(total);
+        setZoneCount(res.zone_count);
+        setVolumes(res.volume_count);
+        setInstances(res.instance_count);
+        const resZones = !res.zones ? [] : res.zones;
+        for (let zone of resZones) {
+          zone.volumes = res.volumes_per_server;
+          const cap = res.volumes_per_server * res.volume_size * zone.servers;
+          zone.capacity = niceBytes(cap + "");
+        }
+        setZones(resZones);
+
+        setTenant(res);
+        setError("");
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    loadInfo();
+  }, []);
+
   return (
     <React.Fragment>
-      {addZoneOpen && (
+      {addZoneOpen && tenant !== null && (
         <AddZoneModal
           open={addZoneOpen}
           onCloseZoneAndReload={onCloseZoneAndRefresh}
+          volumeSize={tenant.volume_size}
+          volumesPerInstance={tenant.volumes_per_server}
         />
       )}
       {addBucketOpen && (
@@ -156,7 +201,7 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="h6">
-            Tenant > {match.params["clusterName"]}
+            Tenant > {match.params["tenantName"]}
           </Typography>
         </Grid>
         <Grid item xs={12}>
@@ -168,7 +213,7 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
               <div>Capacity:</div>
               <div>{niceBytes(capacity.toString(10))}</div>
               <div>Zones:</div>
-              <div>{zones}</div>
+              <div>{zoneCount}</div>
               <div>External IDP:</div>
               <div>
                 {externalIDP ? "Yes" : "No"}&nbsp;&nbsp;
@@ -184,19 +229,9 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
               <div>Instances:</div>
               <div>{instances}</div>
               <div>External KMS:</div>
-              <div>
-                {externalKMS ? "Yes" : "No"}&nbsp;&nbsp;
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  onClick={() => {}}
-                >
-                  Edit
-                </Button>
-              </div>
-              <div>Drives:</div>
-              <div>{drives}</div>
+              <div>{externalKMS ? "Yes" : "No"}&nbsp;&nbsp;</div>
+              <div>Volumes:</div>
+              <div>{volumes}</div>
             </div>
           </Paper>
           <div className={classes.masterActions}>
@@ -208,16 +243,6 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
                 onClick={() => {}}
               >
                 Warp
-              </Button>
-            </div>
-            <div>
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                onClick={() => {}}
-              >
-                See as deployment
               </Button>
             </div>
           </div>
@@ -303,17 +328,13 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
                 },
               ]}
               columns={[
-                {
-                  label: "Status",
-                  elementKey: "status",
-                },
                 { label: "Name", elementKey: "name" },
                 { label: "Capacity", elementKey: "capacity" },
-                { label: "# of Instances", elementKey: "instances" },
-                { label: "# of Drives", elementKey: "drives" },
+                { label: "# of Instances", elementKey: "servers" },
+                { label: "# of Drives", elementKey: "volumes" },
               ]}
               isLoading={false}
-              records={[]}
+              records={zones}
               entityName="Zones"
               idField="name"
               paginatorConfig={{

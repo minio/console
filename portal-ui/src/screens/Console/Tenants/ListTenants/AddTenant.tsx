@@ -54,6 +54,11 @@ const styles = (theme: Theme) =>
     ...modalBasic,
   });
 
+interface Opts {
+  label: string;
+  value: string;
+}
+
 const AddTenant = ({
   open,
   closeModalAndRefresh,
@@ -75,7 +80,7 @@ const AddTenant = ({
   const [enableMCS, setEnableMCS] = useState<boolean>(false);
   const [enableSSL, setEnableSSL] = useState<boolean>(false);
   const [sizeFactor, setSizeFactor] = useState<string>("Gi");
-  const [storageClasses, setStorageClassesList] = useState<string[]>([]);
+  const [storageClasses, setStorageClassesList] = useState<Opts[]>([]);
 
   useEffect(() => {
     fetchStorageClassList();
@@ -136,17 +141,17 @@ const AddTenant = ({
         if (res !== null) {
           classes = res;
         }
-        setStorageClassesList(classes);
+        setStorageClassesList(
+          classes.map((s: string) => ({
+            label: s,
+            value: s,
+          }))
+        );
       })
       .catch((err: any) => {
         console.log(err);
       });
   };
-
-  const storageClassesList = storageClasses.map((s: string) => ({
-    label: s,
-    value: s,
-  }));
 
   return (
     <ModalWrapper
@@ -279,7 +284,7 @@ const AddTenant = ({
                 }}
                 label="Storage Class"
                 value={volumeConfiguration.storage_class}
-                options={storageClassesList}
+                options={storageClasses}
               />
             </Grid>
             <Grid item xs={12}>
