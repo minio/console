@@ -21,6 +21,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"time"
 
 	"github.com/minio/mcs/pkg"
 
@@ -103,10 +104,12 @@ func newApp(name string) *cli.App {
 
 	app := cli.NewApp()
 	app.Name = name
-	app.Version = pkg.Version
+	app.Version = pkg.Version + " - " + pkg.ShortCommitID
 	app.Author = "MinIO, Inc."
-	app.Usage = "mcs"
+	app.Usage = "MinIO Console Server"
 	app.Description = `MinIO Console Server`
+	app.Copyright = "(c) 2020 MinIO, Inc."
+	app.Compiled, _ = time.Parse(time.RFC3339, pkg.ReleaseTime)
 	app.Commands = commands
 	app.HideHelpCommand = true // Hide `help, h` command, we already have `minio --help`.
 	app.CustomAppHelpTemplate = mcsHelpTemplate
