@@ -25,6 +25,7 @@ import (
 	"strings"
 
 	"github.com/minio/mcs/models"
+	"github.com/minio/mcs/pkg"
 	"github.com/minio/mcs/pkg/auth"
 
 	assetFS "github.com/elazarl/go-bindata-assetfs"
@@ -161,6 +162,7 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 // FileServerMiddleware serves files from the static folder
 func FileServerMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Server", "mcs/"+pkg.Version) // add HTTP Server header
 		switch {
 		case strings.HasPrefix(r.URL.Path, "/ws"):
 			serveWS(w, r)
