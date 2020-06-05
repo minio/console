@@ -43,10 +43,6 @@ export const configurationElements: IConfigurationElement[] = [
     configuration_label: "Identity LDAP Configuration",
   },
   {
-    configuration_id: "policy_opa",
-    configuration_label: "Policy OPA Configuration",
-  },
-  {
     configuration_id: "kms_vault",
     configuration_label: "KMS Vault Configuration",
   },
@@ -310,26 +306,6 @@ export const fieldsConfigurations: any = {
       tooltip: "Optionally add a comment to this setting",
       type: "string",
       multiline: true,
-    },
-  ],
-  policy_opa: [
-    {
-      name: "url",
-      required: true,
-      label: "OPA URL",
-      type: "string",
-    },
-    {
-      name: "auth_token",
-      required: true,
-      label: "Auth Token",
-      type: "string",
-    },
-    {
-      name: "policy_opa",
-      required: true,
-      label: "Policy OPA",
-      type: "string",
     },
   ],
   kms_vault: [],
