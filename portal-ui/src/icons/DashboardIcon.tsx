@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2019 MinIO, Inc.
+// Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -20,15 +20,24 @@ class DashboardIcon extends React.Component {
   render() {
     return (
       <SvgIcon>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-          <title>ic_h_dashboard</title>
-          <g id="Layer_2" data-name="Layer 2">
-            <g id="Layer_1-2" data-name="Layer 1">
-              <rect className="cls-1" x="9" width="7" height="7" />
-              <rect className="cls-1" width="7" height="7" />
-              <rect className="cls-1" x="9" y="9" width="7" height="7" />
-              <rect className="cls-1" y="9" width="7" height="7" />
-            </g>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
+          <g transform="translate(249 720)">
+            <rect
+              width="6"
+              height="5"
+              transform="translate(-244 -720) rotate(90)"
+            />
+            <rect width="4" height="4" transform="translate(-243 -720)" />
+            <rect
+              width="5"
+              height="4"
+              transform="translate(-239 -715) rotate(90)"
+            />
+            <rect
+              width="5"
+              height="3"
+              transform="translate(-244 -710) rotate(180)"
+            />
           </g>
         </svg>
       </SvgIcon>

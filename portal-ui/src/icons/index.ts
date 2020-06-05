@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2019 MinIO, Inc.
+// Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,10 +14,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export { default as PermissionIcon } from './PermissionIcon';
-export { default as CreateIcon } from './CreateIcon';
-export { default as DeleteIcon } from './DeleteIcon';
-export { default as ServiceAccountIcon } from './ServiceAccountIcon';
-export { default as DashboardIcon } from './DashboardIcon';
-export { default as BucketsIcon } from './BucketsIcon';
-export { default as UsersIcon } from './UsersIcon';
+export { default as PermissionIcon } from "./PermissionIcon";
+export { default as CreateIcon } from "./CreateIcon";
+export { default as DeleteIcon } from "./DeleteIcon";
+export { default as ServiceAccountIcon } from "./ServiceAccountIcon";
+export { default as DashboardIcon } from "./DashboardIcon";
+export { default as BucketsIcon } from "./BucketsIcon";
+export { default as UsersIcon } from "./UsersIcon";
+export { default as ServiceAccountsIcon } from "./ServiceAccountsIcon";
+export { default as GroupsIcon } from "./GroupsIcon";
+export { default as IAMPoliciesIcon } from "./IAMPoliciesIcon";
+export { default as TraceIcon } from "./TraceIcon";
+export { default as LambdaNotificationsIcon } from "./LambdaNotificationsIcon";
+export { default as ConfigurationsListIcon } from "./ConfigurationsListIcon";
+export { default as ClustersIcon } from "./ClustersIcon";
+export { default as MirroringIcon } from "./MirroringIcon";
+export { default as WarpIcon } from "./WarpIcon";
+export { default as WatchIcon } from "./WatchIcon";

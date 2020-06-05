@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2019 MinIO, Inc.
+// Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,22 +14,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import React from "react";
-import {SvgIcon} from "@material-ui/core";
+import { SvgIcon } from "@material-ui/core";
 class BucketsIcon extends React.Component {
-    render() {
-        return (<SvgIcon>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-                <title>ic_h_buckets</title>
-                <g id="Layer_2" data-name="Layer 2">
-                    <g id="Layer_1-2" data-name="Layer 1">
-                        <polygon className="cls-1" points="13.428 16 2.572 16 0 0 16 0 13.428 16"/>
-                    </g>
-                </g>
-            </svg>
-        </SvgIcon>)
-    }
+  render() {
+    return (
+      <SvgIcon>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
+          <path d="M8.392,10H1.608L0,0H10Z" />
+        </svg>
+      </SvgIcon>
+    );
+  }
 }
 
 export default BucketsIcon;

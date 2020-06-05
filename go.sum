@@ -406,7 +406,6 @@ github.com/minio/lsync v1.0.1 h1:AVvILxA976xc27hstd1oR+X9PQG0sPSom1MNb1ImfUs=
 github.com/minio/lsync v1.0.1/go.mod h1:tCFzfo0dlvdGl70IT4IAK/5Wtgb0/BrTmo/jE8pArKA=
 github.com/minio/mc v0.0.0-20200515235434-3b479cf92ed6 h1:2SrKe2vLDLwvnYkYrJelrzyGW8t/8HCbr9yDsw+8XSI=
 github.com/minio/mc v0.0.0-20200515235434-3b479cf92ed6/go.mod h1:U3Jgk0bcSjn+QPUMisrS6nxCWOoQ6rYWSvLCB30apuU=
-github.com/minio/mc v0.0.0-20200519213124-bf731558cda0 h1:D497vXgHka7/Z3oYFEbFIfAEdWBHbfad8KZ5grSROI0=
 github.com/minio/minio v0.0.0-20200421050159-282c9f790a03/go.mod h1:zBua5AiljGs1Irdl2XEyiJjvZVCVDIG8gjozzRBcVlw=
 github.com/minio/minio v0.0.0-20200516011754-9cac385aecdb h1:CQC7D3UDnUycuxhwImcVhMSLet/RbShosAnYcvMtEB8=
 github.com/minio/minio v0.0.0-20200516011754-9cac385aecdb/go.mod h1:wymaytM/HELuwdz7BGZHmQ3XKq2SxPsLeGxyOCaCLiA=
