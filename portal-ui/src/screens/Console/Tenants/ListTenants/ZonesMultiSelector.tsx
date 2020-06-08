@@ -76,7 +76,7 @@ const ZonesMultiSelector = ({
   onChange,
   classes,
 }: IZonesMultiSelector) => {
-  const defaultZone: IZone = { name: "", servers: 0 };
+  const defaultZone: IZone = { name: "", servers: 0, capacity: "", volumes: 0 };
 
   const [currentElements, setCurrentElements] = useState<IZone[]>([
     { ...defaultZone },

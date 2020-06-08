@@ -17,6 +17,9 @@
 export interface IZone {
   name: string;
   servers: number;
+  // computed
+  capacity: string;
+  volumes: number;
 }
 
 export interface IVolumeConfiguration {
@@ -32,6 +35,8 @@ export interface ITenant {
   creation_date: Date;
   volume_size: number;
   volume_count: number;
+  volumes_per_server: number;
+  zones: IZone[];
   // computed
   capacity: string;
 }
