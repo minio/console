@@ -62,7 +62,7 @@ Additionally, you can create policies to limit the privileges for `mcs` users, f
 	"Version": "2012-10-17",
 	"Statement": [{
 			"Action": [
-				"admin:ServerInfo",
+				"admin:ServerInfo"
 			],
 			"Effect": "Allow",
 			"Sid": ""
