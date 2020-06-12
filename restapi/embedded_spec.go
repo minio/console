@@ -754,6 +754,40 @@ func init() {
         }
       }
     },
+    "/login/mkube": {
+      "post": {
+        "security": [],
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Login to Mkube.",
+        "operationId": "LoginMkube",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/loginMkubeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful login.",
+            "schema": {
+              "$ref": "#/definitions/loginResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/login/oauth2/auth": {
       "post": {
         "security": [],
@@ -1719,10 +1753,22 @@ func init() {
           "type": "string",
           "enum": [
             "form",
-            "redirect"
+            "redirect",
+            "service-account"
           ]
         },
         "redirect": {
+          "type": "string"
+        }
+      }
+    },
+    "loginMkubeRequest": {
+      "type": "object",
+      "required": [
+        "jwt"
+      ],
+      "properties": {
+        "jwt": {
           "type": "string"
         }
       }
@@ -2869,6 +2915,40 @@ func init() {
         }
       }
     },
+    "/login/mkube": {
+      "post": {
+        "security": [],
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Login to Mkube.",
+        "operationId": "LoginMkube",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/loginMkubeRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful login.",
+            "schema": {
+              "$ref": "#/definitions/loginResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/login/oauth2/auth": {
       "post": {
         "security": [],
@@ -3834,10 +3914,22 @@ func init() {
           "type": "string",
           "enum": [
             "form",
-            "redirect"
+            "redirect",
+            "service-account"
           ]
         },
         "redirect": {
+          "type": "string"
+        }
+      }
+    },
+    "loginMkubeRequest": {
+      "type": "object",
+      "required": [
+        "jwt"
+      ],
+      "properties": {
+        "jwt": {
           "type": "string"
         }
       }

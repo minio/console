@@ -17,5 +17,5 @@
 package acl
 
 const (
-	McsOperatorOnly = "MCS_OPERATOR_ONLY"
+	McsmKubeAdminOnly = "MCS_MKUBE_ADMIN_ONLY"
 )

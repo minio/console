@@ -22,8 +22,8 @@ import (
 	"github.com/minio/minio/pkg/env"
 )
 
-// GetOperatorOnly gets mcs operator mode status set on env variable
-//or default one
-func GetOperatorOnly() string {
-	return strings.ToLower(env.Get(McsOperatorOnly, "off"))
+// GetOperatorOnly gets MCS mkube admin mode status set on env variable
+// or default one
+func GetOperatorOnly() bool {
+	return strings.ToLower(env.Get(McsmKubeAdminOnly, "off")) == "on"
 }

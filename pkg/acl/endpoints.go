@@ -286,7 +286,7 @@ func actionsStringToActionSet(actions []string) iampolicy.ActionSet {
 func GetAuthorizedEndpoints(actions []string) []string {
 	rangeTake := endpointRules
 
-	if operatorOnly == "on" {
+	if operatorOnly {
 		rangeTake = operatorRules
 	}
 

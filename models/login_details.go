@@ -37,7 +37,7 @@ import (
 type LoginDetails struct {
 
 	// login strategy
-	// Enum: [form redirect]
+	// Enum: [form redirect service-account]
 	LoginStrategy string `json:"loginStrategy,omitempty"`
 
 	// redirect
@@ -62,7 +62,7 @@ var loginDetailsTypeLoginStrategyPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["form","redirect"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["form","redirect","service-account"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -77,6 +77,9 @@ const (
 
 	// LoginDetailsLoginStrategyRedirect captures enum value "redirect"
 	LoginDetailsLoginStrategyRedirect string = "redirect"
+
+	// LoginDetailsLoginStrategyServiceAccount captures enum value "service-account"
+	LoginDetailsLoginStrategyServiceAccount string = "service-account"
 )
 
 // prop value enum

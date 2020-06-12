@@ -15,6 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 export interface ILoginDetails {
-  loginStrategy: string;
+  loginStrategy: loginStrategyType;
   redirect: string;
+}
+
+export enum loginStrategyType {
+  unknown = "unknown",
+  form = "form",
+  redirect = "redirect",
+  serviceAccount = "service-account",
 }

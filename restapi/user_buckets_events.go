@@ -23,6 +23,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
 	"github.com/minio/mcs/models"
+	"github.com/minio/mcs/pkg/auth"
 	"github.com/minio/mcs/restapi/operations"
 	"github.com/minio/mcs/restapi/operations/user_api"
 	"github.com/minio/minio-go/v6"
@@ -181,7 +182,11 @@ func createBucketEvent(client MCS3Client, arn string, notificationEvents []model
 
 // getCreateBucketEventsResponse calls createBucketEvent to add a bucket event notification
 func getCreateBucketEventsResponse(sessionID, bucketName string, eventReq *models.BucketEventRequest) error {
-	s3Client, err := newS3BucketClient(sessionID, bucketName)
+	claims, err := auth.JWTAuthenticate(sessionID)
+	if err != nil {
+		return err
+	}
+	s3Client, err := newS3BucketClient(claims, bucketName)
 	if err != nil {
 		log.Println("error creating S3Client:", err)
 		return err
@@ -217,7 +222,11 @@ func joinNotificationEvents(events []models.NotificationEventType) string {
 
 // getDeleteBucketEventsResponse calls deleteBucketEventNotification() to delete a bucket event notification
 func getDeleteBucketEventsResponse(sessionID, bucketName string, arn string, events []models.NotificationEventType, prefix, suffix *string) error {
-	s3Client, err := newS3BucketClient(sessionID, bucketName)
+	claims, err := auth.JWTAuthenticate(sessionID)
+	if err != nil {
+		return err
+	}
+	s3Client, err := newS3BucketClient(claims, bucketName)
 	if err != nil {
 		log.Println("error creating S3Client:", err)
 		return err

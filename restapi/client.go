@@ -25,9 +25,11 @@ import (
 
 	mc "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
+	"github.com/minio/mcs/pkg/acl"
 	"github.com/minio/mcs/pkg/auth"
 	xjwt "github.com/minio/mcs/pkg/auth/jwt"
 	"github.com/minio/mcs/pkg/auth/ldap"
+	"github.com/minio/mcs/pkg/auth/mkube"
 	"github.com/minio/minio-go/v6"
 	"github.com/minio/minio-go/v6/pkg/credentials"
 )
@@ -120,7 +122,7 @@ func (c mcS3Client) watch(options mc.WatchOptions) (*mc.WatchObject, *probe.Erro
 }
 
 // MCSCredentials interface with all functions to be implemented
-// by mock when testing, it should include all needed minioCredentials.Credentials api calls
+// by mock when testing, it should include all needed mcsCredentials.Credentials api calls
 // that are used within this project.
 type MCSCredentials interface {
 	Get() (credentials.Value, error)
@@ -129,17 +131,17 @@ type MCSCredentials interface {
 
 // Interface implementation
 type mcsCredentials struct {
-	minioCredentials *credentials.Credentials
+	mcsCredentials *credentials.Credentials
 }
 
 // implements *Credentials.Get()
 func (c mcsCredentials) Get() (credentials.Value, error) {
-	return c.minioCredentials.Get()
+	return c.mcsCredentials.Get()
 }
 
 // implements *Credentials.Expire()
 func (c mcsCredentials) Expire() {
-	c.minioCredentials.Expire()
+	c.mcsCredentials.Expire()
 }
 
 // mcsSTSAssumeRole it's a STSAssumeRole wrapper, in general
@@ -159,22 +161,31 @@ func (s mcsSTSAssumeRole) IsExpired() bool {
 
 // STSClient contains http.client configuration need it by STSAssumeRole
 var STSClient = PrepareSTSClient()
+var MinioEndpoint = getMinIOServer()
+var MkubeEndpoint = mkube.GetMkubeEndpoint()
 
 func newMcsCredentials(accessKey, secretKey, location string) (*credentials.Credentials, error) {
-	mcsEndpoint := getMinIOServer()
-	if mcsEndpoint == "" {
-		return nil, errors.New("endpoint cannot be empty for AssumeRoleSTS")
-	}
-	if accessKey == "" || secretKey == "" {
-		return nil, errors.New("creredentials access/secretkey is mandatory for AssumeRoleSTS")
-	}
-
 	// Future authentication methods can be added under this switch statement
 	switch {
+	// MKUBE authentication for MCS
+	case acl.GetOperatorOnly():
+		{
+			if MkubeEndpoint == "" {
+				return nil, errors.New("endpoint cannot be empty for Mkube")
+			}
+			creds, err := auth.GetMcsCredentialsFromMkube(secretKey)
+			if err != nil {
+				return nil, err
+			}
+			return creds, nil
+		}
 	// LDAP authentication for MCS
 	case ldap.GetLDAPEnabled():
 		{
-			creds, err := auth.GetMcsCredentialsFromLDAP(mcsEndpoint, accessKey, secretKey)
+			if MinioEndpoint == "" {
+				return nil, errors.New("endpoint cannot be empty for AssumeRoleSTS")
+			}
+			creds, err := auth.GetMcsCredentialsFromLDAP(MinioEndpoint, accessKey, secretKey)
 			if err != nil {
 				return nil, err
 			}
@@ -183,6 +194,9 @@ func newMcsCredentials(accessKey, secretKey, location string) (*credentials.Cred
 	// default authentication for MCS is via STS (Security Token Service) against MinIO
 	default:
 		{
+			if MinioEndpoint == "" || accessKey == "" || secretKey == "" {
+				return nil, errors.New("creredentials endpont, access and secretkey are mandatory for AssumeRoleSTS")
+			}
 			opts := credentials.STSAssumeRoleOptions{
 				AccessKey:       accessKey,
 				SecretKey:       secretKey,
@@ -191,7 +205,7 @@ func newMcsCredentials(accessKey, secretKey, location string) (*credentials.Cred
 			}
 			stsAssumeRole := &credentials.STSAssumeRole{
 				Client:      STSClient,
-				STSEndpoint: mcsEndpoint,
+				STSEndpoint: MinioEndpoint,
 				Options:     opts,
 			}
 			mcsSTSWrapper := mcsSTSAssumeRole{stsAssumeRole: stsAssumeRole}
@@ -209,7 +223,7 @@ func GetClaimsFromJWT(jwt string) (*auth.DecryptedClaims, error) {
 	return claims, nil
 }
 
-// getMcsCredentialsFromJWT returns the *minioCredentials.Credentials associated to the
+// getMcsCredentialsFromJWT returns the *mcsCredentials.Credentials associated to the
 // provided jwt, this is useful for running the Expire() or IsExpired() operations
 func getMcsCredentialsFromJWT(jwt string) (*credentials.Credentials, error) {
 	claims, err := GetClaimsFromJWT(jwt)
@@ -220,7 +234,7 @@ func getMcsCredentialsFromJWT(jwt string) (*credentials.Credentials, error) {
 	return creds, nil
 }
 
-// newMinioClient creates a new MinIO client based on the minioCredentials extracted
+// newMinioClient creates a new MinIO client based on the mcsCredentials extracted
 // from the provided jwt
 func newMinioClient(jwt string) (*minio.Client, error) {
 	creds, err := getMcsCredentialsFromJWT(jwt)
@@ -239,17 +253,16 @@ func newMinioClient(jwt string) (*minio.Client, error) {
 }
 
 // newS3BucketClient creates a new mc S3Client to talk to the server based on a bucket
-func newS3BucketClient(jwt string, bucketName string) (*mc.S3Client, error) {
+func newS3BucketClient(claims *auth.DecryptedClaims, bucketName string) (*mc.S3Client, error) {
 	endpoint := getMinIOServer()
 	useSSL := getMinIOEndpointIsSecure()
 
-	claims, err := auth.JWTAuthenticate(jwt)
-	if err != nil {
-		return nil, err
-	}
-
 	if strings.TrimSpace(bucketName) != "" {
 		endpoint += fmt.Sprintf("/%s", bucketName)
+	}
+
+	if claims == nil {
+		return nil, fmt.Errorf("the provided credentials are invalid")
 	}
 
 	s3Config := newS3Config(endpoint, claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken, !useSSL)
@@ -269,7 +282,7 @@ func newS3BucketClient(jwt string, bucketName string) (*mc.S3Client, error) {
 // parameters.
 func newS3Config(endpoint, accessKey, secretKey, sessionToken string, isSecure bool) *mc.Config {
 	// We have a valid alias and hostConfig. We populate the
-	// minioCredentials from the match found in the config file.
+	// mcsCredentials from the match found in the config file.
 	s3Config := new(mc.Config)
 
 	s3Config.AppName = "mcs" // TODO: make this a constant

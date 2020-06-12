@@ -26,9 +26,11 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net/http"
 	"strings"
 
 	jwtgo "github.com/dgrijalva/jwt-go"
+	"github.com/go-openapi/swag"
 	xjwt "github.com/minio/mcs/pkg/auth/jwt"
 	"github.com/minio/minio-go/v6/pkg/credentials"
 	"github.com/minio/minio/cmd"
@@ -181,4 +183,43 @@ func decrypt(data []byte) ([]byte, error) {
 		return nil, err
 	}
 	return plaintext, nil
+}
+
+// GetTokenFromRequest returns a token from a http Request
+// either defined on a cookie `token` or on Authorization header.
+//
+// Authorization Header needs to be like "Authorization Bearer <jwt_token>"
+func GetTokenFromRequest(r *http.Request) (*string, error) {
+	// Get Auth token
+	var reqToken string
+
+	// Token might come either as a Cookie or as a Header
+	// if not set in cookie, check if it is set on Header.
+	tokenCookie, err := r.Cookie("token")
+	if err != nil {
+		headerToken := r.Header.Get("Authorization")
+		// reqToken should come as "Bearer <token>"
+		splitHeaderToken := strings.Split(headerToken, "Bearer")
+		if len(splitHeaderToken) <= 1 {
+			return nil, errNoAuthToken
+		}
+		reqToken = strings.TrimSpace(splitHeaderToken[1])
+	} else {
+		reqToken = strings.TrimSpace(tokenCookie.Value)
+	}
+	return swag.String(reqToken), nil
+}
+
+func GetClaimsFromTokenInRequest(req *http.Request) (*DecryptedClaims, error) {
+	sessionID, err := GetTokenFromRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	// Perform decryption of the JWT, if MCS is able to decrypt the JWT that means a valid session
+	// was used in the first place to get it
+	claims, err := JWTAuthenticate(*sessionID)
+	if err != nil {
+		return nil, err
+	}
+	return claims, nil
 }

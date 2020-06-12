@@ -18,8 +18,8 @@ require (
 	github.com/json-iterator/go v1.1.9
 	github.com/minio/cli v1.22.0
 	github.com/minio/mc v0.0.0-20200515235434-3b479cf92ed6
-	github.com/minio/minio v0.0.0-20200516011754-9cac385aecdb
-	github.com/minio/minio-go/v6 v6.0.56-0.20200502013257-a81c8c13cc3f
+	github.com/minio/minio v0.0.0-20200603201854-5686a7e27319
+	github.com/minio/minio-go/v6 v6.0.56
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/stretchr/testify v1.5.1
