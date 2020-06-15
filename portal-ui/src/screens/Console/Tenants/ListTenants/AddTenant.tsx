@@ -72,6 +72,7 @@ const AddTenant = ({
   const [addSending, setAddSending] = useState<boolean>(false);
   const [addError, setAddError] = useState<string>("");
   const [tenantName, setTenantName] = useState<string>("");
+  const [namespace, setNamespace] = useState<string>("");
   const [imageName, setImageName] = useState<string>("");
   const [serviceName, setServiceName] = useState<string>("");
   const [zones, setZones] = useState<IZone[]>([]);
@@ -142,18 +143,13 @@ const AddTenant = ({
 
   useEffect(() => {
     if (addSending) {
-      let cleanZones: IZone[] = [];
-      for (let zone of zones) {
-        if (zone.name !== "") {
-          cleanZones.push(zone);
-        }
-      }
+      const cleanZones = zones.filter((zone) => {
+        return zone.name !== "";
+      });
 
       const commonValidation = commonFormValidation(validationElements);
 
       setValidationErrors(commonValidation);
-
-      console.log(commonValidation);
 
       if (Object.keys(commonValidation).length === 0) {
         api
@@ -171,6 +167,7 @@ const AddTenant = ({
               storage_class: volumeConfiguration.storage_class,
             },
             zones: cleanZones,
+            namespace,
           })
           .then(() => {
             setAddSending(false);
@@ -294,6 +291,17 @@ const AddTenant = ({
                 label="Service Name"
                 value={serviceName}
                 error={validationErrors["service_name"] || ""}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="namespace"
+                name="namespace"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setNamespace(e.target.value);
+                }}
+                label="Namespace"
+                value={namespace}
               />
             </Grid>
             <Grid item xs={12}>
