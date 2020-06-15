@@ -18,12 +18,14 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import get from "lodash/get";
 import { InputLabel, Tooltip } from "@material-ui/core";
+import IconButton from "@material-ui/core/IconButton";
 import HelpIcon from "@material-ui/icons/Help";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import {
   fieldBasic,
   tooltipHelper,
 } from "../../Common/FormComponents/common/styleLibrary";
+import DeleteIcon from "../../../../icons/DeleteIcon";
 import { IZone } from "./types";
 
 interface IZonesMultiSelector {
@@ -37,7 +39,7 @@ interface IZonesMultiSelector {
 
 const gridBasic = {
   display: "grid",
-  gridTemplateColumns: "calc(50% - 4px) calc(50% - 4px)",
+  gridTemplateColumns: "calc(50% - 20px) calc(50% - 20px) 30px",
   gridGap: 8,
 };
 
@@ -65,6 +67,13 @@ const styles = (theme: Theme) =>
     inputTitles: {
       ...gridBasic,
       marginBottom: 5,
+    },
+    deleteIconContainer: {
+      alignSelf: "center",
+      "& button": {
+        padding: 0,
+        marginBottom: 10,
+      },
     },
   });
 
@@ -122,6 +131,16 @@ const ZonesMultiSelector = ({
     setCurrentElements(updatedElement);
   };
 
+  const deleteElement = (zoneToRemove: number) => {
+    const zonesClone = [...currentElements];
+
+    const newArray = zonesClone
+      .slice(0, zoneToRemove)
+      .concat(zonesClone.slice(zoneToRemove + 1, zonesClone.length));
+
+    setCurrentElements(newArray);
+  };
+
   const inputs = currentElements.map((element, index) => {
     return (
       <React.Fragment key={`zone-${name}-${index.toString()}`}>
@@ -147,6 +166,17 @@ const ZonesMultiSelector = ({
             index={index}
             key={`Zones-${name}-${index.toString()}-servers`}
           />
+        </div>
+        <div className={classes.deleteIconContainer}>
+          <IconButton
+            color="primary"
+            onClick={() => {
+              deleteElement(index);
+            }}
+            disabled={index === currentElements.length - 1}
+          >
+            <DeleteIcon />
+          </IconButton>
         </div>
       </React.Fragment>
     );
