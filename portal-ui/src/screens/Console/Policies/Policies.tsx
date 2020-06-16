@@ -14,114 +14,114 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { useState, useEffect } from "react";
+import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
 import { Button } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import { Policy, PolicyList } from "./types";
-import AddPolicy from "./AddPolicy";
-import DeletePolicy from "./DeletePolicy";
-import api from "../../../common/api";
 import { CreateIcon } from "../../../icons";
 import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
+import AddPolicy from "./AddPolicy";
+import DeletePolicy from "./DeletePolicy";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
+import api from "../../../common/api";
 
 const styles = (theme: Theme) =>
   createStyles({
     seeMore: {
-      marginTop: theme.spacing(3)
+      marginTop: theme.spacing(3),
     },
     paper: {
       display: "flex",
       overflow: "auto",
-      flexDirection: "column"
+      flexDirection: "column",
     },
 
     addSideBar: {
       width: "320px",
-      padding: "20px"
+      padding: "20px",
     },
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     tableToolbar: {
       paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0)
+      paddingRight: theme.spacing(0),
     },
     minTableHeader: {
       color: "#393939",
       "& tr": {
         "& th": {
-          fontWeight: "bold"
-        }
-      }
+          fontWeight: "bold",
+        },
+      },
     },
     actionsTray: {
       textAlign: "right",
       "& button": {
-        marginLeft: 10
-      }
+        marginLeft: 10,
+      },
     },
     searchField: {
       background: "#FFFFFF",
       padding: 12,
       borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012"
-    }
+      boxShadow: "0px 3px 6px #00000012",
+    },
   });
 
 interface IPoliciesProps {
   classes: any;
 }
 
-interface IPoliciesState {
-  records: Policy[];
-  totalRecords: number;
-  loading: boolean;
-  error: string;
-  deleteError: string;
-  addScreenOpen: boolean;
-  page: number;
-  rowsPerPage: number;
-  deleteOpen: boolean;
-  selectedPolicy: string;
-  filterPolicies: string;
-  policyEdit: any;
-}
+const Policies = ({ classes }: IPoliciesProps) => {
+  const [records, setRecords] = useState<Policy[]>([]);
+  const [totalRecords, setTotalRecords] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(0);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+  const [selectedPolicy, setSelectedPolicy] = useState<string>("");
+  const [filterPolicies, setFilterPolicies] = useState<string>("");
+  const [policyEdit, setPolicyEdit] = useState<any>(null);
 
-class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
-  state: IPoliciesState = {
-    records: [],
-    totalRecords: 0,
-    loading: false,
-    error: "",
-    deleteError: "",
-    addScreenOpen: false,
-    page: 0,
-    rowsPerPage: 10,
-    deleteOpen: false,
-    selectedPolicy: "",
-    filterPolicies: "",
-    policyEdit: null
-  };
+  useEffect(() => {
+    fetchRecords();
+  }, []);
 
-  fetchRecords() {
-    this.setState({ loading: true }, () => {
-      const { page, rowsPerPage } = this.state;
+  useEffect(() => {
+    if (loading) {
       const offset = page * rowsPerPage;
       api
         .invoke("GET", `/api/v1/policies?offset=${offset}&limit=${rowsPerPage}`)
         .then((res: PolicyList) => {
-          this.setState({
-            loading: false,
-            records: res.policies,
-            totalRecords: res.total,
-            error: ""
+          const policies = get(res, "policies", []);
+          const total = get(res, "total", 0);
+
+          policies.sort((pa, pb) => {
+            if (pa.name > pb.name) {
+              return 1;
+            }
+
+            if (pa.name < pb.name) {
+              return -1;
+            }
+
+            return 0;
           });
+
+          setLoading(false);
+          setRecords(policies);
+          setTotalRecords(total);
+          setError("");
+
           // if we get 0 results, and page > 0 , go down 1 page
           if (
             (res.policies === undefined ||
@@ -130,187 +130,166 @@ class Policies extends React.Component<IPoliciesProps, IPoliciesState> {
             page > 0
           ) {
             const newPage = page - 1;
-            this.setState({ page: newPage }, () => {
-              this.fetchRecords();
-            });
+
+            setPage(newPage);
+            fetchRecords();
           }
         })
-        .catch(err => {
-          this.setState({ loading: false, error: err });
+        .catch((err) => {
+          setLoading(false);
+          setError(err);
         });
-    });
-  }
+    }
+  }, [
+    loading,
+    setLoading,
+    setRecords,
+    setTotalRecords,
+    setError,
+    setPage,
+    setError,
+  ]);
 
-  closeAddModalAndRefresh() {
-    this.setState({ addScreenOpen: false }, () => {
-      this.fetchRecords();
-    });
-  }
+  const fetchRecords = () => {
+    setLoading(true);
+  };
 
-  closeDeleteModalAndRefresh(refresh: boolean) {
-    this.setState({ deleteOpen: false }, () => {
-      if (refresh) {
-        this.fetchRecords();
-      }
-    });
-  }
+  const closeAddModalAndRefresh = (refresh: boolean) => {
+    setAddScreenOpen(false);
 
-  policyFilter(): void {}
+    if (refresh) {
+      fetchRecords();
+    }
+  };
 
-  componentDidMount(): void {
-    this.fetchRecords();
-  }
+  const closeDeleteModalAndRefresh = (refresh: boolean) => {
+    setDeleteOpen(false);
 
-  render() {
-    const { classes } = this.props;
-    const {
-      records,
-      totalRecords,
-      addScreenOpen,
-      loading,
-      page,
-      rowsPerPage,
-      deleteOpen,
-      selectedPolicy,
-      filterPolicies,
-      policyEdit
-    } = this.state;
+    if (refresh) {
+      fetchRecords();
+    }
+  };
 
-    const offset = page * rowsPerPage;
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
 
-    const handleChangePage = (event: unknown, newPage: number) => {
-      this.setState({ page: newPage });
-    };
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const rPP = parseInt(event.target.value, 10);
+    setPage(0);
+    setRowsPerPage(rPP);
+  };
 
-    const handleChangeRowsPerPage = (
-      event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-      const rPP = parseInt(event.target.value, 10);
-      this.setState({ page: 0, rowsPerPage: rPP });
-    };
+  const confirmDeletePolicy = (policy: string) => {
+    setDeleteOpen(true);
+    setSelectedPolicy(policy);
+  };
 
-    const confirmDeletePolicy = (policy: string) => {
-      this.setState({ deleteOpen: true, selectedPolicy: policy });
-    };
+  const viewAction = (row: any) => {
+    setAddScreenOpen(true);
+    setPolicyEdit(row);
+  };
 
-    const viewAction = (row: any) => {
-      this.setState({
-        addScreenOpen: true,
-        policyEdit: row
-      });
-    };
+  const tableActions = [
+    { type: "view", onClick: viewAction },
+    { type: "delete", onClick: confirmDeletePolicy, sendOnlyId: true },
+  ];
 
-    const tableActions = [
-      { type: "view", onClick: viewAction },
-      { type: "delete", onClick: confirmDeletePolicy, sendOnlyId: true }
-    ];
+  const filteredRecords = records.filter((elementItem) =>
+    elementItem.name.includes(filterPolicies)
+  );
 
-    const filteredRecords = records
-      .slice(offset, offset + rowsPerPage)
-      .filter((b: Policy) => {
-        if (filterPolicies === "") {
-          return true;
-        } else {
-          if (b.name.indexOf(filterPolicies) >= 0) {
-            return true;
-          } else {
-            return false;
-          }
-        }
-      });
+  const beginRecord = page * rowsPerPage;
+  const endRecords = beginRecord + rowsPerPage;
 
-    return (
-      <React.Fragment>
-        {addScreenOpen && (
-          <AddPolicy
-            open={addScreenOpen}
-            closeModalAndRefresh={() => {
-              this.closeAddModalAndRefresh();
-            }}
-            policyEdit={policyEdit}
-          />
-        )}
-        {deleteOpen && (
-          <DeletePolicy
-            deleteOpen={deleteOpen}
-            selectedPolicy={selectedPolicy}
-            closeDeleteModalAndRefresh={(refresh: boolean) => {
-              this.closeDeleteModalAndRefresh(refresh);
-            }}
-          />
-        )}
-        <Grid container>
-          <Grid item xs={12}>
-            <Typography variant="h6">IAM Policies</Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12} className={classes.actionsTray}>
-            <TextField
-              placeholder="Search Policies"
-              className={classes.searchField}
-              id="search-resource"
-              label=""
-              onChange={val => {
-                this.setState({
-                  filterPolicies: val.target.value
-                });
-              }}
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                )
-              }}
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<CreateIcon />}
-              onClick={() => {
-                this.setState({
-                  addScreenOpen: true,
-                  policyEdit: null
-                });
-              }}
-            >
-              Create Policy
-            </Button>
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12}>
-            <TableWrapper
-              itemActions={tableActions}
-              columns={[{ label: "Name", elementKey: "name" }]}
-              isLoading={loading}
-              records={filteredRecords}
-              entityName="Policies"
-              idField="name"
-              paginatorConfig={{
-                rowsPerPageOptions: [5, 10, 25],
-                colSpan: 3,
-                count: totalRecords,
-                rowsPerPage: rowsPerPage,
-                page: page,
-                SelectProps: {
-                  inputProps: { "aria-label": "rows per page" },
-                  native: true
-                },
-                onChangePage: handleChangePage,
-                onChangeRowsPerPage: handleChangeRowsPerPage,
-                ActionsComponent: MinTablePaginationActions
-              }}
-            />
-          </Grid>
+  const paginatedRecords = filteredRecords.slice(beginRecord, endRecords);
+
+  return (
+    <React.Fragment>
+      {addScreenOpen && (
+        <AddPolicy
+          open={addScreenOpen}
+          closeModalAndRefresh={closeAddModalAndRefresh}
+          policyEdit={policyEdit}
+        />
+      )}
+      {deleteOpen && (
+        <DeletePolicy
+          deleteOpen={deleteOpen}
+          selectedPolicy={selectedPolicy}
+          closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
+        />
+      )}
+      <Grid container>
+        <Grid item xs={12}>
+          <Typography variant="h6">IAM Policies</Typography>
         </Grid>
-      </React.Fragment>
-    );
-  }
-}
+        <Grid item xs={12}>
+          <br />
+        </Grid>
+        <Grid item xs={12} className={classes.actionsTray}>
+          <TextField
+            placeholder="Search Policies"
+            className={classes.searchField}
+            id="search-resource"
+            label=""
+            onChange={(val) => {
+              setPage(0);
+              setFilterPolicies(val.target.value);
+            }}
+            InputProps={{
+              disableUnderline: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<CreateIcon />}
+            onClick={() => {
+              setAddScreenOpen(true);
+              setPolicyEdit(null);
+            }}
+          >
+            Create Policy
+          </Button>
+        </Grid>
+        <Grid item xs={12}>
+          <br />
+        </Grid>
+        <Grid item xs={12}>
+          <TableWrapper
+            itemActions={tableActions}
+            columns={[{ label: "Name", elementKey: "name" }]}
+            isLoading={loading}
+            records={paginatedRecords}
+            entityName="Policies"
+            idField="name"
+            paginatorConfig={{
+              rowsPerPageOptions: [5, 10, 25],
+              colSpan: 3,
+              count: filteredRecords.length,
+              rowsPerPage: rowsPerPage,
+              page: page,
+              SelectProps: {
+                inputProps: { "aria-label": "rows per page" },
+                native: true,
+              },
+              onChangePage: handleChangePage,
+              onChangeRowsPerPage: handleChangeRowsPerPage,
+              ActionsComponent: MinTablePaginationActions,
+            }}
+          />
+        </Grid>
+      </Grid>
+    </React.Fragment>
+  );
+};
 
 export default withStyles(styles)(Policies);
