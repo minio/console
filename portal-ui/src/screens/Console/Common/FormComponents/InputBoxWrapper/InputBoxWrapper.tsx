@@ -44,6 +44,9 @@ interface InputBoxProps {
   tooltip?: string;
   autoComplete?: string;
   index?: number;
+  error?: string;
+  required?: boolean;
+  placeholder?: string;
 }
 
 const styles = (theme: Theme) =>
@@ -52,6 +55,14 @@ const styles = (theme: Theme) =>
     ...tooltipHelper,
     textBoxContainer: {
       flexGrow: 1,
+      position: "relative",
+    },
+    errorState: {
+      color: "#b53b4b",
+      fontSize: 14,
+      position: "absolute",
+      top: 7,
+      right: 7,
     },
   });
 
@@ -65,6 +76,10 @@ const inputStyles = makeStyles((theme: Theme) =>
       padding: "11px 20px",
       color: "#393939",
       fontSize: 14,
+    },
+    error: {
+      color: "#b53b4b",
+      boxShadow: "inset 0px 0px 1px 1px #b53b4b",
     },
   })
 );
@@ -92,14 +107,31 @@ const InputBoxWrapper = ({
   multiline = false,
   tooltip = "",
   index = 0,
+  error = "",
+  required = false,
+  placeholder = "",
   classes,
 }: InputBoxProps) => {
   return (
     <React.Fragment>
-      <Grid item xs={12} className={classes.fieldContainer}>
+      <Grid
+        item
+        xs={12}
+        className={`${classes.fieldContainer} ${
+          error !== "" ? classes.errorInField : ""
+        }`}
+      >
         {label !== "" && (
-          <InputLabel htmlFor={id} className={classes.inputLabel}>
-            <span>{label}</span>
+          <InputLabel
+            htmlFor={id}
+            className={`${error !== "" ? classes.fieldLabelError : ""} ${
+              classes.inputLabel
+            }`}
+          >
+            <span>
+              {label}
+              {required ? "*" : ""}
+            </span>
             {tooltip !== "" && (
               <div className={classes.tooltipContainer}>
                 <Tooltip title={tooltip} placement="top-start">
@@ -112,7 +144,6 @@ const InputBoxWrapper = ({
 
         <div className={classes.textBoxContainer}>
           <InputField
-            className={classes.boxDesign}
             id={id}
             name={name}
             variant="outlined"
@@ -124,6 +155,9 @@ const InputBoxWrapper = ({
             multiline={multiline}
             autoComplete={autoComplete}
             inputProps={{ "data-index": index }}
+            error={error !== ""}
+            helperText={error}
+            placeholder={placeholder}
           />
         </div>
       </Grid>
