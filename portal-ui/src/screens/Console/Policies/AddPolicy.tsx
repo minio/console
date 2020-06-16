@@ -51,7 +51,7 @@ const styles = (theme: Theme) =>
 interface IAddPolicyProps {
   classes: any;
   open: boolean;
-  closeModalAndRefresh: () => void;
+  closeModalAndRefresh: (refresh: boolean) => void;
   policyEdit: Policy;
 }
 
@@ -89,7 +89,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
               addError: "",
             },
             () => {
-              this.props.closeModalAndRefresh();
+              this.props.closeModalAndRefresh(true);
             }
           );
         })
@@ -120,7 +120,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
         modalOpen={open}
         onClose={() => {
           this.setState({ addError: "" }, () => {
-            this.props.closeModalAndRefresh();
+            this.props.closeModalAndRefresh(false);
           });
         }}
         title={`${policyEdit ? "Info" : "Create"} Policy`}
