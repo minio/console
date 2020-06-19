@@ -33,6 +33,9 @@ export const fieldBasic = {
       alignItems: "center",
     },
   },
+  fieldLabelError: {
+    paddingBottom: 22,
+  },
   fieldContainer: {
     display: "flex",
     alignItems: "center",

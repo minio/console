@@ -28,6 +28,10 @@ import CheckboxWrapper from "../../Common/FormComponents/CheckboxWrapper/Checkbo
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { k8sfactorForDropdown } from "../../../../common/utils";
 import ZonesMultiSelector from "./ZonesMultiSelector";
+import {
+  commonFormValidation,
+  IValidation,
+} from "../../../../utils/validationFunctions";
 
 interface IAddTenantProps {
   open: boolean;
@@ -50,6 +54,7 @@ const styles = (theme: Theme) =>
     },
     sizeFactorContainer: {
       marginLeft: 8,
+      alignSelf: "flex-start" as const,
     },
     ...modalBasic,
   });
@@ -81,10 +86,59 @@ const AddTenant = ({
   const [enableSSL, setEnableSSL] = useState<boolean>(false);
   const [sizeFactor, setSizeFactor] = useState<string>("Gi");
   const [storageClasses, setStorageClassesList] = useState<Opts[]>([]);
+  const [validationErrors, setValidationErrors] = useState<any>({});
 
   useEffect(() => {
     fetchStorageClassList();
   }, []);
+
+  const validationElements: IValidation[] = [
+    {
+      fieldKey: "tenant-name",
+      required: true,
+      pattern: /^[a-z0-9-]{3,63}$/,
+      customPatternMessage:
+        "Name only can contain lowercase letters, numbers and '-'. Min. Length: 3",
+      value: tenantName,
+    },
+    {
+      fieldKey: "image",
+      required: false,
+      value: imageName,
+    },
+    {
+      fieldKey: "service_name",
+      required: false,
+      value: serviceName,
+    },
+    {
+      fieldKey: "volumes_per_server",
+      required: true,
+      value: volumesPerServer.toString(10),
+    },
+    {
+      fieldKey: "volume_size",
+      required: true,
+      value: volumeConfiguration.size,
+    },
+    {
+      fieldKey: "access_key",
+      required: false,
+      value: accessKey,
+    },
+    {
+      fieldKey: "secret_key",
+      required: false,
+      value: secretKey,
+    },
+  ];
+
+  const clearValidationError = (fieldKey: string) => {
+    const newValidationElement = { ...validationErrors };
+    delete newValidationElement[fieldKey];
+
+    setValidationErrors(newValidationElement);
+  };
 
   useEffect(() => {
     if (addSending) {
@@ -95,31 +149,42 @@ const AddTenant = ({
         }
       }
 
-      api
-        .invoke("POST", `/api/v1/mkube/tenants`, {
-          name: tenantName,
-          service_name: tenantName,
-          image: imageName,
-          enable_ssl: enableSSL,
-          enable_mcs: enableMCS,
-          access_key: accessKey,
-          secret_key: secretKey,
-          volumes_per_server: volumesPerServer,
-          volume_configuration: {
-            size: `${volumeConfiguration.size}${sizeFactor}`,
-            storage_class: volumeConfiguration.storage_class,
-          },
-          zones: cleanZones,
-        })
-        .then(() => {
-          setAddSending(false);
-          setAddError("");
-          closeModalAndRefresh(true);
-        })
-        .catch((err) => {
-          setAddSending(false);
-          setAddError(err);
-        });
+      const commonValidation = commonFormValidation(validationElements);
+
+      setValidationErrors(commonValidation);
+
+      console.log(commonValidation);
+
+      if (Object.keys(commonValidation).length === 0) {
+        api
+          .invoke("POST", `/api/v1/mkube/tenants`, {
+            name: tenantName,
+            service_name: tenantName,
+            image: imageName,
+            enable_ssl: enableSSL,
+            enable_mcs: enableMCS,
+            access_key: accessKey,
+            secret_key: secretKey,
+            volumes_per_server: volumesPerServer,
+            volume_configuration: {
+              size: `${volumeConfiguration.size}${sizeFactor}`,
+              storage_class: volumeConfiguration.storage_class,
+            },
+            zones: cleanZones,
+          })
+          .then(() => {
+            setAddSending(false);
+            setAddError("");
+            closeModalAndRefresh(true);
+          })
+          .catch((err) => {
+            setAddSending(false);
+            setAddError(err);
+          });
+      } else {
+        setAddSending(false);
+        setAddError("Please fix the errors in the form and try again");
+      }
     }
   }, [addSending]);
 
@@ -147,6 +212,11 @@ const AddTenant = ({
             value: s,
           }))
         );
+
+        const newStorage = { ...volumeConfiguration };
+        newStorage.storage_class = res[0];
+
+        setVolumeConfiguration(newStorage);
       })
       .catch((err: any) => {
         console.log(err);
@@ -191,9 +261,12 @@ const AddTenant = ({
                 name="tenant-name"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setTenantName(e.target.value);
+                  clearValidationError("tenant-name");
                 }}
                 label="Tenant Name"
                 value={tenantName}
+                required
+                error={validationErrors["tenant-name"] || ""}
               />
             </Grid>
             <Grid item xs={12}>
@@ -202,9 +275,12 @@ const AddTenant = ({
                 name="image"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setImageName(e.target.value);
+                  clearValidationError("image");
                 }}
                 label="MinIO Image"
                 value={imageName}
+                error={validationErrors["image"] || ""}
+                placeholder="Eg. minio/minio:RELEASE.2020-05-08T02-40-49Z"
               />
             </Grid>
             <Grid item xs={12}>
@@ -213,9 +289,11 @@ const AddTenant = ({
                 name="service_name"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setServiceName(e.target.value);
+                  clearValidationError("service_name");
                 }}
                 label="Service Name"
                 value={serviceName}
+                error={validationErrors["service_name"] || ""}
               />
             </Grid>
             <Grid item xs={12}>
@@ -243,9 +321,12 @@ const AddTenant = ({
                 type="number"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setVolumesPerServer(parseInt(e.target.value));
+                  clearValidationError("volumes_per_server");
                 }}
                 label="Volumes per Server"
                 value={volumesPerServer.toString(10)}
+                required
+                error={validationErrors["volumes_per_server"] || ""}
               />
             </Grid>
             <Grid item xs={12}>
@@ -256,9 +337,12 @@ const AddTenant = ({
                     name="volume_size"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setVolumeConfig("size", e.target.value);
+                      clearValidationError("volume_size");
                     }}
                     label="Size"
                     value={volumeConfiguration.size}
+                    required
+                    error={validationErrors["volume_size"] || ""}
                   />
                 </div>
                 <div className={classes.sizeFactorContainer}>
@@ -304,9 +388,11 @@ const AddTenant = ({
                 name="access_key"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setAccessKey(e.target.value);
+                  clearValidationError("access_key");
                 }}
                 label="Access Key"
                 value={accessKey}
+                error={validationErrors["access_key"] || ""}
               />
             </Grid>
             <Grid item xs={12}>
@@ -315,9 +401,11 @@ const AddTenant = ({
                 name="secret_key"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setSecretKey(e.target.value);
+                  clearValidationError("secret_key");
                 }}
                 label="Secret Key"
                 value={secretKey}
+                error={validationErrors["secret_key"] || ""}
               />
             </Grid>
             <Grid item xs={12}>
