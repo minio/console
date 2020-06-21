@@ -101,6 +101,7 @@ const AddTenant = ({
   const [secretKey, setSecretKey] = useState<string>("");
   const [enableMCS, setEnableMCS] = useState<boolean>(true);
   const [enableSSL, setEnableSSL] = useState<boolean>(false);
+  const [enableMinDNS, setEnableMinDNS] = useState<boolean>(false);
   const [sizeFactor, setSizeFactor] = useState<string>("Gi");
   const [storageClasses, setStorageClassesList] = useState<Opts[]>([]);
   const [validationErrors, setValidationErrors] = useState<any>({});
