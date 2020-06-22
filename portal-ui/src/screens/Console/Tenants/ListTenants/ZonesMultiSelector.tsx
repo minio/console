@@ -158,6 +158,7 @@ const ZonesMultiSelector = ({
         <div>
           <InputBoxWrapper
             type="number"
+            min="0"
             id={`${name}-${index.toString()}-servers`}
             label={""}
             name={`${name}-${index.toString()}-servers`}

@@ -196,11 +196,15 @@ const AddTenant = ({
     {
       fieldKey: "volumes_per_server",
       required: true,
+      pattern: /\d+/,
+      customPatternMessage: "Field must be numeric",
       value: volumesPerServer.toString(10),
     },
     {
       fieldKey: "volume_size",
       required: true,
+      pattern: /\d+/,
+      customPatternMessage: "Field must be numeric",
       value: volumeConfiguration.size,
     },
 
@@ -544,6 +548,7 @@ const AddTenant = ({
               }}
               label="Volumes per Server"
               value={volumesPerServer.toString(10)}
+              min="0"
               required
               error={validationErrors["volumes_per_server"] || ""}
             />
@@ -552,6 +557,7 @@ const AddTenant = ({
             <div className={classes.multiContainer}>
               <div>
                 <InputBoxWrapper
+                  type="number"
                   id="volume_size"
                   name="volume_size"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -562,6 +568,7 @@ const AddTenant = ({
                   value={volumeConfiguration.size}
                   required
                   error={validationErrors["volume_size"] || ""}
+                  min="0"
                 />
               </div>
               <div className={classes.sizeFactorContainer}>

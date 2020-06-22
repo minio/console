@@ -47,6 +47,8 @@ interface InputBoxProps {
   error?: string;
   required?: boolean;
   placeholder?: string;
+  min?: string;
+  max?: string;
 }
 
 const styles = (theme: Theme) =>
@@ -110,8 +112,20 @@ const InputBoxWrapper = ({
   error = "",
   required = false,
   placeholder = "",
+  min,
+  max,
   classes,
 }: InputBoxProps) => {
+  let inputProps: any = { "data-index": index };
+
+  if (type === "number" && min) {
+    inputProps["min"] = min;
+  }
+
+  if (type === "number" && max) {
+    inputProps["max"] = max;
+  }
+
   return (
     <React.Fragment>
       <Grid
@@ -154,7 +168,7 @@ const InputBoxWrapper = ({
             type={type}
             multiline={multiline}
             autoComplete={autoComplete}
-            inputProps={{ "data-index": index }}
+            inputProps={inputProps}
             error={error !== ""}
             helperText={error}
             placeholder={placeholder}
