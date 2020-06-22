@@ -101,7 +101,7 @@ const AddTenant = ({
   const [secretKey, setSecretKey] = useState<string>("");
   const [enableMCS, setEnableMCS] = useState<boolean>(true);
   const [enableSSL, setEnableSSL] = useState<boolean>(false);
-  const [enableMinDNS, setEnableMinDNS] = useState<boolean>(false);
+  const [enableMinDNS, setEnableMinDNS] = useState<boolean>(true);
   const [sizeFactor, setSizeFactor] = useState<string>("Gi");
   const [storageClasses, setStorageClassesList] = useState<Opts[]>([]);
   const [validationErrors, setValidationErrors] = useState<any>({});
@@ -197,22 +197,29 @@ const AddTenant = ({
       setValidationErrors(commonValidation);
 
       if (Object.keys(commonValidation).length === 0) {
+        const data: { [key: string]: any } = {
+          name: tenantName,
+          service_name: tenantName,
+          image: imageName,
+          enable_ssl: enableSSL,
+          enable_mcs: enableMCS,
+          access_key: accessKey,
+          secret_key: secretKey,
+          volumes_per_server: volumesPerServer,
+          volume_configuration: {
+            size: `${volumeConfiguration.size}${sizeFactor}`,
+            storage_class: volumeConfiguration.storage_class,
+          },
+          zones: cleanZones,
+        };
+        if (enableMinDNS) {
+          data["annotations"] = {
+            "io.min.dns": "{.metadata.name}.{.metadata.labels.controller}",
+          };
+        }
+
         api
-          .invoke("POST", `/api/v1/mkube/tenants`, {
-            name: tenantName,
-            service_name: tenantName,
-            image: imageName,
-            enable_ssl: enableSSL,
-            enable_mcs: enableMCS,
-            access_key: accessKey,
-            secret_key: secretKey,
-            volumes_per_server: volumesPerServer,
-            volume_configuration: {
-              size: `${volumeConfiguration.size}${sizeFactor}`,
-              storage_class: volumeConfiguration.storage_class,
-            },
-            zones: cleanZones,
-          })
+          .invoke("POST", `/api/v1/mkube/tenants`, data)
           .then(() => {
             setAddSending(false);
             setAddError("");
@@ -535,7 +542,7 @@ const AddTenant = ({
 
                 setEnableMCS(checked);
               }}
-              label={"Enable mcs"}
+              label={"Enable Console"}
             />
           </Grid>
           <Grid item xs={12}>
@@ -551,6 +558,21 @@ const AddTenant = ({
                 setEnableSSL(checked);
               }}
               label={"Enable SSL"}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <CheckboxWrapper
+              value="enabled_mindns"
+              id="enabled_mindns"
+              name="enabled_mindns"
+              checked={enableMinDNS}
+              onChange={(e) => {
+                const targetD = e.target;
+                const checked = targetD.checked;
+
+                setEnableMinDNS(checked);
+              }}
+              label={"Enable MinDNS"}
             />
           </Grid>
         </React.Fragment>
