@@ -30,6 +30,7 @@ import (
 	"github.com/minio/mcs/pkg/auth/utils"
 	"github.com/minio/mcs/restapi/operations"
 	"github.com/minio/mcs/restapi/operations/user_api"
+	minCreds "github.com/minio/minio-go/v6/pkg/credentials"
 )
 
 var (
@@ -104,6 +105,22 @@ func getConfiguredRegionForLogin(client MinioAdmin) (string, error) {
 
 // getLoginResponse performs login() and serializes it to the handler's output
 func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, error) {
+	//work around to bypass login for operator mode, temporary
+	if acl.GetOperatorOnly() == "on" && *lr.AccessKey == "minio" {
+		tokens := minCreds.Value{}
+		jwt, err := auth.NewJWTWithClaimsForClient(&tokens, []string{"ok"}, getMinIOServer())
+		if err != nil {
+			log.Println("error authenticating user", err)
+			return nil, errInvalidCredentials
+		}
+
+		// serialize output
+		loginResponse := &models.LoginResponse{
+			SessionID: jwt,
+		}
+		return loginResponse, nil
+	}
+
 	ctx := context.Background()
 	mAdmin, err := newSuperMAdminClient()
 	if err != nil {
