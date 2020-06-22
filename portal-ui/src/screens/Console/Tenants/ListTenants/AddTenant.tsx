@@ -68,6 +68,7 @@ const styles = (theme: Theme) =>
       paddingTop: 5,
       marginBottom: 10,
       backgroundColor: "#fff",
+      zIndex: 500,
     },
     tableTitle: {
       fontWeight: 700,
@@ -86,6 +87,7 @@ const AddTenant = ({
   closeModalAndRefresh,
   classes,
 }: IAddTenantProps) => {
+  // Fields
   const [addSending, setAddSending] = useState<boolean>(false);
   const [addError, setAddError] = useState<string>("");
   const [tenantName, setTenantName] = useState<string>("");
@@ -106,13 +108,21 @@ const AddTenant = ({
   const [storageClasses, setStorageClassesList] = useState<Opts[]>([]);
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [namespace, setNamespace] = useState<string>("");
+
+  // Forms Validation
   const [nameTenantValid, setNameTenantValid] = useState<boolean>(false);
   const [configValid, setConfigValid] = useState<boolean>(false);
+  const [configureValid, setConfigureValid] = useState<boolean>(false);
+
+  // Custom Elements
+  const [customACCK, setCustomACCK] = useState<boolean>(false);
+  const [customDockerhub, setCustomDockerhub] = useState<boolean>(false);
 
   useEffect(() => {
     fetchStorageClassList();
   }, []);
 
+  /* Validations of pages */
   useEffect(() => {
     const commonValidation = commonFormValidation([validationElements[0]]);
 
@@ -134,6 +144,46 @@ const AddTenant = ({
     setValidationErrors(commonValidation);
   }, [volumesPerServer, volumeConfiguration]);
 
+  useEffect(() => {
+    let customAccountValidation: IValidation[] = [];
+    if (customACCK) {
+      customAccountValidation = [
+        ...customAccountValidation,
+        {
+          fieldKey: "access_key",
+          required: true,
+          value: accessKey,
+        },
+        {
+          fieldKey: "secret_key",
+          required: true,
+          value: secretKey,
+        },
+      ];
+    }
+
+    if (customDockerhub) {
+      customAccountValidation = [
+        ...customAccountValidation,
+        {
+          fieldKey: "image",
+          required: true,
+          value: imageName,
+          pattern: /^((.*?)\/(.*?):(.+))$/,
+          customPatternMessage: "Format must be of form: 'minio/minio:VERSION'",
+        },
+      ];
+    }
+
+    const commonVal = commonFormValidation(customAccountValidation);
+
+    setConfigureValid(Object.keys(commonVal).length === 0);
+
+    setValidationErrors(commonVal);
+  }, [customACCK, customDockerhub, accessKey, secretKey, imageName]);
+
+  /* End Validation of pages */
+
   const validationElements: IValidation[] = [
     {
       fieldKey: "tenant-name",
@@ -153,26 +203,11 @@ const AddTenant = ({
       required: true,
       value: volumeConfiguration.size,
     },
-    {
-      fieldKey: "image",
-      required: false,
-      value: imageName,
-    },
+
     {
       fieldKey: "service_name",
       required: false,
       value: serviceName,
-    },
-
-    {
-      fieldKey: "access_key",
-      required: false,
-      value: accessKey,
-    },
-    {
-      fieldKey: "secret_key",
-      required: false,
-      value: secretKey,
     },
   ];
 
@@ -316,48 +351,104 @@ const AddTenant = ({
             <h3>Configure</h3>
             <span>Basic configurations for tenant management</span>
           </div>
-          Please enter your access & secret keys
           <Grid item xs={12}>
-            <InputBoxWrapper
-              id="access_key"
-              name="access_key"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setAccessKey(e.target.value);
-                clearValidationError("access_key");
+            <CheckboxWrapper
+              value="custom_acck"
+              id="custom_acck"
+              name="custom_acck"
+              checked={customACCK}
+              onChange={(e) => {
+                const targetD = e.target;
+                const checked = targetD.checked;
+
+                setCustomACCK(checked);
               }}
-              label="Access Key"
-              value={accessKey}
-              error={validationErrors["access_key"] || ""}
+              label={"Use Custom Access Keys"}
             />
           </Grid>
+          {customACCK && (
+            <React.Fragment>
+              Please enter your access & secret keys
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="access_key"
+                  name="access_key"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setAccessKey(e.target.value);
+                    clearValidationError("access_key");
+                  }}
+                  label="Access Key"
+                  value={accessKey}
+                  error={validationErrors["access_key"] || ""}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="secret_key"
+                  name="secret_key"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setSecretKey(e.target.value);
+                    clearValidationError("secret_key");
+                  }}
+                  label="Secret Key"
+                  value={secretKey}
+                  error={validationErrors["secret_key"] || ""}
+                  required
+                />
+              </Grid>
+            </React.Fragment>
+          )}
           <Grid item xs={12}>
-            <InputBoxWrapper
-              id="secret_key"
-              name="secret_key"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setSecretKey(e.target.value);
-                clearValidationError("secret_key");
+            <CheckboxWrapper
+              value="custom_dockerhub"
+              id="custom_dockerhub"
+              name="custom_dockerhub"
+              checked={customDockerhub}
+              onChange={(e) => {
+                const targetD = e.target;
+                const checked = targetD.checked;
+
+                setCustomDockerhub(checked);
               }}
-              label="Secret Key"
-              value={secretKey}
-              error={validationErrors["secret_key"] || ""}
+              label={"Use custom image"}
             />
           </Grid>
-          Please enter the MinIO image from dockerhub
-          <Grid item xs={12}>
-            <InputBoxWrapper
-              id="image"
-              name="image"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setImageName(e.target.value);
-                clearValidationError("image");
-              }}
-              label="MinIO Image"
-              value={imageName}
-              error={validationErrors["image"] || ""}
-              placeholder="Eg. minio/minio:RELEASE.2020-05-08T02-40-49Z"
-            />
-          </Grid>
+          {customDockerhub && (
+            <React.Fragment>
+              Please enter the MinIO image from dockerhub
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="image"
+                  name="image"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setImageName(e.target.value);
+                    clearValidationError("image");
+                  }}
+                  label="MinIO Image"
+                  value={imageName}
+                  error={validationErrors["image"] || ""}
+                  placeholder="Eg. minio/minio:RELEASE.2020-05-08T02-40-49Z"
+                  required
+                />
+              </Grid>
+            </React.Fragment>
+          )}
+        </React.Fragment>
+      ),
+      buttons: [
+        cancelButton,
+        { label: "Back", type: "back", enabled: true },
+        { label: "Next", type: "next", enabled: configureValid },
+      ],
+    },
+    {
+      label: "Service Configuration",
+      componentRender: (
+        <React.Fragment>
+          <div className={classes.headerElement}>
+            <h3>Service Configuration</h3>
+          </div>
           <Grid item xs={12}>
             <InputBoxWrapper
               id="service_name"
