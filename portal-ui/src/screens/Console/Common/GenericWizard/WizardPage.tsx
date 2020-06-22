@@ -59,8 +59,6 @@ const WizardPage = ({ classes, page, pageChange }: IWizardPage) => {
     }
   };
 
-  console.log("buttons", page);
-
   return (
     <div className={classes.wizardStepContainer}>
       <div className={classes.wizardComponent}>{page.componentRender}</div>

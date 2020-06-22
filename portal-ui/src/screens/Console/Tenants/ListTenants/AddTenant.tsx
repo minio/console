@@ -796,11 +796,10 @@ const AddTenant = ({
         cancelButton,
         { label: "Back", type: "back", enabled: true },
         {
-          label: "Save",
+          label: "Create",
           type: "submit",
           enabled: !addSending,
           action: () => {
-            console.log("Save");
             setAddSending(true);
           },
         },
