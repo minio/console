@@ -97,7 +97,7 @@ const AddTenant = ({
   const [volumesPerServer, setVolumesPerServer] = useState<number>(0);
   const [volumeConfiguration, setVolumeConfiguration] = useState<
     IVolumeConfiguration
-  >({ size: "", storage_class: "" });
+  >({ size: 0, storage_class: "" });
   const [mountPath, setMountPath] = useState<string>("");
   const [accessKey, setAccessKey] = useState<string>("");
   const [secretKey, setSecretKey] = useState<string>("");
@@ -205,7 +205,7 @@ const AddTenant = ({
       required: true,
       pattern: /\d+/,
       customPatternMessage: "Field must be numeric",
-      value: volumeConfiguration.size,
+      value: volumeConfiguration.size.toString(10),
     },
 
     {
@@ -277,7 +277,7 @@ const AddTenant = ({
 
   const setVolumeConfig = (item: string, value: string) => {
     const volumeCopy: IVolumeConfiguration = {
-      size: item !== "size" ? volumeConfiguration.size : value,
+      size: item !== "size" ? volumeConfiguration.size : parseInt(value),
       storage_class:
         item !== "storage_class" ? volumeConfiguration.storage_class : value,
     };
@@ -565,7 +565,7 @@ const AddTenant = ({
                     clearValidationError("volume_size");
                   }}
                   label="Size"
-                  value={volumeConfiguration.size}
+                  value={volumeConfiguration.size.toString(10)}
                   required
                   error={validationErrors["volume_size"] || ""}
                   min="0"
