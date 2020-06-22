@@ -88,8 +88,9 @@ const ZonesMultiSelector = ({
   const defaultZone: IZone = { name: "", servers: 0, capacity: "", volumes: 0 };
 
   const [currentElements, setCurrentElements] = useState<IZone[]>([
-    { ...defaultZone },
+    { ...defaultZone, name: "zone-1" },
   ]);
+  const [internalCounter, setInternalCounter] = useState<number>(1);
   const bottomList = createRef<HTMLDivElement>();
 
   // Use effect to send new values to onChange
@@ -100,9 +101,15 @@ const ZonesMultiSelector = ({
   // If the last input is not empty, we add a new one
   const addEmptyRow = (elementsUp: IZone[]) => {
     const lastElement = elementsUp[elementsUp.length - 1];
+    const internalElement = internalCounter + 1;
     if (lastElement.servers !== 0 && lastElement.name !== "") {
-      elementsUp.push({ ...defaultZone });
+      elementsUp.push({
+        ...defaultZone,
+        name: `zone-${internalElement}`,
+      });
       const refScroll = bottomList.current;
+
+      setInternalCounter(internalElement);
 
       if (refScroll) {
         refScroll.scrollIntoView(false);
