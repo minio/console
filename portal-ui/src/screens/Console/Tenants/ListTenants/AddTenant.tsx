@@ -685,6 +685,12 @@ const AddTenant = ({
                 </TableCell>
                 <TableCell>{enableMCS ? "Enabled" : "Disabled"}</TableCell>
               </TableRow>
+              <TableRow>
+                <TableCell align="right" className={classes.tableTitle}>
+                  Enable MinDNS
+                </TableCell>
+                <TableCell>{enableMinDNS ? "Enabled" : "Disabled"}</TableCell>
+              </TableRow>
             </TableBody>
           </Table>
 
