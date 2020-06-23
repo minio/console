@@ -64,7 +64,8 @@ const TableActionButton = ({
       size={"small"}
       onClick={
         onClick
-          ? () => {
+          ? (e) => {
+              e.stopPropagation();
               onClick(valueClick);
             }
           : () => null
@@ -79,7 +80,16 @@ const TableActionButton = ({
   }
 
   if (isString(to)) {
-    return <Link to={`${to}/${valueClick}`}>{buttonElement}</Link>;
+    return (
+      <Link
+        to={`${to}/${valueClick}`}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        {buttonElement}
+      </Link>
+    );
   }
 
   return null;
