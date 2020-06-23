@@ -31,6 +31,8 @@ install: mcs
 
 swagger-gen:
 	@echo "Generating swagger server code from yaml"
+	@rm -rf models
+	@rm -rf restapi/operations
 	@swagger generate server -A mcs --main-package=mcs --exclude-main -P models.Principal -f ./swagger.yml -r NOTICE
 
 assets:

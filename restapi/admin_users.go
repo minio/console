@@ -74,10 +74,10 @@ func registerUsersHandlers(api *operations.McsAPI) {
 		sessionID := string(*principal)
 		userInfoResponse, err := getUserInfoResponse(sessionID, params)
 		if err != nil {
-			return admin_api.NewGetUserDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return admin_api.NewGetUserInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 
-		return admin_api.NewGetUserOK().WithPayload(userInfoResponse)
+		return admin_api.NewGetUserInfoOK().WithPayload(userInfoResponse)
 	})
 	// Update User
 	api.AdminAPIUpdateUserInfoHandler = admin_api.UpdateUserInfoHandlerFunc(func(params admin_api.UpdateUserInfoParams, principal *models.Principal) middleware.Responder {
