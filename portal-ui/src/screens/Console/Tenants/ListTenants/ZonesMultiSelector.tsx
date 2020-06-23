@@ -34,6 +34,7 @@ interface IZonesMultiSelector {
   label: string;
   tooltip?: string;
   classes: any;
+
   onChange: (elements: IZone[]) => void;
 }
 
@@ -87,9 +88,7 @@ const ZonesMultiSelector = ({
 }: IZonesMultiSelector) => {
   const defaultZone: IZone = { name: "", servers: 0, capacity: "", volumes: 0 };
 
-  const [currentElements, setCurrentElements] = useState<IZone[]>([
-    { ...defaultZone, name: "zone-1" },
-  ]);
+  const [currentElements, setCurrentElements] = useState<IZone[]>([]);
   const [internalCounter, setInternalCounter] = useState<number>(1);
   const bottomList = createRef<HTMLDivElement>();
 
@@ -97,6 +96,17 @@ const ZonesMultiSelector = ({
   useEffect(() => {
     onChange(currentElements);
   }, [currentElements]);
+
+  // Use effect to set initial values
+  useEffect(() => {
+    if (currentElements.length === 0 && elements.length === 0) {
+      // Initial Value
+      setCurrentElements([{ ...defaultZone, name: "zone-1" }]);
+    } else if (currentElements.length === 0 && elements.length > 0) {
+      setCurrentElements(elements);
+      setInternalCounter(elements.length);
+    }
+  }, [currentElements, elements]);
 
   // If the last input is not empty, we add a new one
   const addEmptyRow = (elementsUp: IZone[]) => {
