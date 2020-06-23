@@ -839,12 +839,6 @@ const AddTenant = ({
               </TableRow>
             </TableBody>
           </Table>
-
-          {addSending && (
-            <Grid item xs={12}>
-              <LinearProgress />
-            </Grid>
-          )}
         </React.Fragment>
       ),
       buttons: [
@@ -873,6 +867,11 @@ const AddTenant = ({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
+      {addSending && (
+        <Grid item xs={12}>
+          <LinearProgress />
+        </Grid>
+      )}
       <GenericWizard wizardSteps={wizardSteps} />
     </ModalWrapper>
   );
