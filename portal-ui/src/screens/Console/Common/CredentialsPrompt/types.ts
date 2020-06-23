@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface ServiceAccountsList {
-  service_accounts: string[];
-  total: number;
+export interface NewServiceAccount {
+  accessKey: string;
+  secretKey: string;
 }

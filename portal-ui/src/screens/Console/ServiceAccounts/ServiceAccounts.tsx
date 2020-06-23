@@ -20,11 +20,11 @@ import Grid from "@material-ui/core/Grid";
 import api from "../../../common/api";
 import { Button } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
-import { NewServiceAccount } from "./types";
+import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
 import AddServiceAccount from "./AddServiceAccount";
 import DeleteServiceAccount from "./DeleteServiceAccount";
-import CredentialsPrompt from "./CredentialsPrompt";
+import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import { CreateIcon } from "../../../icons";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -222,6 +222,7 @@ const ServiceAccounts = ({ classes }: IServiceAccountsProps) => {
           closeModal={() => {
             closeCredentialsModal();
           }}
+          entity="Service Account"
         />
       )}
       <Grid container>

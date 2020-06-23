@@ -38,10 +38,14 @@ import {
 } from "../../../../utils/validationFunctions";
 import GenericWizard from "../../Common/GenericWizard/GenericWizard";
 import { IWizardElement } from "../../Common/GenericWizard/types";
+import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
 
 interface IAddTenantProps {
   open: boolean;
-  closeModalAndRefresh: (reloadData: boolean) => any;
+  closeModalAndRefresh: (
+    reloadData: boolean,
+    res: NewServiceAccount | null
+  ) => any;
   classes: any;
 }
 
@@ -278,10 +282,15 @@ const AddTenant = ({
 
         api
           .invoke("POST", `/api/v1/mkube/tenants`, data)
-          .then(() => {
+          .then((res) => {
+            const newSrvAcc: NewServiceAccount = {
+              accessKey: res.access_key,
+              secretKey: res.secret_key,
+            };
+
             setAddSending(false);
             setAddError("");
-            closeModalAndRefresh(true);
+            closeModalAndRefresh(true, newSrvAcc);
           })
           .catch((err) => {
             setAddSending(false);
@@ -334,7 +343,7 @@ const AddTenant = ({
     type: "other",
     enabled: true,
     action: () => {
-      closeModalAndRefresh(false);
+      closeModalAndRefresh(false, null);
     },
   };
 
@@ -859,7 +868,7 @@ const AddTenant = ({
       modalOpen={open}
       onClose={() => {
         setAddError("");
-        closeModalAndRefresh(false);
+        closeModalAndRefresh(false, null);
       }}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"

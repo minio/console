@@ -30,6 +30,8 @@ import { ITenant, ITenantsResponse } from "./types";
 import { niceBytes } from "../../../../common/utils";
 import DeleteTenant from "./DeleteTenant";
 import AddTenant from "./AddTenant";
+import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
+import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 
 interface ITenantsList {
   classes: any;
@@ -90,9 +92,22 @@ const ListTenants = ({ classes }: ITenantsList) => {
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   const [page, setPage] = useState<number>(0);
   const [error, setError] = useState<string>("");
+  const [showNewCredentials, setShowNewCredentials] = useState<boolean>(false);
+  const [
+    createdAccount,
+    setCreatedAccount,
+  ] = useState<NewServiceAccount | null>(null);
 
-  const closeAddModalAndRefresh = (reloadData: boolean) => {
+  const closeAddModalAndRefresh = (
+    reloadData: boolean,
+    res: NewServiceAccount | null
+  ) => {
     setCreateTenantOpen(false);
+
+    if (res !== null) {
+      setShowNewCredentials(true);
+      setCreatedAccount(res);
+    }
 
     if (reloadData) {
       setIsLoading(true);
@@ -110,6 +125,11 @@ const ListTenants = ({ classes }: ITenantsList) => {
   const confirmDeleteTenant = (tenant: string) => {
     setSelectedTenant(tenant);
     setDeleteOpen(true);
+  };
+
+  const closeCredentialsModal = () => {
+    setShowNewCredentials(false);
+    setCreatedAccount(null);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -204,6 +224,16 @@ const ListTenants = ({ classes }: ITenantsList) => {
           deleteOpen={deleteOpen}
           selectedTenant={selectedTenant}
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
+        />
+      )}
+      {showNewCredentials && (
+        <CredentialsPrompt
+          newServiceAccount={createdAccount}
+          open={showNewCredentials}
+          closeModal={() => {
+            closeCredentialsModal();
+          }}
+          entity="Tenant"
         />
       )}
       <Grid container>
