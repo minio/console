@@ -26,6 +26,7 @@ export interface IWizardElement {
   label: string;
   componentRender: any;
   buttons: IWizardButton[];
+  advancedOnly?: boolean;
 }
 
 export interface IWizardMain {

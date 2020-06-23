@@ -117,6 +117,7 @@ const AddTenant = ({
   const [storageClasses, setStorageClassesList] = useState<Opts[]>([]);
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [namespace, setNamespace] = useState<string>("");
+  const [advancedMode, setAdvancedMode] = useState<boolean>(false);
 
   // Forms Validation
   const [nameTenantValid, setNameTenantValid] = useState<boolean>(false);
@@ -303,6 +304,14 @@ const AddTenant = ({
     }
   }, [addSending]);
 
+  useEffect(() => {
+    if (advancedMode) {
+      setZones([{ name: "zone-1", servers: 0, capacity: "0", volumes: 0 }]);
+    } else {
+      setZones([{ name: "zone-1", servers: 1, capacity: "0", volumes: 0 }]);
+    }
+  }, [advancedMode]);
+
   const setVolumeConfig = (item: string, value: string) => {
     const volumeCopy: IVolumeConfiguration = {
       size: item !== "size" ? volumeConfiguration.size : parseInt(value),
@@ -351,24 +360,47 @@ const AddTenant = ({
     {
       label: "Name Tenant",
       componentRender: (
-        <Grid item xs={12}>
+        <React.Fragment>
           <div className={classes.headerElement}>
             <h3>Name Tenant</h3>
             <span>How would you like to name this new tenant?</span>
           </div>
-          <InputBoxWrapper
-            id="tenant-name"
-            name="tenant-name"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setTenantName(e.target.value);
-              clearValidationError("tenant-name");
-            }}
-            label="Tenant Name"
-            value={tenantName}
-            required
-            error={validationErrors["tenant-name"] || ""}
-          />
-        </Grid>
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="tenant-name"
+              name="tenant-name"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setTenantName(e.target.value);
+                clearValidationError("tenant-name");
+              }}
+              label="Tenant Name"
+              value={tenantName}
+              required
+              error={validationErrors["tenant-name"] || ""}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <br />
+            <span>
+              Use Advanced mode to configure additional options in the tenant
+            </span>
+            <br />
+            <br />
+            <CheckboxWrapper
+              value="adv_mode"
+              id="adv_mode"
+              name="adv_mode"
+              checked={advancedMode}
+              onChange={(e) => {
+                const targetD = e.target;
+                const checked = targetD.checked;
+
+                setAdvancedMode(checked);
+              }}
+              label={"Advanced Mode"}
+            />
+          </Grid>
+        </React.Fragment>
       ),
       buttons: [
         cancelButton,
@@ -431,21 +463,25 @@ const AddTenant = ({
               </Grid>
             </React.Fragment>
           )}
-          <Grid item xs={12}>
-            <CheckboxWrapper
-              value="custom_dockerhub"
-              id="custom_dockerhub"
-              name="custom_dockerhub"
-              checked={customDockerhub}
-              onChange={(e) => {
-                const targetD = e.target;
-                const checked = targetD.checked;
 
-                setCustomDockerhub(checked);
-              }}
-              label={"Use custom image"}
-            />
-          </Grid>
+          {advancedMode && (
+            <Grid item xs={12}>
+              <CheckboxWrapper
+                value="custom_dockerhub"
+                id="custom_dockerhub"
+                name="custom_dockerhub"
+                checked={customDockerhub}
+                onChange={(e) => {
+                  const targetD = e.target;
+                  const checked = targetD.checked;
+
+                  setCustomDockerhub(checked);
+                }}
+                label={"Use custom image"}
+              />
+            </Grid>
+          )}
+
           {customDockerhub && (
             <React.Fragment>
               Please enter the MinIO image from dockerhub
@@ -476,6 +512,7 @@ const AddTenant = ({
     },
     {
       label: "Service Configuration",
+      advancedOnly: true,
       componentRender: (
         <React.Fragment>
           <div className={classes.headerElement}>
@@ -517,6 +554,7 @@ const AddTenant = ({
     },
     {
       label: "Storage Class",
+      advancedOnly: true,
       componentRender: (
         <React.Fragment>
           <div className={classes.headerElement}>
@@ -554,17 +592,20 @@ const AddTenant = ({
             <h3>Server Configuration</h3>
             <span>Define the server configuration</span>
           </div>
-          <Grid item xs={12}>
-            <InputBoxWrapper
-              id="mount_path"
-              name="mount_path"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setMountPath(e.target.value);
-              }}
-              label="Mount Path"
-              value={mountPath}
-            />
-          </Grid>
+          {advancedMode && (
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="mount_path"
+                name="mount_path"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setMountPath(e.target.value);
+                }}
+                label="Mount Path"
+                value={mountPath}
+              />
+            </Grid>
+          )}
+
           <Grid item xs={12}>
             <InputBoxWrapper
               id="volumes_per_server"
@@ -623,6 +664,7 @@ const AddTenant = ({
     },
     {
       label: "Zones Definition",
+      advancedOnly: true,
       componentRender: (
         <React.Fragment>
           <div className={classes.headerElement}>
@@ -654,6 +696,7 @@ const AddTenant = ({
     },
     {
       label: "Extra Configurations",
+      advancedOnly: true,
       componentRender: (
         <React.Fragment>
           <div className={classes.headerElement}>
@@ -819,24 +862,30 @@ const AddTenant = ({
                 </TableCell>
                 <TableCell>{zones.length}</TableCell>
               </TableRow>
-              <TableRow>
-                <TableCell align="right" className={classes.tableTitle}>
-                  Enable SSL
-                </TableCell>
-                <TableCell>{enableSSL ? "Enabled" : "Disabled"}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell align="right" className={classes.tableTitle}>
-                  Enable MCS
-                </TableCell>
-                <TableCell>{enableMCS ? "Enabled" : "Disabled"}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell align="right" className={classes.tableTitle}>
-                  Enable MinDNS
-                </TableCell>
-                <TableCell>{enableMinDNS ? "Enabled" : "Disabled"}</TableCell>
-              </TableRow>
+              {advancedMode && (
+                <React.Fragment>
+                  <TableRow>
+                    <TableCell align="right" className={classes.tableTitle}>
+                      Enable SSL
+                    </TableCell>
+                    <TableCell>{enableSSL ? "Enabled" : "Disabled"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell align="right" className={classes.tableTitle}>
+                      Enable MCS
+                    </TableCell>
+                    <TableCell>{enableMCS ? "Enabled" : "Disabled"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell align="right" className={classes.tableTitle}>
+                      Enable MinDNS
+                    </TableCell>
+                    <TableCell>
+                      {enableMinDNS ? "Enabled" : "Disabled"}
+                    </TableCell>
+                  </TableRow>
+                </React.Fragment>
+              )}
             </TableBody>
           </Table>
         </React.Fragment>
@@ -856,6 +905,12 @@ const AddTenant = ({
     },
   ];
 
+  let filteredWizardSteps = wizardSteps;
+
+  if (!advancedMode) {
+    filteredWizardSteps = wizardSteps.filter((step) => !step.advancedOnly);
+  }
+
   return (
     <ModalWrapper
       title="Create Tenant"
@@ -872,7 +927,7 @@ const AddTenant = ({
           <LinearProgress />
         </Grid>
       )}
-      <GenericWizard wizardSteps={wizardSteps} />
+      <GenericWizard wizardSteps={filteredWizardSteps} />
     </ModalWrapper>
   );
 };
