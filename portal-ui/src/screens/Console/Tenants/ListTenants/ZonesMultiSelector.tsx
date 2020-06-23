@@ -102,7 +102,11 @@ const ZonesMultiSelector = ({
   const addEmptyRow = (elementsUp: IZone[]) => {
     const lastElement = elementsUp[elementsUp.length - 1];
     const internalElement = internalCounter + 1;
-    if (lastElement.servers !== 0 && lastElement.name !== "") {
+    if (
+      lastElement.servers !== 0 &&
+      lastElement.name !== "" &&
+      !isNaN(lastElement.servers)
+    ) {
       elementsUp.push({
         ...defaultZone,
         name: `zone-${internalElement}`,

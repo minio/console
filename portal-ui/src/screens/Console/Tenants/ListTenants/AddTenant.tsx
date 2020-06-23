@@ -74,6 +74,11 @@ const styles = (theme: Theme) =>
       fontWeight: 700,
       width: "30%",
     },
+    zoneError: {
+      color: "#dc1f2e",
+      fontSize: "0.75rem",
+      paddingLeft: 120,
+    },
     ...modalBasic,
   });
 
@@ -113,6 +118,7 @@ const AddTenant = ({
   const [nameTenantValid, setNameTenantValid] = useState<boolean>(false);
   const [configValid, setConfigValid] = useState<boolean>(false);
   const [configureValid, setConfigureValid] = useState<boolean>(false);
+  const [zonesValid, setZonesValid] = useState<boolean>(false);
 
   // Custom Elements
   const [customACCK, setCustomACCK] = useState<boolean>(false);
@@ -181,6 +187,22 @@ const AddTenant = ({
 
     setValidationErrors(commonVal);
   }, [customACCK, customDockerhub, accessKey, secretKey, imageName]);
+
+  useEffect(() => {
+    const filteredZones = zones.filter(
+      (zone) => zone.servers !== 0 && !isNaN(zone.servers)
+    );
+
+    if (filteredZones.length > 0) {
+      setZonesValid(true);
+      setValidationErrors({});
+
+      return;
+    }
+
+    setZonesValid(false);
+    setValidationErrors({ zones_selector: "Please add a valid zone" });
+  }, [zones]);
 
   /* End Validation of pages */
 
@@ -612,13 +634,16 @@ const AddTenant = ({
                 elements={zones}
               />
             </div>
+            <div className={classes.zoneError}>
+              {validationErrors["zones_selector"] || ""}
+            </div>
           </Grid>
         </React.Fragment>
       ),
       buttons: [
         cancelButton,
         { label: "Back", type: "back", enabled: true },
-        { label: "Next", type: "next", enabled: true },
+        { label: "Next", type: "next", enabled: zonesValid },
       ],
     },
     {
