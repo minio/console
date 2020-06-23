@@ -27,6 +27,7 @@ import (
 	"github.com/minio/mcs/models"
 	"github.com/minio/mcs/pkg"
 	"github.com/minio/mcs/pkg/auth"
+	"github.com/minio/mcs/pkg/auth/mkube"
 
 	assetFS "github.com/elazarl/go-bindata-assetfs"
 
@@ -167,8 +168,7 @@ func FileServerMiddleware(next http.Handler) http.Handler {
 		case strings.HasPrefix(r.URL.Path, "/ws"):
 			serveWS(w, r)
 		case strings.HasPrefix(r.URL.Path, "/api/v1/mkube"):
-			client := &http.Client{}
-			serverMkube(client, w, r)
+			serverMkube(mkube.HTTPClient, w, r)
 		case strings.HasPrefix(r.URL.Path, "/api"):
 			next.ServeHTTP(w, r)
 		default:

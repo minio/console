@@ -106,7 +106,7 @@ func TestGetAuthorizedEndpoints(t *testing.T) {
 }
 
 func TestOperatorOnlyEndpoints(t *testing.T) {
-	operatorOnly = "on"
+	operatorOnly = true
 
 	tests := []endpoint{
 		{

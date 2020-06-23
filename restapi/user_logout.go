@@ -37,7 +37,7 @@ func registerLogoutHandlers(api *operations.McsAPI) {
 	})
 }
 
-// logout() call Expire() on the provided minioCredentials
+// logout() call Expire() on the provided mcsCredentials
 func logout(credentials MCSCredentials) {
 	credentials.Expire()
 }
@@ -49,7 +49,7 @@ func getLogoutResponse(jwt string) error {
 		log.Println(err)
 		return err
 	}
-	credentials := mcsCredentials{minioCredentials: creds}
+	credentials := mcsCredentials{mcsCredentials: creds}
 	if err != nil {
 		log.Println("error creating MinIO Client:", err)
 		return err

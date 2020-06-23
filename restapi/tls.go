@@ -60,7 +60,7 @@ func prepareSTSClientTransport() *http.Transport {
 			// Can't use TLSv1.1 because of RC4 cipher usage
 			MinVersion: tls.VersionTLS12,
 		}
-		// If root CAs are configured we save them to the http.Client RootCAs store
+		// If CAs certificates are configured we save them to the http.Client RootCAs store
 		if len(caCertFileNames) > 0 {
 			certs := x509.NewCertPool()
 			for _, caCert := range caCertFileNames {
@@ -85,7 +85,7 @@ func prepareSTSClientTransport() *http.Transport {
 }
 
 // PrepareSTSClient returns an http.Client with custom configurations need it by *credentials.STSAssumeRole
-// custom configurations include skipVerification flag, and root CA certificates
+// custom configurations include the use of CA certificates
 func PrepareSTSClient() *http.Client {
 	transport := prepareSTSClientTransport()
 	// Return http client with default configuration

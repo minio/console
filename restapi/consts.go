@@ -49,5 +49,4 @@ const (
 	McsSecureReferrerPolicy                  = "MCS_SECURE_REFERRER_POLICY"
 	McsSecureFeaturePolicy                   = "MCS_SECURE_FEATURE_POLICY"
 	McsSecureExpectCTHeader                  = "MCS_SECURE_EXPECT_CT_HEADER"
-	McsM3Host                                = "MCS_M3_HOSTNAME"
 )

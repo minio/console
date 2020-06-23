@@ -19,11 +19,15 @@ package restapi
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
+
+	"github.com/minio/mcs/pkg/auth"
+	"github.com/minio/minio-go/v6/pkg/credentials"
 )
 
 // RoundTripFunc .
@@ -41,8 +45,17 @@ func NewTestClient(fn RoundTripFunc) *http.Client {
 	}
 }
 
-func Test_serverMkube(t *testing.T) {
+var audience = ""
+var creds = &credentials.Value{
+	AccessKeyID:     "fakeAccessKeyID",
+	SecretAccessKey: "fakeSecretAccessKey",
+	SessionToken:    "fakeSessionToken",
+	SignerType:      0,
+}
 
+func Test_serverMkube(t *testing.T) {
+	jwt, _ := auth.NewJWTWithClaimsForClient(creds, []string{""}, audience)
+	dummyBody := ioutil.NopCloser(bytes.NewReader([]byte("foo")))
 	OKclient := NewTestClient(func(req *http.Request) (*http.Response, error) {
 		return &http.Response{
 			StatusCode: 200,
@@ -83,16 +96,53 @@ func Test_serverMkube(t *testing.T) {
 			args: args{
 				client:   OKclient,
 				recorder: httptest.NewRecorder(),
-				req:      &http.Request{URL: testURL},
+				req: &http.Request{
+					Body: dummyBody,
+					URL:  testURL,
+					Header: http.Header{
+						"Authorization": []string{fmt.Sprintf("Bearer %s", jwt)},
+					},
+				},
 			},
 			wantCode: 200,
+		},
+		{
+			name: "Unsuccessful request - wrong jwt credentials",
+			args: args{
+				client:   OKclient,
+				recorder: httptest.NewRecorder(),
+				req: &http.Request{
+					Body: dummyBody,
+					URL:  testURL,
+					Header: http.Header{
+						"Authorization": []string{"EAEAEAEAE"},
+					},
+				},
+			},
+			wantCode: 500,
+		},
+		{
+			name: "Unsuccessful request - no mkube service account token provided",
+			args: args{
+				client:   OKclient,
+				recorder: httptest.NewRecorder(),
+				req: &http.Request{
+					Body:   dummyBody,
+					URL:    testURL,
+					Header: http.Header{},
+				},
+			},
+			wantCode: 500,
 		},
 		{
 			name: "Unsuccessful request",
 			args: args{
 				client:   badClient,
 				recorder: httptest.NewRecorder(),
-				req:      &http.Request{URL: testURL},
+				req: &http.Request{
+					URL:  testURL,
+					Body: dummyBody,
+				},
 			},
 			wantCode: 500,
 		},
@@ -101,7 +151,10 @@ func Test_serverMkube(t *testing.T) {
 			args: args{
 				client:   refusedClient,
 				recorder: httptest.NewRecorder(),
-				req:      &http.Request{URL: testURL},
+				req: &http.Request{
+					URL:  testURL,
+					Body: dummyBody,
+				},
 			},
 			wantCode: 500,
 		},
@@ -111,7 +164,7 @@ func Test_serverMkube(t *testing.T) {
 			serverMkube(tt.args.client, tt.args.recorder, tt.args.req)
 			resp := tt.args.recorder.Result()
 			if resp.StatusCode != tt.wantCode {
-				t.Errorf("Invalid code returned")
+				t.Errorf("Invalid code returned, expected: %d received: %d", tt.wantCode, resp.StatusCode)
 				return
 			}
 		})

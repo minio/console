@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import request from "superagent";
 import storage from "local-storage-fallback";
 import { connect, ConnectedProps } from "react-redux";
@@ -26,9 +26,8 @@ import { CircularProgress, Paper } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { SystemState } from "../../types";
 import { userLoggedIn } from "../../actions";
-import history from "../../history";
 import api from "../../common/api";
-import { ILoginDetails } from "./types";
+import { ILoginDetails, loginStrategyType } from "./types";
 import { setCookie } from "../../common/utils";
 
 const styles = (theme: Theme) =>
@@ -101,57 +100,57 @@ interface ILoginProps {
   classes: any;
 }
 
-interface ILoginState {
-  accessKey: string;
-  secretKey: string;
-  error: string;
-  loading: boolean;
-  loginStrategy: ILoginDetails;
+interface LoginStrategyRoutes {
+  [key: string]: string;
 }
 
-class Login extends React.Component<ILoginProps, ILoginState> {
-  state: ILoginState = {
-    accessKey: "",
-    secretKey: "",
-    error: "",
-    loading: false,
-    loginStrategy: {
-      loginStrategy: "",
-      redirect: "",
-    },
-  };
+interface LoginStrategyPayload {
+  [key: string]: any;
+}
 
-  fetchConfiguration() {
-    this.setState({ loading: true }, () => {
-      api
-        .invoke("GET", "/api/v1/login")
-        .then((loginDetails: ILoginDetails) => {
-          this.setState({
-            loading: false,
-          });
-          this.setState({
-            loading: false,
-            loginStrategy: loginDetails,
-            error: "",
-          });
-        })
-        .catch((err: any) => {
-          this.setState({ loading: false, error: err });
-        });
-    });
+const Login = ({ classes, userLoggedIn }: ILoginProps) => {
+  const [accessKey, setAccessKey] = useState<string>("");
+  const [jwt, setJwt] = useState<string>("");
+  const [secretKey, setSecretKey] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [loginStrategy, setLoginStrategy] = useState<ILoginDetails>({
+    loginStrategy: loginStrategyType.unknown,
+    redirect: "",
+  });
+
+  const loginStrategyEndpoints: LoginStrategyRoutes = {
+    "form": "/api/v1/login",
+    "service-account": "/api/v1/login/mkube",
+  }
+  const loginStrategyPayload: LoginStrategyPayload = {
+    "form": { accessKey, secretKey },
+    "service-account": { jwt },
   }
 
-  formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const url = "/api/v1/login";
-    const { accessKey, secretKey } = this.state;
+  const fetchConfiguration = () => {
+    setLoading(true);
 
+    api
+      .invoke("GET", "/api/v1/login")
+      .then((loginDetails: ILoginDetails) => {
+        setLoading(false);
+        setLoginStrategy(loginDetails);
+        setError("");
+      })
+      .catch((err: any) => {
+        setLoading(false);
+        setError(err);
+      });
+  };
+
+  const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     request
-      .post(url)
-      .send({ accessKey, secretKey })
+      .post(loginStrategyEndpoints[loginStrategy.loginStrategy] || "/api/v1/login")
+      .send(loginStrategyPayload[loginStrategy.loginStrategy])
       .then((res: any) => {
         const bodyResponse = res.body;
-
         if (bodyResponse.sessionId) {
           // store the jwt token
           setCookie("token", bodyResponse.sessionId);
@@ -164,134 +163,173 @@ class Login extends React.Component<ILoginProps, ILoginState> {
       })
       .then(() => {
         // We set the state in redux
-        this.props.userLoggedIn(true);
+        userLoggedIn(true);
         // There is a browser cache issue if we change the policy associated to an account and then logout and history.push("/") after login
         // therefore after login we need to use window.location redirect
         window.location.href = "/";
       })
       .catch((err) => {
-        this.setState({ error: `${err}` });
+        setError(err.message);
       });
   };
 
-  componentDidMount(): void {
-    this.fetchConfiguration();
-  }
+  useEffect(() => {
+    fetchConfiguration();
+  }, []);
 
-  render() {
-    const { error, accessKey, secretKey, loginStrategy } = this.state;
-    const { classes } = this.props;
+  let loginComponent = null;
 
-    let loginComponent = null;
-
-    switch (loginStrategy.loginStrategy) {
-      case "form": {
-        loginComponent = (
-          <React.Fragment>
-            <Typography component="h1" variant="h6">
-              Login
-            </Typography>
-            <form
-              className={classes.form}
-              noValidate
-              onSubmit={this.formSubmit}
-            >
-              <Grid container spacing={2}>
-                {error !== "" && (
-                  <Grid item xs={12}>
-                    <Typography
-                      component="p"
-                      variant="body1"
-                      className={classes.errorBlock}
-                    >
-                      {error}
-                    </Typography>
-                  </Grid>
-                )}
+  switch (loginStrategy.loginStrategy) {
+    case loginStrategyType.form: {
+      loginComponent = (
+        <React.Fragment>
+          <Typography component="h1" variant="h6">
+            Login
+          </Typography>
+          <form className={classes.form} noValidate onSubmit={formSubmit}>
+            <Grid container spacing={2}>
+              {error !== "" && (
                 <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="accessKey"
-                    value={accessKey}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      this.setState({ accessKey: e.target.value })
-                    }
-                    label="Access Key"
-                    name="accessKey"
-                    autoComplete="username"
-                  />
+                  <Typography
+                    component="p"
+                    variant="body1"
+                    className={classes.errorBlock}
+                  >
+                    {error}
+                  </Typography>
                 </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    value={secretKey}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      this.setState({ secretKey: e.target.value })
-                    }
-                    name="secretKey"
-                    label="Secret Key"
-                    type="password"
-                    id="secretKey"
-                    autoComplete="current-password"
-                  />
-                </Grid>
+              )}
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="accessKey"
+                  value={accessKey}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setAccessKey(e.target.value)
+                  }
+                  label="Access Key"
+                  name="accessKey"
+                  autoComplete="username"
+                />
               </Grid>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-              >
-                Login
-              </Button>
-            </form>
-          </React.Fragment>
-        );
-        break;
-      }
-      case "redirect": {
-        loginComponent = (
-          <React.Fragment>
-            <Typography component="h1" variant="h6">
-              Login
-            </Typography>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  value={secretKey}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setSecretKey(e.target.value)
+                  }
+                  name="secretKey"
+                  label="Secret Key"
+                  type="password"
+                  id="secretKey"
+                  autoComplete="current-password"
+                />
+              </Grid>
+            </Grid>
             <Button
-              component={"a"}
-              href={loginStrategy.redirect}
               type="submit"
               fullWidth
               variant="contained"
               color="primary"
               className={classes.submit}
             >
-              Welcome
+              Login
             </Button>
-          </React.Fragment>
-        );
-        break;
-      }
-      default:
-        loginComponent = (
-          <CircularProgress className={classes.loadingLoginStrategy} />
-        );
+          </form>
+        </React.Fragment>
+      );
+      break;
     }
-
-    return (
-      <Paper className={classes.paper}>
-        <Grid container className={classes.mainContainer}>
-          <Grid item xs={7} className={classes.theOcean}>
-            <div className={classes.oceanBg} />
-          </Grid>
-          <Grid item xs={5} className={classes.theLogin}>
-            {loginComponent}
-          </Grid>
-        </Grid>
-      </Paper>
-    );
+    case loginStrategyType.redirect: {
+      loginComponent = (
+        <React.Fragment>
+          <Typography component="h1" variant="h6">
+            Login
+          </Typography>
+          <Button
+            component={"a"}
+            href={loginStrategy.redirect}
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
+            Welcome
+          </Button>
+        </React.Fragment>
+      );
+      break;
+    }
+    case loginStrategyType.serviceAccount: {
+      loginComponent = (
+        <React.Fragment>
+          <Typography component="h1" variant="h6">
+            Login
+          </Typography>
+          <form className={classes.form} noValidate onSubmit={formSubmit}>
+            <Grid container spacing={2}>
+              {error !== "" && (
+                <Grid item xs={12}>
+                  <Typography
+                    component="p"
+                    variant="body1"
+                    className={classes.errorBlock}
+                  >
+                    {error}
+                  </Typography>
+                </Grid>
+              )}
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="jwt"
+                  value={jwt}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setJwt(e.target.value)
+                  }
+                  label="JWT"
+                  name="jwt"
+                  autoComplete="Service Account JWT Token"
+                />
+              </Grid>
+            </Grid>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+            >
+              Login
+            </Button>
+          </form>
+        </React.Fragment>
+      );
+      break;
+    }
+    default:
+      loginComponent = (
+        <CircularProgress className={classes.loadingLoginStrategy} />
+      );
   }
-}
+
+  return (
+    <Paper className={classes.paper}>
+      <Grid container className={classes.mainContainer}>
+        <Grid item xs={7} className={classes.theOcean}>
+          <div className={classes.oceanBg} />
+        </Grid>
+        <Grid item xs={5} className={classes.theLogin}>
+          {loginComponent}
+        </Grid>
+      </Grid>
+    </Paper>
+  );
+};
 
 export default connector(withStyles(styles)(Login));

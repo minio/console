@@ -61,18 +61,25 @@ func registerLoginHandlers(api *operations.McsAPI) {
 		}
 		return user_api.NewLoginOauth2AuthCreated().WithPayload(loginResponse)
 	})
+	api.UserAPILoginMkubeHandler = user_api.LoginMkubeHandlerFunc(func(params user_api.LoginMkubeParams) middleware.Responder {
+		loginResponse, err := getLoginMkubeResponse(params.Body)
+		if err != nil {
+			return user_api.NewLoginMkubeDefault(401).WithPayload(&models.Error{Code: 401, Message: swag.String(err.Error())})
+		}
+		return user_api.NewLoginMkubeCreated().WithPayload(loginResponse)
+	})
 }
 
-// login performs a check of minioCredentials against MinIO, generates some claims and returns the jwt
+// login performs a check of mcsCredentials against MinIO, generates some claims and returns the jwt
 // for subsequent authentication
 func login(credentials MCSCredentials, actions []string) (*string, error) {
-	// try to obtain minioCredentials,
+	// try to obtain mcsCredentials,
 	tokens, err := credentials.Get()
 	if err != nil {
 		log.Println("error authenticating user", err)
 		return nil, errInvalidCredentials
 	}
-	// if we made it here, the minioCredentials work, generate a jwt with claims
+	// if we made it here, the mcsCredentials work, generate a jwt with claims
 	jwt, err := auth.NewJWTWithClaimsForClient(&tokens, actions, getMinIOServer())
 	if err != nil {
 		log.Println("error authenticating user", err)
@@ -115,7 +122,7 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, error) {
 		log.Println("error login:", err)
 		return nil, errInvalidCredentials
 	}
-	credentials := mcsCredentials{minioCredentials: creds}
+	credentials := mcsCredentials{mcsCredentials: creds}
 	// obtain the current policy assigned to this user
 	// necessary for generating the list of allowed endpoints
 	userInfo, err := adminClient.getUserInfo(ctx, *lr.AccessKey)
@@ -127,7 +134,7 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, error) {
 	// by default every user starts with an empty array of available actions
 	// therefore we would have access only to pages that doesn't require any privilege
 	// ie: service-account page
-	actions := []string{}
+	var actions []string
 	// if a policy is assigned to this user we parse the actions from there
 	if policy != nil {
 		actions = acl.GetActionsStringFromPolicy(policy)
@@ -148,7 +155,9 @@ func getLoginDetailsResponse() (*models.LoginDetails, error) {
 	ctx := context.Background()
 	loginStrategy := models.LoginDetailsLoginStrategyForm
 	redirectURL := ""
-	if oauth2.IsIdpEnabled() {
+	if acl.GetOperatorOnly() {
+		loginStrategy = models.LoginDetailsLoginStrategyServiceAccount
+	} else if oauth2.IsIdpEnabled() {
 		loginStrategy = models.LoginDetailsLoginStrategyRedirect
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil)
@@ -238,7 +247,7 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 			log.Println("error login:", err)
 			return nil, errorGeneric
 		}
-		credentials := mcsCredentials{minioCredentials: creds}
+		credentials := mcsCredentials{mcsCredentials: creds}
 		jwt, err := login(credentials, actions)
 		if err != nil {
 			return nil, err
@@ -250,4 +259,24 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 		return loginResponse, nil
 	}
 	return nil, errorGeneric
+}
+
+// getLoginMkubeResponse validate the provided service account token against mkube
+func getLoginMkubeResponse(lmr *models.LoginMkubeRequest) (*models.LoginResponse, error) {
+	creds, err := newMcsCredentials("", *lmr.Jwt, "")
+	if err != nil {
+		log.Println("error login:", err)
+		return nil, errInvalidCredentials
+	}
+	credentials := mcsCredentials{mcsCredentials: creds}
+	var actions []string
+	jwt, err := login(credentials, actions)
+	if err != nil {
+		return nil, err
+	}
+	// serialize output
+	loginResponse := &models.LoginResponse{
+		SessionID: *jwt,
+	}
+	return loginResponse, nil
 }

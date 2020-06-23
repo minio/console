@@ -26,7 +26,6 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/gorilla/websocket"
 	"github.com/minio/mcs/pkg/auth"
-	"github.com/minio/mcs/pkg/ws"
 )
 
 var upgrader = websocket.Upgrader{
@@ -99,14 +98,9 @@ func (c wsConn) readMessage() (messageType int, p []byte, err error) {
 // on the path.
 // Request should come like ws://<host>:<port>/ws/<api>
 func serveWS(w http.ResponseWriter, req *http.Request) {
-	sessionID, err := ws.GetTokenFromRequest(req)
-	if err != nil {
-		errors.ServeError(w, req, err)
-		return
-	}
 	// Perform authentication before upgrading to a Websocket Connection
 	// authenticate WS connection with MCS
-	claims, err := auth.JWTAuthenticate(*sessionID)
+	claims, err := auth.GetClaimsFromTokenInRequest(req)
 	if err != nil {
 		log.Print("error on ws authentication: ", err)
 		errors.ServeError(w, req, errors.New(http.StatusUnauthorized, err.Error()))
@@ -152,7 +146,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 		go wsAdminClient.heal(hOptions)
 	case strings.HasPrefix(wsPath, `/watch`):
 		wOptions := getWatchOptionsFromReq(req)
-		wsS3Client, err := newWebSocketS3Client(conn, *sessionID, wOptions.BucketName)
+		wsS3Client, err := newWebSocketS3Client(conn, claims, wOptions.BucketName)
 		if err != nil {
 			closeWsConn(conn)
 			return
@@ -188,10 +182,10 @@ func newWebSocketAdminClient(conn *websocket.Conn, autClaims *auth.DecryptedClai
 }
 
 // newWebSocketS3Client returns a wsAdminClient authenticated as MCS admin
-func newWebSocketS3Client(conn *websocket.Conn, jwt, bucketName string) (*wsS3Client, error) {
+func newWebSocketS3Client(conn *websocket.Conn, claims *auth.DecryptedClaims, bucketName string) (*wsS3Client, error) {
 	// Only start Websocket Interaction after user has been
 	// authenticated with MinIO
-	s3Client, err := newS3BucketClient(jwt, bucketName)
+	s3Client, err := newS3BucketClient(claims, bucketName)
 	if err != nil {
 		log.Println("error creating S3Client:", err)
 		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))

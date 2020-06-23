@@ -18,6 +18,7 @@ package restapi
 
 import (
 	"bufio"
+	"bytes"
 	"errors"
 	"fmt"
 	"log"
@@ -25,24 +26,45 @@ import (
 	"strings"
 
 	apiErrors "github.com/go-openapi/errors"
+	"github.com/minio/mcs/pkg/auth"
+	"github.com/minio/mcs/pkg/auth/mkube"
 )
 
 // serverMkube handles calls for mkube
 func serverMkube(client *http.Client, w http.ResponseWriter, req *http.Request) {
+	// extract the service account token inside the jwt encrypted claims
+	claims, err := auth.GetClaimsFromTokenInRequest(req)
+	if err != nil {
+		apiErrors.ServeError(w, req, err)
+		return
+	}
+	m3SAToken := claims.SessionToken
+	if m3SAToken == "" {
+		apiErrors.ServeError(w, req, errors.New("service M3 is not available"))
+		return
+	}
 	// destination of the request, the mkube server
 	req.URL.Path = strings.Replace(req.URL.Path, "/mkube", "", 1)
-	targetURL := fmt.Sprintf("%s%s", getM3Host(), req.URL.String())
-
+	targetURL := fmt.Sprintf("%s%s", mkube.GetMkubeEndpoint(), req.URL.String())
+	body := new(bytes.Buffer)
+	_, err = body.ReadFrom(req.Body)
+	if err != nil {
+		apiErrors.ServeError(w, req, err)
+		return
+	}
 	// set the HTTP method, url, and m3Req body
-	m3Req, err := http.NewRequest(req.Method, targetURL, req.Body)
+	m3Req, err := http.NewRequest(req.Method, targetURL, body)
 	if err != nil {
 		apiErrors.ServeError(w, req, err)
 		log.Println("error creating m3 request:", err)
 		return
 	}
 
-	// set the m3Req headers
-	m3Req.Header = req.Header
+	// Set the m3Req authorization headers
+	// Authorization Header needs to be like "Authorization Bearer <jwt_token>"
+	token := fmt.Sprintf("Bearer %s", m3SAToken)
+	m3Req.Header.Add("Authorization", token)
+	m3Req.Header.Add("Content-type", "application/json; charset=utf-8")
 	resp, err := client.Do(m3Req)
 	if err != nil {
 		log.Println("error on m3 request:", err)

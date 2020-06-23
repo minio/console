@@ -60,6 +60,28 @@ paths:
       security: []
       tags:
         - UserAPI
+  /login/mkube:
+    post:
+      summary: Login to Mkube.
+      operationId: LoginMkube
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/loginMkubeRequest'
+      responses:
+        201:
+          description: A successful login.
+          schema:
+            $ref: '#/definitions/loginResponse'
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      security: []
+      tags:
+        - UserAPI
 
   /login/oauth2/auth:
     post:
@@ -354,7 +376,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-  
+
   /service-accounts/{access_key}:
     delete:
       summary: Delete Service Account
@@ -1173,7 +1195,7 @@ definitions:
       - get
   notificationConfig:
     type: object
-    required: 
+    required:
       - arn
     properties:
       id:
@@ -1212,7 +1234,7 @@ definitions:
         title: "filter event associated to the specified suffix"
   bucketEventRequest:
     type: object
-    required: 
+    required:
       - configuration
     properties:
       configuration:
@@ -1242,7 +1264,7 @@ definitions:
     properties:
       loginStrategy:
         type: string
-        enum: [form,redirect]
+        enum: [form,redirect,service-account]
       redirect:
         type: string
   loginOauth2AuthRequest:
@@ -1254,6 +1276,13 @@ definitions:
       state:
         type: string
       code:
+        type: string
+  loginMkubeRequest:
+    type: object
+    required:
+      - jwt
+    properties:
+      jwt:
         type: string
   loginRequest:
     type: object
