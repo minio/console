@@ -143,6 +143,11 @@ const styles = (theme: Theme) =>
       paddingTop: "100px",
       paddingBottom: "100px",
     },
+    rowElement: {
+      "&:hover": {
+        backgroundColor: "#ececec",
+      },
+    },
     ...checkboxIcons,
   });
 
@@ -190,6 +195,10 @@ const elementActions = (
   idField: string
 ) => {
   return actions.map((action: ItemActions, index: number) => {
+    if (action.type === "view") {
+      return null;
+    }
+
     return (
       <TableActionButton
         type={action.type}
@@ -265,7 +274,10 @@ const TableWrapper = ({
                   : false;
 
                 return (
-                  <TableRow key={`tb-${entityName}-${index.toString()}`}>
+                  <TableRow
+                    key={`tb-${entityName}-${index.toString()}`}
+                    className={classes.rowElement}
+                  >
                     {onSelect && selectedItems && (
                       <TableCell
                         padding="checkbox"
