@@ -190,7 +190,7 @@ const AddTenant = ({
 
   useEffect(() => {
     const filteredZones = zones.filter(
-      (zone) => zone.servers !== 0 && !isNaN(zone.servers)
+      (zone) => zone.name !== "" && zone.servers !== 0 && !isNaN(zone.servers)
     );
 
     if (filteredZones.length > 0) {
@@ -246,12 +246,9 @@ const AddTenant = ({
 
   useEffect(() => {
     if (addSending) {
-      let cleanZones: IZone[] = [];
-      for (let zone of zones) {
-        if (zone.name !== "") {
-          cleanZones.push(zone);
-        }
-      }
+      let cleanZones = zones.filter(
+        (zone) => zone.name !== "" && zone.servers > 0 && !isNaN(zone.servers)
+      );
 
       const commonValidation = commonFormValidation(validationElements);
 
