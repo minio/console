@@ -143,17 +143,28 @@ const AddTenant = ({
   }, [tenantName]);
 
   useEffect(() => {
-    const commonValidation = commonFormValidation(
-      validationElements.slice(1, 3)
-    );
+    let subValidation = validationElements.slice(1, 3);
+
+    if (!advancedMode) {
+      subValidation.push({
+        fieldKey: "servers",
+        required: true,
+        pattern: /\d+/,
+        customPatternMessage: "Field must be numeric",
+        value: zones.length > 0 ? zones[0].servers.toString(10) : "0",
+      });
+    }
+
+    const commonValidation = commonFormValidation(subValidation);
 
     setConfigValid(
       !("volumes_per_server" in commonValidation) &&
-        !("volume_size" in commonValidation)
+        !("volume_size" in commonValidation) &&
+        !("servers" in commonValidation)
     );
 
     setValidationErrors(commonValidation);
-  }, [volumesPerServer, volumeConfiguration]);
+  }, [volumesPerServer, volumeConfiguration, zones]);
 
   useEffect(() => {
     let customAccountValidation: IValidation[] = [];
@@ -320,6 +331,14 @@ const AddTenant = ({
     };
 
     setVolumeConfiguration(volumeCopy);
+  };
+
+  const setServersSimple = (value: string) => {
+    const copyZone = [...zones];
+
+    copyZone[0].servers = parseInt(value, 10);
+
+    setZones(copyZone);
   };
 
   const fetchStorageClassList = () => {
@@ -606,6 +625,24 @@ const AddTenant = ({
             </Grid>
           )}
 
+          {!advancedMode && (
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="servers"
+                name="servers"
+                type="number"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setServersSimple(e.target.value);
+                  clearValidationError("servers");
+                }}
+                label="Number of Servers"
+                value={zones.length > 0 ? zones[0].servers.toString(10) : "0"}
+                min="0"
+                required
+                error={validationErrors["servers"] || ""}
+              />
+            </Grid>
+          )}
           <Grid item xs={12}>
             <InputBoxWrapper
               id="volumes_per_server"
