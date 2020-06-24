@@ -24,6 +24,7 @@ import { ThemeProvider, withStyles } from "@material-ui/core/styles";
 
 import "./index.css";
 import theme from "./theme/main";
+import newTheme from "./theme/newtheme";
 
 const GlobalCss = withStyles({
   // @global is handled by jss-plugin-global.
@@ -33,34 +34,35 @@ const GlobalCss = withStyles({
       fontSize: "14px",
       textTransform: "capitalize",
       padding: "16px 25px 16px 25px",
-      borderRadius: "3px"
+      borderRadius: "3px",
     },
     ".MuiButton-sizeSmall": {
       padding: "4px 10px",
-      fontSize: "0.8125rem"
+      fontSize: "0.8125rem",
     },
     ".MuiTableCell-head": {
       borderRadius: "3px 3px 0px 0px",
-      fontSize: "13px"
+      fontSize: "13px",
     },
     ".MuiPaper-root": {
-      borderRadius: "3px"
+      borderRadius: "3px",
     },
     ".MuiDrawer-paperAnchorDockedLeft": {
-      borderRight: "0px"
+      borderRight: "0px",
     },
     ".MuiDrawer-root": {
       "& .MuiPaper-root": {
-        borderRadius: "0px"
-      }
-    }
-  }
+        borderRadius: "0px",
+      },
+    },
+  },
 })(() => null);
 
 ReactDOM.render(
   <Provider store={configureStore()}>
     <GlobalCss />
     <ThemeProvider theme={theme}>
+      {/*<ThemeProvider theme={newTheme}>*/}
       <Routes />
     </ThemeProvider>
   </Provider>,

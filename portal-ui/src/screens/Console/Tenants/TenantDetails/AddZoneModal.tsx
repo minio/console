@@ -110,7 +110,7 @@ const AddZoneModal = ({
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setNumberOfInstances(parseInt(e.target.value));
             }}
-            label="Volumes per Server"
+            label="Drives per Server"
             value={numberOfInstances.toString(10)}
           />
         </Grid>

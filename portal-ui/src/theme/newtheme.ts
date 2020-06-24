@@ -1,17 +1,17 @@
 import { createMuiTheme } from "@material-ui/core";
 
-const theme = createMuiTheme({
+const newTheme = createMuiTheme({
   palette: {
     primary: {
-      light: "#757ce8",
-      main: "#201763",
-      dark: "#362585",
+      light: "#0c4453",
+      main: "#01262e",
+      dark: "#001115",
       contrastText: "#fff",
     },
     secondary: {
       light: "#ff7961",
       main: "#f44336",
-      dark: "#ba000d",
+      dark: "#01262E",
       contrastText: "#000",
     },
     error: {
@@ -20,15 +20,15 @@ const theme = createMuiTheme({
       contrastText: "#ffffff",
     },
     grey: {
-      100: "#f0f0f0",
-      200: "#e6e6e6",
-      300: "#cccccc",
-      400: "#999999",
-      500: "#8c8c8c",
-      600: "#737373",
-      700: "#666666",
-      800: "#4d4d4d",
-      900: "#333333",
+      100: "#F7F7F7",
+      200: "#D8DDDE",
+      300: "#BAC3C5",
+      400: "#9BA9AC",
+      500: "#7C8F93",
+      600: "#5D7479",
+      700: "#3F5A60",
+      800: "#204047",
+      900: "#01262E",
     },
     background: {
       default: "#F4F4F4",
@@ -38,29 +38,29 @@ const theme = createMuiTheme({
     fontFamily: ["Lato", "sans-serif"].join(","),
     h1: {
       fontWeight: "bold",
-      color: "#201763",
+      color: "#01262E",
     },
     h2: {
       fontWeight: "bold",
-      color: "#201763",
+      color: "#01262E",
     },
     h3: {
       fontWeight: "bold",
-      color: "#201763",
+      color: "#01262E",
     },
     h4: {
       fontWeight: "bold",
-      color: "#201763",
+      color: "#01262E",
     },
     h5: {
       fontWeight: "bold",
-      color: "#201763",
+      color: "#01262E",
     },
     h6: {
       fontWeight: "bold",
-      color: "#000000",
+      color: "#01262E",
     },
   },
 });
 
-export default theme;
+export default newTheme;
