@@ -17,6 +17,7 @@
 import storage from "local-storage-fallback";
 import request from "superagent";
 import get from "lodash/get";
+import { clearSession } from "../utils";
 
 export class API {
   invoke(method: string, url: string, data?: object) {
@@ -28,8 +29,11 @@ export class API {
       .catch((err) => {
         // if we get unauthorized, kick out the user
         if (err.status === 401) {
-          storage.removeItem("token");
-          window.location.href = "/";
+          clearSession();
+          // Refresh the whole page to ensure cache is clear
+          // and we dont end on an infinite loop
+          window.location.href = "/login";
+          return;
         }
         return this.onError(err);
       });
@@ -48,7 +52,8 @@ export class API {
 
       return Promise.reject(throwMessage);
     } else {
-      return Promise.reject("Unknown error");
+      clearSession();
+      window.location.href = "/login";
     }
   }
 }

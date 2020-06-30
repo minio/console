@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import storage from "local-storage-fallback";
+
 export const units = [
   "B",
   "KiB",
@@ -48,6 +50,20 @@ export const setCookie = (name: string, val: string) => {
   // Set it
   document.cookie =
     name + "=" + value + "; expires=" + date.toUTCString() + "; path=/";
+};
+
+export const deleteCookie = (name: string) => {
+  document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+};
+
+export const setSession = (token: string) => {
+  setCookie("token", token);
+  storage.setItem("token", token);
+};
+
+export const clearSession = () => {
+  storage.removeItem("token");
+  deleteCookie("token");
 };
 
 // timeFromdate gets time string from date input
