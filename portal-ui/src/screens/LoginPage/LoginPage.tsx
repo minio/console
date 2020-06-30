@@ -28,7 +28,8 @@ import { SystemState } from "../../types";
 import { userLoggedIn } from "../../actions";
 import api from "../../common/api";
 import { ILoginDetails, loginStrategyType } from "./types";
-import { setCookie } from "../../common/utils";
+import { setSession } from "../../common/utils";
+import history from "../../history";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -120,13 +121,13 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
   });
 
   const loginStrategyEndpoints: LoginStrategyRoutes = {
-    "form": "/api/v1/login",
+    form: "/api/v1/login",
     "service-account": "/api/v1/login/mkube",
-  }
+  };
   const loginStrategyPayload: LoginStrategyPayload = {
-    "form": { accessKey, secretKey },
+    form: { accessKey, secretKey },
     "service-account": { jwt },
-  }
+  };
 
   const fetchConfiguration = () => {
     setLoading(true);
@@ -147,15 +148,15 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
   const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     request
-      .post(loginStrategyEndpoints[loginStrategy.loginStrategy] || "/api/v1/login")
+      .post(
+        loginStrategyEndpoints[loginStrategy.loginStrategy] || "/api/v1/login"
+      )
       .send(loginStrategyPayload[loginStrategy.loginStrategy])
       .then((res: any) => {
         const bodyResponse = res.body;
         if (bodyResponse.sessionId) {
           // store the jwt token
-          setCookie("token", bodyResponse.sessionId);
-          storage.setItem("token", bodyResponse.sessionId);
-          //return res.body.sessionId;
+          setSession(bodyResponse.sessionId);
         } else if (bodyResponse.error) {
           // throw will be moved to catch block once bad login returns 403
           throw bodyResponse.error;
@@ -164,9 +165,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
       .then(() => {
         // We set the state in redux
         userLoggedIn(true);
-        // There is a browser cache issue if we change the policy associated to an account and then logout and history.push("/") after login
-        // therefore after login we need to use window.location redirect
-        window.location.href = "/";
+        history.push("/");
       })
       .catch((err) => {
         setError(err.message);

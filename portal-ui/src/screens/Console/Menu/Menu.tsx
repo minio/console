@@ -50,6 +50,7 @@ import {
   UsersIcon,
   WarpIcon,
 } from "../../../icons";
+import { clearSession } from "../../../common/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -156,9 +157,9 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
 
   const logout = () => {
     const deleteSession = () => {
-      storage.removeItem("token");
+      clearSession();
       userLoggedIn(false);
-      history.push("/");
+      history.push("/login");
     };
     api
       .invoke("POST", `/api/v1/logout`)

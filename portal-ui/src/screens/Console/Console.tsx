@@ -68,6 +68,7 @@ import ListTenants from "./Tenants/ListTenants/ListTenants";
 import { ISessionResponse } from "./types";
 import { saveSessionResponse } from "./actions";
 import TenantDetails from "./Tenants/TenantDetails/TenantDetails";
+import { clearSession } from "../../common/utils";
 
 function Copyright() {
   return (
@@ -206,9 +207,12 @@ const Console = ({
       .then((res) => {
         saveSessionResponse(res);
       })
-      .catch((err) => {
-        storage.removeItem("token");
-        history.push("/");
+      .catch(() => {
+        // if server returns 401 for /api/v1/session call invoke function will internally call clearSession()
+        // and redirecto to window.location.href = "/"; and this code will be not reached
+        // in case that not happen we clear session here and redirect as well
+        clearSession();
+        window.location.href = "/login";
       });
   }, [saveSessionResponse]);
 
