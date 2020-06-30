@@ -148,22 +148,8 @@ const ListTenants = ({ classes }: ITenantsList) => {
     window.open(link, "_blank");
   };
 
-  const openLinkCloud = (element: ITenant) => {
-    const link = `https://${element.name}.cloud.min.dev`;
-
-    openLink(link);
-  };
-
-  const openLinkConsole = (element: ITenant) => {
-    const link = `https://console.${element.name}.cloud.min.dev`;
-
-    openLink(link);
-  };
-
   const tableActions = [
     { type: "view", to: `/tenants`, sendOnlyId: true },
-    // { type: "cloud", onClick: openLinkCloud },
-    // { type: "console", onClick: openLinkConsole },
     { type: "delete", onClick: confirmDeleteTenant, sendOnlyId: true },
   ];
 

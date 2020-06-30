@@ -24,7 +24,6 @@ import { ThemeProvider, withStyles } from "@material-ui/core/styles";
 
 import "./index.css";
 import theme from "./theme/main";
-import newTheme from "./theme/newtheme";
 
 const GlobalCss = withStyles({
   // @global is handled by jss-plugin-global.
@@ -34,7 +33,7 @@ const GlobalCss = withStyles({
       fontSize: "14px",
       textTransform: "capitalize",
       padding: "16px 25px 16px 25px",
-      borderRadius: "3px",
+      borderRadius: 3,
     },
     ".MuiButton-sizeSmall": {
       padding: "4px 10px",
@@ -42,17 +41,17 @@ const GlobalCss = withStyles({
     },
     ".MuiTableCell-head": {
       borderRadius: "3px 3px 0px 0px",
-      fontSize: "13px",
+      fontSize: 13,
     },
     ".MuiPaper-root": {
-      borderRadius: "3px",
+      borderRadius: 3,
     },
     ".MuiDrawer-paperAnchorDockedLeft": {
-      borderRight: "0px",
+      borderRight: 0,
     },
     ".MuiDrawer-root": {
       "& .MuiPaper-root": {
-        borderRadius: "0px",
+        borderRadius: 0,
       },
     },
   },
