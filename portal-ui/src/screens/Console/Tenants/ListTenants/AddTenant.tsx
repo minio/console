@@ -112,7 +112,6 @@ const AddTenant = ({
   const [secretKey, setSecretKey] = useState<string>("");
   const [enableMCS, setEnableMCS] = useState<boolean>(true);
   const [enableSSL, setEnableSSL] = useState<boolean>(false);
-  const [enableMinDNS, setEnableMinDNS] = useState<boolean>(true);
   const [sizeFactor, setSizeFactor] = useState<string>("Gi");
   const [storageClasses, setStorageClassesList] = useState<Opts[]>([]);
   const [validationErrors, setValidationErrors] = useState<any>({});
@@ -286,11 +285,6 @@ const AddTenant = ({
           },
           zones: cleanZones,
         };
-        if (enableMinDNS) {
-          data["annotations"] = {
-            "io.min.dns": "{.metadata.name}.{.metadata.labels.controller}",
-          };
-        }
 
         api
           .invoke("POST", `/api/v1/mkube/tenants`, data)
@@ -769,21 +763,6 @@ const AddTenant = ({
               label={"Enable SSL"}
             />
           </Grid>
-          <Grid item xs={12}>
-            <CheckboxWrapper
-              value="enabled_mindns"
-              id="enabled_mindns"
-              name="enabled_mindns"
-              checked={enableMinDNS}
-              onChange={(e) => {
-                const targetD = e.target;
-                const checked = targetD.checked;
-
-                setEnableMinDNS(checked);
-              }}
-              label={"Enable MinDNS"}
-            />
-          </Grid>
         </React.Fragment>
       ),
       buttons: [
@@ -912,14 +891,6 @@ const AddTenant = ({
                       Enable MCS
                     </TableCell>
                     <TableCell>{enableMCS ? "Enabled" : "Disabled"}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell align="right" className={classes.tableTitle}>
-                      Enable MinDNS
-                    </TableCell>
-                    <TableCell>
-                      {enableMinDNS ? "Enabled" : "Disabled"}
-                    </TableCell>
                   </TableRow>
                 </React.Fragment>
               )}

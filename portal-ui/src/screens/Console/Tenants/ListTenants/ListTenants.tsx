@@ -162,8 +162,8 @@ const ListTenants = ({ classes }: ITenantsList) => {
 
   const tableActions = [
     { type: "view", to: `/tenants`, sendOnlyId: true },
-    { type: "cloud", onClick: openLinkCloud },
-    { type: "console", onClick: openLinkConsole },
+    // { type: "cloud", onClick: openLinkCloud },
+    // { type: "console", onClick: openLinkConsole },
     { type: "delete", onClick: confirmDeleteTenant, sendOnlyId: true },
   ];
 

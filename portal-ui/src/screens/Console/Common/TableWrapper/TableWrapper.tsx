@@ -147,10 +147,6 @@ const styles = (theme: Theme) =>
     rowElement: {
       userSelect: "none",
 
-      "&:nth-child(odd)": {
-        backgroundColor: "#f8f8f8",
-      },
-
       "&:hover": {
         backgroundColor: "#ececec",
       },
