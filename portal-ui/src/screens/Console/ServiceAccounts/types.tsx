@@ -18,8 +18,3 @@ export interface ServiceAccountsList {
   service_accounts: string[];
   total: number;
 }
-
-export interface NewServiceAccount {
-  accessKey: string;
-  secretKey: string;
-}

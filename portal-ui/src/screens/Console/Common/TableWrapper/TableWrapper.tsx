@@ -32,6 +32,7 @@ import {
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { TablePaginationActionsProps } from "@material-ui/core/TablePagination/TablePaginationActions";
 import TableActionButton from "./TableActionButton";
+import history from "../../../../history";
 import { checkboxIcons } from "../FormComponents/common/styleLibrary";
 
 //Interfaces for table Items
@@ -143,6 +144,16 @@ const styles = (theme: Theme) =>
       paddingTop: "100px",
       paddingBottom: "100px",
     },
+    rowElement: {
+      userSelect: "none",
+
+      "&:hover": {
+        backgroundColor: "#ececec",
+      },
+    },
+    rowClickable: {
+      cursor: "pointer",
+    },
     ...checkboxIcons,
   });
 
@@ -190,6 +201,10 @@ const elementActions = (
   idField: string
 ) => {
   return actions.map((action: ItemActions, index: number) => {
+    if (action.type === "view") {
+      return null;
+    }
+
     return (
       <TableActionButton
         type={action.type}
@@ -219,6 +234,24 @@ const TableWrapper = ({
   stickyHeader = false,
   paginatorConfig,
 }: TableWrapperProps) => {
+  const findView = itemActions
+    ? itemActions.find((el) => el.type === "view")
+    : null;
+
+  const clickAction = (rowItem: any) => {
+    if (findView) {
+      const valueClick = findView.sendOnlyId ? rowItem[idField] : rowItem;
+      if (findView.to) {
+        history.push(`${findView.to}/${valueClick}`);
+        return;
+      }
+
+      if (findView.onClick) {
+        findView.onClick(valueClick);
+      }
+    }
+  };
+
   return (
     <Grid item xs={12}>
       <Paper className={classes.paper}>
@@ -265,7 +298,15 @@ const TableWrapper = ({
                   : false;
 
                 return (
-                  <TableRow key={`tb-${entityName}-${index.toString()}`}>
+                  <TableRow
+                    key={`tb-${entityName}-${index.toString()}`}
+                    className={`${findView ? classes.rowClickable : ""} ${
+                      classes.rowElement
+                    }`}
+                    onClick={() => {
+                      clickAction(record);
+                    }}
+                  >
                     {onSelect && selectedItems && (
                       <TableCell
                         padding="checkbox"
@@ -278,6 +319,10 @@ const TableWrapper = ({
                           inputProps={{ "aria-label": "secondary checkbox" }}
                           checked={isSelected}
                           onChange={onSelect}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                          }}
                           checkedIcon={<span className={classes.checkedIcon} />}
                           icon={<span className={classes.unCheckedIcon} />}
                         />

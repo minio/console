@@ -27,6 +27,7 @@ const styles = (theme: Theme) =>
       flexGrow: 1,
     },
     wizardSteps: {
+      minWidth: 180,
       marginRight: 10,
       "& ul": {
         padding: 15,

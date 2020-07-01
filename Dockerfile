@@ -1,5 +1,7 @@
 FROM golang:1.13
 
+RUN apt-get update -y && apt-get install -y ca-certificates
+
 ADD go.mod /go/src/github.com/minio/mcs/go.mod
 ADD go.sum /go/src/github.com/minio/mcs/go.sum
 WORKDIR /go/src/github.com/minio/mcs/
@@ -12,7 +14,6 @@ WORKDIR /go/src/github.com/minio/mcs/
 
 ENV CGO_ENABLED=0
 
-RUN apt-get update -y && apt-get install -y ca-certificates
 RUN go build -ldflags "-w -s" -a -o mcs ./cmd/mcs
 
 FROM scratch

@@ -38,10 +38,14 @@ import {
 } from "../../../../utils/validationFunctions";
 import GenericWizard from "../../Common/GenericWizard/GenericWizard";
 import { IWizardElement } from "../../Common/GenericWizard/types";
+import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
 
 interface IAddTenantProps {
   open: boolean;
-  closeModalAndRefresh: (reloadData: boolean) => any;
+  closeModalAndRefresh: (
+    reloadData: boolean,
+    res: NewServiceAccount | null
+  ) => any;
   classes: any;
 }
 
@@ -68,10 +72,16 @@ const styles = (theme: Theme) =>
       paddingTop: 5,
       marginBottom: 10,
       backgroundColor: "#fff",
+      zIndex: 500,
     },
     tableTitle: {
       fontWeight: 700,
       width: "30%",
+    },
+    zoneError: {
+      color: "#dc1f2e",
+      fontSize: "0.75rem",
+      paddingLeft: 120,
     },
     ...modalBasic,
   });
@@ -86,6 +96,7 @@ const AddTenant = ({
   closeModalAndRefresh,
   classes,
 }: IAddTenantProps) => {
+  // Fields
   const [addSending, setAddSending] = useState<boolean>(false);
   const [addError, setAddError] = useState<string>("");
   const [tenantName, setTenantName] = useState<string>("");
@@ -95,7 +106,7 @@ const AddTenant = ({
   const [volumesPerServer, setVolumesPerServer] = useState<number>(0);
   const [volumeConfiguration, setVolumeConfiguration] = useState<
     IVolumeConfiguration
-  >({ size: "", storage_class: "" });
+  >({ size: 0, storage_class: "" });
   const [mountPath, setMountPath] = useState<string>("");
   const [accessKey, setAccessKey] = useState<string>("");
   const [secretKey, setSecretKey] = useState<string>("");
@@ -105,13 +116,23 @@ const AddTenant = ({
   const [storageClasses, setStorageClassesList] = useState<Opts[]>([]);
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [namespace, setNamespace] = useState<string>("");
+  const [advancedMode, setAdvancedMode] = useState<boolean>(false);
+
+  // Forms Validation
   const [nameTenantValid, setNameTenantValid] = useState<boolean>(false);
   const [configValid, setConfigValid] = useState<boolean>(false);
+  const [configureValid, setConfigureValid] = useState<boolean>(false);
+  const [zonesValid, setZonesValid] = useState<boolean>(false);
+
+  // Custom Elements
+  const [customACCK, setCustomACCK] = useState<boolean>(false);
+  const [customDockerhub, setCustomDockerhub] = useState<boolean>(false);
 
   useEffect(() => {
     fetchStorageClassList();
   }, []);
 
+  /* Validations of pages */
   useEffect(() => {
     const commonValidation = commonFormValidation([validationElements[0]]);
 
@@ -121,17 +142,84 @@ const AddTenant = ({
   }, [tenantName]);
 
   useEffect(() => {
-    const commonValidation = commonFormValidation(
-      validationElements.slice(1, 3)
-    );
+    let subValidation = validationElements.slice(1, 3);
+
+    if (!advancedMode) {
+      subValidation.push({
+        fieldKey: "servers",
+        required: true,
+        pattern: /\d+/,
+        customPatternMessage: "Field must be numeric",
+        value: zones.length > 0 ? zones[0].servers.toString(10) : "0",
+      });
+    }
+
+    const commonValidation = commonFormValidation(subValidation);
 
     setConfigValid(
       !("volumes_per_server" in commonValidation) &&
-        !("volume_size" in commonValidation)
+        !("volume_size" in commonValidation) &&
+        !("servers" in commonValidation)
     );
 
     setValidationErrors(commonValidation);
-  }, [volumesPerServer, volumeConfiguration]);
+  }, [volumesPerServer, volumeConfiguration, zones]);
+
+  useEffect(() => {
+    let customAccountValidation: IValidation[] = [];
+    if (customACCK) {
+      customAccountValidation = [
+        ...customAccountValidation,
+        {
+          fieldKey: "access_key",
+          required: true,
+          value: accessKey,
+        },
+        {
+          fieldKey: "secret_key",
+          required: true,
+          value: secretKey,
+        },
+      ];
+    }
+
+    if (customDockerhub) {
+      customAccountValidation = [
+        ...customAccountValidation,
+        {
+          fieldKey: "image",
+          required: true,
+          value: imageName,
+          pattern: /^((.*?)\/(.*?):(.+))$/,
+          customPatternMessage: "Format must be of form: 'minio/minio:VERSION'",
+        },
+      ];
+    }
+
+    const commonVal = commonFormValidation(customAccountValidation);
+
+    setConfigureValid(Object.keys(commonVal).length === 0);
+
+    setValidationErrors(commonVal);
+  }, [customACCK, customDockerhub, accessKey, secretKey, imageName]);
+
+  useEffect(() => {
+    const filteredZones = zones.filter(
+      (zone) => zone.name !== "" && zone.servers !== 0 && !isNaN(zone.servers)
+    );
+
+    if (filteredZones.length > 0) {
+      setZonesValid(true);
+      setValidationErrors({});
+
+      return;
+    }
+
+    setZonesValid(false);
+    setValidationErrors({ zones_selector: "Please add a valid zone" });
+  }, [zones]);
+
+  /* End Validation of pages */
 
   const validationElements: IValidation[] = [
     {
@@ -145,33 +233,22 @@ const AddTenant = ({
     {
       fieldKey: "volumes_per_server",
       required: true,
+      pattern: /\d+/,
+      customPatternMessage: "Field must be numeric",
       value: volumesPerServer.toString(10),
     },
     {
       fieldKey: "volume_size",
       required: true,
-      value: volumeConfiguration.size,
+      pattern: /\d+/,
+      customPatternMessage: "Field must be numeric",
+      value: volumeConfiguration.size.toString(10),
     },
-    {
-      fieldKey: "image",
-      required: false,
-      value: imageName,
-    },
+
     {
       fieldKey: "service_name",
       required: false,
       value: serviceName,
-    },
-
-    {
-      fieldKey: "access_key",
-      required: false,
-      value: accessKey,
-    },
-    {
-      fieldKey: "secret_key",
-      required: false,
-      value: secretKey,
     },
   ];
 
@@ -184,38 +261,42 @@ const AddTenant = ({
 
   useEffect(() => {
     if (addSending) {
-      let cleanZones: IZone[] = [];
-      for (let zone of zones) {
-        if (zone.name !== "") {
-          cleanZones.push(zone);
-        }
-      }
+      let cleanZones = zones.filter(
+        (zone) => zone.name !== "" && zone.servers > 0 && !isNaN(zone.servers)
+      );
 
       const commonValidation = commonFormValidation(validationElements);
 
       setValidationErrors(commonValidation);
 
       if (Object.keys(commonValidation).length === 0) {
+        const data: { [key: string]: any } = {
+          name: tenantName,
+          service_name: tenantName,
+          image: imageName,
+          enable_ssl: enableSSL,
+          enable_mcs: enableMCS,
+          access_key: accessKey,
+          secret_key: secretKey,
+          volumes_per_server: volumesPerServer,
+          volume_configuration: {
+            size: `${volumeConfiguration.size}${sizeFactor}`,
+            storage_class: volumeConfiguration.storage_class,
+          },
+          zones: cleanZones,
+        };
+
         api
-          .invoke("POST", `/api/v1/mkube/tenants`, {
-            name: tenantName,
-            service_name: tenantName,
-            image: imageName,
-            enable_ssl: enableSSL,
-            enable_mcs: enableMCS,
-            access_key: accessKey,
-            secret_key: secretKey,
-            volumes_per_server: volumesPerServer,
-            volume_configuration: {
-              size: `${volumeConfiguration.size}${sizeFactor}`,
-              storage_class: volumeConfiguration.storage_class,
-            },
-            zones: cleanZones,
-          })
-          .then(() => {
+          .invoke("POST", `/api/v1/mkube/tenants`, data)
+          .then((res) => {
+            const newSrvAcc: NewServiceAccount = {
+              accessKey: res.access_key,
+              secretKey: res.secret_key,
+            };
+
             setAddSending(false);
             setAddError("");
-            closeModalAndRefresh(true);
+            closeModalAndRefresh(true, newSrvAcc);
           })
           .catch((err) => {
             setAddSending(false);
@@ -228,14 +309,30 @@ const AddTenant = ({
     }
   }, [addSending]);
 
+  useEffect(() => {
+    if (advancedMode) {
+      setZones([{ name: "zone-1", servers: 0, capacity: "0", volumes: 0 }]);
+    } else {
+      setZones([{ name: "zone-1", servers: 1, capacity: "0", volumes: 0 }]);
+    }
+  }, [advancedMode]);
+
   const setVolumeConfig = (item: string, value: string) => {
     const volumeCopy: IVolumeConfiguration = {
-      size: item !== "size" ? volumeConfiguration.size : value,
+      size: item !== "size" ? volumeConfiguration.size : parseInt(value),
       storage_class:
         item !== "storage_class" ? volumeConfiguration.storage_class : value,
     };
 
     setVolumeConfiguration(volumeCopy);
+  };
+
+  const setServersSimple = (value: string) => {
+    const copyZone = [...zones];
+
+    copyZone[0].servers = parseInt(value, 10);
+
+    setZones(copyZone);
   };
 
   const fetchStorageClassList = () => {
@@ -268,7 +365,7 @@ const AddTenant = ({
     type: "other",
     enabled: true,
     action: () => {
-      closeModalAndRefresh(false);
+      closeModalAndRefresh(false, null);
     },
   };
 
@@ -276,24 +373,47 @@ const AddTenant = ({
     {
       label: "Name Tenant",
       componentRender: (
-        <Grid item xs={12}>
+        <React.Fragment>
           <div className={classes.headerElement}>
             <h3>Name Tenant</h3>
             <span>How would you like to name this new tenant?</span>
           </div>
-          <InputBoxWrapper
-            id="tenant-name"
-            name="tenant-name"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setTenantName(e.target.value);
-              clearValidationError("tenant-name");
-            }}
-            label="Tenant Name"
-            value={tenantName}
-            required
-            error={validationErrors["tenant-name"] || ""}
-          />
-        </Grid>
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="tenant-name"
+              name="tenant-name"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setTenantName(e.target.value);
+                clearValidationError("tenant-name");
+              }}
+              label="Tenant Name"
+              value={tenantName}
+              required
+              error={validationErrors["tenant-name"] || ""}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <br />
+            <span>
+              Use Advanced mode to configure additional options in the tenant
+            </span>
+            <br />
+            <br />
+            <CheckboxWrapper
+              value="adv_mode"
+              id="adv_mode"
+              name="adv_mode"
+              checked={advancedMode}
+              onChange={(e) => {
+                const targetD = e.target;
+                const checked = targetD.checked;
+
+                setAdvancedMode(checked);
+              }}
+              label={"Advanced Mode"}
+            />
+          </Grid>
+        </React.Fragment>
       ),
       buttons: [
         cancelButton,
@@ -308,48 +428,109 @@ const AddTenant = ({
             <h3>Configure</h3>
             <span>Basic configurations for tenant management</span>
           </div>
-          Please enter your access & secret keys
           <Grid item xs={12}>
-            <InputBoxWrapper
-              id="access_key"
-              name="access_key"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setAccessKey(e.target.value);
-                clearValidationError("access_key");
+            <CheckboxWrapper
+              value="custom_acck"
+              id="custom_acck"
+              name="custom_acck"
+              checked={customACCK}
+              onChange={(e) => {
+                const targetD = e.target;
+                const checked = targetD.checked;
+
+                setCustomACCK(checked);
               }}
-              label="Access Key"
-              value={accessKey}
-              error={validationErrors["access_key"] || ""}
+              label={"Use Custom Access Keys"}
             />
           </Grid>
-          <Grid item xs={12}>
-            <InputBoxWrapper
-              id="secret_key"
-              name="secret_key"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setSecretKey(e.target.value);
-                clearValidationError("secret_key");
-              }}
-              label="Secret Key"
-              value={secretKey}
-              error={validationErrors["secret_key"] || ""}
-            />
-          </Grid>
-          Please enter the MinIO image from dockerhub
-          <Grid item xs={12}>
-            <InputBoxWrapper
-              id="image"
-              name="image"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setImageName(e.target.value);
-                clearValidationError("image");
-              }}
-              label="MinIO Image"
-              value={imageName}
-              error={validationErrors["image"] || ""}
-              placeholder="Eg. minio/minio:RELEASE.2020-05-08T02-40-49Z"
-            />
-          </Grid>
+          {customACCK && (
+            <React.Fragment>
+              Please enter your access & secret keys
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="access_key"
+                  name="access_key"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setAccessKey(e.target.value);
+                    clearValidationError("access_key");
+                  }}
+                  label="Access Key"
+                  value={accessKey}
+                  error={validationErrors["access_key"] || ""}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="secret_key"
+                  name="secret_key"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setSecretKey(e.target.value);
+                    clearValidationError("secret_key");
+                  }}
+                  label="Secret Key"
+                  value={secretKey}
+                  error={validationErrors["secret_key"] || ""}
+                  required
+                />
+              </Grid>
+            </React.Fragment>
+          )}
+
+          {advancedMode && (
+            <Grid item xs={12}>
+              <CheckboxWrapper
+                value="custom_dockerhub"
+                id="custom_dockerhub"
+                name="custom_dockerhub"
+                checked={customDockerhub}
+                onChange={(e) => {
+                  const targetD = e.target;
+                  const checked = targetD.checked;
+
+                  setCustomDockerhub(checked);
+                }}
+                label={"Use custom image"}
+              />
+            </Grid>
+          )}
+
+          {customDockerhub && (
+            <React.Fragment>
+              Please enter the MinIO image from dockerhub
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="image"
+                  name="image"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setImageName(e.target.value);
+                    clearValidationError("image");
+                  }}
+                  label="MinIO Image"
+                  value={imageName}
+                  error={validationErrors["image"] || ""}
+                  placeholder="Eg. minio/minio:RELEASE.2020-05-08T02-40-49Z"
+                  required
+                />
+              </Grid>
+            </React.Fragment>
+          )}
+        </React.Fragment>
+      ),
+      buttons: [
+        cancelButton,
+        { label: "Back", type: "back", enabled: true },
+        { label: "Next", type: "next", enabled: configureValid },
+      ],
+    },
+    {
+      label: "Service Configuration",
+      advancedOnly: true,
+      componentRender: (
+        <React.Fragment>
+          <div className={classes.headerElement}>
+            <h3>Service Configuration</h3>
+          </div>
           <Grid item xs={12}>
             <InputBoxWrapper
               id="service_name"
@@ -386,6 +567,7 @@ const AddTenant = ({
     },
     {
       label: "Storage Class",
+      advancedOnly: true,
       componentRender: (
         <React.Fragment>
           <div className={classes.headerElement}>
@@ -423,17 +605,38 @@ const AddTenant = ({
             <h3>Server Configuration</h3>
             <span>Define the server configuration</span>
           </div>
-          <Grid item xs={12}>
-            <InputBoxWrapper
-              id="mount_path"
-              name="mount_path"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setMountPath(e.target.value);
-              }}
-              label="Mount Path"
-              value={mountPath}
-            />
-          </Grid>
+          {advancedMode && (
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="mount_path"
+                name="mount_path"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setMountPath(e.target.value);
+                }}
+                label="Mount Path"
+                value={mountPath}
+              />
+            </Grid>
+          )}
+
+          {!advancedMode && (
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="servers"
+                name="servers"
+                type="number"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setServersSimple(e.target.value);
+                  clearValidationError("servers");
+                }}
+                label="Number of Servers"
+                value={zones.length > 0 ? zones[0].servers.toString(10) : "0"}
+                min="0"
+                required
+                error={validationErrors["servers"] || ""}
+              />
+            </Grid>
+          )}
           <Grid item xs={12}>
             <InputBoxWrapper
               id="volumes_per_server"
@@ -445,6 +648,7 @@ const AddTenant = ({
               }}
               label="Volumes per Server"
               value={volumesPerServer.toString(10)}
+              min="0"
               required
               error={validationErrors["volumes_per_server"] || ""}
             />
@@ -453,6 +657,7 @@ const AddTenant = ({
             <div className={classes.multiContainer}>
               <div>
                 <InputBoxWrapper
+                  type="number"
                   id="volume_size"
                   name="volume_size"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -460,9 +665,10 @@ const AddTenant = ({
                     clearValidationError("volume_size");
                   }}
                   label="Size"
-                  value={volumeConfiguration.size}
+                  value={volumeConfiguration.size.toString(10)}
                   required
                   error={validationErrors["volume_size"] || ""}
+                  min="0"
                 />
               </div>
               <div className={classes.sizeFactorContainer}>
@@ -489,6 +695,7 @@ const AddTenant = ({
     },
     {
       label: "Zones Definition",
+      advancedOnly: true,
       componentRender: (
         <React.Fragment>
           <div className={classes.headerElement}>
@@ -506,17 +713,21 @@ const AddTenant = ({
                 elements={zones}
               />
             </div>
+            <div className={classes.zoneError}>
+              {validationErrors["zones_selector"] || ""}
+            </div>
           </Grid>
         </React.Fragment>
       ),
       buttons: [
         cancelButton,
         { label: "Back", type: "back", enabled: true },
-        { label: "Next", type: "next", enabled: true },
+        { label: "Next", type: "next", enabled: zonesValid },
       ],
     },
     {
       label: "Extra Configurations",
+      advancedOnly: true,
       componentRender: (
         <React.Fragment>
           <div className={classes.headerElement}>
@@ -534,7 +745,7 @@ const AddTenant = ({
 
                 setEnableMCS(checked);
               }}
-              label={"Enable mcs"}
+              label={"Enable Console"}
             />
           </Grid>
           <Grid item xs={12}>
@@ -588,48 +799,65 @@ const AddTenant = ({
                 </TableCell>
                 <TableCell>{tenantName}</TableCell>
               </TableRow>
-              <TableRow>
-                <TableCell align="right" className={classes.tableTitle}>
-                  Access Key
-                </TableCell>
-                <TableCell>{accessKey}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell align="right" className={classes.tableTitle}>
-                  Secret Key
-                </TableCell>
-                <TableCell>{secretKey}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell align="right" className={classes.tableTitle}>
-                  MinIO Image
-                </TableCell>
-                <TableCell>{imageName}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell align="right" className={classes.tableTitle}>
-                  Service Name
-                </TableCell>
-                <TableCell>{serviceName}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell align="right" className={classes.tableTitle}>
-                  Namespace
-                </TableCell>
-                <TableCell>{namespace}</TableCell>
-              </TableRow>
+              {customACCK && (
+                <React.Fragment>
+                  <TableRow>
+                    <TableCell align="right" className={classes.tableTitle}>
+                      Access Key
+                    </TableCell>
+                    <TableCell>{accessKey}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell align="right" className={classes.tableTitle}>
+                      Secret Key
+                    </TableCell>
+                    <TableCell>{secretKey}</TableCell>
+                  </TableRow>
+                </React.Fragment>
+              )}
+
+              {customDockerhub && (
+                <TableRow>
+                  <TableCell align="right" className={classes.tableTitle}>
+                    MinIO Image
+                  </TableCell>
+                  <TableCell>{imageName}</TableCell>
+                </TableRow>
+              )}
+
+              {serviceName !== "" && (
+                <TableRow>
+                  <TableCell align="right" className={classes.tableTitle}>
+                    Service Name
+                  </TableCell>
+                  <TableCell>{serviceName}</TableCell>
+                </TableRow>
+              )}
+
+              {namespace !== "" && (
+                <TableRow>
+                  <TableCell align="right" className={classes.tableTitle}>
+                    Namespace
+                  </TableCell>
+                  <TableCell>{namespace}</TableCell>
+                </TableRow>
+              )}
+
               <TableRow>
                 <TableCell align="right" className={classes.tableTitle}>
                   Storage Class
                 </TableCell>
                 <TableCell>{volumeConfiguration.storage_class}</TableCell>
               </TableRow>
-              <TableRow>
-                <TableCell align="right" className={classes.tableTitle}>
-                  Mount Path
-                </TableCell>
-                <TableCell>{mountPath}</TableCell>
-              </TableRow>
+              {mountPath !== "" && (
+                <TableRow>
+                  <TableCell align="right" className={classes.tableTitle}>
+                    Mount Path
+                  </TableCell>
+                  <TableCell>{mountPath}</TableCell>
+                </TableRow>
+              )}
+
               <TableRow>
                 <TableCell align="right" className={classes.tableTitle}>
                   Volumes per Server
@@ -650,37 +878,34 @@ const AddTenant = ({
                 </TableCell>
                 <TableCell>{zones.length}</TableCell>
               </TableRow>
-              <TableRow>
-                <TableCell align="right" className={classes.tableTitle}>
-                  Enable SSL
-                </TableCell>
-                <TableCell>{enableSSL ? "Enabled" : "Disabled"}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell align="right" className={classes.tableTitle}>
-                  Enable MCS
-                </TableCell>
-                <TableCell>{enableMCS ? "Enabled" : "Disabled"}</TableCell>
-              </TableRow>
+              {advancedMode && (
+                <React.Fragment>
+                  <TableRow>
+                    <TableCell align="right" className={classes.tableTitle}>
+                      Enable SSL
+                    </TableCell>
+                    <TableCell>{enableSSL ? "Enabled" : "Disabled"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell align="right" className={classes.tableTitle}>
+                      Enable MCS
+                    </TableCell>
+                    <TableCell>{enableMCS ? "Enabled" : "Disabled"}</TableCell>
+                  </TableRow>
+                </React.Fragment>
+              )}
             </TableBody>
           </Table>
-
-          {addSending && (
-            <Grid item xs={12}>
-              <LinearProgress />
-            </Grid>
-          )}
         </React.Fragment>
       ),
       buttons: [
         cancelButton,
         { label: "Back", type: "back", enabled: true },
         {
-          label: "Save",
+          label: "Create",
           type: "submit",
           enabled: !addSending,
           action: () => {
-            console.log("Save");
             setAddSending(true);
           },
         },
@@ -688,18 +913,29 @@ const AddTenant = ({
     },
   ];
 
+  let filteredWizardSteps = wizardSteps;
+
+  if (!advancedMode) {
+    filteredWizardSteps = wizardSteps.filter((step) => !step.advancedOnly);
+  }
+
   return (
     <ModalWrapper
       title="Create Tenant"
       modalOpen={open}
       onClose={() => {
         setAddError("");
-        closeModalAndRefresh(false);
+        closeModalAndRefresh(false, null);
       }}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <GenericWizard wizardSteps={wizardSteps} />
+      {addSending && (
+        <Grid item xs={12}>
+          <LinearProgress />
+        </Grid>
+      )}
+      <GenericWizard wizardSteps={filteredWizardSteps} />
     </ModalWrapper>
   );
 };

@@ -33,34 +33,35 @@ const GlobalCss = withStyles({
       fontSize: "14px",
       textTransform: "capitalize",
       padding: "16px 25px 16px 25px",
-      borderRadius: "3px"
+      borderRadius: 3,
     },
     ".MuiButton-sizeSmall": {
       padding: "4px 10px",
-      fontSize: "0.8125rem"
+      fontSize: "0.8125rem",
     },
     ".MuiTableCell-head": {
       borderRadius: "3px 3px 0px 0px",
-      fontSize: "13px"
+      fontSize: 13,
     },
     ".MuiPaper-root": {
-      borderRadius: "3px"
+      borderRadius: 3,
     },
     ".MuiDrawer-paperAnchorDockedLeft": {
-      borderRight: "0px"
+      borderRight: 0,
     },
     ".MuiDrawer-root": {
       "& .MuiPaper-root": {
-        borderRadius: "0px"
-      }
-    }
-  }
+        borderRadius: 0,
+      },
+    },
+  },
 })(() => null);
 
 ReactDOM.render(
   <Provider store={configureStore()}>
     <GlobalCss />
     <ThemeProvider theme={theme}>
+      {/*<ThemeProvider theme={newTheme}>*/}
       <Routes />
     </ThemeProvider>
   </Provider>,

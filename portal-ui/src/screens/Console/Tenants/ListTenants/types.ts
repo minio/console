@@ -23,7 +23,7 @@ export interface IZone {
 }
 
 export interface IVolumeConfiguration {
-  size: string;
+  size: number;
   storage_class: string;
 }
 

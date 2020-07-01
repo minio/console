@@ -34,6 +34,7 @@ interface IZonesMultiSelector {
   label: string;
   tooltip?: string;
   classes: any;
+
   onChange: (elements: IZone[]) => void;
 }
 
@@ -87,9 +88,8 @@ const ZonesMultiSelector = ({
 }: IZonesMultiSelector) => {
   const defaultZone: IZone = { name: "", servers: 0, capacity: "", volumes: 0 };
 
-  const [currentElements, setCurrentElements] = useState<IZone[]>([
-    { ...defaultZone },
-  ]);
+  const [currentElements, setCurrentElements] = useState<IZone[]>([]);
+  const [internalCounter, setInternalCounter] = useState<number>(1);
   const bottomList = createRef<HTMLDivElement>();
 
   // Use effect to send new values to onChange
@@ -97,12 +97,33 @@ const ZonesMultiSelector = ({
     onChange(currentElements);
   }, [currentElements]);
 
+  // Use effect to set initial values
+  useEffect(() => {
+    if (currentElements.length === 0 && elements.length === 0) {
+      // Initial Value
+      setCurrentElements([{ ...defaultZone, name: "zone-1" }]);
+    } else if (currentElements.length === 0 && elements.length > 0) {
+      setCurrentElements(elements);
+      setInternalCounter(elements.length);
+    }
+  }, [currentElements, elements]);
+
   // If the last input is not empty, we add a new one
   const addEmptyRow = (elementsUp: IZone[]) => {
     const lastElement = elementsUp[elementsUp.length - 1];
-    if (lastElement.servers !== 0 && lastElement.name !== "") {
-      elementsUp.push({ ...defaultZone });
+    const internalElement = internalCounter + 1;
+    if (
+      lastElement.servers !== 0 &&
+      lastElement.name !== "" &&
+      !isNaN(lastElement.servers)
+    ) {
+      elementsUp.push({
+        ...defaultZone,
+        name: `zone-${internalElement}`,
+      });
       const refScroll = bottomList.current;
+
+      setInternalCounter(internalElement);
 
       if (refScroll) {
         refScroll.scrollIntoView(false);
@@ -158,6 +179,7 @@ const ZonesMultiSelector = ({
         <div>
           <InputBoxWrapper
             type="number"
+            min="0"
             id={`${name}-${index.toString()}-servers`}
             label={""}
             name={`${name}-${index.toString()}-servers`}

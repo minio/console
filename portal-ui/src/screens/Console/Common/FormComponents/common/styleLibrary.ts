@@ -20,7 +20,7 @@ export const fieldBasic = {
   inputLabel: {
     fontWeight: 500,
     marginRight: 10,
-    width: 100,
+    width: 160,
     fontSize: 14,
     color: "#393939",
     textAlign: "right" as const,

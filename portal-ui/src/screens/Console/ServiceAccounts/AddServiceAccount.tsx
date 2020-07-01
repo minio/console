@@ -25,7 +25,7 @@ import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import api from "../../../common/api";
 import "codemirror/lib/codemirror.css";
 import "codemirror/theme/material.css";
-import { NewServiceAccount } from "./types";
+import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import HelpIcon from "@material-ui/icons/Help";
 
 require("codemirror/mode/javascript/javascript");

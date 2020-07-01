@@ -20,6 +20,8 @@ import ViewIcon from "./TableActionIcons/ViewIcon";
 import PencilIcon from "./TableActionIcons/PencilIcon";
 import DeleteIcon from "./TableActionIcons/DeleteIcon";
 import DescriptionIcon from "./TableActionIcons/DescriptionIcon";
+import CloudIcon from "./TableActionIcons/CloudIcon";
+import ConsoleIcon from "./TableActionIcons/ConsoleIcon";
 import { Link } from "react-router-dom";
 
 interface IActionButton {
@@ -42,6 +44,10 @@ const defineIcon = (type: string, selected: boolean) => {
       return <DeleteIcon active={selected} />;
     case "description":
       return <DescriptionIcon active={selected} />;
+    case "cloud":
+      return <CloudIcon active={selected} />;
+    case "console":
+      return <ConsoleIcon active={selected} />;
   }
 
   return null;
@@ -64,7 +70,8 @@ const TableActionButton = ({
       size={"small"}
       onClick={
         onClick
-          ? () => {
+          ? (e) => {
+              e.stopPropagation();
               onClick(valueClick);
             }
           : () => null
@@ -79,7 +86,16 @@ const TableActionButton = ({
   }
 
   if (isString(to)) {
-    return <Link to={`${to}/${valueClick}`}>{buttonElement}</Link>;
+    return (
+      <Link
+        to={`${to}/${valueClick}`}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        {buttonElement}
+      </Link>
+    );
   }
 
   return null;

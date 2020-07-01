@@ -378,10 +378,6 @@ const Console = ({
                   ) : null}
                 </Switch>
               </Router>
-
-              <Box pt={4}>
-                <Copyright />
-              </Box>
             </Container>
           </main>
         </div>
