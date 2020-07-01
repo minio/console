@@ -55,8 +55,6 @@ func RandomCharString(n int) string {
 	return RandomCharStringWithAlphabet(n, letters)
 }
 
-const letterLowerCase = "abcdefghijklmnopqrstuvwxyz012345"
-
 // DifferenceArrays returns the elements in `a` that aren't in `b`.
 func DifferenceArrays(a, b []string) []string {
 	mb := make(map[string]struct{}, len(b))
