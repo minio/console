@@ -82,7 +82,7 @@ func init() {
 }
 
 func (m NofiticationService) validateNofiticationServiceEnum(path, location string, value NofiticationService) error {
-	if err := validate.Enum(path, location, value, nofiticationServiceEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, nofiticationServiceEnum, true); err != nil {
 		return err
 	}
 	return nil

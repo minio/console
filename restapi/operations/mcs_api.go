@@ -99,6 +99,9 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		UserAPICreateServiceAccountHandler: user_api.CreateServiceAccountHandlerFunc(func(params user_api.CreateServiceAccountParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.CreateServiceAccount has not yet been implemented")
 		}),
+		AdminAPICreateTenantHandler: admin_api.CreateTenantHandlerFunc(func(params admin_api.CreateTenantParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.CreateTenant has not yet been implemented")
+		}),
 		UserAPIDeleteBucketHandler: user_api.DeleteBucketHandlerFunc(func(params user_api.DeleteBucketParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteBucket has not yet been implemented")
 		}),
@@ -108,11 +111,20 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		UserAPIDeleteServiceAccountHandler: user_api.DeleteServiceAccountHandlerFunc(func(params user_api.DeleteServiceAccountParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteServiceAccount has not yet been implemented")
 		}),
+		AdminAPIDeleteTenantHandler: admin_api.DeleteTenantHandlerFunc(func(params admin_api.DeleteTenantParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.DeleteTenant has not yet been implemented")
+		}),
+		AdminAPIGetResourceQuotaHandler: admin_api.GetResourceQuotaHandlerFunc(func(params admin_api.GetResourceQuotaParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.GetResourceQuota has not yet been implemented")
+		}),
 		AdminAPIGetUserInfoHandler: admin_api.GetUserInfoHandlerFunc(func(params admin_api.GetUserInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetUserInfo has not yet been implemented")
 		}),
 		AdminAPIGroupInfoHandler: admin_api.GroupInfoHandlerFunc(func(params admin_api.GroupInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GroupInfo has not yet been implemented")
+		}),
+		AdminAPIListAllTenantsHandler: admin_api.ListAllTenantsHandlerFunc(func(params admin_api.ListAllTenantsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.ListAllTenants has not yet been implemented")
 		}),
 		UserAPIListBucketEventsHandler: user_api.ListBucketEventsHandlerFunc(func(params user_api.ListBucketEventsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.ListBucketEvents has not yet been implemented")
@@ -128,6 +140,9 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		}),
 		AdminAPIListPoliciesHandler: admin_api.ListPoliciesHandlerFunc(func(params admin_api.ListPoliciesParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListPolicies has not yet been implemented")
+		}),
+		AdminAPIListTenantsHandler: admin_api.ListTenantsHandlerFunc(func(params admin_api.ListTenantsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.ListTenants has not yet been implemented")
 		}),
 		UserAPIListUserServiceAccountsHandler: user_api.ListUserServiceAccountsHandlerFunc(func(params user_api.ListUserServiceAccountsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.ListUserServiceAccounts has not yet been implemented")
@@ -186,8 +201,14 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		AdminAPISetPolicyHandler: admin_api.SetPolicyHandlerFunc(func(params admin_api.SetPolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.SetPolicy has not yet been implemented")
 		}),
+		AdminAPITenantInfoHandler: admin_api.TenantInfoHandlerFunc(func(params admin_api.TenantInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.TenantInfo has not yet been implemented")
+		}),
 		AdminAPIUpdateGroupHandler: admin_api.UpdateGroupHandlerFunc(func(params admin_api.UpdateGroupParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.UpdateGroup has not yet been implemented")
+		}),
+		AdminAPIUpdateTenantHandler: admin_api.UpdateTenantHandlerFunc(func(params admin_api.UpdateTenantParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.UpdateTenant has not yet been implemented")
 		}),
 		AdminAPIUpdateUserGroupsHandler: admin_api.UpdateUserGroupsHandlerFunc(func(params admin_api.UpdateUserGroupsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.UpdateUserGroups has not yet been implemented")
@@ -268,16 +289,24 @@ type McsAPI struct {
 	UserAPICreateBucketEventHandler user_api.CreateBucketEventHandler
 	// UserAPICreateServiceAccountHandler sets the operation handler for the create service account operation
 	UserAPICreateServiceAccountHandler user_api.CreateServiceAccountHandler
+	// AdminAPICreateTenantHandler sets the operation handler for the create tenant operation
+	AdminAPICreateTenantHandler admin_api.CreateTenantHandler
 	// UserAPIDeleteBucketHandler sets the operation handler for the delete bucket operation
 	UserAPIDeleteBucketHandler user_api.DeleteBucketHandler
 	// UserAPIDeleteBucketEventHandler sets the operation handler for the delete bucket event operation
 	UserAPIDeleteBucketEventHandler user_api.DeleteBucketEventHandler
 	// UserAPIDeleteServiceAccountHandler sets the operation handler for the delete service account operation
 	UserAPIDeleteServiceAccountHandler user_api.DeleteServiceAccountHandler
+	// AdminAPIDeleteTenantHandler sets the operation handler for the delete tenant operation
+	AdminAPIDeleteTenantHandler admin_api.DeleteTenantHandler
+	// AdminAPIGetResourceQuotaHandler sets the operation handler for the get resource quota operation
+	AdminAPIGetResourceQuotaHandler admin_api.GetResourceQuotaHandler
 	// AdminAPIGetUserInfoHandler sets the operation handler for the get user info operation
 	AdminAPIGetUserInfoHandler admin_api.GetUserInfoHandler
 	// AdminAPIGroupInfoHandler sets the operation handler for the group info operation
 	AdminAPIGroupInfoHandler admin_api.GroupInfoHandler
+	// AdminAPIListAllTenantsHandler sets the operation handler for the list all tenants operation
+	AdminAPIListAllTenantsHandler admin_api.ListAllTenantsHandler
 	// UserAPIListBucketEventsHandler sets the operation handler for the list bucket events operation
 	UserAPIListBucketEventsHandler user_api.ListBucketEventsHandler
 	// UserAPIListBucketsHandler sets the operation handler for the list buckets operation
@@ -288,6 +317,8 @@ type McsAPI struct {
 	AdminAPIListGroupsHandler admin_api.ListGroupsHandler
 	// AdminAPIListPoliciesHandler sets the operation handler for the list policies operation
 	AdminAPIListPoliciesHandler admin_api.ListPoliciesHandler
+	// AdminAPIListTenantsHandler sets the operation handler for the list tenants operation
+	AdminAPIListTenantsHandler admin_api.ListTenantsHandler
 	// UserAPIListUserServiceAccountsHandler sets the operation handler for the list user service accounts operation
 	UserAPIListUserServiceAccountsHandler user_api.ListUserServiceAccountsHandler
 	// AdminAPIListUsersHandler sets the operation handler for the list users operation
@@ -326,8 +357,12 @@ type McsAPI struct {
 	AdminAPISetConfigHandler admin_api.SetConfigHandler
 	// AdminAPISetPolicyHandler sets the operation handler for the set policy operation
 	AdminAPISetPolicyHandler admin_api.SetPolicyHandler
+	// AdminAPITenantInfoHandler sets the operation handler for the tenant info operation
+	AdminAPITenantInfoHandler admin_api.TenantInfoHandler
 	// AdminAPIUpdateGroupHandler sets the operation handler for the update group operation
 	AdminAPIUpdateGroupHandler admin_api.UpdateGroupHandler
+	// AdminAPIUpdateTenantHandler sets the operation handler for the update tenant operation
+	AdminAPIUpdateTenantHandler admin_api.UpdateTenantHandler
 	// AdminAPIUpdateUserGroupsHandler sets the operation handler for the update user groups operation
 	AdminAPIUpdateUserGroupsHandler admin_api.UpdateUserGroupsHandler
 	// AdminAPIUpdateUserInfoHandler sets the operation handler for the update user info operation
@@ -441,6 +476,9 @@ func (o *McsAPI) Validate() error {
 	if o.UserAPICreateServiceAccountHandler == nil {
 		unregistered = append(unregistered, "user_api.CreateServiceAccountHandler")
 	}
+	if o.AdminAPICreateTenantHandler == nil {
+		unregistered = append(unregistered, "admin_api.CreateTenantHandler")
+	}
 	if o.UserAPIDeleteBucketHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteBucketHandler")
 	}
@@ -450,11 +488,20 @@ func (o *McsAPI) Validate() error {
 	if o.UserAPIDeleteServiceAccountHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteServiceAccountHandler")
 	}
+	if o.AdminAPIDeleteTenantHandler == nil {
+		unregistered = append(unregistered, "admin_api.DeleteTenantHandler")
+	}
+	if o.AdminAPIGetResourceQuotaHandler == nil {
+		unregistered = append(unregistered, "admin_api.GetResourceQuotaHandler")
+	}
 	if o.AdminAPIGetUserInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetUserInfoHandler")
 	}
 	if o.AdminAPIGroupInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.GroupInfoHandler")
+	}
+	if o.AdminAPIListAllTenantsHandler == nil {
+		unregistered = append(unregistered, "admin_api.ListAllTenantsHandler")
 	}
 	if o.UserAPIListBucketEventsHandler == nil {
 		unregistered = append(unregistered, "user_api.ListBucketEventsHandler")
@@ -470,6 +517,9 @@ func (o *McsAPI) Validate() error {
 	}
 	if o.AdminAPIListPoliciesHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListPoliciesHandler")
+	}
+	if o.AdminAPIListTenantsHandler == nil {
+		unregistered = append(unregistered, "admin_api.ListTenantsHandler")
 	}
 	if o.UserAPIListUserServiceAccountsHandler == nil {
 		unregistered = append(unregistered, "user_api.ListUserServiceAccountsHandler")
@@ -528,8 +578,14 @@ func (o *McsAPI) Validate() error {
 	if o.AdminAPISetPolicyHandler == nil {
 		unregistered = append(unregistered, "admin_api.SetPolicyHandler")
 	}
+	if o.AdminAPITenantInfoHandler == nil {
+		unregistered = append(unregistered, "admin_api.TenantInfoHandler")
+	}
 	if o.AdminAPIUpdateGroupHandler == nil {
 		unregistered = append(unregistered, "admin_api.UpdateGroupHandler")
+	}
+	if o.AdminAPIUpdateTenantHandler == nil {
+		unregistered = append(unregistered, "admin_api.UpdateTenantHandler")
 	}
 	if o.AdminAPIUpdateUserGroupsHandler == nil {
 		unregistered = append(unregistered, "admin_api.UpdateUserGroupsHandler")
@@ -685,6 +741,10 @@ func (o *McsAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/service-accounts"] = user_api.NewCreateServiceAccount(o.context, o.UserAPICreateServiceAccountHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/tenants"] = admin_api.NewCreateTenant(o.context, o.AdminAPICreateTenantHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
@@ -697,6 +757,14 @@ func (o *McsAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/service-accounts/{access_key}"] = user_api.NewDeleteServiceAccount(o.context, o.UserAPIDeleteServiceAccountHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/namespaces/{namespace}/tenants/{tenant}"] = admin_api.NewDeleteTenant(o.context, o.AdminAPIDeleteTenantHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/namespaces/{namespace}/resourcequotas/{resource-quota-name}"] = admin_api.NewGetResourceQuota(o.context, o.AdminAPIGetResourceQuotaHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -705,6 +773,10 @@ func (o *McsAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/groups/{name}"] = admin_api.NewGroupInfo(o.context, o.AdminAPIGroupInfoHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/tenants"] = admin_api.NewListAllTenants(o.context, o.AdminAPIListAllTenantsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -725,6 +797,10 @@ func (o *McsAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/policies"] = admin_api.NewListPolicies(o.context, o.AdminAPIListPoliciesHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants"] = admin_api.NewListTenants(o.context, o.AdminAPIListTenantsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -801,10 +877,18 @@ func (o *McsAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/set-policy/{name}"] = admin_api.NewSetPolicy(o.context, o.AdminAPISetPolicyHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}"] = admin_api.NewTenantInfo(o.context, o.AdminAPITenantInfoHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/groups/{name}"] = admin_api.NewUpdateGroup(o.context, o.AdminAPIUpdateGroupHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/namespaces/{namespace}/tenants/{tenant}"] = admin_api.NewUpdateTenant(o.context, o.AdminAPIUpdateTenantHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

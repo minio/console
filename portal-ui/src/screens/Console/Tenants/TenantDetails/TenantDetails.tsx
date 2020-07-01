@@ -146,7 +146,7 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
     setLoading(true);
 
     api
-      .invoke("GET", `/api/v1/mkube/tenants/${tenantName}`)
+      .invoke("GET", `/api/v1/tenants/${tenantName}`)
       .then((res: ITenant) => {
         const total = res.volume_count * res.volume_size;
 

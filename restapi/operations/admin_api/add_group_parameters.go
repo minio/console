@@ -70,7 +70,7 @@ func (o *AddGroupParams) BindRequest(r *http.Request, route *middleware.MatchedR
 		var body models.AddGroupRequest
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
-				res = append(res, errors.Required("body", "body"))
+				res = append(res, errors.Required("body", "body", ""))
 			} else {
 				res = append(res, errors.NewParseError("body", "body", "", err))
 			}
@@ -85,7 +85,7 @@ func (o *AddGroupParams) BindRequest(r *http.Request, route *middleware.MatchedR
 			}
 		}
 	} else {
-		res = append(res, errors.Required("body", "body"))
+		res = append(res, errors.Required("body", "body", ""))
 	}
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)

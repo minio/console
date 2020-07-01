@@ -61,7 +61,7 @@ func init() {
 }
 
 func (m BucketAccess) validateBucketAccessEnum(path, location string, value BucketAccess) error {
-	if err := validate.Enum(path, location, value, bucketAccessEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, bucketAccessEnum, true); err != nil {
 		return err
 	}
 	return nil

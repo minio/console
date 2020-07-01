@@ -76,7 +76,7 @@ func (o *SetConfigParams) BindRequest(r *http.Request, route *middleware.Matched
 		var body models.SetConfigRequest
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
-				res = append(res, errors.Required("body", "body"))
+				res = append(res, errors.Required("body", "body", ""))
 			} else {
 				res = append(res, errors.NewParseError("body", "body", "", err))
 			}
@@ -91,7 +91,7 @@ func (o *SetConfigParams) BindRequest(r *http.Request, route *middleware.Matched
 			}
 		}
 	} else {
-		res = append(res, errors.Required("body", "body"))
+		res = append(res, errors.Required("body", "body", ""))
 	}
 	rName, rhkName, _ := route.Params.GetOK("name")
 	if err := o.bindName(rName, rhkName, route.Formats); err != nil {

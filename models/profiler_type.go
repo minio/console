@@ -73,7 +73,7 @@ func init() {
 }
 
 func (m ProfilerType) validateProfilerTypeEnum(path, location string, value ProfilerType) error {
-	if err := validate.Enum(path, location, value, profilerTypeEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, profilerTypeEnum, true); err != nil {
 		return err
 	}
 	return nil

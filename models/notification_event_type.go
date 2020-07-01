@@ -61,7 +61,7 @@ func init() {
 }
 
 func (m NotificationEventType) validateNotificationEventTypeEnum(path, location string, value NotificationEventType) error {
-	if err := validate.Enum(path, location, value, notificationEventTypeEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, notificationEventTypeEnum, true); err != nil {
 		return err
 	}
 	return nil

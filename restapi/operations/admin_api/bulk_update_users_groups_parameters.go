@@ -70,7 +70,7 @@ func (o *BulkUpdateUsersGroupsParams) BindRequest(r *http.Request, route *middle
 		var body models.BulkUserGroups
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
-				res = append(res, errors.Required("body", "body"))
+				res = append(res, errors.Required("body", "body", ""))
 			} else {
 				res = append(res, errors.NewParseError("body", "body", "", err))
 			}
@@ -85,7 +85,7 @@ func (o *BulkUpdateUsersGroupsParams) BindRequest(r *http.Request, route *middle
 			}
 		}
 	} else {
-		res = append(res, errors.Required("body", "body"))
+		res = append(res, errors.Required("body", "body", ""))
 	}
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
