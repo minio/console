@@ -842,6 +842,200 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/resourcequotas/{resource-quota-name}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get Resource Quota",
+        "operationId": "GetResourceQuota",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "resource-quota-name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/resourceQuota"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "List Tenants by Namespace",
+        "operationId": "ListTenants",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "sort_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listTenantsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Tenant Info",
+        "operationId": "TenantInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/tenant"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Update Tenant",
+        "operationId": "UpdateTenant",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateTenantRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Delete Tenant",
+        "operationId": "DeleteTenant",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/policies": {
       "get": {
         "tags": [
@@ -1191,6 +1385,79 @@ func init() {
         "responses": {
           "204": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/tenants": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "List Tenant of All Namespaces",
+        "operationId": "ListAllTenants",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "sort_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listTenantsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Create Tenant",
+        "operationId": "CreateTenant",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createTenantRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/createTenantResponse"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -1616,6 +1883,86 @@ func init() {
         }
       }
     },
+    "createTenantRequest": {
+      "type": "object",
+      "required": [
+        "name",
+        "volume_configuration",
+        "namespace"
+      ],
+      "properties": {
+        "access_key": {
+          "type": "string"
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "enable_mcs": {
+          "type": "boolean",
+          "default": true
+        },
+        "enable_ssl": {
+          "type": "boolean",
+          "default": true
+        },
+        "image": {
+          "type": "string"
+        },
+        "mounth_path": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]{3,63}$"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "secret_key": {
+          "type": "string"
+        },
+        "service_name": {
+          "type": "string"
+        },
+        "volume_configuration": {
+          "type": "object",
+          "required": [
+            "size"
+          ],
+          "properties": {
+            "size": {
+              "type": "string"
+            },
+            "storage_class": {
+              "type": "string"
+            }
+          }
+        },
+        "volumes_per_server": {
+          "type": "integer"
+        },
+        "zones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/zone"
+          }
+        }
+      }
+    },
+    "createTenantResponse": {
+      "type": "object",
+      "properties": {
+        "access_key": {
+          "type": "string"
+        },
+        "secret_key": {
+          "type": "string"
+        }
+      }
+    },
     "error": {
       "type": "object",
       "required": [
@@ -1731,6 +2078,23 @@ func init() {
           "type": "integer",
           "format": "int64",
           "title": "total number of policies"
+        }
+      }
+    },
+    "listTenantsResponse": {
+      "type": "object",
+      "properties": {
+        "tenants": {
+          "type": "array",
+          "title": "list of resulting tenants",
+          "items": {
+            "$ref": "#/definitions/tenantList"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "title": "number of tenants accessible to tenant user"
         }
       }
     },
@@ -1992,6 +2356,36 @@ func init() {
         }
       }
     },
+    "resourceQuota": {
+      "type": "object",
+      "properties": {
+        "elements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/resourceQuotaElement"
+          }
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "resourceQuotaElement": {
+      "type": "object",
+      "properties": {
+        "hard": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "used": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "serviceAccountCreds": {
       "type": "object",
       "properties": {
@@ -2110,6 +2504,73 @@ func init() {
         }
       }
     },
+    "tenant": {
+      "type": "object",
+      "properties": {
+        "creation_date": {
+          "type": "string"
+        },
+        "currentState": {
+          "type": "string"
+        },
+        "instance_count": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "volume_count": {
+          "type": "integer"
+        },
+        "volume_size": {
+          "type": "integer"
+        },
+        "volumes_per_server": {
+          "type": "integer"
+        },
+        "zone_count": {
+          "type": "integer"
+        },
+        "zones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/zone"
+          }
+        }
+      }
+    },
+    "tenantList": {
+      "type": "object",
+      "properties": {
+        "creation_date": {
+          "type": "string"
+        },
+        "currentState": {
+          "type": "string"
+        },
+        "instance_count": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "volume_count": {
+          "type": "integer"
+        },
+        "volume_size": {
+          "type": "integer"
+        },
+        "zone_count": {
+          "type": "integer"
+        }
+      }
+    },
     "updateGroupRequest": {
       "type": "object",
       "required": [
@@ -2125,6 +2586,15 @@ func init() {
         },
         "status": {
           "type": "string"
+        }
+      }
+    },
+    "updateTenantRequest": {
+      "type": "object",
+      "properties": {
+        "image": {
+          "type": "string",
+          "pattern": "^((.*?)/(.*?):(.+))$"
         }
       }
     },
@@ -2177,6 +2647,17 @@ func init() {
         },
         "status": {
           "type": "string"
+        }
+      }
+    },
+    "zone": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "servers": {
+          "type": "integer"
         }
       }
     }
@@ -3003,6 +3484,200 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/resourcequotas/{resource-quota-name}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get Resource Quota",
+        "operationId": "GetResourceQuota",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "resource-quota-name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/resourceQuota"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "List Tenants by Namespace",
+        "operationId": "ListTenants",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "sort_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listTenantsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Tenant Info",
+        "operationId": "TenantInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/tenant"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Update Tenant",
+        "operationId": "UpdateTenant",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateTenantRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Delete Tenant",
+        "operationId": "DeleteTenant",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/policies": {
       "get": {
         "tags": [
@@ -3362,6 +4037,79 @@ func init() {
         }
       }
     },
+    "/tenants": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "List Tenant of All Namespaces",
+        "operationId": "ListAllTenants",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "sort_by",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listTenantsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Create Tenant",
+        "operationId": "CreateTenant",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createTenantRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/createTenantResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/users": {
       "get": {
         "tags": [
@@ -3595,6 +4343,20 @@ func init() {
     }
   },
   "definitions": {
+    "CreateTenantRequestVolumeConfiguration": {
+      "type": "object",
+      "required": [
+        "size"
+      ],
+      "properties": {
+        "size": {
+          "type": "string"
+        },
+        "storage_class": {
+          "type": "string"
+        }
+      }
+    },
     "addGroupRequest": {
       "type": "object",
       "required": [
@@ -3777,6 +4539,86 @@ func init() {
         }
       }
     },
+    "createTenantRequest": {
+      "type": "object",
+      "required": [
+        "name",
+        "volume_configuration",
+        "namespace"
+      ],
+      "properties": {
+        "access_key": {
+          "type": "string"
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "enable_mcs": {
+          "type": "boolean",
+          "default": true
+        },
+        "enable_ssl": {
+          "type": "boolean",
+          "default": true
+        },
+        "image": {
+          "type": "string"
+        },
+        "mounth_path": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]{3,63}$"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "secret_key": {
+          "type": "string"
+        },
+        "service_name": {
+          "type": "string"
+        },
+        "volume_configuration": {
+          "type": "object",
+          "required": [
+            "size"
+          ],
+          "properties": {
+            "size": {
+              "type": "string"
+            },
+            "storage_class": {
+              "type": "string"
+            }
+          }
+        },
+        "volumes_per_server": {
+          "type": "integer"
+        },
+        "zones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/zone"
+          }
+        }
+      }
+    },
+    "createTenantResponse": {
+      "type": "object",
+      "properties": {
+        "access_key": {
+          "type": "string"
+        },
+        "secret_key": {
+          "type": "string"
+        }
+      }
+    },
     "error": {
       "type": "object",
       "required": [
@@ -3892,6 +4734,23 @@ func init() {
           "type": "integer",
           "format": "int64",
           "title": "total number of policies"
+        }
+      }
+    },
+    "listTenantsResponse": {
+      "type": "object",
+      "properties": {
+        "tenants": {
+          "type": "array",
+          "title": "list of resulting tenants",
+          "items": {
+            "$ref": "#/definitions/tenantList"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "title": "number of tenants accessible to tenant user"
         }
       }
     },
@@ -4153,6 +5012,36 @@ func init() {
         }
       }
     },
+    "resourceQuota": {
+      "type": "object",
+      "properties": {
+        "elements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/resourceQuotaElement"
+          }
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "resourceQuotaElement": {
+      "type": "object",
+      "properties": {
+        "hard": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "used": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "serviceAccountCreds": {
       "type": "object",
       "properties": {
@@ -4271,6 +5160,73 @@ func init() {
         }
       }
     },
+    "tenant": {
+      "type": "object",
+      "properties": {
+        "creation_date": {
+          "type": "string"
+        },
+        "currentState": {
+          "type": "string"
+        },
+        "instance_count": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "volume_count": {
+          "type": "integer"
+        },
+        "volume_size": {
+          "type": "integer"
+        },
+        "volumes_per_server": {
+          "type": "integer"
+        },
+        "zone_count": {
+          "type": "integer"
+        },
+        "zones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/zone"
+          }
+        }
+      }
+    },
+    "tenantList": {
+      "type": "object",
+      "properties": {
+        "creation_date": {
+          "type": "string"
+        },
+        "currentState": {
+          "type": "string"
+        },
+        "instance_count": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "volume_count": {
+          "type": "integer"
+        },
+        "volume_size": {
+          "type": "integer"
+        },
+        "zone_count": {
+          "type": "integer"
+        }
+      }
+    },
     "updateGroupRequest": {
       "type": "object",
       "required": [
@@ -4286,6 +5242,15 @@ func init() {
         },
         "status": {
           "type": "string"
+        }
+      }
+    },
+    "updateTenantRequest": {
+      "type": "object",
+      "properties": {
+        "image": {
+          "type": "string",
+          "pattern": "^((.*?)/(.*?):(.+))$"
         }
       }
     },
@@ -4338,6 +5303,17 @@ func init() {
         },
         "status": {
           "type": "string"
+        }
+      }
+    },
+    "zone": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "servers": {
+          "type": "integer"
         }
       }
     }

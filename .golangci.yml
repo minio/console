@@ -22,3 +22,7 @@ linters:
 
 service:
   golangci-lint-version: 1.21.0 # use the fixed version to not introduce new linters unexpectedly
+
+run:
+  skip-dirs:
+    - pkg/clientgen

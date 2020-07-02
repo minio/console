@@ -958,6 +958,191 @@ paths:
       tags:
         - AdminAPI
 
+#  m3
+
+  /tenants:
+    get:
+      summary: List Tenant of All Namespaces
+      operationId: ListAllTenants
+      parameters:
+        - name: sort_by
+          in: query
+          required: false
+          type: string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listTenantsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    post:
+      summary: Create Tenant
+      operationId: CreateTenant
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/createTenantRequest"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/createTenantResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /namespaces/{namespace}/tenants:
+    get:
+      summary: List Tenants by Namespace
+      operationId: ListTenants
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: sort_by
+          in: query
+          required: false
+          type: string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listTenantsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /namespaces/{namespace}/tenants/{tenant}:
+    get:
+      summary: Tenant Info
+      operationId: TenantInfo
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/tenant"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    delete:
+      summary: Delete Tenant
+      operationId: DeleteTenant
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    put:
+      summary: Update Tenant
+      operationId: UpdateTenant
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/updateTenantRequest"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /namespaces/{namespace}/resourcequotas/{resource-quota-name}:
+    get:
+      summary: Get Resource Quota
+      operationId: GetResourceQuota
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: resource-quota-name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/resourceQuota"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
 definitions:
   bucketAccess:
     type: string
@@ -1461,4 +1646,148 @@ definitions:
         type: string
       secretKey:
         type: string
+  tenant:
+    type: object
+    properties:
+      name:
+        type: string
+      zone_count:
+        type: integer
+      instance_count:
+        type: integer
+      volume_size:
+        type: integer
+      volume_count:
+        type: integer
+      volumes_per_server:
+        type: integer
+      creation_date:
+        type: string
+      currentState:
+        type: string
+      zones:
+        type: array
+        items:
+          $ref: "#/definitions/zone"
+      namespace:
+        type: string
+  tenantList:
+    type: object
+    properties:
+      name:
+        type: string
+      zone_count:
+        type: integer
+      instance_count:
+        type: integer
+      volume_size:
+        type: integer
+      volume_count:
+        type: integer
+      creation_date:
+        type: string
+      currentState:
+        type: string
+      namespace:
+        type: string
+  listTenantsResponse:
+    type: object
+    properties:
+      tenants:
+        type: array
+        items:
+          $ref: "#/definitions/tenantList"
+        title: list of resulting tenants
+      total:
+        type: integer
+        format: int64
+        title: number of tenants accessible to tenant user
+  updateTenantRequest:
+    type: object
+    properties:
+      image:
+        type: string
+        pattern: "^((.*?)/(.*?):(.+))$"
+  createTenantRequest:
+    type: object
+    required:
+      - name
+      - volume_configuration
+      - namespace
+    properties:
+      name:
+        type: string
+        pattern: "^[a-z0-9-]{3,63}$"
+      image:
+        type: string
+      service_name:
+        type: string
+      zones:
+        type: array
+        items:
+          $ref: "#/definitions/zone"
+      volumes_per_server:
+        type: integer
+      volume_configuration:
+        type: object
+        required:
+          - size
+        properties:
+          size:
+            type: string
+          storage_class:
+            type: string
+      mounth_path:
+        type: string
+      access_key:
+        type: string
+      secret_key:
+        type: string
+      enable_mcs:
+        type: boolean
+        default: true
+      enable_ssl:
+        type: boolean
+        default: true
+      namespace:
+        type: string
+      annotations:
+        type: object
+        additionalProperties:
+          type: string
+  createTenantResponse:
+    type: object
+    properties:
+      access_key:
+        type: string
+      secret_key:
+        type: string
+  zone:
+    type: object
+    properties:
+      name:
+        type: string
+      servers:
+        type: integer
 
+  resourceQuota:
+    type: object
+    properties:
+      name:
+        type: string
+      elements:
+        type: array
+        items:
+          $ref: "#/definitions/resourceQuotaElement"
+
+  resourceQuotaElement:
+    type: object
+    properties:
+      name:
+        type: string
+      hard:
+        type: integer
+        format: int64
+      used:
+        type: integer
+        format: int64

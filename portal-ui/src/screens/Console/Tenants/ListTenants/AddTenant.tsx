@@ -287,7 +287,7 @@ const AddTenant = ({
         };
 
         api
-          .invoke("POST", `/api/v1/mkube/tenants`, data)
+          .invoke("POST", `/api/v1/tenants`, data)
           .then((res) => {
             const newSrvAcc: NewServiceAccount = {
               accessKey: res.access_key,
@@ -337,7 +337,7 @@ const AddTenant = ({
 
   const fetchStorageClassList = () => {
     api
-      .invoke("GET", `/api/v1/mkube/storage-classes`)
+      .invoke("GET", `/api/v1/storage-classes`)
       .then((res: string[]) => {
         let classes: string[] = [];
         if (res !== null) {

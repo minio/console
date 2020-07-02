@@ -27,7 +27,6 @@ import (
 	"github.com/minio/mcs/models"
 	"github.com/minio/mcs/pkg"
 	"github.com/minio/mcs/pkg/auth"
-	"github.com/minio/mcs/pkg/auth/mkube"
 
 	assetFS "github.com/elazarl/go-bindata-assetfs"
 
@@ -100,6 +99,12 @@ func configureAPI(api *operations.McsAPI) http.Handler {
 	// Register admin Service Account Handlers
 	registerServiceAccountsHandlers(api)
 
+	//m3
+	// Register tenant handlers
+	registerTenantHandlers(api)
+	// Register ResourceQuota handlers
+	registerResourceQuotaHandlers(api)
+
 	api.PreServerShutdown = func() {}
 
 	api.ServerShutdown = func() {}
@@ -167,8 +172,6 @@ func FileServerMiddleware(next http.Handler) http.Handler {
 		switch {
 		case strings.HasPrefix(r.URL.Path, "/ws"):
 			serveWS(w, r)
-		case strings.HasPrefix(r.URL.Path, "/api/v1/mkube"):
-			serverMkube(mkube.HTTPClient, w, r)
 		case strings.HasPrefix(r.URL.Path, "/api"):
 			next.ServeHTTP(w, r)
 		default:
