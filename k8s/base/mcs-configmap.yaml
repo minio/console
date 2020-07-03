@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mcs-env
+data:
+  MCS_PORT: "9090"
+  MCS_TLS_PORT: "9443"
