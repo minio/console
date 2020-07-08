@@ -30,14 +30,14 @@ import (
 	"github.com/minio/mcs/models"
 )
 
-// LoginMkubeCreatedCode is the HTTP code returned for type LoginMkubeCreated
-const LoginMkubeCreatedCode int = 201
+// LoginOperatorCreatedCode is the HTTP code returned for type LoginOperatorCreated
+const LoginOperatorCreatedCode int = 201
 
-/*LoginMkubeCreated A successful login.
+/*LoginOperatorCreated A successful login.
 
-swagger:response loginMkubeCreated
+swagger:response loginOperatorCreated
 */
-type LoginMkubeCreated struct {
+type LoginOperatorCreated struct {
 
 	/*
 	  In: Body
@@ -45,25 +45,25 @@ type LoginMkubeCreated struct {
 	Payload *models.LoginResponse `json:"body,omitempty"`
 }
 
-// NewLoginMkubeCreated creates LoginMkubeCreated with default headers values
-func NewLoginMkubeCreated() *LoginMkubeCreated {
+// NewLoginOperatorCreated creates LoginOperatorCreated with default headers values
+func NewLoginOperatorCreated() *LoginOperatorCreated {
 
-	return &LoginMkubeCreated{}
+	return &LoginOperatorCreated{}
 }
 
-// WithPayload adds the payload to the login mkube created response
-func (o *LoginMkubeCreated) WithPayload(payload *models.LoginResponse) *LoginMkubeCreated {
+// WithPayload adds the payload to the login operator created response
+func (o *LoginOperatorCreated) WithPayload(payload *models.LoginResponse) *LoginOperatorCreated {
 	o.Payload = payload
 	return o
 }
 
-// SetPayload sets the payload to the login mkube created response
-func (o *LoginMkubeCreated) SetPayload(payload *models.LoginResponse) {
+// SetPayload sets the payload to the login operator created response
+func (o *LoginOperatorCreated) SetPayload(payload *models.LoginResponse) {
 	o.Payload = payload
 }
 
 // WriteResponse to the client
-func (o *LoginMkubeCreated) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *LoginOperatorCreated) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(201)
 	if o.Payload != nil {
@@ -74,11 +74,11 @@ func (o *LoginMkubeCreated) WriteResponse(rw http.ResponseWriter, producer runti
 	}
 }
 
-/*LoginMkubeDefault Generic error response.
+/*LoginOperatorDefault Generic error response.
 
-swagger:response loginMkubeDefault
+swagger:response loginOperatorDefault
 */
-type LoginMkubeDefault struct {
+type LoginOperatorDefault struct {
 	_statusCode int
 
 	/*
@@ -87,41 +87,41 @@ type LoginMkubeDefault struct {
 	Payload *models.Error `json:"body,omitempty"`
 }
 
-// NewLoginMkubeDefault creates LoginMkubeDefault with default headers values
-func NewLoginMkubeDefault(code int) *LoginMkubeDefault {
+// NewLoginOperatorDefault creates LoginOperatorDefault with default headers values
+func NewLoginOperatorDefault(code int) *LoginOperatorDefault {
 	if code <= 0 {
 		code = 500
 	}
 
-	return &LoginMkubeDefault{
+	return &LoginOperatorDefault{
 		_statusCode: code,
 	}
 }
 
-// WithStatusCode adds the status to the login mkube default response
-func (o *LoginMkubeDefault) WithStatusCode(code int) *LoginMkubeDefault {
+// WithStatusCode adds the status to the login operator default response
+func (o *LoginOperatorDefault) WithStatusCode(code int) *LoginOperatorDefault {
 	o._statusCode = code
 	return o
 }
 
-// SetStatusCode sets the status to the login mkube default response
-func (o *LoginMkubeDefault) SetStatusCode(code int) {
+// SetStatusCode sets the status to the login operator default response
+func (o *LoginOperatorDefault) SetStatusCode(code int) {
 	o._statusCode = code
 }
 
-// WithPayload adds the payload to the login mkube default response
-func (o *LoginMkubeDefault) WithPayload(payload *models.Error) *LoginMkubeDefault {
+// WithPayload adds the payload to the login operator default response
+func (o *LoginOperatorDefault) WithPayload(payload *models.Error) *LoginOperatorDefault {
 	o.Payload = payload
 	return o
 }
 
-// SetPayload sets the payload to the login mkube default response
-func (o *LoginMkubeDefault) SetPayload(payload *models.Error) {
+// SetPayload sets the payload to the login operator default response
+func (o *LoginOperatorDefault) SetPayload(payload *models.Error) {
 	o.Payload = payload
 }
 
 // WriteResponse to the client
-func (o *LoginMkubeDefault) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *LoginOperatorDefault) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(o._statusCode)
 	if o.Payload != nil {

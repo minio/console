@@ -236,5 +236,5 @@ func getSecureExpectCTHeader() string {
 // getTenantMemorySize Memory size value to be used when generating the
 // MinioInstance request
 func getTenantMemorySize() string {
-	return env.Get(M3TenantMemorySize, defaultTenantMemorySize)
+	return env.Get(McsTenantMemorySize, defaultTenantMemorySize)
 }

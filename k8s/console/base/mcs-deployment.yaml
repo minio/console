@@ -17,9 +17,6 @@ spec:
         - name: mcs
           image: minio/mcs:latest
           imagePullPolicy: "IfNotPresent"
-          env:
-            - name: MCS_MKUBE_ADMIN_ONLY
-              value: "on"
           args:
             - /mcs
             - server

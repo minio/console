@@ -754,21 +754,21 @@ func init() {
         }
       }
     },
-    "/login/mkube": {
+    "/login/oauth2/auth": {
       "post": {
         "security": [],
         "tags": [
           "UserAPI"
         ],
-        "summary": "Login to Mkube.",
-        "operationId": "LoginMkube",
+        "summary": "Identity Provider oauth2 callback endpoint.",
+        "operationId": "LoginOauth2Auth",
         "parameters": [
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/loginMkubeRequest"
+              "$ref": "#/definitions/loginOauth2AuthRequest"
             }
           }
         ],
@@ -788,21 +788,21 @@ func init() {
         }
       }
     },
-    "/login/oauth2/auth": {
+    "/login/operator": {
       "post": {
         "security": [],
         "tags": [
           "UserAPI"
         ],
-        "summary": "Identity Provider oauth2 callback endpoint.",
-        "operationId": "LoginOauth2Auth",
+        "summary": "Login to Operator Console.",
+        "operationId": "LoginOperator",
         "parameters": [
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/loginOauth2AuthRequest"
+              "$ref": "#/definitions/loginOperatorRequest"
             }
           }
         ],
@@ -2126,17 +2126,6 @@ func init() {
         }
       }
     },
-    "loginMkubeRequest": {
-      "type": "object",
-      "required": [
-        "jwt"
-      ],
-      "properties": {
-        "jwt": {
-          "type": "string"
-        }
-      }
-    },
     "loginOauth2AuthRequest": {
       "type": "object",
       "required": [
@@ -2148,6 +2137,17 @@ func init() {
           "type": "string"
         },
         "state": {
+          "type": "string"
+        }
+      }
+    },
+    "loginOperatorRequest": {
+      "type": "object",
+      "required": [
+        "jwt"
+      ],
+      "properties": {
+        "jwt": {
           "type": "string"
         }
       }
@@ -3396,21 +3396,21 @@ func init() {
         }
       }
     },
-    "/login/mkube": {
+    "/login/oauth2/auth": {
       "post": {
         "security": [],
         "tags": [
           "UserAPI"
         ],
-        "summary": "Login to Mkube.",
-        "operationId": "LoginMkube",
+        "summary": "Identity Provider oauth2 callback endpoint.",
+        "operationId": "LoginOauth2Auth",
         "parameters": [
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/loginMkubeRequest"
+              "$ref": "#/definitions/loginOauth2AuthRequest"
             }
           }
         ],
@@ -3430,21 +3430,21 @@ func init() {
         }
       }
     },
-    "/login/oauth2/auth": {
+    "/login/operator": {
       "post": {
         "security": [],
         "tags": [
           "UserAPI"
         ],
-        "summary": "Identity Provider oauth2 callback endpoint.",
-        "operationId": "LoginOauth2Auth",
+        "summary": "Login to Operator Console.",
+        "operationId": "LoginOperator",
         "parameters": [
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/loginOauth2AuthRequest"
+              "$ref": "#/definitions/loginOperatorRequest"
             }
           }
         ],
@@ -4782,17 +4782,6 @@ func init() {
         }
       }
     },
-    "loginMkubeRequest": {
-      "type": "object",
-      "required": [
-        "jwt"
-      ],
-      "properties": {
-        "jwt": {
-          "type": "string"
-        }
-      }
-    },
     "loginOauth2AuthRequest": {
       "type": "object",
       "required": [
@@ -4804,6 +4793,17 @@ func init() {
           "type": "string"
         },
         "state": {
+          "type": "string"
+        }
+      }
+    },
+    "loginOperatorRequest": {
+      "type": "object",
+      "required": [
+        "jwt"
+      ],
+      "properties": {
+        "jwt": {
           "type": "string"
         }
       }

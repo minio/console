@@ -29,18 +29,18 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// LoginMkubeRequest login mkube request
+// LoginOperatorRequest login operator request
 //
-// swagger:model loginMkubeRequest
-type LoginMkubeRequest struct {
+// swagger:model loginOperatorRequest
+type LoginOperatorRequest struct {
 
 	// jwt
 	// Required: true
 	Jwt *string `json:"jwt"`
 }
 
-// Validate validates this login mkube request
-func (m *LoginMkubeRequest) Validate(formats strfmt.Registry) error {
+// Validate validates this login operator request
+func (m *LoginOperatorRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateJwt(formats); err != nil {
@@ -53,7 +53,7 @@ func (m *LoginMkubeRequest) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *LoginMkubeRequest) validateJwt(formats strfmt.Registry) error {
+func (m *LoginOperatorRequest) validateJwt(formats strfmt.Registry) error {
 
 	if err := validate.Required("jwt", "body", m.Jwt); err != nil {
 		return err
@@ -63,7 +63,7 @@ func (m *LoginMkubeRequest) validateJwt(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *LoginMkubeRequest) MarshalBinary() ([]byte, error) {
+func (m *LoginOperatorRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -71,8 +71,8 @@ func (m *LoginMkubeRequest) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *LoginMkubeRequest) UnmarshalBinary(b []byte) error {
-	var res LoginMkubeRequest
+func (m *LoginOperatorRequest) UnmarshalBinary(b []byte) error {
+	var res LoginOperatorRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

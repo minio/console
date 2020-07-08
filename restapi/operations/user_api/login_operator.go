@@ -28,40 +28,40 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 )
 
-// LoginMkubeHandlerFunc turns a function with the right signature into a login mkube handler
-type LoginMkubeHandlerFunc func(LoginMkubeParams) middleware.Responder
+// LoginOperatorHandlerFunc turns a function with the right signature into a login operator handler
+type LoginOperatorHandlerFunc func(LoginOperatorParams) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn LoginMkubeHandlerFunc) Handle(params LoginMkubeParams) middleware.Responder {
+func (fn LoginOperatorHandlerFunc) Handle(params LoginOperatorParams) middleware.Responder {
 	return fn(params)
 }
 
-// LoginMkubeHandler interface for that can handle valid login mkube params
-type LoginMkubeHandler interface {
-	Handle(LoginMkubeParams) middleware.Responder
+// LoginOperatorHandler interface for that can handle valid login operator params
+type LoginOperatorHandler interface {
+	Handle(LoginOperatorParams) middleware.Responder
 }
 
-// NewLoginMkube creates a new http.Handler for the login mkube operation
-func NewLoginMkube(ctx *middleware.Context, handler LoginMkubeHandler) *LoginMkube {
-	return &LoginMkube{Context: ctx, Handler: handler}
+// NewLoginOperator creates a new http.Handler for the login operator operation
+func NewLoginOperator(ctx *middleware.Context, handler LoginOperatorHandler) *LoginOperator {
+	return &LoginOperator{Context: ctx, Handler: handler}
 }
 
-/*LoginMkube swagger:route POST /login/mkube UserAPI loginMkube
+/*LoginOperator swagger:route POST /login/operator UserAPI loginOperator
 
-Login to Mkube.
+Login to Operator Console.
 
 */
-type LoginMkube struct {
+type LoginOperator struct {
 	Context *middleware.Context
-	Handler LoginMkubeHandler
+	Handler LoginOperatorHandler
 }
 
-func (o *LoginMkube) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *LoginOperator) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		r = rCtx
 	}
-	var Params = NewLoginMkubeParams()
+	var Params = NewLoginOperatorParams()
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)

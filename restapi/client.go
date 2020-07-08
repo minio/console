@@ -29,7 +29,6 @@ import (
 	"github.com/minio/mcs/pkg/auth"
 	xjwt "github.com/minio/mcs/pkg/auth/jwt"
 	"github.com/minio/mcs/pkg/auth/ldap"
-	"github.com/minio/mcs/pkg/auth/mkube"
 	"github.com/minio/minio-go/v6"
 	"github.com/minio/minio-go/v6/pkg/credentials"
 )
@@ -162,18 +161,14 @@ func (s mcsSTSAssumeRole) IsExpired() bool {
 // STSClient contains http.client configuration need it by STSAssumeRole
 var STSClient = PrepareSTSClient()
 var MinioEndpoint = getMinIOServer()
-var MkubeEndpoint = mkube.GetMkubeEndpoint()
 
 func newMcsCredentials(accessKey, secretKey, location string) (*credentials.Credentials, error) {
 	// Future authentication methods can be added under this switch statement
 	switch {
-	// MKUBE authentication for MCS
-	case acl.GetOperatorOnly():
+	// authentication for Operator Console
+	case acl.GetOperatorMode():
 		{
-			if MkubeEndpoint == "" {
-				return nil, errors.New("endpoint cannot be empty for Mkube")
-			}
-			creds, err := auth.GetMcsCredentialsFromMkube(secretKey)
+			creds, err := auth.GetMcsCredentialsForOperator(secretKey)
 			if err != nil {
 				return nil, err
 			}

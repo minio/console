@@ -24,7 +24,7 @@ import (
 )
 
 func GetK8sConfig(token string) *rest.Config {
-	// if m3 is running inside k8s by default he will have access to the ca cert from the k8s local authority
+	// if console is running inside k8s by default he will have access to the ca cert from the k8s local authority
 	const (
 		rootCAFile = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 	)
@@ -33,7 +33,7 @@ func GetK8sConfig(token string) *rest.Config {
 		tlsClientConfig.CAFile = rootCAFile
 	}
 	config := &rest.Config{
-		Host:            getK8sAPIServer(),
+		Host:            GetK8sAPIServer(),
 		TLSClientConfig: tlsClientConfig,
 		APIPath:         "/",
 		BearerToken:     token,

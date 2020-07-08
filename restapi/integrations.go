@@ -170,15 +170,15 @@ func gkeIntegration(clientset *kubernetes.Clientset, tenantName string, namespac
 		return err
 	}
 	// udpate ingress with this new service
-	m3Ingress, err := clientset.ExtensionsV1beta1().Ingresses(namespace).Get(context.Background(), "mkube-ingress", metav1.GetOptions{})
+	consoleIngress, err := clientset.ExtensionsV1beta1().Ingresses(namespace).Get(context.Background(), "console-ingress", metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
 
-	certsInIngress := m3Ingress.ObjectMeta.Annotations["networking.gke.io/managed-certificates"]
+	certsInIngress := consoleIngress.ObjectMeta.Annotations["networking.gke.io/managed-certificates"]
 	allCerts := strings.Split(certsInIngress, ",")
 	allCerts = append(allCerts, manCertName)
-	m3Ingress.ObjectMeta.Annotations["networking.gke.io/managed-certificates"] = strings.Join(allCerts, ",")
+	consoleIngress.ObjectMeta.Annotations["networking.gke.io/managed-certificates"] = strings.Join(allCerts, ",")
 
 	tenantNodePortIoS := intstr.IntOrString{
 		Type:   intstr.Int,
@@ -190,7 +190,7 @@ func gkeIntegration(clientset *kubernetes.Clientset, tenantName string, namespac
 		IntVal: int32(tenantMcsNodePort),
 	}
 
-	m3Ingress.Spec.Rules = append(m3Ingress.Spec.Rules, extensionsBeta1.IngressRule{
+	consoleIngress.Spec.Rules = append(consoleIngress.Spec.Rules, extensionsBeta1.IngressRule{
 		Host: tenantDomain,
 		IngressRuleValue: extensionsBeta1.IngressRuleValue{
 			HTTP: &extensionsBeta1.HTTPIngressRuleValue{
@@ -205,7 +205,7 @@ func gkeIntegration(clientset *kubernetes.Clientset, tenantName string, namespac
 			},
 		},
 	})
-	m3Ingress.Spec.Rules = append(m3Ingress.Spec.Rules, extensionsBeta1.IngressRule{
+	consoleIngress.Spec.Rules = append(consoleIngress.Spec.Rules, extensionsBeta1.IngressRule{
 		Host: tenantMcsDomain,
 		IngressRuleValue: extensionsBeta1.IngressRuleValue{
 			HTTP: &extensionsBeta1.HTTPIngressRuleValue{
@@ -221,7 +221,7 @@ func gkeIntegration(clientset *kubernetes.Clientset, tenantName string, namespac
 		},
 	})
 
-	_, err = clientset.ExtensionsV1beta1().Ingresses(namespace).Update(context.Background(), m3Ingress, metav1.UpdateOptions{})
+	_, err = clientset.ExtensionsV1beta1().Ingresses(namespace).Update(context.Background(), consoleIngress, metav1.UpdateOptions{})
 	if err != nil {
 		return err
 	}
