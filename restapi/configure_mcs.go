@@ -25,10 +25,10 @@ import (
 	"strings"
 
 	"github.com/minio/mcs/pkg/acl"
+	"github.com/minio/mcs/pkg/auth"
 
 	"github.com/minio/mcs/models"
 	"github.com/minio/mcs/pkg"
-	"github.com/minio/mcs/pkg/auth"
 
 	assetFS "github.com/elazarl/go-bindata-assetfs"
 

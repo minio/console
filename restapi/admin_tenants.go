@@ -21,8 +21,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -32,6 +34,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 
 	"github.com/minio/mcs/cluster"
+	madmin "github.com/minio/minio/pkg/madmin"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
@@ -128,27 +131,60 @@ func getDeleteTenantResponse(token string, params admin_api.DeleteTenantParams) 
 	return deleteTenantAction(context.Background(), opClient, params.Namespace, params.Tenant)
 }
 
-func getTenantInfoResponse(token string, params admin_api.TenantInfoParams) (*models.Tenant, error) {
-	opClient, err := cluster.OperatorClient(token)
+func identifyMinioInstanceScheme(mi *operator.MinIOInstance) string {
+	scheme := "http"
+	if mi.RequiresAutoCertSetup() || mi.RequiresExternalCertSetup() {
+		scheme = "https"
+	}
+	return scheme
+}
+
+func getTenantAdminClient(ctx context.Context, client K8sClient, namespace, tenantName, serviceName, scheme string) (*madmin.AdminClient, error) {
+	// get admin credentials from secret
+	creds, err := client.getSecret(ctx, namespace, fmt.Sprintf("%s-secret", tenantName), metav1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}
-
-	minInst, err := opClient.OperatorV1().MinIOInstances(params.Namespace).Get(context.Background(), params.Tenant, metav1.GetOptions{})
+	accessKey, ok := creds.Data["accesskey"]
+	if !ok {
+		log.Println("tenant's secret doesn't contain accesskey")
+		return nil, errorGeneric
+	}
+	secretkey, ok := creds.Data["secretkey"]
+	if !ok {
+		log.Println("tenant's secret doesn't contain secretkey")
+		return nil, errorGeneric
+	}
+	service, err := client.getService(ctx, namespace, serviceName, metav1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}
+	mAdmin, pErr := NewAdminClient(scheme+"://"+net.JoinHostPort(service.Spec.ClusterIP, strconv.Itoa(operator.MinIOPort)), string(accessKey), string(secretkey))
+	if pErr != nil {
+		return nil, pErr.Cause
+	}
+	return mAdmin, nil
+}
 
+func getMinioInstance(ctx context.Context, operatorClient OperatorClient, namespace, tenantName string) (*operator.MinIOInstance, error) {
+	minInst, err := operatorClient.MinIOInstanceGet(ctx, namespace, tenantName, metav1.GetOptions{})
+	if err != nil {
+		return nil, err
+	}
+	return minInst, nil
+}
+
+func getTenantInfo(minioInstance *operator.MinIOInstance, tenantInfo *usageInfo) *models.Tenant {
 	var instanceCount int64
 	var volumeCount int64
-	for _, zone := range minInst.Spec.Zones {
+	for _, zone := range minioInstance.Spec.Zones {
 		instanceCount = instanceCount + int64(zone.Servers)
-		volumeCount = volumeCount + int64(zone.Servers*int32(minInst.Spec.VolumesPerServer))
+		volumeCount = volumeCount + int64(zone.Servers*int32(minioInstance.Spec.VolumesPerServer))
 	}
 
 	var zones []*models.Zone
 
-	for _, z := range minInst.Spec.Zones {
+	for _, z := range minioInstance.Spec.Zones {
 		zones = append(zones, &models.Zone{
 			Name:    z.Name,
 			Servers: int64(z.Servers),
@@ -156,17 +192,66 @@ func getTenantInfoResponse(token string, params admin_api.TenantInfoParams) (*mo
 	}
 
 	return &models.Tenant{
-		CreationDate:     minInst.ObjectMeta.CreationTimestamp.String(),
+		CreationDate:     minioInstance.ObjectMeta.CreationTimestamp.String(),
 		InstanceCount:    instanceCount,
-		Name:             params.Tenant,
-		VolumesPerServer: int64(minInst.Spec.VolumesPerServer),
+		Name:             minioInstance.Name,
+		VolumesPerServer: int64(minioInstance.Spec.VolumesPerServer),
 		VolumeCount:      volumeCount,
-		VolumeSize:       minInst.Spec.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value(),
-		ZoneCount:        int64(len(minInst.Spec.Zones)),
-		CurrentState:     minInst.Status.CurrentState,
+		VolumeSize:       minioInstance.Spec.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value(),
+		TotalSize:        int64(minioInstance.Spec.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value() * volumeCount),
+		ZoneCount:        int64(len(minioInstance.Spec.Zones)),
+		CurrentState:     minioInstance.Status.CurrentState,
 		Zones:            zones,
-		Namespace:        minInst.ObjectMeta.Namespace,
-	}, nil
+		Namespace:        minioInstance.ObjectMeta.Namespace,
+		Image:            minioInstance.Spec.Image,
+		UsedSize:         tenantInfo.DisksUsage,
+	}
+}
+
+func getTenantInfoResponse(token string, params admin_api.TenantInfoParams) (*models.Tenant, error) {
+	// 20 seconds timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	opClientClientSet, err := cluster.OperatorClient(token)
+	if err != nil {
+		return nil, err
+	}
+	clientset, err := cluster.K8sClient(token)
+	if err != nil {
+		log.Println("error getting k8sClient:", err)
+		return nil, err
+	}
+
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+	k8sClient := &k8sClient{
+		client: clientset,
+	}
+
+	minInst, err := getMinioInstance(ctx, opClient, params.Namespace, params.Tenant)
+	if err != nil {
+		log.Println("error getting minioInstance:", err)
+		return nil, err
+	}
+	minioInstanceScheme := identifyMinioInstanceScheme(minInst)
+	mAdmin, err := getTenantAdminClient(ctx, k8sClient, params.Namespace, params.Tenant, minInst.Spec.ServiceName, minioInstanceScheme)
+	if err != nil {
+		log.Println("error getting tenant's admin client:", err)
+		return nil, err
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := adminClient{client: mAdmin}
+	// serialize output
+	adminInfo, err := getAdminInfo(ctx, adminClient)
+	if err != nil {
+		log.Println("error getting admin info:", err)
+		return nil, err
+	}
+	info := getTenantInfo(minInst, adminInfo)
+	return info, nil
 }
 
 func listTenants(ctx context.Context, operatorClient OperatorClient, namespace string, limit *int32) (*models.ListTenantsResponse, error) {

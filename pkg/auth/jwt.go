@@ -28,12 +28,12 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	jwtgo "github.com/dgrijalva/jwt-go"
 	"github.com/go-openapi/swag"
 	xjwt "github.com/minio/mcs/pkg/auth/jwt"
 	"github.com/minio/minio-go/v6/pkg/credentials"
-	"github.com/minio/minio/cmd"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/pbkdf2"
 )
@@ -103,7 +103,7 @@ func NewJWTWithClaimsForClient(credentials *credentials.Value, actions []string,
 			return "", err
 		}
 		claims := xjwt.NewStandardClaims()
-		claims.SetExpiry(cmd.UTCNow().Add(xjwt.GetMcsSTSAndJWTDurationTime()))
+		claims.SetExpiry(time.Now().UTC().Add(xjwt.GetMcsSTSAndJWTDurationTime()))
 		claims.SetSubject(uuid.NewV4().String())
 		claims.SetData(encryptedClaims)
 		claims.SetAudience(audience)

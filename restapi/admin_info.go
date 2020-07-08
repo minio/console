@@ -42,9 +42,10 @@ func registerAdminInfoHandlers(api *operations.McsAPI) {
 }
 
 type usageInfo struct {
-	Buckets int64
-	Objects int64
-	Usage   int64
+	Buckets    int64
+	Objects    int64
+	Usage      int64
+	DisksUsage int64
 }
 
 // getAdminInfo invokes admin info and returns a parsed `usageInfo` structure
@@ -55,10 +56,19 @@ func getAdminInfo(ctx context.Context, client MinioAdmin) (*usageInfo, error) {
 	}
 	// we are trimming uint64 to int64 this will report an incorrect measurement for numbers greater than
 	// 9,223,372,036,854,775,807
+
+	var usedSpace int64
+	for _, serv := range serverInfo.Servers {
+		for _, disk := range serv.Disks {
+			usedSpace += int64(disk.UsedSpace)
+		}
+	}
+
 	return &usageInfo{
-		Buckets: int64(serverInfo.Buckets.Count),
-		Objects: int64(serverInfo.Objects.Count),
-		Usage:   int64(serverInfo.Usage.Size),
+		Buckets:    int64(serverInfo.Buckets.Count),
+		Objects:    int64(serverInfo.Objects.Count),
+		Usage:      int64(serverInfo.Usage.Size),
+		DisksUsage: usedSpace,
 	}, nil
 }
 

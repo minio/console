@@ -2513,6 +2513,9 @@ func init() {
         "currentState": {
           "type": "string"
         },
+        "image": {
+          "type": "string"
+        },
         "instance_count": {
           "type": "integer"
         },
@@ -2522,11 +2525,20 @@ func init() {
         "namespace": {
           "type": "string"
         },
+        "total_size": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "used_size": {
+          "type": "integer",
+          "format": "int64"
+        },
         "volume_count": {
           "type": "integer"
         },
         "volume_size": {
-          "type": "integer"
+          "type": "integer",
+          "format": "int64"
         },
         "volumes_per_server": {
           "type": "integer"
@@ -5169,6 +5181,9 @@ func init() {
         "currentState": {
           "type": "string"
         },
+        "image": {
+          "type": "string"
+        },
         "instance_count": {
           "type": "integer"
         },
@@ -5178,11 +5193,20 @@ func init() {
         "namespace": {
           "type": "string"
         },
+        "total_size": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "used_size": {
+          "type": "integer",
+          "format": "int64"
+        },
         "volume_count": {
           "type": "integer"
         },
         "volume_size": {
-          "type": "integer"
+          "type": "integer",
+          "format": "int64"
         },
         "volumes_per_server": {
           "type": "integer"

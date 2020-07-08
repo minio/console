@@ -29,6 +29,8 @@ import (
 // that are used within this project.
 type K8sClient interface {
 	getResourceQuota(ctx context.Context, namespace, resource string, opts metav1.GetOptions) (*v1.ResourceQuota, error)
+	getSecret(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*v1.Secret, error)
+	getService(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*v1.Service, error)
 }
 
 // Interface implementation
@@ -40,4 +42,12 @@ type k8sClient struct {
 
 func (c *k8sClient) getResourceQuota(ctx context.Context, namespace, resource string, opts metav1.GetOptions) (*v1.ResourceQuota, error) {
 	return c.client.CoreV1().ResourceQuotas(namespace).Get(ctx, resource, opts)
+}
+
+func (c *k8sClient) getSecret(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*v1.Secret, error) {
+	return c.client.CoreV1().Secrets(namespace).Get(ctx, secretName, opts)
+}
+
+func (c *k8sClient) getService(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*v1.Service, error) {
+	return c.client.CoreV1().Services(namespace).Get(ctx, serviceName, opts)
 }
