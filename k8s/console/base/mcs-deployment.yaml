@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mcs
+  template:
+    metadata:
+      labels:
+        app: mcs
+    spec:
+      serviceAccountName: m3-sa
+      containers:
+        - name: mcs
+          image: minio/mcs:latest
+          imagePullPolicy: "IfNotPresent"
+          args:
+            - /mcs
+            - server
+          ports:
+            - containerPort: 9090
+              name: http
+            - containerPort: 9433
+              name: https

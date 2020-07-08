@@ -61,12 +61,12 @@ func registerLoginHandlers(api *operations.McsAPI) {
 		}
 		return user_api.NewLoginOauth2AuthCreated().WithPayload(loginResponse)
 	})
-	api.UserAPILoginMkubeHandler = user_api.LoginMkubeHandlerFunc(func(params user_api.LoginMkubeParams) middleware.Responder {
-		loginResponse, err := getLoginMkubeResponse(params.Body)
+	api.UserAPILoginOperatorHandler = user_api.LoginOperatorHandlerFunc(func(params user_api.LoginOperatorParams) middleware.Responder {
+		loginResponse, err := getLoginOperatorResponse(params.Body)
 		if err != nil {
-			return user_api.NewLoginMkubeDefault(401).WithPayload(&models.Error{Code: 401, Message: swag.String(err.Error())})
+			return user_api.NewLoginOperatorDefault(401).WithPayload(&models.Error{Code: 401, Message: swag.String(err.Error())})
 		}
-		return user_api.NewLoginMkubeCreated().WithPayload(loginResponse)
+		return user_api.NewLoginOperatorCreated().WithPayload(loginResponse)
 	})
 }
 
@@ -155,7 +155,7 @@ func getLoginDetailsResponse() (*models.LoginDetails, error) {
 	ctx := context.Background()
 	loginStrategy := models.LoginDetailsLoginStrategyForm
 	redirectURL := ""
-	if acl.GetOperatorOnly() {
+	if acl.GetOperatorMode() {
 		loginStrategy = models.LoginDetailsLoginStrategyServiceAccount
 	} else if oauth2.IsIdpEnabled() {
 		loginStrategy = models.LoginDetailsLoginStrategyRedirect
@@ -261,8 +261,8 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 	return nil, errorGeneric
 }
 
-// getLoginMkubeResponse validate the provided service account token against mkube
-func getLoginMkubeResponse(lmr *models.LoginMkubeRequest) (*models.LoginResponse, error) {
+// getLoginOperatorResponse validate the provided service account token against k8s api
+func getLoginOperatorResponse(lmr *models.LoginOperatorRequest) (*models.LoginResponse, error) {
 	creds, err := newMcsCredentials("", *lmr.Jwt, "")
 	if err != nil {
 		log.Println("error login:", err)

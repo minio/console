@@ -34,27 +34,27 @@ var (
 	errCantDetermineMCImage    = errors.New("can't determine MC Image")
 )
 
-func getK8sAPIServer() string {
-	// if m3 is running inside a k8s pod KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT will contain the k8s api server apiServerAddress
-	// if m3 is not running inside k8s by default will look for the k8s api server on localhost:8001 (kubectl proxy)
+func GetK8sAPIServer() string {
+	// if console is running inside a k8s pod KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT will contain the k8s api server apiServerAddress
+	// if console is not running inside k8s by default will look for the k8s api server on localhost:8001 (kubectl proxy)
 	// NOTE: using kubectl proxy is for local development only, since every request send to localhost:8001 will bypass service account authentication
 	// more info here: https://kubernetes.io/docs/tasks/access-application-cluster/access-cluster/#directly-accessing-the-rest-api
-	// you can override this using M3_K8S_API_SERVER, ie use the k8s cluster from `kubectl config view`
+	// you can override this using MCS_K8S_API_SERVER, ie use the k8s cluster from `kubectl config view`
 	host, port := env.Get("KUBERNETES_SERVICE_HOST", ""), env.Get("KUBERNETES_SERVICE_PORT", "")
 	apiServerAddress := "http://localhost:8001"
 	if host != "" && port != "" {
 		apiServerAddress = "https://" + net.JoinHostPort(host, port)
 	}
-	return env.Get(M3K8sAPIServer, apiServerAddress)
+	return env.Get(McsK8sAPIServer, apiServerAddress)
 }
 
 // getK8sAPIServerInsecure allow to tell the k8s client to skip TLS certificate verification, ie: when connecting to a k8s cluster
 // that uses certificate not trusted by your machine
 func getK8sAPIServerInsecure() bool {
-	return strings.ToLower(env.Get(m3k8SAPIServerInsecure, "off")) == "on"
+	return strings.ToLower(env.Get(McsK8SAPIServerInsecure, "off")) == "on"
 }
 
-// GetNsFromFile assumes mkube is running inside a k8s pod and extract the current namespace from the
+// GetNsFromFile assumes console is running inside a k8s pod and extract the current namespace from the
 // /var/run/secrets/kubernetes.io/serviceaccount/namespace file
 func GetNsFromFile() string {
 	dat, err := ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/namespace")
@@ -64,12 +64,12 @@ func GetNsFromFile() string {
 	return string(dat)
 }
 
-// This operation will run only once at mkube startup
+// This operation will run only once at console startup
 var namespace = GetNsFromFile()
 
 // Returns the namespace in which the controller is installed
 func GetNs() string {
-	return env.Get(M3Namespace, namespace)
+	return env.Get(McsNamespace, namespace)
 }
 
 // getLatestMinIOImage returns the latest docker image for MinIO if found on the internet
@@ -106,7 +106,7 @@ var latestMinIOImage, errLatestMinIOImage = getLatestMinIOImage(
 // a preferred image to be used (configured via ENVIRONMENT VARIABLES) GetMinioImage will return that
 // if not, GetMinioImage will try to obtain the image URL for the latest version of MinIO and return that
 func GetMinioImage() (*string, error) {
-	image := strings.TrimSpace(env.Get(M3MinioImage, ""))
+	image := strings.TrimSpace(env.Get(McsMinioImage, ""))
 	// if there is a preferred image configured by the user we'll always return that
 	if image != "" {
 		return &image, nil
@@ -156,7 +156,7 @@ func getLatestMCImage() (*string, error) {
 var latestMCImage, errLatestMCImage = getLatestMCImage()
 
 func GetMCImage() (*string, error) {
-	image := strings.TrimSpace(env.Get(M3MCImage, ""))
+	image := strings.TrimSpace(env.Get(McsMCImage, ""))
 	// if there is a preferred image configured by the user we'll always return that
 	if image != "" {
 		return &image, nil

@@ -24,6 +24,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/minio/mcs/pkg/acl"
+
 	"github.com/minio/mcs/models"
 	"github.com/minio/mcs/pkg"
 	"github.com/minio/mcs/pkg/auth"
@@ -60,9 +62,18 @@ func configureAPI(api *operations.McsAPI) http.Handler {
 	// Applies when the "x-token" header is set
 
 	api.KeyAuth = func(token string, scopes []string) (*models.Principal, error) {
-		if auth.IsJWTValid(token) {
-			prin := models.Principal(token)
-			return &prin, nil
+		if acl.GetOperatorMode() {
+			// here we just check the token is present on the request, authentication will be done
+			// by kubernetes api server
+			if token != "" {
+				prin := models.Principal(token)
+				return &prin, nil
+			}
+		} else {
+			if auth.IsJWTValid(token) {
+				prin := models.Principal(token)
+				return &prin, nil
+			}
 		}
 		log.Printf("Access attempt with incorrect api key auth: %s", token)
 		return nil, errors.New(401, "incorrect api key auth")
@@ -99,7 +110,7 @@ func configureAPI(api *operations.McsAPI) http.Handler {
 	// Register admin Service Account Handlers
 	registerServiceAccountsHandlers(api)
 
-	//m3
+	// Operator Console
 	// Register tenant handlers
 	registerTenantHandlers(api)
 	// Register ResourceQuota handlers

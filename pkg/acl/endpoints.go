@@ -233,7 +233,7 @@ var operatorRules = map[string]ConfigurationActionSet{
 }
 
 // operatorOnly ENV variable
-var operatorOnly = GetOperatorOnly()
+var operatorOnly = GetOperatorMode()
 
 // GetActionsStringFromPolicy extract the admin/s3 actions from a given policy and return them in []string format
 //

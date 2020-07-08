@@ -122,7 +122,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
 
   const loginStrategyEndpoints: LoginStrategyRoutes = {
     form: "/api/v1/login",
-    "service-account": "/api/v1/login/mkube",
+    "service-account": "/api/v1/login/operator",
   };
   const loginStrategyPayload: LoginStrategyPayload = {
     form: { accessKey, secretKey },

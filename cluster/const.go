@@ -17,9 +17,9 @@
 package cluster
 
 const (
-	M3K8sAPIServer         = "M3_K8S_API_SERVER"
-	m3k8SAPIServerInsecure = "M3_K8S_API_SERVER_INSECURE"
-	M3MinioImage           = "M3_MINIO_IMAGE"
-	M3MCImage              = "M3_MC_IMAGE"
-	M3Namespace            = "M3_NAMESPACE"
+	McsK8sAPIServer         = "MCS_K8S_API_SERVER"
+	McsK8SAPIServerInsecure = "MCS_K8S_API_SERVER_INSECURE"
+	McsMinioImage           = "MCS_MINIO_IMAGE"
+	McsMCImage              = "MCS_MC_IMAGE"
+	McsNamespace            = "MCS_NAMESPACE"
 )

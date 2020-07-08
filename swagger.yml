@@ -60,16 +60,16 @@ paths:
       security: []
       tags:
         - UserAPI
-  /login/mkube:
+  /login/operator:
     post:
-      summary: Login to Mkube.
-      operationId: LoginMkube
+      summary: Login to Operator Console.
+      operationId: LoginOperator
       parameters:
         - name: body
           in: body
           required: true
           schema:
-            $ref: '#/definitions/loginMkubeRequest'
+            $ref: '#/definitions/loginOperatorRequest'
       responses:
         201:
           description: A successful login.
@@ -1462,7 +1462,7 @@ definitions:
         type: string
       code:
         type: string
-  loginMkubeRequest:
+  loginOperatorRequest:
     type: object
     required:
       - jwt
