@@ -22,12 +22,15 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"reflect"
 	"testing"
 
 	"github.com/minio/mcs/cluster"
 	"github.com/minio/mcs/models"
 	"github.com/minio/mcs/restapi/operations/admin_api"
 	v1 "github.com/minio/minio-operator/pkg/apis/operator.min.io/v1"
+	"github.com/minio/minio/pkg/madmin"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
 )
@@ -37,6 +40,8 @@ var opClientMinioInstanceGetMock func(ctx context.Context, namespace string, ins
 var opClientMinioInstancePatchMock func(ctx context.Context, namespace string, instanceName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.MinIOInstance, error)
 var opClientMinioInstanceListMock func(ctx context.Context, namespace string, opts metav1.ListOptions) (*v1.MinIOInstanceList, error)
 var httpClientGetMock func(url string) (resp *http.Response, err error)
+var k8sclientGetSecretMock func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error)
+var k8sclientGetServiceMock func(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*corev1.Service, error)
 
 // mock function of MinioInstanceDelete()
 func (ac opClientMock) MinIOInstanceDelete(ctx context.Context, namespace string, instanceName string, options metav1.DeleteOptions) error {
@@ -61,6 +66,185 @@ func (ac opClientMock) MinIOInstanceList(ctx context.Context, namespace string, 
 // mock function of get()
 func (h httpClientMock) Get(url string) (resp *http.Response, err error) {
 	return httpClientGetMock(url)
+}
+
+func (c k8sClientMock) getSecret(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+	return k8sclientGetSecretMock(ctx, namespace, secretName, opts)
+}
+
+func (c k8sClientMock) getService(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*corev1.Service, error) {
+	return k8sclientGetServiceMock(ctx, namespace, serviceName, opts)
+}
+
+func Test_TenantInfo(t *testing.T) {
+	ctx := context.Background()
+	kClient := k8sClientMock{}
+	type args struct {
+		ctx         context.Context
+		client      K8sClient
+		namespace   string
+		tenantName  string
+		serviceName string
+		scheme      string
+	}
+	tests := []struct {
+		name           string
+		args           args
+		wantErr        bool
+		want           madmin.AdminClient
+		mockGetSecret  func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error)
+		mockGetService func(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*corev1.Service, error)
+	}{
+		{
+			name: "Return Tenant Admin, no errors",
+			args: args{
+				ctx:         ctx,
+				client:      kClient,
+				namespace:   "default",
+				tenantName:  "tenant-1",
+				serviceName: "service-1",
+				scheme:      "http",
+			},
+			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+				vals := make(map[string][]byte)
+				vals["secretkey"] = []byte("secret")
+				vals["accesskey"] = []byte("access")
+				sec := &corev1.Secret{
+					Data: vals,
+				}
+				return sec, nil
+			},
+			mockGetService: func(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*corev1.Service, error) {
+				serv := &corev1.Service{
+					Spec: corev1.ServiceSpec{
+						ClusterIP: "10.1.1.2",
+					},
+				}
+				return serv, nil
+			},
+			wantErr: false,
+		},
+		{
+			name: "Access key not stored on secrets",
+			args: args{
+				ctx:         ctx,
+				client:      kClient,
+				namespace:   "default",
+				tenantName:  "tenant-1",
+				serviceName: "service-1",
+				scheme:      "http",
+			},
+			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+				vals := make(map[string][]byte)
+				vals["secretkey"] = []byte("secret")
+				sec := &corev1.Secret{
+					Data: vals,
+				}
+				return sec, nil
+			},
+			mockGetService: func(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*corev1.Service, error) {
+				serv := &corev1.Service{
+					Spec: corev1.ServiceSpec{
+						ClusterIP: "10.1.1.2",
+					},
+				}
+				return serv, nil
+			},
+			wantErr: true,
+		},
+		{
+			name: "Secret key not stored on secrets",
+			args: args{
+				ctx:         ctx,
+				client:      kClient,
+				namespace:   "default",
+				tenantName:  "tenant-1",
+				serviceName: "service-1",
+				scheme:      "http",
+			},
+			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+				vals := make(map[string][]byte)
+				vals["accesskey"] = []byte("access")
+				sec := &corev1.Secret{
+					Data: vals,
+				}
+				return sec, nil
+			},
+			mockGetService: func(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*corev1.Service, error) {
+				serv := &corev1.Service{
+					Spec: corev1.ServiceSpec{
+						ClusterIP: "10.1.1.2",
+					},
+				}
+				return serv, nil
+			},
+			wantErr: true,
+		},
+		{
+			name: "Handle error on getService",
+			args: args{
+				ctx:         ctx,
+				client:      kClient,
+				namespace:   "default",
+				tenantName:  "tenant-1",
+				serviceName: "service-1",
+				scheme:      "http",
+			},
+			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+				vals := make(map[string][]byte)
+				vals["accesskey"] = []byte("access")
+				vals["secretkey"] = []byte("secret")
+				sec := &corev1.Secret{
+					Data: vals,
+				}
+				return sec, nil
+			},
+			mockGetService: func(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*corev1.Service, error) {
+				return nil, errors.New("error")
+			},
+			wantErr: true,
+		},
+		{
+			name: "Handle error on getSecret",
+			args: args{
+				ctx:         ctx,
+				client:      kClient,
+				namespace:   "default",
+				tenantName:  "tenant-1",
+				serviceName: "service-1",
+				scheme:      "http",
+			},
+			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+				return nil, errors.New("error")
+			},
+			mockGetService: func(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*corev1.Service, error) {
+				serv := &corev1.Service{
+					Spec: corev1.ServiceSpec{
+						ClusterIP: "10.1.1.2",
+					},
+				}
+				return serv, nil
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		k8sclientGetSecretMock = tt.mockGetSecret
+		k8sclientGetServiceMock = tt.mockGetService
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := getTenantAdminClient(tt.args.ctx, tt.args.client, tt.args.namespace, tt.args.tenantName, tt.args.serviceName, tt.args.scheme)
+			if err != nil {
+				if tt.wantErr {
+					return
+				}
+				t.Errorf("getTenantAdminClient() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if reflect.DeepEqual(got, tt.want) {
+				t.Errorf("got %v want %v", got, tt.want)
+			}
+		})
+
+	}
 }
 
 func Test_deleteTenantAction(t *testing.T) {

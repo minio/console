@@ -41,6 +41,9 @@ type Tenant struct {
 	// current state
 	CurrentState string `json:"currentState,omitempty"`
 
+	// image
+	Image string `json:"image,omitempty"`
+
 	// instance count
 	InstanceCount int64 `json:"instance_count,omitempty"`
 
@@ -49,6 +52,12 @@ type Tenant struct {
 
 	// namespace
 	Namespace string `json:"namespace,omitempty"`
+
+	// total size
+	TotalSize int64 `json:"total_size,omitempty"`
+
+	// used size
+	UsedSize int64 `json:"used_size,omitempty"`
 
 	// volume count
 	VolumeCount int64 `json:"volume_count,omitempty"`

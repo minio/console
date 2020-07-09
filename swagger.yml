@@ -46,12 +46,12 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/loginRequest'
+            $ref: "#/definitions/loginRequest"
       responses:
         201:
           description: A successful login.
           schema:
-            $ref: '#/definitions/loginResponse'
+            $ref: "#/definitions/loginResponse"
         default:
           description: Generic error response.
           schema:
@@ -74,7 +74,7 @@ paths:
         201:
           description: A successful login.
           schema:
-            $ref: '#/definitions/loginResponse'
+            $ref: "#/definitions/loginResponse"
         default:
           description: Generic error response.
           schema:
@@ -92,12 +92,12 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/loginOauth2AuthRequest'
+            $ref: "#/definitions/loginOauth2AuthRequest"
       responses:
         201:
           description: A successful login.
           schema:
-            $ref: '#/definitions/loginResponse'
+            $ref: "#/definitions/loginResponse"
         default:
           description: Generic error response.
           schema:
@@ -174,7 +174,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/makeBucketRequest'
+            $ref: "#/definitions/makeBucketRequest"
       responses:
         201:
           description: A successful response.
@@ -291,7 +291,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/bucketEventRequest'
+            $ref: "#/definitions/bucketEventRequest"
       responses:
         201:
           description: A successful response.
@@ -319,7 +319,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/notificationDeleteRequest'
+            $ref: "#/definitions/notificationDeleteRequest"
       responses:
         204:
           description: A successful response.
@@ -364,7 +364,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/serviceAccountRequest'
+            $ref: "#/definitions/serviceAccountRequest"
       responses:
         201:
           description: A successful response.
@@ -430,12 +430,12 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/addUserRequest'
+            $ref: "#/definitions/addUserRequest"
       responses:
         201:
           description: A successful response.
           schema:
-            $ref: '#/definitions/user'
+            $ref: "#/definitions/user"
         default:
           description: Generic error response.
           schema:
@@ -462,7 +462,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       tags:
-          - AdminAPI
+        - AdminAPI
     put:
       summary: Update User Info
       operationId: UpdateUserInfo
@@ -585,7 +585,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/addGroupRequest'
+            $ref: "#/definitions/addGroupRequest"
       responses:
         201:
           description: A successful response.
@@ -692,12 +692,12 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/addPolicyRequest'
+            $ref: "#/definitions/addPolicyRequest"
       responses:
         201:
           description: A successful response.
           schema:
-            $ref: '#/definitions/policy'
+            $ref: "#/definitions/policy"
         default:
           description: Generic error response.
           schema:
@@ -783,7 +783,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/setPolicyRequest'
+            $ref: "#/definitions/setPolicyRequest"
       responses:
         204:
           description: A successful response.
@@ -859,12 +859,12 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/profilingStartRequest'
+            $ref: "#/definitions/profilingStartRequest"
       responses:
         201:
           description: A successful response.
           schema:
-            $ref: '#/definitions/startProfilingList'
+            $ref: "#/definitions/startProfilingList"
         default:
           description: Generic error response.
           schema:
@@ -945,20 +945,18 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/notificationEndpoint'
+            $ref: "#/definitions/notificationEndpoint"
       responses:
         201:
           description: A successful response.
           schema:
-            $ref: '#/definitions/notificationEndpoint'
+            $ref: "#/definitions/notificationEndpoint"
         default:
           description: Generic error response.
           schema:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-
-#  m3
 
   /tenants:
     get:
@@ -1354,7 +1352,7 @@ definitions:
       configurations:
         type: array
         items:
-          $ref: '#/definitions/configDescription'
+          $ref: "#/definitions/configDescription"
       total:
         type: integer
         format: int64
@@ -1449,7 +1447,7 @@ definitions:
     properties:
       loginStrategy:
         type: string
-        enum: [form,redirect,service-account]
+        enum: [form, redirect, service-account]
       redirect:
         type: string
   loginOauth2AuthRequest:
@@ -1638,7 +1636,7 @@ definitions:
     properties:
       policy:
         type: string
-        title : "policy to be applied to the Service Account if any"
+        title: "policy to be applied to the Service Account if any"
   serviceAccountCreds:
     type: object
     properties:
@@ -1646,6 +1644,7 @@ definitions:
         type: string
       secretKey:
         type: string
+
   tenant:
     type: object
     properties:
@@ -1657,6 +1656,7 @@ definitions:
         type: integer
       volume_size:
         type: integer
+        format: int64
       volume_count:
         type: integer
       volumes_per_server:
@@ -1669,8 +1669,17 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/zone"
+      image:
+        type: string
       namespace:
         type: string
+      total_size:
+        type: integer
+        format: int64
+      used_size:
+        type: integer
+        format: int64
+
   tenantList:
     type: object
     properties:

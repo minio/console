@@ -17,7 +17,7 @@ type k8sClientMock struct{}
 
 var k8sclientGetResourceQuotaMock func(ctx context.Context, namespace, resource string, opts metav1.GetOptions) (*v1.ResourceQuota, error)
 
-// mock function of getResourceQuota()
+// mock functions
 func (c k8sClientMock) getResourceQuota(ctx context.Context, namespace, resource string, opts metav1.GetOptions) (*v1.ResourceQuota, error) {
 	return k8sclientGetResourceQuotaMock(ctx, namespace, resource, opts)
 }
