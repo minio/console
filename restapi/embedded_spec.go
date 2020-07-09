@@ -2331,7 +2331,24 @@ func init() {
       ]
     },
     "principal": {
-      "type": "string"
+      "type": "object",
+      "properties": {
+        "accessKeyID": {
+          "type": "string"
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "secretAccessKey": {
+          "type": "string"
+        },
+        "sessionToken": {
+          "type": "string"
+        }
+      }
     },
     "profilerType": {
       "type": "string",
@@ -4999,7 +5016,24 @@ func init() {
       ]
     },
     "principal": {
-      "type": "string"
+      "type": "object",
+      "properties": {
+        "accessKeyID": {
+          "type": "string"
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "secretAccessKey": {
+          "type": "string"
+        },
+        "sessionToken": {
+          "type": "string"
+        }
+      }
     },
     "profilerType": {
       "type": "string",

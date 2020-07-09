@@ -25,6 +25,7 @@ import (
 
 	mc "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
+	"github.com/minio/mcs/models"
 	"github.com/minio/mcs/pkg/acl"
 	"github.com/minio/mcs/pkg/auth"
 	xjwt "github.com/minio/mcs/pkg/auth/jwt"
@@ -218,24 +219,16 @@ func GetClaimsFromJWT(jwt string) (*auth.DecryptedClaims, error) {
 	return claims, nil
 }
 
-// getMcsCredentialsFromJWT returns the *mcsCredentials.Credentials associated to the
+// getMcsCredentialsFromSession returns the *mcsCredentials.Credentials associated to the
 // provided jwt, this is useful for running the Expire() or IsExpired() operations
-func getMcsCredentialsFromJWT(jwt string) (*credentials.Credentials, error) {
-	claims, err := GetClaimsFromJWT(jwt)
-	if err != nil {
-		return nil, err
-	}
-	creds := credentials.NewStaticV4(claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken)
-	return creds, nil
+func getMcsCredentialsFromSession(claims *models.Principal) *credentials.Credentials {
+	return credentials.NewStaticV4(claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken)
 }
 
 // newMinioClient creates a new MinIO client based on the mcsCredentials extracted
 // from the provided jwt
-func newMinioClient(jwt string) (*minio.Client, error) {
-	creds, err := getMcsCredentialsFromJWT(jwt)
-	if err != nil {
-		return nil, err
-	}
+func newMinioClient(claims *models.Principal) (*minio.Client, error) {
+	creds := getMcsCredentialsFromSession(claims)
 	minioClient, err := minio.NewWithOptions(getMinIOEndpoint(), &minio.Options{
 		Creds:  creds,
 		Secure: getMinIOEndpointIsSecure(),
@@ -248,7 +241,7 @@ func newMinioClient(jwt string) (*minio.Client, error) {
 }
 
 // newS3BucketClient creates a new mc S3Client to talk to the server based on a bucket
-func newS3BucketClient(claims *auth.DecryptedClaims, bucketName string) (*mc.S3Client, error) {
+func newS3BucketClient(claims *models.Principal, bucketName string) (*mc.S3Client, error) {
 	endpoint := getMinIOServer()
 	useSSL := getMinIOEndpointIsSecure()
 

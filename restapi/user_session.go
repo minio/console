@@ -18,7 +18,6 @@ package restapi
 
 import (
 	"errors"
-	"log"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
@@ -34,28 +33,23 @@ var (
 
 func registerSessionHandlers(api *operations.McsAPI) {
 	// session check
-	api.UserAPISessionCheckHandler = user_api.SessionCheckHandlerFunc(func(params user_api.SessionCheckParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		sessionResp, err := getSessionResponse(sessionID)
+	api.UserAPISessionCheckHandler = user_api.SessionCheckHandlerFunc(func(params user_api.SessionCheckParams, session *models.Principal) middleware.Responder {
+		sessionResp, err := getSessionResponse(session)
 		if err != nil {
 			return user_api.NewSessionCheckDefault(401).WithPayload(&models.Error{Code: 401, Message: swag.String(err.Error())})
 		}
 		return user_api.NewSessionCheckOK().WithPayload(sessionResp)
 	})
-
 }
 
 // getSessionResponse parse the jwt of the current session and returns a list of allowed actions to render in the UI
-func getSessionResponse(sessionID string) (*models.SessionResponse, error) {
+func getSessionResponse(session *models.Principal) (*models.SessionResponse, error) {
 	// serialize output
-	claims, err := GetClaimsFromJWT(sessionID)
-	if err != nil {
-		log.Println("error getting claims from JWT", err)
+	if session == nil {
 		return nil, errorGenericInvalidSession
 	}
-
 	sessionResp := &models.SessionResponse{
-		Pages:  acl.GetAuthorizedEndpoints(claims.Actions),
+		Pages:  acl.GetAuthorizedEndpoints(session.Actions),
 		Status: models.SessionResponseStatusOk,
 	}
 	return sessionResp, nil

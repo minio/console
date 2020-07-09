@@ -1484,7 +1484,18 @@ definitions:
         type: string
   # Structure that holds the `Bearer {TOKEN}` present on authenticated requests
   principal:
-    type: string
+    type: object
+    properties:
+      accessKeyID:
+        type: string
+      secretAccessKey:
+        type: string
+      sessionToken:
+        type: string
+      actions:
+        type: array
+        items:
+          type: string
   startProfilingItem:
     type: object
     properties:

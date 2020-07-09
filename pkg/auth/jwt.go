@@ -32,6 +32,7 @@ import (
 
 	jwtgo "github.com/dgrijalva/jwt-go"
 	"github.com/go-openapi/swag"
+	"github.com/minio/mcs/models"
 	xjwt "github.com/minio/mcs/pkg/auth/jwt"
 	"github.com/minio/minio-go/v6/pkg/credentials"
 	uuid "github.com/satori/go.uuid"
@@ -210,7 +211,7 @@ func GetTokenFromRequest(r *http.Request) (*string, error) {
 	return swag.String(reqToken), nil
 }
 
-func GetClaimsFromTokenInRequest(req *http.Request) (*DecryptedClaims, error) {
+func GetClaimsFromTokenInRequest(req *http.Request) (*models.Principal, error) {
 	sessionID, err := GetTokenFromRequest(req)
 	if err != nil {
 		return nil, err
@@ -221,5 +222,10 @@ func GetClaimsFromTokenInRequest(req *http.Request) (*DecryptedClaims, error) {
 	if err != nil {
 		return nil, err
 	}
-	return claims, nil
+	return &models.Principal{
+		AccessKeyID:     claims.AccessKeyID,
+		Actions:         claims.Actions,
+		SecretAccessKey: claims.SecretAccessKey,
+		SessionToken:    claims.SessionToken,
+	}, nil
 }

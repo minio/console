@@ -23,7 +23,6 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
 	"github.com/minio/mcs/models"
-	"github.com/minio/mcs/pkg/auth"
 	"github.com/minio/mcs/restapi/operations"
 	"github.com/minio/mcs/restapi/operations/user_api"
 	"github.com/minio/minio-go/v6"
@@ -31,26 +30,23 @@ import (
 
 func registerBucketEventsHandlers(api *operations.McsAPI) {
 	// list bucket events
-	api.UserAPIListBucketEventsHandler = user_api.ListBucketEventsHandlerFunc(func(params user_api.ListBucketEventsParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		listBucketEventsResponse, err := getListBucketEventsResponse(sessionID, params)
+	api.UserAPIListBucketEventsHandler = user_api.ListBucketEventsHandlerFunc(func(params user_api.ListBucketEventsParams, session *models.Principal) middleware.Responder {
+		listBucketEventsResponse, err := getListBucketEventsResponse(session, params)
 		if err != nil {
 			return user_api.NewListBucketEventsDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return user_api.NewListBucketEventsOK().WithPayload(listBucketEventsResponse)
 	})
 	// create bucket event
-	api.UserAPICreateBucketEventHandler = user_api.CreateBucketEventHandlerFunc(func(params user_api.CreateBucketEventParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		if err := getCreateBucketEventsResponse(sessionID, params.BucketName, params.Body); err != nil {
+	api.UserAPICreateBucketEventHandler = user_api.CreateBucketEventHandlerFunc(func(params user_api.CreateBucketEventParams, session *models.Principal) middleware.Responder {
+		if err := getCreateBucketEventsResponse(session, params.BucketName, params.Body); err != nil {
 			return user_api.NewCreateBucketEventDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return user_api.NewCreateBucketEventCreated()
 	})
 	// delete bucket event
-	api.UserAPIDeleteBucketEventHandler = user_api.DeleteBucketEventHandlerFunc(func(params user_api.DeleteBucketEventParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		if err := getDeleteBucketEventsResponse(sessionID, params.BucketName, params.Arn, params.Body.Events, params.Body.Prefix, params.Body.Suffix); err != nil {
+	api.UserAPIDeleteBucketEventHandler = user_api.DeleteBucketEventHandlerFunc(func(params user_api.DeleteBucketEventParams, session *models.Principal) middleware.Responder {
+		if err := getDeleteBucketEventsResponse(session, params.BucketName, params.Arn, params.Body.Events, params.Body.Prefix, params.Body.Suffix); err != nil {
 			return user_api.NewDeleteBucketEventDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return user_api.NewDeleteBucketEventNoContent()
@@ -128,8 +124,8 @@ func listBucketEvents(client MinioClient, bucketName string) ([]*models.Notifica
 }
 
 // getListBucketsResponse performs listBucketEvents() and serializes it to the handler's output
-func getListBucketEventsResponse(sessionID string, params user_api.ListBucketEventsParams) (*models.ListBucketEventsResponse, error) {
-	mClient, err := newMinioClient(sessionID)
+func getListBucketEventsResponse(session *models.Principal, params user_api.ListBucketEventsParams) (*models.ListBucketEventsResponse, error) {
+	mClient, err := newMinioClient(session)
 	if err != nil {
 		log.Println("error creating MinIO Client:", err)
 		return nil, err
@@ -181,12 +177,8 @@ func createBucketEvent(client MCS3Client, arn string, notificationEvents []model
 }
 
 // getCreateBucketEventsResponse calls createBucketEvent to add a bucket event notification
-func getCreateBucketEventsResponse(sessionID, bucketName string, eventReq *models.BucketEventRequest) error {
-	claims, err := auth.JWTAuthenticate(sessionID)
-	if err != nil {
-		return err
-	}
-	s3Client, err := newS3BucketClient(claims, bucketName)
+func getCreateBucketEventsResponse(session *models.Principal, bucketName string, eventReq *models.BucketEventRequest) error {
+	s3Client, err := newS3BucketClient(session, bucketName)
 	if err != nil {
 		log.Println("error creating S3Client:", err)
 		return err
@@ -221,12 +213,8 @@ func joinNotificationEvents(events []models.NotificationEventType) string {
 }
 
 // getDeleteBucketEventsResponse calls deleteBucketEventNotification() to delete a bucket event notification
-func getDeleteBucketEventsResponse(sessionID, bucketName string, arn string, events []models.NotificationEventType, prefix, suffix *string) error {
-	claims, err := auth.JWTAuthenticate(sessionID)
-	if err != nil {
-		return err
-	}
-	s3Client, err := newS3BucketClient(claims, bucketName)
+func getDeleteBucketEventsResponse(session *models.Principal, bucketName string, arn string, events []models.NotificationEventType, prefix, suffix *string) error {
+	s3Client, err := newS3BucketClient(session, bucketName)
 	if err != nil {
 		log.Println("error creating S3Client:", err)
 		return err

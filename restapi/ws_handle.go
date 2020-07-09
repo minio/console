@@ -25,6 +25,7 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/gorilla/websocket"
+	"github.com/minio/mcs/models"
 	"github.com/minio/mcs/pkg/auth"
 )
 
@@ -100,13 +101,12 @@ func (c wsConn) readMessage() (messageType int, p []byte, err error) {
 func serveWS(w http.ResponseWriter, req *http.Request) {
 	// Perform authentication before upgrading to a Websocket Connection
 	// authenticate WS connection with MCS
-	claims, err := auth.GetClaimsFromTokenInRequest(req)
+	session, err := auth.GetClaimsFromTokenInRequest(req)
 	if err != nil {
 		log.Print("error on ws authentication: ", err)
 		errors.ServeError(w, req, errors.New(http.StatusUnauthorized, err.Error()))
 		return
 	}
-
 	// upgrades the HTTP server connection to the WebSocket protocol.
 	conn, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
@@ -118,14 +118,14 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	wsPath := strings.TrimPrefix(req.URL.Path, wsBasePath)
 	switch {
 	case wsPath == "/trace":
-		wsAdminClient, err := newWebSocketAdminClient(conn, claims)
+		wsAdminClient, err := newWebSocketAdminClient(conn, session)
 		if err != nil {
 			closeWsConn(conn)
 			return
 		}
 		go wsAdminClient.trace()
 	case wsPath == "/console":
-		wsAdminClient, err := newWebSocketAdminClient(conn, claims)
+		wsAdminClient, err := newWebSocketAdminClient(conn, session)
 		if err != nil {
 			closeWsConn(conn)
 			return
@@ -138,7 +138,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 			closeWsConn(conn)
 			return
 		}
-		wsAdminClient, err := newWebSocketAdminClient(conn, claims)
+		wsAdminClient, err := newWebSocketAdminClient(conn, session)
 		if err != nil {
 			closeWsConn(conn)
 			return
@@ -146,7 +146,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 		go wsAdminClient.heal(hOptions)
 	case strings.HasPrefix(wsPath, `/watch`):
 		wOptions := getWatchOptionsFromReq(req)
-		wsS3Client, err := newWebSocketS3Client(conn, claims, wOptions.BucketName)
+		wsS3Client, err := newWebSocketS3Client(conn, session, wOptions.BucketName)
 		if err != nil {
 			closeWsConn(conn)
 			return
@@ -159,7 +159,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 }
 
 // newWebSocketAdminClient returns a wsAdminClient authenticated as an admin user
-func newWebSocketAdminClient(conn *websocket.Conn, autClaims *auth.DecryptedClaims) (*wsAdminClient, error) {
+func newWebSocketAdminClient(conn *websocket.Conn, autClaims *models.Principal) (*wsAdminClient, error) {
 	// Only start Websocket Interaction after user has been
 	// authenticated with MinIO
 	mAdmin, err := newAdminFromClaims(autClaims)
@@ -182,7 +182,7 @@ func newWebSocketAdminClient(conn *websocket.Conn, autClaims *auth.DecryptedClai
 }
 
 // newWebSocketS3Client returns a wsAdminClient authenticated as MCS admin
-func newWebSocketS3Client(conn *websocket.Conn, claims *auth.DecryptedClaims, bucketName string) (*wsS3Client, error) {
+func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, bucketName string) (*wsS3Client, error) {
 	// Only start Websocket Interaction after user has been
 	// authenticated with MinIO
 	s3Client, err := newS3BucketClient(claims, bucketName)

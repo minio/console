@@ -34,18 +34,16 @@ import (
 
 func registerProfilingHandler(api *operations.McsAPI) {
 	// Start Profiling
-	api.AdminAPIProfilingStartHandler = admin_api.ProfilingStartHandlerFunc(func(params admin_api.ProfilingStartParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		profilingStartResponse, err := getProfilingStartResponse(sessionID, params.Body)
+	api.AdminAPIProfilingStartHandler = admin_api.ProfilingStartHandlerFunc(func(params admin_api.ProfilingStartParams, session *models.Principal) middleware.Responder {
+		profilingStartResponse, err := getProfilingStartResponse(session, params.Body)
 		if err != nil {
 			return admin_api.NewProfilingStartDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return admin_api.NewProfilingStartCreated().WithPayload(profilingStartResponse)
 	})
 	// Stop and download profiling data
-	api.AdminAPIProfilingStopHandler = admin_api.ProfilingStopHandlerFunc(func(params admin_api.ProfilingStopParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		profilingStopResponse, err := getProfilingStopResponse(sessionID)
+	api.AdminAPIProfilingStopHandler = admin_api.ProfilingStopHandlerFunc(func(params admin_api.ProfilingStopParams, session *models.Principal) middleware.Responder {
+		profilingStopResponse, err := getProfilingStopResponse(session)
 		if err != nil {
 			return admin_api.NewProfilingStopDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
@@ -92,13 +90,13 @@ func startProfiling(ctx context.Context, client MinioAdmin, profilerType models.
 }
 
 // getProfilingStartResponse performs startProfiling() and serializes it to the handler's output
-func getProfilingStartResponse(sessionID string, params *models.ProfilingStartRequest) (*models.StartProfilingList, error) {
+func getProfilingStartResponse(session *models.Principal, params *models.ProfilingStartRequest) (*models.StartProfilingList, error) {
 	ctx := context.Background()
 	if params == nil {
 		log.Println("error profiling type not in body request")
 		return nil, errors.New(500, "error AddPolicy body not in request")
 	}
-	mAdmin, err := newMAdminClient(sessionID)
+	mAdmin, err := newMAdminClient(session)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		return nil, err
@@ -129,9 +127,9 @@ func stopProfiling(ctx context.Context, client MinioAdmin) (io.ReadCloser, error
 }
 
 // getProfilingStopResponse() performs setPolicy() and serializes it to the handler's output
-func getProfilingStopResponse(sessionID string) (io.ReadCloser, error) {
+func getProfilingStopResponse(session *models.Principal) (io.ReadCloser, error) {
 	ctx := context.Background()
-	mAdmin, err := newMAdminClient(sessionID)
+	mAdmin, err := newMAdminClient(session)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		return nil, err

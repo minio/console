@@ -34,27 +34,24 @@ import (
 
 func registersPoliciesHandler(api *operations.McsAPI) {
 	// List Policies
-	api.AdminAPIListPoliciesHandler = admin_api.ListPoliciesHandlerFunc(func(params admin_api.ListPoliciesParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		listPoliciesResponse, err := getListPoliciesResponse(sessionID)
+	api.AdminAPIListPoliciesHandler = admin_api.ListPoliciesHandlerFunc(func(params admin_api.ListPoliciesParams, session *models.Principal) middleware.Responder {
+		listPoliciesResponse, err := getListPoliciesResponse(session)
 		if err != nil {
 			return admin_api.NewListPoliciesDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return admin_api.NewListPoliciesOK().WithPayload(listPoliciesResponse)
 	})
 	// Policy Info
-	api.AdminAPIPolicyInfoHandler = admin_api.PolicyInfoHandlerFunc(func(params admin_api.PolicyInfoParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		policyInfo, err := getPolicyInfoResponse(sessionID, params)
+	api.AdminAPIPolicyInfoHandler = admin_api.PolicyInfoHandlerFunc(func(params admin_api.PolicyInfoParams, session *models.Principal) middleware.Responder {
+		policyInfo, err := getPolicyInfoResponse(session, params)
 		if err != nil {
 			return admin_api.NewPolicyInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return admin_api.NewPolicyInfoOK().WithPayload(policyInfo)
 	})
 	// Add Policy
-	api.AdminAPIAddPolicyHandler = admin_api.AddPolicyHandlerFunc(func(params admin_api.AddPolicyParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		policyResponse, err := getAddPolicyResponse(sessionID, params.Body)
+	api.AdminAPIAddPolicyHandler = admin_api.AddPolicyHandlerFunc(func(params admin_api.AddPolicyParams, session *models.Principal) middleware.Responder {
+		policyResponse, err := getAddPolicyResponse(session, params.Body)
 		if err != nil {
 			return admin_api.NewAddPolicyDefault(500).WithPayload(&models.Error{
 				Code:    500,
@@ -64,17 +61,15 @@ func registersPoliciesHandler(api *operations.McsAPI) {
 		return admin_api.NewAddPolicyCreated().WithPayload(policyResponse)
 	})
 	// Remove Policy
-	api.AdminAPIRemovePolicyHandler = admin_api.RemovePolicyHandlerFunc(func(params admin_api.RemovePolicyParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		if err := getRemovePolicyResponse(sessionID, params); err != nil {
+	api.AdminAPIRemovePolicyHandler = admin_api.RemovePolicyHandlerFunc(func(params admin_api.RemovePolicyParams, session *models.Principal) middleware.Responder {
+		if err := getRemovePolicyResponse(session, params); err != nil {
 			return admin_api.NewRemovePolicyDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return admin_api.NewRemovePolicyNoContent()
 	})
 	// Set Policy
-	api.AdminAPISetPolicyHandler = admin_api.SetPolicyHandlerFunc(func(params admin_api.SetPolicyParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		if err := getSetPolicyResponse(sessionID, params.Name, params.Body); err != nil {
+	api.AdminAPISetPolicyHandler = admin_api.SetPolicyHandlerFunc(func(params admin_api.SetPolicyParams, session *models.Principal) middleware.Responder {
+		if err := getSetPolicyResponse(session, params.Name, params.Body); err != nil {
 			return admin_api.NewSetPolicyDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return admin_api.NewSetPolicyNoContent()
@@ -102,9 +97,9 @@ func listPolicies(ctx context.Context, client MinioAdmin) ([]*models.Policy, err
 }
 
 // getListPoliciesResponse performs listPolicies() and serializes it to the handler's output
-func getListPoliciesResponse(sessionID string) (*models.ListPoliciesResponse, error) {
+func getListPoliciesResponse(session *models.Principal) (*models.ListPoliciesResponse, error) {
 	ctx := context.Background()
-	mAdmin, err := newMAdminClient(sessionID)
+	mAdmin, err := newMAdminClient(session)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		return nil, err
@@ -136,13 +131,13 @@ func removePolicy(ctx context.Context, client MinioAdmin, name string) error {
 }
 
 // getRemovePolicyResponse() performs removePolicy() and serializes it to the handler's output
-func getRemovePolicyResponse(sessionID string, params admin_api.RemovePolicyParams) error {
+func getRemovePolicyResponse(session *models.Principal, params admin_api.RemovePolicyParams) error {
 	ctx := context.Background()
 	if params.Name == "" {
 		log.Println("error policy name not in request")
 		return errors.New(500, "error policy name not in request")
 	}
-	mAdmin, err := newMAdminClient(sessionID)
+	mAdmin, err := newMAdminClient(session)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		return err
@@ -178,14 +173,14 @@ func addPolicy(ctx context.Context, client MinioAdmin, name, policy string) (*mo
 }
 
 // getAddPolicyResponse performs addPolicy() and serializes it to the handler's output
-func getAddPolicyResponse(sessionID string, params *models.AddPolicyRequest) (*models.Policy, error) {
+func getAddPolicyResponse(session *models.Principal, params *models.AddPolicyRequest) (*models.Policy, error) {
 	ctx := context.Background()
 	if params == nil {
 		log.Println("error AddPolicy body not in request")
 		return nil, errors.New(500, "error AddPolicy body not in request")
 	}
 
-	mAdmin, err := newMAdminClient(sessionID)
+	mAdmin, err := newMAdminClient(session)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		return nil, err
@@ -218,9 +213,9 @@ func policyInfo(ctx context.Context, client MinioAdmin, name string) (*models.Po
 }
 
 // getPolicyInfoResponse performs policyInfo() and serializes it to the handler's output
-func getPolicyInfoResponse(sessionID string, params admin_api.PolicyInfoParams) (*models.Policy, error) {
+func getPolicyInfoResponse(session *models.Principal, params admin_api.PolicyInfoParams) (*models.Policy, error) {
 	ctx := context.Background()
-	mAdmin, err := newMAdminClient(sessionID)
+	mAdmin, err := newMAdminClient(session)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		return nil, err
@@ -249,13 +244,13 @@ func setPolicy(ctx context.Context, client MinioAdmin, name, entityName string, 
 }
 
 // getSetPolicyResponse() performs setPolicy() and serializes it to the handler's output
-func getSetPolicyResponse(sessionID string, name string, params *models.SetPolicyRequest) error {
+func getSetPolicyResponse(session *models.Principal, name string, params *models.SetPolicyRequest) error {
 	ctx := context.Background()
 	if name == "" {
 		log.Println("error policy name not in request")
 		return errors.New(500, "error policy name not in request")
 	}
-	mAdmin, err := newMAdminClient(sessionID)
+	mAdmin, err := newMAdminClient(session)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		return err

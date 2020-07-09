@@ -30,9 +30,8 @@ import (
 
 func registerAdminInfoHandlers(api *operations.McsAPI) {
 	// return usage stats
-	api.AdminAPIAdminInfoHandler = admin_api.AdminInfoHandlerFunc(func(params admin_api.AdminInfoParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		infoResp, err := getAdminInfoResponse(sessionID)
+	api.AdminAPIAdminInfoHandler = admin_api.AdminInfoHandlerFunc(func(params admin_api.AdminInfoParams, session *models.Principal) middleware.Responder {
+		infoResp, err := getAdminInfoResponse(session)
 		if err != nil {
 			return admin_api.NewAdminInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
@@ -73,8 +72,8 @@ func getAdminInfo(ctx context.Context, client MinioAdmin) (*usageInfo, error) {
 }
 
 // getAdminInfoResponse returns the response containing total buckets, objects and usage.
-func getAdminInfoResponse(sessionID string) (*models.AdminInfoResponse, error) {
-	mAdmin, err := newMAdminClient(sessionID)
+func getAdminInfoResponse(session *models.Principal) (*models.AdminInfoResponse, error) {
+	mAdmin, err := newMAdminClient(session)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		return nil, err

@@ -24,7 +24,7 @@ import (
 
 	mcCmd "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
-	"github.com/minio/mcs/pkg/auth"
+	"github.com/minio/mcs/models"
 	"github.com/minio/minio-go/v6/pkg/credentials"
 	mauth "github.com/minio/minio/pkg/auth"
 	iampolicy "github.com/minio/minio/pkg/iam/policy"
@@ -241,12 +241,8 @@ func (ac adminClient) heal(ctx context.Context, bucket, prefix string, healOpts 
 	return ac.client.Heal(ctx, bucket, prefix, healOpts, clientToken, forceStart, forceStop)
 }
 
-func newMAdminClient(jwt string) (*madmin.AdminClient, error) {
-	claims, err := auth.JWTAuthenticate(jwt)
-	if err != nil {
-		return nil, err
-	}
-	adminClient, err := newAdminFromClaims(claims)
+func newMAdminClient(sessionClaims *models.Principal) (*madmin.AdminClient, error) {
+	adminClient, err := newAdminFromClaims(sessionClaims)
 	if err != nil {
 		return nil, err
 	}
@@ -254,7 +250,7 @@ func newMAdminClient(jwt string) (*madmin.AdminClient, error) {
 }
 
 // newAdminFromClaims creates a minio admin from Decrypted claims using Assume role credentials
-func newAdminFromClaims(claims *auth.DecryptedClaims) (*madmin.AdminClient, error) {
+func newAdminFromClaims(claims *models.Principal) (*madmin.AdminClient, error) {
 	tlsEnabled := getMinIOEndpointIsSecure()
 	endpoint := getMinIOEndpoint()
 
