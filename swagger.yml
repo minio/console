@@ -69,7 +69,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/loginOperatorRequest'
+            $ref: "#/definitions/loginOperatorRequest"
       responses:
         201:
           description: A successful login.
@@ -1116,6 +1116,34 @@ paths:
       tags:
         - AdminAPI
 
+  /namespaces/{namespace}/tenants/{tenant}/zones:
+    post:
+      summary: Tenant Add Zone
+      operationId: TenantAddZone
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/zone"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
   /namespaces/{namespace}/resourcequotas/{resource-quota-name}:
     get:
       summary: Get Resource Quota
@@ -1784,6 +1812,9 @@ definitions:
         type: string
   zone:
     type: object
+    required:
+      - name
+      - servers
     properties:
       name:
         type: string

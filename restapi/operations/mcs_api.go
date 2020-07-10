@@ -201,6 +201,9 @@ func NewMcsAPI(spec *loads.Document) *McsAPI {
 		AdminAPISetPolicyHandler: admin_api.SetPolicyHandlerFunc(func(params admin_api.SetPolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.SetPolicy has not yet been implemented")
 		}),
+		AdminAPITenantAddZoneHandler: admin_api.TenantAddZoneHandlerFunc(func(params admin_api.TenantAddZoneParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.TenantAddZone has not yet been implemented")
+		}),
 		AdminAPITenantInfoHandler: admin_api.TenantInfoHandlerFunc(func(params admin_api.TenantInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TenantInfo has not yet been implemented")
 		}),
@@ -357,6 +360,8 @@ type McsAPI struct {
 	AdminAPISetConfigHandler admin_api.SetConfigHandler
 	// AdminAPISetPolicyHandler sets the operation handler for the set policy operation
 	AdminAPISetPolicyHandler admin_api.SetPolicyHandler
+	// AdminAPITenantAddZoneHandler sets the operation handler for the tenant add zone operation
+	AdminAPITenantAddZoneHandler admin_api.TenantAddZoneHandler
 	// AdminAPITenantInfoHandler sets the operation handler for the tenant info operation
 	AdminAPITenantInfoHandler admin_api.TenantInfoHandler
 	// AdminAPIUpdateGroupHandler sets the operation handler for the update group operation
@@ -577,6 +582,9 @@ func (o *McsAPI) Validate() error {
 	}
 	if o.AdminAPISetPolicyHandler == nil {
 		unregistered = append(unregistered, "admin_api.SetPolicyHandler")
+	}
+	if o.AdminAPITenantAddZoneHandler == nil {
+		unregistered = append(unregistered, "admin_api.TenantAddZoneHandler")
 	}
 	if o.AdminAPITenantInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.TenantInfoHandler")
@@ -877,6 +885,10 @@ func (o *McsAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/set-policy/{name}"] = admin_api.NewSetPolicy(o.context, o.AdminAPISetPolicyHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/namespaces/{namespace}/tenants/{tenant}/zones"] = admin_api.NewTenantAddZone(o.context, o.AdminAPITenantAddZoneHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

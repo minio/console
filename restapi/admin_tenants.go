@@ -102,6 +102,15 @@ func registerTenantHandlers(api *operations.McsAPI) {
 		}
 		return admin_api.NewUpdateTenantCreated()
 	})
+
+	api.AdminAPITenantAddZoneHandler = admin_api.TenantAddZoneHandlerFunc(func(params admin_api.TenantAddZoneParams, session *models.Principal) middleware.Responder {
+		err := getTenantAddZoneResponse(session, params)
+		if err != nil {
+			log.Println(err)
+			return admin_api.NewTenantAddZoneDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String("Unable to update tenant")})
+		}
+		return admin_api.NewTenantAddZoneCreated()
+	})
 }
 
 // deleteTenantAction performs the actions of deleting a tenant
@@ -180,8 +189,8 @@ func getTenantInfo(minioInstance *operator.MinIOInstance, tenantInfo *usageInfo)
 
 	for _, z := range minioInstance.Spec.Zones {
 		zones = append(zones, &models.Zone{
-			Name:    z.Name,
-			Servers: int64(z.Servers),
+			Name:    swag.String(z.Name),
+			Servers: swag.Int64(int64(z.Servers)),
 		})
 	}
 
@@ -465,8 +474,8 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	if len(params.Body.Zones) > 0 {
 		for _, zone := range params.Body.Zones {
 			minInst.Spec.Zones = append(minInst.Spec.Zones, operator.Zone{
-				Name:    zone.Name,
-				Servers: int32(zone.Servers),
+				Name:    *zone.Name,
+				Servers: int32(*zone.Servers),
 			})
 		}
 	}
@@ -544,9 +553,6 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClient, http
 
 func getUpdateTenantResponse(session *models.Principal, params admin_api.UpdateTenantParams) error {
 	ctx := context.Background()
-	// TODO: use namespace of the tenant not from the controller
-	currentNamespace := cluster.GetNs()
-
 	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
 		log.Println("error getting operator client:", err)
@@ -561,10 +567,50 @@ func getUpdateTenantResponse(session *models.Principal, params admin_api.UpdateT
 			Timeout: 4 * time.Second,
 		},
 	}
-	if err := updateTenantAction(ctx, opClient, httpC, currentNamespace, params); err != nil {
+	if err := updateTenantAction(ctx, opClient, httpC, params.Namespace, params); err != nil {
 		log.Println("error patching MinioInstance:", err)
 		return err
 	}
+	return nil
+}
 
+// addTenantZone creates a zone to a defined tenant
+func addTenantZone(ctx context.Context, operatorClient OperatorClient, params admin_api.TenantAddZoneParams) error {
+	minInst, err := operatorClient.MinIOInstanceGet(ctx, params.Namespace, params.Tenant, metav1.GetOptions{})
+	if err != nil {
+		return err
+	}
+
+	minInst.Spec.Zones = append(minInst.Spec.Zones, operator.Zone{
+		Name:    *params.Body.Name,
+		Servers: int32(*params.Body.Servers),
+	})
+
+	payloadBytes, err := json.Marshal(minInst)
+	if err != nil {
+		return err
+	}
+
+	_, err = operatorClient.MinIOInstancePatch(ctx, params.Namespace, minInst.Name, types.MergePatchType, payloadBytes, metav1.PatchOptions{})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func getTenantAddZoneResponse(session *models.Principal, params admin_api.TenantAddZoneParams) error {
+	ctx := context.Background()
+	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
+	if err != nil {
+		log.Println("error getting operator client:", err)
+		return err
+	}
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+	if err := addTenantZone(ctx, opClient, params); err != nil {
+		log.Println("error patching MinioInstance:", err)
+		return err
+	}
 	return nil
 }

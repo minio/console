@@ -25,6 +25,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/go-openapi/swag"
 	"github.com/minio/mcs/cluster"
 	"github.com/minio/mcs/models"
 	"github.com/minio/mcs/restapi/operations/admin_api"
@@ -294,6 +295,97 @@ func Test_deleteTenantAction(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := deleteTenantAction(tt.args.ctx, tt.args.operatorClient, tt.args.nameSpace, tt.args.instanceName); (err != nil) != tt.wantErr {
 				t.Errorf("deleteTenantAction() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func Test_TenantAddZone(t *testing.T) {
+	opClient := opClientMock{}
+
+	type args struct {
+		ctx                    context.Context
+		operatorClient         OperatorClient
+		nameSpace              string
+		mockMinioInstancePatch func(ctx context.Context, namespace string, instanceName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.MinIOInstance, error)
+		mockMinioInstanceGet   func(ctx context.Context, namespace string, instanceName string, options metav1.GetOptions) (*v1.MinIOInstance, error)
+		params                 admin_api.TenantAddZoneParams
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "Add zone, no errors",
+			args: args{
+				ctx:            context.Background(),
+				operatorClient: opClient,
+				nameSpace:      "default",
+				mockMinioInstancePatch: func(ctx context.Context, namespace string, instanceName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.MinIOInstance, error) {
+					return &v1.MinIOInstance{}, nil
+				},
+				mockMinioInstanceGet: func(ctx context.Context, namespace string, instanceName string, options metav1.GetOptions) (*v1.MinIOInstance, error) {
+					return &v1.MinIOInstance{}, nil
+				},
+				params: admin_api.TenantAddZoneParams{
+					Body: &models.Zone{
+						Name:    swag.String("zone-1"),
+						Servers: swag.Int64(int64(4)),
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "Error on patch, handle error",
+			args: args{
+				ctx:            context.Background(),
+				operatorClient: opClient,
+				nameSpace:      "default",
+				mockMinioInstancePatch: func(ctx context.Context, namespace string, instanceName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.MinIOInstance, error) {
+					return nil, errors.New("errors")
+				},
+				mockMinioInstanceGet: func(ctx context.Context, namespace string, instanceName string, options metav1.GetOptions) (*v1.MinIOInstance, error) {
+					return &v1.MinIOInstance{}, nil
+				},
+				params: admin_api.TenantAddZoneParams{
+					Body: &models.Zone{
+						Name:    swag.String("zone-1"),
+						Servers: swag.Int64(int64(4)),
+					},
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "Error on get, handle error",
+			args: args{
+				ctx:            context.Background(),
+				operatorClient: opClient,
+				nameSpace:      "default",
+				mockMinioInstancePatch: func(ctx context.Context, namespace string, instanceName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.MinIOInstance, error) {
+					return nil, errors.New("errors")
+				},
+				mockMinioInstanceGet: func(ctx context.Context, namespace string, instanceName string, options metav1.GetOptions) (*v1.MinIOInstance, error) {
+					return nil, errors.New("errors")
+				},
+				params: admin_api.TenantAddZoneParams{
+					Body: &models.Zone{
+						Name:    swag.String("zone-1"),
+						Servers: swag.Int64(int64(4)),
+					},
+				},
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		opClientMinioInstanceGetMock = tt.args.mockMinioInstanceGet
+		opClientMinioInstancePatchMock = tt.args.mockMinioInstancePatch
+		t.Run(tt.name, func(t *testing.T) {
+			if err := addTenantZone(tt.args.ctx, tt.args.operatorClient, tt.args.params); (err != nil) != tt.wantErr {
+				t.Errorf("addTenantZone() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
