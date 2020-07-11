@@ -33,36 +33,32 @@ import (
 
 func registerUsersHandlers(api *operations.McsAPI) {
 	// List Users
-	api.AdminAPIListUsersHandler = admin_api.ListUsersHandlerFunc(func(params admin_api.ListUsersParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		listUsersResponse, err := getListUsersResponse(sessionID)
+	api.AdminAPIListUsersHandler = admin_api.ListUsersHandlerFunc(func(params admin_api.ListUsersParams, session *models.Principal) middleware.Responder {
+		listUsersResponse, err := getListUsersResponse(session)
 		if err != nil {
 			return admin_api.NewListUsersDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return admin_api.NewListUsersOK().WithPayload(listUsersResponse)
 	})
 	// Add User
-	api.AdminAPIAddUserHandler = admin_api.AddUserHandlerFunc(func(params admin_api.AddUserParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		userResponse, err := getUserAddResponse(sessionID, params)
+	api.AdminAPIAddUserHandler = admin_api.AddUserHandlerFunc(func(params admin_api.AddUserParams, session *models.Principal) middleware.Responder {
+		userResponse, err := getUserAddResponse(session, params)
 		if err != nil {
 			return admin_api.NewAddUserDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return admin_api.NewAddUserCreated().WithPayload(userResponse)
 	})
 	// Remove User
-	api.AdminAPIRemoveUserHandler = admin_api.RemoveUserHandlerFunc(func(params admin_api.RemoveUserParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		err := getRemoveUserResponse(sessionID, params)
+	api.AdminAPIRemoveUserHandler = admin_api.RemoveUserHandlerFunc(func(params admin_api.RemoveUserParams, session *models.Principal) middleware.Responder {
+		err := getRemoveUserResponse(session, params)
 		if err != nil {
 			return admin_api.NewRemoveUserDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return admin_api.NewRemoveUserNoContent()
 	})
 	// Update User-Groups
-	api.AdminAPIUpdateUserGroupsHandler = admin_api.UpdateUserGroupsHandlerFunc(func(params admin_api.UpdateUserGroupsParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		userUpdateResponse, err := getUpdateUserGroupsResponse(sessionID, params)
+	api.AdminAPIUpdateUserGroupsHandler = admin_api.UpdateUserGroupsHandlerFunc(func(params admin_api.UpdateUserGroupsParams, session *models.Principal) middleware.Responder {
+		userUpdateResponse, err := getUpdateUserGroupsResponse(session, params)
 		if err != nil {
 			return admin_api.NewUpdateUserGroupsDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
@@ -70,9 +66,8 @@ func registerUsersHandlers(api *operations.McsAPI) {
 		return admin_api.NewUpdateUserGroupsOK().WithPayload(userUpdateResponse)
 	})
 	// Get User
-	api.AdminAPIGetUserInfoHandler = admin_api.GetUserInfoHandlerFunc(func(params admin_api.GetUserInfoParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		userInfoResponse, err := getUserInfoResponse(sessionID, params)
+	api.AdminAPIGetUserInfoHandler = admin_api.GetUserInfoHandlerFunc(func(params admin_api.GetUserInfoParams, session *models.Principal) middleware.Responder {
+		userInfoResponse, err := getUserInfoResponse(session, params)
 		if err != nil {
 			return admin_api.NewGetUserInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
@@ -80,9 +75,8 @@ func registerUsersHandlers(api *operations.McsAPI) {
 		return admin_api.NewGetUserInfoOK().WithPayload(userInfoResponse)
 	})
 	// Update User
-	api.AdminAPIUpdateUserInfoHandler = admin_api.UpdateUserInfoHandlerFunc(func(params admin_api.UpdateUserInfoParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		userUpdateResponse, err := getUpdateUserResponse(sessionID, params)
+	api.AdminAPIUpdateUserInfoHandler = admin_api.UpdateUserInfoHandlerFunc(func(params admin_api.UpdateUserInfoParams, session *models.Principal) middleware.Responder {
+		userUpdateResponse, err := getUpdateUserResponse(session, params)
 		if err != nil {
 			return admin_api.NewUpdateUserInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
@@ -90,9 +84,8 @@ func registerUsersHandlers(api *operations.McsAPI) {
 		return admin_api.NewUpdateUserInfoOK().WithPayload(userUpdateResponse)
 	})
 	// Update User-Groups Bulk
-	api.AdminAPIBulkUpdateUsersGroupsHandler = admin_api.BulkUpdateUsersGroupsHandlerFunc(func(params admin_api.BulkUpdateUsersGroupsParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		err := getAddUsersListToGroupsResponse(sessionID, params)
+	api.AdminAPIBulkUpdateUsersGroupsHandler = admin_api.BulkUpdateUsersGroupsHandlerFunc(func(params admin_api.BulkUpdateUsersGroupsParams, session *models.Principal) middleware.Responder {
+		err := getAddUsersListToGroupsResponse(session, params)
 		if err != nil {
 			return admin_api.NewBulkUpdateUsersGroupsDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
@@ -126,9 +119,9 @@ func listUsers(ctx context.Context, client MinioAdmin) ([]*models.User, error) {
 }
 
 // getListUsersResponse performs listUsers() and serializes it to the handler's output
-func getListUsersResponse(sessionID string) (*models.ListUsersResponse, error) {
+func getListUsersResponse(session *models.Principal) (*models.ListUsersResponse, error) {
 	ctx := context.Background()
-	mAdmin, err := newMAdminClient(sessionID)
+	mAdmin, err := newMAdminClient(session)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		return nil, err
@@ -174,9 +167,9 @@ func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *strin
 	return userRet, nil
 }
 
-func getUserAddResponse(sessionID string, params admin_api.AddUserParams) (*models.User, error) {
+func getUserAddResponse(session *models.Principal, params admin_api.AddUserParams) (*models.User, error) {
 	ctx := context.Background()
-	mAdmin, err := newMAdminClient(sessionID)
+	mAdmin, err := newMAdminClient(session)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		return nil, err
@@ -201,10 +194,10 @@ func removeUser(ctx context.Context, client MinioAdmin, accessKey string) error 
 	return nil
 }
 
-func getRemoveUserResponse(sessionID string, params admin_api.RemoveUserParams) error {
+func getRemoveUserResponse(session *models.Principal, params admin_api.RemoveUserParams) error {
 	ctx := context.Background()
 
-	mAdmin, err := newMAdminClient(sessionID)
+	mAdmin, err := newMAdminClient(session)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		return err
@@ -233,10 +226,10 @@ func getUserInfo(ctx context.Context, client MinioAdmin, accessKey string) (*mad
 	return &userInfo, nil
 }
 
-func getUserInfoResponse(sessionID string, params admin_api.GetUserInfoParams) (*models.User, error) {
+func getUserInfoResponse(session *models.Principal, params admin_api.GetUserInfoParams) (*models.User, error) {
 	ctx := context.Background()
 
-	mAdmin, err := newMAdminClient(sessionID)
+	mAdmin, err := newMAdminClient(session)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		return nil, err
@@ -348,10 +341,10 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 	return userReturn, nil
 }
 
-func getUpdateUserGroupsResponse(sessionID string, params admin_api.UpdateUserGroupsParams) (*models.User, error) {
+func getUpdateUserGroupsResponse(session *models.Principal, params admin_api.UpdateUserGroupsParams) (*models.User, error) {
 	ctx := context.Background()
 
-	mAdmin, err := newMAdminClient(sessionID)
+	mAdmin, err := newMAdminClient(session)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		return nil, err
@@ -389,10 +382,10 @@ func setUserStatus(ctx context.Context, client MinioAdmin, user string, status s
 	return nil
 }
 
-func getUpdateUserResponse(sessionID string, params admin_api.UpdateUserInfoParams) (*models.User, error) {
+func getUpdateUserResponse(session *models.Principal, params admin_api.UpdateUserInfoParams) (*models.User, error) {
 	ctx := context.Background()
 
-	mAdmin, err := newMAdminClient(sessionID)
+	mAdmin, err := newMAdminClient(session)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		return nil, err
@@ -462,10 +455,10 @@ func addUsersListToGroups(ctx context.Context, client MinioAdmin, usersToUpdate 
 	return nil
 }
 
-func getAddUsersListToGroupsResponse(sessionID string, params admin_api.BulkUpdateUsersGroupsParams) error {
+func getAddUsersListToGroupsResponse(session *models.Principal, params admin_api.BulkUpdateUsersGroupsParams) error {
 	ctx := context.Background()
 
-	mAdmin, err := newMAdminClient(sessionID)
+	mAdmin, err := newMAdminClient(session)
 	if err != nil {
 		log.Println("error creating Madmin Client:", err)
 		return err

@@ -48,10 +48,10 @@ func GetK8sAPIServer() string {
 	return env.Get(McsK8sAPIServer, apiServerAddress)
 }
 
-// getK8sAPIServerInsecure allow to tell the k8s client to skip TLS certificate verification, ie: when connecting to a k8s cluster
-// that uses certificate not trusted by your machine
-func getK8sAPIServerInsecure() bool {
-	return strings.ToLower(env.Get(McsK8SAPIServerInsecure, "off")) == "on"
+// If MCS_K8S_API_SERVER_TLS_ROOT_CA is true mcs will load the certificate into the
+// http.client rootCAs pool, this is useful for testing an k8s ApiServer or when working with self-signed certificates
+func getK8sAPIServerTLSRootCA() string {
+	return strings.TrimSpace(env.Get(McsK8SAPIServerTLSRootCA, ""))
 }
 
 // GetNsFromFile assumes console is running inside a k8s pod and extract the current namespace from the

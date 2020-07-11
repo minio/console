@@ -17,10 +17,7 @@
 package restapi
 
 import (
-	"log"
-
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/swag"
 	"github.com/minio/mcs/models"
 	"github.com/minio/mcs/restapi/operations"
 	"github.com/minio/mcs/restapi/operations/user_api"
@@ -28,11 +25,8 @@ import (
 
 func registerLogoutHandlers(api *operations.McsAPI) {
 	// logout from mcs
-	api.UserAPILogoutHandler = user_api.LogoutHandlerFunc(func(params user_api.LogoutParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		if err := getLogoutResponse(sessionID); err != nil {
-			return user_api.NewLogoutDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
-		}
+	api.UserAPILogoutHandler = user_api.LogoutHandlerFunc(func(params user_api.LogoutParams, session *models.Principal) middleware.Responder {
+		getLogoutResponse(session)
 		return user_api.NewLogoutOK()
 	})
 }
@@ -43,17 +37,8 @@ func logout(credentials MCSCredentials) {
 }
 
 // getLogoutResponse performs logout() and returns nil or error
-func getLogoutResponse(jwt string) error {
-	creds, err := getMcsCredentialsFromJWT(jwt)
-	if err != nil {
-		log.Println(err)
-		return err
-	}
+func getLogoutResponse(session *models.Principal) {
+	creds := getMcsCredentialsFromSession(session)
 	credentials := mcsCredentials{mcsCredentials: creds}
-	if err != nil {
-		log.Println("error creating MinIO Client:", err)
-		return err
-	}
 	logout(credentials)
-	return nil
 }

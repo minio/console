@@ -47,18 +47,16 @@ import (
 
 func registerTenantHandlers(api *operations.McsAPI) {
 	// Add Tenant
-	api.AdminAPICreateTenantHandler = admin_api.CreateTenantHandlerFunc(func(params admin_api.CreateTenantParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		resp, err := getTenantCreatedResponse(sessionID, params)
+	api.AdminAPICreateTenantHandler = admin_api.CreateTenantHandlerFunc(func(params admin_api.CreateTenantParams, session *models.Principal) middleware.Responder {
+		resp, err := getTenantCreatedResponse(session, params)
 		if err != nil {
 			return admin_api.NewCreateTenantDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return admin_api.NewCreateTenantOK().WithPayload(resp)
 	})
 	// List All Tenants of all namespaces
-	api.AdminAPIListAllTenantsHandler = admin_api.ListAllTenantsHandlerFunc(func(params admin_api.ListAllTenantsParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		resp, err := getListAllTenantsResponse(sessionID, params)
+	api.AdminAPIListAllTenantsHandler = admin_api.ListAllTenantsHandlerFunc(func(params admin_api.ListAllTenantsParams, session *models.Principal) middleware.Responder {
+		resp, err := getListAllTenantsResponse(session, params)
 		if err != nil {
 			return admin_api.NewListTenantsDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
@@ -66,9 +64,8 @@ func registerTenantHandlers(api *operations.McsAPI) {
 
 	})
 	// List Tenants by namespace
-	api.AdminAPIListTenantsHandler = admin_api.ListTenantsHandlerFunc(func(params admin_api.ListTenantsParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		resp, err := getListTenantsResponse(sessionID, params)
+	api.AdminAPIListTenantsHandler = admin_api.ListTenantsHandlerFunc(func(params admin_api.ListTenantsParams, session *models.Principal) middleware.Responder {
+		resp, err := getListTenantsResponse(session, params)
 		if err != nil {
 			return admin_api.NewListTenantsDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
@@ -76,9 +73,8 @@ func registerTenantHandlers(api *operations.McsAPI) {
 
 	})
 	// Detail Tenant
-	api.AdminAPITenantInfoHandler = admin_api.TenantInfoHandlerFunc(func(params admin_api.TenantInfoParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		resp, err := getTenantInfoResponse(sessionID, params)
+	api.AdminAPITenantInfoHandler = admin_api.TenantInfoHandlerFunc(func(params admin_api.TenantInfoParams, session *models.Principal) middleware.Responder {
+		resp, err := getTenantInfoResponse(session, params)
 		if err != nil {
 			return admin_api.NewTenantInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
@@ -87,9 +83,8 @@ func registerTenantHandlers(api *operations.McsAPI) {
 	})
 
 	// Delete Tenant
-	api.AdminAPIDeleteTenantHandler = admin_api.DeleteTenantHandlerFunc(func(params admin_api.DeleteTenantParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		err := getDeleteTenantResponse(sessionID, params)
+	api.AdminAPIDeleteTenantHandler = admin_api.DeleteTenantHandlerFunc(func(params admin_api.DeleteTenantParams, session *models.Principal) middleware.Responder {
+		err := getDeleteTenantResponse(session, params)
 		if err != nil {
 			log.Println(err)
 			return admin_api.NewTenantInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String("Unable to delete tenant")})
@@ -99,9 +94,8 @@ func registerTenantHandlers(api *operations.McsAPI) {
 	})
 
 	// Update Tenant
-	api.AdminAPIUpdateTenantHandler = admin_api.UpdateTenantHandlerFunc(func(params admin_api.UpdateTenantParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		err := getUpdateTenantResponse(sessionID, params)
+	api.AdminAPIUpdateTenantHandler = admin_api.UpdateTenantHandlerFunc(func(params admin_api.UpdateTenantParams, session *models.Principal) middleware.Responder {
+		err := getUpdateTenantResponse(session, params)
 		if err != nil {
 			log.Println(err)
 			return admin_api.NewUpdateTenantDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String("Unable to update tenant")})
@@ -120,8 +114,8 @@ func deleteTenantAction(ctx context.Context, operatorClient OperatorClient, name
 }
 
 // getDeleteTenantResponse gets the output of deleting a minio instance
-func getDeleteTenantResponse(token string, params admin_api.DeleteTenantParams) error {
-	opClientClientSet, err := cluster.OperatorClient(token)
+func getDeleteTenantResponse(session *models.Principal, params admin_api.DeleteTenantParams) error {
+	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
 		return err
 	}
@@ -208,16 +202,16 @@ func getTenantInfo(minioInstance *operator.MinIOInstance, tenantInfo *usageInfo)
 	}
 }
 
-func getTenantInfoResponse(token string, params admin_api.TenantInfoParams) (*models.Tenant, error) {
+func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInfoParams) (*models.Tenant, error) {
 	// 20 seconds timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
-	opClientClientSet, err := cluster.OperatorClient(token)
+	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
 		return nil, err
 	}
-	clientset, err := cluster.K8sClient(token)
+	clientset, err := cluster.K8sClient(session.SessionToken)
 	if err != nil {
 		log.Println("error getting k8sClient:", err)
 		return nil, err
@@ -297,9 +291,9 @@ func listTenants(ctx context.Context, operatorClient OperatorClient, namespace s
 	}, nil
 }
 
-func getListAllTenantsResponse(token string, params admin_api.ListAllTenantsParams) (*models.ListTenantsResponse, error) {
+func getListAllTenantsResponse(session *models.Principal, params admin_api.ListAllTenantsParams) (*models.ListTenantsResponse, error) {
 	ctx := context.Background()
-	opClientClientSet, err := cluster.OperatorClient(token)
+	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
 		log.Println("error getting operator client:", err)
 		return nil, err
@@ -316,9 +310,9 @@ func getListAllTenantsResponse(token string, params admin_api.ListAllTenantsPara
 }
 
 // getListTenantsResponse list tenants by namespace
-func getListTenantsResponse(token string, params admin_api.ListTenantsParams) (*models.ListTenantsResponse, error) {
+func getListTenantsResponse(session *models.Principal, params admin_api.ListTenantsParams) (*models.ListTenantsResponse, error) {
 	ctx := context.Background()
-	opClientClientSet, err := cluster.OperatorClient(token)
+	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
 		log.Println("error getting operator client:", err)
 		return nil, err
@@ -334,7 +328,7 @@ func getListTenantsResponse(token string, params admin_api.ListTenantsParams) (*
 	return listT, nil
 }
 
-func getTenantCreatedResponse(token string, params admin_api.CreateTenantParams) (*models.CreateTenantResponse, error) {
+func getTenantCreatedResponse(session *models.Principal, params admin_api.CreateTenantParams) (*models.CreateTenantResponse, error) {
 	minioImage := params.Body.Image
 	if minioImage == "" {
 		minImg, err := cluster.GetMinioImage()
@@ -366,7 +360,7 @@ func getTenantCreatedResponse(token string, params admin_api.CreateTenantParams)
 		},
 	}
 
-	clientset, err := cluster.K8sClient(token)
+	clientset, err := cluster.K8sClient(session.SessionToken)
 	if err != nil {
 		return nil, err
 	}
@@ -494,7 +488,7 @@ func getTenantCreatedResponse(token string, params admin_api.CreateTenantParams)
 		minInst.Spec.Metadata.Annotations = params.Body.Annotations
 	}
 
-	opClient, err := cluster.OperatorClient(token)
+	opClient, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
 		return nil, err
 	}
@@ -506,7 +500,7 @@ func getTenantCreatedResponse(token string, params admin_api.CreateTenantParams)
 
 	// Integratrions
 	if os.Getenv("GKE_INTEGRATION") != "" {
-		err := gkeIntegration(clientset, *params.Body.Name, ns, token)
+		err := gkeIntegration(clientset, *params.Body.Name, ns, session.SessionToken)
 		if err != nil {
 			return nil, err
 		}
@@ -548,12 +542,12 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClient, http
 	return nil
 }
 
-func getUpdateTenantResponse(token string, params admin_api.UpdateTenantParams) error {
+func getUpdateTenantResponse(session *models.Principal, params admin_api.UpdateTenantParams) error {
 	ctx := context.Background()
 	// TODO: use namespace of the tenant not from the controller
 	currentNamespace := cluster.GetNs()
 
-	opClientClientSet, err := cluster.OperatorClient(token)
+	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
 		log.Println("error getting operator client:", err)
 		return err

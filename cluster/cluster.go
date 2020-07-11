@@ -23,15 +23,28 @@ import (
 	certutil "k8s.io/client-go/util/cert"
 )
 
-func GetK8sConfig(token string) *rest.Config {
-	// if console is running inside k8s by default he will have access to the ca cert from the k8s local authority
-	const (
-		rootCAFile = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
-	)
-	tlsClientConfig := rest.TLSClientConfig{Insecure: getK8sAPIServerInsecure()}
-	if _, err := certutil.NewPool(rootCAFile); err == nil {
-		tlsClientConfig.CAFile = rootCAFile
+// getTLSClientConfig will return the right TLS configuration for the K8S client based on the configured TLS certificate
+func getTLSClientConfig() rest.TLSClientConfig {
+	var defaultRootCAFile = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+	var customRootCAFile = getK8sAPIServerTLSRootCA()
+	tlsClientConfig := rest.TLSClientConfig{}
+	// if console is running inside k8s by default he will have access to the CA Cert from the k8s local authority
+	if _, err := certutil.NewPool(defaultRootCAFile); err == nil {
+		tlsClientConfig.CAFile = defaultRootCAFile
 	}
+	// if the user explicitly define a custom CA certificate, instead, we will use that
+	if customRootCAFile != "" {
+		if _, err := certutil.NewPool(customRootCAFile); err == nil {
+			tlsClientConfig.CAFile = customRootCAFile
+		}
+	}
+	return tlsClientConfig
+}
+
+// This operation will run only once at console startup
+var tlsClientConfig = getTLSClientConfig()
+
+func GetK8sConfig(token string) *rest.Config {
 	config := &rest.Config{
 		Host:            GetK8sAPIServer(),
 		TLSClientConfig: tlsClientConfig,

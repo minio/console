@@ -24,7 +24,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/minio/mcs/pkg/acl"
 	"github.com/minio/mcs/pkg/auth"
 
 	"github.com/minio/mcs/models"
@@ -62,21 +61,19 @@ func configureAPI(api *operations.McsAPI) http.Handler {
 	// Applies when the "x-token" header is set
 
 	api.KeyAuth = func(token string, scopes []string) (*models.Principal, error) {
-		if acl.GetOperatorMode() {
-			// here we just check the token is present on the request, authentication will be done
-			// by kubernetes api server
-			if token != "" {
-				prin := models.Principal(token)
-				return &prin, nil
-			}
-		} else {
-			if auth.IsJWTValid(token) {
-				prin := models.Principal(token)
-				return &prin, nil
-			}
+		// we are validating the jwt by decrypting the claims inside, if the operation succed that means the jwt
+		// was generated and signed by us in the first place
+		claims, err := auth.JWTAuthenticate(token)
+		if err != nil {
+			log.Println(err)
+			return nil, errors.New(401, "incorrect api key auth")
 		}
-		log.Printf("Access attempt with incorrect api key auth: %s", token)
-		return nil, errors.New(401, "incorrect api key auth")
+		return &models.Principal{
+			AccessKeyID:     claims.AccessKeyID,
+			Actions:         claims.Actions,
+			SecretAccessKey: claims.SecretAccessKey,
+			SessionToken:    claims.SessionToken,
+		}, nil
 	}
 
 	// Register login handlers

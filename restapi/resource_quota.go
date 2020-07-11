@@ -32,9 +32,8 @@ import (
 
 func registerResourceQuotaHandlers(api *operations.McsAPI) {
 	// Get Resource Quota
-	api.AdminAPIGetResourceQuotaHandler = admin_api.GetResourceQuotaHandlerFunc(func(params admin_api.GetResourceQuotaParams, principal *models.Principal) middleware.Responder {
-		sessionID := string(*principal)
-		resp, err := getResourceQuotaResponse(sessionID, params)
+	api.AdminAPIGetResourceQuotaHandler = admin_api.GetResourceQuotaHandlerFunc(func(params admin_api.GetResourceQuotaParams, session *models.Principal) middleware.Responder {
+		resp, err := getResourceQuotaResponse(session, params)
 		if err != nil {
 			return admin_api.NewGetResourceQuotaDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
@@ -69,9 +68,9 @@ func getResourceQuota(ctx context.Context, client K8sClient, namespace, resource
 	return &rq, nil
 }
 
-func getResourceQuotaResponse(token string, params admin_api.GetResourceQuotaParams) (*models.ResourceQuota, error) {
+func getResourceQuotaResponse(session *models.Principal, params admin_api.GetResourceQuotaParams) (*models.ResourceQuota, error) {
 	ctx := context.Background()
-	client, err := cluster.K8sClient(token)
+	client, err := cluster.K8sClient(session.SessionToken)
 	if err != nil {
 		log.Println("error getting k8sClient:", err)
 		return nil, err
