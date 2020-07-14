@@ -1036,6 +1036,48 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/zones": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Tenant Add Zone",
+        "operationId": "TenantAddZone",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/zone"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/policies": {
       "get": {
         "tags": [
@@ -2681,6 +2723,10 @@ func init() {
     },
     "zone": {
       "type": "object",
+      "required": [
+        "name",
+        "servers"
+      ],
       "properties": {
         "name": {
           "type": "string"
@@ -3696,6 +3742,48 @@ func init() {
         ],
         "responses": {
           "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/zones": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Tenant Add Zone",
+        "operationId": "TenantAddZone",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/zone"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
             "description": "A successful response."
           },
           "default": {
@@ -5366,6 +5454,10 @@ func init() {
     },
     "zone": {
       "type": "object",
+      "required": [
+        "name",
+        "servers"
+      ],
       "properties": {
         "name": {
           "type": "string"
