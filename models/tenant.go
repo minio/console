@@ -53,6 +53,9 @@ type Tenant struct {
 	// namespace
 	Namespace string `json:"namespace,omitempty"`
 
+	// storage class
+	StorageClass string `json:"storage_class,omitempty"`
+
 	// total size
 	TotalSize int64 `json:"total_size,omitempty"`
 

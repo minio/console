@@ -208,6 +208,7 @@ func getTenantInfo(minioInstance *operator.MinIOInstance, tenantInfo *usageInfo)
 		Namespace:        minioInstance.ObjectMeta.Namespace,
 		Image:            minioInstance.Spec.Image,
 		UsedSize:         tenantInfo.DisksUsage,
+		StorageClass:     swag.StringValue(minioInstance.Spec.VolumeClaimTemplate.Spec.StorageClassName),
 	}
 }
 

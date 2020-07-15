@@ -2584,6 +2584,9 @@ func init() {
         "namespace": {
           "type": "string"
         },
+        "storage_class": {
+          "type": "string"
+        },
         "total_size": {
           "type": "integer",
           "format": "int64"
@@ -5313,6 +5316,9 @@ func init() {
           "type": "string"
         },
         "namespace": {
+          "type": "string"
+        },
+        "storage_class": {
           "type": "string"
         },
         "total_size": {
