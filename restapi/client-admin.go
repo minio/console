@@ -46,10 +46,10 @@ func NewAdminClient(url, accessKey, secretKey string) (*madmin.AdminClient, *pro
 		AppComments: []string{appName, runtime.GOOS, runtime.GOARCH},
 		Insecure:    false,
 	})
-	s3Client.SetCustomTransport(STSClient.Transport)
 	if err != nil {
 		return nil, err.Trace(url)
 	}
+	s3Client.SetCustomTransport(STSClient.Transport)
 	return s3Client, nil
 }
 

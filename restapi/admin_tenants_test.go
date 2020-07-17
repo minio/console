@@ -29,9 +29,10 @@ import (
 	"github.com/minio/mcs/cluster"
 	"github.com/minio/mcs/models"
 	"github.com/minio/mcs/restapi/operations/admin_api"
+	operator "github.com/minio/minio-operator/pkg/apis/operator.min.io/v1"
 	v1 "github.com/minio/minio-operator/pkg/apis/operator.min.io/v1"
-	"github.com/minio/minio/pkg/madmin"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
 )
@@ -77,7 +78,7 @@ func (c k8sClientMock) getService(ctx context.Context, namespace, serviceName st
 	return k8sclientGetServiceMock(ctx, namespace, serviceName, opts)
 }
 
-func Test_TenantInfo(t *testing.T) {
+func Test_TenantInfoTenantAdminClient(t *testing.T) {
 	ctx := context.Background()
 	kClient := k8sClientMock{}
 	type args struct {
@@ -92,7 +93,6 @@ func Test_TenantInfo(t *testing.T) {
 		name           string
 		args           args
 		wantErr        bool
-		want           madmin.AdminClient
 		mockGetSecret  func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error)
 		mockGetService func(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*corev1.Service, error)
 	}{
@@ -240,11 +240,91 @@ func Test_TenantInfo(t *testing.T) {
 				}
 				t.Errorf("getTenantAdminClient() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			if reflect.DeepEqual(got, tt.want) {
+			if got == nil {
+				t.Errorf("getTenantAdminClient() expected type: *madmin.AdminClient, got: nil")
+			}
+		})
+	}
+}
+
+func Test_TenantInfo(t *testing.T) {
+	testTimeStamp := metav1.Now()
+	type args struct {
+		minioInstance *operator.MinIOInstance
+		tenantInfo    *usageInfo
+	}
+	tests := []struct {
+		name string
+		args args
+		want *models.Tenant
+	}{
+		{
+			name: "Get tenant Info",
+			args: args{
+				minioInstance: &operator.MinIOInstance{
+					ObjectMeta: metav1.ObjectMeta{
+						CreationTimestamp: testTimeStamp,
+						Name:              "tenant1",
+						Namespace:         "minio-ns",
+					},
+					Spec: operator.MinIOInstanceSpec{
+						Zones: []operator.Zone{
+							{
+								Name:    "zone1",
+								Servers: int32(2),
+							},
+						},
+						VolumesPerServer: 4,
+						VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
+							Spec: corev1.PersistentVolumeClaimSpec{
+								Resources: corev1.ResourceRequirements{
+									Requests: map[corev1.ResourceName]resource.Quantity{
+										corev1.ResourceStorage: resource.MustParse("1Mi"),
+									},
+								},
+								StorageClassName: swag.String("standard"),
+							},
+						},
+						Image: "minio/minio:RELEASE.2020-06-14T18-32-17Z",
+					},
+					Status: operator.MinIOInstanceStatus{
+						CurrentState: "ready",
+					},
+				},
+				tenantInfo: &usageInfo{
+					DisksUsage: 1024,
+				},
+			},
+			want: &models.Tenant{
+				CreationDate:     testTimeStamp.String(),
+				InstanceCount:    2, // number of servers
+				Name:             "tenant1",
+				VolumesPerServer: int64(4),
+				VolumeCount:      int64(8),
+				VolumeSize:       int64(1048576),
+				TotalSize:        int64(8388608),
+				ZoneCount:        int64(1),
+				CurrentState:     "ready",
+				Zones: []*models.Zone{
+					{
+						Name:    swag.String("zone1"),
+						Servers: swag.Int64(int64(2)),
+					},
+				},
+				Namespace:    "minio-ns",
+				Image:        "minio/minio:RELEASE.2020-06-14T18-32-17Z",
+				UsedSize:     int64(1024),
+				StorageClass: "standard",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := getTenantInfo(tt.args.minioInstance, tt.args.tenantInfo)
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("got %v want %v", got, tt.want)
 			}
 		})
-
 	}
 }
 

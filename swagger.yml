@@ -1718,6 +1718,8 @@ definitions:
       used_size:
         type: integer
         format: int64
+      storage_class:
+        type: string
 
   tenantList:
     type: object
