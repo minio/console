@@ -119,7 +119,7 @@ export MCS_MINIO_SERVER=http://localhost:9000
 
 ```
 ...
-export MCS_MINIO_SERVER_TLS_SKIP_VERIFICATION=on
+export MCS_MINIO_SERVER_TLS_ROOT_CAS=<certificate_file_name>
 export MCS_MINIO_SERVER=https://localhost:9000
 ./mcs server
 ```
