@@ -30,22 +30,19 @@ import (
 )
 
 // assigning mock at runtime instead of compile time
-var mcWatchMock func(options mc.WatchOptions) (*mc.WatchObject, *probe.Error)
+var mcWatchMock func(ctx context.Context, options mc.WatchOptions) (*mc.WatchObject, *probe.Error)
 
 // implements mc.S3Client.Watch()
-func (c s3ClientMock) watch(options mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
-	return mcWatchMock(options)
+func (c s3ClientMock) watch(ctx context.Context, options mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
+	return mcWatchMock(ctx, options)
 }
 
 func TestWatch(t *testing.T) {
 	assert := assert.New(t)
-
 	client := s3ClientMock{}
 	mockWSConn := mockConn{}
 	ctx := context.Background()
-
 	function := "startWatch()"
-
 	testStreamSize := 5
 	testReceiver := make(chan []mc.EventInfo, testStreamSize)
 	isClosed := false // testReceiver is closed?
@@ -57,7 +54,7 @@ func TestWatch(t *testing.T) {
 
 	// Test-1: Serve Watch with no errors until Watch finishes sending
 	// define mock function behavior
-	mcWatchMock = func(params mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
+	mcWatchMock = func(ctx context.Context, params mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
 		wo := &mc.WatchObject{
 			EventInfoChan: make(chan []mc.EventInfo),
 			ErrorChan:     make(chan *probe.Error),
@@ -65,7 +62,11 @@ func TestWatch(t *testing.T) {
 		}
 		// Only success, start a routine to start reading line by line.
 		go func(wo *mc.WatchObject) {
-			defer wo.Close()
+			defer func() {
+				close(wo.EventInfoChan)
+				close(wo.ErrorChan)
+			}()
+
 			lines := make([]int, testStreamSize)
 			// mocking sending 5 lines of info
 			for range lines {
@@ -117,7 +118,7 @@ func TestWatch(t *testing.T) {
 
 	// Test-3: error happens on Watch, watch should stop
 	// and error shall be returned.
-	mcWatchMock = func(params mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
+	mcWatchMock = func(ctx context.Context, params mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
 		wo := &mc.WatchObject{
 			EventInfoChan: make(chan []mc.EventInfo),
 			ErrorChan:     make(chan *probe.Error),
@@ -125,7 +126,10 @@ func TestWatch(t *testing.T) {
 		}
 		// Only success, start a routine to start reading line by line.
 		go func(wo *mc.WatchObject) {
-			defer wo.Close()
+			defer func() {
+				close(wo.EventInfoChan)
+				close(wo.ErrorChan)
+			}()
 			lines := make([]int, testStreamSize)
 			// mocking sending 5 lines of info
 			for range lines {
@@ -149,7 +153,7 @@ func TestWatch(t *testing.T) {
 
 	// Test-4: error happens on Watch, watch should stop
 	// and error shall be returned.
-	mcWatchMock = func(params mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
+	mcWatchMock = func(ctx context.Context, params mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
 		return nil, &probe.Error{Cause: fmt.Errorf("error on Watch")}
 	}
 	if err := startWatch(ctx, mockWSConn, client, testOptions); assert.Error(err) {
@@ -157,7 +161,7 @@ func TestWatch(t *testing.T) {
 	}
 
 	// Test-5: return nil on error on Watch
-	mcWatchMock = func(params mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
+	mcWatchMock = func(ctx context.Context, params mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
 		wo := &mc.WatchObject{
 			EventInfoChan: make(chan []mc.EventInfo),
 			ErrorChan:     make(chan *probe.Error),
@@ -165,7 +169,10 @@ func TestWatch(t *testing.T) {
 		}
 		// Only success, start a routine to start reading line by line.
 		go func(wo *mc.WatchObject) {
-			defer wo.Close()
+			defer func() {
+				close(wo.EventInfoChan)
+				close(wo.ErrorChan)
+			}()
 			lines := make([]int, testStreamSize)
 			// mocking sending 5 lines of info
 			for range lines {

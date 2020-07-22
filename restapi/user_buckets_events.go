@@ -17,6 +17,7 @@
 package restapi
 
 import (
+	"context"
 	"log"
 	"strings"
 
@@ -152,7 +153,7 @@ func getListBucketEventsResponse(session *models.Principal, params user_api.List
 // If notificationEvents is empty, by default will set [get, put, delete], else the provided
 // ones will be set.
 // this function follows same behavior as minio/mc for adding a bucket event
-func createBucketEvent(client MCS3Client, arn string, notificationEvents []models.NotificationEventType, prefix, suffix string, ignoreExisting bool) error {
+func createBucketEvent(ctx context.Context, client MCS3Client, arn string, notificationEvents []models.NotificationEventType, prefix, suffix string, ignoreExisting bool) error {
 	var events []string
 	if len(notificationEvents) == 0 {
 		// default event values are [get, put, delete]
@@ -169,7 +170,7 @@ func createBucketEvent(client MCS3Client, arn string, notificationEvents []model
 		}
 	}
 
-	perr := client.addNotificationConfig(arn, events, prefix, suffix, ignoreExisting)
+	perr := client.addNotificationConfig(ctx, arn, events, prefix, suffix, ignoreExisting)
 	if perr != nil {
 		return perr.Cause
 	}
@@ -178,6 +179,7 @@ func createBucketEvent(client MCS3Client, arn string, notificationEvents []model
 
 // getCreateBucketEventsResponse calls createBucketEvent to add a bucket event notification
 func getCreateBucketEventsResponse(session *models.Principal, bucketName string, eventReq *models.BucketEventRequest) error {
+	ctx := context.Background()
 	s3Client, err := newS3BucketClient(session, bucketName)
 	if err != nil {
 		log.Println("error creating S3Client:", err)
@@ -186,7 +188,7 @@ func getCreateBucketEventsResponse(session *models.Principal, bucketName string,
 	// create a mc S3Client interface implementation
 	// defining the client to be used
 	mcS3Client := mcS3Client{client: s3Client}
-	err = createBucketEvent(mcS3Client, *eventReq.Configuration.Arn, eventReq.Configuration.Events, eventReq.Configuration.Prefix, eventReq.Configuration.Suffix, eventReq.IgnoreExisting)
+	err = createBucketEvent(ctx, mcS3Client, *eventReq.Configuration.Arn, eventReq.Configuration.Events, eventReq.Configuration.Prefix, eventReq.Configuration.Suffix, eventReq.IgnoreExisting)
 	if err != nil {
 		log.Println("error creating bucket event:", err)
 		return err
@@ -195,9 +197,9 @@ func getCreateBucketEventsResponse(session *models.Principal, bucketName string,
 }
 
 // deleteBucketEventNotification calls S3Client.RemoveNotificationConfig to remove a bucket event notification
-func deleteBucketEventNotification(client MCS3Client, arn string, events []models.NotificationEventType, prefix, suffix *string) error {
+func deleteBucketEventNotification(ctx context.Context, client MCS3Client, arn string, events []models.NotificationEventType, prefix, suffix *string) error {
 	eventSingleString := joinNotificationEvents(events)
-	perr := client.removeNotificationConfig(arn, eventSingleString, *prefix, *suffix)
+	perr := client.removeNotificationConfig(ctx, arn, eventSingleString, *prefix, *suffix)
 	if perr != nil {
 		return perr.Cause
 	}
@@ -214,6 +216,7 @@ func joinNotificationEvents(events []models.NotificationEventType) string {
 
 // getDeleteBucketEventsResponse calls deleteBucketEventNotification() to delete a bucket event notification
 func getDeleteBucketEventsResponse(session *models.Principal, bucketName string, arn string, events []models.NotificationEventType, prefix, suffix *string) error {
+	ctx := context.Background()
 	s3Client, err := newS3BucketClient(session, bucketName)
 	if err != nil {
 		log.Println("error creating S3Client:", err)
@@ -222,7 +225,7 @@ func getDeleteBucketEventsResponse(session *models.Principal, bucketName string,
 	// create a mc S3Client interface implementation
 	// defining the client to be used
 	mcS3Client := mcS3Client{client: s3Client}
-	err = deleteBucketEventNotification(mcS3Client, arn, events, prefix, suffix)
+	err = deleteBucketEventNotification(ctx, mcS3Client, arn, events, prefix, suffix)
 	if err != nil {
 		log.Println("error deleting bucket event:", err)
 		return err

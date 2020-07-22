@@ -15,18 +15,19 @@ require (
 	github.com/go-openapi/validate v0.19.10
 	github.com/gorilla/websocket v1.4.2
 	github.com/jessevdk/go-flags v1.4.0
-	github.com/json-iterator/go v1.1.9
+	github.com/json-iterator/go v1.1.10
 	github.com/minio/cli v1.22.0
-	github.com/minio/mc v0.0.0-20200515235434-3b479cf92ed6
-	github.com/minio/minio v0.0.0-20200603201854-5686a7e27319
-	github.com/minio/minio-go/v6 v6.0.56
-	github.com/minio/minio-operator v0.0.0-20200520220606-60eca6e7beab
+	github.com/minio/mc v0.0.0-20200719194630-c8a3b7bff08c
+	github.com/minio/minio v0.0.0-20200714163805-778e9c864f67
+	github.com/minio/minio-go/v6 v6.0.58-0.20200612001654-a57fec8037ec
+	github.com/minio/minio-go/v7 v7.0.2-0.20200718235721-f0e2f3ae3678
+	github.com/minio/minio-operator v0.0.0-20200713191021-de7c5283f7e5
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/stretchr/testify v1.6.1
 	github.com/unrolled/secure v1.0.7
-	golang.org/x/crypto v0.0.0-20200220183623-bac4c82f6975
-	golang.org/x/net v0.0.0-20200602114024-627f9648deb9
+	golang.org/x/crypto v0.0.0-20200709230013-948cd5f35899
+	golang.org/x/net v0.0.0-20200707034311-ab3426394381
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	k8s.io/api v0.18.0
 	k8s.io/apimachinery v0.18.0

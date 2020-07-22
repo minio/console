@@ -17,6 +17,7 @@
 package restapi
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -38,26 +39,27 @@ func (mc minioClientMock) getBucketNotification(bucketName string) (bucketNotifi
 }
 
 //// Mock mc S3Client functions ////
-var mcAddNotificationConfigMock func(arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error
-var mcRemoveNotificationConfigMock func(arn string, event string, prefix string, suffix string) *probe.Error
+var mcAddNotificationConfigMock func(ctx context.Context, arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error
+var mcRemoveNotificationConfigMock func(ctx context.Context, arn string, event string, prefix string, suffix string) *probe.Error
 
 // Define a mock struct of mc S3Client interface implementation
 type s3ClientMock struct {
 }
 
 // implements mc.S3Client.AddNotificationConfigMock()
-func (c s3ClientMock) addNotificationConfig(arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
-	return mcAddNotificationConfigMock(arn, events, prefix, suffix, ignoreExisting)
+func (c s3ClientMock) addNotificationConfig(ctx context.Context, arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
+	return mcAddNotificationConfigMock(ctx, arn, events, prefix, suffix, ignoreExisting)
 }
 
 // implements mc.S3Client.DeleteBucketEventNotification()
-func (c s3ClientMock) removeNotificationConfig(arn string, event string, prefix string, suffix string) *probe.Error {
-	return mcRemoveNotificationConfigMock(arn, event, prefix, suffix)
+func (c s3ClientMock) removeNotificationConfig(ctx context.Context, arn string, event string, prefix string, suffix string) *probe.Error {
+	return mcRemoveNotificationConfigMock(ctx, arn, event, prefix, suffix)
 }
 
 func TestAddBucketNotification(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client
+	ctx := context.Background()
 	client := s3ClientMock{}
 	function := "createBucketEvent()"
 	// Test-1: createBucketEvent() set an event with empty parameters and events, should set default values with no error
@@ -66,10 +68,10 @@ func TestAddBucketNotification(t *testing.T) {
 	testPrefix := ""
 	testSuffix := ""
 	testIgnoreExisting := false
-	mcAddNotificationConfigMock = func(arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
+	mcAddNotificationConfigMock = func(ctx context.Context, arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
 		return nil
 	}
-	if err := createBucketEvent(client, testArn, testNotificationEvents, testPrefix, testSuffix, testIgnoreExisting); err != nil {
+	if err := createBucketEvent(ctx, client, testArn, testNotificationEvents, testPrefix, testSuffix, testIgnoreExisting); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 
@@ -82,23 +84,24 @@ func TestAddBucketNotification(t *testing.T) {
 	testPrefix = "photos/"
 	testSuffix = ".jpg"
 	testIgnoreExisting = true
-	mcAddNotificationConfigMock = func(arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
+	mcAddNotificationConfigMock = func(ctx context.Context, arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
 		return nil
 	}
-	if err := createBucketEvent(client, testArn, testNotificationEvents, testPrefix, testSuffix, testIgnoreExisting); err != nil {
+	if err := createBucketEvent(ctx, client, testArn, testNotificationEvents, testPrefix, testSuffix, testIgnoreExisting); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 
 	// Test-3 createBucketEvent() S3Client.AddNotificationConfig returns an error and is handled correctly
-	mcAddNotificationConfigMock = func(arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
+	mcAddNotificationConfigMock = func(ctx context.Context, arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
 		return probe.NewError(errors.New("error"))
 	}
-	if err := createBucketEvent(client, testArn, testNotificationEvents, testPrefix, testSuffix, testIgnoreExisting); assert.Error(err) {
+	if err := createBucketEvent(ctx, client, testArn, testNotificationEvents, testPrefix, testSuffix, testIgnoreExisting); assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
 }
 
 func TestDeleteBucketNotification(t *testing.T) {
+	ctx := context.Background()
 	assert := assert.New(t)
 	// mock minIO client
 	client := s3ClientMock{}
@@ -112,18 +115,18 @@ func TestDeleteBucketNotification(t *testing.T) {
 		models.NotificationEventTypePut}
 	prefix := "/photos"
 	suffix := ".jpg"
-	mcRemoveNotificationConfigMock = func(arn string, event string, prefix string, suffix string) *probe.Error {
+	mcRemoveNotificationConfigMock = func(ctx context.Context, arn string, event string, prefix string, suffix string) *probe.Error {
 		return nil
 	}
-	if err := deleteBucketEventNotification(client, testArn, events, swag.String(prefix), swag.String(suffix)); err != nil {
+	if err := deleteBucketEventNotification(ctx, client, testArn, events, swag.String(prefix), swag.String(suffix)); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 
 	// Test-2 deleteBucketEventNotification() S3Client.DeleteBucketEventNotification returns an error and is handled correctly
-	mcRemoveNotificationConfigMock = func(arn string, event string, prefix string, suffix string) *probe.Error {
+	mcRemoveNotificationConfigMock = func(ctx context.Context, arn string, event string, prefix string, suffix string) *probe.Error {
 		return probe.NewError(errors.New("error"))
 	}
-	if err := deleteBucketEventNotification(client, testArn, events, swag.String(prefix), swag.String(suffix)); assert.Error(err) {
+	if err := deleteBucketEventNotification(ctx, client, testArn, events, swag.String(prefix), swag.String(suffix)); assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
 
