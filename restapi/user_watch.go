@@ -35,7 +35,7 @@ type watchOptions struct {
 }
 
 func startWatch(ctx context.Context, conn WSConn, wsc MCS3Client, options watchOptions) error {
-	wo, pErr := wsc.watch(options.WatchOptions)
+	wo, pErr := wsc.watch(ctx, options.WatchOptions)
 	if pErr != nil {
 		fmt.Println("error initializing watch:", pErr.Cause)
 		return pErr.Cause

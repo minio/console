@@ -134,9 +134,9 @@ func getDeleteTenantResponse(session *models.Principal, params admin_api.DeleteT
 	return deleteTenantAction(context.Background(), opClient, params.Namespace, params.Tenant)
 }
 
-func identifyMinioInstanceScheme(mi *operator.MinIOInstance) string {
+func getMinioInstanceScheme(mi *operator.MinIOInstance) string {
 	scheme := "http"
-	if mi.RequiresAutoCertSetup() || mi.RequiresExternalCertSetup() {
+	if mi.AutoCert() || mi.ExternalCert() {
 		scheme = "https"
 	}
 	return scheme
@@ -239,7 +239,7 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 		log.Println("error getting minioInstance:", err)
 		return nil, err
 	}
-	minioInstanceScheme := identifyMinioInstanceScheme(minInst)
+	minioInstanceScheme := getMinioInstanceScheme(minInst)
 	mAdmin, err := getTenantAdminClient(ctx, k8sClient, params.Namespace, params.Tenant, minInst.Spec.ServiceName, minioInstanceScheme)
 	if err != nil {
 		log.Println("error getting tenant's admin client:", err)
