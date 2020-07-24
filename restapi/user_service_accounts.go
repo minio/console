@@ -25,13 +25,13 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
-	"github.com/minio/mcs/models"
-	"github.com/minio/mcs/restapi/operations"
-	"github.com/minio/mcs/restapi/operations/user_api"
+	"github.com/minio/console/models"
+	"github.com/minio/console/restapi/operations"
+	"github.com/minio/console/restapi/operations/user_api"
 	iampolicy "github.com/minio/minio/pkg/iam/policy"
 )
 
-func registerServiceAccountsHandlers(api *operations.McsAPI) {
+func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 	// Create Service Account
 	api.UserAPICreateServiceAccountHandler = user_api.CreateServiceAccountHandlerFunc(func(params user_api.CreateServiceAccountParams, session *models.Principal) middleware.Responder {
 		creds, err := getCreateServiceAccountResponse(session, params.Body)

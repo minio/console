@@ -19,8 +19,8 @@ vendor/
 
 # Ignore executables
 target/
-mcs
-!mcs/
+console
+!console/
 
 dist/
 

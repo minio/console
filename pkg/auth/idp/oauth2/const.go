@@ -18,12 +18,12 @@ package oauth2
 
 const (
 	// const for idp configuration
-	McsIdpURL            = "MCS_IDP_URL"
-	McsIdpClientID       = "MCS_IDP_CLIENT_ID"
-	McsIdpSecret         = "MCS_IDP_SECRET"
-	McsIdpCallbackURL    = "MCS_IDP_CALLBACK"
-	McsIdpAdminRoles     = "MCS_IDP_ADMIN_ROLES"
-	McsIdpHmacPassphrase = "MCS_IDP_HMAC_PASSPHRASE"
-	McsIdpHmacSalt       = "MCS_IDP_HMAC_SALT"
-	McsIdpPolicyUser     = "MCS_IDP_POLICY_USER"
+	ConsoleIdpURL            = "CONSOLE_IDP_URL"
+	ConsoleIdpClientID       = "CONSOLE_IDP_CLIENT_ID"
+	ConsoleIdpSecret         = "CONSOLE_IDP_SECRET"
+	ConsoleIdpCallbackURL    = "CONSOLE_IDP_CALLBACK"
+	ConsoleIdpAdminRoles     = "CONSOLE_IDP_ADMIN_ROLES"
+	ConsoleIdpHmacPassphrase = "CONSOLE_IDP_HMAC_PASSPHRASE"
+	ConsoleIdpHmacSalt       = "CONSOLE_IDP_HMAC_SALT"
+	ConsoleIdpPolicyUser     = "CONSOLE_IDP_POLICY_USER"
 )

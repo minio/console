@@ -33,4 +33,4 @@ jobs:
         run: |
           make verifiers
           make test
-          make mcs
+          make console

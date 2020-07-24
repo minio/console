@@ -1,4 +1,4 @@
-# LDAP authentication with MCS
+# LDAP authentication with Console
 
 ## Setup
 
@@ -32,13 +32,13 @@ dn: ou=groups,dc=example,dc=org
 objectclass:organizationalunit
 ou: groups
 description: generic groups branch
-# create mcsAdmin group (this already exists on minio and have a policy of s3::*)
-dn: cn=mcsAdmin,ou=groups,dc=example,dc=org
+# create consoleAdmin group (this already exists on minio and have a policy of s3::*)
+dn: cn=consoleAdmin,ou=groups,dc=example,dc=org
 objectClass: top
 objectClass: posixGroup
 gidNumber: 678
 # Assing group to new user
-dn: cn=mcsAdmin,ou=groups,dc=example,dc=org
+dn: cn=consoleAdmin,ou=groups,dc=example,dc=org
 changetype: modify
 add: memberuid
 memberuid: billy
@@ -48,7 +48,7 @@ $ docker cp billy.ldif my-openldap-container:/container/service/slapd/assets/tes
 $ docker exec my-openldap-container ldapadd -x -D "cn=admin,dc=example,dc=org" -w admin -f /container/service/slapd/assets/test/billy.ldif -H ldap://localhost -ZZ
 ```
 
-Query the ldap server to check the user billy was created correctly and got assigned to the mcsAdmin group, you should get a list 
+Query the ldap server to check the user billy was created correctly and got assigned to the consoleAdmin group, you should get a list 
 containing ldap users and groups.
 
 ```
@@ -73,9 +73,9 @@ Re-enter new password:
 Enter LDAP Password:
 ```
 
-### Add the mcsAdmin policy to user billy on MinIO
+### Add the consoleAdmin policy to user billy on MinIO
 ```
-$ cat > mcsAdmin.json << EOF
+$ cat > consoleAdmin.json << EOF
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -99,8 +99,8 @@ $ cat > mcsAdmin.json << EOF
   ]
 }
 EOF
-$ mc admin policy add myminio mcsAdmin mcsAdmin.json
-$ mc admin policy set myminio mcsAdmin user=billy
+$ mc admin policy add myminio consoleAdmin consoleAdmin.json
+$ mc admin policy set myminio consoleAdmin user=billy
 ```
 
 ## Run MinIO
@@ -116,12 +116,12 @@ export MINIO_IDENTITY_LDAP_SERVER_INSECURE=on
 ./minio server ~/Data
 ```
 
-## Run MCS
+## Run Console
 
 ```
-export MCS_ACCESS_KEY=minio
-export MCS_SECRET_KEY=minio123
+export CONSOLE_ACCESS_KEY=minio
+export CONSOLE_SECRET_KEY=minio123
 ...
-export MCS_LDAP_ENABLED=on
-./mcs server
+export CONSOLE_LDAP_ENABLED=on
+./console server
 ```

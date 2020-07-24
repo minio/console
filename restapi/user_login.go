@@ -23,13 +23,13 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
-	"github.com/minio/mcs/models"
-	"github.com/minio/mcs/pkg/acl"
-	"github.com/minio/mcs/pkg/auth"
-	"github.com/minio/mcs/pkg/auth/idp/oauth2"
-	"github.com/minio/mcs/pkg/auth/utils"
-	"github.com/minio/mcs/restapi/operations"
-	"github.com/minio/mcs/restapi/operations/user_api"
+	"github.com/minio/console/models"
+	"github.com/minio/console/pkg/acl"
+	"github.com/minio/console/pkg/auth"
+	"github.com/minio/console/pkg/auth/idp/oauth2"
+	"github.com/minio/console/pkg/auth/utils"
+	"github.com/minio/console/restapi/operations"
+	"github.com/minio/console/restapi/operations/user_api"
 )
 
 var (
@@ -37,7 +37,7 @@ var (
 	errInvalidCredentials = errors.New("invalid Credentials")
 )
 
-func registerLoginHandlers(api *operations.McsAPI) {
+func registerLoginHandlers(api *operations.ConsoleAPI) {
 	// get login strategy
 	api.UserAPILoginDetailHandler = user_api.LoginDetailHandlerFunc(func(params user_api.LoginDetailParams) middleware.Responder {
 		loginDetails, err := getLoginDetailsResponse()
@@ -70,16 +70,16 @@ func registerLoginHandlers(api *operations.McsAPI) {
 	})
 }
 
-// login performs a check of mcsCredentials against MinIO, generates some claims and returns the jwt
+// login performs a check of consoleCredentials against MinIO, generates some claims and returns the jwt
 // for subsequent authentication
-func login(credentials MCSCredentials, actions []string) (*string, error) {
-	// try to obtain mcsCredentials,
+func login(credentials ConsoleCredentials, actions []string) (*string, error) {
+	// try to obtain consoleCredentials,
 	tokens, err := credentials.Get()
 	if err != nil {
 		log.Println("error authenticating user", err)
 		return nil, errInvalidCredentials
 	}
-	// if we made it here, the mcsCredentials work, generate a jwt with claims
+	// if we made it here, the consoleCredentials work, generate a jwt with claims
 	jwt, err := auth.NewJWTWithClaimsForClient(&tokens, actions, getMinIOServer())
 	if err != nil {
 		log.Println("error authenticating user", err)
@@ -117,12 +117,12 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	creds, err := newMcsCredentials(*lr.AccessKey, *lr.SecretKey, location)
+	creds, err := newConsoleCredentials(*lr.AccessKey, *lr.SecretKey, location)
 	if err != nil {
 		log.Println("error login:", err)
 		return nil, errInvalidCredentials
 	}
-	credentials := mcsCredentials{mcsCredentials: creds}
+	credentials := consoleCredentials{consoleCredentials: creds}
 	// obtain the current policy assigned to this user
 	// necessary for generating the list of allowed endpoints
 	userInfo, err := adminClient.getUserInfo(ctx, *lr.AccessKey)
@@ -150,7 +150,7 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, error) {
 	return loginResponse, nil
 }
 
-// getLoginDetailsResponse returns information regarding the MCS authentication mechanism.
+// getLoginDetailsResponse returns information regarding the Console authentication mechanism.
 func getLoginDetailsResponse() (*models.LoginDetails, error) {
 	ctx := context.Background()
 	loginStrategy := models.LoginDetailsLoginStrategyForm
@@ -228,7 +228,7 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 				}
 			}
 		}()
-		// assign the "mcsAdmin" policy to this user
+		// assign the "consoleAdmin" policy to this user
 		policyName := oauth2.GetIDPPolicyForUser()
 		if err := setPolicy(ctx, adminClient, policyName, accessKey, models.PolicyEntityUser); err != nil {
 			log.Println("error setting policy:", err)
@@ -242,12 +242,12 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 		}
 		actions := acl.GetActionsStringFromPolicy(policy)
 		// User was created correctly, create a new session/JWT
-		creds, err := newMcsCredentials(accessKey, secretKey, location)
+		creds, err := newConsoleCredentials(accessKey, secretKey, location)
 		if err != nil {
 			log.Println("error login:", err)
 			return nil, errorGeneric
 		}
-		credentials := mcsCredentials{mcsCredentials: creds}
+		credentials := consoleCredentials{consoleCredentials: creds}
 		jwt, err := login(credentials, actions)
 		if err != nil {
 			return nil, err
@@ -263,12 +263,12 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 
 // getLoginOperatorResponse validate the provided service account token against k8s api
 func getLoginOperatorResponse(lmr *models.LoginOperatorRequest) (*models.LoginResponse, error) {
-	creds, err := newMcsCredentials("", *lmr.Jwt, "")
+	creds, err := newConsoleCredentials("", *lmr.Jwt, "")
 	if err != nil {
 		log.Println("error login:", err)
 		return nil, errInvalidCredentials
 	}
-	credentials := mcsCredentials{mcsCredentials: creds}
+	credentials := consoleCredentials{consoleCredentials: creds}
 	var actions []string
 	jwt, err := login(credentials, actions)
 	if err != nil {

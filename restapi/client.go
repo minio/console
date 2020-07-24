@@ -23,13 +23,13 @@ import (
 
 	"errors"
 
+	"github.com/minio/console/models"
+	"github.com/minio/console/pkg/acl"
+	"github.com/minio/console/pkg/auth"
+	xjwt "github.com/minio/console/pkg/auth/jwt"
+	"github.com/minio/console/pkg/auth/ldap"
 	mc "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
-	"github.com/minio/mcs/models"
-	"github.com/minio/mcs/pkg/acl"
-	"github.com/minio/mcs/pkg/auth"
-	xjwt "github.com/minio/mcs/pkg/auth/jwt"
-	"github.com/minio/mcs/pkg/auth/ldap"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/minio/minio-go/v7/pkg/notification"
@@ -124,41 +124,41 @@ func (c mcS3Client) watch(ctx context.Context, options mc.WatchOptions) (*mc.Wat
 	return c.client.Watch(ctx, options)
 }
 
-// MCSCredentials interface with all functions to be implemented
-// by mock when testing, it should include all needed mcsCredentials.Credentials api calls
+// ConsoleCredentials interface with all functions to be implemented
+// by mock when testing, it should include all needed consoleCredentials.Credentials api calls
 // that are used within this project.
-type MCSCredentials interface {
+type ConsoleCredentials interface {
 	Get() (credentials.Value, error)
 	Expire()
 }
 
 // Interface implementation
-type mcsCredentials struct {
-	mcsCredentials *credentials.Credentials
+type consoleCredentials struct {
+	consoleCredentials *credentials.Credentials
 }
 
 // implements *Credentials.Get()
-func (c mcsCredentials) Get() (credentials.Value, error) {
-	return c.mcsCredentials.Get()
+func (c consoleCredentials) Get() (credentials.Value, error) {
+	return c.consoleCredentials.Get()
 }
 
 // implements *Credentials.Expire()
-func (c mcsCredentials) Expire() {
-	c.mcsCredentials.Expire()
+func (c consoleCredentials) Expire() {
+	c.consoleCredentials.Expire()
 }
 
-// mcsSTSAssumeRole it's a STSAssumeRole wrapper, in general
+// consoleSTSAssumeRole it's a STSAssumeRole wrapper, in general
 // there's no need to use this struct anywhere else in the project, it's only required
 // for passing a custom *http.Client to *credentials.STSAssumeRole
-type mcsSTSAssumeRole struct {
+type consoleSTSAssumeRole struct {
 	stsAssumeRole *credentials.STSAssumeRole
 }
 
-func (s mcsSTSAssumeRole) Retrieve() (credentials.Value, error) {
+func (s consoleSTSAssumeRole) Retrieve() (credentials.Value, error) {
 	return s.stsAssumeRole.Retrieve()
 }
 
-func (s mcsSTSAssumeRole) IsExpired() bool {
+func (s consoleSTSAssumeRole) IsExpired() bool {
 	return s.stsAssumeRole.IsExpired()
 }
 
@@ -168,31 +168,31 @@ var (
 	MinioEndpoint = getMinIOServer()
 )
 
-func newMcsCredentials(accessKey, secretKey, location string) (*credentials.Credentials, error) {
+func newConsoleCredentials(accessKey, secretKey, location string) (*credentials.Credentials, error) {
 	// Future authentication methods can be added under this switch statement
 	switch {
 	// authentication for Operator Console
 	case acl.GetOperatorMode():
 		{
-			creds, err := auth.GetMcsCredentialsForOperator(secretKey)
+			creds, err := auth.GetConsoleCredentialsForOperator(secretKey)
 			if err != nil {
 				return nil, err
 			}
 			return creds, nil
 		}
-	// LDAP authentication for MCS
+	// LDAP authentication for Console
 	case ldap.GetLDAPEnabled():
 		{
 			if MinioEndpoint == "" {
 				return nil, errors.New("endpoint cannot be empty for AssumeRoleSTS")
 			}
-			creds, err := auth.GetMcsCredentialsFromLDAP(MinioEndpoint, accessKey, secretKey)
+			creds, err := auth.GetConsoleCredentialsFromLDAP(MinioEndpoint, accessKey, secretKey)
 			if err != nil {
 				return nil, err
 			}
 			return creds, nil
 		}
-	// default authentication for MCS is via STS (Security Token Service) against MinIO
+	// default authentication for Console is via STS (Security Token Service) against MinIO
 	default:
 		{
 			if MinioEndpoint == "" || accessKey == "" || secretKey == "" {
@@ -202,15 +202,15 @@ func newMcsCredentials(accessKey, secretKey, location string) (*credentials.Cred
 				AccessKey:       accessKey,
 				SecretKey:       secretKey,
 				Location:        location,
-				DurationSeconds: xjwt.GetMcsSTSAndJWTDurationInSeconds(),
+				DurationSeconds: xjwt.GetConsoleSTSAndJWTDurationInSeconds(),
 			}
 			stsAssumeRole := &credentials.STSAssumeRole{
 				Client:      STSClient,
 				STSEndpoint: MinioEndpoint,
 				Options:     opts,
 			}
-			mcsSTSWrapper := mcsSTSAssumeRole{stsAssumeRole: stsAssumeRole}
-			return credentials.New(mcsSTSWrapper), nil
+			consoleSTSWrapper := consoleSTSAssumeRole{stsAssumeRole: stsAssumeRole}
+			return credentials.New(consoleSTSWrapper), nil
 		}
 	}
 }
@@ -224,16 +224,16 @@ func GetClaimsFromJWT(jwt string) (*auth.DecryptedClaims, error) {
 	return claims, nil
 }
 
-// getMcsCredentialsFromSession returns the *mcsCredentials.Credentials associated to the
+// getConsoleCredentialsFromSession returns the *consoleCredentials.Credentials associated to the
 // provided jwt, this is useful for running the Expire() or IsExpired() operations
-func getMcsCredentialsFromSession(claims *models.Principal) *credentials.Credentials {
+func getConsoleCredentialsFromSession(claims *models.Principal) *credentials.Credentials {
 	return credentials.NewStaticV4(claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken)
 }
 
-// newMinioClient creates a new MinIO client based on the mcsCredentials extracted
+// newMinioClient creates a new MinIO client based on the consoleCredentials extracted
 // from the provided jwt
 func newMinioClient(claims *models.Principal) (*minio.Client, error) {
-	creds := getMcsCredentialsFromSession(claims)
+	creds := getConsoleCredentialsFromSession(claims)
 	minioClient, err := minio.New(getMinIOEndpoint(), &minio.Options{
 		Creds:     creds,
 		Secure:    getMinIOEndpointIsSecure(),
@@ -275,11 +275,11 @@ func newS3BucketClient(claims *models.Principal, bucketName string) (*mc.S3Clien
 // parameters.
 func newS3Config(endpoint, accessKey, secretKey, sessionToken string, isSecure bool) *mc.Config {
 	// We have a valid alias and hostConfig. We populate the
-	// mcsCredentials from the match found in the config file.
+	// consoleCredentials from the match found in the config file.
 	s3Config := new(mc.Config)
 
-	s3Config.AppName = "mcs" // TODO: make this a constant
-	s3Config.AppVersion = "" // TODO: get this from constant or build
+	s3Config.AppName = "console" // TODO: make this a constant
+	s3Config.AppVersion = ""     // TODO: get this from constant or build
 	s3Config.AppComments = []string{}
 	s3Config.Debug = false
 	s3Config.Insecure = isSecure

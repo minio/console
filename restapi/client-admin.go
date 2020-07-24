@@ -22,16 +22,16 @@ import (
 	"path/filepath"
 	"runtime"
 
+	"github.com/minio/console/models"
 	mcCmd "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
-	"github.com/minio/mcs/models"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	mauth "github.com/minio/minio/pkg/auth"
 	iampolicy "github.com/minio/minio/pkg/iam/policy"
 	"github.com/minio/minio/pkg/madmin"
 )
 
-const globalAppName = "mcs"
+const globalAppName = "console"
 
 // NewAdminClient gives a new client interface
 func NewAdminClient(url, accessKey, secretKey string) (*madmin.AdminClient, *probe.Error) {
@@ -42,7 +42,7 @@ func NewAdminClient(url, accessKey, secretKey string) (*madmin.AdminClient, *pro
 		AccessKey:   accessKey,
 		SecretKey:   secretKey,
 		AppName:     appName,
-		AppVersion:  McsVersion,
+		AppVersion:  ConsoleVersion,
 		AppComments: []string{appName, runtime.GOOS, runtime.GOARCH},
 		Insecure:    false,
 	})

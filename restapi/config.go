@@ -24,19 +24,19 @@ import (
 	"github.com/minio/minio/pkg/env"
 )
 
-// Port mcs default port
+// Port console default port
 var Port = "9090"
 
-// Hostname mcs hostname
+// Hostname console hostname
 var Hostname = "0.0.0.0"
 
-// TLSHostname mcs tls hostname
+// TLSHostname console tls hostname
 var TLSHostname = "0.0.0.0"
 
-// TLSPort mcs tls port
+// TLSPort console tls port
 var TLSPort = "9443"
 
-// TLSRedirect mcs tls redirect rule
+// TLSRedirect console tls redirect rule
 var TLSRedirect = "off"
 
 // defaultTenantMemorySize default value used
@@ -44,21 +44,21 @@ var TLSRedirect = "off"
 var defaultTenantMemorySize = "16Gi"
 
 func getAccessKey() string {
-	return env.Get(McsAccessKey, "minioadmin")
+	return env.Get(ConsoleAccessKey, "minioadmin")
 }
 
 func getSecretKey() string {
-	return env.Get(McsSecretKey, "minioadmin")
+	return env.Get(ConsoleSecretKey, "minioadmin")
 }
 
 func getMinIOServer() string {
-	return strings.TrimSpace(env.Get(McsMinIOServer, "http://localhost:9000"))
+	return strings.TrimSpace(env.Get(ConsoleMinIOServer, "http://localhost:9000"))
 }
 
-// If MCS_MINIO_SERVER_TLS_ROOT_CAS is true mcs will load a list of certificates into the
+// If CONSOLE_MINIO_SERVER_TLS_ROOT_CAS is true console will load a list of certificates into the
 // http.client rootCAs store, this is useful for testing or when working with self-signed certificates
 func getMinioServerTLSRootCAs() []string {
-	caCertFileNames := strings.TrimSpace(env.Get(McsMinIOServerTLSRootCAs, ""))
+	caCertFileNames := strings.TrimSpace(env.Get(ConsoleMinIOServerTLSRootCAs, ""))
 	if caCertFileNames == "" {
 		return []string{}
 	}
@@ -90,35 +90,35 @@ func getMinIOEndpointIsSecure() bool {
 }
 
 func getProductionMode() bool {
-	return strings.ToLower(env.Get(McsProductionMode, "on")) == "on"
+	return strings.ToLower(env.Get(ConsoleProductionMode, "on")) == "on"
 }
 
-// GetHostname gets mcs hostname set on env variable,
+// GetHostname gets console hostname set on env variable,
 // default one or defined on run command
 func GetHostname() string {
-	return strings.ToLower(env.Get(McsHostname, Hostname))
+	return strings.ToLower(env.Get(ConsoleHostname, Hostname))
 }
 
-// GetPort gets mcs por set on env variable
+// GetPort gets console por set on env variable
 // or default one
 func GetPort() int {
-	port, err := strconv.Atoi(env.Get(McsPort, Port))
+	port, err := strconv.Atoi(env.Get(ConsolePort, Port))
 	if err != nil {
 		port = 9090
 	}
 	return port
 }
 
-// GetSSLHostname gets mcs ssl hostname set on env variable
+// GetSSLHostname gets console ssl hostname set on env variable
 // or default one
 func GetSSLHostname() string {
-	return strings.ToLower(env.Get(McsTLSHostname, TLSHostname))
+	return strings.ToLower(env.Get(ConsoleTLSHostname, TLSHostname))
 }
 
-// GetSSLPort gets mcs ssl port set on env variable
+// GetSSLPort gets console ssl port set on env variable
 // or default one
 func GetSSLPort() int {
-	port, err := strconv.Atoi(env.Get(McsTLSPort, TLSPort))
+	port, err := strconv.Atoi(env.Get(ConsoleTLSPort, TLSPort))
 	if err != nil {
 		port = 9443
 	}
@@ -127,7 +127,7 @@ func GetSSLPort() int {
 
 // Get secure middleware env variable configurations
 func getSecureAllowedHosts() []string {
-	allowedHosts := env.Get(McsSecureAllowedHosts, "")
+	allowedHosts := env.Get(ConsoleSecureAllowedHosts, "")
 	if allowedHosts != "" {
 		return strings.Split(allowedHosts, ",")
 	}
@@ -136,39 +136,39 @@ func getSecureAllowedHosts() []string {
 
 // AllowedHostsAreRegex determines, if the provided AllowedHosts slice contains valid regular expressions. Default is false.
 func getSecureAllowedHostsAreRegex() bool {
-	return strings.ToLower(env.Get(McsSecureAllowedHostsAreRegex, "off")) == "on"
+	return strings.ToLower(env.Get(ConsoleSecureAllowedHostsAreRegex, "off")) == "on"
 }
 
 // If FrameDeny is set to true, adds the X-Frame-Options header with the value of `DENY`. Default is true.
 func getSecureFrameDeny() bool {
-	return strings.ToLower(env.Get(McsSecureFrameDeny, "on")) == "on"
+	return strings.ToLower(env.Get(ConsoleSecureFrameDeny, "on")) == "on"
 }
 
 // If ContentTypeNosniff is true, adds the X-Content-Type-Options header with the value `nosniff`. Default is true.
 func getSecureContentTypeNonSniff() bool {
-	return strings.ToLower(env.Get(McsSecureContentTypeNoSniff, "on")) == "on"
+	return strings.ToLower(env.Get(ConsoleSecureContentTypeNoSniff, "on")) == "on"
 }
 
 // If BrowserXssFilter is true, adds the X-XSS-Protection header with the value `1; mode=block`. Default is true.
 func getSecureBrowserXSSFilter() bool {
-	return strings.ToLower(env.Get(McsSecureBrowserXSSFilter, "on")) == "on"
+	return strings.ToLower(env.Get(ConsoleSecureBrowserXSSFilter, "on")) == "on"
 }
 
 // ContentSecurityPolicy allows the Content-Security-Policy header value to be set with a custom value. Default is "".
 // Passing a template string will replace `$NONCE` with a dynamic nonce value of 16 bytes for each request which can be
 // later retrieved using the Nonce function.
 func getSecureContentSecurityPolicy() string {
-	return env.Get(McsSecureContentSecurityPolicy, "")
+	return env.Get(ConsoleSecureContentSecurityPolicy, "")
 }
 
 // ContentSecurityPolicyReportOnly allows the Content-Security-Policy-Report-Only header value to be set with a custom value. Default is "".
 func getSecureContentSecurityPolicyReportOnly() string {
-	return env.Get(McsSecureContentSecurityPolicyReportOnly, "")
+	return env.Get(ConsoleSecureContentSecurityPolicyReportOnly, "")
 }
 
 // HostsProxyHeaders is a set of header keys that may hold a proxied hostname value for the request.
 func getSecureHostsProxyHeaders() []string {
-	allowedHosts := env.Get(McsSecureHostsProxyHeaders, "")
+	allowedHosts := env.Get(ConsoleSecureHostsProxyHeaders, "")
 	if allowedHosts != "" {
 		return strings.Split(allowedHosts, ",")
 	}
@@ -177,17 +177,17 @@ func getSecureHostsProxyHeaders() []string {
 
 // If SSLRedirect is set to true, then only allow HTTPS requests. Default is true.
 func getSSLRedirect() bool {
-	return strings.ToLower(env.Get(McsSecureSSLRedirect, TLSRedirect)) == "on"
+	return strings.ToLower(env.Get(ConsoleSecureSSLRedirect, TLSRedirect)) == "on"
 }
 
 // SSLHost is the host name that is used to redirect HTTP requests to HTTPS. Default is "", which indicates to use the same host.
 func getSecureSSLHost() string {
-	return env.Get(McsSecureSSLHost, fmt.Sprintf("%s:%s", TLSHostname, TLSPort))
+	return env.Get(ConsoleSecureSSLHost, fmt.Sprintf("%s:%s", TLSHostname, TLSPort))
 }
 
 // STSSeconds is the max-age of the Strict-Transport-Security header. Default is 0, which would NOT include the header.
 func getSecureSTSSeconds() int64 {
-	seconds, err := strconv.Atoi(env.Get(McsSecureSTSSeconds, "0"))
+	seconds, err := strconv.Atoi(env.Get(ConsoleSecureSTSSeconds, "0"))
 	if err != nil {
 		seconds = 0
 	}
@@ -196,45 +196,45 @@ func getSecureSTSSeconds() int64 {
 
 // If STSIncludeSubdomains is set to true, the `includeSubdomains` will be appended to the Strict-Transport-Security header. Default is false.
 func getSecureSTSIncludeSubdomains() bool {
-	return strings.ToLower(env.Get(McsSecureSTSIncludeSubdomains, "off")) == "on"
+	return strings.ToLower(env.Get(ConsoleSecureSTSIncludeSubdomains, "off")) == "on"
 }
 
 // If STSPreload is set to true, the `preload` flag will be appended to the Strict-Transport-Security header. Default is false.
 func getSecureSTSPreload() bool {
-	return strings.ToLower(env.Get(McsSecureSTSPreload, "off")) == "on"
+	return strings.ToLower(env.Get(ConsoleSecureSTSPreload, "off")) == "on"
 }
 
 // If SSLTemporaryRedirect is true, the a 302 will be used while redirecting. Default is false (301).
 func getSecureSSLTemporaryRedirect() bool {
-	return strings.ToLower(env.Get(McsSecureSSLTemporaryRedirect, "off")) == "on"
+	return strings.ToLower(env.Get(ConsoleSecureSSLTemporaryRedirect, "off")) == "on"
 }
 
 // STS header is only included when the connection is HTTPS.
 func getSecureForceSTSHeader() bool {
-	return strings.ToLower(env.Get(McsSecureForceSTSHeader, "off")) == "on"
+	return strings.ToLower(env.Get(ConsoleSecureForceSTSHeader, "off")) == "on"
 }
 
 // PublicKey implements HPKP to prevent MITM attacks with forged certificates. Default is "".
 func getSecurePublicKey() string {
-	return env.Get(McsSecurePublicKey, "")
+	return env.Get(ConsoleSecurePublicKey, "")
 }
 
 // ReferrerPolicy allows the Referrer-Policy header with the value to be set with a custom value. Default is "".
 func getSecureReferrerPolicy() string {
-	return env.Get(McsSecureReferrerPolicy, "")
+	return env.Get(ConsoleSecureReferrerPolicy, "")
 }
 
 // FeaturePolicy allows the Feature-Policy header with the value to be set with a custom value. Default is "".
 func getSecureFeaturePolicy() string {
-	return env.Get(McsSecureFeaturePolicy, "")
+	return env.Get(ConsoleSecureFeaturePolicy, "")
 }
 
 func getSecureExpectCTHeader() string {
-	return env.Get(McsSecureExpectCTHeader, "")
+	return env.Get(ConsoleSecureExpectCTHeader, "")
 }
 
 // getTenantMemorySize Memory size value to be used when generating the
 // Tenant request
 func getTenantMemorySize() string {
-	return env.Get(McsTenantMemorySize, defaultTenantMemorySize)
+	return env.Get(ConsoleTenantMemorySize, defaultTenantMemorySize)
 }

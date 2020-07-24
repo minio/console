@@ -27,7 +27,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"github.com/minio/mcs/models"
+	"github.com/minio/console/models"
 )
 
 // NotificationEndpointListOKCode is the HTTP code returned for type NotificationEndpointListOK

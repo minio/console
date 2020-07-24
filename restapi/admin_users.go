@@ -20,9 +20,9 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
-	"github.com/minio/mcs/models"
-	"github.com/minio/mcs/restapi/operations"
-	"github.com/minio/mcs/restapi/operations/admin_api"
+	"github.com/minio/console/models"
+	"github.com/minio/console/restapi/operations"
+	"github.com/minio/console/restapi/operations/admin_api"
 	"github.com/minio/minio/pkg/madmin"
 
 	"context"
@@ -31,7 +31,7 @@ import (
 	"strings"
 )
 
-func registerUsersHandlers(api *operations.McsAPI) {
+func registerUsersHandlers(api *operations.ConsoleAPI) {
 	// List Users
 	api.AdminAPIListUsersHandler = admin_api.ListUsersHandlerFunc(func(params admin_api.ListUsersParams, session *models.Principal) middleware.Responder {
 		listUsersResponse, err := getListUsersResponse(session)

@@ -19,7 +19,7 @@ limitations under the License.
 package scheme
 
 import (
-	networkingv1beta2 "github.com/minio/mcs/pkg/apis/networking.gke.io/v1beta2"
+	networkingv1beta2 "github.com/minio/console/pkg/apis/networking.gke.io/v1beta2"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"

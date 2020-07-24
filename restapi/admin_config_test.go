@@ -28,7 +28,7 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/minio/mcs/models"
+	"github.com/minio/console/models"
 	"github.com/minio/minio/cmd/config"
 	"github.com/minio/minio/pkg/event/target"
 	"github.com/minio/minio/pkg/madmin"

@@ -22,7 +22,7 @@ import (
 	"github.com/minio/minio/pkg/env"
 )
 
-// GetOperatorMode gets MCS Operator mode status set on env variable or default one
+// GetOperatorMode gets Console Operator mode status set on env variable or default one
 func GetOperatorMode() bool {
-	return strings.ToLower(env.Get(mcsOperatorMode, "off")) == "on"
+	return strings.ToLower(env.Get(consoleOperatorMode, "off")) == "on"
 }

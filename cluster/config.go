@@ -39,19 +39,19 @@ func GetK8sAPIServer() string {
 	// if console is not running inside k8s by default will look for the k8s api server on localhost:8001 (kubectl proxy)
 	// NOTE: using kubectl proxy is for local development only, since every request send to localhost:8001 will bypass service account authentication
 	// more info here: https://kubernetes.io/docs/tasks/access-application-cluster/access-cluster/#directly-accessing-the-rest-api
-	// you can override this using MCS_K8S_API_SERVER, ie use the k8s cluster from `kubectl config view`
+	// you can override this using CONSOLE_K8S_API_SERVER, ie use the k8s cluster from `kubectl config view`
 	host, port := env.Get("KUBERNETES_SERVICE_HOST", ""), env.Get("KUBERNETES_SERVICE_PORT", "")
 	apiServerAddress := "http://localhost:8001"
 	if host != "" && port != "" {
 		apiServerAddress = "https://" + net.JoinHostPort(host, port)
 	}
-	return env.Get(McsK8sAPIServer, apiServerAddress)
+	return env.Get(ConsoleK8sAPIServer, apiServerAddress)
 }
 
-// If MCS_K8S_API_SERVER_TLS_ROOT_CA is true mcs will load the certificate into the
+// If CONSOLE_K8S_API_SERVER_TLS_ROOT_CA is true console will load the certificate into the
 // http.client rootCAs pool, this is useful for testing an k8s ApiServer or when working with self-signed certificates
 func getK8sAPIServerTLSRootCA() string {
-	return strings.TrimSpace(env.Get(McsK8SAPIServerTLSRootCA, ""))
+	return strings.TrimSpace(env.Get(ConsoleK8SAPIServerTLSRootCA, ""))
 }
 
 // GetNsFromFile assumes console is running inside a k8s pod and extract the current namespace from the
@@ -69,7 +69,7 @@ var namespace = GetNsFromFile()
 
 // Returns the namespace in which the controller is installed
 func GetNs() string {
-	return env.Get(McsNamespace, namespace)
+	return env.Get(ConsoleNamespace, namespace)
 }
 
 // getLatestMinIOImage returns the latest docker image for MinIO if found on the internet
@@ -106,7 +106,7 @@ var latestMinIOImage, errLatestMinIOImage = getLatestMinIOImage(
 // a preferred image to be used (configured via ENVIRONMENT VARIABLES) GetMinioImage will return that
 // if not, GetMinioImage will try to obtain the image URL for the latest version of MinIO and return that
 func GetMinioImage() (*string, error) {
-	image := strings.TrimSpace(env.Get(McsMinioImage, ""))
+	image := strings.TrimSpace(env.Get(ConsoleMinioImage, ""))
 	// if there is a preferred image configured by the user we'll always return that
 	if image != "" {
 		return &image, nil
@@ -156,7 +156,7 @@ func getLatestMCImage() (*string, error) {
 var latestMCImage, errLatestMCImage = getLatestMCImage()
 
 func GetMCImage() (*string, error) {
-	image := strings.TrimSpace(env.Get(McsMCImage, ""))
+	image := strings.TrimSpace(env.Get(ConsoleMCImage, ""))
 	// if there is a preferred image configured by the user we'll always return that
 	if image != "" {
 		return &image, nil

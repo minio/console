@@ -17,5 +17,5 @@
 package acl
 
 const (
-	mcsOperatorMode = "MCS_OPERATOR_MODE"
+	consoleOperatorMode = "CONSOLE_OPERATOR_MODE"
 )

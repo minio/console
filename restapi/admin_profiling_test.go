@@ -24,7 +24,7 @@ import (
 
 	"errors"
 
-	"github.com/minio/mcs/models"
+	"github.com/minio/console/models"
 	"github.com/minio/minio/pkg/madmin"
 	"github.com/stretchr/testify/assert"
 )

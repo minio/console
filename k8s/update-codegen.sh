@@ -26,8 +26,8 @@ CODEGEN_PKG=${CODEGEN_PKG:-$(cd "${SCRIPT_ROOT}"; ls -d -1 ./vendor/k8s.io/code-
 #                  k8s.io/kubernetes. The output-base is needed for the generators to output into the vendor dir
 #                  instead of the $GOPATH directly. For normal projects this can be dropped.
 bash "${CODEGEN_PKG}"/generate-groups.sh "all" \
-  github.com/minio/mcs/pkg/generated \
-  github.com/minio/mcs/pkg/apis \
+  github.com/minio/console/pkg/generated \
+  github.com/minio/console/pkg/apis \
   mkube:v1 \
   --go-header-file "${SCRIPT_ROOT}"/k8s/boilerplate.go.txt
 

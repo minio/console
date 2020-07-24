@@ -1,4 +1,4 @@
-module github.com/minio/mcs
+module github.com/minio/console
 
 go 1.13
 

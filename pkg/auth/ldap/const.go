@@ -18,5 +18,5 @@ package ldap
 
 const (
 	// const for ldap configuration
-	MCSLDAPEnabled = "MCS_LDAP_ENABLED"
+	ConsoleLDAPEnabled = "CONSOLE_LDAP_ENABLED"
 )

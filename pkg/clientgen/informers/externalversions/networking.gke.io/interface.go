@@ -19,8 +19,8 @@ limitations under the License.
 package networking
 
 import (
-	internalinterfaces "github.com/minio/mcs/pkg/clientgen/informers/externalversions/internalinterfaces"
-	v1beta2 "github.com/minio/mcs/pkg/clientgen/informers/externalversions/networking.gke.io/v1beta2"
+	internalinterfaces "github.com/minio/console/pkg/clientgen/informers/externalversions/internalinterfaces"
+	v1beta2 "github.com/minio/console/pkg/clientgen/informers/externalversions/networking.gke.io/v1beta2"
 )
 
 // Interface provides access to each of this group's versions.

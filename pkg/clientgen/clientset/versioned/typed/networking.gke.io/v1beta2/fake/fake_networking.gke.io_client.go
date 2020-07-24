@@ -19,7 +19,7 @@ limitations under the License.
 package fake
 
 import (
-	v1beta2 "github.com/minio/mcs/pkg/clientgen/clientset/versioned/typed/networking.gke.io/v1beta2"
+	v1beta2 "github.com/minio/console/pkg/clientgen/clientset/versioned/typed/networking.gke.io/v1beta2"
 	rest "k8s.io/client-go/rest"
 	testing "k8s.io/client-go/testing"
 )

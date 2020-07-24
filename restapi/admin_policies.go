@@ -26,13 +26,13 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
-	"github.com/minio/mcs/models"
-	"github.com/minio/mcs/restapi/operations"
-	"github.com/minio/mcs/restapi/operations/admin_api"
+	"github.com/minio/console/models"
+	"github.com/minio/console/restapi/operations"
+	"github.com/minio/console/restapi/operations/admin_api"
 	iampolicy "github.com/minio/minio/pkg/iam/policy"
 )
 
-func registersPoliciesHandler(api *operations.McsAPI) {
+func registersPoliciesHandler(api *operations.ConsoleAPI) {
 	// List Policies
 	api.AdminAPIListPoliciesHandler = admin_api.ListPoliciesHandlerFunc(func(params admin_api.ListPoliciesParams, session *models.Principal) middleware.Responder {
 		listPoliciesResponse, err := getListPoliciesResponse(session)

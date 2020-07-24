@@ -27,9 +27,9 @@ import (
 	"testing"
 
 	"github.com/go-openapi/swag"
-	"github.com/minio/mcs/cluster"
-	"github.com/minio/mcs/models"
-	"github.com/minio/mcs/restapi/operations/admin_api"
+	"github.com/minio/console/cluster"
+	"github.com/minio/console/models"
+	"github.com/minio/console/restapi/operations/admin_api"
 	operator "github.com/minio/operator/pkg/apis/minio.min.io/v1"
 	v1 "github.com/minio/operator/pkg/apis/minio.min.io/v1"
 	corev1 "k8s.io/api/core/v1"

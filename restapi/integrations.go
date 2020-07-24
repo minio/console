@@ -23,9 +23,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/minio/mcs/cluster"
-	gkev1beta2 "github.com/minio/mcs/pkg/apis/networking.gke.io/v1beta2"
-	gkeClientset "github.com/minio/mcs/pkg/clientgen/clientset/versioned"
+	"github.com/minio/console/cluster"
+	gkev1beta2 "github.com/minio/console/pkg/apis/networking.gke.io/v1beta2"
+	gkeClientset "github.com/minio/console/pkg/clientgen/clientset/versioned"
 	corev1 "k8s.io/api/core/v1"
 	extensionsBeta1 "k8s.io/api/extensions/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -70,7 +70,7 @@ func gkeIntegration(clientset *kubernetes.Clientset, tenantName string, namespac
 	log.Println("informer closed")
 
 	tenantDomain := fmt.Sprintf("%s.cloud.min.dev", tenantName)
-	tenantMcsDomain := fmt.Sprintf("console.%s.cloud.min.dev", tenantName)
+	tenantConsoleDomain := fmt.Sprintf("console.%s.cloud.min.dev", tenantName)
 
 	// customization for demo, add the ingress for this new tenant
 	// create ManagedCertificate
@@ -82,7 +82,7 @@ func gkeIntegration(clientset *kubernetes.Clientset, tenantName string, namespac
 		Spec: gkev1beta2.ManagedCertificateSpec{
 			Domains: []string{
 				tenantDomain,
-				tenantMcsDomain,
+				tenantConsoleDomain,
 			},
 		},
 		Status: gkev1beta2.ManagedCertificateStatus{
@@ -134,38 +134,38 @@ func gkeIntegration(clientset *kubernetes.Clientset, tenantName string, namespac
 		return err
 	}
 
-	//NOW FOR MCS
-	// create mcsManagedCertificate
+	//NOW FOR Console
+	// create consoleManagedCertificate
 
 	// get a nodeport port for this tenant and create a nodeport for it
-	tenantMcsNodePort := 9090
+	tenantConsoleNodePort := 9090
 
-	targetMcsPort := intstr.IntOrString{
+	targetConsolePort := intstr.IntOrString{
 		Type:   intstr.Int,
 		IntVal: 9090,
 	}
 
-	tenantMcsnpMcsSvc := fmt.Sprintf("%s-mcs-np", tenantName)
-	npMcsSvc := corev1.Service{
+	tenantNpConsoleSvc := fmt.Sprintf("%s-console-np", tenantName)
+	npConsoleSvc := corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: tenantMcsnpMcsSvc,
+			Name: tenantNpConsoleSvc,
 		},
 		Spec: corev1.ServiceSpec{
 			Selector: map[string]string{
-				"v1.min.io/mcs": fmt.Sprintf("%s-mcs", tenantName),
+				"v1.min.io/console": fmt.Sprintf("%s-console", tenantName),
 			},
 			Type: corev1.ServiceTypeNodePort,
 			Ports: []corev1.ServicePort{
 				{
 					Protocol:   corev1.ProtocolTCP,
-					Port:       int32(tenantMcsNodePort),
-					TargetPort: targetMcsPort,
+					Port:       int32(tenantConsoleNodePort),
+					TargetPort: targetConsolePort,
 				},
 			},
 		},
 	}
 
-	_, err = clientset.CoreV1().Services(namespace).Create(context.Background(), &npMcsSvc, metav1.CreateOptions{})
+	_, err = clientset.CoreV1().Services(namespace).Create(context.Background(), &npConsoleSvc, metav1.CreateOptions{})
 	if err != nil {
 		return err
 	}
@@ -185,9 +185,9 @@ func gkeIntegration(clientset *kubernetes.Clientset, tenantName string, namespac
 		IntVal: int32(tenantNodePort),
 	}
 
-	tenantMcsNodePortIoS := intstr.IntOrString{
+	tenantConsoleNodePortIoS := intstr.IntOrString{
 		Type:   intstr.Int,
-		IntVal: int32(tenantMcsNodePort),
+		IntVal: int32(tenantConsoleNodePort),
 	}
 
 	consoleIngress.Spec.Rules = append(consoleIngress.Spec.Rules, extensionsBeta1.IngressRule{
@@ -206,14 +206,14 @@ func gkeIntegration(clientset *kubernetes.Clientset, tenantName string, namespac
 		},
 	})
 	consoleIngress.Spec.Rules = append(consoleIngress.Spec.Rules, extensionsBeta1.IngressRule{
-		Host: tenantMcsDomain,
+		Host: tenantConsoleDomain,
 		IngressRuleValue: extensionsBeta1.IngressRuleValue{
 			HTTP: &extensionsBeta1.HTTPIngressRuleValue{
 				Paths: []extensionsBeta1.HTTPIngressPath{
 					{
 						Backend: extensionsBeta1.IngressBackend{
-							ServiceName: tenantMcsnpMcsSvc,
-							ServicePort: tenantMcsNodePortIoS,
+							ServiceName: tenantNpConsoleSvc,
+							ServicePort: tenantConsoleNodePortIoS,
 						},
 					},
 				},

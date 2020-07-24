@@ -23,5 +23,5 @@ import (
 )
 
 func GetLDAPEnabled() bool {
-	return strings.ToLower(env.Get(MCSLDAPEnabled, "off")) == "on"
+	return strings.ToLower(env.Get(ConsoleLDAPEnabled, "off")) == "on"
 }

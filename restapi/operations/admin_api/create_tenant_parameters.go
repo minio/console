@@ -30,7 +30,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 
-	"github.com/minio/mcs/models"
+	"github.com/minio/console/models"
 )
 
 // NewCreateTenantParams creates a new CreateTenantParams object

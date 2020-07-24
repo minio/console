@@ -31,7 +31,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/minio/mcs/models"
+	"github.com/minio/console/models"
 )
 
 // NewUpdateTenantParams creates a new UpdateTenantParams object

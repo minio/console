@@ -24,14 +24,14 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
-	"github.com/minio/mcs/models"
-	"github.com/minio/mcs/restapi/operations"
+	"github.com/minio/console/models"
+	"github.com/minio/console/restapi/operations"
 	madmin "github.com/minio/minio/pkg/madmin"
 
-	"github.com/minio/mcs/restapi/operations/admin_api"
+	"github.com/minio/console/restapi/operations/admin_api"
 )
 
-func registerConfigHandlers(api *operations.McsAPI) {
+func registerConfigHandlers(api *operations.ConsoleAPI) {
 	// List Configurations
 	api.AdminAPIListConfigHandler = admin_api.ListConfigHandlerFunc(func(params admin_api.ListConfigParams, session *models.Principal) middleware.Responder {
 		configListResp, err := getListConfigResponse(session)

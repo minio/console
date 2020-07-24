@@ -23,13 +23,13 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
-	"github.com/minio/mcs/models"
-	"github.com/minio/mcs/restapi/operations"
-	"github.com/minio/mcs/restapi/operations/user_api"
+	"github.com/minio/console/models"
+	"github.com/minio/console/restapi/operations"
+	"github.com/minio/console/restapi/operations/user_api"
 	"github.com/minio/minio-go/v7/pkg/notification"
 )
 
-func registerBucketEventsHandlers(api *operations.McsAPI) {
+func registerBucketEventsHandlers(api *operations.ConsoleAPI) {
 	// list bucket events
 	api.UserAPIListBucketEventsHandler = user_api.ListBucketEventsHandlerFunc(func(params user_api.ListBucketEventsParams, session *models.Principal) middleware.Responder {
 		listBucketEventsResponse, err := getListBucketEventsResponse(session, params)

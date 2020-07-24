@@ -2,12 +2,12 @@
 
 ## Supported Versions
 
-We always provide security updates for the [latest release](https://github.com/minio/mcs/releases/latest).
+We always provide security updates for the [latest release](https://github.com/minio/console/releases/latest).
 Whenever there is a security update you just need to upgrade to the latest version.
 
 ## Reporting a Vulnerability
 
-All security bugs in [minio/mcs](https://github,com/minio/mcs) (or other minio/* repositories)
+All security bugs in [minio/console](https://github,com/minio/console) (or other minio/* repositories)
 should be reported by email to security@min.io. Your email will be acknowledged within 48 hours,
 and you'll receive a more detailed response to your email within 72 hours indicating the next steps
 in handling your report.

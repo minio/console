@@ -1,6 +1,6 @@
 # This is an example goreleaser.yaml file with some sane defaults.
 # Make sure to check the documentation at http://goreleaser.com
-project_name: mcs
+project_name: console
 
 before:
   hooks:
@@ -18,12 +18,12 @@ builds:
       - arm64
     env:
       - CGO_ENABLED=0
-    main: ./cmd/mcs/
+    main: ./cmd/console/
     flags:
       - -trimpath
       - --tags=kqueue
     ldflags:
-      - -s -w -X github.com/minio/mcs/pkg.ReleaseTag={{.Tag}} -X github.com/minio/mcs/pkg.CommitID={{.FullCommit}} -X github.com/minio/mcs/pkg.Version={{.Version}} -X github.com/minio/mcs/pkg.ShortCommitID={{.ShortCommit}} -X github.com/minio/mcs/pkg.ReleaseTime={{.Date}}
+      - -s -w -X github.com/minio/console/pkg.ReleaseTag={{.Tag}} -X github.com/minio/console/pkg.CommitID={{.FullCommit}} -X github.com/minio/console/pkg.Version={{.Version}} -X github.com/minio/console/pkg.ShortCommitID={{.ShortCommit}} -X github.com/minio/console/pkg.ReleaseTime={{.Date}}
 archives:
   -
     replacements:
@@ -51,7 +51,7 @@ changelog:
 nfpms:
   -
     vendor: MinIO Inc.
-    homepage: https://github.com/minio/mcs
+    homepage: https://github.com/minio/console
     maintainer: MinIO <minio@minio.io>
     description: MinIO Console Server
     license: GNU Affero General Public License v3.0
@@ -71,5 +71,5 @@ dockers:
     goarch: amd64
     dockerfile: Dockerfile.release
     image_templates:
-      - "minio/mcs:{{ .Tag }}"
-      - "minio/mcs:latest"
+      - "minio/console:{{ .Tag }}"
+      - "minio/console:latest"

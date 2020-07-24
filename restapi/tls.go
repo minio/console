@@ -68,12 +68,12 @@ func prepareSTSClientTransport() *http.Transport {
 				if FileExists(caCert) {
 					pemData, err := ioutil.ReadFile(caCert)
 					if err != nil {
-						// if there was an error reading pem file stop mcs
+						// if there was an error reading pem file stop console
 						panic(err)
 					}
 					certs.AppendCertsFromPEM(pemData)
 				} else {
-					// if provided cert filename doesn't exists stop mcs
+					// if provided cert filename doesn't exists stop console
 					panic(fmt.Sprintf(certDontExists, caCert))
 				}
 			}

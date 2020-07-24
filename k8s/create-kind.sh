@@ -1,16 +1,16 @@
 #!/bin/bash
 
 # setup environment variables based on flags to see if we should build the docker containers again
-MCS_DOCKER="true"
+CONSOLE_DOCKER="true"
 
 # evaluate flags
-# `-m` for mcs
+# `-m` for console
 
 
 while getopts ":m:" opt; do
   case $opt in
     m)
-	  MCS_DOCKER="$OPTARG"
+	  CONSOLE_DOCKER="$OPTARG"
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
@@ -34,11 +34,11 @@ echo "install metrics server"
 kubectl apply -f metrics-dev.yaml
 
 # Whether or not to build the m3 container and load it to kind or just load it
-if [[ $MCS_DOCKER == "true" ]]; then
+if [[ $CONSOLE_DOCKER == "true" ]]; then
 	# Build mkube
-  make --directory=".." k8sdev TAG=minio/mcs:latest
+  make --directory=".." k8sdev TAG=minio/console:latest
 else
-	kind load docker-image minio/mcs:latest
+	kind load docker-image minio/console:latest
 fi
 
 echo "done"

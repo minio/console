@@ -25,7 +25,7 @@ import (
 
 	"errors"
 
-	"github.com/minio/mcs/models"
+	"github.com/minio/console/models"
 	iampolicy "github.com/minio/minio/pkg/iam/policy"
 	"github.com/stretchr/testify/assert"
 )
@@ -97,7 +97,7 @@ func TestRemovePolicy(t *testing.T) {
 	funcAssert := assert.New(t)
 	adminClient := adminClientMock{}
 	// Test-1 : removePolicy() remove an existing policy
-	policyToRemove := "mcs-policy"
+	policyToRemove := "console-policy"
 	minioRemovePolicyMock = func(name string) error {
 		return nil
 	}
