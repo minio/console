@@ -1,4 +1,4 @@
-# Minio Console Server
+# MinIO Console
 
 A graphical user interface for [MinIO](https://github.com/minio/minio)
 
