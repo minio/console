@@ -50,7 +50,7 @@ func NewLogout(ctx *middleware.Context, handler LogoutHandler) *Logout {
 
 /*Logout swagger:route POST /logout UserAPI logout
 
-Logout from mcs.
+Logout from Console.
 
 */
 type Logout struct {

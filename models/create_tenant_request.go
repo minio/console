@@ -42,8 +42,8 @@ type CreateTenantRequest struct {
 	// annotations
 	Annotations map[string]string `json:"annotations,omitempty"`
 
-	// enable mcs
-	EnableMcs *bool `json:"enable_mcs,omitempty"`
+	// enable console
+	EnableConsole *bool `json:"enable_console,omitempty"`
 
 	// enable ssl
 	EnableSsl *bool `json:"enable_ssl,omitempty"`
@@ -69,14 +69,8 @@ type CreateTenantRequest struct {
 	// service name
 	ServiceName string `json:"service_name,omitempty"`
 
-	// volume configuration
-	// Required: true
-	VolumeConfiguration *CreateTenantRequestVolumeConfiguration `json:"volume_configuration"`
-
-	// volumes per server
-	VolumesPerServer int64 `json:"volumes_per_server,omitempty"`
-
 	// zones
+	// Required: true
 	Zones []*Zone `json:"zones"`
 }
 
@@ -89,10 +83,6 @@ func (m *CreateTenantRequest) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateNamespace(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateVolumeConfiguration(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -128,28 +118,10 @@ func (m *CreateTenantRequest) validateNamespace(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *CreateTenantRequest) validateVolumeConfiguration(formats strfmt.Registry) error {
-
-	if err := validate.Required("volume_configuration", "body", m.VolumeConfiguration); err != nil {
-		return err
-	}
-
-	if m.VolumeConfiguration != nil {
-		if err := m.VolumeConfiguration.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("volume_configuration")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
 func (m *CreateTenantRequest) validateZones(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Zones) { // not required
-		return nil
+	if err := validate.Required("zones", "body", m.Zones); err != nil {
+		return err
 	}
 
 	for i := 0; i < len(m.Zones); i++ {
@@ -182,60 +154,6 @@ func (m *CreateTenantRequest) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *CreateTenantRequest) UnmarshalBinary(b []byte) error {
 	var res CreateTenantRequest
-	if err := swag.ReadJSON(b, &res); err != nil {
-		return err
-	}
-	*m = res
-	return nil
-}
-
-// CreateTenantRequestVolumeConfiguration create tenant request volume configuration
-//
-// swagger:model CreateTenantRequestVolumeConfiguration
-type CreateTenantRequestVolumeConfiguration struct {
-
-	// size
-	// Required: true
-	Size *string `json:"size"`
-
-	// storage class
-	StorageClass string `json:"storage_class,omitempty"`
-}
-
-// Validate validates this create tenant request volume configuration
-func (m *CreateTenantRequestVolumeConfiguration) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateSize(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *CreateTenantRequestVolumeConfiguration) validateSize(formats strfmt.Registry) error {
-
-	if err := validate.Required("volume_configuration"+"."+"size", "body", m.Size); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// MarshalBinary interface implementation
-func (m *CreateTenantRequestVolumeConfiguration) MarshalBinary() ([]byte, error) {
-	if m == nil {
-		return nil, nil
-	}
-	return swag.WriteJSON(m)
-}
-
-// UnmarshalBinary interface implementation
-func (m *CreateTenantRequestVolumeConfiguration) UnmarshalBinary(b []byte) error {
-	var res CreateTenantRequestVolumeConfiguration
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

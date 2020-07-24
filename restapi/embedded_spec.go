@@ -726,7 +726,7 @@ func init() {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Login to mcs",
+        "summary": "Login to Console",
         "operationId": "Login",
         "parameters": [
           {
@@ -827,7 +827,7 @@ func init() {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Logout from mcs.",
+        "summary": "Logout from Console.",
         "operationId": "Logout",
         "responses": {
           "200": {
@@ -1929,8 +1929,8 @@ func init() {
       "type": "object",
       "required": [
         "name",
-        "volume_configuration",
-        "namespace"
+        "namespace",
+        "zones"
       ],
       "properties": {
         "access_key": {
@@ -1942,7 +1942,7 @@ func init() {
             "type": "string"
           }
         },
-        "enable_mcs": {
+        "enable_console": {
           "type": "boolean",
           "default": true
         },
@@ -1968,23 +1968,6 @@ func init() {
         },
         "service_name": {
           "type": "string"
-        },
-        "volume_configuration": {
-          "type": "object",
-          "required": [
-            "size"
-          ],
-          "properties": {
-            "size": {
-              "type": "string"
-            },
-            "storage_class": {
-              "type": "string"
-            }
-          }
-        },
-        "volumes_per_server": {
-          "type": "integer"
         },
         "zones": {
           "type": "array",
@@ -2575,16 +2558,10 @@ func init() {
         "image": {
           "type": "string"
         },
-        "instance_count": {
-          "type": "integer"
-        },
         "name": {
           "type": "string"
         },
         "namespace": {
-          "type": "string"
-        },
-        "storage_class": {
           "type": "string"
         },
         "total_size": {
@@ -2594,19 +2571,6 @@ func init() {
         "used_size": {
           "type": "integer",
           "format": "int64"
-        },
-        "volume_count": {
-          "type": "integer"
-        },
-        "volume_size": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "volumes_per_server": {
-          "type": "integer"
-        },
-        "zone_count": {
-          "type": "integer"
         },
         "zones": {
           "type": "array",
@@ -2727,8 +2691,9 @@ func init() {
     "zone": {
       "type": "object",
       "required": [
-        "name",
-        "servers"
+        "servers",
+        "volumes_per_server",
+        "volume_configuration"
       ],
       "properties": {
         "name": {
@@ -2736,6 +2701,24 @@ func init() {
         },
         "servers": {
           "type": "integer"
+        },
+        "volume_configuration": {
+          "type": "object",
+          "required": [
+            "size"
+          ],
+          "properties": {
+            "size": {
+              "type": "integer"
+            },
+            "storage_class_name": {
+              "type": "string"
+            }
+          }
+        },
+        "volumes_per_server": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     }
@@ -3446,7 +3429,7 @@ func init() {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Login to mcs",
+        "summary": "Login to Console",
         "operationId": "Login",
         "parameters": [
           {
@@ -3547,7 +3530,7 @@ func init() {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Logout from mcs.",
+        "summary": "Logout from Console.",
         "operationId": "Logout",
         "responses": {
           "200": {
@@ -4463,16 +4446,16 @@ func init() {
     }
   },
   "definitions": {
-    "CreateTenantRequestVolumeConfiguration": {
+    "ZoneVolumeConfiguration": {
       "type": "object",
       "required": [
         "size"
       ],
       "properties": {
         "size": {
-          "type": "string"
+          "type": "integer"
         },
-        "storage_class": {
+        "storage_class_name": {
           "type": "string"
         }
       }
@@ -4663,8 +4646,8 @@ func init() {
       "type": "object",
       "required": [
         "name",
-        "volume_configuration",
-        "namespace"
+        "namespace",
+        "zones"
       ],
       "properties": {
         "access_key": {
@@ -4676,7 +4659,7 @@ func init() {
             "type": "string"
           }
         },
-        "enable_mcs": {
+        "enable_console": {
           "type": "boolean",
           "default": true
         },
@@ -4702,23 +4685,6 @@ func init() {
         },
         "service_name": {
           "type": "string"
-        },
-        "volume_configuration": {
-          "type": "object",
-          "required": [
-            "size"
-          ],
-          "properties": {
-            "size": {
-              "type": "string"
-            },
-            "storage_class": {
-              "type": "string"
-            }
-          }
-        },
-        "volumes_per_server": {
-          "type": "integer"
         },
         "zones": {
           "type": "array",
@@ -5309,16 +5275,10 @@ func init() {
         "image": {
           "type": "string"
         },
-        "instance_count": {
-          "type": "integer"
-        },
         "name": {
           "type": "string"
         },
         "namespace": {
-          "type": "string"
-        },
-        "storage_class": {
           "type": "string"
         },
         "total_size": {
@@ -5328,19 +5288,6 @@ func init() {
         "used_size": {
           "type": "integer",
           "format": "int64"
-        },
-        "volume_count": {
-          "type": "integer"
-        },
-        "volume_size": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "volumes_per_server": {
-          "type": "integer"
-        },
-        "zone_count": {
-          "type": "integer"
         },
         "zones": {
           "type": "array",
@@ -5461,8 +5408,9 @@ func init() {
     "zone": {
       "type": "object",
       "required": [
-        "name",
-        "servers"
+        "servers",
+        "volumes_per_server",
+        "volume_configuration"
       ],
       "properties": {
         "name": {
@@ -5470,6 +5418,24 @@ func init() {
         },
         "servers": {
           "type": "integer"
+        },
+        "volume_configuration": {
+          "type": "object",
+          "required": [
+            "size"
+          ],
+          "properties": {
+            "size": {
+              "type": "integer"
+            },
+            "storage_class_name": {
+              "type": "string"
+            }
+          }
+        },
+        "volumes_per_server": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     }

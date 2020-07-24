@@ -17,6 +17,6 @@
 package restapi
 
 const (
-	// McsTenantMemorySize Memory size to be used when creating MinioInstance request
+	// McsTenantMemorySize Memory size to be used when creating Tenant request
 	McsTenantMemorySize = "MCS_TENANT_MEMORY_SIZE"
 )

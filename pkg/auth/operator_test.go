@@ -15,7 +15,7 @@ type operatorClientTest struct {
 
 var operatorAuthenticateMock func(ctx context.Context) ([]byte, error)
 
-// MinIOInstanceDelete implements the minio instance delete action from minio-operator
+// TenantDelete implements the minio instance delete action from minio-operator
 func (c *operatorClientTest) Authenticate(ctx context.Context) ([]byte, error) {
 	return operatorAuthenticateMock(ctx)
 }
