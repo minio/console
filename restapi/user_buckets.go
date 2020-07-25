@@ -30,7 +30,7 @@ import (
 	"github.com/minio/mcs/models"
 	"github.com/minio/mcs/restapi/operations"
 	"github.com/minio/mcs/restapi/operations/user_api"
-	"github.com/minio/minio-go/v6/pkg/policy"
+	"github.com/minio/minio-go/v7/pkg/policy"
 	minioIAMPolicy "github.com/minio/minio/pkg/iam/policy"
 )
 
@@ -211,10 +211,7 @@ func getBucketSetPolicyResponse(session *models.Principal, bucketName string, re
 
 // removeBucket deletes a bucket
 func removeBucket(client MinioClient, bucketName string) error {
-	if err := client.removeBucket(bucketName); err != nil {
-		return err
-	}
-	return nil
+	return client.removeBucket(context.Background(), bucketName)
 }
 
 // getDeleteBucketResponse performs removeBucket() to delete a bucket
@@ -239,7 +236,7 @@ func getDeleteBucketResponse(session *models.Principal, params user_api.DeleteBu
 
 // getBucketInfo return bucket information including name, policy access, size and creation date
 func getBucketInfo(client MinioClient, bucketName string) (*models.Bucket, error) {
-	policyStr, err := client.getBucketPolicy(bucketName)
+	policyStr, err := client.getBucketPolicy(context.Background(), bucketName)
 	if err != nil {
 		return nil, err
 	}

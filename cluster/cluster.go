@@ -17,7 +17,7 @@
 package cluster
 
 import (
-	operator "github.com/minio/minio-operator/pkg/client/clientset/versioned"
+	operator "github.com/minio/operator/pkg/client/clientset/versioned"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	certutil "k8s.io/client-go/util/cert"

@@ -41,7 +41,7 @@ import (
 	"github.com/minio/mcs/models"
 	"github.com/minio/mcs/restapi/operations"
 	"github.com/minio/mcs/restapi/operations/admin_api"
-	operator "github.com/minio/minio-operator/pkg/apis/operator.min.io/v1"
+	operator "github.com/minio/operator/pkg/apis/minio.min.io/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -115,7 +115,7 @@ func registerTenantHandlers(api *operations.McsAPI) {
 
 // deleteTenantAction performs the actions of deleting a tenant
 func deleteTenantAction(ctx context.Context, operatorClient OperatorClient, nameSpace, instanceName string) error {
-	err := operatorClient.MinIOInstanceDelete(ctx, nameSpace, instanceName, metav1.DeleteOptions{})
+	err := operatorClient.TenantDelete(ctx, nameSpace, instanceName, metav1.DeleteOptions{})
 	if err != nil {
 		return err
 	}
@@ -134,7 +134,7 @@ func getDeleteTenantResponse(session *models.Principal, params admin_api.DeleteT
 	return deleteTenantAction(context.Background(), opClient, params.Namespace, params.Tenant)
 }
 
-func getMinioInstanceScheme(mi *operator.MinIOInstance) string {
+func getTenantScheme(mi *operator.Tenant) string {
 	scheme := "http"
 	if mi.AutoCert() || mi.ExternalCert() {
 		scheme = "https"
@@ -169,52 +169,60 @@ func getTenantAdminClient(ctx context.Context, client K8sClient, namespace, tena
 	return mAdmin, nil
 }
 
-func getMinioInstance(ctx context.Context, operatorClient OperatorClient, namespace, tenantName string) (*operator.MinIOInstance, error) {
-	minInst, err := operatorClient.MinIOInstanceGet(ctx, namespace, tenantName, metav1.GetOptions{})
+func getTenant(ctx context.Context, operatorClient OperatorClient, namespace, tenantName string) (*operator.Tenant, error) {
+	minInst, err := operatorClient.TenantGet(ctx, namespace, tenantName, metav1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}
 	return minInst, nil
 }
 
-func getTenantInfo(minioInstance *operator.MinIOInstance, tenantInfo *usageInfo) *models.Tenant {
+func getTenantInfo(tenant *operator.Tenant, tenantInfo *usageInfo) *models.Tenant {
 	var instanceCount int64
 	var volumeCount int64
-	for _, zone := range minioInstance.Spec.Zones {
+	for _, zone := range tenant.Spec.Zones {
 		instanceCount = instanceCount + int64(zone.Servers)
-		volumeCount = volumeCount + int64(zone.Servers*int32(minioInstance.Spec.VolumesPerServer))
+		volumeCount = volumeCount + int64(zone.Servers*zone.VolumesPerServer)
 	}
 
 	var zones []*models.Zone
 
-	for _, z := range minioInstance.Spec.Zones {
-		zones = append(zones, &models.Zone{
-			Name:    swag.String(z.Name),
-			Servers: swag.Int64(int64(z.Servers)),
-		})
+	var totalSize int64
+	for _, z := range tenant.Spec.Zones {
+		zoneModel := &models.Zone{
+			Name:                z.Name,
+			Servers:             swag.Int64(int64(z.Servers)),
+			VolumesPerServer:    &z.VolumesPerServer,
+			VolumeConfiguration: &models.ZoneVolumeConfiguration{},
+		}
+
+		if z.VolumeClaimTemplate != nil {
+			zoneModel.VolumeConfiguration.Size = swag.Int64(z.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value())
+			if z.VolumeClaimTemplate.Spec.StorageClassName != nil {
+				zoneModel.VolumeConfiguration.StorageClassName = *z.VolumeClaimTemplate.Spec.StorageClassName
+			}
+		}
+
+		zones = append(zones, zoneModel)
+		zoneSize := int64(z.Servers) * int64(z.VolumesPerServer) * z.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value()
+		totalSize = totalSize + zoneSize
 	}
 
 	return &models.Tenant{
-		CreationDate:     minioInstance.ObjectMeta.CreationTimestamp.String(),
-		InstanceCount:    instanceCount,
-		Name:             minioInstance.Name,
-		VolumesPerServer: int64(minioInstance.Spec.VolumesPerServer),
-		VolumeCount:      volumeCount,
-		VolumeSize:       minioInstance.Spec.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value(),
-		TotalSize:        int64(minioInstance.Spec.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value() * volumeCount),
-		ZoneCount:        int64(len(minioInstance.Spec.Zones)),
-		CurrentState:     minioInstance.Status.CurrentState,
-		Zones:            zones,
-		Namespace:        minioInstance.ObjectMeta.Namespace,
-		Image:            minioInstance.Spec.Image,
-		UsedSize:         tenantInfo.DisksUsage,
-		StorageClass:     swag.StringValue(minioInstance.Spec.VolumeClaimTemplate.Spec.StorageClassName),
+		CreationDate: tenant.ObjectMeta.CreationTimestamp.String(),
+		Name:         tenant.Name,
+		TotalSize:    totalSize,
+		CurrentState: tenant.Status.CurrentState,
+		Zones:        zones,
+		Namespace:    tenant.ObjectMeta.Namespace,
+		Image:        tenant.Spec.Image,
+		UsedSize:     tenantInfo.DisksUsage,
 	}
 }
 
 func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInfoParams) (*models.Tenant, error) {
-	// 20 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	// 5 seconds timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
@@ -234,13 +242,28 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 		client: clientset,
 	}
 
-	minInst, err := getMinioInstance(ctx, opClient, params.Namespace, params.Tenant)
+	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
 	if err != nil {
-		log.Println("error getting minioInstance:", err)
+		log.Println("error getting minioTenant:", err)
 		return nil, err
 	}
-	minioInstanceScheme := getMinioInstanceScheme(minInst)
-	mAdmin, err := getTenantAdminClient(ctx, k8sClient, params.Namespace, params.Tenant, minInst.Spec.ServiceName, minioInstanceScheme)
+	tenantScheme := getTenantScheme(minTenant)
+
+	svcName := minTenant.Spec.ServiceName
+	if svcName == "" {
+		svcName = minTenant.Name
+		// TODO:
+		// 1 get tenant services
+		// 2 filter out cluster ip svc
+	}
+
+	mAdmin, err := getTenantAdminClient(
+		ctx,
+		k8sClient,
+		params.Namespace,
+		params.Tenant,
+		svcName,
+		tenantScheme)
 	if err != nil {
 		log.Println("error getting tenant's admin client:", err)
 		return nil, err
@@ -254,7 +277,7 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 		log.Println("error getting admin info:", err)
 		return nil, err
 	}
-	info := getTenantInfo(minInst, adminInfo)
+	info := getTenantInfo(minTenant, adminInfo)
 	return info, nil
 }
 
@@ -267,20 +290,20 @@ func listTenants(ctx context.Context, operatorClient OperatorClient, namespace s
 		listOpts.Limit = int64(*limit)
 	}
 
-	minInstances, err := operatorClient.MinIOInstanceList(ctx, namespace, listOpts)
+	minTenants, err := operatorClient.TenantList(ctx, namespace, listOpts)
 	if err != nil {
 		return nil, err
 	}
 
 	var tenants []*models.TenantList
 
-	for _, minInst := range minInstances.Items {
+	for _, minInst := range minTenants.Items {
 
 		var instanceCount int64
 		var volumeCount int64
 		for _, zone := range minInst.Spec.Zones {
 			instanceCount = instanceCount + int64(zone.Servers)
-			volumeCount = volumeCount + int64(zone.Servers*int32(minInst.Spec.VolumesPerServer))
+			volumeCount = volumeCount + int64(zone.Servers*zone.VolumesPerServer)
 		}
 
 		tenants = append(tenants, &models.TenantList{
@@ -289,7 +312,6 @@ func listTenants(ctx context.Context, operatorClient OperatorClient, namespace s
 			ZoneCount:     int64(len(minInst.Spec.Zones)),
 			InstanceCount: instanceCount,
 			VolumeCount:   volumeCount,
-			VolumeSize:    minInst.Spec.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value(),
 			CurrentState:  minInst.Status.CurrentState,
 			Namespace:     minInst.ObjectMeta.Namespace,
 		})
@@ -380,59 +402,33 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		return nil, err
 	}
 
-	enableSSL := true
+	enableSSL := false
 	if params.Body.EnableSsl != nil {
 		enableSSL = *params.Body.EnableSsl
 	}
 	enableMCS := true
-	if params.Body.EnableMcs != nil {
-		enableMCS = *params.Body.EnableMcs
+	if params.Body.EnableConsole != nil {
+		enableMCS = *params.Body.EnableConsole
 	}
 
-	volumeSize, err := resource.ParseQuantity(*params.Body.VolumeConfiguration.Size)
-	if err != nil {
-		return nil, err
-	}
-
+	// TODO: Calculate this ourselves?
 	memorySize, err := resource.ParseQuantity(getTenantMemorySize())
 	if err != nil {
 		return nil, err
 	}
 
-	volTemp := corev1.PersistentVolumeClaimSpec{
-		AccessModes: []corev1.PersistentVolumeAccessMode{
-			corev1.ReadWriteOnce,
-		},
-		Resources: corev1.ResourceRequirements{
-			Requests: corev1.ResourceList{
-				corev1.ResourceStorage: volumeSize,
-				corev1.ResourceMemory:  memorySize,
-			},
-		},
-	}
-
-	if params.Body.VolumeConfiguration.StorageClass != "" {
-		volTemp.StorageClassName = &params.Body.VolumeConfiguration.StorageClass
-	}
-
 	//Construct a MinIO Instance with everything we are getting from parameters
-	minInst := operator.MinIOInstance{
+	minInst := operator.Tenant{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: *params.Body.Name,
 		},
-		Spec: operator.MinIOInstanceSpec{
+		Spec: operator.TenantSpec{
 			Image:     minioImage,
 			Mountpath: "/export",
 			CredsSecret: &corev1.LocalObjectReference{
 				Name: secretName,
 			},
 			RequestAutoCert: enableSSL,
-			VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "data",
-				},
-				Spec: volTemp,
-			},
 		},
 	}
 	// optionals are set below
@@ -460,10 +456,11 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			return nil, err
 		}
 
-		minInst.Spec.MCS = &operator.MCSConfig{
-			Replicas:  2,
-			Image:     "minio/mcs:v0.1.1",
-			MCSSecret: &corev1.LocalObjectReference{Name: mcsSecretName},
+		const consoleVersion = "minio/mcs:v0.2.1"
+		minInst.Spec.Console = &operator.ConsoleConfiguration{
+			Replicas:      2,
+			Image:         consoleVersion,
+			ConsoleSecret: &corev1.LocalObjectReference{Name: mcsSecretName},
 		}
 	}
 
@@ -474,18 +471,39 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	// set the zones if they are provided
 	if len(params.Body.Zones) > 0 {
 		for _, zone := range params.Body.Zones {
+			volumeSize := resource.NewQuantity(*zone.VolumeConfiguration.Size, resource.DecimalExponent)
+			volTemp := corev1.PersistentVolumeClaimSpec{
+				AccessModes: []corev1.PersistentVolumeAccessMode{
+					corev1.ReadWriteOnce,
+				},
+				Resources: corev1.ResourceRequirements{
+					Requests: corev1.ResourceList{
+						corev1.ResourceStorage: *volumeSize,
+					},
+				},
+			}
+			if zone.VolumeConfiguration.StorageClassName != "" {
+				volTemp.StorageClassName = &zone.VolumeConfiguration.StorageClassName
+			}
 			minInst.Spec.Zones = append(minInst.Spec.Zones, operator.Zone{
-				Name:    *zone.Name,
-				Servers: int32(*zone.Servers),
+				Name:             zone.Name,
+				Servers:          int32(*zone.Servers),
+				VolumesPerServer: *zone.VolumesPerServer,
+				VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
+					ObjectMeta: metav1.ObjectMeta{
+						Name: "data",
+					},
+					Spec: volTemp,
+				},
+				Resources: corev1.ResourceRequirements{
+					Requests: corev1.ResourceList{
+						corev1.ResourceMemory: memorySize,
+					},
+				},
 			})
 		}
 	}
 
-	// Set Volumes Per Server if provided, default 1
-	minInst.Spec.VolumesPerServer = 1
-	if params.Body.VolumesPerServer > 0 {
-		minInst.Spec.VolumesPerServer = int(params.Body.VolumesPerServer)
-	}
 	// Set Mount Path if provided
 	if params.Body.MounthPath != "" {
 		minInst.Spec.Mountpath = params.Body.MounthPath
@@ -503,7 +521,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		return nil, err
 	}
 
-	_, err = opClient.OperatorV1().MinIOInstances(ns).Create(context.Background(), &minInst, metav1.CreateOptions{})
+	_, err = opClient.MinioV1().Tenants(ns).Create(context.Background(), &minInst, metav1.CreateOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -522,10 +540,10 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}, nil
 }
 
-// updateTenantAction does an update on the minioInstance by patching the desired changes
+// updateTenantAction does an update on the minioTenant by patching the desired changes
 func updateTenantAction(ctx context.Context, operatorClient OperatorClient, httpCl cluster.HTTPClientI, nameSpace string, params admin_api.UpdateTenantParams) error {
 	imageToUpdate := params.Body.Image
-	minInst, err := operatorClient.MinIOInstanceGet(ctx, nameSpace, params.Tenant, metav1.GetOptions{})
+	minInst, err := operatorClient.TenantGet(ctx, nameSpace, params.Tenant, metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
@@ -545,7 +563,7 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClient, http
 	if err != nil {
 		return err
 	}
-	_, err = operatorClient.MinIOInstancePatch(ctx, nameSpace, minInst.Name, types.MergePatchType, payloadBytes, metav1.PatchOptions{})
+	_, err = operatorClient.TenantPatch(ctx, nameSpace, minInst.Name, types.MergePatchType, payloadBytes, metav1.PatchOptions{})
 	if err != nil {
 		return err
 	}
@@ -569,7 +587,7 @@ func getUpdateTenantResponse(session *models.Principal, params admin_api.UpdateT
 		},
 	}
 	if err := updateTenantAction(ctx, opClient, httpC, params.Namespace, params); err != nil {
-		log.Println("error patching MinioInstance:", err)
+		log.Println("error patching Tenant:", err)
 		return err
 	}
 	return nil
@@ -577,13 +595,13 @@ func getUpdateTenantResponse(session *models.Principal, params admin_api.UpdateT
 
 // addTenantZone creates a zone to a defined tenant
 func addTenantZone(ctx context.Context, operatorClient OperatorClient, params admin_api.TenantAddZoneParams) error {
-	minInst, err := operatorClient.MinIOInstanceGet(ctx, params.Namespace, params.Tenant, metav1.GetOptions{})
+	minInst, err := operatorClient.TenantGet(ctx, params.Namespace, params.Tenant, metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
 
 	minInst.Spec.Zones = append(minInst.Spec.Zones, operator.Zone{
-		Name:    *params.Body.Name,
+		Name:    params.Body.Name,
 		Servers: int32(*params.Body.Servers),
 	})
 
@@ -592,7 +610,7 @@ func addTenantZone(ctx context.Context, operatorClient OperatorClient, params ad
 		return err
 	}
 
-	_, err = operatorClient.MinIOInstancePatch(ctx, params.Namespace, minInst.Name, types.MergePatchType, payloadBytes, metav1.PatchOptions{})
+	_, err = operatorClient.TenantPatch(ctx, params.Namespace, minInst.Name, types.MergePatchType, payloadBytes, metav1.PatchOptions{})
 	if err != nil {
 		return err
 	}
@@ -610,7 +628,7 @@ func getTenantAddZoneResponse(session *models.Principal, params admin_api.Tenant
 		client: opClientClientSet,
 	}
 	if err := addTenantZone(ctx, opClient, params); err != nil {
-		log.Println("error patching MinioInstance:", err)
+		log.Println("error patching Tenant:", err)
 		return err
 	}
 	return nil

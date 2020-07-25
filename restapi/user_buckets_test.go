@@ -26,7 +26,7 @@ import (
 
 	"github.com/go-openapi/swag"
 	"github.com/minio/mcs/models"
-	"github.com/minio/minio-go/v6"
+	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio/pkg/madmin"
 	"github.com/stretchr/testify/assert"
 )
@@ -58,12 +58,12 @@ func (mc minioClientMock) setBucketPolicyWithContext(ctx context.Context, bucket
 }
 
 // mock function of removeBucket()
-func (mc minioClientMock) removeBucket(bucketName string) error {
+func (mc minioClientMock) removeBucket(ctx context.Context, bucketName string) error {
 	return minioRemoveBucketMock(bucketName)
 }
 
 // imock function of getBucketPolicy()
-func (mc minioClientMock) getBucketPolicy(bucketName string) (string, error) {
+func (mc minioClientMock) getBucketPolicy(ctx context.Context, bucketName string) (string, error) {
 	return minioGetBucketPolicyMock(bucketName)
 }
 

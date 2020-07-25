@@ -35,23 +35,34 @@ import (
 type Zone struct {
 
 	// name
-	// Required: true
-	Name *string `json:"name"`
+	Name string `json:"name,omitempty"`
 
 	// servers
 	// Required: true
 	Servers *int64 `json:"servers"`
+
+	// volume configuration
+	// Required: true
+	VolumeConfiguration *ZoneVolumeConfiguration `json:"volume_configuration"`
+
+	// volumes per server
+	// Required: true
+	VolumesPerServer *int32 `json:"volumes_per_server"`
 }
 
 // Validate validates this zone
 func (m *Zone) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateName(formats); err != nil {
+	if err := m.validateServers(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateServers(formats); err != nil {
+	if err := m.validateVolumeConfiguration(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateVolumesPerServer(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -61,18 +72,36 @@ func (m *Zone) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Zone) validateName(formats strfmt.Registry) error {
+func (m *Zone) validateServers(formats strfmt.Registry) error {
 
-	if err := validate.Required("name", "body", m.Name); err != nil {
+	if err := validate.Required("servers", "body", m.Servers); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (m *Zone) validateServers(formats strfmt.Registry) error {
+func (m *Zone) validateVolumeConfiguration(formats strfmt.Registry) error {
 
-	if err := validate.Required("servers", "body", m.Servers); err != nil {
+	if err := validate.Required("volume_configuration", "body", m.VolumeConfiguration); err != nil {
+		return err
+	}
+
+	if m.VolumeConfiguration != nil {
+		if err := m.VolumeConfiguration.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("volume_configuration")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Zone) validateVolumesPerServer(formats strfmt.Registry) error {
+
+	if err := validate.Required("volumes_per_server", "body", m.VolumesPerServer); err != nil {
 		return err
 	}
 
@@ -90,6 +119,60 @@ func (m *Zone) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *Zone) UnmarshalBinary(b []byte) error {
 	var res Zone
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// ZoneVolumeConfiguration zone volume configuration
+//
+// swagger:model ZoneVolumeConfiguration
+type ZoneVolumeConfiguration struct {
+
+	// size
+	// Required: true
+	Size *int64 `json:"size"`
+
+	// storage class name
+	StorageClassName string `json:"storage_class_name,omitempty"`
+}
+
+// Validate validates this zone volume configuration
+func (m *ZoneVolumeConfiguration) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateSize(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ZoneVolumeConfiguration) validateSize(formats strfmt.Registry) error {
+
+	if err := validate.Required("volume_configuration"+"."+"size", "body", m.Size); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *ZoneVolumeConfiguration) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *ZoneVolumeConfiguration) UnmarshalBinary(b []byte) error {
+	var res ZoneVolumeConfiguration
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

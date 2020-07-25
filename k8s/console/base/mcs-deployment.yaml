@@ -12,7 +12,7 @@ spec:
       labels:
         app: mcs
     spec:
-      serviceAccountName: m3-sa
+      serviceAccountName: mcs-sa
       containers:
         - name: mcs
           image: minio/mcs:latest

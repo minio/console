@@ -34,7 +34,7 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/minio/mcs/models"
 	xjwt "github.com/minio/mcs/pkg/auth/jwt"
-	"github.com/minio/minio-go/v6/pkg/credentials"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/pbkdf2"
 )

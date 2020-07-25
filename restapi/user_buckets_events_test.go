@@ -26,16 +26,16 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/mcs/models"
-	"github.com/minio/minio-go/v6"
+	"github.com/minio/minio-go/v7/pkg/notification"
 	"github.com/stretchr/testify/assert"
 )
 
 // assigning mock at runtime instead of compile time
-var minioGetBucketNotificationMock func(bucketName string) (bucketNotification minio.BucketNotification, err error)
+var minioGetBucketNotificationMock func(ctx context.Context, bucketName string) (bucketNotification notification.Configuration, err error)
 
 // mock function of getBucketNotification()
-func (mc minioClientMock) getBucketNotification(bucketName string) (bucketNotification minio.BucketNotification, err error) {
-	return minioGetBucketNotificationMock(bucketName)
+func (mc minioClientMock) getBucketNotification(ctx context.Context, bucketName string) (bucketNotification notification.Configuration, err error) {
+	return minioGetBucketNotificationMock(ctx, bucketName)
 }
 
 //// Mock mc S3Client functions ////
@@ -144,27 +144,27 @@ func TestListBucketEvents(t *testing.T) {
 
 	////// Test-1 : listBucketEvents() get list of events for a particular bucket only one config
 	// mock bucketNotification response from MinIO
-	mockBucketN := minio.BucketNotification{
-		LambdaConfigs: []minio.LambdaConfig{},
-		TopicConfigs:  []minio.TopicConfig{},
-		QueueConfigs: []minio.QueueConfig{
-			minio.QueueConfig{
+	mockBucketN := notification.Configuration{
+		LambdaConfigs: []notification.LambdaConfig{},
+		TopicConfigs:  []notification.TopicConfig{},
+		QueueConfigs: []notification.QueueConfig{
+			notification.QueueConfig{
 				Queue: "arn:minio:sqs::test:postgresql",
-				NotificationConfig: minio.NotificationConfig{
+				Config: notification.Config{
 					ID: "",
-					Events: []minio.NotificationEventType{
-						minio.ObjectAccessedAll,
-						minio.ObjectCreatedAll,
-						minio.ObjectRemovedAll,
+					Events: []notification.EventType{
+						notification.ObjectAccessedAll,
+						notification.ObjectCreatedAll,
+						notification.ObjectRemovedAll,
 					},
-					Filter: &minio.Filter{
-						S3Key: minio.S3Key{
-							FilterRules: []minio.FilterRule{
-								minio.FilterRule{
+					Filter: &notification.Filter{
+						S3Key: notification.S3Key{
+							FilterRules: []notification.FilterRule{
+								notification.FilterRule{
 									Name:  "suffix",
 									Value: ".jpg",
 								},
-								minio.FilterRule{
+								notification.FilterRule{
 									Name:  "prefix",
 									Value: "file/",
 								},
@@ -188,7 +188,7 @@ func TestListBucketEvents(t *testing.T) {
 			},
 		},
 	}
-	minioGetBucketNotificationMock = func(bucketName string) (bucketNotification minio.BucketNotification, err error) {
+	minioGetBucketNotificationMock = func(ctx context.Context, bucketName string) (bucketNotification notification.Configuration, err error) {
 		return mockBucketN, nil
 	}
 	eventConfigs, err := listBucketEvents(minClient, "bucket")
@@ -209,16 +209,16 @@ func TestListBucketEvents(t *testing.T) {
 	}
 
 	////// Test-2 : listBucketEvents() get list of events no filters
-	mockBucketN = minio.BucketNotification{
-		LambdaConfigs: []minio.LambdaConfig{},
-		TopicConfigs:  []minio.TopicConfig{},
-		QueueConfigs: []minio.QueueConfig{
-			minio.QueueConfig{
+	mockBucketN = notification.Configuration{
+		LambdaConfigs: []notification.LambdaConfig{},
+		TopicConfigs:  []notification.TopicConfig{},
+		QueueConfigs: []notification.QueueConfig{
+			notification.QueueConfig{
 				Queue: "arn:minio:sqs::test:postgresql",
-				NotificationConfig: minio.NotificationConfig{
+				Config: notification.Config{
 					ID: "",
-					Events: []minio.NotificationEventType{
-						minio.ObjectRemovedAll,
+					Events: []notification.EventType{
+						notification.ObjectRemovedAll,
 					},
 				},
 			},
@@ -235,7 +235,7 @@ func TestListBucketEvents(t *testing.T) {
 			},
 		},
 	}
-	minioGetBucketNotificationMock = func(bucketName string) (bucketNotification minio.BucketNotification, err error) {
+	minioGetBucketNotificationMock = func(ctx context.Context, bucketName string) (bucketNotification notification.Configuration, err error) {
 		return mockBucketN, nil
 	}
 	eventConfigs, err = listBucketEvents(minClient, "bucket")
@@ -256,23 +256,23 @@ func TestListBucketEvents(t *testing.T) {
 	}
 
 	////// Test-3 : listBucketEvents() get list of events
-	mockBucketN = minio.BucketNotification{
-		LambdaConfigs: []minio.LambdaConfig{
-			minio.LambdaConfig{
+	mockBucketN = notification.Configuration{
+		LambdaConfigs: []notification.LambdaConfig{
+			notification.LambdaConfig{
 				Lambda: "lambda",
-				NotificationConfig: minio.NotificationConfig{
+				Config: notification.Config{
 					ID: "",
-					Events: []minio.NotificationEventType{
-						minio.ObjectRemovedAll,
+					Events: []notification.EventType{
+						notification.ObjectRemovedAll,
 					},
-					Filter: &minio.Filter{
-						S3Key: minio.S3Key{
-							FilterRules: []minio.FilterRule{
-								minio.FilterRule{
+					Filter: &notification.Filter{
+						S3Key: notification.S3Key{
+							FilterRules: []notification.FilterRule{
+								notification.FilterRule{
 									Name:  "suffix",
 									Value: ".png",
 								},
-								minio.FilterRule{
+								notification.FilterRule{
 									Name:  "prefix",
 									Value: "lambda/",
 								},
@@ -282,22 +282,22 @@ func TestListBucketEvents(t *testing.T) {
 				},
 			},
 		},
-		TopicConfigs: []minio.TopicConfig{
-			minio.TopicConfig{
+		TopicConfigs: []notification.TopicConfig{
+			notification.TopicConfig{
 				Topic: "topic",
-				NotificationConfig: minio.NotificationConfig{
+				Config: notification.Config{
 					ID: "",
-					Events: []minio.NotificationEventType{
-						minio.ObjectRemovedAll,
+					Events: []notification.EventType{
+						notification.ObjectRemovedAll,
 					},
-					Filter: &minio.Filter{
-						S3Key: minio.S3Key{
-							FilterRules: []minio.FilterRule{
-								minio.FilterRule{
+					Filter: &notification.Filter{
+						S3Key: notification.S3Key{
+							FilterRules: []notification.FilterRule{
+								notification.FilterRule{
 									Name:  "suffix",
 									Value: ".gif",
 								},
-								minio.FilterRule{
+								notification.FilterRule{
 									Name:  "prefix",
 									Value: "topic/",
 								},
@@ -307,17 +307,17 @@ func TestListBucketEvents(t *testing.T) {
 				},
 			},
 		},
-		QueueConfigs: []minio.QueueConfig{
-			minio.QueueConfig{
+		QueueConfigs: []notification.QueueConfig{
+			notification.QueueConfig{
 				Queue: "arn:minio:sqs::test:postgresql",
-				NotificationConfig: minio.NotificationConfig{
+				Config: notification.Config{
 					ID: "",
-					Events: []minio.NotificationEventType{
-						minio.ObjectRemovedAll,
+					Events: []notification.EventType{
+						notification.ObjectRemovedAll,
 					},
-					Filter: &minio.Filter{
-						S3Key: minio.S3Key{
-							FilterRules: []minio.FilterRule{},
+					Filter: &notification.Filter{
+						S3Key: notification.S3Key{
+							FilterRules: []notification.FilterRule{},
 						},
 					},
 				},
@@ -354,7 +354,7 @@ func TestListBucketEvents(t *testing.T) {
 			},
 		},
 	}
-	minioGetBucketNotificationMock = func(bucketName string) (bucketNotification minio.BucketNotification, err error) {
+	minioGetBucketNotificationMock = func(ctx context.Context, bucketName string) (bucketNotification notification.Configuration, err error) {
 		return mockBucketN, nil
 	}
 	eventConfigs, err = listBucketEvents(minClient, "bucket")
@@ -375,8 +375,8 @@ func TestListBucketEvents(t *testing.T) {
 	}
 
 	////// Test-2 : listBucketEvents() Returns error and see that the error is handled correctly and returned
-	minioGetBucketNotificationMock = func(bucketName string) (bucketNotification minio.BucketNotification, err error) {
-		return minio.BucketNotification{}, errors.New("error")
+	minioGetBucketNotificationMock = func(ctx context.Context, bucketName string) (bucketNotification notification.Configuration, err error) {
+		return notification.Configuration{}, errors.New("error")
 	}
 	_, err = listBucketEvents(minClient, "bucket")
 	if assert.Error(err) {

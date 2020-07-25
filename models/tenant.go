@@ -44,35 +44,17 @@ type Tenant struct {
 	// image
 	Image string `json:"image,omitempty"`
 
-	// instance count
-	InstanceCount int64 `json:"instance_count,omitempty"`
-
 	// name
 	Name string `json:"name,omitempty"`
 
 	// namespace
 	Namespace string `json:"namespace,omitempty"`
 
-	// storage class
-	StorageClass string `json:"storage_class,omitempty"`
-
 	// total size
 	TotalSize int64 `json:"total_size,omitempty"`
 
 	// used size
 	UsedSize int64 `json:"used_size,omitempty"`
-
-	// volume count
-	VolumeCount int64 `json:"volume_count,omitempty"`
-
-	// volume size
-	VolumeSize int64 `json:"volume_size,omitempty"`
-
-	// volumes per server
-	VolumesPerServer int64 `json:"volumes_per_server,omitempty"`
-
-	// zone count
-	ZoneCount int64 `json:"zone_count,omitempty"`
 
 	// zones
 	Zones []*Zone `json:"zones"`

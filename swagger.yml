@@ -39,7 +39,7 @@ paths:
       tags:
         - UserAPI
     post:
-      summary: Login to mcs
+      summary: Login to Console
       operationId: Login
       parameters:
         - name: body
@@ -108,7 +108,7 @@ paths:
 
   /logout:
     post:
-      summary: Logout from mcs.
+      summary: Logout from Console.
       operationId: Logout
       responses:
         200:
@@ -1689,17 +1689,6 @@ definitions:
     properties:
       name:
         type: string
-      zone_count:
-        type: integer
-      instance_count:
-        type: integer
-      volume_size:
-        type: integer
-        format: int64
-      volume_count:
-        type: integer
-      volumes_per_server:
-        type: integer
       creation_date:
         type: string
       currentState:
@@ -1718,8 +1707,6 @@ definitions:
       used_size:
         type: integer
         format: int64
-      storage_class:
-        type: string
 
   tenantList:
     type: object
@@ -1762,8 +1749,8 @@ definitions:
     type: object
     required:
       - name
-      - volume_configuration
       - namespace
+      - zones
     properties:
       name:
         type: string
@@ -1776,24 +1763,13 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/zone"
-      volumes_per_server:
-        type: integer
-      volume_configuration:
-        type: object
-        required:
-          - size
-        properties:
-          size:
-            type: string
-          storage_class:
-            type: string
       mounth_path:
         type: string
       access_key:
         type: string
       secret_key:
         type: string
-      enable_mcs:
+      enable_console:
         type: boolean
         default: true
       enable_ssl:
@@ -1815,13 +1791,26 @@ definitions:
   zone:
     type: object
     required:
-      - name
       - servers
+      - volumes_per_server
+      - volume_configuration
     properties:
       name:
         type: string
       servers:
         type: integer
+      volumes_per_server:
+        type: integer
+        format: int32
+      volume_configuration:
+        type: object
+        required:
+          - size
+        properties:
+          size:
+            type: integer
+          storage_class_name:
+            type: string
 
   resourceQuota:
     type: object

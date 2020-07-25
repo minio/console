@@ -64,7 +64,7 @@ rules:
       - create
       - get
   - apiGroups:
-      - operator.min.io
+      - minio.min.io
     resources:
       - "*"
     verbs:

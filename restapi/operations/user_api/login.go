@@ -48,7 +48,7 @@ func NewLogin(ctx *middleware.Context, handler LoginHandler) *Login {
 
 /*Login swagger:route POST /login UserAPI login
 
-Login to mcs
+Login to Console
 
 */
 type Login struct {
