@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/minio/mcs/cluster"
-	operatorClientset "github.com/minio/minio-operator/pkg/client/clientset/versioned"
+	operatorClientset "github.com/minio/operator/pkg/client/clientset/versioned"
 )
 
 type operatorClientTest struct {

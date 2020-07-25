@@ -19,8 +19,8 @@ package restapi
 import (
 	"context"
 
-	v1 "github.com/minio/minio-operator/pkg/apis/minio.min.io/v1"
-	operatorClientset "github.com/minio/minio-operator/pkg/client/clientset/versioned"
+	v1 "github.com/minio/operator/pkg/apis/minio.min.io/v1"
+	operatorClientset "github.com/minio/operator/pkg/client/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
 )
@@ -38,27 +38,27 @@ type OperatorClient interface {
 // Interface implementation
 //
 // Define the structure of a operator client and define the functions that are actually used
-// from the minio-operator.
+// from the minio operator.
 type operatorClient struct {
 	client *operatorClientset.Clientset
 }
 
-// TenantDelete implements the minio instance delete action from minio-operator
+// TenantDelete implements the minio instance delete action from minio operator
 func (c *operatorClient) TenantDelete(ctx context.Context, namespace string, instanceName string, options metav1.DeleteOptions) error {
 	return c.client.MinioV1().Tenants(namespace).Delete(ctx, instanceName, options)
 }
 
-// TenantGet implements the minio instance get action from minio-operator
+// TenantGet implements the minio instance get action from minio operator
 func (c *operatorClient) TenantGet(ctx context.Context, namespace string, instanceName string, options metav1.GetOptions) (*v1.Tenant, error) {
 	return c.client.MinioV1().Tenants(namespace).Get(ctx, instanceName, options)
 }
 
-// TenantPatch implements the minio instance patch action from minio-operator
+// TenantPatch implements the minio instance patch action from minio operator
 func (c *operatorClient) TenantPatch(ctx context.Context, namespace string, instanceName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
 	return c.client.MinioV1().Tenants(namespace).Patch(ctx, instanceName, pt, data, options)
 }
 
-// TenantList implements the minio instance list action from minio-operator
+// TenantList implements the minio instance list action from minio operator
 func (c *operatorClient) TenantList(ctx context.Context, namespace string, opts metav1.ListOptions) (*v1.TenantList, error) {
 	return c.client.MinioV1().Tenants(namespace).List(ctx, opts)
 }

@@ -21,7 +21,6 @@ require (
 	github.com/minio/minio v0.0.0-20200723003940-b9be841fd222
 	github.com/minio/minio-go/v6 v6.0.58-0.20200612001654-a57fec8037ec
 	github.com/minio/minio-go/v7 v7.0.2-0.20200718235721-f0e2f3ae3678
-	github.com/minio/minio-operator v0.0.0-20200723204759-26762d65da84
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/stretchr/testify v1.6.1
