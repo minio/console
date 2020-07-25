@@ -25,7 +25,7 @@ you can override this using `MCS_K8S_API_SERVER`, ie use the k8s cluster from `k
 
 ## Extract the Service account token and use it with MCS
 
-For local development you can use the jwt associated to the `m3-sa` service account, you can get the token running
+For local development you can use the jwt associated to the `mcs-sa` service account, you can get the token running
 the following command in your terminal:
 
 ```
