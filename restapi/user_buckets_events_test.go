@@ -26,7 +26,7 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/mcs/models"
-	"github.com/minio/minio-go/v6"
+	"github.com/minio/minio-go/v7"
 	"github.com/stretchr/testify/assert"
 )
 

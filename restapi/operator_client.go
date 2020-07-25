@@ -19,8 +19,8 @@ package restapi
 import (
 	"context"
 
-	v1 "github.com/minio/operator/v3/pkg/apis/minio.min.io/v1"
-	operatorClientset "github.com/minio/operator/v3/pkg/client/clientset/versioned"
+	v1 "github.com/minio/operator/pkg/apis/minio.min.io/v1"
+	operatorClientset "github.com/minio/operator/pkg/client/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
 )

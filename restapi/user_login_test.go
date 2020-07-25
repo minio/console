@@ -23,7 +23,7 @@ import (
 
 	"github.com/minio/mcs/pkg/auth"
 	"github.com/minio/mcs/pkg/auth/idp/oauth2"
-	"github.com/minio/minio-go/v6/pkg/credentials"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/minio/minio/cmd/config"
 	"github.com/minio/minio/pkg/madmin"
 	"github.com/stretchr/testify/assert"
