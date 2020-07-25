@@ -20,6 +20,7 @@ require (
 	github.com/minio/mc v0.0.0-20200719194630-c8a3b7bff08c
 	github.com/minio/minio v0.0.0-20200723003940-b9be841fd222
 	github.com/minio/minio-go/v6 v6.0.58-0.20200612001654-a57fec8037ec
+	github.com/minio/operator v3.0.1
 	github.com/minio/minio-go/v7 v7.0.2-0.20200718235721-f0e2f3ae3678
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/satori/go.uuid v1.2.0

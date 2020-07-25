@@ -533,6 +533,8 @@ github.com/minio/minio-go/v7 v7.0.1/go.mod h1:dJ80Mv2HeGkYLH1sqS/ksz07ON6csH3S6J
 github.com/minio/minio-go/v7 v7.0.2-0.20200718235721-f0e2f3ae3678 h1:vV6dhx+KI1YfQTqlYYUa2dh8MUhecITo1XXhFDTl6fU=
 github.com/minio/minio-go/v7 v7.0.2-0.20200718235721-f0e2f3ae3678/go.mod h1:dJ80Mv2HeGkYLH1sqS/ksz07ON6csH3S6JUMSQ2zAns=
 github.com/minio/operator v0.0.0-20200725182825-7f341e47337b h1:BejiiTafabS9YR1UkHwBNxZntHETT19Hp0TI2K7x1Dc=
+github.com/minio/operator v0.0.0-20200725185636-4a625e4fbb31 h1:FzB4mwu62LnVgOFhB7fLu15fAgIh6+1PHJoytkQPEsY=
+github.com/minio/operator v0.0.0-20200725185636-4a625e4fbb31/go.mod h1:G0pMmQFV5b5OrH7/OmVKtPoHzj3SmHNgqDlTew1NM/Y=
 github.com/minio/parquet-go v0.0.0-20200414234858-838cfa8aae61 h1:pUSI/WKPdd77gcuoJkSzhJ4wdS8OMDOsOu99MtpXEQA=
 github.com/minio/parquet-go v0.0.0-20200414234858-838cfa8aae61/go.mod h1:4trzEJ7N1nBTd5Tt7OCZT5SEin+WiAXpdJ/WgPkESA8=
 github.com/minio/sha256-simd v0.1.1 h1:5QHSlgo3nt5yKOJrC7W8w7X+NFl8cMPZm96iu8kKUJU=
