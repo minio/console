@@ -21,8 +21,8 @@ import (
 	"log"
 
 	"github.com/minio/mcs/cluster"
-	"github.com/minio/minio-go/v6/pkg/credentials"
-	operatorClientset "github.com/minio/operator/v3/pkg/client/clientset/versioned"
+	"github.com/minio/minio-go/v7/pkg/credentials"
+	operatorClientset "github.com/minio/operator/pkg/client/clientset/versioned"
 )
 
 // operatorCredentialsProvider is an struct to hold the JWT (service account token)

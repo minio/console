@@ -26,7 +26,7 @@ import (
 	"github.com/minio/mcs/models"
 	"github.com/minio/mcs/restapi/operations"
 	"github.com/minio/mcs/restapi/operations/user_api"
-	"github.com/minio/minio-go/v6"
+	"github.com/minio/minio-go/v7/pkg/notification"
 )
 
 func registerBucketEventsHandlers(api *operations.McsAPI) {
@@ -58,22 +58,22 @@ func registerBucketEventsHandlers(api *operations.McsAPI) {
 // listBucketEvents fetches a list of all events set for a bucket and serializes them for a proper output
 func listBucketEvents(client MinioClient, bucketName string) ([]*models.NotificationConfig, error) {
 	var configs []*models.NotificationConfig
-	bn, err := client.getBucketNotification(bucketName)
+	bn, err := client.getBucketNotification(context.Background(), bucketName)
 	if err != nil {
 		return nil, err
 	}
 
 	// Generate pretty event names from event types
-	prettyEventNames := func(eventsTypes []minio.NotificationEventType) []models.NotificationEventType {
+	prettyEventNames := func(eventsTypes []notification.EventType) []models.NotificationEventType {
 		var result []models.NotificationEventType
 		for _, eventType := range eventsTypes {
 			var eventTypePretty models.NotificationEventType
 			switch eventType {
-			case minio.ObjectAccessedAll:
+			case notification.ObjectAccessedAll:
 				eventTypePretty = models.NotificationEventTypeGet
-			case minio.ObjectCreatedAll:
+			case notification.ObjectCreatedAll:
 				eventTypePretty = models.NotificationEventTypePut
-			case minio.ObjectRemovedAll:
+			case notification.ObjectRemovedAll:
 				eventTypePretty = models.NotificationEventTypeDelete
 			}
 			result = append(result, eventTypePretty)
@@ -82,7 +82,7 @@ func listBucketEvents(client MinioClient, bucketName string) ([]*models.Notifica
 	}
 	// part of implementation taken from minio/mc
 	// s3Client.ListNotificationConfigs()... to serialize configurations
-	getFilters := func(config minio.NotificationConfig) (prefix, suffix string) {
+	getFilters := func(config notification.Config) (prefix, suffix string) {
 		if config.Filter == nil {
 			return
 		}
@@ -97,27 +97,27 @@ func listBucketEvents(client MinioClient, bucketName string) ([]*models.Notifica
 		}
 		return prefix, suffix
 	}
-	for _, config := range bn.TopicConfigs {
-		prefix, suffix := getFilters(config.NotificationConfig)
-		configs = append(configs, &models.NotificationConfig{ID: config.ID,
-			Arn:    swag.String(config.Topic),
-			Events: prettyEventNames(config.Events),
+	for _, embed := range bn.TopicConfigs {
+		prefix, suffix := getFilters(embed.Config)
+		configs = append(configs, &models.NotificationConfig{ID: embed.ID,
+			Arn:    swag.String(embed.Topic),
+			Events: prettyEventNames(embed.Events),
 			Prefix: prefix,
 			Suffix: suffix})
 	}
-	for _, config := range bn.QueueConfigs {
-		prefix, suffix := getFilters(config.NotificationConfig)
-		configs = append(configs, &models.NotificationConfig{ID: config.ID,
-			Arn:    swag.String(config.Queue),
-			Events: prettyEventNames(config.Events),
+	for _, embed := range bn.QueueConfigs {
+		prefix, suffix := getFilters(embed.Config)
+		configs = append(configs, &models.NotificationConfig{ID: embed.ID,
+			Arn:    swag.String(embed.Queue),
+			Events: prettyEventNames(embed.Events),
 			Prefix: prefix,
 			Suffix: suffix})
 	}
-	for _, config := range bn.LambdaConfigs {
-		prefix, suffix := getFilters(config.NotificationConfig)
-		configs = append(configs, &models.NotificationConfig{ID: config.ID,
-			Arn:    swag.String(config.Lambda),
-			Events: prettyEventNames(config.Events),
+	for _, embed := range bn.LambdaConfigs {
+		prefix, suffix := getFilters(embed.Config)
+		configs = append(configs, &models.NotificationConfig{ID: embed.ID,
+			Arn:    swag.String(embed.Lambda),
+			Events: prettyEventNames(embed.Events),
 			Prefix: prefix,
 			Suffix: suffix})
 	}
