@@ -30,8 +30,9 @@ import (
 	"github.com/minio/mcs/pkg/auth"
 	xjwt "github.com/minio/mcs/pkg/auth/jwt"
 	"github.com/minio/mcs/pkg/auth/ldap"
-	"github.com/minio/minio-go/v6"
-	"github.com/minio/minio-go/v6/pkg/credentials"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/minio/minio-go/v7/pkg/notification"
 )
 
 func init() {
@@ -47,9 +48,9 @@ type MinioClient interface {
 	listBucketsWithContext(ctx context.Context) ([]minio.BucketInfo, error)
 	makeBucketWithContext(ctx context.Context, bucketName, location string) error
 	setBucketPolicyWithContext(ctx context.Context, bucketName, policy string) error
-	removeBucket(bucketName string) error
-	getBucketNotification(bucketName string) (bucketNotification minio.BucketNotification, err error)
-	getBucketPolicy(bucketName string) (string, error)
+	removeBucket(ctx context.Context, bucketName string) error
+	getBucketNotification(ctx context.Context, bucketName string) (config notification.Configuration, err error)
+	getBucketPolicy(ctx context.Context, bucketName string) (string, error)
 }
 
 // Interface implementation
@@ -62,32 +63,34 @@ type minioClient struct {
 
 // implements minio.ListBucketsWithContext(ctx)
 func (c minioClient) listBucketsWithContext(ctx context.Context) ([]minio.BucketInfo, error) {
-	return c.client.ListBucketsWithContext(ctx)
+	return c.client.ListBuckets(ctx)
 }
 
 // implements minio.MakeBucketWithContext(ctx, bucketName, location)
 func (c minioClient) makeBucketWithContext(ctx context.Context, bucketName, location string) error {
-	return c.client.MakeBucketWithContext(ctx, bucketName, location)
+	return c.client.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{
+		Region: location,
+	})
 }
 
 // implements minio.SetBucketPolicyWithContext(ctx, bucketName, policy)
 func (c minioClient) setBucketPolicyWithContext(ctx context.Context, bucketName, policy string) error {
-	return c.client.SetBucketPolicyWithContext(ctx, bucketName, policy)
+	return c.client.SetBucketPolicy(ctx, bucketName, policy)
 }
 
 // implements minio.RemoveBucket(bucketName)
-func (c minioClient) removeBucket(bucketName string) error {
-	return c.client.RemoveBucket(bucketName)
+func (c minioClient) removeBucket(ctx context.Context, bucketName string) error {
+	return c.client.RemoveBucket(ctx, bucketName)
 }
 
 // implements minio.GetBucketNotification(bucketName)
-func (c minioClient) getBucketNotification(bucketName string) (bucketNotification minio.BucketNotification, err error) {
-	return c.client.GetBucketNotification(bucketName)
+func (c minioClient) getBucketNotification(ctx context.Context, bucketName string) (config notification.Configuration, err error) {
+	return c.client.GetBucketNotification(ctx, bucketName)
 }
 
 // implements minio.GetBucketPolicy(bucketName)
-func (c minioClient) getBucketPolicy(bucketName string) (string, error) {
-	return c.client.GetBucketPolicy(bucketName)
+func (c minioClient) getBucketPolicy(ctx context.Context, bucketName string) (string, error) {
+	return c.client.GetBucketPolicy(ctx, bucketName)
 }
 
 // MCS3Client interface with all functions to be implemented
@@ -160,8 +163,10 @@ func (s mcsSTSAssumeRole) IsExpired() bool {
 }
 
 // STSClient contains http.client configuration need it by STSAssumeRole
-var STSClient = PrepareSTSClient()
-var MinioEndpoint = getMinIOServer()
+var (
+	STSClient     = PrepareSTSClient()
+	MinioEndpoint = getMinIOServer()
+)
 
 func newMcsCredentials(accessKey, secretKey, location string) (*credentials.Credentials, error) {
 	// Future authentication methods can be added under this switch statement
@@ -229,14 +234,14 @@ func getMcsCredentialsFromSession(claims *models.Principal) *credentials.Credent
 // from the provided jwt
 func newMinioClient(claims *models.Principal) (*minio.Client, error) {
 	creds := getMcsCredentialsFromSession(claims)
-	minioClient, err := minio.NewWithOptions(getMinIOEndpoint(), &minio.Options{
-		Creds:  creds,
-		Secure: getMinIOEndpointIsSecure(),
+	minioClient, err := minio.New(getMinIOEndpoint(), &minio.Options{
+		Creds:     creds,
+		Secure:    getMinIOEndpointIsSecure(),
+		Transport: STSClient.Transport,
 	})
 	if err != nil {
 		return nil, err
 	}
-	minioClient.SetCustomTransport(STSClient.Transport)
 	return minioClient, nil
 }
 
