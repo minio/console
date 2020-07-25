@@ -41,7 +41,7 @@ import (
 	"github.com/minio/mcs/models"
 	"github.com/minio/mcs/restapi/operations"
 	"github.com/minio/mcs/restapi/operations/admin_api"
-	operator "github.com/minio/operator/pkg/apis/minio.min.io/v1"
+	operator "github.com/minio/operator/v3/pkg/apis/minio.min.io/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
