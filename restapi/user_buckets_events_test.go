@@ -19,7 +19,6 @@ package restapi
 import (
 	"context"
 	"fmt"
-	"github.com/minio/minio-go/v7/pkg/notification"
 	"testing"
 
 	"errors"
@@ -27,6 +26,7 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/mcs/models"
+	"github.com/minio/minio-go/v7/pkg/notification"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -354,7 +354,7 @@ func TestListBucketEvents(t *testing.T) {
 			},
 		},
 	}
-	minioGetBucketNotificationMock = func(ctx context.Context,bucketName string) (bucketNotification notification.Configuration, err error) {
+	minioGetBucketNotificationMock = func(ctx context.Context, bucketName string) (bucketNotification notification.Configuration, err error) {
 		return mockBucketN, nil
 	}
 	eventConfigs, err = listBucketEvents(minClient, "bucket")
