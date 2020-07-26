@@ -2,10 +2,17 @@
 # Make sure to check the documentation at http://goreleaser.com
 project_name: console
 
+release:
+   name_template: "Version {{.Version}}"
+   github:
+    owner: minio
+    name: console
+
 before:
   hooks:
     # you may remove this if you don't use vgo
     - go mod tidy
+
 builds:
   -
     goos:
