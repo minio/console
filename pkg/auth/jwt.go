@@ -32,8 +32,8 @@ import (
 
 	jwtgo "github.com/dgrijalva/jwt-go"
 	"github.com/go-openapi/swag"
-	"github.com/minio/mcs/models"
-	xjwt "github.com/minio/mcs/pkg/auth/jwt"
+	"github.com/minio/console/models"
+	xjwt "github.com/minio/console/pkg/auth/jwt"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/pbkdf2"
@@ -46,7 +46,7 @@ var (
 	errClaimsFormat   = errors.New("encrypted jwt claims not in the right format")
 )
 
-// derivedKey is the key used to encrypt the JWT claims, its derived using pbkdf on MCS_PBKDF_PASSPHRASE with MCS_PBKDF_SALT
+// derivedKey is the key used to encrypt the JWT claims, its derived using pbkdf on CONSOLE_PBKDF_PASSPHRASE with CONSOLE_PBKDF_SALT
 var derivedKey = pbkdf2.Key([]byte(xjwt.GetPBKDFPassphrase()), []byte(xjwt.GetPBKDFSalt()), 4096, 32, sha1.New)
 
 // IsJWTValid returns true or false depending if the provided jwt is valid or not
@@ -104,7 +104,7 @@ func NewJWTWithClaimsForClient(credentials *credentials.Value, actions []string,
 			return "", err
 		}
 		claims := xjwt.NewStandardClaims()
-		claims.SetExpiry(time.Now().UTC().Add(xjwt.GetMcsSTSAndJWTDurationTime()))
+		claims.SetExpiry(time.Now().UTC().Add(xjwt.GetConsoleSTSAndJWTDurationTime()))
 		claims.SetSubject(uuid.NewV4().String())
 		claims.SetData(encryptedClaims)
 		claims.SetAudience(audience)
@@ -216,7 +216,7 @@ func GetClaimsFromTokenInRequest(req *http.Request) (*models.Principal, error) {
 	if err != nil {
 		return nil, err
 	}
-	// Perform decryption of the JWT, if MCS is able to decrypt the JWT that means a valid session
+	// Perform decryption of the JWT, if Console is able to decrypt the JWT that means a valid session
 	// was used in the first place to get it
 	claims, err := JWTAuthenticate(*sessionID)
 	if err != nil {

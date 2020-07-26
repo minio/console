@@ -23,12 +23,12 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
-	"github.com/minio/mcs/models"
-	"github.com/minio/mcs/restapi/operations"
-	"github.com/minio/mcs/restapi/operations/admin_api"
+	"github.com/minio/console/models"
+	"github.com/minio/console/restapi/operations"
+	"github.com/minio/console/restapi/operations/admin_api"
 )
 
-func registerAdminArnsHandlers(api *operations.McsAPI) {
+func registerAdminArnsHandlers(api *operations.ConsoleAPI) {
 	// return a list of arns
 	api.AdminAPIArnListHandler = admin_api.ArnListHandlerFunc(func(params admin_api.ArnListParams, session *models.Principal) middleware.Responder {
 		arnsResp, err := getArnsResponse(session)

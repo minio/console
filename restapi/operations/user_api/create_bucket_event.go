@@ -27,7 +27,7 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"github.com/minio/mcs/models"
+	"github.com/minio/console/models"
 )
 
 // CreateBucketEventHandlerFunc turns a function with the right signature into a create bucket event handler

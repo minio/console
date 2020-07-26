@@ -26,13 +26,13 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
-	"github.com/minio/mcs/models"
-	"github.com/minio/mcs/restapi/operations"
-	"github.com/minio/mcs/restapi/operations/admin_api"
+	"github.com/minio/console/models"
+	"github.com/minio/console/restapi/operations"
+	"github.com/minio/console/restapi/operations/admin_api"
 	"github.com/minio/minio/pkg/madmin"
 )
 
-func registerProfilingHandler(api *operations.McsAPI) {
+func registerProfilingHandler(api *operations.ConsoleAPI) {
 	// Start Profiling
 	api.AdminAPIProfilingStartHandler = admin_api.ProfilingStartHandlerFunc(func(params admin_api.ProfilingStartParams, session *models.Principal) middleware.Responder {
 		profilingStartResponse, err := getProfilingStartResponse(session, params.Body)

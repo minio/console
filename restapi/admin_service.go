@@ -23,13 +23,13 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
-	"github.com/minio/mcs/models"
-	"github.com/minio/mcs/restapi/operations"
+	"github.com/minio/console/models"
+	"github.com/minio/console/restapi/operations"
 
-	"github.com/minio/mcs/restapi/operations/admin_api"
+	"github.com/minio/console/restapi/operations/admin_api"
 )
 
-func registerServiceHandlers(api *operations.McsAPI) {
+func registerServiceHandlers(api *operations.ConsoleAPI) {
 	// Restart Service
 	api.AdminAPIRestartServiceHandler = admin_api.RestartServiceHandlerFunc(func(params admin_api.RestartServiceParams, session *models.Principal) middleware.Responder {
 		if err := getRestartServiceResponse(session); err != nil {

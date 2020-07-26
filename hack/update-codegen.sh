@@ -25,7 +25,7 @@ go get -d k8s.io/code-generator/...
 # Checkout code-generator to compatible version
 #(cd $GOPATH/src/k8s.io/code-generator && git checkout origin/release-1.14 -B release-1.14)
 
-REPOSITORY=github.com/minio/mcs
+REPOSITORY=github.com/minio/console
 $GOPATH/src/k8s.io/code-generator/generate-groups.sh all \
   $REPOSITORY/pkg/clientgen $REPOSITORY/pkg/apis networking.gke.io:v1beta2 \
   --go-header-file $SCRIPT_ROOT/hack/header.go.txt

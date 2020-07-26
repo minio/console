@@ -19,7 +19,7 @@ package auth
 import (
 	"context"
 
-	"github.com/minio/mcs/pkg/auth/idp/oauth2"
+	"github.com/minio/console/pkg/auth/idp/oauth2"
 )
 
 // IdentityProviderClient interface with all functions to be implemented

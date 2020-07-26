@@ -9,20 +9,20 @@ A graphical user interface for [MinIO](https://github.com/minio/minio)
 
 ## Setup
 
-All `mcs` needs is a MinIO user with admin privileges and URL pointing to your MinIO deployment.
+All `console` needs is a MinIO user with admin privileges and URL pointing to your MinIO deployment.
 > Note: We don't recommend using MinIO's Operator Credentials
 
-1. Create a user for `mcs` using `mc`. 
+1. Create a user for `console` using `mc`. 
 ```
 $ set +o history
-$ mc admin user add myminio mcs YOURMCSSECRET
+$ mc admin user add myminio console YOURCONSOLESECRET
 $ set -o history
 ```
 
-2. Create a policy for `mcs` with access to everything (for testing and debugging)
+2. Create a policy for `console` with access to everything (for testing and debugging)
 
 ```
-$ cat > mcsAdmin.json << EOF
+$ cat > consoleAdmin.json << EOF
 {
 	"Version": "2012-10-17",
 	"Statement": [{
@@ -45,18 +45,18 @@ $ cat > mcsAdmin.json << EOF
 	]
 }
 EOF
-$ mc admin policy add myminio mcsAdmin mcsAdmin.json
+$ mc admin policy add myminio consoleAdmin consoleAdmin.json
 ```
 
-3. Set the policy for the new `mcs` user
+3. Set the policy for the new `console` user
 
 ```
-$ mc admin policy set myminio mcsAdmin user=mcs
+$ mc admin policy set myminio consoleAdmin user=console
 ```
 
 
 ### Note
-Additionally, you can create policies to limit the privileges for `mcs` users, for example, if you want the user to only have access to dashboard, buckets, notifications and watch page, the policy should look like this:
+Additionally, you can create policies to limit the privileges for `console` users, for example, if you want the user to only have access to dashboard, buckets, notifications and watch page, the policy should look like this:
 ```
 {
 	"Version": "2012-10-17",
@@ -97,34 +97,34 @@ Additionally, you can create policies to limit the privileges for `mcs` users, f
 }
 ```
 
-## Run MCS server
+## Run Console server
 To run the server:
 
 ```
-export MCS_HMAC_JWT_SECRET=YOURJWTSIGNINGSECRET
+export CONSOLE_HMAC_JWT_SECRET=YOURJWTSIGNINGSECRET
 
 #required to encrypt jwet payload
-export MCS_PBKDF_PASSPHRASE=SECRET
+export CONSOLE_PBKDF_PASSPHRASE=SECRET
 
 #required to encrypt jwet payload
-export MCS_PBKDF_SALT=SECRET
+export CONSOLE_PBKDF_SALT=SECRET
 
-export MCS_ACCESS_KEY=mcs
-export MCS_SECRET_KEY=YOURMCSSECRET
-export MCS_MINIO_SERVER=http://localhost:9000
-./mcs server
+export CONSOLE_ACCESS_KEY=console
+export CONSOLE_SECRET_KEY=YOURCONSOLESECRET
+export CONSOLE_MINIO_SERVER=http://localhost:9000
+./console server
 ```
 
-## Connect MCS to a Minio using TLS and a self-signed certificate
+## Connect Console to a Minio using TLS and a self-signed certificate
 
 ```
 ...
-export MCS_MINIO_SERVER_TLS_ROOT_CAS=<certificate_file_name>
-export MCS_MINIO_SERVER=https://localhost:9000
-./mcs server
+export CONSOLE_MINIO_SERVER_TLS_ROOT_CAS=<certificate_file_name>
+export CONSOLE_MINIO_SERVER=https://localhost:9000
+./console server
 ```
 
 You can verify that the apis work by doing the request on `localhost:9090/api/v1/...`
 
-# Contribute to mcs Project
-Please follow mcs [Contributor's Guide](https://github.com/minio/mcs/blob/master/CONTRIBUTING.md)
+# Contribute to console Project
+Please follow console [Contributor's Guide](https://github.com/minio/console/blob/master/CONTRIBUTING.md)

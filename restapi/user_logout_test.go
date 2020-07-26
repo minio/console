@@ -19,9 +19,9 @@ package restapi
 import "testing"
 
 // mock function of Get()
-func (ac mcsCredentialsMock) Expire() {
+func (ac consoleCredentialsMock) Expire() {
 	// Do nothing
-	// Implementing this method for the mcsCredentials interface
+	// Implementing this method for the consoleCredentials interface
 }
 
 func TestLogout(t *testing.T) {

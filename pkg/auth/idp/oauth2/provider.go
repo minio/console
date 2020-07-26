@@ -28,7 +28,7 @@ import (
 	"strings"
 
 	"github.com/coreos/go-oidc"
-	"github.com/minio/mcs/pkg/auth/utils"
+	"github.com/minio/console/pkg/auth/utils"
 	"golang.org/x/crypto/pbkdf2"
 	xoauth2 "golang.org/x/oauth2"
 )
@@ -94,7 +94,7 @@ type Provider struct {
 }
 
 // derivedKey is the key used to compute the HMAC for signing the oauth state parameter
-// its derived using pbkdf on MCS_IDP_HMAC_PASSPHRASE with MCS_IDP_HMAC_SALT
+// its derived using pbkdf on CONSOLE_IDP_HMAC_PASSPHRASE with CONSOLE_IDP_HMAC_SALT
 var derivedKey = pbkdf2.Key([]byte(getPassphraseForIdpHmac()), []byte(getSaltForIdpHmac()), 4096, 32, sha1.New)
 
 // NewOauth2ProviderClient instantiates a new oauth2 client using the configured credentials
@@ -186,7 +186,7 @@ func (client *Provider) VerifyIdentity(ctx context.Context, code, state string) 
 }
 
 // validateOauth2State validates the provided state was originated using the same
-// instance (or one configured using the same secrets) of MCS, this is basically used to prevent CSRF attacks
+// instance (or one configured using the same secrets) of Console, this is basically used to prevent CSRF attacks
 // https://security.stackexchange.com/questions/20187/oauth2-cross-site-request-forgery-and-state-parameter
 func validateOauth2State(state string) bool {
 	// state contains a base64 encoded string that may ends with "==", the browser encodes that to "%3D%3D"

@@ -24,12 +24,12 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
-	"github.com/minio/mcs/models"
-	"github.com/minio/mcs/restapi/operations"
-	"github.com/minio/mcs/restapi/operations/admin_api"
+	"github.com/minio/console/models"
+	"github.com/minio/console/restapi/operations"
+	"github.com/minio/console/restapi/operations/admin_api"
 )
 
-func registerAdminNotificationEndpointsHandlers(api *operations.McsAPI) {
+func registerAdminNotificationEndpointsHandlers(api *operations.ConsoleAPI) {
 	// return a list of notification endpoints
 	api.AdminAPINotificationEndpointListHandler = admin_api.NotificationEndpointListHandlerFunc(func(params admin_api.NotificationEndpointListParams, session *models.Principal) middleware.Responder {
 		notifEndpoints, err := getNotificationEndpointsResponse(session)

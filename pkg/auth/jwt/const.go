@@ -17,8 +17,8 @@
 package jwt
 
 const (
-	McsHmacJWTSecret            = "MCS_HMAC_JWT_SECRET"
-	McsSTSAndJWTDurationSeconds = "MCS_STS_AND_JWT_DURATION_SECONDS"
-	McsPBKDFPassphrase          = "MCS_PBKDF_PASSPHRASE"
-	McsPBKDFSalt                = "MCS_PBKDF_SALT"
+	ConsoleHmacJWTSecret            = "CONSOLE_HMAC_JWT_SECRET"
+	ConsoleSTSAndJWTDurationSeconds = "CONSOLE_STS_AND_JWT_DURATION_SECONDS"
+	ConsolePBKDFPassphrase          = "CONSOLE_PBKDF_PASSPHRASE"
+	ConsolePBKDFSalt                = "CONSOLE_PBKDF_SALT"
 )

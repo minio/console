@@ -27,14 +27,14 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
-	"github.com/minio/mcs/models"
-	"github.com/minio/mcs/restapi/operations"
-	"github.com/minio/mcs/restapi/operations/user_api"
+	"github.com/minio/console/models"
+	"github.com/minio/console/restapi/operations"
+	"github.com/minio/console/restapi/operations/user_api"
 	"github.com/minio/minio-go/v7/pkg/policy"
 	minioIAMPolicy "github.com/minio/minio/pkg/iam/policy"
 )
 
-func registerBucketsHandlers(api *operations.McsAPI) {
+func registerBucketsHandlers(api *operations.ConsoleAPI) {
 	// list buckets
 	api.UserAPIListBucketsHandler = user_api.ListBucketsHandlerFunc(func(params user_api.ListBucketsParams, session *models.Principal) middleware.Responder {
 		listBucketsResponse, err := getListBucketsResponse(session)
@@ -164,7 +164,7 @@ func setBucketAccessPolicy(ctx context.Context, client MinioClient, bucketName s
 	if access != models.BucketAccessPRIVATE && access != models.BucketAccessPUBLIC {
 		return fmt.Errorf("access: `%s` not supported", access)
 	}
-	bucketPolicy := mcsAccess2policyAccess(access)
+	bucketPolicy := consoleAccess2policyAccess(access)
 
 	bucketAccessPolicy := policy.BucketAccessPolicy{Version: minioIAMPolicy.DefaultVersion}
 	bucketAccessPolicy.Statements = policy.SetPolicy(bucketAccessPolicy.Statements,
@@ -250,7 +250,7 @@ func getBucketInfo(client MinioClient, bucketName string) (*models.Bucket, error
 		}
 		policyAccess = policy.GetPolicy(p.Statements, bucketName, "")
 	}
-	bucketAccess := policyAccess2mcsAccess(policyAccess)
+	bucketAccess := policyAccess2consoleAccess(policyAccess)
 	if bucketAccess == models.BucketAccessPRIVATE && policyStr != "" {
 		bucketAccess = models.BucketAccessCUSTOM
 	}
@@ -283,8 +283,8 @@ func getBucketInfoResponse(session *models.Principal, params user_api.BucketInfo
 
 }
 
-// policyAccess2mcsAccess gets the equivalent of policy.BucketPolicy to models.BucketAccess
-func policyAccess2mcsAccess(bucketPolicy policy.BucketPolicy) (bucketAccess models.BucketAccess) {
+// policyAccess2consoleAccess gets the equivalent of policy.BucketPolicy to models.BucketAccess
+func policyAccess2consoleAccess(bucketPolicy policy.BucketPolicy) (bucketAccess models.BucketAccess) {
 	switch bucketPolicy {
 	case policy.BucketPolicyReadWrite:
 		bucketAccess = models.BucketAccessPUBLIC
@@ -296,8 +296,8 @@ func policyAccess2mcsAccess(bucketPolicy policy.BucketPolicy) (bucketAccess mode
 	return bucketAccess
 }
 
-// mcsAccess2policyAccess gets the equivalent of models.BucketAccess to policy.BucketPolicy
-func mcsAccess2policyAccess(bucketAccess models.BucketAccess) (bucketPolicy policy.BucketPolicy) {
+// consoleAccess2policyAccess gets the equivalent of models.BucketAccess to policy.BucketPolicy
+func consoleAccess2policyAccess(bucketAccess models.BucketAccess) (bucketPolicy policy.BucketPolicy) {
 	switch bucketAccess {
 	case models.BucketAccessPUBLIC:
 		bucketPolicy = policy.BucketPolicyReadWrite

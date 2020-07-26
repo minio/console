@@ -21,7 +21,7 @@ package externalversions
 import (
 	"fmt"
 
-	v1beta2 "github.com/minio/mcs/pkg/apis/networking.gke.io/v1beta2"
+	v1beta2 "github.com/minio/console/pkg/apis/networking.gke.io/v1beta2"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
 	cache "k8s.io/client-go/tools/cache"
 )

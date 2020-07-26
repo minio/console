@@ -23,9 +23,9 @@ import (
 	sync "sync"
 	time "time"
 
-	versioned "github.com/minio/mcs/pkg/clientgen/clientset/versioned"
-	internalinterfaces "github.com/minio/mcs/pkg/clientgen/informers/externalversions/internalinterfaces"
-	networkinggkeio "github.com/minio/mcs/pkg/clientgen/informers/externalversions/networking.gke.io"
+	versioned "github.com/minio/console/pkg/clientgen/clientset/versioned"
+	internalinterfaces "github.com/minio/console/pkg/clientgen/informers/externalversions/internalinterfaces"
+	networkinggkeio "github.com/minio/console/pkg/clientgen/informers/externalversions/networking.gke.io"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"

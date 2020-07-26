@@ -1,6 +1,6 @@
 node_modules/
 dist/
 target/
-mcs
-!mcs/
+console
+!console/
 portal-ui/node_modules/

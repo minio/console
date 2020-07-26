@@ -21,7 +21,7 @@ package versioned
 import (
 	"fmt"
 
-	networkingv1beta2 "github.com/minio/mcs/pkg/clientgen/clientset/versioned/typed/networking.gke.io/v1beta2"
+	networkingv1beta2 "github.com/minio/console/pkg/clientgen/clientset/versioned/typed/networking.gke.io/v1beta2"
 	discovery "k8s.io/client-go/discovery"
 	rest "k8s.io/client-go/rest"
 	flowcontrol "k8s.io/client-go/util/flowcontrol"

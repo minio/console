@@ -31,7 +31,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/minio/mcs/models"
+	"github.com/minio/console/models"
 )
 
 // NewSetPolicyParams creates a new SetPolicyParams object

@@ -21,17 +21,17 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
-	"github.com/minio/mcs/models"
-	"github.com/minio/mcs/pkg/acl"
-	"github.com/minio/mcs/restapi/operations"
-	"github.com/minio/mcs/restapi/operations/user_api"
+	"github.com/minio/console/models"
+	"github.com/minio/console/pkg/acl"
+	"github.com/minio/console/restapi/operations"
+	"github.com/minio/console/restapi/operations/user_api"
 )
 
 var (
 	errorGenericInvalidSession = errors.New("invalid session")
 )
 
-func registerSessionHandlers(api *operations.McsAPI) {
+func registerSessionHandlers(api *operations.ConsoleAPI) {
 	// session check
 	api.UserAPISessionCheckHandler = user_api.SessionCheckHandlerFunc(func(params user_api.SessionCheckParams, session *models.Principal) middleware.Responder {
 		sessionResp, err := getSessionResponse(session)

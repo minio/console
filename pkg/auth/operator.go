@@ -20,7 +20,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/minio/mcs/cluster"
+	"github.com/minio/console/cluster"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	operatorClientset "github.com/minio/operator/pkg/client/clientset/versioned"
 )
@@ -30,7 +30,7 @@ type operatorCredentialsProvider struct {
 	serviceAccountJWT string
 }
 
-// Implementing the interfaces of the minio Provider, we use this to leverage on the existing mcs Authentication flow
+// Implementing the interfaces of the minio Provider, we use this to leverage on the existing console Authentication flow
 func (s operatorCredentialsProvider) Retrieve() (credentials.Value, error) {
 	return credentials.Value{
 		AccessKeyID:     "",
@@ -65,7 +65,7 @@ func (c *operatorClient) Authenticate(ctx context.Context) ([]byte, error) {
 }
 
 // isServiceAccountTokenValid will make an authenticated request against kubernetes api, if the
-// request success means the provided jwt its a valid service account token and the MCS user can use it for future
+// request success means the provided jwt its a valid service account token and the console user can use it for future
 // requests until it expires
 func isServiceAccountTokenValid(ctx context.Context, operatorClient OperatorClient) bool {
 	_, err := operatorClient.Authenticate(ctx)
@@ -76,8 +76,8 @@ func isServiceAccountTokenValid(ctx context.Context, operatorClient OperatorClie
 	return true
 }
 
-// GetMcsCredentialsForOperator will validate the provided JWT (service account token) and return it in the form of credentials.Credentials
-func GetMcsCredentialsForOperator(jwt string) (*credentials.Credentials, error) {
+// GetConsoleCredentialsForOperator will validate the provided JWT (service account token) and return it in the form of credentials.Credentials
+func GetConsoleCredentialsForOperator(jwt string) (*credentials.Credentials, error) {
 	ctx := context.Background()
 	opClientClientSet, err := cluster.OperatorClient(jwt)
 	if err != nil {

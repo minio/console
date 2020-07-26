@@ -20,7 +20,7 @@ make swagger-gen
 
 This will update all the necessary code.
 
-`./restapi/configure_mcs.go` is a file that contains the handlers to be used by the application, here is the only place where we need to update our code to support the new apis. This file is not affected when running the swagger generator and it is safe to edit.
+`./restapi/configure_console.go` is a file that contains the handlers to be used by the application, here is the only place where we need to update our code to support the new apis. This file is not affected when running the swagger generator and it is safe to edit.
 
 ## Unit Tests
 `./restapi/handlers_test.go` needs to be updated with the proper tests for the new api.
@@ -47,7 +47,7 @@ $ git push origin my-new-feature
 Pull requests can be created via GitHub. Refer to [this document](https://help.github.com/articles/creating-a-pull-request/) for detailed steps on how to create a pull request. After a Pull Request gets peer reviewed and approved, it will be merged.
 
 ## FAQs
-### How does ``mcs`` manages dependencies?
+### How does ``console`` manages dependencies?
 ``MinIO`` uses `go mod` to manage its dependencies.
 - Run `go get foo/bar` in the source folder to add the dependency to `go.mod` file.
 
@@ -55,5 +55,5 @@ To remove a dependency
 - Edit your code and remove the import reference.
 - Run `go mod tidy` in the source folder to remove dependency from `go.mod` file.
 
-### What are the coding guidelines for mcs?
-``mcs`` is fully conformant with Golang style. Refer: [Effective Go](https://github.com/golang/go/wiki/CodeReviewComments) article from Golang project. If you observe offending code, please feel free to send a pull request or ping us on [Slack](https://slack.min.io).
+### What are the coding guidelines for console?
+``console`` is fully conformant with Golang style. Refer: [Effective Go](https://github.com/golang/go/wiki/CodeReviewComments) article from Golang project. If you observe offending code, please feel free to send a pull request or ping us on [Slack](https://slack.min.io).

@@ -19,7 +19,7 @@ limitations under the License.
 package v1beta2
 
 import (
-	internalinterfaces "github.com/minio/mcs/pkg/clientgen/informers/externalversions/internalinterfaces"
+	internalinterfaces "github.com/minio/console/pkg/clientgen/informers/externalversions/internalinterfaces"
 )
 
 // Interface provides access to all the informers in this group version.

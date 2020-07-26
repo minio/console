@@ -18,27 +18,27 @@ package restapi
 
 import (
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/minio/mcs/models"
-	"github.com/minio/mcs/restapi/operations"
-	"github.com/minio/mcs/restapi/operations/user_api"
+	"github.com/minio/console/models"
+	"github.com/minio/console/restapi/operations"
+	"github.com/minio/console/restapi/operations/user_api"
 )
 
-func registerLogoutHandlers(api *operations.McsAPI) {
-	// logout from mcs
+func registerLogoutHandlers(api *operations.ConsoleAPI) {
+	// logout from console
 	api.UserAPILogoutHandler = user_api.LogoutHandlerFunc(func(params user_api.LogoutParams, session *models.Principal) middleware.Responder {
 		getLogoutResponse(session)
 		return user_api.NewLogoutOK()
 	})
 }
 
-// logout() call Expire() on the provided mcsCredentials
-func logout(credentials MCSCredentials) {
+// logout() call Expire() on the provided consoleCredentials
+func logout(credentials ConsoleCredentials) {
 	credentials.Expire()
 }
 
 // getLogoutResponse performs logout() and returns nil or error
 func getLogoutResponse(session *models.Principal) {
-	creds := getMcsCredentialsFromSession(session)
-	credentials := mcsCredentials{mcsCredentials: creds}
+	creds := getConsoleCredentialsFromSession(session)
+	credentials := consoleCredentials{consoleCredentials: creds}
 	logout(credentials)
 }

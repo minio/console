@@ -19,29 +19,29 @@
 package oauth2
 
 import (
-	"github.com/minio/mcs/pkg/auth/utils"
+	"github.com/minio/console/pkg/auth/utils"
 	"github.com/minio/minio/pkg/env"
 )
 
 func GetIdpURL() string {
-	return env.Get(McsIdpURL, "")
+	return env.Get(ConsoleIdpURL, "")
 }
 
 func GetIdpClientID() string {
-	return env.Get(McsIdpClientID, "")
+	return env.Get(ConsoleIdpClientID, "")
 }
 
 func GetIdpSecret() string {
-	return env.Get(McsIdpSecret, "")
+	return env.Get(ConsoleIdpSecret, "")
 }
 
 // Public endpoint used by the identity oidcProvider when redirecting the user after identity verification
 func GetIdpCallbackURL() string {
-	return env.Get(McsIdpCallbackURL, "")
+	return env.Get(ConsoleIdpCallbackURL, "")
 }
 
 func GetIdpAdminRoles() string {
-	return env.Get(McsIdpAdminRoles, "")
+	return env.Get(ConsoleIdpAdminRoles, "")
 }
 
 func IsIdpEnabled() bool {
@@ -55,17 +55,17 @@ var defaultPassphraseForIdpHmac = utils.RandomCharString(64)
 
 // GetPassphraseForIdpHmac returns passphrase for the pbkdf2 function used to sign the oauth2 state parameter
 func getPassphraseForIdpHmac() string {
-	return env.Get(McsIdpHmacPassphrase, defaultPassphraseForIdpHmac)
+	return env.Get(ConsoleIdpHmacPassphrase, defaultPassphraseForIdpHmac)
 }
 
 var defaultSaltForIdpHmac = utils.RandomCharString(64)
 
 // GetSaltForIdpHmac returns salt for the pbkdf2 function used to sign the oauth2 state parameter
 func getSaltForIdpHmac() string {
-	return env.Get(McsIdpHmacSalt, defaultSaltForIdpHmac)
+	return env.Get(ConsoleIdpHmacSalt, defaultSaltForIdpHmac)
 }
 
 // GetSaltForIdpHmac returns the policy to be assigned to the users authenticating via an IDP
 func GetIDPPolicyForUser() string {
-	return env.Get(McsIdpPolicyUser, "mcsAdmin")
+	return env.Get(ConsoleIdpPolicyUser, "consoleAdmin")
 }

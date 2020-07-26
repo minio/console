@@ -27,9 +27,9 @@ var (
 	errInvalidCredentials = errors.New("invalid Credentials")
 )
 
-// GetMcsCredentialsFromLDAP authenticates the user against MinIO when the LDAP integration is enabled
+// GetConsoleCredentialsFromLDAP authenticates the user against MinIO when the LDAP integration is enabled
 // if the authentication succeed *credentials.Credentials object is returned and we continue with the normal STSAssumeRole flow
-func GetMcsCredentialsFromLDAP(endpoint, ldapUser, ldapPassword string) (*credentials.Credentials, error) {
+func GetConsoleCredentialsFromLDAP(endpoint, ldapUser, ldapPassword string) (*credentials.Credentials, error) {
 	creds, err := credentials.NewLDAPIdentity(endpoint, ldapUser, ldapPassword)
 	if err != nil {
 		log.Println("LDAP authentication error: ", err)

@@ -23,15 +23,15 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
-	"github.com/minio/mcs/restapi/operations"
+	"github.com/minio/console/restapi/operations"
 	"github.com/minio/minio/pkg/madmin"
 
-	"github.com/minio/mcs/restapi/operations/admin_api"
+	"github.com/minio/console/restapi/operations/admin_api"
 
-	"github.com/minio/mcs/models"
+	"github.com/minio/console/models"
 )
 
-func registerGroupsHandlers(api *operations.McsAPI) {
+func registerGroupsHandlers(api *operations.ConsoleAPI) {
 	// List Groups
 	api.AdminAPIListGroupsHandler = admin_api.ListGroupsHandlerFunc(func(params admin_api.ListGroupsParams, session *models.Principal) middleware.Responder {
 		listGroupsResponse, err := getListGroupsResponse(session)

@@ -21,30 +21,30 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/minio/mcs/pkg/auth"
-	"github.com/minio/mcs/pkg/auth/idp/oauth2"
+	"github.com/minio/console/pkg/auth"
+	"github.com/minio/console/pkg/auth/idp/oauth2"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/minio/minio/cmd/config"
 	"github.com/minio/minio/pkg/madmin"
 	"github.com/stretchr/testify/assert"
 )
 
-// Define a mock struct of MCSCredentials interface implementation
-type mcsCredentialsMock struct{}
+// Define a mock struct of ConsoleCredentials interface implementation
+type consoleCredentialsMock struct{}
 
 // Common mocks
-var mcsCredentialsGetMock func() (credentials.Value, error)
+var consoleCredentialsGetMock func() (credentials.Value, error)
 
 // mock function of Get()
-func (ac mcsCredentialsMock) Get() (credentials.Value, error) {
-	return mcsCredentialsGetMock()
+func (ac consoleCredentialsMock) Get() (credentials.Value, error) {
+	return consoleCredentialsGetMock()
 }
 
 func TestLogin(t *testing.T) {
 	funcAssert := assert.New(t)
-	mcsCredentials := mcsCredentialsMock{}
-	// Test Case 1: Valid mcsCredentials
-	mcsCredentialsGetMock = func() (credentials.Value, error) {
+	consoleCredentials := consoleCredentialsMock{}
+	// Test Case 1: Valid consoleCredentials
+	consoleCredentialsGetMock = func() (credentials.Value, error) {
 		return credentials.Value{
 			AccessKeyID:     "fakeAccessKeyID",
 			SecretAccessKey: "fakeSecretAccessKey",
@@ -52,15 +52,15 @@ func TestLogin(t *testing.T) {
 			SignerType:      0,
 		}, nil
 	}
-	jwt, err := login(mcsCredentials, []string{""})
+	jwt, err := login(consoleCredentials, []string{""})
 	funcAssert.NotEmpty(jwt, "JWT was returned empty")
 	funcAssert.Nil(err, "error creating a session")
 
 	// Test Case 2: Invalid credentials
-	mcsCredentialsGetMock = func() (credentials.Value, error) {
+	consoleCredentialsGetMock = func() (credentials.Value, error) {
 		return credentials.Value{}, errors.New("")
 	}
-	_, err = login(mcsCredentials, []string{""})
+	_, err = login(consoleCredentials, []string{""})
 	funcAssert.NotNil(err, "not error returned creating a session")
 }
 

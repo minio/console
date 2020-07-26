@@ -19,9 +19,9 @@ limitations under the License.
 package fake
 
 import (
-	clientset "github.com/minio/mcs/pkg/clientgen/clientset/versioned"
-	networkingv1beta2 "github.com/minio/mcs/pkg/clientgen/clientset/versioned/typed/networking.gke.io/v1beta2"
-	fakenetworkingv1beta2 "github.com/minio/mcs/pkg/clientgen/clientset/versioned/typed/networking.gke.io/v1beta2/fake"
+	clientset "github.com/minio/console/pkg/clientgen/clientset/versioned"
+	networkingv1beta2 "github.com/minio/console/pkg/clientgen/clientset/versioned/typed/networking.gke.io/v1beta2"
+	fakenetworkingv1beta2 "github.com/minio/console/pkg/clientgen/clientset/versioned/typed/networking.gke.io/v1beta2/fake"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/discovery"

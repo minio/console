@@ -27,7 +27,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"github.com/minio/mcs/models"
+	"github.com/minio/console/models"
 )
 
 // DeleteBucketNoContentCode is the HTTP code returned for type DeleteBucketNoContent

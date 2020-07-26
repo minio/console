@@ -33,19 +33,19 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 
-	"github.com/minio/mcs/cluster"
+	"github.com/minio/console/cluster"
 	madmin "github.com/minio/minio/pkg/madmin"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
-	"github.com/minio/mcs/models"
-	"github.com/minio/mcs/restapi/operations"
-	"github.com/minio/mcs/restapi/operations/admin_api"
+	"github.com/minio/console/models"
+	"github.com/minio/console/restapi/operations"
+	"github.com/minio/console/restapi/operations/admin_api"
 	operator "github.com/minio/operator/pkg/apis/minio.min.io/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func registerTenantHandlers(api *operations.McsAPI) {
+func registerTenantHandlers(api *operations.ConsoleAPI) {
 	// Add Tenant
 	api.AdminAPICreateTenantHandler = admin_api.CreateTenantHandlerFunc(func(params admin_api.CreateTenantParams, session *models.Principal) middleware.Responder {
 		resp, err := getTenantCreatedResponse(session, params)
@@ -406,9 +406,9 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	if params.Body.EnableSsl != nil {
 		enableSSL = *params.Body.EnableSsl
 	}
-	enableMCS := true
+	enableConsole := true
 	if params.Body.EnableConsole != nil {
-		enableMCS = *params.Body.EnableConsole
+		enableConsole = *params.Body.EnableConsole
 	}
 
 	// TODO: Calculate this ourselves?
@@ -433,22 +433,22 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 	// optionals are set below
 
-	if enableMCS {
-		mcsSelector := fmt.Sprintf("%s-mcs", *params.Body.Name)
+	if enableConsole {
+		consoleSelector := fmt.Sprintf("%s-console", *params.Body.Name)
 
-		mcsSecretName := fmt.Sprintf("%s-secret", mcsSelector)
+		consoleSecretName := fmt.Sprintf("%s-secret", consoleSelector)
 		imm := true
 		instanceSecret := corev1.Secret{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: mcsSecretName,
+				Name: consoleSecretName,
 			},
 			Immutable: &imm,
 			Data: map[string][]byte{
-				"MCS_HMAC_JWT_SECRET":  []byte(RandomCharString(16)),
-				"MCS_PBKDF_PASSPHRASE": []byte(RandomCharString(16)),
-				"MCS_PBKDF_SALT":       []byte(RandomCharString(8)),
-				"MCS_ACCESS_KEY":       []byte(RandomCharString(16)),
-				"MCS_SECRET_KEY":       []byte(RandomCharString(32)),
+				"CONSOLE_HMAC_JWT_SECRET":  []byte(RandomCharString(16)),
+				"CONSOLE_PBKDF_PASSPHRASE": []byte(RandomCharString(16)),
+				"CONSOLE_PBKDF_SALT":       []byte(RandomCharString(8)),
+				"CONSOLE_ACCESS_KEY":       []byte(RandomCharString(16)),
+				"CONSOLE_SECRET_KEY":       []byte(RandomCharString(32)),
 			},
 		}
 		_, err = clientset.CoreV1().Secrets(ns).Create(context.Background(), &instanceSecret, metav1.CreateOptions{})
@@ -456,11 +456,11 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			return nil, err
 		}
 
-		const consoleVersion = "minio/mcs:v0.2.1"
+		const consoleVersion = "minio/console:v0.3.0"
 		minInst.Spec.Console = &operator.ConsoleConfiguration{
 			Replicas:      2,
 			Image:         consoleVersion,
-			ConsoleSecret: &corev1.LocalObjectReference{Name: mcsSecretName},
+			ConsoleSecret: &corev1.LocalObjectReference{Name: consoleSecretName},
 		}
 	}
 

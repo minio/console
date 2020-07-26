@@ -20,17 +20,17 @@ import (
 	"context"
 	"log"
 
-	"github.com/minio/mcs/cluster"
+	"github.com/minio/console/cluster"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
-	"github.com/minio/mcs/models"
-	"github.com/minio/mcs/restapi/operations"
-	"github.com/minio/mcs/restapi/operations/admin_api"
+	"github.com/minio/console/models"
+	"github.com/minio/console/restapi/operations"
+	"github.com/minio/console/restapi/operations/admin_api"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func registerResourceQuotaHandlers(api *operations.McsAPI) {
+func registerResourceQuotaHandlers(api *operations.ConsoleAPI) {
 	// Get Resource Quota
 	api.AdminAPIGetResourceQuotaHandler = admin_api.GetResourceQuotaHandlerFunc(func(params admin_api.GetResourceQuotaParams, session *models.Principal) middleware.Responder {
 		resp, err := getResourceQuotaResponse(session, params)

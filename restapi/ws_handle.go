@@ -25,8 +25,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/gorilla/websocket"
-	"github.com/minio/mcs/models"
-	"github.com/minio/mcs/pkg/auth"
+	"github.com/minio/console/models"
+	"github.com/minio/console/pkg/auth"
 )
 
 var upgrader = websocket.Upgrader{
@@ -39,8 +39,8 @@ const (
 	wsBasePath = "/ws"
 )
 
-// MCSWebsocketAdmin interface of a Websocket Client
-type MCSWebsocketAdmin interface {
+// ConsoleWebsocketAdmin interface of a Websocket Client
+type ConsoleWebsocketAdmin interface {
 	trace()
 	console()
 }
@@ -52,8 +52,8 @@ type wsAdminClient struct {
 	client MinioAdmin
 }
 
-// MCSWebsocket interface of a Websocket Client
-type MCSWebsocket interface {
+// ConsoleWebsocket interface of a Websocket Client
+type ConsoleWebsocket interface {
 	watch(options watchOptions)
 	heal(opts healOptions)
 }
@@ -100,7 +100,7 @@ func (c wsConn) readMessage() (messageType int, p []byte, err error) {
 // Request should come like ws://<host>:<port>/ws/<api>
 func serveWS(w http.ResponseWriter, req *http.Request) {
 	// Perform authentication before upgrading to a Websocket Connection
-	// authenticate WS connection with MCS
+	// authenticate WS connection with Console
 	session, err := auth.GetClaimsFromTokenInRequest(req)
 	if err != nil {
 		log.Print("error on ws authentication: ", err)
@@ -181,7 +181,7 @@ func newWebSocketAdminClient(conn *websocket.Conn, autClaims *models.Principal) 
 	return wsAdminClient, nil
 }
 
-// newWebSocketS3Client returns a wsAdminClient authenticated as MCS admin
+// newWebSocketS3Client returns a wsAdminClient authenticated as Console admin
 func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, bucketName string) (*wsS3Client, error) {
 	// Only start Websocket Interaction after user has been
 	// authenticated with MinIO
