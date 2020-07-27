@@ -117,6 +117,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIGetResourceQuotaHandler: admin_api.GetResourceQuotaHandlerFunc(func(params admin_api.GetResourceQuotaParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetResourceQuota has not yet been implemented")
 		}),
+		AdminAPIGetTenantUsageHandler: admin_api.GetTenantUsageHandlerFunc(func(params admin_api.GetTenantUsageParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.GetTenantUsage has not yet been implemented")
+		}),
 		AdminAPIGetUserInfoHandler: admin_api.GetUserInfoHandlerFunc(func(params admin_api.GetUserInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetUserInfo has not yet been implemented")
 		}),
@@ -304,6 +307,8 @@ type ConsoleAPI struct {
 	AdminAPIDeleteTenantHandler admin_api.DeleteTenantHandler
 	// AdminAPIGetResourceQuotaHandler sets the operation handler for the get resource quota operation
 	AdminAPIGetResourceQuotaHandler admin_api.GetResourceQuotaHandler
+	// AdminAPIGetTenantUsageHandler sets the operation handler for the get tenant usage operation
+	AdminAPIGetTenantUsageHandler admin_api.GetTenantUsageHandler
 	// AdminAPIGetUserInfoHandler sets the operation handler for the get user info operation
 	AdminAPIGetUserInfoHandler admin_api.GetUserInfoHandler
 	// AdminAPIGroupInfoHandler sets the operation handler for the group info operation
@@ -498,6 +503,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIGetResourceQuotaHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetResourceQuotaHandler")
+	}
+	if o.AdminAPIGetTenantUsageHandler == nil {
+		unregistered = append(unregistered, "admin_api.GetTenantUsageHandler")
 	}
 	if o.AdminAPIGetUserInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetUserInfoHandler")
@@ -773,6 +781,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/namespaces/{namespace}/resourcequotas/{resource-quota-name}"] = admin_api.NewGetResourceQuota(o.context, o.AdminAPIGetResourceQuotaHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/usage"] = admin_api.NewGetTenantUsage(o.context, o.AdminAPIGetTenantUsageHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

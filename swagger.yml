@@ -1144,6 +1144,31 @@ paths:
       tags:
         - AdminAPI
 
+  /namespaces/{namespace}/tenants/{tenant}/usage:
+    get:
+      summary: Get Usage For The Tenant
+      operationId: GetTenantUsage
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/tenantUsage"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
   /namespaces/{namespace}/resourcequotas/{resource-quota-name}:
     get:
       summary: Get Resource Quota
@@ -1704,6 +1729,10 @@ definitions:
       total_size:
         type: integer
         format: int64
+
+  tenantUsage:
+    type: object
+    properties:
       used_size:
         type: integer
         format: int64

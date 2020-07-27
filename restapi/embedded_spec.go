@@ -1036,6 +1036,43 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/usage": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get Usage For The Tenant",
+        "operationId": "GetTenantUsage",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/tenantUsage"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/zones": {
       "post": {
         "tags": [
@@ -2568,10 +2605,6 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
-        "used_size": {
-          "type": "integer",
-          "format": "int64"
-        },
         "zones": {
           "type": "array",
           "items": {
@@ -2606,6 +2639,15 @@ func init() {
         },
         "zone_count": {
           "type": "integer"
+        }
+      }
+    },
+    "tenantUsage": {
+      "type": "object",
+      "properties": {
+        "used_size": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -3729,6 +3771,43 @@ func init() {
         "responses": {
           "204": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/usage": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get Usage For The Tenant",
+        "operationId": "GetTenantUsage",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/tenantUsage"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -5285,10 +5364,6 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
-        "used_size": {
-          "type": "integer",
-          "format": "int64"
-        },
         "zones": {
           "type": "array",
           "items": {
@@ -5323,6 +5398,15 @@ func init() {
         },
         "zone_count": {
           "type": "integer"
+        }
+      }
+    },
+    "tenantUsage": {
+      "type": "object",
+      "properties": {
+        "used_size": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

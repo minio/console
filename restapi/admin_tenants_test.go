@@ -315,13 +315,12 @@ func Test_TenantInfo(t *testing.T) {
 				},
 				Namespace: "minio-ns",
 				Image:     "minio/minio:RELEASE.2020-06-14T18-32-17Z",
-				UsedSize:  int64(1024),
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := getTenantInfo(tt.args.minioTenant, tt.args.tenantInfo)
+			got := getTenantInfo(tt.args.minioTenant)
 			if !reflect.DeepEqual(got, tt.want) {
 				ji, _ := json.Marshal(got)
 				vi, _ := json.Marshal(tt.want)
