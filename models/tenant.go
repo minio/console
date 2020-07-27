@@ -53,9 +53,6 @@ type Tenant struct {
 	// total size
 	TotalSize int64 `json:"total_size,omitempty"`
 
-	// used size
-	UsedSize int64 `json:"used_size,omitempty"`
-
 	// zones
 	Zones []*Zone `json:"zones"`
 }

@@ -112,6 +112,15 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 		}
 		return admin_api.NewTenantAddZoneCreated()
 	})
+
+	api.AdminAPIGetTenantUsageHandler = admin_api.GetTenantUsageHandlerFunc(func(params admin_api.GetTenantUsageParams, session *models.Principal) middleware.Responder {
+		payload, err := getTenantUsageResponse(session, params)
+		if err != nil {
+			log.Println(err)
+			return admin_api.NewGetTenantUsageDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String("Unable to get tenant usage")})
+		}
+		return admin_api.NewGetTenantUsageOK().WithPayload(payload)
+	})
 }
 
 // deleteTenantAction performs the actions of deleting a tenant
@@ -178,7 +187,7 @@ func getTenant(ctx context.Context, operatorClient OperatorClient, namespace, te
 	return minInst, nil
 }
 
-func getTenantInfo(tenant *operator.Tenant, tenantInfo *usageInfo) *models.Tenant {
+func getTenantInfo(tenant *operator.Tenant) *models.Tenant {
 	var instanceCount int64
 	var volumeCount int64
 	for _, zone := range tenant.Spec.Zones {
@@ -217,7 +226,6 @@ func getTenantInfo(tenant *operator.Tenant, tenantInfo *usageInfo) *models.Tenan
 		Zones:        zones,
 		Namespace:    tenant.ObjectMeta.Namespace,
 		Image:        tenant.Spec.Image,
-		UsedSize:     tenantInfo.DisksUsage,
 	}
 }
 
@@ -230,17 +238,9 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 	if err != nil {
 		return nil, err
 	}
-	clientset, err := cluster.K8sClient(session.SessionToken)
-	if err != nil {
-		log.Println("error getting k8sClient:", err)
-		return nil, err
-	}
 
 	opClient := &operatorClient{
 		client: opClientClientSet,
-	}
-	k8sClient := &k8sClient{
-		client: clientset,
 	}
 
 	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
@@ -248,37 +248,8 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 		log.Println("error getting minioTenant:", err)
 		return nil, err
 	}
-	tenantScheme := getTenantScheme(minTenant)
 
-	svcName := minTenant.Spec.ServiceName
-	if svcName == "" {
-		svcName = minTenant.Name
-		// TODO:
-		// 1 get tenant services
-		// 2 filter out cluster ip svc
-	}
-
-	mAdmin, err := getTenantAdminClient(
-		ctx,
-		k8sClient,
-		params.Namespace,
-		params.Tenant,
-		svcName,
-		tenantScheme)
-	if err != nil {
-		log.Println("error getting tenant's admin client:", err)
-		return nil, err
-	}
-	// create a minioClient interface implementation
-	// defining the client to be used
-	adminClient := adminClient{client: mAdmin}
-	// serialize output
-	adminInfo, err := getAdminInfo(ctx, adminClient)
-	if err != nil {
-		log.Println("error getting admin info:", err)
-		return nil, err
-	}
-	info := getTenantInfo(minTenant, adminInfo)
+	info := getTenantInfo(minTenant)
 	return info, nil
 }
 
@@ -683,4 +654,66 @@ func getTenantAddZoneResponse(session *models.Principal, params admin_api.Tenant
 		return err
 	}
 	return nil
+}
+
+// getTenantUsageResponse returns the usage of a tenant
+func getTenantUsageResponse(session *models.Principal, params admin_api.GetTenantUsageParams) (*models.TenantUsage, error) {
+	// 5 seconds timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
+	if err != nil {
+		return nil, err
+	}
+	clientset, err := cluster.K8sClient(session.SessionToken)
+	if err != nil {
+		log.Println("error getting k8sClient:", err)
+		return nil, err
+	}
+
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+	k8sClient := &k8sClient{
+		client: clientset,
+	}
+
+	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
+	if err != nil {
+		log.Println("error getting minioTenant:", err)
+		return nil, err
+	}
+	tenantScheme := getTenantScheme(minTenant)
+
+	svcName := minTenant.Spec.ServiceName
+	if svcName == "" {
+		svcName = minTenant.Name
+		// TODO:
+		// 1 get tenant services
+		// 2 filter out cluster ip svc
+	}
+
+	mAdmin, err := getTenantAdminClient(
+		ctx,
+		k8sClient,
+		params.Namespace,
+		params.Tenant,
+		svcName,
+		tenantScheme)
+	if err != nil {
+		log.Println("error getting tenant's admin client:", err)
+		return nil, err
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := adminClient{client: mAdmin}
+	// serialize output
+	adminInfo, err := getAdminInfo(ctx, adminClient)
+	if err != nil {
+		log.Println("error getting admin info:", err)
+		return nil, err
+	}
+	info := &models.TenantUsage{UsedSize: adminInfo.Usage}
+	return info, nil
 }
