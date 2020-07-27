@@ -415,10 +415,92 @@ func Test_TenantAddZone(t *testing.T) {
 					Body: &models.Zone{
 						Name:    "zone-1",
 						Servers: swag.Int64(int64(4)),
+						VolumeConfiguration: &models.ZoneVolumeConfiguration{
+							Size:             swag.Int64(2147483648),
+							StorageClassName: "standard",
+						},
+						VolumesPerServer: swag.Int32(4),
 					},
 				},
 			},
 			wantErr: false,
+		}, {
+			name: "Add zone, error size",
+			args: args{
+				ctx:            context.Background(),
+				operatorClient: opClient,
+				nameSpace:      "default",
+				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
+					return &v1.Tenant{}, nil
+				},
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
+					return &v1.Tenant{}, nil
+				},
+				params: admin_api.TenantAddZoneParams{
+					Body: &models.Zone{
+						Name:    "zone-1",
+						Servers: swag.Int64(int64(4)),
+						VolumeConfiguration: &models.ZoneVolumeConfiguration{
+							Size:             swag.Int64(0),
+							StorageClassName: "standard",
+						},
+						VolumesPerServer: swag.Int32(4),
+					},
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "Add zone, error servers negative",
+			args: args{
+				ctx:            context.Background(),
+				operatorClient: opClient,
+				nameSpace:      "default",
+				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
+					return &v1.Tenant{}, nil
+				},
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
+					return &v1.Tenant{}, nil
+				},
+				params: admin_api.TenantAddZoneParams{
+					Body: &models.Zone{
+						Name:    "zone-1",
+						Servers: swag.Int64(int64(-1)),
+						VolumeConfiguration: &models.ZoneVolumeConfiguration{
+							Size:             swag.Int64(2147483648),
+							StorageClassName: "standard",
+						},
+						VolumesPerServer: swag.Int32(4),
+					},
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "Add zone, error volumes per server negative",
+			args: args{
+				ctx:            context.Background(),
+				operatorClient: opClient,
+				nameSpace:      "default",
+				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
+					return &v1.Tenant{}, nil
+				},
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
+					return &v1.Tenant{}, nil
+				},
+				params: admin_api.TenantAddZoneParams{
+					Body: &models.Zone{
+						Name:    "zone-1",
+						Servers: swag.Int64(int64(4)),
+						VolumeConfiguration: &models.ZoneVolumeConfiguration{
+							Size:             swag.Int64(2147483648),
+							StorageClassName: "standard",
+						},
+						VolumesPerServer: swag.Int32(-1),
+					},
+				},
+			},
+			wantErr: true,
 		},
 		{
 			name: "Error on patch, handle error",

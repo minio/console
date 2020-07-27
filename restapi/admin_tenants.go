@@ -19,6 +19,7 @@ package restapi
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -192,7 +193,7 @@ func getTenantInfo(tenant *operator.Tenant, tenantInfo *usageInfo) *models.Tenan
 		zoneModel := &models.Zone{
 			Name:                z.Name,
 			Servers:             swag.Int64(int64(z.Servers)),
-			VolumesPerServer:    &z.VolumesPerServer,
+			VolumesPerServer:    swag.Int32(z.VolumesPerServer),
 			VolumeConfiguration: &models.ZoneVolumeConfiguration{},
 		}
 
@@ -600,9 +601,59 @@ func addTenantZone(ctx context.Context, operatorClient OperatorClient, params ad
 		return err
 	}
 
+	zoneParams := params.Body
+	if zoneParams.VolumeConfiguration == nil {
+		return errors.New("a volume configuration must be specified")
+	}
+
+	if zoneParams.VolumeConfiguration.Size == nil || *zoneParams.VolumeConfiguration.Size <= int64(0) {
+		return errors.New("volume size must be greater than 0")
+	}
+
+	if zoneParams.Servers == nil || *zoneParams.Servers <= 0 {
+		return errors.New("number of servers must be greater than 0")
+	}
+
+	if zoneParams.VolumesPerServer == nil || *zoneParams.VolumesPerServer <= 0 {
+		return errors.New("number of volumes per server must be greater than 0")
+	}
+
+	volumeSize := resource.NewQuantity(*zoneParams.VolumeConfiguration.Size, resource.DecimalExponent)
+	volTemp := corev1.PersistentVolumeClaimSpec{
+		AccessModes: []corev1.PersistentVolumeAccessMode{
+			corev1.ReadWriteOnce,
+		},
+		Resources: corev1.ResourceRequirements{
+			Requests: corev1.ResourceList{
+				corev1.ResourceStorage: *volumeSize,
+			},
+		},
+	}
+	if zoneParams.VolumeConfiguration.StorageClassName != "" {
+		volTemp.StorageClassName = &zoneParams.VolumeConfiguration.StorageClassName
+	}
+
+	// TODO: Calculate this ourselves?
+	memorySize, err := resource.ParseQuantity(getTenantMemorySize())
+	if err != nil {
+		return err
+	}
+
 	minInst.Spec.Zones = append(minInst.Spec.Zones, operator.Zone{
-		Name:    params.Body.Name,
-		Servers: int32(*params.Body.Servers),
+		Name:             zoneParams.Name,
+		Servers:          int32(*zoneParams.Servers),
+		VolumesPerServer: *zoneParams.VolumesPerServer,
+		VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "data",
+			},
+			Spec: volTemp,
+		},
+		Resources: corev1.ResourceRequirements{
+			Requests: corev1.ResourceList{
+				corev1.ResourceMemory: memorySize,
+			},
+		},
 	})
 
 	payloadBytes, err := json.Marshal(minInst)
