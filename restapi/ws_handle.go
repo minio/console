@@ -61,8 +61,8 @@ type ConsoleWebsocket interface {
 type wsS3Client struct {
 	// websocket connection.
 	conn wsConn
-	// mcS3Client
-	client MCS3Client
+	// mcClient
+	client MCClient
 }
 
 // WSConn interface with all functions to be implemented
@@ -197,7 +197,7 @@ func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, bucket
 	wsConnection := wsConn{conn: conn}
 	// create a s3Client interface implementation
 	// defining the client to be used
-	mcS3C := mcS3Client{client: s3Client}
+	mcS3C := mcClient{client: s3Client}
 	// create websocket client and handle request
 	wsS3Client := &wsS3Client{conn: wsConnection, client: mcS3C}
 	return wsS3Client, nil

@@ -34,7 +34,7 @@ type watchOptions struct {
 	mc.WatchOptions
 }
 
-func startWatch(ctx context.Context, conn WSConn, wsc MCS3Client, options watchOptions) error {
+func startWatch(ctx context.Context, conn WSConn, wsc MCClient, options watchOptions) error {
 	wo, pErr := wsc.watch(ctx, options.WatchOptions)
 	if pErr != nil {
 		fmt.Println("error initializing watch:", pErr.Cause)
