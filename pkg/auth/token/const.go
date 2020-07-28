@@ -14,10 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package jwt
+package token
 
 const (
-	ConsoleHmacJWTSecret            = "CONSOLE_HMAC_JWT_SECRET"
 	ConsoleSTSAndJWTDurationSeconds = "CONSOLE_STS_AND_JWT_DURATION_SECONDS"
 	ConsolePBKDFPassphrase          = "CONSOLE_PBKDF_PASSPHRASE"
 	ConsolePBKDFSalt                = "CONSOLE_PBKDF_SALT"

@@ -14,23 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package jwt
+package token
 
 import (
 	"strconv"
-	"time"
 
 	"github.com/minio/console/pkg/auth/utils"
 	"github.com/minio/minio/pkg/env"
 )
-
-// defaultHmacJWTPassphrase will be used by default if application is not configured with a custom CONSOLE_HMAC_JWT_SECRET secret
-var defaultHmacJWTPassphrase = utils.RandomCharString(64)
-
-// GetHmacJWTSecret returns the 64 bytes secret used for signing the generated JWT for the application
-func GetHmacJWTSecret() string {
-	return env.Get(ConsoleHmacJWTSecret, defaultHmacJWTPassphrase)
-}
 
 // ConsoleSTSAndJWTDurationSeconds returns the default session duration for the STS requested tokens and the generated JWTs.
 // Ideally both values should match so jwt and Minio sts sessions expires at the same time.
@@ -40,12 +31,6 @@ func GetConsoleSTSAndJWTDurationInSeconds() int {
 		duration = 3600
 	}
 	return duration
-}
-
-// GetConsoleSTSAndJWTDurationTime returns GetConsoleSTSAndJWTDurationInSeconds in duration format
-func GetConsoleSTSAndJWTDurationTime() time.Duration {
-	duration := GetConsoleSTSAndJWTDurationInSeconds()
-	return time.Duration(duration) * time.Second
 }
 
 var defaultPBKDFPassphrase = utils.RandomCharString(64)

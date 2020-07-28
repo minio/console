@@ -23,7 +23,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var audience = ""
 var creds = &credentials.Value{
 	AccessKeyID:     "fakeAccessKeyID",
 	SecretAccessKey: "fakeSecretAccessKey",
@@ -35,25 +34,25 @@ var badToken = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiRDMwYWE0ekQ1bWt
 
 func TestNewJWTWithClaimsForClient(t *testing.T) {
 	funcAssert := assert.New(t)
-	// Test-1 : NewJWTWithClaimsForClient() is generated correctly without errors
-	function := "NewJWTWithClaimsForClient()"
-	jwt, err := NewJWTWithClaimsForClient(creds, []string{""}, audience)
+	// Test-1 : NewEncryptedTokenForClient() is generated correctly without errors
+	function := "NewEncryptedTokenForClient()"
+	jwt, err := NewEncryptedTokenForClient(creds, []string{""})
 	if err != nil || jwt == "" {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err)
 	}
 	// saving jwt for future tests
 	goodToken = jwt
-	// Test-2 : NewJWTWithClaimsForClient() throws error because of empty credentials
-	if _, err = NewJWTWithClaimsForClient(nil, []string{""}, audience); err != nil {
+	// Test-2 : NewEncryptedTokenForClient() throws error because of empty credentials
+	if _, err = NewEncryptedTokenForClient(nil, []string{""}); err != nil {
 		funcAssert.Equal("provided credentials are empty", err.Error())
 	}
 }
 
 func TestJWTAuthenticate(t *testing.T) {
 	funcAssert := assert.New(t)
-	// Test-1 : JWTAuthenticate() should correctly return the claims
-	function := "JWTAuthenticate()"
-	claims, err := JWTAuthenticate(goodToken)
+	// Test-1 : SessionTokenAuthenticate() should correctly return the claims
+	function := "SessionTokenAuthenticate()"
+	claims, err := SessionTokenAuthenticate(goodToken)
 	if err != nil || claims == nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err)
 	} else {
@@ -61,20 +60,20 @@ func TestJWTAuthenticate(t *testing.T) {
 		funcAssert.Equal(claims.SecretAccessKey, creds.SecretAccessKey)
 		funcAssert.Equal(claims.SessionToken, creds.SessionToken)
 	}
-	// Test-2 : JWTAuthenticate() return an error because of a tampered jwt
-	if _, err := JWTAuthenticate(badToken); err != nil {
-		funcAssert.Equal("authentication failed, check your access credentials", err.Error())
+	// Test-2 : SessionTokenAuthenticate() return an error because of a tampered jwt
+	if _, err := SessionTokenAuthenticate(badToken); err != nil {
+		funcAssert.Equal("session token internal data is malformed", err.Error())
 	}
-	// Test-3 : JWTAuthenticate() return an error because of an empty jwt
-	if _, err := JWTAuthenticate(""); err != nil {
-		funcAssert.Equal("JWT token missing", err.Error())
+	// Test-3 : SessionTokenAuthenticate() return an error because of an empty jwt
+	if _, err := SessionTokenAuthenticate(""); err != nil {
+		funcAssert.Equal("session token missing", err.Error())
 	}
 }
 
 func TestIsJWTValid(t *testing.T) {
 	funcAssert := assert.New(t)
-	// Test-1 : JWTAuthenticate() provided token is valid
-	funcAssert.Equal(true, IsJWTValid(goodToken))
-	// Test-2 : JWTAuthenticate() provided token is invalid
-	funcAssert.Equal(false, IsJWTValid(badToken))
+	// Test-1 : SessionTokenAuthenticate() provided token is valid
+	funcAssert.Equal(true, IsSessionTokenValid(goodToken))
+	// Test-2 : SessionTokenAuthenticate() provided token is invalid
+	funcAssert.Equal(false, IsSessionTokenValid(badToken))
 }

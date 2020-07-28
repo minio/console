@@ -28,30 +28,26 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"time"
 
-	jwtgo "github.com/dgrijalva/jwt-go"
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
-	xjwt "github.com/minio/console/pkg/auth/jwt"
+	"github.com/minio/console/pkg/auth/token"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/pbkdf2"
 )
 
 var (
-	errAuthentication = errors.New("authentication failed, check your access credentials")
-	errNoAuthToken    = errors.New("JWT token missing")
-	errReadingToken   = errors.New("JWT internal data is malformed")
-	errClaimsFormat   = errors.New("encrypted jwt claims not in the right format")
+	errNoAuthToken  = errors.New("session token missing")
+	errReadingToken = errors.New("session token internal data is malformed")
+	errClaimsFormat = errors.New("encrypted session token claims not in the right format")
 )
 
-// derivedKey is the key used to encrypt the JWT claims, its derived using pbkdf on CONSOLE_PBKDF_PASSPHRASE with CONSOLE_PBKDF_SALT
-var derivedKey = pbkdf2.Key([]byte(xjwt.GetPBKDFPassphrase()), []byte(xjwt.GetPBKDFSalt()), 4096, 32, sha1.New)
+// derivedKey is the key used to encrypt the session token claims, its derived using pbkdf on CONSOLE_PBKDF_PASSPHRASE with CONSOLE_PBKDF_SALT
+var derivedKey = pbkdf2.Key([]byte(token.GetPBKDFPassphrase()), []byte(token.GetPBKDFSalt()), 4096, 32, sha1.New)
 
-// IsJWTValid returns true or false depending if the provided jwt is valid or not
-func IsJWTValid(token string) bool {
-	_, err := JWTAuthenticate(token)
+// IsSessionTokenValid returns true or false depending if the provided session token is valid or not
+func IsSessionTokenValid(token string) bool {
+	_, err := SessionTokenAuthenticate(token)
 	return err == nil
 }
 
@@ -63,8 +59,8 @@ type DecryptedClaims struct {
 	Actions         []string
 }
 
-// JWTAuthenticate takes a jwt, decode it, extract claims and validate the signature
-// if the jwt claims.Data is valid we proceed to decrypt the information inside
+// SessionTokenAuthenticate takes a session token, decode it, extract claims and validate the signature
+// if the session token claims are valid we proceed to decrypt the information inside
 //
 // returns claims after validation in the following format:
 //
@@ -73,48 +69,36 @@ type DecryptedClaims struct {
 //		SecretAccessKey
 //		SessionToken
 //	}
-func JWTAuthenticate(token string) (*DecryptedClaims, error) {
+func SessionTokenAuthenticate(token string) (*DecryptedClaims, error) {
 	if token == "" {
 		return nil, errNoAuthToken
 	}
-	// initialize claims object
-	claims := xjwt.NewMapClaims()
-	// populate the claims object
-	if err := xjwt.ParseWithClaims(token, claims); err != nil {
-		return nil, errAuthentication
-	}
-	// decrypt the claims.Data field
-	claimTokens, err := decryptClaims(claims.Data)
+	// decrypt encrypted token
+	claimTokens, err := decryptClaims(token)
 	if err != nil {
 		// we print decryption token error information for debugging purposes
 		log.Println(err)
 		// we return a generic error that doesn't give any information to attackers
 		return nil, errReadingToken
 	}
-	// claimsTokens contains the decrypted STS claims
+	// claimsTokens contains the decrypted JWT for Console
 	return claimTokens, nil
 }
 
-// NewJWTWithClaimsForClient generates a new jwt with claims based on the provided STS credentials, first
+// NewEncryptedTokenForClient generates a new session token with claims based on the provided STS credentials, first
 // encrypts the claims and the sign them
-func NewJWTWithClaimsForClient(credentials *credentials.Value, actions []string, audience string) (string, error) {
+func NewEncryptedTokenForClient(credentials *credentials.Value, actions []string) (string, error) {
 	if credentials != nil {
 		encryptedClaims, err := encryptClaims(credentials.AccessKeyID, credentials.SecretAccessKey, credentials.SessionToken, actions)
 		if err != nil {
 			return "", err
 		}
-		claims := xjwt.NewStandardClaims()
-		claims.SetExpiry(time.Now().UTC().Add(xjwt.GetConsoleSTSAndJWTDurationTime()))
-		claims.SetSubject(uuid.NewV4().String())
-		claims.SetData(encryptedClaims)
-		claims.SetAudience(audience)
-		jwt := jwtgo.NewWithClaims(jwtgo.SigningMethodHS512, claims)
-		return jwt.SignedString([]byte(xjwt.GetHmacJWTSecret()))
+		return encryptedClaims, nil
 	}
 	return "", errors.New("provided credentials are empty")
 }
 
-// encryptClaims() receives the 3 STS claims, concatenate them and encrypt them using AES-GCM
+// encryptClaims() receives the STS claims, concatenate them and encrypt them using AES-GCM
 // returns a base64 encoded ciphertext
 func encryptClaims(accessKeyID, secretAccessKey, sessionToken string, actions []string) (string, error) {
 	payload := []byte(fmt.Sprintf("%s#%s#%s#%s", accessKeyID, secretAccessKey, sessionToken, strings.Join(actions, ",")))
@@ -189,7 +173,7 @@ func decrypt(data []byte) ([]byte, error) {
 // GetTokenFromRequest returns a token from a http Request
 // either defined on a cookie `token` or on Authorization header.
 //
-// Authorization Header needs to be like "Authorization Bearer <jwt_token>"
+// Authorization Header needs to be like "Authorization Bearer <token>"
 func GetTokenFromRequest(r *http.Request) (*string, error) {
 	// Get Auth token
 	var reqToken string
@@ -216,9 +200,9 @@ func GetClaimsFromTokenInRequest(req *http.Request) (*models.Principal, error) {
 	if err != nil {
 		return nil, err
 	}
-	// Perform decryption of the JWT, if Console is able to decrypt the JWT that means a valid session
+	// Perform decryption of the session token, if Console is able to decrypt the session token that means a valid session
 	// was used in the first place to get it
-	claims, err := JWTAuthenticate(*sessionID)
+	claims, err := SessionTokenAuthenticate(*sessionID)
 	if err != nil {
 		return nil, err
 	}

@@ -48,6 +48,9 @@ type CreateTenantRequest struct {
 	// enable ssl
 	EnableSsl *bool `json:"enable_ssl,omitempty"`
 
+	// encryption
+	Encryption *EncryptionConfiguration `json:"encryption,omitempty"`
+
 	// image
 	Image string `json:"image,omitempty"`
 
@@ -69,6 +72,9 @@ type CreateTenantRequest struct {
 	// service name
 	ServiceName string `json:"service_name,omitempty"`
 
+	// tls
+	TLS *TLSConfiguration `json:"tls,omitempty"`
+
 	// zones
 	// Required: true
 	Zones []*Zone `json:"zones"`
@@ -78,11 +84,19 @@ type CreateTenantRequest struct {
 func (m *CreateTenantRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateEncryption(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.validateNamespace(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTLS(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -93,6 +107,24 @@ func (m *CreateTenantRequest) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *CreateTenantRequest) validateEncryption(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Encryption) { // not required
+		return nil
+	}
+
+	if m.Encryption != nil {
+		if err := m.Encryption.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("encryption")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -113,6 +145,24 @@ func (m *CreateTenantRequest) validateNamespace(formats strfmt.Registry) error {
 
 	if err := validate.Required("namespace", "body", m.Namespace); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *CreateTenantRequest) validateTLS(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.TLS) { // not required
+		return nil
+	}
+
+	if m.TLS != nil {
+		if err := m.TLS.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("tls")
+			}
+			return err
+		}
 	}
 
 	return nil

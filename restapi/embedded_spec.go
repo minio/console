@@ -1860,6 +1860,51 @@ func init() {
         }
       }
     },
+    "awsConfiguration": {
+      "type": "object",
+      "required": [
+        "secretsmanager"
+      ],
+      "properties": {
+        "secretsmanager": {
+          "type": "object",
+          "required": [
+            "endpoint",
+            "region",
+            "credentials"
+          ],
+          "properties": {
+            "credentials": {
+              "type": "object",
+              "required": [
+                "accesskey",
+                "secretkey"
+              ],
+              "properties": {
+                "accesskey": {
+                  "type": "string"
+                },
+                "secretkey": {
+                  "type": "string"
+                },
+                "token": {
+                  "type": "string"
+                }
+              }
+            },
+            "endpoint": {
+              "type": "string"
+            },
+            "kmskey": {
+              "type": "string"
+            },
+            "region": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "bucket": {
       "type": "object",
       "required": [
@@ -1987,6 +2032,10 @@ func init() {
           "type": "boolean",
           "default": true
         },
+        "encryption": {
+          "type": "object",
+          "$ref": "#/definitions/encryptionConfiguration"
+        },
         "image": {
           "type": "string"
         },
@@ -2005,6 +2054,10 @@ func init() {
         },
         "service_name": {
           "type": "string"
+        },
+        "tls": {
+          "type": "object",
+          "$ref": "#/definitions/tlsConfiguration"
         },
         "zones": {
           "type": "array",
@@ -2036,6 +2089,59 @@ func init() {
         }
       }
     },
+    "encryptionConfiguration": {
+      "type": "object",
+      "properties": {
+        "aws": {
+          "type": "object",
+          "$ref": "#/definitions/awsConfiguration"
+        },
+        "client": {
+          "type": "object",
+          "required": [
+            "crt",
+            "key"
+          ],
+          "properties": {
+            "crt": {
+              "type": "string"
+            },
+            "key": {
+              "type": "string"
+            }
+          }
+        },
+        "gemalto": {
+          "type": "object",
+          "$ref": "#/definitions/gemaltoConfiguration"
+        },
+        "image": {
+          "type": "string"
+        },
+        "master_key": {
+          "type": "string"
+        },
+        "server": {
+          "type": "object",
+          "required": [
+            "crt",
+            "key"
+          ],
+          "properties": {
+            "crt": {
+              "type": "string"
+            },
+            "key": {
+              "type": "string"
+            }
+          }
+        },
+        "vault": {
+          "type": "object",
+          "$ref": "#/definitions/vaultConfiguration"
+        }
+      }
+    },
     "error": {
       "type": "object",
       "required": [
@@ -2048,6 +2154,56 @@ func init() {
         },
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "gemaltoConfiguration": {
+      "type": "object",
+      "required": [
+        "keysecure"
+      ],
+      "properties": {
+        "keysecure": {
+          "type": "object",
+          "required": [
+            "endpoint",
+            "credentials"
+          ],
+          "properties": {
+            "credentials": {
+              "type": "object",
+              "required": [
+                "token",
+                "domain"
+              ],
+              "properties": {
+                "domain": {
+                  "type": "string"
+                },
+                "retry": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "token": {
+                  "type": "string"
+                }
+              }
+            },
+            "endpoint": {
+              "type": "string"
+            },
+            "tls": {
+              "type": "object",
+              "required": [
+                "ca"
+              ],
+              "properties": {
+                "ca": {
+                  "type": "string"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -2788,6 +2944,21 @@ func init() {
         }
       }
     },
+    "tlsConfiguration": {
+      "type": "object",
+      "required": [
+        "crt",
+        "key"
+      ],
+      "properties": {
+        "crt": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        }
+      }
+    },
     "updateGroupRequest": {
       "type": "object",
       "required": [
@@ -2864,6 +3035,58 @@ func init() {
         },
         "status": {
           "type": "string"
+        }
+      }
+    },
+    "vaultConfiguration": {
+      "type": "object",
+      "required": [
+        "endpoint",
+        "approle"
+      ],
+      "properties": {
+        "approle": {
+          "type": "object",
+          "required": [
+            "id",
+            "secret"
+          ],
+          "properties": {
+            "engine": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "retry": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "secret": {
+              "type": "string"
+            }
+          }
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "engine": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "status": {
+          "type": "object",
+          "properties": {
+            "ping": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
         }
       }
     },
@@ -4853,6 +5076,61 @@ func init() {
     }
   },
   "definitions": {
+    "AwsConfigurationSecretsmanager": {
+      "type": "object",
+      "required": [
+        "endpoint",
+        "region",
+        "credentials"
+      ],
+      "properties": {
+        "credentials": {
+          "type": "object",
+          "required": [
+            "accesskey",
+            "secretkey"
+          ],
+          "properties": {
+            "accesskey": {
+              "type": "string"
+            },
+            "secretkey": {
+              "type": "string"
+            },
+            "token": {
+              "type": "string"
+            }
+          }
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "kmskey": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        }
+      }
+    },
+    "AwsConfigurationSecretsmanagerCredentials": {
+      "type": "object",
+      "required": [
+        "accesskey",
+        "secretkey"
+      ],
+      "properties": {
+        "accesskey": {
+          "type": "string"
+        },
+        "secretkey": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        }
+      }
+    },
     "CreateTenantResponseConsole": {
       "type": "object",
       "properties": {
@@ -4860,6 +5138,108 @@ func init() {
           "type": "string"
         },
         "secret_key": {
+          "type": "string"
+        }
+      }
+    },
+    "EncryptionConfigurationClient": {
+      "type": "object",
+      "required": [
+        "crt",
+        "key"
+      ],
+      "properties": {
+        "crt": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        }
+      }
+    },
+    "EncryptionConfigurationServer": {
+      "type": "object",
+      "required": [
+        "crt",
+        "key"
+      ],
+      "properties": {
+        "crt": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        }
+      }
+    },
+    "GemaltoConfigurationKeysecure": {
+      "type": "object",
+      "required": [
+        "endpoint",
+        "credentials"
+      ],
+      "properties": {
+        "credentials": {
+          "type": "object",
+          "required": [
+            "token",
+            "domain"
+          ],
+          "properties": {
+            "domain": {
+              "type": "string"
+            },
+            "retry": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "token": {
+              "type": "string"
+            }
+          }
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "tls": {
+          "type": "object",
+          "required": [
+            "ca"
+          ],
+          "properties": {
+            "ca": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "GemaltoConfigurationKeysecureCredentials": {
+      "type": "object",
+      "required": [
+        "token",
+        "domain"
+      ],
+      "properties": {
+        "domain": {
+          "type": "string"
+        },
+        "retry": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "GemaltoConfigurationKeysecureTLS": {
+      "type": "object",
+      "required": [
+        "ca"
+      ],
+      "properties": {
+        "ca": {
           "type": "string"
         }
       }
@@ -4956,6 +5336,37 @@ func init() {
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "VaultConfigurationApprole": {
+      "type": "object",
+      "required": [
+        "id",
+        "secret"
+      ],
+      "properties": {
+        "engine": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "retry": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "secret": {
+          "type": "string"
+        }
+      }
+    },
+    "VaultConfigurationStatus": {
+      "type": "object",
+      "properties": {
+        "ping": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -5221,6 +5632,51 @@ func init() {
         }
       }
     },
+    "awsConfiguration": {
+      "type": "object",
+      "required": [
+        "secretsmanager"
+      ],
+      "properties": {
+        "secretsmanager": {
+          "type": "object",
+          "required": [
+            "endpoint",
+            "region",
+            "credentials"
+          ],
+          "properties": {
+            "credentials": {
+              "type": "object",
+              "required": [
+                "accesskey",
+                "secretkey"
+              ],
+              "properties": {
+                "accesskey": {
+                  "type": "string"
+                },
+                "secretkey": {
+                  "type": "string"
+                },
+                "token": {
+                  "type": "string"
+                }
+              }
+            },
+            "endpoint": {
+              "type": "string"
+            },
+            "kmskey": {
+              "type": "string"
+            },
+            "region": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "bucket": {
       "type": "object",
       "required": [
@@ -5348,6 +5804,10 @@ func init() {
           "type": "boolean",
           "default": true
         },
+        "encryption": {
+          "type": "object",
+          "$ref": "#/definitions/encryptionConfiguration"
+        },
         "image": {
           "type": "string"
         },
@@ -5366,6 +5826,10 @@ func init() {
         },
         "service_name": {
           "type": "string"
+        },
+        "tls": {
+          "type": "object",
+          "$ref": "#/definitions/tlsConfiguration"
         },
         "zones": {
           "type": "array",
@@ -5397,6 +5861,59 @@ func init() {
         }
       }
     },
+    "encryptionConfiguration": {
+      "type": "object",
+      "properties": {
+        "aws": {
+          "type": "object",
+          "$ref": "#/definitions/awsConfiguration"
+        },
+        "client": {
+          "type": "object",
+          "required": [
+            "crt",
+            "key"
+          ],
+          "properties": {
+            "crt": {
+              "type": "string"
+            },
+            "key": {
+              "type": "string"
+            }
+          }
+        },
+        "gemalto": {
+          "type": "object",
+          "$ref": "#/definitions/gemaltoConfiguration"
+        },
+        "image": {
+          "type": "string"
+        },
+        "master_key": {
+          "type": "string"
+        },
+        "server": {
+          "type": "object",
+          "required": [
+            "crt",
+            "key"
+          ],
+          "properties": {
+            "crt": {
+              "type": "string"
+            },
+            "key": {
+              "type": "string"
+            }
+          }
+        },
+        "vault": {
+          "type": "object",
+          "$ref": "#/definitions/vaultConfiguration"
+        }
+      }
+    },
     "error": {
       "type": "object",
       "required": [
@@ -5409,6 +5926,56 @@ func init() {
         },
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "gemaltoConfiguration": {
+      "type": "object",
+      "required": [
+        "keysecure"
+      ],
+      "properties": {
+        "keysecure": {
+          "type": "object",
+          "required": [
+            "endpoint",
+            "credentials"
+          ],
+          "properties": {
+            "credentials": {
+              "type": "object",
+              "required": [
+                "token",
+                "domain"
+              ],
+              "properties": {
+                "domain": {
+                  "type": "string"
+                },
+                "retry": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "token": {
+                  "type": "string"
+                }
+              }
+            },
+            "endpoint": {
+              "type": "string"
+            },
+            "tls": {
+              "type": "object",
+              "required": [
+                "ca"
+              ],
+              "properties": {
+                "ca": {
+                  "type": "string"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -6083,6 +6650,21 @@ func init() {
         }
       }
     },
+    "tlsConfiguration": {
+      "type": "object",
+      "required": [
+        "crt",
+        "key"
+      ],
+      "properties": {
+        "crt": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        }
+      }
+    },
     "updateGroupRequest": {
       "type": "object",
       "required": [
@@ -6159,6 +6741,58 @@ func init() {
         },
         "status": {
           "type": "string"
+        }
+      }
+    },
+    "vaultConfiguration": {
+      "type": "object",
+      "required": [
+        "endpoint",
+        "approle"
+      ],
+      "properties": {
+        "approle": {
+          "type": "object",
+          "required": [
+            "id",
+            "secret"
+          ],
+          "properties": {
+            "engine": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "retry": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "secret": {
+              "type": "string"
+            }
+          }
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "engine": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "status": {
+          "type": "object",
+          "properties": {
+            "ping": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
         }
       }
     },
