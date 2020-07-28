@@ -2631,10 +2631,10 @@ func init() {
         "namespace": {
           "type": "string"
         },
-        "volume_count": {
+        "total_size": {
           "type": "integer"
         },
-        "volume_size": {
+        "volume_count": {
           "type": "integer"
         },
         "zone_count": {
@@ -5390,10 +5390,10 @@ func init() {
         "namespace": {
           "type": "string"
         },
-        "volume_count": {
+        "total_size": {
           "type": "integer"
         },
-        "volume_size": {
+        "volume_count": {
           "type": "integer"
         },
         "zone_count": {
