@@ -153,7 +153,7 @@ func getListBucketEventsResponse(session *models.Principal, params user_api.List
 // If notificationEvents is empty, by default will set [get, put, delete], else the provided
 // ones will be set.
 // this function follows same behavior as minio/mc for adding a bucket event
-func createBucketEvent(ctx context.Context, client MCS3Client, arn string, notificationEvents []models.NotificationEventType, prefix, suffix string, ignoreExisting bool) error {
+func createBucketEvent(ctx context.Context, client MCClient, arn string, notificationEvents []models.NotificationEventType, prefix, suffix string, ignoreExisting bool) error {
 	var events []string
 	if len(notificationEvents) == 0 {
 		// default event values are [get, put, delete]
@@ -187,8 +187,8 @@ func getCreateBucketEventsResponse(session *models.Principal, bucketName string,
 	}
 	// create a mc S3Client interface implementation
 	// defining the client to be used
-	mcS3Client := mcS3Client{client: s3Client}
-	err = createBucketEvent(ctx, mcS3Client, *eventReq.Configuration.Arn, eventReq.Configuration.Events, eventReq.Configuration.Prefix, eventReq.Configuration.Suffix, eventReq.IgnoreExisting)
+	mcClient := mcClient{client: s3Client}
+	err = createBucketEvent(ctx, mcClient, *eventReq.Configuration.Arn, eventReq.Configuration.Events, eventReq.Configuration.Prefix, eventReq.Configuration.Suffix, eventReq.IgnoreExisting)
 	if err != nil {
 		log.Println("error creating bucket event:", err)
 		return err
@@ -197,7 +197,7 @@ func getCreateBucketEventsResponse(session *models.Principal, bucketName string,
 }
 
 // deleteBucketEventNotification calls S3Client.RemoveNotificationConfig to remove a bucket event notification
-func deleteBucketEventNotification(ctx context.Context, client MCS3Client, arn string, events []models.NotificationEventType, prefix, suffix *string) error {
+func deleteBucketEventNotification(ctx context.Context, client MCClient, arn string, events []models.NotificationEventType, prefix, suffix *string) error {
 	eventSingleString := joinNotificationEvents(events)
 	perr := client.removeNotificationConfig(ctx, arn, eventSingleString, *prefix, *suffix)
 	if perr != nil {
@@ -224,8 +224,8 @@ func getDeleteBucketEventsResponse(session *models.Principal, bucketName string,
 	}
 	// create a mc S3Client interface implementation
 	// defining the client to be used
-	mcS3Client := mcS3Client{client: s3Client}
-	err = deleteBucketEventNotification(ctx, mcS3Client, arn, events, prefix, suffix)
+	mcClient := mcClient{client: s3Client}
+	err = deleteBucketEventNotification(ctx, mcClient, arn, events, prefix, suffix)
 	if err != nil {
 		log.Println("error deleting bucket event:", err)
 		return err

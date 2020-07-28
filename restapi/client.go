@@ -93,10 +93,10 @@ func (c minioClient) getBucketPolicy(ctx context.Context, bucketName string) (st
 	return c.client.GetBucketPolicy(ctx, bucketName)
 }
 
-// MCS3Client interface with all functions to be implemented
+// MCClient interface with all functions to be implemented
 // by mock when testing, it should include all mc/S3Client respective api calls
 // that are used within this project.
-type MCS3Client interface {
+type MCClient interface {
 	addNotificationConfig(ctx context.Context, arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error
 	removeNotificationConfig(ctx context.Context, arn string, event string, prefix string, suffix string) *probe.Error
 	watch(ctx context.Context, options mc.WatchOptions) (*mc.WatchObject, *probe.Error)
@@ -106,21 +106,21 @@ type MCS3Client interface {
 //
 // Define the structure of a mc S3Client and define the functions that are actually used
 // from mcS3client api.
-type mcS3Client struct {
+type mcClient struct {
 	client *mc.S3Client
 }
 
 // implements S3Client.AddNotificationConfig()
-func (c mcS3Client) addNotificationConfig(ctx context.Context, arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
+func (c mcClient) addNotificationConfig(ctx context.Context, arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
 	return c.client.AddNotificationConfig(ctx, arn, events, prefix, suffix, ignoreExisting)
 }
 
 // implements S3Client.RemoveNotificationConfig()
-func (c mcS3Client) removeNotificationConfig(ctx context.Context, arn string, event string, prefix string, suffix string) *probe.Error {
+func (c mcClient) removeNotificationConfig(ctx context.Context, arn string, event string, prefix string, suffix string) *probe.Error {
 	return c.client.RemoveNotificationConfig(ctx, arn, event, prefix, suffix)
 }
 
-func (c mcS3Client) watch(ctx context.Context, options mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
+func (c mcClient) watch(ctx context.Context, options mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
 	return c.client.Watch(ctx, options)
 }
 
