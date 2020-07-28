@@ -1746,7 +1746,7 @@ definitions:
         type: integer
       instance_count:
         type: integer
-      volume_size:
+      total_size:
         type: integer
       volume_count:
         type: integer

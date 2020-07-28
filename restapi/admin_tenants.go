@@ -269,6 +269,8 @@ func listTenants(ctx context.Context, operatorClient OperatorClient, namespace s
 
 	var tenants []*models.TenantList
 
+	var totalSize int64
+
 	for _, minInst := range minTenants.Items {
 
 		var instanceCount int64
@@ -276,6 +278,10 @@ func listTenants(ctx context.Context, operatorClient OperatorClient, namespace s
 		for _, zone := range minInst.Spec.Zones {
 			instanceCount = instanceCount + int64(zone.Servers)
 			volumeCount = volumeCount + int64(zone.Servers*zone.VolumesPerServer)
+			if zone.VolumeClaimTemplate != nil {
+				zoneSize := int64(zone.VolumesPerServer) * int64(zone.Servers) * zone.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value()
+				totalSize = totalSize + zoneSize
+			}
 		}
 
 		tenants = append(tenants, &models.TenantList{
@@ -286,6 +292,7 @@ func listTenants(ctx context.Context, operatorClient OperatorClient, namespace s
 			VolumeCount:   volumeCount,
 			CurrentState:  minInst.Status.CurrentState,
 			Namespace:     minInst.ObjectMeta.Namespace,
+			TotalSize:     totalSize,
 		})
 	}
 

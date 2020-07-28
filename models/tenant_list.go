@@ -47,11 +47,11 @@ type TenantList struct {
 	// namespace
 	Namespace string `json:"namespace,omitempty"`
 
+	// total size
+	TotalSize int64 `json:"total_size,omitempty"`
+
 	// volume count
 	VolumeCount int64 `json:"volume_count,omitempty"`
-
-	// volume size
-	VolumeSize int64 `json:"volume_size,omitempty"`
 
 	// zone count
 	ZoneCount int64 `json:"zone_count,omitempty"`
