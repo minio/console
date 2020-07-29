@@ -846,8 +846,8 @@ func parseTenantZone(zone *operator.Zone) *models.Zone {
 
 	// parse resources' requests
 	var resources *models.ZoneResources
-	var resourcesRequests map[string]int64
-	var resourcesLimits map[string]int64
+	resourcesRequests := make(map[string]int64)
+	resourcesLimits := make(map[string]int64)
 	for key, val := range zone.Resources.Requests {
 		resourcesRequests[key.String()] = val.Value()
 	}
