@@ -108,7 +108,7 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 		err := getTenantAddZoneResponse(session, params)
 		if err != nil {
 			log.Println(err)
-			return admin_api.NewTenantAddZoneDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String("Unable to update tenant")})
+			return admin_api.NewTenantAddZoneDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String("Unable to add zone")})
 		}
 		return admin_api.NewTenantAddZoneCreated()
 	})
@@ -199,21 +199,7 @@ func getTenantInfo(tenant *operator.Tenant) *models.Tenant {
 
 	var totalSize int64
 	for _, z := range tenant.Spec.Zones {
-		zoneModel := &models.Zone{
-			Name:                z.Name,
-			Servers:             swag.Int64(int64(z.Servers)),
-			VolumesPerServer:    swag.Int32(z.VolumesPerServer),
-			VolumeConfiguration: &models.ZoneVolumeConfiguration{},
-		}
-
-		if z.VolumeClaimTemplate != nil {
-			zoneModel.VolumeConfiguration.Size = swag.Int64(z.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value())
-			if z.VolumeClaimTemplate.Spec.StorageClassName != nil {
-				zoneModel.VolumeConfiguration.StorageClassName = *z.VolumeClaimTemplate.Spec.StorageClassName
-			}
-		}
-
-		zones = append(zones, zoneModel)
+		zones = append(zones, parseTenantZone(&z))
 		zoneSize := int64(z.Servers) * int64(z.VolumesPerServer) * z.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value()
 		totalSize = totalSize + zoneSize
 	}
@@ -268,11 +254,9 @@ func listTenants(ctx context.Context, operatorClient OperatorClient, namespace s
 	}
 
 	var tenants []*models.TenantList
-
 	var totalSize int64
 
 	for _, minInst := range minTenants.Items {
-
 		var instanceCount int64
 		var volumeCount int64
 		for _, zone := range minInst.Spec.Zones {
@@ -390,12 +374,6 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		enableConsole = *params.Body.EnableConsole
 	}
 
-	// TODO: Calculate this ourselves?
-	memorySize, err := resource.ParseQuantity(getTenantMemorySize())
-	if err != nil {
-		return nil, err
-	}
-
 	//Construct a MinIO Instance with everything we are getting from parameters
 	minInst := operator.Tenant{
 		ObjectMeta: metav1.ObjectMeta{
@@ -414,7 +392,6 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 
 	if enableConsole {
 		consoleSelector := fmt.Sprintf("%s-console", *params.Body.Name)
-
 		consoleSecretName := fmt.Sprintf("%s-secret", consoleSelector)
 		imm := true
 		instanceSecret := corev1.Secret{
@@ -448,39 +425,12 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		minInst.Spec.ServiceName = params.Body.ServiceName
 	}
 	// set the zones if they are provided
-	if len(params.Body.Zones) > 0 {
-		for _, zone := range params.Body.Zones {
-			volumeSize := resource.NewQuantity(*zone.VolumeConfiguration.Size, resource.DecimalExponent)
-			volTemp := corev1.PersistentVolumeClaimSpec{
-				AccessModes: []corev1.PersistentVolumeAccessMode{
-					corev1.ReadWriteOnce,
-				},
-				Resources: corev1.ResourceRequirements{
-					Requests: corev1.ResourceList{
-						corev1.ResourceStorage: *volumeSize,
-					},
-				},
-			}
-			if zone.VolumeConfiguration.StorageClassName != "" {
-				volTemp.StorageClassName = &zone.VolumeConfiguration.StorageClassName
-			}
-			minInst.Spec.Zones = append(minInst.Spec.Zones, operator.Zone{
-				Name:             zone.Name,
-				Servers:          int32(*zone.Servers),
-				VolumesPerServer: *zone.VolumesPerServer,
-				VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
-					ObjectMeta: metav1.ObjectMeta{
-						Name: "data",
-					},
-					Spec: volTemp,
-				},
-				Resources: corev1.ResourceRequirements{
-					Requests: corev1.ResourceList{
-						corev1.ResourceMemory: memorySize,
-					},
-				},
-			})
+	for _, zone := range params.Body.Zones {
+		zone, err := parseTenantZoneRequest(zone)
+		if err != nil {
+			return nil, err
 		}
+		minInst.Spec.Zones = append(minInst.Spec.Zones, *zone)
 	}
 
 	// Set Mount Path if provided
@@ -574,72 +524,23 @@ func getUpdateTenantResponse(session *models.Principal, params admin_api.UpdateT
 
 // addTenantZone creates a zone to a defined tenant
 func addTenantZone(ctx context.Context, operatorClient OperatorClient, params admin_api.TenantAddZoneParams) error {
-	minInst, err := operatorClient.TenantGet(ctx, params.Namespace, params.Tenant, metav1.GetOptions{})
+	tenant, err := operatorClient.TenantGet(ctx, params.Namespace, params.Tenant, metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
 
 	zoneParams := params.Body
-	if zoneParams.VolumeConfiguration == nil {
-		return errors.New("a volume configuration must be specified")
+	zone, err := parseTenantZoneRequest(zoneParams)
+	if err != nil {
+		return err
 	}
-
-	if zoneParams.VolumeConfiguration.Size == nil || *zoneParams.VolumeConfiguration.Size <= int64(0) {
-		return errors.New("volume size must be greater than 0")
-	}
-
-	if zoneParams.Servers == nil || *zoneParams.Servers <= 0 {
-		return errors.New("number of servers must be greater than 0")
-	}
-
-	if zoneParams.VolumesPerServer == nil || *zoneParams.VolumesPerServer <= 0 {
-		return errors.New("number of volumes per server must be greater than 0")
-	}
-
-	volumeSize := resource.NewQuantity(*zoneParams.VolumeConfiguration.Size, resource.DecimalExponent)
-	volTemp := corev1.PersistentVolumeClaimSpec{
-		AccessModes: []corev1.PersistentVolumeAccessMode{
-			corev1.ReadWriteOnce,
-		},
-		Resources: corev1.ResourceRequirements{
-			Requests: corev1.ResourceList{
-				corev1.ResourceStorage: *volumeSize,
-			},
-		},
-	}
-	if zoneParams.VolumeConfiguration.StorageClassName != "" {
-		volTemp.StorageClassName = &zoneParams.VolumeConfiguration.StorageClassName
-	}
-
-	// TODO: Calculate this ourselves?
-	memorySize, err := resource.ParseQuantity(getTenantMemorySize())
+	tenant.Spec.Zones = append(tenant.Spec.Zones, *zone)
+	payloadBytes, err := json.Marshal(tenant)
 	if err != nil {
 		return err
 	}
 
-	minInst.Spec.Zones = append(minInst.Spec.Zones, operator.Zone{
-		Name:             zoneParams.Name,
-		Servers:          int32(*zoneParams.Servers),
-		VolumesPerServer: *zoneParams.VolumesPerServer,
-		VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: "data",
-			},
-			Spec: volTemp,
-		},
-		Resources: corev1.ResourceRequirements{
-			Requests: corev1.ResourceList{
-				corev1.ResourceMemory: memorySize,
-			},
-		},
-	})
-
-	payloadBytes, err := json.Marshal(minInst)
-	if err != nil {
-		return err
-	}
-
-	_, err = operatorClient.TenantPatch(ctx, params.Namespace, minInst.Name, types.MergePatchType, payloadBytes, metav1.PatchOptions{})
+	_, err = operatorClient.TenantPatch(ctx, params.Namespace, tenant.Name, types.MergePatchType, payloadBytes, metav1.PatchOptions{})
 	if err != nil {
 		return err
 	}
@@ -723,4 +624,400 @@ func getTenantUsageResponse(session *models.Principal, params admin_api.GetTenan
 	}
 	info := &models.TenantUsage{UsedSize: adminInfo.Usage}
 	return info, nil
+}
+
+// parseTenantZoneRequest parse zone request and returns the equivalent
+// operator.Zone object
+func parseTenantZoneRequest(zoneParams *models.Zone) (*operator.Zone, error) {
+	if zoneParams.VolumeConfiguration == nil {
+		return nil, errors.New("a volume configuration must be specified")
+	}
+
+	if zoneParams.VolumeConfiguration.Size == nil || *zoneParams.VolumeConfiguration.Size <= int64(0) {
+		return nil, errors.New("volume size must be greater than 0")
+	}
+
+	if zoneParams.Servers == nil || *zoneParams.Servers <= 0 {
+		return nil, errors.New("number of servers must be greater than 0")
+	}
+
+	if zoneParams.VolumesPerServer == nil || *zoneParams.VolumesPerServer <= 0 {
+		return nil, errors.New("number of volumes per server must be greater than 0")
+	}
+
+	volumeSize := resource.NewQuantity(*zoneParams.VolumeConfiguration.Size, resource.DecimalExponent)
+	volTemp := corev1.PersistentVolumeClaimSpec{
+		AccessModes: []corev1.PersistentVolumeAccessMode{
+			corev1.ReadWriteOnce,
+		},
+		Resources: corev1.ResourceRequirements{
+			Requests: corev1.ResourceList{
+				corev1.ResourceStorage: *volumeSize,
+			},
+		},
+	}
+	if zoneParams.VolumeConfiguration.StorageClassName != "" {
+		volTemp.StorageClassName = &zoneParams.VolumeConfiguration.StorageClassName
+	}
+
+	// parse resources' requests
+	var resourcesRequests corev1.ResourceList
+	var resourcesLimits corev1.ResourceList
+	if zoneParams.Resources != nil {
+		for key, val := range zoneParams.Resources.Requests {
+			resourcesRequests[corev1.ResourceName(key)] = *resource.NewQuantity(val, resource.BinarySI)
+		}
+		for key, val := range zoneParams.Resources.Limits {
+			resourcesLimits[corev1.ResourceName(key)] = *resource.NewQuantity(val, resource.BinarySI)
+		}
+	}
+
+	// parse Node Affinity
+	nodeSelectorTerms := []corev1.NodeSelectorTerm{}
+	preferredSchedulingTerm := []corev1.PreferredSchedulingTerm{}
+	if zoneParams.Affinity != nil && zoneParams.Affinity.NodeAffinity != nil {
+		if zoneParams.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution != nil {
+			for _, elem := range zoneParams.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution.NodeSelectorTerms {
+				term := parseModelsNodeSelectorTerm(elem)
+				nodeSelectorTerms = append(nodeSelectorTerms, term)
+			}
+		}
+		for _, elem := range zoneParams.Affinity.NodeAffinity.PreferredDuringSchedulingIgnoredDuringExecution {
+			pst := corev1.PreferredSchedulingTerm{
+				Weight:     *elem.Weight,
+				Preference: parseModelsNodeSelectorTerm(elem.Preference),
+			}
+			preferredSchedulingTerm = append(preferredSchedulingTerm, pst)
+		}
+	}
+	var nodeAffinity *corev1.NodeAffinity
+	if len(nodeSelectorTerms) > 0 || len(preferredSchedulingTerm) > 0 {
+		nodeAffinity = &corev1.NodeAffinity{
+			RequiredDuringSchedulingIgnoredDuringExecution: &corev1.NodeSelector{
+				NodeSelectorTerms: nodeSelectorTerms,
+			},
+			PreferredDuringSchedulingIgnoredDuringExecution: preferredSchedulingTerm,
+		}
+	}
+
+	// parse Pod Affinity
+	podAffinityTerms := []corev1.PodAffinityTerm{}
+	weightedPodAffinityTerms := []corev1.WeightedPodAffinityTerm{}
+	if zoneParams.Affinity != nil && zoneParams.Affinity.PodAffinity != nil {
+		for _, elem := range zoneParams.Affinity.PodAffinity.RequiredDuringSchedulingIgnoredDuringExecution {
+			podAffinityTerms = append(podAffinityTerms, parseModelPodAffinityTerm(elem))
+		}
+		for _, elem := range zoneParams.Affinity.PodAffinity.PreferredDuringSchedulingIgnoredDuringExecution {
+			wAffinityTerm := corev1.WeightedPodAffinityTerm{
+				Weight:          *elem.Weight,
+				PodAffinityTerm: parseModelPodAffinityTerm(elem.PodAffinityTerm),
+			}
+			weightedPodAffinityTerms = append(weightedPodAffinityTerms, wAffinityTerm)
+		}
+	}
+	var podAffinity *corev1.PodAffinity
+	if len(podAffinityTerms) > 0 || len(weightedPodAffinityTerms) > 0 {
+		podAffinity = &corev1.PodAffinity{
+			RequiredDuringSchedulingIgnoredDuringExecution:  podAffinityTerms,
+			PreferredDuringSchedulingIgnoredDuringExecution: weightedPodAffinityTerms,
+		}
+	}
+
+	// parse Pod Anti Affinity
+	podAntiAffinityTerms := []corev1.PodAffinityTerm{}
+	weightedPodAntiAffinityTerms := []corev1.WeightedPodAffinityTerm{}
+	if zoneParams.Affinity != nil && zoneParams.Affinity.PodAntiAffinity != nil {
+		for _, elem := range zoneParams.Affinity.PodAntiAffinity.RequiredDuringSchedulingIgnoredDuringExecution {
+			podAntiAffinityTerms = append(podAntiAffinityTerms, parseModelPodAffinityTerm(elem))
+		}
+		for _, elem := range zoneParams.Affinity.PodAntiAffinity.PreferredDuringSchedulingIgnoredDuringExecution {
+			wAffinityTerm := corev1.WeightedPodAffinityTerm{
+				Weight:          *elem.Weight,
+				PodAffinityTerm: parseModelPodAffinityTerm(elem.PodAffinityTerm),
+			}
+			weightedPodAntiAffinityTerms = append(weightedPodAntiAffinityTerms, wAffinityTerm)
+		}
+	}
+	var podAntiAffinity *corev1.PodAntiAffinity
+	if len(podAntiAffinityTerms) > 0 || len(weightedPodAntiAffinityTerms) > 0 {
+		podAntiAffinity = &corev1.PodAntiAffinity{
+			RequiredDuringSchedulingIgnoredDuringExecution:  podAntiAffinityTerms,
+			PreferredDuringSchedulingIgnoredDuringExecution: weightedPodAntiAffinityTerms,
+		}
+	}
+
+	var affinity *corev1.Affinity
+	if nodeAffinity != nil || podAffinity != nil || podAntiAffinity != nil {
+		affinity = &corev1.Affinity{
+			NodeAffinity:    nodeAffinity,
+			PodAffinity:     podAffinity,
+			PodAntiAffinity: podAntiAffinity,
+		}
+	}
+
+	// parse tolerations
+	tolerations := []corev1.Toleration{}
+	for _, elem := range zoneParams.Tolerations {
+		toleration := corev1.Toleration{
+			Key:               elem.Key,
+			Operator:          corev1.TolerationOperator(elem.Operator),
+			Value:             elem.Value,
+			Effect:            corev1.TaintEffect(elem.Effect),
+			TolerationSeconds: &elem.TolerationSeconds,
+		}
+		tolerations = append(tolerations, toleration)
+	}
+
+	zone := &operator.Zone{
+		Name:             zoneParams.Name,
+		Servers:          int32(*zoneParams.Servers),
+		VolumesPerServer: *zoneParams.VolumesPerServer,
+		VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "data",
+			},
+			Spec: volTemp,
+		},
+		Resources: corev1.ResourceRequirements{
+			Requests: resourcesRequests,
+			Limits:   resourcesLimits,
+		},
+		NodeSelector: zoneParams.NodeSelector,
+		Affinity:     affinity,
+		Tolerations:  tolerations,
+	}
+	return zone, nil
+}
+
+func parseModelPodAffinityTerm(term *models.PodAffinityTerm) corev1.PodAffinityTerm {
+	labelMatchExpressions := []metav1.LabelSelectorRequirement{}
+	for _, exp := range term.LabelSelector.MatchExpressions {
+		labelSelectorReq := metav1.LabelSelectorRequirement{
+			Key:      *exp.Key,
+			Operator: metav1.LabelSelectorOperator(*exp.Operator),
+			Values:   exp.Values,
+		}
+		labelMatchExpressions = append(labelMatchExpressions, labelSelectorReq)
+	}
+
+	podAffinityTerm := corev1.PodAffinityTerm{
+		LabelSelector: &metav1.LabelSelector{
+			MatchExpressions: labelMatchExpressions,
+			MatchLabels:      term.LabelSelector.MatchLabels,
+		},
+		Namespaces:  term.Namespaces,
+		TopologyKey: *term.TopologyKey,
+	}
+	return podAffinityTerm
+}
+
+func parseModelsNodeSelectorTerm(elem *models.NodeSelectorTerm) corev1.NodeSelectorTerm {
+	var term corev1.NodeSelectorTerm
+	for _, matchExpression := range elem.MatchExpressions {
+		matchExp := corev1.NodeSelectorRequirement{
+			Key:      *matchExpression.Key,
+			Operator: corev1.NodeSelectorOperator(*matchExpression.Operator),
+			Values:   matchExpression.Values,
+		}
+		term.MatchExpressions = append(term.MatchExpressions, matchExp)
+	}
+	for _, matchField := range elem.MatchFields {
+		matchF := corev1.NodeSelectorRequirement{
+			Key:      *matchField.Key,
+			Operator: corev1.NodeSelectorOperator(*matchField.Operator),
+			Values:   matchField.Values,
+		}
+		term.MatchFields = append(term.MatchFields, matchF)
+	}
+	return term
+}
+
+// parseTenantZone operator Zone object and returns the equivalent
+// models.Zone object
+func parseTenantZone(zone *operator.Zone) *models.Zone {
+	var size *int64
+	var storageClassName string
+	if zone.VolumeClaimTemplate != nil {
+		size = swag.Int64(zone.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value())
+		if zone.VolumeClaimTemplate.Spec.StorageClassName != nil {
+			storageClassName = *zone.VolumeClaimTemplate.Spec.StorageClassName
+		}
+	}
+
+	// parse resources' requests
+	var resources *models.ZoneResources
+	var resourcesRequests map[string]int64
+	var resourcesLimits map[string]int64
+	for key, val := range zone.Resources.Requests {
+		resourcesRequests[key.String()] = val.Value()
+	}
+	for key, val := range zone.Resources.Limits {
+		resourcesLimits[key.String()] = val.Value()
+	}
+	if len(resourcesRequests) > 0 || len(resourcesLimits) > 0 {
+		resources = &models.ZoneResources{
+			Limits:   resourcesLimits,
+			Requests: resourcesRequests,
+		}
+	}
+
+	// parse Node Affinity
+	nodeSelectorTerms := []*models.NodeSelectorTerm{}
+	preferredSchedulingTerm := []*models.ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{}
+
+	if zone.Affinity != nil && zone.Affinity.NodeAffinity != nil {
+		if zone.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution != nil {
+			for _, elem := range zone.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution.NodeSelectorTerms {
+				term := parseNodeSelectorTerm(&elem)
+				nodeSelectorTerms = append(nodeSelectorTerms, term)
+			}
+		}
+		for _, elem := range zone.Affinity.NodeAffinity.PreferredDuringSchedulingIgnoredDuringExecution {
+			pst := &models.ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{
+				Weight:     swag.Int32(elem.Weight),
+				Preference: parseNodeSelectorTerm(&elem.Preference),
+			}
+			preferredSchedulingTerm = append(preferredSchedulingTerm, pst)
+		}
+	}
+
+	var nodeAffinity *models.ZoneAffinityNodeAffinity
+	if len(nodeSelectorTerms) > 0 || len(preferredSchedulingTerm) > 0 {
+		nodeAffinity = &models.ZoneAffinityNodeAffinity{
+			RequiredDuringSchedulingIgnoredDuringExecution: &models.ZoneAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution{
+				NodeSelectorTerms: nodeSelectorTerms,
+			},
+			PreferredDuringSchedulingIgnoredDuringExecution: preferredSchedulingTerm,
+		}
+	}
+
+	// parse Pod Affinity
+	podAffinityTerms := []*models.PodAffinityTerm{}
+	weightedPodAffinityTerms := []*models.ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{}
+
+	if zone.Affinity != nil && zone.Affinity.PodAffinity != nil {
+		for _, elem := range zone.Affinity.PodAffinity.RequiredDuringSchedulingIgnoredDuringExecution {
+			podAffinityTerms = append(podAffinityTerms, parsePodAffinityTerm(&elem))
+		}
+		for _, elem := range zone.Affinity.PodAffinity.PreferredDuringSchedulingIgnoredDuringExecution {
+			wAffinityTerm := &models.ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{
+				Weight:          swag.Int32(elem.Weight),
+				PodAffinityTerm: parsePodAffinityTerm(&elem.PodAffinityTerm),
+			}
+			weightedPodAffinityTerms = append(weightedPodAffinityTerms, wAffinityTerm)
+		}
+	}
+	var podAffinity *models.ZoneAffinityPodAffinity
+	if len(podAffinityTerms) > 0 || len(weightedPodAffinityTerms) > 0 {
+		podAffinity = &models.ZoneAffinityPodAffinity{
+			RequiredDuringSchedulingIgnoredDuringExecution:  podAffinityTerms,
+			PreferredDuringSchedulingIgnoredDuringExecution: weightedPodAffinityTerms,
+		}
+	}
+
+	// parse Pod Anti Affinity
+	podAntiAffinityTerms := []*models.PodAffinityTerm{}
+	weightedPodAntiAffinityTerms := []*models.ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{}
+
+	if zone.Affinity != nil && zone.Affinity.PodAntiAffinity != nil {
+		for _, elem := range zone.Affinity.PodAntiAffinity.RequiredDuringSchedulingIgnoredDuringExecution {
+			podAntiAffinityTerms = append(podAntiAffinityTerms, parsePodAffinityTerm(&elem))
+		}
+		for _, elem := range zone.Affinity.PodAntiAffinity.PreferredDuringSchedulingIgnoredDuringExecution {
+			wAffinityTerm := &models.ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{
+				Weight:          swag.Int32(elem.Weight),
+				PodAffinityTerm: parsePodAffinityTerm(&elem.PodAffinityTerm),
+			}
+			weightedPodAntiAffinityTerms = append(weightedPodAntiAffinityTerms, wAffinityTerm)
+		}
+	}
+
+	var podAntiAffinity *models.ZoneAffinityPodAntiAffinity
+	if len(podAntiAffinityTerms) > 0 || len(weightedPodAntiAffinityTerms) > 0 {
+		podAntiAffinity = &models.ZoneAffinityPodAntiAffinity{
+			RequiredDuringSchedulingIgnoredDuringExecution:  podAntiAffinityTerms,
+			PreferredDuringSchedulingIgnoredDuringExecution: weightedPodAntiAffinityTerms,
+		}
+	}
+
+	// build affinity object
+	var affinity *models.ZoneAffinity
+	if nodeAffinity != nil || podAffinity != nil || podAntiAffinity != nil {
+		affinity = &models.ZoneAffinity{
+			NodeAffinity:    nodeAffinity,
+			PodAffinity:     podAffinity,
+			PodAntiAffinity: podAntiAffinity,
+		}
+	}
+
+	// parse tolerations
+	var tolerations models.ZoneTolerations
+	for _, elem := range zone.Tolerations {
+		toleration := &models.ZoneTolerationsItems0{
+			Key:               elem.Key,
+			Operator:          string(elem.Operator),
+			Value:             elem.Value,
+			Effect:            string(elem.Effect),
+			TolerationSeconds: *elem.TolerationSeconds,
+		}
+		tolerations = append(tolerations, toleration)
+	}
+
+	zoneModel := &models.Zone{
+		Name:             zone.Name,
+		Servers:          swag.Int64(int64(zone.Servers)),
+		VolumesPerServer: swag.Int32(zone.VolumesPerServer),
+		VolumeConfiguration: &models.ZoneVolumeConfiguration{
+			Size:             size,
+			StorageClassName: storageClassName,
+		},
+		NodeSelector: zone.NodeSelector,
+		Resources:    resources,
+		Affinity:     affinity,
+		Tolerations:  tolerations,
+	}
+	return zoneModel
+}
+
+func parsePodAffinityTerm(term *corev1.PodAffinityTerm) *models.PodAffinityTerm {
+	labelMatchExpressions := []*models.PodAffinityTermLabelSelectorMatchExpressionsItems0{}
+	for _, exp := range term.LabelSelector.MatchExpressions {
+		labelSelectorReq := &models.PodAffinityTermLabelSelectorMatchExpressionsItems0{
+			Key:      swag.String(exp.Key),
+			Operator: swag.String(string(exp.Operator)),
+			Values:   exp.Values,
+		}
+		labelMatchExpressions = append(labelMatchExpressions, labelSelectorReq)
+	}
+
+	podAffinityTerm := &models.PodAffinityTerm{
+		LabelSelector: &models.PodAffinityTermLabelSelector{
+			MatchExpressions: labelMatchExpressions,
+			MatchLabels:      term.LabelSelector.MatchLabels,
+		},
+		Namespaces:  term.Namespaces,
+		TopologyKey: swag.String(term.TopologyKey),
+	}
+	return podAffinityTerm
+}
+
+func parseNodeSelectorTerm(term *corev1.NodeSelectorTerm) *models.NodeSelectorTerm {
+	var t models.NodeSelectorTerm
+	for _, matchExpression := range term.MatchExpressions {
+		matchExp := &models.NodeSelectorTermMatchExpressionsItems0{
+			Key:      swag.String(matchExpression.Key),
+			Operator: swag.String(string(matchExpression.Operator)),
+			Values:   matchExpression.Values,
+		}
+		t.MatchExpressions = append(t.MatchExpressions, matchExp)
+	}
+	for _, matchField := range term.MatchFields {
+		matchF := &models.NodeSelectorTermMatchFieldsItems0{
+			Key:      swag.String(matchField.Key),
+			Operator: swag.String(string(matchField.Operator)),
+			Values:   matchField.Values,
+		}
+		t.MatchFields = append(t.MatchFields, matchF)
+	}
+	return &t
 }

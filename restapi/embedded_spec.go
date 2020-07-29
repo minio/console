@@ -2248,6 +2248,70 @@ func init() {
         }
       }
     },
+    "nodeSelectorTerm": {
+      "description": "A null or empty node selector term matches no objects. The requirements of them are ANDed. The TopologySelectorTerm type implements a subset of the NodeSelectorTerm.",
+      "type": "object",
+      "properties": {
+        "matchExpressions": {
+          "description": "A list of node selector requirements by node's labels.",
+          "type": "array",
+          "items": {
+            "description": "A node selector requirement is a selector that contains values, a key, and an operator that relates the key and values.",
+            "type": "object",
+            "required": [
+              "key",
+              "operator"
+            ],
+            "properties": {
+              "key": {
+                "description": "The label key that the selector applies to.",
+                "type": "string"
+              },
+              "operator": {
+                "description": "Represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt.",
+                "type": "string"
+              },
+              "values": {
+                "description": "An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer. This array is replaced during a strategic merge patch.",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "matchFields": {
+          "description": "A list of node selector requirements by node's fields.",
+          "type": "array",
+          "items": {
+            "description": "A node selector requirement is a selector that contains values, a key, and an operator that relates the key and values.",
+            "type": "object",
+            "required": [
+              "key",
+              "operator"
+            ],
+            "properties": {
+              "key": {
+                "description": "The label key that the selector applies to.",
+                "type": "string"
+              },
+              "operator": {
+                "description": "Represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt.",
+                "type": "string"
+              },
+              "values": {
+                "description": "An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer. This array is replaced during a strategic merge patch.",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "nofiticationService": {
       "type": "string",
       "enum": [
@@ -2372,6 +2436,68 @@ func init() {
         "delete",
         "get"
       ]
+    },
+    "podAffinityTerm": {
+      "description": "Required. A pod affinity term, associated with the corresponding weight.",
+      "type": "object",
+      "required": [
+        "topologyKey"
+      ],
+      "properties": {
+        "labelSelector": {
+          "description": "A label query over a set of resources, in this case pods.",
+          "type": "object",
+          "properties": {
+            "matchExpressions": {
+              "description": "matchExpressions is a list of label selector requirements. The requirements are ANDed.",
+              "type": "array",
+              "items": {
+                "description": "A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.",
+                "type": "object",
+                "required": [
+                  "key",
+                  "operator"
+                ],
+                "properties": {
+                  "key": {
+                    "description": "key is the label key that the selector applies to.",
+                    "type": "string"
+                  },
+                  "operator": {
+                    "description": "operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.",
+                    "type": "string"
+                  },
+                  "values": {
+                    "description": "values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.",
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "matchLabels": {
+              "description": "matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \"key\", the operator is \"In\", and the values array contains only \"value\". The requirements are ANDed.",
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "namespaces": {
+          "description": "namespaces specifies which namespaces the labelSelector applies to (matches against); null or empty list means \"this pod's namespace\"",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "topologyKey": {
+          "description": "This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.",
+          "type": "string"
+        }
+      }
     },
     "policy": {
       "type": "object",
@@ -2738,11 +2864,27 @@ func init() {
         "volume_configuration"
       ],
       "properties": {
+        "affinity": {
+          "$ref": "#/definitions/zoneAffinity"
+        },
         "name": {
           "type": "string"
         },
+        "node_selector": {
+          "description": "NodeSelector is a selector which must be true for the pod to fit on a node. Selector which must match a node's labels for the pod to be scheduled on that node. More info: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "resources": {
+          "$ref": "#/definitions/zoneResources"
+        },
         "servers": {
           "type": "integer"
+        },
+        "tolerations": {
+          "$ref": "#/definitions/zoneTolerations"
         },
         "volume_configuration": {
           "type": "object",
@@ -2761,6 +2903,181 @@ func init() {
         "volumes_per_server": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "zoneAffinity": {
+      "description": "If specified, affinity will define the pod's scheduling constraints",
+      "type": "object",
+      "properties": {
+        "nodeAffinity": {
+          "description": "Describes node affinity scheduling rules for the pod.",
+          "type": "object",
+          "properties": {
+            "preferredDuringSchedulingIgnoredDuringExecution": {
+              "description": "The scheduler will prefer to schedule pods to nodes that satisfy the affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding \"weight\" to the sum if the node matches the corresponding matchExpressions; the node(s) with the highest sum are the most preferred.",
+              "type": "array",
+              "items": {
+                "description": "An empty preferred scheduling term matches all objects with implicit weight 0 (i.e. it's a no-op). A null preferred scheduling term matches no objects (i.e. is also a no-op).",
+                "type": "object",
+                "required": [
+                  "preference",
+                  "weight"
+                ],
+                "properties": {
+                  "preference": {
+                    "description": "A node selector term, associated with the corresponding weight.",
+                    "type": "object",
+                    "$ref": "#/definitions/nodeSelectorTerm"
+                  },
+                  "weight": {
+                    "description": "Weight associated with matching the corresponding nodeSelectorTerm, in the range 1-100.",
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              }
+            },
+            "requiredDuringSchedulingIgnoredDuringExecution": {
+              "description": "If the affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to an update), the system may or may not try to eventually evict the pod from its node.",
+              "type": "object",
+              "required": [
+                "nodeSelectorTerms"
+              ],
+              "properties": {
+                "nodeSelectorTerms": {
+                  "description": "Required. A list of node selector terms. The terms are ORed.",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/nodeSelectorTerm"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "podAffinity": {
+          "description": "Describes pod affinity scheduling rules (e.g. co-locate this pod in the same node, zone, etc. as some other pod(s)).",
+          "type": "object",
+          "properties": {
+            "preferredDuringSchedulingIgnoredDuringExecution": {
+              "description": "The scheduler will prefer to schedule pods to nodes that satisfy the affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding \"weight\" to the sum if the node has pods which matches the corresponding podAffinityTerm; the node(s) with the highest sum are the most preferred.",
+              "type": "array",
+              "items": {
+                "description": "The weights of all of the matched WeightedPodAffinityTerm fields are added per-node to find the most preferred node(s)",
+                "type": "object",
+                "required": [
+                  "podAffinityTerm",
+                  "weight"
+                ],
+                "properties": {
+                  "podAffinityTerm": {
+                    "$ref": "#/definitions/podAffinityTerm"
+                  },
+                  "weight": {
+                    "description": "weight associated with matching the corresponding podAffinityTerm, in the range 1-100.",
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              }
+            },
+            "requiredDuringSchedulingIgnoredDuringExecution": {
+              "description": "If the affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to a pod label update), the system may or may not try to eventually evict the pod from its node. When there are multiple elements, the lists of nodes corresponding to each podAffinityTerm are intersected, i.e. all terms must be satisfied.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/podAffinityTerm"
+              }
+            }
+          }
+        },
+        "podAntiAffinity": {
+          "description": "Describes pod anti-affinity scheduling rules (e.g. avoid putting this pod in the same node, zone, etc. as some other pod(s)).",
+          "type": "object",
+          "properties": {
+            "preferredDuringSchedulingIgnoredDuringExecution": {
+              "description": "The scheduler will prefer to schedule pods to nodes that satisfy the anti-affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling anti-affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding \"weight\" to the sum if the node has pods which matches the corresponding podAffinityTerm; the node(s) with the highest sum are the most preferred.",
+              "type": "array",
+              "items": {
+                "description": "The weights of all of the matched WeightedPodAffinityTerm fields are added per-node to find the most preferred node(s)",
+                "type": "object",
+                "required": [
+                  "podAffinityTerm",
+                  "weight"
+                ],
+                "properties": {
+                  "podAffinityTerm": {
+                    "$ref": "#/definitions/podAffinityTerm"
+                  },
+                  "weight": {
+                    "description": "weight associated with matching the corresponding podAffinityTerm, in the range 1-100.",
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              }
+            },
+            "requiredDuringSchedulingIgnoredDuringExecution": {
+              "description": "If the anti-affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the anti-affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to a pod label update), the system may or may not try to eventually evict the pod from its node. When there are multiple elements, the lists of nodes corresponding to each podAffinityTerm are intersected, i.e. all terms must be satisfied.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/podAffinityTerm"
+              }
+            }
+          }
+        }
+      }
+    },
+    "zoneResources": {
+      "description": "If provided, use these requests and limit for cpu/memory resource allocation",
+      "type": "object",
+      "properties": {
+        "limits": {
+          "description": "Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/",
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "requests": {
+          "description": "Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/",
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      }
+    },
+    "zoneTolerations": {
+      "description": "Tolerations allows users to set entries like effect, key, operator, value.",
+      "type": "array",
+      "items": {
+        "description": "The pod this Toleration is attached to tolerates any taint that matches the triple \u003ckey,value,effect\u003e using the matching operator \u003coperator\u003e.",
+        "type": "object",
+        "properties": {
+          "effect": {
+            "description": "Effect indicates the taint effect to match. Empty means match all taint effects. When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.",
+            "type": "string"
+          },
+          "key": {
+            "description": "Key is the taint key that the toleration applies to. Empty means match all taint keys. If the key is empty, operator must be Exists; this combination means to match all values and all keys.",
+            "type": "string"
+          },
+          "operator": {
+            "description": "Operator represents a key's relationship to the value. Valid operators are Exists and Equal. Defaults to Equal. Exists is equivalent to wildcard for value, so that a pod can tolerate all taints of a particular category.",
+            "type": "string"
+          },
+          "tolerationSeconds": {
+            "description": "TolerationSeconds represents the period of time the toleration (which must be of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default, it is not set, which means tolerate the taint forever (do not evict). Zero and negative values will be treated as 0 (evict immediately) by the system.",
+            "type": "integer",
+            "format": "int64"
+          },
+          "value": {
+            "description": "Value is the taint value the toleration matches to. If the operator is Exists, the value should be empty, otherwise just a regular string.",
+            "type": "string"
+          }
         }
       }
     }
@@ -4525,6 +4842,269 @@ func init() {
     }
   },
   "definitions": {
+    "NodeSelectorTermMatchExpressionsItems0": {
+      "description": "A node selector requirement is a selector that contains values, a key, and an operator that relates the key and values.",
+      "type": "object",
+      "required": [
+        "key",
+        "operator"
+      ],
+      "properties": {
+        "key": {
+          "description": "The label key that the selector applies to.",
+          "type": "string"
+        },
+        "operator": {
+          "description": "Represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt.",
+          "type": "string"
+        },
+        "values": {
+          "description": "An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer. This array is replaced during a strategic merge patch.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "NodeSelectorTermMatchFieldsItems0": {
+      "description": "A node selector requirement is a selector that contains values, a key, and an operator that relates the key and values.",
+      "type": "object",
+      "required": [
+        "key",
+        "operator"
+      ],
+      "properties": {
+        "key": {
+          "description": "The label key that the selector applies to.",
+          "type": "string"
+        },
+        "operator": {
+          "description": "Represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt.",
+          "type": "string"
+        },
+        "values": {
+          "description": "An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer. This array is replaced during a strategic merge patch.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "PodAffinityTermLabelSelector": {
+      "description": "A label query over a set of resources, in this case pods.",
+      "type": "object",
+      "properties": {
+        "matchExpressions": {
+          "description": "matchExpressions is a list of label selector requirements. The requirements are ANDed.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PodAffinityTermLabelSelectorMatchExpressionsItems0"
+          }
+        },
+        "matchLabels": {
+          "description": "matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \"key\", the operator is \"In\", and the values array contains only \"value\". The requirements are ANDed.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "PodAffinityTermLabelSelectorMatchExpressionsItems0": {
+      "description": "A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.",
+      "type": "object",
+      "required": [
+        "key",
+        "operator"
+      ],
+      "properties": {
+        "key": {
+          "description": "key is the label key that the selector applies to.",
+          "type": "string"
+        },
+        "operator": {
+          "description": "operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.",
+          "type": "string"
+        },
+        "values": {
+          "description": "values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ZoneAffinityNodeAffinity": {
+      "description": "Describes node affinity scheduling rules for the pod.",
+      "type": "object",
+      "properties": {
+        "preferredDuringSchedulingIgnoredDuringExecution": {
+          "description": "The scheduler will prefer to schedule pods to nodes that satisfy the affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding \"weight\" to the sum if the node matches the corresponding matchExpressions; the node(s) with the highest sum are the most preferred.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0"
+          }
+        },
+        "requiredDuringSchedulingIgnoredDuringExecution": {
+          "description": "If the affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to an update), the system may or may not try to eventually evict the pod from its node.",
+          "type": "object",
+          "required": [
+            "nodeSelectorTerms"
+          ],
+          "properties": {
+            "nodeSelectorTerms": {
+              "description": "Required. A list of node selector terms. The terms are ORed.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/nodeSelectorTerm"
+              }
+            }
+          }
+        }
+      }
+    },
+    "ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0": {
+      "description": "An empty preferred scheduling term matches all objects with implicit weight 0 (i.e. it's a no-op). A null preferred scheduling term matches no objects (i.e. is also a no-op).",
+      "type": "object",
+      "required": [
+        "preference",
+        "weight"
+      ],
+      "properties": {
+        "preference": {
+          "description": "A node selector term, associated with the corresponding weight.",
+          "type": "object",
+          "$ref": "#/definitions/nodeSelectorTerm"
+        },
+        "weight": {
+          "description": "Weight associated with matching the corresponding nodeSelectorTerm, in the range 1-100.",
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "ZoneAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution": {
+      "description": "If the affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to an update), the system may or may not try to eventually evict the pod from its node.",
+      "type": "object",
+      "required": [
+        "nodeSelectorTerms"
+      ],
+      "properties": {
+        "nodeSelectorTerms": {
+          "description": "Required. A list of node selector terms. The terms are ORed.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/nodeSelectorTerm"
+          }
+        }
+      }
+    },
+    "ZoneAffinityPodAffinity": {
+      "description": "Describes pod affinity scheduling rules (e.g. co-locate this pod in the same node, zone, etc. as some other pod(s)).",
+      "type": "object",
+      "properties": {
+        "preferredDuringSchedulingIgnoredDuringExecution": {
+          "description": "The scheduler will prefer to schedule pods to nodes that satisfy the affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding \"weight\" to the sum if the node has pods which matches the corresponding podAffinityTerm; the node(s) with the highest sum are the most preferred.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0"
+          }
+        },
+        "requiredDuringSchedulingIgnoredDuringExecution": {
+          "description": "If the affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to a pod label update), the system may or may not try to eventually evict the pod from its node. When there are multiple elements, the lists of nodes corresponding to each podAffinityTerm are intersected, i.e. all terms must be satisfied.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/podAffinityTerm"
+          }
+        }
+      }
+    },
+    "ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0": {
+      "description": "The weights of all of the matched WeightedPodAffinityTerm fields are added per-node to find the most preferred node(s)",
+      "type": "object",
+      "required": [
+        "podAffinityTerm",
+        "weight"
+      ],
+      "properties": {
+        "podAffinityTerm": {
+          "$ref": "#/definitions/podAffinityTerm"
+        },
+        "weight": {
+          "description": "weight associated with matching the corresponding podAffinityTerm, in the range 1-100.",
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "ZoneAffinityPodAntiAffinity": {
+      "description": "Describes pod anti-affinity scheduling rules (e.g. avoid putting this pod in the same node, zone, etc. as some other pod(s)).",
+      "type": "object",
+      "properties": {
+        "preferredDuringSchedulingIgnoredDuringExecution": {
+          "description": "The scheduler will prefer to schedule pods to nodes that satisfy the anti-affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling anti-affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding \"weight\" to the sum if the node has pods which matches the corresponding podAffinityTerm; the node(s) with the highest sum are the most preferred.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0"
+          }
+        },
+        "requiredDuringSchedulingIgnoredDuringExecution": {
+          "description": "If the anti-affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the anti-affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to a pod label update), the system may or may not try to eventually evict the pod from its node. When there are multiple elements, the lists of nodes corresponding to each podAffinityTerm are intersected, i.e. all terms must be satisfied.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/podAffinityTerm"
+          }
+        }
+      }
+    },
+    "ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0": {
+      "description": "The weights of all of the matched WeightedPodAffinityTerm fields are added per-node to find the most preferred node(s)",
+      "type": "object",
+      "required": [
+        "podAffinityTerm",
+        "weight"
+      ],
+      "properties": {
+        "podAffinityTerm": {
+          "$ref": "#/definitions/podAffinityTerm"
+        },
+        "weight": {
+          "description": "weight associated with matching the corresponding podAffinityTerm, in the range 1-100.",
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "ZoneTolerationsItems0": {
+      "description": "The pod this Toleration is attached to tolerates any taint that matches the triple \u003ckey,value,effect\u003e using the matching operator \u003coperator\u003e.",
+      "type": "object",
+      "properties": {
+        "effect": {
+          "description": "Effect indicates the taint effect to match. Empty means match all taint effects. When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.",
+          "type": "string"
+        },
+        "key": {
+          "description": "Key is the taint key that the toleration applies to. Empty means match all taint keys. If the key is empty, operator must be Exists; this combination means to match all values and all keys.",
+          "type": "string"
+        },
+        "operator": {
+          "description": "Operator represents a key's relationship to the value. Valid operators are Exists and Equal. Defaults to Equal. Exists is equivalent to wildcard for value, so that a pod can tolerate all taints of a particular category.",
+          "type": "string"
+        },
+        "tolerationSeconds": {
+          "description": "TolerationSeconds represents the period of time the toleration (which must be of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default, it is not set, which means tolerate the taint forever (do not evict). Zero and negative values will be treated as 0 (evict immediately) by the system.",
+          "type": "integer",
+          "format": "int64"
+        },
+        "value": {
+          "description": "Value is the taint value the toleration matches to. If the operator is Exists, the value should be empty, otherwise just a regular string.",
+          "type": "string"
+        }
+      }
+    },
     "ZoneVolumeConfiguration": {
       "type": "object",
       "required": [
@@ -5007,6 +5587,26 @@ func init() {
         }
       }
     },
+    "nodeSelectorTerm": {
+      "description": "A null or empty node selector term matches no objects. The requirements of them are ANDed. The TopologySelectorTerm type implements a subset of the NodeSelectorTerm.",
+      "type": "object",
+      "properties": {
+        "matchExpressions": {
+          "description": "A list of node selector requirements by node's labels.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NodeSelectorTermMatchExpressionsItems0"
+          }
+        },
+        "matchFields": {
+          "description": "A list of node selector requirements by node's fields.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NodeSelectorTermMatchFieldsItems0"
+          }
+        }
+      }
+    },
     "nofiticationService": {
       "type": "string",
       "enum": [
@@ -5131,6 +5731,46 @@ func init() {
         "delete",
         "get"
       ]
+    },
+    "podAffinityTerm": {
+      "description": "Required. A pod affinity term, associated with the corresponding weight.",
+      "type": "object",
+      "required": [
+        "topologyKey"
+      ],
+      "properties": {
+        "labelSelector": {
+          "description": "A label query over a set of resources, in this case pods.",
+          "type": "object",
+          "properties": {
+            "matchExpressions": {
+              "description": "matchExpressions is a list of label selector requirements. The requirements are ANDed.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PodAffinityTermLabelSelectorMatchExpressionsItems0"
+              }
+            },
+            "matchLabels": {
+              "description": "matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \"key\", the operator is \"In\", and the values array contains only \"value\". The requirements are ANDed.",
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "namespaces": {
+          "description": "namespaces specifies which namespaces the labelSelector applies to (matches against); null or empty list means \"this pod's namespace\"",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "topologyKey": {
+          "description": "This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.",
+          "type": "string"
+        }
+      }
     },
     "policy": {
       "type": "object",
@@ -5497,11 +6137,27 @@ func init() {
         "volume_configuration"
       ],
       "properties": {
+        "affinity": {
+          "$ref": "#/definitions/zoneAffinity"
+        },
         "name": {
           "type": "string"
         },
+        "node_selector": {
+          "description": "NodeSelector is a selector which must be true for the pod to fit on a node. Selector which must match a node's labels for the pod to be scheduled on that node. More info: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "resources": {
+          "$ref": "#/definitions/zoneResources"
+        },
         "servers": {
           "type": "integer"
+        },
+        "tolerations": {
+          "$ref": "#/definitions/zoneTolerations"
         },
         "volume_configuration": {
           "type": "object",
@@ -5521,6 +6177,110 @@ func init() {
           "type": "integer",
           "format": "int32"
         }
+      }
+    },
+    "zoneAffinity": {
+      "description": "If specified, affinity will define the pod's scheduling constraints",
+      "type": "object",
+      "properties": {
+        "nodeAffinity": {
+          "description": "Describes node affinity scheduling rules for the pod.",
+          "type": "object",
+          "properties": {
+            "preferredDuringSchedulingIgnoredDuringExecution": {
+              "description": "The scheduler will prefer to schedule pods to nodes that satisfy the affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding \"weight\" to the sum if the node matches the corresponding matchExpressions; the node(s) with the highest sum are the most preferred.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0"
+              }
+            },
+            "requiredDuringSchedulingIgnoredDuringExecution": {
+              "description": "If the affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to an update), the system may or may not try to eventually evict the pod from its node.",
+              "type": "object",
+              "required": [
+                "nodeSelectorTerms"
+              ],
+              "properties": {
+                "nodeSelectorTerms": {
+                  "description": "Required. A list of node selector terms. The terms are ORed.",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/nodeSelectorTerm"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "podAffinity": {
+          "description": "Describes pod affinity scheduling rules (e.g. co-locate this pod in the same node, zone, etc. as some other pod(s)).",
+          "type": "object",
+          "properties": {
+            "preferredDuringSchedulingIgnoredDuringExecution": {
+              "description": "The scheduler will prefer to schedule pods to nodes that satisfy the affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding \"weight\" to the sum if the node has pods which matches the corresponding podAffinityTerm; the node(s) with the highest sum are the most preferred.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0"
+              }
+            },
+            "requiredDuringSchedulingIgnoredDuringExecution": {
+              "description": "If the affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to a pod label update), the system may or may not try to eventually evict the pod from its node. When there are multiple elements, the lists of nodes corresponding to each podAffinityTerm are intersected, i.e. all terms must be satisfied.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/podAffinityTerm"
+              }
+            }
+          }
+        },
+        "podAntiAffinity": {
+          "description": "Describes pod anti-affinity scheduling rules (e.g. avoid putting this pod in the same node, zone, etc. as some other pod(s)).",
+          "type": "object",
+          "properties": {
+            "preferredDuringSchedulingIgnoredDuringExecution": {
+              "description": "The scheduler will prefer to schedule pods to nodes that satisfy the anti-affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling anti-affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding \"weight\" to the sum if the node has pods which matches the corresponding podAffinityTerm; the node(s) with the highest sum are the most preferred.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0"
+              }
+            },
+            "requiredDuringSchedulingIgnoredDuringExecution": {
+              "description": "If the anti-affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the anti-affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to a pod label update), the system may or may not try to eventually evict the pod from its node. When there are multiple elements, the lists of nodes corresponding to each podAffinityTerm are intersected, i.e. all terms must be satisfied.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/podAffinityTerm"
+              }
+            }
+          }
+        }
+      }
+    },
+    "zoneResources": {
+      "description": "If provided, use these requests and limit for cpu/memory resource allocation",
+      "type": "object",
+      "properties": {
+        "limits": {
+          "description": "Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/",
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "requests": {
+          "description": "Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/",
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      }
+    },
+    "zoneTolerations": {
+      "description": "Tolerations allows users to set entries like effect, key, operator, value.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ZoneTolerationsItems0"
       }
     }
   },

@@ -39,10 +39,6 @@ var TLSPort = "9443"
 // TLSRedirect console tls redirect rule
 var TLSRedirect = "off"
 
-// defaultTenantMemorySize default value used
-// when generating minioTenant request
-var defaultTenantMemorySize = "16Gi"
-
 func getAccessKey() string {
 	return env.Get(ConsoleAccessKey, "minioadmin")
 }
@@ -231,10 +227,4 @@ func getSecureFeaturePolicy() string {
 
 func getSecureExpectCTHeader() string {
 	return env.Get(ConsoleSecureExpectCTHeader, "")
-}
-
-// getTenantMemorySize Memory size value to be used when generating the
-// Tenant request
-func getTenantMemorySize() string {
-	return env.Get(ConsoleTenantMemorySize, defaultTenantMemorySize)
 }
