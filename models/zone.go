@@ -34,12 +34,24 @@ import (
 // swagger:model zone
 type Zone struct {
 
+	// affinity
+	Affinity *ZoneAffinity `json:"affinity,omitempty"`
+
 	// name
 	Name string `json:"name,omitempty"`
+
+	// NodeSelector is a selector which must be true for the pod to fit on a node. Selector which must match a node's labels for the pod to be scheduled on that node. More info: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+	NodeSelector map[string]string `json:"node_selector,omitempty"`
+
+	// resources
+	Resources *ZoneResources `json:"resources,omitempty"`
 
 	// servers
 	// Required: true
 	Servers *int64 `json:"servers"`
+
+	// tolerations
+	Tolerations ZoneTolerations `json:"tolerations,omitempty"`
 
 	// volume configuration
 	// Required: true
@@ -54,7 +66,19 @@ type Zone struct {
 func (m *Zone) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateAffinity(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateResources(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateServers(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTolerations(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -72,9 +96,61 @@ func (m *Zone) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *Zone) validateAffinity(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Affinity) { // not required
+		return nil
+	}
+
+	if m.Affinity != nil {
+		if err := m.Affinity.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("affinity")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Zone) validateResources(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Resources) { // not required
+		return nil
+	}
+
+	if m.Resources != nil {
+		if err := m.Resources.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("resources")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *Zone) validateServers(formats strfmt.Registry) error {
 
 	if err := validate.Required("servers", "body", m.Servers); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Zone) validateTolerations(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Tolerations) { // not required
+		return nil
+	}
+
+	if err := m.Tolerations.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("tolerations")
+		}
 		return err
 	}
 
