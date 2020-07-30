@@ -254,12 +254,12 @@ func listTenants(ctx context.Context, operatorClient OperatorClient, namespace s
 	}
 
 	var tenants []*models.TenantList
-	var totalSize int64
 
-	for _, minInst := range minTenants.Items {
+	for _, tenant := range minTenants.Items {
+		var totalSize int64
 		var instanceCount int64
 		var volumeCount int64
-		for _, zone := range minInst.Spec.Zones {
+		for _, zone := range tenant.Spec.Zones {
 			instanceCount = instanceCount + int64(zone.Servers)
 			volumeCount = volumeCount + int64(zone.Servers*zone.VolumesPerServer)
 			if zone.VolumeClaimTemplate != nil {
@@ -269,20 +269,20 @@ func listTenants(ctx context.Context, operatorClient OperatorClient, namespace s
 		}
 
 		tenants = append(tenants, &models.TenantList{
-			CreationDate:  minInst.ObjectMeta.CreationTimestamp.String(),
-			Name:          minInst.ObjectMeta.Name,
-			ZoneCount:     int64(len(minInst.Spec.Zones)),
+			CreationDate:  tenant.ObjectMeta.CreationTimestamp.String(),
+			Name:          tenant.ObjectMeta.Name,
+			ZoneCount:     int64(len(tenant.Spec.Zones)),
 			InstanceCount: instanceCount,
 			VolumeCount:   volumeCount,
-			CurrentState:  minInst.Status.CurrentState,
-			Namespace:     minInst.ObjectMeta.Namespace,
+			CurrentState:  tenant.Status.CurrentState,
+			Namespace:     tenant.ObjectMeta.Namespace,
 			TotalSize:     totalSize,
 		})
 	}
 
 	return &models.ListTenantsResponse{
 		Tenants: tenants,
-		Total:   0,
+		Total:   int64(len(tenants)),
 	}, nil
 }
 
@@ -332,6 +332,13 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		}
 		minioImage = *minImg
 	}
+	// get Kubernetes Client
+	clientset, err := cluster.K8sClient(session.SessionToken)
+	if err != nil {
+		return nil, err
+	}
+
+	ns := *params.Body.Namespace
 
 	// if access/secret are provided, use them, else create a random pair
 	accessKey := RandomCharString(16)
@@ -355,11 +362,6 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		},
 	}
 
-	clientset, err := cluster.K8sClient(session.SessionToken)
-	if err != nil {
-		return nil, err
-	}
-	ns := *params.Body.Namespace
 	_, err = clientset.CoreV1().Secrets(ns).Create(context.Background(), &instanceSecret, metav1.CreateOptions{})
 	if err != nil {
 		return nil, err
@@ -389,10 +391,13 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		},
 	}
 	// optionals are set below
-
+	var consoleAccess string
+	var consoleSecret string
 	if enableConsole {
 		consoleSelector := fmt.Sprintf("%s-console", *params.Body.Name)
 		consoleSecretName := fmt.Sprintf("%s-secret", consoleSelector)
+		consoleAccess = RandomCharString(16)
+		consoleSecret = RandomCharString(32)
 		imm := true
 		instanceSecret := corev1.Secret{
 			ObjectMeta: metav1.ObjectMeta{
@@ -403,8 +408,8 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 				"CONSOLE_HMAC_JWT_SECRET":  []byte(RandomCharString(16)),
 				"CONSOLE_PBKDF_PASSPHRASE": []byte(RandomCharString(16)),
 				"CONSOLE_PBKDF_SALT":       []byte(RandomCharString(8)),
-				"CONSOLE_ACCESS_KEY":       []byte(RandomCharString(16)),
-				"CONSOLE_SECRET_KEY":       []byte(RandomCharString(32)),
+				"CONSOLE_ACCESS_KEY":       []byte(consoleAccess),
+				"CONSOLE_SECRET_KEY":       []byte(consoleSecret),
 			},
 		}
 		_, err = clientset.CoreV1().Secrets(ns).Create(context.Background(), &instanceSecret, metav1.CreateOptions{})
@@ -462,11 +467,16 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			return nil, err
 		}
 	}
-
-	return &models.CreateTenantResponse{
+	response := &models.CreateTenantResponse{
 		AccessKey: accessKey,
 		SecretKey: secretKey,
-	}, nil
+	}
+	// Attach Console Credentials
+	if enableConsole {
+		response.Console.AccessKey = consoleAccess
+		response.Console.SecretKey = consoleSecret
+	}
+	return response, nil
 }
 
 // updateTenantAction does an update on the minioTenant by patching the desired changes

@@ -2020,6 +2020,17 @@ func init() {
         "access_key": {
           "type": "string"
         },
+        "console": {
+          "type": "object",
+          "properties": {
+            "access_key": {
+              "type": "string"
+            },
+            "secret_key": {
+              "type": "string"
+            }
+          }
+        },
         "secret_key": {
           "type": "string"
         }
@@ -4842,6 +4853,17 @@ func init() {
     }
   },
   "definitions": {
+    "CreateTenantResponseConsole": {
+      "type": "object",
+      "properties": {
+        "access_key": {
+          "type": "string"
+        },
+        "secret_key": {
+          "type": "string"
+        }
+      }
+    },
     "NodeSelectorTermMatchExpressionsItems0": {
       "description": "A node selector requirement is a selector that contains values, a key, and an operator that relates the key and values.",
       "type": "object",
@@ -5358,6 +5380,17 @@ func init() {
       "properties": {
         "access_key": {
           "type": "string"
+        },
+        "console": {
+          "type": "object",
+          "properties": {
+            "access_key": {
+              "type": "string"
+            },
+            "secret_key": {
+              "type": "string"
+            }
+          }
         },
         "secret_key": {
           "type": "string"

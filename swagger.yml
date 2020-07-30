@@ -1817,6 +1817,13 @@ definitions:
         type: string
       secret_key:
         type: string
+      console:
+        type: object
+        properties:
+          access_key:
+            type: string
+          secret_key:
+            type: string
   zone:
     type: object
     required:
