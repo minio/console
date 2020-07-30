@@ -1,6 +1,12 @@
+FROM ubuntu:18.04 as certs
+
+RUN apt-get update -y && apt-get install -y ca-certificates
+
 FROM scratch
 MAINTAINER MinIO Development "dev@min.io"
 EXPOSE 9090
 COPY console /console
+
+COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 ENTRYPOINT ["/console"]

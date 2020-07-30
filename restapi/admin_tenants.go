@@ -417,7 +417,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			return nil, err
 		}
 
-		const consoleVersion = "minio/console:v0.3.0"
+		const consoleVersion = "minio/console:v0.3.3"
 		minInst.Spec.Console = &operator.ConsoleConfiguration{
 			Replicas:      2,
 			Image:         consoleVersion,
@@ -473,6 +473,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 	// Attach Console Credentials
 	if enableConsole {
+		response.Console = &models.CreateTenantResponseConsole{}
 		response.Console.AccessKey = consoleAccess
 		response.Console.SecretKey = consoleSecret
 	}
