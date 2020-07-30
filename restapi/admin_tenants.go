@@ -473,6 +473,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 	// Attach Console Credentials
 	if enableConsole {
+		response.Console = &models.CreateTenantResponseConsole{}
 		response.Console.AccessKey = consoleAccess
 		response.Console.SecretKey = consoleSecret
 	}
