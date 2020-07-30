@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:18.04 as certs
 
 RUN apt-get update -y && apt-get install -y ca-certificates
 
