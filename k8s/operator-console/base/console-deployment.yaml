@@ -21,7 +21,6 @@ spec:
             - name: CONSOLE_OPERATOR_MODE
               value: "on"
           args:
-            - /console
             - server
           ports:
             - containerPort: 9090
