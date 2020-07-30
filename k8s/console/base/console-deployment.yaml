@@ -18,7 +18,6 @@ spec:
           image: minio/console:latest
           imagePullPolicy: "IfNotPresent"
           args:
-            - /console
             - server
           ports:
             - containerPort: 9090
