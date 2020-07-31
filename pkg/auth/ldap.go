@@ -24,11 +24,11 @@ import (
 )
 
 var (
-	errInvalidCredentials = errors.New("invalid Credentials")
+	errInvalidCredentials = errors.New("invalid Login")
 )
 
 // GetConsoleCredentialsFromLDAP authenticates the user against MinIO when the LDAP integration is enabled
-// if the authentication succeed *credentials.Credentials object is returned and we continue with the normal STSAssumeRole flow
+// if the authentication succeed *credentials.Login object is returned and we continue with the normal STSAssumeRole flow
 func GetConsoleCredentialsFromLDAP(endpoint, ldapUser, ldapPassword string) (*credentials.Credentials, error) {
 	creds, err := credentials.NewLDAPIdentity(endpoint, ldapUser, ldapPassword)
 	if err != nil {

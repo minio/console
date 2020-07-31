@@ -34,7 +34,7 @@ import (
 
 var (
 	errorGeneric          = errors.New("an error occurred, please try again")
-	errInvalidCredentials = errors.New("invalid Credentials")
+	errInvalidCredentials = errors.New("invalid Login")
 )
 
 func registerLoginHandlers(api *operations.ConsoleAPI) {
@@ -80,7 +80,7 @@ func login(credentials ConsoleCredentials, actions []string) (*string, error) {
 		return nil, errInvalidCredentials
 	}
 	// if we made it here, the consoleCredentials work, generate a jwt with claims
-	jwt, err := auth.NewJWTWithClaimsForClient(&tokens, actions, getMinIOServer())
+	jwt, err := auth.NewEncryptedTokenForClient(&tokens, actions)
 	if err != nil {
 		log.Println("error authenticating user", err)
 		return nil, errInvalidCredentials

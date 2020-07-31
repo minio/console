@@ -98,7 +98,7 @@ func getLatestMinIOImage(client HTTPClientI) (*string, error) {
 var latestMinIOImage, errLatestMinIOImage = getLatestMinIOImage(
 	&HTTPClient{
 		Client: &http.Client{
-			Timeout: 4 * time.Second,
+			Timeout: 15 * time.Second,
 		},
 	})
 

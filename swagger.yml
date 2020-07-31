@@ -1810,6 +1810,162 @@ definitions:
         type: object
         additionalProperties:
           type: string
+      tls:
+        type: object
+        $ref: "#/definitions/tlsConfiguration"
+      encryption:
+        type: object
+        $ref: "#/definitions/encryptionConfiguration"
+
+  tlsConfiguration:
+    type: object
+    required:
+      - crt
+      - key
+    properties:
+      crt:
+        type: string
+      key:
+        type: string
+
+  encryptionConfiguration:
+    type: object
+    properties:
+      image:
+        type: string
+      server:
+        type: object
+        required:
+          - crt
+          - key
+        properties:
+          crt:
+            type: string
+          key:
+            type: string
+      client:
+        type: object
+        required:
+          - crt
+          - key
+        properties:
+          crt:
+            type: string
+          key:
+            type: string
+      master_key:
+        type: string
+      gemalto:
+        type: object
+        $ref: "#/definitions/gemaltoConfiguration"
+      aws:
+        type: object
+        $ref: "#/definitions/awsConfiguration"
+      vault:
+        type: object
+        $ref: "#/definitions/vaultConfiguration"
+
+  vaultConfiguration:
+    type: object
+    required:
+      - endpoint
+      - approle
+    properties:
+      endpoint:
+        type: string
+      engine:
+        type: string
+      namespace:
+        type: string
+      prefix:
+        type: string
+      approle:
+        type: object
+        required:
+          - id
+          - secret
+        properties:
+          engine:
+            type: string
+          id:
+            type: string
+          secret:
+            type: string
+          retry:
+            type: integer
+            format: int64
+      status:
+        type: object
+        properties:
+          ping:
+            type: integer
+            format: int64
+
+  awsConfiguration:
+    type: object
+    required:
+      - secretsmanager
+    properties:
+      secretsmanager:
+        type: object
+        required:
+          - endpoint
+          - region
+          - credentials
+        properties:
+          endpoint:
+            type: string
+          region:
+            type: string
+          kmskey:
+            type: string
+          credentials:
+            type: object
+            required:
+              - accesskey
+              - secretkey
+            properties:
+              accesskey:
+                type: string
+              secretkey:
+                type: string
+              token:
+                type: string
+
+  gemaltoConfiguration:
+    type: object
+    required:
+      - keysecure
+    properties:
+      keysecure:
+        type: object
+        required:
+          - endpoint
+          - credentials
+        properties:
+          endpoint:
+            type: string
+          credentials:
+            type: object
+            required:
+              - token
+              - domain
+            properties:
+              token:
+                type: string
+              domain:
+                type: string
+              retry:
+                type: integer
+                format: int64
+          tls:
+            type: object
+            required:
+              - ca
+            properties:
+              ca:
+                type: string
+
   createTenantResponse:
     type: object
     properties:

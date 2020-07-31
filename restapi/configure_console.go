@@ -63,7 +63,7 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	api.KeyAuth = func(token string, scopes []string) (*models.Principal, error) {
 		// we are validating the jwt by decrypting the claims inside, if the operation succed that means the jwt
 		// was generated and signed by us in the first place
-		claims, err := auth.JWTAuthenticate(token)
+		claims, err := auth.SessionTokenAuthenticate(token)
 		if err != nil {
 			log.Println(err)
 			return nil, errors.New(401, "incorrect api key auth")

@@ -26,8 +26,8 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/acl"
 	"github.com/minio/console/pkg/auth"
-	xjwt "github.com/minio/console/pkg/auth/jwt"
 	"github.com/minio/console/pkg/auth/ldap"
+	xjwt "github.com/minio/console/pkg/auth/token"
 	mc "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7"
@@ -125,7 +125,7 @@ func (c mcClient) watch(ctx context.Context, options mc.WatchOptions) (*mc.Watch
 }
 
 // ConsoleCredentials interface with all functions to be implemented
-// by mock when testing, it should include all needed consoleCredentials.Credentials api calls
+// by mock when testing, it should include all needed consoleCredentials.Login api calls
 // that are used within this project.
 type ConsoleCredentials interface {
 	Get() (credentials.Value, error)
@@ -137,12 +137,12 @@ type consoleCredentials struct {
 	consoleCredentials *credentials.Credentials
 }
 
-// implements *Credentials.Get()
+// implements *Login.Get()
 func (c consoleCredentials) Get() (credentials.Value, error) {
 	return c.consoleCredentials.Get()
 }
 
-// implements *Credentials.Expire()
+// implements *Login.Expire()
 func (c consoleCredentials) Expire() {
 	c.consoleCredentials.Expire()
 }
@@ -217,14 +217,14 @@ func newConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 
 // GetClaimsFromJWT decrypt and returns the claims associated to a provided jwt
 func GetClaimsFromJWT(jwt string) (*auth.DecryptedClaims, error) {
-	claims, err := auth.JWTAuthenticate(jwt)
+	claims, err := auth.SessionTokenAuthenticate(jwt)
 	if err != nil {
 		return nil, err
 	}
 	return claims, nil
 }
 
-// getConsoleCredentialsFromSession returns the *consoleCredentials.Credentials associated to the
+// getConsoleCredentialsFromSession returns the *consoleCredentials.Login associated to the
 // provided jwt, this is useful for running the Expire() or IsExpired() operations
 func getConsoleCredentialsFromSession(claims *models.Principal) *credentials.Credentials {
 	return credentials.NewStaticV4(claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken)
