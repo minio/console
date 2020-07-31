@@ -250,7 +250,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
           </Typography>
           <Button
             component={"a"}
-            href={loginStrategy.redirect}
+            href={loginStrategy.redirect.replace("%5BHOSTNAME%5D", window.location.hostname)}
             type="submit"
             fullWidth
             variant="contained"

@@ -51,6 +51,9 @@ type CreateTenantRequest struct {
 	// encryption
 	Encryption *EncryptionConfiguration `json:"encryption,omitempty"`
 
+	// idp
+	Idp *IdpConfiguration `json:"idp,omitempty"`
+
 	// image
 	Image string `json:"image,omitempty"`
 
@@ -88,6 +91,10 @@ func (m *CreateTenantRequest) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateIdp(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
@@ -120,6 +127,24 @@ func (m *CreateTenantRequest) validateEncryption(formats strfmt.Registry) error 
 		if err := m.Encryption.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("encryption")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *CreateTenantRequest) validateIdp(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Idp) { // not required
+		return nil
+	}
+
+	if m.Idp != nil {
+		if err := m.Idp.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("idp")
 			}
 			return err
 		}

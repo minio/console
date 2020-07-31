@@ -2036,6 +2036,10 @@ func init() {
           "type": "object",
           "$ref": "#/definitions/encryptionConfiguration"
         },
+        "idp": {
+          "type": "object",
+          "$ref": "#/definitions/idpConfiguration"
+        },
         "image": {
           "type": "string"
         },
@@ -2224,6 +2228,64 @@ func init() {
         },
         "status": {
           "type": "string"
+        }
+      }
+    },
+    "idpConfiguration": {
+      "type": "object",
+      "properties": {
+        "active_directory": {
+          "type": "object",
+          "required": [
+            "url",
+            "username_format",
+            "user_search_filter"
+          ],
+          "properties": {
+            "group_name_attribute": {
+              "type": "string"
+            },
+            "group_search_base_dn": {
+              "type": "string"
+            },
+            "group_search_filter": {
+              "type": "string"
+            },
+            "server_insecure": {
+              "type": "boolean"
+            },
+            "skip_ssl_verification": {
+              "type": "boolean"
+            },
+            "url": {
+              "type": "string"
+            },
+            "user_search_filter": {
+              "type": "string"
+            },
+            "username_format": {
+              "type": "string"
+            }
+          }
+        },
+        "oidc": {
+          "type": "object",
+          "required": [
+            "url",
+            "client_id",
+            "secret_id"
+          ],
+          "properties": {
+            "client_id": {
+              "type": "string"
+            },
+            "secret_id": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          }
         }
       }
     },
@@ -5244,6 +5306,59 @@ func init() {
         }
       }
     },
+    "IdpConfigurationActiveDirectory": {
+      "type": "object",
+      "required": [
+        "url",
+        "username_format",
+        "user_search_filter"
+      ],
+      "properties": {
+        "group_name_attribute": {
+          "type": "string"
+        },
+        "group_search_base_dn": {
+          "type": "string"
+        },
+        "group_search_filter": {
+          "type": "string"
+        },
+        "server_insecure": {
+          "type": "boolean"
+        },
+        "skip_ssl_verification": {
+          "type": "boolean"
+        },
+        "url": {
+          "type": "string"
+        },
+        "user_search_filter": {
+          "type": "string"
+        },
+        "username_format": {
+          "type": "string"
+        }
+      }
+    },
+    "IdpConfigurationOidc": {
+      "type": "object",
+      "required": [
+        "url",
+        "client_id",
+        "secret_id"
+      ],
+      "properties": {
+        "client_id": {
+          "type": "string"
+        },
+        "secret_id": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
     "NodeSelectorTermMatchExpressionsItems0": {
       "description": "A node selector requirement is a selector that contains values, a key, and an operator that relates the key and values.",
       "type": "object",
@@ -5808,6 +5923,10 @@ func init() {
           "type": "object",
           "$ref": "#/definitions/encryptionConfiguration"
         },
+        "idp": {
+          "type": "object",
+          "$ref": "#/definitions/idpConfiguration"
+        },
         "image": {
           "type": "string"
         },
@@ -5996,6 +6115,64 @@ func init() {
         },
         "status": {
           "type": "string"
+        }
+      }
+    },
+    "idpConfiguration": {
+      "type": "object",
+      "properties": {
+        "active_directory": {
+          "type": "object",
+          "required": [
+            "url",
+            "username_format",
+            "user_search_filter"
+          ],
+          "properties": {
+            "group_name_attribute": {
+              "type": "string"
+            },
+            "group_search_base_dn": {
+              "type": "string"
+            },
+            "group_search_filter": {
+              "type": "string"
+            },
+            "server_insecure": {
+              "type": "boolean"
+            },
+            "skip_ssl_verification": {
+              "type": "boolean"
+            },
+            "url": {
+              "type": "string"
+            },
+            "user_search_filter": {
+              "type": "string"
+            },
+            "username_format": {
+              "type": "string"
+            }
+          }
+        },
+        "oidc": {
+          "type": "object",
+          "required": [
+            "url",
+            "client_id",
+            "secret_id"
+          ],
+          "properties": {
+            "client_id": {
+              "type": "string"
+            },
+            "secret_id": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          }
         }
       }
     },
