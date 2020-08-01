@@ -71,7 +71,7 @@ func TestWatch(t *testing.T) {
 			// mocking sending 5 lines of info
 			for range lines {
 				info := []mc.EventInfo{
-					mc.EventInfo{
+					{
 						UserAgent: textToReceive,
 					},
 				}
@@ -134,7 +134,7 @@ func TestWatch(t *testing.T) {
 			// mocking sending 5 lines of info
 			for range lines {
 				info := []mc.EventInfo{
-					mc.EventInfo{
+					{
 						UserAgent: textToReceive,
 					},
 				}
@@ -177,7 +177,7 @@ func TestWatch(t *testing.T) {
 			// mocking sending 5 lines of info
 			for range lines {
 				info := []mc.EventInfo{
-					mc.EventInfo{
+					{
 						UserAgent: textToReceive,
 					},
 				}

@@ -60,11 +60,11 @@ func TestListConfig(t *testing.T) {
 	function := "listConfig()"
 	// Test-1 : listConfig() get list of two configurations and ensure is output correctly
 	configListMock := []madmin.HelpKV{
-		madmin.HelpKV{
+		{
 			Key:         "region",
 			Description: "label the location of the server",
 		},
-		madmin.HelpKV{
+		{
 			Key:         "notify_nsq",
 			Description: "publish bucket notifications to NSQ endpoints",
 		},
