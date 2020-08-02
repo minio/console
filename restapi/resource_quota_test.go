@@ -66,12 +66,12 @@ func Test_ResourceQuota(t *testing.T) {
 			want: models.ResourceQuota{
 				Name: mockRQResponse.Name,
 				Elements: []*models.ResourceQuotaElement{
-					&models.ResourceQuotaElement{
+					{
 						Name: "storage",
 						Hard: int64(1000),
 						Used: int64(500),
 					},
-					&models.ResourceQuotaElement{
+					{
 						Name: "cpu",
 						Hard: int64(2048),
 						Used: int64(1024),

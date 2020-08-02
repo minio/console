@@ -67,13 +67,13 @@ func TestListUsers(t *testing.T) {
 	// Test-1 : listUsers() Get response from minio client with two users and return the same number on listUsers()
 	// mock minIO client
 	mockUserMap := map[string]madmin.UserInfo{
-		"ABCDEFGHI": madmin.UserInfo{
+		"ABCDEFGHI": {
 			SecretKey:  "",
 			PolicyName: "ABCDEFGHI-policy",
 			Status:     "enabled",
 			MemberOf:   []string{"group1", "group2"},
 		},
-		"ZBCDEFGHI": madmin.UserInfo{
+		"ZBCDEFGHI": {
 			SecretKey:  "",
 			PolicyName: "ZBCDEFGHI-policy",
 			Status:     "enabled",

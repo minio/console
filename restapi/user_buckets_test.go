@@ -82,8 +82,8 @@ func TestListBucket(t *testing.T) {
 	mockBucketList := madmin.AccountUsageInfo{
 		AccountName: "test",
 		Buckets: []madmin.BucketUsageInfo{
-			madmin.BucketUsageInfo{Name: "bucket-1", Created: time.Now(), Size: 1024},
-			madmin.BucketUsageInfo{Name: "bucket-2", Created: time.Now().Add(time.Hour * 1), Size: 0},
+			{Name: "bucket-1", Created: time.Now(), Size: 1024},
+			{Name: "bucket-2", Created: time.Now().Add(time.Hour * 1), Size: 0},
 		},
 	}
 	// mock function response from listBucketsWithContext(ctx)

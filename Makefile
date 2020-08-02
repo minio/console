@@ -25,8 +25,10 @@ verifiers: getdeps fmt lint
 
 fmt:
 	@echo "Running $@ check"
-	@GO111MODULE=on gofmt -d cmd/
+	@GO111MODULE=on gofmt -d restapi/
 	@GO111MODULE=on gofmt -d pkg/
+	@GO111MODULE=on gofmt -d cmd/
+	@GO111MODULE=on gofmt -d cluster/
 
 lint:
 	@echo "Running $@ check"

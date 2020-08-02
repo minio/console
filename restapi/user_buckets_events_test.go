@@ -148,7 +148,7 @@ func TestListBucketEvents(t *testing.T) {
 		LambdaConfigs: []notification.LambdaConfig{},
 		TopicConfigs:  []notification.TopicConfig{},
 		QueueConfigs: []notification.QueueConfig{
-			notification.QueueConfig{
+			{
 				Queue: "arn:minio:sqs::test:postgresql",
 				Config: notification.Config{
 					ID: "",
@@ -160,11 +160,11 @@ func TestListBucketEvents(t *testing.T) {
 					Filter: &notification.Filter{
 						S3Key: notification.S3Key{
 							FilterRules: []notification.FilterRule{
-								notification.FilterRule{
+								{
 									Name:  "suffix",
 									Value: ".jpg",
 								},
-								notification.FilterRule{
+								{
 									Name:  "prefix",
 									Value: "file/",
 								},
@@ -176,7 +176,7 @@ func TestListBucketEvents(t *testing.T) {
 		},
 	}
 	expectedOutput := []*models.NotificationConfig{
-		&models.NotificationConfig{
+		{
 			Arn:    swag.String("arn:minio:sqs::test:postgresql"),
 			ID:     "",
 			Prefix: "file/",
@@ -213,7 +213,7 @@ func TestListBucketEvents(t *testing.T) {
 		LambdaConfigs: []notification.LambdaConfig{},
 		TopicConfigs:  []notification.TopicConfig{},
 		QueueConfigs: []notification.QueueConfig{
-			notification.QueueConfig{
+			{
 				Queue: "arn:minio:sqs::test:postgresql",
 				Config: notification.Config{
 					ID: "",
@@ -225,7 +225,7 @@ func TestListBucketEvents(t *testing.T) {
 		},
 	}
 	expectedOutput = []*models.NotificationConfig{
-		&models.NotificationConfig{
+		{
 			Arn:    swag.String("arn:minio:sqs::test:postgresql"),
 			ID:     "",
 			Prefix: "",
@@ -258,7 +258,7 @@ func TestListBucketEvents(t *testing.T) {
 	////// Test-3 : listBucketEvents() get list of events
 	mockBucketN = notification.Configuration{
 		LambdaConfigs: []notification.LambdaConfig{
-			notification.LambdaConfig{
+			{
 				Lambda: "lambda",
 				Config: notification.Config{
 					ID: "",
@@ -268,11 +268,11 @@ func TestListBucketEvents(t *testing.T) {
 					Filter: &notification.Filter{
 						S3Key: notification.S3Key{
 							FilterRules: []notification.FilterRule{
-								notification.FilterRule{
+								{
 									Name:  "suffix",
 									Value: ".png",
 								},
-								notification.FilterRule{
+								{
 									Name:  "prefix",
 									Value: "lambda/",
 								},
@@ -283,7 +283,7 @@ func TestListBucketEvents(t *testing.T) {
 			},
 		},
 		TopicConfigs: []notification.TopicConfig{
-			notification.TopicConfig{
+			{
 				Topic: "topic",
 				Config: notification.Config{
 					ID: "",
@@ -293,11 +293,11 @@ func TestListBucketEvents(t *testing.T) {
 					Filter: &notification.Filter{
 						S3Key: notification.S3Key{
 							FilterRules: []notification.FilterRule{
-								notification.FilterRule{
+								{
 									Name:  "suffix",
 									Value: ".gif",
 								},
-								notification.FilterRule{
+								{
 									Name:  "prefix",
 									Value: "topic/",
 								},
@@ -308,7 +308,7 @@ func TestListBucketEvents(t *testing.T) {
 			},
 		},
 		QueueConfigs: []notification.QueueConfig{
-			notification.QueueConfig{
+			{
 				Queue: "arn:minio:sqs::test:postgresql",
 				Config: notification.Config{
 					ID: "",
@@ -326,7 +326,7 @@ func TestListBucketEvents(t *testing.T) {
 	}
 	// order matters in output: topic,queue then lambda are given respectively
 	expectedOutput = []*models.NotificationConfig{
-		&models.NotificationConfig{
+		{
 			Arn:    swag.String("topic"),
 			ID:     "",
 			Prefix: "topic/",
@@ -335,7 +335,7 @@ func TestListBucketEvents(t *testing.T) {
 				models.NotificationEventTypeDelete,
 			},
 		},
-		&models.NotificationConfig{
+		{
 			Arn:    swag.String("arn:minio:sqs::test:postgresql"),
 			ID:     "",
 			Prefix: "",
@@ -344,7 +344,7 @@ func TestListBucketEvents(t *testing.T) {
 				models.NotificationEventTypeDelete,
 			},
 		},
-		&models.NotificationConfig{
+		{
 			Arn:    swag.String("lambda"),
 			ID:     "",
 			Prefix: "lambda/",
