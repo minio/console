@@ -33,8 +33,13 @@ import (
 
 const globalAppName = "console"
 
-// NewAdminClient gives a new client interface
+// NewAdminClient gives a new madmin client interface
 func NewAdminClient(url, accessKey, secretKey string) (*madmin.AdminClient, *probe.Error) {
+	return NewAdminClientWithInsecure(url, accessKey, secretKey, false)
+}
+
+// NewAdminClientWithInsecure gives a new madmin client interface either secure or insecure based on parameter
+func NewAdminClientWithInsecure(url, accessKey, secretKey string, insecure bool) (*madmin.AdminClient, *probe.Error) {
 	appName := filepath.Base(globalAppName)
 
 	s3Client, err := s3AdminNew(&mcCmd.Config{
@@ -44,7 +49,7 @@ func NewAdminClient(url, accessKey, secretKey string) (*madmin.AdminClient, *pro
 		AppName:     appName,
 		AppVersion:  ConsoleVersion,
 		AppComments: []string{appName, runtime.GOOS, runtime.GOARCH},
-		Insecure:    false,
+		Insecure:    insecure,
 	})
 	if err != nil {
 		return nil, err.Trace(url)
