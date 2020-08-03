@@ -32,11 +32,11 @@ import (
 // swagger:model tenantUsage
 type TenantUsage struct {
 
-	// disk used size
-	DiskUsedSize int64 `json:"disk_used_size,omitempty"`
+	// disk used
+	DiskUsed int64 `json:"disk_used,omitempty"`
 
-	// used size
-	UsedSize int64 `json:"used_size,omitempty"`
+	// used
+	Used int64 `json:"used,omitempty"`
 }
 
 // Validate validates this tenant usage

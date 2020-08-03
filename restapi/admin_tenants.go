@@ -990,7 +990,7 @@ func getTenantUsageResponse(session *models.Principal, params admin_api.GetTenan
 		log.Println("error getting admin info:", err)
 		return nil, err
 	}
-	info := &models.TenantUsage{UsedSize: adminInfo.Usage, DiskUsedSize: adminInfo.DisksUsage}
+	info := &models.TenantUsage{Used: adminInfo.Usage, DiskUsed: adminInfo.DisksUsage}
 	return info, nil
 }
 
