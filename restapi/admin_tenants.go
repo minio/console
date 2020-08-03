@@ -395,6 +395,57 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			Env: []corev1.EnvVar{},
 		},
 	}
+	idpEnabled := false
+	// Enable IDP (Active Directory) for MinIO
+	if params.Body.Idp != nil && params.Body.Idp.ActiveDirectory != nil {
+		url := *params.Body.Idp.ActiveDirectory.URL
+		userNameFormat := *params.Body.Idp.ActiveDirectory.UsernameFormat
+		userSearchFilter := *params.Body.Idp.ActiveDirectory.UserSearchFilter
+		tlsSkipVerify := params.Body.Idp.ActiveDirectory.SkipSslVerification
+		serverInsecure := params.Body.Idp.ActiveDirectory.ServerInsecure
+		groupSearchDN := params.Body.Idp.ActiveDirectory.GroupSearchBaseDn
+		groupSearchFilter := params.Body.Idp.ActiveDirectory.GroupSearchFilter
+		groupNameAttribute := params.Body.Idp.ActiveDirectory.GroupNameAttribute
+		if url != "" && userNameFormat != "" && userSearchFilter != "" {
+			// CONSOLE_LDAP_ENABLED
+			idpEnabled = true
+			minInst.Spec.Env = append(minInst.Spec.Env, corev1.EnvVar{
+				Name:  "MINIO_IDENTITY_LDAP_SERVER_ADDR",
+				Value: userNameFormat,
+			}, corev1.EnvVar{
+				Name:  "MINIO_IDENTITY_LDAP_USERNAME_FORMAT",
+				Value: userNameFormat,
+			}, corev1.EnvVar{
+				Name:  "MINIO_IDENTITY_LDAP_USERNAME_SEARCH_FILTER",
+				Value: userSearchFilter,
+			}, corev1.EnvVar{
+				Name:  "MINIO_IDENTITY_LDAP_USERNAME_SEARCH_FILTER",
+				Value: userSearchFilter,
+			}, corev1.EnvVar{
+				Name:  "MINIO_IDENTITY_LDAP_GROUP_SEARCH_BASE_DN",
+				Value: groupSearchDN,
+			}, corev1.EnvVar{
+				Name:  "MINIO_IDENTITY_LDAP_GROUP_SEARCH_FILTER",
+				Value: groupSearchFilter,
+			}, corev1.EnvVar{
+				Name:  "MINIO_IDENTITY_LDAP_GROUP_NAME_ATTRIBUTE",
+				Value: groupNameAttribute,
+			})
+
+			if tlsSkipVerify {
+				minInst.Spec.Env = append(minInst.Spec.Env, corev1.EnvVar{
+					Name:  "MINIO_IDENTITY_LDAP_TLS_SKIP_VERIFY",
+					Value: "on",
+				})
+			}
+			if serverInsecure {
+				minInst.Spec.Env = append(minInst.Spec.Env, corev1.EnvVar{
+					Name:  "MINIO_IDENTITY_LDAP_SERVER_INSECURE",
+					Value: "on",
+				})
+			}
+		}
+	}
 
 	// operator request AutoCert feature
 	encryption := false
@@ -468,6 +519,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 				minInst.Spec.KES.Image = params.Body.Encryption.Image
 			}
 			// Secret to store KES server TLS certificates
+			// TODO check if AutoCert it's already configured
 			serverTLSCrt, err := base64.StdEncoding.DecodeString(*params.Body.Encryption.Server.Crt)
 			if err != nil {
 				return nil, err
@@ -689,6 +741,28 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 				"CONSOLE_SECRET_KEY":       []byte(consoleSecret),
 			},
 		}
+
+		// Enable IDP (Open ID Connect) for console
+		if !idpEnabled && params.Body.Idp != nil && params.Body.Idp.Oidc != nil {
+			url := *params.Body.Idp.Oidc.URL
+			clientID := *params.Body.Idp.Oidc.ClientID
+			secretID := *params.Body.Idp.Oidc.SecretID
+			if url != "" && clientID != "" && secretID != "" {
+				instanceSecret.Data["CONSOLE_IDP_URL"] = []byte(url)
+				instanceSecret.Data["CONSOLE_IDP_CLIENT_ID"] = []byte(clientID)
+				instanceSecret.Data["CONSOLE_IDP_SECRET"] = []byte(secretID)
+				consoleScheme := "http"
+				consolePort := 9090
+				if minInst.Spec.RequestAutoCert {
+					consoleScheme = "https"
+					consolePort = 9443
+				}
+				// https://[HOSTNAME]:9443 will be replaced by javascript in the browser to use the actual hostname
+				// assigned to Console, eg: https://localhost:9443
+				instanceSecret.Data["CONSOLE_IDP_CALLBACK"] = []byte(fmt.Sprintf("%s://[HOSTNAME]:%d/oauth_callback", consoleScheme, consolePort))
+			}
+		}
+
 		_, err = clientset.CoreV1().Secrets(ns).Create(context.Background(), &instanceSecret, metav1.CreateOptions{})
 		if err != nil {
 			return nil, err

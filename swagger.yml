@@ -1810,6 +1810,9 @@ definitions:
         type: object
         additionalProperties:
           type: string
+      idp:
+        type: object
+        $ref: "#/definitions/idpConfiguration"
       tls:
         type: object
         $ref: "#/definitions/tlsConfiguration"
@@ -1827,6 +1830,46 @@ definitions:
         type: string
       key:
         type: string
+
+  idpConfiguration:
+    type: object
+    properties:
+      oidc:
+        type: object
+        required:
+          - url
+          - client_id
+          - secret_id
+        properties:
+          url:
+            type: string
+          client_id:
+            type: string
+          secret_id:
+            type: string
+      active_directory:
+        type: object
+        required:
+          - url
+          - username_format
+          - user_search_filter
+        properties:
+          url:
+            type: string
+          username_format:
+            type: string
+          user_search_filter:
+            type: string
+          group_search_base_dn:
+            type: string
+          group_search_filter:
+            type: string
+          group_name_attribute:
+            type: string
+          skip_ssl_verification:
+            type: boolean
+          server_insecure:
+            type: boolean
 
   encryptionConfiguration:
     type: object
