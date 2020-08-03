@@ -1736,6 +1736,9 @@ definitions:
       used_size:
         type: integer
         format: int64
+      disk_used_size:
+        type: integer
+        format: int64
 
   tenantList:
     type: object
