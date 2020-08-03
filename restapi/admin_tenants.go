@@ -57,6 +57,7 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPICreateTenantHandler = admin_api.CreateTenantHandlerFunc(func(params admin_api.CreateTenantParams, session *models.Principal) middleware.Responder {
 		resp, err := getTenantCreatedResponse(session, params)
 		if err != nil {
+			log.Println(err)
 			return admin_api.NewCreateTenantDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return admin_api.NewCreateTenantOK().WithPayload(resp)
@@ -65,6 +66,7 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPIListAllTenantsHandler = admin_api.ListAllTenantsHandlerFunc(func(params admin_api.ListAllTenantsParams, session *models.Principal) middleware.Responder {
 		resp, err := getListAllTenantsResponse(session, params)
 		if err != nil {
+			log.Println(err)
 			return admin_api.NewListTenantsDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return admin_api.NewListTenantsOK().WithPayload(resp)
@@ -74,6 +76,7 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPIListTenantsHandler = admin_api.ListTenantsHandlerFunc(func(params admin_api.ListTenantsParams, session *models.Principal) middleware.Responder {
 		resp, err := getListTenantsResponse(session, params)
 		if err != nil {
+			log.Println(err)
 			return admin_api.NewListTenantsDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return admin_api.NewListTenantsOK().WithPayload(resp)
@@ -83,6 +86,7 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPITenantInfoHandler = admin_api.TenantInfoHandlerFunc(func(params admin_api.TenantInfoParams, session *models.Principal) middleware.Responder {
 		resp, err := getTenantInfoResponse(session, params)
 		if err != nil {
+			log.Println(err)
 			return admin_api.NewTenantInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return admin_api.NewTenantInfoOK().WithPayload(resp)
@@ -695,6 +699,11 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			Replicas:      2,
 			Image:         consoleVersion,
 			ConsoleSecret: &corev1.LocalObjectReference{Name: consoleSecretName},
+			Resources: corev1.ResourceRequirements{
+				Requests: map[corev1.ResourceName]resource.Quantity{
+					"memory": resource.MustParse("64Mi"),
+				},
+			},
 		}
 	}
 
