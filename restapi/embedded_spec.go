@@ -3000,7 +3000,11 @@ func init() {
     "tenantUsage": {
       "type": "object",
       "properties": {
-        "used_size": {
+        "disk_used": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "used": {
           "type": "integer",
           "format": "int64"
         }
@@ -6821,7 +6825,11 @@ func init() {
     "tenantUsage": {
       "type": "object",
       "properties": {
-        "used_size": {
+        "disk_used": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "used": {
           "type": "integer",
           "format": "int64"
         }

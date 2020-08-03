@@ -939,6 +939,7 @@ func getTenantUsageResponse(session *models.Principal, params admin_api.GetTenan
 
 	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
+		log.Println("error operator client", err)
 		return nil, err
 	}
 	clientset, err := cluster.K8sClient(session.SessionToken)
@@ -989,7 +990,7 @@ func getTenantUsageResponse(session *models.Principal, params admin_api.GetTenan
 		log.Println("error getting admin info:", err)
 		return nil, err
 	}
-	info := &models.TenantUsage{UsedSize: adminInfo.Usage}
+	info := &models.TenantUsage{Used: adminInfo.Usage, DiskUsed: adminInfo.DisksUsage}
 	return info, nil
 }
 

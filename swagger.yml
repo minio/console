@@ -1733,7 +1733,10 @@ definitions:
   tenantUsage:
     type: object
     properties:
-      used_size:
+      used:
+        type: integer
+        format: int64
+      disk_used:
         type: integer
         format: int64
 
