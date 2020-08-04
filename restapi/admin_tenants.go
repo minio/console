@@ -334,7 +334,8 @@ func getListTenantsResponse(session *models.Principal, params admin_api.ListTena
 }
 
 func getTenantCreatedResponse(session *models.Principal, params admin_api.CreateTenantParams) (*models.CreateTenantResponse, error) {
-	minioImage := params.Body.Image
+	tenantReq := params.Body
+	minioImage := tenantReq.Image
 
 	if minioImage == "" {
 		minImg, err := cluster.GetMinioImage()
@@ -349,20 +350,20 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		return nil, err
 	}
 
-	ns := *params.Body.Namespace
+	ns := *tenantReq.Namespace
 
 	// if access/secret are provided, use them, else create a random pair
 	accessKey := RandomCharString(16)
 	secretKey := RandomCharString(32)
 
-	if params.Body.AccessKey != "" {
-		accessKey = params.Body.AccessKey
+	if tenantReq.AccessKey != "" {
+		accessKey = tenantReq.AccessKey
 	}
-	if params.Body.SecretKey != "" {
-		secretKey = params.Body.SecretKey
+	if tenantReq.SecretKey != "" {
+		secretKey = tenantReq.SecretKey
 	}
 
-	secretName := fmt.Sprintf("%s-secret", *params.Body.Name)
+	secretName := fmt.Sprintf("%s-secret", *tenantReq.Name)
 	imm := true
 
 	instanceSecret := corev1.Secret{
@@ -384,7 +385,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	//Construct a MinIO Instance with everything we are getting from parameters
 	minInst := operator.Tenant{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: *params.Body.Name,
+			Name: *tenantReq.Name,
 		},
 		Spec: operator.TenantSpec{
 			Image:     minioImage,
@@ -397,15 +398,15 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 	idpEnabled := false
 	// Enable IDP (Active Directory) for MinIO
-	if params.Body.Idp != nil && params.Body.Idp.ActiveDirectory != nil {
-		url := *params.Body.Idp.ActiveDirectory.URL
-		userNameFormat := *params.Body.Idp.ActiveDirectory.UsernameFormat
-		userSearchFilter := *params.Body.Idp.ActiveDirectory.UserSearchFilter
-		tlsSkipVerify := params.Body.Idp.ActiveDirectory.SkipSslVerification
-		serverInsecure := params.Body.Idp.ActiveDirectory.ServerInsecure
-		groupSearchDN := params.Body.Idp.ActiveDirectory.GroupSearchBaseDn
-		groupSearchFilter := params.Body.Idp.ActiveDirectory.GroupSearchFilter
-		groupNameAttribute := params.Body.Idp.ActiveDirectory.GroupNameAttribute
+	if tenantReq.Idp != nil && tenantReq.Idp.ActiveDirectory != nil {
+		url := *tenantReq.Idp.ActiveDirectory.URL
+		userNameFormat := *tenantReq.Idp.ActiveDirectory.UsernameFormat
+		userSearchFilter := *tenantReq.Idp.ActiveDirectory.UserSearchFilter
+		tlsSkipVerify := tenantReq.Idp.ActiveDirectory.SkipSslVerification
+		serverInsecure := tenantReq.Idp.ActiveDirectory.ServerInsecure
+		groupSearchDN := tenantReq.Idp.ActiveDirectory.GroupSearchBaseDn
+		groupSearchFilter := tenantReq.Idp.ActiveDirectory.GroupSearchFilter
+		groupNameAttribute := tenantReq.Idp.ActiveDirectory.GroupNameAttribute
 		if url != "" && userNameFormat != "" && userSearchFilter != "" {
 			// CONSOLE_LDAP_ENABLED
 			idpEnabled = true
@@ -449,24 +450,24 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 
 	// operator request AutoCert feature
 	encryption := false
-	if params.Body.EnableSsl != nil {
+	if tenantReq.EnableSsl != nil {
 		encryption = true
-		minInst.Spec.RequestAutoCert = *params.Body.EnableSsl
+		minInst.Spec.RequestAutoCert = *tenantReq.EnableSsl
 	}
 
 	// User provided TLS certificates (this will take priority over autoCert)
-	if params.Body.TLS != nil && params.Body.TLS.Crt != nil && params.Body.TLS.Key != nil {
+	if tenantReq.TLS != nil && tenantReq.TLS.Crt != nil && tenantReq.TLS.Key != nil {
 		encryption = true
 		externalTLSCertificateSecretName := fmt.Sprintf("%s-instance-external-certificates", secretName)
 		// disable autoCert
 		minInst.Spec.RequestAutoCert = false
 
-		tlsCrt, err := base64.StdEncoding.DecodeString(*params.Body.TLS.Crt)
+		tlsCrt, err := base64.StdEncoding.DecodeString(*tenantReq.TLS.Crt)
 		if err != nil {
 			return nil, err
 		}
 
-		tlsKey, err := base64.StdEncoding.DecodeString(*params.Body.TLS.Key)
+		tlsKey, err := base64.StdEncoding.DecodeString(*tenantReq.TLS.Key)
 		if err != nil {
 			return nil, err
 		}
@@ -493,19 +494,19 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		}
 	}
 
-	if params.Body.Encryption != nil && encryption {
+	if tenantReq.Encryption != nil && encryption {
 		// Enable auto encryption
 		minInst.Spec.Env = append(minInst.Spec.Env, corev1.EnvVar{
 			Name:  "MINIO_KMS_AUTO_ENCRYPTION",
 			Value: "on",
 		})
 
-		if params.Body.Encryption.MasterKey != "" {
+		if tenantReq.Encryption.MasterKey != "" {
 			// Configure MinIO to use MINIO_KMS_MASTER_KEY legacy key
 			// https://docs.min.io/docs/minio-vault-legacy.html
 			minInst.Spec.Env = append(minInst.Spec.Env, corev1.EnvVar{
 				Name:  "MINIO_KMS_MASTER_KEY",
-				Value: params.Body.Encryption.MasterKey,
+				Value: tenantReq.Encryption.MasterKey,
 			})
 		} else {
 			// KES configuration for Tenant instance
@@ -515,16 +516,16 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 				Metadata: nil,
 			}
 			// Using custom image for KES
-			if params.Body.Encryption.Image != "" {
-				minInst.Spec.KES.Image = params.Body.Encryption.Image
+			if tenantReq.Encryption.Image != "" {
+				minInst.Spec.KES.Image = tenantReq.Encryption.Image
 			}
 			// Secret to store KES server TLS certificates
 			// TODO check if AutoCert it's already configured
-			serverTLSCrt, err := base64.StdEncoding.DecodeString(*params.Body.Encryption.Server.Crt)
+			serverTLSCrt, err := base64.StdEncoding.DecodeString(*tenantReq.Encryption.Server.Crt)
 			if err != nil {
 				return nil, err
 			}
-			serverTLSKey, err := base64.StdEncoding.DecodeString(*params.Body.Encryption.Server.Key)
+			serverTLSKey, err := base64.StdEncoding.DecodeString(*tenantReq.Encryption.Server.Key)
 			if err != nil {
 				return nil, err
 			}
@@ -551,11 +552,11 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			}
 
 			// Secret to store KES clients TLS certificates (mTLS authentication)
-			clientTLSCrt, err := base64.StdEncoding.DecodeString(*params.Body.Encryption.Client.Crt)
+			clientTLSCrt, err := base64.StdEncoding.DecodeString(*tenantReq.Encryption.Client.Crt)
 			if err != nil {
 				return nil, err
 			}
-			clientTLSKey, err := base64.StdEncoding.DecodeString(*params.Body.Encryption.Client.Key)
+			clientTLSKey, err := base64.StdEncoding.DecodeString(*tenantReq.Encryption.Client.Key)
 			if err != nil {
 				return nil, err
 			}
@@ -621,66 +622,66 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 				Keys: kes.Keys{},
 			}
 			// if encryption is enabled and encryption is configured to use Vault
-			if params.Body.Encryption.Vault != nil {
+			if tenantReq.Encryption.Vault != nil {
 				// Initialize Vault Config
 				kesConfig.Keys.Vault = &kes.Vault{
-					Endpoint:   *params.Body.Encryption.Vault.Endpoint,
-					EnginePath: params.Body.Encryption.Vault.Engine,
-					Namespace:  params.Body.Encryption.Vault.Namespace,
-					Prefix:     params.Body.Encryption.Vault.Prefix,
+					Endpoint:   *tenantReq.Encryption.Vault.Endpoint,
+					EnginePath: tenantReq.Encryption.Vault.Engine,
+					Namespace:  tenantReq.Encryption.Vault.Namespace,
+					Prefix:     tenantReq.Encryption.Vault.Prefix,
 					Status: &kes.VaultStatus{
 						Ping: 10 * time.Second,
 					},
 				}
 				// Vault AppRole credentials
-				if params.Body.Encryption.Vault.Approle != nil {
+				if tenantReq.Encryption.Vault.Approle != nil {
 					kesConfig.Keys.Vault.AppRole = &kes.AppRole{
-						EnginePath: params.Body.Encryption.Vault.Approle.Engine,
-						ID:         *params.Body.Encryption.Vault.Approle.ID,
-						Secret:     *params.Body.Encryption.Vault.Approle.Secret,
+						EnginePath: tenantReq.Encryption.Vault.Approle.Engine,
+						ID:         *tenantReq.Encryption.Vault.Approle.ID,
+						Secret:     *tenantReq.Encryption.Vault.Approle.Secret,
 						Retry:      15 * time.Second,
 					}
 				} else {
 					return nil, errors.New("approle credentials missing for kes")
 				}
-			} else if params.Body.Encryption.Aws != nil {
+			} else if tenantReq.Encryption.Aws != nil {
 				// Initialize AWS
 				kesConfig.Keys.Aws = &kes.Aws{
 					SecretsManager: &kes.AwsSecretManager{},
 				}
 				// AWS basic configuration
-				if params.Body.Encryption.Aws.Secretsmanager != nil {
-					kesConfig.Keys.Aws.SecretsManager.Endpoint = *params.Body.Encryption.Aws.Secretsmanager.Endpoint
-					kesConfig.Keys.Aws.SecretsManager.Region = *params.Body.Encryption.Aws.Secretsmanager.Region
-					kesConfig.Keys.Aws.SecretsManager.KmsKey = params.Body.Encryption.Aws.Secretsmanager.Kmskey
+				if tenantReq.Encryption.Aws.Secretsmanager != nil {
+					kesConfig.Keys.Aws.SecretsManager.Endpoint = *tenantReq.Encryption.Aws.Secretsmanager.Endpoint
+					kesConfig.Keys.Aws.SecretsManager.Region = *tenantReq.Encryption.Aws.Secretsmanager.Region
+					kesConfig.Keys.Aws.SecretsManager.KmsKey = tenantReq.Encryption.Aws.Secretsmanager.Kmskey
 					// AWS credentials
-					if params.Body.Encryption.Aws.Secretsmanager.Credentials != nil {
+					if tenantReq.Encryption.Aws.Secretsmanager.Credentials != nil {
 						kesConfig.Keys.Aws.SecretsManager.Login = &kes.AwsSecretManagerLogin{
-							AccessKey:    *params.Body.Encryption.Aws.Secretsmanager.Credentials.Accesskey,
-							SecretKey:    *params.Body.Encryption.Aws.Secretsmanager.Credentials.Secretkey,
-							SessionToken: params.Body.Encryption.Aws.Secretsmanager.Credentials.Token,
+							AccessKey:    *tenantReq.Encryption.Aws.Secretsmanager.Credentials.Accesskey,
+							SecretKey:    *tenantReq.Encryption.Aws.Secretsmanager.Credentials.Secretkey,
+							SessionToken: tenantReq.Encryption.Aws.Secretsmanager.Credentials.Token,
 						}
 					}
 				}
-			} else if params.Body.Encryption.Gemalto != nil {
+			} else if tenantReq.Encryption.Gemalto != nil {
 				// Initialize Gemalto
 				kesConfig.Keys.Gemalto = &kes.Gemalto{
 					KeySecure: &kes.GemaltoKeySecure{},
 				}
 				// Gemalto Configuration
-				if params.Body.Encryption.Gemalto.Keysecure != nil {
-					kesConfig.Keys.Gemalto.KeySecure.Endpoint = *params.Body.Encryption.Gemalto.Keysecure.Endpoint
+				if tenantReq.Encryption.Gemalto.Keysecure != nil {
+					kesConfig.Keys.Gemalto.KeySecure.Endpoint = *tenantReq.Encryption.Gemalto.Keysecure.Endpoint
 					// Gemalto TLS configuration
-					if params.Body.Encryption.Gemalto.Keysecure.TLS != nil {
+					if tenantReq.Encryption.Gemalto.Keysecure.TLS != nil {
 						kesConfig.Keys.Gemalto.KeySecure.TLS = &kes.GemaltoTLS{
-							CAPath: *params.Body.Encryption.Gemalto.Keysecure.TLS.Ca,
+							CAPath: *tenantReq.Encryption.Gemalto.Keysecure.TLS.Ca,
 						}
 					}
 					// Gemalto Login
-					if params.Body.Encryption.Gemalto.Keysecure.Credentials != nil {
+					if tenantReq.Encryption.Gemalto.Keysecure.Credentials != nil {
 						kesConfig.Keys.Gemalto.KeySecure.Credentials = &kes.GemaltoCredentials{
-							Token:  *params.Body.Encryption.Gemalto.Keysecure.Credentials.Token,
-							Domain: *params.Body.Encryption.Gemalto.Keysecure.Credentials.Domain,
+							Token:  *tenantReq.Encryption.Gemalto.Keysecure.Credentials.Token,
+							Domain: *tenantReq.Encryption.Gemalto.Keysecure.Credentials.Domain,
 							Retry:  15 * time.Second,
 						}
 					}
@@ -718,12 +719,12 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	var consoleSecret string
 
 	enableConsole := true
-	if params.Body.EnableConsole != nil {
-		enableConsole = *params.Body.EnableConsole
+	if tenantReq.EnableConsole != nil {
+		enableConsole = *tenantReq.EnableConsole
 	}
 
 	if enableConsole {
-		consoleSelector := fmt.Sprintf("%s-console", *params.Body.Name)
+		consoleSelector := fmt.Sprintf("%s-console", *tenantReq.Name)
 		consoleSecretName := fmt.Sprintf("%s-secret", consoleSelector)
 		consoleAccess = RandomCharString(16)
 		consoleSecret = RandomCharString(32)
@@ -743,10 +744,10 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		}
 
 		// Enable IDP (Open ID Connect) for console
-		if !idpEnabled && params.Body.Idp != nil && params.Body.Idp.Oidc != nil {
-			url := *params.Body.Idp.Oidc.URL
-			clientID := *params.Body.Idp.Oidc.ClientID
-			secretID := *params.Body.Idp.Oidc.SecretID
+		if !idpEnabled && tenantReq.Idp != nil && tenantReq.Idp.Oidc != nil {
+			url := *tenantReq.Idp.Oidc.URL
+			clientID := *tenantReq.Idp.Oidc.ClientID
+			secretID := *tenantReq.Idp.Oidc.SecretID
 			if url != "" && clientID != "" && secretID != "" {
 				instanceSecret.Data["CONSOLE_IDP_URL"] = []byte(url)
 				instanceSecret.Data["CONSOLE_IDP_CLIENT_ID"] = []byte(clientID)
@@ -782,11 +783,11 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 
 	// set the service name if provided
-	if params.Body.ServiceName != "" {
-		minInst.Spec.ServiceName = params.Body.ServiceName
+	if tenantReq.ServiceName != "" {
+		minInst.Spec.ServiceName = tenantReq.ServiceName
 	}
 	// set the zones if they are provided
-	for _, zone := range params.Body.Zones {
+	for _, zone := range tenantReq.Zones {
 		zone, err := parseTenantZoneRequest(zone)
 		if err != nil {
 			return nil, err
@@ -795,15 +796,22 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 
 	// Set Mount Path if provided
-	if params.Body.MounthPath != "" {
-		minInst.Spec.Mountpath = params.Body.MounthPath
+	if tenantReq.MounthPath != "" {
+		minInst.Spec.Mountpath = tenantReq.MounthPath
 	}
 	// add annotations
-	if len(params.Body.Annotations) > 0 {
+	if len(tenantReq.Annotations) > 0 {
 		if minInst.Spec.Metadata == nil {
 			minInst.Spec.Metadata = &metav1.ObjectMeta{}
 		}
-		minInst.Spec.Metadata.Annotations = params.Body.Annotations
+		minInst.Spec.Metadata.Annotations = tenantReq.Annotations
+	}
+
+	// Set Image Pull Secrets Name if defined
+	if tenantReq.ImagePullSecretsName != "" {
+		minInst.Spec.ImagePullSecret = corev1.LocalObjectReference{
+			Name: tenantReq.ImagePullSecretsName,
+		}
 	}
 
 	opClient, err := cluster.OperatorClient(session.SessionToken)
@@ -818,7 +826,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 
 	// Integratrions
 	if os.Getenv("GKE_INTEGRATION") != "" {
-		err := gkeIntegration(clientset, *params.Body.Name, ns, session.SessionToken)
+		err := gkeIntegration(clientset, *tenantReq.Name, ns, session.SessionToken)
 		if err != nil {
 			return nil, err
 		}
@@ -829,9 +837,10 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 	// Attach Console Credentials
 	if enableConsole {
-		response.Console = &models.CreateTenantResponseConsole{}
-		response.Console.AccessKey = consoleAccess
-		response.Console.SecretKey = consoleSecret
+		response.Console = &models.CreateTenantResponseConsole{
+			AccessKey: consoleAccess,
+			SecretKey: consoleSecret,
+		}
 	}
 	return response, nil
 }
