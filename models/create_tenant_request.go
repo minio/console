@@ -57,6 +57,9 @@ type CreateTenantRequest struct {
 	// image
 	Image string `json:"image,omitempty"`
 
+	// image pull secrets name
+	ImagePullSecretsName string `json:"imagePullSecretsName,omitempty"`
+
 	// mounth path
 	MounthPath string `json:"mounth_path,omitempty"`
 

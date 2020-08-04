@@ -1771,12 +1771,14 @@ definitions:
         type: integer
         format: int64
         title: number of tenants accessible to tenant user
+
   updateTenantRequest:
     type: object
     properties:
       image:
         type: string
         pattern: "^((.*?)/(.*?):(.+))$"
+
   createTenantRequest:
     type: object
     required:
@@ -1813,6 +1815,8 @@ definitions:
         type: object
         additionalProperties:
           type: string
+      imagePullSecretsName:
+        type: string
       idp:
         type: object
         $ref: "#/definitions/idpConfiguration"

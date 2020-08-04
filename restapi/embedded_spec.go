@@ -2043,6 +2043,9 @@ func init() {
         "image": {
           "type": "string"
         },
+        "imagePullSecretsName": {
+          "type": "string"
+        },
         "mounth_path": {
           "type": "string"
         },
@@ -5932,6 +5935,9 @@ func init() {
           "$ref": "#/definitions/idpConfiguration"
         },
         "image": {
+          "type": "string"
+        },
+        "imagePullSecretsName": {
           "type": "string"
         },
         "mounth_path": {
