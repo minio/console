@@ -49,8 +49,24 @@ import (
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/admin_api"
 	operator "github.com/minio/operator/pkg/apis/minio.min.io/v1"
+	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/client-go/kubernetes/typed/core/v1"
 )
+
+const (
+	minioRegCred = "minio-regcred-secret"
+)
+
+type imageRegistry struct {
+	Auths map[string]imageRegistryCredentials `json:"auths"`
+}
+
+type imageRegistryCredentials struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Auth     string `json:"auth"`
+}
 
 func registerTenantHandlers(api *operations.ConsoleAPI) {
 	// Add Tenant
@@ -336,6 +352,7 @@ func getListTenantsResponse(session *models.Principal, params admin_api.ListTena
 func getTenantCreatedResponse(session *models.Principal, params admin_api.CreateTenantParams) (*models.CreateTenantResponse, error) {
 	tenantReq := params.Body
 	minioImage := tenantReq.Image
+	ctx := context.Background()
 
 	if minioImage == "" {
 		minImg, err := cluster.GetMinioImage()
@@ -377,7 +394,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		},
 	}
 
-	_, err = clientset.CoreV1().Secrets(ns).Create(context.Background(), &instanceSecret, metav1.CreateOptions{})
+	_, err = clientset.CoreV1().Secrets(ns).Create(ctx, &instanceSecret, metav1.CreateOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -483,7 +500,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 				"tls.key": tlsKey,
 			},
 		}
-		_, err = clientset.CoreV1().Secrets(ns).Create(context.Background(), &externalTLSCertificateSecret, metav1.CreateOptions{})
+		_, err = clientset.CoreV1().Secrets(ns).Create(ctx, &externalTLSCertificateSecret, metav1.CreateOptions{})
 		if err != nil {
 			return nil, err
 		}
@@ -541,7 +558,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 					"tls.key": serverTLSKey,
 				},
 			}
-			_, err = clientset.CoreV1().Secrets(ns).Create(context.Background(), &kesExternalCertificateSecret, metav1.CreateOptions{})
+			_, err = clientset.CoreV1().Secrets(ns).Create(ctx, &kesExternalCertificateSecret, metav1.CreateOptions{})
 			if err != nil {
 				return nil, err
 			}
@@ -572,7 +589,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 					"tls.key": clientTLSKey,
 				},
 			}
-			_, err = clientset.CoreV1().Secrets(ns).Create(context.Background(), &instanceExternalClientCertificateSecret, metav1.CreateOptions{})
+			_, err = clientset.CoreV1().Secrets(ns).Create(ctx, &instanceExternalClientCertificateSecret, metav1.CreateOptions{})
 			if err != nil {
 				return nil, err
 			}
@@ -703,7 +720,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 					"server-config.yaml": serverConfigYaml,
 				},
 			}
-			_, err = clientset.CoreV1().Secrets(ns).Create(context.Background(), &kesConfigurationSecret, metav1.CreateOptions{})
+			_, err = clientset.CoreV1().Secrets(ns).Create(ctx, &kesConfigurationSecret, metav1.CreateOptions{})
 			if err != nil {
 				return nil, err
 			}
@@ -764,7 +781,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			}
 		}
 
-		_, err = clientset.CoreV1().Secrets(ns).Create(context.Background(), &instanceSecret, metav1.CreateOptions{})
+		_, err = clientset.CoreV1().Secrets(ns).Create(ctx, &instanceSecret, metav1.CreateOptions{})
 		if err != nil {
 			return nil, err
 		}
@@ -807,11 +824,9 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		minInst.Spec.Metadata.Annotations = tenantReq.Annotations
 	}
 
-	// Set Image Pull Secrets Name if defined
-	if tenantReq.ImagePullSecretsName != "" {
-		minInst.Spec.ImagePullSecret = corev1.LocalObjectReference{
-			Name: tenantReq.ImagePullSecretsName,
-		}
+	if err := setImageRegistry(ctx, tenantReq.ImageRegistry, clientset.CoreV1(), ns); err != nil {
+		log.Println("error setting image registry secret:", err)
+		return nil, err
 	}
 
 	opClient, err := cluster.OperatorClient(session.SessionToken)
@@ -845,17 +860,76 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	return response, nil
 }
 
+func setImageRegistry(ctx context.Context, req *models.ImageRegistry, clientset v1.CoreV1Interface, namespace string) error {
+	if req == nil || req.Registry == nil || req.Username == nil || req.Password == nil {
+		return nil
+	}
+
+	credentials := make(map[string]imageRegistryCredentials)
+	// username:password encoded
+	authData := []byte(fmt.Sprintf("%s:%s", *req.Username, *req.Password))
+	authStr := base64.StdEncoding.EncodeToString(authData)
+
+	credentials[*req.Registry] = imageRegistryCredentials{
+		Username: *req.Username,
+		Password: *req.Password,
+		Auth:     authStr,
+	}
+	imRegistry := imageRegistry{
+		Auths: credentials,
+	}
+	imRegistryJSON, err := json.Marshal(imRegistry)
+	if err != nil {
+		return err
+	}
+
+	instanceSecret := corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: minioRegCred,
+		},
+		Data: map[string][]byte{
+			corev1.DockerConfigJsonKey: []byte(string(imRegistryJSON)),
+		},
+		Type: corev1.SecretTypeDockerConfigJson,
+	}
+
+	// Get or Create secret if it doesn't exist
+	_, err = clientset.Secrets(namespace).Get(ctx, minioRegCred, metav1.GetOptions{})
+	if err != nil {
+		if k8sErrors.IsNotFound(err) {
+			_, err = clientset.Secrets(namespace).Create(ctx, &instanceSecret, metav1.CreateOptions{})
+			if err != nil {
+				return err
+			}
+			return nil
+		}
+		return err
+	}
+	_, err = clientset.Secrets(namespace).Update(ctx, &instanceSecret, metav1.UpdateOptions{})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // updateTenantAction does an update on the minioTenant by patching the desired changes
-func updateTenantAction(ctx context.Context, operatorClient OperatorClient, httpCl cluster.HTTPClientI, nameSpace string, params admin_api.UpdateTenantParams) error {
+func updateTenantAction(ctx context.Context, operatorClient OperatorClient, clientset v1.CoreV1Interface, httpCl cluster.HTTPClientI, namespace string, params admin_api.UpdateTenantParams) error {
 	imageToUpdate := params.Body.Image
-	minInst, err := operatorClient.TenantGet(ctx, nameSpace, params.Tenant, metav1.GetOptions{})
+	imageRegistryReq := params.Body.ImageRegistry
+
+	if err := setImageRegistry(ctx, imageRegistryReq, clientset, namespace); err != nil {
+		log.Println("error setting image registry secret:", err)
+		return err
+	}
+
+	minInst, err := operatorClient.TenantGet(ctx, namespace, params.Tenant, metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
 
 	// if image to update is empty we'll use the latest image by default
 	if strings.TrimSpace(imageToUpdate) != "" {
-		minInst.Spec.Image = params.Body.Image
+		minInst.Spec.Image = imageToUpdate
 	} else {
 		im, err := cluster.GetLatestMinioImage(httpCl)
 		if err != nil {
@@ -868,7 +942,7 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClient, http
 	if err != nil {
 		return err
 	}
-	_, err = operatorClient.TenantPatch(ctx, nameSpace, minInst.Name, types.MergePatchType, payloadBytes, metav1.PatchOptions{})
+	_, err = operatorClient.TenantPatch(ctx, namespace, minInst.Name, types.MergePatchType, payloadBytes, metav1.PatchOptions{})
 	if err != nil {
 		return err
 	}
@@ -882,6 +956,11 @@ func getUpdateTenantResponse(session *models.Principal, params admin_api.UpdateT
 		log.Println("error getting operator client:", err)
 		return err
 	}
+	// get Kubernetes Client
+	clientset, err := cluster.K8sClient(session.SessionToken)
+	if err != nil {
+		return err
+	}
 
 	opClient := &operatorClient{
 		client: opClientClientSet,
@@ -891,7 +970,8 @@ func getUpdateTenantResponse(session *models.Principal, params admin_api.UpdateT
 			Timeout: 4 * time.Second,
 		},
 	}
-	if err := updateTenantAction(ctx, opClient, httpC, params.Namespace, params); err != nil {
+
+	if err := updateTenantAction(ctx, opClient, clientset.CoreV1(), httpC, params.Namespace, params); err != nil {
 		log.Println("error patching Tenant:", err)
 		return err
 	}

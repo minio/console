@@ -1778,7 +1778,23 @@ definitions:
       image:
         type: string
         pattern: "^((.*?)/(.*?):(.+))$"
-
+      image_registry:
+        $ref: "#/definitions/imageRegistry"
+  
+  imageRegistry:
+    type: object
+    required:
+      - registry
+      - username
+      - password
+    properties:
+      registry:
+        type: string
+      username:
+        type: string
+      password:
+        type: string
+        
   createTenantRequest:
     type: object
     required:
@@ -1815,8 +1831,8 @@ definitions:
         type: object
         additionalProperties:
           type: string
-      imagePullSecretsName:
-        type: string
+      image_registry:
+        $ref: "#/definitions/imageRegistry"
       idp:
         type: object
         $ref: "#/definitions/idpConfiguration"

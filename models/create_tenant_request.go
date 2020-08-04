@@ -57,8 +57,8 @@ type CreateTenantRequest struct {
 	// image
 	Image string `json:"image,omitempty"`
 
-	// image pull secrets name
-	ImagePullSecretsName string `json:"imagePullSecretsName,omitempty"`
+	// image registry
+	ImageRegistry *ImageRegistry `json:"image_registry,omitempty"`
 
 	// mounth path
 	MounthPath string `json:"mounth_path,omitempty"`
@@ -95,6 +95,10 @@ func (m *CreateTenantRequest) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateIdp(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateImageRegistry(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -148,6 +152,24 @@ func (m *CreateTenantRequest) validateIdp(formats strfmt.Registry) error {
 		if err := m.Idp.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("idp")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *CreateTenantRequest) validateImageRegistry(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ImageRegistry) { // not required
+		return nil
+	}
+
+	if m.ImageRegistry != nil {
+		if err := m.ImageRegistry.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("image_registry")
 			}
 			return err
 		}

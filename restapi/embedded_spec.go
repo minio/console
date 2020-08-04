@@ -2043,8 +2043,8 @@ func init() {
         "image": {
           "type": "string"
         },
-        "imagePullSecretsName": {
-          "type": "string"
+        "image_registry": {
+          "$ref": "#/definitions/imageRegistry"
         },
         "mounth_path": {
           "type": "string"
@@ -2289,6 +2289,25 @@ func init() {
               "type": "string"
             }
           }
+        }
+      }
+    },
+    "imageRegistry": {
+      "type": "object",
+      "required": [
+        "registry",
+        "username",
+        "password"
+      ],
+      "properties": {
+        "password": {
+          "type": "string"
+        },
+        "registry": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
         }
       }
     },
@@ -3052,6 +3071,9 @@ func init() {
         "image": {
           "type": "string",
           "pattern": "^((.*?)/(.*?):(.+))$"
+        },
+        "image_registry": {
+          "$ref": "#/definitions/imageRegistry"
         }
       }
     },
@@ -5937,8 +5959,8 @@ func init() {
         "image": {
           "type": "string"
         },
-        "imagePullSecretsName": {
-          "type": "string"
+        "image_registry": {
+          "$ref": "#/definitions/imageRegistry"
         },
         "mounth_path": {
           "type": "string"
@@ -6183,6 +6205,25 @@ func init() {
               "type": "string"
             }
           }
+        }
+      }
+    },
+    "imageRegistry": {
+      "type": "object",
+      "required": [
+        "registry",
+        "username",
+        "password"
+      ],
+      "properties": {
+        "password": {
+          "type": "string"
+        },
+        "registry": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
         }
       }
     },
@@ -6880,6 +6921,9 @@ func init() {
         "image": {
           "type": "string",
           "pattern": "^((.*?)/(.*?):(.+))$"
+        },
+        "image_registry": {
+          "$ref": "#/definitions/imageRegistry"
         }
       }
     },

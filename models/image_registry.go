@@ -29,28 +29,37 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// UpdateTenantRequest update tenant request
+// ImageRegistry image registry
 //
-// swagger:model updateTenantRequest
-type UpdateTenantRequest struct {
+// swagger:model imageRegistry
+type ImageRegistry struct {
 
-	// image
-	// Pattern: ^((.*?)/(.*?):(.+))$
-	Image string `json:"image,omitempty"`
+	// password
+	// Required: true
+	Password *string `json:"password"`
 
-	// image registry
-	ImageRegistry *ImageRegistry `json:"image_registry,omitempty"`
+	// registry
+	// Required: true
+	Registry *string `json:"registry"`
+
+	// username
+	// Required: true
+	Username *string `json:"username"`
 }
 
-// Validate validates this update tenant request
-func (m *UpdateTenantRequest) Validate(formats strfmt.Registry) error {
+// Validate validates this image registry
+func (m *ImageRegistry) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateImage(formats); err != nil {
+	if err := m.validatePassword(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateImageRegistry(formats); err != nil {
+	if err := m.validateRegistry(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateUsername(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -60,39 +69,35 @@ func (m *UpdateTenantRequest) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *UpdateTenantRequest) validateImage(formats strfmt.Registry) error {
+func (m *ImageRegistry) validatePassword(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Image) { // not required
-		return nil
-	}
-
-	if err := validate.Pattern("image", "body", string(m.Image), `^((.*?)/(.*?):(.+))$`); err != nil {
+	if err := validate.Required("password", "body", m.Password); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (m *UpdateTenantRequest) validateImageRegistry(formats strfmt.Registry) error {
+func (m *ImageRegistry) validateRegistry(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.ImageRegistry) { // not required
-		return nil
+	if err := validate.Required("registry", "body", m.Registry); err != nil {
+		return err
 	}
 
-	if m.ImageRegistry != nil {
-		if err := m.ImageRegistry.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("image_registry")
-			}
-			return err
-		}
+	return nil
+}
+
+func (m *ImageRegistry) validateUsername(formats strfmt.Registry) error {
+
+	if err := validate.Required("username", "body", m.Username); err != nil {
+		return err
 	}
 
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *UpdateTenantRequest) MarshalBinary() ([]byte, error) {
+func (m *ImageRegistry) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -100,8 +105,8 @@ func (m *UpdateTenantRequest) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *UpdateTenantRequest) UnmarshalBinary(b []byte) error {
-	var res UpdateTenantRequest
+func (m *ImageRegistry) UnmarshalBinary(b []byte) error {
+	var res ImageRegistry
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
