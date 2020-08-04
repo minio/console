@@ -848,6 +848,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 // updateTenantAction does an update on the minioTenant by patching the desired changes
 func updateTenantAction(ctx context.Context, operatorClient OperatorClient, httpCl cluster.HTTPClientI, nameSpace string, params admin_api.UpdateTenantParams) error {
 	imageToUpdate := params.Body.Image
+	imagePullSecretsName := params.Body.ImagePullSecretsName
 	minInst, err := operatorClient.TenantGet(ctx, nameSpace, params.Tenant, metav1.GetOptions{})
 	if err != nil {
 		return err
@@ -855,13 +856,20 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClient, http
 
 	// if image to update is empty we'll use the latest image by default
 	if strings.TrimSpace(imageToUpdate) != "" {
-		minInst.Spec.Image = params.Body.Image
+		minInst.Spec.Image = imageToUpdate
 	} else {
 		im, err := cluster.GetLatestMinioImage(httpCl)
 		if err != nil {
 			return err
 		}
 		minInst.Spec.Image = *im
+	}
+
+	// set ImagePullSecrets Name if defined
+	if strings.TrimSpace(imagePullSecretsName) != "" {
+		minInst.Spec.ImagePullSecret = corev1.LocalObjectReference{
+			Name: imagePullSecretsName,
+		}
 	}
 
 	payloadBytes, err := json.Marshal(minInst)

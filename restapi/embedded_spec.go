@@ -2043,7 +2043,7 @@ func init() {
         "image": {
           "type": "string"
         },
-        "imagePullSecretsName": {
+        "image_pull_secrets_name": {
           "type": "string"
         },
         "mounth_path": {
@@ -3052,6 +3052,9 @@ func init() {
         "image": {
           "type": "string",
           "pattern": "^((.*?)/(.*?):(.+))$"
+        },
+        "image_pull_secrets_name": {
+          "type": "string"
         }
       }
     },
@@ -5937,7 +5940,7 @@ func init() {
         "image": {
           "type": "string"
         },
-        "imagePullSecretsName": {
+        "image_pull_secrets_name": {
           "type": "string"
         },
         "mounth_path": {
@@ -6880,6 +6883,9 @@ func init() {
         "image": {
           "type": "string",
           "pattern": "^((.*?)/(.*?):(.+))$"
+        },
+        "image_pull_secrets_name": {
+          "type": "string"
         }
       }
     },

@@ -1778,6 +1778,9 @@ definitions:
       image:
         type: string
         pattern: "^((.*?)/(.*?):(.+))$"
+      image_pull_secrets_name:
+        type: string
+      
 
   createTenantRequest:
     type: object
@@ -1815,7 +1818,7 @@ definitions:
         type: object
         additionalProperties:
           type: string
-      imagePullSecretsName:
+      image_pull_secrets_name:
         type: string
       idp:
         type: object

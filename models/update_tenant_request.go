@@ -37,6 +37,9 @@ type UpdateTenantRequest struct {
 	// image
 	// Pattern: ^((.*?)/(.*?):(.+))$
 	Image string `json:"image,omitempty"`
+
+	// image pull secrets name
+	ImagePullSecretsName string `json:"image_pull_secrets_name,omitempty"`
 }
 
 // Validate validates this update tenant request
