@@ -394,6 +394,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 				Name: secretName,
 			},
 			Env: []corev1.EnvVar{},
+			PodManagementPolicy: "Parallel",
 		},
 	}
 	idpEnabled := false
