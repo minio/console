@@ -815,9 +815,18 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	if tenantReq.ServiceName != "" {
 		minInst.Spec.ServiceName = tenantReq.ServiceName
 	}
+	// add annotations
+	var annotations map[string]string
+	if len(tenantReq.Annotations) > 0 {
+		if minInst.Spec.Metadata == nil {
+			minInst.Spec.Metadata = &metav1.ObjectMeta{}
+		}
+		annotations = tenantReq.Annotations
+		minInst.Spec.Metadata.Annotations = annotations
+	}
 	// set the zones if they are provided
 	for _, zone := range tenantReq.Zones {
-		zone, err := parseTenantZoneRequest(zone)
+		zone, err := parseTenantZoneRequest(zone, annotations)
 		if err != nil {
 			return nil, err
 		}
@@ -827,13 +836,6 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	// Set Mount Path if provided
 	if tenantReq.MounthPath != "" {
 		minInst.Spec.Mountpath = tenantReq.MounthPath
-	}
-	// add annotations
-	if len(tenantReq.Annotations) > 0 {
-		if minInst.Spec.Metadata == nil {
-			minInst.Spec.Metadata = &metav1.ObjectMeta{}
-		}
-		minInst.Spec.Metadata.Annotations = tenantReq.Annotations
 	}
 
 	if err := setImageRegistry(ctx, tenantReq.ImageRegistry, clientset.CoreV1(), ns); err != nil {
@@ -1002,7 +1004,7 @@ func addTenantZone(ctx context.Context, operatorClient OperatorClient, params ad
 	}
 
 	zoneParams := params.Body
-	zone, err := parseTenantZoneRequest(zoneParams)
+	zone, err := parseTenantZoneRequest(zoneParams, tenant.ObjectMeta.Annotations)
 	if err != nil {
 		return err
 	}
@@ -1101,7 +1103,7 @@ func getTenantUsageResponse(session *models.Principal, params admin_api.GetTenan
 
 // parseTenantZoneRequest parse zone request and returns the equivalent
 // operator.Zone object
-func parseTenantZoneRequest(zoneParams *models.Zone) (*operator.Zone, error) {
+func parseTenantZoneRequest(zoneParams *models.Zone, annotations map[string]string) (*operator.Zone, error) {
 	if zoneParams.VolumeConfiguration == nil {
 		return nil, errors.New("a volume configuration must be specified")
 	}
@@ -1241,16 +1243,22 @@ func parseTenantZoneRequest(zoneParams *models.Zone) (*operator.Zone, error) {
 		tolerations = append(tolerations, toleration)
 	}
 
-	zone := &operator.Zone{
-		Name:             zoneParams.Name,
-		Servers:          int32(*zoneParams.Servers),
-		VolumesPerServer: *zoneParams.VolumesPerServer,
-		VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: "data",
-			},
-			Spec: volTemp,
+	// Pass annotations to the volume
+	vct := &corev1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "data",
 		},
+		Spec: volTemp,
+	}
+	if len(annotations) > 0 {
+		vct.ObjectMeta.Annotations = annotations
+	}
+
+	zone := &operator.Zone{
+		Name:                zoneParams.Name,
+		Servers:             int32(*zoneParams.Servers),
+		VolumesPerServer:    *zoneParams.VolumesPerServer,
+		VolumeClaimTemplate: vct,
 		Resources: corev1.ResourceRequirements{
 			Requests: resourcesRequests,
 			Limits:   resourcesLimits,
