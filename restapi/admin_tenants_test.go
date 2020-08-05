@@ -35,7 +35,9 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 	types "k8s.io/apimachinery/pkg/types"
+	"k8s.io/client-go/kubernetes/fake"
 )
 
 var opClientTenantDeleteMock func(ctx context.Context, namespace string, tenantName string, options metav1.DeleteOptions) error
@@ -573,6 +575,7 @@ func Test_UpdateTenantAction(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
+		objs    []runtime.Object
 		wantErr bool
 	}{
 		{
@@ -708,8 +711,9 @@ func Test_UpdateTenantAction(t *testing.T) {
 		opClientTenantGetMock = tt.args.mockTenantGet
 		opClientTenantPatchMock = tt.args.mockTenantPatch
 		httpClientGetMock = tt.args.mockHTTPClientGet
+		cnsClient := fake.NewSimpleClientset(tt.objs...)
 		t.Run(tt.name, func(t *testing.T) {
-			if err := updateTenantAction(tt.args.ctx, tt.args.operatorClient, tt.args.httpCl, tt.args.nameSpace, tt.args.params); (err != nil) != tt.wantErr {
+			if err := updateTenantAction(tt.args.ctx, tt.args.operatorClient, cnsClient.CoreV1(), tt.args.httpCl, tt.args.nameSpace, tt.args.params); (err != nil) != tt.wantErr {
 				t.Errorf("deleteTenantAction() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
