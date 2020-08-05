@@ -1827,6 +1827,8 @@ definitions:
         default: true
       namespace:
         type: string
+      erasureCodingParity:
+        type: integer
       annotations:
         type: object
         additionalProperties:

@@ -51,6 +51,9 @@ type CreateTenantRequest struct {
 	// encryption
 	Encryption *EncryptionConfiguration `json:"encryption,omitempty"`
 
+	// erasure coding parity
+	ErasureCodingParity int64 `json:"erasureCodingParity,omitempty"`
+
 	// idp
 	Idp *IdpConfiguration `json:"idp,omitempty"`
 

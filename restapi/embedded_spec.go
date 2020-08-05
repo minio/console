@@ -2036,6 +2036,9 @@ func init() {
           "type": "object",
           "$ref": "#/definitions/encryptionConfiguration"
         },
+        "erasureCodingParity": {
+          "type": "integer"
+        },
         "idp": {
           "type": "object",
           "$ref": "#/definitions/idpConfiguration"
@@ -5951,6 +5954,9 @@ func init() {
         "encryption": {
           "type": "object",
           "$ref": "#/definitions/encryptionConfiguration"
+        },
+        "erasureCodingParity": {
+          "type": "integer"
         },
         "idp": {
           "type": "object",
