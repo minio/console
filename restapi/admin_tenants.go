@@ -841,6 +841,10 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		return nil, err
 	}
 
+	minInst.Spec.ImagePullSecret = corev1.LocalObjectReference{
+		Name: minioRegCred,
+	}
+
 	opClient, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
 		return nil, err
