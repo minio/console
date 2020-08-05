@@ -399,6 +399,18 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		return nil, err
 	}
 
+	var envrionmentVariables []corev1.EnvVar
+	// Check the Erasure Coding Parity for validity and pass it to Tenant
+	if tenantReq.ErasureCodingParity > 0 {
+		if tenantReq.ErasureCodingParity < 2 && tenantReq.ErasureCodingParity > 8 {
+			return nil, errors.New("invalid Erasure Coding Value")
+		}
+		envrionmentVariables = append(envrionmentVariables, corev1.EnvVar{
+			Name:  "MINIO_STORAGE_CLASS_STANDARD",
+			Value: fmt.Sprintf("%d", tenantReq.ErasureCodingParity),
+		})
+	}
+
 	//Construct a MinIO Instance with everything we are getting from parameters
 	minInst := operator.Tenant{
 		ObjectMeta: metav1.ObjectMeta{
@@ -410,7 +422,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			CredsSecret: &corev1.LocalObjectReference{
 				Name: secretName,
 			},
-			Env: []corev1.EnvVar{},
+			Env: envrionmentVariables,
 		},
 	}
 	idpEnabled := false
