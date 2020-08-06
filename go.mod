@@ -15,7 +15,7 @@ require (
 	github.com/gorilla/websocket v1.4.2
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/minio/cli v1.22.0
-	github.com/minio/kes v0.10.1
+	github.com/minio/kes v0.11.0
 	github.com/minio/mc v0.0.0-20200725183142-90d22b271f60
 	github.com/minio/minio v0.0.0-20200725154241-abbf6ce6ccf8
 	github.com/minio/minio-go/v7 v7.0.2-0.20200722162308-e0105ca08252
