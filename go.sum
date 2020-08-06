@@ -457,6 +457,8 @@ github.com/minio/highwayhash v1.0.0 h1:iMSDhgUILCr0TNm8LWlSjF8N0ZIj2qbO8WHp6Q/J2
 github.com/minio/highwayhash v1.0.0/go.mod h1:xQboMTeM9nY9v/LlAOxFctujiv5+Aq2hR5dxBpaMbdc=
 github.com/minio/kes v0.10.1 h1:f+WDJdNHNMf1xE6BbjtCLUyh671weSCQ30uynoCPl78=
 github.com/minio/kes v0.10.1/go.mod h1:mTF1Bv8YVEtQqF/B7Felp4tLee44Pp+dgI0rhCvgNg8=
+github.com/minio/kes v0.11.0 h1:8ma6OCVSxKT50b1uYXLJro3m7PmZtCLxBaTddQexI5k=
+github.com/minio/kes v0.11.0/go.mod h1:mTF1Bv8YVEtQqF/B7Felp4tLee44Pp+dgI0rhCvgNg8=
 github.com/minio/mc v0.0.0-20200725183142-90d22b271f60 h1:LevaZ33nx+rUzRsuU7rVvqXUP7VCu2BQanhITw4Z9rA=
 github.com/minio/mc v0.0.0-20200725183142-90d22b271f60/go.mod h1:Hvnyrb/NMM+pJ53JO/J3jxGtwPDYJh7K6c1D+RR2h2g=
 github.com/minio/md5-simd v1.1.0 h1:QPfiOqlZH+Cj9teu0t9b1nTBfPbyTl16Of5MeuShdK4=
