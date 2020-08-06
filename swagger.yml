@@ -1921,8 +1921,6 @@ definitions:
             type: string
           key:
             type: string
-      master_key:
-        type: string
       gemalto:
         type: object
         $ref: "#/definitions/gemaltoConfiguration"
@@ -1968,6 +1966,15 @@ definitions:
           ping:
             type: integer
             format: int64
+      tls:
+        type: object
+        properties:
+          key:
+            type: string
+          crt:
+            type: string
+          ca:
+            type: string
 
   awsConfiguration:
     type: object

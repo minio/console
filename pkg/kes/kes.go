@@ -9,12 +9,14 @@ import (
 	"github.com/minio/kes"
 )
 
+type Identity = kes.Identity
+
 type TLSProxyHeader struct {
 	ClientCert string `yaml:"cert,omitempty"`
 }
 
 type TLSProxy struct {
-	Identities *[]kes.Identity `yaml:"identities,omitempty"`
+	Identities *[]Identity     `yaml:"identities,omitempty"`
 	Header     *TLSProxyHeader `yaml:"header,omitempty"`
 }
 
@@ -25,8 +27,8 @@ type TLS struct {
 }
 
 type Policy struct {
-	Paths      []string       `yaml:"paths,omitempty"`
-	Identities []kes.Identity `yaml:"identities,omitempty"`
+	Paths      []string   `yaml:"paths,omitempty"`
+	Identities []Identity `yaml:"identities,omitempty"`
 }
 
 type Expiry struct {
@@ -120,7 +122,7 @@ type Keys struct {
 
 type ServerConfig struct {
 	Addr     string            `yaml:"address,omitempty"`
-	Root     kes.Identity      `yaml:"root,omitempty"`
+	Root     Identity          `yaml:"root,omitempty"`
 	TLS      TLS               `yaml:"tls,omitempty"`
 	Policies map[string]Policy `yaml:"policy,omitempty"`
 	Cache    Cache             `yaml:"cache,omitempty"`

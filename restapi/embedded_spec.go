@@ -2128,9 +2128,6 @@ func init() {
         "image": {
           "type": "string"
         },
-        "master_key": {
-          "type": "string"
-        },
         "server": {
           "type": "object",
           "required": [
@@ -3179,6 +3176,20 @@ func init() {
             "ping": {
               "type": "integer",
               "format": "int64"
+            }
+          }
+        },
+        "tls": {
+          "type": "object",
+          "properties": {
+            "ca": {
+              "type": "string"
+            },
+            "crt": {
+              "type": "string"
+            },
+            "key": {
+              "type": "string"
             }
           }
         }
@@ -5528,6 +5539,20 @@ func init() {
         }
       }
     },
+    "VaultConfigurationTLS": {
+      "type": "object",
+      "properties": {
+        "ca": {
+          "type": "string"
+        },
+        "crt": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        }
+      }
+    },
     "ZoneAffinityNodeAffinity": {
       "description": "Describes node affinity scheduling rules for the pod.",
       "type": "object",
@@ -6054,9 +6079,6 @@ func init() {
           "$ref": "#/definitions/gemaltoConfiguration"
         },
         "image": {
-          "type": "string"
-        },
-        "master_key": {
           "type": "string"
         },
         "server": {
@@ -7041,6 +7063,20 @@ func init() {
             "ping": {
               "type": "integer",
               "format": "int64"
+            }
+          }
+        },
+        "tls": {
+          "type": "object",
+          "properties": {
+            "ca": {
+              "type": "string"
+            },
+            "crt": {
+              "type": "string"
+            },
+            "key": {
+              "type": "string"
             }
           }
         }

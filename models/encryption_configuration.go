@@ -46,9 +46,6 @@ type EncryptionConfiguration struct {
 	// image
 	Image string `json:"image,omitempty"`
 
-	// master key
-	MasterKey string `json:"master_key,omitempty"`
-
 	// server
 	Server *EncryptionConfigurationServer `json:"server,omitempty"`
 

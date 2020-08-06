@@ -53,6 +53,9 @@ type VaultConfiguration struct {
 
 	// status
 	Status *VaultConfigurationStatus `json:"status,omitempty"`
+
+	// tls
+	TLS *VaultConfigurationTLS `json:"tls,omitempty"`
 }
 
 // Validate validates this vault configuration
@@ -68,6 +71,10 @@ func (m *VaultConfiguration) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateStatus(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTLS(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -114,6 +121,24 @@ func (m *VaultConfiguration) validateStatus(formats strfmt.Registry) error {
 		if err := m.Status.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("status")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *VaultConfiguration) validateTLS(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.TLS) { // not required
+		return nil
+	}
+
+	if m.TLS != nil {
+		if err := m.TLS.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("tls")
 			}
 			return err
 		}
@@ -239,6 +264,44 @@ func (m *VaultConfigurationStatus) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *VaultConfigurationStatus) UnmarshalBinary(b []byte) error {
 	var res VaultConfigurationStatus
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// VaultConfigurationTLS vault configuration TLS
+//
+// swagger:model VaultConfigurationTLS
+type VaultConfigurationTLS struct {
+
+	// ca
+	Ca string `json:"ca,omitempty"`
+
+	// crt
+	Crt string `json:"crt,omitempty"`
+
+	// key
+	Key string `json:"key,omitempty"`
+}
+
+// Validate validates this vault configuration TLS
+func (m *VaultConfigurationTLS) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *VaultConfigurationTLS) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *VaultConfigurationTLS) UnmarshalBinary(b []byte) error {
+	var res VaultConfigurationTLS
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
