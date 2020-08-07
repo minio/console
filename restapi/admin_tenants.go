@@ -407,7 +407,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		}
 		envrionmentVariables = append(envrionmentVariables, corev1.EnvVar{
 			Name:  "MINIO_STORAGE_CLASS_STANDARD",
-			Value: fmt.Sprintf("%d", tenantReq.ErasureCodingParity),
+			Value: fmt.Sprintf("EC:%d", tenantReq.ErasureCodingParity),
 		})
 	}
 
