@@ -33,10 +33,10 @@ import (
 	"time"
 
 	"github.com/minio/console/pkg/kes"
-	kes2 "github.com/minio/kes"
 	"gopkg.in/yaml.v2"
 	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/client-go/kubernetes"
 
 	corev1 "k8s.io/api/core/v1"
 
@@ -522,217 +522,15 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			Name:  "MINIO_KMS_AUTO_ENCRYPTION",
 			Value: "on",
 		})
-
-		if tenantReq.Encryption.MasterKey != "" {
-			// Configure MinIO to use MINIO_KMS_MASTER_KEY legacy key
-			// https://docs.min.io/docs/minio-vault-legacy.html
-			minInst.Spec.Env = append(minInst.Spec.Env, corev1.EnvVar{
-				Name:  "MINIO_KMS_MASTER_KEY",
-				Value: tenantReq.Encryption.MasterKey,
-			})
-		} else {
-			// KES configuration for Tenant instance
-			minInst.Spec.KES = &operator.KESConfig{
-				Image:    "minio/kes:latest",
-				Replicas: 1,
-				Metadata: nil,
-			}
-			// Using custom image for KES
-			if tenantReq.Encryption.Image != "" {
-				minInst.Spec.KES.Image = tenantReq.Encryption.Image
-			}
-			// Secret to store KES server TLS certificates
-			// TODO check if AutoCert it's already configured
-			serverTLSCrt, err := base64.StdEncoding.DecodeString(*tenantReq.Encryption.Server.Crt)
-			if err != nil {
-				return nil, err
-			}
-			serverTLSKey, err := base64.StdEncoding.DecodeString(*tenantReq.Encryption.Server.Key)
-			if err != nil {
-				return nil, err
-			}
-			kesExternalCertificateSecretName := fmt.Sprintf("%s-kes-external-certificates", secretName)
-			kesExternalCertificateSecret := corev1.Secret{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: kesExternalCertificateSecretName,
-				},
-				Type:      corev1.SecretTypeTLS,
-				Immutable: &imm,
-				Data: map[string][]byte{
-					"tls.crt": serverTLSCrt,
-					"tls.key": serverTLSKey,
-				},
-			}
-			_, err = clientset.CoreV1().Secrets(ns).Create(ctx, &kesExternalCertificateSecret, metav1.CreateOptions{})
-			if err != nil {
-				return nil, err
-			}
-			// External certificates used by KES
-			minInst.Spec.KES.ExternalCertSecret = &operator.LocalCertificateReference{
-				Name: kesExternalCertificateSecretName,
-				Type: "kubernetes.io/tls",
-			}
-
-			// Secret to store KES clients TLS certificates (mTLS authentication)
-			clientTLSCrt, err := base64.StdEncoding.DecodeString(*tenantReq.Encryption.Client.Crt)
-			if err != nil {
-				return nil, err
-			}
-			clientTLSKey, err := base64.StdEncoding.DecodeString(*tenantReq.Encryption.Client.Key)
-			if err != nil {
-				return nil, err
-			}
-			instanceExternalClientCertificateSecretName := fmt.Sprintf("%s-instance-external-client-certificates", secretName)
-			instanceExternalClientCertificateSecret := corev1.Secret{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: instanceExternalClientCertificateSecretName,
-				},
-				Type:      corev1.SecretTypeTLS,
-				Immutable: &imm,
-				Data: map[string][]byte{
-					"tls.crt": clientTLSCrt,
-					"tls.key": clientTLSKey,
-				},
-			}
-			_, err = clientset.CoreV1().Secrets(ns).Create(ctx, &instanceExternalClientCertificateSecret, metav1.CreateOptions{})
-			if err != nil {
-				return nil, err
-			}
-			// KES client certificates used by MinIO instance
-			minInst.Spec.ExternalClientCertSecret = &operator.LocalCertificateReference{
-				Name: instanceExternalClientCertificateSecretName,
-				Type: "kubernetes.io/tls",
-			}
-			// Calculate the client cert identity based on the clientTLSCrt
-			h := crypto.SHA256.New()
-			certificate, err := kes.ParseCertificate(clientTLSCrt)
-			if err != nil {
-				return nil, err
-			}
-			h.Write(certificate.RawSubjectPublicKeyInfo)
-			clientCrtIdentity := hex.EncodeToString(h.Sum(nil))
-			// Default configuration for KES
-			kesConfig := kes.ServerConfig{
-				Addr: "0.0.0.0:7373",
-				Root: "disabled",
-				TLS: kes.TLS{
-					KeyPath:  "/tmp/kes/server.key",
-					CertPath: "/tmp/kes/server.crt",
-				},
-				Policies: map[string]kes.Policy{
-					"default-policy": {
-						Paths: []string{
-							"/v1/key/create/my-minio-key",
-							"/v1/key/generate/my-minio-key",
-							"/v1/key/decrypt/my-minio-key",
-						},
-						Identities: []kes2.Identity{
-							kes2.Identity(clientCrtIdentity),
-						},
-					},
-				},
-				Cache: kes.Cache{
-					Expiry: &kes.Expiry{
-						Any:    5 * time.Minute,
-						Unused: 20 * time.Second,
-					},
-				},
-				Log: kes.Log{
-					Error: "on",
-					Audit: "off",
-				},
-				Keys: kes.Keys{},
-			}
-			// if encryption is enabled and encryption is configured to use Vault
-			if tenantReq.Encryption.Vault != nil {
-				// Initialize Vault Config
-				kesConfig.Keys.Vault = &kes.Vault{
-					Endpoint:   *tenantReq.Encryption.Vault.Endpoint,
-					EnginePath: tenantReq.Encryption.Vault.Engine,
-					Namespace:  tenantReq.Encryption.Vault.Namespace,
-					Prefix:     tenantReq.Encryption.Vault.Prefix,
-					Status: &kes.VaultStatus{
-						Ping: 10 * time.Second,
-					},
-				}
-				// Vault AppRole credentials
-				if tenantReq.Encryption.Vault.Approle != nil {
-					kesConfig.Keys.Vault.AppRole = &kes.AppRole{
-						EnginePath: tenantReq.Encryption.Vault.Approle.Engine,
-						ID:         *tenantReq.Encryption.Vault.Approle.ID,
-						Secret:     *tenantReq.Encryption.Vault.Approle.Secret,
-						Retry:      15 * time.Second,
-					}
-				} else {
-					return nil, errors.New("approle credentials missing for kes")
-				}
-			} else if tenantReq.Encryption.Aws != nil {
-				// Initialize AWS
-				kesConfig.Keys.Aws = &kes.Aws{
-					SecretsManager: &kes.AwsSecretManager{},
-				}
-				// AWS basic configuration
-				if tenantReq.Encryption.Aws.Secretsmanager != nil {
-					kesConfig.Keys.Aws.SecretsManager.Endpoint = *tenantReq.Encryption.Aws.Secretsmanager.Endpoint
-					kesConfig.Keys.Aws.SecretsManager.Region = *tenantReq.Encryption.Aws.Secretsmanager.Region
-					kesConfig.Keys.Aws.SecretsManager.KmsKey = tenantReq.Encryption.Aws.Secretsmanager.Kmskey
-					// AWS credentials
-					if tenantReq.Encryption.Aws.Secretsmanager.Credentials != nil {
-						kesConfig.Keys.Aws.SecretsManager.Login = &kes.AwsSecretManagerLogin{
-							AccessKey:    *tenantReq.Encryption.Aws.Secretsmanager.Credentials.Accesskey,
-							SecretKey:    *tenantReq.Encryption.Aws.Secretsmanager.Credentials.Secretkey,
-							SessionToken: tenantReq.Encryption.Aws.Secretsmanager.Credentials.Token,
-						}
-					}
-				}
-			} else if tenantReq.Encryption.Gemalto != nil {
-				// Initialize Gemalto
-				kesConfig.Keys.Gemalto = &kes.Gemalto{
-					KeySecure: &kes.GemaltoKeySecure{},
-				}
-				// Gemalto Configuration
-				if tenantReq.Encryption.Gemalto.Keysecure != nil {
-					kesConfig.Keys.Gemalto.KeySecure.Endpoint = *tenantReq.Encryption.Gemalto.Keysecure.Endpoint
-					// Gemalto TLS configuration
-					if tenantReq.Encryption.Gemalto.Keysecure.TLS != nil {
-						kesConfig.Keys.Gemalto.KeySecure.TLS = &kes.GemaltoTLS{
-							CAPath: *tenantReq.Encryption.Gemalto.Keysecure.TLS.Ca,
-						}
-					}
-					// Gemalto Login
-					if tenantReq.Encryption.Gemalto.Keysecure.Credentials != nil {
-						kesConfig.Keys.Gemalto.KeySecure.Credentials = &kes.GemaltoCredentials{
-							Token:  *tenantReq.Encryption.Gemalto.Keysecure.Credentials.Token,
-							Domain: *tenantReq.Encryption.Gemalto.Keysecure.Credentials.Domain,
-							Retry:  15 * time.Second,
-						}
-					}
-				}
-			}
-			// Generate Yaml configuration for KES
-			serverConfigYaml, err := yaml.Marshal(kesConfig)
-			if err != nil {
-				return nil, err
-			}
-			// Secret to store KES server configuration
-			kesConfigurationSecretName := fmt.Sprintf("%s-kes-configuration", secretName)
-			kesConfigurationSecret := corev1.Secret{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: kesConfigurationSecretName,
-				},
-				Immutable: &imm,
-				Data: map[string][]byte{
-					"server-config.yaml": serverConfigYaml,
-				},
-			}
-			_, err = clientset.CoreV1().Secrets(ns).Create(ctx, &kesConfigurationSecret, metav1.CreateOptions{})
-			if err != nil {
-				return nil, err
-			}
-			// Configuration used by KES
-			minInst.Spec.KES.Configuration = &corev1.LocalObjectReference{
-				Name: kesConfigurationSecretName,
-			}
+		// KES client mTLSCertificates used by MinIO instance
+		minInst.Spec.ExternalClientCertSecret, err = getTenantExternalClientCertificates(ctx, clientset, ns, tenantReq.Encryption, secretName)
+		if err != nil {
+			return nil, err
+		}
+		// KES configuration for Tenant instance
+		minInst.Spec.KES, err = getKESConfiguration(ctx, clientset, ns, tenantReq.Encryption, secretName, minInst.Spec.RequestAutoCert)
+		if err != nil {
+			return nil, err
 		}
 	}
 
@@ -1506,4 +1304,329 @@ func parseNodeSelectorTerm(term *corev1.NodeSelectorTerm) *models.NodeSelectorTe
 		t.MatchFields = append(t.MatchFields, matchF)
 	}
 	return &t
+}
+
+func getTenantExternalClientCertificates(ctx context.Context, clientSet *kubernetes.Clientset, ns string, encryptionCfg *models.EncryptionConfiguration, secretName string) (clientCertificates *operator.LocalCertificateReference, err error) {
+	instanceExternalClientCertificateSecretName := fmt.Sprintf("%s-instance-external-client-mtls-certificates", secretName)
+	// If there's an error during this process we delete all KES configuration secrets
+	defer func() {
+		if err != nil {
+			errDelete := clientSet.CoreV1().Secrets(ns).Delete(ctx, instanceExternalClientCertificateSecretName, metav1.DeleteOptions{})
+			if errDelete != nil {
+				log.Print(errDelete)
+			}
+			return
+		}
+	}()
+	imm := true
+	// Secret to store KES clients TLS mTLSCertificates (mTLS authentication)
+	clientTLSCrt, err := base64.StdEncoding.DecodeString(*encryptionCfg.Client.Crt)
+	if err != nil {
+		return nil, err
+	}
+	clientTLSKey, err := base64.StdEncoding.DecodeString(*encryptionCfg.Client.Key)
+	if err != nil {
+		return nil, err
+	}
+	instanceExternalClientCertificateSecret := corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: instanceExternalClientCertificateSecretName,
+		},
+		Type:      corev1.SecretTypeTLS,
+		Immutable: &imm,
+		Data: map[string][]byte{
+			"tls.crt": clientTLSCrt,
+			"tls.key": clientTLSKey,
+		},
+	}
+	_, err = clientSet.CoreV1().Secrets(ns).Create(ctx, &instanceExternalClientCertificateSecret, metav1.CreateOptions{})
+	if err != nil {
+		return nil, err
+	}
+	// KES client mTLSCertificates used by MinIO instance
+	clientCertificates = &operator.LocalCertificateReference{
+		Name: instanceExternalClientCertificateSecretName,
+		Type: "kubernetes.io/tls",
+	}
+	return clientCertificates, nil
+}
+
+func getKESConfiguration(ctx context.Context, clientSet *kubernetes.Clientset, ns string, encryptionCfg *models.EncryptionConfiguration, secretName string, autoCert bool) (kesConfiguration *operator.KESConfig, err error) {
+	// secrets used by the KES configuration
+	instanceExternalClientCertificateSecretName := fmt.Sprintf("%s-instance-external-client-mtls-certificates", secretName)
+	kesExternalCertificateSecretName := fmt.Sprintf("%s-kes-external-mtls-certificates", secretName)
+	kesClientCertSecretName := fmt.Sprintf("%s-kes-mtls-certificates", secretName)
+	kesConfigurationSecretName := fmt.Sprintf("%s-kes-configuration", secretName)
+	// If there's an error during this process we delete all KES configuration secrets
+	defer func() {
+		if err != nil {
+			errDelete := clientSet.CoreV1().Secrets(ns).Delete(ctx, instanceExternalClientCertificateSecretName, metav1.DeleteOptions{})
+			if errDelete != nil {
+				log.Print(errDelete)
+			}
+			errDelete = clientSet.CoreV1().Secrets(ns).Delete(ctx, kesExternalCertificateSecretName, metav1.DeleteOptions{})
+			if errDelete != nil {
+				log.Print(errDelete)
+			}
+			errDelete = clientSet.CoreV1().Secrets(ns).Delete(ctx, kesClientCertSecretName, metav1.DeleteOptions{})
+			if errDelete != nil {
+				log.Print(errDelete)
+			}
+			errDelete = clientSet.CoreV1().Secrets(ns).Delete(ctx, kesConfigurationSecretName, metav1.DeleteOptions{})
+			if errDelete != nil {
+				log.Print(errDelete)
+			}
+			return
+		}
+	}()
+
+	imm := true
+	kesConfiguration = &operator.KESConfig{
+		Image:    "minio/kes:v0.11.0",
+		Replicas: 1,
+		Metadata: nil,
+	}
+	// Using custom image for KES
+	if encryptionCfg.Image != "" {
+		kesConfiguration.Image = encryptionCfg.Image
+	}
+	// if autoCert is enabled then Operator will generate the client certificates, calculate the client cert identity
+	// and pass it to KES via the $MINIO_KES_IDENTITY variable
+	clientCrtIdentity := "$MINIO_KES_IDENTITY"
+	// Generate server certificates for KES only if autoCert is disabled
+	if !autoCert {
+		serverTLSCrt, err := base64.StdEncoding.DecodeString(*encryptionCfg.Server.Crt)
+		if err != nil {
+			return nil, err
+		}
+		serverTLSKey, err := base64.StdEncoding.DecodeString(*encryptionCfg.Server.Key)
+		if err != nil {
+			return nil, err
+		}
+		// Secret to store KES server TLS mTLSCertificates
+		kesExternalCertificateSecret := corev1.Secret{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: kesExternalCertificateSecretName,
+			},
+			Type:      corev1.SecretTypeTLS,
+			Immutable: &imm,
+			Data: map[string][]byte{
+				"tls.crt": serverTLSCrt,
+				"tls.key": serverTLSKey,
+			},
+		}
+		_, err = clientSet.CoreV1().Secrets(ns).Create(ctx, &kesExternalCertificateSecret, metav1.CreateOptions{})
+		if err != nil {
+			return nil, err
+		}
+		// External mTLSCertificates used by KES
+		kesConfiguration.ExternalCertSecret = &operator.LocalCertificateReference{
+			Name: kesExternalCertificateSecretName,
+			Type: "kubernetes.io/tls",
+		}
+
+		// Client certificate for KES used by Minio to mTLS
+		clientTLSCrt, err := base64.StdEncoding.DecodeString(*encryptionCfg.Client.Crt)
+		if err != nil {
+			return nil, err
+		}
+		// Calculate the client cert identity based on the clientTLSCrt
+		h := crypto.SHA256.New()
+		certificate, err := kes.ParseCertificate(clientTLSCrt)
+		if err != nil {
+			return nil, err
+		}
+		h.Write(certificate.RawSubjectPublicKeyInfo)
+		clientCrtIdentity = hex.EncodeToString(h.Sum(nil))
+	}
+
+	// Default kesConfiguration for KES
+	kesConfig := kes.ServerConfig{
+		Addr: "0.0.0.0:7373",
+		Root: "disabled",
+		TLS: kes.TLS{
+			KeyPath:  "/tmp/kes/server.key",
+			CertPath: "/tmp/kes/server.crt",
+		},
+		Policies: map[string]kes.Policy{
+			"default-policy": {
+				Paths: []string{
+					"/v1/key/create/my-minio-key",
+					"/v1/key/generate/my-minio-key",
+					"/v1/key/decrypt/my-minio-key",
+				},
+				Identities: []kes.Identity{
+					kes.Identity(clientCrtIdentity),
+				},
+			},
+		},
+		Cache: kes.Cache{
+			Expiry: &kes.Expiry{
+				Any:    5 * time.Minute,
+				Unused: 20 * time.Second,
+			},
+		},
+		Log: kes.Log{
+			Error: "on",
+			Audit: "off",
+		},
+		Keys: kes.Keys{},
+	}
+
+	// operator will mount the mTLSCertificates in the following paths
+	// therefore we set these values in the KES yaml kesConfiguration
+	var mTLSClientCrtPath = "/tmp/kes/client.crt"
+	var mTLSClientKeyPath = "/tmp/kes/client.key"
+	var mTLSClientCaPath = "/tmp/kes/ca.crt"
+	// map to hold mTLSCertificates for KES mTLS against Vault
+	mTLSCertificates := map[string][]byte{}
+
+	// if encryption is enabled and encryption is configured to use Vault
+	if encryptionCfg.Vault != nil {
+		// Initialize Vault Config
+
+		kesConfig.Keys.Vault = &kes.Vault{
+			Endpoint:   *encryptionCfg.Vault.Endpoint,
+			EnginePath: encryptionCfg.Vault.Engine,
+			Namespace:  encryptionCfg.Vault.Namespace,
+			Prefix:     encryptionCfg.Vault.Prefix,
+			Status: &kes.VaultStatus{
+				Ping: 10 * time.Second,
+			},
+		}
+		// Vault AppRole credentials
+		if encryptionCfg.Vault.Approle != nil {
+			kesConfig.Keys.Vault.AppRole = &kes.AppRole{
+				EnginePath: encryptionCfg.Vault.Approle.Engine,
+				ID:         *encryptionCfg.Vault.Approle.ID,
+				Secret:     *encryptionCfg.Vault.Approle.Secret,
+				Retry:      15 * time.Second,
+			}
+		} else {
+			return nil, errors.New("approle credentials missing for kes")
+		}
+
+		// Vault mTLS kesConfiguration
+		if encryptionCfg.Vault.TLS != nil {
+			vaultTLSConfig := encryptionCfg.Vault.TLS
+			if vaultTLSConfig.Crt != "" {
+				clientCrt, err := base64.StdEncoding.DecodeString(vaultTLSConfig.Crt)
+				if err != nil {
+					return nil, err
+				}
+				mTLSCertificates["client.crt"] = clientCrt
+				kesConfig.Keys.Vault.TLS.CertPath = mTLSClientCrtPath
+			}
+			if vaultTLSConfig.Key != "" {
+				clientKey, err := base64.StdEncoding.DecodeString(vaultTLSConfig.Key)
+				if err != nil {
+					return nil, err
+				}
+				mTLSCertificates["client.key"] = clientKey
+				kesConfig.Keys.Vault.TLS.KeyPath = mTLSClientKeyPath
+			}
+			if vaultTLSConfig.Ca != "" {
+				caCrt, err := base64.StdEncoding.DecodeString(vaultTLSConfig.Ca)
+				if err != nil {
+					return nil, err
+				}
+				mTLSCertificates["ca.crt"] = caCrt
+				kesConfig.Keys.Vault.TLS.CAPath = mTLSClientCaPath
+			}
+		}
+	} else if encryptionCfg.Aws != nil {
+		// Initialize AWS
+		kesConfig.Keys.Aws = &kes.Aws{
+			SecretsManager: &kes.AwsSecretManager{},
+		}
+		// AWS basic kesConfiguration
+		if encryptionCfg.Aws.Secretsmanager != nil {
+			kesConfig.Keys.Aws.SecretsManager.Endpoint = *encryptionCfg.Aws.Secretsmanager.Endpoint
+			kesConfig.Keys.Aws.SecretsManager.Region = *encryptionCfg.Aws.Secretsmanager.Region
+			kesConfig.Keys.Aws.SecretsManager.KmsKey = encryptionCfg.Aws.Secretsmanager.Kmskey
+			// AWS credentials
+			if encryptionCfg.Aws.Secretsmanager.Credentials != nil {
+				kesConfig.Keys.Aws.SecretsManager.Login = &kes.AwsSecretManagerLogin{
+					AccessKey:    *encryptionCfg.Aws.Secretsmanager.Credentials.Accesskey,
+					SecretKey:    *encryptionCfg.Aws.Secretsmanager.Credentials.Secretkey,
+					SessionToken: encryptionCfg.Aws.Secretsmanager.Credentials.Token,
+				}
+			}
+		}
+	} else if encryptionCfg.Gemalto != nil {
+		// Initialize Gemalto
+		kesConfig.Keys.Gemalto = &kes.Gemalto{
+			KeySecure: &kes.GemaltoKeySecure{},
+		}
+		// Gemalto Configuration
+		if encryptionCfg.Gemalto.Keysecure != nil {
+			kesConfig.Keys.Gemalto.KeySecure.Endpoint = *encryptionCfg.Gemalto.Keysecure.Endpoint
+			// Gemalto TLS kesConfiguration
+			if encryptionCfg.Gemalto.Keysecure.TLS != nil {
+				if encryptionCfg.Gemalto.Keysecure.TLS.Ca != nil {
+					caCrt, err := base64.StdEncoding.DecodeString(*encryptionCfg.Gemalto.Keysecure.TLS.Ca)
+					if err != nil {
+						return nil, err
+					}
+					mTLSCertificates["ca.crt"] = caCrt
+					kesConfig.Keys.Gemalto.KeySecure.TLS = &kes.GemaltoTLS{
+						CAPath: mTLSClientCaPath,
+					}
+				}
+			}
+			// Gemalto Login
+			if encryptionCfg.Gemalto.Keysecure.Credentials != nil {
+				kesConfig.Keys.Gemalto.KeySecure.Credentials = &kes.GemaltoCredentials{
+					Token:  *encryptionCfg.Gemalto.Keysecure.Credentials.Token,
+					Domain: *encryptionCfg.Gemalto.Keysecure.Credentials.Domain,
+					Retry:  15 * time.Second,
+				}
+			}
+		}
+	}
+
+	// if mTLSCertificates contains elements we create the kubernetes secret
+	if len(mTLSCertificates) > 0 {
+		// Secret to store KES mTLS kesConfiguration
+		kesClientCertSecret := corev1.Secret{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: kesClientCertSecretName,
+			},
+			Immutable: &imm,
+			Data:      mTLSCertificates,
+		}
+		_, err = clientSet.CoreV1().Secrets(ns).Create(ctx, &kesClientCertSecret, metav1.CreateOptions{})
+		if err != nil {
+			return nil, err
+		}
+		// kubernetes generic secret
+		kesConfiguration.ClientCertSecret = &operator.LocalCertificateReference{
+			Name: kesClientCertSecretName,
+		}
+	}
+
+	// Generate Yaml kesConfiguration for KES
+	serverConfigYaml, err := yaml.Marshal(kesConfig)
+	if err != nil {
+		return nil, err
+	}
+	// Secret to store KES server kesConfiguration
+	kesConfigurationSecret := corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: kesConfigurationSecretName,
+		},
+		Immutable: &imm,
+		Data: map[string][]byte{
+			"server-config.yaml": serverConfigYaml,
+		},
+	}
+	_, err = clientSet.CoreV1().Secrets(ns).Create(ctx, &kesConfigurationSecret, metav1.CreateOptions{})
+	if err != nil {
+		return nil, err
+	}
+	// Configuration used by KES
+	kesConfiguration.Configuration = &corev1.LocalObjectReference{
+		Name: kesConfigurationSecretName,
+	}
+	return kesConfiguration, nil
 }
