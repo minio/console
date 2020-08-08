@@ -1822,7 +1822,7 @@ definitions:
       enable_console:
         type: boolean
         default: true
-      enable_ssl:
+      enable_tls:
         type: boolean
         default: true
       namespace:
@@ -1845,7 +1845,7 @@ definitions:
         type: object
         $ref: "#/definitions/encryptionConfiguration"
 
-  tlsConfiguration:
+  keyPairConfiguration:
     type: object
     required:
       - crt
@@ -1855,6 +1855,16 @@ definitions:
         type: string
       key:
         type: string
+
+  tlsConfiguration:
+    type: object
+    properties:
+      minio:
+        type: object
+        $ref: "#/definitions/keyPairConfiguration"
+      console:
+        type: object
+        $ref: "#/definitions/keyPairConfiguration"
 
   idpConfiguration:
     type: object
@@ -1903,24 +1913,10 @@ definitions:
         type: string
       server:
         type: object
-        required:
-          - crt
-          - key
-        properties:
-          crt:
-            type: string
-          key:
-            type: string
+        $ref: "#/definitions/keyPairConfiguration"
       client:
         type: object
-        required:
-          - crt
-          - key
-        properties:
-          crt:
-            type: string
-          key:
-            type: string
+        $ref: "#/definitions/keyPairConfiguration"
       gemalto:
         type: object
         $ref: "#/definitions/gemaltoConfiguration"

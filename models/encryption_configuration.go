@@ -26,7 +26,6 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // EncryptionConfiguration encryption configuration
@@ -38,7 +37,7 @@ type EncryptionConfiguration struct {
 	Aws *AwsConfiguration `json:"aws,omitempty"`
 
 	// client
-	Client *EncryptionConfigurationClient `json:"client,omitempty"`
+	Client *KeyPairConfiguration `json:"client,omitempty"`
 
 	// gemalto
 	Gemalto *GemaltoConfiguration `json:"gemalto,omitempty"`
@@ -47,7 +46,7 @@ type EncryptionConfiguration struct {
 	Image string `json:"image,omitempty"`
 
 	// server
-	Server *EncryptionConfigurationServer `json:"server,omitempty"`
+	Server *KeyPairConfiguration `json:"server,omitempty"`
 
 	// vault
 	Vault *VaultConfiguration `json:"vault,omitempty"`
@@ -184,142 +183,6 @@ func (m *EncryptionConfiguration) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *EncryptionConfiguration) UnmarshalBinary(b []byte) error {
 	var res EncryptionConfiguration
-	if err := swag.ReadJSON(b, &res); err != nil {
-		return err
-	}
-	*m = res
-	return nil
-}
-
-// EncryptionConfigurationClient encryption configuration client
-//
-// swagger:model EncryptionConfigurationClient
-type EncryptionConfigurationClient struct {
-
-	// crt
-	// Required: true
-	Crt *string `json:"crt"`
-
-	// key
-	// Required: true
-	Key *string `json:"key"`
-}
-
-// Validate validates this encryption configuration client
-func (m *EncryptionConfigurationClient) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateCrt(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateKey(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *EncryptionConfigurationClient) validateCrt(formats strfmt.Registry) error {
-
-	if err := validate.Required("client"+"."+"crt", "body", m.Crt); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *EncryptionConfigurationClient) validateKey(formats strfmt.Registry) error {
-
-	if err := validate.Required("client"+"."+"key", "body", m.Key); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// MarshalBinary interface implementation
-func (m *EncryptionConfigurationClient) MarshalBinary() ([]byte, error) {
-	if m == nil {
-		return nil, nil
-	}
-	return swag.WriteJSON(m)
-}
-
-// UnmarshalBinary interface implementation
-func (m *EncryptionConfigurationClient) UnmarshalBinary(b []byte) error {
-	var res EncryptionConfigurationClient
-	if err := swag.ReadJSON(b, &res); err != nil {
-		return err
-	}
-	*m = res
-	return nil
-}
-
-// EncryptionConfigurationServer encryption configuration server
-//
-// swagger:model EncryptionConfigurationServer
-type EncryptionConfigurationServer struct {
-
-	// crt
-	// Required: true
-	Crt *string `json:"crt"`
-
-	// key
-	// Required: true
-	Key *string `json:"key"`
-}
-
-// Validate validates this encryption configuration server
-func (m *EncryptionConfigurationServer) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateCrt(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateKey(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *EncryptionConfigurationServer) validateCrt(formats strfmt.Registry) error {
-
-	if err := validate.Required("server"+"."+"crt", "body", m.Crt); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *EncryptionConfigurationServer) validateKey(formats strfmt.Registry) error {
-
-	if err := validate.Required("server"+"."+"key", "body", m.Key); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// MarshalBinary interface implementation
-func (m *EncryptionConfigurationServer) MarshalBinary() ([]byte, error) {
-	if m == nil {
-		return nil, nil
-	}
-	return swag.WriteJSON(m)
-}
-
-// UnmarshalBinary interface implementation
-func (m *EncryptionConfigurationServer) UnmarshalBinary(b []byte) error {
-	var res EncryptionConfigurationServer
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

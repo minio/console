@@ -45,8 +45,8 @@ type CreateTenantRequest struct {
 	// enable console
 	EnableConsole *bool `json:"enable_console,omitempty"`
 
-	// enable ssl
-	EnableSsl *bool `json:"enable_ssl,omitempty"`
+	// enable tls
+	EnableTLS *bool `json:"enable_tls,omitempty"`
 
 	// encryption
 	Encryption *EncryptionConfiguration `json:"encryption,omitempty"`

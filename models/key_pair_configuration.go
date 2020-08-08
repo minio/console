@@ -26,29 +26,32 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
-// TLSConfiguration tls configuration
+// KeyPairConfiguration key pair configuration
 //
-// swagger:model tlsConfiguration
-type TLSConfiguration struct {
+// swagger:model keyPairConfiguration
+type KeyPairConfiguration struct {
 
-	// console
-	Console *KeyPairConfiguration `json:"console,omitempty"`
+	// crt
+	// Required: true
+	Crt *string `json:"crt"`
 
-	// minio
-	Minio *KeyPairConfiguration `json:"minio,omitempty"`
+	// key
+	// Required: true
+	Key *string `json:"key"`
 }
 
-// Validate validates this tls configuration
-func (m *TLSConfiguration) Validate(formats strfmt.Registry) error {
+// Validate validates this key pair configuration
+func (m *KeyPairConfiguration) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateConsole(formats); err != nil {
+	if err := m.validateCrt(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateMinio(formats); err != nil {
+	if err := m.validateKey(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -58,44 +61,26 @@ func (m *TLSConfiguration) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *TLSConfiguration) validateConsole(formats strfmt.Registry) error {
+func (m *KeyPairConfiguration) validateCrt(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Console) { // not required
-		return nil
-	}
-
-	if m.Console != nil {
-		if err := m.Console.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("console")
-			}
-			return err
-		}
+	if err := validate.Required("crt", "body", m.Crt); err != nil {
+		return err
 	}
 
 	return nil
 }
 
-func (m *TLSConfiguration) validateMinio(formats strfmt.Registry) error {
+func (m *KeyPairConfiguration) validateKey(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Minio) { // not required
-		return nil
-	}
-
-	if m.Minio != nil {
-		if err := m.Minio.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("minio")
-			}
-			return err
-		}
+	if err := validate.Required("key", "body", m.Key); err != nil {
+		return err
 	}
 
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *TLSConfiguration) MarshalBinary() ([]byte, error) {
+func (m *KeyPairConfiguration) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -103,8 +88,8 @@ func (m *TLSConfiguration) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *TLSConfiguration) UnmarshalBinary(b []byte) error {
-	var res TLSConfiguration
+func (m *KeyPairConfiguration) UnmarshalBinary(b []byte) error {
+	var res KeyPairConfiguration
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
