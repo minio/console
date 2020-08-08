@@ -214,13 +214,6 @@ func getTenant(ctx context.Context, operatorClient OperatorClient, namespace, te
 }
 
 func getTenantInfo(tenant *operator.Tenant) *models.Tenant {
-	var instanceCount int64
-	var volumeCount int64
-	for _, zone := range tenant.Spec.Zones {
-		instanceCount = instanceCount + int64(zone.Servers)
-		volumeCount = volumeCount + int64(zone.Servers*zone.VolumesPerServer)
-	}
-
 	var zones []*models.Zone
 
 	var totalSize int64
@@ -1233,12 +1226,18 @@ func parseTenantZoneRequest(zoneParams *models.Zone, annotations map[string]stri
 	// parse tolerations
 	tolerations := []corev1.Toleration{}
 	for _, elem := range zoneParams.Tolerations {
+		var tolerationSeconds *int64
+		if elem.TolerationSeconds != nil {
+			// elem.TolerationSeconds.Seconds is allowed to be nil
+			tolerationSeconds = elem.TolerationSeconds.Seconds
+		}
+
 		toleration := corev1.Toleration{
 			Key:               elem.Key,
 			Operator:          corev1.TolerationOperator(elem.Operator),
 			Value:             elem.Value,
 			Effect:            corev1.TaintEffect(elem.Effect),
-			TolerationSeconds: &elem.TolerationSeconds,
+			TolerationSeconds: tolerationSeconds,
 		}
 		tolerations = append(tolerations, toleration)
 	}
@@ -1434,12 +1433,18 @@ func parseTenantZone(zone *operator.Zone) *models.Zone {
 	// parse tolerations
 	var tolerations models.ZoneTolerations
 	for _, elem := range zone.Tolerations {
+		var tolerationSecs *models.ZoneTolerationSeconds
+		if elem.TolerationSeconds != nil {
+			tolerationSecs = &models.ZoneTolerationSeconds{
+				Seconds: elem.TolerationSeconds,
+			}
+		}
 		toleration := &models.ZoneTolerationsItems0{
 			Key:               elem.Key,
 			Operator:          string(elem.Operator),
 			Value:             elem.Value,
 			Effect:            string(elem.Effect),
-			TolerationSeconds: *elem.TolerationSeconds,
+			TolerationSeconds: tolerationSecs,
 		}
 		tolerations = append(tolerations, toleration)
 	}
