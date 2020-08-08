@@ -75,8 +75,8 @@ type ZoneTolerationsItems0 struct {
 	// Operator represents a key's relationship to the value. Valid operators are Exists and Equal. Defaults to Equal. Exists is equivalent to wildcard for value, so that a pod can tolerate all taints of a particular category.
 	Operator string `json:"operator,omitempty"`
 
-	// TolerationSeconds represents the period of time the toleration (which must be of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default, it is not set, which means tolerate the taint forever (do not evict). Zero and negative values will be treated as 0 (evict immediately) by the system.
-	TolerationSeconds int64 `json:"tolerationSeconds,omitempty"`
+	// toleration seconds
+	TolerationSeconds *ZoneTolerationSeconds `json:"tolerationSeconds,omitempty"`
 
 	// Value is the taint value the toleration matches to. If the operator is Exists, the value should be empty, otherwise just a regular string.
 	Value string `json:"value,omitempty"`
@@ -84,6 +84,33 @@ type ZoneTolerationsItems0 struct {
 
 // Validate validates this zone tolerations items0
 func (m *ZoneTolerationsItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateTolerationSeconds(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ZoneTolerationsItems0) validateTolerationSeconds(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.TolerationSeconds) { // not required
+		return nil
+	}
+
+	if m.TolerationSeconds != nil {
+		if err := m.TolerationSeconds.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("tolerationSeconds")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

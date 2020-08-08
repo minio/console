@@ -3378,6 +3378,19 @@ func init() {
         }
       }
     },
+    "zoneTolerationSeconds": {
+      "description": "TolerationSeconds represents the period of time the toleration (which must be of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default, it is not set, which means tolerate the taint forever (do not evict). Zero and negative values will be treated as 0 (evict immediately) by the system.",
+      "type": "object",
+      "required": [
+        "seconds"
+      ],
+      "properties": {
+        "seconds": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "zoneTolerations": {
       "description": "Tolerations allows users to set entries like effect, key, operator, value.",
       "type": "array",
@@ -3398,9 +3411,7 @@ func init() {
             "type": "string"
           },
           "tolerationSeconds": {
-            "description": "TolerationSeconds represents the period of time the toleration (which must be of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default, it is not set, which means tolerate the taint forever (do not evict). Zero and negative values will be treated as 0 (evict immediately) by the system.",
-            "type": "integer",
-            "format": "int64"
+            "$ref": "#/definitions/zoneTolerationSeconds"
           },
           "value": {
             "description": "Value is the taint value the toleration matches to. If the operator is Exists, the value should be empty, otherwise just a regular string.",
@@ -5675,9 +5686,7 @@ func init() {
           "type": "string"
         },
         "tolerationSeconds": {
-          "description": "TolerationSeconds represents the period of time the toleration (which must be of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default, it is not set, which means tolerate the taint forever (do not evict). Zero and negative values will be treated as 0 (evict immediately) by the system.",
-          "type": "integer",
-          "format": "int64"
+          "$ref": "#/definitions/zoneTolerationSeconds"
         },
         "value": {
           "description": "Value is the taint value the toleration matches to. If the operator is Exists, the value should be empty, otherwise just a regular string.",
@@ -7181,6 +7190,19 @@ func init() {
             "type": "integer",
             "format": "int64"
           }
+        }
+      }
+    },
+    "zoneTolerationSeconds": {
+      "description": "TolerationSeconds represents the period of time the toleration (which must be of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default, it is not set, which means tolerate the taint forever (do not evict). Zero and negative values will be treated as 0 (evict immediately) by the system.",
+      "type": "object",
+      "required": [
+        "seconds"
+      ],
+      "properties": {
+        "seconds": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
