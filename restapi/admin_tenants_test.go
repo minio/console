@@ -91,6 +91,7 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 		tenantName  string
 		serviceName string
 		scheme      string
+		insecure    bool
 	}
 	tests := []struct {
 		name           string
@@ -236,7 +237,7 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 		k8sclientGetSecretMock = tt.mockGetSecret
 		k8sclientGetServiceMock = tt.mockGetService
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := getTenantAdminClient(tt.args.ctx, tt.args.client, tt.args.namespace, tt.args.tenantName, tt.args.serviceName, tt.args.scheme)
+			got, err := getTenantAdminClient(tt.args.ctx, tt.args.client, tt.args.namespace, tt.args.tenantName, tt.args.serviceName, tt.args.scheme, tt.args.insecure)
 			if err != nil {
 				if tt.wantErr {
 					return

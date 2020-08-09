@@ -164,7 +164,6 @@ func (s consoleSTSAssumeRole) IsExpired() bool {
 
 // STSClient contains http.client configuration need it by STSAssumeRole
 var (
-	STSClient     = PrepareSTSClient()
 	MinioEndpoint = getMinIOServer()
 )
 
@@ -204,8 +203,9 @@ func newConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 				Location:        location,
 				DurationSeconds: xjwt.GetConsoleSTSAndJWTDurationInSeconds(),
 			}
+			stsClient := PrepareSTSClient(false)
 			stsAssumeRole := &credentials.STSAssumeRole{
-				Client:      STSClient,
+				Client:      stsClient,
 				STSEndpoint: MinioEndpoint,
 				Options:     opts,
 			}
@@ -234,10 +234,11 @@ func getConsoleCredentialsFromSession(claims *models.Principal) *credentials.Cre
 // from the provided jwt
 func newMinioClient(claims *models.Principal) (*minio.Client, error) {
 	creds := getConsoleCredentialsFromSession(claims)
+	stsClient := PrepareSTSClient(false)
 	minioClient, err := minio.New(getMinIOEndpoint(), &minio.Options{
 		Creds:     creds,
 		Secure:    getMinIOEndpointIsSecure(),
-		Transport: STSClient.Transport,
+		Transport: stsClient.Transport,
 	})
 	if err != nil {
 		return nil, err
