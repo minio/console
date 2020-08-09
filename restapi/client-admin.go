@@ -19,7 +19,6 @@ package restapi
 import (
 	"context"
 	"io"
-	"log"
 	"path/filepath"
 	"runtime"
 
