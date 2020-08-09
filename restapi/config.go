@@ -105,15 +105,15 @@ func GetPort() int {
 	return port
 }
 
-// GetSSLHostname gets console ssl hostname set on env variable
+// GetTLSHostname gets console tls hostname set on env variable
 // or default one
-func GetSSLHostname() string {
+func GetTLSHostname() string {
 	return strings.ToLower(env.Get(ConsoleTLSHostname, TLSHostname))
 }
 
-// GetSSLPort gets console ssl port set on env variable
+// GetTLSPort gets console tls port set on env variable
 // or default one
-func GetSSLPort() int {
+func GetTLSPort() int {
 	port, err := strconv.Atoi(env.Get(ConsoleTLSPort, TLSPort))
 	if err != nil {
 		port = 9443
@@ -171,14 +171,14 @@ func getSecureHostsProxyHeaders() []string {
 	return []string{}
 }
 
-// If SSLRedirect is set to true, then only allow HTTPS requests. Default is true.
-func getSSLRedirect() bool {
-	return strings.ToLower(env.Get(ConsoleSecureSSLRedirect, TLSRedirect)) == "on"
+// If TLSRedirect is set to true, then only allow HTTPS requests. Default is true.
+func getTLSRedirect() bool {
+	return strings.ToLower(env.Get(ConsoleSecureTLSRedirect, TLSRedirect)) == "on"
 }
 
-// SSLHost is the host name that is used to redirect HTTP requests to HTTPS. Default is "", which indicates to use the same host.
-func getSecureSSLHost() string {
-	return env.Get(ConsoleSecureSSLHost, fmt.Sprintf("%s:%s", TLSHostname, TLSPort))
+// TLSHost is the host name that is used to redirect HTTP requests to HTTPS. Default is "", which indicates to use the same host.
+func getSecureTLSHost() string {
+	return env.Get(ConsoleSecureTLSHost, fmt.Sprintf("%s:%s", TLSHostname, TLSPort))
 }
 
 // STSSeconds is the max-age of the Strict-Transport-Security header. Default is 0, which would NOT include the header.
@@ -200,9 +200,9 @@ func getSecureSTSPreload() bool {
 	return strings.ToLower(env.Get(ConsoleSecureSTSPreload, "off")) == "on"
 }
 
-// If SSLTemporaryRedirect is true, the a 302 will be used while redirecting. Default is false (301).
-func getSecureSSLTemporaryRedirect() bool {
-	return strings.ToLower(env.Get(ConsoleSecureSSLTemporaryRedirect, "off")) == "on"
+// If TLSTemporaryRedirect is true, the a 302 will be used while redirecting. Default is false (301).
+func getSecureTLSTemporaryRedirect() bool {
+	return strings.ToLower(env.Get(ConsoleSecureTLSTemporaryRedirect, "off")) == "on"
 }
 
 // STS header is only included when the connection is HTTPS.

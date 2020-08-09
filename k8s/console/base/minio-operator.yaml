@@ -426,7 +426,7 @@ spec:
                 externalCertSecret:
                   description:
                     ExternalCertSecret allows a user to specify custom
-                    CA certificate, and private key for group replication SSL.
+                    CA certificate, and private key for group replication TLS.
                   properties:
                     name:
                       type: string

@@ -420,7 +420,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		url := *tenantReq.Idp.ActiveDirectory.URL
 		userNameFormat := *tenantReq.Idp.ActiveDirectory.UsernameFormat
 		userSearchFilter := *tenantReq.Idp.ActiveDirectory.UserSearchFilter
-		tlsSkipVerify := tenantReq.Idp.ActiveDirectory.SkipSslVerification
+		tlsSkipVerify := tenantReq.Idp.ActiveDirectory.SkipTLSVerification
 		serverInsecure := tenantReq.Idp.ActiveDirectory.ServerInsecure
 		groupSearchDN := tenantReq.Idp.ActiveDirectory.GroupSearchBaseDn
 		groupSearchFilter := tenantReq.Idp.ActiveDirectory.GroupSearchFilter
