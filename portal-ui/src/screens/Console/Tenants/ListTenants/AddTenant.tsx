@@ -111,7 +111,7 @@ const AddTenant = ({
   const [accessKey, setAccessKey] = useState<string>("");
   const [secretKey, setSecretKey] = useState<string>("");
   const [enableConsole, setEnableConsole] = useState<boolean>(true);
-  const [enableSSL, setEnableSSL] = useState<boolean>(false);
+  const [enableTLS, setEnableTLS] = useState<boolean>(false);
   const [sizeFactor, setSizeFactor] = useState<string>("Gi");
   const [storageClasses, setStorageClassesList] = useState<Opts[]>([]);
   const [validationErrors, setValidationErrors] = useState<any>({});
@@ -274,7 +274,7 @@ const AddTenant = ({
           name: tenantName,
           service_name: tenantName,
           image: imageName,
-          enable_ssl: enableSSL,
+          enable_tls: enableTLS,
           enable_console: enableConsole,
           access_key: accessKey,
           secret_key: secretKey,
@@ -750,17 +750,17 @@ const AddTenant = ({
           </Grid>
           <Grid item xs={12}>
             <CheckboxWrapper
-              value="enable_ssl"
-              id="enable_ssl"
-              name="enable_ssl"
-              checked={enableSSL}
+              value="enable_tls"
+              id="enable_tls"
+              name="enable_tls"
+              checked={enableTLS}
               onChange={(e) => {
                 const targetD = e.target;
                 const checked = targetD.checked;
 
-                setEnableSSL(checked);
+                setEnableTLS(checked);
               }}
-              label={"Enable SSL"}
+              label={"Enable TLS"}
             />
           </Grid>
         </React.Fragment>
@@ -882,9 +882,9 @@ const AddTenant = ({
                 <React.Fragment>
                   <TableRow>
                     <TableCell align="right" className={classes.tableTitle}>
-                      Enable SSL
+                      Enable TLS
                     </TableCell>
-                    <TableCell>{enableSSL ? "Enabled" : "Disabled"}</TableCell>
+                    <TableCell>{enableTLS ? "Enabled" : "Disabled"}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell align="right" className={classes.tableTitle}>

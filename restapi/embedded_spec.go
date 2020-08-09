@@ -2235,7 +2235,7 @@ func init() {
             "server_insecure": {
               "type": "boolean"
             },
-            "skip_ssl_verification": {
+            "skip_tls_verification": {
               "type": "boolean"
             },
             "url": {
@@ -5341,7 +5341,7 @@ func init() {
         "server_insecure": {
           "type": "boolean"
         },
-        "skip_ssl_verification": {
+        "skip_tls_verification": {
           "type": "boolean"
         },
         "url": {
@@ -6149,7 +6149,7 @@ func init() {
             "server_insecure": {
               "type": "boolean"
             },
-            "skip_ssl_verification": {
+            "skip_tls_verification": {
               "type": "boolean"
             },
             "url": {

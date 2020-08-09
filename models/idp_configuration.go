@@ -130,8 +130,8 @@ type IdpConfigurationActiveDirectory struct {
 	// server insecure
 	ServerInsecure bool `json:"server_insecure,omitempty"`
 
-	// skip ssl verification
-	SkipSslVerification bool `json:"skip_ssl_verification,omitempty"`
+	// skip tls verification
+	SkipTLSVerification bool `json:"skip_tls_verification,omitempty"`
 
 	// url
 	// Required: true

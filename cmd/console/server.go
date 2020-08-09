@@ -47,12 +47,12 @@ var serverCmd = cli.Command{
 		},
 		cli.StringFlag{
 			Name:  "tls-host",
-			Value: restapi.GetSSLHostname(),
+			Value: restapi.GetTLSHostname(),
 			Usage: "HTTPS server hostname",
 		},
 		cli.IntFlag{
 			Name:  "tls-port",
-			Value: restapi.GetSSLPort(),
+			Value: restapi.GetTLSPort(),
 			Usage: "HTTPS server port",
 		},
 		cli.StringFlag{

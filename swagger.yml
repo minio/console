@@ -1901,7 +1901,7 @@ definitions:
             type: string
           group_name_attribute:
             type: string
-          skip_ssl_verification:
+          skip_tls_verification:
             type: boolean
           server_insecure:
             type: boolean
