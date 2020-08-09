@@ -178,7 +178,7 @@ func getTenantScheme(mi *operator.Tenant) string {
 	return scheme
 }
 
-func getTenantAdminClient(ctx context.Context, client K8sClient, namespace, tenantName, serviceName, scheme string) (*madmin.AdminClient, error) {
+func getTenantAdminClient(ctx context.Context, client K8sClient, namespace, tenantName, serviceName, scheme string, insecure bool) (*madmin.AdminClient, error) {
 	// get admin credentials from secret
 	creds, err := client.getSecret(ctx, namespace, fmt.Sprintf("%s-secret", tenantName), metav1.GetOptions{})
 	if err != nil {
@@ -194,11 +194,7 @@ func getTenantAdminClient(ctx context.Context, client K8sClient, namespace, tena
 		log.Println("tenant's secret doesn't contain secretkey")
 		return nil, errorGeneric
 	}
-	service, err := client.getService(ctx, namespace, serviceName, metav1.GetOptions{})
-	if err != nil {
-		return nil, err
-	}
-	mAdmin, pErr := NewAdminClient(scheme+"://"+net.JoinHostPort(service.Spec.ClusterIP, strconv.Itoa(operator.MinIOPort)), string(accessKey), string(secretkey))
+	mAdmin, pErr := NewAdminClientWithInsecure(scheme+"://"+net.JoinHostPort(serviceName, strconv.Itoa(operator.MinIOPort)), string(accessKey), string(secretkey), insecure)
 	if pErr != nil {
 		return nil, pErr.Cause
 	}
@@ -858,15 +854,10 @@ func getTenantUsageResponse(session *models.Principal, params admin_api.GetTenan
 		log.Println("error getting minioTenant:", err)
 		return nil, err
 	}
+	minTenant.EnsureDefaults()
 	tenantScheme := getTenantScheme(minTenant)
 
-	svcName := minTenant.Spec.ServiceName
-	if svcName == "" {
-		svcName = minTenant.Name
-		// TODO:
-		// 1 get tenant services
-		// 2 filter out cluster ip svc
-	}
+	svcName := fmt.Sprintf("%s.%s.svc.cluster.local", minTenant.MinIOCIServiceName(), minTenant.Namespace)
 
 	mAdmin, err := getTenantAdminClient(
 		ctx,
@@ -874,7 +865,8 @@ func getTenantUsageResponse(session *models.Principal, params admin_api.GetTenan
 		params.Namespace,
 		params.Tenant,
 		svcName,
-		tenantScheme)
+		tenantScheme,
+		true)
 	if err != nil {
 		log.Println("error getting tenant's admin client:", err)
 		return nil, err

@@ -30,12 +30,24 @@ var (
 	certDontExists = "File certificate doesn't exists: %s"
 )
 
-func prepareSTSClientTransport() *http.Transport {
+func prepareSTSClientTransport(insecure bool) *http.Transport {
 	// This takes github.com/minio/minio/pkg/madmin/transport.go as an example
 	//
 	// DefaultTransport - this default transport is similar to
 	// http.DefaultTransport but with additional param  DisableCompression
 	// is set to true to avoid decompressing content with 'gzip' encoding.
+
+	// Keep TLS config.
+	tlsConfig := &tls.Config{
+		// Can't use SSLv3 because of POODLE and BEAST
+		// Can't use TLSv1.0 because of POODLE and BEAST using CBC cipher
+		// Can't use TLSv1.1 because of RC4 cipher usage
+		MinVersion: tls.VersionTLS12,
+	}
+	if insecure {
+		tlsConfig.InsecureSkipVerify = true
+	}
+
 	DefaultTransport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
 		DialContext: (&net.Dialer{
@@ -49,6 +61,7 @@ func prepareSTSClientTransport() *http.Transport {
 		TLSHandshakeTimeout:   10 * time.Second,
 		ExpectContinueTimeout: 1 * time.Second,
 		DisableCompression:    true,
+		TLSClientConfig:       tlsConfig,
 	}
 	// If Minio instance is running with TLS enabled and it's using a self-signed certificate
 	// or a certificate issued by a custom certificate authority we prepare a new custom *http.Transport
@@ -86,10 +99,11 @@ func prepareSTSClientTransport() *http.Transport {
 
 // PrepareSTSClient returns an http.Client with custom configurations need it by *credentials.STSAssumeRole
 // custom configurations include the use of CA certificates
-func PrepareSTSClient() *http.Client {
-	transport := prepareSTSClientTransport()
+func PrepareSTSClient(insecure bool) *http.Client {
+	transport := prepareSTSClientTransport(insecure)
 	// Return http client with default configuration
-	return &http.Client{
+	c := &http.Client{
 		Transport: transport,
 	}
+	return c
 }
