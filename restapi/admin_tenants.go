@@ -466,26 +466,26 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		}
 	}
 
-	// operator request AutoCert feature
-	encryption := false
-	if tenantReq.EnableSsl != nil {
-		encryption = true
-		minInst.Spec.RequestAutoCert = *tenantReq.EnableSsl
+	isEncryptionAvailable := false
+	if *tenantReq.EnableTLS {
+		// If user request autoCert, Operator will generate certificate keypair for MinIO (server), Console (server) and KES (server and app mTLS)
+		isEncryptionAvailable = true
+		minInst.Spec.RequestAutoCert = *tenantReq.EnableTLS
 	}
 
-	// User provided TLS certificates (this will take priority over autoCert)
-	if tenantReq.TLS != nil && tenantReq.TLS.Crt != nil && tenantReq.TLS.Key != nil {
-		encryption = true
+	if !minInst.Spec.RequestAutoCert && tenantReq.TLS != nil && tenantReq.TLS.Minio != nil {
+		// User provided TLS certificates for MinIO
+		isEncryptionAvailable = true
 		externalTLSCertificateSecretName := fmt.Sprintf("%s-instance-external-certificates", secretName)
 		// disable autoCert
 		minInst.Spec.RequestAutoCert = false
 
-		tlsCrt, err := base64.StdEncoding.DecodeString(*tenantReq.TLS.Crt)
+		tlsCrt, err := base64.StdEncoding.DecodeString(*tenantReq.TLS.Minio.Crt)
 		if err != nil {
 			return nil, err
 		}
 
-		tlsKey, err := base64.StdEncoding.DecodeString(*tenantReq.TLS.Key)
+		tlsKey, err := base64.StdEncoding.DecodeString(*tenantReq.TLS.Minio.Key)
 		if err != nil {
 			return nil, err
 		}
@@ -512,16 +512,18 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		}
 	}
 
-	if tenantReq.Encryption != nil && encryption {
+	if tenantReq.Encryption != nil && isEncryptionAvailable {
 		// Enable auto encryption
 		minInst.Spec.Env = append(minInst.Spec.Env, corev1.EnvVar{
 			Name:  "MINIO_KMS_AUTO_ENCRYPTION",
 			Value: "on",
 		})
-		// KES client mTLSCertificates used by MinIO instance
-		minInst.Spec.ExternalClientCertSecret, err = getTenantExternalClientCertificates(ctx, clientset, ns, tenantReq.Encryption, secretName)
-		if err != nil {
-			return nil, err
+		// KES client mTLSCertificates used by MinIO instance, only if autoCert is not enabled
+		if !minInst.Spec.RequestAutoCert {
+			minInst.Spec.ExternalClientCertSecret, err = getTenantExternalClientCertificates(ctx, clientset, ns, tenantReq.Encryption, secretName)
+			if err != nil {
+				return nil, err
+			}
 		}
 		// KES configuration for Tenant instance
 		minInst.Spec.KES, err = getKESConfiguration(ctx, clientset, ns, tenantReq.Encryption, secretName, minInst.Spec.RequestAutoCert)
@@ -534,10 +536,8 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	var consoleAccess string
 	var consoleSecret string
 
-	enableConsole := true
-	if tenantReq.EnableConsole != nil {
-		enableConsole = *tenantReq.EnableConsole
-	}
+	//enableConsole := true
+	enableConsole := *tenantReq.EnableConsole
 
 	if enableConsole {
 		consoleSelector := fmt.Sprintf("%s-console", *tenantReq.Name)
@@ -596,6 +596,39 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 				},
 			},
 		}
+
+		if !minInst.Spec.RequestAutoCert && tenantReq.TLS.Console != nil {
+			consoleExternalTLSCertificateSecretName := fmt.Sprintf("%s-console-external-certificates", secretName)
+			tlsCrt, err := base64.StdEncoding.DecodeString(*tenantReq.TLS.Console.Crt)
+			if err != nil {
+				return nil, err
+			}
+			tlsKey, err := base64.StdEncoding.DecodeString(*tenantReq.TLS.Console.Key)
+			if err != nil {
+				return nil, err
+			}
+			consoleExternalTLSCertificateSecret := corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: consoleExternalTLSCertificateSecretName,
+				},
+				Type:      corev1.SecretTypeTLS,
+				Immutable: &imm,
+				Data: map[string][]byte{
+					"tls.crt": tlsCrt,
+					"tls.key": tlsKey,
+				},
+			}
+			_, err = clientset.CoreV1().Secrets(ns).Create(ctx, &consoleExternalTLSCertificateSecret, metav1.CreateOptions{})
+			if err != nil {
+				return nil, err
+			}
+			// Certificates used by the minio instance
+			minInst.Spec.Console.ExternalCertSecret = &operator.LocalCertificateReference{
+				Name: consoleExternalTLSCertificateSecretName,
+				Type: "kubernetes.io/tls",
+			}
+		}
+
 	}
 
 	// set the service name if provided
@@ -1501,6 +1534,7 @@ func getKESConfiguration(ctx context.Context, clientSet *kubernetes.Clientset, n
 		// Vault mTLS kesConfiguration
 		if encryptionCfg.Vault.TLS != nil {
 			vaultTLSConfig := encryptionCfg.Vault.TLS
+			kesConfig.Keys.Vault.TLS = &kes.VaultTLS{}
 			if vaultTLSConfig.Crt != "" {
 				clientCrt, err := base64.StdEncoding.DecodeString(vaultTLSConfig.Crt)
 				if err != nil {

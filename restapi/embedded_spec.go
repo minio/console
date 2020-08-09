@@ -2028,7 +2028,7 @@ func init() {
           "type": "boolean",
           "default": true
         },
-        "enable_ssl": {
+        "enable_tls": {
           "type": "boolean",
           "default": true
         },
@@ -2108,18 +2108,7 @@ func init() {
         },
         "client": {
           "type": "object",
-          "required": [
-            "crt",
-            "key"
-          ],
-          "properties": {
-            "crt": {
-              "type": "string"
-            },
-            "key": {
-              "type": "string"
-            }
-          }
+          "$ref": "#/definitions/keyPairConfiguration"
         },
         "gemalto": {
           "type": "object",
@@ -2130,18 +2119,7 @@ func init() {
         },
         "server": {
           "type": "object",
-          "required": [
-            "crt",
-            "key"
-          ],
-          "properties": {
-            "crt": {
-              "type": "string"
-            },
-            "key": {
-              "type": "string"
-            }
-          }
+          "$ref": "#/definitions/keyPairConfiguration"
         },
         "vault": {
           "type": "object",
@@ -2307,6 +2285,21 @@ func init() {
           "type": "string"
         },
         "username": {
+          "type": "string"
+        }
+      }
+    },
+    "keyPairConfiguration": {
+      "type": "object",
+      "required": [
+        "crt",
+        "key"
+      ],
+      "properties": {
+        "crt": {
+          "type": "string"
+        },
+        "key": {
           "type": "string"
         }
       }
@@ -3034,16 +3027,14 @@ func init() {
     },
     "tlsConfiguration": {
       "type": "object",
-      "required": [
-        "crt",
-        "key"
-      ],
       "properties": {
-        "crt": {
-          "type": "string"
+        "console": {
+          "type": "object",
+          "$ref": "#/definitions/keyPairConfiguration"
         },
-        "key": {
-          "type": "string"
+        "minio": {
+          "type": "object",
+          "$ref": "#/definitions/keyPairConfiguration"
         }
       }
     },
@@ -5258,36 +5249,6 @@ func init() {
         }
       }
     },
-    "EncryptionConfigurationClient": {
-      "type": "object",
-      "required": [
-        "crt",
-        "key"
-      ],
-      "properties": {
-        "crt": {
-          "type": "string"
-        },
-        "key": {
-          "type": "string"
-        }
-      }
-    },
-    "EncryptionConfigurationServer": {
-      "type": "object",
-      "required": [
-        "crt",
-        "key"
-      ],
-      "properties": {
-        "crt": {
-          "type": "string"
-        },
-        "key": {
-          "type": "string"
-        }
-      }
-    },
     "GemaltoConfigurationKeysecure": {
       "type": "object",
       "required": [
@@ -5981,7 +5942,7 @@ func init() {
           "type": "boolean",
           "default": true
         },
-        "enable_ssl": {
+        "enable_tls": {
           "type": "boolean",
           "default": true
         },
@@ -6061,18 +6022,7 @@ func init() {
         },
         "client": {
           "type": "object",
-          "required": [
-            "crt",
-            "key"
-          ],
-          "properties": {
-            "crt": {
-              "type": "string"
-            },
-            "key": {
-              "type": "string"
-            }
-          }
+          "$ref": "#/definitions/keyPairConfiguration"
         },
         "gemalto": {
           "type": "object",
@@ -6083,18 +6033,7 @@ func init() {
         },
         "server": {
           "type": "object",
-          "required": [
-            "crt",
-            "key"
-          ],
-          "properties": {
-            "crt": {
-              "type": "string"
-            },
-            "key": {
-              "type": "string"
-            }
-          }
+          "$ref": "#/definitions/keyPairConfiguration"
         },
         "vault": {
           "type": "object",
@@ -6260,6 +6199,21 @@ func init() {
           "type": "string"
         },
         "username": {
+          "type": "string"
+        }
+      }
+    },
+    "keyPairConfiguration": {
+      "type": "object",
+      "required": [
+        "crt",
+        "key"
+      ],
+      "properties": {
+        "crt": {
+          "type": "string"
+        },
+        "key": {
           "type": "string"
         }
       }
@@ -6921,16 +6875,14 @@ func init() {
     },
     "tlsConfiguration": {
       "type": "object",
-      "required": [
-        "crt",
-        "key"
-      ],
       "properties": {
-        "crt": {
-          "type": "string"
+        "console": {
+          "type": "object",
+          "$ref": "#/definitions/keyPairConfiguration"
         },
-        "key": {
-          "type": "string"
+        "minio": {
+          "type": "object",
+          "$ref": "#/definitions/keyPairConfiguration"
         }
       }
     },
