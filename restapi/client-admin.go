@@ -19,6 +19,7 @@ package restapi
 import (
 	"context"
 	"io"
+	"log"
 	"path/filepath"
 	"runtime"
 
@@ -54,7 +55,8 @@ func NewAdminClientWithInsecure(url, accessKey, secretKey string, insecure bool)
 	if err != nil {
 		return nil, err.Trace(url)
 	}
-	s3Client.SetCustomTransport(STSClient.Transport)
+	stsClient := PrepareSTSClient(insecure)
+	s3Client.SetCustomTransport(stsClient.Transport)
 	return s3Client, nil
 }
 
@@ -266,7 +268,8 @@ func newAdminFromClaims(claims *models.Principal) (*madmin.AdminClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	adminClient.SetCustomTransport(STSClient.Transport)
+	stsClient := PrepareSTSClient(false)
+	adminClient.SetCustomTransport(stsClient.Transport)
 	return adminClient, nil
 }
 
