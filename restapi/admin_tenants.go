@@ -467,7 +467,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 
 	isEncryptionAvailable := false
-	if *tenantReq.EnableTLS {
+	if tenantReq.EnableTLS != nil && *tenantReq.EnableTLS {
 		// If user request autoCert, Operator will generate certificate keypair for MinIO (server), Console (server) and KES (server and app mTLS)
 		isEncryptionAvailable = true
 		minInst.Spec.RequestAutoCert = *tenantReq.EnableTLS
@@ -536,8 +536,10 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	var consoleAccess string
 	var consoleSecret string
 
-	//enableConsole := true
-	enableConsole := *tenantReq.EnableConsole
+	enableConsole := true
+	if tenantReq.EnableConsole != nil && *tenantReq.EnableConsole {
+		enableConsole = *tenantReq.EnableConsole
+	}
 
 	if enableConsole {
 		consoleSelector := fmt.Sprintf("%s-console", *tenantReq.Name)
@@ -597,7 +599,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			},
 		}
 
-		if !minInst.Spec.RequestAutoCert && tenantReq.TLS.Console != nil {
+		if !minInst.Spec.RequestAutoCert && tenantReq.TLS != nil && tenantReq.TLS.Console != nil {
 			consoleExternalTLSCertificateSecretName := fmt.Sprintf("%s-console-external-certificates", secretName)
 			tlsCrt, err := base64.StdEncoding.DecodeString(*tenantReq.TLS.Console.Crt)
 			if err != nil {
