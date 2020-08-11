@@ -34,9 +34,16 @@ import (
 // swagger:model updateTenantRequest
 type UpdateTenantRequest struct {
 
+	// console image
+	// Pattern: ^((.*?)/(.*?):(.+))$
+	ConsoleImage string `json:"console_image,omitempty"`
+
 	// image
 	// Pattern: ^((.*?)/(.*?):(.+))$
 	Image string `json:"image,omitempty"`
+
+	// image pull secret
+	ImagePullSecret string `json:"image_pull_secret,omitempty"`
 
 	// image registry
 	ImageRegistry *ImageRegistry `json:"image_registry,omitempty"`
@@ -45,6 +52,10 @@ type UpdateTenantRequest struct {
 // Validate validates this update tenant request
 func (m *UpdateTenantRequest) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateConsoleImage(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateImage(formats); err != nil {
 		res = append(res, err)
@@ -57,6 +68,19 @@ func (m *UpdateTenantRequest) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *UpdateTenantRequest) validateConsoleImage(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ConsoleImage) { // not required
+		return nil
+	}
+
+	if err := validate.Pattern("console_image", "body", string(m.ConsoleImage), `^((.*?)/(.*?):(.+))$`); err != nil {
+		return err
+	}
+
 	return nil
 }
 

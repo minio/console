@@ -1778,8 +1778,13 @@ definitions:
       image:
         type: string
         pattern: "^((.*?)/(.*?):(.+))$"
+      console_image:
+        type: string
+        pattern: "^((.*?)/(.*?):(.+))$"
       image_registry:
         $ref: "#/definitions/imageRegistry"
+      image_pull_secret:
+        type: string
   
   imageRegistry:
     type: object
@@ -1806,6 +1811,8 @@ definitions:
         type: string
         pattern: "^[a-z0-9-]{3,63}$"
       image:
+        type: string
+      console_image:
         type: string
       service_name:
         type: string
@@ -1835,6 +1842,8 @@ definitions:
           type: string
       image_registry:
         $ref: "#/definitions/imageRegistry"
+      image_pull_secret:
+        type: string
       idp:
         type: object
         $ref: "#/definitions/idpConfiguration"

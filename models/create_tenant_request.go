@@ -42,6 +42,9 @@ type CreateTenantRequest struct {
 	// annotations
 	Annotations map[string]string `json:"annotations,omitempty"`
 
+	// console image
+	ConsoleImage string `json:"console_image,omitempty"`
+
 	// enable console
 	EnableConsole *bool `json:"enable_console,omitempty"`
 
@@ -59,6 +62,9 @@ type CreateTenantRequest struct {
 
 	// image
 	Image string `json:"image,omitempty"`
+
+	// image pull secret
+	ImagePullSecret string `json:"image_pull_secret,omitempty"`
 
 	// image registry
 	ImageRegistry *ImageRegistry `json:"image_registry,omitempty"`
