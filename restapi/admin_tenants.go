@@ -708,6 +708,8 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	return response, nil
 }
 
+// setImageRegistry creates a secret to store the private registry credentials, if one exist it updates the existing one
+// returns the name of the secret created/updated
 func setImageRegistry(ctx context.Context, tenantName string, req *models.ImageRegistry, clientset v1.CoreV1Interface, namespace string) (string, error) {
 	if req == nil || req.Registry == nil || req.Username == nil || req.Password == nil {
 		return "", nil
@@ -763,7 +765,7 @@ func setImageRegistry(ctx context.Context, tenantName string, req *models.ImageR
 }
 
 // updateTenantAction does an update on the minioTenant by patching the desired changes
-func updateTenantAction(ctx context.Context, operatorClient OperatorClient, clientset v1.CoreV1Interface, httpCl cluster.HTTPClientI, namespace string, tenantName string, params admin_api.UpdateTenantParams) error {
+func updateTenantAction(ctx context.Context, operatorClient OperatorClient, clientset v1.CoreV1Interface, httpCl cluster.HTTPClientI, namespace string, params admin_api.UpdateTenantParams) error {
 	imageToUpdate := params.Body.Image
 	imageRegistryReq := params.Body.ImageRegistry
 
@@ -776,14 +778,14 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClient, clie
 		minInst.Spec.ImagePullSecret.Name = params.Body.ImagePullSecret
 	} else {
 		// update the image pull secret content
-		if _, err := setImageRegistry(ctx, tenantName, imageRegistryReq, clientset, namespace); err != nil {
+		if _, err := setImageRegistry(ctx, params.Tenant, imageRegistryReq, clientset, namespace); err != nil {
 			log.Println("error setting image registry secret:", err)
 			return err
 		}
 	}
 
 	// update the console image
-	if params.Body.ConsoleImage != "" {
+	if strings.TrimSpace(params.Body.ConsoleImage) != "" && minInst.Spec.Console != nil {
 		minInst.Spec.Console.Image = params.Body.ConsoleImage
 	}
 
@@ -792,10 +794,10 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClient, clie
 		minInst.Spec.Image = imageToUpdate
 	} else {
 		im, err := cluster.GetLatestMinioImage(httpCl)
-		if err != nil {
-			return err
+		// if we can't get the MinIO image, we won' auto-update it unless it's explicit by name
+		if err == nil {
+			minInst.Spec.Image = *im
 		}
-		minInst.Spec.Image = *im
 	}
 
 	payloadBytes, err := json.Marshal(minInst)
@@ -831,7 +833,7 @@ func getUpdateTenantResponse(session *models.Principal, params admin_api.UpdateT
 		},
 	}
 
-	if err := updateTenantAction(ctx, opClient, clientset.CoreV1(), httpC, params.Namespace, params.Tenant, params); err != nil {
+	if err := updateTenantAction(ctx, opClient, clientset.CoreV1(), httpC, params.Namespace, params); err != nil {
 		log.Println("error patching Tenant:", err)
 		return err
 	}
