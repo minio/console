@@ -19,16 +19,30 @@ package restapi
 import (
 	"crypto/tls"
 	"crypto/x509"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"net"
 	"net/http"
 	"time"
 )
 
-var (
-	certDontExists = "File certificate doesn't exists: %s"
-)
+func getCertPool() *x509.CertPool {
+	caCertFileNames := getMinioServerTLSRootCAs()
+	// If CAs certificates are configured we save them to the http.Client RootCAs store
+	certs := x509.NewCertPool()
+	for _, caCert := range caCertFileNames {
+		pemData, err := ioutil.ReadFile(caCert)
+		if err != nil {
+			// logging this error
+			log.Println(err)
+			continue
+		}
+		certs.AppendCertsFromPEM(pemData)
+	}
+	return certs
+}
+
+var certPool = getCertPool()
 
 func prepareSTSClientTransport(insecure bool) *http.Transport {
 	// This takes github.com/minio/minio/pkg/madmin/transport.go as an example
@@ -36,18 +50,6 @@ func prepareSTSClientTransport(insecure bool) *http.Transport {
 	// DefaultTransport - this default transport is similar to
 	// http.DefaultTransport but with additional param  DisableCompression
 	// is set to true to avoid decompressing content with 'gzip' encoding.
-
-	// Keep TLS config.
-	tlsConfig := &tls.Config{
-		// Can't use SSLv3 because of POODLE and BEAST
-		// Can't use TLSv1.0 because of POODLE and BEAST using CBC cipher
-		// Can't use TLSv1.1 because of RC4 cipher usage
-		MinVersion: tls.VersionTLS12,
-	}
-	if insecure {
-		tlsConfig.InsecureSkipVerify = true
-	}
-
 	DefaultTransport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
 		DialContext: (&net.Dialer{
@@ -61,38 +63,14 @@ func prepareSTSClientTransport(insecure bool) *http.Transport {
 		TLSHandshakeTimeout:   10 * time.Second,
 		ExpectContinueTimeout: 1 * time.Second,
 		DisableCompression:    true,
-		TLSClientConfig:       tlsConfig,
-	}
-	// If Minio instance is running with TLS enabled and it's using a self-signed certificate
-	// or a certificate issued by a custom certificate authority we prepare a new custom *http.Transport
-	if getMinIOEndpointIsSecure() {
-		caCertFileNames := getMinioServerTLSRootCAs()
-		tlsConfig := &tls.Config{
+		TLSClientConfig: &tls.Config{
 			// Can't use SSLv3 because of POODLE and BEAST
 			// Can't use TLSv1.0 because of POODLE and BEAST using CBC cipher
 			// Can't use TLSv1.1 because of RC4 cipher usage
-			MinVersion: tls.VersionTLS12,
-		}
-		// If CAs certificates are configured we save them to the http.Client RootCAs store
-		if len(caCertFileNames) > 0 {
-			certs := x509.NewCertPool()
-			for _, caCert := range caCertFileNames {
-				// Validate certificate exists
-				if FileExists(caCert) {
-					pemData, err := ioutil.ReadFile(caCert)
-					if err != nil {
-						// if there was an error reading pem file stop console
-						panic(err)
-					}
-					certs.AppendCertsFromPEM(pemData)
-				} else {
-					// if provided cert filename doesn't exists stop console
-					panic(fmt.Sprintf(certDontExists, caCert))
-				}
-			}
-			tlsConfig.RootCAs = certs
-		}
-		DefaultTransport.TLSClientConfig = tlsConfig
+			MinVersion:         tls.VersionTLS12,
+			InsecureSkipVerify: insecure,
+			RootCAs:            certPool,
+		},
 	}
 	return DefaultTransport
 }
