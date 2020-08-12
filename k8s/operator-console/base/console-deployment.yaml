@@ -15,7 +15,7 @@ spec:
       serviceAccountName: console-sa
       containers:
         - name: console
-          image: minio/console:v0.3.12
+          image: minio/console:v0.3.13
           imagePullPolicy: "IfNotPresent"
           env:
             - name: CONSOLE_OPERATOR_MODE
