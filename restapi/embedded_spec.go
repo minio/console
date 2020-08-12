@@ -2024,6 +2024,9 @@ func init() {
             "type": "string"
           }
         },
+        "console_image": {
+          "type": "string"
+        },
         "enable_console": {
           "type": "boolean",
           "default": true
@@ -2044,6 +2047,9 @@ func init() {
           "$ref": "#/definitions/idpConfiguration"
         },
         "image": {
+          "type": "string"
+        },
+        "image_pull_secret": {
           "type": "string"
         },
         "image_registry": {
@@ -3059,9 +3065,16 @@ func init() {
     "updateTenantRequest": {
       "type": "object",
       "properties": {
+        "console_image": {
+          "type": "string",
+          "pattern": "^((.*?)/(.*?):(.+))$"
+        },
         "image": {
           "type": "string",
           "pattern": "^((.*?)/(.*?):(.+))$"
+        },
+        "image_pull_secret": {
+          "type": "string"
         },
         "image_registry": {
           "$ref": "#/definitions/imageRegistry"
@@ -5938,6 +5951,9 @@ func init() {
             "type": "string"
           }
         },
+        "console_image": {
+          "type": "string"
+        },
         "enable_console": {
           "type": "boolean",
           "default": true
@@ -5958,6 +5974,9 @@ func init() {
           "$ref": "#/definitions/idpConfiguration"
         },
         "image": {
+          "type": "string"
+        },
+        "image_pull_secret": {
           "type": "string"
         },
         "image_registry": {
@@ -6907,9 +6926,16 @@ func init() {
     "updateTenantRequest": {
       "type": "object",
       "properties": {
+        "console_image": {
+          "type": "string",
+          "pattern": "^((.*?)/(.*?):(.+))$"
+        },
         "image": {
           "type": "string",
           "pattern": "^((.*?)/(.*?):(.+))$"
+        },
+        "image_pull_secret": {
+          "type": "string"
         },
         "image_registry": {
           "$ref": "#/definitions/imageRegistry"

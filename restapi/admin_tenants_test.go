@@ -647,6 +647,7 @@ func Test_UpdateTenantAction(t *testing.T) {
 					return &http.Response{}, nil
 				},
 				params: admin_api.UpdateTenantParams{
+					Tenant: "minio-tenant",
 					Body: &models.UpdateTenantRequest{
 						Image: "minio/minio:RELEASE.2020-06-03T22-13-49Z",
 					},
@@ -675,6 +676,7 @@ func Test_UpdateTenantAction(t *testing.T) {
 					}, nil
 				},
 				params: admin_api.UpdateTenantParams{
+					Tenant: "minio-tenant",
 					Body: &models.UpdateTenantRequest{
 						Image: "",
 					},
@@ -683,7 +685,7 @@ func Test_UpdateTenantAction(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "Empty image input Error retrieving latest image",
+			name: "Empty image input Error retrieving latest image, nothing happens",
 			args: args{
 				ctx:            context.Background(),
 				operatorClient: opClient,
@@ -700,12 +702,63 @@ func Test_UpdateTenantAction(t *testing.T) {
 					return nil, errors.New("error")
 				},
 				params: admin_api.UpdateTenantParams{
+					Tenant: "minio-tenant",
 					Body: &models.UpdateTenantRequest{
 						Image: "",
 					},
 				},
 			},
-			wantErr: true,
+			wantErr: false,
+		},
+		{
+			name: "Update minio console version no errors",
+			args: args{
+				ctx:            context.Background(),
+				operatorClient: opClient,
+				httpCl:         httpClientM,
+				nameSpace:      "default",
+				tenantName:     "minio-tenant",
+				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
+					return &v1.Tenant{}, nil
+				},
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
+					return &v1.Tenant{}, nil
+				},
+				mockHTTPClientGet: func(url string) (resp *http.Response, err error) {
+					return nil, errors.New("use default minio")
+				},
+				params: admin_api.UpdateTenantParams{
+					Body: &models.UpdateTenantRequest{
+						ConsoleImage: "minio/console:v0.3.11",
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "Update minio image pull secrets no errors",
+			args: args{
+				ctx:            context.Background(),
+				operatorClient: opClient,
+				httpCl:         httpClientM,
+				nameSpace:      "default",
+				tenantName:     "minio-tenant",
+				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
+					return &v1.Tenant{}, nil
+				},
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
+					return &v1.Tenant{}, nil
+				},
+				mockHTTPClientGet: func(url string) (resp *http.Response, err error) {
+					return nil, errors.New("use default minio")
+				},
+				params: admin_api.UpdateTenantParams{
+					Body: &models.UpdateTenantRequest{
+						ImagePullSecret: "minio-regcred",
+					},
+				},
+			},
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {

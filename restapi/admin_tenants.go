@@ -54,10 +54,6 @@ import (
 	v1 "k8s.io/client-go/kubernetes/typed/core/v1"
 )
 
-const (
-	minioRegCred = "minio-regcred-secret"
-)
-
 type imageRegistry struct {
 	Auths map[string]imageRegistryCredentials `json:"auths"`
 }
@@ -589,7 +585,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 
 		const consoleVersion = "minio/console:v0.3.11"
 		minInst.Spec.Console = &operator.ConsoleConfiguration{
-			Replicas:      2,
+			Replicas:      1,
 			Image:         consoleVersion,
 			ConsoleSecret: &corev1.LocalObjectReference{Name: consoleSecretName},
 			Resources: corev1.ResourceRequirements{
@@ -660,13 +656,25 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		minInst.Spec.Mountpath = tenantReq.MounthPath
 	}
 
-	if err := setImageRegistry(ctx, tenantReq.ImageRegistry, clientset.CoreV1(), ns); err != nil {
+	// We accept either `image_pull_secret` or the individual details of the `image_registry` but not both
+	var imagePullSecret string
+
+	if tenantReq.ImagePullSecret != "" {
+		imagePullSecret = tenantReq.ImagePullSecret
+	} else if imagePullSecret, err = setImageRegistry(ctx, *tenantReq.Name, tenantReq.ImageRegistry, clientset.CoreV1(), ns); err != nil {
 		log.Println("error setting image registry secret:", err)
 		return nil, err
 	}
+	// pass the image pull secret to the Tenant
+	if imagePullSecret != "" {
+		minInst.Spec.ImagePullSecret = corev1.LocalObjectReference{
+			Name: imagePullSecret,
+		}
+	}
 
-	minInst.Spec.ImagePullSecret = corev1.LocalObjectReference{
-		Name: minioRegCred,
+	// set console image if provided
+	if tenantReq.ConsoleImage != "" {
+		minInst.Spec.Console.Image = tenantReq.ConsoleImage
 	}
 
 	opClient, err := cluster.OperatorClient(session.SessionToken)
@@ -700,9 +708,11 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	return response, nil
 }
 
-func setImageRegistry(ctx context.Context, req *models.ImageRegistry, clientset v1.CoreV1Interface, namespace string) error {
+// setImageRegistry creates a secret to store the private registry credentials, if one exist it updates the existing one
+// returns the name of the secret created/updated
+func setImageRegistry(ctx context.Context, tenantName string, req *models.ImageRegistry, clientset v1.CoreV1Interface, namespace string) (string, error) {
 	if req == nil || req.Registry == nil || req.Username == nil || req.Password == nil {
-		return nil
+		return "", nil
 	}
 
 	credentials := make(map[string]imageRegistryCredentials)
@@ -720,12 +730,14 @@ func setImageRegistry(ctx context.Context, req *models.ImageRegistry, clientset 
 	}
 	imRegistryJSON, err := json.Marshal(imRegistry)
 	if err != nil {
-		return err
+		return "", err
 	}
+
+	pullSecretName := fmt.Sprintf("%s-regcred", tenantName)
 
 	instanceSecret := corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: minioRegCred,
+			Name: pullSecretName,
 		},
 		Data: map[string][]byte{
 			corev1.DockerConfigJsonKey: []byte(string(imRegistryJSON)),
@@ -734,22 +746,22 @@ func setImageRegistry(ctx context.Context, req *models.ImageRegistry, clientset 
 	}
 
 	// Get or Create secret if it doesn't exist
-	_, err = clientset.Secrets(namespace).Get(ctx, minioRegCred, metav1.GetOptions{})
+	_, err = clientset.Secrets(namespace).Get(ctx, pullSecretName, metav1.GetOptions{})
 	if err != nil {
 		if k8sErrors.IsNotFound(err) {
 			_, err = clientset.Secrets(namespace).Create(ctx, &instanceSecret, metav1.CreateOptions{})
 			if err != nil {
-				return err
+				return "", err
 			}
-			return nil
+			return "", nil
 		}
-		return err
+		return "", err
 	}
 	_, err = clientset.Secrets(namespace).Update(ctx, &instanceSecret, metav1.UpdateOptions{})
 	if err != nil {
-		return err
+		return "", err
 	}
-	return nil
+	return pullSecretName, nil
 }
 
 // updateTenantAction does an update on the minioTenant by patching the desired changes
@@ -757,14 +769,24 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClient, clie
 	imageToUpdate := params.Body.Image
 	imageRegistryReq := params.Body.ImageRegistry
 
-	if err := setImageRegistry(ctx, imageRegistryReq, clientset, namespace); err != nil {
-		log.Println("error setting image registry secret:", err)
-		return err
-	}
-
 	minInst, err := operatorClient.TenantGet(ctx, namespace, params.Tenant, metav1.GetOptions{})
 	if err != nil {
 		return err
+	}
+	// we can take either the `image_pull_secret` of the `image_registry` but not both
+	if params.Body.ImagePullSecret != "" {
+		minInst.Spec.ImagePullSecret.Name = params.Body.ImagePullSecret
+	} else {
+		// update the image pull secret content
+		if _, err := setImageRegistry(ctx, params.Tenant, imageRegistryReq, clientset, namespace); err != nil {
+			log.Println("error setting image registry secret:", err)
+			return err
+		}
+	}
+
+	// update the console image
+	if strings.TrimSpace(params.Body.ConsoleImage) != "" && minInst.Spec.Console != nil {
+		minInst.Spec.Console.Image = params.Body.ConsoleImage
 	}
 
 	// if image to update is empty we'll use the latest image by default
@@ -772,10 +794,10 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClient, clie
 		minInst.Spec.Image = imageToUpdate
 	} else {
 		im, err := cluster.GetLatestMinioImage(httpCl)
-		if err != nil {
-			return err
+		// if we can't get the MinIO image, we won' auto-update it unless it's explicit by name
+		if err == nil {
+			minInst.Spec.Image = *im
 		}
-		minInst.Spec.Image = *im
 	}
 
 	payloadBytes, err := json.Marshal(minInst)
