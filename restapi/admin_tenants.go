@@ -341,10 +341,10 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 
 	if minioImage == "" {
 		minImg, err := cluster.GetMinioImage()
-		if err != nil {
-			return nil, err
+		// we can live without figuring out the latest version of MinIO, Operator will use a hardcoded value
+		if err == nil {
+			minioImage = *minImg
 		}
-		minioImage = *minImg
 	}
 	// get Kubernetes Client
 	clientset, err := cluster.K8sClient(session.SessionToken)
