@@ -17,14 +17,17 @@
 package auth
 
 import (
+	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
-	"crypto/rand"
+	"crypto/hmac"
 	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/base64"
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
@@ -33,6 +36,9 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/auth/token"
 	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/secure-io/sio-go/sioutil"
+	"golang.org/x/crypto/chacha20"
+	"golang.org/x/crypto/chacha20poly1305"
 	"golang.org/x/crypto/pbkdf2"
 )
 
@@ -40,6 +46,7 @@ var (
 	errNoAuthToken  = errors.New("session token missing")
 	errReadingToken = errors.New("session token internal data is malformed")
 	errClaimsFormat = errors.New("encrypted session token claims not in the right format")
+	errorGeneric    = errors.New("an error has occurred")
 )
 
 // derivedKey is the key used to encrypt the session token claims, its derived using pbkdf on CONSOLE_PBKDF_PASSPHRASE with CONSOLE_PBKDF_SALT
@@ -102,9 +109,10 @@ func NewEncryptedTokenForClient(credentials *credentials.Value, actions []string
 // returns a base64 encoded ciphertext
 func encryptClaims(accessKeyID, secretAccessKey, sessionToken string, actions []string) (string, error) {
 	payload := []byte(fmt.Sprintf("%s#%s#%s#%s", accessKeyID, secretAccessKey, sessionToken, strings.Join(actions, ",")))
-	ciphertext, err := encrypt(payload)
+	ciphertext, err := encrypt(payload, []byte{})
 	if err != nil {
-		return "", err
+		log.Println(err)
+		return "", errorGeneric
 	}
 	return base64.StdEncoding.EncodeToString(ciphertext), nil
 }
@@ -116,7 +124,7 @@ func decryptClaims(ciphertext string) (*DecryptedClaims, error) {
 		log.Println(err)
 		return nil, errClaimsFormat
 	}
-	plaintext, err := decrypt(decoded)
+	plaintext, err := decrypt(decoded, []byte{})
 	if err != nil {
 		log.Println(err)
 		return nil, errClaimsFormat
@@ -136,37 +144,137 @@ func decryptClaims(ciphertext string) (*DecryptedClaims, error) {
 	}, nil
 }
 
-// Encrypt a blob of data using AEAD (AES-GCM) with a pbkdf2 derived key
-func encrypt(plaintext []byte) ([]byte, error) {
-	block, _ := aes.NewCipher(derivedKey)
-	gcm, err := cipher.NewGCM(block)
+const (
+	aesGcm   = 0x00
+	c20p1305 = 0x01
+)
+
+// Encrypt a blob of data using AEAD scheme, AES-GCM if the executing CPU
+// provides AES hardware support, otherwise will use ChaCha20-Poly1305
+// with a pbkdf2 derived key, this function should be used to encrypt a session
+// or data key provided as plaintext.
+//
+// The returned ciphertext data consists of:
+//    iv | AEAD ID | nonce | encrypted data
+//     32      1        12      ~ len(data)
+func encrypt(plaintext, associatedData []byte) ([]byte, error) {
+	iv, err := sioutil.Random(32) // 32 bit IV
 	if err != nil {
 		return nil, err
 	}
-	nonce := make([]byte, gcm.NonceSize())
-	if _, err = io.ReadFull(rand.Reader, nonce); err != nil {
+	var algorithm byte
+	if sioutil.NativeAES() {
+		algorithm = aesGcm
+	} else {
+		algorithm = c20p1305
+	}
+	var aead cipher.AEAD
+	switch algorithm {
+	case aesGcm:
+		mac := hmac.New(sha256.New, derivedKey)
+		mac.Write(iv)
+		sealingKey := mac.Sum(nil)
+
+		var block cipher.Block
+		block, err = aes.NewCipher(sealingKey)
+		if err != nil {
+			return nil, err
+		}
+		aead, err = cipher.NewGCM(block)
+		if err != nil {
+			return nil, err
+		}
+	case c20p1305:
+		var sealingKey []byte
+		sealingKey, err = chacha20.HChaCha20(derivedKey, iv)
+		if err != nil {
+			return nil, err
+		}
+		aead, err = chacha20poly1305.New(sealingKey)
+		if err != nil {
+			return nil, err
+		}
+	}
+	nonce, err := sioutil.Random(aead.NonceSize())
+	if err != nil {
 		return nil, err
 	}
-	cipherText := gcm.Seal(nonce, nonce, plaintext, nil)
-	return cipherText, nil
+
+	sealedBytes := aead.Seal(nil, nonce, plaintext, associatedData)
+
+	// ciphertext = iv | AEAD ID | nonce | sealed bytes
+
+	var buf bytes.Buffer
+	buf.Write(iv)
+	buf.WriteByte(algorithm)
+	buf.Write(nonce)
+	buf.Write(sealedBytes)
+
+	return buf.Bytes(), nil
 }
 
-// Decrypts a blob of data using AEAD (AES-GCM) with a pbkdf2 derived key
-func decrypt(data []byte) ([]byte, error) {
-	block, err := aes.NewCipher(derivedKey)
+// Decrypts a blob of data using AEAD scheme AES-GCM if the executing CPU
+// provides AES hardware support, otherwise will use ChaCha20-Poly1305with
+// and a pbkdf2 derived key
+func decrypt(ciphertext []byte, associatedData []byte) ([]byte, error) {
+	var (
+		iv        [32]byte
+		algorithm [1]byte
+		nonce     [12]byte // This depends on the AEAD but both used ciphers have the same nonce length.
+	)
+
+	r := bytes.NewReader(ciphertext)
+	if _, err := io.ReadFull(r, iv[:]); err != nil {
+		return nil, err
+	}
+	if _, err := io.ReadFull(r, algorithm[:]); err != nil {
+		return nil, err
+	}
+	if _, err := io.ReadFull(r, nonce[:]); err != nil {
+		return nil, err
+	}
+
+	var aead cipher.AEAD
+	switch algorithm[0] {
+	case aesGcm:
+		mac := hmac.New(sha256.New, derivedKey)
+		mac.Write(iv[:])
+		sealingKey := mac.Sum(nil)
+		block, err := aes.NewCipher(sealingKey[:])
+		if err != nil {
+			return nil, err
+		}
+		aead, err = cipher.NewGCM(block)
+		if err != nil {
+			return nil, err
+		}
+	case c20p1305:
+		sealingKey, err := chacha20.HChaCha20(derivedKey, iv[:])
+		if err != nil {
+			return nil, err
+		}
+		aead, err = chacha20poly1305.New(sealingKey)
+		if err != nil {
+			return nil, err
+		}
+	default:
+		return nil, fmt.Errorf("invalid algorithm: %v", algorithm)
+	}
+
+	if len(nonce) != aead.NonceSize() {
+		return nil, fmt.Errorf("invalid nonce size %d, expected %d", len(nonce), aead.NonceSize())
+	}
+
+	sealedBytes, err := ioutil.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}
-	gcm, err := cipher.NewGCM(block)
+
+	plaintext, err := aead.Open(nil, nonce[:], sealedBytes, associatedData)
 	if err != nil {
 		return nil, err
 	}
-	nonceSize := gcm.NonceSize()
-	nonce, cipherText := data[:nonceSize], data[nonceSize:]
-	plaintext, err := gcm.Open(nil, nonce, cipherText, nil)
-	if err != nil {
-		return nil, err
-	}
+
 	return plaintext, nil
 }
 
