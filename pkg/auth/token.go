@@ -17,18 +17,19 @@
 package auth
 
 import (
+	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/hmac"
 	"crypto/sha1"
 	"crypto/sha256"
 	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/go-openapi/swag"
@@ -143,31 +144,29 @@ func decryptClaims(ciphertext string) (*DecryptedClaims, error) {
 	}, nil
 }
 
-type SealedSecret struct {
-	Algorithm string `json:"aead"`
-	IV        []byte `json:"iv"`
-	Nonce     []byte `json:"nonce"`
-	Bytes     []byte `json:"bytes"`
-}
+const (
+	aesGcm   = 0x00
+	c20p1305 = 0x01
+)
 
 // Encrypt a blob of data using AEAD scheme, AES-GCM if the executing CPU
 // provides AES hardware support, otherwise will use ChaCha20-Poly1305
 // with a pbkdf2 derived key, this function should be used to encrypt a session
 // or data key provided as plaintext.
 func encrypt(plaintext, associatedData []byte) ([]byte, error) {
-	iv, err := sioutil.Random(16)
+	iv, err := sioutil.Random(32) // 32 bit IV
 	if err != nil {
 		return nil, err
 	}
-	var algorithm string
+	var algorithm byte
 	if sioutil.NativeAES() {
-		algorithm = "AES-256-GCM-HMAC-SHA-256"
+		algorithm = aesGcm
 	} else {
-		algorithm = "ChaCha20Poly1305"
+		algorithm = c20p1305
 	}
 	var aead cipher.AEAD
 	switch algorithm {
-	case "AES-256-GCM-HMAC-SHA-256":
+	case aesGcm:
 		mac := hmac.New(sha256.New, derivedKey)
 		mac.Write(iv)
 		sealingKey := mac.Sum(nil)
@@ -181,7 +180,7 @@ func encrypt(plaintext, associatedData []byte) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-	case "ChaCha20Poly1305":
+	case c20p1305:
 		var sealingKey []byte
 		sealingKey, err = chacha20.HChaCha20(derivedKey, iv)
 		if err != nil {
@@ -191,38 +190,51 @@ func encrypt(plaintext, associatedData []byte) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-	default:
-		return nil, errors.New("invalid algorithm: " + algorithm)
 	}
 	nonce, err := sioutil.Random(aead.NonceSize())
 	if err != nil {
 		return nil, err
 	}
-	ciphertext := aead.Seal(nil, nonce, plaintext, associatedData)
-	return json.Marshal(SealedSecret{
-		Algorithm: algorithm,
-		IV:        iv,
-		Nonce:     nonce,
-		Bytes:     ciphertext,
-	})
+
+	sealedBytes := aead.Seal(nil, nonce, plaintext, associatedData)
+
+	// ciphertext = salt || AEAD ID | nonce | sealed bytes
+
+	var buf bytes.Buffer
+	buf.Write(iv)
+	buf.WriteByte(algorithm)
+	buf.Write(nonce)
+	buf.Write(sealedBytes)
+
+	return buf.Bytes(), nil
 }
 
 // Decrypts a blob of data using AEAD scheme AES-GCM if the executing CPU
 // provides AES hardware support, otherwise will use ChaCha20-Poly1305with
 // and a pbkdf2 derived key
 func decrypt(ciphertext []byte, associatedData []byte) ([]byte, error) {
-	var sealedSecret SealedSecret
-	if err := json.Unmarshal(ciphertext, &sealedSecret); err != nil {
+	var (
+		iv        [32]byte
+		algorithm [1]byte
+		nonce     [8]byte // This depends on the AEAD but both used ciphers have the same nonce length.
+	)
+
+	r := bytes.NewReader(ciphertext)
+	if _, err := io.ReadFull(r, iv[:]); err != nil {
 		return nil, err
 	}
-	if n := len(sealedSecret.IV); n != 16 {
-		return nil, errors.New("invalid iv size " + strconv.Itoa(n))
+	if _, err := io.ReadFull(r, algorithm[:]); err != nil {
+		return nil, err
 	}
+	if _, err := io.ReadFull(r, nonce[:]); err != nil {
+		return nil, err
+	}
+
 	var aead cipher.AEAD
-	switch sealedSecret.Algorithm {
-	case "AES-256-GCM-HMAC-SHA-256":
+	switch algorithm[0] {
+	case aesGcm:
 		mac := hmac.New(sha256.New, derivedKey)
-		mac.Write(sealedSecret.IV)
+		mac.Write(iv[:])
 		sealingKey := mac.Sum(nil)
 		block, err := aes.NewCipher(sealingKey[:])
 		if err != nil {
@@ -232,8 +244,8 @@ func decrypt(ciphertext []byte, associatedData []byte) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-	case "ChaCha20Poly1305":
-		sealingKey, err := chacha20.HChaCha20(derivedKey, sealedSecret.IV)
+	case c20p1305:
+		sealingKey, err := chacha20.HChaCha20(derivedKey, iv[:])
 		if err != nil {
 			return nil, err
 		}
@@ -242,15 +254,23 @@ func decrypt(ciphertext []byte, associatedData []byte) ([]byte, error) {
 			return nil, err
 		}
 	default:
-		return nil, errors.New("invalid algorithm: " + sealedSecret.Algorithm)
+		return nil, fmt.Errorf("invalid algorithm: %v", algorithm)
 	}
-	if n := len(sealedSecret.Nonce); n != aead.NonceSize() {
-		return nil, errors.New("invalid nonce size " + strconv.Itoa(n))
+
+	if len(nonce) != aead.NonceSize() {
+		return nil, fmt.Errorf("invalid nonce size %d, expected %d", len(nonce), aead.NonceSize())
 	}
-	plaintext, err := aead.Open(nil, sealedSecret.Nonce, sealedSecret.Bytes, associatedData)
+
+	sealedBytes, err := ioutil.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}
+
+	plaintext, err := aead.Open(nil, nonce[:], sealedBytes, associatedData)
+	if err != nil {
+		return nil, err
+	}
+
 	return plaintext, nil
 }
 
