@@ -21,6 +21,7 @@ require (
 	github.com/minio/minio-go/v7 v7.0.5-0.20200807085956-d7db33ea7618
 	github.com/minio/operator v0.0.0-20200806194125-c2ff646f4af1
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
+	github.com/secure-io/sio-go v0.3.1
 	github.com/stretchr/testify v1.6.1
 	github.com/unrolled/secure v1.0.7
 	golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de

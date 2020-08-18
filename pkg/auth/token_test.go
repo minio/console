@@ -36,12 +36,12 @@ func TestNewJWTWithClaimsForClient(t *testing.T) {
 	funcAssert := assert.New(t)
 	// Test-1 : NewEncryptedTokenForClient() is generated correctly without errors
 	function := "NewEncryptedTokenForClient()"
-	jwt, err := NewEncryptedTokenForClient(creds, []string{""})
-	if err != nil || jwt == "" {
+	token, err := NewEncryptedTokenForClient(creds, []string{""})
+	if err != nil || token == "" {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err)
 	}
-	// saving jwt for future tests
-	goodToken = jwt
+	// saving token for future tests
+	goodToken = token
 	// Test-2 : NewEncryptedTokenForClient() throws error because of empty credentials
 	if _, err = NewEncryptedTokenForClient(nil, []string{""}); err != nil {
 		funcAssert.Equal("provided credentials are empty", err.Error())
