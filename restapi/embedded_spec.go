@@ -1007,7 +1007,7 @@ func init() {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Delete Tenant",
+        "summary": "Delete tenant and underlying pvcs",
         "operationId": "DeleteTenant",
         "parameters": [
           {
@@ -1021,6 +1021,13 @@ func init() {
             "name": "tenant",
             "in": "path",
             "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/deleteTenantRequest"
+            }
           }
         ],
         "responses": {
@@ -2102,6 +2109,14 @@ func init() {
         },
         "secret_key": {
           "type": "string"
+        }
+      }
+    },
+    "deleteTenantRequest": {
+      "type": "object",
+      "properties": {
+        "delete_pvcs": {
+          "type": "boolean"
         }
       }
     },
@@ -4423,7 +4438,7 @@ func init() {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Delete Tenant",
+        "summary": "Delete tenant and underlying pvcs",
         "operationId": "DeleteTenant",
         "parameters": [
           {
@@ -4437,6 +4452,13 @@ func init() {
             "name": "tenant",
             "in": "path",
             "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/deleteTenantRequest"
+            }
           }
         ],
         "responses": {
@@ -6029,6 +6051,14 @@ func init() {
         },
         "secret_key": {
           "type": "string"
+        }
+      }
+    },
+    "deleteTenantRequest": {
+      "type": "object",
+      "properties": {
+        "delete_pvcs": {
+          "type": "boolean"
         }
       }
     },

@@ -33,9 +33,11 @@ import (
 	operator "github.com/minio/operator/pkg/apis/minio.min.io/v1"
 	v1 "github.com/minio/operator/pkg/apis/minio.min.io/v1"
 	corev1 "k8s.io/api/core/v1"
+	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	types "k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes/fake"
 )
@@ -335,12 +337,13 @@ func Test_TenantInfo(t *testing.T) {
 
 func Test_deleteTenantAction(t *testing.T) {
 	opClient := opClientMock{}
-
 	type args struct {
 		ctx              context.Context
 		operatorClient   OperatorClient
 		nameSpace        string
 		tenantName       string
+		deletePvcs       bool
+		objs             []runtime.Object
 		mockTenantDelete func(ctx context.Context, namespace string, tenantName string, options metav1.DeleteOptions) error
 	}
 	tests := []struct {
@@ -355,6 +358,7 @@ func Test_deleteTenantAction(t *testing.T) {
 				operatorClient: opClient,
 				nameSpace:      "default",
 				tenantName:     "minio-tenant",
+				deletePvcs:     false,
 				mockTenantDelete: func(ctx context.Context, namespace string, tenantName string, options metav1.DeleteOptions) error {
 					return nil
 				},
@@ -368,8 +372,145 @@ func Test_deleteTenantAction(t *testing.T) {
 				operatorClient: opClient,
 				nameSpace:      "default",
 				tenantName:     "minio-tenant",
+				deletePvcs:     false,
 				mockTenantDelete: func(ctx context.Context, namespace string, tenantName string, options metav1.DeleteOptions) error {
 					return errors.New("something happened")
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// Delete only PVCs of the defined tenant on the specific namespace
+			name: "Delete PVCs on Tenant Deletion",
+			args: args{
+				ctx:            context.Background(),
+				operatorClient: opClient,
+				nameSpace:      "minio-tenant",
+				tenantName:     "tenant1",
+				deletePvcs:     true,
+				objs: []runtime.Object{
+					&corev1.PersistentVolumeClaim{
+						ObjectMeta: metav1.ObjectMeta{
+							Name:      "PVC1",
+							Namespace: "minio-tenant",
+							Labels: map[string]string{
+								operator.TenantLabel: "tenant1",
+								operator.ZoneLabel:   "zone-1",
+							},
+						},
+					},
+				},
+				mockTenantDelete: func(ctx context.Context, namespace string, tenantName string, options metav1.DeleteOptions) error {
+					return nil
+				},
+			},
+			wantErr: false,
+		},
+		{
+			// Do not delete underlying pvcs
+			name: "Don't Delete PVCs on Tenant Deletion",
+			args: args{
+				ctx:            context.Background(),
+				operatorClient: opClient,
+				nameSpace:      "minio-tenant",
+				tenantName:     "tenant1",
+				deletePvcs:     false,
+				objs: []runtime.Object{
+					&corev1.PersistentVolumeClaim{
+						ObjectMeta: metav1.ObjectMeta{
+							Name:      "PVC1",
+							Namespace: "minio-tenant",
+							Labels: map[string]string{
+								operator.TenantLabel: "tenant1",
+								operator.ZoneLabel:   "zone-1",
+							},
+						},
+					},
+				},
+				mockTenantDelete: func(ctx context.Context, namespace string, tenantName string, options metav1.DeleteOptions) error {
+					return nil
+				},
+			},
+			wantErr: false,
+		},
+		{
+			// If error is different than NotFound, PVC deletion should not continue
+			name: "Don't delete pvcs if error Deleting Tenant, return",
+			args: args{
+				ctx:            context.Background(),
+				operatorClient: opClient,
+				nameSpace:      "minio-tenant",
+				tenantName:     "tenant1",
+				deletePvcs:     true,
+				objs: []runtime.Object{
+					&corev1.PersistentVolumeClaim{
+						ObjectMeta: metav1.ObjectMeta{
+							Name:      "PVC1",
+							Namespace: "minio-tenant",
+							Labels: map[string]string{
+								operator.TenantLabel: "tenant1",
+								operator.ZoneLabel:   "zone-1",
+							},
+						},
+					},
+				},
+				mockTenantDelete: func(ctx context.Context, namespace string, tenantName string, options metav1.DeleteOptions) error {
+					return errors.New("error returned")
+				},
+			},
+			wantErr: true,
+		},
+		{
+			// If error is NotFound while trying to Delete Tenant, PVC deletion should continue
+			name: "Delete pvcs if tenant not found",
+			args: args{
+				ctx:            context.Background(),
+				operatorClient: opClient,
+				nameSpace:      "minio-tenant",
+				tenantName:     "tenant1",
+				deletePvcs:     true,
+				objs: []runtime.Object{
+					&corev1.PersistentVolumeClaim{
+						ObjectMeta: metav1.ObjectMeta{
+							Name:      "PVC1",
+							Namespace: "minio-tenant",
+							Labels: map[string]string{
+								operator.TenantLabel: "tenant1",
+								operator.ZoneLabel:   "zone-1",
+							},
+						},
+					},
+				},
+				mockTenantDelete: func(ctx context.Context, namespace string, tenantName string, options metav1.DeleteOptions) error {
+					return k8sErrors.NewNotFound(schema.GroupResource{}, "tenant1")
+				},
+			},
+			wantErr: false,
+		},
+		{
+			// If error is NotFound while trying to Delete Tenant and pvcdeletion=false,
+			// error should be returned
+			name: "Don't delete pvcs and return error if tenant not found",
+			args: args{
+				ctx:            context.Background(),
+				operatorClient: opClient,
+				nameSpace:      "minio-tenant",
+				tenantName:     "tenant1",
+				deletePvcs:     false,
+				objs: []runtime.Object{
+					&corev1.PersistentVolumeClaim{
+						ObjectMeta: metav1.ObjectMeta{
+							Name:      "PVC1",
+							Namespace: "minio-tenant",
+							Labels: map[string]string{
+								operator.TenantLabel: "tenant1",
+								operator.ZoneLabel:   "zone-1",
+							},
+						},
+					},
+				},
+				mockTenantDelete: func(ctx context.Context, namespace string, tenantName string, options metav1.DeleteOptions) error {
+					return k8sErrors.NewNotFound(schema.GroupResource{}, "tenant1")
 				},
 			},
 			wantErr: true,
@@ -377,8 +518,9 @@ func Test_deleteTenantAction(t *testing.T) {
 	}
 	for _, tt := range tests {
 		opClientTenantDeleteMock = tt.args.mockTenantDelete
+		kubeClient := fake.NewSimpleClientset(tt.args.objs...)
 		t.Run(tt.name, func(t *testing.T) {
-			if err := deleteTenantAction(tt.args.ctx, tt.args.operatorClient, tt.args.nameSpace, tt.args.tenantName); (err != nil) != tt.wantErr {
+			if err := deleteTenantAction(tt.args.ctx, tt.args.operatorClient, kubeClient.CoreV1(), tt.args.nameSpace, tt.args.tenantName, tt.args.deletePvcs); (err != nil) != tt.wantErr {
 				t.Errorf("deleteTenantAction() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -768,7 +910,7 @@ func Test_UpdateTenantAction(t *testing.T) {
 		cnsClient := fake.NewSimpleClientset(tt.objs...)
 		t.Run(tt.name, func(t *testing.T) {
 			if err := updateTenantAction(tt.args.ctx, tt.args.operatorClient, cnsClient.CoreV1(), tt.args.httpCl, tt.args.nameSpace, tt.args.params); (err != nil) != tt.wantErr {
-				t.Errorf("deleteTenantAction() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("updateTenantAction() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

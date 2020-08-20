@@ -110,7 +110,7 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 		err := getDeleteTenantResponse(session, params)
 		if err != nil {
 			log.Println(err)
-			return admin_api.NewTenantInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String("Unable to delete tenant")})
+			return admin_api.NewTenantInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return admin_api.NewTenantInfoOK()
 
@@ -145,25 +145,53 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 	})
 }
 
-// deleteTenantAction performs the actions of deleting a tenant
-func deleteTenantAction(ctx context.Context, operatorClient OperatorClient, nameSpace, instanceName string) error {
-	err := operatorClient.TenantDelete(ctx, nameSpace, instanceName, metav1.DeleteOptions{})
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 // getDeleteTenantResponse gets the output of deleting a minio instance
 func getDeleteTenantResponse(session *models.Principal, params admin_api.DeleteTenantParams) error {
 	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
 		return err
 	}
+	// get Kubernetes Client
+	clientset, err := cluster.K8sClient(session.SessionToken)
+	if err != nil {
+		return err
+	}
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
-	return deleteTenantAction(context.Background(), opClient, params.Namespace, params.Tenant)
+	deleteTenantPVCs := false
+	if params.Body != nil {
+		deleteTenantPVCs = params.Body.DeletePvcs
+	}
+	return deleteTenantAction(context.Background(), opClient, clientset.CoreV1(), params.Namespace, params.Tenant, deleteTenantPVCs)
+}
+
+// deleteTenantAction performs the actions of deleting a tenant
+//
+// It also adds the option of deleting the tenant's underlying pvcs if deletePvcs set
+func deleteTenantAction(
+	ctx context.Context,
+	operatorClient OperatorClient,
+	clientset v1.CoreV1Interface,
+	namespace, tenantName string,
+	deletePvcs bool) error {
+
+	err := operatorClient.TenantDelete(ctx, namespace, tenantName, metav1.DeleteOptions{})
+	if err != nil {
+		// try to delete pvc even if the tenant doesn't exist anymore but only if deletePvcs is set to true,
+		// else, we return the error
+		if (deletePvcs && !k8sErrors.IsNotFound(err)) || !deletePvcs {
+			return err
+		}
+	}
+
+	if deletePvcs {
+		opts := metav1.ListOptions{
+			LabelSelector: fmt.Sprintf("%s=%s", operator.TenantLabel, tenantName),
+		}
+		return clientset.PersistentVolumeClaims(namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
+	}
+	return nil
 }
 
 func getTenantScheme(mi *operator.Tenant) string {
