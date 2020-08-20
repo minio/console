@@ -8,4 +8,4 @@ resources:
   - console-configmap.yaml
   - console-service.yaml
   - console-deployment.yaml
-  - minio-operator.yaml
+  - https://github.com/minio/operator/?ref=v3.0.10

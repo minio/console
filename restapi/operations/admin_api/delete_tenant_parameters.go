@@ -26,8 +26,11 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
+
+	"github.com/minio/console/models"
 )
 
 // NewDeleteTenantParams creates a new DeleteTenantParams object
@@ -46,6 +49,10 @@ type DeleteTenantParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
+	/*
+	  In: body
+	*/
+	Body *models.DeleteTenantRequest
 	/*
 	  Required: true
 	  In: path
@@ -67,6 +74,22 @@ func (o *DeleteTenantParams) BindRequest(r *http.Request, route *middleware.Matc
 
 	o.HTTPRequest = r
 
+	if runtime.HasBody(r) {
+		defer r.Body.Close()
+		var body models.DeleteTenantRequest
+		if err := route.Consumer.Consume(r.Body, &body); err != nil {
+			res = append(res, errors.NewParseError("body", "body", "", err))
+		} else {
+			// validate body object
+			if err := body.Validate(route.Formats); err != nil {
+				res = append(res, err)
+			}
+
+			if len(res) == 0 {
+				o.Body = &body
+			}
+		}
+	}
 	rNamespace, rhkNamespace, _ := route.Params.GetOK("namespace")
 	if err := o.bindNamespace(rNamespace, rhkNamespace, route.Formats); err != nil {
 		res = append(res, err)

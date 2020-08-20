@@ -1069,7 +1069,7 @@ paths:
       tags:
         - AdminAPI
     delete:
-      summary: Delete Tenant
+      summary: Delete tenant and underlying pvcs
       operationId: DeleteTenant
       parameters:
         - name: namespace
@@ -1080,6 +1080,11 @@ paths:
           in: path
           required: true
           type: string
+        - name: body
+          in: body
+          required: false
+          schema:
+            $ref: "#/definitions/deleteTenantRequest"
       responses:
         204:
           description: A successful response.
@@ -2516,3 +2521,9 @@ definitions:
       used:
         type: integer
         format: int64
+  
+  deleteTenantRequest:
+    type: object
+    properties:
+      delete_pvcs:
+        type: boolean

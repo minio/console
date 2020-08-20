@@ -29,6 +29,12 @@ rules:
       - list
       - patch
   - apiGroups:
+      - ""
+    resources:
+      - persistentvolumeclaims
+    verbs:
+      - deletecollection
+  - apiGroups:
       - "storage.k8s.io"
     resources:
       - storageclasses
