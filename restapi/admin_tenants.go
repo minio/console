@@ -1141,7 +1141,8 @@ func parseTenantZoneRequest(zoneParams *models.Zone, annotations map[string]stri
 	// Pass annotations to the volume
 	vct := &corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "data",
+			Name:   "data",
+			Labels: zoneParams.VolumeConfiguration.Labels,
 		},
 		Spec: volTemp,
 	}
