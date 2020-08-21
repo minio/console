@@ -398,12 +398,16 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		secretKey = tenantReq.SecretKey
 	}
 
-	secretName := fmt.Sprintf("%s-secret", *tenantReq.Name)
+	tenantName := *tenantReq.Name
+	secretName := fmt.Sprintf("%s-secret", tenantName)
 	imm := true
 
 	instanceSecret := corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: secretName,
+			Labels: map[string]string{
+				operator.TenantLabel: tenantName,
+			},
 		},
 		Immutable: &imm,
 		Data: map[string][]byte{
@@ -432,7 +436,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	//Construct a MinIO Instance with everything we are getting from parameters
 	minInst := operator.Tenant{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: *tenantReq.Name,
+			Name: tenantName,
 		},
 		Spec: operator.TenantSpec{
 			Image:     minioImage,
@@ -522,6 +526,9 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		externalTLSCertificateSecret := corev1.Secret{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: externalTLSCertificateSecretName,
+				Labels: map[string]string{
+					operator.TenantLabel: tenantName,
+				},
 			},
 			Type:      corev1.SecretTypeTLS,
 			Immutable: &imm,
@@ -549,13 +556,13 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		})
 		// KES client mTLSCertificates used by MinIO instance, only if autoCert is not enabled
 		if !minInst.Spec.RequestAutoCert {
-			minInst.Spec.ExternalClientCertSecret, err = getTenantExternalClientCertificates(ctx, clientset, ns, tenantReq.Encryption, secretName)
+			minInst.Spec.ExternalClientCertSecret, err = getTenantExternalClientCertificates(ctx, clientset, ns, tenantReq.Encryption, secretName, tenantName)
 			if err != nil {
 				return nil, err
 			}
 		}
 		// KES configuration for Tenant instance
-		minInst.Spec.KES, err = getKESConfiguration(ctx, clientset, ns, tenantReq.Encryption, secretName, minInst.Spec.RequestAutoCert)
+		minInst.Spec.KES, err = getKESConfiguration(ctx, clientset, ns, tenantReq.Encryption, secretName, tenantName, minInst.Spec.RequestAutoCert)
 		if err != nil {
 			return nil, err
 		}
@@ -571,7 +578,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 
 	if enableConsole {
-		consoleSelector := fmt.Sprintf("%s-console", *tenantReq.Name)
+		consoleSelector := fmt.Sprintf("%s-console", tenantName)
 		consoleSecretName := fmt.Sprintf("%s-secret", consoleSelector)
 		consoleAccess = RandomCharString(16)
 		consoleSecret = RandomCharString(32)
@@ -579,6 +586,9 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		instanceSecret := corev1.Secret{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: consoleSecretName,
+				Labels: map[string]string{
+					operator.TenantLabel: tenantName,
+				},
 			},
 			Immutable: &imm,
 			Data: map[string][]byte{
@@ -641,6 +651,9 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			consoleExternalTLSCertificateSecret := corev1.Secret{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: consoleExternalTLSCertificateSecretName,
+					Labels: map[string]string{
+						operator.TenantLabel: tenantName,
+					},
 				},
 				Type:      corev1.SecretTypeTLS,
 				Immutable: &imm,
@@ -694,7 +707,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 
 	if tenantReq.ImagePullSecret != "" {
 		imagePullSecret = tenantReq.ImagePullSecret
-	} else if imagePullSecret, err = setImageRegistry(ctx, *tenantReq.Name, tenantReq.ImageRegistry, clientset.CoreV1(), ns); err != nil {
+	} else if imagePullSecret, err = setImageRegistry(ctx, tenantName, tenantReq.ImageRegistry, clientset.CoreV1(), ns); err != nil {
 		log.Println("error setting image registry secret:", err)
 		return nil, err
 	}
@@ -722,7 +735,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 
 	// Integratrions
 	if os.Getenv("GKE_INTEGRATION") != "" {
-		err := gkeIntegration(clientset, *tenantReq.Name, ns, session.SessionToken)
+		err := gkeIntegration(clientset, tenantName, ns, session.SessionToken)
 		if err != nil {
 			return nil, err
 		}
@@ -771,6 +784,9 @@ func setImageRegistry(ctx context.Context, tenantName string, req *models.ImageR
 	instanceSecret := corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: pullSecretName,
+			Labels: map[string]string{
+				operator.TenantLabel: tenantName,
+			},
 		},
 		Data: map[string][]byte{
 			corev1.DockerConfigJsonKey: []byte(string(imRegistryJSON)),
@@ -1388,7 +1404,7 @@ func parseNodeSelectorTerm(term *corev1.NodeSelectorTerm) *models.NodeSelectorTe
 	return &t
 }
 
-func getTenantExternalClientCertificates(ctx context.Context, clientSet *kubernetes.Clientset, ns string, encryptionCfg *models.EncryptionConfiguration, secretName string) (clientCertificates *operator.LocalCertificateReference, err error) {
+func getTenantExternalClientCertificates(ctx context.Context, clientSet *kubernetes.Clientset, ns string, encryptionCfg *models.EncryptionConfiguration, secretName, tenantName string) (clientCertificates *operator.LocalCertificateReference, err error) {
 	instanceExternalClientCertificateSecretName := fmt.Sprintf("%s-instance-external-client-mtls-certificates", secretName)
 	// If there's an error during this process we delete all KES configuration secrets
 	defer func() {
@@ -1413,6 +1429,9 @@ func getTenantExternalClientCertificates(ctx context.Context, clientSet *kuberne
 	instanceExternalClientCertificateSecret := corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: instanceExternalClientCertificateSecretName,
+			Labels: map[string]string{
+				operator.TenantLabel: tenantName,
+			},
 		},
 		Type:      corev1.SecretTypeTLS,
 		Immutable: &imm,
@@ -1433,7 +1452,7 @@ func getTenantExternalClientCertificates(ctx context.Context, clientSet *kuberne
 	return clientCertificates, nil
 }
 
-func getKESConfiguration(ctx context.Context, clientSet *kubernetes.Clientset, ns string, encryptionCfg *models.EncryptionConfiguration, secretName string, autoCert bool) (kesConfiguration *operator.KESConfig, err error) {
+func getKESConfiguration(ctx context.Context, clientSet *kubernetes.Clientset, ns string, encryptionCfg *models.EncryptionConfiguration, secretName, tenantName string, autoCert bool) (kesConfiguration *operator.KESConfig, err error) {
 	// secrets used by the KES configuration
 	instanceExternalClientCertificateSecretName := fmt.Sprintf("%s-instance-external-client-mtls-certificates", secretName)
 	kesExternalCertificateSecretName := fmt.Sprintf("%s-kes-external-mtls-certificates", secretName)
@@ -1489,6 +1508,9 @@ func getKESConfiguration(ctx context.Context, clientSet *kubernetes.Clientset, n
 		kesExternalCertificateSecret := corev1.Secret{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: kesExternalCertificateSecretName,
+				Labels: map[string]string{
+					operator.TenantLabel: tenantName,
+				},
 			},
 			Type:      corev1.SecretTypeTLS,
 			Immutable: &imm,
@@ -1674,6 +1696,9 @@ func getKESConfiguration(ctx context.Context, clientSet *kubernetes.Clientset, n
 		kesClientCertSecret := corev1.Secret{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: kesClientCertSecretName,
+				Labels: map[string]string{
+					operator.TenantLabel: tenantName,
+				},
 			},
 			Immutable: &imm,
 			Data:      mTLSCertificates,
@@ -1697,6 +1722,9 @@ func getKESConfiguration(ctx context.Context, clientSet *kubernetes.Clientset, n
 	kesConfigurationSecret := corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: kesConfigurationSecretName,
+			Labels: map[string]string{
+				operator.TenantLabel: tenantName,
+			},
 		},
 		Immutable: &imm,
 		Data: map[string][]byte{
