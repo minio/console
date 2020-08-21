@@ -189,7 +189,12 @@ func deleteTenantAction(
 		opts := metav1.ListOptions{
 			LabelSelector: fmt.Sprintf("%s=%s", operator.TenantLabel, tenantName),
 		}
-		return clientset.PersistentVolumeClaims(namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
+		err = clientset.PersistentVolumeClaims(namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
+		if err != nil {
+			return err
+		}
+		// delete all tenant's secrets only if deletePvcs = true
+		return clientset.Secrets(namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
 	}
 	return nil
 }

@@ -14,6 +14,7 @@ rules:
       - list
       - patch
       - update
+      - deletecollection
   - apiGroups:
       - ""
     resources:
@@ -22,6 +23,7 @@ rules:
       - services
       - events
       - resourcequotas
+      - nodes
     verbs:
       - get
       - watch
@@ -34,6 +36,8 @@ rules:
       - persistentvolumeclaims
     verbs:
       - deletecollection
+      - list
+      - get
   - apiGroups:
       - "storage.k8s.io"
     resources:
