@@ -2088,6 +2088,10 @@ definitions:
             type: integer
           storage_class_name:
             type: string
+          labels:
+            type: object
+            additionalProperties:
+              type: string
       resources:
         $ref: "#/definitions/zoneResources"
       node_selector:

@@ -207,6 +207,9 @@ func (m *Zone) UnmarshalBinary(b []byte) error {
 // swagger:model ZoneVolumeConfiguration
 type ZoneVolumeConfiguration struct {
 
+	// labels
+	Labels map[string]string `json:"labels,omitempty"`
+
 	// size
 	// Required: true
 	Size *int64 `json:"size"`

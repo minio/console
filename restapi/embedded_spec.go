@@ -3250,6 +3250,12 @@ func init() {
             "size"
           ],
           "properties": {
+            "labels": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
             "size": {
               "type": "integer"
             },
@@ -5721,6 +5727,12 @@ func init() {
         "size"
       ],
       "properties": {
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
         "size": {
           "type": "integer"
         },
@@ -7126,6 +7138,12 @@ func init() {
             "size"
           ],
           "properties": {
+            "labels": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
             "size": {
               "type": "integer"
             },
