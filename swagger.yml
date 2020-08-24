@@ -1837,6 +1837,9 @@ definitions:
       enable_tls:
         type: boolean
         default: true
+      enable_prometheus:
+        type: boolean
+        default: false
       namespace:
         type: string
       erasureCodingParity:

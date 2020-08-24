@@ -48,6 +48,9 @@ type CreateTenantRequest struct {
 	// enable console
 	EnableConsole *bool `json:"enable_console,omitempty"`
 
+	// enable prometheus
+	EnablePrometheus *bool `json:"enable_prometheus,omitempty"`
+
 	// enable tls
 	EnableTLS *bool `json:"enable_tls,omitempty"`
 

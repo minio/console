@@ -2038,6 +2038,10 @@ func init() {
           "type": "boolean",
           "default": true
         },
+        "enable_prometheus": {
+          "type": "boolean",
+          "default": false
+        },
         "enable_tls": {
           "type": "boolean",
           "default": true
@@ -5991,6 +5995,10 @@ func init() {
         "enable_console": {
           "type": "boolean",
           "default": true
+        },
+        "enable_prometheus": {
+          "type": "boolean",
+          "default": false
         },
         "enable_tls": {
           "type": "boolean",
