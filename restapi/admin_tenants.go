@@ -681,10 +681,12 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 	// add annotations
 	var annotations map[string]string
-	if len(tenantReq.Annotations) > 0 {
-		if minInst.Spec.Metadata == nil {
-			minInst.Spec.Metadata = &metav1.ObjectMeta{}
+	if minInst.Spec.Metadata == nil {
+		minInst.Spec.Metadata = &metav1.ObjectMeta{
+			Annotations: map[string]string{},
 		}
+	}
+	if len(tenantReq.Annotations) > 0 {
 		annotations = tenantReq.Annotations
 		minInst.Spec.Metadata.Annotations = annotations
 	}
@@ -716,6 +718,13 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		minInst.Spec.ImagePullSecret = corev1.LocalObjectReference{
 			Name: imagePullSecret,
 		}
+	}
+
+	// prometheus annotations support
+	if tenantReq.EnablePrometheus != nil && *tenantReq.EnablePrometheus && minInst.Spec.Metadata != nil && minInst.Spec.Metadata.Annotations != nil {
+		minInst.Spec.Metadata.Annotations["prometheus.io/path"] = "/minio/prometheus/metrics"
+		minInst.Spec.Metadata.Annotations["prometheus.io/port"] = fmt.Sprint(operator.MinIOPort)
+		minInst.Spec.Metadata.Annotations["prometheus.io/scrape"] = "true"
 	}
 
 	// set console image if provided
