@@ -1148,6 +1148,34 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+    put: 
+      summary: Tenant Update Zones
+      operationId: TenantUpdateZones
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/zoneUpdateRequest"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/tenant"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
 
   /namespaces/{namespace}/tenants/{tenant}/usage:
     get:
@@ -1764,6 +1792,7 @@ definitions:
         type: string
       namespace:
         type: string
+
   listTenantsResponse:
     type: object
     properties:
@@ -2534,3 +2563,13 @@ definitions:
     properties:
       delete_pvcs:
         type: boolean
+  
+  zoneUpdateRequest:
+    type: object
+    required:
+      - zones
+    properties:
+      zones:
+        type: array
+        items:
+          $ref: "#/definitions/zone"

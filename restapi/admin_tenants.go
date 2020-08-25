@@ -143,6 +143,15 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 		}
 		return admin_api.NewGetTenantUsageOK().WithPayload(payload)
 	})
+
+	api.AdminAPITenantUpdateZonesHandler = admin_api.TenantUpdateZonesHandlerFunc(func(params admin_api.TenantUpdateZonesParams, session *models.Principal) middleware.Responder {
+		resp, err := getTenantUpdateZoneResponse(session, params)
+		if err != nil {
+			log.Println(err)
+			return admin_api.NewTenantUpdateZonesDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
+		return admin_api.NewTenantUpdateZonesOK().WithPayload(resp)
+	})
 }
 
 // getDeleteTenantResponse gets the output of deleting a minio instance
@@ -1750,4 +1759,72 @@ func getKESConfiguration(ctx context.Context, clientSet *kubernetes.Clientset, n
 		Name: kesConfigurationSecretName,
 	}
 	return kesConfiguration, nil
+}
+
+func getTenantUpdateZoneResponse(session *models.Principal, params admin_api.TenantUpdateZonesParams) (*models.Tenant, error) {
+	ctx := context.Background()
+	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
+	if err != nil {
+		log.Println("error getting operator client:", err)
+		return nil, err
+	}
+
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+
+	t, err := updateTenantZones(ctx, opClient, params.Namespace, params.Tenant, params.Body.Zones)
+	if err != nil {
+		log.Println("error updating Tenant's zones:", err)
+		return nil, err
+	}
+
+	// parse it to models.Tenant
+	tenant := getTenantInfo(t)
+	return tenant, nil
+}
+
+// updateTenantZones Sets the Tenant's zones to the ones provided by the request
+//
+// It does the equivalent to a PUT request on Tenant's zones
+func updateTenantZones(
+	ctx context.Context,
+	operatorClient OperatorClient,
+	namespace string,
+	tenantName string,
+	zonesReq []*models.Zone) (*operator.Tenant, error) {
+
+	minInst, err := operatorClient.TenantGet(ctx, namespace, tenantName, metav1.GetOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	if minInst.Spec.Metadata == nil {
+		minInst.Spec.Metadata = &metav1.ObjectMeta{
+			Annotations: map[string]string{},
+		}
+	}
+
+	// set the zones if they are provided
+	var newZoneArray []operator.Zone
+	for _, zone := range zonesReq {
+		zone, err := parseTenantZoneRequest(zone, minInst.Spec.Metadata.Annotations)
+		if err != nil {
+			return nil, err
+		}
+		newZoneArray = append(newZoneArray, *zone)
+	}
+
+	// replace zones array
+	minInst.Spec.Zones = newZoneArray
+
+	payloadBytes, err := json.Marshal(minInst)
+	if err != nil {
+		return nil, err
+	}
+	tenantUpdated, err := operatorClient.TenantPatch(ctx, namespace, minInst.Name, types.MergePatchType, payloadBytes, metav1.PatchOptions{})
+	if err != nil {
+		return nil, err
+	}
+	return tenantUpdated, nil
 }
