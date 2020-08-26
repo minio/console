@@ -213,6 +213,12 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPITenantInfoHandler: admin_api.TenantInfoHandlerFunc(func(params admin_api.TenantInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TenantInfo has not yet been implemented")
 		}),
+		AdminAPITenantUpdateCertificateHandler: admin_api.TenantUpdateCertificateHandlerFunc(func(params admin_api.TenantUpdateCertificateParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.TenantUpdateCertificate has not yet been implemented")
+		}),
+		AdminAPITenantUpdateEncryptionHandler: admin_api.TenantUpdateEncryptionHandlerFunc(func(params admin_api.TenantUpdateEncryptionParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.TenantUpdateEncryption has not yet been implemented")
+		}),
 		AdminAPITenantUpdateZonesHandler: admin_api.TenantUpdateZonesHandlerFunc(func(params admin_api.TenantUpdateZonesParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TenantUpdateZones has not yet been implemented")
 		}),
@@ -377,6 +383,10 @@ type ConsoleAPI struct {
 	AdminAPITenantAddZoneHandler admin_api.TenantAddZoneHandler
 	// AdminAPITenantInfoHandler sets the operation handler for the tenant info operation
 	AdminAPITenantInfoHandler admin_api.TenantInfoHandler
+	// AdminAPITenantUpdateCertificateHandler sets the operation handler for the tenant update certificate operation
+	AdminAPITenantUpdateCertificateHandler admin_api.TenantUpdateCertificateHandler
+	// AdminAPITenantUpdateEncryptionHandler sets the operation handler for the tenant update encryption operation
+	AdminAPITenantUpdateEncryptionHandler admin_api.TenantUpdateEncryptionHandler
 	// AdminAPITenantUpdateZonesHandler sets the operation handler for the tenant update zones operation
 	AdminAPITenantUpdateZonesHandler admin_api.TenantUpdateZonesHandler
 	// AdminAPIUpdateGroupHandler sets the operation handler for the update group operation
@@ -609,6 +619,12 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPITenantInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.TenantInfoHandler")
+	}
+	if o.AdminAPITenantUpdateCertificateHandler == nil {
+		unregistered = append(unregistered, "admin_api.TenantUpdateCertificateHandler")
+	}
+	if o.AdminAPITenantUpdateEncryptionHandler == nil {
+		unregistered = append(unregistered, "admin_api.TenantUpdateEncryptionHandler")
 	}
 	if o.AdminAPITenantUpdateZonesHandler == nil {
 		unregistered = append(unregistered, "admin_api.TenantUpdateZonesHandler")
@@ -925,6 +941,14 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}"] = admin_api.NewTenantInfo(o.context, o.AdminAPITenantInfoHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/namespaces/{namespace}/tenants/{tenant}/certificates"] = admin_api.NewTenantUpdateCertificate(o.context, o.AdminAPITenantUpdateCertificateHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/namespaces/{namespace}/tenants/{tenant}/encryption"] = admin_api.NewTenantUpdateEncryption(o.context, o.AdminAPITenantUpdateEncryptionHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
