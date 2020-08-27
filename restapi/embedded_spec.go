@@ -1081,6 +1081,49 @@ func init() {
       }
     },
     "/namespaces/{namespace}/tenants/{tenant}/zones": {
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Tenant Update Zones",
+        "operationId": "TenantUpdateZones",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/zoneUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/tenant"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "AdminAPI"
@@ -3459,6 +3502,20 @@ func init() {
           }
         }
       }
+    },
+    "zoneUpdateRequest": {
+      "type": "object",
+      "required": [
+        "zones"
+      ],
+      "properties": {
+        "zones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/zone"
+          }
+        }
+      }
     }
   },
   "securityDefinitions": {
@@ -4522,6 +4579,49 @@ func init() {
       }
     },
     "/namespaces/{namespace}/tenants/{tenant}/zones": {
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Tenant Update Zones",
+        "operationId": "TenantUpdateZones",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/zoneUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/tenant"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "AdminAPI"
@@ -7281,6 +7381,20 @@ func init() {
       "type": "array",
       "items": {
         "$ref": "#/definitions/ZoneTolerationsItems0"
+      }
+    },
+    "zoneUpdateRequest": {
+      "type": "object",
+      "required": [
+        "zones"
+      ],
+      "properties": {
+        "zones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/zone"
+          }
+        }
       }
     }
   },

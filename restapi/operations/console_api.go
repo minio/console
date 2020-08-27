@@ -210,6 +210,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPITenantInfoHandler: admin_api.TenantInfoHandlerFunc(func(params admin_api.TenantInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TenantInfo has not yet been implemented")
 		}),
+		AdminAPITenantUpdateZonesHandler: admin_api.TenantUpdateZonesHandlerFunc(func(params admin_api.TenantUpdateZonesParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.TenantUpdateZones has not yet been implemented")
+		}),
 		AdminAPIUpdateGroupHandler: admin_api.UpdateGroupHandlerFunc(func(params admin_api.UpdateGroupParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.UpdateGroup has not yet been implemented")
 		}),
@@ -369,6 +372,8 @@ type ConsoleAPI struct {
 	AdminAPITenantAddZoneHandler admin_api.TenantAddZoneHandler
 	// AdminAPITenantInfoHandler sets the operation handler for the tenant info operation
 	AdminAPITenantInfoHandler admin_api.TenantInfoHandler
+	// AdminAPITenantUpdateZonesHandler sets the operation handler for the tenant update zones operation
+	AdminAPITenantUpdateZonesHandler admin_api.TenantUpdateZonesHandler
 	// AdminAPIUpdateGroupHandler sets the operation handler for the update group operation
 	AdminAPIUpdateGroupHandler admin_api.UpdateGroupHandler
 	// AdminAPIUpdateTenantHandler sets the operation handler for the update tenant operation
@@ -596,6 +601,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPITenantInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.TenantInfoHandler")
+	}
+	if o.AdminAPITenantUpdateZonesHandler == nil {
+		unregistered = append(unregistered, "admin_api.TenantUpdateZonesHandler")
 	}
 	if o.AdminAPIUpdateGroupHandler == nil {
 		unregistered = append(unregistered, "admin_api.UpdateGroupHandler")
@@ -905,6 +913,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}"] = admin_api.NewTenantInfo(o.context, o.AdminAPITenantInfoHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/namespaces/{namespace}/tenants/{tenant}/zones"] = admin_api.NewTenantUpdateZones(o.context, o.AdminAPITenantUpdateZonesHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
