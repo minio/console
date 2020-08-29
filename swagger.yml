@@ -1226,6 +1226,22 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+  
+  /cluster/resources:
+    get:
+      summary: Get Cluster Resources
+      operationId: GetClusterResources
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/clusterResources"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
 
 definitions:
   bucketAccess:
@@ -2573,3 +2589,50 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/zone"
+
+  clusterResources:
+    type: object
+    properties:
+      nodes:
+        type: array
+        items:
+          $ref: "#/definitions/nodeInfo"
+  
+  nodeInfo:
+    type: object
+    properties:
+      name:
+        type: string
+      taints:
+        $ref: "#/definitions/nodeTaints"
+      allocatable_resources:
+        type: object
+        additionalProperties:
+            type: integer
+            format: int64
+        description: Represents the resources of a node that are available for scheduling.
+      total_resources:
+        type: object
+        additionalProperties:
+            type: integer
+            format: int64
+        description: Represents the total resources of a node.
+          
+  nodeTaints:
+    type: object 
+    properties:
+      no_schedule:
+        type: array
+        items:
+          type: string
+      no_execute:
+        type: array
+        items:
+          type: string
+      prefer_no_schedule:
+        type: array
+        items:
+          type: string
+
+
+      

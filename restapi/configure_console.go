@@ -112,6 +112,8 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerTenantHandlers(api)
 	// Register ResourceQuota handlers
 	registerResourceQuotaHandlers(api)
+	// Register Nodes' handlers
+	registerNodesHandlers(api)
 
 	api.PreServerShutdown = func() {}
 

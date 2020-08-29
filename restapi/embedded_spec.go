@@ -437,6 +437,29 @@ func init() {
         }
       }
     },
+    "/cluster/resources": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get Cluster Resources",
+        "operationId": "GetClusterResources",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/clusterResources"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/configs": {
       "get": {
         "tags": [
@@ -2021,6 +2044,17 @@ func init() {
         }
       }
     },
+    "clusterResources": {
+      "type": "object",
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/nodeInfo"
+          }
+        }
+      }
+    },
     "configDescription": {
       "type": "object",
       "properties": {
@@ -2560,6 +2594,33 @@ func init() {
         }
       }
     },
+    "nodeInfo": {
+      "type": "object",
+      "properties": {
+        "allocatable_resources": {
+          "description": "Represents the resources of a node that are available for scheduling.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "taints": {
+          "$ref": "#/definitions/nodeTaints"
+        },
+        "total_resources": {
+          "description": "Represents the total resources of a node.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      }
+    },
     "nodeSelectorTerm": {
       "description": "A null or empty node selector term matches no objects. The requirements of them are ANDed. The TopologySelectorTerm type implements a subset of the NodeSelectorTerm.",
       "type": "object",
@@ -2620,6 +2681,29 @@ func init() {
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "nodeTaints": {
+      "type": "object",
+      "properties": {
+        "no_execute": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "no_schedule": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "prefer_no_schedule": {
+          "type": "array",
+          "items": {
+            "type": "string"
           }
         }
       }
@@ -3924,6 +4008,29 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/bucket"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/cluster/resources": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get Cluster Resources",
+        "operationId": "GetClusterResources",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/clusterResources"
             }
           },
           "default": {
@@ -6036,6 +6143,17 @@ func init() {
         }
       }
     },
+    "clusterResources": {
+      "type": "object",
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/nodeInfo"
+          }
+        }
+      }
+    },
     "configDescription": {
       "type": "object",
       "properties": {
@@ -6575,6 +6693,33 @@ func init() {
         }
       }
     },
+    "nodeInfo": {
+      "type": "object",
+      "properties": {
+        "allocatable_resources": {
+          "description": "Represents the resources of a node that are available for scheduling.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "taints": {
+          "$ref": "#/definitions/nodeTaints"
+        },
+        "total_resources": {
+          "description": "Represents the total resources of a node.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      }
+    },
     "nodeSelectorTerm": {
       "description": "A null or empty node selector term matches no objects. The requirements of them are ANDed. The TopologySelectorTerm type implements a subset of the NodeSelectorTerm.",
       "type": "object",
@@ -6591,6 +6736,29 @@ func init() {
           "type": "array",
           "items": {
             "$ref": "#/definitions/NodeSelectorTermMatchFieldsItems0"
+          }
+        }
+      }
+    },
+    "nodeTaints": {
+      "type": "object",
+      "properties": {
+        "no_execute": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "no_schedule": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "prefer_no_schedule": {
+          "type": "array",
+          "items": {
+            "type": "string"
           }
         }
       }
