@@ -23,30 +23,30 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"strconv"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
-// MakeBucketRequest make bucket request
+// ListRemoteBucketsResponse list remote buckets response
 //
-// swagger:model makeBucketRequest
-type MakeBucketRequest struct {
+// swagger:model listRemoteBucketsResponse
+type ListRemoteBucketsResponse struct {
 
-	// name
-	// Required: true
-	Name *string `json:"name"`
+	// list of remote buckets
+	Buckets []*RemoteBucket `json:"buckets"`
 
-	// versioned
-	Versioned bool `json:"versioned,omitempty"`
+	// number of remote buckets accessible to user
+	Total int64 `json:"total,omitempty"`
 }
 
-// Validate validates this make bucket request
-func (m *MakeBucketRequest) Validate(formats strfmt.Registry) error {
+// Validate validates this list remote buckets response
+func (m *ListRemoteBucketsResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateName(formats); err != nil {
+	if err := m.validateBuckets(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -56,17 +56,33 @@ func (m *MakeBucketRequest) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *MakeBucketRequest) validateName(formats strfmt.Registry) error {
+func (m *ListRemoteBucketsResponse) validateBuckets(formats strfmt.Registry) error {
 
-	if err := validate.Required("name", "body", m.Name); err != nil {
-		return err
+	if swag.IsZero(m.Buckets) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Buckets); i++ {
+		if swag.IsZero(m.Buckets[i]) { // not required
+			continue
+		}
+
+		if m.Buckets[i] != nil {
+			if err := m.Buckets[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("buckets" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *MakeBucketRequest) MarshalBinary() ([]byte, error) {
+func (m *ListRemoteBucketsResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -74,8 +90,8 @@ func (m *MakeBucketRequest) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *MakeBucketRequest) UnmarshalBinary(b []byte) error {
-	var res MakeBucketRequest
+func (m *ListRemoteBucketsResponse) UnmarshalBinary(b []byte) error {
+	var res ListRemoteBucketsResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

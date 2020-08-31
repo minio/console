@@ -72,6 +72,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIAddPolicyHandler: admin_api.AddPolicyHandlerFunc(func(params admin_api.AddPolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.AddPolicy has not yet been implemented")
 		}),
+		UserAPIAddRemoteBucketHandler: user_api.AddRemoteBucketHandlerFunc(func(params user_api.AddRemoteBucketParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.AddRemoteBucket has not yet been implemented")
+		}),
 		AdminAPIAddUserHandler: admin_api.AddUserHandlerFunc(func(params admin_api.AddUserParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.AddUser has not yet been implemented")
 		}),
@@ -107,6 +110,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		UserAPIDeleteBucketEventHandler: user_api.DeleteBucketEventHandlerFunc(func(params user_api.DeleteBucketEventParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteBucketEvent has not yet been implemented")
+		}),
+		UserAPIDeleteRemoteBucketHandler: user_api.DeleteRemoteBucketHandlerFunc(func(params user_api.DeleteRemoteBucketParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.DeleteRemoteBucket has not yet been implemented")
 		}),
 		UserAPIDeleteServiceAccountHandler: user_api.DeleteServiceAccountHandlerFunc(func(params user_api.DeleteServiceAccountParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteServiceAccount has not yet been implemented")
@@ -147,6 +153,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIListPoliciesHandler: admin_api.ListPoliciesHandlerFunc(func(params admin_api.ListPoliciesParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListPolicies has not yet been implemented")
 		}),
+		UserAPIListRemoteBucketsHandler: user_api.ListRemoteBucketsHandlerFunc(func(params user_api.ListRemoteBucketsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.ListRemoteBuckets has not yet been implemented")
+		}),
 		AdminAPIListTenantsHandler: admin_api.ListTenantsHandlerFunc(func(params admin_api.ListTenantsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListTenants has not yet been implemented")
 		}),
@@ -185,6 +194,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		AdminAPIProfilingStopHandler: admin_api.ProfilingStopHandlerFunc(func(params admin_api.ProfilingStopParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ProfilingStop has not yet been implemented")
+		}),
+		UserAPIRemoteBucketDetailsHandler: user_api.RemoteBucketDetailsHandlerFunc(func(params user_api.RemoteBucketDetailsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.RemoteBucketDetails has not yet been implemented")
 		}),
 		AdminAPIRemoveGroupHandler: admin_api.RemoveGroupHandlerFunc(func(params admin_api.RemoveGroupParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.RemoveGroup has not yet been implemented")
@@ -283,6 +295,8 @@ type ConsoleAPI struct {
 	AdminAPIAddNotificationEndpointHandler admin_api.AddNotificationEndpointHandler
 	// AdminAPIAddPolicyHandler sets the operation handler for the add policy operation
 	AdminAPIAddPolicyHandler admin_api.AddPolicyHandler
+	// UserAPIAddRemoteBucketHandler sets the operation handler for the add remote bucket operation
+	UserAPIAddRemoteBucketHandler user_api.AddRemoteBucketHandler
 	// AdminAPIAddUserHandler sets the operation handler for the add user operation
 	AdminAPIAddUserHandler admin_api.AddUserHandler
 	// AdminAPIAdminInfoHandler sets the operation handler for the admin info operation
@@ -307,6 +321,8 @@ type ConsoleAPI struct {
 	UserAPIDeleteBucketHandler user_api.DeleteBucketHandler
 	// UserAPIDeleteBucketEventHandler sets the operation handler for the delete bucket event operation
 	UserAPIDeleteBucketEventHandler user_api.DeleteBucketEventHandler
+	// UserAPIDeleteRemoteBucketHandler sets the operation handler for the delete remote bucket operation
+	UserAPIDeleteRemoteBucketHandler user_api.DeleteRemoteBucketHandler
 	// UserAPIDeleteServiceAccountHandler sets the operation handler for the delete service account operation
 	UserAPIDeleteServiceAccountHandler user_api.DeleteServiceAccountHandler
 	// AdminAPIDeleteTenantHandler sets the operation handler for the delete tenant operation
@@ -333,6 +349,8 @@ type ConsoleAPI struct {
 	AdminAPIListGroupsHandler admin_api.ListGroupsHandler
 	// AdminAPIListPoliciesHandler sets the operation handler for the list policies operation
 	AdminAPIListPoliciesHandler admin_api.ListPoliciesHandler
+	// UserAPIListRemoteBucketsHandler sets the operation handler for the list remote buckets operation
+	UserAPIListRemoteBucketsHandler user_api.ListRemoteBucketsHandler
 	// AdminAPIListTenantsHandler sets the operation handler for the list tenants operation
 	AdminAPIListTenantsHandler admin_api.ListTenantsHandler
 	// UserAPIListUserServiceAccountsHandler sets the operation handler for the list user service accounts operation
@@ -359,6 +377,8 @@ type ConsoleAPI struct {
 	AdminAPIProfilingStartHandler admin_api.ProfilingStartHandler
 	// AdminAPIProfilingStopHandler sets the operation handler for the profiling stop operation
 	AdminAPIProfilingStopHandler admin_api.ProfilingStopHandler
+	// UserAPIRemoteBucketDetailsHandler sets the operation handler for the remote bucket details operation
+	UserAPIRemoteBucketDetailsHandler user_api.RemoteBucketDetailsHandler
 	// AdminAPIRemoveGroupHandler sets the operation handler for the remove group operation
 	AdminAPIRemoveGroupHandler admin_api.RemoveGroupHandler
 	// AdminAPIRemovePolicyHandler sets the operation handler for the remove policy operation
@@ -469,6 +489,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.AdminAPIAddPolicyHandler == nil {
 		unregistered = append(unregistered, "admin_api.AddPolicyHandler")
 	}
+	if o.UserAPIAddRemoteBucketHandler == nil {
+		unregistered = append(unregistered, "user_api.AddRemoteBucketHandler")
+	}
 	if o.AdminAPIAddUserHandler == nil {
 		unregistered = append(unregistered, "admin_api.AddUserHandler")
 	}
@@ -504,6 +527,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIDeleteBucketEventHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteBucketEventHandler")
+	}
+	if o.UserAPIDeleteRemoteBucketHandler == nil {
+		unregistered = append(unregistered, "user_api.DeleteRemoteBucketHandler")
 	}
 	if o.UserAPIDeleteServiceAccountHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteServiceAccountHandler")
@@ -544,6 +570,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.AdminAPIListPoliciesHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListPoliciesHandler")
 	}
+	if o.UserAPIListRemoteBucketsHandler == nil {
+		unregistered = append(unregistered, "user_api.ListRemoteBucketsHandler")
+	}
 	if o.AdminAPIListTenantsHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListTenantsHandler")
 	}
@@ -582,6 +611,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIProfilingStopHandler == nil {
 		unregistered = append(unregistered, "admin_api.ProfilingStopHandler")
+	}
+	if o.UserAPIRemoteBucketDetailsHandler == nil {
+		unregistered = append(unregistered, "user_api.RemoteBucketDetailsHandler")
 	}
 	if o.AdminAPIRemoveGroupHandler == nil {
 		unregistered = append(unregistered, "admin_api.RemoveGroupHandler")
@@ -740,6 +772,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
+	o.handlers["POST"]["/remote-buckets"] = user_api.NewAddRemoteBucket(o.context, o.UserAPIAddRemoteBucketHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
 	o.handlers["POST"]["/users"] = admin_api.NewAddUser(o.context, o.AdminAPIAddUserHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -785,6 +821,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/buckets/{bucket_name}/events/{arn}"] = user_api.NewDeleteBucketEvent(o.context, o.UserAPIDeleteBucketEventHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/remote-buckets/{name}"] = user_api.NewDeleteRemoteBucket(o.context, o.UserAPIDeleteRemoteBucketHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
@@ -840,6 +880,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/remote-buckets"] = user_api.NewListRemoteBuckets(o.context, o.UserAPIListRemoteBucketsHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/namespaces/{namespace}/tenants"] = admin_api.NewListTenants(o.context, o.AdminAPIListTenantsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -889,6 +933,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/profiling/stop"] = admin_api.NewProfilingStop(o.context, o.AdminAPIProfilingStopHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/remote-buckets/{name}"] = user_api.NewRemoteBucketDetails(o.context, o.UserAPIRemoteBucketDetailsHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
