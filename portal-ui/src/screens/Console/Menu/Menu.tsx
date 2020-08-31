@@ -222,6 +222,22 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
       icon: <IAMPoliciesIcon />,
     },
     {
+      group: "Admin",
+      type: "item",
+      component: NavLink,
+      to: "/remote-buckets",
+      name: "Remote Buckets",
+      icon: <IAMPoliciesIcon />,
+    },
+    {
+      group: "Admin",
+      type: "item",
+      component: NavLink,
+      to: "/replication",
+      name: "Replication",
+      icon: <IAMPoliciesIcon />,
+    },
+    {
       group: "Tools",
       type: "item",
       component: NavLink,
@@ -255,18 +271,11 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
     },
     {
       group: "Admin",
-      type: "title",
-      name: "Configurations",
-      component: Typography,
-    },
-    {
-      group: "Admin",
       type: "item",
       component: NavLink,
       to: "/notification-endpoints",
       name: "Lambda Notifications",
       icon: <LambdaNotificationsIcon />,
-      extraMargin: true,
     },
     {
       group: "Admin",
@@ -275,7 +284,6 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
       to: "/configurations-list",
       name: "Configurations List",
       icon: <ConfigurationsListIcon />,
-      extraMargin: true,
     },
     {
       group: "Operator",
