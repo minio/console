@@ -21,6 +21,8 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import WebAssetIcon from "@material-ui/icons/WebAsset";
 import HealingIcon from "@material-ui/icons/Healing";
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
 import Collapse from "@material-ui/core/Collapse";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
@@ -227,7 +229,7 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
       component: NavLink,
       to: "/remote-buckets",
       name: "Remote Buckets",
-      icon: <IAMPoliciesIcon />,
+      icon: <CloudUploadIcon />,
     },
     {
       group: "Admin",
@@ -235,7 +237,7 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
       component: NavLink,
       to: "/replication",
       name: "Replication",
-      icon: <IAMPoliciesIcon />,
+      icon: <FileCopyIcon />,
     },
     {
       group: "Tools",

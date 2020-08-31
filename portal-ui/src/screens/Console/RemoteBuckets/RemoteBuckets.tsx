@@ -245,7 +245,7 @@ const RemoteBucketsList = ({classes}: IRemoteListBucketsProps) => {
                         ]}
                         isLoading={loading}
                         records={filteredRecords}
-                        entityName="Buckets"
+                        entityName="Remote Buckets"
                         idField="name"
                         paginatorConfig={{
                             rowsPerPageOptions: [5, 10, 25],
