@@ -1372,6 +1372,114 @@ func init() {
         }
       }
     },
+    "/remote-buckets": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "List Remote Buckets",
+        "operationId": "ListRemoteBuckets",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listRemoteBucketsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Add Remote Bucket",
+        "operationId": "AddRemoteBucket",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/remoteBucket"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/remote-buckets/{name}": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Remote Bucket Details",
+        "operationId": "RemoteBucketDetails",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/remoteBucket"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Remote Bucket",
+        "operationId": "DeleteRemoteBucket",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/service-accounts": {
       "get": {
         "tags": [
@@ -2489,6 +2597,23 @@ func init() {
         }
       }
     },
+    "listRemoteBucketsResponse": {
+      "type": "object",
+      "properties": {
+        "buckets": {
+          "type": "array",
+          "title": "list of remote buckets",
+          "items": {
+            "$ref": "#/definitions/remoteBucket"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "title": "number of remote buckets accessible to user"
+        }
+      }
+    },
     "listTenantsResponse": {
       "type": "object",
       "properties": {
@@ -2591,6 +2716,9 @@ func init() {
       "properties": {
         "name": {
           "type": "string"
+        },
+        "versioned": {
+          "type": "boolean"
         }
       }
     },
@@ -2954,6 +3082,45 @@ func init() {
       "properties": {
         "type": {
           "$ref": "#/definitions/profilerType"
+        }
+      }
+    },
+    "remoteBucket": {
+      "type": "object",
+      "required": [
+        "accessKey",
+        "sourceBucket",
+        "remoteARN"
+      ],
+      "properties": {
+        "accessKey": {
+          "type": "string",
+          "minLength": 3
+        },
+        "remoteARN": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string",
+          "minLength": 8
+        },
+        "service": {
+          "type": "string",
+          "enum": [
+            "replication"
+          ]
+        },
+        "sourceBucket": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "targetBucket": {
+          "type": "string"
+        },
+        "targetURL": {
+          "type": "string"
         }
       }
     },
@@ -4954,6 +5121,114 @@ func init() {
         }
       }
     },
+    "/remote-buckets": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "List Remote Buckets",
+        "operationId": "ListRemoteBuckets",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listRemoteBucketsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Add Remote Bucket",
+        "operationId": "AddRemoteBucket",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/remoteBucket"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/remote-buckets/{name}": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Remote Bucket Details",
+        "operationId": "RemoteBucketDetails",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/remoteBucket"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Remote Bucket",
+        "operationId": "DeleteRemoteBucket",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/service-accounts": {
       "get": {
         "tags": [
@@ -6588,6 +6863,23 @@ func init() {
         }
       }
     },
+    "listRemoteBucketsResponse": {
+      "type": "object",
+      "properties": {
+        "buckets": {
+          "type": "array",
+          "title": "list of remote buckets",
+          "items": {
+            "$ref": "#/definitions/remoteBucket"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "title": "number of remote buckets accessible to user"
+        }
+      }
+    },
     "listTenantsResponse": {
       "type": "object",
       "properties": {
@@ -6690,6 +6982,9 @@ func init() {
       "properties": {
         "name": {
           "type": "string"
+        },
+        "versioned": {
+          "type": "boolean"
         }
       }
     },
@@ -6987,6 +7282,45 @@ func init() {
       "properties": {
         "type": {
           "$ref": "#/definitions/profilerType"
+        }
+      }
+    },
+    "remoteBucket": {
+      "type": "object",
+      "required": [
+        "accessKey",
+        "sourceBucket",
+        "remoteARN"
+      ],
+      "properties": {
+        "accessKey": {
+          "type": "string",
+          "minLength": 3
+        },
+        "remoteARN": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string",
+          "minLength": 8
+        },
+        "service": {
+          "type": "string",
+          "enum": [
+            "replication"
+          ]
+        },
+        "sourceBucket": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "targetBucket": {
+          "type": "string"
+        },
+        "targetURL": {
+          "type": "string"
         }
       }
     },

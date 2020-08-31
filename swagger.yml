@@ -958,6 +958,78 @@ paths:
       tags:
         - AdminAPI
 
+  /remote-buckets:
+    get:
+      summary: List Remote Buckets
+      operationId: ListRemoteBuckets
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listRemoteBucketsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    post:
+      summary: Add Remote Bucket
+      operationId: AddRemoteBucket
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/remoteBucket"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /remote-buckets/{name}:
+    get:
+      summary: Remote Bucket Details
+      operationId: RemoteBucketDetails
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/remoteBucket"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    delete:
+      summary: Delete Remote Bucket
+      operationId: DeleteRemoteBucket
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /tenants:
     get:
       summary: List Tenant of All Namespaces
@@ -1285,6 +1357,8 @@ definitions:
     properties:
       name:
         type: string
+      versioned:
+        type: boolean
   error:
     type: object
     required:
@@ -1757,6 +1831,44 @@ definitions:
         type: string
       secretKey:
         type: string
+  remoteBucket:
+    type: object
+    required:
+      - accessKey
+      - sourceBucket
+      - remoteARN
+    properties:
+      accessKey:
+        type: string
+        minLength: 3
+      secretKey:
+        type: string
+        minLength: 8
+      sourceBucket:
+        type: string
+      targetURL:
+        type: string
+      targetBucket:
+        type: string
+      remoteARN:
+        type: string
+      status:
+        type: string
+      service:
+        type: string
+        enum: [replication]
+  listRemoteBucketsResponse:
+    type: object
+    properties:
+      buckets:
+        type: array
+        items:
+          $ref: "#/definitions/remoteBucket"
+        title: list of remote buckets
+      total:
+        type: integer
+        format: int64
+        title: number of remote buckets accessible to user
 
   tenant:
     type: object
