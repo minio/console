@@ -341,6 +341,71 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/replication": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Bucket Replication",
+        "operationId": "GetBucketReplication",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bucketReplicationResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Set Bucket Replication",
+        "operationId": "CreateBucketReplication",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/setBucketReplication"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{name}": {
       "get": {
         "tags": [
@@ -2131,6 +2196,64 @@ func init() {
         }
       }
     },
+    "bucketReplicationDestination": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string"
+        }
+      }
+    },
+    "bucketReplicationResponse": {
+      "type": "object",
+      "properties": {
+        "op": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "bucketReplicationRule": {
+      "type": "object",
+      "properties": {
+        "delete_marker_replication": {
+          "$ref": "#/definitions/bucketReplicationRuleMarker"
+        },
+        "destination": {
+          "$ref": "#/definitions/bucketReplicationDestination"
+        },
+        "id": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "Enabled",
+            "Disabled"
+          ]
+        }
+      }
+    },
+    "bucketReplicationRuleMarker": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "Enabled",
+            "Disabled"
+          ]
+        }
+      }
+    },
     "bulkUserGroups": {
       "type": "object",
       "required": [
@@ -3208,6 +3331,17 @@ func init() {
         }
       }
     },
+    "setBucketReplication": {
+      "type": "object",
+      "properties": {
+        "arn": {
+          "type": "string"
+        },
+        "destination_bucket": {
+          "type": "string"
+        }
+      }
+    },
     "setConfigRequest": {
       "type": "object",
       "required": [
@@ -4079,6 +4213,71 @@ func init() {
         ],
         "responses": {
           "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/replication": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Bucket Replication",
+        "operationId": "GetBucketReplication",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bucketReplicationResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Set Bucket Replication",
+        "operationId": "CreateBucketReplication",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/setBucketReplication"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
             "description": "A successful response."
           },
           "default": {
@@ -6397,6 +6596,64 @@ func init() {
         }
       }
     },
+    "bucketReplicationDestination": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string"
+        }
+      }
+    },
+    "bucketReplicationResponse": {
+      "type": "object",
+      "properties": {
+        "op": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "bucketReplicationRule": {
+      "type": "object",
+      "properties": {
+        "delete_marker_replication": {
+          "$ref": "#/definitions/bucketReplicationRuleMarker"
+        },
+        "destination": {
+          "$ref": "#/definitions/bucketReplicationDestination"
+        },
+        "id": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "Enabled",
+            "Disabled"
+          ]
+        }
+      }
+    },
+    "bucketReplicationRuleMarker": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "Enabled",
+            "Disabled"
+          ]
+        }
+      }
+    },
     "bulkUserGroups": {
       "type": "object",
       "required": [
@@ -7405,6 +7662,17 @@ func init() {
       "properties": {
         "access": {
           "$ref": "#/definitions/bucketAccess"
+        }
+      }
+    },
+    "setBucketReplication": {
+      "type": "object",
+      "properties": {
+        "arn": {
+          "type": "string"
+        },
+        "destination_bucket": {
+          "type": "string"
         }
       }
     },

@@ -99,6 +99,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPICreateBucketEventHandler: user_api.CreateBucketEventHandlerFunc(func(params user_api.CreateBucketEventParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.CreateBucketEvent has not yet been implemented")
 		}),
+		UserAPICreateBucketReplicationHandler: user_api.CreateBucketReplicationHandlerFunc(func(params user_api.CreateBucketReplicationParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.CreateBucketReplication has not yet been implemented")
+		}),
 		UserAPICreateServiceAccountHandler: user_api.CreateServiceAccountHandlerFunc(func(params user_api.CreateServiceAccountParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.CreateServiceAccount has not yet been implemented")
 		}),
@@ -119,6 +122,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		AdminAPIDeleteTenantHandler: admin_api.DeleteTenantHandlerFunc(func(params admin_api.DeleteTenantParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.DeleteTenant has not yet been implemented")
+		}),
+		UserAPIGetBucketReplicationHandler: user_api.GetBucketReplicationHandlerFunc(func(params user_api.GetBucketReplicationParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.GetBucketReplication has not yet been implemented")
 		}),
 		AdminAPIGetClusterResourcesHandler: admin_api.GetClusterResourcesHandlerFunc(func(params admin_api.GetClusterResourcesParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetClusterResources has not yet been implemented")
@@ -313,6 +319,8 @@ type ConsoleAPI struct {
 	AdminAPIConfigInfoHandler admin_api.ConfigInfoHandler
 	// UserAPICreateBucketEventHandler sets the operation handler for the create bucket event operation
 	UserAPICreateBucketEventHandler user_api.CreateBucketEventHandler
+	// UserAPICreateBucketReplicationHandler sets the operation handler for the create bucket replication operation
+	UserAPICreateBucketReplicationHandler user_api.CreateBucketReplicationHandler
 	// UserAPICreateServiceAccountHandler sets the operation handler for the create service account operation
 	UserAPICreateServiceAccountHandler user_api.CreateServiceAccountHandler
 	// AdminAPICreateTenantHandler sets the operation handler for the create tenant operation
@@ -327,6 +335,8 @@ type ConsoleAPI struct {
 	UserAPIDeleteServiceAccountHandler user_api.DeleteServiceAccountHandler
 	// AdminAPIDeleteTenantHandler sets the operation handler for the delete tenant operation
 	AdminAPIDeleteTenantHandler admin_api.DeleteTenantHandler
+	// UserAPIGetBucketReplicationHandler sets the operation handler for the get bucket replication operation
+	UserAPIGetBucketReplicationHandler user_api.GetBucketReplicationHandler
 	// AdminAPIGetClusterResourcesHandler sets the operation handler for the get cluster resources operation
 	AdminAPIGetClusterResourcesHandler admin_api.GetClusterResourcesHandler
 	// AdminAPIGetResourceQuotaHandler sets the operation handler for the get resource quota operation
@@ -516,6 +526,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.UserAPICreateBucketEventHandler == nil {
 		unregistered = append(unregistered, "user_api.CreateBucketEventHandler")
 	}
+	if o.UserAPICreateBucketReplicationHandler == nil {
+		unregistered = append(unregistered, "user_api.CreateBucketReplicationHandler")
+	}
 	if o.UserAPICreateServiceAccountHandler == nil {
 		unregistered = append(unregistered, "user_api.CreateServiceAccountHandler")
 	}
@@ -536,6 +549,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIDeleteTenantHandler == nil {
 		unregistered = append(unregistered, "admin_api.DeleteTenantHandler")
+	}
+	if o.UserAPIGetBucketReplicationHandler == nil {
+		unregistered = append(unregistered, "user_api.GetBucketReplicationHandler")
 	}
 	if o.AdminAPIGetClusterResourcesHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetClusterResourcesHandler")
@@ -805,6 +821,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/buckets/{bucket_name}/events"] = user_api.NewCreateBucketEvent(o.context, o.UserAPICreateBucketEventHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/buckets/{bucket_name}/replication"] = user_api.NewCreateBucketReplication(o.context, o.UserAPICreateBucketReplicationHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
@@ -833,6 +853,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/namespaces/{namespace}/tenants/{tenant}"] = admin_api.NewDeleteTenant(o.context, o.AdminAPIDeleteTenantHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/buckets/{bucket_name}/replication"] = user_api.NewGetBucketReplication(o.context, o.UserAPIGetBucketReplicationHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

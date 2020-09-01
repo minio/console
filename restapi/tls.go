@@ -27,12 +27,14 @@ import (
 )
 
 func getCertPool() *x509.CertPool {
-	caCertFileNames := getMinioServerTLSRootCAs()
-	if len(caCertFileNames) == 0 {
-		return nil
+	rootCAs, _ := x509.SystemCertPool()
+	if rootCAs == nil {
+		// In some systems (like Windows) system cert pool is
+		// not supported or no certificates are present on the
+		// system - so we create a new cert pool.
+		rootCAs = x509.NewCertPool()
 	}
-	// If CAs certificates are configured we save them to the http.Client RootCAs store
-	certs := x509.NewCertPool()
+	caCertFileNames := getMinioServerTLSRootCAs()
 	for _, caCert := range caCertFileNames {
 		pemData, err := ioutil.ReadFile(caCert)
 		if err != nil {
@@ -40,9 +42,9 @@ func getCertPool() *x509.CertPool {
 			log.Println(err)
 			continue
 		}
-		certs.AppendCertsFromPEM(pemData)
+		rootCAs.AppendCertsFromPEM(pemData)
 	}
-	return certs
+	return rootCAs
 }
 
 var certPool = getCertPool()
