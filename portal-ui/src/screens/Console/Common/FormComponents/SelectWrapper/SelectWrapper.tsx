@@ -51,7 +51,7 @@ const styles = (theme: Theme) =>
     ...tooltipHelper,
     inputLabel: {
       ...fieldBasic.inputLabel,
-      width: 116,
+      width: 200,
     },
   });
 

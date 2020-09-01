@@ -24,12 +24,12 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import Moment from "react-moment";
 import api from "../../../common/api";
-import {Bucket, BucketList} from "../Buckets/types";
+import {Bucket} from "../Buckets/types";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import AddRemoteBucket from "./AddRemoteBucket";
 import {MinTablePaginationActions} from "../../../common/MinTablePaginationActions";
 import {CreateIcon} from "../../../icons";
-import {niceBytes} from "../../../common/utils";
+import {IRemoteBucket, IRemoteBucketsResponse} from "./types";
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -79,30 +79,16 @@ interface IRemoteListBucketsProps {
     classes: any;
 }
 
-interface IRemoteListBucketsState {
-    records: Bucket[];
-    totalRecords: number;
-    loading: boolean;
-    error: string;
-    deleteError: string;
-    addScreenOpen: boolean;
-    page: number;
-    rowsPerPage: number;
-    deleteOpen: boolean;
-    selectedBucket: string;
-    filterBuckets: string;
-}
-
 const RemoteBucketsList = ({classes}: IRemoteListBucketsProps) => {
-    const [records, setRecords] = useState([]);
-    const [totalRecords, setTotalRecords] = useState(0);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
-    const [addScreenOpen, setAddScreenOpen] = useState(false);
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [selectedBucket, setSelectedBucket] = useState("");
-    const [filterBuckets, setFilterBuckets] = useState("");
+    const [records, setRecords] = useState<IRemoteBucket[]>([]);
+    const [totalRecords, setTotalRecords] = useState<number>(0);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string>("");
+    const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
+    const [page, setPage] = useState<number>(0);
+    const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+    const [selectedBucket, setSelectedBucket] = useState<string>("");
+    const [filterBuckets, setFilterBuckets] = useState<string>("");
 
     useEffect(() => {
         if (loading) {
@@ -118,10 +104,10 @@ const RemoteBucketsList = ({classes}: IRemoteListBucketsProps) => {
     const fetchRecords = () => {
         const offset = page * rowsPerPage;
         api
-            .invoke("GET", `/api/v1/buckets?offset=${offset}&limit=${rowsPerPage}`)
-            .then((res: BucketList) => {
+            .invoke("GET", `/api/v1/remote-buckets`)
+            .then((res: IRemoteBucketsResponse) => {
                 setLoading(false);
-                setRecords([]);
+                setRecords(res.buckets);
                 setTotalRecords(!res.buckets ? 0 : res.total);
                 setError("");
                 // if we get 0 results, and page > 0 , go down 1 page
@@ -166,7 +152,7 @@ const RemoteBucketsList = ({classes}: IRemoteListBucketsProps) => {
 
     const filteredRecords = records
         .slice(offset, offset + rowsPerPage)
-        .filter((b: Bucket) => {
+        .filter((b: IRemoteBucket) => {
             if (filterBuckets === "") {
                 return true;
             } else {
@@ -232,16 +218,9 @@ const RemoteBucketsList = ({classes}: IRemoteListBucketsProps) => {
                         itemActions={tableActions}
                         columns={[
                             {label: "Name", elementKey: "name"},
-                            {
-                                label: "Creation Date",
-                                elementKey: "creation_date",
-                                renderFunction: displayParsedDate,
-                            },
-                            {
-                                label: "Size",
-                                elementKey: "size",
-                                renderFunction: niceBytes,
-                            },
+                            {label: "Source Bucket", elementKey: "sourceBucket"},
+                            {label: "Target Bucket", elementKey: "targetBucket"},
+                            {label: "Status", elementKey: "status"},
                         ]}
                         isLoading={loading}
                         records={filteredRecords}
