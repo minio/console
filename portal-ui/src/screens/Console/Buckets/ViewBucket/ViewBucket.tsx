@@ -143,6 +143,7 @@ interface IViewBucketState {
   selectedEvent: BucketEvent | null;
   bucketSize: string;
   errorSize: string;
+  replicationSet: boolean;
 }
 
 class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
@@ -165,6 +166,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     selectedEvent: null,
     bucketSize: "0",
     errorSize: "",
+    replicationSet: false,
   };
 
   fetchEvents() {
@@ -279,6 +281,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       selectedEvent,
       bucketSize,
       loadingSize,
+      replicationSet,
     } = this.state;
 
     const offset = page * rowsPerPage;
@@ -301,6 +304,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     };
 
     let accessPolicy = "n/a";
+
     if (info !== null) {
       accessPolicy = info.access;
     }
@@ -339,7 +343,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
         <Grid container>
           <Grid item xs={12}>
             <Typography variant="h6">
-              Bucket > {match.params["bucketName"]}
+              Bucket &gt; {match.params["bucketName"]}
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -373,6 +377,11 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
                       ) : (
                         niceBytes(bucketSize)
                       )}
+                    </div>
+                    <div>Replication:</div>
+                    <div>
+                      {replicationSet ? "Yes" : "No"}&nbsp;
+                      <button className="">Set</button>
                     </div>
                   </div>
                 </Paper>
@@ -421,7 +430,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
                 });
               }}
             >
-              Subcribe to Event
+              Subscribe to Event
             </Button>
           </Grid>
           <Grid item xs={12}>
