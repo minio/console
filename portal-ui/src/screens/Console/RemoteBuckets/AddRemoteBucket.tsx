@@ -49,16 +49,12 @@ const AddRemoteBucket = ({
 }: IAddBucketProps) => {
   const [addLoading, setAddLoading] = useState(false);
   const [addError, setAddError] = useState("");
-  const [bucketName, setBucketName] = useState("");
   const [accessKey, setAccessKey] = useState("");
   const [secretKey, setSecretKey] = useState("");
   const [sourceBucket, setSourceBucket] = useState("");
   const [targetURL, setTargetURL] = useState("");
   const [targetBucket, setTargetBucket] = useState("");
   const [remoteARN, setRemoteARN] = useState("");
-  const [status, setStatus] = useState("");
-  const [service, setService] = useState("");
-  const [arnList, setArnList] = useState([]);
 
   useEffect(() => {
     if (addLoading) {
@@ -68,15 +64,13 @@ const AddRemoteBucket = ({
 
   const addRecord = () => {
     const remoteBucketInfo = {
-      name: bucketName,
       accessKey: accessKey,
       secretKey: secretKey,
       sourceBucket: sourceBucket,
       targetURL: targetURL,
       targetBucket: targetBucket,
       remoteARN: remoteARN,
-      status,
-      service,
+      service: "replication",
     };
 
     api
@@ -91,16 +85,6 @@ const AddRemoteBucket = ({
         setAddError(err);
       });
   };
-
-  const arnValues = arnList.map((arnConstant) => ({
-    label: arnConstant,
-    value: arnConstant,
-  }));
-
-  const serviceOptions = [
-    { label: "None", value: "" },
-    { label: "Replication", value: "replication" },
-  ];
 
   return (
     <ModalWrapper
@@ -134,17 +118,6 @@ const AddRemoteBucket = ({
                 </Typography>
               </Grid>
             )}
-            <Grid item xs={12}>
-              <InputBoxWrapper
-                id="bucket-name"
-                name="bucket-name"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setBucketName(e.target.value);
-                }}
-                label="Remote Bucket Name"
-                value={bucketName}
-              />
-            </Grid>
             <Grid item xs={12}>
               <InputBoxWrapper
                 id="accessKey"
@@ -201,38 +174,14 @@ const AddRemoteBucket = ({
               />
             </Grid>
             <Grid item xs={12}>
-              <SelectWrapper
-                onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                  setRemoteARN(e.target.value as string);
-                }}
+              <InputBoxWrapper
                 id="remoteARN"
                 name="remoteARN"
-                label={"Remote ARN"}
-                value={remoteARN}
-                options={arnValues}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <InputBoxWrapper
-                id="status"
-                name="status"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setStatus(e.target.value);
+                  setRemoteARN(e.target.value);
                 }}
-                label="Status"
-                value={status}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <SelectWrapper
-                onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                  setService(e.target.value as string);
-                }}
-                id="service"
-                name="service"
-                label={"Service"}
-                value={service}
-                options={serviceOptions}
+                label="Remote ARN"
+                value={remoteARN}
               />
             </Grid>
           </Grid>
