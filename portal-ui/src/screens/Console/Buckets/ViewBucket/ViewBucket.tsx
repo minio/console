@@ -546,7 +546,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
                 size="medium"
                 onClick={() => {
                   this.setState({
-                    addScreenOpen: true,
+                    openSetReplication: true,
                   });
                 }}
               >
