@@ -49,3 +49,21 @@ export interface ArnList {
 export interface BucketVersioning {
   is_versioned: boolean;
 }
+
+export interface BucketReplicationRuleDeleteMarker {
+  status: string;
+}
+export interface BucketReplicationDestination {
+  bucket: string;
+}
+export interface BucketReplicationRule {
+  id: string;
+  status: string;
+  priority: number;
+  delete_marker_replication: BucketReplicationRuleDeleteMarker;
+  Destination: BucketReplicationDestination;
+}
+
+export interface BucketReplication {
+  rules: BucketReplicationRule[];
+}
