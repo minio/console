@@ -249,7 +249,7 @@ const RemoteBucketsList = ({ classes }: IRemoteListBucketsProps) => {
             isLoading={loading}
             records={filteredRecords}
             entityName="Remote Buckets"
-            idField="name"
+            idField="remoteARN"
             paginatorConfig={{
               rowsPerPageOptions: [5, 10, 25],
               colSpan: 3,
