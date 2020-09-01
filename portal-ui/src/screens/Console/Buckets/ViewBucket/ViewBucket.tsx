@@ -132,6 +132,9 @@ const styles = (theme: Theme) =>
       display: "flex",
       justifyContent: "space-between",
     },
+    tabPan: {
+      marginTop: "5px",
+    },
   });
 
 interface IViewBucketProps {
@@ -154,9 +157,10 @@ function TabPanel(props: TabPanelProps) {
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
+      style={{ marginTop: "5px" }}
       {...other}
     >
-      {value === index && <Box p={3}>{children}</Box>}
+      {value === index && <React.Fragment>{children}</React.Fragment>}
     </div>
   );
 }
@@ -393,7 +397,11 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     };
 
     const ruleDestDisplay = (events: BucketReplicationDestination) => {
-      return <React.Fragment>{events.bucket}</React.Fragment>;
+      return (
+        <React.Fragment>
+          {events.bucket.replace("arn:aws:s3:::", "")}
+        </React.Fragment>
+      );
     };
 
     const ruleDelDisplay = (events: BucketReplicationRuleDeleteMarker) => {
