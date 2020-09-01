@@ -29,8 +29,8 @@ import (
 	"strings"
 )
 
-// CreateBucketReplicationURL generates an URL for the create bucket replication operation
-type CreateBucketReplicationURL struct {
+// SetBucketReplicationURL generates an URL for the set bucket replication operation
+type SetBucketReplicationURL struct {
 	BucketName string
 
 	_basePath string
@@ -41,7 +41,7 @@ type CreateBucketReplicationURL struct {
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *CreateBucketReplicationURL) WithBasePath(bp string) *CreateBucketReplicationURL {
+func (o *SetBucketReplicationURL) WithBasePath(bp string) *SetBucketReplicationURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -49,12 +49,12 @@ func (o *CreateBucketReplicationURL) WithBasePath(bp string) *CreateBucketReplic
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *CreateBucketReplicationURL) SetBasePath(bp string) {
+func (o *SetBucketReplicationURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *CreateBucketReplicationURL) Build() (*url.URL, error) {
+func (o *SetBucketReplicationURL) Build() (*url.URL, error) {
 	var _result url.URL
 
 	var _path = "/buckets/{bucket_name}/replication"
@@ -63,7 +63,7 @@ func (o *CreateBucketReplicationURL) Build() (*url.URL, error) {
 	if bucketName != "" {
 		_path = strings.Replace(_path, "{bucket_name}", bucketName, -1)
 	} else {
-		return nil, errors.New("bucketName is required on CreateBucketReplicationURL")
+		return nil, errors.New("bucketName is required on SetBucketReplicationURL")
 	}
 
 	_basePath := o._basePath
@@ -76,7 +76,7 @@ func (o *CreateBucketReplicationURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *CreateBucketReplicationURL) Must(u *url.URL, err error) *url.URL {
+func (o *SetBucketReplicationURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -87,17 +87,17 @@ func (o *CreateBucketReplicationURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *CreateBucketReplicationURL) String() string {
+func (o *SetBucketReplicationURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *CreateBucketReplicationURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *SetBucketReplicationURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on CreateBucketReplicationURL")
+		return nil, errors.New("scheme is required for a full url on SetBucketReplicationURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on CreateBucketReplicationURL")
+		return nil, errors.New("host is required for a full url on SetBucketReplicationURL")
 	}
 
 	base, err := o.Build()
@@ -111,6 +111,6 @@ func (o *CreateBucketReplicationURL) BuildFull(scheme, host string) (*url.URL, e
 }
 
 // StringFull returns the string representation of a complete url
-func (o *CreateBucketReplicationURL) StringFull(scheme, host string) string {
+func (o *SetBucketReplicationURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

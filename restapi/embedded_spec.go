@@ -376,7 +376,7 @@ func init() {
           "UserAPI"
         ],
         "summary": "Set Bucket Replication",
-        "operationId": "CreateBucketReplication",
+        "operationId": "SetBucketReplication",
         "parameters": [
           {
             "type": "string",
@@ -390,6 +390,71 @@ func init() {
             "required": true,
             "schema": {
               "$ref": "#/definitions/setBucketReplication"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/versioned": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Bucket Versioning",
+        "operationId": "GetBucketVersioning",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bucketVersioningResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Set Bucket Versioning",
+        "operationId": "SetBucketVersioning",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/setBucketVersioning"
             }
           }
         ],
@@ -2254,6 +2319,14 @@ func init() {
         }
       }
     },
+    "bucketVersioningResponse": {
+      "type": "object",
+      "properties": {
+        "is_versioned": {
+          "type": "boolean"
+        }
+      }
+    },
     "bulkUserGroups": {
       "type": "object",
       "required": [
@@ -3342,6 +3415,14 @@ func init() {
         }
       }
     },
+    "setBucketVersioning": {
+      "type": "object",
+      "properties": {
+        "versioning": {
+          "type": "boolean"
+        }
+      }
+    },
     "setConfigRequest": {
       "type": "object",
       "required": [
@@ -4259,7 +4340,7 @@ func init() {
           "UserAPI"
         ],
         "summary": "Set Bucket Replication",
-        "operationId": "CreateBucketReplication",
+        "operationId": "SetBucketReplication",
         "parameters": [
           {
             "type": "string",
@@ -4273,6 +4354,71 @@ func init() {
             "required": true,
             "schema": {
               "$ref": "#/definitions/setBucketReplication"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/versioned": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Bucket Versioning",
+        "operationId": "GetBucketVersioning",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bucketVersioningResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Set Bucket Versioning",
+        "operationId": "SetBucketVersioning",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/setBucketVersioning"
             }
           }
         ],
@@ -6654,6 +6800,14 @@ func init() {
         }
       }
     },
+    "bucketVersioningResponse": {
+      "type": "object",
+      "properties": {
+        "is_versioned": {
+          "type": "boolean"
+        }
+      }
+    },
     "bulkUserGroups": {
       "type": "object",
       "required": [
@@ -7673,6 +7827,14 @@ func init() {
         },
         "destination_bucket": {
           "type": "string"
+        }
+      }
+    },
+    "setBucketVersioning": {
+      "type": "object",
+      "properties": {
+        "versioning": {
+          "type": "boolean"
         }
       }
     },
