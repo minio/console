@@ -24,6 +24,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/minio/minio-go/v7/pkg/replication"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
@@ -84,7 +86,7 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 		return user_api.NewGetBucketVersioningOK().WithPayload(getBucketVersioning)
 	})
 
-	// get bucket versioning
+	// get bucket replication
 	api.UserAPIGetBucketReplicationHandler = user_api.GetBucketReplicationHandlerFunc(func(params user_api.GetBucketReplicationParams, session *models.Principal) middleware.Responder {
 		getBucketReplication, err := getBucketReplicationdResponse(session, params.BucketName)
 		if err != nil {
@@ -92,6 +94,69 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewGetBucketReplicationOK().WithPayload(getBucketReplication)
 	})
+	// get bucket replication
+	api.UserAPIAddBucketReplicationHandler = user_api.AddBucketReplicationHandlerFunc(func(params user_api.AddBucketReplicationParams, session *models.Principal) middleware.Responder {
+		err := getAddBucketReplicationdResponse(session, params.BucketName, &params)
+		if err != nil {
+			return user_api.NewAddBucketReplicationDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
+		return user_api.NewAddBucketReplicationCreated()
+	})
+}
+
+func getAddBucketReplicationdResponse(session *models.Principal, bucketName string, params *user_api.AddBucketReplicationParams) error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		log.Println("error creating MinIO Client:", err)
+		return err
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+
+	// we will tolerate this call failing
+	cfg, err := minioClient.getBucketReplication(ctx, bucketName)
+	if err != nil {
+		log.Println("error versioning bucket:", err)
+	}
+
+	// add rule
+
+	maxPrio := 0
+	for _, r := range cfg.Rules {
+		if r.Priority > maxPrio {
+			maxPrio = r.Priority
+		}
+	}
+	maxPrio++
+
+	s3Client, err := newS3BucketClient(session, bucketName)
+	if err != nil {
+		log.Println("error creating S3Client:", err)
+		return err
+	}
+	// create a mc S3Client interface implementation
+	// defining the client to be used
+	mcClient := mcClient{client: s3Client}
+
+	opts := replication.Options{
+		RoleArn:    params.Body.Arn,
+		Priority:   fmt.Sprintf("%d", maxPrio),
+		RuleStatus: "enable",
+		//ID:         cliCtx.String("id"),
+		DestBucket: params.Body.DestinationBucket,
+		Op:         replication.AddOption,
+	}
+
+	err2 := mcClient.setReplication(ctx, &cfg, opts)
+	if err2 != nil {
+		log.Println("error creating replication for bucket:", err2.Cause)
+		return err2.Cause
+	}
+	return nil
 }
 
 func getBucketReplicationdResponse(session *models.Principal, bucketName string) (*models.BucketReplicationResponse, error) {

@@ -34,18 +34,18 @@ import (
 	"github.com/minio/console/models"
 )
 
-// NewSetBucketReplicationParams creates a new SetBucketReplicationParams object
+// NewAddBucketReplicationParams creates a new AddBucketReplicationParams object
 // no default values defined in spec.
-func NewSetBucketReplicationParams() SetBucketReplicationParams {
+func NewAddBucketReplicationParams() AddBucketReplicationParams {
 
-	return SetBucketReplicationParams{}
+	return AddBucketReplicationParams{}
 }
 
-// SetBucketReplicationParams contains all the bound params for the set bucket replication operation
+// AddBucketReplicationParams contains all the bound params for the add bucket replication operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters SetBucketReplication
-type SetBucketReplicationParams struct {
+// swagger:parameters AddBucketReplication
+type AddBucketReplicationParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
@@ -54,7 +54,7 @@ type SetBucketReplicationParams struct {
 	  Required: true
 	  In: body
 	*/
-	Body *models.SetBucketReplication
+	Body *models.AddBucketReplication
 	/*
 	  Required: true
 	  In: path
@@ -65,15 +65,15 @@ type SetBucketReplicationParams struct {
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewSetBucketReplicationParams() beforehand.
-func (o *SetBucketReplicationParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewAddBucketReplicationParams() beforehand.
+func (o *AddBucketReplicationParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		var body models.SetBucketReplication
+		var body models.AddBucketReplication
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
 				res = append(res, errors.Required("body", "body", ""))
@@ -105,7 +105,7 @@ func (o *SetBucketReplicationParams) BindRequest(r *http.Request, route *middlew
 }
 
 // bindBucketName binds and validates parameter BucketName from path.
-func (o *SetBucketReplicationParams) bindBucketName(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *AddBucketReplicationParams) bindBucketName(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]

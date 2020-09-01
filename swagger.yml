@@ -350,9 +350,9 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-    put:
-      summary: Set Bucket Replication
-      operationId: SetBucketReplication
+    post:
+      summary: Add Bucket Replication
+      operationId: AddBucketReplication
       parameters:
         - name: bucket_name
           in: path
@@ -362,7 +362,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: "#/definitions/setBucketReplication"
+            $ref: "#/definitions/addBucketReplication"
       responses:
         201:
           description: A successful response.
@@ -1735,7 +1735,7 @@ definitions:
     #  }
     # }
     #}
-  setBucketReplication:
+  addBucketReplication:
     type: object
     properties:
       arn:

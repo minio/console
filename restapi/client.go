@@ -110,6 +110,11 @@ func (c minioClient) getBucketReplication(ctx context.Context, bucketName string
 	return c.client.GetBucketReplication(ctx, bucketName)
 }
 
+// implements minio.setBucketVersioning(ctx, bucketName, cfg)
+func (c minioClient) setBucketReplication(ctx context.Context, bucketName string, cfg replication.Config) error {
+	return c.client.SetBucketReplication(ctx, bucketName, cfg)
+}
+
 // MCClient interface with all functions to be implemented
 // by mock when testing, it should include all mc/S3Client respective api calls
 // that are used within this project.
@@ -139,6 +144,10 @@ func (c mcClient) removeNotificationConfig(ctx context.Context, arn string, even
 
 func (c mcClient) watch(ctx context.Context, options mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
 	return c.client.Watch(ctx, options)
+}
+
+func (c mcClient) setReplication(ctx context.Context, cfg *replication.Config, opts replication.Options) *probe.Error {
+	return c.client.SetReplication(ctx, cfg, opts)
 }
 
 // ConsoleCredentials interface with all functions to be implemented

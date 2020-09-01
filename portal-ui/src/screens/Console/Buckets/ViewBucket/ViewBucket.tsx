@@ -43,7 +43,7 @@ import AddEvent from "./AddEvent";
 import DeleteEvent from "./DeleteEvent";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import { niceBytes } from "../../../../common/utils";
-import Replication from "./Replication";
+import AddReplicationModal from "./AddReplicationModal";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -432,11 +432,13 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
           />
         )}
         {openSetReplication && (
-          <Replication
+          <AddReplicationModal
             closeModalAndRefresh={() => {
               setOpenReplicationOpen(false);
+              this.fetchEvents();
             }}
             open={openSetReplication}
+            bucketName={bucketName}
           />
         )}
         <Grid container>

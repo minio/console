@@ -30,40 +30,40 @@ import (
 	"github.com/minio/console/models"
 )
 
-// SetBucketReplicationHandlerFunc turns a function with the right signature into a set bucket replication handler
-type SetBucketReplicationHandlerFunc func(SetBucketReplicationParams, *models.Principal) middleware.Responder
+// AddBucketReplicationHandlerFunc turns a function with the right signature into a add bucket replication handler
+type AddBucketReplicationHandlerFunc func(AddBucketReplicationParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn SetBucketReplicationHandlerFunc) Handle(params SetBucketReplicationParams, principal *models.Principal) middleware.Responder {
+func (fn AddBucketReplicationHandlerFunc) Handle(params AddBucketReplicationParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
-// SetBucketReplicationHandler interface for that can handle valid set bucket replication params
-type SetBucketReplicationHandler interface {
-	Handle(SetBucketReplicationParams, *models.Principal) middleware.Responder
+// AddBucketReplicationHandler interface for that can handle valid add bucket replication params
+type AddBucketReplicationHandler interface {
+	Handle(AddBucketReplicationParams, *models.Principal) middleware.Responder
 }
 
-// NewSetBucketReplication creates a new http.Handler for the set bucket replication operation
-func NewSetBucketReplication(ctx *middleware.Context, handler SetBucketReplicationHandler) *SetBucketReplication {
-	return &SetBucketReplication{Context: ctx, Handler: handler}
+// NewAddBucketReplication creates a new http.Handler for the add bucket replication operation
+func NewAddBucketReplication(ctx *middleware.Context, handler AddBucketReplicationHandler) *AddBucketReplication {
+	return &AddBucketReplication{Context: ctx, Handler: handler}
 }
 
-/*SetBucketReplication swagger:route PUT /buckets/{bucket_name}/replication UserAPI setBucketReplication
+/*AddBucketReplication swagger:route POST /buckets/{bucket_name}/replication UserAPI addBucketReplication
 
-Set Bucket Replication
+Add Bucket Replication
 
 */
-type SetBucketReplication struct {
+type AddBucketReplication struct {
 	Context *middleware.Context
-	Handler SetBucketReplicationHandler
+	Handler AddBucketReplicationHandler
 }
 
-func (o *SetBucketReplication) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *AddBucketReplication) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		r = rCtx
 	}
-	var Params = NewSetBucketReplicationParams()
+	var Params = NewAddBucketReplicationParams()
 
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {

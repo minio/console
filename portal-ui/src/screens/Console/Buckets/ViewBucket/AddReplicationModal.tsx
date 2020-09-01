@@ -19,6 +19,7 @@ interface IReplicationModal {
   open: boolean;
   closeModalAndRefresh: () => any;
   classes: any;
+  bucketName: string;
 }
 
 const styles = (theme: Theme) =>
@@ -40,10 +41,11 @@ const styles = (theme: Theme) =>
     ...modalBasic,
   });
 
-const Replication = ({
+const AddReplicationModal = ({
   open,
   closeModalAndRefresh,
   classes,
+  bucketName,
 }: IReplicationModal) => {
   const [addError, setAddError] = useState("");
   const [loadingForm, setLoadingForm] = useState(true);
@@ -68,14 +70,16 @@ const Replication = ({
 
   const addRecord = () => {
     const replicationInfo = {
-      remoteURL,
-      source,
-      target,
-      ARN,
+      destination_bucket: target,
+      arn: ARN,
     };
 
     api
-      .invoke("PUT", "/api/v1/replication", replicationInfo)
+      .invoke(
+        "POST",
+        `/api/v1/buckets/${bucketName}/replication`,
+        replicationInfo
+      )
       .then((res) => {
         setAddLoading(false);
         setAddError("");
@@ -142,28 +146,7 @@ const Replication = ({
                   </Typography>
                 </Grid>
               )}
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="remote-url"
-                  name="remote-url"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setRemoteURL(e.target.value);
-                  }}
-                  label="Remote URL"
-                  value={remoteURL}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="source"
-                  name="source"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setSource(e.target.value);
-                  }}
-                  label="Source"
-                  value={source}
-                />
-              </Grid>
+
               <Grid item xs={12}>
                 <InputBoxWrapper
                   id="target"
@@ -171,7 +154,7 @@ const Replication = ({
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setTarget(e.target.value);
                   }}
-                  label="Target"
+                  label="Destination Bucket"
                   value={target}
                 />
               </Grid>
@@ -210,4 +193,4 @@ const Replication = ({
   );
 };
 
-export default withStyles(styles)(Replication);
+export default withStyles(styles)(AddReplicationModal);
