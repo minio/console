@@ -30,6 +30,7 @@ import AddRemoteBucket from "./AddRemoteBucket";
 import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
 import { CreateIcon } from "../../../icons";
 import { IRemoteBucket, IRemoteBucketsResponse } from "./types";
+import DeleteRemoteBucket from "./DeleteRemoteBucket";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -85,6 +86,7 @@ const RemoteBucketsList = ({ classes }: IRemoteListBucketsProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
+  const [deleteScreenOpen, setDeleteOpen] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   const [selectedBucket, setSelectedBucket] = useState<string>("");
@@ -99,6 +101,14 @@ const RemoteBucketsList = ({ classes }: IRemoteListBucketsProps) => {
   const closeAddModalAndRefresh = () => {
     setAddScreenOpen(false);
     setLoading(true);
+  };
+
+  const closeDeleteModalAndRefresh = (reload: boolean) => {
+    setDeleteOpen(false);
+
+    if (reload) {
+      setLoading(true);
+    }
   };
 
   const fetchRecords = () => {
@@ -142,7 +152,14 @@ const RemoteBucketsList = ({ classes }: IRemoteListBucketsProps) => {
     setRowsPerPage(rPP);
   };
 
-  const tableActions = [{ type: "view", to: `/buckets`, sendOnlyId: true }];
+  const confirmDeleteRemoteBucket = (arnRemoteBucket: string) => {
+    setSelectedBucket(arnRemoteBucket);
+    setDeleteOpen(true);
+  };
+
+  const tableActions = [
+    { type: "delete", onClick: confirmDeleteRemoteBucket, sendOnlyId: true },
+  ];
 
   const displayParsedDate = (date: string) => {
     return <Moment>{date}</Moment>;
@@ -170,6 +187,15 @@ const RemoteBucketsList = ({ classes }: IRemoteListBucketsProps) => {
           closeModalAndRefresh={() => {
             closeAddModalAndRefresh();
           }}
+        />
+      )}
+      {deleteScreenOpen && (
+        <DeleteRemoteBucket
+          bucketName={selectedBucket}
+          closeDeleteModalAndRefresh={(reload) => {
+            closeDeleteModalAndRefresh(reload);
+          }}
+          deleteOpen={deleteScreenOpen}
         />
       )}
       <Grid container>
@@ -215,7 +241,7 @@ const RemoteBucketsList = ({ classes }: IRemoteListBucketsProps) => {
           <TableWrapper
             itemActions={tableActions}
             columns={[
-              { label: "Name", elementKey: "name" },
+              { label: "Remote ARN", elementKey: "remoteARN" },
               { label: "Source Bucket", elementKey: "sourceBucket" },
               { label: "Target Bucket", elementKey: "targetBucket" },
               { label: "Status", elementKey: "status" },
