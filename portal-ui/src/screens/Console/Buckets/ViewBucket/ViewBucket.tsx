@@ -33,6 +33,7 @@ import AddEvent from "./AddEvent";
 import DeleteEvent from "./DeleteEvent";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import { niceBytes } from "../../../../common/utils";
+import Replication from "./Replication";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -143,6 +144,8 @@ interface IViewBucketState {
   selectedEvent: BucketEvent | null;
   bucketSize: string;
   errorSize: string;
+  replicationSet: boolean;
+  openSetReplication: boolean;
 }
 
 class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
@@ -165,6 +168,8 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     selectedEvent: null,
     bucketSize: "0",
     errorSize: "",
+    replicationSet: false,
+    openSetReplication: false,
   };
 
   fetchEvents() {
@@ -279,6 +284,8 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       selectedEvent,
       bucketSize,
       loadingSize,
+      replicationSet,
+      openSetReplication,
     } = this.state;
 
     const offset = page * rowsPerPage;
@@ -301,12 +308,17 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     };
 
     let accessPolicy = "n/a";
+
     if (info !== null) {
       accessPolicy = info.access;
     }
 
     const eventsDisplay = (events: string[]) => {
       return <React.Fragment>{events.join(", ")}</React.Fragment>;
+    };
+
+    const setOpenReplicationOpen = (open = false) => {
+      this.setState({ openSetReplication: open });
     };
 
     const tableActions = [{ type: "delete", onClick: confirmDeleteEvent }];
@@ -335,11 +347,18 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
             }}
           />
         )}
-
+        {openSetReplication && (
+          <Replication
+            closeModalAndRefresh={() => {
+              setOpenReplicationOpen(false);
+            }}
+            open={openSetReplication}
+          />
+        )}
         <Grid container>
           <Grid item xs={12}>
             <Typography variant="h6">
-              Bucket > {match.params["bucketName"]}
+              Bucket &gt; {match.params["bucketName"]}
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -373,6 +392,18 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
                       ) : (
                         niceBytes(bucketSize)
                       )}
+                    </div>
+                    <div>Replication:</div>
+                    <div>
+                      {replicationSet ? "Yes" : "No"}&nbsp;
+                      <Button
+                        variant="contained"
+                        size="small"
+                        color="primary"
+                        onClick={() => setOpenReplicationOpen(true)}
+                      >
+                        Set
+                      </Button>
                     </div>
                   </div>
                 </Paper>
@@ -421,7 +452,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
                 });
               }}
             >
-              Subcribe to Event
+              Subscribe to Event
             </Button>
           </Grid>
           <Grid item xs={12}>
