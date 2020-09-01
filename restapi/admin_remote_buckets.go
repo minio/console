@@ -112,7 +112,7 @@ func getDeleteRemoteBucketResponse(session *models.Principal, params user_api.De
 		return err
 	}
 	adminClient := adminClient{client: mAdmin}
-	err = deleteRemoteBucket(ctx, adminClient, params.Name)
+	err = deleteRemoteBucket(ctx, adminClient, params.SourceBucketName, params.Arn)
 	if err != nil {
 		log.Println("error deleting remote bucket: ", err)
 		return err
@@ -178,8 +178,8 @@ func getRemoteBucket(ctx context.Context, client MinioAdmin, name string) (*mode
 	}, nil
 }
 
-func deleteRemoteBucket(ctx context.Context, client MinioAdmin, name string) error {
-	return client.removeRemoteBucket(ctx, name, "")
+func deleteRemoteBucket(ctx context.Context, client MinioAdmin, sourceBucketName, arn string) error {
+	return client.removeRemoteBucket(ctx, sourceBucketName, arn)
 }
 
 func addRemoteBucket(ctx context.Context, client MinioAdmin, params models.RemoteBucket) error {

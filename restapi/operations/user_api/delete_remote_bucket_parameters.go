@@ -50,7 +50,12 @@ type DeleteRemoteBucketParams struct {
 	  Required: true
 	  In: path
 	*/
-	Name string
+	Arn string
+	/*
+	  Required: true
+	  In: path
+	*/
+	SourceBucketName string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -62,8 +67,13 @@ func (o *DeleteRemoteBucketParams) BindRequest(r *http.Request, route *middlewar
 
 	o.HTTPRequest = r
 
-	rName, rhkName, _ := route.Params.GetOK("name")
-	if err := o.bindName(rName, rhkName, route.Formats); err != nil {
+	rArn, rhkArn, _ := route.Params.GetOK("arn")
+	if err := o.bindArn(rArn, rhkArn, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	rSourceBucketName, rhkSourceBucketName, _ := route.Params.GetOK("source-bucket-name")
+	if err := o.bindSourceBucketName(rSourceBucketName, rhkSourceBucketName, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -73,8 +83,8 @@ func (o *DeleteRemoteBucketParams) BindRequest(r *http.Request, route *middlewar
 	return nil
 }
 
-// bindName binds and validates parameter Name from path.
-func (o *DeleteRemoteBucketParams) bindName(rawData []string, hasKey bool, formats strfmt.Registry) error {
+// bindArn binds and validates parameter Arn from path.
+func (o *DeleteRemoteBucketParams) bindArn(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -83,7 +93,22 @@ func (o *DeleteRemoteBucketParams) bindName(rawData []string, hasKey bool, forma
 	// Required: true
 	// Parameter is provided by construction from the route
 
-	o.Name = raw
+	o.Arn = raw
+
+	return nil
+}
+
+// bindSourceBucketName binds and validates parameter SourceBucketName from path.
+func (o *DeleteRemoteBucketParams) bindSourceBucketName(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: true
+	// Parameter is provided by construction from the route
+
+	o.SourceBucketName = raw
 
 	return nil
 }

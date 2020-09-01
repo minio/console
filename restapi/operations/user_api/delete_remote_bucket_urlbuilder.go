@@ -31,7 +31,8 @@ import (
 
 // DeleteRemoteBucketURL generates an URL for the delete remote bucket operation
 type DeleteRemoteBucketURL struct {
-	Name string
+	Arn              string
+	SourceBucketName string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -57,13 +58,20 @@ func (o *DeleteRemoteBucketURL) SetBasePath(bp string) {
 func (o *DeleteRemoteBucketURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/remote-buckets/{name}"
+	var _path = "/remote-buckets/{source-bucket-name}/{arn}"
 
-	name := o.Name
-	if name != "" {
-		_path = strings.Replace(_path, "{name}", name, -1)
+	arn := o.Arn
+	if arn != "" {
+		_path = strings.Replace(_path, "{arn}", arn, -1)
 	} else {
-		return nil, errors.New("name is required on DeleteRemoteBucketURL")
+		return nil, errors.New("arn is required on DeleteRemoteBucketURL")
+	}
+
+	sourceBucketName := o.SourceBucketName
+	if sourceBucketName != "" {
+		_path = strings.Replace(_path, "{source-bucket-name}", sourceBucketName, -1)
+	} else {
+		return nil, errors.New("sourceBucketName is required on DeleteRemoteBucketURL")
 	}
 
 	_basePath := o._basePath
