@@ -69,9 +69,7 @@ import { ISessionResponse } from "./types";
 import { saveSessionResponse } from "./actions";
 import TenantDetails from "./Tenants/TenantDetails/TenantDetails";
 import { clearSession } from "../../common/utils";
-import AddRemoteBucket from "./RemoteBuckets/AddRemoteBucket";
 import RemoteBuckets from "./RemoteBuckets/RemoteBuckets";
-import Replication from "./Replication/Replication";
 
 function Copyright() {
   return (
@@ -275,10 +273,6 @@ const Console = ({
     {
       component: RemoteBuckets,
       path: "/remote-buckets",
-    },
-    {
-      component: Replication,
-      path: "/replication",
     },
     {
       component: Trace,

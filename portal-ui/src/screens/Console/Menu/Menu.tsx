@@ -232,14 +232,6 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
       icon: <CloudUploadIcon />,
     },
     {
-      group: "Admin",
-      type: "item",
-      component: NavLink,
-      to: "/replication",
-      name: "Replication",
-      icon: <FileCopyIcon />,
-    },
-    {
       group: "Tools",
       type: "item",
       component: NavLink,
