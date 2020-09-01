@@ -67,14 +67,20 @@ const AddRemoteBucket = ({
     }, [addLoading]);
 
     const addRecord = () => {
-        if (addLoading) {
-            return;
-        }
+        const remoteBucketInfo = {
+            name: bucketName,
+            accessKey: accessKey,
+            secretKey: secretKey,
+            sourceBucket: sourceBucket,
+            targetURL: targetURL,
+            targetBucket: targetBucket,
+            remoteARN: remoteARN,
+            status,
+            service,
+        };
 
         api
-            .invoke("POST", "/api/v1/buckets", {
-                name: bucketName,
-            })
+            .invoke("POST", "/api/v1/remote-buckets", remoteBucketInfo)
             .then((res) => {
                 setAddLoading(false);
                 setAddError("");
@@ -112,6 +118,7 @@ const AddRemoteBucket = ({
                 noValidate
                 autoComplete="off"
                 onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                    e.preventDefault();
                     addRecord();
                 }}
             >
