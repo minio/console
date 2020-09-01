@@ -1097,11 +1097,16 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
+  /remote-buckets/{source-bucket-name}/{arn}:
     delete:
       summary: Delete Remote Bucket
       operationId: DeleteRemoteBucket
       parameters:
-        - name: name
+        - name: source-bucket-name
+          in: path
+          required: true
+          type: string
+        - name: arn
           in: path
           required: true
           type: string

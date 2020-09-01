@@ -48,7 +48,7 @@ func NewDeleteRemoteBucket(ctx *middleware.Context, handler DeleteRemoteBucketHa
 	return &DeleteRemoteBucket{Context: ctx, Handler: handler}
 }
 
-/*DeleteRemoteBucket swagger:route DELETE /remote-buckets/{name} UserAPI deleteRemoteBucket
+/*DeleteRemoteBucket swagger:route DELETE /remote-buckets/{source-bucket-name}/{arn} UserAPI deleteRemoteBucket
 
 Delete Remote Bucket
 

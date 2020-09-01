@@ -1582,7 +1582,9 @@ func init() {
             }
           }
         }
-      },
+      }
+    },
+    "/remote-buckets/{source-bucket-name}/{arn}": {
       "delete": {
         "tags": [
           "UserAPI"
@@ -1592,7 +1594,13 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "name": "name",
+            "name": "source-bucket-name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "arn",
             "in": "path",
             "required": true
           }
@@ -5544,7 +5552,9 @@ func init() {
             }
           }
         }
-      },
+      }
+    },
+    "/remote-buckets/{source-bucket-name}/{arn}": {
       "delete": {
         "tags": [
           "UserAPI"
@@ -5554,7 +5564,13 @@ func init() {
         "parameters": [
           {
             "type": "string",
-            "name": "name",
+            "name": "source-bucket-name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "arn",
             "in": "path",
             "required": true
           }
