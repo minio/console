@@ -75,14 +75,61 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewBucketSetPolicyOK().WithPayload(bucketSetPolicyResp)
 	})
-	// set bucket policy
+	// get bucket versioning
 	api.UserAPIGetBucketVersioningHandler = user_api.GetBucketVersioningHandlerFunc(func(params user_api.GetBucketVersioningParams, session *models.Principal) middleware.Responder {
-		bucketSetPolicyResp, err := getBucketVersionedResponse(session, params.BucketName)
+		getBucketVersioning, err := getBucketVersionedResponse(session, params.BucketName)
 		if err != nil {
 			return user_api.NewGetBucketVersioningDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
-		return user_api.NewGetBucketVersioningOK().WithPayload(bucketSetPolicyResp)
+		return user_api.NewGetBucketVersioningOK().WithPayload(getBucketVersioning)
 	})
+
+	// get bucket versioning
+	api.UserAPIGetBucketReplicationHandler = user_api.GetBucketReplicationHandlerFunc(func(params user_api.GetBucketReplicationParams, session *models.Principal) middleware.Responder {
+		getBucketReplication, err := getBucketReplicationdResponse(session, params.BucketName)
+		if err != nil {
+			return user_api.NewGetBucketReplicationDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
+		return user_api.NewGetBucketReplicationOK().WithPayload(getBucketReplication)
+	})
+}
+
+func getBucketReplicationdResponse(session *models.Principal, bucketName string) (*models.BucketReplicationResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		log.Println("error creating MinIO Client:", err)
+		return nil, err
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+
+	// we will tolerate this call failing
+	res, err := minioClient.getBucketReplication(ctx, bucketName)
+	if err != nil {
+		log.Println("error versioning bucket:", err)
+	}
+
+	var rules []*models.BucketReplicationRule
+
+	for _, rule := range res.Rules {
+		rules = append(rules, &models.BucketReplicationRule{
+			DeleteMarkerReplication: &models.BucketReplicationRuleMarker{Status: string(rule.DeleteMarkerReplication.Status)},
+			Destination:             &models.BucketReplicationDestination{Bucket: rule.Destination.Bucket},
+			ID:                      rule.ID,
+			Priority:                int32(rule.Priority),
+			Status:                  string(rule.Status),
+		})
+	}
+
+	// serialize output
+	listBucketsResponse := &models.BucketReplicationResponse{
+		Rules: rules,
+	}
+	return listBucketsResponse, nil
 }
 
 func getBucketVersionedResponse(session *models.Principal, bucketName string) (*models.BucketVersioningResponse, error) {

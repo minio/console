@@ -124,6 +124,10 @@ const styles = (theme: Theme) =>
     capitalizeFirst: {
       textTransform: "capitalize",
     },
+    doubleElement: {
+      display: "flex",
+      justifyContent: "space-between",
+    },
   });
 
 interface IViewBucketProps {
@@ -414,8 +418,8 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
                       )}
                     </div>
                     <div>Replication:</div>
-                    <div>
-                      {replicationSet ? "Yes" : "No"}&nbsp;
+                    <div className={classes.doubleElement}>
+                      <span>{replicationSet ? "Yes" : "No"}</span>
                       <Button
                         variant="contained"
                         size="small"
