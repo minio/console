@@ -46,6 +46,16 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewRemoteBucketDetailsOK().WithPayload(response)
 	})
+
+	// delete remote bucket
+	api.UserAPIDeleteRemoteBucketHandler = user_api.DeleteRemoteBucketHandlerFunc(func(params user_api.DeleteRemoteBucketParams, session *models.Principal) middleware.Responder {
+		err := getDeleteRemoteBucketResponse(session, params)
+		if err != nil {
+			return user_api.NewDeleteRemoteBucketDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
+		return user_api.NewDeleteRemoteBucketNoContent()
+	})
+
 }
 
 func getListRemoteBucketsResponse(session *models.Principal) (*models.ListRemoteBucketsResponse, error) {
@@ -81,6 +91,22 @@ func getRemoteBucketDetailsResponse(session *models.Principal, params user_api.R
 		return nil, err
 	}
 	return bucket, nil
+}
+
+func getDeleteRemoteBucketResponse(session *models.Principal, params user_api.DeleteRemoteBucketParams) error {
+	ctx := context.Background()
+	mAdmin, err := newMAdminClient(session)
+	if err != nil {
+		log.Println("error creating Madmin Client:", err)
+		return err
+	}
+	adminClient := adminClient{client: mAdmin}
+	err = deleteRemoteBucket(ctx, adminClient, params.Name)
+	if err != nil {
+		log.Println("error deleting remote bucket: ", err)
+		return err
+	}
+	return err
 }
 
 func listRemoteBuckets(ctx context.Context, client MinioAdmin) ([]*models.RemoteBucket, error) {
@@ -122,4 +148,8 @@ func getRemoteBucket(ctx context.Context, client MinioAdmin, name string) (*mode
 		TargetBucket: remoteBucket.TargetBucket,
 		TargetURL:    remoteBucket.Endpoint,
 	}, nil
+}
+
+func deleteRemoteBucket(ctx context.Context, client MinioAdmin, name string) error {
+	return client.removeRemoteBucket(ctx, name, "")
 }
