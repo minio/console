@@ -89,7 +89,17 @@ const RemoteBucketsList = ({ classes }: IRemoteListBucketsProps) => {
   const [deleteScreenOpen, setDeleteOpen] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
-  const [selectedBucket, setSelectedBucket] = useState<string>("");
+  const [selectedBucket, setSelectedBucket] = useState<IRemoteBucket>({
+    remoteARN: "",
+    accessKey: "",
+    name: "",
+    secretKey: "",
+    service: "",
+    sourceBucket: "",
+    status: "",
+    targetBucket: "",
+    targetURL: "",
+  });
   const [filterBuckets, setFilterBuckets] = useState<string>("");
 
   useEffect(() => {
@@ -152,18 +162,12 @@ const RemoteBucketsList = ({ classes }: IRemoteListBucketsProps) => {
     setRowsPerPage(rPP);
   };
 
-  const confirmDeleteRemoteBucket = (arnRemoteBucket: string) => {
+  const confirmDeleteRemoteBucket = (arnRemoteBucket: IRemoteBucket) => {
     setSelectedBucket(arnRemoteBucket);
     setDeleteOpen(true);
   };
 
-  const tableActions = [
-    { type: "delete", onClick: confirmDeleteRemoteBucket, sendOnlyId: true },
-  ];
-
-  const displayParsedDate = (date: string) => {
-    return <Moment>{date}</Moment>;
-  };
+  const tableActions = [{ type: "delete", onClick: confirmDeleteRemoteBucket }];
 
   const filteredRecords = records
     .slice(offset, offset + rowsPerPage)
@@ -191,7 +195,8 @@ const RemoteBucketsList = ({ classes }: IRemoteListBucketsProps) => {
       )}
       {deleteScreenOpen && (
         <DeleteRemoteBucket
-          bucketName={selectedBucket}
+          bucketName={selectedBucket.remoteARN}
+          sourceBucket={selectedBucket.sourceBucket}
           closeDeleteModalAndRefresh={(reload) => {
             closeDeleteModalAndRefresh(reload);
           }}

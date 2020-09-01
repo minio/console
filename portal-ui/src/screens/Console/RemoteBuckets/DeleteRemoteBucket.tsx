@@ -41,6 +41,7 @@ interface IDeleteEventProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   bucketName: any;
+  sourceBucket: string;
 }
 
 interface IDeleteEventState {
@@ -53,6 +54,7 @@ const DeleteRemoteBucket = ({
   closeDeleteModalAndRefresh,
   classes,
   bucketName,
+  sourceBucket,
 }: IDeleteEventProps) => {
   const [deleteError, setDeleteError] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -65,7 +67,7 @@ const DeleteRemoteBucket = ({
 
   const removeRecord = () => {
     api
-      .invoke("DELETE", `/api/v1/remote-buckets/${bucketName}`)
+      .invoke("DELETE", `/api/v1/remote-buckets/${sourceBucket}/${bucketName}`)
       .then(() => {
         setDeleteLoading(false);
         setDeleteError("");
