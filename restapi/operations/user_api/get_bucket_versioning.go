@@ -30,40 +30,40 @@ import (
 	"github.com/minio/console/models"
 )
 
-// CreateBucketReplicationHandlerFunc turns a function with the right signature into a create bucket replication handler
-type CreateBucketReplicationHandlerFunc func(CreateBucketReplicationParams, *models.Principal) middleware.Responder
+// GetBucketVersioningHandlerFunc turns a function with the right signature into a get bucket versioning handler
+type GetBucketVersioningHandlerFunc func(GetBucketVersioningParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn CreateBucketReplicationHandlerFunc) Handle(params CreateBucketReplicationParams, principal *models.Principal) middleware.Responder {
+func (fn GetBucketVersioningHandlerFunc) Handle(params GetBucketVersioningParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
-// CreateBucketReplicationHandler interface for that can handle valid create bucket replication params
-type CreateBucketReplicationHandler interface {
-	Handle(CreateBucketReplicationParams, *models.Principal) middleware.Responder
+// GetBucketVersioningHandler interface for that can handle valid get bucket versioning params
+type GetBucketVersioningHandler interface {
+	Handle(GetBucketVersioningParams, *models.Principal) middleware.Responder
 }
 
-// NewCreateBucketReplication creates a new http.Handler for the create bucket replication operation
-func NewCreateBucketReplication(ctx *middleware.Context, handler CreateBucketReplicationHandler) *CreateBucketReplication {
-	return &CreateBucketReplication{Context: ctx, Handler: handler}
+// NewGetBucketVersioning creates a new http.Handler for the get bucket versioning operation
+func NewGetBucketVersioning(ctx *middleware.Context, handler GetBucketVersioningHandler) *GetBucketVersioning {
+	return &GetBucketVersioning{Context: ctx, Handler: handler}
 }
 
-/*CreateBucketReplication swagger:route PUT /buckets/{bucket_name}/replication UserAPI createBucketReplication
+/*GetBucketVersioning swagger:route GET /buckets/{bucket_name}/versioning UserAPI getBucketVersioning
 
-Set Bucket Replication
+Bucket Versioning
 
 */
-type CreateBucketReplication struct {
+type GetBucketVersioning struct {
 	Context *middleware.Context
-	Handler CreateBucketReplicationHandler
+	Handler GetBucketVersioningHandler
 }
 
-func (o *CreateBucketReplication) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *GetBucketVersioning) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		r = rCtx
 	}
-	var Params = NewCreateBucketReplicationParams()
+	var Params = NewGetBucketVersioningParams()
 
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {

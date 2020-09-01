@@ -23,50 +23,26 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
-// MakeBucketRequest make bucket request
+// BucketVersioningResponse bucket versioning response
 //
-// swagger:model makeBucketRequest
-type MakeBucketRequest struct {
+// swagger:model bucketVersioningResponse
+type BucketVersioningResponse struct {
 
-	// name
-	// Required: true
-	Name *string `json:"name"`
-
-	// versioning
-	Versioning bool `json:"versioning,omitempty"`
+	// is versioned
+	IsVersioned bool `json:"is_versioned,omitempty"`
 }
 
-// Validate validates this make bucket request
-func (m *MakeBucketRequest) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateName(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *MakeBucketRequest) validateName(formats strfmt.Registry) error {
-
-	if err := validate.Required("name", "body", m.Name); err != nil {
-		return err
-	}
-
+// Validate validates this bucket versioning response
+func (m *BucketVersioningResponse) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *MakeBucketRequest) MarshalBinary() ([]byte, error) {
+func (m *BucketVersioningResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -74,8 +50,8 @@ func (m *MakeBucketRequest) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *MakeBucketRequest) UnmarshalBinary(b []byte) error {
-	var res MakeBucketRequest
+func (m *BucketVersioningResponse) UnmarshalBinary(b []byte) error {
+	var res BucketVersioningResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

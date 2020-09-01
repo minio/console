@@ -23,7 +23,13 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import api from "../../../../common/api";
-import { BucketEvent, BucketEventList, BucketInfo, BucketList } from "../types";
+import {
+  BucketEvent,
+  BucketEventList,
+  BucketInfo,
+  BucketList,
+  BucketVersioning,
+} from "../types";
 import { Button } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import SetAccessPolicy from "./SetAccessPolicy";
@@ -146,6 +152,7 @@ interface IViewBucketState {
   errorSize: string;
   replicationSet: boolean;
   openSetReplication: boolean;
+  isVersioned: boolean;
 }
 
 class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
@@ -170,6 +177,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     errorSize: "",
     replicationSet: false,
     openSetReplication: false,
+    isVersioned: false,
   };
 
   fetchEvents() {
@@ -199,6 +207,17 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
         })
         .catch((err: any) => {
           this.setState({ loadingEvents: false, error: err });
+        });
+
+      api
+        .invoke("GET", `/api/v1/buckets/${bucketName}/versioning`)
+        .then((res: BucketVersioning) => {
+          this.setState({
+            isVersioned: res.is_versioned,
+          });
+        })
+        .catch((err: any) => {
+          this.setState({ error: err });
         });
     });
   }
@@ -286,6 +305,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       loadingSize,
       replicationSet,
       openSetReplication,
+      isVersioned,
     } = this.state;
 
     const offset = page * rowsPerPage;
@@ -405,6 +425,8 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
                         Set
                       </Button>
                     </div>
+                    <div>Versioning:</div>
+                    <div>{isVersioned ? "Yes" : "No"}&nbsp;</div>
                   </div>
                 </Paper>
               </div>

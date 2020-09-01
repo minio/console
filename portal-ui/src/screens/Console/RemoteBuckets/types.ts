@@ -15,18 +15,18 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 export interface IRemoteBucketsResponse {
-    buckets: IRemoteBucket[];
-    total: number;
+  buckets: IRemoteBucket[];
+  total: number;
 }
 
 export interface IRemoteBucket {
-    name: string;
-    accessKey: string;
-    secretKey: string;
-    sourceBucket: string;
-    targetURL: string;
-    targetBucket: string;
-    remoteARN: string;
-    status: string;
-    service: string;
+  name: string;
+  accessKey: string;
+  secretKey: string;
+  sourceBucket: string;
+  targetURL: string;
+  targetBucket: string;
+  remoteARN: string;
+  status: string;
+  service: string;
 }

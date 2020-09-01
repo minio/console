@@ -75,6 +75,40 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewBucketSetPolicyOK().WithPayload(bucketSetPolicyResp)
 	})
+	// set bucket policy
+	api.UserAPIGetBucketVersioningHandler = user_api.GetBucketVersioningHandlerFunc(func(params user_api.GetBucketVersioningParams, session *models.Principal) middleware.Responder {
+		bucketSetPolicyResp, err := getBucketVersionedResponse(session, params.BucketName)
+		if err != nil {
+			return user_api.NewGetBucketVersioningDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
+		return user_api.NewGetBucketVersioningOK().WithPayload(bucketSetPolicyResp)
+	})
+}
+
+func getBucketVersionedResponse(session *models.Principal, bucketName string) (*models.BucketVersioningResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		log.Println("error creating MinIO Client:", err)
+		return nil, err
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+
+	// we will tolerate this call failing
+	res, err := minioClient.getBucketVersioning(ctx, bucketName)
+	if err != nil {
+		log.Println("error versioning bucket:", err)
+	}
+
+	// serialize output
+	listBucketsResponse := &models.BucketVersioningResponse{
+		IsVersioned: res.Status == "Enabled",
+	}
+	return listBucketsResponse, nil
 }
 
 // getaAcountUsageInfo fetches a list of all buckets allowed to that particular client from MinIO Servers
@@ -150,7 +184,7 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 		return err
 	}
 	// if versioned
-	if br.Versioned {
+	if br.Versioning {
 		// we will tolerate this call failing
 		if err := minioClient.enableVersioning(ctx, *br.Name); err != nil {
 			log.Println("error versioning bucket:", err)

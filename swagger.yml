@@ -352,7 +352,7 @@ paths:
         - UserAPI
     put:
       summary: Set Bucket Replication
-      operationId: CreateBucketReplication
+      operationId: SetBucketReplication
       parameters:
         - name: bucket_name
           in: path
@@ -363,6 +363,48 @@ paths:
           required: true
           schema:
             $ref: "#/definitions/setBucketReplication"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+  /buckets/{bucket_name}/versioning:
+    get:
+      summary: Bucket Versioning
+      operationId: GetBucketVersioning
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucketVersioningResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    put:
+      summary: Set Bucket Versioning
+      operationId: SetBucketVersioning
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/setBucketVersioning"
       responses:
         201:
           description: A successful response.
@@ -1400,7 +1442,7 @@ definitions:
     properties:
       name:
         type: string
-      versioned:
+      versioning:
         type: boolean
   error:
     type: object
@@ -1965,6 +2007,16 @@ definitions:
         type: integer
         format: int64
         title: number of remote buckets accessible to user
+  bucketVersioningResponse:
+    type: object
+    properties:
+      is_versioned:
+        type: boolean
+  setBucketVersioning:
+    type: object
+    properties:
+      versioning:
+        type: boolean
 
   tenant:
     type: object
