@@ -33,6 +33,7 @@ import AddEvent from "./AddEvent";
 import DeleteEvent from "./DeleteEvent";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import { niceBytes } from "../../../../common/utils";
+import Replication from "./Replication";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -144,6 +145,7 @@ interface IViewBucketState {
   bucketSize: string;
   errorSize: string;
   replicationSet: boolean;
+  openSetReplication: boolean;
 }
 
 class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
@@ -167,6 +169,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     bucketSize: "0",
     errorSize: "",
     replicationSet: false,
+    openSetReplication: false,
   };
 
   fetchEvents() {
@@ -282,6 +285,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       bucketSize,
       loadingSize,
       replicationSet,
+      openSetReplication,
     } = this.state;
 
     const offset = page * rowsPerPage;
@@ -313,6 +317,10 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       return <React.Fragment>{events.join(", ")}</React.Fragment>;
     };
 
+    const setOpenReplicationOpen = (open = false) => {
+      this.setState({ openSetReplication: open });
+    };
+
     const tableActions = [{ type: "delete", onClick: confirmDeleteEvent }];
 
     const filteredRecords = records.slice(offset, offset + rowsPerPage);
@@ -339,7 +347,14 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
             }}
           />
         )}
-
+        {openSetReplication && (
+          <Replication
+            closeModalAndRefresh={() => {
+              setOpenReplicationOpen(false);
+            }}
+            open={openSetReplication}
+          />
+        )}
         <Grid container>
           <Grid item xs={12}>
             <Typography variant="h6">
@@ -381,7 +396,14 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
                     <div>Replication:</div>
                     <div>
                       {replicationSet ? "Yes" : "No"}&nbsp;
-                      <button className="">Set</button>
+                      <Button
+                        variant="contained"
+                        size="small"
+                        color="primary"
+                        onClick={() => setOpenReplicationOpen(true)}
+                      >
+                        Set
+                      </Button>
                     </div>
                   </div>
                 </Paper>
