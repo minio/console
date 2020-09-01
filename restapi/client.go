@@ -21,6 +21,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/minio/minio-go/v7/pkg/replication"
+
 	"errors"
 
 	"github.com/minio/console/models"
@@ -101,6 +103,11 @@ func (c minioClient) enableVersioning(ctx context.Context, bucketName string) er
 // implements minio.getBucketVersioning(ctx, bucketName)
 func (c minioClient) getBucketVersioning(ctx context.Context, bucketName string) (minio.BucketVersioningConfiguration, error) {
 	return c.client.GetBucketVersioning(ctx, bucketName)
+}
+
+// implements minio.getBucketVersioning(ctx, bucketName)
+func (c minioClient) getBucketReplication(ctx context.Context, bucketName string) (replication.Config, error) {
+	return c.client.GetBucketReplication(ctx, bucketName)
 }
 
 // MCClient interface with all functions to be implemented

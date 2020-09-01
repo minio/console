@@ -46,7 +46,7 @@ type BucketReplicationRule struct {
 	ID string `json:"id,omitempty"`
 
 	// priority
-	Priority int64 `json:"priority,omitempty"`
+	Priority int32 `json:"priority,omitempty"`
 
 	// status
 	// Enum: [Enabled Disabled]
