@@ -27,10 +27,10 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// SetBucketReplication set bucket replication
+// AddBucketReplication add bucket replication
 //
-// swagger:model setBucketReplication
-type SetBucketReplication struct {
+// swagger:model addBucketReplication
+type AddBucketReplication struct {
 
 	// arn
 	Arn string `json:"arn,omitempty"`
@@ -39,13 +39,13 @@ type SetBucketReplication struct {
 	DestinationBucket string `json:"destination_bucket,omitempty"`
 }
 
-// Validate validates this set bucket replication
-func (m *SetBucketReplication) Validate(formats strfmt.Registry) error {
+// Validate validates this add bucket replication
+func (m *AddBucketReplication) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *SetBucketReplication) MarshalBinary() ([]byte, error) {
+func (m *AddBucketReplication) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -53,8 +53,8 @@ func (m *SetBucketReplication) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *SetBucketReplication) UnmarshalBinary(b []byte) error {
-	var res SetBucketReplication
+func (m *AddBucketReplication) UnmarshalBinary(b []byte) error {
+	var res AddBucketReplication
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -371,12 +371,12 @@ func init() {
           }
         }
       },
-      "put": {
+      "post": {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Set Bucket Replication",
-        "operationId": "SetBucketReplication",
+        "summary": "Add Bucket Replication",
+        "operationId": "AddBucketReplication",
         "parameters": [
           {
             "type": "string",
@@ -389,7 +389,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/setBucketReplication"
+              "$ref": "#/definitions/addBucketReplication"
             }
           }
         ],
@@ -2099,6 +2099,17 @@ func init() {
     }
   },
   "definitions": {
+    "addBucketReplication": {
+      "type": "object",
+      "properties": {
+        "arn": {
+          "type": "string"
+        },
+        "destination_bucket": {
+          "type": "string"
+        }
+      }
+    },
     "addGroupRequest": {
       "type": "object",
       "required": [
@@ -3410,17 +3421,6 @@ func init() {
         }
       }
     },
-    "setBucketReplication": {
-      "type": "object",
-      "properties": {
-        "arn": {
-          "type": "string"
-        },
-        "destination_bucket": {
-          "type": "string"
-        }
-      }
-    },
     "setBucketVersioning": {
       "type": "object",
       "properties": {
@@ -4341,12 +4341,12 @@ func init() {
           }
         }
       },
-      "put": {
+      "post": {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Set Bucket Replication",
-        "operationId": "SetBucketReplication",
+        "summary": "Add Bucket Replication",
+        "operationId": "AddBucketReplication",
         "parameters": [
           {
             "type": "string",
@@ -4359,7 +4359,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/setBucketReplication"
+              "$ref": "#/definitions/addBucketReplication"
             }
           }
         ],
@@ -6586,6 +6586,17 @@ func init() {
         }
       }
     },
+    "addBucketReplication": {
+      "type": "object",
+      "properties": {
+        "arn": {
+          "type": "string"
+        },
+        "destination_bucket": {
+          "type": "string"
+        }
+      }
+    },
     "addGroupRequest": {
       "type": "object",
       "required": [
@@ -7828,17 +7839,6 @@ func init() {
       "properties": {
         "access": {
           "$ref": "#/definitions/bucketAccess"
-        }
-      }
-    },
-    "setBucketReplication": {
-      "type": "object",
-      "properties": {
-        "arn": {
-          "type": "string"
-        },
-        "destination_bucket": {
-          "type": "string"
         }
       }
     },

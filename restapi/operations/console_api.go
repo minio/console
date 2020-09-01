@@ -63,6 +63,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		BinProducer:  runtime.ByteStreamProducer(),
 		JSONProducer: runtime.JSONProducer(),
 
+		UserAPIAddBucketReplicationHandler: user_api.AddBucketReplicationHandlerFunc(func(params user_api.AddBucketReplicationParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.AddBucketReplication has not yet been implemented")
+		}),
 		AdminAPIAddGroupHandler: admin_api.AddGroupHandlerFunc(func(params admin_api.AddGroupParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.AddGroup has not yet been implemented")
 		}),
@@ -219,9 +222,6 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPISessionCheckHandler: user_api.SessionCheckHandlerFunc(func(params user_api.SessionCheckParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.SessionCheck has not yet been implemented")
 		}),
-		UserAPISetBucketReplicationHandler: user_api.SetBucketReplicationHandlerFunc(func(params user_api.SetBucketReplicationParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.SetBucketReplication has not yet been implemented")
-		}),
 		UserAPISetBucketVersioningHandler: user_api.SetBucketVersioningHandlerFunc(func(params user_api.SetBucketVersioningParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.SetBucketVersioning has not yet been implemented")
 		}),
@@ -301,6 +301,8 @@ type ConsoleAPI struct {
 	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
 	APIAuthorizer runtime.Authorizer
 
+	// UserAPIAddBucketReplicationHandler sets the operation handler for the add bucket replication operation
+	UserAPIAddBucketReplicationHandler user_api.AddBucketReplicationHandler
 	// AdminAPIAddGroupHandler sets the operation handler for the add group operation
 	AdminAPIAddGroupHandler admin_api.AddGroupHandler
 	// AdminAPIAddNotificationEndpointHandler sets the operation handler for the add notification endpoint operation
@@ -405,8 +407,6 @@ type ConsoleAPI struct {
 	AdminAPIRestartServiceHandler admin_api.RestartServiceHandler
 	// UserAPISessionCheckHandler sets the operation handler for the session check operation
 	UserAPISessionCheckHandler user_api.SessionCheckHandler
-	// UserAPISetBucketReplicationHandler sets the operation handler for the set bucket replication operation
-	UserAPISetBucketReplicationHandler user_api.SetBucketReplicationHandler
 	// UserAPISetBucketVersioningHandler sets the operation handler for the set bucket versioning operation
 	UserAPISetBucketVersioningHandler user_api.SetBucketVersioningHandler
 	// AdminAPISetConfigHandler sets the operation handler for the set config operation
@@ -500,6 +500,9 @@ func (o *ConsoleAPI) Validate() error {
 		unregistered = append(unregistered, "KeyAuth")
 	}
 
+	if o.UserAPIAddBucketReplicationHandler == nil {
+		unregistered = append(unregistered, "user_api.AddBucketReplicationHandler")
+	}
 	if o.AdminAPIAddGroupHandler == nil {
 		unregistered = append(unregistered, "admin_api.AddGroupHandler")
 	}
@@ -656,9 +659,6 @@ func (o *ConsoleAPI) Validate() error {
 	if o.UserAPISessionCheckHandler == nil {
 		unregistered = append(unregistered, "user_api.SessionCheckHandler")
 	}
-	if o.UserAPISetBucketReplicationHandler == nil {
-		unregistered = append(unregistered, "user_api.SetBucketReplicationHandler")
-	}
 	if o.UserAPISetBucketVersioningHandler == nil {
 		unregistered = append(unregistered, "user_api.SetBucketVersioningHandler")
 	}
@@ -789,6 +789,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
 
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/buckets/{bucket_name}/replication"] = user_api.NewAddBucketReplication(o.context, o.UserAPIAddBucketReplicationHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
@@ -997,10 +1001,6 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/session"] = user_api.NewSessionCheck(o.context, o.UserAPISessionCheckHandler)
-	if o.handlers["PUT"] == nil {
-		o.handlers["PUT"] = make(map[string]http.Handler)
-	}
-	o.handlers["PUT"]["/buckets/{bucket_name}/replication"] = user_api.NewSetBucketReplication(o.context, o.UserAPISetBucketReplicationHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
