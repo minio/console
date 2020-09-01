@@ -26,6 +26,8 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/user_api"
+	mauth "github.com/minio/minio/pkg/auth"
+	"github.com/minio/minio/pkg/madmin"
 )
 
 func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
@@ -54,6 +56,15 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 			return user_api.NewDeleteRemoteBucketDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return user_api.NewDeleteRemoteBucketNoContent()
+	})
+
+	// set remote bucket
+	api.UserAPIAddRemoteBucketHandler = user_api.AddRemoteBucketHandlerFunc(func(params user_api.AddRemoteBucketParams, session *models.Principal) middleware.Responder {
+		err := getAddRemoteBucketResponse(session, params)
+		if err != nil {
+			return user_api.NewAddRemoteBucketDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
+		return user_api.NewAddRemoteBucketCreated()
 	})
 
 }
@@ -109,6 +120,22 @@ func getDeleteRemoteBucketResponse(session *models.Principal, params user_api.De
 	return err
 }
 
+func getAddRemoteBucketResponse(session *models.Principal, params user_api.AddRemoteBucketParams) error {
+	ctx := context.Background()
+	mAdmin, err := newMAdminClient(session)
+	if err != nil {
+		log.Println("error creating Madmin Client:", err)
+		return err
+	}
+	adminClient := adminClient{client: mAdmin}
+	err = addRemoteBucket(ctx, adminClient, *params.Body)
+	if err != nil {
+		log.Println("error adding remote bucket: ", err)
+		return err
+	}
+	return err
+}
+
 func listRemoteBuckets(ctx context.Context, client MinioAdmin) ([]*models.RemoteBucket, error) {
 	var remoteBuckets []*models.RemoteBucket
 	buckets, err := client.listRemoteBuckets(ctx, "", "")
@@ -152,4 +179,19 @@ func getRemoteBucket(ctx context.Context, client MinioAdmin, name string) (*mode
 
 func deleteRemoteBucket(ctx context.Context, client MinioAdmin, name string) error {
 	return client.removeRemoteBucket(ctx, name, "")
+}
+
+func addRemoteBucket(ctx context.Context, client MinioAdmin, params models.RemoteBucket) error {
+	remoteBucket := &madmin.BucketTarget{
+		SourceBucket: *params.SourceBucket,
+		Endpoint:     params.TargetURL,
+		Credentials: &mauth.Credentials{
+			SecretKey: params.SecretKey,
+			AccessKey: *params.AccessKey,
+		},
+		TargetBucket: params.TargetBucket,
+		Arn:          *params.RemoteARN,
+	}
+	_, err := client.addRemoteBucket(ctx, *params.SourceBucket, remoteBucket)
+	return err
 }

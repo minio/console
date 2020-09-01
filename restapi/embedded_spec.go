@@ -2272,14 +2272,11 @@ func init() {
     "bucketReplicationResponse": {
       "type": "object",
       "properties": {
-        "op": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
+        "rules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/bucketReplicationRule"
+          }
         }
       }
     },
@@ -2296,7 +2293,8 @@ func init() {
           "type": "string"
         },
         "priority": {
-          "type": "integer"
+          "type": "integer",
+          "format": "int32"
         },
         "status": {
           "type": "string",
@@ -6753,14 +6751,11 @@ func init() {
     "bucketReplicationResponse": {
       "type": "object",
       "properties": {
-        "op": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
+        "rules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/bucketReplicationRule"
+          }
         }
       }
     },
@@ -6777,7 +6772,8 @@ func init() {
           "type": "string"
         },
         "priority": {
-          "type": "integer"
+          "type": "integer",
+          "format": "int32"
         },
         "status": {
           "type": "string",
