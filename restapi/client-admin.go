@@ -97,6 +97,8 @@ type MinioAdmin interface {
 	addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (mauth.Credentials, error)
 	listServiceAccounts(ctx context.Context) (madmin.ListServiceAccountsResp, error)
 	deleteServiceAccount(ctx context.Context, serviceAccount string) error
+	// Remote Buckets
+	listRemoteBuckets(ctx context.Context, bucket, arnType string) (targets []madmin.BucketTarget, err error)
 }
 
 // Interface implementation
@@ -245,6 +247,10 @@ func (ac adminClient) accountUsageInfo(ctx context.Context) (madmin.AccountUsage
 func (ac adminClient) heal(ctx context.Context, bucket, prefix string, healOpts madmin.HealOpts, clientToken string,
 	forceStart, forceStop bool) (healStart madmin.HealStartSuccess, healTaskStatus madmin.HealTaskStatus, err error) {
 	return ac.client.Heal(ctx, bucket, prefix, healOpts, clientToken, forceStart, forceStop)
+}
+
+func (ac adminClient) listRemoteBuckets(ctx context.Context, bucket, arnType string) (targets []madmin.BucketTarget, err error) {
+	return ac.client.ListRemoteTargets(ctx, bucket, arnType)
 }
 
 func newMAdminClient(sessionClaims *models.Principal) (*madmin.AdminClient, error) {

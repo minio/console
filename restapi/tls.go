@@ -28,6 +28,9 @@ import (
 
 func getCertPool() *x509.CertPool {
 	caCertFileNames := getMinioServerTLSRootCAs()
+	if len(caCertFileNames) == 0 {
+		return nil
+	}
 	// If CAs certificates are configured we save them to the http.Client RootCAs store
 	certs := x509.NewCertPool()
 	for _, caCert := range caCertFileNames {
