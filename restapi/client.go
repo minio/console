@@ -93,6 +93,11 @@ func (c minioClient) getBucketPolicy(ctx context.Context, bucketName string) (st
 	return c.client.GetBucketPolicy(ctx, bucketName)
 }
 
+// implements minio.enableVersioning(ctx, bucketName)
+func (c minioClient) enableVersioning(ctx context.Context, bucketName string) error {
+	return c.client.EnableVersioning(ctx, bucketName)
+}
+
 // MCClient interface with all functions to be implemented
 // by mock when testing, it should include all mc/S3Client respective api calls
 // that are used within this project.

@@ -149,6 +149,13 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 		log.Println("error making bucket:", err)
 		return err
 	}
+	// if versioned
+	if br.Versioned {
+		// we will tolerate this call failing
+		if err := minioClient.enableVersioning(ctx, *br.Name); err != nil {
+			log.Println("error versioning bucket:", err)
+		}
+	}
 	return nil
 }
 
