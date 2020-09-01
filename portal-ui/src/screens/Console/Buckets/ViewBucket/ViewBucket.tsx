@@ -264,8 +264,9 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       api
         .invoke("GET", `/api/v1/buckets/${bucketName}/replication`)
         .then((res: BucketReplication) => {
+          const r = res.rules ? res.rules : [];
           this.setState({
-            replicationRules: res.rules,
+            replicationRules: r,
           });
         })
         .catch((err: any) => {
