@@ -205,7 +205,6 @@ class ListBuckets extends React.Component<
     };
 
     const filteredRecords = records
-      .slice(offset, offset + rowsPerPage)
       .filter((b: Bucket) => {
         if (filterBuckets === "") {
           return true;
@@ -216,7 +215,8 @@ class ListBuckets extends React.Component<
             return false;
           }
         }
-      });
+      })
+      .slice(offset, offset + rowsPerPage);
 
     return (
       <React.Fragment>
