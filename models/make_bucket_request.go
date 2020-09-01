@@ -38,8 +38,8 @@ type MakeBucketRequest struct {
 	// Required: true
 	Name *string `json:"name"`
 
-	// versioned
-	Versioned bool `json:"versioned,omitempty"`
+	// versioning
+	Versioning bool `json:"versioning,omitempty"`
 }
 
 // Validate validates this make bucket request

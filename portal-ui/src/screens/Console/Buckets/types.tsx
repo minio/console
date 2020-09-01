@@ -45,3 +45,7 @@ export interface BucketEventList {
 export interface ArnList {
   arns: string[];
 }
+
+export interface BucketVersioning {
+  is_versioned: boolean;
+}

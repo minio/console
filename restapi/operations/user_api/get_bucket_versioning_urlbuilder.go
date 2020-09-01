@@ -57,7 +57,7 @@ func (o *GetBucketVersioningURL) SetBasePath(bp string) {
 func (o *GetBucketVersioningURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/buckets/{bucket_name}/versioned"
+	var _path = "/buckets/{bucket_name}/versioning"
 
 	bucketName := o.BucketName
 	if bucketName != "" {

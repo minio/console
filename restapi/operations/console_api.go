@@ -872,7 +872,7 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/buckets/{bucket_name}/versioned"] = user_api.NewGetBucketVersioning(o.context, o.UserAPIGetBucketVersioningHandler)
+	o.handlers["GET"]["/buckets/{bucket_name}/versioning"] = user_api.NewGetBucketVersioning(o.context, o.UserAPIGetBucketVersioningHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -1004,7 +1004,7 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/buckets/{bucket_name}/versioned"] = user_api.NewSetBucketVersioning(o.context, o.UserAPISetBucketVersioningHandler)
+	o.handlers["PUT"]["/buckets/{bucket_name}/versioning"] = user_api.NewSetBucketVersioning(o.context, o.UserAPISetBucketVersioningHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

@@ -372,7 +372,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-  /buckets/{bucket_name}/versioned:
+  /buckets/{bucket_name}/versioning:
     get:
       summary: Bucket Versioning
       operationId: GetBucketVersioning
@@ -1442,7 +1442,7 @@ definitions:
     properties:
       name:
         type: string
-      versioned:
+      versioning:
         type: boolean
   error:
     type: object

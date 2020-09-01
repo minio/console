@@ -64,7 +64,7 @@ class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
 
   addRecord(event: React.FormEvent) {
     event.preventDefault();
-    const { bucketName, addLoading } = this.state;
+    const { bucketName, addLoading, versioned } = this.state;
     if (addLoading) {
       return;
     }
@@ -72,6 +72,7 @@ class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
       api
         .invoke("POST", "/api/v1/buckets", {
           name: bucketName,
+          versioning: versioned,
         })
         .then((res) => {
           this.setState(

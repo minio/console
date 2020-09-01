@@ -48,7 +48,7 @@ func NewGetBucketVersioning(ctx *middleware.Context, handler GetBucketVersioning
 	return &GetBucketVersioning{Context: ctx, Handler: handler}
 }
 
-/*GetBucketVersioning swagger:route GET /buckets/{bucket_name}/versioned UserAPI getBucketVersioning
+/*GetBucketVersioning swagger:route GET /buckets/{bucket_name}/versioning UserAPI getBucketVersioning
 
 Bucket Versioning
 

@@ -406,7 +406,7 @@ func init() {
         }
       }
     },
-    "/buckets/{bucket_name}/versioned": {
+    "/buckets/{bucket_name}/versioning": {
       "get": {
         "tags": [
           "UserAPI"
@@ -2913,7 +2913,7 @@ func init() {
         "name": {
           "type": "string"
         },
-        "versioned": {
+        "versioning": {
           "type": "boolean"
         }
       }
@@ -4370,7 +4370,7 @@ func init() {
         }
       }
     },
-    "/buckets/{bucket_name}/versioned": {
+    "/buckets/{bucket_name}/versioning": {
       "get": {
         "tags": [
           "UserAPI"
@@ -7394,7 +7394,7 @@ func init() {
         "name": {
           "type": "string"
         },
-        "versioned": {
+        "versioning": {
           "type": "boolean"
         }
       }
