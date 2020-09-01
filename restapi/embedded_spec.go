@@ -1536,7 +1536,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/remoteBucket"
+              "$ref": "#/definitions/createRemoteBucket"
             }
           }
         ],
@@ -2397,6 +2397,37 @@ func init() {
           "type": "string"
         },
         "value": {
+          "type": "string"
+        }
+      }
+    },
+    "createRemoteBucket": {
+      "required": [
+        "accessKey",
+        "secretKey",
+        "targetURL",
+        "sourceBucket",
+        "targetBucket"
+      ],
+      "properties": {
+        "accessKey": {
+          "type": "string",
+          "minLength": 3
+        },
+        "region": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string",
+          "minLength": 8
+        },
+        "sourceBucket": {
+          "type": "string"
+        },
+        "targetBucket": {
+          "type": "string"
+        },
+        "targetURL": {
           "type": "string"
         }
       }
@@ -5506,7 +5537,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/remoteBucket"
+              "$ref": "#/definitions/createRemoteBucket"
             }
           }
         ],
@@ -6884,6 +6915,37 @@ func init() {
           "type": "string"
         },
         "value": {
+          "type": "string"
+        }
+      }
+    },
+    "createRemoteBucket": {
+      "required": [
+        "accessKey",
+        "secretKey",
+        "targetURL",
+        "sourceBucket",
+        "targetBucket"
+      ],
+      "properties": {
+        "accessKey": {
+          "type": "string",
+          "minLength": 3
+        },
+        "region": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string",
+          "minLength": 8
+        },
+        "sourceBucket": {
+          "type": "string"
+        },
+        "targetBucket": {
+          "type": "string"
+        },
+        "targetURL": {
           "type": "string"
         }
       }

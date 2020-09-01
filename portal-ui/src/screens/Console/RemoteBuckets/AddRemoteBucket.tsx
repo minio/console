@@ -54,7 +54,7 @@ const AddRemoteBucket = ({
   const [sourceBucket, setSourceBucket] = useState("");
   const [targetURL, setTargetURL] = useState("");
   const [targetBucket, setTargetBucket] = useState("");
-  const [remoteARN, setRemoteARN] = useState("");
+  const [region, setRegion] = useState("");
 
   useEffect(() => {
     if (addLoading) {
@@ -69,8 +69,7 @@ const AddRemoteBucket = ({
       sourceBucket: sourceBucket,
       targetURL: targetURL,
       targetBucket: targetBucket,
-      remoteARN: remoteARN,
-      service: "replication",
+      region: region,
     };
 
     api
@@ -158,6 +157,7 @@ const AddRemoteBucket = ({
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setTargetURL(e.target.value);
                 }}
+                placeholder="https://play.min.io:9000"
                 label="Target URL"
                 value={targetURL}
               />
@@ -175,13 +175,13 @@ const AddRemoteBucket = ({
             </Grid>
             <Grid item xs={12}>
               <InputBoxWrapper
-                id="remoteARN"
-                name="remoteARN"
+                id="region"
+                name="region"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setRemoteARN(e.target.value);
+                  setRegion(e.target.value);
                 }}
-                label="Remote ARN"
-                value={remoteARN}
+                label="Region"
+                value={region}
               />
             </Grid>
           </Grid>

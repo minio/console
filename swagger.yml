@@ -1066,7 +1066,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: "#/definitions/remoteBucket"
+            $ref: "#/definitions/createRemoteBucket"
       responses:
         201:
           description: A successful response.
@@ -1999,6 +1999,28 @@ definitions:
       service:
         type: string
         enum: [replication]
+  createRemoteBucket:
+    required:
+      - accessKey
+      - secretKey
+      - targetURL
+      - sourceBucket
+      - targetBucket
+    properties:
+      accessKey:
+        type: string
+        minLength: 3
+      secretKey:
+        type: string
+        minLength: 8
+      targetURL:
+        type: string
+      sourceBucket:
+        type: string
+      targetBucket:
+        type: string
+      region:
+        type: string
   listRemoteBucketsResponse:
     type: object
     properties:

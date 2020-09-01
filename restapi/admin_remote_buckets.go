@@ -20,13 +20,15 @@ import (
 	"context"
 	"errors"
 	"log"
+	"net/url"
+	"strconv"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/user_api"
-	mauth "github.com/minio/minio/pkg/auth"
+	"github.com/minio/minio/pkg/auth"
 	"github.com/minio/minio/pkg/madmin"
 )
 
@@ -182,17 +184,34 @@ func deleteRemoteBucket(ctx context.Context, client MinioAdmin, sourceBucketName
 	return client.removeRemoteBucket(ctx, sourceBucketName, arn)
 }
 
-func addRemoteBucket(ctx context.Context, client MinioAdmin, params models.RemoteBucket) error {
-	remoteBucket := &madmin.BucketTarget{
-		SourceBucket: *params.SourceBucket,
-		Endpoint:     params.TargetURL,
-		Credentials: &mauth.Credentials{
-			SecretKey: params.SecretKey,
-			AccessKey: *params.AccessKey,
-		},
-		TargetBucket: params.TargetBucket,
-		Arn:          *params.RemoteARN,
+func addRemoteBucket(ctx context.Context, client MinioAdmin, params models.CreateRemoteBucket) error {
+	TargetURL := *params.TargetURL
+	accessKey := *params.AccessKey
+	secretKey := *params.SecretKey
+	u, err := url.Parse(TargetURL)
+	if err != nil {
+		return errors.New("malformed Remote target URL")
 	}
-	_, err := client.addRemoteBucket(ctx, *params.SourceBucket, remoteBucket)
+	secure := u.Scheme == "https"
+	host := u.Host
+	if u.Port() == "" {
+		port := 80
+		if secure {
+			port = 443
+		}
+		host = host + ":" + strconv.Itoa(port)
+	}
+	creds := &auth.Credentials{AccessKey: accessKey, SecretKey: secretKey}
+	remoteBucket := &madmin.BucketTarget{
+		TargetBucket: *params.TargetBucket,
+		Secure:       secure,
+		Credentials:  creds,
+		Endpoint:     host,
+		Path:         "",
+		API:          "s3v4",
+		Type:         "replication",
+		Region:       params.Region,
+	}
+	_, err = client.addRemoteBucket(ctx, *params.SourceBucket, remoteBucket)
 	return err
 }
