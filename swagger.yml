@@ -330,6 +330,49 @@ paths:
       tags:
         - UserAPI
 
+  /buckets/{bucket_name}/replication:
+    get:
+      summary: Bucket Replication
+      operationId: GetBucketReplication
+      parameters:
+          - name: bucket_name
+            in: path
+            required: true
+            type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucketReplicationResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    put:
+      summary: Set Bucket Replication
+      operationId: CreateBucketReplication
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/setBucketReplication"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /service-accounts:
     get:
       summary: List User's Service Accounts
@@ -1220,7 +1263,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-    put: 
+    put:
       summary: Tenant Update Zones
       operationId: TenantUpdateZones
       parameters:
@@ -1298,7 +1341,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-  
+
   /cluster/resources:
     get:
       summary: Get Cluster Resources
@@ -1600,6 +1643,59 @@ definitions:
         $ref: "#/definitions/notificationConfig"
       ignoreExisting:
         type: boolean
+  bucketReplicationRuleMarker:
+    type: object
+    properties:
+      status:
+        type: string
+        enum:
+          - Enabled
+          - Disabled
+  bucketReplicationDestination:
+    type: object
+    properties:
+      bucket:
+        type: string
+  bucketReplicationRule:
+    type: object
+    properties:
+      id:
+        type: string
+      status:
+        type: string
+        enum:
+          - Enabled
+          - Disabled
+      priority:
+        type: integer
+      delete_marker_replication:
+        $ref: "#/definitions/bucketReplicationRuleMarker"
+      destination:
+        $ref: "#/definitions/bucketReplicationDestination"
+
+  bucketReplicationResponse:
+    type: object
+    properties:
+      op:
+        type: string
+      status:
+        type: string
+      url:
+        type: string
+    # missimng
+    #  "Filter": {
+    #   "And": {},
+    #   "Tag": {}
+    #  }
+    # }
+    #}
+  setBucketReplication:
+    type: object
+    properties:
+      arn:
+        type: string
+      destination_bucket:
+        type: string
   listBucketEventsResponse:
     type: object
     properties:
@@ -1947,7 +2043,7 @@ definitions:
         $ref: "#/definitions/imageRegistry"
       image_pull_secret:
         type: string
-  
+
   imageRegistry:
     type: object
     required:
@@ -1961,7 +2057,7 @@ definitions:
         type: string
       password:
         type: string
-        
+
   createTenantRequest:
     type: object
     required:
@@ -2302,14 +2398,14 @@ definitions:
           type: string
       type: object
     type: array
-  
+
   zoneTolerationSeconds:
     description: TolerationSeconds represents the period of
-            time the toleration (which must be of effect NoExecute,
-            otherwise this field is ignored) tolerates the taint.
-            By default, it is not set, which means tolerate the taint
-            forever (do not evict). Zero and negative values will
-            be treated as 0 (evict immediately) by the system.
+      time the toleration (which must be of effect NoExecute,
+      otherwise this field is ignored) tolerates the taint.
+      By default, it is not set, which means tolerate the taint
+      forever (do not evict). Zero and negative values will
+      be treated as 0 (evict immediately) by the system.
     type: object
     required:
       - seconds
@@ -2685,13 +2781,13 @@ definitions:
       used:
         type: integer
         format: int64
-  
+
   deleteTenantRequest:
     type: object
     properties:
       delete_pvcs:
         type: boolean
-  
+
   zoneUpdateRequest:
     type: object
     required:
@@ -2709,7 +2805,7 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/nodeInfo"
-  
+
   nodeInfo:
     type: object
     properties:
@@ -2720,18 +2816,18 @@ definitions:
       allocatable_resources:
         type: object
         additionalProperties:
-            type: integer
-            format: int64
+          type: integer
+          format: int64
         description: Represents the resources of a node that are available for scheduling.
       total_resources:
         type: object
         additionalProperties:
-            type: integer
-            format: int64
+          type: integer
+          format: int64
         description: Represents the total resources of a node.
-          
+
   nodeTaints:
-    type: object 
+    type: object
     properties:
       no_schedule:
         type: array
