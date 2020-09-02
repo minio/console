@@ -26,17 +26,23 @@ import (
 	"errors"
 	"net/url"
 	golangswaggerpaths "path"
+
+	"github.com/go-openapi/swag"
 )
 
-// GetClusterResourcesURL generates an URL for the get cluster resources operation
-type GetClusterResourcesURL struct {
+// GetMaxAllocatableMemURL generates an URL for the get max allocatable mem operation
+type GetMaxAllocatableMemURL struct {
+	NumNodes int32
+
 	_basePath string
+	// avoid unkeyed usage
+	_ struct{}
 }
 
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *GetClusterResourcesURL) WithBasePath(bp string) *GetClusterResourcesURL {
+func (o *GetMaxAllocatableMemURL) WithBasePath(bp string) *GetMaxAllocatableMemURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -44,15 +50,15 @@ func (o *GetClusterResourcesURL) WithBasePath(bp string) *GetClusterResourcesURL
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *GetClusterResourcesURL) SetBasePath(bp string) {
+func (o *GetMaxAllocatableMemURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *GetClusterResourcesURL) Build() (*url.URL, error) {
+func (o *GetMaxAllocatableMemURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/cluster/resources"
+	var _path = "/cluster/max-allocatable-memory"
 
 	_basePath := o._basePath
 	if _basePath == "" {
@@ -60,11 +66,20 @@ func (o *GetClusterResourcesURL) Build() (*url.URL, error) {
 	}
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
 
+	qs := make(url.Values)
+
+	numNodesQ := swag.FormatInt32(o.NumNodes)
+	if numNodesQ != "" {
+		qs.Set("num_nodes", numNodesQ)
+	}
+
+	_result.RawQuery = qs.Encode()
+
 	return &_result, nil
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *GetClusterResourcesURL) Must(u *url.URL, err error) *url.URL {
+func (o *GetMaxAllocatableMemURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -75,17 +90,17 @@ func (o *GetClusterResourcesURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *GetClusterResourcesURL) String() string {
+func (o *GetMaxAllocatableMemURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *GetClusterResourcesURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *GetMaxAllocatableMemURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on GetClusterResourcesURL")
+		return nil, errors.New("scheme is required for a full url on GetMaxAllocatableMemURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on GetClusterResourcesURL")
+		return nil, errors.New("host is required for a full url on GetMaxAllocatableMemURL")
 	}
 
 	base, err := o.Build()
@@ -99,6 +114,6 @@ func (o *GetClusterResourcesURL) BuildFull(scheme, host string) (*url.URL, error
 }
 
 // StringFull returns the string representation of a complete url
-func (o *GetClusterResourcesURL) StringFull(scheme, host string) string {
+func (o *GetMaxAllocatableMemURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

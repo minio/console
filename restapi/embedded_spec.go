@@ -437,18 +437,28 @@ func init() {
         }
       }
     },
-    "/cluster/resources": {
+    "/cluster/max-allocatable-memory": {
       "get": {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Get Cluster Resources",
-        "operationId": "GetClusterResources",
+        "summary": "Get maximum allocatable memory for given number of nodes",
+        "operationId": "GetMaxAllocatableMem",
+        "parameters": [
+          {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32",
+            "name": "num_nodes",
+            "in": "query",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/clusterResources"
+              "$ref": "#/definitions/maxAllocatableMemResponse"
             }
           },
           "default": {
@@ -2044,17 +2054,6 @@ func init() {
         }
       }
     },
-    "clusterResources": {
-      "type": "object",
-      "properties": {
-        "nodes": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/nodeInfo"
-          }
-        }
-      }
-    },
     "configDescription": {
       "type": "object",
       "properties": {
@@ -2594,30 +2593,12 @@ func init() {
         }
       }
     },
-    "nodeInfo": {
+    "maxAllocatableMemResponse": {
       "type": "object",
       "properties": {
-        "allocatable_resources": {
-          "description": "Represents the resources of a node that are available for scheduling.",
-          "type": "object",
-          "additionalProperties": {
-            "type": "integer",
-            "format": "int64"
-          }
-        },
-        "name": {
-          "type": "string"
-        },
-        "taints": {
-          "$ref": "#/definitions/nodeTaints"
-        },
-        "total_resources": {
-          "description": "Represents the total resources of a node.",
-          "type": "object",
-          "additionalProperties": {
-            "type": "integer",
-            "format": "int64"
-          }
+        "max_memory": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -2681,29 +2662,6 @@ func init() {
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "nodeTaints": {
-      "type": "object",
-      "properties": {
-        "no_execute": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "no_schedule": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "prefer_no_schedule": {
-          "type": "array",
-          "items": {
-            "type": "string"
           }
         }
       }
@@ -4019,18 +3977,28 @@ func init() {
         }
       }
     },
-    "/cluster/resources": {
+    "/cluster/max-allocatable-memory": {
       "get": {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Get Cluster Resources",
-        "operationId": "GetClusterResources",
+        "summary": "Get maximum allocatable memory for given number of nodes",
+        "operationId": "GetMaxAllocatableMem",
+        "parameters": [
+          {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32",
+            "name": "num_nodes",
+            "in": "query",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/clusterResources"
+              "$ref": "#/definitions/maxAllocatableMemResponse"
             }
           },
           "default": {
@@ -6143,17 +6111,6 @@ func init() {
         }
       }
     },
-    "clusterResources": {
-      "type": "object",
-      "properties": {
-        "nodes": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/nodeInfo"
-          }
-        }
-      }
-    },
     "configDescription": {
       "type": "object",
       "properties": {
@@ -6693,30 +6650,12 @@ func init() {
         }
       }
     },
-    "nodeInfo": {
+    "maxAllocatableMemResponse": {
       "type": "object",
       "properties": {
-        "allocatable_resources": {
-          "description": "Represents the resources of a node that are available for scheduling.",
-          "type": "object",
-          "additionalProperties": {
-            "type": "integer",
-            "format": "int64"
-          }
-        },
-        "name": {
-          "type": "string"
-        },
-        "taints": {
-          "$ref": "#/definitions/nodeTaints"
-        },
-        "total_resources": {
-          "description": "Represents the total resources of a node.",
-          "type": "object",
-          "additionalProperties": {
-            "type": "integer",
-            "format": "int64"
-          }
+        "max_memory": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -6736,29 +6675,6 @@ func init() {
           "type": "array",
           "items": {
             "$ref": "#/definitions/NodeSelectorTermMatchFieldsItems0"
-          }
-        }
-      }
-    },
-    "nodeTaints": {
-      "type": "object",
-      "properties": {
-        "no_execute": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "no_schedule": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "prefer_no_schedule": {
-          "type": "array",
-          "items": {
-            "type": "string"
           }
         }
       }
