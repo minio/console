@@ -1202,6 +1202,62 @@ paths:
       tags:
         - AdminAPI
 
+  /namespaces/{namespace}/tenants/{tenant}/certificates:
+    put:
+      summary: Tenant Update Certificates
+      operationId: TenantUpdateCertificate
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/tlsConfiguration"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /namespaces/{namespace}/tenants/{tenant}/encryption:
+    put:
+      summary: Tenant Update Encryption
+      operationId: TenantUpdateEncryption
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/encryptionConfiguration"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
   /namespaces/{namespace}/resourcequotas/{resource-quota-name}:
     get:
       summary: Get Resource Quota

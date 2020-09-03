@@ -42,7 +42,7 @@ func registerResourceQuotaHandlers(api *operations.ConsoleAPI) {
 	})
 }
 
-func getResourceQuota(ctx context.Context, client K8sClient, namespace, resourcequota string) (*models.ResourceQuota, error) {
+func getResourceQuota(ctx context.Context, client K8sClientI, namespace, resourcequota string) (*models.ResourceQuota, error) {
 	resourceQuota, err := client.getResourceQuota(ctx, namespace, resourcequota, metav1.GetOptions{})
 	if err != nil {
 		return nil, err

@@ -25,10 +25,10 @@ import (
 	types "k8s.io/apimachinery/pkg/types"
 )
 
-// OperatorClient interface with all functions to be implemented
-// by mock when testing, it should include all OperatorClient respective api calls
+// OperatorClientI interface with all functions to be implemented
+// by mock when testing, it should include all OperatorClientI respective api calls
 // that are used within this project.
-type OperatorClient interface {
+type OperatorClientI interface {
 	TenantDelete(ctx context.Context, namespace string, instanceName string, options metav1.DeleteOptions) error
 	TenantGet(ctx context.Context, namespace string, instanceName string, options metav1.GetOptions) (*v1.Tenant, error)
 	TenantPatch(ctx context.Context, namespace string, instanceName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error)

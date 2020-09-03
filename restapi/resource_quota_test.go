@@ -48,7 +48,7 @@ func Test_ResourceQuota(t *testing.T) {
 	kClient := k8sClientMock{}
 	type args struct {
 		ctx    context.Context
-		client K8sClient
+		client K8sClientI
 	}
 	tests := []struct {
 		name              string

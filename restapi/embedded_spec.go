@@ -1076,6 +1076,90 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/certificates": {
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Tenant Update Certificates",
+        "operationId": "TenantUpdateCertificate",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/tlsConfiguration"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/encryption": {
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Tenant Update Encryption",
+        "operationId": "TenantUpdateEncryption",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/encryptionConfiguration"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/usage": {
       "get": {
         "tags": [
@@ -4605,6 +4689,90 @@ func init() {
         ],
         "responses": {
           "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/certificates": {
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Tenant Update Certificates",
+        "operationId": "TenantUpdateCertificate",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/tlsConfiguration"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/encryption": {
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Tenant Update Encryption",
+        "operationId": "TenantUpdateEncryption",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/encryptionConfiguration"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
             "description": "A successful response."
           },
           "default": {

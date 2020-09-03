@@ -88,7 +88,7 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 	kClient := k8sClientMock{}
 	type args struct {
 		ctx         context.Context
-		client      K8sClient
+		client      K8sClientI
 		namespace   string
 		tenantName  string
 		serviceName string
@@ -339,7 +339,7 @@ func Test_deleteTenantAction(t *testing.T) {
 	opClient := opClientMock{}
 	type args struct {
 		ctx              context.Context
-		operatorClient   OperatorClient
+		operatorClient   OperatorClientI
 		nameSpace        string
 		tenantName       string
 		deletePvcs       bool
@@ -532,7 +532,7 @@ func Test_TenantAddZone(t *testing.T) {
 
 	type args struct {
 		ctx             context.Context
-		operatorClient  OperatorClient
+		operatorClient  OperatorClientI
 		nameSpace       string
 		mockTenantPatch func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error)
 		mockTenantGet   func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error)
@@ -706,7 +706,7 @@ func Test_UpdateTenantAction(t *testing.T) {
 
 	type args struct {
 		ctx               context.Context
-		operatorClient    OperatorClient
+		operatorClient    OperatorClientI
 		httpCl            cluster.HTTPClientI
 		nameSpace         string
 		tenantName        string

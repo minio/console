@@ -24,13 +24,16 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-// K8sClient interface with all functions to be implemented
-// by mock when testing, it should include all K8sClient respective api calls
+// K8sClientI interface with all functions to be implemented
+// by mock when testing, it should include all K8sClientI respective api calls
 // that are used within this project.
-type K8sClient interface {
+type K8sClientI interface {
 	getResourceQuota(ctx context.Context, namespace, resource string, opts metav1.GetOptions) (*v1.ResourceQuota, error)
 	getSecret(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*v1.Secret, error)
 	getService(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*v1.Service, error)
+	deletePodCollection(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error
+	deleteSecret(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error
+	createSecret(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error)
 }
 
 // Interface implementation
@@ -50,4 +53,16 @@ func (c *k8sClient) getSecret(ctx context.Context, namespace, secretName string,
 
 func (c *k8sClient) getService(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*v1.Service, error) {
 	return c.client.CoreV1().Services(namespace).Get(ctx, serviceName, opts)
+}
+
+func (c *k8sClient) deletePodCollection(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
+	return c.client.CoreV1().Pods(namespace).DeleteCollection(ctx, opts, listOpts)
+}
+
+func (c *k8sClient) deleteSecret(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error {
+	return c.client.CoreV1().Secrets(namespace).Delete(ctx, name, opts)
+}
+
+func (c *k8sClient) createSecret(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error) {
+	return c.client.CoreV1().Secrets(namespace).Create(ctx, secret, opts)
 }
