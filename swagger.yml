@@ -1838,11 +1838,15 @@ definitions:
           $ref: "#/definitions/zone"
       image:
         type: string
+      console_image:
+        type: string
       namespace:
         type: string
       total_size:
         type: integer
         format: int64
+      enable_prometheus:
+        type: boolean
 
   tenantUsage:
     type: object
@@ -1902,6 +1906,8 @@ definitions:
         $ref: "#/definitions/imageRegistry"
       image_pull_secret:
         type: string
+      enable_prometheus:
+        type: boolean
   
   imageRegistry:
     type: object

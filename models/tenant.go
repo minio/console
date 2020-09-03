@@ -35,6 +35,9 @@ import (
 // swagger:model tenant
 type Tenant struct {
 
+	// console image
+	ConsoleImage string `json:"console_image,omitempty"`
+
 	// creation date
 	CreationDate string `json:"creation_date,omitempty"`
 
@@ -43,6 +46,9 @@ type Tenant struct {
 
 	// deletion date
 	DeletionDate string `json:"deletion_date,omitempty"`
+
+	// enable prometheus
+	EnablePrometheus bool `json:"enable_prometheus,omitempty"`
 
 	// image
 	Image string `json:"image,omitempty"`
