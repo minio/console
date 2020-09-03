@@ -30,40 +30,40 @@ import (
 	"github.com/minio/console/models"
 )
 
-// GetClusterResourcesHandlerFunc turns a function with the right signature into a get cluster resources handler
-type GetClusterResourcesHandlerFunc func(GetClusterResourcesParams, *models.Principal) middleware.Responder
+// GetMaxAllocatableMemHandlerFunc turns a function with the right signature into a get max allocatable mem handler
+type GetMaxAllocatableMemHandlerFunc func(GetMaxAllocatableMemParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn GetClusterResourcesHandlerFunc) Handle(params GetClusterResourcesParams, principal *models.Principal) middleware.Responder {
+func (fn GetMaxAllocatableMemHandlerFunc) Handle(params GetMaxAllocatableMemParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
-// GetClusterResourcesHandler interface for that can handle valid get cluster resources params
-type GetClusterResourcesHandler interface {
-	Handle(GetClusterResourcesParams, *models.Principal) middleware.Responder
+// GetMaxAllocatableMemHandler interface for that can handle valid get max allocatable mem params
+type GetMaxAllocatableMemHandler interface {
+	Handle(GetMaxAllocatableMemParams, *models.Principal) middleware.Responder
 }
 
-// NewGetClusterResources creates a new http.Handler for the get cluster resources operation
-func NewGetClusterResources(ctx *middleware.Context, handler GetClusterResourcesHandler) *GetClusterResources {
-	return &GetClusterResources{Context: ctx, Handler: handler}
+// NewGetMaxAllocatableMem creates a new http.Handler for the get max allocatable mem operation
+func NewGetMaxAllocatableMem(ctx *middleware.Context, handler GetMaxAllocatableMemHandler) *GetMaxAllocatableMem {
+	return &GetMaxAllocatableMem{Context: ctx, Handler: handler}
 }
 
-/*GetClusterResources swagger:route GET /cluster/resources AdminAPI getClusterResources
+/*GetMaxAllocatableMem swagger:route GET /cluster/max-allocatable-memory AdminAPI getMaxAllocatableMem
 
-Get Cluster Resources
+Get maximum allocatable memory for given number of nodes
 
 */
-type GetClusterResources struct {
+type GetMaxAllocatableMem struct {
 	Context *middleware.Context
-	Handler GetClusterResourcesHandler
+	Handler GetMaxAllocatableMemHandler
 }
 
-func (o *GetClusterResources) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *GetMaxAllocatableMem) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		r = rCtx
 	}
-	var Params = NewGetClusterResourcesParams()
+	var Params = NewGetMaxAllocatableMemParams()
 
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {

@@ -114,8 +114,8 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIDeleteTenantHandler: admin_api.DeleteTenantHandlerFunc(func(params admin_api.DeleteTenantParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.DeleteTenant has not yet been implemented")
 		}),
-		AdminAPIGetClusterResourcesHandler: admin_api.GetClusterResourcesHandlerFunc(func(params admin_api.GetClusterResourcesParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.GetClusterResources has not yet been implemented")
+		AdminAPIGetMaxAllocatableMemHandler: admin_api.GetMaxAllocatableMemHandlerFunc(func(params admin_api.GetMaxAllocatableMemParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.GetMaxAllocatableMem has not yet been implemented")
 		}),
 		AdminAPIGetResourceQuotaHandler: admin_api.GetResourceQuotaHandlerFunc(func(params admin_api.GetResourceQuotaParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetResourceQuota has not yet been implemented")
@@ -311,8 +311,8 @@ type ConsoleAPI struct {
 	UserAPIDeleteServiceAccountHandler user_api.DeleteServiceAccountHandler
 	// AdminAPIDeleteTenantHandler sets the operation handler for the delete tenant operation
 	AdminAPIDeleteTenantHandler admin_api.DeleteTenantHandler
-	// AdminAPIGetClusterResourcesHandler sets the operation handler for the get cluster resources operation
-	AdminAPIGetClusterResourcesHandler admin_api.GetClusterResourcesHandler
+	// AdminAPIGetMaxAllocatableMemHandler sets the operation handler for the get max allocatable mem operation
+	AdminAPIGetMaxAllocatableMemHandler admin_api.GetMaxAllocatableMemHandler
 	// AdminAPIGetResourceQuotaHandler sets the operation handler for the get resource quota operation
 	AdminAPIGetResourceQuotaHandler admin_api.GetResourceQuotaHandler
 	// AdminAPIGetTenantUsageHandler sets the operation handler for the get tenant usage operation
@@ -511,8 +511,8 @@ func (o *ConsoleAPI) Validate() error {
 	if o.AdminAPIDeleteTenantHandler == nil {
 		unregistered = append(unregistered, "admin_api.DeleteTenantHandler")
 	}
-	if o.AdminAPIGetClusterResourcesHandler == nil {
-		unregistered = append(unregistered, "admin_api.GetClusterResourcesHandler")
+	if o.AdminAPIGetMaxAllocatableMemHandler == nil {
+		unregistered = append(unregistered, "admin_api.GetMaxAllocatableMemHandler")
 	}
 	if o.AdminAPIGetResourceQuotaHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetResourceQuotaHandler")
@@ -796,7 +796,7 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/cluster/resources"] = admin_api.NewGetClusterResources(o.context, o.AdminAPIGetClusterResourcesHandler)
+	o.handlers["GET"]["/cluster/max-allocatable-memory"] = admin_api.NewGetMaxAllocatableMem(o.context, o.AdminAPIGetMaxAllocatableMemHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
