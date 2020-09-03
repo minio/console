@@ -18,11 +18,9 @@ package restapi
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 
@@ -33,7 +31,7 @@ func registerServiceHandlers(api *operations.ConsoleAPI) {
 	// Restart Service
 	api.AdminAPIRestartServiceHandler = admin_api.RestartServiceHandlerFunc(func(params admin_api.RestartServiceParams, session *models.Principal) middleware.Responder {
 		if err := getRestartServiceResponse(session); err != nil {
-			return admin_api.NewRestartServiceDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return admin_api.NewRestartServiceDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewRestartServiceNoContent()
 	})
@@ -61,20 +59,18 @@ func serviceRestart(ctx context.Context, client MinioAdmin) error {
 }
 
 // getRestartServiceResponse performs serviceRestart()
-func getRestartServiceResponse(session *models.Principal) error {
+func getRestartServiceResponse(session *models.Principal) *models.Error {
 	ctx := context.Background()
 	mAdmin, err := newMAdminClient(session)
 	if err != nil {
-		log.Println("error creating Madmin Client:", err)
-		return err
+		return prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
 
 	if err := serviceRestart(ctx, adminClient); err != nil {
-		log.Println("error restarting service:", err)
-		return err
+		return prepareError(err)
 	}
 	return nil
 }

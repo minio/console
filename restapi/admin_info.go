@@ -18,11 +18,9 @@ package restapi
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/admin_api"
@@ -33,7 +31,7 @@ func registerAdminInfoHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPIAdminInfoHandler = admin_api.AdminInfoHandlerFunc(func(params admin_api.AdminInfoParams, session *models.Principal) middleware.Responder {
 		infoResp, err := getAdminInfoResponse(session)
 		if err != nil {
-			return admin_api.NewAdminInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return admin_api.NewAdminInfoDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewAdminInfoOK().WithPayload(infoResp)
 	})
@@ -72,11 +70,10 @@ func getAdminInfo(ctx context.Context, client MinioAdmin) (*usageInfo, error) {
 }
 
 // getAdminInfoResponse returns the response containing total buckets, objects and usage.
-func getAdminInfoResponse(session *models.Principal) (*models.AdminInfoResponse, error) {
+func getAdminInfoResponse(session *models.Principal) (*models.AdminInfoResponse, *models.Error) {
 	mAdmin, err := newMAdminClient(session)
 	if err != nil {
-		log.Println("error creating Madmin Client:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -87,8 +84,7 @@ func getAdminInfoResponse(session *models.Principal) (*models.AdminInfoResponse,
 	// serialize output
 	usage, err := getAdminInfo(ctx, adminClient)
 	if err != nil {
-		log.Println("error getting information:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	sessionResp := &models.AdminInfoResponse{
 		Buckets: usage.Buckets,

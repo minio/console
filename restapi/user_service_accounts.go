@@ -19,12 +19,10 @@ package restapi
 import (
 	"bytes"
 	"context"
-	"log"
 	"strings"
 	"time"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/user_api"
@@ -36,7 +34,7 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 	api.UserAPICreateServiceAccountHandler = user_api.CreateServiceAccountHandlerFunc(func(params user_api.CreateServiceAccountParams, session *models.Principal) middleware.Responder {
 		creds, err := getCreateServiceAccountResponse(session, params.Body)
 		if err != nil {
-			return user_api.NewCreateServiceAccountDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return user_api.NewCreateServiceAccountDefault(int(err.Code)).WithPayload(err)
 		}
 		return user_api.NewCreateServiceAccountCreated().WithPayload(creds)
 	})
@@ -44,7 +42,7 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 	api.UserAPIListUserServiceAccountsHandler = user_api.ListUserServiceAccountsHandlerFunc(func(params user_api.ListUserServiceAccountsParams, session *models.Principal) middleware.Responder {
 		serviceAccounts, err := getUserServiceAccountsResponse(session)
 		if err != nil {
-			return user_api.NewListUserServiceAccountsDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return user_api.NewListUserServiceAccountsDefault(int(err.Code)).WithPayload(err)
 		}
 		return user_api.NewListUserServiceAccountsOK().WithPayload(serviceAccounts)
 	})
@@ -52,7 +50,7 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 	// Delete a User's service account
 	api.UserAPIDeleteServiceAccountHandler = user_api.DeleteServiceAccountHandlerFunc(func(params user_api.DeleteServiceAccountParams, session *models.Principal) middleware.Responder {
 		if err := getDeleteServiceAccountResponse(session, params.AccessKey); err != nil {
-			return user_api.NewDeleteServiceAccountDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return user_api.NewDeleteServiceAccountDefault(int(err.Code)).WithPayload(err)
 		}
 		return user_api.NewDeleteServiceAccountNoContent()
 	})
@@ -79,14 +77,13 @@ func createServiceAccount(ctx context.Context, userClient MinioAdmin, policy str
 // getCreateServiceAccountResponse creates a service account with the defined policy for the user that
 //   is requestingit ,it first gets the credentials of the user and creates a client which is going to
 //   make the call to create the Service Account
-func getCreateServiceAccountResponse(session *models.Principal, serviceAccount *models.ServiceAccountRequest) (*models.ServiceAccountCreds, error) {
+func getCreateServiceAccountResponse(session *models.Principal, serviceAccount *models.ServiceAccountRequest) (*models.ServiceAccountCreds, *models.Error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
 	userAdmin, err := newMAdminClient(session)
 	if err != nil {
-		log.Println("error creating user Client:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	// create a MinIO user Admin Client interface implementation
 	// defining the client to be used
@@ -94,8 +91,7 @@ func getCreateServiceAccountResponse(session *models.Principal, serviceAccount *
 
 	saCreds, err := createServiceAccount(ctx, userAdminClient, serviceAccount.Policy)
 	if err != nil {
-		log.Println("error creating service account:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	return saCreds, nil
 }
@@ -115,14 +111,13 @@ func getUserServiceAccounts(ctx context.Context, userClient MinioAdmin) (models.
 
 // getUserServiceAccountsResponse authenticates the user and calls
 // getUserServiceAccounts to list the user's service accounts
-func getUserServiceAccountsResponse(session *models.Principal) (models.ServiceAccounts, error) {
+func getUserServiceAccountsResponse(session *models.Principal) (models.ServiceAccounts, *models.Error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
 	userAdmin, err := newMAdminClient(session)
 	if err != nil {
-		log.Println("error creating user Client:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	// create a MinIO user Admin Client interface implementation
 	// defining the client to be used
@@ -130,11 +125,9 @@ func getUserServiceAccountsResponse(session *models.Principal) (models.ServiceAc
 
 	serviceAccounts, err := getUserServiceAccounts(ctx, userAdminClient)
 	if err != nil {
-		log.Println("error listing user's service account:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	return serviceAccounts, nil
-
 }
 
 // deleteServiceAccount calls delete service account api
@@ -143,22 +136,20 @@ func deleteServiceAccount(ctx context.Context, userClient MinioAdmin, accessKey 
 }
 
 // getDeleteServiceAccountResponse authenticates the user and calls deleteServiceAccount
-func getDeleteServiceAccountResponse(session *models.Principal, accessKey string) error {
+func getDeleteServiceAccountResponse(session *models.Principal, accessKey string) *models.Error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
 	userAdmin, err := newMAdminClient(session)
 	if err != nil {
-		log.Println("error creating user Client:", err)
-		return err
+		return prepareError(err)
 	}
 	// create a MinIO user Admin Client interface implementation
 	// defining the client to be used
 	userAdminClient := adminClient{client: userAdmin}
 
 	if err := deleteServiceAccount(ctx, userAdminClient, accessKey); err != nil {
-		log.Println("error deleting user's service account:", err)
-		return err
+		return prepareError(err)
 	}
 	return nil
 }
