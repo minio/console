@@ -787,7 +787,7 @@ func setImageRegistry(ctx context.Context, tenantName string, req *models.ImageR
 			if err != nil {
 				return "", err
 			}
-			return "", nil
+			return pullSecretName, nil
 		}
 		return "", err
 	}
