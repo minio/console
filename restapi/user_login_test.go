@@ -100,7 +100,7 @@ func TestLoginOauth2Auth(t *testing.T) {
 		return nil, errors.New("error")
 	}
 	if _, err := loginOauth2Auth(ctx, identityProvider, mockCode, mockState); funcAssert.Error(err) {
-		funcAssert.Equal("an error occurred, please try again", err.Error())
+		funcAssert.Equal(errInvalidCredentials.Error(), err.Error())
 	}
 }
 

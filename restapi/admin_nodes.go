@@ -18,7 +18,6 @@ package restapi
 
 import (
 	"context"
-	"log"
 	"sort"
 
 	"github.com/minio/console/cluster"
@@ -26,7 +25,6 @@ import (
 	"errors"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/admin_api"
@@ -39,7 +37,7 @@ func registerNodesHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPIGetMaxAllocatableMemHandler = admin_api.GetMaxAllocatableMemHandlerFunc(func(params admin_api.GetMaxAllocatableMemParams, principal *models.Principal) middleware.Responder {
 		resp, err := getMaxAllocatableMemoryResponse(principal, params.NumNodes)
 		if err != nil {
-			return admin_api.NewGetMaxAllocatableMemDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return admin_api.NewGetMaxAllocatableMemDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewGetMaxAllocatableMemOK().WithPayload(resp)
 	})
@@ -123,19 +121,16 @@ func min(x, y int64) int64 {
 	return x
 }
 
-func getMaxAllocatableMemoryResponse(session *models.Principal, numNodes int32) (*models.MaxAllocatableMemResponse, error) {
+func getMaxAllocatableMemoryResponse(session *models.Principal, numNodes int32) (*models.MaxAllocatableMemResponse, *models.Error) {
 	ctx := context.Background()
 	client, err := cluster.K8sClient(session.SessionToken)
 	if err != nil {
-		log.Println("error getting k8sClient:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 
 	clusterResources, err := getMaxAllocatableMemory(ctx, client.CoreV1(), numNodes)
 	if err != nil {
-		log.Println("error getting cluster's resources:", err)
-		return nil, err
-
+		return nil, prepareError(err)
 	}
 	return clusterResources, nil
 }

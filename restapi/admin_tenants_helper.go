@@ -81,25 +81,25 @@ func tenantUpdateCertificates(ctx context.Context, operatorClient OperatorClient
 }
 
 // getTenantUpdateCertificatesResponse wrapper of tenantUpdateCertificates
-func getTenantUpdateCertificatesResponse(session *models.Principal, params admin_api.TenantUpdateCertificateParams) error {
+func getTenantUpdateCertificatesResponse(session *models.Principal, params admin_api.TenantUpdateCertificateParams) *models.Error {
 	ctx := context.Background()
 	// get Kubernetes Client
 	clientSet, err := cluster.K8sClient(session.SessionToken)
 	if err != nil {
-		return err
+		return prepareError(err, errorUnableToUpdateTenantCertificates)
 	}
 	k8sClient := k8sClient{
 		client: clientSet,
 	}
 	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
-		return err
+		return prepareError(err, errorUnableToUpdateTenantCertificates)
 	}
 	opClient := operatorClient{
 		client: opClientClientSet,
 	}
 	if err := tenantUpdateCertificates(ctx, &opClient, &k8sClient, params.Namespace, params); err != nil {
-		return err
+		return prepareError(err, errorUnableToUpdateTenantCertificates)
 	}
 	return nil
 }
@@ -157,25 +157,25 @@ func tenantUpdateEncryption(ctx context.Context, operatorClient OperatorClientI,
 }
 
 // getTenantUpdateEncryptionResponse is a wrapper for tenantUpdateEncryption
-func getTenantUpdateEncryptionResponse(session *models.Principal, params admin_api.TenantUpdateEncryptionParams) error {
+func getTenantUpdateEncryptionResponse(session *models.Principal, params admin_api.TenantUpdateEncryptionParams) *models.Error {
 	ctx := context.Background()
 	// get Kubernetes Client
 	clientSet, err := cluster.K8sClient(session.SessionToken)
 	if err != nil {
-		return err
+		return prepareError(err, errorUpdatingEncryptionConfig)
 	}
 	k8sClient := k8sClient{
 		client: clientSet,
 	}
 	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
-		return err
+		return prepareError(err, errorUpdatingEncryptionConfig)
 	}
 	opClient := operatorClient{
 		client: opClientClientSet,
 	}
 	if err := tenantUpdateEncryption(ctx, &opClient, &k8sClient, params.Namespace, params); err != nil {
-		return err
+		return prepareError(err, errorUpdatingEncryptionConfig)
 	}
 	return nil
 }

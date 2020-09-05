@@ -18,12 +18,10 @@ package restapi
 
 import (
 	"context"
-	"log"
 
 	"github.com/minio/console/cluster"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/admin_api"
@@ -35,7 +33,7 @@ func registerResourceQuotaHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPIGetResourceQuotaHandler = admin_api.GetResourceQuotaHandlerFunc(func(params admin_api.GetResourceQuotaParams, session *models.Principal) middleware.Responder {
 		resp, err := getResourceQuotaResponse(session, params)
 		if err != nil {
-			return admin_api.NewGetResourceQuotaDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return admin_api.NewGetResourceQuotaDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewGetResourceQuotaOK().WithPayload(resp)
 
@@ -68,20 +66,18 @@ func getResourceQuota(ctx context.Context, client K8sClientI, namespace, resourc
 	return &rq, nil
 }
 
-func getResourceQuotaResponse(session *models.Principal, params admin_api.GetResourceQuotaParams) (*models.ResourceQuota, error) {
+func getResourceQuotaResponse(session *models.Principal, params admin_api.GetResourceQuotaParams) (*models.ResourceQuota, *models.Error) {
 	ctx := context.Background()
 	client, err := cluster.K8sClient(session.SessionToken)
 	if err != nil {
-		log.Println("error getting k8sClient:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	k8sClient := &k8sClient{
 		client: client,
 	}
 	resourceQuota, err := getResourceQuota(ctx, k8sClient, params.Namespace, params.ResourceQuotaName)
 	if err != nil {
-		log.Println("error getting resource quota:", err)
-		return nil, err
+		return nil, prepareError(err)
 
 	}
 	return resourceQuota, nil

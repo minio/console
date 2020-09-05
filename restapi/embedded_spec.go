@@ -2320,7 +2320,7 @@ func init() {
       "properties": {
         "code": {
           "type": "integer",
-          "format": "int64"
+          "format": "int32"
         },
         "message": {
           "type": "string"
@@ -6461,7 +6461,7 @@ func init() {
       "properties": {
         "code": {
           "type": "integer",
-          "format": "int64"
+          "format": "int32"
         },
         "message": {
           "type": "string"

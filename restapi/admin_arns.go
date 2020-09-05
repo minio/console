@@ -18,11 +18,9 @@ package restapi
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/admin_api"
@@ -33,7 +31,7 @@ func registerAdminArnsHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPIArnListHandler = admin_api.ArnListHandlerFunc(func(params admin_api.ArnListParams, session *models.Principal) middleware.Responder {
 		arnsResp, err := getArnsResponse(session)
 		if err != nil {
-			return admin_api.NewArnListDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return admin_api.NewArnListDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewArnListOK().WithPayload(arnsResp)
 	})
@@ -53,11 +51,10 @@ func getArns(ctx context.Context, client MinioAdmin) (*models.ArnsResponse, erro
 }
 
 // getArnsResponse returns a list of active arns in the instance
-func getArnsResponse(session *models.Principal) (*models.ArnsResponse, error) {
+func getArnsResponse(session *models.Principal) (*models.ArnsResponse, *models.Error) {
 	mAdmin, err := newMAdminClient(session)
 	if err != nil {
-		log.Println("error creating Madmin Client:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -68,8 +65,7 @@ func getArnsResponse(session *models.Principal) (*models.ArnsResponse, error) {
 	// serialize output
 	arnsList, err := getArns(ctx, adminClient)
 	if err != nil {
-		log.Println("error getting arn list:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	return arnsList, nil
 }

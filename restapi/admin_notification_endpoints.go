@@ -19,11 +19,9 @@ package restapi
 import (
 	"context"
 	"errors"
-	"log"
 	"time"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/admin_api"
@@ -34,7 +32,7 @@ func registerAdminNotificationEndpointsHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPINotificationEndpointListHandler = admin_api.NotificationEndpointListHandlerFunc(func(params admin_api.NotificationEndpointListParams, session *models.Principal) middleware.Responder {
 		notifEndpoints, err := getNotificationEndpointsResponse(session)
 		if err != nil {
-			return admin_api.NewNotificationEndpointListDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return admin_api.NewNotificationEndpointListDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewNotificationEndpointListOK().WithPayload(notifEndpoints)
 	})
@@ -42,7 +40,7 @@ func registerAdminNotificationEndpointsHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPIAddNotificationEndpointHandler = admin_api.AddNotificationEndpointHandlerFunc(func(params admin_api.AddNotificationEndpointParams, session *models.Principal) middleware.Responder {
 		notifEndpoints, err := getAddNotificationEndpointResponse(session, &params)
 		if err != nil {
-			return admin_api.NewAddNotificationEndpointDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return admin_api.NewAddNotificationEndpointDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewAddNotificationEndpointCreated().WithPayload(notifEndpoints)
 	})
@@ -78,11 +76,10 @@ func getNotificationEndpoints(ctx context.Context, client MinioAdmin) (*models.N
 }
 
 // getNotificationEndpointsResponse returns a list of notification endpoints in the instance
-func getNotificationEndpointsResponse(session *models.Principal) (*models.NotifEndpointResponse, error) {
+func getNotificationEndpointsResponse(session *models.Principal) (*models.NotifEndpointResponse, *models.Error) {
 	mAdmin, err := newMAdminClient(session)
 	if err != nil {
-		log.Println("error creating Madmin Client:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -93,8 +90,7 @@ func getNotificationEndpointsResponse(session *models.Principal) (*models.NotifE
 	// serialize output
 	notfEndpointResp, err := getNotificationEndpoints(ctx, adminClient)
 	if err != nil {
-		log.Println("error getting notification endpoint list:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	return notfEndpointResp, nil
 }
@@ -150,11 +146,10 @@ func addNotificationEndpoint(ctx context.Context, client MinioAdmin, params *adm
 }
 
 // getNotificationEndpointsResponse returns a list of notification endpoints in the instance
-func getAddNotificationEndpointResponse(session *models.Principal, params *admin_api.AddNotificationEndpointParams) (*models.NotificationEndpoint, error) {
+func getAddNotificationEndpointResponse(session *models.Principal, params *admin_api.AddNotificationEndpointParams) (*models.NotificationEndpoint, *models.Error) {
 	mAdmin, err := newMAdminClient(session)
 	if err != nil {
-		log.Println("error creating Madmin Client:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -165,8 +160,7 @@ func getAddNotificationEndpointResponse(session *models.Principal, params *admin
 	// serialize output
 	notfEndpointResp, err := addNotificationEndpoint(ctx, adminClient, params)
 	if err != nil {
-		log.Println("error getting notification endpoint list:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	return notfEndpointResp, nil
 }
