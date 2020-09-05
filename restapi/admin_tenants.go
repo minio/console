@@ -119,7 +119,6 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPITenantAddZoneHandler = admin_api.TenantAddZoneHandlerFunc(func(params admin_api.TenantAddZoneParams, session *models.Principal) middleware.Responder {
 		err := getTenantAddZoneResponse(session, params)
 		if err != nil {
-			log.Println(err)
 			return admin_api.NewTenantAddZoneDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewTenantAddZoneCreated()
@@ -129,7 +128,6 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPIGetTenantUsageHandler = admin_api.GetTenantUsageHandlerFunc(func(params admin_api.GetTenantUsageParams, session *models.Principal) middleware.Responder {
 		payload, err := getTenantUsageResponse(session, params)
 		if err != nil {
-			log.Println(err)
 			return admin_api.NewGetTenantUsageDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewGetTenantUsageOK().WithPayload(payload)
@@ -139,7 +137,6 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPITenantUpdateZonesHandler = admin_api.TenantUpdateZonesHandlerFunc(func(params admin_api.TenantUpdateZonesParams, session *models.Principal) middleware.Responder {
 		resp, err := getTenantUpdateZoneResponse(session, params)
 		if err != nil {
-			log.Println(err)
 			return admin_api.NewTenantUpdateZonesDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewTenantUpdateZonesOK().WithPayload(resp)
@@ -149,7 +146,6 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPITenantUpdateCertificateHandler = admin_api.TenantUpdateCertificateHandlerFunc(func(params admin_api.TenantUpdateCertificateParams, session *models.Principal) middleware.Responder {
 		err := getTenantUpdateCertificatesResponse(session, params)
 		if err != nil {
-			log.Println(err)
 			return admin_api.NewGetTenantUsageDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewTenantUpdateCertificateCreated()
@@ -159,7 +155,6 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPITenantUpdateEncryptionHandler = admin_api.TenantUpdateEncryptionHandlerFunc(func(params admin_api.TenantUpdateEncryptionParams, session *models.Principal) middleware.Responder {
 		err := getTenantUpdateEncryptionResponse(session, params)
 		if err != nil {
-			log.Println(err)
 			return admin_api.NewGetTenantUsageDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewTenantUpdateCertificateCreated()
