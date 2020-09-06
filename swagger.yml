@@ -1828,6 +1828,8 @@ definitions:
         type: string
       creation_date:
         type: string
+      deletion_date:
+        type: string
       currentState:
         type: string
       zones:
@@ -1866,6 +1868,8 @@ definitions:
       volume_count:
         type: integer
       creation_date:
+        type: string
+      deletion_date:
         type: string
       currentState:
         type: string
