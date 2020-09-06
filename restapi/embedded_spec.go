@@ -3150,6 +3150,9 @@ func init() {
     "tenant": {
       "type": "object",
       "properties": {
+        "console_image": {
+          "type": "string"
+        },
         "creation_date": {
           "type": "string"
         },
@@ -3158,6 +3161,9 @@ func init() {
         },
         "deletion_date": {
           "type": "string"
+        },
+        "enable_prometheus": {
+          "type": "boolean"
         },
         "image": {
           "type": "string"
@@ -3262,6 +3268,9 @@ func init() {
         "console_image": {
           "type": "string",
           "pattern": "^((.*?)/(.*?):(.+))$"
+        },
+        "enable_prometheus": {
+          "type": "boolean"
         },
         "image": {
           "type": "string",
@@ -7231,6 +7240,9 @@ func init() {
     "tenant": {
       "type": "object",
       "properties": {
+        "console_image": {
+          "type": "string"
+        },
         "creation_date": {
           "type": "string"
         },
@@ -7239,6 +7251,9 @@ func init() {
         },
         "deletion_date": {
           "type": "string"
+        },
+        "enable_prometheus": {
+          "type": "boolean"
         },
         "image": {
           "type": "string"
@@ -7343,6 +7358,9 @@ func init() {
         "console_image": {
           "type": "string",
           "pattern": "^((.*?)/(.*?):(.+))$"
+        },
+        "enable_prometheus": {
+          "type": "boolean"
         },
         "image": {
           "type": "string",

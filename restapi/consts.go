@@ -50,3 +50,11 @@ const (
 	ConsoleSecureFeaturePolicy                   = "CONSOLE_SECURE_FEATURE_POLICY"
 	ConsoleSecureExpectCTHeader                  = "CONSOLE_SECURE_EXPECT_CT_HEADER"
 )
+
+// prometheus annotations
+
+const (
+	prometheusPath   = "prometheus.io/path"
+	prometheusPort   = "prometheus.io/port"
+	prometheusScrape = "prometheus.io/scrape"
+)

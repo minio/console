@@ -257,9 +257,27 @@ func getTenant(ctx context.Context, operatorClient OperatorClientI, namespace, t
 	return minInst, nil
 }
 
+func isPrometheusEnabled(annotations map[string]string) bool {
+	if annotations == nil {
+		return false
+	}
+	// if one of the following prometheus annotations are not present
+	// we consider the tenant as not integrated with prometheus
+	if _, ok := annotations[prometheusPath]; !ok {
+		return false
+	}
+	if _, ok := annotations[prometheusPort]; !ok {
+		return false
+	}
+	if _, ok := annotations[prometheusScrape]; !ok {
+		return false
+	}
+	return true
+}
+
 func getTenantInfo(tenant *operator.Tenant) *models.Tenant {
 	var zones []*models.Zone
-
+	consoleImage := ""
 	var totalSize int64
 	for _, z := range tenant.Spec.Zones {
 		zones = append(zones, parseTenantZone(&z))
@@ -271,15 +289,27 @@ func getTenantInfo(tenant *operator.Tenant) *models.Tenant {
 		deletion = tenant.ObjectMeta.DeletionTimestamp.String()
 	}
 
+	if tenant.HasConsoleEnabled() {
+		consoleImage = tenant.Spec.Console.Image
+	}
+
+	if tenant.Spec.Metadata == nil {
+		tenant.Spec.Metadata = &metav1.ObjectMeta{
+			Annotations: map[string]string{},
+		}
+	}
+
 	return &models.Tenant{
-		CreationDate: tenant.ObjectMeta.CreationTimestamp.String(),
-		DeletionDate: deletion,
-		Name:         tenant.Name,
-		TotalSize:    totalSize,
-		CurrentState: tenant.Status.CurrentState,
-		Zones:        zones,
-		Namespace:    tenant.ObjectMeta.Namespace,
-		Image:        tenant.Spec.Image,
+		CreationDate:     tenant.ObjectMeta.CreationTimestamp.String(),
+		DeletionDate:     deletion,
+		Name:             tenant.Name,
+		TotalSize:        totalSize,
+		CurrentState:     tenant.Status.CurrentState,
+		Zones:            zones,
+		Namespace:        tenant.ObjectMeta.Namespace,
+		Image:            tenant.Spec.Image,
+		ConsoleImage:     consoleImage,
+		EnablePrometheus: isPrometheusEnabled(tenant.Spec.Metadata.Annotations),
 	}
 }
 
@@ -695,9 +725,9 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 
 	// prometheus annotations support
 	if tenantReq.EnablePrometheus != nil && *tenantReq.EnablePrometheus && minInst.Spec.Metadata != nil && minInst.Spec.Metadata.Annotations != nil {
-		minInst.Spec.Metadata.Annotations["prometheus.io/path"] = "/minio/prometheus/metrics"
-		minInst.Spec.Metadata.Annotations["prometheus.io/port"] = fmt.Sprint(operator.MinIOPort)
-		minInst.Spec.Metadata.Annotations["prometheus.io/scrape"] = "true"
+		minInst.Spec.Metadata.Annotations[prometheusPath] = "/minio/prometheus/metrics"
+		minInst.Spec.Metadata.Annotations[prometheusPort] = fmt.Sprint(operator.MinIOPort)
+		minInst.Spec.Metadata.Annotations[prometheusScrape] = "true"
 	}
 
 	// set console image if provided
@@ -831,6 +861,40 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClientI, cli
 		}
 	}
 
+	// Prometheus Annotations
+	if minInst.Spec.Metadata == nil {
+		minInst.Spec.Metadata = &metav1.ObjectMeta{
+			Annotations: map[string]string{},
+		}
+	}
+	currentAnnotations := minInst.Spec.Metadata.Annotations
+	prometheusAnnotations := map[string]string{
+		prometheusPath:   "/minio/prometheus/metrics",
+		prometheusPort:   fmt.Sprint(operator.MinIOPort),
+		prometheusScrape: "true",
+	}
+	if params.Body.EnablePrometheus && minInst.Spec.Metadata != nil && currentAnnotations != nil {
+		// add prometheus annotations to the tenant
+		minInst.Spec.Metadata.Annotations = addAnnotations(currentAnnotations, prometheusAnnotations)
+		// add prometheus annotations to the each zone
+		if minInst.Spec.Zones != nil {
+			for _, zone := range minInst.Spec.Zones {
+				zoneAnnotations := zone.VolumeClaimTemplate.GetObjectMeta().GetAnnotations()
+				zone.VolumeClaimTemplate.GetObjectMeta().SetAnnotations(addAnnotations(zoneAnnotations, prometheusAnnotations))
+			}
+		}
+	} else {
+		// remove prometheus annotations to the tenant
+		minInst.Spec.Metadata.Annotations = removeAnnotations(currentAnnotations, prometheusAnnotations)
+		// add prometheus annotations from each zone
+		if minInst.Spec.Zones != nil {
+			for _, zone := range minInst.Spec.Zones {
+				zoneAnnotations := zone.VolumeClaimTemplate.GetObjectMeta().GetAnnotations()
+				zone.VolumeClaimTemplate.GetObjectMeta().SetAnnotations(removeAnnotations(zoneAnnotations, prometheusAnnotations))
+			}
+		}
+	}
+
 	payloadBytes, err := json.Marshal(minInst)
 	if err != nil {
 		return err
@@ -840,6 +904,28 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClientI, cli
 		return err
 	}
 	return nil
+}
+
+// addAnnotations will merge two annotation maps
+func addAnnotations(annotationsOne, annotationsTwo map[string]string) map[string]string {
+	if annotationsOne == nil {
+		annotationsOne = map[string]string{}
+	}
+	for key, value := range annotationsTwo {
+		annotationsOne[key] = value
+	}
+	return annotationsOne
+}
+
+// removeAnnotations will remove keys from the first annotations map based on the second one
+func removeAnnotations(annotationsOne, annotationsTwo map[string]string) map[string]string {
+	if annotationsOne == nil {
+		annotationsOne = map[string]string{}
+	}
+	for key := range annotationsTwo {
+		delete(annotationsOne, key)
+	}
+	return annotationsOne
 }
 
 func getUpdateTenantResponse(session *models.Principal, params admin_api.UpdateTenantParams) *models.Error {
