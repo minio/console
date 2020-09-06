@@ -3156,6 +3156,9 @@ func init() {
         "currentState": {
           "type": "string"
         },
+        "deletion_date": {
+          "type": "string"
+        },
         "image": {
           "type": "string"
         },
@@ -3184,6 +3187,9 @@ func init() {
           "type": "string"
         },
         "currentState": {
+          "type": "string"
+        },
+        "deletion_date": {
           "type": "string"
         },
         "instance_count": {
@@ -7231,6 +7237,9 @@ func init() {
         "currentState": {
           "type": "string"
         },
+        "deletion_date": {
+          "type": "string"
+        },
         "image": {
           "type": "string"
         },
@@ -7259,6 +7268,9 @@ func init() {
           "type": "string"
         },
         "currentState": {
+          "type": "string"
+        },
+        "deletion_date": {
           "type": "string"
         },
         "instance_count": {

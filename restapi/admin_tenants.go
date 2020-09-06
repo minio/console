@@ -266,9 +266,14 @@ func getTenantInfo(tenant *operator.Tenant) *models.Tenant {
 		zoneSize := int64(z.Servers) * int64(z.VolumesPerServer) * z.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value()
 		totalSize = totalSize + zoneSize
 	}
+	var deletion string
+	if tenant.ObjectMeta.DeletionTimestamp != nil {
+		deletion = tenant.ObjectMeta.DeletionTimestamp.String()
+	}
 
 	return &models.Tenant{
 		CreationDate: tenant.ObjectMeta.CreationTimestamp.String(),
+		DeletionDate: deletion,
 		Name:         tenant.Name,
 		TotalSize:    totalSize,
 		CurrentState: tenant.Status.CurrentState,
@@ -330,8 +335,14 @@ func listTenants(ctx context.Context, operatorClient OperatorClientI, namespace 
 			}
 		}
 
+		var deletion string
+		if tenant.ObjectMeta.DeletionTimestamp != nil {
+			deletion = tenant.ObjectMeta.DeletionTimestamp.String()
+		}
+
 		tenants = append(tenants, &models.TenantList{
 			CreationDate:  tenant.ObjectMeta.CreationTimestamp.String(),
+			DeletionDate:  deletion,
 			Name:          tenant.ObjectMeta.Name,
 			ZoneCount:     int64(len(tenant.Spec.Zones)),
 			InstanceCount: instanceCount,

@@ -41,6 +41,9 @@ type Tenant struct {
 	// current state
 	CurrentState string `json:"currentState,omitempty"`
 
+	// deletion date
+	DeletionDate string `json:"deletion_date,omitempty"`
+
 	// image
 	Image string `json:"image,omitempty"`
 
