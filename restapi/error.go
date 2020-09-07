@@ -87,12 +87,12 @@ func prepareError(err ...error) *models.Error {
 			errorMessage = errorGenericInvalidSession.Error()
 		}
 		// if we received a second error take that as friendly message but dont override the code
-		if len(err) > 1 {
+		if len(err) > 1 && err[1] != nil {
 			log.Print("friendly error: ", err[1].Error())
 			errorMessage = err[1].Error()
 		}
 		// if we receive third error we just print that as debugging
-		if len(err) > 2 {
+		if len(err) > 2 && err[2] != nil {
 			log.Print("debugging error: ", err[2].Error())
 		}
 	}

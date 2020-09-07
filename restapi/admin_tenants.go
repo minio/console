@@ -792,24 +792,23 @@ func setImageRegistry(ctx context.Context, tenantName string, req *models.ImageR
 	}
 
 	pullSecretName := fmt.Sprintf("%s-regcred", tenantName)
-
-	instanceSecret := corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: pullSecretName,
-			Labels: map[string]string{
-				operator.TenantLabel: tenantName,
-			},
-		},
-		Data: map[string][]byte{
-			corev1.DockerConfigJsonKey: []byte(string(imRegistryJSON)),
-		},
-		Type: corev1.SecretTypeDockerConfigJson,
+	secretCredentials := map[string][]byte{
+		corev1.DockerConfigJsonKey: []byte(string(imRegistryJSON)),
 	}
-
 	// Get or Create secret if it doesn't exist
-	_, err = clientset.Secrets(namespace).Get(ctx, pullSecretName, metav1.GetOptions{})
+	currentSecret, err := clientset.Secrets(namespace).Get(ctx, pullSecretName, metav1.GetOptions{})
 	if err != nil {
 		if k8sErrors.IsNotFound(err) {
+			instanceSecret := corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: pullSecretName,
+					Labels: map[string]string{
+						operator.TenantLabel: tenantName,
+					},
+				},
+				Data: secretCredentials,
+				Type: corev1.SecretTypeDockerConfigJson,
+			}
 			_, err = clientset.Secrets(namespace).Create(ctx, &instanceSecret, metav1.CreateOptions{})
 			if err != nil {
 				return "", err
@@ -818,7 +817,8 @@ func setImageRegistry(ctx context.Context, tenantName string, req *models.ImageR
 		}
 		return "", err
 	}
-	_, err = clientset.Secrets(namespace).Update(ctx, &instanceSecret, metav1.UpdateOptions{})
+	currentSecret.Data = secretCredentials
+	_, err = clientset.Secrets(namespace).Update(ctx, currentSecret, metav1.UpdateOptions{})
 	if err != nil {
 		return "", err
 	}
