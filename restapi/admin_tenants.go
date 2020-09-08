@@ -146,7 +146,7 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPITenantUpdateCertificateHandler = admin_api.TenantUpdateCertificateHandlerFunc(func(params admin_api.TenantUpdateCertificateParams, session *models.Principal) middleware.Responder {
 		err := getTenantUpdateCertificatesResponse(session, params)
 		if err != nil {
-			return admin_api.NewGetTenantUsageDefault(int(err.Code)).WithPayload(err)
+			return admin_api.NewTenantUpdateCertificateDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewTenantUpdateCertificateCreated()
 	})
@@ -155,9 +155,9 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPITenantUpdateEncryptionHandler = admin_api.TenantUpdateEncryptionHandlerFunc(func(params admin_api.TenantUpdateEncryptionParams, session *models.Principal) middleware.Responder {
 		err := getTenantUpdateEncryptionResponse(session, params)
 		if err != nil {
-			return admin_api.NewGetTenantUsageDefault(int(err.Code)).WithPayload(err)
+			return admin_api.NewTenantUpdateEncryptionDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewTenantUpdateCertificateCreated()
+		return admin_api.NewTenantUpdateEncryptionCreated()
 	})
 }
 
