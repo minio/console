@@ -871,7 +871,7 @@ func Test_UpdateTenantAction(t *testing.T) {
 				},
 				params: admin_api.UpdateTenantParams{
 					Body: &models.UpdateTenantRequest{
-						ConsoleImage: "minio/console:v0.3.22",
+						ConsoleImage: "minio/console:v0.3.23",
 					},
 				},
 			},
