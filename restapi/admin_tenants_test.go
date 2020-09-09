@@ -257,7 +257,6 @@ func Test_TenantInfo(t *testing.T) {
 	testTimeStamp := metav1.Now()
 	type args struct {
 		minioTenant *operator.Tenant
-		tenantInfo  *usageInfo
 	}
 	tests := []struct {
 		name string
@@ -298,9 +297,6 @@ func Test_TenantInfo(t *testing.T) {
 						CurrentState: "ready",
 					},
 				},
-				tenantInfo: &usageInfo{
-					DisksUsage: 1024,
-				},
 			},
 			want: &models.Tenant{
 				CreationDate: testTimeStamp.String(),
@@ -318,8 +314,149 @@ func Test_TenantInfo(t *testing.T) {
 						},
 					},
 				},
-				Namespace: "minio-ns",
-				Image:     "minio/minio:RELEASE.2020-06-14T18-32-17Z",
+				Namespace:        "minio-ns",
+				Image:            "minio/minio:RELEASE.2020-06-14T18-32-17Z",
+				EnablePrometheus: false,
+			},
+		},
+		{
+			// Description if DeletionTimeStamp is present, value should be returned as string
+			// If Prometheus annotations are present, EnablePrometheus should be returned as true
+			// All three annotations should be defined to consider Prometheus enabled
+			name: "Get tenant Info w DeletionTimeStamp and Prometheus",
+			args: args{
+				minioTenant: &operator.Tenant{
+					ObjectMeta: metav1.ObjectMeta{
+						CreationTimestamp: testTimeStamp,
+						Name:              "tenant1",
+						Namespace:         "minio-ns",
+						DeletionTimestamp: &testTimeStamp,
+					},
+					Spec: operator.TenantSpec{
+						Zones: []operator.Zone{
+							{
+								Name:             "zone1",
+								Servers:          int32(2),
+								VolumesPerServer: 4,
+								VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
+									Spec: corev1.PersistentVolumeClaimSpec{
+										Resources: corev1.ResourceRequirements{
+											Requests: map[corev1.ResourceName]resource.Quantity{
+												corev1.ResourceStorage: resource.MustParse("1Mi"),
+											},
+										},
+										StorageClassName: swag.String("standard"),
+									},
+								},
+							},
+						},
+						Image: "minio/minio:RELEASE.2020-06-14T18-32-17Z",
+						Metadata: &metav1.ObjectMeta{
+							Annotations: map[string]string{
+								prometheusPath:   "some/path",
+								prometheusPort:   "other/path",
+								prometheusScrape: "other/path",
+							},
+						},
+					},
+					Status: operator.TenantStatus{
+						CurrentState: "ready",
+					},
+				},
+			},
+			want: &models.Tenant{
+				CreationDate: testTimeStamp.String(),
+				DeletionDate: testTimeStamp.String(),
+				Name:         "tenant1",
+				TotalSize:    int64(8388608),
+				CurrentState: "ready",
+				Zones: []*models.Zone{
+					{
+						Name:             "zone1",
+						Servers:          swag.Int64(int64(2)),
+						VolumesPerServer: swag.Int32(4),
+						VolumeConfiguration: &models.ZoneVolumeConfiguration{
+							StorageClassName: "standard",
+							Size:             swag.Int64(1024 * 1024),
+						},
+					},
+				},
+				Namespace:        "minio-ns",
+				Image:            "minio/minio:RELEASE.2020-06-14T18-32-17Z",
+				EnablePrometheus: true,
+			},
+		},
+		{
+			// If Prometheus annotations are present, EnablePrometheus should be returned as true
+			// All three annotations should be defined to consider Prometheus enabled
+			name: "Get tenant Info, not all Prometheus annotations",
+			args: args{
+				minioTenant: &operator.Tenant{
+					ObjectMeta: metav1.ObjectMeta{
+						CreationTimestamp: testTimeStamp,
+						Name:              "tenant1",
+						Namespace:         "minio-ns",
+					},
+					Spec: operator.TenantSpec{
+						Zones: []operator.Zone{},
+						Image: "minio/minio:RELEASE.2020-06-14T18-32-17Z",
+						Metadata: &metav1.ObjectMeta{
+							Annotations: map[string]string{
+								prometheusPath:   "some/path",
+								prometheusScrape: "other/path",
+							},
+						},
+					},
+					Status: operator.TenantStatus{
+						CurrentState: "ready",
+					},
+				},
+			},
+			want: &models.Tenant{
+				CreationDate:     testTimeStamp.String(),
+				Name:             "tenant1",
+				CurrentState:     "ready",
+				Namespace:        "minio-ns",
+				Image:            "minio/minio:RELEASE.2020-06-14T18-32-17Z",
+				EnablePrometheus: false,
+			},
+		},
+		{
+			// If console image is set, it should be returned on tenant info
+			name: "Get tenant Info, Console image set",
+			args: args{
+				minioTenant: &operator.Tenant{
+					ObjectMeta: metav1.ObjectMeta{
+						CreationTimestamp: testTimeStamp,
+						Name:              "tenant1",
+						Namespace:         "minio-ns",
+					},
+					Spec: operator.TenantSpec{
+						Zones: []operator.Zone{},
+						Image: "minio/minio:RELEASE.2020-06-14T18-32-17Z",
+						Metadata: &metav1.ObjectMeta{
+							Annotations: map[string]string{
+								prometheusPath:   "some/path",
+								prometheusScrape: "other/path",
+							},
+						},
+						Console: &operator.ConsoleConfiguration{
+							Image: "minio/console:master",
+						},
+					},
+					Status: operator.TenantStatus{
+						CurrentState: "ready",
+					},
+				},
+			},
+			want: &models.Tenant{
+				CreationDate:     testTimeStamp.String(),
+				Name:             "tenant1",
+				CurrentState:     "ready",
+				Namespace:        "minio-ns",
+				Image:            "minio/minio:RELEASE.2020-06-14T18-32-17Z",
+				EnablePrometheus: false,
+				ConsoleImage:     "minio/console:master",
 			},
 		},
 	}
