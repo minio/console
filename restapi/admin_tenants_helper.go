@@ -183,10 +183,6 @@ func getTenantUpdateEncryptionResponse(session *models.Principal, params admin_a
 // getKESConfiguration will generate the KES server certificate secrets, the tenant client secrets for mTLS authentication between MinIO and KES and the
 // kes-configuration.yaml file used by the KES service (how to connect to the external KMS, eg: Vault, AWS, Gemalto, etc)
 func getKESConfiguration(ctx context.Context, clientSet K8sClientI, ns string, encryptionCfg *models.EncryptionConfiguration, secretName, tenantName string, autoCert bool) (kesConfiguration *operator.KESConfig, err error) {
-	// Secrets used by the MiniO tenant service
-	//
-	// tenantExternalClientCertSecretName is the name of the secret that will store the certificates for mTLS between MinIO and the KES, eg: app.key and app.crt
-	tenantExternalClientCertSecretName := fmt.Sprintf("%s-tenant-external-client-cert", secretName)
 	// Secrets used by the KES service
 	//
 	// kesExternalCertSecretName is the name of the secret that will store the certificates for TLS in the KES server, eg: server.key and server.crt
@@ -195,28 +191,7 @@ func getKESConfiguration(ctx context.Context, clientSet K8sClientI, ns string, e
 	kesClientCertSecretName := fmt.Sprintf("%s-kes-client-cert", secretName)
 	// kesConfigurationSecretName is the name of the secret that will store the configuration file, eg: kes-configuration.yaml
 	kesConfigurationSecretName := fmt.Sprintf("%s-kes-configuration", secretName)
-	// if there's an error during this process we delete all KES configuration secrets
-	defer func() {
-		if err != nil {
-			errDelete := clientSet.deleteSecret(ctx, ns, tenantExternalClientCertSecretName, metav1.DeleteOptions{})
-			if errDelete != nil {
-				log.Print(errDelete)
-			}
-			errDelete = clientSet.deleteSecret(ctx, ns, kesExternalCertSecretName, metav1.DeleteOptions{})
-			if errDelete != nil {
-				log.Print(errDelete)
-			}
-			errDelete = clientSet.deleteSecret(ctx, ns, kesClientCertSecretName, metav1.DeleteOptions{})
-			if errDelete != nil {
-				log.Print(errDelete)
-			}
-			errDelete = clientSet.deleteSecret(ctx, ns, kesConfigurationSecretName, metav1.DeleteOptions{})
-			if errDelete != nil {
-				log.Print(errDelete)
-			}
-			return
-		}
-	}()
+
 	kesConfiguration = &operator.KESConfig{
 		Image:    "minio/kes:v0.11.0",
 		Replicas: 1,

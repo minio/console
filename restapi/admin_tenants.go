@@ -422,7 +422,7 @@ func getListTenantsResponse(session *models.Principal, params admin_api.ListTena
 	return listT, nil
 }
 
-func getTenantCreatedResponse(session *models.Principal, params admin_api.CreateTenantParams) (*models.CreateTenantResponse, *models.Error) {
+func getTenantCreatedResponse(session *models.Principal, params admin_api.CreateTenantParams) (response *models.CreateTenantResponse, mError *models.Error) {
 	tenantReq := params.Body
 	minioImage := tenantReq.Image
 	ctx := context.Background()
@@ -478,11 +478,24 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	if err != nil {
 		return nil, prepareError(err)
 	}
+	// delete secrets created if an error occurred during tenant creation,
+	defer func() {
+		if mError != nil {
+			log.Printf("deleting secrets created for failed tenant: %s if any\n", tenantName)
+			opts := metav1.ListOptions{
+				LabelSelector: fmt.Sprintf("%s=%s", operator.TenantLabel, tenantName),
+			}
+			err = clientSet.CoreV1().Secrets(ns).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
+			if err != nil {
+				log.Println("error deleting tenant's secrets:", err)
+			}
+		}
+	}()
 
 	var envrionmentVariables []corev1.EnvVar
 	// Check the Erasure Coding Parity for validity and pass it to Tenant
 	if tenantReq.ErasureCodingParity > 0 {
-		if tenantReq.ErasureCodingParity < 2 && tenantReq.ErasureCodingParity > 8 {
+		if tenantReq.ErasureCodingParity < 2 || tenantReq.ErasureCodingParity > 8 {
 			return nil, prepareError(errorInvalidErasureCodingValue)
 		}
 		envrionmentVariables = append(envrionmentVariables, corev1.EnvVar{
@@ -713,7 +726,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 
 	if tenantReq.ImagePullSecret != "" {
 		imagePullSecret = tenantReq.ImagePullSecret
-	} else if imagePullSecret, err = setImageRegistry(ctx, tenantName, tenantReq.ImageRegistry, clientSet.CoreV1(), ns); err != nil {
+	} else if imagePullSecret, err = setImageRegistry(ctx, tenantReq.ImageRegistry, clientSet.CoreV1(), ns, tenantName); err != nil {
 		return nil, prepareError(err)
 	}
 	// pass the image pull secret to the Tenant
@@ -752,7 +765,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			return nil, prepareError(err)
 		}
 	}
-	response := &models.CreateTenantResponse{
+	response = &models.CreateTenantResponse{
 		AccessKey: accessKey,
 		SecretKey: secretKey,
 	}
@@ -768,7 +781,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 
 // setImageRegistry creates a secret to store the private registry credentials, if one exist it updates the existing one
 // returns the name of the secret created/updated
-func setImageRegistry(ctx context.Context, tenantName string, req *models.ImageRegistry, clientset v1.CoreV1Interface, namespace string) (string, error) {
+func setImageRegistry(ctx context.Context, req *models.ImageRegistry, clientset v1.CoreV1Interface, namespace, tenantName string) (string, error) {
 	if req == nil || req.Registry == nil || req.Username == nil || req.Password == nil {
 		return "", nil
 	}
@@ -839,7 +852,7 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClientI, cli
 		minInst.Spec.ImagePullSecret.Name = params.Body.ImagePullSecret
 	} else {
 		// update the image pull secret content
-		if _, err := setImageRegistry(ctx, params.Tenant, imageRegistryReq, clientset, namespace); err != nil {
+		if _, err := setImageRegistry(ctx, imageRegistryReq, clientset, namespace, params.Tenant); err != nil {
 			log.Println("error setting image registry secret:", err)
 			return err
 		}
