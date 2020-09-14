@@ -35,7 +35,7 @@ const styles = (theme: Theme) =>
     ...modalBasic,
   });
 
-interface IAddBucketProps {
+export interface IAddBucketProps {
   classes: any;
   open: boolean;
   closeModalAndRefresh: () => void;
@@ -101,6 +101,7 @@ class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
         aria-describedby="alert-dialog-description"
       >
         <form
+          data-testid="add-bucket-form"
           noValidate
           autoComplete="off"
           onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
