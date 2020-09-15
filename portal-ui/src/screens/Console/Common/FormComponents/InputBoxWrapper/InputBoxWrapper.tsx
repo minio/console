@@ -49,6 +49,7 @@ interface InputBoxProps {
   placeholder?: string;
   min?: string;
   max?: string;
+  dataTestID?: string;
 }
 
 const styles = (theme: Theme) =>
@@ -115,8 +116,9 @@ const InputBoxWrapper = ({
   min,
   max,
   classes,
+  dataTestID = "",
 }: InputBoxProps) => {
-  let inputProps: any = { "data-index": index };
+  let inputProps: any = { "data-index": index, "data-testid": dataTestID };
 
   if (type === "number" && min) {
     inputProps["min"] = min;

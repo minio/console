@@ -123,6 +123,7 @@ class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
               )}
               <Grid item xs={12}>
                 <InputBoxWrapper
+                  dataTestID="add-bucket-form-bucket-name-input"
                   id="bucket-name"
                   name="bucket-name"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -135,6 +136,7 @@ class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
             </Grid>
             <Grid item xs={12} className={classes.buttonContainer}>
               <Button
+                data-testid="add-bucket-submit-button"
                 type="submit"
                 variant="contained"
                 color="primary"

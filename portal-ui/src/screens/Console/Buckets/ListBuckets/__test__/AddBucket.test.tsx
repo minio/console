@@ -34,9 +34,18 @@ function renderAddBucket(props: Partial<IAddBucketProps> = {}) {
 }
 
 describe("<AddBucket />", () => {
-  const { findByTestId } = renderAddBucket();
   test("should display a blank add bucket form", async () => {
+    const { findByTestId } = renderAddBucket();
     const addBucketForm = await findByTestId("add-bucket-form");
     expect(addBucketForm).toHaveTextContent("Bucket Name")
+  });
+  test("should display error", async () => {
+    const { findByTestId } = renderAddBucket();
+    const onSubmit = jest.fn();
+    const bucketNameInput = await findByTestId("add-bucket-form-bucket-name-input");
+    const submit = await findByTestId("add-bucket-submit-button");
+    fireEvent.change(bucketNameInput, { target: { value: "test" } });
+    fireEvent.click(submit);
+    expect(onSubmit).toHaveBeenCalledWith("test");
   });
 });
