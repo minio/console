@@ -201,7 +201,7 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="h6">
-            Tenant > {match.params["tenantName"]}
+            {`Tenant > ${match.params["tenantName"]}`}
           </Typography>
         </Grid>
         <Grid item xs={12}>

@@ -339,7 +339,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
         <Grid container>
           <Grid item xs={12}>
             <Typography variant="h6">
-              Bucket > {match.params["bucketName"]}
+              {`Bucket > ${match.params["bucketName"]}`}
             </Typography>
           </Grid>
           <Grid item xs={12}>
