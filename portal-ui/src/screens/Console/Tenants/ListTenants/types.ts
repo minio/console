@@ -17,18 +17,32 @@
 export interface IZone {
   name: string;
   servers: number;
+  volumes_per_server: number;
+  volume_configuration: IVolumeConfiguration;
   // computed
   capacity: string;
   volumes: number;
 }
 
+export interface IAddZoneRequest {
+  name: string;
+  servers: number;
+  volumes_per_server: number;
+  volume_configuration: IVolumeConfiguration;
+}
+
 export interface IVolumeConfiguration {
   size: number;
   storage_class: string;
+  labels: { [key: string]: any } | null;
 }
 
 export interface ITenant {
+  total_size: number;
   name: string;
+  namespace: string;
+  image: string;
+  console_image: string;
   zone_count: number;
   currentState: string;
   instance_count: 4;

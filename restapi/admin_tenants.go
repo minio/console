@@ -1531,6 +1531,9 @@ func updateTenantZones(
 	// replace zones array
 	minInst.Spec.Zones = newZoneArray
 
+	minInst = minInst.DeepCopy()
+	minInst.EnsureDefaults()
+
 	payloadBytes, err := json.Marshal(minInst)
 	if err != nil {
 		return nil, err

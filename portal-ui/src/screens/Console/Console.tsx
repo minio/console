@@ -311,7 +311,7 @@ const Console = ({
     },
     {
       component: TenantDetails,
-      path: "/tenants/:tenantName",
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName",
     },
   ];
   const allowedRoutes = routes.filter((route: any) => allowedPages[route.path]);
