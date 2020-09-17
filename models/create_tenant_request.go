@@ -72,6 +72,9 @@ type CreateTenantRequest struct {
 	// image registry
 	ImageRegistry *ImageRegistry `json:"image_registry,omitempty"`
 
+	// labels
+	Labels map[string]string `json:"labels,omitempty"`
+
 	// mounth path
 	MounthPath string `json:"mounth_path,omitempty"`
 

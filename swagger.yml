@@ -1148,7 +1148,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-    put: 
+    put:
       summary: Tenant Update Zones
       operationId: TenantUpdateZones
       parameters:
@@ -1282,7 +1282,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-  
+
   /cluster/max-allocatable-memory:
     get:
       summary: Get maximum allocatable memory for given number of nodes
@@ -1908,7 +1908,7 @@ definitions:
         type: string
       enable_prometheus:
         type: boolean
-  
+
   imageRegistry:
     type: object
     required:
@@ -1922,7 +1922,7 @@ definitions:
         type: string
       password:
         type: string
-        
+
   createTenantRequest:
     type: object
     required:
@@ -1963,6 +1963,10 @@ definitions:
       erasureCodingParity:
         type: integer
       annotations:
+        type: object
+        additionalProperties:
+          type: string
+      labels:
         type: object
         additionalProperties:
           type: string
@@ -2213,6 +2217,10 @@ definitions:
             type: object
             additionalProperties:
               type: string
+          annotations:
+            type: object
+            additionalProperties:
+              type: string
       resources:
         $ref: "#/definitions/zoneResources"
       node_selector:
@@ -2263,14 +2271,14 @@ definitions:
           type: string
       type: object
     type: array
-  
+
   zoneTolerationSeconds:
     description: TolerationSeconds represents the period of
-            time the toleration (which must be of effect NoExecute,
-            otherwise this field is ignored) tolerates the taint.
-            By default, it is not set, which means tolerate the taint
-            forever (do not evict). Zero and negative values will
-            be treated as 0 (evict immediately) by the system.
+      time the toleration (which must be of effect NoExecute,
+      otherwise this field is ignored) tolerates the taint.
+      By default, it is not set, which means tolerate the taint
+      forever (do not evict). Zero and negative values will
+      be treated as 0 (evict immediately) by the system.
     type: object
     required:
       - seconds
@@ -2646,13 +2654,13 @@ definitions:
       used:
         type: integer
         format: int64
-  
+
   deleteTenantRequest:
     type: object
     properties:
       delete_pvcs:
         type: boolean
-  
+
   zoneUpdateRequest:
     type: object
     required:
@@ -2662,7 +2670,7 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/zone"
-  
+
   maxAllocatableMemResponse:
     type: object
     properties:
