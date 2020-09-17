@@ -8,33 +8,34 @@ import Grid from "@material-ui/core/Grid";
 import {
   factorForDropdown,
   getTotalSize,
-  niceBytes,
+  niceBytes
 } from "../../../../common/utils";
 import { Button, LinearProgress } from "@material-ui/core";
+import api from "../../../../common/api";
+import { IAddZoneRequest, ITenant } from "../ListTenants/types";
 
 interface IAddZoneProps {
+  tenant: ITenant;
   classes: any;
   open: boolean;
   onCloseZoneAndReload: (shouldReload: boolean) => void;
-  volumesPerInstance: number;
-  volumeSize: number;
 }
 
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red",
+      color: "red"
     },
     buttonContainer: {
-      textAlign: "right",
+      textAlign: "right"
     },
     multiContainer: {
       display: "flex",
       alignItems: "center" as const,
-      justifyContent: "flex-start" as const,
+      justifyContent: "flex-start" as const
     },
     sizeFactorContainer: {
-      marginLeft: 8,
+      marginLeft: 8
     },
     bottomContainer: {
       display: "flex",
@@ -42,39 +43,39 @@ const styles = (theme: Theme) =>
       alignItems: "center",
       "& div": {
         flexGrow: 1,
-        width: "100%",
-      },
+        width: "100%"
+      }
     },
     factorElements: {
       display: "flex",
-      justifyContent: "flex-start",
+      justifyContent: "flex-start"
     },
     sizeNumber: {
       fontSize: 35,
       fontWeight: 700,
-      textAlign: "center",
+      textAlign: "center"
     },
     sizeDescription: {
       fontSize: 14,
       color: "#777",
-      textAlign: "center",
+      textAlign: "center"
     },
-    ...modalBasic,
+    ...modalBasic
   });
 
 const AddZoneModal = ({
+  tenant,
   classes,
   open,
-  onCloseZoneAndReload,
-  volumesPerInstance,
-  volumeSize,
+  onCloseZoneAndReload
 }: IAddZoneProps) => {
   const [addSending, setAddSending] = useState<boolean>(false);
-  const [zoneName, setZoneName] = useState<string>("");
-  const [numberOfInstances, setNumberOfInstances] = useState<number>(0);
+  const [numberOfNodes, setNumberOfNodes] = useState<number>(0);
+  const [volumeSize, setVolumeSize] = useState<number>(0);
+  const [volumesPerServer, setVolumesPerSever] = useState<number>(0);
 
-  const instanceCapacity: number = volumeSize * volumesPerInstance;
-  const totalCapacity: number = instanceCapacity * numberOfInstances;
+  const instanceCapacity: number = volumeSize * 1073741824 * volumesPerServer;
+  const totalCapacity: number = instanceCapacity * numberOfNodes;
 
   return (
     <ModalWrapper
@@ -88,30 +89,66 @@ const AddZoneModal = ({
         onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
           e.preventDefault();
           setAddSending(true);
+          const data: IAddZoneRequest = {
+            name: "",
+            servers: numberOfNodes,
+            volumes_per_server: volumesPerServer,
+            volume_configuration: {
+              size: volumeSize * 1073741824,
+              storage_class: "",
+              labels: null
+            }
+          };
+          api
+            .invoke(
+              "POST",
+              `/api/v1/namespaces/${tenant.namespace}/tenants/${tenant.name}/zones`,
+              data
+            )
+            .then(() => {
+              setAddSending(false);
+              onCloseZoneAndReload(true);
+            })
+            .catch(err => {
+              setAddSending(false);
+              // setDeleteError(err);
+            });
         }}
       >
         <Grid item xs={12}>
           <InputBoxWrapper
-            id="zone_name"
-            name="zone_name"
-            type="string"
+            id="number_of_nodes"
+            name="number_of_nodes"
+            type="number"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setZoneName(e.target.value);
+              setNumberOfNodes(parseInt(e.target.value));
             }}
-            label="Name"
-            value={zoneName}
+            label="Number o Nodes"
+            value={numberOfNodes.toString(10)}
           />
         </Grid>
         <Grid item xs={12}>
           <InputBoxWrapper
-            id="number_instances"
-            name="number_instances"
+            id="zone_size"
+            name="zone_size"
             type="number"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setNumberOfInstances(parseInt(e.target.value));
+              setVolumeSize(parseInt(e.target.value));
             }}
-            label="Drives per Server"
-            value={numberOfInstances.toString(10)}
+            label="Volume Size (Gi)"
+            value={volumeSize.toString(10)}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <InputBoxWrapper
+            id="volumes_per_sever"
+            name="volumes_per_sever"
+            type="number"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setVolumesPerSever(parseInt(e.target.value));
+            }}
+            label="Volumes per Server"
+            value={volumesPerServer.toString(10)}
           />
         </Grid>
         <Grid item xs={12}>

@@ -107,7 +107,7 @@ export const getBytes = (
 
   const powFactor = unitsTake.findIndex((element) => element === unit);
 
-  if (powFactor == -1) {
+  if (powFactor === -1) {
     return "0";
   }
   const factor = Math.pow(1024, powFactor);
