@@ -2226,6 +2226,12 @@ func init() {
         "image_registry": {
           "$ref": "#/definitions/imageRegistry"
         },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
         "mounth_path": {
           "type": "string"
         },
@@ -3438,6 +3444,12 @@ func init() {
             "size"
           ],
           "properties": {
+            "annotations": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
             "labels": {
               "type": "object",
               "additionalProperties": {
@@ -6089,6 +6101,12 @@ func init() {
         "size"
       ],
       "properties": {
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
         "labels": {
           "type": "object",
           "additionalProperties": {
@@ -6381,6 +6399,12 @@ func init() {
         },
         "image_registry": {
           "$ref": "#/definitions/imageRegistry"
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "mounth_path": {
           "type": "string"
@@ -7528,6 +7552,12 @@ func init() {
             "size"
           ],
           "properties": {
+            "annotations": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
             "labels": {
               "type": "object",
               "additionalProperties": {

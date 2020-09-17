@@ -293,12 +293,6 @@ func getTenantInfo(tenant *operator.Tenant) *models.Tenant {
 		consoleImage = tenant.Spec.Console.Image
 	}
 
-	if tenant.Spec.Metadata == nil {
-		tenant.Spec.Metadata = &metav1.ObjectMeta{
-			Annotations: map[string]string{},
-		}
-	}
-
 	return &models.Tenant{
 		CreationDate:     tenant.ObjectMeta.CreationTimestamp.String(),
 		DeletionDate:     deletion,
@@ -309,7 +303,7 @@ func getTenantInfo(tenant *operator.Tenant) *models.Tenant {
 		Namespace:        tenant.ObjectMeta.Namespace,
 		Image:            tenant.Spec.Image,
 		ConsoleImage:     consoleImage,
-		EnablePrometheus: isPrometheusEnabled(tenant.Spec.Metadata.Annotations),
+		EnablePrometheus: isPrometheusEnabled(tenant.Annotations),
 	}
 }
 
@@ -507,7 +501,8 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	//Construct a MinIO Instance with everything we are getting from parameters
 	minInst := operator.Tenant{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: tenantName,
+			Name:   tenantName,
+			Labels: tenantReq.Labels,
 		},
 		Spec: operator.TenantSpec{
 			Image:     minioImage,
@@ -698,18 +693,14 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 	// add annotations
 	var annotations map[string]string
-	if minInst.Spec.Metadata == nil {
-		minInst.Spec.Metadata = &metav1.ObjectMeta{
-			Annotations: map[string]string{},
-		}
-	}
+
 	if len(tenantReq.Annotations) > 0 {
 		annotations = tenantReq.Annotations
-		minInst.Spec.Metadata.Annotations = annotations
+		minInst.Annotations = annotations
 	}
 	// set the zones if they are provided
 	for _, zone := range tenantReq.Zones {
-		zone, err := parseTenantZoneRequest(zone, annotations)
+		zone, err := parseTenantZoneRequest(zone)
 		if err != nil {
 			return nil, prepareError(err)
 		}
@@ -737,10 +728,10 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 
 	// prometheus annotations support
-	if tenantReq.EnablePrometheus != nil && *tenantReq.EnablePrometheus && minInst.Spec.Metadata != nil && minInst.Spec.Metadata.Annotations != nil {
-		minInst.Spec.Metadata.Annotations[prometheusPath] = "/minio/prometheus/metrics"
-		minInst.Spec.Metadata.Annotations[prometheusPort] = fmt.Sprint(operator.MinIOPort)
-		minInst.Spec.Metadata.Annotations[prometheusScrape] = "true"
+	if tenantReq.EnablePrometheus != nil && *tenantReq.EnablePrometheus && minInst.Annotations != nil {
+		minInst.Annotations[prometheusPath] = "/minio/prometheus/metrics"
+		minInst.Annotations[prometheusPort] = fmt.Sprint(operator.MinIOPort)
+		minInst.Annotations[prometheusScrape] = "true"
 	}
 
 	// set console image if provided
@@ -875,12 +866,7 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClientI, cli
 	}
 
 	// Prometheus Annotations
-	if minInst.Spec.Metadata == nil {
-		minInst.Spec.Metadata = &metav1.ObjectMeta{
-			Annotations: map[string]string{},
-		}
-	}
-	currentAnnotations := minInst.Spec.Metadata.Annotations
+	currentAnnotations := minInst.Annotations
 	prometheusAnnotations := map[string]string{
 		prometheusPath:   "/minio/prometheus/metrics",
 		prometheusPort:   fmt.Sprint(operator.MinIOPort),
@@ -888,7 +874,7 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClientI, cli
 	}
 	if params.Body.EnablePrometheus && minInst.Spec.Metadata != nil && currentAnnotations != nil {
 		// add prometheus annotations to the tenant
-		minInst.Spec.Metadata.Annotations = addAnnotations(currentAnnotations, prometheusAnnotations)
+		minInst.Annotations = addAnnotations(currentAnnotations, prometheusAnnotations)
 		// add prometheus annotations to the each zone
 		if minInst.Spec.Zones != nil {
 			for _, zone := range minInst.Spec.Zones {
@@ -898,7 +884,7 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClientI, cli
 		}
 	} else {
 		// remove prometheus annotations to the tenant
-		minInst.Spec.Metadata.Annotations = removeAnnotations(currentAnnotations, prometheusAnnotations)
+		minInst.Annotations = removeAnnotations(currentAnnotations, prometheusAnnotations)
 		// add prometheus annotations from each zone
 		if minInst.Spec.Zones != nil {
 			for _, zone := range minInst.Spec.Zones {
@@ -974,7 +960,7 @@ func addTenantZone(ctx context.Context, operatorClient OperatorClientI, params a
 	}
 
 	zoneParams := params.Body
-	zone, err := parseTenantZoneRequest(zoneParams, tenant.ObjectMeta.Annotations)
+	zone, err := parseTenantZoneRequest(zoneParams)
 	if err != nil {
 		return err
 	}
@@ -1062,7 +1048,7 @@ func getTenantUsageResponse(session *models.Principal, params admin_api.GetTenan
 
 // parseTenantZoneRequest parse zone request and returns the equivalent
 // operator.Zone object
-func parseTenantZoneRequest(zoneParams *models.Zone, annotations map[string]string) (*operator.Zone, error) {
+func parseTenantZoneRequest(zoneParams *models.Zone) (*operator.Zone, error) {
 	if zoneParams.VolumeConfiguration == nil {
 		return nil, errors.New("a volume configuration must be specified")
 	}
@@ -1211,13 +1197,11 @@ func parseTenantZoneRequest(zoneParams *models.Zone, annotations map[string]stri
 	// Pass annotations to the volume
 	vct := &corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:   "data",
-			Labels: zoneParams.VolumeConfiguration.Labels,
+			Name:        "data",
+			Labels:      zoneParams.VolumeConfiguration.Labels,
+			Annotations: zoneParams.VolumeConfiguration.Annotations,
 		},
 		Spec: volTemp,
-	}
-	if len(annotations) > 0 {
-		vct.ObjectMeta.Annotations = annotations
 	}
 
 	zone := &operator.Zone{
@@ -1512,16 +1496,10 @@ func updateTenantZones(
 		return nil, err
 	}
 
-	if minInst.Spec.Metadata == nil {
-		minInst.Spec.Metadata = &metav1.ObjectMeta{
-			Annotations: map[string]string{},
-		}
-	}
-
 	// set the zones if they are provided
 	var newZoneArray []operator.Zone
 	for _, zone := range zonesReq {
-		zone, err := parseTenantZoneRequest(zone, minInst.Spec.Metadata.Annotations)
+		zone, err := parseTenantZoneRequest(zone)
 		if err != nil {
 			return nil, err
 		}

@@ -331,6 +331,11 @@ func Test_TenantInfo(t *testing.T) {
 						Name:              "tenant1",
 						Namespace:         "minio-ns",
 						DeletionTimestamp: &testTimeStamp,
+						Annotations: map[string]string{
+							prometheusPath:   "some/path",
+							prometheusPort:   "other/path",
+							prometheusScrape: "other/path",
+						},
 					},
 					Spec: operator.TenantSpec{
 						Zones: []operator.Zone{
@@ -351,13 +356,6 @@ func Test_TenantInfo(t *testing.T) {
 							},
 						},
 						Image: "minio/minio:RELEASE.2020-06-14T18-32-17Z",
-						Metadata: &metav1.ObjectMeta{
-							Annotations: map[string]string{
-								prometheusPath:   "some/path",
-								prometheusPort:   "other/path",
-								prometheusScrape: "other/path",
-							},
-						},
 					},
 					Status: operator.TenantStatus{
 						CurrentState: "ready",
@@ -396,16 +394,14 @@ func Test_TenantInfo(t *testing.T) {
 						CreationTimestamp: testTimeStamp,
 						Name:              "tenant1",
 						Namespace:         "minio-ns",
+						Annotations: map[string]string{
+							prometheusPath:   "some/path",
+							prometheusScrape: "other/path",
+						},
 					},
 					Spec: operator.TenantSpec{
 						Zones: []operator.Zone{},
 						Image: "minio/minio:RELEASE.2020-06-14T18-32-17Z",
-						Metadata: &metav1.ObjectMeta{
-							Annotations: map[string]string{
-								prometheusPath:   "some/path",
-								prometheusScrape: "other/path",
-							},
-						},
 					},
 					Status: operator.TenantStatus{
 						CurrentState: "ready",
@@ -430,16 +426,14 @@ func Test_TenantInfo(t *testing.T) {
 						CreationTimestamp: testTimeStamp,
 						Name:              "tenant1",
 						Namespace:         "minio-ns",
+						Annotations: map[string]string{
+							prometheusPath:   "some/path",
+							prometheusScrape: "other/path",
+						},
 					},
 					Spec: operator.TenantSpec{
 						Zones: []operator.Zone{},
 						Image: "minio/minio:RELEASE.2020-06-14T18-32-17Z",
-						Metadata: &metav1.ObjectMeta{
-							Annotations: map[string]string{
-								prometheusPath:   "some/path",
-								prometheusScrape: "other/path",
-							},
-						},
 						Console: &operator.ConsoleConfiguration{
 							Image: "minio/console:master",
 						},
