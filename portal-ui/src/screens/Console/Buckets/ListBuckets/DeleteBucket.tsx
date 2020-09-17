@@ -23,7 +23,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  LinearProgress
+  LinearProgress,
 } from "@material-ui/core";
 import api from "../../../../common/api";
 import { BucketList } from "../types";
@@ -32,8 +32,8 @@ import Typography from "@material-ui/core/Typography";
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
-    }
+      color: "red",
+    },
   });
 
 interface IDeleteBucketProps {
@@ -54,7 +54,7 @@ class DeleteBucket extends React.Component<
 > {
   state: IDeleteBucketState = {
     deleteLoading: false,
-    deleteError: ""
+    deleteError: "",
   };
 
   removeRecord() {
@@ -66,23 +66,23 @@ class DeleteBucket extends React.Component<
     this.setState({ deleteLoading: true }, () => {
       api
         .invoke("DELETE", `/api/v1/buckets/${selectedBucket}`, {
-          name: selectedBucket
+          name: selectedBucket,
         })
         .then((res: BucketList) => {
           this.setState(
             {
               deleteLoading: false,
-              deleteError: ""
+              deleteError: "",
             },
             () => {
               this.props.closeDeleteModalAndRefresh(true);
             }
           );
         })
-        .catch(err => {
+        .catch((err) => {
           this.setState({
             deleteLoading: false,
-            deleteError: err
+            deleteError: err,
           });
         });
     });

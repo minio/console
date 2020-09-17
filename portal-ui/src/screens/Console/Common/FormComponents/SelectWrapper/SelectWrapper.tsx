@@ -42,6 +42,7 @@ interface SelectProps {
   onChange: (
     e: React.ChangeEvent<{ name?: string | undefined; value: unknown }>
   ) => void;
+  disabled?: boolean;
   classes: any;
 }
 
@@ -51,7 +52,7 @@ const styles = (theme: Theme) =>
     ...tooltipHelper,
     inputLabel: {
       ...fieldBasic.inputLabel,
-      width: 116,
+      width: 215,
     },
   });
 
@@ -88,6 +89,7 @@ const SelectWrapper = ({
   label,
   tooltip = "",
   value,
+  disabled = false,
 }: SelectProps) => {
   return (
     <React.Fragment>
@@ -111,6 +113,7 @@ const SelectWrapper = ({
             value={value}
             onChange={onChange}
             input={<SelectStyled />}
+            disabled={disabled}
           >
             {options.map((option) => (
               <MenuItem

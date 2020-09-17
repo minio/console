@@ -19,6 +19,8 @@ export interface IValidation {
   required: boolean;
   pattern?: RegExp;
   customPatternMessage?: string;
+  customValidation?: boolean;
+  customValidationMessage?: string;
   value: string;
 }
 
@@ -31,12 +33,18 @@ export const commonFormValidation = (fieldsValidate: IValidation[]) => {
       return;
     }
 
+    if (field.customValidation && field.customValidationMessage) {
+      returnErrors[field.fieldKey] = field.customValidationMessage;
+      return;
+    }
+
     if (field.pattern && field.customPatternMessage) {
       const rgx = new RegExp(field.pattern, "g");
 
       if (!field.value.match(rgx)) {
         returnErrors[field.fieldKey] = field.customPatternMessage;
       }
+      return;
     }
   });
 
