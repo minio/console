@@ -1306,6 +1306,33 @@ paths:
       tags:
         - AdminAPI
 
+  /get-parity/{nodes}/{disksPerNode}:
+    get:
+      summary: Gets parity by sending number of nodes & number of disks
+      operationId: GetParity
+      parameters:
+        - name: nodes
+          in: path
+          required: true
+          type: integer
+          minimum: 2
+        - name: disksPerNode
+          in: path
+          required: true
+          type: integer
+          minimum: 1
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/parityResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
 definitions:
   bucketAccess:
     type: string
@@ -2677,3 +2704,8 @@ definitions:
       max_memory:
         type: integer
         format: int64
+
+  parityResponse:
+    type: array
+    items:
+      type: string

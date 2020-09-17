@@ -117,6 +117,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIGetMaxAllocatableMemHandler: admin_api.GetMaxAllocatableMemHandlerFunc(func(params admin_api.GetMaxAllocatableMemParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetMaxAllocatableMem has not yet been implemented")
 		}),
+		AdminAPIGetParityHandler: admin_api.GetParityHandlerFunc(func(params admin_api.GetParityParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.GetParity has not yet been implemented")
+		}),
 		AdminAPIGetResourceQuotaHandler: admin_api.GetResourceQuotaHandlerFunc(func(params admin_api.GetResourceQuotaParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetResourceQuota has not yet been implemented")
 		}),
@@ -319,6 +322,8 @@ type ConsoleAPI struct {
 	AdminAPIDeleteTenantHandler admin_api.DeleteTenantHandler
 	// AdminAPIGetMaxAllocatableMemHandler sets the operation handler for the get max allocatable mem operation
 	AdminAPIGetMaxAllocatableMemHandler admin_api.GetMaxAllocatableMemHandler
+	// AdminAPIGetParityHandler sets the operation handler for the get parity operation
+	AdminAPIGetParityHandler admin_api.GetParityHandler
 	// AdminAPIGetResourceQuotaHandler sets the operation handler for the get resource quota operation
 	AdminAPIGetResourceQuotaHandler admin_api.GetResourceQuotaHandler
 	// AdminAPIGetTenantUsageHandler sets the operation handler for the get tenant usage operation
@@ -523,6 +528,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIGetMaxAllocatableMemHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetMaxAllocatableMemHandler")
+	}
+	if o.AdminAPIGetParityHandler == nil {
+		unregistered = append(unregistered, "admin_api.GetParityHandler")
 	}
 	if o.AdminAPIGetResourceQuotaHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetResourceQuotaHandler")
@@ -813,6 +821,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/cluster/max-allocatable-memory"] = admin_api.NewGetMaxAllocatableMem(o.context, o.AdminAPIGetMaxAllocatableMemHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/get-parity/{nodes}/{disksPerNode}"] = admin_api.NewGetParity(o.context, o.AdminAPIGetParityHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

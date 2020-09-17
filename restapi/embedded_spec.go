@@ -572,6 +572,45 @@ func init() {
         }
       }
     },
+    "/get-parity/{nodes}/{disksPerNode}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Gets parity by sending number of nodes \u0026 number of disks",
+        "operationId": "GetParity",
+        "parameters": [
+          {
+            "minimum": 2,
+            "type": "integer",
+            "name": "nodes",
+            "in": "path",
+            "required": true
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "name": "disksPerNode",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/parityResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/groups": {
       "get": {
         "tags": [
@@ -2881,6 +2920,12 @@ func init() {
         "get"
       ]
     },
+    "parityResponse": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "podAffinityTerm": {
       "description": "Required. A pod affinity term, associated with the corresponding weight.",
       "type": "object",
@@ -4213,6 +4258,45 @@ func init() {
         "responses": {
           "204": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/get-parity/{nodes}/{disksPerNode}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Gets parity by sending number of nodes \u0026 number of disks",
+        "operationId": "GetParity",
+        "parameters": [
+          {
+            "minimum": 2,
+            "type": "integer",
+            "name": "nodes",
+            "in": "path",
+            "required": true
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "name": "disksPerNode",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/parityResponse"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -7010,6 +7094,12 @@ func init() {
         "delete",
         "get"
       ]
+    },
+    "parityResponse": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "podAffinityTerm": {
       "description": "Required. A pod affinity term, associated with the corresponding weight.",
