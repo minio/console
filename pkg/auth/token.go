@@ -158,7 +158,7 @@ const (
 //    iv | AEAD ID | nonce | encrypted data
 //     32      1        12      ~ len(data)
 func encrypt(plaintext, associatedData []byte) ([]byte, error) {
-	iv, err := sioutil.Random(32) // 32 bit IV
+	iv, err := sioutil.Random(32) // 32 bytes IV
 	if err != nil {
 		return nil, err
 	}
@@ -186,7 +186,7 @@ func encrypt(plaintext, associatedData []byte) ([]byte, error) {
 		}
 	case c20p1305:
 		var sealingKey []byte
-		sealingKey, err = chacha20.HChaCha20(derivedKey, iv)
+		sealingKey, err = chacha20.HChaCha20(derivedKey, iv[:16]) // HChaCha20 expects nonce of 16 bytes
 		if err != nil {
 			return nil, err
 		}
@@ -249,7 +249,7 @@ func decrypt(ciphertext []byte, associatedData []byte) ([]byte, error) {
 			return nil, err
 		}
 	case c20p1305:
-		sealingKey, err := chacha20.HChaCha20(derivedKey, iv[:])
+		sealingKey, err := chacha20.HChaCha20(derivedKey, iv[:16]) // HChaCha20 expects nonce of 16 bytes
 		if err != nil {
 			return nil, err
 		}
