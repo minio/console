@@ -155,10 +155,10 @@ const (
 // or data key provided as plaintext.
 //
 // The returned ciphertext data consists of:
-//    iv | AEAD ID | nonce | encrypted data
-//     32      1        12      ~ len(data)
+//    AEAD ID | iv | nonce | encrypted data
+//       1      16		 12     ~ len(data)
 func encrypt(plaintext, associatedData []byte) ([]byte, error) {
-	iv, err := sioutil.Random(32) // 32 bytes IV
+	iv, err := sioutil.Random(16) // 16 bytes IV
 	if err != nil {
 		return nil, err
 	}
@@ -186,7 +186,7 @@ func encrypt(plaintext, associatedData []byte) ([]byte, error) {
 		}
 	case c20p1305:
 		var sealingKey []byte
-		sealingKey, err = chacha20.HChaCha20(derivedKey, iv[:16]) // HChaCha20 expects nonce of 16 bytes
+		sealingKey, err = chacha20.HChaCha20(derivedKey, iv) // HChaCha20 expects nonce of 16 bytes
 		if err != nil {
 			return nil, err
 		}
@@ -202,11 +202,11 @@ func encrypt(plaintext, associatedData []byte) ([]byte, error) {
 
 	sealedBytes := aead.Seal(nil, nonce, plaintext, associatedData)
 
-	// ciphertext = iv | AEAD ID | nonce | sealed bytes
+	// ciphertext = AEAD ID | iv | nonce | sealed bytes
 
 	var buf bytes.Buffer
-	buf.Write(iv)
 	buf.WriteByte(algorithm)
+	buf.Write(iv)
 	buf.Write(nonce)
 	buf.Write(sealedBytes)
 
@@ -218,16 +218,16 @@ func encrypt(plaintext, associatedData []byte) ([]byte, error) {
 // and a pbkdf2 derived key
 func decrypt(ciphertext []byte, associatedData []byte) ([]byte, error) {
 	var (
-		iv        [32]byte
 		algorithm [1]byte
+		iv        [16]byte
 		nonce     [12]byte // This depends on the AEAD but both used ciphers have the same nonce length.
 	)
 
 	r := bytes.NewReader(ciphertext)
-	if _, err := io.ReadFull(r, iv[:]); err != nil {
+	if _, err := io.ReadFull(r, algorithm[:]); err != nil {
 		return nil, err
 	}
-	if _, err := io.ReadFull(r, algorithm[:]); err != nil {
+	if _, err := io.ReadFull(r, iv[:]); err != nil {
 		return nil, err
 	}
 	if _, err := io.ReadFull(r, nonce[:]); err != nil {
@@ -249,7 +249,7 @@ func decrypt(ciphertext []byte, associatedData []byte) ([]byte, error) {
 			return nil, err
 		}
 	case c20p1305:
-		sealingKey, err := chacha20.HChaCha20(derivedKey, iv[:16]) // HChaCha20 expects nonce of 16 bytes
+		sealingKey, err := chacha20.HChaCha20(derivedKey, iv[:]) // HChaCha20 expects nonce of 16 bytes
 		if err != nil {
 			return nil, err
 		}
