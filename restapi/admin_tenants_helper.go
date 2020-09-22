@@ -195,7 +195,6 @@ func getKESConfiguration(ctx context.Context, clientSet K8sClientI, ns string, e
 	kesConfiguration = &operator.KESConfig{
 		Image:    "minio/kes:v0.11.0",
 		Replicas: 1,
-		Metadata: nil,
 	}
 	// Using custom image for KES
 	if encryptionCfg.Image != "" {

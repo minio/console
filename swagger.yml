@@ -2010,6 +2010,25 @@ definitions:
       encryption:
         type: object
         $ref: "#/definitions/encryptionConfiguration"
+      console:
+        type: object
+        $ref: '#/definitions/consoleConfiguration'
+
+  metadataFields:
+    type: object
+    properties:
+      annotations:
+        type: object
+        additionalProperties:
+          type: string
+      labels:
+        type: object
+        additionalProperties:
+          type: string
+      node_selector:
+        type: object
+        additionalProperties:
+          type: string
 
   keyPairConfiguration:
     type: object
@@ -2072,26 +2091,36 @@ definitions:
           server_insecure:
             type: boolean
 
+  consoleConfiguration:
+    allOf:
+      - $ref: '#/definitions/metadataFields'
+      - type: object
+        properties:
+          image:
+            type: string
+
   encryptionConfiguration:
-    type: object
-    properties:
-      image:
-        type: string
-      server:
-        type: object
-        $ref: "#/definitions/keyPairConfiguration"
-      client:
-        type: object
-        $ref: "#/definitions/keyPairConfiguration"
-      gemalto:
-        type: object
-        $ref: "#/definitions/gemaltoConfiguration"
-      aws:
-        type: object
-        $ref: "#/definitions/awsConfiguration"
-      vault:
-        type: object
-        $ref: "#/definitions/vaultConfiguration"
+    allOf:
+      - $ref: '#/definitions/metadataFields'
+      - type: object
+        properties:
+          image:
+            type: string
+          server:
+            type: object
+            $ref: "#/definitions/keyPairConfiguration"
+          client:
+            type: object
+            $ref: "#/definitions/keyPairConfiguration"
+          gemalto:
+            type: object
+            $ref: "#/definitions/gemaltoConfiguration"
+          aws:
+            type: object
+            $ref: "#/definitions/awsConfiguration"
+          vault:
+            type: object
+            $ref: "#/definitions/vaultConfiguration"
 
   vaultConfiguration:
     type: object
