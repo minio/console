@@ -42,25 +42,25 @@ interface ITenantDetailsProps {
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     buttonContainer: {
-      textAlign: "right"
+      textAlign: "right",
     },
     multiContainer: {
       display: "flex",
       alignItems: "center" as const,
-      justifyContent: "flex-start" as const
+      justifyContent: "flex-start" as const,
     },
     sizeFactorContainer: {
-      marginLeft: 8
+      marginLeft: 8,
     },
     containerHeader: {
       display: "flex",
-      justifyContent: "space-between"
+      justifyContent: "space-between",
     },
     paperContainer: {
-      padding: "15px 15px 15px 50px"
+      padding: "15px 15px 15px 50px",
     },
     infoGrid: {
       display: "grid",
@@ -68,41 +68,28 @@ const styles = (theme: Theme) =>
       gridGap: 8,
       "& div": {
         display: "flex",
-        alignItems: "center"
+        alignItems: "center",
       },
       "& div:nth-child(odd)": {
         justifyContent: "flex-end",
-        fontWeight: 700
+        fontWeight: 700,
       },
       "& div:nth-child(2n)": {
-        paddingRight: 35
-      }
+        paddingRight: 35,
+      },
     },
     masterActions: {
       width: "25%",
       minWidth: "120px",
       "& div": {
-        margin: "5px 0px"
-      }
+        margin: "5px 0px",
+      },
     },
     actionsTray: {
-      textAlign: "right"
+      textAlign: "right",
     },
-    ...modalBasic
+    ...modalBasic,
   });
-
-const mainPagination = {
-  rowsPerPageOptions: [5, 10, 25],
-  colSpan: 3,
-  count: 0,
-  rowsPerPage: 0,
-  page: 0,
-  SelectProps: {
-    inputProps: { "aria-label": "rows per page" },
-    native: true
-  },
-  ActionsComponent: MinTablePaginationActions
-};
 
 const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
@@ -180,7 +167,7 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
         setError("");
         setLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
         setError(err);
         setLoading(false);
       });
@@ -227,10 +214,10 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
               <div>{niceBytes(capacity.toString(10))}</div>
               <div>Minio:</div>
               <div>{tenant ? tenant.image : ""}</div>
-              <div>Console:</div>
-              <div>{tenant ? tenant.console_image : ""}</div>
               <div>Zones:</div>
               <div>{zoneCount}</div>
+              <div>Console:</div>
+              <div>{tenant ? tenant.console_image : ""}</div>
               <div>Instances:</div>
               <div>{instances}</div>
               <div>Volumes:</div>
@@ -274,26 +261,35 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
             itemActions={[
               {
                 type: "delete",
-                onClick: element => {
+                onClick: (element) => {
                   console.log(element);
                 },
-                sendOnlyId: true
-              }
+                sendOnlyId: true,
+              },
             ]}
             columns={[
               { label: "Name", elementKey: "name" },
               { label: "Capacity", elementKey: "capacity" },
               { label: "# of Instances", elementKey: "servers" },
-              { label: "# of Drives", elementKey: "volumes" }
+              { label: "# of Drives", elementKey: "volumes" },
             ]}
             isLoading={false}
             records={zones}
             entityName="Zones"
             idField="name"
             paginatorConfig={{
-              ...mainPagination,
+              rowsPerPageOptions: [5, 10, 25],
+              colSpan: 3,
+              count: zoneCount,
+              rowsPerPage: 10,
+              page: 0,
+              SelectProps: {
+                inputProps: { "aria-label": "rows per page" },
+                native: true,
+              },
+              ActionsComponent: MinTablePaginationActions,
               onChangePage: () => {},
-              onChangeRowsPerPage: () => {}
+              onChangeRowsPerPage: () => {},
             }}
           />
         </Grid>
