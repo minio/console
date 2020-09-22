@@ -2213,6 +2213,21 @@ func init() {
         }
       }
     },
+    "consoleConfiguration": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/metadataFields"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "image": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
     "createTenantRequest": {
       "type": "object",
       "required": [
@@ -2229,6 +2244,10 @@ func init() {
           "additionalProperties": {
             "type": "string"
           }
+        },
+        "console": {
+          "type": "object",
+          "$ref": "#/definitions/consoleConfiguration"
         },
         "console_image": {
           "type": "string"
@@ -2330,32 +2349,39 @@ func init() {
       }
     },
     "encryptionConfiguration": {
-      "type": "object",
-      "properties": {
-        "aws": {
-          "type": "object",
-          "$ref": "#/definitions/awsConfiguration"
+      "allOf": [
+        {
+          "$ref": "#/definitions/metadataFields"
         },
-        "client": {
+        {
           "type": "object",
-          "$ref": "#/definitions/keyPairConfiguration"
-        },
-        "gemalto": {
-          "type": "object",
-          "$ref": "#/definitions/gemaltoConfiguration"
-        },
-        "image": {
-          "type": "string"
-        },
-        "server": {
-          "type": "object",
-          "$ref": "#/definitions/keyPairConfiguration"
-        },
-        "vault": {
-          "type": "object",
-          "$ref": "#/definitions/vaultConfiguration"
+          "properties": {
+            "aws": {
+              "type": "object",
+              "$ref": "#/definitions/awsConfiguration"
+            },
+            "client": {
+              "type": "object",
+              "$ref": "#/definitions/keyPairConfiguration"
+            },
+            "gemalto": {
+              "type": "object",
+              "$ref": "#/definitions/gemaltoConfiguration"
+            },
+            "image": {
+              "type": "string"
+            },
+            "server": {
+              "type": "object",
+              "$ref": "#/definitions/keyPairConfiguration"
+            },
+            "vault": {
+              "type": "object",
+              "$ref": "#/definitions/vaultConfiguration"
+            }
+          }
         }
-      }
+      ]
     },
     "error": {
       "type": "object",
@@ -2728,6 +2754,29 @@ func init() {
         "max_memory": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
+    "metadataFields": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "node_selector": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       }
     },
@@ -6432,6 +6481,21 @@ func init() {
         }
       }
     },
+    "consoleConfiguration": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/metadataFields"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "image": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
     "createTenantRequest": {
       "type": "object",
       "required": [
@@ -6448,6 +6512,10 @@ func init() {
           "additionalProperties": {
             "type": "string"
           }
+        },
+        "console": {
+          "type": "object",
+          "$ref": "#/definitions/consoleConfiguration"
         },
         "console_image": {
           "type": "string"
@@ -6549,32 +6617,39 @@ func init() {
       }
     },
     "encryptionConfiguration": {
-      "type": "object",
-      "properties": {
-        "aws": {
-          "type": "object",
-          "$ref": "#/definitions/awsConfiguration"
+      "allOf": [
+        {
+          "$ref": "#/definitions/metadataFields"
         },
-        "client": {
+        {
           "type": "object",
-          "$ref": "#/definitions/keyPairConfiguration"
-        },
-        "gemalto": {
-          "type": "object",
-          "$ref": "#/definitions/gemaltoConfiguration"
-        },
-        "image": {
-          "type": "string"
-        },
-        "server": {
-          "type": "object",
-          "$ref": "#/definitions/keyPairConfiguration"
-        },
-        "vault": {
-          "type": "object",
-          "$ref": "#/definitions/vaultConfiguration"
+          "properties": {
+            "aws": {
+              "type": "object",
+              "$ref": "#/definitions/awsConfiguration"
+            },
+            "client": {
+              "type": "object",
+              "$ref": "#/definitions/keyPairConfiguration"
+            },
+            "gemalto": {
+              "type": "object",
+              "$ref": "#/definitions/gemaltoConfiguration"
+            },
+            "image": {
+              "type": "string"
+            },
+            "server": {
+              "type": "object",
+              "$ref": "#/definitions/keyPairConfiguration"
+            },
+            "vault": {
+              "type": "object",
+              "$ref": "#/definitions/vaultConfiguration"
+            }
+          }
         }
-      }
+      ]
     },
     "error": {
       "type": "object",
@@ -6947,6 +7022,29 @@ func init() {
         "max_memory": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
+    "metadataFields": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "node_selector": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       }
     },
