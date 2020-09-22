@@ -783,6 +783,8 @@ github.com/minio/minio-go/v7 v7.0.5-0.20200807085956-d7db33ea7618 h1:8iTb0TFs6kD
 github.com/minio/minio-go/v7 v7.0.5-0.20200807085956-d7db33ea7618/go.mod h1:CSt2ETZNs+bIIhWTse0mcZKZWMGrFU7Er7RR0TmkDYk=
 github.com/minio/operator v0.0.0-20200921211523-69f9eef5b7b5 h1:yQ7WHA2wbTTGHz0Z4xXSRxfUTm5fafM0ajvlZlQ2Zl4=
 github.com/minio/operator v0.0.0-20200921211523-69f9eef5b7b5/go.mod h1:6lavbNo2YuJWeQR5bZYsEWdbpRCO2KrTyfQ0PtC/AN4=
+github.com/minio/operator v0.0.0-20200922064400-af3315add727 h1:MN8Knn7yxrd76Y3uL38DZh4RhihTZTck5u51NoEar/c=
+github.com/minio/operator v0.0.0-20200922064400-af3315add727/go.mod h1:6lavbNo2YuJWeQR5bZYsEWdbpRCO2KrTyfQ0PtC/AN4=
 github.com/minio/selfupdate v0.3.1 h1:BWEFSNnrZVMUWXbXIgLDNDjbejkmpAmZvy/nCz1HlEs=
 github.com/minio/selfupdate v0.3.1/go.mod h1:b8ThJzzH7u2MkF6PcIra7KaXO9Khf6alWPvMSyTDCFM=
 github.com/minio/sha256-simd v0.1.1 h1:5QHSlgo3nt5yKOJrC7W8w7X+NFl8cMPZm96iu8kKUJU=

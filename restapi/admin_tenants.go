@@ -514,7 +514,9 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			CredsSecret: &corev1.LocalObjectReference{
 				Name: secretName,
 			},
-			Env: envrionmentVariables,
+			Env:     envrionmentVariables,
+			KES:     &operator.KESConfig{},
+			Console: &operator.ConsoleConfiguration{},
 		},
 	}
 	idpEnabled := false
@@ -569,16 +571,16 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		}
 	}
 
-	isEncryptionAvailable := false
+	isEncryptionEnabled := false
 	if tenantReq.EnableTLS != nil && *tenantReq.EnableTLS {
 		// If user request autoCert, Operator will generate certificate keypair for MinIO (server), Console (server) and KES (server and app mTLS)
-		isEncryptionAvailable = true
+		isEncryptionEnabled = true
 		minInst.Spec.RequestAutoCert = *tenantReq.EnableTLS
 	}
 
 	if !minInst.Spec.RequestAutoCert && tenantReq.TLS != nil && tenantReq.TLS.Minio != nil {
 		// User provided TLS certificates for MinIO
-		isEncryptionAvailable = true
+		isEncryptionEnabled = true
 		// disable autoCert
 		minInst.Spec.RequestAutoCert = false
 		// Certificates used by the MinIO instance
@@ -590,7 +592,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		minInst.Spec.ExternalCertSecret = externalCertSecret
 	}
 
-	if tenantReq.Encryption != nil && isEncryptionAvailable {
+	if tenantReq.Encryption != nil && isEncryptionEnabled {
 		// Enable auto encryption
 		minInst.Spec.Env = append(minInst.Spec.Env, corev1.EnvVar{
 			Name:  "MINIO_KMS_AUTO_ENCRYPTION",
@@ -609,6 +611,13 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		if err != nil {
 			return nil, prepareError(errorGeneric)
 		}
+	}
+
+	// Set Labels, Annotations and Node Selector for KES
+	if isEncryptionEnabled && tenantReq.Encryption != nil {
+		minInst.Spec.KES.Labels = tenantReq.Encryption.Labels
+		minInst.Spec.KES.Annotations = tenantReq.Encryption.Annotations
+		minInst.Spec.KES.NodeSelector = tenantReq.Encryption.NodeSelector
 	}
 
 	// optionals are set below
@@ -688,6 +697,13 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 				return nil, prepareError(errorGeneric)
 			}
 			minInst.Spec.Console.ExternalCertSecret = externalCertSecret
+		}
+
+		// Set Labels, Annotations and Node Selector for Console
+		if tenantReq.Console != nil {
+			minInst.Spec.Console.Annotations = tenantReq.Console.Annotations
+			minInst.Spec.Console.Labels = tenantReq.Console.Labels
+			minInst.Spec.Console.NodeSelector = tenantReq.Console.NodeSelector
 		}
 	}
 
