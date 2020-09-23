@@ -7,7 +7,6 @@ rules:
       - ""
     resources:
       - namespaces
-      - secrets
       - pods
       - services
       - events
@@ -18,6 +17,18 @@ rules:
       - create
       - list
       - patch
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - watch
+      - create
+      - list
+      - patch
+      - deletecollection
+      - delete
   - apiGroups:
       - "storage.k8s.io"
     resources:

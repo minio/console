@@ -8,7 +8,7 @@ import Grid from "@material-ui/core/Grid";
 import {
   factorForDropdown,
   getTotalSize,
-  niceBytes
+  niceBytes,
 } from "../../../../common/utils";
 import { Button, LinearProgress } from "@material-ui/core";
 import api from "../../../../common/api";
@@ -24,18 +24,18 @@ interface IAddZoneProps {
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     buttonContainer: {
-      textAlign: "right"
+      textAlign: "right",
     },
     multiContainer: {
       display: "flex",
       alignItems: "center" as const,
-      justifyContent: "flex-start" as const
+      justifyContent: "flex-start" as const,
     },
     sizeFactorContainer: {
-      marginLeft: 8
+      marginLeft: 8,
     },
     bottomContainer: {
       display: "flex",
@@ -43,31 +43,31 @@ const styles = (theme: Theme) =>
       alignItems: "center",
       "& div": {
         flexGrow: 1,
-        width: "100%"
-      }
+        width: "100%",
+      },
     },
     factorElements: {
       display: "flex",
-      justifyContent: "flex-start"
+      justifyContent: "flex-start",
     },
     sizeNumber: {
       fontSize: 35,
       fontWeight: 700,
-      textAlign: "center"
+      textAlign: "center",
     },
     sizeDescription: {
       fontSize: 14,
       color: "#777",
-      textAlign: "center"
+      textAlign: "center",
     },
-    ...modalBasic
+    ...modalBasic,
   });
 
 const AddZoneModal = ({
   tenant,
   classes,
   open,
-  onCloseZoneAndReload
+  onCloseZoneAndReload,
 }: IAddZoneProps) => {
   const [addSending, setAddSending] = useState<boolean>(false);
   const [numberOfNodes, setNumberOfNodes] = useState<number>(0);
@@ -96,8 +96,8 @@ const AddZoneModal = ({
             volume_configuration: {
               size: volumeSize * 1073741824,
               storage_class: "",
-              labels: null
-            }
+              labels: null,
+            },
           };
           api
             .invoke(
@@ -109,7 +109,7 @@ const AddZoneModal = ({
               setAddSending(false);
               onCloseZoneAndReload(true);
             })
-            .catch(err => {
+            .catch((err) => {
               setAddSending(false);
               // setDeleteError(err);
             });
