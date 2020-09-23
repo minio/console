@@ -127,7 +127,7 @@ const RemoteBucketsList = ({ classes }: IRemoteListBucketsProps) => {
       .invoke("GET", `/api/v1/remote-buckets`)
       .then((res: IRemoteBucketsResponse) => {
         setLoading(false);
-        setRecords(res.buckets);
+        setRecords(res.buckets || []);
         setTotalRecords(!res.buckets ? 0 : res.total);
         setError("");
         // if we get 0 results, and page > 0 , go down 1 page
