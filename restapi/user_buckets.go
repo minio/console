@@ -26,7 +26,6 @@ import (
 
 	"github.com/minio/minio-go/v7/pkg/replication"
 
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
