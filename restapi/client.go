@@ -110,11 +110,6 @@ func (c minioClient) getBucketReplication(ctx context.Context, bucketName string
 	return c.client.GetBucketReplication(ctx, bucketName)
 }
 
-// implements minio.setBucketVersioning(ctx, bucketName, cfg)
-func (c minioClient) setBucketReplication(ctx context.Context, bucketName string, cfg replication.Config) error {
-	return c.client.SetBucketReplication(ctx, bucketName, cfg)
-}
-
 // MCClient interface with all functions to be implemented
 // by mock when testing, it should include all mc/S3Client respective api calls
 // that are used within this project.
