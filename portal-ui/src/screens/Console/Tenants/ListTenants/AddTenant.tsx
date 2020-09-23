@@ -40,7 +40,7 @@ import {
 } from "../../../../common/utils";
 import {
   commonFormValidation,
-  IValidation
+  IValidation,
 } from "../../../../utils/validationFunctions";
 import GenericWizard from "../../Common/GenericWizard/GenericWizard";
 import { IWizardElement } from "../../Common/GenericWizard/types";
@@ -52,12 +52,13 @@ import {
   ICapacity,
   ITenantCreator,
 } from "../../../../common/types";
+import { NewTenantCredential } from "./TenantCredentialsPrompt/types";
 
 interface IAddTenantProps {
   open: boolean;
   closeModalAndRefresh: (
     reloadData: boolean,
-    res: NewServiceAccount | null
+    res: NewTenantCredential | null
   ) => any;
   classes: any;
 }
@@ -65,19 +66,19 @@ interface IAddTenantProps {
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     buttonContainer: {
-      textAlign: "right"
+      textAlign: "right",
     },
     multiContainer: {
       display: "flex",
       alignItems: "center" as const,
-      justifyContent: "flex-start" as const
+      justifyContent: "flex-start" as const,
     },
     sizeFactorContainer: {
       marginLeft: 8,
-      alignSelf: "flex-start" as const
+      alignSelf: "flex-start" as const,
     },
     headerElement: {
       position: "sticky",
@@ -85,16 +86,16 @@ const styles = (theme: Theme) =>
       paddingTop: 5,
       marginBottom: 10,
       backgroundColor: "#fff",
-      zIndex: 500
+      zIndex: 500,
     },
     tableTitle: {
       fontWeight: 700,
-      width: "30%"
+      width: "30%",
     },
     zoneError: {
       color: "#dc1f2e",
       fontSize: "0.75rem",
-      paddingLeft: 120
+      paddingLeft: 120,
     },
     error: {
       color: "#dc1f2e",
@@ -111,7 +112,7 @@ interface Opts {
 const AddTenant = ({
   open,
   closeModalAndRefresh,
-  classes
+  classes,
 }: IAddTenantProps) => {
   // Fields
   const [addSending, setAddSending] = useState<boolean>(false);
@@ -212,7 +213,9 @@ const AddTenant = ({
         const elements = get(res, "elements", []);
 
         const newStorage = elements.map((storageClass: any) => {
-          const name = get(storageClass, "name", "").split(".")[0];
+          const name = get(storageClass, "name", "").split(
+            ".storageclass.storage.k8s.io/requests.storage"
+          )[0];
 
           return { label: name, value: name };
         });
@@ -265,16 +268,6 @@ const AddTenant = ({
     );
 
     setDistribution(distrCalculate);
-
-    /*const errorDistribution = get(distrCalculate, "error", "");
-
-    if (errorDistribution === "") {
-      const disksPerServer = get(distrCalculate, "disks", 0);
-      const totalNodes = get(distrCalculate, "nodes", 0);
-      const sizePerVolume = get(distrCalculate, "pvSize", 0);
-
-      getParity(totalNodes, disksPerServer, sizePerVolume);
-    }*/
   };
 
   /*Calculate Allocation End*/
@@ -301,8 +294,8 @@ const AddTenant = ({
 
     setNameTenantValid(
       !("tenant-name" in commonValidation) &&
-      !("namespace" in commonValidation) &&
-      storageClasses.length > 0
+        !("namespace" in commonValidation) &&
+        storageClasses.length > 0
     );
 
     setValidationErrors(commonValidation);
@@ -337,9 +330,9 @@ const AddTenant = ({
 
     setConfigValid(
       !("nodes" in commonValidation) &&
-      !("volume_size" in commonValidation) &&
-      !("memory_per_node" in commonValidation) &&
-      distribution.error === ""
+        !("volume_size" in commonValidation) &&
+        !("memory_per_node" in commonValidation) &&
+        distribution.error === ""
     );
 
     setValidationErrors(commonValidation);
@@ -356,8 +349,8 @@ const AddTenant = ({
           required: true,
           value: imageName,
           pattern: /^((.*?)\/(.*?):(.+))$/,
-          customPatternMessage: "Format must be of form: 'minio/minio:VERSION'"
-        }
+          customPatternMessage: "Format must be of form: 'minio/minio:VERSION'",
+        },
       ];
     }
 
@@ -590,9 +583,13 @@ const AddTenant = ({
       api
         .invoke("POST", `/api/v1/tenants`, dataSend)
         .then((res) => {
-          const newSrvAcc: NewServiceAccount = {
+          const newSrvAcc: NewTenantCredential = {
             accessKey: res.access_key,
             secretKey: res.secret_key,
+            console: {
+              accessKey: res.console.access_key,
+              secretKey: res.console.secret_key,
+            },
           };
 
           setAddSending(false);
@@ -620,7 +617,7 @@ const AddTenant = ({
     enabled: true,
     action: () => {
       closeModalAndRefresh(false, null);
-    }
+    },
   };
 
   const wizardSteps: IWizardElement[] = [
@@ -690,7 +687,7 @@ const AddTenant = ({
               id="adv_mode"
               name="adv_mode"
               checked={advancedMode}
-              onChange={e => {
+              onChange={(e) => {
                 const targetD = e.target;
                 const checked = targetD.checked;
 
@@ -703,8 +700,8 @@ const AddTenant = ({
       ),
       buttons: [
         cancelButton,
-        { label: "Next", type: "next", enabled: nameTenantValid }
-      ]
+        { label: "Next", type: "next", enabled: nameTenantValid },
+      ],
     },
     {
       label: "Configure",
@@ -1080,8 +1077,8 @@ const AddTenant = ({
       buttons: [
         cancelButton,
         { label: "Back", type: "back", enabled: true },
-        { label: "Next", type: "next", enabled: true }
-      ]
+        { label: "Next", type: "next", enabled: true },
+      ],
     },
     {
       label: "Encryption",
@@ -1504,8 +1501,8 @@ const AddTenant = ({
       buttons: [
         cancelButton,
         { label: "Back", type: "back", enabled: true },
-        { label: "Next", type: "next", enabled: true }
-      ]
+        { label: "Next", type: "next", enabled: true },
+      ],
     },
     {
       label: "Tenant Size",
@@ -1720,16 +1717,16 @@ const AddTenant = ({
           enabled: !addSending,
           action: () => {
             setAddSending(true);
-          }
-        }
-      ]
-    }
+          },
+        },
+      ],
+    },
   ];
 
   let filteredWizardSteps = wizardSteps;
 
   if (!advancedMode) {
-    filteredWizardSteps = wizardSteps.filter(step => !step.advancedOnly);
+    filteredWizardSteps = wizardSteps.filter((step) => !step.advancedOnly);
   }
 
   return (

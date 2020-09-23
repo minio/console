@@ -265,7 +265,7 @@ const TableWrapper = ({
             </Grid>
           </Grid>
         )}
-        {records && records.length > 0 ? (
+        {records && !isLoading && records.length > 0 ? (
           <Table size="small" stickyHeader={stickyHeader}>
             <TableHead className={classes.minTableHeader}>
               <TableRow>
