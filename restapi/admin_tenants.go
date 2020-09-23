@@ -514,9 +514,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			CredsSecret: &corev1.LocalObjectReference{
 				Name: secretName,
 			},
-			Env:     envrionmentVariables,
-			KES:     &operator.KESConfig{},
-			Console: &operator.ConsoleConfiguration{},
+			Env: envrionmentVariables,
 		},
 	}
 	idpEnabled := false
@@ -611,10 +609,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		if err != nil {
 			return nil, prepareError(errorGeneric)
 		}
-	}
-
-	// Set Labels, Annotations and Node Selector for KES
-	if isEncryptionEnabled && tenantReq.Encryption != nil {
+		// Set Labels, Annotations and Node Selector for KES
 		minInst.Spec.KES.Labels = tenantReq.Encryption.Labels
 		minInst.Spec.KES.Annotations = tenantReq.Encryption.Annotations
 		minInst.Spec.KES.NodeSelector = tenantReq.Encryption.NodeSelector
