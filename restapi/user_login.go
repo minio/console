@@ -18,11 +18,9 @@ package restapi
 
 import (
 	"context"
-	"errors"
 	"log"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/acl"
 	"github.com/minio/console/pkg/auth"
@@ -32,17 +30,12 @@ import (
 	"github.com/minio/console/restapi/operations/user_api"
 )
 
-var (
-	errorGeneric          = errors.New("an error occurred, please try again")
-	errInvalidCredentials = errors.New("invalid Login")
-)
-
 func registerLoginHandlers(api *operations.ConsoleAPI) {
 	// get login strategy
 	api.UserAPILoginDetailHandler = user_api.LoginDetailHandlerFunc(func(params user_api.LoginDetailParams) middleware.Responder {
 		loginDetails, err := getLoginDetailsResponse()
 		if err != nil {
-			return user_api.NewLoginDetailDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return user_api.NewLoginDetailDefault(int(err.Code)).WithPayload(err)
 		}
 		return user_api.NewLoginDetailOK().WithPayload(loginDetails)
 	})
@@ -50,21 +43,21 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 	api.UserAPILoginHandler = user_api.LoginHandlerFunc(func(params user_api.LoginParams) middleware.Responder {
 		loginResponse, err := getLoginResponse(params.Body)
 		if err != nil {
-			return user_api.NewLoginDefault(401).WithPayload(&models.Error{Code: 401, Message: swag.String(err.Error())})
+			return user_api.NewLoginDefault(int(err.Code)).WithPayload(err)
 		}
 		return user_api.NewLoginCreated().WithPayload(loginResponse)
 	})
 	api.UserAPILoginOauth2AuthHandler = user_api.LoginOauth2AuthHandlerFunc(func(params user_api.LoginOauth2AuthParams) middleware.Responder {
 		loginResponse, err := getLoginOauth2AuthResponse(params.Body)
 		if err != nil {
-			return user_api.NewLoginOauth2AuthDefault(401).WithPayload(&models.Error{Code: 401, Message: swag.String(err.Error())})
+			return user_api.NewLoginOauth2AuthDefault(int(err.Code)).WithPayload(err)
 		}
 		return user_api.NewLoginOauth2AuthCreated().WithPayload(loginResponse)
 	})
 	api.UserAPILoginOperatorHandler = user_api.LoginOperatorHandlerFunc(func(params user_api.LoginOperatorParams) middleware.Responder {
 		loginResponse, err := getLoginOperatorResponse(params.Body)
 		if err != nil {
-			return user_api.NewLoginOperatorDefault(401).WithPayload(&models.Error{Code: 401, Message: swag.String(err.Error())})
+			return user_api.NewLoginOperatorDefault(int(err.Code)).WithPayload(err)
 		}
 		return user_api.NewLoginOperatorCreated().WithPayload(loginResponse)
 	})
@@ -76,8 +69,7 @@ func login(credentials ConsoleCredentials, actions []string) (*string, error) {
 	// try to obtain consoleCredentials,
 	tokens, err := credentials.Get()
 	if err != nil {
-		log.Println("error authenticating user", err)
-		return nil, errInvalidCredentials
+		return nil, err
 	}
 	// if we made it here, the consoleCredentials work, generate a jwt with claims
 	jwt, err := auth.NewEncryptedTokenForClient(&tokens, actions)
@@ -103,32 +95,29 @@ func getConfiguredRegionForLogin(client MinioAdmin) (string, error) {
 }
 
 // getLoginResponse performs login() and serializes it to the handler's output
-func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, error) {
+func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.Error) {
 	ctx := context.Background()
 	mAdmin, err := newSuperMAdminClient()
 	if err != nil {
-		log.Println("error creating Madmin Client:", err)
-		return nil, errorGeneric
+		return nil, prepareError(err)
 	}
 	adminClient := adminClient{client: mAdmin}
 	// obtain the configured MinIO region
 	// need it for user authentication
 	location, err := getConfiguredRegionForLogin(adminClient)
 	if err != nil {
-		return nil, err
+		return nil, prepareError(err)
 	}
 	creds, err := newConsoleCredentials(*lr.AccessKey, *lr.SecretKey, location)
 	if err != nil {
-		log.Println("error login:", err)
-		return nil, errInvalidCredentials
+		return nil, prepareError(err)
 	}
 	credentials := consoleCredentials{consoleCredentials: creds}
 	// obtain the current policy assigned to this user
 	// necessary for generating the list of allowed endpoints
 	userInfo, err := adminClient.getUserInfo(ctx, *lr.AccessKey)
 	if err != nil {
-		log.Println("error login:", err)
-		return nil, errInvalidCredentials
+		return nil, prepareError(err)
 	}
 	policy, _ := adminClient.getPolicy(ctx, userInfo.PolicyName)
 	// by default every user starts with an empty array of available actions
@@ -141,7 +130,7 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, error) {
 	}
 	sessionID, err := login(credentials, actions)
 	if err != nil {
-		return nil, err
+		return nil, prepareError(errInvalidCredentials, nil, err)
 	}
 	// serialize output
 	loginResponse := &models.LoginResponse{
@@ -151,7 +140,7 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, error) {
 }
 
 // getLoginDetailsResponse returns information regarding the Console authentication mechanism.
-func getLoginDetailsResponse() (*models.LoginDetails, error) {
+func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
 	ctx := context.Background()
 	loginStrategy := models.LoginDetailsLoginStrategyForm
 	redirectURL := ""
@@ -162,8 +151,7 @@ func getLoginDetailsResponse() (*models.LoginDetails, error) {
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil)
 		if err != nil {
-			log.Println("error getting new oauth2 provider client", err)
-			return nil, errorGeneric
+			return nil, prepareError(err)
 		}
 		// Validate user against IDP
 		identityProvider := &auth.IdentityProvider{Client: oauth2Client}
@@ -180,31 +168,29 @@ func loginOauth2Auth(ctx context.Context, provider *auth.IdentityProvider, code,
 	userIdentity, err := provider.VerifyIdentity(ctx, code, state)
 	if err != nil {
 		log.Println("error validating user identity against idp:", err)
-		return nil, errorGeneric
+		return nil, errInvalidCredentials
 	}
 	return userIdentity, nil
 }
 
-func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.LoginResponse, error) {
+func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.LoginResponse, *models.Error) {
 	ctx := context.Background()
 	if oauth2.IsIdpEnabled() {
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil)
 		if err != nil {
-			log.Println("error getting new oauth2 client:", err)
-			return nil, errorGeneric
+			return nil, prepareError(err)
 		}
 		// initialize new identity provider
 		identityProvider := &auth.IdentityProvider{Client: oauth2Client}
 		// Validate user against IDP
 		identity, err := loginOauth2Auth(ctx, identityProvider, *lr.Code, *lr.State)
 		if err != nil {
-			return nil, err
+			return nil, prepareError(errInvalidCredentials, nil, err)
 		}
 		mAdmin, err := newSuperMAdminClient()
 		if err != nil {
-			log.Println("error creating Madmin Client:", err)
-			return nil, errorGeneric
+			return nil, prepareError(err)
 		}
 		adminClient := adminClient{client: mAdmin}
 		accessKey := identity.Email
@@ -213,12 +199,11 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 		// need it for user authentication
 		location, err := getConfiguredRegionForLogin(adminClient)
 		if err != nil {
-			return nil, err
+			return nil, prepareError(err)
 		}
 		// create user in MinIO
 		if _, err := addUser(ctx, adminClient, &accessKey, &secretKey, []string{}); err != nil {
-			log.Println("error adding user:", err)
-			return nil, errorGeneric
+			return nil, prepareError(err)
 		}
 		// rollback user if there's an error after this point
 		defer func() {
@@ -231,26 +216,23 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 		// assign the "consoleAdmin" policy to this user
 		policyName := oauth2.GetIDPPolicyForUser()
 		if err := setPolicy(ctx, adminClient, policyName, accessKey, models.PolicyEntityUser); err != nil {
-			log.Println("error setting policy:", err)
-			return nil, errorGeneric
+			return nil, prepareError(err)
 		}
 		// obtain the current policy details, necessary for generating the list of allowed endpoints
 		policy, err := adminClient.getPolicy(ctx, policyName)
 		if err != nil {
-			log.Println("error reading policy:", err)
-			return nil, errorGeneric
+			return nil, prepareError(err)
 		}
 		actions := acl.GetActionsStringFromPolicy(policy)
 		// User was created correctly, create a new session/JWT
 		creds, err := newConsoleCredentials(accessKey, secretKey, location)
 		if err != nil {
-			log.Println("error login:", err)
-			return nil, errorGeneric
+			return nil, prepareError(err)
 		}
 		credentials := consoleCredentials{consoleCredentials: creds}
 		jwt, err := login(credentials, actions)
 		if err != nil {
-			return nil, err
+			return nil, prepareError(errInvalidCredentials, nil, err)
 		}
 		// serialize output
 		loginResponse := &models.LoginResponse{
@@ -258,21 +240,20 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 		}
 		return loginResponse, nil
 	}
-	return nil, errorGeneric
+	return nil, prepareError(errorGeneric)
 }
 
 // getLoginOperatorResponse validate the provided service account token against k8s api
-func getLoginOperatorResponse(lmr *models.LoginOperatorRequest) (*models.LoginResponse, error) {
+func getLoginOperatorResponse(lmr *models.LoginOperatorRequest) (*models.LoginResponse, *models.Error) {
 	creds, err := newConsoleCredentials("", *lmr.Jwt, "")
 	if err != nil {
-		log.Println("error login:", err)
-		return nil, errInvalidCredentials
+		return nil, prepareError(err)
 	}
 	credentials := consoleCredentials{consoleCredentials: creds}
 	var actions []string
 	jwt, err := login(credentials, actions)
 	if err != nil {
-		return nil, err
+		return nil, prepareError(errInvalidCredentials, nil, err)
 	}
 	// serialize output
 	loginResponse := &models.LoginResponse{

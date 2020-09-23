@@ -17,18 +17,11 @@
 package restapi
 
 import (
-	"errors"
-
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/acl"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/user_api"
-)
-
-var (
-	errorGenericInvalidSession = errors.New("invalid session")
 )
 
 func registerSessionHandlers(api *operations.ConsoleAPI) {
@@ -36,17 +29,17 @@ func registerSessionHandlers(api *operations.ConsoleAPI) {
 	api.UserAPISessionCheckHandler = user_api.SessionCheckHandlerFunc(func(params user_api.SessionCheckParams, session *models.Principal) middleware.Responder {
 		sessionResp, err := getSessionResponse(session)
 		if err != nil {
-			return user_api.NewSessionCheckDefault(401).WithPayload(&models.Error{Code: 401, Message: swag.String(err.Error())})
+			return user_api.NewSessionCheckDefault(int(err.Code)).WithPayload(err)
 		}
 		return user_api.NewSessionCheckOK().WithPayload(sessionResp)
 	})
 }
 
 // getSessionResponse parse the jwt of the current session and returns a list of allowed actions to render in the UI
-func getSessionResponse(session *models.Principal) (*models.SessionResponse, error) {
+func getSessionResponse(session *models.Principal) (*models.SessionResponse, *models.Error) {
 	// serialize output
 	if session == nil {
-		return nil, errorGenericInvalidSession
+		return nil, prepareError(errorGenericInvalidSession)
 	}
 	sessionResp := &models.SessionResponse{
 		Pages:  acl.GetAuthorizedEndpoints(session.Actions),

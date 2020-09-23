@@ -23,63 +23,26 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
-// NodeInfo node info
+// MaxAllocatableMemResponse max allocatable mem response
 //
-// swagger:model nodeInfo
-type NodeInfo struct {
+// swagger:model maxAllocatableMemResponse
+type MaxAllocatableMemResponse struct {
 
-	// Represents the resources of a node that are available for scheduling.
-	AllocatableResources map[string]int64 `json:"allocatable_resources,omitempty"`
-
-	// name
-	Name string `json:"name,omitempty"`
-
-	// taints
-	Taints *NodeTaints `json:"taints,omitempty"`
-
-	// Represents the total resources of a node.
-	TotalResources map[string]int64 `json:"total_resources,omitempty"`
+	// max memory
+	MaxMemory int64 `json:"max_memory,omitempty"`
 }
 
-// Validate validates this node info
-func (m *NodeInfo) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateTaints(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *NodeInfo) validateTaints(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Taints) { // not required
-		return nil
-	}
-
-	if m.Taints != nil {
-		if err := m.Taints.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("taints")
-			}
-			return err
-		}
-	}
-
+// Validate validates this max allocatable mem response
+func (m *MaxAllocatableMemResponse) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *NodeInfo) MarshalBinary() ([]byte, error) {
+func (m *MaxAllocatableMemResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -87,8 +50,8 @@ func (m *NodeInfo) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *NodeInfo) UnmarshalBinary(b []byte) error {
-	var res NodeInfo
+func (m *MaxAllocatableMemResponse) UnmarshalBinary(b []byte) error {
+	var res MaxAllocatableMemResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

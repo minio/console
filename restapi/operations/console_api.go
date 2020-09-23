@@ -129,8 +129,11 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIGetBucketVersioningHandler: user_api.GetBucketVersioningHandlerFunc(func(params user_api.GetBucketVersioningParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetBucketVersioning has not yet been implemented")
 		}),
-		AdminAPIGetClusterResourcesHandler: admin_api.GetClusterResourcesHandlerFunc(func(params admin_api.GetClusterResourcesParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.GetClusterResources has not yet been implemented")
+		AdminAPIGetMaxAllocatableMemHandler: admin_api.GetMaxAllocatableMemHandlerFunc(func(params admin_api.GetMaxAllocatableMemParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.GetMaxAllocatableMem has not yet been implemented")
+		}),
+		AdminAPIGetParityHandler: admin_api.GetParityHandlerFunc(func(params admin_api.GetParityParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.GetParity has not yet been implemented")
 		}),
 		AdminAPIGetResourceQuotaHandler: admin_api.GetResourceQuotaHandlerFunc(func(params admin_api.GetResourceQuotaParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetResourceQuota has not yet been implemented")
@@ -236,6 +239,12 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		AdminAPITenantInfoHandler: admin_api.TenantInfoHandlerFunc(func(params admin_api.TenantInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TenantInfo has not yet been implemented")
+		}),
+		AdminAPITenantUpdateCertificateHandler: admin_api.TenantUpdateCertificateHandlerFunc(func(params admin_api.TenantUpdateCertificateParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.TenantUpdateCertificate has not yet been implemented")
+		}),
+		AdminAPITenantUpdateEncryptionHandler: admin_api.TenantUpdateEncryptionHandlerFunc(func(params admin_api.TenantUpdateEncryptionParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.TenantUpdateEncryption has not yet been implemented")
 		}),
 		AdminAPITenantUpdateZonesHandler: admin_api.TenantUpdateZonesHandlerFunc(func(params admin_api.TenantUpdateZonesParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TenantUpdateZones has not yet been implemented")
@@ -345,8 +354,10 @@ type ConsoleAPI struct {
 	UserAPIGetBucketReplicationHandler user_api.GetBucketReplicationHandler
 	// UserAPIGetBucketVersioningHandler sets the operation handler for the get bucket versioning operation
 	UserAPIGetBucketVersioningHandler user_api.GetBucketVersioningHandler
-	// AdminAPIGetClusterResourcesHandler sets the operation handler for the get cluster resources operation
-	AdminAPIGetClusterResourcesHandler admin_api.GetClusterResourcesHandler
+	// AdminAPIGetMaxAllocatableMemHandler sets the operation handler for the get max allocatable mem operation
+	AdminAPIGetMaxAllocatableMemHandler admin_api.GetMaxAllocatableMemHandler
+	// AdminAPIGetParityHandler sets the operation handler for the get parity operation
+	AdminAPIGetParityHandler admin_api.GetParityHandler
 	// AdminAPIGetResourceQuotaHandler sets the operation handler for the get resource quota operation
 	AdminAPIGetResourceQuotaHandler admin_api.GetResourceQuotaHandler
 	// AdminAPIGetTenantUsageHandler sets the operation handler for the get tenant usage operation
@@ -417,6 +428,10 @@ type ConsoleAPI struct {
 	AdminAPITenantAddZoneHandler admin_api.TenantAddZoneHandler
 	// AdminAPITenantInfoHandler sets the operation handler for the tenant info operation
 	AdminAPITenantInfoHandler admin_api.TenantInfoHandler
+	// AdminAPITenantUpdateCertificateHandler sets the operation handler for the tenant update certificate operation
+	AdminAPITenantUpdateCertificateHandler admin_api.TenantUpdateCertificateHandler
+	// AdminAPITenantUpdateEncryptionHandler sets the operation handler for the tenant update encryption operation
+	AdminAPITenantUpdateEncryptionHandler admin_api.TenantUpdateEncryptionHandler
 	// AdminAPITenantUpdateZonesHandler sets the operation handler for the tenant update zones operation
 	AdminAPITenantUpdateZonesHandler admin_api.TenantUpdateZonesHandler
 	// AdminAPIUpdateGroupHandler sets the operation handler for the update group operation
@@ -566,8 +581,11 @@ func (o *ConsoleAPI) Validate() error {
 	if o.UserAPIGetBucketVersioningHandler == nil {
 		unregistered = append(unregistered, "user_api.GetBucketVersioningHandler")
 	}
-	if o.AdminAPIGetClusterResourcesHandler == nil {
-		unregistered = append(unregistered, "admin_api.GetClusterResourcesHandler")
+	if o.AdminAPIGetMaxAllocatableMemHandler == nil {
+		unregistered = append(unregistered, "admin_api.GetMaxAllocatableMemHandler")
+	}
+	if o.AdminAPIGetParityHandler == nil {
+		unregistered = append(unregistered, "admin_api.GetParityHandler")
 	}
 	if o.AdminAPIGetResourceQuotaHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetResourceQuotaHandler")
@@ -673,6 +691,12 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPITenantInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.TenantInfoHandler")
+	}
+	if o.AdminAPITenantUpdateCertificateHandler == nil {
+		unregistered = append(unregistered, "admin_api.TenantUpdateCertificateHandler")
+	}
+	if o.AdminAPITenantUpdateEncryptionHandler == nil {
+		unregistered = append(unregistered, "admin_api.TenantUpdateEncryptionHandler")
 	}
 	if o.AdminAPITenantUpdateZonesHandler == nil {
 		unregistered = append(unregistered, "admin_api.TenantUpdateZonesHandler")
@@ -880,7 +904,11 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/cluster/resources"] = admin_api.NewGetClusterResources(o.context, o.AdminAPIGetClusterResourcesHandler)
+	o.handlers["GET"]["/cluster/max-allocatable-memory"] = admin_api.NewGetMaxAllocatableMem(o.context, o.AdminAPIGetMaxAllocatableMemHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/get-parity/{nodes}/{disksPerNode}"] = admin_api.NewGetParity(o.context, o.AdminAPIGetParityHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -1021,6 +1049,14 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}"] = admin_api.NewTenantInfo(o.context, o.AdminAPITenantInfoHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/namespaces/{namespace}/tenants/{tenant}/certificates"] = admin_api.NewTenantUpdateCertificate(o.context, o.AdminAPITenantUpdateCertificateHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/namespaces/{namespace}/tenants/{tenant}/encryption"] = admin_api.NewTenantUpdateEncryption(o.context, o.AdminAPITenantUpdateEncryptionHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

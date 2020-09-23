@@ -38,6 +38,9 @@ type UpdateTenantRequest struct {
 	// Pattern: ^((.*?)/(.*?):(.+))$
 	ConsoleImage string `json:"console_image,omitempty"`
 
+	// enable prometheus
+	EnablePrometheus bool `json:"enable_prometheus,omitempty"`
+
 	// image
 	// Pattern: ^((.*?)/(.*?):(.+))$
 	Image string `json:"image,omitempty"`

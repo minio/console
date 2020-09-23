@@ -91,19 +91,6 @@ const styles = (theme: Theme) =>
     ...modalBasic,
   });
 
-const mainPagination = {
-  rowsPerPageOptions: [5, 10, 25],
-  colSpan: 3,
-  count: 0,
-  rowsPerPage: 0,
-  page: 0,
-  SelectProps: {
-    inputProps: { "aria-label": "rows per page" },
-    native: true,
-  },
-  ActionsComponent: MinTablePaginationActions,
-};
-
 const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [capacity, setCapacity] = useState<number>(0);
@@ -142,24 +129,38 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
 
   const loadInfo = () => {
     const tenantName = match.params["tenantName"];
+    const tenantNamespace = match.params["tenantNamespace"];
 
     setLoading(true);
 
     api
-      .invoke("GET", `/api/v1/tenants/${tenantName}`)
+      .invoke(
+        "GET",
+        `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}`
+      )
       .then((res: ITenant) => {
-        const total = res.volume_count * res.volume_size;
-
-        setCapacity(total);
-        setZoneCount(res.zone_count);
-        setVolumes(res.volume_count);
-        setInstances(res.instance_count);
         const resZones = !res.zones ? [] : res.zones;
+        const total = res.volume_count * res.volume_size;
+        let totalInstances = 0;
+        let totalVolumes = 0;
+        let count = 1;
         for (let zone of resZones) {
-          zone.volumes = res.volumes_per_server;
-          const cap = res.volumes_per_server * res.volume_size * zone.servers;
+          const cap =
+            zone.volumes_per_server *
+            zone.servers *
+            zone.volume_configuration.size;
+          zone.name = `zone-${count}`;
           zone.capacity = niceBytes(cap + "");
+          zone.volumes = zone.servers * zone.volumes_per_server;
+          totalInstances += zone.servers;
+          totalVolumes += zone.volumes;
+          count += 1;
         }
+        setCapacity(res.total_size);
+        setZoneCount(resZones.length);
+        setVolumes(totalVolumes);
+        setInstances(totalInstances);
+
         setZones(resZones);
 
         setTenant(res);
@@ -182,8 +183,7 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
         <AddZoneModal
           open={addZoneOpen}
           onCloseZoneAndReload={onCloseZoneAndRefresh}
-          volumeSize={tenant.volume_size}
-          volumesPerInstance={tenant.volumes_per_server}
+          tenant={tenant}
         />
       )}
       {addBucketOpen && (
@@ -201,7 +201,7 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
       <Grid container>
         <Grid item xs={12}>
           <Typography variant="h6">
-            Tenant > {match.params["tenantName"]}
+            {`Tenant > ${match.params["tenantName"]}`}
           </Typography>
         </Grid>
         <Grid item xs={12}>
@@ -212,40 +212,18 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
             <div className={classes.infoGrid}>
               <div>Capacity:</div>
               <div>{niceBytes(capacity.toString(10))}</div>
+              <div>Minio:</div>
+              <div>{tenant ? tenant.image : ""}</div>
               <div>Zones:</div>
               <div>{zoneCount}</div>
-              <div>External IDP:</div>
-              <div>
-                {externalIDP ? "Yes" : "No"}&nbsp;&nbsp;
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  onClick={() => {}}
-                >
-                  Edit
-                </Button>
-              </div>
+              <div>Console:</div>
+              <div>{tenant ? tenant.console_image : ""}</div>
               <div>Instances:</div>
               <div>{instances}</div>
-              <div>External KMS:</div>
-              <div>{externalKMS ? "Yes" : "No"}&nbsp;&nbsp;</div>
               <div>Volumes:</div>
               <div>{volumes}</div>
             </div>
           </Paper>
-          <div className={classes.masterActions}>
-            <div>
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                onClick={() => {}}
-              >
-                Warp
-              </Button>
-            </div>
-          </div>
         </Grid>
         <Grid item xs={12}>
           <br />
@@ -261,185 +239,59 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
             aria-label="tenant-tabs"
           >
             <Tab label="Zones" />
-            <Tab label="Buckets" />
-            <Tab label="Replication" />
           </Tabs>
         </Grid>
         <Grid item xs={6} className={classes.actionsTray}>
-          {selectedTab === 0 && (
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<CreateIcon />}
-              onClick={() => {
-                setAddZone(true);
-              }}
-            >
-              Add Zone
-            </Button>
-          )}
-
-          {selectedTab === 1 && (
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<CreateIcon />}
-              onClick={() => {
-                setAddBucketOpen(true);
-              }}
-            >
-              Create Bucket
-            </Button>
-          )}
-
-          {selectedTab === 2 && (
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<CreateIcon />}
-              onClick={() => {
-                setAddReplicationOpen(true);
-              }}
-            >
-              Add Replication
-            </Button>
-          )}
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<CreateIcon />}
+            onClick={() => {
+              setAddZone(true);
+            }}
+          >
+            Add Zone
+          </Button>
         </Grid>
         <Grid item xs={12}>
           <br />
         </Grid>
         <Grid item xs={12}>
-          {selectedTab === 0 && (
-            <TableWrapper
-              itemActions={[
-                {
-                  type: "view",
-                  onClick: (element) => {
-                    console.log(element);
-                  },
-                  sendOnlyId: true,
+          <TableWrapper
+            itemActions={[
+              {
+                type: "delete",
+                onClick: (element) => {
+                  console.log(element);
                 },
-                {
-                  type: "delete",
-                  onClick: (element) => {
-                    console.log(element);
-                  },
-                  sendOnlyId: true,
-                },
-              ]}
-              columns={[
-                { label: "Name", elementKey: "name" },
-                { label: "Capacity", elementKey: "capacity" },
-                { label: "# of Instances", elementKey: "servers" },
-                { label: "# of Drives", elementKey: "volumes" },
-              ]}
-              isLoading={false}
-              records={zones}
-              entityName="Zones"
-              idField="name"
-              paginatorConfig={{
-                ...mainPagination,
-                onChangePage: () => {},
-                onChangeRowsPerPage: () => {},
-              }}
-            />
-          )}
-
-          {selectedTab === 1 && (
-            <TableWrapper
-              itemActions={[
-                {
-                  type: "view",
-                  onClick: (element) => {
-                    console.log(element);
-                  },
-                  sendOnlyId: true,
-                },
-                {
-                  type: "replicate",
-                  onClick: (element) => {
-                    console.log(element);
-                  },
-                  sendOnlyId: true,
-                },
-                {
-                  type: "mirror",
-                  onClick: (element) => {
-                    console.log(element);
-                  },
-                  sendOnlyId: true,
-                },
-                {
-                  type: "delete",
-                  onClick: (element) => {
-                    console.log(element);
-                  },
-                  sendOnlyId: true,
-                },
-              ]}
-              columns={[
-                {
-                  label: "Status",
-                  elementKey: "status",
-                },
-                { label: "Name", elementKey: "name" },
-                { label: "AccessPolicy", elementKey: "access_policy" },
-              ]}
-              isLoading={false}
-              records={[]}
-              entityName="Buckets"
-              idField="name"
-              paginatorConfig={{
-                ...mainPagination,
-                onChangePage: () => {},
-                onChangeRowsPerPage: () => {},
-              }}
-            />
-          )}
-
-          {selectedTab === 2 && (
-            <TableWrapper
-              itemActions={[
-                {
-                  type: "view",
-                  onClick: (element) => {
-                    console.log(element);
-                  },
-                  sendOnlyId: true,
-                },
-              ]}
-              columns={[
-                {
-                  label: "Source",
-                  elementKey: "source",
-                },
-                { label: "Source Bucket", elementKey: "source_bucket" },
-                { label: "Destination", elementKey: "destination" },
-                {
-                  label: "Destination Bucket",
-                  elementKey: "destination_bucket",
-                },
-              ]}
-              isLoading={false}
-              records={[]}
-              entityName="Replication"
-              idField="id"
-              paginatorConfig={{
-                rowsPerPageOptions: [5, 10, 25],
-                colSpan: 3,
-                count: 0,
-                rowsPerPage: 0,
-                page: 0,
-                SelectProps: {
-                  inputProps: { "aria-label": "rows per page" },
-                  native: true,
-                },
-                onChangePage: () => {},
-                onChangeRowsPerPage: () => {},
-                ActionsComponent: MinTablePaginationActions,
-              }}
-            />
-          )}
+                sendOnlyId: true,
+              },
+            ]}
+            columns={[
+              { label: "Name", elementKey: "name" },
+              { label: "Capacity", elementKey: "capacity" },
+              { label: "# of Instances", elementKey: "servers" },
+              { label: "# of Drives", elementKey: "volumes" },
+            ]}
+            isLoading={false}
+            records={zones}
+            entityName="Zones"
+            idField="name"
+            paginatorConfig={{
+              rowsPerPageOptions: [5, 10, 25],
+              colSpan: 3,
+              count: zoneCount,
+              rowsPerPage: 10,
+              page: 0,
+              SelectProps: {
+                inputProps: { "aria-label": "rows per page" },
+                native: true,
+              },
+              ActionsComponent: MinTablePaginationActions,
+              onChangePage: () => {},
+              onChangeRowsPerPage: () => {},
+            }}
+          />
         </Grid>
       </Grid>
     </React.Fragment>

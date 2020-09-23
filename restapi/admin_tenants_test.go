@@ -87,13 +87,12 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 	ctx := context.Background()
 	kClient := k8sClientMock{}
 	type args struct {
-		ctx         context.Context
-		client      K8sClient
-		namespace   string
-		tenantName  string
-		serviceName string
-		scheme      string
-		insecure    bool
+		ctx        context.Context
+		client     K8sClientI
+		namespace  string
+		tenantName string
+		serviceURL string
+		insecure   bool
 	}
 	tests := []struct {
 		name           string
@@ -105,12 +104,11 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 		{
 			name: "Return Tenant Admin, no errors",
 			args: args{
-				ctx:         ctx,
-				client:      kClient,
-				namespace:   "default",
-				tenantName:  "tenant-1",
-				serviceName: "service-1",
-				scheme:      "http",
+				ctx:        ctx,
+				client:     kClient,
+				namespace:  "default",
+				tenantName: "tenant-1",
+				serviceURL: "http://service-1.default.svc.cluster.local:80",
 			},
 			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
 				vals := make(map[string][]byte)
@@ -134,12 +132,11 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 		{
 			name: "Access key not stored on secrets",
 			args: args{
-				ctx:         ctx,
-				client:      kClient,
-				namespace:   "default",
-				tenantName:  "tenant-1",
-				serviceName: "service-1",
-				scheme:      "http",
+				ctx:        ctx,
+				client:     kClient,
+				namespace:  "default",
+				tenantName: "tenant-1",
+				serviceURL: "http://service-1.default.svc.cluster.local:80",
 			},
 			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
 				vals := make(map[string][]byte)
@@ -162,12 +159,11 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 		{
 			name: "Secret key not stored on secrets",
 			args: args{
-				ctx:         ctx,
-				client:      kClient,
-				namespace:   "default",
-				tenantName:  "tenant-1",
-				serviceName: "service-1",
-				scheme:      "http",
+				ctx:        ctx,
+				client:     kClient,
+				namespace:  "default",
+				tenantName: "tenant-1",
+				serviceURL: "http://service-1.default.svc.cluster.local:80",
 			},
 			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
 				vals := make(map[string][]byte)
@@ -190,12 +186,11 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 		{
 			name: "Handle error on getService",
 			args: args{
-				ctx:         ctx,
-				client:      kClient,
-				namespace:   "default",
-				tenantName:  "tenant-1",
-				serviceName: "service-1",
-				scheme:      "http",
+				ctx:        ctx,
+				client:     kClient,
+				namespace:  "default",
+				tenantName: "tenant-1",
+				serviceURL: "http://service-1.default.svc.cluster.local:80",
 			},
 			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
 				vals := make(map[string][]byte)
@@ -214,12 +209,11 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 		{
 			name: "Handle error on getSecret",
 			args: args{
-				ctx:         ctx,
-				client:      kClient,
-				namespace:   "default",
-				tenantName:  "tenant-1",
-				serviceName: "service-1",
-				scheme:      "http",
+				ctx:        ctx,
+				client:     kClient,
+				namespace:  "default",
+				tenantName: "tenant-1",
+				serviceURL: "http://service-1.default.svc.cluster.local:80",
 			},
 			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
 				return nil, errors.New("error")
@@ -239,7 +233,7 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 		k8sclientGetSecretMock = tt.mockGetSecret
 		k8sclientGetServiceMock = tt.mockGetService
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := getTenantAdminClient(tt.args.ctx, tt.args.client, tt.args.namespace, tt.args.tenantName, tt.args.serviceName, tt.args.scheme, tt.args.insecure)
+			got, err := getTenantAdminClient(tt.args.ctx, tt.args.client, tt.args.namespace, tt.args.tenantName, tt.args.serviceURL, tt.args.insecure)
 			if err != nil {
 				if tt.wantErr {
 					return
@@ -257,7 +251,6 @@ func Test_TenantInfo(t *testing.T) {
 	testTimeStamp := metav1.Now()
 	type args struct {
 		minioTenant *operator.Tenant
-		tenantInfo  *usageInfo
 	}
 	tests := []struct {
 		name string
@@ -298,9 +291,6 @@ func Test_TenantInfo(t *testing.T) {
 						CurrentState: "ready",
 					},
 				},
-				tenantInfo: &usageInfo{
-					DisksUsage: 1024,
-				},
 			},
 			want: &models.Tenant{
 				CreationDate: testTimeStamp.String(),
@@ -318,8 +308,143 @@ func Test_TenantInfo(t *testing.T) {
 						},
 					},
 				},
-				Namespace: "minio-ns",
-				Image:     "minio/minio:RELEASE.2020-06-14T18-32-17Z",
+				Namespace:        "minio-ns",
+				Image:            "minio/minio:RELEASE.2020-06-14T18-32-17Z",
+				EnablePrometheus: false,
+			},
+		},
+		{
+			// Description if DeletionTimeStamp is present, value should be returned as string
+			// If Prometheus annotations are present, EnablePrometheus should be returned as true
+			// All three annotations should be defined to consider Prometheus enabled
+			name: "Get tenant Info w DeletionTimeStamp and Prometheus",
+			args: args{
+				minioTenant: &operator.Tenant{
+					ObjectMeta: metav1.ObjectMeta{
+						CreationTimestamp: testTimeStamp,
+						Name:              "tenant1",
+						Namespace:         "minio-ns",
+						DeletionTimestamp: &testTimeStamp,
+						Annotations: map[string]string{
+							prometheusPath:   "some/path",
+							prometheusPort:   "other/path",
+							prometheusScrape: "other/path",
+						},
+					},
+					Spec: operator.TenantSpec{
+						Zones: []operator.Zone{
+							{
+								Name:             "zone1",
+								Servers:          int32(2),
+								VolumesPerServer: 4,
+								VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
+									Spec: corev1.PersistentVolumeClaimSpec{
+										Resources: corev1.ResourceRequirements{
+											Requests: map[corev1.ResourceName]resource.Quantity{
+												corev1.ResourceStorage: resource.MustParse("1Mi"),
+											},
+										},
+										StorageClassName: swag.String("standard"),
+									},
+								},
+							},
+						},
+						Image: "minio/minio:RELEASE.2020-06-14T18-32-17Z",
+					},
+					Status: operator.TenantStatus{
+						CurrentState: "ready",
+					},
+				},
+			},
+			want: &models.Tenant{
+				CreationDate: testTimeStamp.String(),
+				DeletionDate: testTimeStamp.String(),
+				Name:         "tenant1",
+				TotalSize:    int64(8388608),
+				CurrentState: "ready",
+				Zones: []*models.Zone{
+					{
+						Name:             "zone1",
+						Servers:          swag.Int64(int64(2)),
+						VolumesPerServer: swag.Int32(4),
+						VolumeConfiguration: &models.ZoneVolumeConfiguration{
+							StorageClassName: "standard",
+							Size:             swag.Int64(1024 * 1024),
+						},
+					},
+				},
+				Namespace:        "minio-ns",
+				Image:            "minio/minio:RELEASE.2020-06-14T18-32-17Z",
+				EnablePrometheus: true,
+			},
+		},
+		{
+			// If Prometheus annotations are present, EnablePrometheus should be returned as true
+			// All three annotations should be defined to consider Prometheus enabled
+			name: "Get tenant Info, not all Prometheus annotations",
+			args: args{
+				minioTenant: &operator.Tenant{
+					ObjectMeta: metav1.ObjectMeta{
+						CreationTimestamp: testTimeStamp,
+						Name:              "tenant1",
+						Namespace:         "minio-ns",
+						Annotations: map[string]string{
+							prometheusPath:   "some/path",
+							prometheusScrape: "other/path",
+						},
+					},
+					Spec: operator.TenantSpec{
+						Zones: []operator.Zone{},
+						Image: "minio/minio:RELEASE.2020-06-14T18-32-17Z",
+					},
+					Status: operator.TenantStatus{
+						CurrentState: "ready",
+					},
+				},
+			},
+			want: &models.Tenant{
+				CreationDate:     testTimeStamp.String(),
+				Name:             "tenant1",
+				CurrentState:     "ready",
+				Namespace:        "minio-ns",
+				Image:            "minio/minio:RELEASE.2020-06-14T18-32-17Z",
+				EnablePrometheus: false,
+			},
+		},
+		{
+			// If console image is set, it should be returned on tenant info
+			name: "Get tenant Info, Console image set",
+			args: args{
+				minioTenant: &operator.Tenant{
+					ObjectMeta: metav1.ObjectMeta{
+						CreationTimestamp: testTimeStamp,
+						Name:              "tenant1",
+						Namespace:         "minio-ns",
+						Annotations: map[string]string{
+							prometheusPath:   "some/path",
+							prometheusScrape: "other/path",
+						},
+					},
+					Spec: operator.TenantSpec{
+						Zones: []operator.Zone{},
+						Image: "minio/minio:RELEASE.2020-06-14T18-32-17Z",
+						Console: &operator.ConsoleConfiguration{
+							Image: "minio/console:master",
+						},
+					},
+					Status: operator.TenantStatus{
+						CurrentState: "ready",
+					},
+				},
+			},
+			want: &models.Tenant{
+				CreationDate:     testTimeStamp.String(),
+				Name:             "tenant1",
+				CurrentState:     "ready",
+				Namespace:        "minio-ns",
+				Image:            "minio/minio:RELEASE.2020-06-14T18-32-17Z",
+				EnablePrometheus: false,
+				ConsoleImage:     "minio/console:master",
 			},
 		},
 	}
@@ -339,7 +464,7 @@ func Test_deleteTenantAction(t *testing.T) {
 	opClient := opClientMock{}
 	type args struct {
 		ctx              context.Context
-		operatorClient   OperatorClient
+		operatorClient   OperatorClientI
 		nameSpace        string
 		tenantName       string
 		deletePvcs       bool
@@ -532,7 +657,7 @@ func Test_TenantAddZone(t *testing.T) {
 
 	type args struct {
 		ctx             context.Context
-		operatorClient  OperatorClient
+		operatorClient  OperatorClientI
 		nameSpace       string
 		mockTenantPatch func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error)
 		mockTenantGet   func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error)
@@ -706,7 +831,7 @@ func Test_UpdateTenantAction(t *testing.T) {
 
 	type args struct {
 		ctx               context.Context
-		operatorClient    OperatorClient
+		operatorClient    OperatorClientI
 		httpCl            cluster.HTTPClientI
 		nameSpace         string
 		tenantName        string
@@ -871,7 +996,7 @@ func Test_UpdateTenantAction(t *testing.T) {
 				},
 				params: admin_api.UpdateTenantParams{
 					Body: &models.UpdateTenantRequest{
-						ConsoleImage: "minio/console:v0.3.17",
+						ConsoleImage: "minio/console:v0.3.26",
 					},
 				},
 			},

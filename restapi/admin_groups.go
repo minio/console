@@ -22,7 +22,6 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/swag"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/minio/pkg/madmin"
 
@@ -36,7 +35,7 @@ func registerGroupsHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPIListGroupsHandler = admin_api.ListGroupsHandlerFunc(func(params admin_api.ListGroupsParams, session *models.Principal) middleware.Responder {
 		listGroupsResponse, err := getListGroupsResponse(session)
 		if err != nil {
-			return admin_api.NewListGroupsDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return admin_api.NewListGroupsDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewListGroupsOK().WithPayload(listGroupsResponse)
 	})
@@ -44,21 +43,21 @@ func registerGroupsHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPIGroupInfoHandler = admin_api.GroupInfoHandlerFunc(func(params admin_api.GroupInfoParams, session *models.Principal) middleware.Responder {
 		groupInfo, err := getGroupInfoResponse(session, params)
 		if err != nil {
-			return admin_api.NewGroupInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return admin_api.NewGroupInfoDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewGroupInfoOK().WithPayload(groupInfo)
 	})
 	// Add Group
 	api.AdminAPIAddGroupHandler = admin_api.AddGroupHandlerFunc(func(params admin_api.AddGroupParams, session *models.Principal) middleware.Responder {
 		if err := getAddGroupResponse(session, params.Body); err != nil {
-			return admin_api.NewAddGroupDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return admin_api.NewAddGroupDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewAddGroupCreated()
 	})
 	// Remove Group
 	api.AdminAPIRemoveGroupHandler = admin_api.RemoveGroupHandlerFunc(func(params admin_api.RemoveGroupParams, session *models.Principal) middleware.Responder {
 		if err := getRemoveGroupResponse(session, params); err != nil {
-			return admin_api.NewRemoveGroupDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return admin_api.NewRemoveGroupDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewRemoveGroupNoContent()
 	})
@@ -66,7 +65,7 @@ func registerGroupsHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPIUpdateGroupHandler = admin_api.UpdateGroupHandlerFunc(func(params admin_api.UpdateGroupParams, session *models.Principal) middleware.Responder {
 		groupUpdateResp, err := getUpdateGroupResponse(session, params)
 		if err != nil {
-			return admin_api.NewUpdateGroupDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return admin_api.NewUpdateGroupDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewUpdateGroupOK().WithPayload(groupUpdateResp)
 	})
@@ -82,12 +81,11 @@ func listGroups(ctx context.Context, client MinioAdmin) (*[]string, error) {
 }
 
 // getListGroupsResponse performs listGroups() and serializes it to the handler's output
-func getListGroupsResponse(session *models.Principal) (*models.ListGroupsResponse, error) {
+func getListGroupsResponse(session *models.Principal) (*models.ListGroupsResponse, *models.Error) {
 	ctx := context.Background()
 	mAdmin, err := newMAdminClient(session)
 	if err != nil {
-		log.Println("error creating Madmin Client:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
@@ -95,8 +93,7 @@ func getListGroupsResponse(session *models.Principal) (*models.ListGroupsRespons
 
 	groups, err := listGroups(ctx, adminClient)
 	if err != nil {
-		log.Println("error listing groups:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	// serialize output
 	listGroupsResponse := &models.ListGroupsResponse{
@@ -116,12 +113,11 @@ func groupInfo(ctx context.Context, client MinioAdmin, group string) (*madmin.Gr
 }
 
 // getGroupInfoResponse performs groupInfo() and serializes it to the handler's output
-func getGroupInfoResponse(session *models.Principal, params admin_api.GroupInfoParams) (*models.Group, error) {
+func getGroupInfoResponse(session *models.Principal, params admin_api.GroupInfoParams) (*models.Group, *models.Error) {
 	ctx := context.Background()
 	mAdmin, err := newMAdminClient(session)
 	if err != nil {
-		log.Println("error creating Madmin Client:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
@@ -129,8 +125,7 @@ func getGroupInfoResponse(session *models.Principal, params admin_api.GroupInfoP
 
 	groupDesc, err := groupInfo(ctx, adminClient, params.Name)
 	if err != nil {
-		log.Println("error getting  group info:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 
 	groupResponse := &models.Group{
@@ -157,26 +152,23 @@ func addGroup(ctx context.Context, client MinioAdmin, group string, members []st
 }
 
 // getAddGroupResponse performs addGroup() and serializes it to the handler's output
-func getAddGroupResponse(session *models.Principal, params *models.AddGroupRequest) error {
+func getAddGroupResponse(session *models.Principal, params *models.AddGroupRequest) *models.Error {
 	ctx := context.Background()
 	// AddGroup request needed to proceed
 	if params == nil {
-		log.Println("error AddGroup body not in request")
-		return errors.New(500, "error AddGroup body not in request")
+		return prepareError(errGroupBodyNotInRequest)
 	}
 
 	mAdmin, err := newMAdminClient(session)
 	if err != nil {
-		log.Println("error creating Madmin Client:", err)
-		return err
+		return prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
 
 	if err := addGroup(ctx, adminClient, *params.Group, params.Members); err != nil {
-		log.Println("error adding group:", err)
-		return err
+		return prepareError(err)
 	}
 	return nil
 }
@@ -196,25 +188,22 @@ func removeGroup(ctx context.Context, client MinioAdmin, group string) error {
 }
 
 // getRemoveGroupResponse performs removeGroup() and serializes it to the handler's output
-func getRemoveGroupResponse(session *models.Principal, params admin_api.RemoveGroupParams) error {
+func getRemoveGroupResponse(session *models.Principal, params admin_api.RemoveGroupParams) *models.Error {
 	ctx := context.Background()
 
 	if params.Name == "" {
-		log.Println("error group name not in request")
-		return errors.New(500, "error group name not in request")
+		return prepareError(errGroupNameNotInRequest)
 	}
 	mAdmin, err := newMAdminClient(session)
 	if err != nil {
-		log.Println("error creating Madmin Client:", err)
-		return err
+		return prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
 
 	if err := removeGroup(ctx, adminClient, params.Name); err != nil {
-		log.Println("error removing group:", err)
-		return err
+		return prepareError(err)
 	}
 	return nil
 }
@@ -276,23 +265,21 @@ func setGroupStatus(ctx context.Context, client MinioAdmin, group, status string
 // getUpdateGroupResponse updates a group by adding or removing it's members depending on the request,
 // 	also sets the group's status if status in the request is different than the current one.
 //  Then serializes the output to be used by the handler.
-func getUpdateGroupResponse(session *models.Principal, params admin_api.UpdateGroupParams) (*models.Group, error) {
+func getUpdateGroupResponse(session *models.Principal, params admin_api.UpdateGroupParams) (*models.Group, *models.Error) {
 	ctx := context.Background()
 	if params.Name == "" {
-		log.Println("error group name not in request")
-		return nil, errors.New(500, "error group name not in request")
+		return nil, prepareError(errGroupNameNotInRequest)
 	}
 	if params.Body == nil {
-		log.Println("error body not in request")
-		return nil, errors.New(500, "error body not in request")
+		return nil, prepareError(errGroupBodyNotInRequest)
+
 	}
 	expectedGroupUpdate := params.Body
 	groupName := params.Name
 
 	mAdmin, err := newMAdminClient(session)
 	if err != nil {
-		log.Println("error creating Madmin Client:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
@@ -300,8 +287,7 @@ func getUpdateGroupResponse(session *models.Principal, params admin_api.UpdateGr
 
 	groupUpdated, err := groupUpdate(ctx, adminClient, groupName, expectedGroupUpdate)
 	if err != nil {
-		log.Println("error updating group:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	groupResponse := &models.Group{
 		Name:    groupUpdated.Name,

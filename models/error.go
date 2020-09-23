@@ -35,7 +35,7 @@ import (
 type Error struct {
 
 	// code
-	Code int64 `json:"code,omitempty"`
+	Code int32 `json:"code,omitempty"`
 
 	// message
 	// Required: true

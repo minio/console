@@ -20,7 +20,7 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
-import { Button } from "@material-ui/core";
+import { Button, IconButton } from "@material-ui/core";
 import { CreateIcon } from "../../../../icons";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import { MinTablePaginationActions } from "../../../../common/MinTablePaginationActions";
@@ -32,6 +32,8 @@ import DeleteTenant from "./DeleteTenant";
 import AddTenant from "./AddTenant";
 import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
 import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
+import history from "../../../../history";
+import RefreshIcon from "@material-ui/icons/Refresh";
 
 interface ITenantsList {
   classes: any;
@@ -122,9 +124,14 @@ const ListTenants = ({ classes }: ITenantsList) => {
     }
   };
 
-  const confirmDeleteTenant = (tenant: string) => {
+  const confirmDeleteTenant = (tenant: ITenant) => {
     setSelectedTenant(tenant);
     setDeleteOpen(true);
+  };
+
+  const redirectToTenantDetails = (tenant: ITenant) => {
+    history.push(`/namespaces/${tenant.namespace}/tenants/${tenant.name}`);
+    return;
   };
 
   const closeCredentialsModal = () => {
@@ -149,8 +156,8 @@ const ListTenants = ({ classes }: ITenantsList) => {
   };
 
   const tableActions = [
-    { type: "view", to: `/tenants`, sendOnlyId: true },
-    { type: "delete", onClick: confirmDeleteTenant, sendOnlyId: true },
+    { type: "view", onClick: redirectToTenantDetails },
+    { type: "delete", onClick: confirmDeleteTenant },
   ];
 
   const filteredRecords = records
@@ -187,9 +194,7 @@ const ListTenants = ({ classes }: ITenantsList) => {
             }
 
             for (let i = 0; i < resTenants.length; i++) {
-              const total =
-                resTenants[i].volume_count * resTenants[i].volume_size;
-              resTenants[i].capacity = niceBytes(total + "");
+              resTenants[i].capacity = niceBytes(resTenants[i].total_size + "");
             }
 
             setRecords(resTenants);
@@ -248,6 +253,17 @@ const ListTenants = ({ classes }: ITenantsList) => {
           <br />
         </Grid>
         <Grid item xs={12} className={classes.actionsTray}>
+          <IconButton
+            color="primary"
+            aria-label="Refresh Tenant List"
+            component="span"
+            onClick={() => {
+              setIsLoading(true);
+            }}
+          >
+            <RefreshIcon />
+          </IconButton>
+
           <TextField
             placeholder="Search Tenants"
             className={classes.searchField}

@@ -24,43 +24,14 @@ package models
 
 import (
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
 )
 
-// NodeTaints node taints
+// ParityResponse parity response
 //
-// swagger:model nodeTaints
-type NodeTaints struct {
+// swagger:model parityResponse
+type ParityResponse []string
 
-	// no execute
-	NoExecute []string `json:"no_execute"`
-
-	// no schedule
-	NoSchedule []string `json:"no_schedule"`
-
-	// prefer no schedule
-	PreferNoSchedule []string `json:"prefer_no_schedule"`
-}
-
-// Validate validates this node taints
-func (m *NodeTaints) Validate(formats strfmt.Registry) error {
-	return nil
-}
-
-// MarshalBinary interface implementation
-func (m *NodeTaints) MarshalBinary() ([]byte, error) {
-	if m == nil {
-		return nil, nil
-	}
-	return swag.WriteJSON(m)
-}
-
-// UnmarshalBinary interface implementation
-func (m *NodeTaints) UnmarshalBinary(b []byte) error {
-	var res NodeTaints
-	if err := swag.ReadJSON(b, &res); err != nil {
-		return err
-	}
-	*m = res
+// Validate validates this parity response
+func (m ParityResponse) Validate(formats strfmt.Registry) error {
 	return nil
 }

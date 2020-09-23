@@ -1364,6 +1364,62 @@ paths:
       tags:
         - AdminAPI
 
+  /namespaces/{namespace}/tenants/{tenant}/certificates:
+    put:
+      summary: Tenant Update Certificates
+      operationId: TenantUpdateCertificate
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/tlsConfiguration"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /namespaces/{namespace}/tenants/{tenant}/encryption:
+    put:
+      summary: Tenant Update Encryption
+      operationId: TenantUpdateEncryption
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/encryptionConfiguration"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
   /namespaces/{namespace}/resourcequotas/{resource-quota-name}:
     get:
       summary: Get Resource Quota
@@ -1389,15 +1445,49 @@ paths:
       tags:
         - AdminAPI
 
-  /cluster/resources:
+  /cluster/max-allocatable-memory:
     get:
-      summary: Get Cluster Resources
-      operationId: GetClusterResources
+      summary: Get maximum allocatable memory for given number of nodes
+      operationId: GetMaxAllocatableMem
+      parameters:
+        - name: num_nodes
+          in: query
+          required: true
+          type: integer
+          format: int32
+          minimum: 1
       responses:
         200:
           description: A successful response.
           schema:
-            $ref: "#/definitions/clusterResources"
+            $ref: "#/definitions/maxAllocatableMemResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /get-parity/{nodes}/{disksPerNode}:
+    get:
+      summary: Gets parity by sending number of nodes & number of disks
+      operationId: GetParity
+      parameters:
+        - name: nodes
+          in: path
+          required: true
+          type: integer
+          minimum: 2
+        - name: disksPerNode
+          in: path
+          required: true
+          type: integer
+          minimum: 1
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/parityResponse"
         default:
           description: Generic error response.
           schema:
@@ -1456,7 +1546,7 @@ definitions:
     properties:
       code:
         type: integer
-        format: int64
+        format: int32
       message:
         type: string
   user:
@@ -2051,6 +2141,8 @@ definitions:
         type: string
       creation_date:
         type: string
+      deletion_date:
+        type: string
       currentState:
         type: string
       zones:
@@ -2059,11 +2151,15 @@ definitions:
           $ref: "#/definitions/zone"
       image:
         type: string
+      console_image:
+        type: string
       namespace:
         type: string
       total_size:
         type: integer
         format: int64
+      enable_prometheus:
+        type: boolean
 
   tenantUsage:
     type: object
@@ -2089,6 +2185,8 @@ definitions:
       volume_count:
         type: integer
       creation_date:
+        type: string
+      deletion_date:
         type: string
       currentState:
         type: string
@@ -2121,6 +2219,8 @@ definitions:
         $ref: "#/definitions/imageRegistry"
       image_pull_secret:
         type: string
+      enable_prometheus:
+        type: boolean
 
   imageRegistry:
     type: object
@@ -2179,6 +2279,10 @@ definitions:
         type: object
         additionalProperties:
           type: string
+      labels:
+        type: object
+        additionalProperties:
+          type: string
       image_registry:
         $ref: "#/definitions/imageRegistry"
       image_pull_secret:
@@ -2192,6 +2296,25 @@ definitions:
       encryption:
         type: object
         $ref: "#/definitions/encryptionConfiguration"
+      console:
+        type: object
+        $ref: '#/definitions/consoleConfiguration'
+
+  metadataFields:
+    type: object
+    properties:
+      annotations:
+        type: object
+        additionalProperties:
+          type: string
+      labels:
+        type: object
+        additionalProperties:
+          type: string
+      node_selector:
+        type: object
+        additionalProperties:
+          type: string
 
   keyPairConfiguration:
     type: object
@@ -2254,26 +2377,36 @@ definitions:
           server_insecure:
             type: boolean
 
+  consoleConfiguration:
+    allOf:
+      - $ref: '#/definitions/metadataFields'
+      - type: object
+        properties:
+          image:
+            type: string
+
   encryptionConfiguration:
-    type: object
-    properties:
-      image:
-        type: string
-      server:
-        type: object
-        $ref: "#/definitions/keyPairConfiguration"
-      client:
-        type: object
-        $ref: "#/definitions/keyPairConfiguration"
-      gemalto:
-        type: object
-        $ref: "#/definitions/gemaltoConfiguration"
-      aws:
-        type: object
-        $ref: "#/definitions/awsConfiguration"
-      vault:
-        type: object
-        $ref: "#/definitions/vaultConfiguration"
+    allOf:
+      - $ref: '#/definitions/metadataFields'
+      - type: object
+        properties:
+          image:
+            type: string
+          server:
+            type: object
+            $ref: "#/definitions/keyPairConfiguration"
+          client:
+            type: object
+            $ref: "#/definitions/keyPairConfiguration"
+          gemalto:
+            type: object
+            $ref: "#/definitions/gemaltoConfiguration"
+          aws:
+            type: object
+            $ref: "#/definitions/awsConfiguration"
+          vault:
+            type: object
+            $ref: "#/definitions/vaultConfiguration"
 
   vaultConfiguration:
     type: object
@@ -2423,6 +2556,10 @@ definitions:
           storage_class_name:
             type: string
           labels:
+            type: object
+            additionalProperties:
+              type: string
+          annotations:
             type: object
             additionalProperties:
               type: string
@@ -2876,49 +3013,14 @@ definitions:
         items:
           $ref: "#/definitions/zone"
 
-  clusterResources:
+  maxAllocatableMemResponse:
     type: object
     properties:
-      nodes:
-        type: array
-        items:
-          $ref: "#/definitions/nodeInfo"
+      max_memory:
+        type: integer
+        format: int64
 
-  nodeInfo:
-    type: object
-    properties:
-      name:
-        type: string
-      taints:
-        $ref: "#/definitions/nodeTaints"
-      allocatable_resources:
-        type: object
-        additionalProperties:
-          type: integer
-          format: int64
-        description: Represents the resources of a node that are available for scheduling.
-      total_resources:
-        type: object
-        additionalProperties:
-          type: integer
-          format: int64
-        description: Represents the total resources of a node.
-
-  nodeTaints:
-    type: object
-    properties:
-      no_schedule:
-        type: array
-        items:
-          type: string
-      no_execute:
-        type: array
-        items:
-          type: string
-      prefer_no_schedule:
-        type: array
-        items:
-          type: string
-
-
-      
+  parityResponse:
+    type: array
+    items:
+      type: string

@@ -38,6 +38,9 @@ type TenantList struct {
 	// current state
 	CurrentState string `json:"currentState,omitempty"`
 
+	// deletion date
+	DeletionDate string `json:"deletion_date,omitempty"`
+
 	// instance count
 	InstanceCount int64 `json:"instance_count,omitempty"`
 

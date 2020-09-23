@@ -27,11 +27,12 @@ import {
 import Typography from "@material-ui/core/Typography";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../../common/api";
+import { ITenant } from "./types";
 
 interface IDeleteTenant {
   classes: any;
   deleteOpen: boolean;
-  selectedTenant: string;
+  selectedTenant: ITenant;
   closeDeleteModalAndRefresh: (refreshList: boolean) => any;
 }
 
@@ -54,7 +55,10 @@ const DeleteTenant = ({
   useEffect(() => {
     if (deleteLoading) {
       api
-        .invoke("DELETE", `/api/v1/tenants/${selectedTenant}`)
+        .invoke(
+          "DELETE",
+          `/api/v1/namespaces/${selectedTenant.namespace}/tenants/${selectedTenant.name}`
+        )
         .then(() => {
           setDeleteLoading(false);
           setDeleteError("");
@@ -85,7 +89,7 @@ const DeleteTenant = ({
       <DialogContent>
         {deleteLoading && <LinearProgress />}
         <DialogContentText id="alert-dialog-description">
-          Are you sure you want to delete tenant <b>{selectedTenant}</b>?
+          Are you sure you want to delete tenant <b>{selectedTenant.name}</b>?
           {deleteError !== "" && (
             <React.Fragment>
               <br />

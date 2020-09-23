@@ -32,6 +32,7 @@ import (
 //
 // swagger:model encryptionConfiguration
 type EncryptionConfiguration struct {
+	MetadataFields
 
 	// aws
 	Aws *AwsConfiguration `json:"aws,omitempty"`
@@ -52,9 +53,99 @@ type EncryptionConfiguration struct {
 	Vault *VaultConfiguration `json:"vault,omitempty"`
 }
 
+// UnmarshalJSON unmarshals this object from a JSON structure
+func (m *EncryptionConfiguration) UnmarshalJSON(raw []byte) error {
+	// AO0
+	var aO0 MetadataFields
+	if err := swag.ReadJSON(raw, &aO0); err != nil {
+		return err
+	}
+	m.MetadataFields = aO0
+
+	// AO1
+	var dataAO1 struct {
+		Aws *AwsConfiguration `json:"aws,omitempty"`
+
+		Client *KeyPairConfiguration `json:"client,omitempty"`
+
+		Gemalto *GemaltoConfiguration `json:"gemalto,omitempty"`
+
+		Image string `json:"image,omitempty"`
+
+		Server *KeyPairConfiguration `json:"server,omitempty"`
+
+		Vault *VaultConfiguration `json:"vault,omitempty"`
+	}
+	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+		return err
+	}
+
+	m.Aws = dataAO1.Aws
+
+	m.Client = dataAO1.Client
+
+	m.Gemalto = dataAO1.Gemalto
+
+	m.Image = dataAO1.Image
+
+	m.Server = dataAO1.Server
+
+	m.Vault = dataAO1.Vault
+
+	return nil
+}
+
+// MarshalJSON marshals this object to a JSON structure
+func (m EncryptionConfiguration) MarshalJSON() ([]byte, error) {
+	_parts := make([][]byte, 0, 2)
+
+	aO0, err := swag.WriteJSON(m.MetadataFields)
+	if err != nil {
+		return nil, err
+	}
+	_parts = append(_parts, aO0)
+	var dataAO1 struct {
+		Aws *AwsConfiguration `json:"aws,omitempty"`
+
+		Client *KeyPairConfiguration `json:"client,omitempty"`
+
+		Gemalto *GemaltoConfiguration `json:"gemalto,omitempty"`
+
+		Image string `json:"image,omitempty"`
+
+		Server *KeyPairConfiguration `json:"server,omitempty"`
+
+		Vault *VaultConfiguration `json:"vault,omitempty"`
+	}
+
+	dataAO1.Aws = m.Aws
+
+	dataAO1.Client = m.Client
+
+	dataAO1.Gemalto = m.Gemalto
+
+	dataAO1.Image = m.Image
+
+	dataAO1.Server = m.Server
+
+	dataAO1.Vault = m.Vault
+
+	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	if errAO1 != nil {
+		return nil, errAO1
+	}
+	_parts = append(_parts, jsonDataAO1)
+	return swag.ConcatJSON(_parts...), nil
+}
+
 // Validate validates this encryption configuration
 func (m *EncryptionConfiguration) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	// validation for a type composition with MetadataFields
+	if err := m.MetadataFields.Validate(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateAws(formats); err != nil {
 		res = append(res, err)

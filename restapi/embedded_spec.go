@@ -567,18 +567,28 @@ func init() {
         }
       }
     },
-    "/cluster/resources": {
+    "/cluster/max-allocatable-memory": {
       "get": {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Get Cluster Resources",
-        "operationId": "GetClusterResources",
+        "summary": "Get maximum allocatable memory for given number of nodes",
+        "operationId": "GetMaxAllocatableMem",
+        "parameters": [
+          {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32",
+            "name": "num_nodes",
+            "in": "query",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/clusterResources"
+              "$ref": "#/definitions/maxAllocatableMemResponse"
             }
           },
           "default": {
@@ -682,6 +692,45 @@ func init() {
         "responses": {
           "204": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/get-parity/{nodes}/{disksPerNode}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Gets parity by sending number of nodes \u0026 number of disks",
+        "operationId": "GetParity",
+        "parameters": [
+          {
+            "minimum": 2,
+            "type": "integer",
+            "name": "nodes",
+            "in": "path",
+            "required": true
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "name": "disksPerNode",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/parityResponse"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -1185,6 +1234,90 @@ func init() {
         ],
         "responses": {
           "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/certificates": {
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Tenant Update Certificates",
+        "operationId": "TenantUpdateCertificate",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/tlsConfiguration"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/encryption": {
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Tenant Update Encryption",
+        "operationId": "TenantUpdateEncryption",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/encryptionConfiguration"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
             "description": "A successful response."
           },
           "default": {
@@ -2365,17 +2498,6 @@ func init() {
         }
       }
     },
-    "clusterResources": {
-      "type": "object",
-      "properties": {
-        "nodes": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/nodeInfo"
-          }
-        }
-      }
-    },
     "configDescription": {
       "type": "object",
       "properties": {
@@ -2411,6 +2533,21 @@ func init() {
           "type": "string"
         }
       }
+    },
+    "consoleConfiguration": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/metadataFields"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "image": {
+              "type": "string"
+            }
+          }
+        }
+      ]
     },
     "createRemoteBucket": {
       "required": [
@@ -2460,6 +2597,10 @@ func init() {
             "type": "string"
           }
         },
+        "console": {
+          "type": "object",
+          "$ref": "#/definitions/consoleConfiguration"
+        },
         "console_image": {
           "type": "string"
         },
@@ -2494,6 +2635,12 @@ func init() {
         },
         "image_registry": {
           "$ref": "#/definitions/imageRegistry"
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "mounth_path": {
           "type": "string"
@@ -2554,32 +2701,39 @@ func init() {
       }
     },
     "encryptionConfiguration": {
-      "type": "object",
-      "properties": {
-        "aws": {
-          "type": "object",
-          "$ref": "#/definitions/awsConfiguration"
+      "allOf": [
+        {
+          "$ref": "#/definitions/metadataFields"
         },
-        "client": {
+        {
           "type": "object",
-          "$ref": "#/definitions/keyPairConfiguration"
-        },
-        "gemalto": {
-          "type": "object",
-          "$ref": "#/definitions/gemaltoConfiguration"
-        },
-        "image": {
-          "type": "string"
-        },
-        "server": {
-          "type": "object",
-          "$ref": "#/definitions/keyPairConfiguration"
-        },
-        "vault": {
-          "type": "object",
-          "$ref": "#/definitions/vaultConfiguration"
+          "properties": {
+            "aws": {
+              "type": "object",
+              "$ref": "#/definitions/awsConfiguration"
+            },
+            "client": {
+              "type": "object",
+              "$ref": "#/definitions/keyPairConfiguration"
+            },
+            "gemalto": {
+              "type": "object",
+              "$ref": "#/definitions/gemaltoConfiguration"
+            },
+            "image": {
+              "type": "string"
+            },
+            "server": {
+              "type": "object",
+              "$ref": "#/definitions/keyPairConfiguration"
+            },
+            "vault": {
+              "type": "object",
+              "$ref": "#/definitions/vaultConfiguration"
+            }
+          }
         }
-      }
+      ]
     },
     "error": {
       "type": "object",
@@ -2589,7 +2743,7 @@ func init() {
       "properties": {
         "code": {
           "type": "integer",
-          "format": "int64"
+          "format": "int32"
         },
         "message": {
           "type": "string"
@@ -2966,29 +3120,34 @@ func init() {
         }
       }
     },
-    "nodeInfo": {
+    "maxAllocatableMemResponse": {
       "type": "object",
       "properties": {
-        "allocatable_resources": {
-          "description": "Represents the resources of a node that are available for scheduling.",
+        "max_memory": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "metadataFields": {
+      "type": "object",
+      "properties": {
+        "annotations": {
           "type": "object",
           "additionalProperties": {
-            "type": "integer",
-            "format": "int64"
+            "type": "string"
           }
         },
-        "name": {
-          "type": "string"
-        },
-        "taints": {
-          "$ref": "#/definitions/nodeTaints"
-        },
-        "total_resources": {
-          "description": "Represents the total resources of a node.",
+        "labels": {
           "type": "object",
           "additionalProperties": {
-            "type": "integer",
-            "format": "int64"
+            "type": "string"
+          }
+        },
+        "node_selector": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
           }
         }
       }
@@ -3053,29 +3212,6 @@ func init() {
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "nodeTaints": {
-      "type": "object",
-      "properties": {
-        "no_execute": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "no_schedule": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "prefer_no_schedule": {
-          "type": "array",
-          "items": {
-            "type": "string"
           }
         }
       }
@@ -3204,6 +3340,12 @@ func init() {
         "delete",
         "get"
       ]
+    },
+    "parityResponse": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "podAffinityTerm": {
       "description": "Required. A pod affinity term, associated with the corresponding weight.",
@@ -3527,11 +3669,20 @@ func init() {
     "tenant": {
       "type": "object",
       "properties": {
+        "console_image": {
+          "type": "string"
+        },
         "creation_date": {
           "type": "string"
         },
         "currentState": {
           "type": "string"
+        },
+        "deletion_date": {
+          "type": "string"
+        },
+        "enable_prometheus": {
+          "type": "boolean"
         },
         "image": {
           "type": "string"
@@ -3561,6 +3712,9 @@ func init() {
           "type": "string"
         },
         "currentState": {
+          "type": "string"
+        },
+        "deletion_date": {
           "type": "string"
         },
         "instance_count": {
@@ -3633,6 +3787,9 @@ func init() {
         "console_image": {
           "type": "string",
           "pattern": "^((.*?)/(.*?):(.+))$"
+        },
+        "enable_prometheus": {
+          "type": "boolean"
         },
         "image": {
           "type": "string",
@@ -3800,6 +3957,12 @@ func init() {
             "size"
           ],
           "properties": {
+            "annotations": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
             "labels": {
               "type": "object",
               "additionalProperties": {
@@ -4568,18 +4731,28 @@ func init() {
         }
       }
     },
-    "/cluster/resources": {
+    "/cluster/max-allocatable-memory": {
       "get": {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Get Cluster Resources",
-        "operationId": "GetClusterResources",
+        "summary": "Get maximum allocatable memory for given number of nodes",
+        "operationId": "GetMaxAllocatableMem",
+        "parameters": [
+          {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32",
+            "name": "num_nodes",
+            "in": "query",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/clusterResources"
+              "$ref": "#/definitions/maxAllocatableMemResponse"
             }
           },
           "default": {
@@ -4683,6 +4856,45 @@ func init() {
         "responses": {
           "204": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/get-parity/{nodes}/{disksPerNode}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Gets parity by sending number of nodes \u0026 number of disks",
+        "operationId": "GetParity",
+        "parameters": [
+          {
+            "minimum": 2,
+            "type": "integer",
+            "name": "nodes",
+            "in": "path",
+            "required": true
+          },
+          {
+            "minimum": 1,
+            "type": "integer",
+            "name": "disksPerNode",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/parityResponse"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -5186,6 +5398,90 @@ func init() {
         ],
         "responses": {
           "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/certificates": {
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Tenant Update Certificates",
+        "operationId": "TenantUpdateCertificate",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/tlsConfiguration"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/encryption": {
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Tenant Update Encryption",
+        "operationId": "TenantUpdateEncryption",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/encryptionConfiguration"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
             "description": "A successful response."
           },
           "default": {
@@ -6603,6 +6899,12 @@ func init() {
         "size"
       ],
       "properties": {
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
         "labels": {
           "type": "object",
           "additionalProperties": {
@@ -6883,17 +7185,6 @@ func init() {
         }
       }
     },
-    "clusterResources": {
-      "type": "object",
-      "properties": {
-        "nodes": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/nodeInfo"
-          }
-        }
-      }
-    },
     "configDescription": {
       "type": "object",
       "properties": {
@@ -6929,6 +7220,21 @@ func init() {
           "type": "string"
         }
       }
+    },
+    "consoleConfiguration": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/metadataFields"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "image": {
+              "type": "string"
+            }
+          }
+        }
+      ]
     },
     "createRemoteBucket": {
       "required": [
@@ -6978,6 +7284,10 @@ func init() {
             "type": "string"
           }
         },
+        "console": {
+          "type": "object",
+          "$ref": "#/definitions/consoleConfiguration"
+        },
         "console_image": {
           "type": "string"
         },
@@ -7012,6 +7322,12 @@ func init() {
         },
         "image_registry": {
           "$ref": "#/definitions/imageRegistry"
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "mounth_path": {
           "type": "string"
@@ -7072,32 +7388,39 @@ func init() {
       }
     },
     "encryptionConfiguration": {
-      "type": "object",
-      "properties": {
-        "aws": {
-          "type": "object",
-          "$ref": "#/definitions/awsConfiguration"
+      "allOf": [
+        {
+          "$ref": "#/definitions/metadataFields"
         },
-        "client": {
+        {
           "type": "object",
-          "$ref": "#/definitions/keyPairConfiguration"
-        },
-        "gemalto": {
-          "type": "object",
-          "$ref": "#/definitions/gemaltoConfiguration"
-        },
-        "image": {
-          "type": "string"
-        },
-        "server": {
-          "type": "object",
-          "$ref": "#/definitions/keyPairConfiguration"
-        },
-        "vault": {
-          "type": "object",
-          "$ref": "#/definitions/vaultConfiguration"
+          "properties": {
+            "aws": {
+              "type": "object",
+              "$ref": "#/definitions/awsConfiguration"
+            },
+            "client": {
+              "type": "object",
+              "$ref": "#/definitions/keyPairConfiguration"
+            },
+            "gemalto": {
+              "type": "object",
+              "$ref": "#/definitions/gemaltoConfiguration"
+            },
+            "image": {
+              "type": "string"
+            },
+            "server": {
+              "type": "object",
+              "$ref": "#/definitions/keyPairConfiguration"
+            },
+            "vault": {
+              "type": "object",
+              "$ref": "#/definitions/vaultConfiguration"
+            }
+          }
         }
-      }
+      ]
     },
     "error": {
       "type": "object",
@@ -7107,7 +7430,7 @@ func init() {
       "properties": {
         "code": {
           "type": "integer",
-          "format": "int64"
+          "format": "int32"
         },
         "message": {
           "type": "string"
@@ -7484,29 +7807,34 @@ func init() {
         }
       }
     },
-    "nodeInfo": {
+    "maxAllocatableMemResponse": {
       "type": "object",
       "properties": {
-        "allocatable_resources": {
-          "description": "Represents the resources of a node that are available for scheduling.",
+        "max_memory": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "metadataFields": {
+      "type": "object",
+      "properties": {
+        "annotations": {
           "type": "object",
           "additionalProperties": {
-            "type": "integer",
-            "format": "int64"
+            "type": "string"
           }
         },
-        "name": {
-          "type": "string"
-        },
-        "taints": {
-          "$ref": "#/definitions/nodeTaints"
-        },
-        "total_resources": {
-          "description": "Represents the total resources of a node.",
+        "labels": {
           "type": "object",
           "additionalProperties": {
-            "type": "integer",
-            "format": "int64"
+            "type": "string"
+          }
+        },
+        "node_selector": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
           }
         }
       }
@@ -7527,29 +7855,6 @@ func init() {
           "type": "array",
           "items": {
             "$ref": "#/definitions/NodeSelectorTermMatchFieldsItems0"
-          }
-        }
-      }
-    },
-    "nodeTaints": {
-      "type": "object",
-      "properties": {
-        "no_execute": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "no_schedule": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "prefer_no_schedule": {
-          "type": "array",
-          "items": {
-            "type": "string"
           }
         }
       }
@@ -7678,6 +7983,12 @@ func init() {
         "delete",
         "get"
       ]
+    },
+    "parityResponse": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "podAffinityTerm": {
       "description": "Required. A pod affinity term, associated with the corresponding weight.",
@@ -7979,11 +8290,20 @@ func init() {
     "tenant": {
       "type": "object",
       "properties": {
+        "console_image": {
+          "type": "string"
+        },
         "creation_date": {
           "type": "string"
         },
         "currentState": {
           "type": "string"
+        },
+        "deletion_date": {
+          "type": "string"
+        },
+        "enable_prometheus": {
+          "type": "boolean"
         },
         "image": {
           "type": "string"
@@ -8013,6 +8333,9 @@ func init() {
           "type": "string"
         },
         "currentState": {
+          "type": "string"
+        },
+        "deletion_date": {
           "type": "string"
         },
         "instance_count": {
@@ -8085,6 +8408,9 @@ func init() {
         "console_image": {
           "type": "string",
           "pattern": "^((.*?)/(.*?):(.+))$"
+        },
+        "enable_prometheus": {
+          "type": "boolean"
         },
         "image": {
           "type": "string",
@@ -8252,6 +8578,12 @@ func init() {
             "size"
           ],
           "properties": {
+            "annotations": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
             "labels": {
               "type": "object",
               "additionalProperties": {

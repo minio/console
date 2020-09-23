@@ -86,7 +86,14 @@ const ZonesMultiSelector = ({
   onChange,
   classes,
 }: IZonesMultiSelector) => {
-  const defaultZone: IZone = { name: "", servers: 0, capacity: "", volumes: 0 };
+  const defaultZone: IZone = {
+    name: "",
+    servers: 0,
+    capacity: "",
+    volumes: 0,
+    volumes_per_server: 0,
+    volume_configuration: { size: 0, storage_class: "", labels: null },
+  };
 
   const [currentElements, setCurrentElements] = useState<IZone[]>([]);
   const [internalCounter, setInternalCounter] = useState<number>(1);

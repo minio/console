@@ -18,9 +18,7 @@ package restapi
 
 import (
 	"context"
-	"crypto"
 	"encoding/base64"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -32,11 +30,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/minio/console/pkg/kes"
-	"gopkg.in/yaml.v2"
 	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/types"
-	"k8s.io/client-go/kubernetes"
 
 	corev1 "k8s.io/api/core/v1"
 
@@ -69,8 +64,7 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPICreateTenantHandler = admin_api.CreateTenantHandlerFunc(func(params admin_api.CreateTenantParams, session *models.Principal) middleware.Responder {
 		resp, err := getTenantCreatedResponse(session, params)
 		if err != nil {
-			log.Println(err)
-			return admin_api.NewCreateTenantDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return admin_api.NewCreateTenantDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewCreateTenantOK().WithPayload(resp)
 	})
@@ -78,8 +72,7 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPIListAllTenantsHandler = admin_api.ListAllTenantsHandlerFunc(func(params admin_api.ListAllTenantsParams, session *models.Principal) middleware.Responder {
 		resp, err := getListAllTenantsResponse(session, params)
 		if err != nil {
-			log.Println(err)
-			return admin_api.NewListTenantsDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return admin_api.NewListTenantsDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewListTenantsOK().WithPayload(resp)
 
@@ -88,8 +81,7 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPIListTenantsHandler = admin_api.ListTenantsHandlerFunc(func(params admin_api.ListTenantsParams, session *models.Principal) middleware.Responder {
 		resp, err := getListTenantsResponse(session, params)
 		if err != nil {
-			log.Println(err)
-			return admin_api.NewListTenantsDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return admin_api.NewListTenantsDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewListTenantsOK().WithPayload(resp)
 
@@ -98,8 +90,7 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPITenantInfoHandler = admin_api.TenantInfoHandlerFunc(func(params admin_api.TenantInfoParams, session *models.Principal) middleware.Responder {
 		resp, err := getTenantInfoResponse(session, params)
 		if err != nil {
-			log.Println(err)
-			return admin_api.NewTenantInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return admin_api.NewTenantInfoDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewTenantInfoOK().WithPayload(resp)
 
@@ -109,8 +100,7 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPIDeleteTenantHandler = admin_api.DeleteTenantHandlerFunc(func(params admin_api.DeleteTenantParams, session *models.Principal) middleware.Responder {
 		err := getDeleteTenantResponse(session, params)
 		if err != nil {
-			log.Println(err)
-			return admin_api.NewTenantInfoDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return admin_api.NewTenantInfoDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewTenantInfoOK()
 
@@ -120,50 +110,67 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPIUpdateTenantHandler = admin_api.UpdateTenantHandlerFunc(func(params admin_api.UpdateTenantParams, session *models.Principal) middleware.Responder {
 		err := getUpdateTenantResponse(session, params)
 		if err != nil {
-			log.Println(err)
-			return admin_api.NewUpdateTenantDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String("Unable to update tenant")})
+			return admin_api.NewUpdateTenantDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewUpdateTenantCreated()
 	})
 
+	// Add Tenant Zones
 	api.AdminAPITenantAddZoneHandler = admin_api.TenantAddZoneHandlerFunc(func(params admin_api.TenantAddZoneParams, session *models.Principal) middleware.Responder {
 		err := getTenantAddZoneResponse(session, params)
 		if err != nil {
-			log.Println(err)
-			return admin_api.NewTenantAddZoneDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String("Unable to add zone")})
+			return admin_api.NewTenantAddZoneDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewTenantAddZoneCreated()
 	})
 
+	// Get Tenant Usage
 	api.AdminAPIGetTenantUsageHandler = admin_api.GetTenantUsageHandlerFunc(func(params admin_api.GetTenantUsageParams, session *models.Principal) middleware.Responder {
 		payload, err := getTenantUsageResponse(session, params)
 		if err != nil {
-			log.Println(err)
-			return admin_api.NewGetTenantUsageDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String("Unable to get tenant usage")})
+			return admin_api.NewGetTenantUsageDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewGetTenantUsageOK().WithPayload(payload)
 	})
 
+	// Update Tenant Zones
 	api.AdminAPITenantUpdateZonesHandler = admin_api.TenantUpdateZonesHandlerFunc(func(params admin_api.TenantUpdateZonesParams, session *models.Principal) middleware.Responder {
 		resp, err := getTenantUpdateZoneResponse(session, params)
 		if err != nil {
-			log.Println(err)
-			return admin_api.NewTenantUpdateZonesDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+			return admin_api.NewTenantUpdateZonesDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewTenantUpdateZonesOK().WithPayload(resp)
+	})
+
+	// Update Tenant Certificates
+	api.AdminAPITenantUpdateCertificateHandler = admin_api.TenantUpdateCertificateHandlerFunc(func(params admin_api.TenantUpdateCertificateParams, session *models.Principal) middleware.Responder {
+		err := getTenantUpdateCertificatesResponse(session, params)
+		if err != nil {
+			return admin_api.NewTenantUpdateCertificateDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewTenantUpdateCertificateCreated()
+	})
+
+	// Update Tenant Encryption Configuration
+	api.AdminAPITenantUpdateEncryptionHandler = admin_api.TenantUpdateEncryptionHandlerFunc(func(params admin_api.TenantUpdateEncryptionParams, session *models.Principal) middleware.Responder {
+		err := getTenantUpdateEncryptionResponse(session, params)
+		if err != nil {
+			return admin_api.NewTenantUpdateEncryptionDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewTenantUpdateEncryptionCreated()
 	})
 }
 
 // getDeleteTenantResponse gets the output of deleting a minio instance
-func getDeleteTenantResponse(session *models.Principal, params admin_api.DeleteTenantParams) error {
+func getDeleteTenantResponse(session *models.Principal, params admin_api.DeleteTenantParams) *models.Error {
 	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
-		return err
+		return prepareError(err)
 	}
 	// get Kubernetes Client
 	clientset, err := cluster.K8sClient(session.SessionToken)
 	if err != nil {
-		return err
+		return prepareError(err)
 	}
 	opClient := &operatorClient{
 		client: opClientClientSet,
@@ -172,7 +179,10 @@ func getDeleteTenantResponse(session *models.Principal, params admin_api.DeleteT
 	if params.Body != nil {
 		deleteTenantPVCs = params.Body.DeletePvcs
 	}
-	return deleteTenantAction(context.Background(), opClient, clientset.CoreV1(), params.Namespace, params.Tenant, deleteTenantPVCs)
+	if err = deleteTenantAction(context.Background(), opClient, clientset.CoreV1(), params.Namespace, params.Tenant, deleteTenantPVCs); err != nil {
+		return prepareError(err)
+	}
+	return nil
 }
 
 // deleteTenantAction performs the actions of deleting a tenant
@@ -180,7 +190,7 @@ func getDeleteTenantResponse(session *models.Principal, params admin_api.DeleteT
 // It also adds the option of deleting the tenant's underlying pvcs if deletePvcs set
 func deleteTenantAction(
 	ctx context.Context,
-	operatorClient OperatorClient,
+	operatorClient OperatorClientI,
 	clientset v1.CoreV1Interface,
 	namespace, tenantName string,
 	deletePvcs bool) error {
@@ -208,15 +218,19 @@ func deleteTenantAction(
 	return nil
 }
 
-func getTenantScheme(mi *operator.Tenant) string {
+// GetTenantServiceURL gets tenant's service url with the proper scheme and port
+func GetTenantServiceURL(mi *operator.Tenant) (svcURL string) {
 	scheme := "http"
+	port := operator.MinIOPortLoadBalancerSVC
 	if mi.AutoCert() || mi.ExternalCert() {
 		scheme = "https"
+		port = operator.MinIOTLSPortLoadBalancerSVC
 	}
-	return scheme
+	svc := fmt.Sprintf("%s.%s.svc.cluster.local", mi.MinIOCIServiceName(), mi.Namespace)
+	return fmt.Sprintf("%s://%s", scheme, net.JoinHostPort(svc, strconv.Itoa(port)))
 }
 
-func getTenantAdminClient(ctx context.Context, client K8sClient, namespace, tenantName, serviceName, scheme string, insecure bool) (*madmin.AdminClient, error) {
+func getTenantAdminClient(ctx context.Context, client K8sClientI, namespace, tenantName, svcURL string, insecure bool) (*madmin.AdminClient, error) {
 	// get admin credentials from secret
 	creds, err := client.getSecret(ctx, namespace, fmt.Sprintf("%s-secret", tenantName), metav1.GetOptions{})
 	if err != nil {
@@ -232,14 +246,14 @@ func getTenantAdminClient(ctx context.Context, client K8sClient, namespace, tena
 		log.Println("tenant's secret doesn't contain secretkey")
 		return nil, errorGeneric
 	}
-	mAdmin, pErr := NewAdminClientWithInsecure(scheme+"://"+net.JoinHostPort(serviceName, strconv.Itoa(operator.MinIOPort)), string(accessKey), string(secretkey), insecure)
+	mAdmin, pErr := NewAdminClientWithInsecure(svcURL, string(accessKey), string(secretkey), insecure)
 	if pErr != nil {
 		return nil, pErr.Cause
 	}
 	return mAdmin, nil
 }
 
-func getTenant(ctx context.Context, operatorClient OperatorClient, namespace, tenantName string) (*operator.Tenant, error) {
+func getTenant(ctx context.Context, operatorClient OperatorClientI, namespace, tenantName string) (*operator.Tenant, error) {
 	minInst, err := operatorClient.TenantGet(ctx, namespace, tenantName, metav1.GetOptions{})
 	if err != nil {
 		return nil, err
@@ -247,35 +261,64 @@ func getTenant(ctx context.Context, operatorClient OperatorClient, namespace, te
 	return minInst, nil
 }
 
+func isPrometheusEnabled(annotations map[string]string) bool {
+	if annotations == nil {
+		return false
+	}
+	// if one of the following prometheus annotations are not present
+	// we consider the tenant as not integrated with prometheus
+	if _, ok := annotations[prometheusPath]; !ok {
+		return false
+	}
+	if _, ok := annotations[prometheusPort]; !ok {
+		return false
+	}
+	if _, ok := annotations[prometheusScrape]; !ok {
+		return false
+	}
+	return true
+}
+
 func getTenantInfo(tenant *operator.Tenant) *models.Tenant {
 	var zones []*models.Zone
-
+	consoleImage := ""
 	var totalSize int64
 	for _, z := range tenant.Spec.Zones {
 		zones = append(zones, parseTenantZone(&z))
 		zoneSize := int64(z.Servers) * int64(z.VolumesPerServer) * z.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value()
 		totalSize = totalSize + zoneSize
 	}
+	var deletion string
+	if tenant.ObjectMeta.DeletionTimestamp != nil {
+		deletion = tenant.ObjectMeta.DeletionTimestamp.String()
+	}
+
+	if tenant.HasConsoleEnabled() {
+		consoleImage = tenant.Spec.Console.Image
+	}
 
 	return &models.Tenant{
-		CreationDate: tenant.ObjectMeta.CreationTimestamp.String(),
-		Name:         tenant.Name,
-		TotalSize:    totalSize,
-		CurrentState: tenant.Status.CurrentState,
-		Zones:        zones,
-		Namespace:    tenant.ObjectMeta.Namespace,
-		Image:        tenant.Spec.Image,
+		CreationDate:     tenant.ObjectMeta.CreationTimestamp.String(),
+		DeletionDate:     deletion,
+		Name:             tenant.Name,
+		TotalSize:        totalSize,
+		CurrentState:     tenant.Status.CurrentState,
+		Zones:            zones,
+		Namespace:        tenant.ObjectMeta.Namespace,
+		Image:            tenant.Spec.Image,
+		ConsoleImage:     consoleImage,
+		EnablePrometheus: isPrometheusEnabled(tenant.Annotations),
 	}
 }
 
-func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInfoParams) (*models.Tenant, error) {
+func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInfoParams) (*models.Tenant, *models.Error) {
 	// 5 seconds timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
-		return nil, err
+		return nil, prepareError(err)
 	}
 
 	opClient := &operatorClient{
@@ -284,15 +327,14 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 
 	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
 	if err != nil {
-		log.Println("error getting minioTenant:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 
 	info := getTenantInfo(minTenant)
 	return info, nil
 }
 
-func listTenants(ctx context.Context, operatorClient OperatorClient, namespace string, limit *int32) (*models.ListTenantsResponse, error) {
+func listTenants(ctx context.Context, operatorClient OperatorClientI, namespace string, limit *int32) (*models.ListTenantsResponse, error) {
 	listOpts := metav1.ListOptions{
 		Limit: 10,
 	}
@@ -321,8 +363,14 @@ func listTenants(ctx context.Context, operatorClient OperatorClient, namespace s
 			}
 		}
 
+		var deletion string
+		if tenant.ObjectMeta.DeletionTimestamp != nil {
+			deletion = tenant.ObjectMeta.DeletionTimestamp.String()
+		}
+
 		tenants = append(tenants, &models.TenantList{
 			CreationDate:  tenant.ObjectMeta.CreationTimestamp.String(),
+			DeletionDate:  deletion,
 			Name:          tenant.ObjectMeta.Name,
 			ZoneCount:     int64(len(tenant.Spec.Zones)),
 			InstanceCount: instanceCount,
@@ -339,44 +387,40 @@ func listTenants(ctx context.Context, operatorClient OperatorClient, namespace s
 	}, nil
 }
 
-func getListAllTenantsResponse(session *models.Principal, params admin_api.ListAllTenantsParams) (*models.ListTenantsResponse, error) {
+func getListAllTenantsResponse(session *models.Principal, params admin_api.ListAllTenantsParams) (*models.ListTenantsResponse, *models.Error) {
 	ctx := context.Background()
 	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
-		log.Println("error getting operator client:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
 	listT, err := listTenants(ctx, opClient, "", params.Limit)
 	if err != nil {
-		log.Println("error listing tenants:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	return listT, nil
 }
 
 // getListTenantsResponse list tenants by namespace
-func getListTenantsResponse(session *models.Principal, params admin_api.ListTenantsParams) (*models.ListTenantsResponse, error) {
+func getListTenantsResponse(session *models.Principal, params admin_api.ListTenantsParams) (*models.ListTenantsResponse, *models.Error) {
 	ctx := context.Background()
 	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
-		log.Println("error getting operator client:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
 	listT, err := listTenants(ctx, opClient, params.Namespace, params.Limit)
 	if err != nil {
-		log.Println("error listing tenants:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 	return listT, nil
 }
 
-func getTenantCreatedResponse(session *models.Principal, params admin_api.CreateTenantParams) (*models.CreateTenantResponse, error) {
+func getTenantCreatedResponse(session *models.Principal, params admin_api.CreateTenantParams) (response *models.CreateTenantResponse, mError *models.Error) {
 	tenantReq := params.Body
 	minioImage := tenantReq.Image
 	ctx := context.Background()
@@ -389,9 +433,12 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		}
 	}
 	// get Kubernetes Client
-	clientset, err := cluster.K8sClient(session.SessionToken)
+	clientSet, err := cluster.K8sClient(session.SessionToken)
+	k8sClient := k8sClient{
+		client: clientSet,
+	}
 	if err != nil {
-		return nil, err
+		return nil, prepareError(err)
 	}
 
 	ns := *tenantReq.Namespace
@@ -425,16 +472,29 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		},
 	}
 
-	_, err = clientset.CoreV1().Secrets(ns).Create(ctx, &instanceSecret, metav1.CreateOptions{})
+	_, err = clientSet.CoreV1().Secrets(ns).Create(ctx, &instanceSecret, metav1.CreateOptions{})
 	if err != nil {
-		return nil, err
+		return nil, prepareError(err)
 	}
+	// delete secrets created if an error occurred during tenant creation,
+	defer func() {
+		if mError != nil {
+			log.Printf("deleting secrets created for failed tenant: %s if any\n", tenantName)
+			opts := metav1.ListOptions{
+				LabelSelector: fmt.Sprintf("%s=%s", operator.TenantLabel, tenantName),
+			}
+			err = clientSet.CoreV1().Secrets(ns).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
+			if err != nil {
+				log.Println("error deleting tenant's secrets:", err)
+			}
+		}
+	}()
 
 	var envrionmentVariables []corev1.EnvVar
 	// Check the Erasure Coding Parity for validity and pass it to Tenant
 	if tenantReq.ErasureCodingParity > 0 {
-		if tenantReq.ErasureCodingParity < 2 && tenantReq.ErasureCodingParity > 8 {
-			return nil, errors.New("invalid Erasure Coding Value")
+		if tenantReq.ErasureCodingParity < 2 || tenantReq.ErasureCodingParity > 8 {
+			return nil, prepareError(errorInvalidErasureCodingValue)
 		}
 		envrionmentVariables = append(envrionmentVariables, corev1.EnvVar{
 			Name:  "MINIO_STORAGE_CLASS_STANDARD",
@@ -445,7 +505,8 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	//Construct a MinIO Instance with everything we are getting from parameters
 	minInst := operator.Tenant{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: tenantName,
+			Name:   tenantName,
+			Labels: tenantReq.Labels,
 		},
 		Spec: operator.TenantSpec{
 			Image:     minioImage,
@@ -508,56 +569,28 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		}
 	}
 
-	isEncryptionAvailable := false
+	isEncryptionEnabled := false
 	if tenantReq.EnableTLS != nil && *tenantReq.EnableTLS {
 		// If user request autoCert, Operator will generate certificate keypair for MinIO (server), Console (server) and KES (server and app mTLS)
-		isEncryptionAvailable = true
+		isEncryptionEnabled = true
 		minInst.Spec.RequestAutoCert = *tenantReq.EnableTLS
 	}
 
 	if !minInst.Spec.RequestAutoCert && tenantReq.TLS != nil && tenantReq.TLS.Minio != nil {
 		// User provided TLS certificates for MinIO
-		isEncryptionAvailable = true
-		externalTLSCertificateSecretName := fmt.Sprintf("%s-instance-external-certificates", secretName)
+		isEncryptionEnabled = true
 		// disable autoCert
 		minInst.Spec.RequestAutoCert = false
-
-		tlsCrt, err := base64.StdEncoding.DecodeString(*tenantReq.TLS.Minio.Crt)
+		// Certificates used by the MinIO instance
+		externalCertSecretName := fmt.Sprintf("%s-instance-external-certificates", secretName)
+		externalCertSecret, err := createOrReplaceExternalCertSecret(ctx, &k8sClient, ns, tenantReq.TLS.Minio, externalCertSecretName, tenantName)
 		if err != nil {
-			return nil, err
+			return nil, prepareError(err)
 		}
-
-		tlsKey, err := base64.StdEncoding.DecodeString(*tenantReq.TLS.Minio.Key)
-		if err != nil {
-			return nil, err
-		}
-
-		externalTLSCertificateSecret := corev1.Secret{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: externalTLSCertificateSecretName,
-				Labels: map[string]string{
-					operator.TenantLabel: tenantName,
-				},
-			},
-			Type:      corev1.SecretTypeTLS,
-			Immutable: &imm,
-			Data: map[string][]byte{
-				"tls.crt": tlsCrt,
-				"tls.key": tlsKey,
-			},
-		}
-		_, err = clientset.CoreV1().Secrets(ns).Create(ctx, &externalTLSCertificateSecret, metav1.CreateOptions{})
-		if err != nil {
-			return nil, err
-		}
-		// Certificates used by the minio instance
-		minInst.Spec.ExternalCertSecret = &operator.LocalCertificateReference{
-			Name: externalTLSCertificateSecretName,
-			Type: "kubernetes.io/tls",
-		}
+		minInst.Spec.ExternalCertSecret = externalCertSecret
 	}
 
-	if tenantReq.Encryption != nil && isEncryptionAvailable {
+	if tenantReq.Encryption != nil && isEncryptionEnabled {
 		// Enable auto encryption
 		minInst.Spec.Env = append(minInst.Spec.Env, corev1.EnvVar{
 			Name:  "MINIO_KMS_AUTO_ENCRYPTION",
@@ -565,16 +598,21 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		})
 		// KES client mTLSCertificates used by MinIO instance, only if autoCert is not enabled
 		if !minInst.Spec.RequestAutoCert {
-			minInst.Spec.ExternalClientCertSecret, err = getTenantExternalClientCertificates(ctx, clientset, ns, tenantReq.Encryption, secretName, tenantName)
+			tenantExternalClientCertSecretName := fmt.Sprintf("%s-tenant-external-client-cert", secretName)
+			minInst.Spec.ExternalClientCertSecret, err = createOrReplaceExternalCertSecret(ctx, &k8sClient, ns, tenantReq.Encryption.Client, tenantExternalClientCertSecretName, tenantName)
 			if err != nil {
-				return nil, err
+				return nil, prepareError(errorGeneric)
 			}
 		}
 		// KES configuration for Tenant instance
-		minInst.Spec.KES, err = getKESConfiguration(ctx, clientset, ns, tenantReq.Encryption, secretName, tenantName, minInst.Spec.RequestAutoCert)
+		minInst.Spec.KES, err = getKESConfiguration(ctx, &k8sClient, ns, tenantReq.Encryption, secretName, tenantName, minInst.Spec.RequestAutoCert)
 		if err != nil {
-			return nil, err
+			return nil, prepareError(errorGeneric)
 		}
+		// Set Labels, Annotations and Node Selector for KES
+		minInst.Spec.KES.Labels = tenantReq.Encryption.Labels
+		minInst.Spec.KES.Annotations = tenantReq.Encryption.Annotations
+		minInst.Spec.KES.NodeSelector = tenantReq.Encryption.NodeSelector
 	}
 
 	// optionals are set below
@@ -630,12 +668,12 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			}
 		}
 
-		_, err = clientset.CoreV1().Secrets(ns).Create(ctx, &instanceSecret, metav1.CreateOptions{})
+		_, err = clientSet.CoreV1().Secrets(ns).Create(ctx, &instanceSecret, metav1.CreateOptions{})
 		if err != nil {
-			return nil, err
+			return nil, prepareError(errorGeneric)
 		}
 
-		const consoleVersion = "minio/console:v0.3.17"
+		const consoleVersion = "minio/console:v0.3.26"
 		minInst.Spec.Console = &operator.ConsoleConfiguration{
 			Replicas:      1,
 			Image:         consoleVersion,
@@ -646,42 +684,22 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 				},
 			},
 		}
-
 		if !minInst.Spec.RequestAutoCert && tenantReq.TLS != nil && tenantReq.TLS.Console != nil {
-			consoleExternalTLSCertificateSecretName := fmt.Sprintf("%s-console-external-certificates", secretName)
-			tlsCrt, err := base64.StdEncoding.DecodeString(*tenantReq.TLS.Console.Crt)
+			// Certificates used by the console instance
+			externalCertSecretName := fmt.Sprintf("%s-console-external-certificates", secretName)
+			externalCertSecret, err := createOrReplaceExternalCertSecret(ctx, &k8sClient, ns, tenantReq.TLS.Console, externalCertSecretName, tenantName)
 			if err != nil {
-				return nil, err
+				return nil, prepareError(errorGeneric)
 			}
-			tlsKey, err := base64.StdEncoding.DecodeString(*tenantReq.TLS.Console.Key)
-			if err != nil {
-				return nil, err
-			}
-			consoleExternalTLSCertificateSecret := corev1.Secret{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: consoleExternalTLSCertificateSecretName,
-					Labels: map[string]string{
-						operator.TenantLabel: tenantName,
-					},
-				},
-				Type:      corev1.SecretTypeTLS,
-				Immutable: &imm,
-				Data: map[string][]byte{
-					"tls.crt": tlsCrt,
-					"tls.key": tlsKey,
-				},
-			}
-			_, err = clientset.CoreV1().Secrets(ns).Create(ctx, &consoleExternalTLSCertificateSecret, metav1.CreateOptions{})
-			if err != nil {
-				return nil, err
-			}
-			// Certificates used by the minio instance
-			minInst.Spec.Console.ExternalCertSecret = &operator.LocalCertificateReference{
-				Name: consoleExternalTLSCertificateSecretName,
-				Type: "kubernetes.io/tls",
-			}
+			minInst.Spec.Console.ExternalCertSecret = externalCertSecret
 		}
 
+		// Set Labels, Annotations and Node Selector for Console
+		if tenantReq.Console != nil {
+			minInst.Spec.Console.Annotations = tenantReq.Console.Annotations
+			minInst.Spec.Console.Labels = tenantReq.Console.Labels
+			minInst.Spec.Console.NodeSelector = tenantReq.Console.NodeSelector
+		}
 	}
 
 	// set the service name if provided
@@ -690,20 +708,16 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 	// add annotations
 	var annotations map[string]string
-	if minInst.Spec.Metadata == nil {
-		minInst.Spec.Metadata = &metav1.ObjectMeta{
-			Annotations: map[string]string{},
-		}
-	}
+
 	if len(tenantReq.Annotations) > 0 {
 		annotations = tenantReq.Annotations
-		minInst.Spec.Metadata.Annotations = annotations
+		minInst.Annotations = annotations
 	}
 	// set the zones if they are provided
 	for _, zone := range tenantReq.Zones {
-		zone, err := parseTenantZoneRequest(zone, annotations)
+		zone, err := parseTenantZoneRequest(zone)
 		if err != nil {
-			return nil, err
+			return nil, prepareError(err)
 		}
 		minInst.Spec.Zones = append(minInst.Spec.Zones, *zone)
 	}
@@ -718,9 +732,8 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 
 	if tenantReq.ImagePullSecret != "" {
 		imagePullSecret = tenantReq.ImagePullSecret
-	} else if imagePullSecret, err = setImageRegistry(ctx, tenantName, tenantReq.ImageRegistry, clientset.CoreV1(), ns); err != nil {
-		log.Println("error setting image registry secret:", err)
-		return nil, err
+	} else if imagePullSecret, err = setImageRegistry(ctx, tenantReq.ImageRegistry, clientSet.CoreV1(), ns, tenantName); err != nil {
+		return nil, prepareError(err)
 	}
 	// pass the image pull secret to the Tenant
 	if imagePullSecret != "" {
@@ -730,10 +743,10 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 
 	// prometheus annotations support
-	if tenantReq.EnablePrometheus != nil && *tenantReq.EnablePrometheus && minInst.Spec.Metadata != nil && minInst.Spec.Metadata.Annotations != nil {
-		minInst.Spec.Metadata.Annotations["prometheus.io/path"] = "/minio/prometheus/metrics"
-		minInst.Spec.Metadata.Annotations["prometheus.io/port"] = fmt.Sprint(operator.MinIOPort)
-		minInst.Spec.Metadata.Annotations["prometheus.io/scrape"] = "true"
+	if tenantReq.EnablePrometheus != nil && *tenantReq.EnablePrometheus && minInst.Annotations != nil {
+		minInst.Annotations[prometheusPath] = "/minio/prometheus/metrics"
+		minInst.Annotations[prometheusPort] = fmt.Sprint(operator.MinIOPort)
+		minInst.Annotations[prometheusScrape] = "true"
 	}
 
 	// set console image if provided
@@ -743,22 +756,22 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 
 	opClient, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
-		return nil, err
+		return nil, prepareError(err)
 	}
 
 	_, err = opClient.MinioV1().Tenants(ns).Create(context.Background(), &minInst, metav1.CreateOptions{})
 	if err != nil {
-		return nil, err
+		return nil, prepareError(err)
 	}
 
 	// Integratrions
 	if os.Getenv("GKE_INTEGRATION") != "" {
-		err := gkeIntegration(clientset, tenantName, ns, session.SessionToken)
+		err := gkeIntegration(clientSet, tenantName, ns, session.SessionToken)
 		if err != nil {
-			return nil, err
+			return nil, prepareError(err)
 		}
 	}
-	response := &models.CreateTenantResponse{
+	response = &models.CreateTenantResponse{
 		AccessKey: accessKey,
 		SecretKey: secretKey,
 	}
@@ -774,7 +787,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 
 // setImageRegistry creates a secret to store the private registry credentials, if one exist it updates the existing one
 // returns the name of the secret created/updated
-func setImageRegistry(ctx context.Context, tenantName string, req *models.ImageRegistry, clientset v1.CoreV1Interface, namespace string) (string, error) {
+func setImageRegistry(ctx context.Context, req *models.ImageRegistry, clientset v1.CoreV1Interface, namespace, tenantName string) (string, error) {
 	if req == nil || req.Registry == nil || req.Username == nil || req.Password == nil {
 		return "", nil
 	}
@@ -798,33 +811,33 @@ func setImageRegistry(ctx context.Context, tenantName string, req *models.ImageR
 	}
 
 	pullSecretName := fmt.Sprintf("%s-regcred", tenantName)
-
-	instanceSecret := corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: pullSecretName,
-			Labels: map[string]string{
-				operator.TenantLabel: tenantName,
-			},
-		},
-		Data: map[string][]byte{
-			corev1.DockerConfigJsonKey: []byte(string(imRegistryJSON)),
-		},
-		Type: corev1.SecretTypeDockerConfigJson,
+	secretCredentials := map[string][]byte{
+		corev1.DockerConfigJsonKey: []byte(string(imRegistryJSON)),
 	}
-
 	// Get or Create secret if it doesn't exist
-	_, err = clientset.Secrets(namespace).Get(ctx, pullSecretName, metav1.GetOptions{})
+	currentSecret, err := clientset.Secrets(namespace).Get(ctx, pullSecretName, metav1.GetOptions{})
 	if err != nil {
 		if k8sErrors.IsNotFound(err) {
+			instanceSecret := corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: pullSecretName,
+					Labels: map[string]string{
+						operator.TenantLabel: tenantName,
+					},
+				},
+				Data: secretCredentials,
+				Type: corev1.SecretTypeDockerConfigJson,
+			}
 			_, err = clientset.Secrets(namespace).Create(ctx, &instanceSecret, metav1.CreateOptions{})
 			if err != nil {
 				return "", err
 			}
-			return "", nil
+			return pullSecretName, nil
 		}
 		return "", err
 	}
-	_, err = clientset.Secrets(namespace).Update(ctx, &instanceSecret, metav1.UpdateOptions{})
+	currentSecret.Data = secretCredentials
+	_, err = clientset.Secrets(namespace).Update(ctx, currentSecret, metav1.UpdateOptions{})
 	if err != nil {
 		return "", err
 	}
@@ -832,7 +845,7 @@ func setImageRegistry(ctx context.Context, tenantName string, req *models.ImageR
 }
 
 // updateTenantAction does an update on the minioTenant by patching the desired changes
-func updateTenantAction(ctx context.Context, operatorClient OperatorClient, clientset v1.CoreV1Interface, httpCl cluster.HTTPClientI, namespace string, params admin_api.UpdateTenantParams) error {
+func updateTenantAction(ctx context.Context, operatorClient OperatorClientI, clientset v1.CoreV1Interface, httpCl cluster.HTTPClientI, namespace string, params admin_api.UpdateTenantParams) error {
 	imageToUpdate := params.Body.Image
 	imageRegistryReq := params.Body.ImageRegistry
 
@@ -845,7 +858,7 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClient, clie
 		minInst.Spec.ImagePullSecret.Name = params.Body.ImagePullSecret
 	} else {
 		// update the image pull secret content
-		if _, err := setImageRegistry(ctx, params.Tenant, imageRegistryReq, clientset, namespace); err != nil {
+		if _, err := setImageRegistry(ctx, imageRegistryReq, clientset, namespace, params.Tenant); err != nil {
 			log.Println("error setting image registry secret:", err)
 			return err
 		}
@@ -867,6 +880,35 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClient, clie
 		}
 	}
 
+	// Prometheus Annotations
+	currentAnnotations := minInst.Annotations
+	prometheusAnnotations := map[string]string{
+		prometheusPath:   "/minio/prometheus/metrics",
+		prometheusPort:   fmt.Sprint(operator.MinIOPort),
+		prometheusScrape: "true",
+	}
+	if params.Body.EnablePrometheus && currentAnnotations != nil {
+		// add prometheus annotations to the tenant
+		minInst.Annotations = addAnnotations(currentAnnotations, prometheusAnnotations)
+		// add prometheus annotations to the each zone
+		if minInst.Spec.Zones != nil {
+			for _, zone := range minInst.Spec.Zones {
+				zoneAnnotations := zone.VolumeClaimTemplate.GetObjectMeta().GetAnnotations()
+				zone.VolumeClaimTemplate.GetObjectMeta().SetAnnotations(addAnnotations(zoneAnnotations, prometheusAnnotations))
+			}
+		}
+	} else {
+		// remove prometheus annotations to the tenant
+		minInst.Annotations = removeAnnotations(currentAnnotations, prometheusAnnotations)
+		// add prometheus annotations from each zone
+		if minInst.Spec.Zones != nil {
+			for _, zone := range minInst.Spec.Zones {
+				zoneAnnotations := zone.VolumeClaimTemplate.GetObjectMeta().GetAnnotations()
+				zone.VolumeClaimTemplate.GetObjectMeta().SetAnnotations(removeAnnotations(zoneAnnotations, prometheusAnnotations))
+			}
+		}
+	}
+
 	payloadBytes, err := json.Marshal(minInst)
 	if err != nil {
 		return err
@@ -878,19 +920,39 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClient, clie
 	return nil
 }
 
-func getUpdateTenantResponse(session *models.Principal, params admin_api.UpdateTenantParams) error {
+// addAnnotations will merge two annotation maps
+func addAnnotations(annotationsOne, annotationsTwo map[string]string) map[string]string {
+	if annotationsOne == nil {
+		annotationsOne = map[string]string{}
+	}
+	for key, value := range annotationsTwo {
+		annotationsOne[key] = value
+	}
+	return annotationsOne
+}
+
+// removeAnnotations will remove keys from the first annotations map based on the second one
+func removeAnnotations(annotationsOne, annotationsTwo map[string]string) map[string]string {
+	if annotationsOne == nil {
+		annotationsOne = map[string]string{}
+	}
+	for key := range annotationsTwo {
+		delete(annotationsOne, key)
+	}
+	return annotationsOne
+}
+
+func getUpdateTenantResponse(session *models.Principal, params admin_api.UpdateTenantParams) *models.Error {
 	ctx := context.Background()
 	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
-		log.Println("error getting operator client:", err)
-		return err
+		return prepareError(err)
 	}
 	// get Kubernetes Client
-	clientset, err := cluster.K8sClient(session.SessionToken)
+	clientSet, err := cluster.K8sClient(session.SessionToken)
 	if err != nil {
-		return err
+		return prepareError(err)
 	}
-
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
@@ -899,23 +961,21 @@ func getUpdateTenantResponse(session *models.Principal, params admin_api.UpdateT
 			Timeout: 4 * time.Second,
 		},
 	}
-
-	if err := updateTenantAction(ctx, opClient, clientset.CoreV1(), httpC, params.Namespace, params); err != nil {
-		log.Println("error patching Tenant:", err)
-		return err
+	if err := updateTenantAction(ctx, opClient, clientSet.CoreV1(), httpC, params.Namespace, params); err != nil {
+		return prepareError(err, errors.New("unable to update tenant"))
 	}
 	return nil
 }
 
 // addTenantZone creates a zone to a defined tenant
-func addTenantZone(ctx context.Context, operatorClient OperatorClient, params admin_api.TenantAddZoneParams) error {
+func addTenantZone(ctx context.Context, operatorClient OperatorClientI, params admin_api.TenantAddZoneParams) error {
 	tenant, err := operatorClient.TenantGet(ctx, params.Namespace, params.Tenant, metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
 
 	zoneParams := params.Body
-	zone, err := parseTenantZoneRequest(zoneParams, tenant.ObjectMeta.Annotations)
+	zone, err := parseTenantZoneRequest(zoneParams)
 	if err != nil {
 		return err
 	}
@@ -932,68 +992,60 @@ func addTenantZone(ctx context.Context, operatorClient OperatorClient, params ad
 	return nil
 }
 
-func getTenantAddZoneResponse(session *models.Principal, params admin_api.TenantAddZoneParams) error {
+func getTenantAddZoneResponse(session *models.Principal, params admin_api.TenantAddZoneParams) *models.Error {
 	ctx := context.Background()
 	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
-		log.Println("error getting operator client:", err)
-		return err
+		return prepareError(err)
 	}
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
 	if err := addTenantZone(ctx, opClient, params); err != nil {
-		log.Println("error patching Tenant:", err)
-		return err
+		return prepareError(err, errors.New("unable to add zone"))
 	}
 	return nil
 }
 
 // getTenantUsageResponse returns the usage of a tenant
-func getTenantUsageResponse(session *models.Principal, params admin_api.GetTenantUsageParams) (*models.TenantUsage, error) {
+func getTenantUsageResponse(session *models.Principal, params admin_api.GetTenantUsageParams) (*models.TenantUsage, *models.Error) {
 	// 5 seconds timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
-		log.Println("error operator client", err)
-		return nil, err
+		return nil, prepareError(err, errorUnableToGetTenantUsage)
 	}
-	clientset, err := cluster.K8sClient(session.SessionToken)
+	clientSet, err := cluster.K8sClient(session.SessionToken)
 	if err != nil {
-		log.Println("error getting k8sClient:", err)
-		return nil, err
+		return nil, prepareError(err, errorUnableToGetTenantUsage)
 	}
 
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
 	k8sClient := &k8sClient{
-		client: clientset,
+		client: clientSet,
 	}
 
 	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
 	if err != nil {
-		log.Println("error getting minioTenant:", err)
-		return nil, err
+		return nil, prepareError(err, errorUnableToGetTenantUsage)
 	}
 	minTenant.EnsureDefaults()
-	tenantScheme := getTenantScheme(minTenant)
 
-	svcName := fmt.Sprintf("%s.%s.svc.cluster.local", minTenant.MinIOCIServiceName(), minTenant.Namespace)
+	svcURL := GetTenantServiceURL(minTenant)
 
 	mAdmin, err := getTenantAdminClient(
 		ctx,
 		k8sClient,
 		params.Namespace,
 		params.Tenant,
-		svcName,
-		tenantScheme,
+		svcURL,
 		true)
 	if err != nil {
-		log.Println("error getting tenant's admin client:", err)
-		return nil, err
+		return nil, prepareError(err, errorUnableToGetTenantUsage)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -1001,8 +1053,7 @@ func getTenantUsageResponse(session *models.Principal, params admin_api.GetTenan
 	// serialize output
 	adminInfo, err := getAdminInfo(ctx, adminClient)
 	if err != nil {
-		log.Println("error getting admin info:", err)
-		return nil, err
+		return nil, prepareError(err, errorUnableToGetTenantUsage)
 	}
 	info := &models.TenantUsage{Used: adminInfo.Usage, DiskUsed: adminInfo.DisksUsage}
 	return info, nil
@@ -1010,7 +1061,7 @@ func getTenantUsageResponse(session *models.Principal, params admin_api.GetTenan
 
 // parseTenantZoneRequest parse zone request and returns the equivalent
 // operator.Zone object
-func parseTenantZoneRequest(zoneParams *models.Zone, annotations map[string]string) (*operator.Zone, error) {
+func parseTenantZoneRequest(zoneParams *models.Zone) (*operator.Zone, error) {
 	if zoneParams.VolumeConfiguration == nil {
 		return nil, errors.New("a volume configuration must be specified")
 	}
@@ -1159,13 +1210,11 @@ func parseTenantZoneRequest(zoneParams *models.Zone, annotations map[string]stri
 	// Pass annotations to the volume
 	vct := &corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:   "data",
-			Labels: zoneParams.VolumeConfiguration.Labels,
+			Name:        "data",
+			Labels:      zoneParams.VolumeConfiguration.Labels,
+			Annotations: zoneParams.VolumeConfiguration.Annotations,
 		},
 		Spec: volTemp,
-	}
-	if len(annotations) > 0 {
-		vct.ObjectMeta.Annotations = annotations
 	}
 
 	zone := &operator.Zone{
@@ -1423,350 +1472,11 @@ func parseNodeSelectorTerm(term *corev1.NodeSelectorTerm) *models.NodeSelectorTe
 	return &t
 }
 
-func getTenantExternalClientCertificates(ctx context.Context, clientSet *kubernetes.Clientset, ns string, encryptionCfg *models.EncryptionConfiguration, secretName, tenantName string) (clientCertificates *operator.LocalCertificateReference, err error) {
-	instanceExternalClientCertificateSecretName := fmt.Sprintf("%s-instance-external-client-mtls-certificates", secretName)
-	// If there's an error during this process we delete all KES configuration secrets
-	defer func() {
-		if err != nil {
-			errDelete := clientSet.CoreV1().Secrets(ns).Delete(ctx, instanceExternalClientCertificateSecretName, metav1.DeleteOptions{})
-			if errDelete != nil {
-				log.Print(errDelete)
-			}
-			return
-		}
-	}()
-	imm := true
-	// Secret to store KES clients TLS mTLSCertificates (mTLS authentication)
-	clientTLSCrt, err := base64.StdEncoding.DecodeString(*encryptionCfg.Client.Crt)
-	if err != nil {
-		return nil, err
-	}
-	clientTLSKey, err := base64.StdEncoding.DecodeString(*encryptionCfg.Client.Key)
-	if err != nil {
-		return nil, err
-	}
-	instanceExternalClientCertificateSecret := corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: instanceExternalClientCertificateSecretName,
-			Labels: map[string]string{
-				operator.TenantLabel: tenantName,
-			},
-		},
-		Type:      corev1.SecretTypeTLS,
-		Immutable: &imm,
-		Data: map[string][]byte{
-			"tls.crt": clientTLSCrt,
-			"tls.key": clientTLSKey,
-		},
-	}
-	_, err = clientSet.CoreV1().Secrets(ns).Create(ctx, &instanceExternalClientCertificateSecret, metav1.CreateOptions{})
-	if err != nil {
-		return nil, err
-	}
-	// KES client mTLSCertificates used by MinIO instance
-	clientCertificates = &operator.LocalCertificateReference{
-		Name: instanceExternalClientCertificateSecretName,
-		Type: "kubernetes.io/tls",
-	}
-	return clientCertificates, nil
-}
-
-func getKESConfiguration(ctx context.Context, clientSet *kubernetes.Clientset, ns string, encryptionCfg *models.EncryptionConfiguration, secretName, tenantName string, autoCert bool) (kesConfiguration *operator.KESConfig, err error) {
-	// secrets used by the KES configuration
-	instanceExternalClientCertificateSecretName := fmt.Sprintf("%s-instance-external-client-mtls-certificates", secretName)
-	kesExternalCertificateSecretName := fmt.Sprintf("%s-kes-external-mtls-certificates", secretName)
-	kesClientCertSecretName := fmt.Sprintf("%s-kes-mtls-certificates", secretName)
-	kesConfigurationSecretName := fmt.Sprintf("%s-kes-configuration", secretName)
-	// If there's an error during this process we delete all KES configuration secrets
-	defer func() {
-		if err != nil {
-			errDelete := clientSet.CoreV1().Secrets(ns).Delete(ctx, instanceExternalClientCertificateSecretName, metav1.DeleteOptions{})
-			if errDelete != nil {
-				log.Print(errDelete)
-			}
-			errDelete = clientSet.CoreV1().Secrets(ns).Delete(ctx, kesExternalCertificateSecretName, metav1.DeleteOptions{})
-			if errDelete != nil {
-				log.Print(errDelete)
-			}
-			errDelete = clientSet.CoreV1().Secrets(ns).Delete(ctx, kesClientCertSecretName, metav1.DeleteOptions{})
-			if errDelete != nil {
-				log.Print(errDelete)
-			}
-			errDelete = clientSet.CoreV1().Secrets(ns).Delete(ctx, kesConfigurationSecretName, metav1.DeleteOptions{})
-			if errDelete != nil {
-				log.Print(errDelete)
-			}
-			return
-		}
-	}()
-
-	imm := true
-	kesConfiguration = &operator.KESConfig{
-		Image:    "minio/kes:v0.11.0",
-		Replicas: 1,
-		Metadata: nil,
-	}
-	// Using custom image for KES
-	if encryptionCfg.Image != "" {
-		kesConfiguration.Image = encryptionCfg.Image
-	}
-	// if autoCert is enabled then Operator will generate the client certificates, calculate the client cert identity
-	// and pass it to KES via the $MINIO_KES_IDENTITY variable
-	clientCrtIdentity := "$MINIO_KES_IDENTITY"
-	// Generate server certificates for KES only if autoCert is disabled
-	if !autoCert {
-		serverTLSCrt, err := base64.StdEncoding.DecodeString(*encryptionCfg.Server.Crt)
-		if err != nil {
-			return nil, err
-		}
-		serverTLSKey, err := base64.StdEncoding.DecodeString(*encryptionCfg.Server.Key)
-		if err != nil {
-			return nil, err
-		}
-		// Secret to store KES server TLS mTLSCertificates
-		kesExternalCertificateSecret := corev1.Secret{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: kesExternalCertificateSecretName,
-				Labels: map[string]string{
-					operator.TenantLabel: tenantName,
-				},
-			},
-			Type:      corev1.SecretTypeTLS,
-			Immutable: &imm,
-			Data: map[string][]byte{
-				"tls.crt": serverTLSCrt,
-				"tls.key": serverTLSKey,
-			},
-		}
-		_, err = clientSet.CoreV1().Secrets(ns).Create(ctx, &kesExternalCertificateSecret, metav1.CreateOptions{})
-		if err != nil {
-			return nil, err
-		}
-		// External mTLSCertificates used by KES
-		kesConfiguration.ExternalCertSecret = &operator.LocalCertificateReference{
-			Name: kesExternalCertificateSecretName,
-			Type: "kubernetes.io/tls",
-		}
-
-		// Client certificate for KES used by Minio to mTLS
-		clientTLSCrt, err := base64.StdEncoding.DecodeString(*encryptionCfg.Client.Crt)
-		if err != nil {
-			return nil, err
-		}
-		// Calculate the client cert identity based on the clientTLSCrt
-		h := crypto.SHA256.New()
-		certificate, err := kes.ParseCertificate(clientTLSCrt)
-		if err != nil {
-			return nil, err
-		}
-		h.Write(certificate.RawSubjectPublicKeyInfo)
-		clientCrtIdentity = hex.EncodeToString(h.Sum(nil))
-	}
-
-	// Default kesConfiguration for KES
-	kesConfig := kes.ServerConfig{
-		Addr: "0.0.0.0:7373",
-		Root: "disabled",
-		TLS: kes.TLS{
-			KeyPath:  "/tmp/kes/server.key",
-			CertPath: "/tmp/kes/server.crt",
-		},
-		Policies: map[string]kes.Policy{
-			"default-policy": {
-				Paths: []string{
-					"/v1/key/create/my-minio-key",
-					"/v1/key/generate/my-minio-key",
-					"/v1/key/decrypt/my-minio-key",
-				},
-				Identities: []kes.Identity{
-					kes.Identity(clientCrtIdentity),
-				},
-			},
-		},
-		Cache: kes.Cache{
-			Expiry: &kes.Expiry{
-				Any:    5 * time.Minute,
-				Unused: 20 * time.Second,
-			},
-		},
-		Log: kes.Log{
-			Error: "on",
-			Audit: "off",
-		},
-		Keys: kes.Keys{},
-	}
-
-	// operator will mount the mTLSCertificates in the following paths
-	// therefore we set these values in the KES yaml kesConfiguration
-	var mTLSClientCrtPath = "/tmp/kes/client.crt"
-	var mTLSClientKeyPath = "/tmp/kes/client.key"
-	var mTLSClientCaPath = "/tmp/kes/ca.crt"
-	// map to hold mTLSCertificates for KES mTLS against Vault
-	mTLSCertificates := map[string][]byte{}
-
-	// if encryption is enabled and encryption is configured to use Vault
-	if encryptionCfg.Vault != nil {
-		// Initialize Vault Config
-
-		kesConfig.Keys.Vault = &kes.Vault{
-			Endpoint:   *encryptionCfg.Vault.Endpoint,
-			EnginePath: encryptionCfg.Vault.Engine,
-			Namespace:  encryptionCfg.Vault.Namespace,
-			Prefix:     encryptionCfg.Vault.Prefix,
-			Status: &kes.VaultStatus{
-				Ping: 10 * time.Second,
-			},
-		}
-		// Vault AppRole credentials
-		if encryptionCfg.Vault.Approle != nil {
-			kesConfig.Keys.Vault.AppRole = &kes.AppRole{
-				EnginePath: encryptionCfg.Vault.Approle.Engine,
-				ID:         *encryptionCfg.Vault.Approle.ID,
-				Secret:     *encryptionCfg.Vault.Approle.Secret,
-				Retry:      15 * time.Second,
-			}
-		} else {
-			return nil, errors.New("approle credentials missing for kes")
-		}
-
-		// Vault mTLS kesConfiguration
-		if encryptionCfg.Vault.TLS != nil {
-			vaultTLSConfig := encryptionCfg.Vault.TLS
-			kesConfig.Keys.Vault.TLS = &kes.VaultTLS{}
-			if vaultTLSConfig.Crt != "" {
-				clientCrt, err := base64.StdEncoding.DecodeString(vaultTLSConfig.Crt)
-				if err != nil {
-					return nil, err
-				}
-				mTLSCertificates["client.crt"] = clientCrt
-				kesConfig.Keys.Vault.TLS.CertPath = mTLSClientCrtPath
-			}
-			if vaultTLSConfig.Key != "" {
-				clientKey, err := base64.StdEncoding.DecodeString(vaultTLSConfig.Key)
-				if err != nil {
-					return nil, err
-				}
-				mTLSCertificates["client.key"] = clientKey
-				kesConfig.Keys.Vault.TLS.KeyPath = mTLSClientKeyPath
-			}
-			if vaultTLSConfig.Ca != "" {
-				caCrt, err := base64.StdEncoding.DecodeString(vaultTLSConfig.Ca)
-				if err != nil {
-					return nil, err
-				}
-				mTLSCertificates["ca.crt"] = caCrt
-				kesConfig.Keys.Vault.TLS.CAPath = mTLSClientCaPath
-			}
-		}
-	} else if encryptionCfg.Aws != nil {
-		// Initialize AWS
-		kesConfig.Keys.Aws = &kes.Aws{
-			SecretsManager: &kes.AwsSecretManager{},
-		}
-		// AWS basic kesConfiguration
-		if encryptionCfg.Aws.Secretsmanager != nil {
-			kesConfig.Keys.Aws.SecretsManager.Endpoint = *encryptionCfg.Aws.Secretsmanager.Endpoint
-			kesConfig.Keys.Aws.SecretsManager.Region = *encryptionCfg.Aws.Secretsmanager.Region
-			kesConfig.Keys.Aws.SecretsManager.KmsKey = encryptionCfg.Aws.Secretsmanager.Kmskey
-			// AWS credentials
-			if encryptionCfg.Aws.Secretsmanager.Credentials != nil {
-				kesConfig.Keys.Aws.SecretsManager.Login = &kes.AwsSecretManagerLogin{
-					AccessKey:    *encryptionCfg.Aws.Secretsmanager.Credentials.Accesskey,
-					SecretKey:    *encryptionCfg.Aws.Secretsmanager.Credentials.Secretkey,
-					SessionToken: encryptionCfg.Aws.Secretsmanager.Credentials.Token,
-				}
-			}
-		}
-	} else if encryptionCfg.Gemalto != nil {
-		// Initialize Gemalto
-		kesConfig.Keys.Gemalto = &kes.Gemalto{
-			KeySecure: &kes.GemaltoKeySecure{},
-		}
-		// Gemalto Configuration
-		if encryptionCfg.Gemalto.Keysecure != nil {
-			kesConfig.Keys.Gemalto.KeySecure.Endpoint = *encryptionCfg.Gemalto.Keysecure.Endpoint
-			// Gemalto TLS kesConfiguration
-			if encryptionCfg.Gemalto.Keysecure.TLS != nil {
-				if encryptionCfg.Gemalto.Keysecure.TLS.Ca != nil {
-					caCrt, err := base64.StdEncoding.DecodeString(*encryptionCfg.Gemalto.Keysecure.TLS.Ca)
-					if err != nil {
-						return nil, err
-					}
-					mTLSCertificates["ca.crt"] = caCrt
-					kesConfig.Keys.Gemalto.KeySecure.TLS = &kes.GemaltoTLS{
-						CAPath: mTLSClientCaPath,
-					}
-				}
-			}
-			// Gemalto Login
-			if encryptionCfg.Gemalto.Keysecure.Credentials != nil {
-				kesConfig.Keys.Gemalto.KeySecure.Credentials = &kes.GemaltoCredentials{
-					Token:  *encryptionCfg.Gemalto.Keysecure.Credentials.Token,
-					Domain: *encryptionCfg.Gemalto.Keysecure.Credentials.Domain,
-					Retry:  15 * time.Second,
-				}
-			}
-		}
-	}
-
-	// if mTLSCertificates contains elements we create the kubernetes secret
-	if len(mTLSCertificates) > 0 {
-		// Secret to store KES mTLS kesConfiguration
-		kesClientCertSecret := corev1.Secret{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: kesClientCertSecretName,
-				Labels: map[string]string{
-					operator.TenantLabel: tenantName,
-				},
-			},
-			Immutable: &imm,
-			Data:      mTLSCertificates,
-		}
-		_, err = clientSet.CoreV1().Secrets(ns).Create(ctx, &kesClientCertSecret, metav1.CreateOptions{})
-		if err != nil {
-			return nil, err
-		}
-		// kubernetes generic secret
-		kesConfiguration.ClientCertSecret = &operator.LocalCertificateReference{
-			Name: kesClientCertSecretName,
-		}
-	}
-
-	// Generate Yaml kesConfiguration for KES
-	serverConfigYaml, err := yaml.Marshal(kesConfig)
-	if err != nil {
-		return nil, err
-	}
-	// Secret to store KES server kesConfiguration
-	kesConfigurationSecret := corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: kesConfigurationSecretName,
-			Labels: map[string]string{
-				operator.TenantLabel: tenantName,
-			},
-		},
-		Immutable: &imm,
-		Data: map[string][]byte{
-			"server-config.yaml": serverConfigYaml,
-		},
-	}
-	_, err = clientSet.CoreV1().Secrets(ns).Create(ctx, &kesConfigurationSecret, metav1.CreateOptions{})
-	if err != nil {
-		return nil, err
-	}
-	// Configuration used by KES
-	kesConfiguration.Configuration = &corev1.LocalObjectReference{
-		Name: kesConfigurationSecretName,
-	}
-	return kesConfiguration, nil
-}
-
-func getTenantUpdateZoneResponse(session *models.Principal, params admin_api.TenantUpdateZonesParams) (*models.Tenant, error) {
+func getTenantUpdateZoneResponse(session *models.Principal, params admin_api.TenantUpdateZonesParams) (*models.Tenant, *models.Error) {
 	ctx := context.Background()
 	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
-		log.Println("error getting operator client:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 
 	opClient := &operatorClient{
@@ -1776,7 +1486,7 @@ func getTenantUpdateZoneResponse(session *models.Principal, params admin_api.Ten
 	t, err := updateTenantZones(ctx, opClient, params.Namespace, params.Tenant, params.Body.Zones)
 	if err != nil {
 		log.Println("error updating Tenant's zones:", err)
-		return nil, err
+		return nil, prepareError(err)
 	}
 
 	// parse it to models.Tenant
@@ -1789,7 +1499,7 @@ func getTenantUpdateZoneResponse(session *models.Principal, params admin_api.Ten
 // It does the equivalent to a PUT request on Tenant's zones
 func updateTenantZones(
 	ctx context.Context,
-	operatorClient OperatorClient,
+	operatorClient OperatorClientI,
 	namespace string,
 	tenantName string,
 	zonesReq []*models.Zone) (*operator.Tenant, error) {
@@ -1799,16 +1509,10 @@ func updateTenantZones(
 		return nil, err
 	}
 
-	if minInst.Spec.Metadata == nil {
-		minInst.Spec.Metadata = &metav1.ObjectMeta{
-			Annotations: map[string]string{},
-		}
-	}
-
 	// set the zones if they are provided
 	var newZoneArray []operator.Zone
 	for _, zone := range zonesReq {
-		zone, err := parseTenantZoneRequest(zone, minInst.Spec.Metadata.Annotations)
+		zone, err := parseTenantZoneRequest(zone)
 		if err != nil {
 			return nil, err
 		}
@@ -1817,6 +1521,9 @@ func updateTenantZones(
 
 	// replace zones array
 	minInst.Spec.Zones = newZoneArray
+
+	minInst = minInst.DeepCopy()
+	minInst.EnsureDefaults()
 
 	payloadBytes, err := json.Marshal(minInst)
 	if err != nil {
