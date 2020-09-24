@@ -34,8 +34,6 @@ import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
 import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 import history from "../../../../history";
 import RefreshIcon from "@material-ui/icons/Refresh";
-import TenantCredentialsPrompt from "./TenantCredentialsPrompt/TenantCredentialsPrompt";
-import { NewTenantCredential } from "./TenantCredentialsPrompt/types";
 
 interface ITenantsList {
   classes: any;
@@ -100,11 +98,11 @@ const ListTenants = ({ classes }: ITenantsList) => {
   const [
     createdAccount,
     setCreatedAccount,
-  ] = useState<NewTenantCredential | null>(null);
+  ] = useState<NewServiceAccount | null>(null);
 
   const closeAddModalAndRefresh = (
     reloadData: boolean,
-    res: NewTenantCredential | null
+    res: NewServiceAccount | null
   ) => {
     setCreateTenantOpen(false);
 
@@ -238,7 +236,7 @@ const ListTenants = ({ classes }: ITenantsList) => {
         />
       )}
       {showNewCredentials && (
-        <TenantCredentialsPrompt
+        <CredentialsPrompt
           newServiceAccount={createdAccount}
           open={showNewCredentials}
           closeModal={() => {

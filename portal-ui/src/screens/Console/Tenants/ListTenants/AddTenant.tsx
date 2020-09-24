@@ -52,13 +52,12 @@ import {
   ICapacity,
   ITenantCreator,
 } from "../../../../common/types";
-import { NewTenantCredential } from "./TenantCredentialsPrompt/types";
 
 interface IAddTenantProps {
   open: boolean;
   closeModalAndRefresh: (
     reloadData: boolean,
-    res: NewTenantCredential | null
+    res: NewServiceAccount | null
   ) => any;
   classes: any;
 }
@@ -178,6 +177,9 @@ const AddTenant = ({
   const [nameTenantValid, setNameTenantValid] = useState<boolean>(false);
   const [configValid, setConfigValid] = useState<boolean>(false);
   const [configureValid, setConfigureValid] = useState<boolean>(false);
+  const [idpValid, setIdpValid] = useState<boolean>(false);
+  const [securityValid, setSecurityValid] = useState<boolean>(false);
+  const [encryptionValid, setEncryptionValid] = useState<boolean>(false);
 
   // Custom Elements
   const [customDockerhub, setCustomDockerhub] = useState<boolean>(false);
@@ -351,6 +353,14 @@ const AddTenant = ({
           pattern: /^((.*?)\/(.*?):(.+))$/,
           customPatternMessage: "Format must be of form: 'minio/minio:VERSION'",
         },
+        {
+          fieldKey: "consoleImage",
+          required: true,
+          value: consoleImage,
+          pattern: /^((.*?)\/(.*?):(.+))$/,
+          customPatternMessage:
+            "Format must be of form: 'minio/console:VERSION'",
+        },
       ];
     }
 
@@ -359,7 +369,302 @@ const AddTenant = ({
     setConfigureValid(Object.keys(commonVal).length === 0);
 
     setValidationErrors(commonVal);
-  }, [customDockerhub, imageName]);
+  }, [customDockerhub, imageName, consoleImage]);
+
+  useEffect(() => {
+    let customIDPValidation: IValidation[] = [];
+
+    if (idpSelection === "none") {
+      setIdpValid(true);
+      setValidationErrors({});
+
+      return;
+    }
+
+    if (idpSelection === "OpenID") {
+      customIDPValidation = [
+        ...customIDPValidation,
+        {
+          fieldKey: "openID_URL",
+          required: true,
+          value: openIDURL,
+        },
+        {
+          fieldKey: "openID_clientID",
+          required: true,
+          value: openIDClientID,
+        },
+        {
+          fieldKey: "openID_secretID",
+          required: true,
+          value: openIDSecretID,
+        },
+      ];
+    }
+
+    if (idpSelection === "AD") {
+      customIDPValidation = [
+        ...customIDPValidation,
+        {
+          fieldKey: "AD_URL",
+          required: true,
+          value: ADURL,
+        },
+        {
+          fieldKey: "ad_userNameFilter",
+          required: true,
+          value: ADUserNameFilter,
+        },
+        {
+          fieldKey: "ad_groupBaseDN",
+          required: true,
+          value: ADGroupBaseDN,
+        },
+        {
+          fieldKey: "ad_groupSearchFilter",
+          required: true,
+          value: ADGroupSearchFilter,
+        },
+        {
+          fieldKey: "ad_nameAttribute",
+          required: true,
+          value: ADNameAttribute,
+        },
+      ];
+    }
+
+    const commonVal = commonFormValidation(customIDPValidation);
+
+    setIdpValid(Object.keys(commonVal).length === 0);
+
+    setValidationErrors(commonVal);
+  }, [
+    idpSelection,
+    openIDURL,
+    openIDClientID,
+    openIDSecretID,
+    ADURL,
+    ADUserNameFilter,
+    ADGroupBaseDN,
+    ADGroupSearchFilter,
+    ADNameAttribute,
+  ]);
+
+  useEffect(() => {
+    let securityValidation: IValidation[] = [];
+
+    if (!enableTLS) {
+      setSecurityValid(true);
+      setValidationErrors({});
+      return;
+    }
+
+    if (tlsType === "autocert") {
+      setSecurityValid(true);
+      setValidationErrors({});
+      return;
+    }
+
+    securityValidation = [
+      ...securityValidation,
+      {
+        fieldKey: "tlsKey",
+        required: true,
+        value: filesBase64.tlsKey,
+      },
+      {
+        fieldKey: "tlsCert",
+        required: true,
+        value: filesBase64.tlsCert,
+      },
+      {
+        fieldKey: "consoleKey",
+        required: true,
+        value: filesBase64.consoleKey,
+      },
+      {
+        fieldKey: "consoleCert",
+        required: true,
+        value: filesBase64.consoleCert,
+      },
+    ];
+
+    const commonVal = commonFormValidation(securityValidation);
+
+    setSecurityValid(Object.keys(commonVal).length === 0);
+
+    setValidationErrors(commonVal);
+  }, [enableTLS, filesBase64, tlsType]);
+
+  useEffect(() => {
+    let encryptionValidation: IValidation[] = [];
+
+    if (enableEncryption) {
+      if (enableTLS && tlsType !== "autocert") {
+        encryptionValidation = [
+          ...encryptionValidation,
+          {
+            fieldKey: "serverKey",
+            required: true,
+            value: filesBase64.serverKey,
+          },
+          {
+            fieldKey: "serverCert",
+            required: true,
+            value: filesBase64.serverCert,
+          },
+          {
+            fieldKey: "clientKey",
+            required: true,
+            value: filesBase64.clientKey,
+          },
+          {
+            fieldKey: "clientCert",
+            required: true,
+            value: filesBase64.clientCert,
+          },
+        ];
+      }
+
+      if (encryptionType === "vault") {
+        encryptionValidation = [
+          ...encryptionValidation,
+          {
+            fieldKey: "vault_endpoint",
+            required: true,
+            value: vaultEndpoint,
+          },
+          {
+            fieldKey: "vault_engine",
+            required: true,
+            value: vaultEngine,
+          },
+          {
+            fieldKey: "vault_id",
+            required: true,
+            value: vaultId,
+          },
+          {
+            fieldKey: "vault_secret",
+            required: true,
+            value: vaultSecret,
+          },
+          {
+            fieldKey: "vault_key",
+            required: true,
+            value: filesBase64.vaultKey,
+          },
+          {
+            fieldKey: "vault_cert",
+            required: true,
+            value: filesBase64.vaultCert,
+          },
+          {
+            fieldKey: "vault_ca",
+            required: true,
+            value: filesBase64.vaultCA,
+          },
+          {
+            fieldKey: "vault_ping",
+            required: true,
+            value: vaultPing,
+            customValidation: parseInt(vaultPing) < 0,
+            customValidationMessage: "Value needs to be 0 or greater",
+          },
+          {
+            fieldKey: "vault_retry",
+            required: true,
+            value: vaultRetry,
+            customValidation: parseInt(vaultRetry) < 0,
+            customValidationMessage: "Value needs to be 0 or greater",
+          },
+        ];
+      }
+
+      if (encryptionType === "aws") {
+        encryptionValidation = [
+          ...encryptionValidation,
+          {
+            fieldKey: "aws_endpoint",
+            required: true,
+            value: awsEndpoint,
+          },
+          {
+            fieldKey: "aws_region",
+            required: true,
+            value: awsRegion,
+          },
+          {
+            fieldKey: "aws_accessKey",
+            required: true,
+            value: awsAccessKey,
+          },
+          {
+            fieldKey: "aws_secretKey",
+            required: true,
+            value: awsSecretKey,
+          },
+        ];
+      }
+
+      if (encryptionType === "gemalto") {
+        encryptionValidation = [
+          ...encryptionValidation,
+          {
+            fieldKey: "gemalto_endpoint",
+            required: true,
+            value: gemaltoEndpoint,
+          },
+          {
+            fieldKey: "gemalto_token",
+            required: true,
+            value: gemaltoToken,
+          },
+          {
+            fieldKey: "gemalto_domain",
+            required: true,
+            value: gemaltoDomain,
+          },
+          {
+            fieldKey: "gemalto_retry",
+            required: true,
+            value: gemaltoRetry,
+            customValidation: parseInt(gemaltoRetry) < 0,
+            customValidationMessage: "Value needs to be 0 or greater",
+          },
+          {
+            fieldKey: "gemalto_ca",
+            required: true,
+            value: filesBase64.gemaltoCA,
+          },
+        ];
+      }
+    }
+
+    const commonVal = commonFormValidation(encryptionValidation);
+
+    setEncryptionValid(Object.keys(commonVal).length === 0);
+
+    setValidationErrors(commonVal);
+  }, [
+    enableEncryption,
+    encryptionType,
+    filesBase64,
+    vaultEndpoint,
+    vaultEngine,
+    vaultId,
+    vaultSecret,
+    vaultPing,
+    vaultRetry,
+    awsEndpoint,
+    awsRegion,
+    awsSecretKey,
+    awsAccessKey,
+    gemaltoEndpoint,
+    gemaltoToken,
+    gemaltoDomain,
+    gemaltoRetry,
+  ]);
 
   const clearValidationError = (fieldKey: string) => {
     const newValidationElement = { ...validationErrors };
@@ -583,7 +888,7 @@ const AddTenant = ({
       api
         .invoke("POST", `/api/v1/tenants`, dataSend)
         .then((res) => {
-          const newSrvAcc: NewTenantCredential = {
+          const newSrvAcc: NewServiceAccount = {
             accessKey: res.access_key,
             secretKey: res.secret_key,
             console: {
@@ -971,7 +1276,7 @@ const AddTenant = ({
       buttons: [
         cancelButton,
         { label: "Back", type: "back", enabled: true },
-        { label: "Next", type: "next", enabled: true },
+        { label: "Next", type: "next", enabled: idpValid },
       ],
     },
     {
@@ -1023,11 +1328,13 @@ const AddTenant = ({
                     <FileSelector
                       onChange={(encodedValue) => {
                         storeCertInObject("tlsKey", encodedValue);
+                        clearValidationError("tlsKey");
                       }}
                       accept=".key,.pem"
                       id="tlsKey"
                       name="tlsKey"
                       label="Key"
+                      error={validationErrors["tlsKey"] || ""}
                       required
                     />
                   </Grid>
@@ -1035,11 +1342,13 @@ const AddTenant = ({
                     <FileSelector
                       onChange={(encodedValue) => {
                         storeCertInObject("tlsCert", encodedValue);
+                        clearValidationError("tlsCert");
                       }}
                       accept=".cer,.crt,.cert,.pem"
                       id="tlsCert"
                       name="tlsCert"
                       label="Cert"
+                      error={validationErrors["tlsCert"] || ""}
                       required
                     />
                   </Grid>
@@ -1048,11 +1357,13 @@ const AddTenant = ({
                     <FileSelector
                       onChange={(encodedValue) => {
                         storeCertInObject("consoleKey", encodedValue);
+                        clearValidationError("consoleKey");
                       }}
                       accept=".key,.pem"
                       id="consoleKey"
                       name="consoleKey"
                       label="Key"
+                      error={validationErrors["consoleKey"] || ""}
                       required
                     />
                   </Grid>
@@ -1060,11 +1371,13 @@ const AddTenant = ({
                     <FileSelector
                       onChange={(encodedValue) => {
                         storeCertInObject("consoleCert", encodedValue);
+                        clearValidationError("consoleCert");
                       }}
                       accept=".cer,.crt,.cert,.pem"
                       id="consoleCert"
                       name="consoleCert"
                       label="Cert"
+                      error={validationErrors["consoleCert"] || ""}
                       required
                     />
                   </Grid>
@@ -1077,7 +1390,7 @@ const AddTenant = ({
       buttons: [
         cancelButton,
         { label: "Back", type: "back", enabled: true },
-        { label: "Next", type: "next", enabled: true },
+        { label: "Next", type: "next", enabled: securityValid },
       ],
     },
     {
@@ -1131,11 +1444,13 @@ const AddTenant = ({
                     <FileSelector
                       onChange={(encodedValue) => {
                         storeCertInObject("serverKey", encodedValue);
+                        clearValidationError("serverKey");
                       }}
                       accept=".key,.pem"
                       id="serverKey"
                       name="serverKey"
                       label="Key"
+                      error={validationErrors["serverKey"] || ""}
                       required
                     />
                   </Grid>
@@ -1143,11 +1458,13 @@ const AddTenant = ({
                     <FileSelector
                       onChange={(encodedValue) => {
                         storeCertInObject("serverCert", encodedValue);
+                        clearValidationError("serverCert");
                       }}
                       accept=".cer,.crt,.cert,.pem"
                       id="serverCert"
                       name="serverCert"
                       label="Cert"
+                      error={validationErrors["serverCert"] || ""}
                       required
                     />
                   </Grid>
@@ -1156,11 +1473,13 @@ const AddTenant = ({
                     <FileSelector
                       onChange={(encodedValue) => {
                         storeCertInObject("clientKey", encodedValue);
+                        clearValidationError("clientKey");
                       }}
                       accept=".key,.pem"
                       id="clientKey"
                       name="clientKey"
                       label="Key"
+                      error={validationErrors["clientKey"] || ""}
                       required
                     />
                   </Grid>
@@ -1168,11 +1487,13 @@ const AddTenant = ({
                     <FileSelector
                       onChange={(encodedValue) => {
                         storeCertInObject("clientCert", encodedValue);
+                        clearValidationError("clientCert");
                       }}
                       accept=".cer,.crt,.cert,.pem"
                       id="clientCert"
                       name="clientCert"
                       label="Cert"
+                      error={validationErrors["clientCert"] || ""}
                       required
                     />
                   </Grid>
@@ -1201,9 +1522,11 @@ const AddTenant = ({
                       name="vault_engine"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setVaultEngine(e.target.value);
+                        clearValidationError("vault_engine");
                       }}
                       label="Engine"
                       value={vaultEngine}
+                      error={validationErrors["vault_engine"] || ""}
                       required
                     />
                   </Grid>
@@ -1263,7 +1586,7 @@ const AddTenant = ({
                         setVaultSecret(e.target.value);
                         clearValidationError("vault_secret");
                       }}
-                      label="Id"
+                      label="Secret"
                       value={vaultSecret}
                       error={validationErrors["vault_secret"] || ""}
                       required
@@ -1277,9 +1600,11 @@ const AddTenant = ({
                       name="vault_retry"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setVaultRetry(e.target.value);
+                        clearValidationError("vault_retry");
                       }}
                       label="Retry"
                       value={vaultRetry}
+                      error={validationErrors["vault_retry"] || ""}
                       required
                     />
                   </Grid>
@@ -1288,11 +1613,13 @@ const AddTenant = ({
                     <FileSelector
                       onChange={(encodedValue) => {
                         storeCertInObject("vaultKey", encodedValue);
+                        clearValidationError("vault_key");
                       }}
                       accept=".key,.pem"
                       id="vault_key"
                       name="vault_key"
                       label="Key"
+                      error={validationErrors["vault_key"] || ""}
                       required
                     />
                   </Grid>
@@ -1300,11 +1627,13 @@ const AddTenant = ({
                     <FileSelector
                       onChange={(encodedValue) => {
                         storeCertInObject("vaultCert", encodedValue);
+                        clearValidationError("vault_cert");
                       }}
                       accept=".cer,.crt,.cert,.pem"
                       id="vault_cert"
                       name="vault_cert"
                       label="Cert"
+                      error={validationErrors["vault_cert"] || ""}
                       required
                     />
                   </Grid>
@@ -1312,11 +1641,13 @@ const AddTenant = ({
                     <FileSelector
                       onChange={(encodedValue) => {
                         storeCertInObject("vaultCA", encodedValue);
+                        clearValidationError("vault_ca");
                       }}
                       accept=".cer,.crt,.cert,.pem"
                       id="vault_ca"
                       name="vault_ca"
                       label="CA"
+                      error={validationErrors["vault_ca"] || ""}
                       required
                     />
                   </Grid>
@@ -1329,9 +1660,11 @@ const AddTenant = ({
                       name="vault_ping"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setVaultPing(e.target.value);
+                        clearValidationError("vault_ping");
                       }}
                       label="Ping"
                       value={vaultPing}
+                      error={validationErrors["vault_ping"] || ""}
                       required
                     />
                   </Grid>
@@ -1443,11 +1776,11 @@ const AddTenant = ({
                       name="gemalto_token"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setGemaltoToken(e.target.value);
-                        clearValidationError("gemalto_endpoint");
+                        clearValidationError("gemalto_token");
                       }}
                       label="Token"
                       value={gemaltoToken}
-                      error={validationErrors["gemalto_endpoint"] || ""}
+                      error={validationErrors["gemalto_token"] || ""}
                       required
                     />
                   </Grid>
@@ -1473,6 +1806,7 @@ const AddTenant = ({
                       name="gemalto_retry"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setGemaltoRetry(e.target.value);
+                        clearValidationError("gemalto_retry");
                       }}
                       label="Domain"
                       value={gemaltoRetry}
@@ -1484,11 +1818,13 @@ const AddTenant = ({
                     <FileSelector
                       onChange={(encodedValue) => {
                         storeCertInObject("gemaltoCA", encodedValue);
+                        clearValidationError("gemalto_ca");
                       }}
                       accept=".cer,.crt,.cert,.pem"
                       id="gemalto_ca"
                       name="gemalto_ca"
                       label="CA"
+                      error={validationErrors["gemalto_ca"] || ""}
                       required
                     />
                   </Grid>
@@ -1501,7 +1837,7 @@ const AddTenant = ({
       buttons: [
         cancelButton,
         { label: "Back", type: "back", enabled: true },
-        { label: "Next", type: "next", enabled: true },
+        { label: "Next", type: "next", enabled: encryptionValid },
       ],
     },
     {

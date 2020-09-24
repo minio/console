@@ -41,6 +41,7 @@ const styles = (theme: Theme) =>
     textBoxContainer: {
       flexGrow: 1,
       position: "relative",
+      flexDirection: "column",
     },
     errorState: {
       color: "#b53b4b",
@@ -48,6 +49,16 @@ const styles = (theme: Theme) =>
       position: "absolute",
       top: 7,
       right: 7,
+    },
+    errorText: {
+      margin: "0",
+      fontSize: "0.75rem",
+      marginTop: 3,
+      textAlign: "left",
+      fontFamily: "Lato,sans-serif",
+      fontWeight: 400,
+      lineHeight: "1.66",
+      color: "#dc1f2e",
     },
   });
 
@@ -104,6 +115,12 @@ const FileSelector = ({
             accept={accept}
             required
           />
+          {error !== "" && (
+            <React.Fragment>
+              <br />
+              <span className={classes.errorText}>{error}</span>
+            </React.Fragment>
+          )}
         </div>
       </Grid>
     </React.Fragment>
