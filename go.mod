@@ -16,10 +16,10 @@ require (
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/minio/cli v1.22.0
 	github.com/minio/kes v0.11.0
-	github.com/minio/mc v0.0.0-20200808005614-7e52c104bee1
-	github.com/minio/minio v0.0.0-20200808024306-2a9819aff876
-	github.com/minio/minio-go/v7 v7.0.5-0.20200807085956-d7db33ea7618
-	github.com/minio/operator v0.0.0-20200922064400-af3315add727
+	github.com/minio/mc v0.0.0-20200901021141-b55e3e2d2987
+	github.com/minio/minio v0.0.0-20200901011052-18725679c4f5
+	github.com/minio/minio-go/v7 v7.0.6-0.20200901014009-5f8d15bbc5fd
+	github.com/minio/operator v0.0.0-20200923155125-e7077234373b
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/secure-io/sio-go v0.3.1
 	github.com/stretchr/testify v1.6.1

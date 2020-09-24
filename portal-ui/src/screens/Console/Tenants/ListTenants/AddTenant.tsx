@@ -52,13 +52,12 @@ import {
   ICapacity,
   ITenantCreator,
 } from "../../../../common/types";
-import { NewTenantCredential } from "./TenantCredentialsPrompt/types";
 
 interface IAddTenantProps {
   open: boolean;
   closeModalAndRefresh: (
     reloadData: boolean,
-    res: NewTenantCredential | null
+    res: NewServiceAccount | null
   ) => any;
   classes: any;
 }
@@ -583,7 +582,7 @@ const AddTenant = ({
       api
         .invoke("POST", `/api/v1/tenants`, dataSend)
         .then((res) => {
-          const newSrvAcc: NewTenantCredential = {
+          const newSrvAcc: NewServiceAccount = {
             accessKey: res.access_key,
             secretKey: res.secret_key,
             console: {

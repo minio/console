@@ -17,12 +17,18 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import { Button, LinearProgress } from "@material-ui/core";
+import {
+  Button,
+  Checkbox,
+  FormControlLabel,
+  LinearProgress,
+} from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import CheckboxWrapper from "../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -43,6 +49,7 @@ interface IAddBucketProps {
 
 interface IAddBucketState {
   addLoading: boolean;
+  versioned: boolean;
   addError: string;
   bucketName: string;
 }
@@ -50,13 +57,14 @@ interface IAddBucketState {
 class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
   state: IAddBucketState = {
     addLoading: false,
+    versioned: false,
     addError: "",
     bucketName: "",
   };
 
   addRecord(event: React.FormEvent) {
     event.preventDefault();
-    const { bucketName, addLoading } = this.state;
+    const { bucketName, addLoading, versioned } = this.state;
     if (addLoading) {
       return;
     }
@@ -64,6 +72,7 @@ class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
       api
         .invoke("POST", "/api/v1/buckets", {
           name: bucketName,
+          versioning: versioned,
         })
         .then((res) => {
           this.setState(
@@ -87,7 +96,7 @@ class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
 
   render() {
     const { classes, open } = this.props;
-    const { addLoading, addError, bucketName } = this.state;
+    const { addLoading, addError, bucketName, versioned } = this.state;
     return (
       <ModalWrapper
         title="Create Bucket"
@@ -129,6 +138,18 @@ class AddBucket extends React.Component<IAddBucketProps, IAddBucketState> {
                   }}
                   label="Bucket Name"
                   value={bucketName}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <CheckboxWrapper
+                  value="versioned"
+                  id="versioned"
+                  name="versioned"
+                  checked={versioned}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    this.setState({ versioned: event.target.checked });
+                  }}
+                  label={"Turn On Versioning"}
                 />
               </Grid>
             </Grid>

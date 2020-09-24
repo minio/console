@@ -21,6 +21,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/minio/minio-go/v7/pkg/replication"
+
 	"errors"
 
 	"github.com/minio/console/models"
@@ -93,6 +95,21 @@ func (c minioClient) getBucketPolicy(ctx context.Context, bucketName string) (st
 	return c.client.GetBucketPolicy(ctx, bucketName)
 }
 
+// implements minio.enableVersioning(ctx, bucketName)
+func (c minioClient) enableVersioning(ctx context.Context, bucketName string) error {
+	return c.client.EnableVersioning(ctx, bucketName)
+}
+
+// implements minio.getBucketVersioning(ctx, bucketName)
+func (c minioClient) getBucketVersioning(ctx context.Context, bucketName string) (minio.BucketVersioningConfiguration, error) {
+	return c.client.GetBucketVersioning(ctx, bucketName)
+}
+
+// implements minio.getBucketVersioning(ctx, bucketName)
+func (c minioClient) getBucketReplication(ctx context.Context, bucketName string) (replication.Config, error) {
+	return c.client.GetBucketReplication(ctx, bucketName)
+}
+
 // MCClient interface with all functions to be implemented
 // by mock when testing, it should include all mc/S3Client respective api calls
 // that are used within this project.
@@ -122,6 +139,10 @@ func (c mcClient) removeNotificationConfig(ctx context.Context, arn string, even
 
 func (c mcClient) watch(ctx context.Context, options mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
 	return c.client.Watch(ctx, options)
+}
+
+func (c mcClient) setReplication(ctx context.Context, cfg *replication.Config, opts replication.Options) *probe.Error {
+	return c.client.SetReplication(ctx, cfg, opts)
 }
 
 // ConsoleCredentials interface with all functions to be implemented
