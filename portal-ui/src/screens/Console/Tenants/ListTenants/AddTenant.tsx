@@ -200,6 +200,20 @@ const AddTenant = ({
     gemaltoCA: "",
   });
 
+  // Files States
+  const [tlsKeyVal, setTlsKeyVal] = useState<string>("");
+  const [tlsCertVal, setTlsCertVal] = useState<string>("");
+  const [consoleKeyVal, setConsoleKeyVal] = useState<string>("");
+  const [consoleCertVal, setConsoleCertVal] = useState<string>("");
+  const [serverKeyVal, setServerKeyVal] = useState<string>("");
+  const [serverCertVal, setServerCertVal] = useState<string>("");
+  const [clientKeyVal, setClientKeyVal] = useState<string>("");
+  const [clientCertVal, setClientCertVal] = useState<string>("");
+  const [vaultKeyVal, setVaultKeyVal] = useState<string>("");
+  const [vaultCertVal, setVaultCertVal] = useState<string>("");
+  const [vaultCAVal, setVaultCAVal] = useState<string>("");
+  const [gemaltoCAVal, setGemaltoCAVal] = useState<string>("");
+
   /*Debounce functions*/
 
   // Storage Quotas
@@ -1326,8 +1340,9 @@ const AddTenant = ({
                   <h5>MinIO TLS Certs</h5>
                   <Grid item xs={12}>
                     <FileSelector
-                      onChange={(encodedValue) => {
+                      onChange={(encodedValue, fileName) => {
                         storeCertInObject("tlsKey", encodedValue);
+                        setTlsKeyVal(fileName);
                         clearValidationError("tlsKey");
                       }}
                       accept=".key,.pem"
@@ -1335,13 +1350,15 @@ const AddTenant = ({
                       name="tlsKey"
                       label="Key"
                       error={validationErrors["tlsKey"] || ""}
+                      value={tlsKeyVal}
                       required
                     />
                   </Grid>
                   <Grid item xs={12}>
                     <FileSelector
-                      onChange={(encodedValue) => {
+                      onChange={(encodedValue, fileName) => {
                         storeCertInObject("tlsCert", encodedValue);
+                        setTlsCertVal(fileName);
                         clearValidationError("tlsCert");
                       }}
                       accept=".cer,.crt,.cert,.pem"
@@ -1349,14 +1366,16 @@ const AddTenant = ({
                       name="tlsCert"
                       label="Cert"
                       error={validationErrors["tlsCert"] || ""}
+                      value={tlsCertVal}
                       required
                     />
                   </Grid>
                   <h5>Console TLS Certs</h5>
                   <Grid item xs={12}>
                     <FileSelector
-                      onChange={(encodedValue) => {
+                      onChange={(encodedValue, fileName) => {
                         storeCertInObject("consoleKey", encodedValue);
+                        setConsoleKeyVal(fileName);
                         clearValidationError("consoleKey");
                       }}
                       accept=".key,.pem"
@@ -1364,13 +1383,15 @@ const AddTenant = ({
                       name="consoleKey"
                       label="Key"
                       error={validationErrors["consoleKey"] || ""}
+                      value={consoleKeyVal}
                       required
                     />
                   </Grid>
                   <Grid item xs={12}>
                     <FileSelector
-                      onChange={(encodedValue) => {
+                      onChange={(encodedValue, fileName) => {
                         storeCertInObject("consoleCert", encodedValue);
+                        setConsoleCertVal(fileName);
                         clearValidationError("consoleCert");
                       }}
                       accept=".cer,.crt,.cert,.pem"
@@ -1378,6 +1399,7 @@ const AddTenant = ({
                       name="consoleCert"
                       label="Cert"
                       error={validationErrors["consoleCert"] || ""}
+                      value={consoleCertVal}
                       required
                     />
                   </Grid>
@@ -1442,8 +1464,9 @@ const AddTenant = ({
                   <h5>Server</h5>
                   <Grid item xs={12}>
                     <FileSelector
-                      onChange={(encodedValue) => {
+                      onChange={(encodedValue, fileName) => {
                         storeCertInObject("serverKey", encodedValue);
+                        setServerKeyVal(fileName);
                         clearValidationError("serverKey");
                       }}
                       accept=".key,.pem"
@@ -1451,13 +1474,15 @@ const AddTenant = ({
                       name="serverKey"
                       label="Key"
                       error={validationErrors["serverKey"] || ""}
+                      value={serverKeyVal}
                       required
                     />
                   </Grid>
                   <Grid item xs={12}>
                     <FileSelector
-                      onChange={(encodedValue) => {
+                      onChange={(encodedValue, fileName) => {
                         storeCertInObject("serverCert", encodedValue);
+                        setServerCertVal(fileName);
                         clearValidationError("serverCert");
                       }}
                       accept=".cer,.crt,.cert,.pem"
@@ -1465,14 +1490,16 @@ const AddTenant = ({
                       name="serverCert"
                       label="Cert"
                       error={validationErrors["serverCert"] || ""}
+                      value={serverCertVal}
                       required
                     />
                   </Grid>
                   <h5>Client</h5>
                   <Grid item xs={12}>
                     <FileSelector
-                      onChange={(encodedValue) => {
+                      onChange={(encodedValue, fileName) => {
                         storeCertInObject("clientKey", encodedValue);
+                        setClientKeyVal(fileName);
                         clearValidationError("clientKey");
                       }}
                       accept=".key,.pem"
@@ -1480,13 +1507,15 @@ const AddTenant = ({
                       name="clientKey"
                       label="Key"
                       error={validationErrors["clientKey"] || ""}
+                      value={clientKeyVal}
                       required
                     />
                   </Grid>
                   <Grid item xs={12}>
                     <FileSelector
-                      onChange={(encodedValue) => {
+                      onChange={(encodedValue, fileName) => {
                         storeCertInObject("clientCert", encodedValue);
+                        setClientCertVal(fileName);
                         clearValidationError("clientCert");
                       }}
                       accept=".cer,.crt,.cert,.pem"
@@ -1494,6 +1523,7 @@ const AddTenant = ({
                       name="clientCert"
                       label="Cert"
                       error={validationErrors["clientCert"] || ""}
+                      value={clientCertVal}
                       required
                     />
                   </Grid>
@@ -1611,8 +1641,9 @@ const AddTenant = ({
                   <h5>TLS</h5>
                   <Grid item xs={12}>
                     <FileSelector
-                      onChange={(encodedValue) => {
+                      onChange={(encodedValue, fileName) => {
                         storeCertInObject("vaultKey", encodedValue);
+                        setVaultKeyVal(fileName);
                         clearValidationError("vault_key");
                       }}
                       accept=".key,.pem"
@@ -1620,13 +1651,15 @@ const AddTenant = ({
                       name="vault_key"
                       label="Key"
                       error={validationErrors["vault_key"] || ""}
+                      value={vaultKeyVal}
                       required
                     />
                   </Grid>
                   <Grid item xs={12}>
                     <FileSelector
-                      onChange={(encodedValue) => {
+                      onChange={(encodedValue, fileName) => {
                         storeCertInObject("vaultCert", encodedValue);
+                        setVaultCertVal(fileName);
                         clearValidationError("vault_cert");
                       }}
                       accept=".cer,.crt,.cert,.pem"
@@ -1634,13 +1667,15 @@ const AddTenant = ({
                       name="vault_cert"
                       label="Cert"
                       error={validationErrors["vault_cert"] || ""}
+                      value={vaultCertVal}
                       required
                     />
                   </Grid>
                   <Grid item xs={12}>
                     <FileSelector
-                      onChange={(encodedValue) => {
+                      onChange={(encodedValue, fileName) => {
                         storeCertInObject("vaultCA", encodedValue);
+                        setVaultCAVal(fileName);
                         clearValidationError("vault_ca");
                       }}
                       accept=".cer,.crt,.cert,.pem"
@@ -1648,6 +1683,7 @@ const AddTenant = ({
                       name="vault_ca"
                       label="CA"
                       error={validationErrors["vault_ca"] || ""}
+                      value={vaultCAVal}
                       required
                     />
                   </Grid>
@@ -1816,8 +1852,9 @@ const AddTenant = ({
                   <h5>TLS</h5>
                   <Grid item xs={12}>
                     <FileSelector
-                      onChange={(encodedValue) => {
+                      onChange={(encodedValue, fileName) => {
                         storeCertInObject("gemaltoCA", encodedValue);
+                        setGemaltoCAVal(fileName);
                         clearValidationError("gemalto_ca");
                       }}
                       accept=".cer,.crt,.cert,.pem"
@@ -1825,6 +1862,7 @@ const AddTenant = ({
                       name="gemalto_ca"
                       label="CA"
                       error={validationErrors["gemalto_ca"] || ""}
+                      value={gemaltoCAVal}
                       required
                     />
                   </Grid>
