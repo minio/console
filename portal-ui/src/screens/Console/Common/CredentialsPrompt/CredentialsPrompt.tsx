@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
+import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { NewServiceAccount } from "./types";
 import { Button } from "@material-ui/core";
@@ -67,6 +68,8 @@ const CredentialsPrompt = ({
     return null;
   }
 
+  const consoleCreds = get(newServiceAccount, "console", null);
+
   return (
     <ModalWrapper
       modalOpen={open}
@@ -87,6 +90,21 @@ const CredentialsPrompt = ({
                 <b>Secret Key:</b> {newServiceAccount.secretKey}
               </li>
             </ul>
+            {consoleCreds && (
+              <React.Fragment>
+                <Grid item xs={12}>
+                  <strong>Console Credentials</strong>
+                  <ul>
+                    <li>
+                      <b>Access Key:</b> {consoleCreds.accessKey}
+                    </li>
+                    <li>
+                      <b>Secret Key:</b> {consoleCreds.secretKey}
+                    </li>
+                  </ul>
+                </Grid>
+              </React.Fragment>
+            )}
             <Typography
               component="p"
               variant="body1"
@@ -99,11 +117,23 @@ const CredentialsPrompt = ({
           <Grid item xs={12} className={classes.buttonContainer}>
             <Button
               onClick={() => {
+                let consoleExtras = {};
+
+                if (consoleCreds) {
+                  consoleExtras = {
+                    console: {
+                      access_key: consoleCreds.accessKey,
+                      secret_key: consoleCreds.secretKey,
+                    },
+                  };
+                }
+
                 download(
                   "credentials.json",
                   JSON.stringify({
                     access_key: newServiceAccount.accessKey,
                     secret_key: newServiceAccount.secretKey,
+                    ...consoleExtras,
                   })
                 );
               }}

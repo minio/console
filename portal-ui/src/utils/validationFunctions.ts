@@ -19,7 +19,7 @@ export interface IValidation {
   required: boolean;
   pattern?: RegExp;
   customPatternMessage?: string;
-  customValidation?: boolean;
+  customValidation?: boolean; // The validation to trigger the error
   customValidationMessage?: string;
   value: string;
 }
