@@ -1,0 +1,15 @@
+{
+    "name": "consoleTestUserAddOnly",
+    "Statement": [
+        {
+            "Action": [
+                "admin:CreateUser"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:s3:::*"
+            ]
+        }
+    ],
+    "version": "2012-10-17"
+}

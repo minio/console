@@ -34,3 +34,16 @@ var minioServerInfoMock func(ctx context.Context) (madmin.InfoMessage, error)
 func (ac adminClientMock) serverInfo(ctx context.Context) (madmin.InfoMessage, error) {
 	return minioServerInfoMock(ctx)
 }
+
+func (ac adminClientMock) listRemoteBuckets(ctx context.Context, bucket, arnType string) (targets []madmin.BucketTarget, err error) {
+	return nil, nil
+}
+func (ac adminClientMock) getRemoteBucket(ctx context.Context, bucket, arnType string) (targets *madmin.BucketTarget, err error) {
+	return nil, nil
+}
+func (ac adminClientMock) removeRemoteBucket(ctx context.Context, bucket, arn string) error {
+	return nil
+}
+func (ac adminClientMock) addRemoteBucket(ctx context.Context, bucket string, target *madmin.BucketTarget) (string, error) {
+	return "", nil
+}

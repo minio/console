@@ -97,6 +97,11 @@ type MinioAdmin interface {
 	addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (mauth.Credentials, error)
 	listServiceAccounts(ctx context.Context) (madmin.ListServiceAccountsResp, error)
 	deleteServiceAccount(ctx context.Context, serviceAccount string) error
+	// Remote Buckets
+	listRemoteBuckets(ctx context.Context, bucket, arnType string) (targets []madmin.BucketTarget, err error)
+	getRemoteBucket(ctx context.Context, bucket, arnType string) (targets *madmin.BucketTarget, err error)
+	removeRemoteBucket(ctx context.Context, bucket, arn string) error
+	addRemoteBucket(ctx context.Context, bucket string, target *madmin.BucketTarget) (string, error)
 }
 
 // Interface implementation
@@ -245,6 +250,33 @@ func (ac adminClient) accountUsageInfo(ctx context.Context) (madmin.AccountUsage
 func (ac adminClient) heal(ctx context.Context, bucket, prefix string, healOpts madmin.HealOpts, clientToken string,
 	forceStart, forceStop bool) (healStart madmin.HealStartSuccess, healTaskStatus madmin.HealTaskStatus, err error) {
 	return ac.client.Heal(ctx, bucket, prefix, healOpts, clientToken, forceStart, forceStop)
+}
+
+// listRemoteBuckets - return a list of remote buckets
+func (ac adminClient) listRemoteBuckets(ctx context.Context, bucket, arnType string) (targets []madmin.BucketTarget, err error) {
+	return ac.client.ListRemoteTargets(ctx, bucket, arnType)
+}
+
+// getRemoteBucket - gets remote bucked based on a given bucket name
+func (ac adminClient) getRemoteBucket(ctx context.Context, bucket, arnType string) (*madmin.BucketTarget, error) {
+	targets, err := ac.client.ListRemoteTargets(ctx, bucket, arnType)
+	if err != nil {
+		return nil, err
+	}
+	if len(targets) > 0 {
+		return &targets[0], nil
+	}
+	return nil, err
+}
+
+// removeRemoteBucket removes a remote target associated with particular ARN for this bucket
+func (ac adminClient) removeRemoteBucket(ctx context.Context, bucket, arn string) error {
+	return ac.client.RemoveRemoteTarget(ctx, bucket, arn)
+}
+
+// addRemoteBucket sets up a remote target for this bucket
+func (ac adminClient) addRemoteBucket(ctx context.Context, bucket string, target *madmin.BucketTarget) (string, error) {
+	return ac.client.SetRemoteTarget(ctx, bucket, target)
 }
 
 func newMAdminClient(sessionClaims *models.Principal) (*madmin.AdminClient, error) {

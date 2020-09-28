@@ -14,8 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { useState } from "react";
+import get from "lodash/get";
 import { Grid, InputLabel, Tooltip } from "@material-ui/core";
+import IconButton from "@material-ui/core/IconButton";
+import AttachFileIcon from "@material-ui/icons/AttachFile";
+import CancelIcon from "@material-ui/icons/Cancel";
 import HelpIcon from "@material-ui/icons/Help";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
@@ -24,7 +28,7 @@ import { fileProcess } from "./utils";
 interface InputBoxProps {
   label: string;
   classes: any;
-  onChange: (e: string) => void;
+  onChange: (e: string, i: string) => void;
   id: string;
   name: string;
   disabled?: boolean;
@@ -32,6 +36,7 @@ interface InputBoxProps {
   required?: boolean;
   error?: string;
   accept?: string;
+  value?: string;
 }
 
 const styles = (theme: Theme) =>
@@ -60,6 +65,17 @@ const styles = (theme: Theme) =>
       lineHeight: "1.66",
       color: "#dc1f2e",
     },
+    valueString: {
+      maxWidth: 350,
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      marginTop: 2,
+    },
+    fileReselect: {
+      display: "flex",
+      alignItems: "center",
+    },
   });
 
 const FileSelector = ({
@@ -73,7 +89,10 @@ const FileSelector = ({
   required,
   error = "",
   accept = "",
+  value = "",
 }: InputBoxProps) => {
+  const [showFileSelector, setShowSelector] = useState(false);
+
   return (
     <React.Fragment>
       <Grid
@@ -103,25 +122,62 @@ const FileSelector = ({
             )}
           </InputLabel>
         )}
-        <div className={classes.textBoxContainer}>
-          <input
-            type="file"
-            name={name}
-            onChange={(e) => {
-              fileProcess(e, (data: any) => {
-                onChange(data);
-              });
-            }}
-            accept={accept}
-            required
-          />
-          {error !== "" && (
-            <React.Fragment>
-              <br />
-              <span className={classes.errorText}>{error}</span>
-            </React.Fragment>
-          )}
-        </div>
+
+        {showFileSelector || value === "" ? (
+          <div className={classes.textBoxContainer}>
+            <input
+              type="file"
+              name={name}
+              onChange={(e) => {
+                const fileName = get(e, "target.files[0].name", "");
+                fileProcess(e, (data: any) => {
+                  onChange(data, fileName);
+                });
+              }}
+              accept={accept}
+              required={required}
+              disabled={disabled}
+            />
+
+            {value !== "" && (
+              <IconButton
+                color="primary"
+                aria-label="upload picture"
+                component="span"
+                onClick={() => {
+                  setShowSelector(false);
+                }}
+                disableRipple={false}
+                disableFocusRipple={false}
+              >
+                <CancelIcon />
+              </IconButton>
+            )}
+
+            {error !== "" && (
+              <React.Fragment>
+                <br />
+                <span className={classes.errorText}>{error}</span>
+              </React.Fragment>
+            )}
+          </div>
+        ) : (
+          <div className={classes.fileReselect}>
+            <div className={classes.valueString}>{value}</div>
+            <IconButton
+              color="primary"
+              aria-label="upload picture"
+              component="span"
+              onClick={() => {
+                setShowSelector(true);
+              }}
+              disableRipple={false}
+              disableFocusRipple={false}
+            >
+              <AttachFileIcon />
+            </IconButton>
+          </div>
+        )}
       </Grid>
     </React.Fragment>
   );

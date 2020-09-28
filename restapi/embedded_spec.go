@@ -341,6 +341,136 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/replication": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Bucket Replication",
+        "operationId": "GetBucketReplication",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bucketReplicationResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Add Bucket Replication",
+        "operationId": "AddBucketReplication",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addBucketReplication"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/versioning": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Bucket Versioning",
+        "operationId": "GetBucketVersioning",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bucketVersioningResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Set Bucket Versioning",
+        "operationId": "SetBucketVersioning",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/setBucketVersioning"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{name}": {
       "get": {
         "tags": [
@@ -1505,6 +1635,122 @@ func init() {
         }
       }
     },
+    "/remote-buckets": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "List Remote Buckets",
+        "operationId": "ListRemoteBuckets",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listRemoteBucketsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Add Remote Bucket",
+        "operationId": "AddRemoteBucket",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createRemoteBucket"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/remote-buckets/{name}": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Remote Bucket Details",
+        "operationId": "RemoteBucketDetails",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/remoteBucket"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/remote-buckets/{source-bucket-name}/{arn}": {
+      "delete": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Remote Bucket",
+        "operationId": "DeleteRemoteBucket",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "source-bucket-name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "arn",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/service-accounts": {
       "get": {
         "tags": [
@@ -1986,6 +2232,17 @@ func init() {
     }
   },
   "definitions": {
+    "addBucketReplication": {
+      "type": "object",
+      "properties": {
+        "arn": {
+          "type": "string"
+        },
+        "destination_bucket": {
+          "type": "string"
+        }
+      }
+    },
     "addGroupRequest": {
       "type": "object",
       "required": [
@@ -2156,6 +2413,70 @@ func init() {
         }
       }
     },
+    "bucketReplicationDestination": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string"
+        }
+      }
+    },
+    "bucketReplicationResponse": {
+      "type": "object",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/bucketReplicationRule"
+          }
+        }
+      }
+    },
+    "bucketReplicationRule": {
+      "type": "object",
+      "properties": {
+        "delete_marker_replication": {
+          "$ref": "#/definitions/bucketReplicationRuleMarker"
+        },
+        "destination": {
+          "$ref": "#/definitions/bucketReplicationDestination"
+        },
+        "id": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "Enabled",
+            "Disabled"
+          ]
+        }
+      }
+    },
+    "bucketReplicationRuleMarker": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "Enabled",
+            "Disabled"
+          ]
+        }
+      }
+    },
+    "bucketVersioningResponse": {
+      "type": "object",
+      "properties": {
+        "is_versioned": {
+          "type": "boolean"
+        }
+      }
+    },
     "bulkUserGroups": {
       "type": "object",
       "required": [
@@ -2227,6 +2548,37 @@ func init() {
           }
         }
       ]
+    },
+    "createRemoteBucket": {
+      "required": [
+        "accessKey",
+        "secretKey",
+        "targetURL",
+        "sourceBucket",
+        "targetBucket"
+      ],
+      "properties": {
+        "accessKey": {
+          "type": "string",
+          "minLength": 3
+        },
+        "region": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string",
+          "minLength": 8
+        },
+        "sourceBucket": {
+          "type": "string"
+        },
+        "targetBucket": {
+          "type": "string"
+        },
+        "targetURL": {
+          "type": "string"
+        }
+      }
     },
     "createTenantRequest": {
       "type": "object",
@@ -2643,6 +2995,23 @@ func init() {
         }
       }
     },
+    "listRemoteBucketsResponse": {
+      "type": "object",
+      "properties": {
+        "buckets": {
+          "type": "array",
+          "title": "list of remote buckets",
+          "items": {
+            "$ref": "#/definitions/remoteBucket"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "title": "number of remote buckets accessible to user"
+        }
+      }
+    },
     "listTenantsResponse": {
       "type": "object",
       "properties": {
@@ -2745,6 +3114,9 @@ func init() {
       "properties": {
         "name": {
           "type": "string"
+        },
+        "versioning": {
+          "type": "boolean"
         }
       }
     },
@@ -3099,6 +3471,45 @@ func init() {
         }
       }
     },
+    "remoteBucket": {
+      "type": "object",
+      "required": [
+        "accessKey",
+        "sourceBucket",
+        "remoteARN"
+      ],
+      "properties": {
+        "accessKey": {
+          "type": "string",
+          "minLength": 3
+        },
+        "remoteARN": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string",
+          "minLength": 8
+        },
+        "service": {
+          "type": "string",
+          "enum": [
+            "replication"
+          ]
+        },
+        "sourceBucket": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "targetBucket": {
+          "type": "string"
+        },
+        "targetURL": {
+          "type": "string"
+        }
+      }
+    },
     "resourceQuota": {
       "type": "object",
       "properties": {
@@ -3180,6 +3591,14 @@ func init() {
       "properties": {
         "access": {
           "$ref": "#/definitions/bucketAccess"
+        }
+      }
+    },
+    "setBucketVersioning": {
+      "type": "object",
+      "properties": {
+        "versioning": {
+          "type": "boolean"
         }
       }
     },
@@ -4086,6 +4505,136 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/replication": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Bucket Replication",
+        "operationId": "GetBucketReplication",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bucketReplicationResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Add Bucket Replication",
+        "operationId": "AddBucketReplication",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addBucketReplication"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/versioning": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Bucket Versioning",
+        "operationId": "GetBucketVersioning",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bucketVersioningResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Set Bucket Versioning",
+        "operationId": "SetBucketVersioning",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/setBucketVersioning"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{name}": {
       "get": {
         "tags": [
@@ -5240,6 +5789,122 @@ func init() {
             "schema": {
               "type": "file"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/remote-buckets": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "List Remote Buckets",
+        "operationId": "ListRemoteBuckets",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listRemoteBucketsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Add Remote Bucket",
+        "operationId": "AddRemoteBucket",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createRemoteBucket"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/remote-buckets/{name}": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Remote Bucket Details",
+        "operationId": "RemoteBucketDetails",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/remoteBucket"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/remote-buckets/{source-bucket-name}/{arn}": {
+      "delete": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Remote Bucket",
+        "operationId": "DeleteRemoteBucket",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "source-bucket-name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "arn",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
@@ -6254,6 +6919,17 @@ func init() {
         }
       }
     },
+    "addBucketReplication": {
+      "type": "object",
+      "properties": {
+        "arn": {
+          "type": "string"
+        },
+        "destination_bucket": {
+          "type": "string"
+        }
+      }
+    },
     "addGroupRequest": {
       "type": "object",
       "required": [
@@ -6424,6 +7100,70 @@ func init() {
         }
       }
     },
+    "bucketReplicationDestination": {
+      "type": "object",
+      "properties": {
+        "bucket": {
+          "type": "string"
+        }
+      }
+    },
+    "bucketReplicationResponse": {
+      "type": "object",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/bucketReplicationRule"
+          }
+        }
+      }
+    },
+    "bucketReplicationRule": {
+      "type": "object",
+      "properties": {
+        "delete_marker_replication": {
+          "$ref": "#/definitions/bucketReplicationRuleMarker"
+        },
+        "destination": {
+          "$ref": "#/definitions/bucketReplicationDestination"
+        },
+        "id": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "Enabled",
+            "Disabled"
+          ]
+        }
+      }
+    },
+    "bucketReplicationRuleMarker": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "Enabled",
+            "Disabled"
+          ]
+        }
+      }
+    },
+    "bucketVersioningResponse": {
+      "type": "object",
+      "properties": {
+        "is_versioned": {
+          "type": "boolean"
+        }
+      }
+    },
     "bulkUserGroups": {
       "type": "object",
       "required": [
@@ -6495,6 +7235,37 @@ func init() {
           }
         }
       ]
+    },
+    "createRemoteBucket": {
+      "required": [
+        "accessKey",
+        "secretKey",
+        "targetURL",
+        "sourceBucket",
+        "targetBucket"
+      ],
+      "properties": {
+        "accessKey": {
+          "type": "string",
+          "minLength": 3
+        },
+        "region": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string",
+          "minLength": 8
+        },
+        "sourceBucket": {
+          "type": "string"
+        },
+        "targetBucket": {
+          "type": "string"
+        },
+        "targetURL": {
+          "type": "string"
+        }
+      }
     },
     "createTenantRequest": {
       "type": "object",
@@ -6911,6 +7682,23 @@ func init() {
         }
       }
     },
+    "listRemoteBucketsResponse": {
+      "type": "object",
+      "properties": {
+        "buckets": {
+          "type": "array",
+          "title": "list of remote buckets",
+          "items": {
+            "$ref": "#/definitions/remoteBucket"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "title": "number of remote buckets accessible to user"
+        }
+      }
+    },
     "listTenantsResponse": {
       "type": "object",
       "properties": {
@@ -7013,6 +7801,9 @@ func init() {
       "properties": {
         "name": {
           "type": "string"
+        },
+        "versioning": {
+          "type": "boolean"
         }
       }
     },
@@ -7301,6 +8092,45 @@ func init() {
         }
       }
     },
+    "remoteBucket": {
+      "type": "object",
+      "required": [
+        "accessKey",
+        "sourceBucket",
+        "remoteARN"
+      ],
+      "properties": {
+        "accessKey": {
+          "type": "string",
+          "minLength": 3
+        },
+        "remoteARN": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string",
+          "minLength": 8
+        },
+        "service": {
+          "type": "string",
+          "enum": [
+            "replication"
+          ]
+        },
+        "sourceBucket": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "targetBucket": {
+          "type": "string"
+        },
+        "targetURL": {
+          "type": "string"
+        }
+      }
+    },
     "resourceQuota": {
       "type": "object",
       "properties": {
@@ -7382,6 +8212,14 @@ func init() {
       "properties": {
         "access": {
           "$ref": "#/definitions/bucketAccess"
+        }
+      }
+    },
+    "setBucketVersioning": {
+      "type": "object",
+      "properties": {
+        "versioning": {
+          "type": "boolean"
         }
       }
     },

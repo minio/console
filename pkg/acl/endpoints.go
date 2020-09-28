@@ -38,6 +38,8 @@ var (
 	tenants         = "/tenants"
 	tenantsDetail   = "/namespaces/:tenantNamespace/tenants/:tenantName"
 	heal            = "/heal"
+	remoteBuckets   = "/remote-buckets"
+	replication     = "/replication"
 )
 
 type ConfigurationActionSet struct {
@@ -208,6 +210,24 @@ var healActionSet = ConfigurationActionSet{
 	),
 }
 
+var remoteBucketsActionSet = ConfigurationActionSet{
+	actionTypes: iampolicy.NewActionSet(
+		iampolicy.AllAdminActions,
+	),
+	actions: iampolicy.NewActionSet(
+		iampolicy.ConfigUpdateAdminAction,
+	),
+}
+
+var replicationActionSet = ConfigurationActionSet{
+	actionTypes: iampolicy.NewActionSet(
+		iampolicy.AllAdminActions,
+	),
+	actions: iampolicy.NewActionSet(
+		iampolicy.ConfigUpdateAdminAction,
+	),
+}
+
 // endpointRules contains the mapping between endpoints and ActionSets, additional rules can be added here
 var endpointRules = map[string]ConfigurationActionSet{
 	configuration:   configurationActionSet,
@@ -224,6 +244,8 @@ var endpointRules = map[string]ConfigurationActionSet{
 	bucketsDetail:   bucketsActionSet,
 	serviceAccounts: serviceAccountsActionSet,
 	heal:            healActionSet,
+	remoteBuckets:   remoteBucketsActionSet,
+	replication:     replicationActionSet,
 }
 
 // operatorRules contains the mapping between endpoints and ActionSets for operator only mode
