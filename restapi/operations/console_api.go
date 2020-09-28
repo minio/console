@@ -63,6 +63,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		BinProducer:  runtime.ByteStreamProducer(),
 		JSONProducer: runtime.JSONProducer(),
 
+		UserAPIAddBucketReplicationHandler: user_api.AddBucketReplicationHandlerFunc(func(params user_api.AddBucketReplicationParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.AddBucketReplication has not yet been implemented")
+		}),
 		AdminAPIAddGroupHandler: admin_api.AddGroupHandlerFunc(func(params admin_api.AddGroupParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.AddGroup has not yet been implemented")
 		}),
@@ -71,6 +74,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		AdminAPIAddPolicyHandler: admin_api.AddPolicyHandlerFunc(func(params admin_api.AddPolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.AddPolicy has not yet been implemented")
+		}),
+		UserAPIAddRemoteBucketHandler: user_api.AddRemoteBucketHandlerFunc(func(params user_api.AddRemoteBucketParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.AddRemoteBucket has not yet been implemented")
 		}),
 		AdminAPIAddUserHandler: admin_api.AddUserHandlerFunc(func(params admin_api.AddUserParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.AddUser has not yet been implemented")
@@ -108,11 +114,20 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIDeleteBucketEventHandler: user_api.DeleteBucketEventHandlerFunc(func(params user_api.DeleteBucketEventParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteBucketEvent has not yet been implemented")
 		}),
+		UserAPIDeleteRemoteBucketHandler: user_api.DeleteRemoteBucketHandlerFunc(func(params user_api.DeleteRemoteBucketParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.DeleteRemoteBucket has not yet been implemented")
+		}),
 		UserAPIDeleteServiceAccountHandler: user_api.DeleteServiceAccountHandlerFunc(func(params user_api.DeleteServiceAccountParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteServiceAccount has not yet been implemented")
 		}),
 		AdminAPIDeleteTenantHandler: admin_api.DeleteTenantHandlerFunc(func(params admin_api.DeleteTenantParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.DeleteTenant has not yet been implemented")
+		}),
+		UserAPIGetBucketReplicationHandler: user_api.GetBucketReplicationHandlerFunc(func(params user_api.GetBucketReplicationParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.GetBucketReplication has not yet been implemented")
+		}),
+		UserAPIGetBucketVersioningHandler: user_api.GetBucketVersioningHandlerFunc(func(params user_api.GetBucketVersioningParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.GetBucketVersioning has not yet been implemented")
 		}),
 		AdminAPIGetMaxAllocatableMemHandler: admin_api.GetMaxAllocatableMemHandlerFunc(func(params admin_api.GetMaxAllocatableMemParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetMaxAllocatableMem has not yet been implemented")
@@ -149,6 +164,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		AdminAPIListPoliciesHandler: admin_api.ListPoliciesHandlerFunc(func(params admin_api.ListPoliciesParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListPolicies has not yet been implemented")
+		}),
+		UserAPIListRemoteBucketsHandler: user_api.ListRemoteBucketsHandlerFunc(func(params user_api.ListRemoteBucketsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.ListRemoteBuckets has not yet been implemented")
 		}),
 		AdminAPIListTenantsHandler: admin_api.ListTenantsHandlerFunc(func(params admin_api.ListTenantsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListTenants has not yet been implemented")
@@ -189,6 +207,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIProfilingStopHandler: admin_api.ProfilingStopHandlerFunc(func(params admin_api.ProfilingStopParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ProfilingStop has not yet been implemented")
 		}),
+		UserAPIRemoteBucketDetailsHandler: user_api.RemoteBucketDetailsHandlerFunc(func(params user_api.RemoteBucketDetailsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.RemoteBucketDetails has not yet been implemented")
+		}),
 		AdminAPIRemoveGroupHandler: admin_api.RemoveGroupHandlerFunc(func(params admin_api.RemoveGroupParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.RemoveGroup has not yet been implemented")
 		}),
@@ -203,6 +224,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		UserAPISessionCheckHandler: user_api.SessionCheckHandlerFunc(func(params user_api.SessionCheckParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.SessionCheck has not yet been implemented")
+		}),
+		UserAPISetBucketVersioningHandler: user_api.SetBucketVersioningHandlerFunc(func(params user_api.SetBucketVersioningParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.SetBucketVersioning has not yet been implemented")
 		}),
 		AdminAPISetConfigHandler: admin_api.SetConfigHandlerFunc(func(params admin_api.SetConfigParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.SetConfig has not yet been implemented")
@@ -286,12 +310,16 @@ type ConsoleAPI struct {
 	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
 	APIAuthorizer runtime.Authorizer
 
+	// UserAPIAddBucketReplicationHandler sets the operation handler for the add bucket replication operation
+	UserAPIAddBucketReplicationHandler user_api.AddBucketReplicationHandler
 	// AdminAPIAddGroupHandler sets the operation handler for the add group operation
 	AdminAPIAddGroupHandler admin_api.AddGroupHandler
 	// AdminAPIAddNotificationEndpointHandler sets the operation handler for the add notification endpoint operation
 	AdminAPIAddNotificationEndpointHandler admin_api.AddNotificationEndpointHandler
 	// AdminAPIAddPolicyHandler sets the operation handler for the add policy operation
 	AdminAPIAddPolicyHandler admin_api.AddPolicyHandler
+	// UserAPIAddRemoteBucketHandler sets the operation handler for the add remote bucket operation
+	UserAPIAddRemoteBucketHandler user_api.AddRemoteBucketHandler
 	// AdminAPIAddUserHandler sets the operation handler for the add user operation
 	AdminAPIAddUserHandler admin_api.AddUserHandler
 	// AdminAPIAdminInfoHandler sets the operation handler for the admin info operation
@@ -316,10 +344,16 @@ type ConsoleAPI struct {
 	UserAPIDeleteBucketHandler user_api.DeleteBucketHandler
 	// UserAPIDeleteBucketEventHandler sets the operation handler for the delete bucket event operation
 	UserAPIDeleteBucketEventHandler user_api.DeleteBucketEventHandler
+	// UserAPIDeleteRemoteBucketHandler sets the operation handler for the delete remote bucket operation
+	UserAPIDeleteRemoteBucketHandler user_api.DeleteRemoteBucketHandler
 	// UserAPIDeleteServiceAccountHandler sets the operation handler for the delete service account operation
 	UserAPIDeleteServiceAccountHandler user_api.DeleteServiceAccountHandler
 	// AdminAPIDeleteTenantHandler sets the operation handler for the delete tenant operation
 	AdminAPIDeleteTenantHandler admin_api.DeleteTenantHandler
+	// UserAPIGetBucketReplicationHandler sets the operation handler for the get bucket replication operation
+	UserAPIGetBucketReplicationHandler user_api.GetBucketReplicationHandler
+	// UserAPIGetBucketVersioningHandler sets the operation handler for the get bucket versioning operation
+	UserAPIGetBucketVersioningHandler user_api.GetBucketVersioningHandler
 	// AdminAPIGetMaxAllocatableMemHandler sets the operation handler for the get max allocatable mem operation
 	AdminAPIGetMaxAllocatableMemHandler admin_api.GetMaxAllocatableMemHandler
 	// AdminAPIGetParityHandler sets the operation handler for the get parity operation
@@ -344,6 +378,8 @@ type ConsoleAPI struct {
 	AdminAPIListGroupsHandler admin_api.ListGroupsHandler
 	// AdminAPIListPoliciesHandler sets the operation handler for the list policies operation
 	AdminAPIListPoliciesHandler admin_api.ListPoliciesHandler
+	// UserAPIListRemoteBucketsHandler sets the operation handler for the list remote buckets operation
+	UserAPIListRemoteBucketsHandler user_api.ListRemoteBucketsHandler
 	// AdminAPIListTenantsHandler sets the operation handler for the list tenants operation
 	AdminAPIListTenantsHandler admin_api.ListTenantsHandler
 	// UserAPIListUserServiceAccountsHandler sets the operation handler for the list user service accounts operation
@@ -370,6 +406,8 @@ type ConsoleAPI struct {
 	AdminAPIProfilingStartHandler admin_api.ProfilingStartHandler
 	// AdminAPIProfilingStopHandler sets the operation handler for the profiling stop operation
 	AdminAPIProfilingStopHandler admin_api.ProfilingStopHandler
+	// UserAPIRemoteBucketDetailsHandler sets the operation handler for the remote bucket details operation
+	UserAPIRemoteBucketDetailsHandler user_api.RemoteBucketDetailsHandler
 	// AdminAPIRemoveGroupHandler sets the operation handler for the remove group operation
 	AdminAPIRemoveGroupHandler admin_api.RemoveGroupHandler
 	// AdminAPIRemovePolicyHandler sets the operation handler for the remove policy operation
@@ -380,6 +418,8 @@ type ConsoleAPI struct {
 	AdminAPIRestartServiceHandler admin_api.RestartServiceHandler
 	// UserAPISessionCheckHandler sets the operation handler for the session check operation
 	UserAPISessionCheckHandler user_api.SessionCheckHandler
+	// UserAPISetBucketVersioningHandler sets the operation handler for the set bucket versioning operation
+	UserAPISetBucketVersioningHandler user_api.SetBucketVersioningHandler
 	// AdminAPISetConfigHandler sets the operation handler for the set config operation
 	AdminAPISetConfigHandler admin_api.SetConfigHandler
 	// AdminAPISetPolicyHandler sets the operation handler for the set policy operation
@@ -475,6 +515,9 @@ func (o *ConsoleAPI) Validate() error {
 		unregistered = append(unregistered, "KeyAuth")
 	}
 
+	if o.UserAPIAddBucketReplicationHandler == nil {
+		unregistered = append(unregistered, "user_api.AddBucketReplicationHandler")
+	}
 	if o.AdminAPIAddGroupHandler == nil {
 		unregistered = append(unregistered, "admin_api.AddGroupHandler")
 	}
@@ -483,6 +526,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIAddPolicyHandler == nil {
 		unregistered = append(unregistered, "admin_api.AddPolicyHandler")
+	}
+	if o.UserAPIAddRemoteBucketHandler == nil {
+		unregistered = append(unregistered, "user_api.AddRemoteBucketHandler")
 	}
 	if o.AdminAPIAddUserHandler == nil {
 		unregistered = append(unregistered, "admin_api.AddUserHandler")
@@ -520,11 +566,20 @@ func (o *ConsoleAPI) Validate() error {
 	if o.UserAPIDeleteBucketEventHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteBucketEventHandler")
 	}
+	if o.UserAPIDeleteRemoteBucketHandler == nil {
+		unregistered = append(unregistered, "user_api.DeleteRemoteBucketHandler")
+	}
 	if o.UserAPIDeleteServiceAccountHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteServiceAccountHandler")
 	}
 	if o.AdminAPIDeleteTenantHandler == nil {
 		unregistered = append(unregistered, "admin_api.DeleteTenantHandler")
+	}
+	if o.UserAPIGetBucketReplicationHandler == nil {
+		unregistered = append(unregistered, "user_api.GetBucketReplicationHandler")
+	}
+	if o.UserAPIGetBucketVersioningHandler == nil {
+		unregistered = append(unregistered, "user_api.GetBucketVersioningHandler")
 	}
 	if o.AdminAPIGetMaxAllocatableMemHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetMaxAllocatableMemHandler")
@@ -561,6 +616,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIListPoliciesHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListPoliciesHandler")
+	}
+	if o.UserAPIListRemoteBucketsHandler == nil {
+		unregistered = append(unregistered, "user_api.ListRemoteBucketsHandler")
 	}
 	if o.AdminAPIListTenantsHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListTenantsHandler")
@@ -601,6 +659,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.AdminAPIProfilingStopHandler == nil {
 		unregistered = append(unregistered, "admin_api.ProfilingStopHandler")
 	}
+	if o.UserAPIRemoteBucketDetailsHandler == nil {
+		unregistered = append(unregistered, "user_api.RemoteBucketDetailsHandler")
+	}
 	if o.AdminAPIRemoveGroupHandler == nil {
 		unregistered = append(unregistered, "admin_api.RemoveGroupHandler")
 	}
@@ -615,6 +676,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPISessionCheckHandler == nil {
 		unregistered = append(unregistered, "user_api.SessionCheckHandler")
+	}
+	if o.UserAPISetBucketVersioningHandler == nil {
+		unregistered = append(unregistered, "user_api.SetBucketVersioningHandler")
 	}
 	if o.AdminAPISetConfigHandler == nil {
 		unregistered = append(unregistered, "admin_api.SetConfigHandler")
@@ -752,6 +816,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
+	o.handlers["POST"]["/buckets/{bucket_name}/replication"] = user_api.NewAddBucketReplication(o.context, o.UserAPIAddBucketReplicationHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
 	o.handlers["POST"]["/groups"] = admin_api.NewAddGroup(o.context, o.AdminAPIAddGroupHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
@@ -761,6 +829,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/policies"] = admin_api.NewAddPolicy(o.context, o.AdminAPIAddPolicyHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/remote-buckets"] = user_api.NewAddRemoteBucket(o.context, o.UserAPIAddRemoteBucketHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
@@ -812,11 +884,23 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
+	o.handlers["DELETE"]["/remote-buckets/{source-bucket-name}/{arn}"] = user_api.NewDeleteRemoteBucket(o.context, o.UserAPIDeleteRemoteBucketHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
 	o.handlers["DELETE"]["/service-accounts/{access_key}"] = user_api.NewDeleteServiceAccount(o.context, o.UserAPIDeleteServiceAccountHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/namespaces/{namespace}/tenants/{tenant}"] = admin_api.NewDeleteTenant(o.context, o.AdminAPIDeleteTenantHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/buckets/{bucket_name}/replication"] = user_api.NewGetBucketReplication(o.context, o.UserAPIGetBucketReplicationHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/buckets/{bucket_name}/versioning"] = user_api.NewGetBucketVersioning(o.context, o.UserAPIGetBucketVersioningHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -865,6 +949,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/policies"] = admin_api.NewListPolicies(o.context, o.AdminAPIListPoliciesHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/remote-buckets"] = user_api.NewListRemoteBuckets(o.context, o.UserAPIListRemoteBucketsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -917,6 +1005,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/profiling/stop"] = admin_api.NewProfilingStop(o.context, o.AdminAPIProfilingStopHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/remote-buckets/{name}"] = user_api.NewRemoteBucketDetails(o.context, o.UserAPIRemoteBucketDetailsHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
@@ -937,6 +1029,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/session"] = user_api.NewSessionCheck(o.context, o.UserAPISessionCheckHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/buckets/{bucket_name}/versioning"] = user_api.NewSetBucketVersioning(o.context, o.UserAPISetBucketVersioningHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

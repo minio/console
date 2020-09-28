@@ -330,6 +330,91 @@ paths:
       tags:
         - UserAPI
 
+  /buckets/{bucket_name}/replication:
+    get:
+      summary: Bucket Replication
+      operationId: GetBucketReplication
+      parameters:
+          - name: bucket_name
+            in: path
+            required: true
+            type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucketReplicationResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    post:
+      summary: Add Bucket Replication
+      operationId: AddBucketReplication
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/addBucketReplication"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+  /buckets/{bucket_name}/versioning:
+    get:
+      summary: Bucket Versioning
+      operationId: GetBucketVersioning
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucketVersioningResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    put:
+      summary: Set Bucket Versioning
+      operationId: SetBucketVersioning
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/setBucketVersioning"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /service-accounts:
     get:
       summary: List User's Service Accounts
@@ -958,6 +1043,83 @@ paths:
       tags:
         - AdminAPI
 
+  /remote-buckets:
+    get:
+      summary: List Remote Buckets
+      operationId: ListRemoteBuckets
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listRemoteBucketsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    post:
+      summary: Add Remote Bucket
+      operationId: AddRemoteBucket
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/createRemoteBucket"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /remote-buckets/{name}:
+    get:
+      summary: Remote Bucket Details
+      operationId: RemoteBucketDetails
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/remoteBucket"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+  /remote-buckets/{source-bucket-name}/{arn}:
+    delete:
+      summary: Delete Remote Bucket
+      operationId: DeleteRemoteBucket
+      parameters:
+        - name: source-bucket-name
+          in: path
+          required: true
+          type: string
+        - name: arn
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /tenants:
     get:
       summary: List Tenant of All Namespaces
@@ -1375,6 +1537,8 @@ definitions:
     properties:
       name:
         type: string
+      versioning:
+        type: boolean
   error:
     type: object
     required:
@@ -1616,6 +1780,58 @@ definitions:
         $ref: "#/definitions/notificationConfig"
       ignoreExisting:
         type: boolean
+  bucketReplicationRuleMarker:
+    type: object
+    properties:
+      status:
+        type: string
+        enum:
+          - Enabled
+          - Disabled
+  bucketReplicationDestination:
+    type: object
+    properties:
+      bucket:
+        type: string
+  bucketReplicationRule:
+    type: object
+    properties:
+      id:
+        type: string
+      status:
+        type: string
+        enum:
+          - Enabled
+          - Disabled
+      priority:
+        type: integer
+        format: int32
+      delete_marker_replication:
+        $ref: "#/definitions/bucketReplicationRuleMarker"
+      destination:
+        $ref: "#/definitions/bucketReplicationDestination"
+
+  bucketReplicationResponse:
+    type: object
+    properties:
+      rules:
+        type: array
+        items:
+          $ref: "#/definitions/bucketReplicationRule"
+    # missimng
+    #  "Filter": {
+    #   "And": {},
+    #   "Tag": {}
+    #  }
+    # }
+    #}
+  addBucketReplication:
+    type: object
+    properties:
+      arn:
+        type: string
+      destination_bucket:
+        type: string
   listBucketEventsResponse:
     type: object
     properties:
@@ -1847,6 +2063,76 @@ definitions:
         type: string
       secretKey:
         type: string
+  remoteBucket:
+    type: object
+    required:
+      - accessKey
+      - sourceBucket
+      - remoteARN
+    properties:
+      accessKey:
+        type: string
+        minLength: 3
+      secretKey:
+        type: string
+        minLength: 8
+      sourceBucket:
+        type: string
+      targetURL:
+        type: string
+      targetBucket:
+        type: string
+      remoteARN:
+        type: string
+      status:
+        type: string
+      service:
+        type: string
+        enum: [replication]
+  createRemoteBucket:
+    required:
+      - accessKey
+      - secretKey
+      - targetURL
+      - sourceBucket
+      - targetBucket
+    properties:
+      accessKey:
+        type: string
+        minLength: 3
+      secretKey:
+        type: string
+        minLength: 8
+      targetURL:
+        type: string
+      sourceBucket:
+        type: string
+      targetBucket:
+        type: string
+      region:
+        type: string
+  listRemoteBucketsResponse:
+    type: object
+    properties:
+      buckets:
+        type: array
+        items:
+          $ref: "#/definitions/remoteBucket"
+        title: list of remote buckets
+      total:
+        type: integer
+        format: int64
+        title: number of remote buckets accessible to user
+  bucketVersioningResponse:
+    type: object
+    properties:
+      is_versioned:
+        type: boolean
+  setBucketVersioning:
+    type: object
+    properties:
+      versioning:
+        type: boolean
 
   tenant:
     type: object
