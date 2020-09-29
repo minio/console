@@ -341,6 +341,47 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/objects": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "List Objects",
+        "operationId": "ListObjects",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "name": "recursive",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listObjectsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/replication": {
       "get": {
         "tags": [
@@ -2413,6 +2454,24 @@ func init() {
         }
       }
     },
+    "bucketObject": {
+      "type": "object",
+      "properties": {
+        "content_type": {
+          "type": "string"
+        },
+        "last_modified": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "bucketReplicationDestination": {
       "type": "object",
       "properties": {
@@ -2975,6 +3034,23 @@ func init() {
           "type": "integer",
           "format": "int64",
           "title": "total number of groups"
+        }
+      }
+    },
+    "listObjectsResponse": {
+      "type": "object",
+      "properties": {
+        "objects": {
+          "type": "array",
+          "title": "list of resulting objects",
+          "items": {
+            "$ref": "#/definitions/bucketObject"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "title": "number of objects"
         }
       }
     },
@@ -4495,6 +4571,47 @@ func init() {
         "responses": {
           "204": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/objects": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "List Objects",
+        "operationId": "ListObjects",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "name": "recursive",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listObjectsResponse"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -7100,6 +7217,24 @@ func init() {
         }
       }
     },
+    "bucketObject": {
+      "type": "object",
+      "properties": {
+        "content_type": {
+          "type": "string"
+        },
+        "last_modified": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "bucketReplicationDestination": {
       "type": "object",
       "properties": {
@@ -7662,6 +7797,23 @@ func init() {
           "type": "integer",
           "format": "int64",
           "title": "total number of groups"
+        }
+      }
+    },
+    "listObjectsResponse": {
+      "type": "object",
+      "properties": {
+        "objects": {
+          "type": "array",
+          "title": "list of resulting objects",
+          "items": {
+            "$ref": "#/definitions/bucketObject"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "title": "number of objects"
         }
       }
     },
