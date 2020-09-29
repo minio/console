@@ -53,6 +53,7 @@ type MinioClient interface {
 	removeBucket(ctx context.Context, bucketName string) error
 	getBucketNotification(ctx context.Context, bucketName string) (config notification.Configuration, err error)
 	getBucketPolicy(ctx context.Context, bucketName string) (string, error)
+	listObjects(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo
 }
 
 // Interface implementation
@@ -108,6 +109,11 @@ func (c minioClient) getBucketVersioning(ctx context.Context, bucketName string)
 // implements minio.getBucketVersioning(ctx, bucketName)
 func (c minioClient) getBucketReplication(ctx context.Context, bucketName string) (replication.Config, error) {
 	return c.client.GetBucketReplication(ctx, bucketName)
+}
+
+// implements minio.listObjects(ctx)
+func (c minioClient) listObjects(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
+	return c.client.ListObjects(ctx, bucket, opts)
 }
 
 // MCClient interface with all functions to be implemented

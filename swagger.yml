@@ -223,6 +223,35 @@ paths:
       tags:
         - UserAPI
 
+  /buckets/{bucket_name}/objects:
+    get:
+      summary: List Objects
+      operationId: ListObjects
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: false
+          type: string
+        - name: recursive
+          in: query
+          required: false
+          type: boolean
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listObjectsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /buckets/{name}/set-policy:
     put:
       summary: Bucket Set Policy
@@ -335,10 +364,10 @@ paths:
       summary: Bucket Replication
       operationId: GetBucketReplication
       parameters:
-          - name: bucket_name
-            in: path
-            required: true
-            type: string
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
       responses:
         200:
           description: A successful response.
@@ -1503,6 +1532,7 @@ definitions:
       - PUBLIC
       - CUSTOM
     default: PRIVATE
+
   bucket:
     type: object
     required:
@@ -1518,6 +1548,7 @@ definitions:
         $ref: "#/definitions/bucketAccess"
       creation_date:
         type: string
+
   listBucketsResponse:
     type: object
     properties:
@@ -1530,6 +1561,33 @@ definitions:
         type: integer
         format: int64
         title: number of buckets accessible to tenant user
+
+  listObjectsResponse:
+    type: object
+    properties:
+      objects:
+        type: array
+        items:
+          $ref: "#/definitions/bucketObject"
+        title: list of resulting objects
+      total:
+        type: integer
+        format: int64
+        title: number of objects
+
+  bucketObject:
+    type: object
+    properties:
+      name:
+        type: string
+      size:
+        type: integer
+        format: int64
+      content_type:
+        type: string
+      last_modified:
+        type: string
+
   makeBucketRequest:
     type: object
     required:
@@ -2298,7 +2356,7 @@ definitions:
         $ref: "#/definitions/encryptionConfiguration"
       console:
         type: object
-        $ref: '#/definitions/consoleConfiguration'
+        $ref: "#/definitions/consoleConfiguration"
 
   metadataFields:
     type: object
@@ -2379,7 +2437,7 @@ definitions:
 
   consoleConfiguration:
     allOf:
-      - $ref: '#/definitions/metadataFields'
+      - $ref: "#/definitions/metadataFields"
       - type: object
         properties:
           image:
@@ -2387,7 +2445,7 @@ definitions:
 
   encryptionConfiguration:
     allOf:
-      - $ref: '#/definitions/metadataFields'
+      - $ref: "#/definitions/metadataFields"
       - type: object
         properties:
           image:

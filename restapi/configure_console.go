@@ -118,6 +118,8 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerNodesHandlers(api)
 	// Register Parity' handlers
 	registerParityHandlers(api)
+	// Register Object's Handlers
+	registerObjectsHandlers(api)
 
 	api.PreServerShutdown = func() {}
 
