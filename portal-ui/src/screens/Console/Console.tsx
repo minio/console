@@ -51,8 +51,6 @@ import Permissions from "./Permissions/Permissions";
 import Dashboard from "./Dashboard/Dashboard";
 import Menu from "./Menu/Menu";
 import api from "../../common/api";
-import storage from "local-storage-fallback";
-import NotFoundPage from "../NotFoundPage";
 import ServiceAccounts from "./ServiceAccounts/ServiceAccounts";
 import Users from "./Users/Users";
 import Groups from "./Groups/Groups";
@@ -70,6 +68,7 @@ import { saveSessionResponse } from "./actions";
 import TenantDetails from "./Tenants/TenantDetails/TenantDetails";
 import { clearSession } from "../../common/utils";
 import RemoteBuckets from "./RemoteBuckets/RemoteBuckets";
+import ObjectBrowser from "./ObjectBrowser/ObjectBrowser";
 
 function Copyright() {
   return (
@@ -253,6 +252,14 @@ const Console = ({
     {
       component: Buckets,
       path: "/buckets/:bucketName",
+    },
+    {
+      component: ObjectBrowser,
+      path: "/object-browser/:bucket?/*",
+    },
+    {
+      component: ObjectBrowser,
+      path: "/object-browser",
     },
     {
       component: Watch,
