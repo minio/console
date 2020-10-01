@@ -22,6 +22,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import WebAssetIcon from "@material-ui/icons/WebAsset";
 import HealingIcon from "@material-ui/icons/Healing";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import DescriptionIcon from "@material-ui/icons/Description";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import Collapse from "@material-ui/core/Collapse";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -187,17 +188,17 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
       group: "User",
       type: "item",
       component: NavLink,
-      to: "/buckets",
-      name: "Buckets",
-      icon: <BucketsIcon />,
+      to: "/service-accounts",
+      name: "Service Accounts",
+      icon: <ServiceAccountsIcon />,
     },
     {
       group: "User",
       type: "item",
       component: NavLink,
-      to: "/service-accounts",
-      name: "Service Accounts",
-      icon: <ServiceAccountsIcon />,
+      to: "/object-browser",
+      name: "Object Browser",
+      icon: <DescriptionIcon />,
     },
     {
       group: "Admin",
@@ -214,6 +215,14 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
       to: "/groups",
       name: "Groups",
       icon: <GroupsIcon />,
+    },
+    {
+      group: "Admin",
+      type: "item",
+      component: NavLink,
+      to: "/buckets",
+      name: "Buckets",
+      icon: <BucketsIcon />,
     },
     {
       group: "Admin",
