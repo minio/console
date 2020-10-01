@@ -3968,8 +3968,10 @@ func init() {
           "$ref": "#/definitions/keyPairConfiguration"
         },
         "minio": {
-          "type": "object",
-          "$ref": "#/definitions/keyPairConfiguration"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/keyPairConfiguration"
+          }
         }
       }
     },
@@ -8799,8 +8801,10 @@ func init() {
           "$ref": "#/definitions/keyPairConfiguration"
         },
         "minio": {
-          "type": "object",
-          "$ref": "#/definitions/keyPairConfiguration"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/keyPairConfiguration"
+          }
         }
       }
     },

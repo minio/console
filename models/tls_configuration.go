@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"strconv"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -37,7 +39,7 @@ type TLSConfiguration struct {
 	Console *KeyPairConfiguration `json:"console,omitempty"`
 
 	// minio
-	Minio *KeyPairConfiguration `json:"minio,omitempty"`
+	Minio []*KeyPairConfiguration `json:"minio"`
 }
 
 // Validate validates this tls configuration
@@ -82,13 +84,20 @@ func (m *TLSConfiguration) validateMinio(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if m.Minio != nil {
-		if err := m.Minio.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("minio")
-			}
-			return err
+	for i := 0; i < len(m.Minio); i++ {
+		if swag.IsZero(m.Minio[i]) { // not required
+			continue
 		}
+
+		if m.Minio[i] != nil {
+			if err := m.Minio[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("minio" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil

@@ -576,14 +576,14 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		minInst.Spec.RequestAutoCert = *tenantReq.EnableTLS
 	}
 
-	if !minInst.Spec.RequestAutoCert && tenantReq.TLS != nil && tenantReq.TLS.Minio != nil {
+	if !minInst.Spec.RequestAutoCert && tenantReq.TLS != nil && len(tenantReq.TLS.Minio) > 0 {
 		// User provided TLS certificates for MinIO
 		isEncryptionEnabled = true
 		// disable autoCert
 		minInst.Spec.RequestAutoCert = false
 		// Certificates used by the MinIO instance
 		externalCertSecretName := fmt.Sprintf("%s-instance-external-certificates", secretName)
-		externalCertSecret, err := createOrReplaceExternalCertSecret(ctx, &k8sClient, ns, tenantReq.TLS.Minio, externalCertSecretName, tenantName)
+		externalCertSecret, err := createOrReplaceExternalCertSecrets(ctx, &k8sClient, ns, tenantReq.TLS.Minio, externalCertSecretName, tenantName)
 		if err != nil {
 			return nil, prepareError(err)
 		}
@@ -599,9 +599,13 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		// KES client mTLSCertificates used by MinIO instance, only if autoCert is not enabled
 		if !minInst.Spec.RequestAutoCert {
 			tenantExternalClientCertSecretName := fmt.Sprintf("%s-tenant-external-client-cert", secretName)
-			minInst.Spec.ExternalClientCertSecret, err = createOrReplaceExternalCertSecret(ctx, &k8sClient, ns, tenantReq.Encryption.Client, tenantExternalClientCertSecretName, tenantName)
+			certificates := []*models.KeyPairConfiguration{tenantReq.Encryption.Client}
+			certificateSecrets, err := createOrReplaceExternalCertSecrets(ctx, &k8sClient, ns, certificates, tenantExternalClientCertSecretName, tenantName)
 			if err != nil {
 				return nil, prepareError(errorGeneric)
+			}
+			if len(certificateSecrets) > 0 {
+				minInst.Spec.ExternalClientCertSecret = certificateSecrets[0]
 			}
 		}
 		// KES configuration for Tenant instance
@@ -687,11 +691,14 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		if !minInst.Spec.RequestAutoCert && tenantReq.TLS != nil && tenantReq.TLS.Console != nil {
 			// Certificates used by the console instance
 			externalCertSecretName := fmt.Sprintf("%s-console-external-certificates", secretName)
-			externalCertSecret, err := createOrReplaceExternalCertSecret(ctx, &k8sClient, ns, tenantReq.TLS.Console, externalCertSecretName, tenantName)
+			certificates := []*models.KeyPairConfiguration{tenantReq.TLS.Console}
+			externalCertSecret, err := createOrReplaceExternalCertSecrets(ctx, &k8sClient, ns, certificates, externalCertSecretName, tenantName)
 			if err != nil {
 				return nil, prepareError(errorGeneric)
 			}
-			minInst.Spec.Console.ExternalCertSecret = externalCertSecret
+			if len(externalCertSecret) > 0 {
+				minInst.Spec.Console.ExternalCertSecret = externalCertSecret[0]
+			}
 		}
 
 		// Set Labels, Annotations and Node Selector for Console

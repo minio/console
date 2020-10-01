@@ -83,7 +83,7 @@ func Test_tenantUpdateCertificates(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "error replacing external certs for tenant because of missing keypair",
+			name: "error replacing external certs for tenant because of empty keypair values",
 			args: args{
 				ctx:       context.Background(),
 				opClient:  opClient,
@@ -91,14 +91,24 @@ func Test_tenantUpdateCertificates(t *testing.T) {
 				namespace: "",
 				params: admin_api.TenantUpdateCertificateParams{
 					Body: &models.TLSConfiguration{
-						Minio: &models.KeyPairConfiguration{},
+						Minio: []*models.KeyPairConfiguration{
+							{
+								Crt: nil,
+								Key: nil,
+							},
+						},
 					},
+				},
+				mockDeletePodCollection: func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
+					return nil
 				},
 				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*operator.Tenant, error) {
 					return &operator.Tenant{
 						Spec: operator.TenantSpec{
-							ExternalCertSecret: &operator.LocalCertificateReference{
-								Name: "secret",
+							ExternalCertSecret: []*operator.LocalCertificateReference{
+								{
+									Name: "secret",
+								},
 							},
 						},
 					}, nil
@@ -115,17 +125,21 @@ func Test_tenantUpdateCertificates(t *testing.T) {
 				namespace: "",
 				params: admin_api.TenantUpdateCertificateParams{
 					Body: &models.TLSConfiguration{
-						Minio: &models.KeyPairConfiguration{
-							Crt: &badCrt,
-							Key: &badKey,
+						Minio: []*models.KeyPairConfiguration{
+							{
+								Crt: &badCrt,
+								Key: &badKey,
+							},
 						},
 					},
 				},
 				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*operator.Tenant, error) {
 					return &operator.Tenant{
 						Spec: operator.TenantSpec{
-							ExternalCertSecret: &operator.LocalCertificateReference{
-								Name: "secret",
+							ExternalCertSecret: []*operator.LocalCertificateReference{
+								{
+									Name: "secret",
+								},
 							},
 						},
 					}, nil
@@ -145,17 +159,21 @@ func Test_tenantUpdateCertificates(t *testing.T) {
 				namespace: "",
 				params: admin_api.TenantUpdateCertificateParams{
 					Body: &models.TLSConfiguration{
-						Minio: &models.KeyPairConfiguration{
-							Crt: &crt,
-							Key: &key,
+						Minio: []*models.KeyPairConfiguration{
+							{
+								Crt: &crt,
+								Key: &key,
+							},
 						},
 					},
 				},
 				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*operator.Tenant, error) {
 					return &operator.Tenant{
 						Spec: operator.TenantSpec{
-							ExternalCertSecret: &operator.LocalCertificateReference{
-								Name: "secret",
+							ExternalCertSecret: []*operator.LocalCertificateReference{
+								{
+									Name: "secret",
+								},
 							},
 						},
 					}, nil
@@ -178,17 +196,21 @@ func Test_tenantUpdateCertificates(t *testing.T) {
 				namespace: "",
 				params: admin_api.TenantUpdateCertificateParams{
 					Body: &models.TLSConfiguration{
-						Minio: &models.KeyPairConfiguration{
-							Crt: &crt,
-							Key: &key,
+						Minio: []*models.KeyPairConfiguration{
+							{
+								Crt: &crt,
+								Key: &key,
+							},
 						},
 					},
 				},
 				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*operator.Tenant, error) {
 					return &operator.Tenant{
 						Spec: operator.TenantSpec{
-							ExternalCertSecret: &operator.LocalCertificateReference{
-								Name: "secret",
+							ExternalCertSecret: []*operator.LocalCertificateReference{
+								{
+									Name: "secret",
+								},
 							},
 						},
 					}, nil

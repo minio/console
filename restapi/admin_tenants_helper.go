@@ -51,7 +51,7 @@ func tenantUpdateCertificates(ctx context.Context, operatorClient OperatorClient
 	if tenant.ExternalCert() && body.Minio != nil {
 		minioCertSecretName := fmt.Sprintf("%s-instance-external-certificates", secretName)
 		// update certificates
-		if _, err := createOrReplaceExternalCertSecret(ctx, clientSet, namespace, body.Minio, minioCertSecretName, tenantName); err != nil {
+		if _, err := createOrReplaceExternalCertSecrets(ctx, clientSet, namespace, body.Minio, minioCertSecretName, tenantName); err != nil {
 			return err
 		}
 		// restart MinIO pods
@@ -66,7 +66,8 @@ func tenantUpdateCertificates(ctx context.Context, operatorClient OperatorClient
 	if tenant.ConsoleExternalCert() && tenant.HasConsoleEnabled() && body.Console != nil {
 		consoleCertSecretName := fmt.Sprintf("%s-console-external-certificates", secretName)
 		// update certificates
-		if _, err := createOrReplaceExternalCertSecret(ctx, clientSet, namespace, body.Console, consoleCertSecretName, tenantName); err != nil {
+		certificates := []*models.KeyPairConfiguration{body.Console}
+		if _, err := createOrReplaceExternalCertSecrets(ctx, clientSet, namespace, certificates, consoleCertSecretName, tenantName); err != nil {
 			return err
 		}
 		// restart Console pods
@@ -119,7 +120,8 @@ func tenantUpdateEncryption(ctx context.Context, operatorClient OperatorClientI,
 		if tenant.KESExternalCert() && body.Server != nil {
 			kesExternalCertSecretName := fmt.Sprintf("%s-kes-external-cert", secretName)
 			// update certificates
-			if _, err := createOrReplaceExternalCertSecret(ctx, clientSet, namespace, body.Server, kesExternalCertSecretName, tenantName); err != nil {
+			certificates := []*models.KeyPairConfiguration{body.Server}
+			if _, err := createOrReplaceExternalCertSecrets(ctx, clientSet, namespace, certificates, kesExternalCertSecretName, tenantName); err != nil {
 				return err
 			}
 		}
@@ -127,7 +129,8 @@ func tenantUpdateEncryption(ctx context.Context, operatorClient OperatorClientI,
 		if tenant.ExternalClientCert() && body.Client != nil {
 			tenantExternalClientCertSecretName := fmt.Sprintf("%s-tenant-external-client-cert", secretName)
 			// Update certificates
-			if _, err := createOrReplaceExternalCertSecret(ctx, clientSet, namespace, body.Client, tenantExternalClientCertSecretName, tenantName); err != nil {
+			certificates := []*models.KeyPairConfiguration{body.Client}
+			if _, err := createOrReplaceExternalCertSecrets(ctx, clientSet, namespace, certificates, tenantExternalClientCertSecretName, tenantName); err != nil {
 				return err
 			}
 			// Restart MinIO pods to mount the new client secrets
@@ -202,12 +205,15 @@ func getKESConfiguration(ctx context.Context, clientSet K8sClientI, ns string, e
 	}
 	// Generate server certificates for KES only if autoCert is disabled
 	if !autoCert {
-		kesExternalCertSecret, err := createOrReplaceExternalCertSecret(ctx, clientSet, ns, encryptionCfg.Server, kesExternalCertSecretName, tenantName)
+		certificates := []*models.KeyPairConfiguration{encryptionCfg.Server}
+		certificateSecrets, err := createOrReplaceExternalCertSecrets(ctx, clientSet, ns, certificates, kesExternalCertSecretName, tenantName)
 		if err != nil {
 			return nil, err
 		}
-		// External TLS certificates used by KES
-		kesConfiguration.ExternalCertSecret = kesExternalCertSecret
+		if len(certificateSecrets) > 0 {
+			// External TLS certificates used by KES
+			kesConfiguration.ExternalCertSecret = certificateSecrets[0]
+		}
 	}
 	// Prepare kesConfiguration for KES
 	serverConfigSecret, clientCertSecret, err := createOrReplaceKesConfigurationSecrets(ctx, clientSet, ns, encryptionCfg, kesConfigurationSecretName, kesClientCertSecretName, tenantName)
@@ -221,50 +227,54 @@ func getKESConfiguration(ctx context.Context, clientSet K8sClientI, ns string, e
 	return kesConfiguration, nil
 }
 
-// createOrReplaceExternalCertSecret receives a keypair, public and private key, encoded in base64, decode it and generate a new kubernetes secret
-// to be used by the operator for TLS encryption
-func createOrReplaceExternalCertSecret(ctx context.Context, clientSet K8sClientI, ns string, keyPair *models.KeyPairConfiguration, secretName, tenantName string) (*operator.LocalCertificateReference, error) {
-	if keyPair == nil || keyPair.Crt == nil || keyPair.Key == nil || *keyPair.Crt == "" || *keyPair.Key == "" {
-		return nil, errors.New("certificate files must not be empty")
-	}
-	// delete secret with same name if exists
-	err := clientSet.deleteSecret(ctx, ns, secretName, metav1.DeleteOptions{})
-	if err != nil {
-		// log the error if any and continue
-		log.Println(err)
-	}
-	imm := true
-	tlsCrt, err := base64.StdEncoding.DecodeString(*keyPair.Crt)
-	if err != nil {
-		return nil, err
-	}
-	tlsKey, err := base64.StdEncoding.DecodeString(*keyPair.Key)
-	if err != nil {
-		return nil, err
-	}
-	externalTLSCertificateSecret := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: secretName,
-			Labels: map[string]string{
-				operator.TenantLabel: tenantName,
+// createOrReplaceExternalCertSecrets receives an array of KeyPairs (public and private key), encoded in base64, decode it and generate an equivalent number of kubernetes
+// secrets to be used by the operator for TLS encryption
+func createOrReplaceExternalCertSecrets(ctx context.Context, clientSet K8sClientI, ns string, keyPairs []*models.KeyPairConfiguration, secretName, tenantName string) ([]*operator.LocalCertificateReference, error) {
+	var keyPairSecrets []*operator.LocalCertificateReference
+	for _, keyPair := range keyPairs {
+		if keyPair == nil || keyPair.Crt == nil || keyPair.Key == nil || *keyPair.Crt == "" || *keyPair.Key == "" {
+			return nil, errors.New("certificate files must not be empty")
+		}
+		// delete secret with same name if exists
+		err := clientSet.deleteSecret(ctx, ns, secretName, metav1.DeleteOptions{})
+		if err != nil {
+			// log the error if any and continue
+			log.Println(err)
+		}
+		imm := true
+		tlsCrt, err := base64.StdEncoding.DecodeString(*keyPair.Crt)
+		if err != nil {
+			return nil, err
+		}
+		tlsKey, err := base64.StdEncoding.DecodeString(*keyPair.Key)
+		if err != nil {
+			return nil, err
+		}
+		externalTLSCertificateSecret := &corev1.Secret{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: secretName,
+				Labels: map[string]string{
+					operator.TenantLabel: tenantName,
+				},
 			},
-		},
-		Type:      corev1.SecretTypeTLS,
-		Immutable: &imm,
-		Data: map[string][]byte{
-			"tls.crt": tlsCrt,
-			"tls.key": tlsKey,
-		},
+			Type:      corev1.SecretTypeTLS,
+			Immutable: &imm,
+			Data: map[string][]byte{
+				"tls.crt": tlsCrt,
+				"tls.key": tlsKey,
+			},
+		}
+		_, err = clientSet.createSecret(ctx, ns, externalTLSCertificateSecret, metav1.CreateOptions{})
+		if err != nil {
+			return nil, err
+		}
+		// Certificates used by the minio instance
+		keyPairSecrets = append(keyPairSecrets, &operator.LocalCertificateReference{
+			Name: secretName,
+			Type: "kubernetes.io/tls",
+		})
 	}
-	_, err = clientSet.createSecret(ctx, ns, externalTLSCertificateSecret, metav1.CreateOptions{})
-	if err != nil {
-		return nil, err
-	}
-	// Certificates used by the minio instance
-	return &operator.LocalCertificateReference{
-		Name: secretName,
-		Type: "kubernetes.io/tls",
-	}, nil
+	return keyPairSecrets, nil
 }
 
 func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sClientI, ns string, encryptionCfg *models.EncryptionConfiguration, kesConfigurationSecretName, kesClientCertSecretName, tenantName string) (*corev1.LocalObjectReference, *operator.LocalCertificateReference, error) {
