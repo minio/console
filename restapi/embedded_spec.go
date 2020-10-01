@@ -380,6 +380,48 @@ func init() {
             }
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Object",
+        "operationId": "DeleteObject",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "path",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "version_id",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "name": "recursive",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
       }
     },
     "/buckets/{bucket_name}/replication": {
@@ -4612,6 +4654,48 @@ func init() {
             "schema": {
               "$ref": "#/definitions/listObjectsResponse"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Object",
+        "operationId": "DeleteObject",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "path",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "version_id",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "name": "recursive",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",

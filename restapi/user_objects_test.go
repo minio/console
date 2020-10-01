@@ -25,15 +25,28 @@ import (
 	"time"
 
 	"github.com/minio/console/models"
+	mc "github.com/minio/mc/cmd"
+	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7"
 )
 
 var minioListObjectsMock func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo
+var mcListMock func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
+var mcRemoveMock func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error
 
 // mock function of listObjects() needed for list objects
-
 func (ac minioClientMock) listObjects(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 	return minioListObjectsMock(ctx, bucket, opts)
+}
+
+// implements mc.S3Client.List()
+func (c s3ClientMock) list(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
+	return mcListMock(ctx, opts)
+}
+
+// implements mc.S3Client.Remove()
+func (c s3ClientMock) remove(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error {
+	return mcRemoveMock(ctx, isIncomplete, isRemoveBucket, isBypass, contentCh)
 }
 
 func Test_listObjects(t *testing.T) {
@@ -156,6 +169,171 @@ func Test_listObjects(t *testing.T) {
 				ji, _ := json.Marshal(resp)
 				vi, _ := json.Marshal(tt.expectedResp)
 				t.Errorf("\ngot: %s \nwant: %s", ji, vi)
+			}
+		})
+	}
+}
+
+func Test_deleteObjects(t *testing.T) {
+	ctx := context.Background()
+	client := s3ClientMock{}
+	type args struct {
+		bucket     string
+		path       string
+		versionID  string
+		recursive  bool
+		listFunc   func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
+		removeFunc func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error
+	}
+	tests := []struct {
+		test      string
+		args      args
+		wantError error
+	}{
+		{
+			test: "Remove single object",
+			args: args{
+				path:      "obj.txt",
+				versionID: "",
+				recursive: false,
+				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error {
+					errorCh := make(chan *probe.Error)
+					go func() {
+						defer close(errorCh)
+						for {
+							return
+						}
+					}()
+					return errorCh
+				},
+			},
+			wantError: nil,
+		},
+		{
+			test: "Error on Remove single object",
+			args: args{
+				path:      "obj.txt",
+				versionID: "",
+				recursive: false,
+				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error {
+					errorCh := make(chan *probe.Error)
+					go func() {
+						defer close(errorCh)
+						for {
+							errorCh <- probe.NewError(errors.New("probe error"))
+							return
+						}
+					}()
+					return errorCh
+				},
+			},
+			wantError: errors.New("probe error"),
+		},
+		{
+			test: "Remove multiple objects",
+			args: args{
+				path:      "path/",
+				versionID: "",
+				recursive: true,
+				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error {
+					errorCh := make(chan *probe.Error)
+					go func() {
+						defer close(errorCh)
+						for {
+							return
+						}
+					}()
+					return errorCh
+				},
+				listFunc: func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
+					ch := make(chan *mc.ClientContent)
+					go func() {
+						defer close(ch)
+						for {
+							ch <- &mc.ClientContent{}
+							return
+						}
+					}()
+					return ch
+				},
+			},
+			wantError: nil,
+		},
+		{
+			// Description handle error when error happens on list function
+			// while deleting multiple objects
+			test: "Error on Remove multiple objects 1",
+			args: args{
+				path:      "path/",
+				versionID: "",
+				recursive: true,
+				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error {
+					errorCh := make(chan *probe.Error)
+					go func() {
+						defer close(errorCh)
+						for {
+							return
+						}
+					}()
+					return errorCh
+				},
+				listFunc: func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
+					ch := make(chan *mc.ClientContent)
+					go func() {
+						defer close(ch)
+						for {
+							ch <- &mc.ClientContent{Err: probe.NewError(errors.New("probe error"))}
+							return
+						}
+					}()
+					return ch
+				},
+			},
+			wantError: errors.New("probe error"),
+		},
+		{
+			// Description handle error when error happens on remove function
+			// while deleting multiple objects
+			test: "Error on Remove multiple objects 2",
+			args: args{
+				path:      "path/",
+				versionID: "",
+				recursive: true,
+				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error {
+					errorCh := make(chan *probe.Error)
+					go func() {
+						defer close(errorCh)
+						for {
+							errorCh <- probe.NewError(errors.New("probe error"))
+							return
+						}
+					}()
+					return errorCh
+				},
+				listFunc: func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
+					ch := make(chan *mc.ClientContent)
+					go func() {
+						defer close(ch)
+						for {
+							ch <- &mc.ClientContent{}
+							return
+						}
+					}()
+					return ch
+				},
+			},
+			wantError: errors.New("probe error"),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.test, func(t *testing.T) {
+			mcListMock = tt.args.listFunc
+			mcRemoveMock = tt.args.removeFunc
+			err := deleteObjects(ctx, client, tt.args.bucket, tt.args.path, tt.args.versionID, tt.args.recursive)
+			if !reflect.DeepEqual(err, tt.wantError) {
+				t.Errorf("deleteObjects() error: %v, wantErr: %v", err, tt.wantError)
+				return
 			}
 		})
 	}

@@ -123,6 +123,8 @@ type MCClient interface {
 	addNotificationConfig(ctx context.Context, arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error
 	removeNotificationConfig(ctx context.Context, arn string, event string, prefix string, suffix string) *probe.Error
 	watch(ctx context.Context, options mc.WatchOptions) (*mc.WatchObject, *probe.Error)
+	remove(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error
+	list(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
 }
 
 // Interface implementation
@@ -149,6 +151,14 @@ func (c mcClient) watch(ctx context.Context, options mc.WatchOptions) (*mc.Watch
 
 func (c mcClient) setReplication(ctx context.Context, cfg *replication.Config, opts replication.Options) *probe.Error {
 	return c.client.SetReplication(ctx, cfg, opts)
+}
+
+func (c mcClient) remove(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error {
+	return c.client.Remove(ctx, isIncomplete, isRemoveBucket, isBypass, contentCh)
+}
+
+func (c mcClient) list(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
+	return c.client.List(ctx, opts)
 }
 
 // ConsoleCredentials interface with all functions to be implemented
@@ -274,12 +284,16 @@ func newMinioClient(claims *models.Principal) (*minio.Client, error) {
 }
 
 // newS3BucketClient creates a new mc S3Client to talk to the server based on a bucket
-func newS3BucketClient(claims *models.Principal, bucketName string) (*mc.S3Client, error) {
+func newS3BucketClient(claims *models.Principal, bucketName string, prefix string) (*mc.S3Client, error) {
 	endpoint := getMinIOServer()
 	useTLS := getMinIOEndpointIsSecure()
 
 	if strings.TrimSpace(bucketName) != "" {
 		endpoint += fmt.Sprintf("/%s", bucketName)
+	}
+
+	if strings.TrimSpace(prefix) != "" {
+		endpoint += fmt.Sprintf("/%s", prefix)
 	}
 
 	if claims == nil {

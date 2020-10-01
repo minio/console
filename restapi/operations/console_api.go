@@ -114,6 +114,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIDeleteBucketEventHandler: user_api.DeleteBucketEventHandlerFunc(func(params user_api.DeleteBucketEventParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteBucketEvent has not yet been implemented")
 		}),
+		UserAPIDeleteObjectHandler: user_api.DeleteObjectHandlerFunc(func(params user_api.DeleteObjectParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.DeleteObject has not yet been implemented")
+		}),
 		UserAPIDeleteRemoteBucketHandler: user_api.DeleteRemoteBucketHandlerFunc(func(params user_api.DeleteRemoteBucketParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteRemoteBucket has not yet been implemented")
 		}),
@@ -347,6 +350,8 @@ type ConsoleAPI struct {
 	UserAPIDeleteBucketHandler user_api.DeleteBucketHandler
 	// UserAPIDeleteBucketEventHandler sets the operation handler for the delete bucket event operation
 	UserAPIDeleteBucketEventHandler user_api.DeleteBucketEventHandler
+	// UserAPIDeleteObjectHandler sets the operation handler for the delete object operation
+	UserAPIDeleteObjectHandler user_api.DeleteObjectHandler
 	// UserAPIDeleteRemoteBucketHandler sets the operation handler for the delete remote bucket operation
 	UserAPIDeleteRemoteBucketHandler user_api.DeleteRemoteBucketHandler
 	// UserAPIDeleteServiceAccountHandler sets the operation handler for the delete service account operation
@@ -570,6 +575,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIDeleteBucketEventHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteBucketEventHandler")
+	}
+	if o.UserAPIDeleteObjectHandler == nil {
+		unregistered = append(unregistered, "user_api.DeleteObjectHandler")
 	}
 	if o.UserAPIDeleteRemoteBucketHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteRemoteBucketHandler")
@@ -889,6 +897,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/buckets/{bucket_name}/events/{arn}"] = user_api.NewDeleteBucketEvent(o.context, o.UserAPIDeleteBucketEventHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/buckets/{bucket_name}/objects"] = user_api.NewDeleteObject(o.context, o.UserAPIDeleteObjectHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}

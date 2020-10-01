@@ -185,7 +185,7 @@ func newWebSocketAdminClient(conn *websocket.Conn, autClaims *models.Principal) 
 func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, bucketName string) (*wsS3Client, error) {
 	// Only start Websocket Interaction after user has been
 	// authenticated with MinIO
-	s3Client, err := newS3BucketClient(claims, bucketName)
+	s3Client, err := newS3BucketClient(claims, bucketName, "")
 	if err != nil {
 		log.Println("error creating S3Client:", err)
 		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
