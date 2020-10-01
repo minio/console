@@ -279,6 +279,11 @@ func (ac adminClient) addRemoteBucket(ctx context.Context, bucket string, target
 	return ac.client.SetRemoteTarget(ctx, bucket, target)
 }
 
+// addRemoteBucket sets up a remote target for this bucket
+func (ac adminClient) setBucketQuota(ctx context.Context, bucket string, quota *madmin.BucketQuota) error {
+	return ac.client.SetBucketQuota(ctx, bucket, quota)
+}
+
 func newMAdminClient(sessionClaims *models.Principal) (*madmin.AdminClient, error) {
 	adminClient, err := newAdminFromClaims(sessionClaims)
 	if err != nil {

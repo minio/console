@@ -126,6 +126,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIDeleteTenantHandler: admin_api.DeleteTenantHandlerFunc(func(params admin_api.DeleteTenantParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.DeleteTenant has not yet been implemented")
 		}),
+		UserAPIGetBucketQuotaHandler: user_api.GetBucketQuotaHandlerFunc(func(params user_api.GetBucketQuotaParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.GetBucketQuota has not yet been implemented")
+		}),
 		UserAPIGetBucketReplicationHandler: user_api.GetBucketReplicationHandlerFunc(func(params user_api.GetBucketReplicationParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetBucketReplication has not yet been implemented")
 		}),
@@ -230,6 +233,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		UserAPISessionCheckHandler: user_api.SessionCheckHandlerFunc(func(params user_api.SessionCheckParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.SessionCheck has not yet been implemented")
+		}),
+		UserAPISetBucketQuotaHandler: user_api.SetBucketQuotaHandlerFunc(func(params user_api.SetBucketQuotaParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.SetBucketQuota has not yet been implemented")
 		}),
 		UserAPISetBucketVersioningHandler: user_api.SetBucketVersioningHandlerFunc(func(params user_api.SetBucketVersioningParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.SetBucketVersioning has not yet been implemented")
@@ -358,6 +364,8 @@ type ConsoleAPI struct {
 	UserAPIDeleteServiceAccountHandler user_api.DeleteServiceAccountHandler
 	// AdminAPIDeleteTenantHandler sets the operation handler for the delete tenant operation
 	AdminAPIDeleteTenantHandler admin_api.DeleteTenantHandler
+	// UserAPIGetBucketQuotaHandler sets the operation handler for the get bucket quota operation
+	UserAPIGetBucketQuotaHandler user_api.GetBucketQuotaHandler
 	// UserAPIGetBucketReplicationHandler sets the operation handler for the get bucket replication operation
 	UserAPIGetBucketReplicationHandler user_api.GetBucketReplicationHandler
 	// UserAPIGetBucketVersioningHandler sets the operation handler for the get bucket versioning operation
@@ -428,6 +436,8 @@ type ConsoleAPI struct {
 	AdminAPIRestartServiceHandler admin_api.RestartServiceHandler
 	// UserAPISessionCheckHandler sets the operation handler for the session check operation
 	UserAPISessionCheckHandler user_api.SessionCheckHandler
+	// UserAPISetBucketQuotaHandler sets the operation handler for the set bucket quota operation
+	UserAPISetBucketQuotaHandler user_api.SetBucketQuotaHandler
 	// UserAPISetBucketVersioningHandler sets the operation handler for the set bucket versioning operation
 	UserAPISetBucketVersioningHandler user_api.SetBucketVersioningHandler
 	// AdminAPISetConfigHandler sets the operation handler for the set config operation
@@ -588,6 +598,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.AdminAPIDeleteTenantHandler == nil {
 		unregistered = append(unregistered, "admin_api.DeleteTenantHandler")
 	}
+	if o.UserAPIGetBucketQuotaHandler == nil {
+		unregistered = append(unregistered, "user_api.GetBucketQuotaHandler")
+	}
 	if o.UserAPIGetBucketReplicationHandler == nil {
 		unregistered = append(unregistered, "user_api.GetBucketReplicationHandler")
 	}
@@ -692,6 +705,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPISessionCheckHandler == nil {
 		unregistered = append(unregistered, "user_api.SessionCheckHandler")
+	}
+	if o.UserAPISetBucketQuotaHandler == nil {
+		unregistered = append(unregistered, "user_api.SetBucketQuotaHandler")
 	}
 	if o.UserAPISetBucketVersioningHandler == nil {
 		unregistered = append(unregistered, "user_api.SetBucketVersioningHandler")
@@ -916,6 +932,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/buckets/{name}/quota"] = user_api.NewGetBucketQuota(o.context, o.UserAPIGetBucketQuotaHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/buckets/{bucket_name}/replication"] = user_api.NewGetBucketReplication(o.context, o.UserAPIGetBucketReplicationHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -1053,6 +1073,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/session"] = user_api.NewSessionCheck(o.context, o.UserAPISessionCheckHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/buckets/{name}/quota"] = user_api.NewSetBucketQuota(o.context, o.UserAPISetBucketQuotaHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

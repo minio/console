@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import { Button } from "@material-ui/core";
@@ -31,6 +31,10 @@ import DeleteBucket from "./DeleteBucket";
 import { MinTablePaginationActions } from "../../../../common/MinTablePaginationActions";
 import { CreateIcon } from "../../../../icons";
 import { niceBytes } from "../../../../common/utils";
+import { AppState } from "../../../../store";
+import { connect } from "react-redux";
+import { logMessageReceived, logResetMessages } from "../../Logs/actions";
+import { addBucketOpen, addBucketReset } from "../actions";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -78,248 +82,232 @@ const styles = (theme: Theme) =>
 
 interface IListBucketsProps {
   classes: any;
+  addBucketOpen: typeof addBucketOpen;
+  addBucketModalOpen: boolean;
+  addBucketReset: typeof addBucketReset;
 }
 
-interface IListBucketsState {
-  records: Bucket[];
-  totalRecords: number;
-  loading: boolean;
-  error: string;
-  deleteError: string;
-  addScreenOpen: boolean;
-  page: number;
-  rowsPerPage: number;
-  deleteOpen: boolean;
-  selectedBucket: string;
-  filterBuckets: string;
-}
+const ListBuckets = ({
+  classes,
+  addBucketOpen,
+  addBucketModalOpen,
+  addBucketReset,
+}: IListBucketsProps) => {
+  const [records, setRecords] = useState<Bucket[]>([]);
+  const [totalRecords, setTotalRecords] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [deleteError, setDeleteError] = useState<string>("");
+  const [page, setPage] = useState<number>(0);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+  const [selectedBucket, setSelectedBucket] = useState<string>("");
+  const [filterBuckets, setFilterBuckets] = useState<string>("");
 
-class ListBuckets extends React.Component<
-  IListBucketsProps,
-  IListBucketsState
-> {
-  state: IListBucketsState = {
-    records: [],
-    totalRecords: 0,
-    loading: false,
-    error: "",
-    deleteError: "",
-    addScreenOpen: false,
-    page: 0,
-    rowsPerPage: 10,
-    deleteOpen: false,
-    selectedBucket: "",
-    filterBuckets: "",
+  useEffect(() => {
+    if (loading) {
+      const fetchRecords = () => {
+        setLoading(true);
+        const offset = page * rowsPerPage;
+        api
+          .invoke(
+            "GET",
+            `/api/v1/buckets?offset=${offset}&limit=${rowsPerPage}`
+          )
+          .then((res: BucketList) => {
+            setLoading(false);
+            setRecords(res.buckets || []);
+            setTotalRecords(!res.buckets ? 0 : res.total);
+            setError("");
+            // if we get 0 results, and page > 0 , go down 1 page
+            if (
+              (res.buckets === undefined ||
+                res.buckets == null ||
+                res.buckets.length === 0) &&
+              page > 0
+            ) {
+              const newPage = page - 1;
+              setPage(newPage);
+              setLoading(true);
+            }
+          })
+          .catch((err: any) => {
+            setLoading(false);
+            setError(err);
+          });
+      };
+      fetchRecords();
+    }
+  }, [loading, page, rowsPerPage]);
+
+  const closeAddModalAndRefresh = () => {
+    addBucketOpen(false);
+    addBucketReset();
+    setLoading(true);
   };
 
-  fetchRecords() {
-    this.setState({ loading: true }, () => {
-      const { page, rowsPerPage } = this.state;
-      const offset = page * rowsPerPage;
-      api
-        .invoke("GET", `/api/v1/buckets?offset=${offset}&limit=${rowsPerPage}`)
-        .then((res: BucketList) => {
-          this.setState({
-            loading: false,
-            records: res.buckets || [],
-            totalRecords: !res.buckets ? 0 : res.total,
-            error: "",
-          });
-          // if we get 0 results, and page > 0 , go down 1 page
-          if (
-            (res.buckets === undefined ||
-              res.buckets == null ||
-              res.buckets.length === 0) &&
-            page > 0
-          ) {
-            const newPage = page - 1;
-            this.setState({ page: newPage }, () => {
-              this.fetchRecords();
-            });
-          }
-        })
-        .catch((err: any) => {
-          this.setState({ loading: false, error: err });
-        });
-    });
-  }
+  const closeDeleteModalAndRefresh = (refresh: boolean) => {
+    setDeleteOpen(false);
+    if (refresh) {
+      setLoading(true);
+    }
+  };
 
-  closeAddModalAndRefresh() {
-    this.setState({ addScreenOpen: false }, () => {
-      this.fetchRecords();
-    });
-  }
+  useEffect(() => {
+    setLoading(true);
+  }, []);
 
-  closeDeleteModalAndRefresh(refresh: boolean) {
-    this.setState({ deleteOpen: false }, () => {
-      if (refresh) {
-        this.fetchRecords();
-      }
-    });
-  }
+  useEffect(() => {
+    setLoading(true);
+  }, [page, rowsPerPage]);
 
-  componentDidMount(): void {
-    this.fetchRecords();
-  }
+  const confirmDeleteBucket = (bucket: string) => {
+    setDeleteOpen(true);
+    setSelectedBucket(bucket);
+  };
 
-  bucketFilter(): void {}
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
 
-  render() {
-    const { classes } = this.props;
-    const {
-      records,
-      totalRecords,
-      addScreenOpen,
-      loading,
-      page,
-      rowsPerPage,
-      deleteOpen,
-      selectedBucket,
-      filterBuckets,
-    } = this.state;
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const rPP = parseInt(event.target.value, 10);
+    setPage(0);
+    setRowsPerPage(rPP);
+  };
+  const tableActions = [
+    { type: "view", to: `/buckets`, sendOnlyId: true },
+    { type: "delete", onClick: confirmDeleteBucket, sendOnlyId: true },
+  ];
 
-    const offset = page * rowsPerPage;
+  const offset = page * rowsPerPage;
 
-    const handleChangePage = (event: unknown, newPage: number) => {
-      this.setState({ page: newPage });
-    };
+  const displayParsedDate = (date: string) => {
+    return <Moment>{date}</Moment>;
+  };
 
-    const handleChangeRowsPerPage = (
-      event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-      const rPP = parseInt(event.target.value, 10);
-      this.setState({ page: 0, rowsPerPage: rPP });
-    };
-
-    const confirmDeleteBucket = (bucket: string) => {
-      this.setState({ deleteOpen: true, selectedBucket: bucket });
-    };
-
-    const tableActions = [
-      { type: "view", to: `/buckets`, sendOnlyId: true },
-      { type: "delete", onClick: confirmDeleteBucket, sendOnlyId: true },
-    ];
-
-    const displayParsedDate = (date: string) => {
-      return <Moment>{date}</Moment>;
-    };
-
-    const filteredRecords = records
-      .filter((b: Bucket) => {
-        if (filterBuckets === "") {
+  const filteredRecords = records
+    .filter((b: Bucket) => {
+      if (filterBuckets === "") {
+        return true;
+      } else {
+        if (b.name.indexOf(filterBuckets) >= 0) {
           return true;
         } else {
-          if (b.name.indexOf(filterBuckets) >= 0) {
-            return true;
-          } else {
-            return false;
-          }
+          return false;
         }
-      })
-      .slice(offset, offset + rowsPerPage);
+      }
+    })
+    .slice(offset, offset + rowsPerPage);
 
-    return (
-      <React.Fragment>
-        {addScreenOpen && (
-          <AddBucket
-            open={addScreenOpen}
-            closeModalAndRefresh={() => {
-              this.closeAddModalAndRefresh();
-            }}
-          />
-        )}
-        {deleteOpen && (
-          <DeleteBucket
-            deleteOpen={deleteOpen}
-            selectedBucket={selectedBucket}
-            closeDeleteModalAndRefresh={(refresh: boolean) => {
-              this.closeDeleteModalAndRefresh(refresh);
-            }}
-          />
-        )}
-        <Grid container>
-          <Grid item xs={12}>
-            <Typography variant="h6">Buckets</Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12} className={classes.actionsTray}>
-            <TextField
-              placeholder="Search Buckets"
-              className={classes.searchField}
-              id="search-resource"
-              label=""
-              onChange={(val) => {
-                this.setState({
-                  filterBuckets: val.target.value,
-                });
-              }}
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<CreateIcon />}
-              onClick={() => {
-                this.setState({
-                  addScreenOpen: true,
-                });
-              }}
-            >
-              Create Bucket
-            </Button>
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12}>
-            <TableWrapper
-              itemActions={tableActions}
-              columns={[
-                { label: "Name", elementKey: "name" },
-                {
-                  label: "Creation Date",
-                  elementKey: "creation_date",
-                  renderFunction: displayParsedDate,
-                },
-                {
-                  label: "Size",
-                  elementKey: "size",
-                  renderFunction: niceBytes,
-                },
-              ]}
-              isLoading={loading}
-              records={filteredRecords}
-              entityName="Buckets"
-              idField="name"
-              paginatorConfig={{
-                rowsPerPageOptions: [5, 10, 25],
-                colSpan: 3,
-                count: totalRecords,
-                rowsPerPage: rowsPerPage,
-                page: page,
-                SelectProps: {
-                  inputProps: { "aria-label": "rows per page" },
-                  native: true,
-                },
-                onChangePage: handleChangePage,
-                onChangeRowsPerPage: handleChangeRowsPerPage,
-                ActionsComponent: MinTablePaginationActions,
-              }}
-            />
-          </Grid>
+  return (
+    <React.Fragment>
+      {addBucketModalOpen && (
+        <AddBucket
+          open={addBucketModalOpen}
+          closeModalAndRefresh={() => {
+            closeAddModalAndRefresh();
+          }}
+        />
+      )}
+      {deleteOpen && (
+        <DeleteBucket
+          deleteOpen={deleteOpen}
+          selectedBucket={selectedBucket}
+          closeDeleteModalAndRefresh={(refresh: boolean) => {
+            closeDeleteModalAndRefresh(refresh);
+          }}
+        />
+      )}
+      <Grid container>
+        <Grid item xs={12}>
+          <Typography variant="h6">Buckets</Typography>
         </Grid>
-      </React.Fragment>
-    );
-  }
-}
+        <Grid item xs={12}>
+          <br />
+        </Grid>
+        <Grid item xs={12} className={classes.actionsTray}>
+          <TextField
+            placeholder="Search Buckets"
+            className={classes.searchField}
+            id="search-resource"
+            label=""
+            onChange={(val) => {
+              setFilterBuckets(val.target.value);
+            }}
+            InputProps={{
+              disableUnderline: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<CreateIcon />}
+            onClick={() => {
+              addBucketOpen(true);
+            }}
+          >
+            Create Bucket
+          </Button>
+        </Grid>
+        <Grid item xs={12}>
+          <br />
+        </Grid>
+        <Grid item xs={12}>
+          <TableWrapper
+            itemActions={tableActions}
+            columns={[
+              { label: "Name", elementKey: "name" },
+              {
+                label: "Creation Date",
+                elementKey: "creation_date",
+                renderFunction: displayParsedDate,
+              },
+              {
+                label: "Size",
+                elementKey: "size",
+                renderFunction: niceBytes,
+              },
+            ]}
+            isLoading={loading}
+            records={filteredRecords}
+            entityName="Buckets"
+            idField="name"
+            paginatorConfig={{
+              rowsPerPageOptions: [5, 10, 25],
+              colSpan: 3,
+              count: totalRecords,
+              rowsPerPage: rowsPerPage,
+              page: page,
+              SelectProps: {
+                inputProps: { "aria-label": "rows per page" },
+                native: true,
+              },
+              onChangePage: handleChangePage,
+              onChangeRowsPerPage: handleChangeRowsPerPage,
+              ActionsComponent: MinTablePaginationActions,
+            }}
+          />
+        </Grid>
+      </Grid>
+    </React.Fragment>
+  );
+};
 
-export default withStyles(styles)(ListBuckets);
+const mapState = (state: AppState) => ({
+  addBucketModalOpen: state.buckets.open,
+});
+
+const connector = connect(mapState, {
+  addBucketOpen: addBucketOpen,
+  addBucketReset: addBucketReset,
+});
+
+export default connector(withStyles(styles)(ListBuckets));

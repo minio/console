@@ -307,6 +307,51 @@ paths:
       tags:
         - UserAPI
 
+  /buckets/{name}/quota:
+    get:
+      summary: Get Bucket Quota
+      operationId: GetBucketQuota
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listObjectsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    put:
+      summary: Bucket Quota
+      operationId: SetBucketQuota
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/setBucketQuota"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucket"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /buckets/{bucket_name}/events:
     get:
       summary: List Bucket Events
@@ -1626,6 +1671,8 @@ definitions:
         type: string
       versioning:
         type: boolean
+      quota:
+        $ref: "#/definitions/setBucketQuota"
   error:
     type: object
     required:
@@ -1937,6 +1984,20 @@ definitions:
     properties:
       access:
         $ref: "#/definitions/bucketAccess"
+  setBucketQuota:
+    type: object
+    required:
+      - enabled
+    properties:
+      enabled:
+        type: boolean
+      quota_type:
+        type: string
+        enum:
+          - fifo
+          - hard
+      amount:
+        type: integer
   loginDetails:
     type: object
     properties:

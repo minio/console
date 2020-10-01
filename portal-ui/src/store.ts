@@ -21,6 +21,7 @@ import { traceReducer } from "./screens/Console/Trace/reducers";
 import { logReducer } from "./screens/Console/Logs/reducers";
 import { watchReducer } from "./screens/Console/Watch/reducers";
 import { consoleReducer } from "./screens/Console/reducer";
+import { bucketsReducer } from "./screens/Console/Buckets/reducers";
 
 const globalReducer = combineReducers({
   system: systemReducer,
@@ -28,6 +29,7 @@ const globalReducer = combineReducers({
   logs: logReducer,
   watch: watchReducer,
   console: consoleReducer,
+  buckets: bucketsReducer,
 });
 
 declare global {

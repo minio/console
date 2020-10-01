@@ -25,6 +25,7 @@ import { connect } from "react-redux";
 import { AppState } from "./store";
 import { userLoggedIn } from "./actions";
 import LoginCallback from "./screens/LoginPage/LoginCallback";
+import { hot } from "react-hot-loader/root";
 
 const isLoggedIn = () => {
   return (
@@ -75,4 +76,4 @@ class Routes extends React.Component<RoutesProps> {
   }
 }
 
-export default connector(Routes);
+export default hot(connector(Routes));

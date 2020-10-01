@@ -296,6 +296,20 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 			log.Println("error versioning bucket:", err)
 		}
 	}
+	// if it has support for
+	if br.Quota != nil && br.Quota.Enabled != nil && *br.Quota.Enabled {
+		mAdmin, err := newMAdminClient(session)
+		if err != nil {
+			return prepareError(err)
+		}
+		// create a minioClient interface implementation
+		// defining the client to be used
+		adminClient := adminClient{client: mAdmin}
+		// we will tolerate this call failing
+		if err := setBucketQuota(ctx, &adminClient, br.Name, br.Quota); err != nil {
+			log.Println("error versioning bucket:", err)
+		}
+	}
 	return nil
 }
 
