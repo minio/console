@@ -49,6 +49,7 @@ interface IColumns {
   elementKey: string;
   sortable?: boolean;
   renderFunction?: (input: any) => any;
+  globalClass?: any;
 }
 
 interface IPaginatorConfig {
@@ -161,7 +162,10 @@ const styles = (theme: Theme) =>
 const titleColumnsMap = (columns: IColumns[]) => {
   return columns.map((column: IColumns, index: number) => {
     return (
-      <TableCell key={`tbCT-${column.elementKey}-${index}`}>
+      <TableCell
+        key={`tbCT-${column.elementKey}-${index}`}
+        className={column.globalClass}
+      >
         {column.label}
       </TableCell>
     );
@@ -279,7 +283,10 @@ const TableWrapper = ({
                   </TableCell>
                 )}
                 {titleColumnsMap(columns)}
-                {itemActions && itemActions.length > 0 && (
+                {((itemActions && itemActions.length > 1) ||
+                  (itemActions &&
+                    itemActions.length === 1 &&
+                    itemActions[0].type !== "view")) && (
                   <TableCell
                     align="center"
                     className={classes.actionsContainer}
@@ -329,7 +336,10 @@ const TableWrapper = ({
                       </TableCell>
                     )}
                     {rowColumnsMap(columns, record, classes, isSelected)}
-                    {itemActions && itemActions.length > 0 && (
+                    {((itemActions && itemActions.length > 1) ||
+                      (itemActions &&
+                        itemActions.length === 1 &&
+                        itemActions[0].type !== "view")) && (
                       <TableCell
                         align="center"
                         className={classes.actionsContainer}
