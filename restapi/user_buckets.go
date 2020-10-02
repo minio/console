@@ -132,7 +132,7 @@ func getAddBucketReplicationdResponse(session *models.Principal, bucketName stri
 	}
 	maxPrio++
 
-	s3Client, err := newS3BucketClient(session, bucketName)
+	s3Client, err := newS3BucketClient(session, bucketName, "")
 	if err != nil {
 		log.Println("error creating S3Client:", err)
 		return err

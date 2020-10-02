@@ -251,6 +251,35 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
+    delete:
+      summary: Delete Object
+      operationId: DeleteObject
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: path
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: false
+          type: string
+        - name: recursive
+          in: query
+          required: false
+          type: boolean
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
 
   /buckets/{name}/set-policy:
     put:
