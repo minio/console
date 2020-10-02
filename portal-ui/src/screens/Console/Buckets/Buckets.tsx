@@ -1,4 +1,4 @@
-// This file is part of MinIO Buckets Server
+// This file is part of MinIO Console Server
 // Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@ import {
   createStyles,
   StyledProps,
   Theme,
-  withStyles
+  withStyles,
 } from "@material-ui/core/styles";
 
 import history from "../../../history";
@@ -28,7 +28,7 @@ import {
   RouteComponentProps,
   Router,
   Switch,
-  withRouter
+  withRouter,
 } from "react-router-dom";
 import { connect } from "react-redux";
 import { AppState } from "../../../store";
@@ -41,62 +41,62 @@ import ViewBucket from "./ViewBucket/ViewBucket";
 const styles = (theme: Theme) =>
   createStyles({
     root: {
-      display: "flex"
+      display: "flex",
     },
     toolbar: {
       background: theme.palette.background.default,
       color: "black",
-      paddingRight: 24 // keep right padding when drawer closed
+      paddingRight: 24, // keep right padding when drawer closed
     },
     toolbarIcon: {
       display: "flex",
       alignItems: "center",
       justifyContent: "flex-end",
       padding: "0 8px",
-      ...theme.mixins.toolbar
+      ...theme.mixins.toolbar,
     },
     appBar: {
       zIndex: theme.zIndex.drawer + 1,
       transition: theme.transitions.create(["width", "margin"], {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen
-      })
+        duration: theme.transitions.duration.leavingScreen,
+      }),
     },
 
     menuButton: {
-      marginRight: 36
+      marginRight: 36,
     },
     menuButtonHidden: {
-      display: "none"
+      display: "none",
     },
     title: {
-      flexGrow: 1
+      flexGrow: 1,
     },
     appBarSpacer: {
-      height: "5px"
+      height: "5px",
     },
     content: {
       flexGrow: 1,
       height: "100vh",
-      overflow: "auto"
+      overflow: "auto",
     },
     container: {
       paddingTop: theme.spacing(4),
-      paddingBottom: theme.spacing(4)
+      paddingBottom: theme.spacing(4),
     },
     paper: {
       padding: theme.spacing(2),
       display: "flex",
       overflow: "auto",
-      flexDirection: "column"
+      flexDirection: "column",
     },
     fixedHeight: {
-      minHeight: 240
-    }
+      minHeight: 240,
+    },
   });
 
 const mapState = (state: AppState) => ({
-  open: state.system.sidebarOpen
+  open: state.system.sidebarOpen,
 });
 
 const connector = connect(mapState, { setMenuOpen });
