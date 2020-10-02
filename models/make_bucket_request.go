@@ -38,6 +38,9 @@ type MakeBucketRequest struct {
 	// Required: true
 	Name *string `json:"name"`
 
+	// quota
+	Quota *SetBucketQuota `json:"quota,omitempty"`
+
 	// versioning
 	Versioning bool `json:"versioning,omitempty"`
 }
@@ -47,6 +50,10 @@ func (m *MakeBucketRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateQuota(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -60,6 +67,24 @@ func (m *MakeBucketRequest) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *MakeBucketRequest) validateQuota(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Quota) { // not required
+		return nil
+	}
+
+	if m.Quota != nil {
+		if err := m.Quota.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("quota")
+			}
+			return err
+		}
 	}
 
 	return nil

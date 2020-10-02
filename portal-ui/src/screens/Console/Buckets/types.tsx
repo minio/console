@@ -67,3 +67,15 @@ export interface BucketReplicationRule {
 export interface BucketReplication {
   rules: BucketReplicationRule[];
 }
+
+export interface QuotaRequest {
+  enabled: boolean;
+  quota_type: string;
+  amount: number;
+}
+
+export interface MakeBucketRequest {
+  name: string;
+  versioning: boolean;
+  quota?: QuotaRequest;
+}

@@ -611,6 +611,74 @@ func init() {
         }
       }
     },
+    "/buckets/{name}/quota": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Get Bucket Quota",
+        "operationId": "GetBucketQuota",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listObjectsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Bucket Quota",
+        "operationId": "SetBucketQuota",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/setBucketQuota"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bucket"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{name}/set-policy": {
       "put": {
         "tags": [
@@ -3233,6 +3301,9 @@ func init() {
         "name": {
           "type": "string"
         },
+        "quota": {
+          "$ref": "#/definitions/setBucketQuota"
+        },
         "versioning": {
           "type": "boolean"
         }
@@ -3709,6 +3780,27 @@ func init() {
       "properties": {
         "access": {
           "$ref": "#/definitions/bucketAccess"
+        }
+      }
+    },
+    "setBucketQuota": {
+      "type": "object",
+      "required": [
+        "enabled"
+      ],
+      "properties": {
+        "amount": {
+          "type": "integer"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "quota_type": {
+          "type": "string",
+          "enum": [
+            "fifo",
+            "hard"
+          ]
         }
       }
     },
@@ -4883,6 +4975,74 @@ func init() {
         "responses": {
           "204": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{name}/quota": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Get Bucket Quota",
+        "operationId": "GetBucketQuota",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listObjectsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Bucket Quota",
+        "operationId": "SetBucketQuota",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/setBucketQuota"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bucket"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -8038,6 +8198,9 @@ func init() {
         "name": {
           "type": "string"
         },
+        "quota": {
+          "$ref": "#/definitions/setBucketQuota"
+        },
         "versioning": {
           "type": "boolean"
         }
@@ -8448,6 +8611,27 @@ func init() {
       "properties": {
         "access": {
           "$ref": "#/definitions/bucketAccess"
+        }
+      }
+    },
+    "setBucketQuota": {
+      "type": "object",
+      "required": [
+        "enabled"
+      ],
+      "properties": {
+        "amount": {
+          "type": "integer"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "quota_type": {
+          "type": "string",
+          "enum": [
+            "fifo",
+            "hard"
+          ]
         }
       }
     },
