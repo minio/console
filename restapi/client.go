@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/minio/minio-go/v7/pkg/replication"
 
@@ -54,6 +55,8 @@ type MinioClient interface {
 	getBucketNotification(ctx context.Context, bucketName string) (config notification.Configuration, err error)
 	getBucketPolicy(ctx context.Context, bucketName string) (string, error)
 	listObjects(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo
+	getObjectRetention(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error)
+	getObjectLegalHold(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error)
 }
 
 // Interface implementation
@@ -114,6 +117,14 @@ func (c minioClient) getBucketReplication(ctx context.Context, bucketName string
 // implements minio.listObjects(ctx)
 func (c minioClient) listObjects(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 	return c.client.ListObjects(ctx, bucket, opts)
+}
+
+func (c minioClient) getObjectRetention(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
+	return c.client.GetObjectRetention(ctx, bucketName, objectName, versionID)
+}
+
+func (c minioClient) getObjectLegalHold(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
+	return c.client.GetObjectLegalHold(ctx, bucketName, objectName, opts)
 }
 
 // MCClient interface with all functions to be implemented

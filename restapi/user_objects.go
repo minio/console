@@ -19,6 +19,7 @@ package restapi
 import (
 	"context"
 	"fmt"
+	"log"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -29,6 +30,7 @@ import (
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/user_api"
 	mc "github.com/minio/mc/cmd"
+	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7"
 )
 
@@ -62,11 +64,15 @@ func getListObjectsResponse(session *models.Principal, params user_api.ListObjec
 	defer cancel()
 	var prefix string
 	var recursive bool
+	var withVersions bool
 	if params.Prefix != nil {
 		prefix = *params.Prefix
 	}
 	if params.Recursive != nil {
 		recursive = *params.Recursive
+	}
+	if params.WithVersions != nil {
+		withVersions = *params.WithVersions
 	}
 	// bucket request needed to proceed
 	if params.BucketName == "" {
@@ -80,7 +86,7 @@ func getListObjectsResponse(session *models.Principal, params user_api.ListObjec
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 
-	objs, err := listBucketObjects(ctx, minioClient, params.BucketName, prefix, recursive)
+	objs, err := listBucketObjects(ctx, minioClient, params.BucketName, prefix, recursive, withVersions)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -93,17 +99,50 @@ func getListObjectsResponse(session *models.Principal, params user_api.ListObjec
 }
 
 // listBucketObjects gets an array of objects in a bucket
-func listBucketObjects(ctx context.Context, client MinioClient, bucketName string, prefix string, recursive bool) ([]*models.BucketObject, error) {
+func listBucketObjects(ctx context.Context, client MinioClient, bucketName string, prefix string, recursive, withVersions bool) ([]*models.BucketObject, error) {
 	var objects []*models.BucketObject
-	for lsObj := range client.listObjects(ctx, bucketName, minio.ListObjectsOptions{Prefix: prefix, Recursive: recursive}) {
+	for lsObj := range client.listObjects(ctx, bucketName, minio.ListObjectsOptions{Prefix: prefix, Recursive: recursive, WithVersions: withVersions}) {
 		if lsObj.Err != nil {
 			return nil, lsObj.Err
 		}
 		obj := &models.BucketObject{
-			Name:         lsObj.Key,
-			Size:         lsObj.Size,
-			LastModified: lsObj.LastModified.String(),
-			ContentType:  lsObj.ContentType,
+			Name:           lsObj.Key,
+			Size:           lsObj.Size,
+			LastModified:   lsObj.LastModified.String(),
+			ContentType:    lsObj.ContentType,
+			VersionID:      lsObj.VersionID,
+			IsLatest:       lsObj.IsLatest,
+			IsDeleteMarker: lsObj.IsDeleteMarker,
+			UserTags:       lsObj.UserTags,
+		}
+		if !lsObj.IsDeleteMarker {
+			// Add Legal Hold Status if available
+			legalHoldStatus, err := client.getObjectLegalHold(ctx, bucketName, lsObj.Key, minio.GetObjectLegalHoldOptions{VersionID: lsObj.VersionID})
+			if err != nil {
+				errResp := minio.ToErrorResponse(probe.NewError(err).ToGoError())
+				if errResp.Code != "NoSuchObjectLockConfiguration" {
+					log.Printf("error getting legal hold status for %s : %s", lsObj.VersionID, err)
+				}
+
+			} else {
+				if legalHoldStatus != nil {
+					obj.LegalHoldStatus = string(*legalHoldStatus)
+				}
+			}
+			// Add Retention Status if available
+			retention, retUntilDate, err := client.getObjectRetention(ctx, bucketName, lsObj.Key, lsObj.VersionID)
+			if err != nil {
+				errResp := minio.ToErrorResponse(probe.NewError(err).ToGoError())
+				if errResp.Code != "NoSuchObjectLockConfiguration" {
+					log.Printf("error getting retention status for %s : %s", lsObj.VersionID, err)
+				}
+			} else {
+				if retention != nil && retUntilDate != nil {
+					date := *retUntilDate
+					obj.RetentionMode = string(*retention)
+					obj.RetentionUntilDate = date.String()
+				}
+			}
 		}
 		objects = append(objects, obj)
 	}
