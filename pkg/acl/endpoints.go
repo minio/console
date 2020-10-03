@@ -40,7 +40,7 @@ var (
 	heal              = "/heal"
 	remoteBuckets     = "/remote-buckets"
 	replication       = "/replication"
-	objectBrowser     = "/object-browser/:bucket?/*"
+	objectBrowser     = "/object-browser/:bucket?"
 	mainObjectBrowser = "/object-browser"
 )
 

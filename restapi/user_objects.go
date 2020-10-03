@@ -161,6 +161,7 @@ func deleteMultipleObjects(ctx context.Context, client MCClient, recursive bool)
 	contentCh := make(chan *mc.ClientContent, 1)
 
 	errorCh := client.remove(ctx, isIncomplete, isRemoveBucket, isBypass, contentCh)
+OUTER_LOOP:
 	for content := range client.list(ctx, listOpts) {
 		if content.Err != nil {
 			switch content.Err.ToGoError().(type) {
@@ -184,8 +185,7 @@ func deleteMultipleObjects(ctx context.Context, client MCClient, recursive bool)
 					// Ignore Permission error.
 					continue
 				}
-				close(contentCh)
-				return pErr.Cause
+				break OUTER_LOOP
 			}
 		}
 	}
