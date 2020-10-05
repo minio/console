@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
+	"github.com/minio/minio/pkg/madmin"
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 )
 
@@ -83,6 +84,11 @@ func prepareError(err ...error) *models.Error {
 		}
 		// console invalid session error
 		if errors.Is(err[0], errorGenericInvalidSession) {
+			errorCode = 401
+			errorMessage = errorGenericInvalidSession.Error()
+		}
+		// console invalid session error
+		if madmin.ToErrorResponse(err[0]).Code == "XMinioAdminNoSuchUser" {
 			errorCode = 401
 			errorMessage = errorGenericInvalidSession.Error()
 		}
