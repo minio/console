@@ -2479,8 +2479,9 @@ definitions:
     type: object
     properties:
       minio:
-        type: object
-        $ref: "#/definitions/keyPairConfiguration"
+        type: array
+        items:
+          $ref: "#/definitions/keyPairConfiguration"
       console:
         type: object
         $ref: "#/definitions/keyPairConfiguration"
