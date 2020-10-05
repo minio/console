@@ -25,6 +25,8 @@ import { niceBytes, timeFromDate } from "../../../common/utils";
 import { wsProtocol } from "../../../utils/wsUtils";
 import api from "../../../common/api";
 import { FormControl, MenuItem, Select } from "@material-ui/core";
+import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
+import PageHeader from "../Common/PageHeader/PageHeader";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -65,6 +67,7 @@ const styles = (theme: Theme) =>
       minWidth: "206px",
       boxShadow: "0px 3px 6px #00000012",
     },
+    ...containerForHeader(theme.spacing(4)),
   });
 
 interface IWatch {
@@ -155,94 +158,91 @@ const Watch = ({
   }));
   return (
     <React.Fragment>
+      <PageHeader label="Watch" />
       <Grid container>
-        <Grid item xs={12}>
-          <Typography variant="h6">Watch</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
-        <Grid item xs={12} className={classes.actionsTray}>
-          <FormControl variant="outlined">
-            <Select
-              id="bucket-name"
-              name="bucket-name"
-              value={bucketName}
-              onChange={(e) => {
-                setBucketName(e.target.value as string);
-              }}
-              className={classes.fieldContainer}
-              disabled={start}
-            >
-              <MenuItem
+        <Grid item xs={12} className={classes.container}>
+          <Grid item xs={12} className={classes.actionsTray}>
+            <FormControl variant="outlined">
+              <Select
+                id="bucket-name"
+                name="bucket-name"
                 value={bucketName}
-                key={`select-bucket-name-default`}
-                disabled={true}
+                onChange={(e) => {
+                  setBucketName(e.target.value as string);
+                }}
+                className={classes.fieldContainer}
+                disabled={start}
               >
-                Select Bucket
-              </MenuItem>
-              {bucketNames.map((option) => (
                 <MenuItem
-                  value={option.value}
-                  key={`select-bucket-name-${option.label}`}
+                  value={bucketName}
+                  key={`select-bucket-name-default`}
+                  disabled={true}
                 >
-                  {option.label}
+                  Select Bucket
                 </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <TextField
-            placeholder="Prefix"
-            className={classes.inputField}
-            id="prefix-resource"
-            label=""
-            disabled={start}
-            InputProps={{
-              disableUnderline: true,
-            }}
-            onChange={(e) => {
-              setPrefix(e.target.value);
-            }}
-          />
-          <TextField
-            placeholder="Suffix"
-            className={classes.inputField}
-            id="suffix-resource"
-            label=""
-            disabled={start}
-            InputProps={{
-              disableUnderline: true,
-            }}
-            onChange={(e) => {
-              setSuffix(e.target.value);
-            }}
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={start}
-            onClick={() => setStart(true)}
-          >
-            Start
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <br />
+                {bucketNames.map((option) => (
+                  <MenuItem
+                    value={option.value}
+                    key={`select-bucket-name-${option.label}`}
+                  >
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField
+              placeholder="Prefix"
+              className={classes.inputField}
+              id="prefix-resource"
+              label=""
+              disabled={start}
+              InputProps={{
+                disableUnderline: true,
+              }}
+              onChange={(e) => {
+                setPrefix(e.target.value);
+              }}
+            />
+            <TextField
+              placeholder="Suffix"
+              className={classes.inputField}
+              id="suffix-resource"
+              label=""
+              disabled={start}
+              InputProps={{
+                disableUnderline: true,
+              }}
+              onChange={(e) => {
+                setSuffix(e.target.value);
+              }}
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={start}
+              onClick={() => setStart(true)}
+            >
+              Start
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            <br />
+          </Grid>
+          <div className={classes.watchList}>
+            <ul>
+              {messages.map((m) => {
+                return (
+                  <li key={m.key}>
+                    {timeFromDate(m.Time)} - {niceBytes(m.Size + "")} - {m.Type}{" "}
+                    - {m.Path}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </Grid>
       </Grid>
-      <div className={classes.watchList}>
-        <ul>
-          {messages.map((m) => {
-            return (
-              <li key={m.key}>
-                {timeFromDate(m.Time)} - {niceBytes(m.Size + "")} - {m.Type} -{" "}
-                {m.Path}
-              </li>
-            );
-          })}
-        </ul>
-      </div>
     </React.Fragment>
   );
 };

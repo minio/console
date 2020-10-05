@@ -79,3 +79,19 @@ export const checkboxIcons = {
     backgroundColor: "#201763",
   },
 };
+
+export const containerForHeader = (bottomSpacing: any) => ({
+  container: {
+    padding: "110px 33px 30px",
+    paddingBottom: bottomSpacing,
+    "& h6": {
+      color: "#777777",
+      fontSize: 14,
+    },
+    "& p": {
+      "& span": {
+        fontSize: 16,
+      },
+    },
+  },
+});

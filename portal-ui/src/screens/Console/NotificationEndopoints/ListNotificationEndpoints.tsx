@@ -27,7 +27,7 @@ import { MinTablePaginationActions } from "../../../common/MinTablePaginationAct
 import {
   NotificationEndpointItem,
   NotificationEndpointsList,
-  TransformedEndpointItem
+  TransformedEndpointItem,
 } from "./types";
 import { notificationTransform } from "./utils";
 import { CreateIcon } from "../../../icons";
@@ -35,6 +35,8 @@ import api from "../../../common/api";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import AddNotificationEndpoint from "./AddNotificationEndpoint";
+import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
+import PageHeader from "../Common/PageHeader/PageHeader";
 
 interface IListNotificationEndpoints {
   classes: any;
@@ -43,29 +45,30 @@ interface IListNotificationEndpoints {
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     strongText: {
-      fontWeight: 700
+      fontWeight: 700,
     },
     keyName: {
-      marginLeft: 5
+      marginLeft: 5,
     },
     actionsTray: {
       textAlign: "right",
       "& button": {
-        marginLeft: 10
-      }
+        marginLeft: 10,
+      },
     },
     searchField: {
       background: "#FFFFFF",
       padding: 12,
       borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012"
+      boxShadow: "0px 3px 6px #00000012",
     },
     iconText: {
-      lineHeight: "24px"
-    }
+      lineHeight: "24px",
+    },
+    ...containerForHeader(theme.spacing(4)),
   });
 
 const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
@@ -96,7 +99,7 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
             setError("");
             setIsLoading(false);
           })
-          .catch(err => {
+          .catch((err) => {
             setError(err);
             setIsLoading(false);
           });
@@ -115,8 +118,8 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
       type: "delete",
       onClick: (row: any) => {
         //confirmDeleteBucket(row.name);
-      }
-    }
+      },
+    },
   ];
 
   const filteredRecords = records.filter((b: TransformedEndpointItem) => {
@@ -136,7 +139,7 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
       <div
         style={{
           display: "flex",
-          alignItems: "center"
+          alignItems: "center",
         }}
       >
         <FiberManualRecordIcon
@@ -158,83 +161,80 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
           }}
         />
       )}
+      <PageHeader label="Lambda Notification Targets" />
       <Grid container>
-        <Grid item xs={12}>
-          <Typography variant="h6">Lambda Notification Targets</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
-        {error !== "" && <Grid container>{error}</Grid>}
-        <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
-            placeholder="Filter"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            onChange={event => {
-              setFilter(event.target.value);
-            }}
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              )
-            }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<CreateIcon />}
-            onClick={() => {
-              setAddScreenOpen(true);
-            }}
-          >
-            Add Notification Target
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
-        <Grid item xs={12}>
-          <TableWrapper
-            itemActions={tableActions}
-            columns={[
-              { label: "Service", elementKey: "service_name" },
-              {
-                label: "Status",
-                elementKey: "status",
-                renderFunction: statusDisplay
-              }
-            ]}
-            isLoading={isLoading}
-            records={filteredRecords}
-            entityName="Notification Endpoints"
-            idField="service_name"
-            paginatorConfig={{
-              rowsPerPageOptions: [5, 10, 25],
-              colSpan: 3,
-              count: totalRecords,
-              rowsPerPage: rowsPerPage,
-              page: page,
-              SelectProps: {
-                inputProps: { "aria-label": "rows per page" },
-                native: true
-              },
-              onChangePage: (event: unknown, newPage: number) => {
-                setPage(newPage);
-              },
-              onChangeRowsPerPage: (
-                event: React.ChangeEvent<HTMLInputElement>
-              ) => {
-                const rPP = parseInt(event.target.value, 10);
-                setRowsPerPage(rPP);
-              },
-              ActionsComponent: MinTablePaginationActions
-            }}
-          />
+        <Grid item xs={12} className={classes.container}>
+          {error !== "" && <Grid container>{error}</Grid>}
+          <Grid item xs={12} className={classes.actionsTray}>
+            <TextField
+              placeholder="Filter"
+              className={classes.searchField}
+              id="search-resource"
+              label=""
+              onChange={(event) => {
+                setFilter(event.target.value);
+              }}
+              InputProps={{
+                disableUnderline: true,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<CreateIcon />}
+              onClick={() => {
+                setAddScreenOpen(true);
+              }}
+            >
+              Add Notification Target
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            <br />
+          </Grid>
+          <Grid item xs={12}>
+            <TableWrapper
+              itemActions={tableActions}
+              columns={[
+                { label: "Service", elementKey: "service_name" },
+                {
+                  label: "Status",
+                  elementKey: "status",
+                  renderFunction: statusDisplay,
+                },
+              ]}
+              isLoading={isLoading}
+              records={filteredRecords}
+              entityName="Notification Endpoints"
+              idField="service_name"
+              paginatorConfig={{
+                rowsPerPageOptions: [5, 10, 25],
+                colSpan: 3,
+                count: totalRecords,
+                rowsPerPage: rowsPerPage,
+                page: page,
+                SelectProps: {
+                  inputProps: { "aria-label": "rows per page" },
+                  native: true,
+                },
+                onChangePage: (event: unknown, newPage: number) => {
+                  setPage(newPage);
+                },
+                onChangeRowsPerPage: (
+                  event: React.ChangeEvent<HTMLInputElement>
+                ) => {
+                  const rPP = parseInt(event.target.value, 10);
+                  setRowsPerPage(rPP);
+                },
+                ActionsComponent: MinTablePaginationActions,
+              }}
+            />
+          </Grid>
         </Grid>
       </Grid>
     </React.Fragment>

@@ -31,6 +31,8 @@ import AddGroup from "../Groups/AddGroup";
 import DeleteGroup from "./DeleteGroup";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import SetPolicy from "../Policies/SetPolicy";
+import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
+import PageHeader from "../Common/PageHeader/PageHeader";
 
 interface IGroupsProps {
   classes: any;
@@ -84,6 +86,7 @@ const styles = (theme: Theme) =>
       borderRadius: 5,
       boxShadow: "0px 3px 6px #00000012",
     },
+    ...containerForHeader(theme.spacing(4)),
   });
 
 const Groups = ({ classes }: IGroupsProps) => {
@@ -215,71 +218,68 @@ const Groups = ({ classes }: IGroupsProps) => {
           }}
         />
       )}
+      <PageHeader label={"Groups"} />
       <Grid container>
-        <Grid item xs={12}>
-          <Typography variant="h6">Groups</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
-        {error !== "" ? <Grid container>{error}</Grid> : <React.Fragment />}
-        <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
-            placeholder="Search Groups"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            onChange={(e) => {
-              setFilter(e.target.value);
-            }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<CreateIcon />}
-            onClick={() => {
-              setSelectedGroup(null);
-              setGroupOpen(true);
-            }}
-          >
-            Create Group
-          </Button>
-        </Grid>
+        <Grid item xs={12} className={classes.container}>
+          {error !== "" ? <Grid container>{error}</Grid> : <React.Fragment />}
+          <Grid item xs={12} className={classes.actionsTray}>
+            <TextField
+              placeholder="Search Groups"
+              className={classes.searchField}
+              id="search-resource"
+              label=""
+              InputProps={{
+                disableUnderline: true,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+              onChange={(e) => {
+                setFilter(e.target.value);
+              }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<CreateIcon />}
+              onClick={() => {
+                setSelectedGroup(null);
+                setGroupOpen(true);
+              }}
+            >
+              Create Group
+            </Button>
+          </Grid>
 
-        <Grid item xs={12}>
-          <br />
-        </Grid>
-        <Grid item xs={12}>
-          <TableWrapper
-            itemActions={tableActions}
-            columns={[{ label: "Name", elementKey: "" }]}
-            isLoading={loading}
-            records={filteredRecords}
-            entityName="Groups"
-            idField=""
-            paginatorConfig={{
-              rowsPerPageOptions: [5, 10, 25],
-              colSpan: 3,
-              count: totalRecords,
-              rowsPerPage: rowsPerPage,
-              page: page,
-              SelectProps: {
-                inputProps: { "aria-label": "rows per page" },
-                native: true,
-              },
-              onChangePage: handleChangePage,
-              onChangeRowsPerPage: handleChangeRowsPerPage,
-              ActionsComponent: MinTablePaginationActions,
-            }}
-          />
+          <Grid item xs={12}>
+            <br />
+          </Grid>
+          <Grid item xs={12}>
+            <TableWrapper
+              itemActions={tableActions}
+              columns={[{ label: "Name", elementKey: "" }]}
+              isLoading={loading}
+              records={filteredRecords}
+              entityName="Groups"
+              idField=""
+              paginatorConfig={{
+                rowsPerPageOptions: [5, 10, 25],
+                colSpan: 3,
+                count: totalRecords,
+                rowsPerPage: rowsPerPage,
+                page: page,
+                SelectProps: {
+                  inputProps: { "aria-label": "rows per page" },
+                  native: true,
+                },
+                onChangePage: handleChangePage,
+                onChangeRowsPerPage: handleChangeRowsPerPage,
+                ActionsComponent: MinTablePaginationActions,
+              }}
+            />
+          </Grid>
         </Grid>
       </Grid>
     </React.Fragment>

@@ -44,6 +44,8 @@ import DeleteEvent from "./DeleteEvent";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import { niceBytes } from "../../../../common/utils";
 import AddReplicationModal from "./AddReplicationModal";
+import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
+import PageHeader from "../../Common/PageHeader/PageHeader";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -135,6 +137,7 @@ const styles = (theme: Theme) =>
     tabPan: {
       marginTop: "5px",
     },
+    ...containerForHeader(theme.spacing(4)),
   });
 
 interface IViewBucketProps {
@@ -449,196 +452,191 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
             bucketName={bucketName}
           />
         )}
+        <PageHeader label={`Bucket > ${match.params["bucketName"]}`} />
         <Grid container>
-          <Grid item xs={12}>
-            <Typography variant="h6">
-              Bucket &gt; {match.params["bucketName"]}
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12}>
-            <div className={classes.headerContainer}>
-              <div>
-                <Paper className={classes.paperContainer}>
-                  <div className={classes.gridContainer}>
-                    <div>Access Policy:</div>
-                    <div className={classes.capitalizeFirst}>
-                      {loadingBucket ? (
-                        <CircularProgress
-                          color="primary"
-                          size={16}
-                          variant="indeterminate"
-                        />
-                      ) : (
-                        accessPolicy.toLowerCase()
-                      )}
-                    </div>
-                    <div>Reported Usage:</div>
-                    <div>
-                      {loadingSize ? (
-                        <CircularProgress
-                          color="primary"
-                          size={16}
-                          variant="indeterminate"
-                        />
-                      ) : (
-                        niceBytes(bucketSize)
-                      )}
-                    </div>
-                    <div>Replication:</div>
-                    <div className={classes.doubleElement}>
-                      <span>{replicationRules.length ? "Yes" : "No"}</span>
-                    </div>
-                    <div>Versioning:</div>
-                    <div>{isVersioned ? "Yes" : "No"}&nbsp;</div>
-                  </div>
-                </Paper>
-              </div>
-              <div className={classes.masterActions}>
+          <Grid item xs={12} className={classes.container}>
+            <Grid item xs={12}>
+              <div className={classes.headerContainer}>
                 <div>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    size="medium"
-                    onClick={() => {
-                      this.setState({
-                        setAccessPolicyScreenOpen: true,
-                      });
-                    }}
-                  >
-                    Change Access Policy
-                  </Button>
+                  <Paper className={classes.paperContainer}>
+                    <div className={classes.gridContainer}>
+                      <div>Access Policy:</div>
+                      <div className={classes.capitalizeFirst}>
+                        {loadingBucket ? (
+                          <CircularProgress
+                            color="primary"
+                            size={16}
+                            variant="indeterminate"
+                          />
+                        ) : (
+                          accessPolicy.toLowerCase()
+                        )}
+                      </div>
+                      <div>Reported Usage:</div>
+                      <div>
+                        {loadingSize ? (
+                          <CircularProgress
+                            color="primary"
+                            size={16}
+                            variant="indeterminate"
+                          />
+                        ) : (
+                          niceBytes(bucketSize)
+                        )}
+                      </div>
+                      <div>Replication:</div>
+                      <div className={classes.doubleElement}>
+                        <span>{replicationRules.length ? "Yes" : "No"}</span>
+                      </div>
+                      <div>Versioning:</div>
+                      <div>{isVersioned ? "Yes" : "No"}&nbsp;</div>
+                    </div>
+                  </Paper>
+                </div>
+                <div className={classes.masterActions}>
+                  <div>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      size="medium"
+                      onClick={() => {
+                        this.setState({
+                          setAccessPolicyScreenOpen: true,
+                        });
+                      }}
+                    >
+                      Change Access Policy
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={6}>
-            <Tabs
-              value={curTab}
-              onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
-                this.setState({ curTab: newValue });
-              }}
-              indicatorColor="primary"
-              textColor="primary"
-              aria-label="cluster-tabs"
-            >
-              <Tab label="Events" {...a11yProps(0)} />
-              <Tab label="Replication" {...a11yProps(1)} />
-            </Tabs>
-          </Grid>
-          <Grid item xs={6} className={classes.actionsTray}>
-            {curTab === 0 && (
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<CreateIcon />}
-                size="medium"
-                onClick={() => {
-                  this.setState({
-                    addScreenOpen: true,
-                  });
+            </Grid>
+            <Grid item xs={12}>
+              <br />
+            </Grid>
+            <Grid item xs={6}>
+              <Tabs
+                value={curTab}
+                onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
+                  this.setState({ curTab: newValue });
                 }}
+                indicatorColor="primary"
+                textColor="primary"
+                aria-label="cluster-tabs"
               >
-                Subscribe to Event
-              </Button>
-            )}
-            {curTab === 1 && (
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<CreateIcon />}
-                size="medium"
-                onClick={() => {
-                  this.setState({
-                    openSetReplication: true,
-                  });
-                }}
-              >
-                Add Replication Rule
-              </Button>
-            )}
-          </Grid>
-          <Grid item xs={12}>
-            <TabPanel index={0} value={curTab}>
-              <TableWrapper
-                itemActions={tableActions}
-                columns={[
-                  { label: "SQS", elementKey: "arn" },
-                  {
-                    label: "Events",
-                    elementKey: "events",
-                    renderFunction: eventsDisplay,
-                  },
-                  { label: "Prefix", elementKey: "prefix" },
-                  { label: "Suffix", elementKey: "suffix" },
-                ]}
-                isLoading={loadingEvents}
-                records={filteredRecords}
-                entityName="Events"
-                idField="id"
-                paginatorConfig={{
-                  rowsPerPageOptions: [5, 10, 25],
-                  colSpan: 3,
-                  count: totalRecords,
-                  rowsPerPage: rowsPerPage,
-                  page: page,
-                  SelectProps: {
-                    inputProps: { "aria-label": "rows per page" },
-                    native: true,
-                  },
-                  onChangePage: handleChangePage,
-                  onChangeRowsPerPage: handleChangeRowsPerPage,
-                  ActionsComponent: MinTablePaginationActions,
-                }}
-              />
-            </TabPanel>
-            <TabPanel index={1} value={curTab}>
-              <TableWrapper
-                itemActions={tableActions}
-                columns={[
-                  { label: "ID", elementKey: "id" },
-                  {
-                    label: "Priority",
-                    elementKey: "priority",
-                  },
-                  {
-                    label: "Destination",
-                    elementKey: "destination",
-                    renderFunction: ruleDestDisplay,
-                  },
-                  {
-                    label: "Delete Replication",
-                    elementKey: "delete_marker_replication",
-                    renderFunction: ruleDelDisplay,
-                  },
-                  { label: "Status", elementKey: "status" },
-                ]}
-                isLoading={loadingEvents}
-                records={filteredRules}
-                entityName="Replication Rules"
-                idField="id"
-                paginatorConfig={{
-                  rowsPerPageOptions: [5, 10, 25],
-                  colSpan: 3,
-                  count: totalRecords,
-                  rowsPerPage: rowsPerPage,
-                  page: page,
-                  SelectProps: {
-                    inputProps: { "aria-label": "rows per page" },
-                    native: true,
-                  },
-                  onChangePage: handleChangePage,
-                  onChangeRowsPerPage: handleChangeRowsPerPage,
-                  ActionsComponent: MinTablePaginationActions,
-                }}
-              />
-            </TabPanel>
+                <Tab label="Events" {...a11yProps(0)} />
+                <Tab label="Replication" {...a11yProps(1)} />
+              </Tabs>
+            </Grid>
+            <Grid item xs={6} className={classes.actionsTray}>
+              {curTab === 0 && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<CreateIcon />}
+                  size="medium"
+                  onClick={() => {
+                    this.setState({
+                      addScreenOpen: true,
+                    });
+                  }}
+                >
+                  Subscribe to Event
+                </Button>
+              )}
+              {curTab === 1 && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<CreateIcon />}
+                  size="medium"
+                  onClick={() => {
+                    this.setState({
+                      openSetReplication: true,
+                    });
+                  }}
+                >
+                  Add Replication Rule
+                </Button>
+              )}
+            </Grid>
+            <Grid item xs={12}>
+              <TabPanel index={0} value={curTab}>
+                <TableWrapper
+                  itemActions={tableActions}
+                  columns={[
+                    { label: "SQS", elementKey: "arn" },
+                    {
+                      label: "Events",
+                      elementKey: "events",
+                      renderFunction: eventsDisplay,
+                    },
+                    { label: "Prefix", elementKey: "prefix" },
+                    { label: "Suffix", elementKey: "suffix" },
+                  ]}
+                  isLoading={loadingEvents}
+                  records={filteredRecords}
+                  entityName="Events"
+                  idField="id"
+                  paginatorConfig={{
+                    rowsPerPageOptions: [5, 10, 25],
+                    colSpan: 3,
+                    count: totalRecords,
+                    rowsPerPage: rowsPerPage,
+                    page: page,
+                    SelectProps: {
+                      inputProps: { "aria-label": "rows per page" },
+                      native: true,
+                    },
+                    onChangePage: handleChangePage,
+                    onChangeRowsPerPage: handleChangeRowsPerPage,
+                    ActionsComponent: MinTablePaginationActions,
+                  }}
+                />
+              </TabPanel>
+              <TabPanel index={1} value={curTab}>
+                <TableWrapper
+                  itemActions={tableActions}
+                  columns={[
+                    { label: "ID", elementKey: "id" },
+                    {
+                      label: "Priority",
+                      elementKey: "priority",
+                    },
+                    {
+                      label: "Destination",
+                      elementKey: "destination",
+                      renderFunction: ruleDestDisplay,
+                    },
+                    {
+                      label: "Delete Replication",
+                      elementKey: "delete_marker_replication",
+                      renderFunction: ruleDelDisplay,
+                    },
+                    { label: "Status", elementKey: "status" },
+                  ]}
+                  isLoading={loadingEvents}
+                  records={filteredRules}
+                  entityName="Replication Rules"
+                  idField="id"
+                  paginatorConfig={{
+                    rowsPerPageOptions: [5, 10, 25],
+                    colSpan: 3,
+                    count: totalRecords,
+                    rowsPerPage: rowsPerPage,
+                    page: page,
+                    SelectProps: {
+                      inputProps: { "aria-label": "rows per page" },
+                      native: true,
+                    },
+                    onChangePage: handleChangePage,
+                    onChangeRowsPerPage: handleChangeRowsPerPage,
+                    ActionsComponent: MinTablePaginationActions,
+                  }}
+                />
+              </TabPanel>
+            </Grid>
           </Grid>
         </Grid>
 
