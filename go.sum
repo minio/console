@@ -798,8 +798,6 @@ github.com/minio/minio-go/v7 v7.0.2/go.mod h1:dJ80Mv2HeGkYLH1sqS/ksz07ON6csH3S6J
 github.com/minio/minio-go/v7 v7.0.5-0.20200811211821-14ed05478889/go.mod h1:CSt2ETZNs+bIIhWTse0mcZKZWMGrFU7Er7RR0TmkDYk=
 github.com/minio/minio-go/v7 v7.0.6-0.20200923173112-bc846cb9b089 h1:9DDs/Gc3fNHOQxQmwIFWs7YDLMTBh59r2XQ6RqEUA1I=
 github.com/minio/minio-go/v7 v7.0.6-0.20200923173112-bc846cb9b089/go.mod h1:CSt2ETZNs+bIIhWTse0mcZKZWMGrFU7Er7RR0TmkDYk=
-github.com/minio/operator v0.0.0-20200923155125-e7077234373b h1:k9u35u4vUi9Lxl/CDYyLU/OVN5M1CG8HQsOC8XTJHxc=
-github.com/minio/operator v0.0.0-20200923155125-e7077234373b/go.mod h1:6lavbNo2YuJWeQR5bZYsEWdbpRCO2KrTyfQ0PtC/AN4=
 github.com/minio/operator v0.0.0-20200930213302-ab2bbdfae96c h1:OIKdzEJDFmUokbJ1rIdlr3kcfsBfXelYgSCTN/+Ppec=
 github.com/minio/operator v0.0.0-20200930213302-ab2bbdfae96c/go.mod h1:6lavbNo2YuJWeQR5bZYsEWdbpRCO2KrTyfQ0PtC/AN4=
 github.com/minio/selfupdate v0.3.1 h1:BWEFSNnrZVMUWXbXIgLDNDjbejkmpAmZvy/nCz1HlEs=
