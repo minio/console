@@ -23,6 +23,9 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { timeFromDate } from "../../../common/utils";
 import { isNullOrUndefined } from "util";
 import { wsProtocol } from "../../../utils/wsUtils";
+import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
+import { Grid } from "@material-ui/core";
+import PageHeader from "../Common/PageHeader/PageHeader";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -54,6 +57,7 @@ const styles = (theme: Theme) =>
     ansidefault: {
       color: "black",
     },
+    ...containerForHeader(theme.spacing(4)),
   });
 
 interface ILogs {
@@ -243,16 +247,20 @@ const Logs = ({
   };
 
   return (
-    <div>
-      <h1>Logs</h1>
-      <div className={classes.logList}>
-        <ul>
-          {messages.map((m) => {
-            return renderLog(m);
-          })}
-        </ul>
-      </div>
-    </div>
+    <React.Fragment>
+      <PageHeader label="Logs" />
+      <Grid container>
+        <Grid className={classes.container} item xs={12}>
+          <div className={classes.logList}>
+            <ul>
+              {messages.map((m) => {
+                return renderLog(m);
+              })}
+            </ul>
+          </div>
+        </Grid>
+      </Grid>
+    </React.Fragment>
   );
 };
 

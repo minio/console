@@ -31,6 +31,8 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { stringSort } from "../../../utils/sortFunctions";
+import PageHeader from "../Common/PageHeader/PageHeader";
+import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -85,6 +87,7 @@ const styles = (theme: Theme) =>
       borderRadius: 5,
       boxShadow: "0px 3px 6px #00000012",
     },
+    ...containerForHeader(theme.spacing(4)),
   });
 
 interface IServiceAccountsProps {
@@ -225,81 +228,78 @@ const ServiceAccounts = ({ classes }: IServiceAccountsProps) => {
           entity="Service Account"
         />
       )}
+      <PageHeader label="Service Accounts" />
       <Grid container>
-        <Grid item xs={12}>
-          <Typography variant="h6">Service Accounts</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
-        <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
-            placeholder="Search Service Accounts"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            onChange={(e) => {
-              setFilter(e.target.value);
-              setPage(0);
-            }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<CreateIcon />}
-            onClick={() => {
-              setAddScreenOpen(true);
-              setSelectedServiceAccount(null);
-            }}
-          >
-            Create service account
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
-        {error !== "" && (
-          <Grid item xs={12}>
-            <Typography
-              component="p"
-              variant="body1"
-              className={classes.errorBlock}
+        <Grid item xs={12} className={classes.container}>
+          <Grid item xs={12} className={classes.actionsTray}>
+            <TextField
+              placeholder="Search Service Accounts"
+              className={classes.searchField}
+              id="search-resource"
+              label=""
+              InputProps={{
+                disableUnderline: true,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+              onChange={(e) => {
+                setFilter(e.target.value);
+                setPage(0);
+              }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<CreateIcon />}
+              onClick={() => {
+                setAddScreenOpen(true);
+                setSelectedServiceAccount(null);
+              }}
             >
-              {error}
-            </Typography>
+              Create service account
+            </Button>
           </Grid>
-        )}
-        <Grid item xs={12}>
-          <TableWrapper
-            isLoading={loading}
-            records={paginatedRecords}
-            entityName={"Service Accounts"}
-            idField={""}
-            columns={[{ label: "Service Account", elementKey: "" }]}
-            itemActions={tableActions}
-            paginatorConfig={{
-              rowsPerPageOptions: [5, 10, 25],
-              colSpan: 4,
-              count: records.length,
-              rowsPerPage: rowsPerPage,
-              page,
-              SelectProps: {
-                inputProps: { "aria-label": "rows per page" },
-                native: true,
-              },
-              onChangePage: handleChangePage,
-              onChangeRowsPerPage: handleChangeRowsPerPage,
-              ActionsComponent: MinTablePaginationActions,
-            }}
-          />
+          <Grid item xs={12}>
+            <br />
+          </Grid>
+          {error !== "" && (
+            <Grid item xs={12}>
+              <Typography
+                component="p"
+                variant="body1"
+                className={classes.errorBlock}
+              >
+                {error}
+              </Typography>
+            </Grid>
+          )}
+          <Grid item xs={12}>
+            <TableWrapper
+              isLoading={loading}
+              records={paginatedRecords}
+              entityName={"Service Accounts"}
+              idField={""}
+              columns={[{ label: "Service Account", elementKey: "" }]}
+              itemActions={tableActions}
+              paginatorConfig={{
+                rowsPerPageOptions: [5, 10, 25],
+                colSpan: 4,
+                count: records.length,
+                rowsPerPage: rowsPerPage,
+                page,
+                SelectProps: {
+                  inputProps: { "aria-label": "rows per page" },
+                  native: true,
+                },
+                onChangePage: handleChangePage,
+                onChangeRowsPerPage: handleChangeRowsPerPage,
+                ActionsComponent: MinTablePaginationActions,
+              }}
+            />
+          </Grid>
         </Grid>
       </Grid>
     </React.Fragment>

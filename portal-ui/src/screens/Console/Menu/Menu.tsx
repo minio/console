@@ -58,44 +58,53 @@ import { clearSession } from "../../../common/utils";
 const styles = (theme: Theme) =>
   createStyles({
     logo: {
-      paddingTop: "42px",
-      marginBottom: "20px",
-      textAlign: "center",
+      paddingTop: 25,
+      marginBottom: 30,
+      paddingLeft: 45,
       "& img": {
-        width: "120px",
+        width: 120,
       },
     },
     menuList: {
       "& .active": {
-        borderTopLeftRadius: "3px",
-        borderBottomLeftRadius: "3px",
+        borderTopLeftRadius: 2,
+        borderBottomLeftRadius: 2,
         color: "#fff",
-        background:
-          "transparent linear-gradient(90deg, #362585 0%, #362585 7%, #281B6F 39%, #1F1661 100%) 0% 0% no-repeat padding-box;",
-        boxShadow: "4px 4px 4px #A5A5A512",
-        fontWeight: 700,
+        backgroundColor: "rgba(255, 255, 255, .18)",
         "& .MuiSvgIcon-root": {
           color: "white",
         },
         "& .MuiTypography-root": {
           color: "#fff",
+          fontWeight: 700,
         },
       },
-      paddingLeft: "30px",
       "& .MuiSvgIcon-root": {
         fontSize: 16,
-        color: "#362585",
+        color: "rgba(255, 255, 255, 0.8)",
         maxWidth: 14,
       },
       "& .MuiListItemIcon-root": {
-        minWidth: "25px",
+        minWidth: 25,
       },
       "& .MuiTypography-root": {
-        fontSize: "12px",
-        color: "#2e2e2e",
+        fontSize: 12,
+        color: "rgba(255, 255, 255, 0.8)",
       },
       "& .MuiListItem-gutters": {
         paddingRight: 0,
+        fontWeight: 300,
+      },
+      "& .MuiListItem-root": {
+        padding: "2px 0 2px 16px",
+        marginBottom: 8,
+        marginLeft: 30,
+        width: "calc(100% - 30px)",
+      },
+      "& .MuiCollapse-container .MuiCollapse-wrapper .MuiCollapse-wrapperInner .MuiDivider-root": {
+        backgroundColor: "rgba(112,112,112,0.5)",
+        marginBottom: 12,
+        height: 1,
       },
     },
     extraMargin: {
@@ -104,31 +113,34 @@ const styles = (theme: Theme) =>
       },
     },
     groupTitle: {
-      color: "#220c7c",
+      color: "#fff",
       fontSize: 10,
       textTransform: "uppercase",
       fontWeight: 700,
       marginBottom: 3,
       cursor: "pointer",
       userSelect: "none",
+      display: "flex",
+      justifyContent: "space-between",
     },
     subTitleMenu: {
       fontWeight: 700,
       marginLeft: 10,
       "&.MuiTypography-root": {
         fontSize: 13,
-        color: "#220c7c",
+        color: "#fff",
       },
     },
     selectorArrow: {
-      marginLeft: 3,
+      marginRight: 20,
       marginTop: 1,
       display: "inline-block",
       width: 0,
       height: 0,
       borderStyle: "solid",
-      borderWidth: "3px 2.5px 0 2.5px",
-      borderColor: "#220C7C transparent transparent transparent",
+      borderWidth: "4px 4px 0 4px",
+      borderColor:
+        "rgba(255, 255, 255, .29) transparent transparent transparent",
       transform: "rotateZ(0deg)",
       transitionDuration: "0.2s",
     },
@@ -362,7 +374,7 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
                     }
                   }}
                 >
-                  {groupMember.label}
+                  <span>{groupMember.label}</span>
                   {groupMember.collapsible && (
                     <span
                       className={`${classes.selectorArrow} ${
