@@ -69,6 +69,7 @@ import TenantDetails from "./Tenants/TenantDetails/TenantDetails";
 import { clearSession } from "../../common/utils";
 import RemoteBuckets from "./RemoteBuckets/RemoteBuckets";
 import ObjectBrowser from "./ObjectBrowser/ObjectBrowser";
+import ListObjects from "./Buckets/ListBuckets/Objects/ListObjects/ListObjects";
 
 function Copyright() {
   return (
@@ -255,11 +256,11 @@ const Console = ({
     },
     {
       component: ObjectBrowser,
-      path: "/object-browser/:bucket?/*",
+      path: "/object-browser",
     },
     {
-      component: ObjectBrowser,
-      path: "/object-browser",
+      component: ListObjects,
+      path: "/object-browser/:bucket?",
     },
     {
       component: Watch,

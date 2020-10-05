@@ -30,6 +30,7 @@ import { MinTablePaginationActions } from "../../../common/MinTablePaginationAct
 import { Bucket, BucketList } from "../Buckets/types";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
+import history from "../../../history";
 
 const styles = (theme: Theme) =>
   createStyles({
