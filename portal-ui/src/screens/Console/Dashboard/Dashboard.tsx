@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2019 MinIO, Inc.
+// Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -27,6 +27,8 @@ import { Usage } from "./types";
 import api from "../../../common/api";
 import { niceBytes } from "../../../common/utils";
 import { LinearProgress } from "@material-ui/core";
+import PageHeader from "../Common/PageHeader/PageHeader";
+import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -77,26 +79,20 @@ const styles = (theme: Theme) =>
       height: "100vh",
       overflow: "auto",
     },
-    container: {
-      paddingBottom: theme.spacing(4),
-      "& h6": {
-        color: "#777777",
-        fontSize: 14,
-      },
-      "& p": {
-        "& span": {
-          fontSize: 16,
-        },
-      },
-    },
+    ...containerForHeader(theme.spacing(4)),
     paper: {
       padding: theme.spacing(2),
       display: "flex",
       overflow: "auto",
       flexDirection: "column",
+      border: "#eaedee 1px solid",
+      borderRadius: 5,
+      boxShadow: "none",
     },
     fixedHeight: {
-      minHeight: 240,
+      minHeight: 165,
+      minWidth: 247,
+      marginRight: 20,
     },
     consumptionValue: {
       color: "#000000",
@@ -106,6 +102,9 @@ const styles = (theme: Theme) =>
     icon: {
       marginRight: 10,
       color: "#777777",
+    },
+    notationContainer: {
+      display: "flex",
     },
   });
 
@@ -155,11 +154,9 @@ const Dashboard = ({ classes }: IDashboardProps) => {
 
   return (
     <React.Fragment>
+      <PageHeader label="Dashboard" />
       <Grid container>
         <Grid container spacing={3} className={classes.container}>
-          <Grid container>
-            <Typography variant="h2">MinIO Console</Typography>
-          </Grid>
           {error !== "" && <Grid container>{error}</Grid>}
           {loading ? (
             <Grid item xs={12} md={12} lg={12}>
@@ -167,37 +164,20 @@ const Dashboard = ({ classes }: IDashboardProps) => {
             </Grid>
           ) : (
             <React.Fragment>
-              <Grid item xs={12} md={4} lg={4}>
+              <Grid item className={classes.notationContainer}>
                 <Paper className={fixedHeightPaper}>
                   <Grid container direction="row" alignItems="center">
                     <Grid item className={classes.icon}>
                       <ViewHeadlineIcon />
                     </Grid>
                     <Grid item>
-                      <Typography variant="h6">Total Buckets</Typography>
+                      <Typography variant="h6">All Buckets</Typography>
                     </Grid>
                   </Grid>
                   <Typography className={classes.consumptionValue}>
                     {usage ? prettyNumber(usage.buckets) : 0}
                   </Typography>
                 </Paper>
-              </Grid>
-              <Grid item xs={12} md={4} lg={4}>
-                <Paper className={fixedHeightPaper}>
-                  <Grid container direction="row" alignItems="center">
-                    <Grid item className={classes.icon}>
-                      <NetworkCheckIcon />
-                    </Grid>
-                    <Grid item>
-                      <Typography variant="h6"> Total Objects</Typography>
-                    </Grid>
-                  </Grid>
-                  <Typography className={classes.consumptionValue}>
-                    {usage ? prettyNumber(usage.objects) : 0}
-                  </Typography>
-                </Paper>
-              </Grid>
-              <Grid item xs={12} md={4} lg={4}>
                 <Paper className={fixedHeightPaper}>
                   <Grid container direction="row" alignItems="center">
                     <Grid item className={classes.icon}>
@@ -209,6 +189,19 @@ const Dashboard = ({ classes }: IDashboardProps) => {
                   </Grid>
                   <Typography className={classes.consumptionValue}>
                     {usage ? prettyUsage(usage.usage + "") : 0}
+                  </Typography>
+                </Paper>
+                <Paper className={fixedHeightPaper}>
+                  <Grid container direction="row" alignItems="center">
+                    <Grid item className={classes.icon}>
+                      <NetworkCheckIcon />
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="h6"> Total Objects</Typography>
+                    </Grid>
+                  </Grid>
+                  <Typography className={classes.consumptionValue}>
+                    {usage ? prettyNumber(usage.objects) : 0}
                   </Typography>
                 </Paper>
               </Grid>

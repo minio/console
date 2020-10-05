@@ -19,6 +19,8 @@ import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Grid, Typography } from "@material-ui/core";
 import BrowseBuckets from "./BrowseBuckets";
+import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
+import PageHeader from "../Common/PageHeader/PageHeader";
 
 interface IObjectBrowserProps {
   match: any;
@@ -67,6 +69,7 @@ const styles = (theme: Theme) =>
     lastElementWPadding: {
       paddingRight: "78",
     },
+    ...containerForHeader(theme.spacing(4)),
   });
 
 const ObjectBrowser = ({ match, classes }: IObjectBrowserProps) => {
@@ -74,11 +77,11 @@ const ObjectBrowser = ({ match, classes }: IObjectBrowserProps) => {
 
   return (
     <React.Fragment>
+      <PageHeader label={"Object Browser"} />
       <Grid container>
-        <Grid item xs={12}>
-          <Typography variant="h6">Object Browser</Typography>
+        <Grid item xs={12} className={classes.container}>
+          {pathIn === "/object-browser" && <BrowseBuckets />}
         </Grid>
-        {pathIn === "/object-browser" && <BrowseBuckets />}
       </Grid>
     </React.Fragment>
   );

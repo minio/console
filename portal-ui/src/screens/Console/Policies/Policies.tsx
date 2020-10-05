@@ -30,6 +30,8 @@ import AddPolicy from "./AddPolicy";
 import DeletePolicy from "./DeletePolicy";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
+import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
+import PageHeader from "../Common/PageHeader/PageHeader";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -73,6 +75,7 @@ const styles = (theme: Theme) =>
       borderRadius: 5,
       boxShadow: "0px 3px 6px #00000012",
     },
+    ...containerForHeader(theme.spacing(4)),
   });
 
 interface IPoliciesProps {
@@ -222,70 +225,67 @@ const Policies = ({ classes }: IPoliciesProps) => {
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
+      <PageHeader label="IAM Policies" />
       <Grid container>
-        <Grid item xs={12}>
-          <Typography variant="h6">IAM Policies</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
-        <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
-            placeholder="Search Policies"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            onChange={(val) => {
-              setPage(0);
-              setFilterPolicies(val.target.value);
-            }}
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<CreateIcon />}
-            onClick={() => {
-              setAddScreenOpen(true);
-              setPolicyEdit(null);
-            }}
-          >
-            Create Policy
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
-        <Grid item xs={12}>
-          <TableWrapper
-            itemActions={tableActions}
-            columns={[{ label: "Name", elementKey: "name" }]}
-            isLoading={loading}
-            records={paginatedRecords}
-            entityName="Policies"
-            idField="name"
-            paginatorConfig={{
-              rowsPerPageOptions: [5, 10, 25],
-              colSpan: 3,
-              count: filteredRecords.length,
-              rowsPerPage: rowsPerPage,
-              page: page,
-              SelectProps: {
-                inputProps: { "aria-label": "rows per page" },
-                native: true,
-              },
-              onChangePage: handleChangePage,
-              onChangeRowsPerPage: handleChangeRowsPerPage,
-              ActionsComponent: MinTablePaginationActions,
-            }}
-          />
+        <Grid item xs={12} className={classes.container}>
+          <Grid item xs={12} className={classes.actionsTray}>
+            <TextField
+              placeholder="Search Policies"
+              className={classes.searchField}
+              id="search-resource"
+              label=""
+              onChange={(val) => {
+                setPage(0);
+                setFilterPolicies(val.target.value);
+              }}
+              InputProps={{
+                disableUnderline: true,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<CreateIcon />}
+              onClick={() => {
+                setAddScreenOpen(true);
+                setPolicyEdit(null);
+              }}
+            >
+              Create Policy
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            <br />
+          </Grid>
+          <Grid item xs={12}>
+            <TableWrapper
+              itemActions={tableActions}
+              columns={[{ label: "Name", elementKey: "name" }]}
+              isLoading={loading}
+              records={paginatedRecords}
+              entityName="Policies"
+              idField="name"
+              paginatorConfig={{
+                rowsPerPageOptions: [5, 10, 25],
+                colSpan: 3,
+                count: filteredRecords.length,
+                rowsPerPage: rowsPerPage,
+                page: page,
+                SelectProps: {
+                  inputProps: { "aria-label": "rows per page" },
+                  native: true,
+                },
+                onChangePage: handleChangePage,
+                onChangeRowsPerPage: handleChangeRowsPerPage,
+                ActionsComponent: MinTablePaginationActions,
+              }}
+            />
+          </Grid>
         </Grid>
       </Grid>
     </React.Fragment>

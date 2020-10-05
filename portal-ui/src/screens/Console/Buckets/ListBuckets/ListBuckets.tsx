@@ -35,6 +35,8 @@ import { AppState } from "../../../../store";
 import { connect } from "react-redux";
 import { logMessageReceived, logResetMessages } from "../../Logs/actions";
 import { addBucketOpen, addBucketReset } from "../actions";
+import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
+import PageHeader from "../../Common/PageHeader/PageHeader";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -78,6 +80,7 @@ const styles = (theme: Theme) =>
       borderRadius: 5,
       boxShadow: "0px 3px 6px #00000012",
     },
+    ...containerForHeader(theme.spacing(4)),
   });
 
 interface IListBucketsProps {
@@ -221,80 +224,77 @@ const ListBuckets = ({
           }}
         />
       )}
+      <PageHeader label={"Buckets"} />
       <Grid container>
-        <Grid item xs={12}>
-          <Typography variant="h6">Buckets</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
-        <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
-            placeholder="Search Buckets"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            onChange={(val) => {
-              setFilterBuckets(val.target.value);
-            }}
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<CreateIcon />}
-            onClick={() => {
-              addBucketOpen(true);
-            }}
-          >
-            Create Bucket
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
-        <Grid item xs={12}>
-          <TableWrapper
-            itemActions={tableActions}
-            columns={[
-              { label: "Name", elementKey: "name" },
-              {
-                label: "Creation Date",
-                elementKey: "creation_date",
-                renderFunction: displayParsedDate,
-              },
-              {
-                label: "Size",
-                elementKey: "size",
-                renderFunction: niceBytes,
-              },
-            ]}
-            isLoading={loading}
-            records={filteredRecords}
-            entityName="Buckets"
-            idField="name"
-            paginatorConfig={{
-              rowsPerPageOptions: [5, 10, 25],
-              colSpan: 3,
-              count: totalRecords,
-              rowsPerPage: rowsPerPage,
-              page: page,
-              SelectProps: {
-                inputProps: { "aria-label": "rows per page" },
-                native: true,
-              },
-              onChangePage: handleChangePage,
-              onChangeRowsPerPage: handleChangeRowsPerPage,
-              ActionsComponent: MinTablePaginationActions,
-            }}
-          />
+        <Grid item xs={12} className={classes.container}>
+          <Grid item xs={12} className={classes.actionsTray}>
+            <TextField
+              placeholder="Search Buckets"
+              className={classes.searchField}
+              id="search-resource"
+              label=""
+              onChange={(val) => {
+                setFilterBuckets(val.target.value);
+              }}
+              InputProps={{
+                disableUnderline: true,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<CreateIcon />}
+              onClick={() => {
+                addBucketOpen(true);
+              }}
+            >
+              Create Bucket
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            <br />
+          </Grid>
+          <Grid item xs={12}>
+            <TableWrapper
+              itemActions={tableActions}
+              columns={[
+                { label: "Name", elementKey: "name" },
+                {
+                  label: "Creation Date",
+                  elementKey: "creation_date",
+                  renderFunction: displayParsedDate,
+                },
+                {
+                  label: "Size",
+                  elementKey: "size",
+                  renderFunction: niceBytes,
+                },
+              ]}
+              isLoading={loading}
+              records={filteredRecords}
+              entityName="Buckets"
+              idField="name"
+              paginatorConfig={{
+                rowsPerPageOptions: [5, 10, 25],
+                colSpan: 3,
+                count: totalRecords,
+                rowsPerPage: rowsPerPage,
+                page: page,
+                SelectProps: {
+                  inputProps: { "aria-label": "rows per page" },
+                  native: true,
+                },
+                onChangePage: handleChangePage,
+                onChangeRowsPerPage: handleChangeRowsPerPage,
+                ActionsComponent: MinTablePaginationActions,
+              }}
+            />
+          </Grid>
         </Grid>
       </Grid>
     </React.Fragment>

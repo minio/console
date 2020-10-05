@@ -27,6 +27,8 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import { configurationElements } from "../utils";
 import { IConfigurationElement } from "../types";
 import EditConfiguration from "../CustomForms/EditConfiguration";
+import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
+import PageHeader from "../../Common/PageHeader/PageHeader";
 
 interface IListConfiguration {
   classes: any;
@@ -58,6 +60,7 @@ const styles = (theme: Theme) =>
     iconText: {
       lineHeight: "24px",
     },
+    ...containerForHeader(theme.spacing(4)),
   });
 
 const ConfigurationsList = ({ classes }: IListConfiguration) => {
@@ -103,47 +106,44 @@ const ConfigurationsList = ({ classes }: IListConfiguration) => {
           selectedConfiguration={selectedConfiguration}
         />
       )}
+      <PageHeader label="Configurations List" />
       <Grid container>
-        <Grid item xs={12}>
-          <Typography variant="h6">Configurations List</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
-        {error !== "" && <Grid container>{error}</Grid>}
-        <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
-            placeholder="Filter"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            onChange={(event) => {
-              setFilter(event.target.value);
-            }}
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
-        <Grid item xs={12}>
-          <TableWrapper
-            itemActions={tableActions}
-            columns={[
-              { label: "Configuration", elementKey: "configuration_id" },
-            ]}
-            isLoading={false}
-            records={filteredRecords}
-            entityName="Configurations"
-            idField="configuration_id"
-          />
+        <Grid item xs={12} className={classes.container}>
+          {error !== "" && <Grid container>{error}</Grid>}
+          <Grid item xs={12} className={classes.actionsTray}>
+            <TextField
+              placeholder="Filter"
+              className={classes.searchField}
+              id="search-resource"
+              label=""
+              onChange={(event) => {
+                setFilter(event.target.value);
+              }}
+              InputProps={{
+                disableUnderline: true,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <br />
+          </Grid>
+          <Grid item xs={12}>
+            <TableWrapper
+              itemActions={tableActions}
+              columns={[
+                { label: "Configuration", elementKey: "configuration_id" },
+              ]}
+              isLoading={false}
+              records={filteredRecords}
+              entityName="Configurations"
+              idField="configuration_id"
+            />
+          </Grid>
         </Grid>
       </Grid>
     </React.Fragment>

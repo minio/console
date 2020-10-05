@@ -84,7 +84,7 @@ function Copyright() {
   );
 }
 
-const drawerWidth = 254;
+const drawerWidth = 245;
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -136,6 +136,9 @@ const styles = (theme: Theme) =>
         duration: theme.transitions.duration.enteringScreen,
       }),
       overflowX: "hidden",
+      background:
+        "transparent linear-gradient(90deg, #073052 0%, #081C42 100%) 0% 0% no-repeat padding-box",
+      boxShadow: "0px 3px 7px #00000014",
     },
     drawerPaperClose: {
       overflowX: "hidden",
@@ -148,17 +151,15 @@ const styles = (theme: Theme) =>
         width: theme.spacing(9),
       },
     },
-    appBarSpacer: {
-      height: "5px",
-    },
     content: {
       flexGrow: 1,
       height: "100vh",
       overflow: "auto",
+      position: "relative",
     },
     container: {
-      paddingTop: theme.spacing(4),
       paddingBottom: theme.spacing(4),
+      margin: 0,
     },
     paper: {
       padding: theme.spacing(2),
@@ -372,8 +373,7 @@ const Console = ({
                 )}
               </div>
             )}
-            <div className={classes.appBarSpacer} />
-            <Container maxWidth="lg" className={classes.container}>
+            <Container className={classes.container}>
               <Router history={history}>
                 <Switch>
                   {allowedRoutes.map((route: any) => (

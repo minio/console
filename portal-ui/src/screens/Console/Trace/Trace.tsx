@@ -23,6 +23,9 @@ import { TraceMessage } from "./types";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { niceBytes, timeFromDate } from "../../../common/utils";
 import { wsProtocol } from "../../../utils/wsUtils";
+import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
+import PageHeader from "../Common/PageHeader/PageHeader";
+import { Grid } from "@material-ui/core";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -41,6 +44,7 @@ const styles = (theme: Theme) =>
         borderBottom: "1px solid #dedede",
       },
     },
+    ...containerForHeader(theme.spacing(4)),
   });
 
 interface ITrace {
@@ -93,23 +97,27 @@ const Trace = ({
   }, [traceMessageReceived]);
 
   return (
-    <div>
-      <h1>Trace</h1>
-      <div className={classes.logList}>
-        <ul>
-          {messages.map((m) => {
-            return (
-              <li key={m.key}>
-                {timeFromDate(m.time)} - {m.api}[{m.statusCode} {m.statusMsg}]{" "}
-                {m.api} {m.host} {m.client} {m.callStats.duration} ↑{" "}
-                {niceBytes(m.callStats.rx + "")} ↓{" "}
-                {niceBytes(m.callStats.tx + "")}
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-    </div>
+    <React.Fragment>
+      <PageHeader label={"Trace"} />
+      <Grid container>
+        <Grid item xs={12} className={classes.container}>
+          <div className={classes.logList}>
+            <ul>
+              {messages.map((m) => {
+                return (
+                  <li key={m.key}>
+                    {timeFromDate(m.time)} - {m.api}[{m.statusCode}{" "}
+                    {m.statusMsg}] {m.api} {m.host} {m.client}{" "}
+                    {m.callStats.duration} ↑ {niceBytes(m.callStats.rx + "")} ↓{" "}
+                    {niceBytes(m.callStats.tx + "")}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </Grid>
+      </Grid>
+    </React.Fragment>
   );
 };
 

@@ -36,6 +36,8 @@ import AddToGroup from "./AddToGroup";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import DescriptionIcon from "@material-ui/icons/Description";
 import SetPolicy from "../Policies/SetPolicy";
+import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
+import PageHeader from "../Common/PageHeader/PageHeader";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -84,6 +86,7 @@ const styles = (theme: Theme) =>
       borderRadius: 5,
       boxShadow: "0px 3px 6px #00000012",
     },
+    ...containerForHeader(theme.spacing(4)),
   });
 
 interface IUsersProps {
@@ -307,90 +310,86 @@ class Users extends React.Component<IUsersProps, IUsersState> {
             }}
           />
         )}
-
+        <PageHeader label={"Users"} />
         <Grid container>
-          <Grid item xs={12}>
-            <Typography variant="h6">Users</Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12} className={classes.actionsTray}>
-            <TextField
-              placeholder="Search Users"
-              className={classes.searchField}
-              id="search-resource"
-              label=""
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-              onChange={(e) => {
-                this.setState({ filter: e.target.value, page: 0 });
-              }}
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<GroupIcon />}
-              disabled={checkedUsers.length <= 0}
-              onClick={() => {
-                if (checkedUsers.length > 0) {
+          <Grid item xs={12} className={classes.container}>
+            <Grid item xs={12} className={classes.actionsTray}>
+              <TextField
+                placeholder="Search Users"
+                className={classes.searchField}
+                id="search-resource"
+                label=""
+                InputProps={{
+                  disableUnderline: true,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                onChange={(e) => {
+                  this.setState({ filter: e.target.value, page: 0 });
+                }}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<GroupIcon />}
+                disabled={checkedUsers.length <= 0}
+                onClick={() => {
+                  if (checkedUsers.length > 0) {
+                    this.setState({
+                      addGroupOpen: true,
+                    });
+                  }
+                }}
+              >
+                Add to Group
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<CreateIcon />}
+                onClick={() => {
                   this.setState({
-                    addGroupOpen: true,
+                    addScreenOpen: true,
+                    selectedUser: null,
                   });
-                }
-              }}
-            >
-              Add to Group
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<CreateIcon />}
-              onClick={() => {
-                this.setState({
-                  addScreenOpen: true,
-                  selectedUser: null,
-                });
-              }}
-            >
-              Create User
-            </Button>
-          </Grid>
+                }}
+              >
+                Create User
+              </Button>
+            </Grid>
 
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12}>
-            <TableWrapper
-              itemActions={tableActions}
-              columns={[{ label: "Access Key", elementKey: "accessKey" }]}
-              onSelect={selectionChanged}
-              selectedItems={checkedUsers}
-              isLoading={loading}
-              records={paginatedRecords}
-              entityName="Users"
-              idField="accessKey"
-              paginatorConfig={{
-                rowsPerPageOptions: [5, 10, 25],
-                colSpan: 3,
-                count: filteredRecords.length,
-                rowsPerPage: rowsPerPage,
-                page: page,
-                SelectProps: {
-                  inputProps: { "aria-label": "rows per page" },
-                  native: true,
-                },
-                onChangePage: handleChangePage,
-                onChangeRowsPerPage: handleChangeRowsPerPage,
-                ActionsComponent: MinTablePaginationActions,
-              }}
-            />
+            <Grid item xs={12}>
+              <br />
+            </Grid>
+            <Grid item xs={12}>
+              <TableWrapper
+                itemActions={tableActions}
+                columns={[{ label: "Access Key", elementKey: "accessKey" }]}
+                onSelect={selectionChanged}
+                selectedItems={checkedUsers}
+                isLoading={loading}
+                records={paginatedRecords}
+                entityName="Users"
+                idField="accessKey"
+                paginatorConfig={{
+                  rowsPerPageOptions: [5, 10, 25],
+                  colSpan: 3,
+                  count: filteredRecords.length,
+                  rowsPerPage: rowsPerPage,
+                  page: page,
+                  SelectProps: {
+                    inputProps: { "aria-label": "rows per page" },
+                    native: true,
+                  },
+                  onChangePage: handleChangePage,
+                  onChangeRowsPerPage: handleChangeRowsPerPage,
+                  ActionsComponent: MinTablePaginationActions,
+                }}
+              />
+            </Grid>
           </Grid>
         </Grid>
       </React.Fragment>
