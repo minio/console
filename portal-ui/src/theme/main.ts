@@ -3,9 +3,9 @@ import { createMuiTheme } from "@material-ui/core";
 const theme = createMuiTheme({
   palette: {
     primary: {
-      light: "#757ce8",
-      main: "#201763",
-      dark: "#362585",
+      light: "#073052",
+      main: "#081C42",
+      dark: "#05122B",
       contrastText: "#fff",
     },
     secondary: {
@@ -38,15 +38,15 @@ const theme = createMuiTheme({
     fontFamily: ["Lato", "sans-serif"].join(","),
     h1: {
       fontWeight: "bold",
-      color: "#201763",
+      color: "#081C42",
     },
     h2: {
       fontWeight: "bold",
-      color: "#201763",
+      color: "#081C42",
     },
     h3: {
       fontWeight: "bold",
-      color: "#201763",
+      color: "#081C42",
     },
     h4: {
       fontWeight: "bold",
@@ -54,7 +54,7 @@ const theme = createMuiTheme({
     },
     h5: {
       fontWeight: "bold",
-      color: "#201763",
+      color: "#081C42",
     },
     h6: {
       fontWeight: "bold",
