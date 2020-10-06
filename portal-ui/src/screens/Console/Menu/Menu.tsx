@@ -54,6 +54,9 @@ import {
   WarpIcon,
 } from "../../../icons";
 import { clearSession } from "../../../common/utils";
+import HealIcon from "../../../icons/HealIcon";
+import ConsoleIcon from "../../../icons/ConsoleIcon";
+import LogoutIcon from "../../../icons/LogoutIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -200,17 +203,25 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
       group: "User",
       type: "item",
       component: NavLink,
-      to: "/service-accounts",
-      name: "Service Accounts",
-      icon: <ServiceAccountsIcon />,
+      to: "/object-browser",
+      name: "Object Browser",
+      icon: <DescriptionIcon />,
     },
     {
       group: "User",
       type: "item",
       component: NavLink,
-      to: "/object-browser",
-      name: "Object Browser",
-      icon: <DescriptionIcon />,
+      to: "/service-accounts",
+      name: "Service Accounts",
+      icon: <ServiceAccountsIcon />,
+    },
+    {
+      group: "Admin",
+      type: "item",
+      component: NavLink,
+      to: "/buckets",
+      name: "Buckets",
+      icon: <BucketsIcon />,
     },
     {
       group: "Admin",
@@ -227,14 +238,6 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
       to: "/groups",
       name: "Groups",
       icon: <GroupsIcon />,
-    },
-    {
-      group: "Admin",
-      type: "item",
-      component: NavLink,
-      to: "/buckets",
-      name: "Buckets",
-      icon: <BucketsIcon />,
     },
     {
       group: "Admin",
@@ -257,8 +260,8 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
       type: "item",
       component: NavLink,
       to: "/logs",
-      name: "Console Logs",
-      icon: <WebAssetIcon />,
+      name: "Logs",
+      icon: <ConsoleIcon />,
     },
     {
       group: "Tools",
@@ -282,7 +285,7 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
       component: NavLink,
       to: "/heal",
       name: "Heal",
-      icon: <HealingIcon />,
+      icon: <HealIcon />,
     },
     {
       group: "Admin",
@@ -436,7 +439,7 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
 
         <ListItem button onClick={logout}>
           <ListItemIcon>
-            <ExitToApp />
+            <LogoutIcon />
           </ListItemIcon>
           <ListItemText primary="Logout" />
         </ListItem>

@@ -89,7 +89,7 @@ export const containerForHeader = (bottomSpacing: any) => ({
       fontSize: 14,
     },
     "& p": {
-      "& span": {
+      "& span:not(*[class*='smallUnit'])": {
         fontSize: 16,
       },
     },
