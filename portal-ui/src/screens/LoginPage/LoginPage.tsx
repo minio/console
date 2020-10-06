@@ -18,6 +18,7 @@ import React, { useEffect, useState } from "react";
 import request from "superagent";
 import storage from "local-storage-fallback";
 import { connect, ConnectedProps } from "react-redux";
+import ErrorIcon from "@material-ui/icons/Error";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
@@ -30,22 +31,31 @@ import api from "../../common/api";
 import { ILoginDetails, loginStrategyType } from "./types";
 import { setSession } from "../../common/utils";
 import history from "../../history";
+import { Error } from "@material-ui/icons";
 
 const styles = (theme: Theme) =>
   createStyles({
     "@global": {
       body: {
-        backgroundColor: "#F4F4F4",
+        backgroundColor: "#FAFAFA",
       },
     },
     paper: {
-      marginTop: theme.spacing(16),
-      borderRadius: "3px",
+      borderRadius: 8,
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      width: "800px",
+      width: 800,
+      height: 424,
       margin: "auto",
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      marginLeft: -400,
+      marginTop: -212,
+      "&.MuiPaper-root": {
+        borderRadius: 8,
+      },
     },
     avatar: {
       margin: theme.spacing(1),
@@ -53,35 +63,66 @@ const styles = (theme: Theme) =>
     },
     form: {
       width: "100%", // Fix IE 11 issue.
-      marginTop: theme.spacing(3),
     },
     submit: {
-      margin: theme.spacing(3, 0, 2),
+      margin: "30px 0px 16px",
+      height: 40,
+      fontWeight: 700,
+      boxShadow: "none",
+      padding: "16px 30px",
     },
     errorBlock: {
-      color: "red",
+      backgroundColor: "#C72C48",
+      width: 800,
+      height: 64,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      position: "absolute",
+      left: "50%",
+      top: "50%",
+      marginLeft: -400,
+      marginTop: -290,
+      color: "#fff",
+      fontWeight: 700,
+      fontSize: 14,
+      borderRadius: 8,
     },
     mainContainer: {
-      borderRadius: "3px",
+      position: "relative",
+      height: 424,
     },
     theOcean: {
-      borderTopLeftRadius: "3px",
-      borderBottomLeftRadius: "3px",
+      borderTopLeftRadius: 8,
+      borderBottomLeftRadius: 8,
       background:
-        "transparent linear-gradient(333deg, #281B6F 1%, #271260 13%, #120D53 83%) 0% 0% no-repeat padding-box;",
+        "transparent linear-gradient(to bottom, #073052 0%,#05122b 100%); 0% 0% no-repeat padding-box;",
     },
     oceanBg: {
       backgroundImage: "url(/images/BG_Illustration.svg)",
       backgroundRepeat: "no-repeat",
       backgroundPosition: "bottom left",
       height: "100%",
-      width: "100%",
+      width: 324,
     },
     theLogin: {
-      padding: "76px 62px 20px 62px",
+      padding: "40px 45px 20px 45px",
     },
     loadingLoginStrategy: {
       textAlign: "center",
+    },
+    headerTitle: {
+      marginBottom: 10,
+    },
+    submitContainer: {
+      textAlign: "right",
+    },
+    disclaimer: {
+      fontSize: 12,
+      marginTop: 30,
+    },
+    jwtInput: {
+      marginTop: 45,
     },
   });
 
@@ -182,61 +223,59 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
     case loginStrategyType.form: {
       loginComponent = (
         <React.Fragment>
-          <Typography component="h1" variant="h6">
-            Login
+          <Typography
+            component="h1"
+            variant="h6"
+            className={classes.headerTitle}
+          >
+            Console Login
           </Typography>
           <form className={classes.form} noValidate onSubmit={formSubmit}>
             <Grid container spacing={2}>
-              {error !== "" && (
-                <Grid item xs={12}>
-                  <Typography
-                    component="p"
-                    variant="body1"
-                    className={classes.errorBlock}
-                  >
-                    {error}
-                  </Typography>
-                </Grid>
-              )}
               <Grid item xs={12}>
                 <TextField
-                  required
                   fullWidth
                   id="accessKey"
                   value={accessKey}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setAccessKey(e.target.value)
                   }
-                  label="Access Key"
+                  label="Enter Access Key"
                   name="accessKey"
                   autoComplete="username"
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  required
                   fullWidth
                   value={secretKey}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setSecretKey(e.target.value)
                   }
                   name="secretKey"
-                  label="Secret Key"
+                  label="Enter Secret Key"
                   type="password"
                   id="secretKey"
                   autoComplete="current-password"
                 />
               </Grid>
             </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
-              Login
-            </Button>
+            <Grid item xs={12} className={classes.submitContainer}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+              >
+                Login
+              </Button>
+            </Grid>
+            <Grid item xs={12} className={classes.disclaimer}>
+              <strong>Don't have an access key?</strong>
+              <br />
+              <br />
+              Contact your administrator to have one made
+            </Grid>
           </form>
         </React.Fragment>
       );
@@ -245,7 +284,11 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
     case loginStrategyType.redirect: {
       loginComponent = (
         <React.Fragment>
-          <Typography component="h1" variant="h6">
+          <Typography
+            component="h1"
+            variant="h6"
+            className={classes.headerTitle}
+          >
             Login
           </Typography>
           <Button
@@ -255,7 +298,6 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
               window.location.hostname
             )}
             type="submit"
-            fullWidth
             variant="contained"
             color="primary"
             className={classes.submit}
@@ -269,23 +311,16 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
     case loginStrategyType.serviceAccount: {
       loginComponent = (
         <React.Fragment>
-          <Typography component="h1" variant="h6">
-            Login
+          <Typography
+            component="h1"
+            variant="h6"
+            className={classes.headerTitle}
+          >
+            Operator Login
           </Typography>
           <form className={classes.form} noValidate onSubmit={formSubmit}>
             <Grid container spacing={2}>
-              {error !== "" && (
-                <Grid item xs={12}>
-                  <Typography
-                    component="p"
-                    variant="body1"
-                    className={classes.errorBlock}
-                  >
-                    {error}
-                  </Typography>
-                </Grid>
-              )}
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.jwtInput}>
                 <TextField
                   required
                   fullWidth
@@ -300,15 +335,21 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
                 />
               </Grid>
             </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
-              Login
-            </Button>
+            <Grid item xs={12} className={classes.submitContainer}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+              >
+                Login
+              </Button>
+            </Grid>
+            <Grid item xs={12} className={classes.disclaimer}>
+              <strong>Don't have an access key?</strong>
+              <br />
+              Contact your administrator to have one made
+            </Grid>
           </form>
         </React.Fragment>
       );
@@ -321,16 +362,24 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
   }
 
   return (
-    <Paper className={classes.paper}>
-      <Grid container className={classes.mainContainer}>
-        <Grid item xs={7} className={classes.theOcean}>
-          <div className={classes.oceanBg} />
+    <React.Fragment>
+      {error !== "" && (
+        <div className={classes.errorBlock}>
+          <ErrorIcon fontSize="small" />
+          &nbsp;{error}
+        </div>
+      )}
+      <Paper className={classes.paper}>
+        <Grid container className={classes.mainContainer}>
+          <Grid item xs={7} className={classes.theOcean}>
+            <div className={classes.oceanBg} />
+          </Grid>
+          <Grid item xs={5} className={classes.theLogin}>
+            {loginComponent}
+          </Grid>
         </Grid>
-        <Grid item xs={5} className={classes.theLogin}>
-          {loginComponent}
-        </Grid>
-      </Grid>
-    </Paper>
+      </Paper>
+    </React.Fragment>
   );
 };
 

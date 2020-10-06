@@ -240,6 +240,10 @@ paths:
           in: query
           required: false
           type: boolean
+        - name: with_versions
+          in: query
+          required: false
+          type: boolean
       responses:
         200:
           description: A successful response.
@@ -1660,6 +1664,26 @@ definitions:
       content_type:
         type: string
       last_modified:
+        type: string
+      is_latest:
+        type: boolean
+      is_delete_marker:
+        type: boolean
+      version_id:
+        type: string
+      user_tags:
+        type: object
+        additionalProperties:
+          type: string
+      expiration:
+        type: string
+      expiration_rule_id:
+        type: string
+      legal_hold_status:
+        type: string
+      retention_mode:
+        type: string
+      retention_until_date:
         type: string
 
   makeBucketRequest:

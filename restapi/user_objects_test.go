@@ -31,20 +31,28 @@ import (
 )
 
 var minioListObjectsMock func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo
+var minioGetObjectLegalHoldMock func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error)
+var minioGetObjectRetentionMock func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error)
+
 var mcListMock func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
 var mcRemoveMock func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error
 
-// mock function of listObjects() needed for list objects
+// mock functions for minioClientMock
 func (ac minioClientMock) listObjects(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 	return minioListObjectsMock(ctx, bucket, opts)
 }
+func (ac minioClientMock) getObjectLegalHold(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
+	return minioGetObjectLegalHoldMock(ctx, bucketName, objectName, opts)
+}
 
-// implements mc.S3Client.List()
+func (ac minioClientMock) getObjectRetention(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
+	return minioGetObjectRetentionMock(ctx, bucketName, objectName, versionID)
+}
+
+// mock functions for s3ClientMock
 func (c s3ClientMock) list(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
 	return mcListMock(ctx, opts)
 }
-
-// implements mc.S3Client.Remove()
 func (c s3ClientMock) remove(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error {
 	return mcRemoveMock(ctx, isIncomplete, isRemoveBucket, isBypass, contentCh)
 }
@@ -52,12 +60,16 @@ func (c s3ClientMock) remove(ctx context.Context, isIncomplete, isRemoveBucket, 
 func Test_listObjects(t *testing.T) {
 	ctx := context.Background()
 	t1 := time.Now()
+	tretention := time.Now()
 	minClient := minioClientMock{}
 	type args struct {
-		bucketName string
-		prefix     string
-		recursive  bool
-		listFunc   func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo
+		bucketName          string
+		prefix              string
+		recursive           bool
+		withVersions        bool
+		listFunc            func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo
+		objectLegalHoldFunc func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error)
+		objectRetentionFunc func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error)
 	}
 	tests := []struct {
 		test         string
@@ -68,9 +80,10 @@ func Test_listObjects(t *testing.T) {
 		{
 			test: "Return objects",
 			args: args{
-				bucketName: "bucket1",
-				prefix:     "prefix",
-				recursive:  true,
+				bucketName:   "bucket1",
+				prefix:       "prefix",
+				recursive:    true,
+				withVersions: false,
 				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 					objectStatCh := make(chan minio.ObjectInfo, 1)
 					go func(objectStatCh chan<- minio.ObjectInfo) {
@@ -94,18 +107,32 @@ func Test_listObjects(t *testing.T) {
 					}(objectStatCh)
 					return objectStatCh
 				},
+				objectLegalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
+					s := minio.LegalHoldEnabled
+					return &s, nil
+				},
+				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
+					m := minio.Governance
+					return &m, &tretention, nil
+				},
 			},
 			expectedResp: []*models.BucketObject{
 				&models.BucketObject{
-					Name:         "obj1",
-					LastModified: t1.String(),
-					Size:         int64(1024),
-					ContentType:  "content",
+					Name:               "obj1",
+					LastModified:       t1.String(),
+					Size:               int64(1024),
+					ContentType:        "content",
+					LegalHoldStatus:    string(minio.LegalHoldEnabled),
+					RetentionMode:      string(minio.Governance),
+					RetentionUntilDate: tretention.String(),
 				}, &models.BucketObject{
-					Name:         "obj2",
-					LastModified: t1.String(),
-					Size:         int64(512),
-					ContentType:  "content",
+					Name:               "obj2",
+					LastModified:       t1.String(),
+					Size:               int64(512),
+					ContentType:        "content",
+					LegalHoldStatus:    string(minio.LegalHoldEnabled),
+					RetentionMode:      string(minio.Governance),
+					RetentionUntilDate: tretention.String(),
 				},
 			},
 			wantError: nil,
@@ -113,13 +140,22 @@ func Test_listObjects(t *testing.T) {
 		{
 			test: "Return zero objects",
 			args: args{
-				bucketName: "bucket1",
-				prefix:     "prefix",
-				recursive:  true,
+				bucketName:   "bucket1",
+				prefix:       "prefix",
+				recursive:    true,
+				withVersions: false,
 				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 					objectStatCh := make(chan minio.ObjectInfo, 1)
 					defer close(objectStatCh)
 					return objectStatCh
+				},
+				objectLegalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
+					s := minio.LegalHoldEnabled
+					return &s, nil
+				},
+				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
+					m := minio.Governance
+					return &m, &tretention, nil
 				},
 			},
 			expectedResp: nil,
@@ -128,9 +164,10 @@ func Test_listObjects(t *testing.T) {
 		{
 			test: "Handle error if present on object",
 			args: args{
-				bucketName: "bucket1",
-				prefix:     "prefix",
-				recursive:  true,
+				bucketName:   "bucket1",
+				prefix:       "prefix",
+				recursive:    true,
+				withVersions: false,
 				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 					objectStatCh := make(chan minio.ObjectInfo, 1)
 					go func(objectStatCh chan<- minio.ObjectInfo) {
@@ -151,16 +188,175 @@ func Test_listObjects(t *testing.T) {
 					}(objectStatCh)
 					return objectStatCh
 				},
+				objectLegalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
+					s := minio.LegalHoldEnabled
+					return &s, nil
+				},
+				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
+					m := minio.Governance
+					return &m, &tretention, nil
+				},
 			},
 			expectedResp: nil,
 			wantError:    errors.New("error here"),
+		},
+		{
+			// Description: deleted objects with IsDeleteMarker
+			// should not call legsalhold or retention funcs
+			test: "Return deleted objects",
+			args: args{
+				bucketName:   "bucket1",
+				prefix:       "prefix",
+				recursive:    true,
+				withVersions: false,
+				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
+					objectStatCh := make(chan minio.ObjectInfo, 1)
+					go func(objectStatCh chan<- minio.ObjectInfo) {
+						defer close(objectStatCh)
+						for _, bucket := range []minio.ObjectInfo{
+							minio.ObjectInfo{
+								Key:            "obj1",
+								LastModified:   t1,
+								Size:           int64(1024),
+								ContentType:    "content",
+								IsDeleteMarker: true,
+							},
+							minio.ObjectInfo{
+								Key:          "obj2",
+								LastModified: t1,
+								Size:         int64(512),
+								ContentType:  "content",
+							},
+						} {
+							objectStatCh <- bucket
+						}
+					}(objectStatCh)
+					return objectStatCh
+				},
+				objectLegalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
+					s := minio.LegalHoldEnabled
+					return &s, nil
+				},
+				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
+					m := minio.Governance
+					return &m, &tretention, nil
+				},
+			},
+			expectedResp: []*models.BucketObject{
+				&models.BucketObject{
+					Name:           "obj1",
+					LastModified:   t1.String(),
+					Size:           int64(1024),
+					ContentType:    "content",
+					IsDeleteMarker: true,
+				}, &models.BucketObject{
+					Name:               "obj2",
+					LastModified:       t1.String(),
+					Size:               int64(512),
+					ContentType:        "content",
+					LegalHoldStatus:    string(minio.LegalHoldEnabled),
+					RetentionMode:      string(minio.Governance),
+					RetentionUntilDate: tretention.String(),
+				},
+			},
+			wantError: nil,
+		},
+		{
+			// Description: deleted objects with
+			// error on legalhold and retention funcs
+			// should only log errors
+			test: "Return deleted objects, error on legalhold and retention",
+			args: args{
+				bucketName:   "bucket1",
+				prefix:       "prefix",
+				recursive:    true,
+				withVersions: false,
+				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
+					objectStatCh := make(chan minio.ObjectInfo, 1)
+					go func(objectStatCh chan<- minio.ObjectInfo) {
+						defer close(objectStatCh)
+						for _, bucket := range []minio.ObjectInfo{
+							minio.ObjectInfo{
+								Key:          "obj1",
+								LastModified: t1,
+								Size:         int64(1024),
+								ContentType:  "content",
+							},
+						} {
+							objectStatCh <- bucket
+						}
+					}(objectStatCh)
+					return objectStatCh
+				},
+				objectLegalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
+					return nil, errors.New("error legal")
+				},
+				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
+					return nil, nil, errors.New("error retention")
+				},
+			},
+			expectedResp: []*models.BucketObject{
+				&models.BucketObject{
+					Name:         "obj1",
+					LastModified: t1.String(),
+					Size:         int64(1024),
+					ContentType:  "content",
+				},
+			},
+			wantError: nil,
+		},
+		{
+			// Description: deleted objects with
+			// error on legalhold and retention funcs
+			// should only log errors
+			test: "Return deleted objects, error on legalhold and retention",
+			args: args{
+				bucketName:   "bucket1",
+				prefix:       "prefix",
+				recursive:    true,
+				withVersions: false,
+				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
+					objectStatCh := make(chan minio.ObjectInfo, 1)
+					go func(objectStatCh chan<- minio.ObjectInfo) {
+						defer close(objectStatCh)
+						for _, bucket := range []minio.ObjectInfo{
+							minio.ObjectInfo{
+								Key:          "obj1",
+								LastModified: t1,
+								Size:         int64(1024),
+								ContentType:  "content",
+							},
+						} {
+							objectStatCh <- bucket
+						}
+					}(objectStatCh)
+					return objectStatCh
+				},
+				objectLegalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
+					return nil, errors.New("error legal")
+				},
+				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
+					return nil, nil, errors.New("error retention")
+				},
+			},
+			expectedResp: []*models.BucketObject{
+				&models.BucketObject{
+					Name:         "obj1",
+					LastModified: t1.String(),
+					Size:         int64(1024),
+					ContentType:  "content",
+				},
+			},
+			wantError: nil,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
 			minioListObjectsMock = tt.args.listFunc
-			resp, err := listBucketObjects(ctx, minClient, tt.args.bucketName, tt.args.prefix, tt.args.recursive)
+			minioGetObjectLegalHoldMock = tt.args.objectLegalHoldFunc
+			minioGetObjectRetentionMock = tt.args.objectRetentionFunc
+			resp, err := listBucketObjects(ctx, minClient, tt.args.bucketName, tt.args.prefix, tt.args.recursive, tt.args.withVersions)
 			if !reflect.DeepEqual(err, tt.wantError) {
 				t.Errorf("listBucketObjects() error: %v, wantErr: %v", err, tt.wantError)
 				return
