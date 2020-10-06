@@ -54,6 +54,9 @@ import {
   WarpIcon,
 } from "../../../icons";
 import { clearSession } from "../../../common/utils";
+import HealIcon from "../../../icons/HealIcon";
+import ConsoleIcon from "../../../icons/ConsoleIcon";
+import LogoutIcon from "../../../icons/LogoutIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -257,8 +260,8 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
       type: "item",
       component: NavLink,
       to: "/logs",
-      name: "Console Logs",
-      icon: <WebAssetIcon />,
+      name: "Logs",
+      icon: <ConsoleIcon />,
     },
     {
       group: "Tools",
@@ -282,7 +285,7 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
       component: NavLink,
       to: "/heal",
       name: "Heal",
-      icon: <HealingIcon />,
+      icon: <HealIcon />,
     },
     {
       group: "Admin",
@@ -436,7 +439,7 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
 
         <ListItem button onClick={logout}>
           <ListItemIcon>
-            <ExitToApp />
+            <LogoutIcon />
           </ListItemIcon>
           <ListItemText primary="Logout" />
         </ListItem>

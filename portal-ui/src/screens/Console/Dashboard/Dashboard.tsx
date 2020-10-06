@@ -29,6 +29,9 @@ import { niceBytes } from "../../../common/utils";
 import { LinearProgress } from "@material-ui/core";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
+import AllBucketsIcon from "../../../icons/AllBucketsIcon";
+import UsageIcon from "../../../icons/UsageIcon";
+import EgressIcon from "../../../icons/EgressIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -90,9 +93,13 @@ const styles = (theme: Theme) =>
       boxShadow: "none",
     },
     fixedHeight: {
-      minHeight: 165,
+      height: 165,
       minWidth: 247,
       marginRight: 20,
+      padding: "25px 28px",
+      "& svg": {
+        maxHeight: 18,
+      },
     },
     consumptionValue: {
       color: "#000000",
@@ -105,6 +112,32 @@ const styles = (theme: Theme) =>
     },
     notationContainer: {
       display: "flex",
+    },
+    dashboardBG: {
+      width: 390,
+      height: 255,
+      zIndex: 500,
+      position: "absolute",
+      backgroundSize: "fill",
+
+      backgroundImage: "url(/images/BG_IllustrationDarker.svg)",
+      backgroundPosition: "right bottom",
+      right: 0,
+      bottom: 0,
+      backgroundRepeat: "no-repeat",
+    },
+    dashboardContainer: {
+      zIndex: 600,
+      position: "absolute",
+    },
+    elementTitle: {
+      fontWeight: 500,
+      color: "#777777",
+      fontSize: 14,
+      marginTop: -9,
+    },
+    smallUnit: {
+      fontSize: 20,
     },
   });
 
@@ -141,7 +174,19 @@ const Dashboard = ({ classes }: IDashboardProps) => {
     if (usage === undefined) {
       return "0";
     }
-    return niceBytes(usage);
+
+    const niceBytesUsage = niceBytes(usage).split(" ");
+
+    if (niceBytesUsage.length !== 2) {
+      return niceBytesUsage.join(" ");
+    }
+
+    return (
+      <React.Fragment>
+        {niceBytesUsage[0]}
+        <span className={classes.smallUnit}>{niceBytesUsage[1]}</span>
+      </React.Fragment>
+    );
   };
 
   const prettyNumber = (usage: number | undefined) => {
@@ -155,7 +200,8 @@ const Dashboard = ({ classes }: IDashboardProps) => {
   return (
     <React.Fragment>
       <PageHeader label="Dashboard" />
-      <Grid container>
+      <div className={classes.dashboardBG} />
+      <Grid container className={classes.dashboardContainer}>
         <Grid container spacing={3} className={classes.container}>
           {error !== "" && <Grid container>{error}</Grid>}
           {loading ? (
@@ -168,10 +214,12 @@ const Dashboard = ({ classes }: IDashboardProps) => {
                 <Paper className={fixedHeightPaper}>
                   <Grid container direction="row" alignItems="center">
                     <Grid item className={classes.icon}>
-                      <ViewHeadlineIcon />
+                      <AllBucketsIcon />
                     </Grid>
                     <Grid item>
-                      <Typography variant="h6">All Buckets</Typography>
+                      <Typography className={classes.elementTitle}>
+                        All buckets
+                      </Typography>
                     </Grid>
                   </Grid>
                   <Typography className={classes.consumptionValue}>
@@ -181,10 +229,12 @@ const Dashboard = ({ classes }: IDashboardProps) => {
                 <Paper className={fixedHeightPaper}>
                   <Grid container direction="row" alignItems="center">
                     <Grid item className={classes.icon}>
-                      <PieChartIcon />
+                      <UsageIcon />
                     </Grid>
                     <Grid item>
-                      <Typography variant="h6">Usage</Typography>
+                      <Typography className={classes.elementTitle}>
+                        Usage
+                      </Typography>
                     </Grid>
                   </Grid>
                   <Typography className={classes.consumptionValue}>
@@ -194,10 +244,13 @@ const Dashboard = ({ classes }: IDashboardProps) => {
                 <Paper className={fixedHeightPaper}>
                   <Grid container direction="row" alignItems="center">
                     <Grid item className={classes.icon}>
-                      <NetworkCheckIcon />
+                      <EgressIcon />
                     </Grid>
                     <Grid item>
-                      <Typography variant="h6"> Total Objects</Typography>
+                      <Typography className={classes.elementTitle}>
+                        {" "}
+                        Total Objects
+                      </Typography>
                     </Grid>
                   </Grid>
                   <Typography className={classes.consumptionValue}>
