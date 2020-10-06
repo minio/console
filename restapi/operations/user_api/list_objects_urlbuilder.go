@@ -35,8 +35,9 @@ import (
 type ListObjectsURL struct {
 	BucketName string
 
-	Prefix    *string
-	Recursive *bool
+	Prefix       *string
+	Recursive    *bool
+	WithVersions *bool
 
 	_basePath string
 	// avoid unkeyed usage
@@ -93,6 +94,14 @@ func (o *ListObjectsURL) Build() (*url.URL, error) {
 	}
 	if recursiveQ != "" {
 		qs.Set("recursive", recursiveQ)
+	}
+
+	var withVersionsQ string
+	if o.WithVersions != nil {
+		withVersionsQ = swag.FormatBool(*o.WithVersions)
+	}
+	if withVersionsQ != "" {
+		qs.Set("with_versions", withVersionsQ)
 	}
 
 	_result.RawQuery = qs.Encode()

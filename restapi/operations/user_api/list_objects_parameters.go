@@ -61,6 +61,10 @@ type ListObjectsParams struct {
 	  In: query
 	*/
 	Recursive *bool
+	/*
+	  In: query
+	*/
+	WithVersions *bool
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -86,6 +90,11 @@ func (o *ListObjectsParams) BindRequest(r *http.Request, route *middleware.Match
 
 	qRecursive, qhkRecursive, _ := qs.GetOK("recursive")
 	if err := o.bindRecursive(qRecursive, qhkRecursive, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qWithVersions, qhkWithVersions, _ := qs.GetOK("with_versions")
+	if err := o.bindWithVersions(qWithVersions, qhkWithVersions, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -146,6 +155,28 @@ func (o *ListObjectsParams) bindRecursive(rawData []string, hasKey bool, formats
 		return errors.InvalidType("recursive", "query", "bool", raw)
 	}
 	o.Recursive = &value
+
+	return nil
+}
+
+// bindWithVersions binds and validates parameter WithVersions from query.
+func (o *ListObjectsParams) bindWithVersions(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+	if raw == "" { // empty values pass all other validations
+		return nil
+	}
+
+	value, err := swag.ConvertBool(raw)
+	if err != nil {
+		return errors.InvalidType("with_versions", "query", "bool", raw)
+	}
+	o.WithVersions = &value
 
 	return nil
 }

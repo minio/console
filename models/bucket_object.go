@@ -35,14 +35,41 @@ type BucketObject struct {
 	// content type
 	ContentType string `json:"content_type,omitempty"`
 
+	// expiration
+	Expiration string `json:"expiration,omitempty"`
+
+	// expiration rule id
+	ExpirationRuleID string `json:"expiration_rule_id,omitempty"`
+
+	// is delete marker
+	IsDeleteMarker bool `json:"is_delete_marker,omitempty"`
+
+	// is latest
+	IsLatest bool `json:"is_latest,omitempty"`
+
 	// last modified
 	LastModified string `json:"last_modified,omitempty"`
+
+	// legal hold status
+	LegalHoldStatus string `json:"legal_hold_status,omitempty"`
 
 	// name
 	Name string `json:"name,omitempty"`
 
+	// retention mode
+	RetentionMode string `json:"retention_mode,omitempty"`
+
+	// retention until date
+	RetentionUntilDate string `json:"retention_until_date,omitempty"`
+
 	// size
 	Size int64 `json:"size,omitempty"`
+
+	// user tags
+	UserTags map[string]string `json:"user_tags,omitempty"`
+
+	// version id
+	VersionID string `json:"version_id,omitempty"`
 }
 
 // Validate validates this bucket object
