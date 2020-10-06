@@ -364,6 +364,11 @@ func init() {
             "type": "boolean",
             "name": "recursive",
             "in": "query"
+          },
+          {
+            "type": "boolean",
+            "name": "with_versions",
+            "in": "query"
           }
         ],
         "responses": {
@@ -2570,15 +2575,45 @@ func init() {
         "content_type": {
           "type": "string"
         },
+        "expiration": {
+          "type": "string"
+        },
+        "expiration_rule_id": {
+          "type": "string"
+        },
+        "is_delete_marker": {
+          "type": "boolean"
+        },
+        "is_latest": {
+          "type": "boolean"
+        },
         "last_modified": {
+          "type": "string"
+        },
+        "legal_hold_status": {
           "type": "string"
         },
         "name": {
           "type": "string"
         },
+        "retention_mode": {
+          "type": "string"
+        },
+        "retention_until_date": {
+          "type": "string"
+        },
         "size": {
           "type": "integer",
           "format": "int64"
+        },
+        "user_tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "version_id": {
+          "type": "string"
         }
       }
     },
@@ -4739,6 +4774,11 @@ func init() {
           {
             "type": "boolean",
             "name": "recursive",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "name": "with_versions",
             "in": "query"
           }
         ],
@@ -7469,15 +7509,45 @@ func init() {
         "content_type": {
           "type": "string"
         },
+        "expiration": {
+          "type": "string"
+        },
+        "expiration_rule_id": {
+          "type": "string"
+        },
+        "is_delete_marker": {
+          "type": "boolean"
+        },
+        "is_latest": {
+          "type": "boolean"
+        },
         "last_modified": {
+          "type": "string"
+        },
+        "legal_hold_status": {
           "type": "string"
         },
         "name": {
           "type": "string"
         },
+        "retention_mode": {
+          "type": "string"
+        },
+        "retention_until_date": {
+          "type": "string"
+        },
         "size": {
           "type": "integer",
           "format": "int64"
+        },
+        "user_tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "version_id": {
+          "type": "string"
         }
       }
     },
