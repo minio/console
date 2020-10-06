@@ -30,6 +30,8 @@ import { CreateIcon } from "../../.././../../../icons";
 import { niceBytes } from "../../../../../../common/utils";
 import Moment from "react-moment";
 import DeleteObject from "./DeleteObject";
+import { containerForHeader } from "../../../../Common/FormComponents/common/styleLibrary";
+import PageHeader from "../../../../Common/PageHeader/PageHeader";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -73,6 +75,7 @@ const styles = (theme: Theme) =>
       borderRadius: 5,
       boxShadow: "0px 3px 6px #00000012",
     },
+    ...containerForHeader(theme.spacing(4)),
   });
 
 interface IListObjectsProps {
@@ -191,58 +194,55 @@ class ListObjects extends React.Component<
             }}
           />
         )}
+        <PageHeader label="Objects" />
         <Grid container>
-          <Grid item xs={12}>
-            <Typography variant="h6">Objects</Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12} className={classes.actionsTray}>
-            <TextField
-              placeholder="Search Objects"
-              className={classes.searchField}
-              id="search-resource"
-              label=""
-              onChange={(val) => {
-                this.setState({
-                  filterObjects: val.target.value,
-                });
-              }}
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12}>
-            <TableWrapper
-              itemActions={tableActions}
-              columns={[
-                { label: "Name", elementKey: "name" },
-                {
-                  label: "Last Modified",
-                  elementKey: "last_modified",
-                  renderFunction: displayParsedDate,
-                },
-                {
-                  label: "Size",
-                  elementKey: "size",
-                  renderFunction: niceBytes,
-                },
-              ]}
-              isLoading={loading}
-              entityName="Objects"
-              idField="name"
-              records={filteredRecords}
-            />
+          <Grid item xs={12} className={classes.container}>
+            <Grid item xs={12} className={classes.actionsTray}>
+              <TextField
+                placeholder="Search Objects"
+                className={classes.searchField}
+                id="search-resource"
+                label=""
+                onChange={(val) => {
+                  this.setState({
+                    filterObjects: val.target.value,
+                  });
+                }}
+                InputProps={{
+                  disableUnderline: true,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <br />
+            </Grid>
+            <Grid item xs={12}>
+              <TableWrapper
+                itemActions={tableActions}
+                columns={[
+                  { label: "Name", elementKey: "name" },
+                  {
+                    label: "Last Modified",
+                    elementKey: "last_modified",
+                    renderFunction: displayParsedDate,
+                  },
+                  {
+                    label: "Size",
+                    elementKey: "size",
+                    renderFunction: niceBytes,
+                  },
+                ]}
+                isLoading={loading}
+                entityName="Objects"
+                idField="name"
+                records={filteredRecords}
+              />
+            </Grid>
           </Grid>
         </Grid>
       </React.Fragment>
