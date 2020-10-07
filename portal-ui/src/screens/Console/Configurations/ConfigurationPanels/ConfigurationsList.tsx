@@ -27,7 +27,11 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import { configurationElements } from "../utils";
 import { IConfigurationElement } from "../types";
 import EditConfiguration from "../CustomForms/EditConfiguration";
-import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  actionsTray,
+  containerForHeader,
+  searchField,
+} from "../../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 
 interface IListConfiguration {
@@ -45,21 +49,11 @@ const styles = (theme: Theme) =>
     keyName: {
       marginLeft: 5,
     },
-    actionsTray: {
-      textAlign: "right",
-      "& button": {
-        marginLeft: 10,
-      },
-    },
-    searchField: {
-      background: "#FFFFFF",
-      padding: 12,
-      borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012",
-    },
     iconText: {
       lineHeight: "24px",
     },
+    ...searchField,
+    ...actionsTray,
     ...containerForHeader(theme.spacing(4)),
   });
 

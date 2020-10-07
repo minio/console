@@ -35,7 +35,11 @@ import api from "../../../common/api";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import AddNotificationEndpoint from "./AddNotificationEndpoint";
-import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
+import {
+  actionsTray,
+  containerForHeader,
+  searchField,
+} from "../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../Common/PageHeader/PageHeader";
 
 interface IListNotificationEndpoints {
@@ -53,21 +57,11 @@ const styles = (theme: Theme) =>
     keyName: {
       marginLeft: 5,
     },
-    actionsTray: {
-      textAlign: "right",
-      "& button": {
-        marginLeft: 10,
-      },
-    },
-    searchField: {
-      background: "#FFFFFF",
-      padding: 12,
-      borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012",
-    },
     iconText: {
       lineHeight: "24px",
     },
+    ...actionsTray,
+    ...searchField,
     ...containerForHeader(theme.spacing(4)),
   });
 

@@ -119,7 +119,7 @@ const styles = (theme: Theme) =>
     },
     rowSelected: {
       ...rowText,
-      color: "#201763",
+      color: "#081C42",
     },
     paginatorContainer: {
       display: "flex",

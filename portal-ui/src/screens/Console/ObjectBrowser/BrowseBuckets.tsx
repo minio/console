@@ -31,6 +31,10 @@ import { Bucket, BucketList } from "../Buckets/types";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
 import history from "../../../history";
+import {
+  actionsTray,
+  searchField,
+} from "../Common/FormComponents/common/styleLibrary";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -62,18 +66,6 @@ const styles = (theme: Theme) =>
         },
       },
     },
-    actionsTray: {
-      textAlign: "right",
-      "& button": {
-        marginLeft: 10,
-      },
-    },
-    searchField: {
-      background: "#FFFFFF",
-      padding: 12,
-      borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012",
-    },
     usedSpaceCol: {
       width: 150,
     },
@@ -81,6 +73,8 @@ const styles = (theme: Theme) =>
       alignItems: "center",
       display: "flex",
     },
+    ...actionsTray,
+    ...searchField,
   });
 
 interface IBrowseBucketsProps {
@@ -162,10 +156,10 @@ const BrowseBuckets = ({ classes }: IBrowseBucketsProps) => {
         />
       )}
       <Grid container>
-        <Grid item xs={6} className={classes.subTitleLabel}>
+        <Grid item xs={2} className={classes.subTitleLabel}>
           <Typography variant="h6">Buckets</Typography>
         </Grid>
-        <Grid item xs={6} className={classes.actionsTray}>
+        <Grid item xs={10} className={classes.actionsTray}>
           <TextField
             placeholder="Search Buckets"
             className={classes.searchField}
