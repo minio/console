@@ -79,3 +79,15 @@ export interface MakeBucketRequest {
   versioning: boolean;
   quota?: QuotaRequest;
 }
+
+export interface IRemoteBucket {
+  name: string;
+  accessKey: string;
+  secretKey: string;
+  sourceBucket: string;
+  targetURL: string;
+  targetBucket: string;
+  remoteARN: string;
+  status: string;
+  service: string;
+}

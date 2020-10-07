@@ -25,11 +25,7 @@ import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBo
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { Button, LinearProgress } from "@material-ui/core";
 import api from "../../../../common/api";
-import {
-  IRemoteBucket,
-  IRemoteBucketsResponse,
-} from "../../RemoteBuckets/types";
-import RemoteBucketsList from "../../RemoteBuckets/RemoteBuckets";
+import { IRemoteBucket } from "../types";
 
 interface IReplicationModal {
   open: boolean;
@@ -88,14 +84,13 @@ const AddReplicationModal = ({
           .invoke("GET", "/api/v1/remote-buckets")
           .then((res: any) => {
             const remoteBuckets = get(res, "buckets", []);
-            const remoteBucket = remoteBuckets
-              .find((itemRemote: IRemoteBucket) => {
+            const remoteBucket = remoteBuckets.find(
+              (itemRemote: IRemoteBucket) => {
                 return itemRemote.sourceBucket === bucketName;
-              });
-            console.log("remote bucket:", remoteBucket);
+              }
+            );
             if (remoteBucket && remoteBucket.remoteARN) {
               const remoteARN = remoteBucket.remoteARN;
-              console.log(remoteARN);
               const replicationInfo = {
                 destination_bucket: targetBucket,
                 arn: remoteARN,
