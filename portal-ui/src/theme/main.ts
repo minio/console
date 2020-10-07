@@ -50,7 +50,7 @@ const theme = createMuiTheme({
     },
     h4: {
       fontWeight: "bold",
-      color: "#201763",
+      color: "#081C42",
     },
     h5: {
       fontWeight: "bold",
@@ -59,6 +59,21 @@ const theme = createMuiTheme({
     h6: {
       fontWeight: "bold",
       color: "#000000",
+    },
+  },
+  overrides: {
+    MuiButton: {
+      root: {
+        borderRadius: 3,
+        color: "white",
+        height: 40,
+        padding: "0 20px",
+        fontSize: 14,
+        fontWeight: 500,
+        "& .MuiSvgIcon-root": {
+          maxHeight: 18,
+        },
+      },
     },
   },
 });

@@ -75,8 +75,8 @@ export const checkboxIcons = {
   unCheckedIcon: { ...checkBoxBasic, border: "1px solid #d0d0d0" },
   checkedIcon: {
     ...checkBoxBasic,
-    border: "1px solid #201763",
-    backgroundColor: "#201763",
+    border: "1px solid #081C42",
+    backgroundColor: "#081C42",
   },
 };
 
@@ -95,3 +95,35 @@ export const containerForHeader = (bottomSpacing: any) => ({
     },
   },
 });
+
+export const actionsTray = {
+  actionsTray: {
+    display: "flex",
+    justifyContent: "space-between",
+    "& button": {
+      flexGrow: 0,
+      marginLeft: 15,
+    },
+  },
+};
+
+export const searchField = {
+  searchField: {
+    flexGrow: 1,
+    marginRight: 30,
+    background: "#FFFFFF",
+    borderRadius: 5,
+    border: "#EAEDEE 1px solid",
+    display: "flex",
+    justifyContent: "center",
+    padding: "0 16px",
+    "& input": {
+      fontSize: 14,
+      color: "#000",
+      "&::placeholder": {
+        color: "#393939",
+        opacity: 1,
+      },
+    },
+  },
+};

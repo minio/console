@@ -34,6 +34,8 @@ import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
 import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 import history from "../../../../history";
 import RefreshIcon from "@material-ui/icons/Refresh";
+import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
+import PageHeader from "../../Common/PageHeader/PageHeader";
 
 interface ITenantsList {
   classes: any;
@@ -81,6 +83,7 @@ const styles = (theme: Theme) =>
       borderRadius: 5,
       boxShadow: "0px 3px 6px #00000012",
     },
+    ...containerForHeader(theme.spacing(4)),
   });
 
 const ListTenants = ({ classes }: ITenantsList) => {
@@ -245,84 +248,81 @@ const ListTenants = ({ classes }: ITenantsList) => {
           entity="Tenant"
         />
       )}
+      <PageHeader label={"Users"} />
       <Grid container>
-        <Grid item xs={12}>
-          <Typography variant="h6">Tenants</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
-        <Grid item xs={12} className={classes.actionsTray}>
-          <IconButton
-            color="primary"
-            aria-label="Refresh Tenant List"
-            component="span"
-            onClick={() => {
-              setIsLoading(true);
-            }}
-          >
-            <RefreshIcon />
-          </IconButton>
+        <Grid item xs={12} className={classes.container}>
+          <Grid item xs={12} className={classes.actionsTray}>
+            <IconButton
+              color="primary"
+              aria-label="Refresh Tenant List"
+              component="span"
+              onClick={() => {
+                setIsLoading(true);
+              }}
+            >
+              <RefreshIcon />
+            </IconButton>
 
-          <TextField
-            placeholder="Search Tenants"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            onChange={(val) => {
-              setFilterTenants(val.target.value);
-            }}
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<CreateIcon />}
-            onClick={() => {
-              setCreateTenantOpen(true);
-            }}
-          >
-            Create Tenant
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
-        <Grid item xs={12}>
-          <TableWrapper
-            itemActions={tableActions}
-            columns={[
-              { label: "Name", elementKey: "name" },
-              { label: "Capacity", elementKey: "capacity" },
-              { label: "# of Zones", elementKey: "zone_count" },
-              { label: "State", elementKey: "currentState" },
-            ]}
-            isLoading={isLoading}
-            records={filteredRecords}
-            entityName="Tenants"
-            idField="name"
-            paginatorConfig={{
-              rowsPerPageOptions: [5, 10, 25],
-              colSpan: 3,
-              count: filteredRecords.length,
-              rowsPerPage: rowsPerPage,
-              page: page,
-              SelectProps: {
-                inputProps: { "aria-label": "rows per page" },
-                native: true,
-              },
-              onChangePage: handleChangePage,
-              onChangeRowsPerPage: handleChangeRowsPerPage,
-              ActionsComponent: MinTablePaginationActions,
-            }}
-          />
+            <TextField
+              placeholder="Search Tenants"
+              className={classes.searchField}
+              id="search-resource"
+              label=""
+              onChange={(val) => {
+                setFilterTenants(val.target.value);
+              }}
+              InputProps={{
+                disableUnderline: true,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<CreateIcon />}
+              onClick={() => {
+                setCreateTenantOpen(true);
+              }}
+            >
+              Create Tenant
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            <br />
+          </Grid>
+          <Grid item xs={12}>
+            <TableWrapper
+              itemActions={tableActions}
+              columns={[
+                { label: "Name", elementKey: "name" },
+                { label: "Capacity", elementKey: "capacity" },
+                { label: "# of Zones", elementKey: "zone_count" },
+                { label: "State", elementKey: "currentState" },
+              ]}
+              isLoading={isLoading}
+              records={filteredRecords}
+              entityName="Tenants"
+              idField="name"
+              paginatorConfig={{
+                rowsPerPageOptions: [5, 10, 25],
+                colSpan: 3,
+                count: filteredRecords.length,
+                rowsPerPage: rowsPerPage,
+                page: page,
+                SelectProps: {
+                  inputProps: { "aria-label": "rows per page" },
+                  native: true,
+                },
+                onChangePage: handleChangePage,
+                onChangeRowsPerPage: handleChangeRowsPerPage,
+                ActionsComponent: MinTablePaginationActions,
+              }}
+            />
+          </Grid>
         </Grid>
       </Grid>
     </React.Fragment>

@@ -32,7 +32,11 @@ import SearchIcon from "@material-ui/icons/Search";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { stringSort } from "../../../utils/sortFunctions";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
+import {
+  actionsTray,
+  containerForHeader,
+  searchField,
+} from "../Common/FormComponents/common/styleLibrary";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -75,18 +79,8 @@ const styles = (theme: Theme) =>
     iconRoot: {
       textAlign: "center",
     },
-    actionsTray: {
-      textAlign: "right",
-      "& button": {
-        marginLeft: 10,
-      },
-    },
-    searchField: {
-      background: "#FFFFFF",
-      padding: 12,
-      borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012",
-    },
+    ...actionsTray,
+    ...searchField,
     ...containerForHeader(theme.spacing(4)),
   });
 

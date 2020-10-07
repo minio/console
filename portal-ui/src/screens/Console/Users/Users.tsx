@@ -36,7 +36,11 @@ import AddToGroup from "./AddToGroup";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import DescriptionIcon from "@material-ui/icons/Description";
 import SetPolicy from "../Policies/SetPolicy";
-import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
+import {
+  actionsTray,
+  containerForHeader,
+  searchField,
+} from "../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../Common/PageHeader/PageHeader";
 
 const styles = (theme: Theme) =>
@@ -74,18 +78,8 @@ const styles = (theme: Theme) =>
         },
       },
     },
-    actionsTray: {
-      textAlign: "right",
-      "& button": {
-        marginLeft: 10,
-      },
-    },
-    searchField: {
-      background: "#FFFFFF",
-      padding: 12,
-      borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012",
-    },
+    ...actionsTray,
+    ...searchField,
     ...containerForHeader(theme.spacing(4)),
   });
 
