@@ -28,6 +28,7 @@ import { stringSort } from "../../../utils/sortFunctions";
 import { GroupsList } from "../Groups/types";
 import get from "lodash/get";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
+import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
 
 interface IGroupsProps {
   classes: any;
@@ -41,10 +42,11 @@ const styles = (theme: Theme) =>
       marginTop: theme.spacing(3),
     },
     paper: {
-      // padding: theme.spacing(2),
       display: "flex",
       overflow: "auto",
       flexDirection: "column",
+      paddingTop: 15,
+      boxShadow: "none",
     },
     addSideBar: {
       width: "320px",
@@ -70,20 +72,6 @@ const styles = (theme: Theme) =>
         },
       },
     },
-    actionsTray: {
-      textAlign: "left",
-      "& button": {
-        marginLeft: 10,
-      },
-    },
-    filterField: {
-      background: "#FFFFFF",
-      padding: 12,
-      borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012",
-      width: "100%",
-      zIndex: 500,
-    },
     noFound: {
       textAlign: "center",
       padding: "10px 0",
@@ -94,6 +82,26 @@ const styles = (theme: Theme) =>
     stickyHeader: {
       backgroundColor: "#fff",
     },
+    actionsTitle: {
+      fontWeight: 600,
+      color: "#000",
+      fontSize: 16,
+      alignSelf: "center",
+    },
+    tableBlock: {
+      marginTop: 15,
+    },
+    filterField: {
+      width: 375,
+      fontWeight: 600,
+      "& .input": {
+        "&::placeholder": {
+          fontWeight: 600,
+          color: "#000",
+        },
+      },
+    },
+    ...actionsTray,
   });
 
 const GroupsSelectors = ({
@@ -164,7 +172,6 @@ const GroupsSelectors = ({
 
   return (
     <React.Fragment>
-      <Title>Groups</Title>
       <Grid item xs={12}>
         <Paper className={classes.paper}>
           {loading && <LinearProgress />}
@@ -172,13 +179,13 @@ const GroupsSelectors = ({
           {records != null && records.length > 0 ? (
             <React.Fragment>
               <Grid item xs={12} className={classes.actionsTray}>
+                <span className={classes.actionsTitle}>Assign Groups</span>
                 <TextField
-                  placeholder="Filter Groups"
+                  placeholder="Filter by Group"
                   className={classes.filterField}
                   id="search-resource"
                   label=""
                   InputProps={{
-                    disableUnderline: true,
                     startAdornment: (
                       <InputAdornment position="start">
                         <SearchIcon />
@@ -190,7 +197,7 @@ const GroupsSelectors = ({
                   }}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.tableBlock}>
                 <TableWrapper
                   columns={[{ label: "Group", elementKey: "" }]}
                   onSelect={selectionChanged}

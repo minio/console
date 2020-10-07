@@ -18,28 +18,24 @@
 
 export const fieldBasic = {
   inputLabel: {
-    fontWeight: 500,
+    fontWeight: 600,
     marginRight: 10,
     width: 160,
-    fontSize: 14,
-    color: "#393939",
-    textAlign: "right" as const,
-    display: "flex",
-    textOverflow: "ellipsis",
+    fontSize: 15,
+    color: "#000",
+    textAlign: "left" as const,
     overflow: "hidden",
-    justifyContent: "flex-end",
     "& span": {
       display: "flex",
       alignItems: "center",
     },
+    display: "flex",
   },
   fieldLabelError: {
     paddingBottom: 22,
   },
   fieldContainer: {
-    display: "flex",
-    alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 20,
   },
   tooltipContainer: {
     marginLeft: 5,
@@ -66,13 +62,13 @@ export const tooltipHelper = {
 };
 
 const checkBoxBasic = {
-  width: 16,
-  height: 16,
-  borderRadius: 3,
+  width: 14,
+  height: 14,
+  borderRadius: 2,
 };
 
 export const checkboxIcons = {
-  unCheckedIcon: { ...checkBoxBasic, border: "1px solid #d0d0d0" },
+  unCheckedIcon: { ...checkBoxBasic, border: "1px solid #c3c3c3" },
   checkedIcon: {
     ...checkBoxBasic,
     border: "1px solid #081C42",
@@ -125,5 +121,21 @@ export const searchField = {
         opacity: 1,
       },
     },
+  },
+};
+
+export const predefinedList = {
+  predefinedTitle: {
+    fontSize: 16,
+    fontWeight: 600,
+    color: "#000",
+    margin: "10px 0",
+  },
+  predefinedList: {
+    backgroundColor: "#eaeaea",
+    padding: "12px 10px",
+    color: "#393939",
+    fontSize: 12,
+    fontWeight: 600,
   },
 };

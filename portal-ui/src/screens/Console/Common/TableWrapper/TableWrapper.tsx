@@ -102,6 +102,8 @@ const styles = (theme: Theme) =>
       flexDirection: "column",
       padding: "19px 38px",
       minHeight: "200px",
+      boxShadow: "none",
+      border: "#e7e7e7 1px solid",
     },
     minTableHeader: {
       color: "#393939",
@@ -120,6 +122,7 @@ const styles = (theme: Theme) =>
     rowSelected: {
       ...rowText,
       color: "#081C42",
+      fontWeight: 600,
     },
     paginatorContainer: {
       display: "flex",

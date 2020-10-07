@@ -16,7 +16,12 @@
 import React from "react";
 import { Dialog, DialogContent, DialogTitle } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  withStyles,
+} from "@material-ui/core/styles";
 
 interface IModalProps {
   classes: any;
@@ -31,16 +36,16 @@ const baseCloseLine = {
   borderLeft: "2px solid #707070",
   height: 33,
   width: 1,
-  position: "absolute"
+  position: "absolute",
 };
 
 const styles = (theme: Theme) =>
   createStyles({
     dialogContainer: {
-      padding: "12px 26px 22px"
+      padding: "8px 15px 22px",
     },
     closeContainer: {
-      textAlign: "right"
+      textAlign: "right",
     },
     closeButton: {
       width: 45,
@@ -48,40 +53,48 @@ const styles = (theme: Theme) =>
       padding: 0,
       backgroundColor: "initial",
       "&:hover": {
-        backgroundColor: "initial"
+        backgroundColor: "initial",
       },
       "&:active": {
-        backgroundColor: "initial"
-      }
+        backgroundColor: "initial",
+      },
     },
     modalCloseIcon: {
       fontSize: 35,
       color: "#707070",
       fontWeight: 300,
       "&:hover": {
-        color: "#000"
-      }
+        color: "#000",
+      },
     },
     closeIcon: {
       "&::before": {
         ...baseCloseLine,
-        transform: "rotate(45deg)"
+        transform: "rotate(45deg)",
       },
       "&::after": {
         ...baseCloseLine,
-        transform: "rotate(-45deg)"
+        transform: "rotate(-45deg)",
       },
       "&:hover::before, &:hover::after": {
-        borderColor: "#000"
+        borderColor: "#000",
       },
       width: 24,
       height: 24,
       display: "block",
-      position: "relative"
+      position: "relative",
     },
     titleClass: {
-      padding: "0px 24px 12px"
-    }
+      padding: "0px 50px 12px",
+      "& h2": {
+        fontWeight: 600,
+        color: "#000",
+        fontSize: 22,
+      },
+    },
+    modalContent: {
+      padding: "0 50px",
+    },
   });
 
 const ModalWrapper = ({
@@ -89,7 +102,7 @@ const ModalWrapper = ({
   modalOpen,
   title,
   children,
-  classes
+  classes,
 }: IModalProps) => {
   return (
     <Dialog
@@ -114,7 +127,9 @@ const ModalWrapper = ({
         <DialogTitle id="alert-dialog-title" className={classes.titleClass}>
           {title}
         </DialogTitle>
-        <DialogContent>{children}</DialogContent>
+        <DialogContent className={classes.modalContent}>
+          {children}
+        </DialogContent>
       </div>
     </Dialog>
   );

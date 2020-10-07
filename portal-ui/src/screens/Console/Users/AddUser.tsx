@@ -195,7 +195,7 @@ class AddUserContent extends React.Component<
           this.props.closeModalAndRefresh();
         }}
         modalOpen={this.props.open}
-        title={selectedUser !== null ? "Edit User" : "Add User"}
+        title={selectedUser !== null ? "Edit User" : "Create User"}
       >
         <React.Fragment>
           <form

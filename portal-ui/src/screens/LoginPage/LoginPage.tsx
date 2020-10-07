@@ -67,7 +67,6 @@ const styles = (theme: Theme) =>
     submit: {
       margin: "30px 0px 16px",
       height: 40,
-      fontWeight: 700,
       boxShadow: "none",
       padding: "16px 30px",
     },
@@ -266,6 +265,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
                 variant="contained"
                 color="primary"
                 className={classes.submit}
+                disabled={secretKey === "" || accessKey === ""}
               >
                 Login
               </Button>
@@ -341,6 +341,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
                 variant="contained"
                 color="primary"
                 className={classes.submit}
+                disabled={jwt === ""}
               >
                 Login
               </Button>

@@ -69,9 +69,15 @@ const theme = createMuiTheme({
         height: 40,
         padding: "0 20px",
         fontSize: 14,
-        fontWeight: 500,
+        fontWeight: 600,
+        boxShadow: "none",
         "& .MuiSvgIcon-root": {
           maxHeight: 18,
+        },
+        "&.MuiButton-contained.Mui-disabled": {
+          backgroundColor: "#EAEDEE",
+          fontWeight: 600,
+          color: "#767676",
         },
       },
     },
