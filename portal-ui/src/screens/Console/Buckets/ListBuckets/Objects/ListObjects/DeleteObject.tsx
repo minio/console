@@ -26,7 +26,6 @@ import {
   LinearProgress,
 } from "@material-ui/core";
 import api from "../../../../../../common/api";
-import { BucketObjectsList } from "../ListObjects/types";
 import Typography from "@material-ui/core/Typography";
 
 const styles = (theme: Theme) =>
@@ -68,13 +67,14 @@ class DeleteObject extends React.Component<
     if (selectedObject.endsWith("/")) {
       recursive = true;
     }
+
     this.setState({ deleteLoading: true }, () => {
       api
         .invoke(
           "DELETE",
           `/api/v1/buckets/${selectedBucket}/objects?path=${selectedObject}&recursive=${recursive}`
         )
-        .then((res: BucketObjectsList) => {
+        .then((res: any) => {
           this.setState(
             {
               deleteLoading: false,
@@ -142,10 +142,12 @@ class DeleteObject extends React.Component<
           </Button>
           <Button
             onClick={() => {
-              this.removeRecord();
+              this.setState({ deleteError: "" }, () => {
+                this.removeRecord();
+              });
             }}
             color="secondary"
-            autoFocus
+            disabled={deleteLoading}
           >
             Delete
           </Button>

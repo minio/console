@@ -126,6 +126,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIDeleteTenantHandler: admin_api.DeleteTenantHandlerFunc(func(params admin_api.DeleteTenantParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.DeleteTenant has not yet been implemented")
 		}),
+		UserAPIDownloadObjectHandler: user_api.DownloadObjectHandlerFunc(func(params user_api.DownloadObjectParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.DownloadObject has not yet been implemented")
+		}),
 		UserAPIGetBucketQuotaHandler: user_api.GetBucketQuotaHandlerFunc(func(params user_api.GetBucketQuotaParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetBucketQuota has not yet been implemented")
 		}),
@@ -364,6 +367,8 @@ type ConsoleAPI struct {
 	UserAPIDeleteServiceAccountHandler user_api.DeleteServiceAccountHandler
 	// AdminAPIDeleteTenantHandler sets the operation handler for the delete tenant operation
 	AdminAPIDeleteTenantHandler admin_api.DeleteTenantHandler
+	// UserAPIDownloadObjectHandler sets the operation handler for the download object operation
+	UserAPIDownloadObjectHandler user_api.DownloadObjectHandler
 	// UserAPIGetBucketQuotaHandler sets the operation handler for the get bucket quota operation
 	UserAPIGetBucketQuotaHandler user_api.GetBucketQuotaHandler
 	// UserAPIGetBucketReplicationHandler sets the operation handler for the get bucket replication operation
@@ -597,6 +602,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIDeleteTenantHandler == nil {
 		unregistered = append(unregistered, "admin_api.DeleteTenantHandler")
+	}
+	if o.UserAPIDownloadObjectHandler == nil {
+		unregistered = append(unregistered, "user_api.DownloadObjectHandler")
 	}
 	if o.UserAPIGetBucketQuotaHandler == nil {
 		unregistered = append(unregistered, "user_api.GetBucketQuotaHandler")
@@ -929,6 +937,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/namespaces/{namespace}/tenants/{tenant}"] = admin_api.NewDeleteTenant(o.context, o.AdminAPIDeleteTenantHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/buckets/{bucket_name}/objects/download"] = user_api.NewDownloadObject(o.context, o.UserAPIDownloadObjectHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

@@ -19,12 +19,15 @@ package restapi
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
 
+	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
@@ -55,6 +58,22 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 			return user_api.NewDeleteObjectDefault(int(err.Code)).WithPayload(err)
 		}
 		return user_api.NewDeleteObjectOK()
+	})
+	// download object
+	api.UserAPIDownloadObjectHandler = user_api.DownloadObjectHandlerFunc(func(params user_api.DownloadObjectParams, session *models.Principal) middleware.Responder {
+		resp, err := getDownloadObjectResponse(session, params)
+		if err != nil {
+			return user_api.NewDownloadObjectDefault(int(err.Code)).WithPayload(err)
+		}
+		return middleware.ResponderFunc(func(rw http.ResponseWriter, _ runtime.Producer) {
+			if _, err := io.Copy(rw, resp); err != nil {
+				log.Println(err)
+			} else {
+				if err := resp.Close(); err != nil {
+					log.Println(err)
+				}
+			}
+		})
 	})
 }
 
@@ -147,6 +166,33 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 		objects = append(objects, obj)
 	}
 	return objects, nil
+}
+
+func getDownloadObjectResponse(session *models.Principal, params user_api.DownloadObjectParams) (io.ReadCloser, *models.Error) {
+	ctx := context.Background()
+	s3Client, err := newS3BucketClient(session, params.BucketName, params.Prefix)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// create a mc S3Client interface implementation
+	// defining the client to be used
+	mcClient := mcClient{client: s3Client}
+	object, err := downloadObject(ctx, mcClient)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	return object, nil
+}
+
+func downloadObject(ctx context.Context, client MCClient) (io.ReadCloser, error) {
+	// TODO: handle version
+	// TODO: handle encripted files
+	var reader io.ReadCloser
+	reader, pErr := client.get(ctx, mc.GetOptions{})
+	if pErr != nil {
+		return nil, pErr.Cause
+	}
+	return reader, nil
 }
 
 // getDeleteObjectResponse returns whether there was an error on deletion of object

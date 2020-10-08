@@ -19,6 +19,7 @@ package restapi
 import (
 	"context"
 	"fmt"
+	"io"
 	"strings"
 	"time"
 
@@ -136,6 +137,7 @@ type MCClient interface {
 	watch(ctx context.Context, options mc.WatchOptions) (*mc.WatchObject, *probe.Error)
 	remove(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error
 	list(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
+	get(ctx context.Context, opts mc.GetOptions) (io.ReadCloser, *probe.Error)
 }
 
 // Interface implementation
@@ -170,6 +172,10 @@ func (c mcClient) remove(ctx context.Context, isIncomplete, isRemoveBucket, isBy
 
 func (c mcClient) list(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
 	return c.client.List(ctx, opts)
+}
+
+func (c mcClient) get(ctx context.Context, opts mc.GetOptions) (io.ReadCloser, *probe.Error) {
+	return c.client.Get(ctx, opts)
 }
 
 // ConsoleCredentials interface with all functions to be implemented
