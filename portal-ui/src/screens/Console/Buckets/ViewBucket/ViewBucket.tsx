@@ -515,51 +515,53 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
             <Grid item xs={12}>
               <br />
             </Grid>
-            <Grid item xs={6}>
-              <Tabs
-                value={curTab}
-                onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
-                  this.setState({ curTab: newValue });
-                }}
-                indicatorColor="primary"
-                textColor="primary"
-                aria-label="cluster-tabs"
-              >
-                <Tab label="Events" {...a11yProps(0)} />
-                <Tab label="Replication" {...a11yProps(1)} />
-              </Tabs>
-            </Grid>
-            <Grid item xs={6} className={classes.actionsTray}>
-              {curTab === 0 && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<CreateIcon />}
-                  size="medium"
-                  onClick={() => {
-                    this.setState({
-                      addScreenOpen: true,
-                    });
+            <Grid container item xs={12}>
+              <Grid item xs={6}>
+                <Tabs
+                  value={curTab}
+                  onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
+                    this.setState({ curTab: newValue });
                   }}
+                  indicatorColor="primary"
+                  textColor="primary"
+                  aria-label="cluster-tabs"
                 >
-                  Subscribe to Event
-                </Button>
-              )}
-              {curTab === 1 && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<CreateIcon />}
-                  size="medium"
-                  onClick={() => {
-                    this.setState({
-                      openSetReplication: true,
-                    });
-                  }}
-                >
-                  Add Replication Rule
-                </Button>
-              )}
+                  <Tab label="Events" {...a11yProps(0)} />
+                  <Tab label="Replication" {...a11yProps(1)} />
+                </Tabs>
+              </Grid>
+              <Grid item xs={6} className={classes.actionsTray}>
+                {curTab === 0 && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<CreateIcon />}
+                    size="medium"
+                    onClick={() => {
+                      this.setState({
+                        addScreenOpen: true,
+                      });
+                    }}
+                  >
+                    Subscribe to Event
+                  </Button>
+                )}
+                {curTab === 1 && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<CreateIcon />}
+                    size="medium"
+                    onClick={() => {
+                      this.setState({
+                        openSetReplication: true,
+                      });
+                    }}
+                  >
+                    Add Replication Rule
+                  </Button>
+                )}
+              </Grid>
             </Grid>
             <Grid item xs={12}>
               <TabPanel index={0} value={curTab}>
