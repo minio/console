@@ -25,11 +25,7 @@ import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBo
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { Button, LinearProgress } from "@material-ui/core";
 import api from "../../../../common/api";
-import {
-  IRemoteBucket,
-  IRemoteBucketsResponse,
-} from "../../RemoteBuckets/types";
-import RemoteBucketsList from "../../RemoteBuckets/RemoteBuckets";
+import { IRemoteBucket } from "../types";
 
 interface IReplicationModal {
   open: boolean;
@@ -64,63 +60,65 @@ const AddReplicationModal = ({
   bucketName,
 }: IReplicationModal) => {
   const [addError, setAddError] = useState("");
-  const [loadingForm, setLoadingForm] = useState(true);
   const [addLoading, setAddLoading] = useState(false);
-  const [remoteURL, setRemoteURL] = useState("");
-  const [source, setSource] = useState("");
-  const [target, setTarget] = useState("");
-  const [ARN, setARN] = useState("");
-  const [arnValues, setARNValues] = useState([]);
-
-  useEffect(() => {
-    if (addLoading) {
-      addRecord();
-    }
-  }, [addLoading]);
-
-  useEffect(() => {
-    if (loadingForm) {
-      getARNValues();
-    }
-  });
+  const [accessKey, setAccessKey] = useState("");
+  const [secretKey, setSecretKey] = useState("");
+  const [targetURL, setTargetURL] = useState("");
+  const [targetBucket, setTargetBucket] = useState("");
+  const [region, setRegion] = useState("");
 
   const addRecord = () => {
-    const replicationInfo = {
-      destination_bucket: target,
-      arn: ARN,
+    const remoteBucketInfo = {
+      accessKey: accessKey,
+      secretKey: secretKey,
+      sourceBucket: bucketName,
+      targetURL: targetURL,
+      targetBucket: targetBucket,
+      region: region,
     };
 
     api
-      .invoke(
-        "POST",
-        `/api/v1/buckets/${bucketName}/replication`,
-        replicationInfo
-      )
-      .then((res) => {
-        setAddLoading(false);
-        setAddError("");
-        closeModalAndRefresh();
+      .invoke("POST", "/api/v1/remote-buckets", remoteBucketInfo)
+      .then(() => {
+        api
+          .invoke("GET", "/api/v1/remote-buckets")
+          .then((res: any) => {
+            const remoteBuckets = get(res, "buckets", []);
+            const remoteBucket = remoteBuckets.find(
+              (itemRemote: IRemoteBucket) => {
+                return itemRemote.sourceBucket === bucketName;
+              }
+            );
+            if (remoteBucket && remoteBucket.remoteARN) {
+              const remoteARN = remoteBucket.remoteARN;
+              const replicationInfo = {
+                destination_bucket: targetBucket,
+                arn: remoteARN,
+              };
+              api
+                .invoke(
+                  "POST",
+                  `/api/v1/buckets/${bucketName}/replication`,
+                  replicationInfo
+                )
+                .then(() => {
+                  setAddLoading(false);
+                  setAddError("");
+                  closeModalAndRefresh();
+                })
+                .catch((err) => {
+                  setAddLoading(false);
+                  setAddError(err);
+                });
+            }
+          })
+          .catch((err) => {
+            setAddError(err);
+          });
       })
       .catch((err) => {
         setAddLoading(false);
         setAddError(err);
-      });
-  };
-
-  const getARNValues = () => {
-    api
-      .invoke("GET", "/api/v1/remote-buckets")
-      .then((res: any) => {
-        const remoteBuckets = get(res, "buckets", []);
-
-        const remoteARNS = remoteBuckets.map((itemRemote: IRemoteBucket) => {
-          return { label: itemRemote.remoteARN, value: itemRemote.remoteARN };
-        });
-        setLoadingForm(false);
-        setARNValues(remoteARNS);
-      })
-      .catch((err) => {
-        setLoadingForm(false);
       });
   };
 
@@ -139,71 +137,96 @@ const AddReplicationModal = ({
         onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
           e.preventDefault();
           setAddLoading(true);
+          addRecord();
         }}
       >
-        {loadingForm && (
-          <Grid container>
+        <Grid container>
+          <Grid item xs={12} className={classes.formScrollable}>
+            {addError !== "" && (
+              <Grid item xs={12}>
+                <Typography
+                  component="p"
+                  variant="body1"
+                  className={classes.errorBlock}
+                >
+                  {addError}
+                </Typography>
+              </Grid>
+            )}
+
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="target"
+                name="target"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setAccessKey(e.target.value);
+                }}
+                label="Access Key"
+                value={accessKey}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="target"
+                name="target"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setSecretKey(e.target.value);
+                }}
+                label="Secret Key"
+                value={secretKey}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="target"
+                name="target"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setTargetURL(e.target.value);
+                }}
+                placeholder="https://play.min.io:9000"
+                label="Target URL"
+                value={targetURL}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="target"
+                name="target"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setTargetBucket(e.target.value);
+                }}
+                label="Target Bucket"
+                value={targetBucket}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="target"
+                name="target"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setRegion(e.target.value);
+                }}
+                label="Region"
+                value={region}
+              />
+            </Grid>
+          </Grid>
+          <Grid item xs={12} className={classes.buttonContainer}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={addLoading}
+            >
+              Save
+            </Button>
+          </Grid>
+          {addLoading && (
             <Grid item xs={12}>
               <LinearProgress />
             </Grid>
-          </Grid>
-        )}
-        {!loadingForm && (
-          <Grid container>
-            <Grid item xs={12} className={classes.formScrollable}>
-              {addError !== "" && (
-                <Grid item xs={12}>
-                  <Typography
-                    component="p"
-                    variant="body1"
-                    className={classes.errorBlock}
-                  >
-                    {addError}
-                  </Typography>
-                </Grid>
-              )}
-
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="target"
-                  name="target"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setTarget(e.target.value);
-                  }}
-                  label="Destination Bucket"
-                  value={target}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <SelectWrapper
-                  onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                    setARN(e.target.value as string);
-                  }}
-                  id="arn"
-                  name="arn"
-                  label={"ARN"}
-                  value={ARN}
-                  options={arnValues}
-                />
-              </Grid>
-            </Grid>
-            <Grid item xs={12} className={classes.buttonContainer}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={addLoading}
-              >
-                Save
-              </Button>
-            </Grid>
-            {addLoading && (
-              <Grid item xs={12}>
-                <LinearProgress />
-              </Grid>
-            )}
-          </Grid>
-        )}
+          )}
+        </Grid>
       </form>
     </ModalWrapper>
   );
