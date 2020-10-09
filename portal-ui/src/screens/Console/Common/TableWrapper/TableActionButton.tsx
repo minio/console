@@ -22,6 +22,8 @@ import DeleteIcon from "./TableActionIcons/DeleteIcon";
 import DescriptionIcon from "./TableActionIcons/DescriptionIcon";
 import CloudIcon from "./TableActionIcons/CloudIcon";
 import ConsoleIcon from "./TableActionIcons/ConsoleIcon";
+import GetAppIcon from "@material-ui/icons/GetApp";
+import SvgIcon from "@material-ui/core/SvgIcon";
 import { Link } from "react-router-dom";
 
 interface IActionButton {
@@ -48,6 +50,10 @@ const defineIcon = (type: string, selected: boolean) => {
       return <CloudIcon active={selected} />;
     case "console":
       return <ConsoleIcon active={selected} />;
+    case "download":
+      return (
+        <SvgIcon component={GetAppIcon} fontSize="small" color="primary" />
+      );
   }
 
   return null;

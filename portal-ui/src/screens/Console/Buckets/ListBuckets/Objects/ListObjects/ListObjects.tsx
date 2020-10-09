@@ -36,6 +36,7 @@ import {
   searchField,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../../../../Common/PageHeader/PageHeader";
+import storage from "local-storage-fallback";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -140,6 +141,38 @@ class ListObjects extends React.Component<
     });
   }
 
+  download(bucketName: string, objectName: string) {
+    var anchor = document.createElement("a");
+    document.body.appendChild(anchor);
+    const token: string = storage.getItem("token")!;
+    var xhr = new XMLHttpRequest();
+
+    xhr.open(
+      "GET",
+      `/api/v1/buckets/${bucketName}/objects/download?prefix=${objectName}`,
+      true
+    );
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+    xhr.responseType = "blob";
+
+    xhr.onload = function(e) {
+      if (this.status == 200) {
+        var blob = new Blob([this.response], {
+          type: "octet/stream",
+        });
+        var blobUrl = window.URL.createObjectURL(blob);
+
+        anchor.href = blobUrl;
+        anchor.download = objectName;
+
+        anchor.click();
+        window.URL.revokeObjectURL(blobUrl);
+        anchor.remove();
+      }
+    };
+    xhr.send();
+  }
+
   bucketFilter(): void {}
 
   render() {
@@ -160,7 +193,12 @@ class ListObjects extends React.Component<
       this.setState({ deleteOpen: true, selectedObject: object });
     };
 
+    const downloadObject = (object: string) => {
+      this.download(selectedBucket, object);
+    };
+
     const tableActions = [
+      { type: "download", onClick: downloadObject, sendOnlyId: true },
       { type: "delete", onClick: confirmDeleteObject, sendOnlyId: true },
     ];
 
