@@ -89,8 +89,7 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 	type args struct {
 		ctx        context.Context
 		client     K8sClientI
-		namespace  string
-		tenantName string
+		tenant     v1.Tenant
 		serviceURL string
 		insecure   bool
 	}
@@ -104,10 +103,15 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 		{
 			name: "Return Tenant Admin, no errors",
 			args: args{
-				ctx:        ctx,
-				client:     kClient,
-				namespace:  "default",
-				tenantName: "tenant-1",
+				ctx:    ctx,
+				client: kClient,
+				tenant: v1.Tenant{
+					ObjectMeta: metav1.ObjectMeta{
+						Namespace: "default",
+						Name:      "tenant-1",
+					},
+					Spec: v1.TenantSpec{CredsSecret: &corev1.LocalObjectReference{Name: "secret-name"}},
+				},
 				serviceURL: "http://service-1.default.svc.cluster.local:80",
 			},
 			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
@@ -132,10 +136,14 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 		{
 			name: "Access key not stored on secrets",
 			args: args{
-				ctx:        ctx,
-				client:     kClient,
-				namespace:  "default",
-				tenantName: "tenant-1",
+				ctx:    ctx,
+				client: kClient,
+				tenant: v1.Tenant{
+					ObjectMeta: metav1.ObjectMeta{
+						Namespace: "default",
+						Name:      "tenant-1",
+					},
+				},
 				serviceURL: "http://service-1.default.svc.cluster.local:80",
 			},
 			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
@@ -159,10 +167,14 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 		{
 			name: "Secret key not stored on secrets",
 			args: args{
-				ctx:        ctx,
-				client:     kClient,
-				namespace:  "default",
-				tenantName: "tenant-1",
+				ctx:    ctx,
+				client: kClient,
+				tenant: v1.Tenant{
+					ObjectMeta: metav1.ObjectMeta{
+						Namespace: "default",
+						Name:      "tenant-1",
+					},
+				},
 				serviceURL: "http://service-1.default.svc.cluster.local:80",
 			},
 			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
@@ -186,10 +198,14 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 		{
 			name: "Handle error on getService",
 			args: args{
-				ctx:        ctx,
-				client:     kClient,
-				namespace:  "default",
-				tenantName: "tenant-1",
+				ctx:    ctx,
+				client: kClient,
+				tenant: v1.Tenant{
+					ObjectMeta: metav1.ObjectMeta{
+						Namespace: "default",
+						Name:      "tenant-1",
+					},
+				},
 				serviceURL: "http://service-1.default.svc.cluster.local:80",
 			},
 			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
@@ -209,10 +225,14 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 		{
 			name: "Handle error on getSecret",
 			args: args{
-				ctx:        ctx,
-				client:     kClient,
-				namespace:  "default",
-				tenantName: "tenant-1",
+				ctx:    ctx,
+				client: kClient,
+				tenant: v1.Tenant{
+					ObjectMeta: metav1.ObjectMeta{
+						Namespace: "default",
+						Name:      "tenant-1",
+					},
+				},
 				serviceURL: "http://service-1.default.svc.cluster.local:80",
 			},
 			mockGetSecret: func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
@@ -233,7 +253,7 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 		k8sclientGetSecretMock = tt.mockGetSecret
 		k8sclientGetServiceMock = tt.mockGetService
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := getTenantAdminClient(tt.args.ctx, tt.args.client, tt.args.namespace, tt.args.tenantName, tt.args.serviceURL, tt.args.insecure)
+			got, err := getTenantAdminClient(tt.args.ctx, tt.args.client, &tt.args.tenant, tt.args.serviceURL, tt.args.insecure)
 			if err != nil {
 				if tt.wantErr {
 					return

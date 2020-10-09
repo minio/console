@@ -230,9 +230,12 @@ func GetTenantServiceURL(mi *operator.Tenant) (svcURL string) {
 	return fmt.Sprintf("%s://%s", scheme, net.JoinHostPort(svc, strconv.Itoa(port)))
 }
 
-func getTenantAdminClient(ctx context.Context, client K8sClientI, namespace, tenantName, svcURL string, insecure bool) (*madmin.AdminClient, error) {
+func getTenantAdminClient(ctx context.Context, client K8sClientI, tenant *operator.Tenant, svcURL string, insecure bool) (*madmin.AdminClient, error) {
+	if tenant == nil || tenant.Spec.CredsSecret == nil {
+		return nil, errors.New("invalid arguments")
+	}
 	// get admin credentials from secret
-	creds, err := client.getSecret(ctx, namespace, fmt.Sprintf("%s-secret", tenantName), metav1.GetOptions{})
+	creds, err := client.getSecret(ctx, tenant.Namespace, tenant.Spec.CredsSecret.Name, metav1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -1047,8 +1050,7 @@ func getTenantUsageResponse(session *models.Principal, params admin_api.GetTenan
 	mAdmin, err := getTenantAdminClient(
 		ctx,
 		k8sClient,
-		params.Namespace,
-		params.Tenant,
+		minTenant,
 		svcURL,
 		true)
 	if err != nil {
