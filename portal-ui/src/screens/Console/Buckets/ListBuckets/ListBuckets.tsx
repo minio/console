@@ -33,7 +33,6 @@ import { CreateIcon } from "../../../../icons";
 import { niceBytes } from "../../../../common/utils";
 import { AppState } from "../../../../store";
 import { connect } from "react-redux";
-import { logMessageReceived, logResetMessages } from "../../Logs/actions";
 import { addBucketOpen, addBucketReset } from "../actions";
 import {
   actionsTray,

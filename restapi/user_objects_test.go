@@ -20,6 +20,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io"
 	"reflect"
 	"testing"
 	"time"
@@ -36,6 +37,7 @@ var minioGetObjectRetentionMock func(ctx context.Context, bucketName, objectName
 
 var mcListMock func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
 var mcRemoveMock func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error
+var mcGetMock func(ctx context.Context, opts mc.GetOptions) (io.ReadCloser, *probe.Error)
 
 // mock functions for minioClientMock
 func (ac minioClientMock) listObjects(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
@@ -55,6 +57,10 @@ func (c s3ClientMock) list(ctx context.Context, opts mc.ListOptions) <-chan *mc.
 }
 func (c s3ClientMock) remove(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error {
 	return mcRemoveMock(ctx, isIncomplete, isRemoveBucket, isBypass, contentCh)
+}
+
+func (c s3ClientMock) get(ctx context.Context, opts mc.GetOptions) (io.ReadCloser, *probe.Error) {
+	return mcGetMock(ctx, opts)
 }
 
 func Test_listObjects(t *testing.T) {
