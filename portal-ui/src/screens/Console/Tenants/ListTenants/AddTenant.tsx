@@ -2113,6 +2113,7 @@ const AddTenant = ({
       }}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
+      wideLimit={false}
     >
       {addSending && (
         <Grid item xs={12}>

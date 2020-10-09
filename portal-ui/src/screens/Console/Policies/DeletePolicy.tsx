@@ -23,7 +23,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  LinearProgress
+  LinearProgress,
 } from "@material-ui/core";
 import api from "../../../common/api";
 import { PolicyList } from "./types";
@@ -32,8 +32,8 @@ import Typography from "@material-ui/core/Typography";
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
-    }
+      color: "red",
+    },
   });
 
 interface IDeletePolicyProps {
@@ -54,7 +54,7 @@ class DeletePolicy extends React.Component<
 > {
   state: IDeletePolicyState = {
     deleteLoading: false,
-    deleteError: ""
+    deleteError: "",
   };
   removeRecord() {
     const { deleteLoading } = this.state;
@@ -69,17 +69,17 @@ class DeletePolicy extends React.Component<
           this.setState(
             {
               deleteLoading: false,
-              deleteError: ""
+              deleteError: "",
             },
             () => {
               this.props.closeDeleteModalAndRefresh(true);
             }
           );
         })
-        .catch(err => {
+        .catch((err) => {
           this.setState({
             deleteLoading: false,
-            deleteError: err
+            deleteError: err,
           });
         });
     });
@@ -98,7 +98,7 @@ class DeletePolicy extends React.Component<
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">Delete Bucket</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Delete Policy</DialogTitle>
         <DialogContent>
           {deleteLoading && <LinearProgress />}
           <DialogContentText id="alert-dialog-description">

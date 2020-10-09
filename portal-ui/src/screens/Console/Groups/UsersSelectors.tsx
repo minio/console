@@ -28,11 +28,16 @@ import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
+import {
+  actionsTray,
+  predefinedList,
+} from "../Common/FormComponents/common/styleLibrary";
 
 interface IGroupsProps {
   classes: any;
   selectedUsers: string[];
   setSelectedUsers: any;
+  editMode?: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -41,10 +46,11 @@ const styles = (theme: Theme) =>
       marginTop: theme.spacing(3),
     },
     paper: {
-      // padding: theme.spacing(2),
       display: "flex",
       overflow: "auto",
       flexDirection: "column",
+      paddingTop: 15,
+      boxShadow: "none",
     },
     addSideBar: {
       width: "320px",
@@ -70,36 +76,43 @@ const styles = (theme: Theme) =>
         },
       },
     },
-    actionsTray: {
-      textAlign: "left",
-      "& button": {
-        marginLeft: 10,
-      },
-    },
-    filterField: {
-      background: "#FFFFFF",
-      padding: 12,
-      borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012",
-      width: "100%",
-      zIndex: 500,
-    },
     noFound: {
       textAlign: "center",
       padding: "10px 0",
     },
     tableContainer: {
-      maxHeight: 250,
+      maxHeight: 200,
     },
     stickyHeader: {
       backgroundColor: "#fff",
     },
+    actionsTitle: {
+      fontWeight: 600,
+      color: "#000",
+      fontSize: 16,
+      alignSelf: "center",
+    },
+    tableBlock: {
+      marginTop: 15,
+    },
+    filterField: {
+      width: 375,
+      fontWeight: 600,
+      "& .input": {
+        "&::placeholder": {
+          fontWeight: 600,
+          color: "#000",
+        },
+      },
+    },
+    ...actionsTray,
   });
 
 const UsersSelectors = ({
   classes,
   selectedUsers,
   setSelectedUsers,
+  editMode = false,
 }: IGroupsProps) => {
   //Local States
   const [records, setRecords] = useState<any[]>([]);
@@ -166,21 +179,22 @@ const UsersSelectors = ({
 
   return (
     <React.Fragment>
-      <Title>Assign Users</Title>
-      {error !== "" ? <div>{error}</div> : <React.Fragment />}
       <Grid item xs={12}>
         <Paper className={classes.paper}>
           {loading && <LinearProgress />}
+          {error !== "" ? <div>{error}</div> : <React.Fragment />}
           {records != null && records.length > 0 ? (
             <React.Fragment>
               <Grid item xs={12} className={classes.actionsTray}>
+                <span className={classes.actionsTitle}>
+                  {editMode ? "Edit" : "Assign"} Members
+                </span>
                 <TextField
                   placeholder="Filter Groups"
                   className={classes.filterField}
                   id="search-resource"
                   label=""
                   InputProps={{
-                    disableUnderline: true,
                     startAdornment: (
                       <InputAdornment position="start">
                         <SearchIcon />
@@ -192,7 +206,7 @@ const UsersSelectors = ({
                   }}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className={classes.tableBlock}>
                 <TableWrapper
                   columns={[{ label: "Access Key", elementKey: "accessKey" }]}
                   onSelect={selectionChanged}

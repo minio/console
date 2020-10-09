@@ -22,6 +22,8 @@ import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import RadioGroupSelector from "../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import CSVMultiSelector from "../Common/FormComponents/CSVMultiSelector/CSVMultiSelector";
+import CommentBoxWrapper from "../Common/FormComponents/CommentBoxWrapper/CommentBoxWrapper";
+import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
 interface IConfGenericProps {
   onChange: (newValue: IElementValue[]) => void;
@@ -94,20 +96,21 @@ const ConfTargetGeneric = ({
   const fieldDefinition = (field: KVField, item: number) => {
     switch (field.type) {
       case "on|off":
+        const value = valueHolder[item] ? valueHolder[item].value : "false";
+
         return (
-          <RadioGroupSelector
-            currentSelection={valueHolder[item] ? valueHolder[item].value : ""}
+          <FormSwitchWrapper
+            indicatorLabel="On"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              const value = e.target.checked ? "true" : "false";
+              setValueElement(field.name, value, item);
+            }}
             id={field.name}
             name={field.name}
             label={field.label}
+            value={"switch_on"}
             tooltip={field.tooltip}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setValueElement(field.name, e.target.value, item)
-            }
-            selectorOptions={[
-              { label: "On", value: "true" },
-              { label: "Off", value: "false" },
-            ]}
+            checked={value === "true"}
           />
         );
       case "csv":
@@ -122,6 +125,20 @@ const ConfTargetGeneric = ({
             tooltip={field.tooltip}
           />
         );
+      case "comment":
+        return (
+          <CommentBoxWrapper
+            id={field.name}
+            name={field.name}
+            label={field.label}
+            tooltip={field.tooltip}
+            value={valueHolder[item] ? valueHolder[item].value : ""}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setValueElement(field.name, e.target.value, item)
+            }
+            placeholder={field.placeholder}
+          />
+        );
       default:
         return (
           <InputBoxWrapper
@@ -134,6 +151,7 @@ const ConfTargetGeneric = ({
               setValueElement(field.name, e.target.value, item)
             }
             multiline={!!field.multiline}
+            placeholder={field.placeholder}
           />
         );
     }

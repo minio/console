@@ -172,7 +172,7 @@ class ListObjects extends React.Component<
     xhr.setRequestHeader("Authorization", `Bearer ${token}`);
 
     xhr.withCredentials = false;
-    xhr.onload = function(event) {
+    xhr.onload = function (event) {
       // TODO: handle status
       if (xhr.status == 401 || xhr.status == 403) {
         listObjects.showSnackBarMessage(
@@ -227,7 +227,7 @@ class ListObjects extends React.Component<
     xhr.setRequestHeader("Authorization", `Bearer ${token}`);
     xhr.responseType = "blob";
 
-    xhr.onload = function(e) {
+    xhr.onload = function (e) {
       if (this.status == 200) {
         var blob = new Blob([this.response], {
           type: "octet/stream",

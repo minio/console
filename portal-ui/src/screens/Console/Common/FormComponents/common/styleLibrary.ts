@@ -20,7 +20,6 @@ export const fieldBasic = {
   inputLabel: {
     fontWeight: 600,
     marginRight: 10,
-    width: 160,
     fontSize: 15,
     color: "#000",
     textAlign: "left" as const,
@@ -53,6 +52,30 @@ export const modalBasic = {
   formSlider: {
     marginLeft: 0,
   },
+  clearButton: {
+    border: "0",
+    backgroundColor: "transparent",
+    color: "#393939",
+    fontWeight: 600,
+    fontSize: 14,
+    marginRight: 10,
+    outline: "0",
+    padding: "16px 25px 16px 25px",
+    cursor: "pointer",
+  },
+  floatingEnabled: {
+    position: "absolute" as const,
+    right: 58,
+    zIndex: 1000,
+    marginTop: -38,
+  },
+  configureString: {
+    border: "#EAEAEA 1px solid",
+    borderRadius: 4,
+    padding: "24px 50px",
+    overflowY: "auto" as const,
+    height: 170,
+  },
 };
 
 export const tooltipHelper = {
@@ -73,6 +96,21 @@ export const checkboxIcons = {
     ...checkBoxBasic,
     border: "1px solid #081C42",
     backgroundColor: "#081C42",
+  },
+};
+
+const radioBasic = {
+  width: 12,
+  height: 12,
+  borderRadius: "100%",
+};
+
+export const radioIcons = {
+  radioUnselectedIcon: { ...radioBasic, border: "1px solid #000" },
+  radioSelectedIcon: {
+    ...radioBasic,
+    border: "1px solid #000",
+    backgroundColor: "#000",
   },
 };
 
@@ -137,5 +175,6 @@ export const predefinedList = {
     color: "#393939",
     fontSize: 12,
     fontWeight: 600,
+    minHeight: 41,
   },
 };

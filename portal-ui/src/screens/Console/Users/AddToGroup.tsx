@@ -60,6 +60,7 @@ const AddToGroup = ({
 }: IAddToGroup) => {
   //Local States
   const [saving, isSaving] = useState<boolean>(false);
+  const [accepted, setAccepted] = useState<boolean>(false);
   const [updatingError, setError] = useState<string>("");
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
 
@@ -75,7 +76,7 @@ const AddToGroup = ({
           .then((res) => {
             isSaving(false);
             setError("");
-            closeModalAndRefresh(true);
+            setAccepted(true);
           })
           .catch((err) => {
             isSaving(false);
@@ -102,62 +103,100 @@ const AddToGroup = ({
     isSaving(true);
   };
 
+  const resetForm = () => {
+    setSelectedGroups([]);
+  };
+
   return (
     <ModalWrapper
       modalOpen={open}
       onClose={() => {
-        closeModalAndRefresh(false);
+        closeModalAndRefresh(accepted);
       }}
-      title="Add Users to Group"
+      title={
+        accepted
+          ? "The selected users were added to the following groups."
+          : "Add Users to Group"
+      }
     >
-      <form noValidate autoComplete="off" onSubmit={setSaving}>
-        <Grid container>
-          <Grid item xs={12} className={classes.formScrollable}>
-            {updatingError !== "" && (
-              <Grid item xs={12}>
-                <Typography
-                  component="p"
-                  variant="body1"
-                  className={classes.errorBlock}
-                >
-                  {updatingError}
-                </Typography>
-              </Grid>
-            )}
-
+      {accepted ? (
+        <React.Fragment>
+          <Grid container>
             <Grid item xs={12} className={classes.predefinedTitle}>
-              Selected Users
+              Groups
+            </Grid>
+            <Grid item xs={12} className={classes.predefinedList}>
+              {selectedGroups.join(", ")}
+            </Grid>
+            <Grid item xs={12} className={classes.predefinedTitle}>
+              Users
             </Grid>
             <Grid item xs={12} className={classes.predefinedList}>
               {checkedUsers.join(", ")}
             </Grid>
-            <Grid item xs={12}>
-              <br />
-            </Grid>
-            <Grid item xs={12}>
-              <GroupsSelectors
-                selectedGroups={selectedGroups}
-                setSelectedGroups={setSelectedGroups}
-              />
-            </Grid>
           </Grid>
-          <Grid item xs={12} className={classes.buttonContainer}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={saving}
-            >
-              Save
-            </Button>
-          </Grid>
-          {saving && (
-            <Grid item xs={12}>
-              <LinearProgress />
+          <br />
+          <br />
+          <br />
+        </React.Fragment>
+      ) : (
+        <form noValidate autoComplete="off" onSubmit={setSaving}>
+          <Grid container>
+            <Grid item xs={12} className={classes.formScrollable}>
+              {updatingError !== "" && (
+                <Grid item xs={12}>
+                  <Typography
+                    component="p"
+                    variant="body1"
+                    className={classes.errorBlock}
+                  >
+                    {updatingError}
+                  </Typography>
+                </Grid>
+              )}
+
+              <Grid item xs={12} className={classes.predefinedTitle}>
+                Selected Users
+              </Grid>
+              <Grid item xs={12} className={classes.predefinedList}>
+                {checkedUsers.join(", ")}
+              </Grid>
+              <Grid item xs={12}>
+                <br />
+              </Grid>
+              <Grid item xs={12}>
+                <GroupsSelectors
+                  selectedGroups={selectedGroups}
+                  setSelectedGroups={setSelectedGroups}
+                />
+              </Grid>
             </Grid>
-          )}
-        </Grid>
-      </form>
+            <Grid item xs={12} className={classes.buttonContainer}>
+              <button
+                type="button"
+                color="primary"
+                className={classes.clearButton}
+                onClick={resetForm}
+              >
+                Clear
+              </button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={saving || selectedGroups.length < 1}
+              >
+                Save
+              </Button>
+            </Grid>
+            {saving && (
+              <Grid item xs={12}>
+                <LinearProgress />
+              </Grid>
+            )}
+          </Grid>
+        </form>
+      )}
     </ModalWrapper>
   );
 };

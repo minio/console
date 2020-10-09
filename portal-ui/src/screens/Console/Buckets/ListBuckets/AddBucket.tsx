@@ -103,6 +103,7 @@ const AddBucket = ({
   const [bName, setBName] = useState<string>(bucketName);
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [addError, setAddError] = useState<string>("");
+  const [sendEnabled, setSendEnabled] = useState<boolean>(false);
 
   const addRecord = (event: React.FormEvent) => {
     event.preventDefault();
@@ -141,9 +142,33 @@ const AddBucket = ({
   const [value] = useDebounce(bName, 1000);
 
   useEffect(() => {
-    console.log("called");
     addBucketName(value);
   }, [value]);
+
+  const resetForm = () => {
+    setBName("");
+    addBucketVersioned(false);
+    addBucketQuota(false);
+    addBucketQuotaType("hard");
+    addBucketQuotaSize("1");
+    addBucketQuotaUnit("TiB");
+  };
+
+  useEffect(() => {
+    let valid = false;
+
+    if (bName.trim() !== "") {
+      valid = true;
+    }
+
+    if (enableQuota && valid) {
+      if (quotaSize.trim() === "" || parseInt(quotaSize) === 0) {
+        valid = false;
+      }
+    }
+
+    setSendEnabled(valid);
+  }, [bName, versioned, quotaType, quotaSize, quotaUnit, enableQuota]);
 
   return (
     <ModalWrapper
@@ -196,7 +221,8 @@ const AddBucket = ({
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   addBucketVersioned(event.target.checked);
                 }}
-                label={"Turn On Versioning"}
+                label={"Versioning"}
+                indicatorLabel={"On"}
               />
             </Grid>
             <Grid item xs={12}>
@@ -209,6 +235,7 @@ const AddBucket = ({
                   addBucketQuota(event.target.checked);
                 }}
                 label={"Enable Bucket Quota"}
+                indicatorLabel={"On"}
               />
             </Grid>
             {enableQuota && (
@@ -264,11 +291,19 @@ const AddBucket = ({
             )}
           </Grid>
           <Grid item xs={12} className={classes.buttonContainer}>
+            <button
+              type="button"
+              color="primary"
+              className={classes.clearButton}
+              onClick={resetForm}
+            >
+              Clear
+            </button>
             <Button
               type="submit"
               variant="contained"
               color="primary"
-              disabled={addLoading}
+              disabled={addLoading || !sendEnabled}
             >
               Save
             </Button>

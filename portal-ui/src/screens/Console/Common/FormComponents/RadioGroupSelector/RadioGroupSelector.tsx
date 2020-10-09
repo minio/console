@@ -25,7 +25,7 @@ import {
   withStyles,
   makeStyles,
 } from "@material-ui/core/styles";
-import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
+import { fieldBasic, radioIcons, tooltipHelper } from "../common/styleLibrary";
 import HelpIcon from "@material-ui/icons/Help";
 
 export interface SelectorTypes {
@@ -49,8 +49,20 @@ const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
     ...tooltipHelper,
-    radioBoxContainer: {
-      flexGrow: 1,
+    radioBoxContainer: {},
+    fieldContainer: {
+      ...fieldBasic.fieldContainer,
+      display: "flex",
+      justifyContent: "space-between",
+      borderBottom: "#9c9c9c 1px solid",
+      paddingBottom: 10,
+      marginTop: 11,
+    },
+    checkedOption: {
+      "& .MuiFormControlLabel-label": {
+        color: "#000",
+        fontWeight: 700,
+      },
     },
   });
 
@@ -60,31 +72,7 @@ const radioStyles = makeStyles({
       backgroundColor: "transparent",
     },
   },
-  icon: {
-    borderRadius: "100%",
-    width: 14,
-    height: 14,
-    border: "1px solid #000",
-  },
-  checkedIcon: {
-    borderRadius: "100%",
-    width: 14,
-    height: 14,
-    border: "1px solid #000",
-    padding: 4,
-    position: "relative",
-    "&::after": {
-      content: '" "',
-      width: 8,
-      height: 8,
-      borderRadius: "100%",
-      display: "block",
-      position: "absolute",
-      backgroundColor: "#000",
-      top: 2,
-      left: 2,
-    },
-  },
+  ...radioIcons,
 });
 
 const RadioButton = (props: RadioProps) => {
@@ -95,8 +83,8 @@ const RadioButton = (props: RadioProps) => {
       className={classes.root}
       disableRipple
       color="default"
-      checkedIcon={<span className={classes.checkedIcon} />}
-      icon={<span className={classes.icon} />}
+      checkedIcon={<span className={classes.radioSelectedIcon} />}
+      icon={<span className={classes.radioUnselectedIcon} />}
       {...props}
     />
   );
@@ -143,6 +131,11 @@ export const RadioGroupSelector = ({
                   value={selectorOption.value}
                   control={<RadioButton />}
                   label={selectorOption.label}
+                  className={
+                    selectorOption.value === currentSelection
+                      ? classes.checkedOption
+                      : ""
+                  }
                 />
               );
             })}

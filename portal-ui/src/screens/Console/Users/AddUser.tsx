@@ -19,13 +19,17 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
+import {
+  modalBasic,
+  predefinedList,
+} from "../Common/FormComponents/common/styleLibrary";
 import { User } from "./types";
 import api from "../../../common/api";
 import GroupsSelectors from "./GroupsSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import RadioGroupSelector from "../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
+import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -42,6 +46,7 @@ const styles = (theme: Theme) =>
       textAlign: "right",
     },
     ...modalBasic,
+    ...predefinedList,
   });
 
 interface IAddUserContentProps {
@@ -57,7 +62,8 @@ interface IAddUserContentState {
   accessKey: string;
   secretKey: string;
   selectedGroups: string[];
-  enabled: string;
+  currentGroups: string[];
+  enabled: boolean;
 }
 
 class AddUserContent extends React.Component<
@@ -69,8 +75,9 @@ class AddUserContent extends React.Component<
     addError: "",
     accessKey: "",
     secretKey: "",
-    enabled: "enabled",
+    enabled: false,
     selectedGroups: [],
+    currentGroups: [],
   };
 
   componentDidMount(): void {
@@ -103,7 +110,7 @@ class AddUserContent extends React.Component<
       if (selectedUser !== null) {
         api
           .invoke("PUT", `/api/v1/users/${selectedUser.accessKey}`, {
-            status: enabled,
+            status: enabled ? "enabled" : "disabled",
             groups: selectedGroups,
           })
           .then((res) => {
@@ -167,7 +174,8 @@ class AddUserContent extends React.Component<
           addError: "",
           accessKey: res.accessKey,
           selectedGroups: res.memberOf || [],
-          enabled: res.status,
+          currentGroups: res.memberOf || [],
+          enabled: res.status === "enabled",
         });
       })
       .catch((err) => {
@@ -178,6 +186,16 @@ class AddUserContent extends React.Component<
       });
   }
 
+  resetForm() {
+    if (this.props.selectedUser !== null) {
+      this.setState({ selectedGroups: [] });
+
+      return;
+    }
+
+    this.setState({ accessKey: "", secretKey: "", selectedGroups: [] });
+  }
+
   render() {
     const { classes, selectedUser } = this.props;
     const {
@@ -186,9 +204,15 @@ class AddUserContent extends React.Component<
       accessKey,
       secretKey,
       selectedGroups,
+      currentGroups,
       enabled,
     } = this.state;
 
+    const sendEnabled =
+      accessKey.trim() !== "" &&
+      selectedGroups.length > 0 &&
+      ((secretKey.trim() !== "" && selectedUser === null) ||
+        selectedUser !== null);
     return (
       <ModalWrapper
         onClose={() => {
@@ -197,6 +221,22 @@ class AddUserContent extends React.Component<
         modalOpen={this.props.open}
         title={selectedUser !== null ? "Edit User" : "Create User"}
       >
+        {selectedUser !== null && (
+          <div className={classes.floatingEnabled}>
+            <FormSwitchWrapper
+              indicatorLabel={"Enabled"}
+              checked={enabled}
+              value={"user_enabled"}
+              id="user-status"
+              name="user-status"
+              onChange={(e) => {
+                this.setState({ enabled: e.target.checked });
+              }}
+              switchOnly
+            />
+          </div>
+        )}
+
         <React.Fragment>
           <form
             noValidate
@@ -231,19 +271,14 @@ class AddUserContent extends React.Component<
                 />
 
                 {selectedUser !== null ? (
-                  <RadioGroupSelector
-                    currentSelection={enabled}
-                    id="user-status"
-                    name="user-status"
-                    label="Status"
-                    onChange={(e) => {
-                      this.setState({ enabled: e.target.value });
-                    }}
-                    selectorOptions={[
-                      { label: "Enabled", value: "enabled" },
-                      { label: "Disabled", value: "disabled" },
-                    ]}
-                  />
+                  <React.Fragment>
+                    <Grid item xs={12} className={classes.predefinedTitle}>
+                      Current Groups
+                    </Grid>
+                    <Grid item xs={12} className={classes.predefinedList}>
+                      {currentGroups.join(", ")}
+                    </Grid>
+                  </React.Fragment>
                 ) : (
                   <InputBoxWrapper
                     id="standard-multiline-static"
@@ -269,11 +304,21 @@ class AddUserContent extends React.Component<
                 </Grid>
               </Grid>
               <Grid item xs={12} className={classes.buttonContainer}>
+                <button
+                  type="button"
+                  color="primary"
+                  className={classes.clearButton}
+                  onClick={() => {
+                    this.resetForm();
+                  }}
+                >
+                  Clear
+                </button>
                 <Button
                   type="submit"
                   variant="contained"
                   color="primary"
-                  disabled={addLoading}
+                  disabled={addLoading || !sendEnabled}
                 >
                   Save
                 </Button>

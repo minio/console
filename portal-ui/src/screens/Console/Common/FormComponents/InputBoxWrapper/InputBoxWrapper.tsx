@@ -76,11 +76,21 @@ const inputStyles = makeStyles((theme: Theme) =>
         borderColor: "#9c9c9c",
       },
     },
+    disabled: {
+      "&.MuiInput-underline::before": {
+        borderColor: "#eaeaea",
+        borderBottomStyle: "solid",
+      },
+    },
     input: {
       padding: "15px 5px 10px",
       color: "#393939",
       fontSize: 13,
       fontWeight: 600,
+      "&:placeholder": {
+        color: "#393939",
+        opacity: 1,
+      },
     },
     error: {
       color: "#b53b4b",

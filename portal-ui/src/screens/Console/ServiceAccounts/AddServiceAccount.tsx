@@ -16,19 +16,14 @@
 
 import React, { useEffect, useState } from "react";
 import Grid from "@material-ui/core/Grid";
-import { UnControlled as CodeMirror } from "react-codemirror2";
 import Typography from "@material-ui/core/Typography";
 import { Button, LinearProgress, Tooltip } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import api from "../../../common/api";
-import "codemirror/lib/codemirror.css";
-import "codemirror/theme/material.css";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
-import HelpIcon from "@material-ui/icons/Help";
-
-require("codemirror/mode/javascript/javascript");
+import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -38,9 +33,6 @@ const styles = (theme: Theme) =>
     jsonPolicyEditor: {
       minHeight: 400,
       width: "100%",
-    },
-    codeMirror: {
-      fontSize: 14,
     },
     buttonContainer: {
       textAlign: "right",
@@ -92,6 +84,10 @@ const AddServiceAccount = ({
     setAddSending(true);
   };
 
+  const resetForm = () => {
+    setPolicyDefinition("");
+  };
+
   return (
     <ModalWrapper
       modalOpen={open}
@@ -120,29 +116,24 @@ const AddServiceAccount = ({
                 </Typography>
               </Grid>
             )}
-            <Grid item xs={12}>
-              <Typography component="h5">
-                Optional Policy
-                <Tooltip
-                  title="A policy that restricts this service account can be attached."
-                  placement="top-start"
-                >
-                  <HelpIcon />
-                </Tooltip>
-              </Typography>
-              <CodeMirror
-                className={classes.codeMirror}
-                options={{
-                  mode: "javascript",
-                  lineNumbers: true,
-                }}
-                onChange={(editor, data, value) => {
-                  setPolicyDefinition(value);
-                }}
-              />
-            </Grid>
+            <CodeMirrorWrapper
+              value={policyDefinition}
+              label="Optional Policy"
+              tooltip="A policy that restricts this service account can be attached."
+              onBeforeChange={(editor, data, value) => {
+                setPolicyDefinition(value);
+              }}
+            />
           </Grid>
           <Grid item xs={12} className={classes.buttonContainer}>
+            <button
+              type="button"
+              color="primary"
+              className={classes.clearButton}
+              onClick={resetForm}
+            >
+              Clear
+            </button>
             <Button
               type="submit"
               variant="contained"

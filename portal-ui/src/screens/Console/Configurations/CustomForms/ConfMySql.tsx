@@ -21,7 +21,12 @@ import Grid from "@material-ui/core/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import { IElementValue } from "../types";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  modalBasic,
+  predefinedList,
+} from "../../Common/FormComponents/common/styleLibrary";
+import CommentBoxWrapper from "../../Common/FormComponents/CommentBoxWrapper/CommentBoxWrapper";
+import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
 interface IConfMySqlProps {
   onChange: (newValue: IElementValue[]) => void;
@@ -31,6 +36,7 @@ interface IConfMySqlProps {
 const styles = (theme: Theme) =>
   createStyles({
     ...modalBasic,
+    ...predefinedList,
   });
 
 const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
@@ -104,44 +110,41 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
     setDsnString(cs);
   }, [user, dbName, password, port, host, setDsnString, configToDsnString]);
 
+  const switcherChangeEvt = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      // build dsn_string
+      const cs = configToDsnString();
+      setDsnString(cs);
+    } else {
+      // parse dsn_string
+      const kv = parseDsnString(dsnString, [
+        "host",
+        "port",
+        "dbname",
+        "user",
+        "password",
+      ]);
+      setHostname(kv.get("host") ? kv.get("host") + "" : "");
+      setPort(kv.get("port") ? kv.get("port") + "" : "");
+      setDbName(kv.get("dbname") ? kv.get("dbname") + "" : "");
+      setUser(kv.get("user") ? kv.get("user") + "" : "");
+      setPassword(kv.get("password") ? kv.get("password") + "" : "");
+    }
+
+    setUseDsnString(event.target.checked);
+  };
+
   return (
     <Grid container className={classes.formScrollable}>
       <Grid item xs={12}>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={useDsnString}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                if (event.target.checked) {
-                  // build dsn_string
-                  const cs = configToDsnString();
-                  setDsnString(cs);
-                } else {
-                  // parse dsn_string
-                  const kv = parseDsnString(dsnString, [
-                    "host",
-                    "port",
-                    "dbname",
-                    "user",
-                    "password",
-                  ]);
-                  setHostname(kv.get("host") ? kv.get("host") + "" : "");
-                  setPort(kv.get("port") ? kv.get("port") + "" : "");
-                  setDbName(kv.get("dbname") ? kv.get("dbname") + "" : "");
-                  setUser(kv.get("user") ? kv.get("user") + "" : "");
-                  setPassword(
-                    kv.get("password") ? kv.get("password") + "" : ""
-                  );
-                }
-
-                setUseDsnString(event.target.checked);
-              }}
-              name="checkedB"
-              color="primary"
-            />
-          }
-          label="Enter DSN String"
-          className={classes.formSlider}
+        <FormSwitchWrapper
+          label={"Enter DNS String"}
+          checked={useDsnString}
+          id="checkedB"
+          name="checkedB"
+          onChange={switcherChangeEvt}
+          value={"dnsString"}
+          indicatorLabel={"On"}
         />
       </Grid>
       {useDsnString ? (
@@ -160,62 +163,78 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
         </React.Fragment>
       ) : (
         <React.Fragment>
-          <Grid item xs={12}>
-            <InputBoxWrapper
-              id="host"
-              name="host"
-              label="Host"
-              value={host}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setHostname(e.target.value);
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <InputBoxWrapper
-              id="db-name"
-              name="db-name"
-              label="DB Name"
-              value={dbName}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setDbName(e.target.value);
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <InputBoxWrapper
-              id="port"
-              name="port"
-              label="Port"
-              value={port}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setPort(e.target.value);
-              }}
-            />
-          </Grid>
+          <Grid item xs={12} className={classes.configureString}>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="host"
+                name="host"
+                label=""
+                placeholder="Enter Host"
+                value={host}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setHostname(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="db-name"
+                name="db-name"
+                label=""
+                placeholder="Enter DB Name"
+                value={dbName}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setDbName(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="port"
+                name="port"
+                label=""
+                placeholder="Enter Port"
+                value={port}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setPort(e.target.value);
+                }}
+              />
+            </Grid>
 
-          <Grid item xs={12}>
-            <InputBoxWrapper
-              id="user"
-              name="user"
-              label="User"
-              value={user}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setUser(e.target.value);
-              }}
-            />
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="user"
+                name="user"
+                label=""
+                placeholder="Enter User"
+                value={user}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setUser(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="password"
+                name="password"
+                label=""
+                placeholder="Enter Password"
+                type="password"
+                value={password}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setPassword(e.target.value);
+                }}
+              />
+            </Grid>
+          </Grid>
+          <Grid item xs={12} className={classes.predefinedTitle}>
+            Connection String
+          </Grid>
+          <Grid item xs={12} className={classes.predefinedList}>
+            {dsnString}
           </Grid>
           <Grid item xs={12}>
-            <InputBoxWrapper
-              id="password"
-              name="password"
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setPassword(e.target.value);
-              }}
-            />
+            <br />
           </Grid>
         </React.Fragment>
       )}
@@ -224,6 +243,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
           id="table"
           name="table"
           label="Table"
+          placeholder="Enter Table Name"
           value={table}
           tooltip="DB table name to store/update events, table is auto-created"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -252,6 +272,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
           id="queue-dir"
           name="queue_dir"
           label="Queue Dir"
+          placeholder="Enter Queue Dir"
           value={queueDir}
           tooltip="staging dir for undelivered messages e.g. '/home/events'"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -264,6 +285,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
           id="queue-limit"
           name="queue_limit"
           label="Queue Limit"
+          placeholder="Enter Queue Limit"
           type="number"
           value={queueLimit}
           tooltip="maximum limit for undelivered messages, defaults to '10000'"
@@ -273,11 +295,11 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
         />
       </Grid>
       <Grid item xs={12}>
-        <InputBoxWrapper
+        <CommentBoxWrapper
           id="comment"
           name="comment"
           label="Comment"
-          multiline={true}
+          placeholder="Enter Comment"
           value={comment}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setComment(e.target.value);

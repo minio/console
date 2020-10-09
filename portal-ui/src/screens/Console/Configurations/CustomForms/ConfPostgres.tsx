@@ -22,7 +22,12 @@ import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBo
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { IElementValue } from "../types";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  modalBasic,
+  predefinedList,
+} from "../../Common/FormComponents/common/styleLibrary";
+import CommentBoxWrapper from "../../Common/FormComponents/CommentBoxWrapper/CommentBoxWrapper";
+import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
 interface IConfPostgresProps {
   onChange: (newValue: IElementValue[]) => void;
@@ -32,6 +37,7 @@ interface IConfPostgresProps {
 const styles = (theme: Theme) =>
   createStyles({
     ...modalBasic,
+    ...predefinedList,
   });
 
 const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
@@ -45,7 +51,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
   const [port, setPort] = useState<string>("");
   const [user, setUser] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [sslMode, setSslMode] = useState<string>("require");
+  const [sslMode, setSslMode] = useState<string>(" ");
 
   const [table, setTable] = useState<string>("");
   const [format, setFormat] = useState<string>("namespace");
@@ -126,8 +132,11 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
     if (port !== "") {
       strValue = `${strValue} port=${port}`;
     }
+    if (sslMode !== " ") {
+      strValue = `${strValue} sslmode=${sslMode}`;
+    }
 
-    strValue = `${strValue} sslmode=${sslMode}`;
+    strValue = `${strValue} `;
 
     return strValue.trim();
   }, [host, dbName, user, password, port, sslMode]);
@@ -169,48 +178,44 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
     configToString,
   ]);
 
+  useEffect(() => {
+    if (useConnectionString) {
+      // build connection_string
+      const cs = configToString();
+      setConnectionString(cs);
+
+      return;
+    }
+    // parse connection_string
+    const kv = parseConnectionString(connectionString, [
+      "host",
+      "port",
+      "dbname",
+      "user",
+      "password",
+      "sslmode",
+    ]);
+    setHostname(kv.get("host") ? kv.get("host") + "" : "");
+    setPort(kv.get("port") ? kv.get("port") + "" : "");
+    setDbName(kv.get("dbname") ? kv.get("dbname") + "" : "");
+    setUser(kv.get("user") ? kv.get("user") + "" : "");
+    setPassword(kv.get("password") ? kv.get("password") + "" : "");
+    setSslMode(kv.get("sslmode") ? kv.get("sslmode") + "" : " ");
+  }, [useConnectionString]);
+
   return (
     <Grid container className={classes.formScrollable}>
       <Grid item xs={12}>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={useConnectionString}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                if (event.target.checked) {
-                  // build connection_string
-                  const cs = configToString();
-                  setConnectionString(cs);
-                } else {
-                  // parse connection_string
-                  const kv = parseConnectionString(connectionString, [
-                    "host",
-                    "port",
-                    "dbname",
-                    "user",
-                    "password",
-                    "sslmode",
-                  ]);
-                  setHostname(kv.get("host") ? kv.get("host") + "" : "");
-                  setPort(kv.get("port") ? kv.get("port") + "" : "");
-                  setDbName(kv.get("dbname") ? kv.get("dbname") + "" : "");
-                  setUser(kv.get("user") ? kv.get("user") + "" : "");
-                  setPassword(
-                    kv.get("password") ? kv.get("password") + "" : ""
-                  );
-                  setSslMode(
-                    kv.get("sslmode") ? kv.get("sslmode") + "" : "require"
-                  );
-                }
-
-                setUseConnectionString(event.target.checked);
-              }}
-              name="checkedB"
-              color="primary"
-            />
-          }
-          label="Enter Connection String"
-          className={classes.formSlider}
+        <FormSwitchWrapper
+          label={"Manually Configure String"}
+          checked={useConnectionString}
+          id="manualString"
+          name="manualString"
+          onChange={(e) => {
+            setUseConnectionString(e.target.checked);
+          }}
+          value={"manualString"}
+          indicatorLabel={"On"}
         />
       </Grid>
       {useConnectionString ? (
@@ -229,81 +234,97 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
         </React.Fragment>
       ) : (
         <React.Fragment>
-          <Grid item xs={12}>
-            <InputBoxWrapper
-              id="host"
-              name="host"
-              label="Host"
-              value={host}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setHostname(e.target.value);
-              }}
-            />
+          <Grid item xs={12} className={classes.configureString}>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="host"
+                name="host"
+                label=""
+                placeholder="Enter Host"
+                value={host}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setHostname(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="db-name"
+                name="db-name"
+                label=""
+                placeholder="Enter DB Name"
+                value={dbName}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setDbName(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="port"
+                name="port"
+                label=""
+                placeholder="Enter Port"
+                value={port}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setPort(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <SelectWrapper
+                value={sslMode}
+                label=""
+                id="sslmode"
+                name="sslmode"
+                onChange={(e): void => {
+                  if (e.target.value !== undefined) {
+                    setSslMode(e.target.value + "");
+                  }
+                }}
+                options={[
+                  { label: "Enter SSL Mode", value: " " },
+                  { label: "Require", value: "require" },
+                  { label: "Disable", value: "disable" },
+                  { label: "Verify CA", value: "verify-ca" },
+                  { label: "Verify Full", value: "verify-full" },
+                ]}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="user"
+                name="user"
+                label=""
+                placeholder="Enter User"
+                value={user}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setUser(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="password"
+                name="password"
+                label=""
+                type="password"
+                placeholder="Enter Password"
+                value={password}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setPassword(e.target.value);
+                }}
+              />
+            </Grid>
+          </Grid>
+          <Grid item xs={12} className={classes.predefinedTitle}>
+            Connection String
+          </Grid>
+          <Grid item xs={12} className={classes.predefinedList}>
+            {connectionString}
           </Grid>
           <Grid item xs={12}>
-            <InputBoxWrapper
-              id="db-name"
-              name="db-name"
-              label="DB Name"
-              value={dbName}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setDbName(e.target.value);
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <InputBoxWrapper
-              id="port"
-              name="port"
-              label="Port"
-              value={port}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setPort(e.target.value);
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <SelectWrapper
-              value={sslMode}
-              label="SSL Mode"
-              id="sslmode"
-              name="sslmode"
-              onChange={(e): void => {
-                if (e.target.value !== undefined) {
-                  setSslMode(e.target.value + "");
-                }
-              }}
-              options={[
-                { label: "Require", value: "require" },
-                { label: "Disable", value: "disable" },
-                { label: "Verify CA", value: "verify-ca" },
-                { label: "Verify Full", value: "verify-full" },
-              ]}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <InputBoxWrapper
-              id="user"
-              name="user"
-              label="User"
-              value={user}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setUser(e.target.value);
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <InputBoxWrapper
-              id="password"
-              name="password"
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setPassword(e.target.value);
-              }}
-            />
+            <br />
           </Grid>
         </React.Fragment>
       )}
@@ -312,6 +333,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
           id="table"
           name="table"
           label="Table"
+          placeholder={"Enter Table Name"}
           value={table}
           tooltip="DB table name to store/update events, table is auto-created"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -340,6 +362,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
           id="queue-dir"
           name="queue_dir"
           label="Queue Dir"
+          placeholder="Enter Queue Directory"
           value={queueDir}
           tooltip="staging dir for undelivered messages e.g. '/home/events'"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -352,6 +375,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
           id="queue-limit"
           name="queue_limit"
           label="Queue Limit"
+          placeholder="Enter Queue Limit"
           type="number"
           value={queueLimit}
           tooltip="maximum limit for undelivered messages, defaults to '10000'"
@@ -361,11 +385,11 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
         />
       </Grid>
       <Grid item xs={12}>
-        <InputBoxWrapper
+        <CommentBoxWrapper
           id="comment"
           name="comment"
           label="Comment"
-          multiline={true}
+          placeholder="Enter Comment"
           value={comment}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setComment(e.target.value);

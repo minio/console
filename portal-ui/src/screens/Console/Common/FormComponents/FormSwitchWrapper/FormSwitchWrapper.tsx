@@ -22,7 +22,7 @@ import { actionsTray, fieldBasic } from "../common/styleLibrary";
 import HelpIcon from "@material-ui/icons/Help";
 
 interface IFormSwitch {
-  label: string;
+  label?: string;
   classes: any;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   value: string | boolean;
@@ -31,7 +31,9 @@ interface IFormSwitch {
   disabled?: boolean;
   tooltip?: string;
   index?: number;
+  indicatorLabel?: string;
   checked: boolean;
+  switchOnly?: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -82,7 +84,7 @@ const styles = (theme: Theme) =>
     },
     actionsTitle: {
       fontWeight: 600,
-      color: "#000",
+      color: "#081C42",
       fontSize: 16,
       alignSelf: "center",
     },
@@ -95,7 +97,7 @@ const styles = (theme: Theme) =>
       "& .input": {
         "&::placeholder": {
           fontWeight: 600,
-          color: "#000",
+          color: "#081C42",
         },
       },
     },
@@ -106,6 +108,15 @@ const styles = (theme: Theme) =>
       borderBottom: "#9c9c9c 1px solid",
       paddingBottom: 14,
       marginBottom: 20,
+    },
+    indicatorLabel: {
+      fontSize: 12,
+      fontWeight: 600,
+      color: "#081C42",
+      margin: "0 8px 0 10px",
+    },
+    switchContainer: {
+      display: "flex",
     },
     ...actionsTray,
     ...fieldBasic,
@@ -127,7 +138,7 @@ const StyledSwitch = withStyles({
       color: "#fff",
     },
     "&$checked + $track": {
-      backgroundColor: "#000",
+      backgroundColor: "#081C42",
       opacity: 1,
       height: 15,
     },
@@ -135,14 +146,14 @@ const StyledSwitch = withStyles({
   checked: {},
   track: {
     height: 15,
-    backgroundColor: "#000",
+    backgroundColor: "#081C42",
     opacity: 1,
     padding: 0,
     marginTop: 1.5,
   },
   thumb: {
     backgroundColor: "#fff",
-    border: "#000 1px solid",
+    border: "#081C42 1px solid",
     boxShadow: "none",
     width: 18,
     height: 18,
@@ -152,16 +163,44 @@ const StyledSwitch = withStyles({
 })(Switch);
 
 const FormSwitchWrapper = ({
-  label,
+  label = "",
   onChange,
   value,
   id,
   name,
   checked = false,
   disabled = false,
+  switchOnly = false,
   tooltip = "",
+  indicatorLabel = "",
   classes,
 }: IFormSwitch) => {
+  const switchComponent = (
+    <React.Fragment>
+      <div className={classes.switchContainer}>
+        <StyledSwitch
+          checked={checked}
+          onChange={onChange}
+          color="primary"
+          name={name}
+          inputProps={{ "aria-label": "primary checkbox" }}
+          disabled={disabled}
+          disableRipple
+          disableFocusRipple
+          disableTouchRipple
+          value={value}
+        />
+        {indicatorLabel !== "" && (
+          <span className={classes.indicatorLabel}>{indicatorLabel}</span>
+        )}
+      </div>
+    </React.Fragment>
+  );
+
+  if (switchOnly) {
+    return switchComponent;
+  }
+
   return (
     <React.Fragment>
       <Grid item xs={12} className={`${classes.wrapperContainer}`}>
@@ -177,21 +216,7 @@ const FormSwitchWrapper = ({
             )}
           </InputLabel>
         )}
-
-        <div className={classes.textBoxContainer}>
-          <StyledSwitch
-            checked={checked}
-            onChange={onChange}
-            color="primary"
-            name={name}
-            inputProps={{ "aria-label": "primary checkbox" }}
-            disabled={disabled}
-            disableRipple
-            disableFocusRipple
-            disableTouchRipple
-            value={value}
-          />
-        </div>
+        {switchComponent}
       </Grid>
     </React.Fragment>
   );

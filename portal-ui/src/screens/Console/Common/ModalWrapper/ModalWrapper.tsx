@@ -29,11 +29,12 @@ interface IModalProps {
   modalOpen: boolean;
   title: string;
   children: any;
+  wideLimit?: boolean;
 }
 
 const baseCloseLine = {
   content: '" "',
-  borderLeft: "2px solid #707070",
+  borderLeft: "2px solid #9C9C9C",
   height: 33,
   width: 1,
   position: "absolute",
@@ -61,10 +62,10 @@ const styles = (theme: Theme) =>
     },
     modalCloseIcon: {
       fontSize: 35,
-      color: "#707070",
+      color: "#9C9C9C",
       fontWeight: 300,
       "&:hover": {
-        color: "#000",
+        color: "#9C9C9C",
       },
     },
     closeIcon: {
@@ -77,7 +78,7 @@ const styles = (theme: Theme) =>
         transform: "rotate(-45deg)",
       },
       "&:hover::before, &:hover::after": {
-        borderColor: "#000",
+        borderColor: "#9C9C9C",
       },
       width: 24,
       height: 24,
@@ -95,6 +96,10 @@ const styles = (theme: Theme) =>
     modalContent: {
       padding: "0 50px",
     },
+    customDialogSize: {
+      width: "100%",
+      maxWidth: 765,
+    },
   });
 
 const ModalWrapper = ({
@@ -103,15 +108,22 @@ const ModalWrapper = ({
   title,
   children,
   classes,
+  wideLimit = true,
 }: IModalProps) => {
+  const customSize = wideLimit
+    ? {
+        classes: {
+          paper: classes.customDialogSize,
+        },
+      }
+    : { maxWidth: "md" as const, fullWidth: true };
   return (
     <Dialog
       open={modalOpen}
       onClose={onClose}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
-      maxWidth={"md"}
-      fullWidth
+      {...customSize}
     >
       <div className={classes.dialogContainer}>
         <div className={classes.closeContainer}>
