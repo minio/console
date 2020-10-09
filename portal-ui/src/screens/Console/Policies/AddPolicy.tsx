@@ -41,6 +41,19 @@ const styles = (theme: Theme) =>
     },
     codeMirror: {
       fontSize: 14,
+      "& .CodeMirror": {
+        color: "#fff",
+        backgroundColor: "#081C42",
+      },
+      "& .CodeMirror-gutter": {
+        backgroundColor: "#081C4280",
+      },
+      "& .CodeMirror-linenumber": {
+        color: "#000",
+        fontSize: 10,
+        height: 20,
+        lineHeight: "20px",
+      },
     },
     buttonContainer: {
       textAlign: "right",

@@ -38,6 +38,7 @@ import {
 } from "../actions";
 import { useDebounce } from "use-debounce";
 import { MakeBucketRequest } from "../types";
+import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -52,7 +53,12 @@ const styles = (theme: Theme) =>
       alignItems: "center" as const,
       justifyContent: "flex-start" as const,
     },
+    quotaSizeContainer: {
+      flexGrow: 1,
+    },
     sizeFactorContainer: {
+      flexGrow: 0,
+      maxWidth: 80,
       marginLeft: 8,
       alignSelf: "flex-start" as const,
     },
@@ -182,7 +188,7 @@ const AddBucket = ({
               />
             </Grid>
             <Grid item xs={12}>
-              <CheckboxWrapper
+              <FormSwitchWrapper
                 value="versioned"
                 id="versioned"
                 name="versioned"
@@ -194,7 +200,7 @@ const AddBucket = ({
               />
             </Grid>
             <Grid item xs={12}>
-              <CheckboxWrapper
+              <FormSwitchWrapper
                 value="bucket_quota"
                 id="bucket_quota"
                 name="bucket_quota"
@@ -224,7 +230,7 @@ const AddBucket = ({
                 </Grid>
                 <Grid item xs={12}>
                   <div className={classes.multiContainer}>
-                    <div>
+                    <div className={classes.quotaSizeContainer}>
                       <InputBoxWrapper
                         type="number"
                         id="quota_size"
@@ -232,7 +238,7 @@ const AddBucket = ({
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           addBucketQuotaSize(e.target.value);
                         }}
-                        label="Size"
+                        label="Quota"
                         value={quotaSize}
                         required
                         min="1"
@@ -240,7 +246,7 @@ const AddBucket = ({
                     </div>
                     <div className={classes.sizeFactorContainer}>
                       <SelectWrapper
-                        label=""
+                        label="&nbsp;"
                         id="quota_unit"
                         name="quota_unit"
                         value={quotaUnit}

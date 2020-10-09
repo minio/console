@@ -50,26 +50,25 @@ const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
     ...tooltipHelper,
-    inputLabel: {
-      ...fieldBasic.inputLabel,
-      width: 215,
-    },
   });
 
 const SelectStyled = withStyles((theme: Theme) =>
   createStyles({
     root: {
+      lineHeight: 1,
       "label + &": {
         marginTop: theme.spacing(3),
       },
     },
     input: {
-      borderRadius: 0,
       position: "relative",
       color: "#393939",
-      fontSize: 14,
-      padding: "11px 20px",
-      border: "1px solid #c4c4c4",
+      fontSize: 13,
+      fontWeight: 600,
+      padding: "15px 20px 10px 10px",
+      borderBottom: "1px solid #9c9c9c",
+      display: "flex",
+      alignItems: "center",
       "&:hover": {
         borderColor: "#393939",
       },
@@ -106,7 +105,7 @@ const SelectWrapper = ({
             )}
           </InputLabel>
         )}
-        <FormControl variant="outlined" fullWidth>
+        <FormControl fullWidth>
           <Select
             id={id}
             name={name}

@@ -29,7 +29,7 @@ import TableRow from "@material-ui/core/TableRow";
 import api from "../../../../common/api";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
-import CheckboxWrapper from "../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
+import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import {
   calculateDistribution,
@@ -1001,7 +1001,7 @@ const AddTenant = ({
             </span>
             <br />
             <br />
-            <CheckboxWrapper
+            <FormSwitchWrapper
               value="adv_mode"
               id="adv_mode"
               name="adv_mode"
@@ -1033,7 +1033,7 @@ const AddTenant = ({
           </div>
 
           <Grid item xs={12}>
-            <CheckboxWrapper
+            <FormSwitchWrapper
               value="custom_dockerhub"
               id="custom_dockerhub"
               name="custom_dockerhub"
@@ -1083,7 +1083,7 @@ const AddTenant = ({
             </React.Fragment>
           )}
           <Grid item xs={12}>
-            <CheckboxWrapper
+            <FormSwitchWrapper
               value="enable_prometheus"
               id="enable_prometheus"
               name="enable_prometheus"
@@ -1198,7 +1198,7 @@ const AddTenant = ({
                 />
               </Grid>
               <Grid item xs={12}>
-                <CheckboxWrapper
+                <FormSwitchWrapper
                   value="ad_skipTLS"
                   id="ad_skipTLS"
                   name="ad_skipTLS"
@@ -1213,7 +1213,7 @@ const AddTenant = ({
                 />
               </Grid>
               <Grid item xs={12}>
-                <CheckboxWrapper
+                <FormSwitchWrapper
                   value="ad_serverInsecure"
                   id="ad_serverInsecure"
                   name="ad_serverInsecure"
@@ -1302,7 +1302,7 @@ const AddTenant = ({
             <h3>Security</h3>
           </div>
           <Grid item xs={12}>
-            <CheckboxWrapper
+            <FormSwitchWrapper
               value="enableTLS"
               id="enableTLS"
               name="enableTLS"
@@ -1425,7 +1425,7 @@ const AddTenant = ({
             <span>How would you like to encrypt the information at rest.</span>
           </div>
           <Grid item xs={12}>
-            <CheckboxWrapper
+            <FormSwitchWrapper
               value="enableEncryption"
               id="enableEncryption"
               name="enableEncryption"

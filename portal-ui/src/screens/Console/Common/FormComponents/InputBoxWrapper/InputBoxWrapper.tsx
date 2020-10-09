@@ -71,13 +71,16 @@ const styles = (theme: Theme) =>
 const inputStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      borderColor: "#393939",
       borderRadius: 0,
+      "&::before": {
+        borderColor: "#9c9c9c",
+      },
     },
     input: {
-      padding: "11px 20px",
+      padding: "15px 5px 10px",
       color: "#393939",
-      fontSize: 14,
+      fontSize: 13,
+      fontWeight: 600,
     },
     error: {
       color: "#b53b4b",
@@ -160,7 +163,6 @@ const InputBoxWrapper = ({
           <InputField
             id={id}
             name={name}
-            variant="outlined"
             fullWidth
             value={value}
             disabled={disabled}
@@ -172,6 +174,10 @@ const InputBoxWrapper = ({
             error={error !== ""}
             helperText={error}
             placeholder={placeholder}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            className={classes.inputRebase}
           />
         </div>
       </Grid>

@@ -166,7 +166,7 @@ const UsersSelectors = ({
 
   return (
     <React.Fragment>
-      <Title>Members</Title>
+      <Title>Assign Users</Title>
       {error !== "" ? <div>{error}</div> : <React.Fragment />}
       <Grid item xs={12}>
         <Paper className={classes.paper}>
