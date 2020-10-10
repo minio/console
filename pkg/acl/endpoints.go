@@ -42,6 +42,7 @@ var (
 	replication       = "/replication"
 	objectBrowser     = "/object-browser/:bucket?"
 	mainObjectBrowser = "/object-browser"
+	license           = "/license"
 )
 
 type ConfigurationActionSet struct {
@@ -236,6 +237,12 @@ var objectBrowserActionSet = ConfigurationActionSet{
 	actions:     iampolicy.NewActionSet(),
 }
 
+// licenseActionSet no actions needed for this module to work
+var licenseActionSet = ConfigurationActionSet{
+	actionTypes: iampolicy.NewActionSet(),
+	actions:     iampolicy.NewActionSet(),
+}
+
 // endpointRules contains the mapping between endpoints and ActionSets, additional rules can be added here
 var endpointRules = map[string]ConfigurationActionSet{
 	configuration:     configurationActionSet,
@@ -256,6 +263,7 @@ var endpointRules = map[string]ConfigurationActionSet{
 	replication:       replicationActionSet,
 	objectBrowser:     objectBrowserActionSet,
 	mainObjectBrowser: objectBrowserActionSet,
+	license:           licenseActionSet,
 }
 
 // operatorRules contains the mapping between endpoints and ActionSets for operator only mode

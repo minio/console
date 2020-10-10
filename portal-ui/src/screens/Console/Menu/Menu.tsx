@@ -55,6 +55,7 @@ import {
 import { clearSession } from "../../../common/utils";
 import HealIcon from "../../../icons/HealIcon";
 import ConsoleIcon from "../../../icons/ConsoleIcon";
+import LicenseIcon from "../../../icons/LicenseIcon";
 import LogoutIcon from "../../../icons/LogoutIcon";
 
 const styles = (theme: Theme) =>
@@ -317,6 +318,14 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
       to: "/warp",
       name: "Warp",
       icon: <WarpIcon />,
+    },
+    {
+      group: "License",
+      type: "item",
+      component: NavLink,
+      to: "/license",
+      name: "License",
+      icon: <LicenseIcon />,
     },
   ];
 
