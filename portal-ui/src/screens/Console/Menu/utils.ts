@@ -20,4 +20,5 @@ export const menuGroups = [
   { label: "Admin", group: "Admin", collapsible: true },
   { label: "Tools", group: "Tools", collapsible: true },
   { label: "Operator", group: "Operator", collapsible: true },
+  { label: "", group: "License", collapsible: false },
 ];

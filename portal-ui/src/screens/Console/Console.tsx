@@ -69,6 +69,7 @@ import TenantDetails from "./Tenants/TenantDetails/TenantDetails";
 import { clearSession } from "../../common/utils";
 import ObjectBrowser from "./ObjectBrowser/ObjectBrowser";
 import ListObjects from "./Buckets/ListBuckets/Objects/ListObjects/ListObjects";
+import License from "./License/License";
 
 function Copyright() {
   return (
@@ -321,6 +322,10 @@ const Console = ({
     {
       component: TenantDetails,
       path: "/namespaces/:tenantNamespace/tenants/:tenantName",
+    },
+    {
+      component: License,
+      path: "/license",
     },
   ];
   const allowedRoutes = routes.filter((route: any) => allowedPages[route.path]);
