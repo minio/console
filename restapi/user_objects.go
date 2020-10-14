@@ -27,6 +27,8 @@ import (
 	"strings"
 	"time"
 
+	"errors"
+
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -74,6 +76,13 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 				}
 			}
 		})
+	})
+	// upload object
+	api.UserAPIPostBucketsBucketNameObjectsUploadHandler = user_api.PostBucketsBucketNameObjectsUploadHandlerFunc(func(params user_api.PostBucketsBucketNameObjectsUploadParams, session *models.Principal) middleware.Responder {
+		if err := getUploadObjectResponse(session, params); err != nil {
+			return user_api.NewPostBucketsBucketNameObjectsUploadDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewPostBucketsBucketNameObjectsUploadOK()
 	})
 }
 
@@ -139,7 +148,7 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 			legalHoldStatus, err := client.getObjectLegalHold(ctx, bucketName, lsObj.Key, minio.GetObjectLegalHoldOptions{VersionID: lsObj.VersionID})
 			if err != nil {
 				errResp := minio.ToErrorResponse(probe.NewError(err).ToGoError())
-				if errResp.Code != "NoSuchObjectLockConfiguration" {
+				if errResp.Code != "InvalidRequest" {
 					log.Printf("error getting legal hold status for %s : %s", lsObj.VersionID, err)
 				}
 
@@ -311,6 +320,43 @@ func deleteSingleObject(ctx context.Context, client MCClient, bucket, object str
 			}
 			return pErr.Cause
 		}
+	}
+	return nil
+}
+
+func getUploadObjectResponse(session *models.Principal, params user_api.PostBucketsBucketNameObjectsUploadParams) *models.Error {
+	ctx := context.Background()
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		return prepareError(err)
+	}
+	// get size from request form
+	var objectSize int64
+	if params.HTTPRequest.MultipartForm == nil {
+		return prepareError(errors.New("request MultipartForm is nil"))
+	}
+	if file, ok := params.HTTPRequest.MultipartForm.File["upfile"]; ok {
+		if len(file) > 0 {
+			objectSize = file[0].Size
+		} else {
+			return prepareError(errors.New("file not present in request"))
+		}
+	} else {
+		return prepareError(errors.New("`upfile` should be on MultipartForm.File map"))
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+	if err := uploadObject(ctx, minioClient, params.BucketName, params.Prefix, objectSize, params.Upfile); err != nil {
+		return prepareError(err)
+	}
+	return nil
+}
+
+func uploadObject(ctx context.Context, client MinioClient, bucketName, prefix string, objectSize int64, object io.ReadCloser) error {
+	_, err := client.putObject(ctx, bucketName, prefix, object, objectSize, minio.PutObjectOptions{ContentType: "application/octet-stream"})
+	if err != nil {
+		return err
 	}
 	return nil
 }

@@ -469,6 +469,48 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/objects/upload": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Uploads an Object.",
+        "parameters": [
+          {
+            "type": "file",
+            "name": "upfile",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/replication": {
       "get": {
         "tags": [
@@ -4910,6 +4952,48 @@ func init() {
             "schema": {
               "type": "file"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/objects/upload": {
+      "post": {
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Uploads an Object.",
+        "parameters": [
+          {
+            "type": "file",
+            "name": "upfile",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",

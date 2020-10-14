@@ -58,7 +58,8 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		APIKeyAuthenticator: security.APIKeyAuth,
 		BearerAuthenticator: security.BearerAuth,
 
-		JSONConsumer: runtime.JSONConsumer(),
+		JSONConsumer:          runtime.JSONConsumer(),
+		MultipartformConsumer: runtime.DiscardConsumer,
 
 		BinProducer:  runtime.ByteStreamProducer(),
 		JSONProducer: runtime.JSONProducer(),
@@ -213,6 +214,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIPolicyInfoHandler: admin_api.PolicyInfoHandlerFunc(func(params admin_api.PolicyInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.PolicyInfo has not yet been implemented")
 		}),
+		UserAPIPostBucketsBucketNameObjectsUploadHandler: user_api.PostBucketsBucketNameObjectsUploadHandlerFunc(func(params user_api.PostBucketsBucketNameObjectsUploadParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.PostBucketsBucketNameObjectsUpload has not yet been implemented")
+		}),
 		AdminAPIProfilingStartHandler: admin_api.ProfilingStartHandlerFunc(func(params admin_api.ProfilingStartParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ProfilingStart has not yet been implemented")
 		}),
@@ -310,6 +314,9 @@ type ConsoleAPI struct {
 	// JSONConsumer registers a consumer for the following mime types:
 	//   - application/json
 	JSONConsumer runtime.Consumer
+	// MultipartformConsumer registers a consumer for the following mime types:
+	//   - multipart/form-data
+	MultipartformConsumer runtime.Consumer
 
 	// BinProducer registers a producer for the following mime types:
 	//   - application/octet-stream
@@ -425,6 +432,8 @@ type ConsoleAPI struct {
 	AdminAPINotificationEndpointListHandler admin_api.NotificationEndpointListHandler
 	// AdminAPIPolicyInfoHandler sets the operation handler for the policy info operation
 	AdminAPIPolicyInfoHandler admin_api.PolicyInfoHandler
+	// UserAPIPostBucketsBucketNameObjectsUploadHandler sets the operation handler for the post buckets bucket name objects upload operation
+	UserAPIPostBucketsBucketNameObjectsUploadHandler user_api.PostBucketsBucketNameObjectsUploadHandler
 	// AdminAPIProfilingStartHandler sets the operation handler for the profiling start operation
 	AdminAPIProfilingStartHandler admin_api.ProfilingStartHandler
 	// AdminAPIProfilingStopHandler sets the operation handler for the profiling stop operation
@@ -527,6 +536,9 @@ func (o *ConsoleAPI) Validate() error {
 
 	if o.JSONConsumer == nil {
 		unregistered = append(unregistered, "JSONConsumer")
+	}
+	if o.MultipartformConsumer == nil {
+		unregistered = append(unregistered, "MultipartformConsumer")
 	}
 
 	if o.BinProducer == nil {
@@ -690,6 +702,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.AdminAPIPolicyInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.PolicyInfoHandler")
 	}
+	if o.UserAPIPostBucketsBucketNameObjectsUploadHandler == nil {
+		unregistered = append(unregistered, "user_api.PostBucketsBucketNameObjectsUploadHandler")
+	}
 	if o.AdminAPIProfilingStartHandler == nil {
 		unregistered = append(unregistered, "admin_api.ProfilingStartHandler")
 	}
@@ -794,6 +809,8 @@ func (o *ConsoleAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Consum
 		switch mt {
 		case "application/json":
 			result["application/json"] = o.JSONConsumer
+		case "multipart/form-data":
+			result["multipart/form-data"] = o.MultipartformConsumer
 		}
 
 		if c, ok := o.customConsumers[mt]; ok {
@@ -1053,6 +1070,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/policies/{name}"] = admin_api.NewPolicyInfo(o.context, o.AdminAPIPolicyInfoHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/buckets/{bucket_name}/objects/upload"] = user_api.NewPostBucketsBucketNameObjectsUpload(o.context, o.UserAPIPostBucketsBucketNameObjectsUploadHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

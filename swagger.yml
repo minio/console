@@ -285,6 +285,34 @@ paths:
       tags:
         - UserAPI
 
+  /buckets/{bucket_name}/objects/upload:
+    post:
+      summary: Uploads an Object.
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: upfile
+          type: file
+          required: true
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /buckets/{bucket_name}/objects/download:
     get:
       summary: Download Object
