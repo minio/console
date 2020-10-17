@@ -248,7 +248,7 @@ const ListTenants = ({ classes }: ITenantsList) => {
           entity="Tenant"
         />
       )}
-      <PageHeader label={"Users"} />
+      <PageHeader label={"Tenants"} />
       <Grid container>
         <Grid item xs={12} className={classes.container}>
           <Grid item xs={12} className={classes.actionsTray}>
