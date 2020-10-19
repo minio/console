@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2019 MinIO, Inc.
+// Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -283,6 +283,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
             selectedGroup={null}
             closeModalAndRefresh={() => {
               this.setState({ setPolicyOpen: false });
+              this.fetchRecords();
             }}
           />
         )}

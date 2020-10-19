@@ -22,6 +22,7 @@ export interface User {
   enabled: boolean;
   accessKey: string;
   secretKey: string;
+  policy?: string;
 }
 
 export interface UsersList {

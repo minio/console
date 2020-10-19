@@ -33,7 +33,10 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { TablePaginationActionsProps } from "@material-ui/core/TablePagination/TablePaginationActions";
 import TableActionButton from "./TableActionButton";
 import history from "../../../../history";
-import { checkboxIcons } from "../FormComponents/common/styleLibrary";
+import {
+  checkboxIcons,
+  radioIcons,
+} from "../FormComponents/common/styleLibrary";
 
 //Interfaces for table Items
 
@@ -80,6 +83,7 @@ interface TableWrapperProps {
   entityName: string;
   selectedItems?: string[];
   stickyHeader?: boolean;
+  radioSelection?: boolean;
   paginatorConfig?: IPaginatorConfig;
 }
 
@@ -103,7 +107,8 @@ const styles = (theme: Theme) =>
       padding: "19px 38px",
       minHeight: "200px",
       boxShadow: "none",
-      border: "#e7e7e7 1px solid",
+      border: "#EAEDEE 1px solid",
+      borderRadius: 3,
     },
     minTableHeader: {
       color: "#393939",
@@ -159,6 +164,7 @@ const styles = (theme: Theme) =>
       cursor: "pointer",
     },
     ...checkboxIcons,
+    ...radioIcons,
   });
 
 // Function that renders Title Columns
@@ -239,6 +245,7 @@ const TableWrapper = ({
   idField,
   classes,
   stickyHeader = false,
+  radioSelection = false,
   paginatorConfig,
 }: TableWrapperProps) => {
   const findView = itemActions
@@ -333,8 +340,24 @@ const TableWrapper = ({
                             e.stopPropagation();
                             e.preventDefault();
                           }}
-                          checkedIcon={<span className={classes.checkedIcon} />}
-                          icon={<span className={classes.unCheckedIcon} />}
+                          checkedIcon={
+                            <span
+                              className={
+                                radioSelection
+                                  ? classes.radioSelectedIcon
+                                  : classes.checkedIcon
+                              }
+                            />
+                          }
+                          icon={
+                            <span
+                              className={
+                                radioSelection
+                                  ? classes.radioUnselectedIcon
+                                  : classes.unCheckedIcon
+                              }
+                            />
+                          }
                         />
                       </TableCell>
                     )}

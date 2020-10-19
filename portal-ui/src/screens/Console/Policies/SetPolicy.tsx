@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useCallback, useEffect, useState } from "react";
+import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import {
   Button,
@@ -28,13 +29,17 @@ import {
   TableRow,
 } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
+import {
+  modalBasic,
+  predefinedList,
+} from "../Common/FormComponents/common/styleLibrary";
 import { User } from "../Users/types";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import { Policy, PolicyList } from "./types";
 import api from "../../../common/api";
 import { policySort } from "../../../utils/sortFunctions";
 import { Group } from "../Groups/types";
+import PolicySelectors from "./PolicySelectors";
 
 interface ISetPolicyProps {
   classes: any;
@@ -47,6 +52,7 @@ interface ISetPolicyProps {
 const styles = (theme: Theme) =>
   createStyles({
     ...modalBasic,
+    ...predefinedList,
     buttonContainer: {
       textAlign: "right",
     },
@@ -60,28 +66,12 @@ const SetPolicy = ({
   open,
 }: ISetPolicyProps) => {
   //Local States
-  const [records, setRecords] = useState<Policy[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [actualPolicy, setActualPolicy] = useState<string>("");
+  const [selectedPolicy, setSelectedPolicy] = useState<string>("");
   const [error, setError] = useState<string>("");
 
-  const fetchRecords = () => {
-    setLoading(true);
-
-    api
-      .invoke("GET", `/api/v1/policies?limit=1000`)
-      .then((res: PolicyList) => {
-        const policies = res.policies === null ? [] : res.policies;
-        setLoading(false);
-        setRecords(policies.sort(policySort));
-        setError("");
-      })
-      .catch((err) => {
-        setLoading(false);
-        setError(err);
-      });
-  };
-
-  const setPolicyAction = (policyName: string) => {
+  const setPolicyAction = () => {
     let entity = "user";
     let value = null;
     if (selectedGroup !== null) {
@@ -96,7 +86,7 @@ const SetPolicy = ({
     setLoading(true);
 
     api
-      .invoke("PUT", `/api/v1/set-policy/${policyName}`, {
+      .invoke("PUT", `/api/v1/set-policy/${selectedPolicy}`, {
         entityName: value,
         entityType: entity,
       })
@@ -111,11 +101,40 @@ const SetPolicy = ({
       });
   };
 
+  const fetchGroupInformation = () => {
+    if (selectedGroup) {
+      api
+        .invoke("GET", `/api/v1/groups/${selectedGroup}`)
+        .then((res: any) => {
+          const groupPolicy = get(res, "policy", "");
+          setActualPolicy(groupPolicy);
+          setSelectedPolicy(groupPolicy);
+        })
+        .catch((err) => {
+          setError(err);
+          setLoading(false);
+        });
+    }
+  };
+
+  const resetSelection = () => {
+    setSelectedPolicy(actualPolicy);
+  };
+
   useEffect(() => {
     if (open) {
-      fetchRecords();
+      if (selectedGroup !== null) {
+        fetchGroupInformation();
+        return;
+      }
+
+      const userPolicy = get(selectedUser, "policy", "");
+      setActualPolicy(userPolicy);
+      setSelectedPolicy(userPolicy);
     }
   }, [open]);
+
+  const userName = get(selectedUser, "accessKey", "");
 
   return (
     <ModalWrapper
@@ -123,59 +142,48 @@ const SetPolicy = ({
         closeModalAndRefresh();
       }}
       modalOpen={open}
-      title={
-        selectedUser !== null ? "Set Policy to User" : "Set Policy to Group"
-      }
+      title="Set Policies"
     >
-      <Grid container className={classes.formScrollable}>
-        <Grid item xs={12}>
-          <TableContainer component={Paper}>
-            <Table
-              className={classes.table}
-              size="small"
-              aria-label="a dense table"
-            >
-              <TableHead>
-                <TableRow>
-                  <TableCell>Policy</TableCell>
-                  <TableCell align="right"></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {records.map((row) => (
-                  <TableRow key={row.name}>
-                    <TableCell component="th" scope="row">
-                      {row.name}
-                    </TableCell>
-                    <TableCell align="right">
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        size={"small"}
-                        onClick={() => {
-                          setPolicyAction(row.name);
-                        }}
-                      >
-                        Set
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+      <Grid item xs={12}>
+        <Grid item xs={12} className={classes.predefinedTitle}>
+          Selected {selectedGroup !== null ? "Group" : "User"}
+        </Grid>
+        <Grid item xs={12} className={classes.predefinedList}>
+          {selectedGroup !== null ? selectedGroup : userName}
         </Grid>
       </Grid>
+      <Grid item xs={12}>
+        <Grid item xs={12} className={classes.predefinedTitle}>
+          Current Policy
+        </Grid>
+        <Grid item xs={12} className={classes.predefinedList}>
+          {actualPolicy}
+        </Grid>
+      </Grid>
+      <PolicySelectors
+        selectedPolicy={selectedPolicy}
+        setSelectedPolicy={setSelectedPolicy}
+      />
+      <Grid item xs={12}>
+        <br />
+      </Grid>
       <Grid item xs={12} className={classes.buttonContainer}>
+        <button
+          type="button"
+          color="primary"
+          className={classes.clearButton}
+          onClick={resetSelection}
+        >
+          Clear
+        </button>
         <Button
-          type="submit"
+          type="button"
           variant="contained"
           color="primary"
-          onClick={() => {
-            closeModalAndRefresh();
-          }}
+          disabled={loading}
+          onClick={setPolicyAction}
         >
-          Cancel
+          Save
         </Button>
       </Grid>
       {loading && (

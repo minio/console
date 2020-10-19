@@ -42,6 +42,7 @@ import {
   removeEmptyFields,
 } from "../Configurations/utils";
 import { IElementValue } from "../Configurations/types";
+import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -60,6 +61,69 @@ const styles = (theme: Theme) =>
     logoButton: {
       height: "80px",
     },
+    lambdaNotif: {
+      border: "#393939 1px solid",
+      borderRadius: 5,
+      width: 101,
+      height: 91,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 16,
+      cursor: "pointer",
+      "& img": {
+        maxWidth: 71,
+        maxHeight: 71,
+      },
+    },
+    iconContainer: {
+      display: "flex",
+      flexDirection: "row",
+      width: 455,
+      justifyContent: "space-between",
+      flexWrap: "wrap",
+    },
+    nonIconContainer: {
+      marginBottom: 16,
+      "& button": {
+        marginRight: 16,
+      },
+    },
+    pickTitle: {
+      fontWeight: 600,
+      color: "#393939",
+      fontSize: 14,
+      marginBottom: 16,
+    },
+    lambdaFormIndicator: {
+      display: "flex",
+      marginBottom: 40,
+    },
+    lambdaName: {
+      fontSize: 18,
+      fontWeight: 700,
+      color: "#000",
+      marginBottom: 6,
+    },
+    lambdaSubname: {
+      fontSize: 12,
+      color: "#000",
+      fontWeight: 600,
+    },
+    lambdaIcon: {
+      borderRadius: 5,
+      border: "#393939 1px solid",
+      width: 53,
+      height: 48,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      marginRight: 16,
+      "& img": {
+        width: 38,
+      },
+    },
+    ...modalBasic,
   });
 
 interface IAddNotificationEndpointProps {
@@ -136,186 +200,111 @@ const AddNotificationEndpoint = ({
     }
   }
 
-  let targetTitle = "";
-  switch (service) {
-    case notifyNsq:
-      targetTitle = "NSQ";
-      break;
-    case notifyWebhooks:
-      targetTitle = "Webhooks";
-      break;
-    case notifyElasticsearch:
-      targetTitle = "Elastic Search";
-      break;
-    case notifyNats:
-      targetTitle = "NATS";
-      break;
-    case notifyMqtt:
-      targetTitle = "MQTT";
-      break;
-    case notifyRedis:
-      targetTitle = "Redis";
-      break;
-    case notifyKafka:
-      targetTitle = "Kafka";
-      break;
-    case notifyPostgres:
-      targetTitle = "Postgres";
-      break;
-    case notifyMysql:
-      targetTitle = "Mysql";
-      break;
-    case notifyAmqp:
-      targetTitle = "AMQP";
-      break;
-  }
+  const servicesList = [
+    {
+      actionTrigger: notifyPostgres,
+      targetTitle: "Postgres SQL",
+      logo: "/postgres.png",
+    },
+    {
+      actionTrigger: notifyKafka,
+      targetTitle: "Kafka",
+      logo: "/kafka.png",
+    },
+    {
+      actionTrigger: notifyAmqp,
+      targetTitle: "AMQP",
+      logo: "/amqp.png",
+    },
+    {
+      actionTrigger: notifyMqtt,
+      targetTitle: "MQTT",
+      logo: "/mqtt.png",
+    },
+    {
+      actionTrigger: notifyRedis,
+      targetTitle: "Redis",
+      logo: "/redis.png",
+    },
+    {
+      actionTrigger: notifyNats,
+      targetTitle: "NATS",
+      logo: "/nats.png",
+    },
+    {
+      actionTrigger: notifyMysql,
+      targetTitle: "Mysql",
+      logo: "/mysql.png",
+    },
+    {
+      actionTrigger: notifyElasticsearch,
+      targetTitle: "Elastic Search",
+      logo: "/elasticsearch.png",
+    },
+    {
+      actionTrigger: notifyWebhooks,
+      targetTitle: "Webhook",
+      logo: "",
+    },
+    {
+      actionTrigger: notifyNsq,
+      targetTitle: "NSQ",
+      logo: "",
+    },
+  ];
+
+  const nonLogos = servicesList.filter((elService) => elService.logo === "");
+  const withLogos = servicesList.filter((elService) => elService.logo !== "");
+
+  const targetElement = servicesList.find(
+    (element) => element.actionTrigger === service
+  );
+
+  const goBack = () => {
+    setService("");
+  };
 
   return (
-    <ModalWrapper
-      modalOpen={open}
-      onClose={closeModalAndRefresh}
-      title={`Add Lambda Notification Target ${targetTitle}`}
-    >
+    <ModalWrapper modalOpen={open} onClose={closeModalAndRefresh} title={""}>
       {service === "" && (
         <Grid container>
           <Grid item xs={12}>
-            <p>Pick a supported service:</p>
-            <table className={classes.chooseTable} style={{ width: "100%" }}>
-              <tbody>
-                <tr>
-                  <td>
-                    <Button
-                      onClick={() => {
-                        setService(notifyPostgres);
-                      }}
-                    >
-                      <img
-                        src="/postgres.png"
-                        className={classes.logoButton}
-                        alt="postgres"
-                      />
-                    </Button>
-                  </td>
-                  <td>
-                    <Button
-                      onClick={() => {
-                        setService(notifyKafka);
-                      }}
-                    >
-                      <img
-                        src="/kafka.png"
-                        className={classes.logoButton}
-                        alt="kafka"
-                      />
-                    </Button>
-                  </td>
-                  <td>
-                    <Button
-                      onClick={() => {
-                        setService(notifyAmqp);
-                      }}
-                    >
-                      <img
-                        src="/amqp.png"
-                        className={classes.logoButton}
-                        alt="amqp"
-                      />
-                    </Button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <Button
-                      onClick={() => {
-                        setService(notifyMqtt);
-                      }}
-                    >
-                      <img
-                        src="/mqtt.png"
-                        className={classes.logoButton}
-                        alt="mqtt"
-                      />
-                    </Button>
-                  </td>
-                  <td>
-                    <Button
-                      onClick={() => {
-                        setService(notifyRedis);
-                      }}
-                    >
-                      <img
-                        src="/redis.png"
-                        className={classes.logoButton}
-                        alt="redis"
-                      />
-                    </Button>
-                  </td>
-                  <td>
-                    <Button
-                      onClick={() => {
-                        setService(notifyNats);
-                      }}
-                    >
-                      <img
-                        src="/nats.png"
-                        className={classes.logoButton}
-                        alt="nats"
-                      />
-                    </Button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <Button
-                      onClick={() => {
-                        setService(notifyMysql);
-                      }}
-                    >
-                      <img
-                        src="/mysql.png"
-                        className={classes.logoButton}
-                        alt="mysql"
-                      />
-                    </Button>
-                  </td>
-                  <td>
-                    <Button
-                      onClick={() => {
-                        setService(notifyElasticsearch);
-                      }}
-                    >
-                      <img
-                        src="/elasticsearch.png"
-                        className={classes.logoButton}
-                        alt="elasticsearch"
-                      />
-                    </Button>
-                  </td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td>
-                    <Button
-                      onClick={() => {
-                        setService(notifyWebhooks);
-                      }}
-                    >
-                      Webhook
-                    </Button>
-                  </td>
-                  <td>
-                    <Button
-                      onClick={() => {
-                        setService(notifyNsq);
-                      }}
-                    >
-                      NSQ
-                    </Button>
-                  </td>
-                  <td />
-                </tr>
-              </tbody>
-            </table>
+            <div className={classes.pickTitle}>Pick a supported service:</div>
+            <div className={classes.nonIconContainer}>
+              {nonLogos.map((item) => {
+                return (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    key={`non-icon-${item.targetTitle}`}
+                    onClick={() => {
+                      setService(item.actionTrigger);
+                    }}
+                  >
+                    {item.targetTitle.toUpperCase()}
+                  </Button>
+                );
+              })}
+            </div>
+            <div className={classes.iconContainer}>
+              {withLogos.map((item) => {
+                return (
+                  <a
+                    key={`icon-${item.targetTitle}`}
+                    className={classes.lambdaNotif}
+                    onClick={() => {
+                      setService(item.actionTrigger);
+                    }}
+                  >
+                    <img
+                      src={item.logo}
+                      className={classes.logoButton}
+                      alt={item.targetTitle}
+                    />
+                  </a>
+                );
+              })}
+            </div>
           </Grid>
           <Grid item xs={12}>
             <br />
@@ -342,10 +331,37 @@ const AddNotificationEndpoint = ({
             </Grid>
           )}
           <form noValidate onSubmit={submitForm}>
+            <Grid item xs={12} className={classes.lambdaFormIndicator}>
+              {targetElement && targetElement.logo !== "" && (
+                <div className={classes.lambdaIcon}>
+                  <img
+                    src={targetElement.logo}
+                    alt={targetElement.targetTitle}
+                  />
+                </div>
+              )}
+
+              <div className={classes.lambdaTitle}>
+                <div className={classes.lambdaName}>
+                  {targetElement ? targetElement.targetTitle : ""}
+                </div>
+                <div className={classes.lambdaSubname}>
+                  Add Lambda Notification Target
+                </div>
+              </div>
+            </Grid>
             <Grid item xs={12}>
               {srvComponent}
             </Grid>
             <Grid item xs={12} className={classes.buttonContainer}>
+              <button
+                type="button"
+                color="primary"
+                className={classes.clearButton}
+                onClick={goBack}
+              >
+                Back
+              </button>
               <Button
                 type="submit"
                 variant="contained"

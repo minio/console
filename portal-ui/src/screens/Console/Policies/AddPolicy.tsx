@@ -16,19 +16,18 @@
 
 import React from "react";
 import Grid from "@material-ui/core/Grid";
-import { UnControlled as CodeMirror } from "react-codemirror2";
 import Typography from "@material-ui/core/Typography";
 import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../common/api";
-import "codemirror/lib/codemirror.css";
-import "codemirror/theme/material.css";
 import { Policy } from "./types";
-import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
+import {
+  fieldBasic,
+  modalBasic,
+} from "../Common/FormComponents/common/styleLibrary";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-
-require("codemirror/mode/javascript/javascript");
+import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -39,26 +38,11 @@ const styles = (theme: Theme) =>
       minHeight: 400,
       width: "100%",
     },
-    codeMirror: {
-      fontSize: 14,
-      "& .CodeMirror": {
-        color: "#fff",
-        backgroundColor: "#081C42",
-      },
-      "& .CodeMirror-gutter": {
-        backgroundColor: "#081C4280",
-      },
-      "& .CodeMirror-linenumber": {
-        color: "#000",
-        fontSize: 10,
-        height: 20,
-        lineHeight: "20px",
-      },
-    },
     buttonContainer: {
       textAlign: "right",
     },
     ...modalBasic,
+    ...fieldBasic,
   });
 
 interface IAddPolicyProps {
@@ -121,13 +105,26 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
     if (policyEdit) {
       this.setState({
         policyName: policyEdit.name,
+        policyDefinition: policyEdit
+          ? JSON.stringify(JSON.parse(policyEdit.policy), null, 4)
+          : "",
       });
     }
   }
 
+  resetForm() {
+    this.setState({
+      policyName: "",
+      policyDefinition: "",
+    });
+  }
+
   render() {
     const { classes, open, policyEdit } = this.props;
-    const { addLoading, addError, policyName } = this.state;
+    const { addLoading, addError, policyName, policyDefinition } = this.state;
+
+    const validSave = policyName.trim() !== "";
+
     return (
       <ModalWrapper
         modalOpen={open}
@@ -163,6 +160,7 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
                   id="policy-name"
                   name="policy-name"
                   label="Policy Name"
+                  placeholder="Enter Policy Name"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     this.setState({ policyName: e.target.value });
                   }}
@@ -173,31 +171,32 @@ class AddPolicy extends React.Component<IAddPolicyProps, IAddPolicyState> {
               <Grid item xs={12}>
                 <br />
               </Grid>
-              <Grid item xs={12}>
-                <CodeMirror
-                  className={classes.codeMirror}
-                  value={
-                    policyEdit
-                      ? JSON.stringify(JSON.parse(policyEdit.policy), null, 4)
-                      : ""
-                  }
-                  options={{
-                    mode: "javascript",
-                    lineNumbers: true,
-                  }}
-                  onChange={(editor, data, value) => {
-                    this.setState({ policyDefinition: value });
-                  }}
-                />
-              </Grid>
+              <CodeMirrorWrapper
+                label="Write Policy"
+                value={policyDefinition}
+                onBeforeChange={(editor, data, value) => {
+                  this.setState({ policyDefinition: value });
+                }}
+                readOnly={!!policyEdit}
+              />
             </Grid>
             {!policyEdit && (
               <Grid item xs={12} className={classes.buttonContainer}>
+                <button
+                  type="button"
+                  color="primary"
+                  className={classes.clearButton}
+                  onClick={() => {
+                    this.resetForm();
+                  }}
+                >
+                  Clear
+                </button>
                 <Button
                   type="submit"
                   variant="contained"
                   color="primary"
-                  disabled={addLoading}
+                  disabled={addLoading || !validSave}
                 >
                   Save
                 </Button>

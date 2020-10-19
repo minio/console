@@ -19,12 +19,16 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
+import {
+  modalBasic,
+  predefinedList,
+} from "../Common/FormComponents/common/styleLibrary";
 import api from "../../../common/api";
 import UsersSelectors from "./UsersSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import RadioGroupSelector from "../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
+import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
 interface IGroupProps {
   open: boolean;
@@ -54,6 +58,7 @@ const styles = (theme: Theme) =>
       textAlign: "right",
     },
     ...modalBasic,
+    ...predefinedList,
   });
 
 const AddGroup = ({
@@ -64,11 +69,12 @@ const AddGroup = ({
 }: IGroupProps) => {
   //Local States
   const [groupName, setGroupName] = useState<string>("");
-  const [groupEnabled, setGroupEnabled] = useState<string>("");
+  const [groupEnabled, setGroupEnabled] = useState<boolean>(false);
   const [saving, isSaving] = useState<boolean>(false);
   const [addError, setError] = useState<string>("");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [loadingGroup, isLoadingGroup] = useState<boolean>(false);
+  const [validGroup, setValidGroup] = useState<boolean>(false);
 
   //Effects
   useEffect(() => {
@@ -81,6 +87,10 @@ const AddGroup = ({
   }, [selectedGroup]);
 
   useEffect(() => {
+    setValidGroup(groupName.trim() !== "");
+  }, [groupName, selectedUsers]);
+
+  useEffect(() => {
     if (saving) {
       const saveRecord = () => {
         if (selectedGroup !== null) {
@@ -88,7 +98,7 @@ const AddGroup = ({
             .invoke("PUT", `/api/v1/groups/${groupName}`, {
               group: groupName,
               members: selectedUsers,
-              status: groupEnabled,
+              status: groupEnabled ? "enabled" : "disabled",
             })
             .then((res) => {
               isSaving(false);
@@ -133,7 +143,7 @@ const AddGroup = ({
         api
           .invoke("GET", `/api/v1/groups/${selectedGroup}`)
           .then((res: MainGroupProps) => {
-            setGroupEnabled(res.status);
+            setGroupEnabled(res.status === "enabled");
             setGroupName(res.name);
             setSelectedUsers(res.members);
           })
@@ -153,12 +163,35 @@ const AddGroup = ({
     isSaving(true);
   };
 
+  const resetForm = () => {
+    if (selectedGroup === null) {
+      setGroupName("");
+    }
+
+    setSelectedUsers([]);
+  };
+
   return (
     <ModalWrapper
       modalOpen={open}
       onClose={closeModalAndRefresh}
-      title={selectedGroup !== null ? `Group Edit - ${groupName}` : "Add Group"}
+      title={selectedGroup !== null ? `Edit Group` : "Create Group"}
     >
+      {selectedGroup !== null && (
+        <div className={classes.floatingEnabled}>
+          <FormSwitchWrapper
+            indicatorLabel={"Enabled"}
+            checked={groupEnabled}
+            value={"group_enabled"}
+            id="group-status"
+            name="group-status"
+            onChange={(e) => {
+              setGroupEnabled(e.target.checked);
+            }}
+            switchOnly
+          />
+        </div>
+      )}
       <form noValidate autoComplete="off" onSubmit={setSaving}>
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
@@ -174,31 +207,13 @@ const AddGroup = ({
               </Grid>
             )}
 
-            {selectedGroup !== null ? (
-              <React.Fragment>
-                <Grid item xs={12}>
-                  <RadioGroupSelector
-                    currentSelection={groupEnabled}
-                    id="group-status"
-                    name="group-status"
-                    label="Status"
-                    onChange={(e) => {
-                      setGroupEnabled(e.target.value);
-                    }}
-                    selectorOptions={[
-                      { label: "Enabled", value: "enabled" },
-                      { label: "Disabled", value: "disabled" },
-                    ]}
-                  />
-                </Grid>
-              </React.Fragment>
-            ) : (
+            {selectedGroup === null ? (
               <React.Fragment>
                 <Grid item xs={12}>
                   <InputBoxWrapper
                     id="group-name"
                     name="group-name"
-                    label="Name"
+                    label="Group Name"
                     value={groupName}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setGroupName(e.target.value);
@@ -206,23 +221,38 @@ const AddGroup = ({
                   />
                 </Grid>
               </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <Grid item xs={12} className={classes.predefinedTitle}>
+                  Group Name
+                </Grid>
+                <Grid item xs={12} className={classes.predefinedList}>
+                  {selectedGroup}
+                </Grid>
+              </React.Fragment>
             )}
-            <Grid item xs={12}>
-              <br />
-            </Grid>
             <Grid item xs={12}>
               <UsersSelectors
                 selectedUsers={selectedUsers}
                 setSelectedUsers={setSelectedUsers}
+                editMode={selectedGroup !== null}
               />
             </Grid>
           </Grid>
           <Grid item xs={12} className={classes.buttonContainer}>
+            <button
+              type="button"
+              color="primary"
+              className={classes.clearButton}
+              onClick={resetForm}
+            >
+              Clear
+            </button>
             <Button
               type="submit"
               variant="contained"
               color="primary"
-              disabled={saving}
+              disabled={saving || !validGroup}
             >
               Save
             </Button>
