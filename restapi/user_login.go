@@ -72,12 +72,12 @@ func login(credentials ConsoleCredentials, actions []string) (*string, error) {
 		return nil, err
 	}
 	// if we made it here, the consoleCredentials work, generate a jwt with claims
-	jwt, err := auth.NewEncryptedTokenForClient(&tokens, actions)
+	token, err := auth.NewEncryptedTokenForClient(&tokens, actions)
 	if err != nil {
 		log.Println("error authenticating user", err)
 		return nil, errInvalidCredentials
 	}
-	return &jwt, nil
+	return &token, nil
 }
 
 func getConfiguredRegionForLogin(client MinioAdmin) (string, error) {
@@ -224,19 +224,19 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 			return nil, prepareError(err)
 		}
 		actions := acl.GetActionsStringFromPolicy(policy)
-		// User was created correctly, create a new session/JWT
+		// User was created correctly, create a new session
 		creds, err := newConsoleCredentials(accessKey, secretKey, location)
 		if err != nil {
 			return nil, prepareError(err)
 		}
 		credentials := consoleCredentials{consoleCredentials: creds}
-		jwt, err := login(credentials, actions)
+		token, err := login(credentials, actions)
 		if err != nil {
 			return nil, prepareError(errInvalidCredentials, nil, err)
 		}
 		// serialize output
 		loginResponse := &models.LoginResponse{
-			SessionID: *jwt,
+			SessionID: *token,
 		}
 		return loginResponse, nil
 	}
@@ -251,13 +251,13 @@ func getLoginOperatorResponse(lmr *models.LoginOperatorRequest) (*models.LoginRe
 	}
 	credentials := consoleCredentials{consoleCredentials: creds}
 	var actions []string
-	jwt, err := login(credentials, actions)
+	token, err := login(credentials, actions)
 	if err != nil {
 		return nil, prepareError(errInvalidCredentials, nil, err)
 	}
 	// serialize output
 	loginResponse := &models.LoginResponse{
-		SessionID: *jwt,
+		SessionID: *token,
 	}
 	return loginResponse, nil
 }

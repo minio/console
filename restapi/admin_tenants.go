@@ -646,7 +646,6 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			},
 			Immutable: &imm,
 			Data: map[string][]byte{
-				"CONSOLE_HMAC_JWT_SECRET":  []byte(RandomCharString(16)),
 				"CONSOLE_PBKDF_PASSPHRASE": []byte(RandomCharString(16)),
 				"CONSOLE_PBKDF_SALT":       []byte(RandomCharString(8)),
 				"CONSOLE_ACCESS_KEY":       []byte(consoleAccess),

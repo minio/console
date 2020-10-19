@@ -101,8 +101,6 @@ Additionally, you can create policies to limit the privileges for `console` user
 To run the server:
 
 ```
-export CONSOLE_HMAC_JWT_SECRET=YOURJWTSIGNINGSECRET
-
 #required to encrypt jwet payload
 export CONSOLE_PBKDF_PASSPHRASE=SECRET
 

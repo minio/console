@@ -23,10 +23,9 @@ import (
 	"github.com/minio/minio/pkg/env"
 )
 
-// ConsoleSTSAndJWTDurationSeconds returns the default session duration for the STS requested tokens and the generated JWTs.
-// Ideally both values should match so jwt and Minio sts sessions expires at the same time.
-func GetConsoleSTSAndJWTDurationInSeconds() int {
-	duration, err := strconv.Atoi(env.Get(ConsoleSTSAndJWTDurationSeconds, "3600"))
+// ConsoleSTSDurationSeconds returns the default session duration for the STS requested tokens.
+func GetConsoleSTSDurationInSeconds() int {
+	duration, err := strconv.Atoi(env.Get(ConsoleSTSDurationSeconds, "3600"))
 	if err != nil {
 		duration = 3600
 	}

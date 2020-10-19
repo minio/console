@@ -60,17 +60,17 @@ func TestJWTAuthenticate(t *testing.T) {
 		funcAssert.Equal(claims.SecretAccessKey, creds.SecretAccessKey)
 		funcAssert.Equal(claims.SessionToken, creds.SessionToken)
 	}
-	// Test-2 : SessionTokenAuthenticate() return an error because of a tampered jwt
+	// Test-2 : SessionTokenAuthenticate() return an error because of a tampered token
 	if _, err := SessionTokenAuthenticate(badToken); err != nil {
 		funcAssert.Equal("session token internal data is malformed", err.Error())
 	}
-	// Test-3 : SessionTokenAuthenticate() return an error because of an empty jwt
+	// Test-3 : SessionTokenAuthenticate() return an error because of an empty token
 	if _, err := SessionTokenAuthenticate(""); err != nil {
 		funcAssert.Equal("session token missing", err.Error())
 	}
 }
 
-func TestIsJWTValid(t *testing.T) {
+func TestSessionTokenValid(t *testing.T) {
 	funcAssert := assert.New(t)
 	// Test-1 : SessionTokenAuthenticate() provided token is valid
 	funcAssert.Equal(true, IsSessionTokenValid(goodToken))
