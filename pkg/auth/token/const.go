@@ -17,7 +17,7 @@
 package token
 
 const (
-	ConsoleSTSAndJWTDurationSeconds = "CONSOLE_STS_AND_JWT_DURATION_SECONDS"
-	ConsolePBKDFPassphrase          = "CONSOLE_PBKDF_PASSPHRASE"
-	ConsolePBKDFSalt                = "CONSOLE_PBKDF_SALT"
+	ConsoleSTSDurationSeconds = "CONSOLE_STS_DURATION_SECONDS"
+	ConsolePBKDFPassphrase    = "CONSOLE_PBKDF_PASSPHRASE"
+	ConsolePBKDFSalt          = "CONSOLE_PBKDF_SALT"
 )

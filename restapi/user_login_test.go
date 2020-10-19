@@ -52,8 +52,8 @@ func TestLogin(t *testing.T) {
 			SignerType:      0,
 		}, nil
 	}
-	jwt, err := login(consoleCredentials, []string{""})
-	funcAssert.NotEmpty(jwt, "JWT was returned empty")
+	token, err := login(consoleCredentials, []string{""})
+	funcAssert.NotEmpty(token, "Token was returned empty")
 	funcAssert.Nil(err, "error creating a session")
 
 	// Test Case 2: Invalid credentials

@@ -2,7 +2,7 @@
 
 `Console` will authenticate against `Kubernetes`using bearer tokens via HTTP `Authorization` header. The user will provide this token once
 in the login form, Console will validate it against Kubernetes (list apis) and if valid will generate and return a new Console sessions 
-with encrypted claims (the user Service account token will be inside the JWT in the data field)
+with encrypted claims (the user Service account token will be inside the session encrypted token
 
 # Kubernetes
 

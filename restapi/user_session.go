@@ -35,7 +35,7 @@ func registerSessionHandlers(api *operations.ConsoleAPI) {
 	})
 }
 
-// getSessionResponse parse the jwt of the current session and returns a list of allowed actions to render in the UI
+// getSessionResponse parse the token of the current session and returns a list of allowed actions to render in the UI
 func getSessionResponse(session *models.Principal) (*models.SessionResponse, *models.Error) {
 	// serialize output
 	if session == nil {

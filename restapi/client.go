@@ -260,7 +260,7 @@ func newConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 				AccessKey:       accessKey,
 				SecretKey:       secretKey,
 				Location:        location,
-				DurationSeconds: xjwt.GetConsoleSTSAndJWTDurationInSeconds(),
+				DurationSeconds: xjwt.GetConsoleSTSDurationInSeconds(),
 			}
 			stsClient := PrepareSTSClient(false)
 			stsAssumeRole := &credentials.STSAssumeRole{
@@ -274,23 +274,14 @@ func newConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 	}
 }
 
-// GetClaimsFromJWT decrypt and returns the claims associated to a provided jwt
-func GetClaimsFromJWT(jwt string) (*auth.DecryptedClaims, error) {
-	claims, err := auth.SessionTokenAuthenticate(jwt)
-	if err != nil {
-		return nil, err
-	}
-	return claims, nil
-}
-
 // getConsoleCredentialsFromSession returns the *consoleCredentials.Login associated to the
-// provided jwt, this is useful for running the Expire() or IsExpired() operations
+// provided session token, this is useful for running the Expire() or IsExpired() operations
 func getConsoleCredentialsFromSession(claims *models.Principal) *credentials.Credentials {
 	return credentials.NewStaticV4(claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken)
 }
 
 // newMinioClient creates a new MinIO client based on the consoleCredentials extracted
-// from the provided jwt
+// from the provided session token
 func newMinioClient(claims *models.Principal) (*minio.Client, error) {
 	creds := getConsoleCredentialsFromSession(claims)
 	stsClient := PrepareSTSClient(false)

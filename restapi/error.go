@@ -87,6 +87,10 @@ func prepareError(err ...error) *models.Error {
 			errorCode = 401
 			errorMessage = errorGenericInvalidSession.Error()
 		}
+		if madmin.ToErrorResponse(err[0]).Code == "InvalidAccessKeyId" {
+			errorCode = 401
+			errorMessage = errorGenericInvalidSession.Error()
+		}
 		// console invalid session error
 		if madmin.ToErrorResponse(err[0]).Code == "XMinioAdminNoSuchUser" {
 			errorCode = 401
