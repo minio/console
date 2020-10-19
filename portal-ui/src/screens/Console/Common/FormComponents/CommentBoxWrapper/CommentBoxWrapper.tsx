@@ -68,11 +68,13 @@ const styles = (theme: Theme) =>
     },
     cssOutlinedInput: {
       borderColor: "#9C9C9C",
+      padding: 16,
     },
-    rootTest: {
+    rootContainer: {
       "& .MuiOutlinedInput-inputMultiline": {
         ...fieldBasic.inputLabel,
         fontSize: 13,
+        minHeight: 150,
       },
     },
   });
@@ -142,7 +144,7 @@ const CommentBoxWrapper = ({
             InputProps={{
               classes: {
                 notchedOutline: classes.cssOutlinedInput,
-                root: classes.rootTest,
+                root: classes.rootContainer,
               },
             }}
             variant="outlined"

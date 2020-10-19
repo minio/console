@@ -123,6 +123,8 @@ const ConfTargetGeneric = ({
               setValueElement(field.name, value, item)
             }
             tooltip={field.tooltip}
+            commonPlaceholder={field.placeholder}
+            withBorder={!!field.withBorder}
           />
         );
       case "comment":
