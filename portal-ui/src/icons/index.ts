@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 export { default as PermissionIcon } from "./PermissionIcon";
+export { default as CopyIcon } from "./CopyIcon";
 export { default as CreateIcon } from "./CreateIcon";
 export { default as DeleteIcon } from "./DeleteIcon";
 export { default as ServiceAccountIcon } from "./ServiceAccountIcon";

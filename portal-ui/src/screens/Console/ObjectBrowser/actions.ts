@@ -26,6 +26,7 @@ interface AddRouteAction {
   type: typeof OBJECT_BROWSER_ADD_ROUTE;
   route: string;
   label: string;
+  routeType: string;
 }
 
 interface ResetRoutesList {
@@ -55,16 +56,16 @@ export type ObjectBrowserActionTypes =
   | SetAllRoutes
   | CreateFolder;
 
-export const addRoute = (route: string, label: string) => {
+export const addRoute = (route: string, label: string, routeType: string) => {
   return {
     type: OBJECT_BROWSER_ADD_ROUTE,
     route,
     label,
+    routeType,
   };
 };
 
 export const resetRoutesList = (reset: boolean) => {
-  console.log("RESET");
   return {
     type: OBJECT_BROWSER_RESET_ROUTES_LIST,
     reset,

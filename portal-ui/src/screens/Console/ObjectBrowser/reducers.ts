@@ -27,13 +27,16 @@ import {
 export interface Route {
   route: string;
   label: string;
+  type: string;
 }
 
 export interface ObjectBrowserState {
   routesList: Route[];
 }
 
-const initialRoute = [{ route: "/object-browser", label: "All Buckets" }];
+const initialRoute = [
+  { route: "/object-browser", label: "All Buckets", type: "path" },
+];
 
 const initialState: ObjectBrowserState = {
   routesList: initialRoute,
@@ -47,7 +50,7 @@ export function objectBrowserReducer(
     case OBJECT_BROWSER_ADD_ROUTE:
       const newRouteList = [
         ...state.routesList,
-        { route: action.route, label: action.label },
+        { route: action.route, label: action.label, type: action.routeType },
       ];
       history.push(action.route);
 
@@ -76,7 +79,12 @@ export function objectBrowserReducer(
       splitRoutes.forEach((route) => {
         if (route !== "" && route !== "object-browser") {
           initRoute = `${initRoute}/${route}`;
-          routesArray.push({ route: initRoute, label: route });
+
+          routesArray.push({
+            route: initRoute,
+            label: route,
+            type: "path",
+          });
         }
       });
 
@@ -97,7 +105,7 @@ export function objectBrowserReducer(
         if (folderTrim !== "") {
           lastRoute = `${lastRoute}/${folderTrim}`;
 
-          const newItem = { route: lastRoute, label: folderTrim };
+          const newItem = { route: lastRoute, label: folderTrim, type: "path" };
           newFoldersRoutes.push(newItem);
         }
       });

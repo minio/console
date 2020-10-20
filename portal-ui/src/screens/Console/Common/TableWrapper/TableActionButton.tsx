@@ -18,12 +18,12 @@ import isString from "lodash/isString";
 import { IconButton } from "@material-ui/core";
 import ViewIcon from "./TableActionIcons/ViewIcon";
 import PencilIcon from "./TableActionIcons/PencilIcon";
+import ShareIcon from "./TableActionIcons/ShareIcon";
 import DeleteIcon from "./TableActionIcons/DeleteIcon";
 import DescriptionIcon from "./TableActionIcons/DescriptionIcon";
 import CloudIcon from "./TableActionIcons/CloudIcon";
 import ConsoleIcon from "./TableActionIcons/ConsoleIcon";
-import GetAppIcon from "@material-ui/icons/GetApp";
-import SvgIcon from "@material-ui/core/SvgIcon";
+import DownloadIcon from "./TableActionIcons/DownloadIcon";
 import { Link } from "react-router-dom";
 import { createStyles, withStyles } from "@material-ui/core/styles";
 
@@ -55,14 +55,14 @@ const defineIcon = (type: string, selected: boolean) => {
       return <DeleteIcon active={selected} />;
     case "description":
       return <DescriptionIcon active={selected} />;
+    case "share":
+      return <ShareIcon active={selected} />;
     case "cloud":
       return <CloudIcon active={selected} />;
     case "console":
       return <ConsoleIcon active={selected} />;
     case "download":
-      return (
-        <SvgIcon component={GetAppIcon} fontSize="small" color="primary" />
-      );
+      return <DownloadIcon active={selected} />;
   }
 
   return null;

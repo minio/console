@@ -129,7 +129,7 @@ const styles = (theme: Theme) =>
 interface IListObjectsProps {
   classes: any;
   match: any;
-  addRoute: (param1: string, param2: string) => any;
+  addRoute: (param1: string, param2: string, param3: string) => any;
   setAllRoutes: (path: string) => any;
   routesList: Route[];
 }
@@ -319,13 +319,16 @@ const ListObjects = ({
       const lastIndex = idElementClean.length - 1;
       const newPath = `${currentPath}/${idElementClean[lastIndex]}`;
 
-      addRoute(newPath, idElementClean[lastIndex]);
+      addRoute(newPath, idElementClean[lastIndex], "path");
       return;
     }
-
     // Element is a file. we open details here
-    // TODO: Add details open function here.
-    //console.log("object", idElementClean);
+    const pathInArray = idElement.split("/");
+    const fileName = pathInArray[pathInArray.length - 1];
+    const newPath = `${currentPath}/${fileName}`;
+
+    addRoute(newPath, fileName, "file");
+    return;
   };
 
   const uploadObject = (e: any): void => {

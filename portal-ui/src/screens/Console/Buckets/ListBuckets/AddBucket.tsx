@@ -221,7 +221,7 @@ const AddBucket = ({
                   addBucketVersioned(event.target.checked);
                 }}
                 label={"Versioning"}
-                indicatorLabel={"On"}
+                indicatorLabels={["On", "Off"]}
               />
             </Grid>
             <Grid item xs={12}>
@@ -234,7 +234,7 @@ const AddBucket = ({
                   addBucketQuota(event.target.checked);
                 }}
                 label={"Enable Bucket Quota"}
-                indicatorLabel={"On"}
+                indicatorLabels={["On", "Off"]}
               />
             </Grid>
             {enableQuota && (
