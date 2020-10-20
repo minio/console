@@ -31,7 +31,7 @@ const styles = (theme: Theme) =>
   createStyles({
     logList: {
       background: "white",
-      maxHeight: "400px",
+      height: "400px",
       overflow: "auto",
       "& ul": {
         margin: "4px",
