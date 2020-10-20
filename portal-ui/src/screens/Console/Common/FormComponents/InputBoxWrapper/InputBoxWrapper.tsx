@@ -16,6 +16,7 @@
 import React from "react";
 import {
   Grid,
+  IconButton,
   InputLabel,
   TextField,
   TextFieldProps,
@@ -49,6 +50,8 @@ interface InputBoxProps {
   placeholder?: string;
   min?: string;
   max?: string;
+  overlayIcon?: any;
+  overlayAction?: () => void;
 }
 
 const styles = (theme: Theme) =>
@@ -57,7 +60,10 @@ const styles = (theme: Theme) =>
     ...tooltipHelper,
     textBoxContainer: {
       flexGrow: 1,
+    },
+    textBoxWithIcon: {
       position: "relative",
+      paddingRight: 25,
     },
     errorState: {
       color: "#b53b4b",
@@ -65,6 +71,15 @@ const styles = (theme: Theme) =>
       position: "absolute",
       top: 7,
       right: 7,
+    },
+    overlayAction: {
+      position: "absolute",
+      right: 0,
+      top: 15,
+      "& svg": {
+        maxWidth: 15,
+        maxHeight: 15,
+      },
     },
   });
 
@@ -83,7 +98,7 @@ const inputStyles = makeStyles((theme: Theme) =>
       },
     },
     input: {
-      padding: "15px 5px 10px",
+      padding: "15px 30px 10px 5px",
       color: "#393939",
       fontSize: 13,
       fontWeight: 600,
@@ -127,6 +142,8 @@ const InputBoxWrapper = ({
   placeholder = "",
   min,
   max,
+  overlayIcon = null,
+  overlayAction,
   classes,
 }: InputBoxProps) => {
   let inputProps: any = { "data-index": index };
@@ -184,12 +201,28 @@ const InputBoxWrapper = ({
             error={error !== ""}
             helperText={error}
             placeholder={placeholder}
-            InputLabelProps={{
-              shrink: true,
-            }}
             className={classes.inputRebase}
           />
         </div>
+        {overlayIcon && (
+          <div className={classes.overlayAction}>
+            <IconButton
+              onClick={
+                overlayAction
+                  ? () => {
+                      overlayAction();
+                    }
+                  : () => null
+              }
+              size={"small"}
+              disableFocusRipple={false}
+              disableRipple={false}
+              disableTouchRipple={false}
+            >
+              {overlayIcon}
+            </IconButton>
+          </div>
+        )}
       </Grid>
     </React.Fragment>
   );

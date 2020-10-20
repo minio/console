@@ -40,6 +40,7 @@ export interface KVField {
   options?: SelectorTypes[];
   multiline?: boolean;
   placeholder?: string;
+  withBorder?: boolean;
 }
 
 export interface IConfigurationElement {

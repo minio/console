@@ -35,6 +35,7 @@ export const fieldBasic = {
   },
   fieldContainer: {
     marginBottom: 20,
+    position: "relative" as const,
   },
   tooltipContainer: {
     marginLeft: 5,

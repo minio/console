@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2019 MinIO, Inc.
+// Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -13,21 +13,32 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React, { useState, useEffect, createRef, ChangeEvent } from "react";
+import React, {
+  useState,
+  useEffect,
+  createRef,
+  useLayoutEffect,
+  ChangeEvent,
+  useRef,
+} from "react";
+import get from "lodash/get";
+import debounce from "lodash/debounce";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import get from "lodash/get";
-import InputBoxWrapper from "../InputBoxWrapper/InputBoxWrapper";
+import HelpIcon from "@material-ui/icons/Help";
 import { InputLabel, Tooltip } from "@material-ui/core";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
-import HelpIcon from "@material-ui/icons/Help";
+import InputBoxWrapper from "../InputBoxWrapper/InputBoxWrapper";
+import AddIcon from "../../../../../icons/AddIcon";
 
 interface ICSVMultiSelector {
   elements: string;
   name: string;
   label: string;
   tooltip?: string;
+  commonPlaceholder?: string;
   classes: any;
+  withBorder?: boolean;
   onChange: (elements: string) => void;
 }
 
@@ -35,16 +46,13 @@ const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
     ...tooltipHelper,
-    inputLabel: {
-      ...fieldBasic.inputLabel,
-      width: 116,
-    },
-    inputContainer: {
+    inputWithBorder: {
+      border: "1px solid #EAEAEA",
+      padding: 15,
       height: 150,
       overflowY: "auto",
-      padding: 15,
       position: "relative",
-      border: "1px solid #c4c4c4",
+      marginTop: 15,
     },
     labelContainer: {
       display: "flex",
@@ -56,7 +64,9 @@ const CSVMultiSelector = ({
   name,
   label,
   tooltip = "",
+  commonPlaceholder = "",
   onChange,
+  withBorder = false,
   classes,
 }: ICSVMultiSelector) => {
   const [currentElements, setCurrentElements] = useState<string[]>([""]);
@@ -75,29 +85,37 @@ const CSVMultiSelector = ({
 
       setCurrentElements(elementsSplit);
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [elements, currentElements]);
 
   // Use effect to send new values to onChange
   useEffect(() => {
-    const elementsString = currentElements
-      .filter((element) => element.trim() !== "")
-      .join(",");
-    onChange(elementsString);
+    const refScroll = bottomList.current;
+    if (refScroll) {
+      refScroll.scrollIntoView(false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentElements]);
+
+  // We avoid multiple re-renders / hang issue typing too fast
+  const firstUpdate = useRef(true);
+  useLayoutEffect(() => {
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+      return;
+    }
+
+    debouncedOnChange();
   }, [currentElements]);
 
   // If the last input is not empty, we add a new one
   const addEmptyLine = (elementsUp: string[]) => {
     if (elementsUp[elementsUp.length - 1].trim() !== "") {
-      elementsUp.push("");
-      const refScroll = bottomList.current;
-
-      if (refScroll) {
-        refScroll.scrollIntoView(false);
-      }
+      const cpList = [...elementsUp];
+      cpList.push("");
+      setCurrentElements(cpList);
     }
-
-    return elementsUp;
   };
 
   // Onchange function for input box, we get the dataset-index & only update that value in the array
@@ -108,9 +126,17 @@ const CSVMultiSelector = ({
     const index = get(e.target, "dataset.index", 0);
     updatedElement[index] = e.target.value;
 
-    updatedElement = addEmptyLine(updatedElement);
     setCurrentElements(updatedElement);
   };
+
+  // Debounce for On Change
+  const debouncedOnChange = debounce(() => {
+    const elementsString = currentElements
+      .filter((element) => element.trim() !== "")
+      .join(",");
+
+    onChange(elementsString);
+  }, 500);
 
   const inputs = currentElements.map((element, index) => {
     return (
@@ -122,6 +148,11 @@ const CSVMultiSelector = ({
         onChange={onChangeElement}
         index={index}
         key={`csv-${name}-${index.toString()}`}
+        placeholder={commonPlaceholder}
+        overlayIcon={index === currentElements.length - 1 ? <AddIcon /> : null}
+        overlayAction={() => {
+          addEmptyLine(currentElements);
+        }}
       />
     );
   });
@@ -139,7 +170,11 @@ const CSVMultiSelector = ({
             </div>
           )}
         </InputLabel>
-        <Grid item xs={12} className={classes.inputContainer}>
+        <Grid
+          item
+          xs={12}
+          className={`${withBorder ? classes.inputWithBorder : ""}`}
+        >
           {inputs}
           <div ref={bottomList} />
         </Grid>
@@ -147,5 +182,4 @@ const CSVMultiSelector = ({
     </React.Fragment>
   );
 };
-
 export default withStyles(styles)(CSVMultiSelector);

@@ -27,33 +27,34 @@ export const notifyWebhooks = "notify_webhooks";
 export const notifyNsq = "notify_nsq";
 
 export const configurationElements: IConfigurationElement[] = [
-  { configuration_id: "region", configuration_label: "Region Configuration" },
-  { configuration_id: "cache", configuration_label: "Cache Configuration" },
+  {
+    configuration_id: "region",
+    configuration_label: "Edit Region Configuration",
+  },
+  {
+    configuration_id: "cache",
+    configuration_label: "Edit Cache Configuration",
+  },
   {
     configuration_id: "compression",
-    configuration_label: "Compression Configuration",
+    configuration_label: "Edit Compression Configuration",
   },
-  { configuration_id: "etcd", configuration_label: "Etcd Configuration" },
+  { configuration_id: "etcd", configuration_label: "Edit Etcd Configuration" },
   {
     configuration_id: "identity_openid",
-    configuration_label: "Identity Openid Configuration",
+    configuration_label: "Edit Identity Openid Configuration",
   },
   {
     configuration_id: "identity_ldap",
-    configuration_label: "Identity LDAP Configuration",
+    configuration_label: "Edit Identity LDAP Configuration",
   },
-  {
-    configuration_id: "kms_vault",
-    configuration_label: "KMS Vault Configuration",
-  },
-  { configuration_id: "kms_kes", configuration_label: "KMS KES Configuration" },
   {
     configuration_id: "logger_webhook",
-    configuration_label: "Logger Webhook Configuration",
+    configuration_label: "Edit Logger Webhook Configuration",
   },
   {
     configuration_id: "audit_webhook",
-    configuration_label: "Audit Webhook Configuration",
+    configuration_label: "Edit Audit Webhook Configuration",
   },
 ];
 
@@ -62,17 +63,18 @@ export const fieldsConfigurations: any = {
     {
       name: "name",
       required: true,
-      label: "name",
+      label: "Server Location",
       tooltip: 'Name of the location of the server e.g. "us-west-rack2"',
       type: "string",
+      placeholder: "e.g. us-west-rack-2",
     },
     {
       name: "comment",
       required: false,
-      label: "comment",
+      label: "Comment",
       tooltip: "You can add a comment to this setting",
       type: "comment",
-      multiline: true,
+      placeholder: "Enter Comment",
     },
   ],
   cache: [
@@ -83,6 +85,7 @@ export const fieldsConfigurations: any = {
       tooltip:
         'Mountpoints e.g. "/optane1" or "/optane2", you can write one per field',
       type: "csv",
+      placeholder: "Enter Mount Point",
     },
     {
       name: "expiry",
@@ -90,6 +93,7 @@ export const fieldsConfigurations: any = {
       label: "Expiry",
       tooltip: 'Cache expiry duration in days e.g. "90"',
       type: "number",
+      placeholder: "Enter Number of Days",
     },
     {
       name: "quota",
@@ -97,6 +101,7 @@ export const fieldsConfigurations: any = {
       label: "Quota",
       tooltip: 'Limit cache drive usage in percentage e.g. "90"',
       type: "number",
+      placeholder: "Enter in %",
     },
     {
       name: "exclude",
@@ -105,6 +110,7 @@ export const fieldsConfigurations: any = {
       tooltip:
         'Wildcard exclusion patterns e.g. "bucket/*.tmp" or "*.exe", you can write one per field',
       type: "csv",
+      placeholder: "Enter Wildcard Exclusion Patterns",
     },
     {
       name: "after",
@@ -112,6 +118,7 @@ export const fieldsConfigurations: any = {
       label: "After",
       tooltip: "Minimum number of access before caching an object",
       type: "number",
+      placeholder: "Enter Number of Attempts",
     },
     {
       name: "watermark_low",
@@ -119,6 +126,7 @@ export const fieldsConfigurations: any = {
       label: "Watermark Low",
       tooltip: "Watermark Low",
       type: "number",
+      placeholder: "Enter Watermark Low",
     },
     {
       name: "watermark_high",
@@ -126,6 +134,7 @@ export const fieldsConfigurations: any = {
       label: "Watermark High",
       tooltip: "Watermark High",
       type: "number",
+      placeholder: "Enter Watermark High",
     },
     {
       name: "comment",
@@ -134,6 +143,7 @@ export const fieldsConfigurations: any = {
       tooltip: "You can add a comment to this setting",
       type: "comment",
       multiline: true,
+      placeholder: "Enter Comment",
     },
   ],
   compression: [
@@ -144,6 +154,8 @@ export const fieldsConfigurations: any = {
       tooltip:
         'Extensions to compress e.g. ".txt",".log" or ".csv", you can write one per field',
       type: "csv",
+      placeholder: "Enter an Extension",
+      withBorder: true,
     },
     {
       name: "mime_types",
@@ -152,6 +164,8 @@ export const fieldsConfigurations: any = {
       tooltip:
         'Mime types e.g. "text/*","application/json" or "application/xml", you can write one per field',
       type: "csv",
+      placeholder: "Enter a Mime Type",
+      withBorder: true,
     },
   ],
   etcd: [
@@ -162,6 +176,7 @@ export const fieldsConfigurations: any = {
       tooltip:
         'List of etcd endpoints e.g. "http://localhost:2379", you can write one per field',
       type: "csv",
+      placeholder: "Enter Endpoint",
     },
     {
       name: "path_prefix",
@@ -169,6 +184,7 @@ export const fieldsConfigurations: any = {
       label: "Path Prefix",
       tooltip: 'namespace prefix to isolate tenants e.g. "customer1/"',
       type: "string",
+      placeholder: "Enter Path Prefix",
     },
     {
       name: "coredns_path",
@@ -176,6 +192,7 @@ export const fieldsConfigurations: any = {
       label: "Coredns Path",
       tooltip: 'Shared bucket DNS records, default is "/skydns"',
       type: "string",
+      placeholder: "Enter Coredns Path",
     },
     {
       name: "client_cert",
@@ -183,6 +200,7 @@ export const fieldsConfigurations: any = {
       label: "Client Cert",
       tooltip: "Client cert for mTLS authentication",
       type: "string",
+      placeholder: "Enter Client Cert",
     },
     {
       name: "client_cert_key",
@@ -190,6 +208,7 @@ export const fieldsConfigurations: any = {
       label: "Client Cert Key",
       tooltip: "Client cert key for mTLS authentication",
       type: "string",
+      placeholder: "Enter Client Cert Key",
     },
     {
       name: "comment",
@@ -198,6 +217,7 @@ export const fieldsConfigurations: any = {
       tooltip: "You can add a comment to this setting",
       type: "comment",
       multiline: true,
+      placeholder: "Enter Comment",
     },
   ],
   identity_openid: [
@@ -207,12 +227,14 @@ export const fieldsConfigurations: any = {
       label: "Config URL",
       tooltip: "Config URL for Client ID configuration",
       type: "string",
+      placeholder: "Enter Config URL",
     },
     {
       name: "client_id",
       required: false,
       label: "Client ID",
       type: "string",
+      placeholder: "Enter Client ID",
     },
     {
       name: "claim_name",
@@ -220,6 +242,7 @@ export const fieldsConfigurations: any = {
       label: "Claim Name",
       tooltip: "Claim Name",
       type: "string",
+      placeholder: "Enter Claim Name",
     },
     {
       name: "claim_prefix",
@@ -227,15 +250,17 @@ export const fieldsConfigurations: any = {
       label: "Claim Prefix",
       tooltip: "Claim Prefix",
       type: "string",
+      placeholder: "Enter Claim Prefix",
     },
   ],
   identity_ldap: [
     {
       name: "server_addr",
       required: true,
-      label: "Server ADDR",
+      label: "Server Addr",
       tooltip: 'AD/LDAP server address e.g. "myldapserver.com:636"',
       type: "string",
+      placeholder: "Enter Server Address",
     },
     {
       name: "username_format",
@@ -244,6 +269,7 @@ export const fieldsConfigurations: any = {
       tooltip:
         'List of username bind DNs e.g. "uid=%s","cn=accounts","dc=myldapserver" or "dc=com", you can write one per field',
       type: "csv",
+      placeholder: "Enter Username Format",
     },
     {
       name: "username_search_filter",
@@ -252,6 +278,7 @@ export const fieldsConfigurations: any = {
       tooltip:
         'User search filter, for example "(cn=%s)" or "(sAMAccountName=%s)" or "(uid=%s)"',
       type: "string",
+      placeholder: "Enter Username Search Filter",
     },
     {
       name: "group_search_filter",
@@ -260,6 +287,7 @@ export const fieldsConfigurations: any = {
       tooltip:
         'Search filter for groups e.g. "(&(objectclass=groupOfNames)(memberUid=%s))"',
       type: "string",
+      placeholder: "Enter Group Search Filter",
     },
     {
       name: "username_search_base_dn",
@@ -267,6 +295,7 @@ export const fieldsConfigurations: any = {
       label: "Username Search Base DN",
       tooltip: "List of username search DNs, you can write one per field",
       type: "csv",
+      placeholder: "Enter Username Search Base DN",
     },
     {
       name: "group_name_attribute",
@@ -274,6 +303,7 @@ export const fieldsConfigurations: any = {
       label: "Group Name Attribute",
       tooltip: 'Search attribute for group name e.g. "cn"',
       type: "string",
+      placeholder: "Enter Group Name Attribute",
     },
     {
       name: "sts_expiry",
@@ -282,6 +312,7 @@ export const fieldsConfigurations: any = {
       tooltip:
         'temporary credentials validity duration in s,m,h,d. Default is "1h"',
       type: "string",
+      placeholder: "Enter STS Expiry",
     },
     {
       name: "tls_skip_verify",
@@ -305,23 +336,23 @@ export const fieldsConfigurations: any = {
       label: "Comment",
       tooltip: "Optionally add a comment to this setting",
       type: "comment",
-      multiline: true,
+      placeholder: "Enter Comment",
     },
   ],
-  kms_vault: [],
-  kms_kes: [],
   logger_webhook: [
     {
       name: "endpoint",
       required: true,
       label: "Endpoint",
       type: "string",
+      placeholder: "Enter Endpoint",
     },
     {
       name: "auth_token",
       required: true,
       label: "Auth Token",
       type: "string",
+      placeholder: "Enter Auth Token",
     },
   ],
   audit_webhook: [
@@ -330,12 +361,14 @@ export const fieldsConfigurations: any = {
       required: true,
       label: "Endpoint",
       type: "string",
+      placeholder: "Enter Endpoint",
     },
     {
       name: "auth_token",
       required: true,
       label: "Auth Token",
       type: "string",
+      placeholder: "Enter Auth Token",
     },
   ],
 };

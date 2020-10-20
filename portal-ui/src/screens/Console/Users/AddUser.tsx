@@ -210,7 +210,6 @@ class AddUserContent extends React.Component<
 
     const sendEnabled =
       accessKey.trim() !== "" &&
-      selectedGroups.length > 0 &&
       ((secretKey.trim() !== "" && selectedUser === null) ||
         selectedUser !== null);
     return (
