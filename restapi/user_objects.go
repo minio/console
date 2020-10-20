@@ -84,6 +84,14 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewPostBucketsBucketNameObjectsUploadOK()
 	})
+	// get share object url
+	api.UserAPIShareObjectHandler = user_api.ShareObjectHandlerFunc(func(params user_api.ShareObjectParams, session *models.Principal) middleware.Responder {
+		resp, err := getShareObjectResponse(session, params)
+		if err != nil {
+			return user_api.NewShareObjectDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewShareObjectOK().WithPayload(*resp)
+	})
 }
 
 // getListObjectsResponse returns a list of objects
@@ -148,10 +156,9 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 			legalHoldStatus, err := client.getObjectLegalHold(ctx, bucketName, lsObj.Key, minio.GetObjectLegalHoldOptions{VersionID: lsObj.VersionID})
 			if err != nil {
 				errResp := minio.ToErrorResponse(probe.NewError(err).ToGoError())
-				if errResp.Code != "InvalidRequest" {
+				if errResp.Code != "InvalidRequest" && errResp.Code != "NoSuchObjectLockConfiguration" {
 					log.Printf("error getting legal hold status for %s : %s", lsObj.VersionID, err)
 				}
-
 			} else {
 				if legalHoldStatus != nil {
 					obj.LegalHoldStatus = string(*legalHoldStatus)
@@ -255,7 +262,6 @@ func deleteMultipleObjects(ctx context.Context, client MCClient, recursive bool)
 	contentCh := make(chan *mc.ClientContent, 1)
 
 	errorCh := client.remove(ctx, isIncomplete, isRemoveBucket, isBypass, contentCh)
-OUTER_LOOP:
 	for content := range client.list(ctx, listOpts) {
 		if content.Err != nil {
 			switch content.Err.ToGoError().(type) {
@@ -279,7 +285,7 @@ OUTER_LOOP:
 					// Ignore Permission error.
 					continue
 				}
-				break OUTER_LOOP
+				return pErr.Cause
 			}
 		}
 	}
@@ -359,6 +365,44 @@ func uploadObject(ctx context.Context, client MinioClient, bucketName, prefix st
 		return err
 	}
 	return nil
+}
+
+// getShareObjectResponse returns a share object url
+func getShareObjectResponse(session *models.Principal, params user_api.ShareObjectParams) (*string, *models.Error) {
+	ctx := context.Background()
+	s3Client, err := newS3BucketClient(session, params.BucketName, params.Prefix)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// create a mc S3Client interface implementation
+	// defining the client to be used
+	mcClient := mcClient{client: s3Client}
+	var expireDuration string
+	if params.Expires != nil {
+		expireDuration = *params.Expires
+	}
+	url, err := getShareObjectURL(ctx, mcClient, params.VersionID, expireDuration)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	return url, nil
+}
+
+func getShareObjectURL(ctx context.Context, client MCClient, versionID string, duration string) (url *string, err error) {
+	// default duration 7d if not defined
+	if strings.TrimSpace(duration) == "" {
+		duration = "168h"
+	}
+
+	expiresDuration, err := time.ParseDuration(duration)
+	if err != nil {
+		return nil, err
+	}
+	objURL, pErr := client.shareDownload(ctx, versionID, expiresDuration)
+	if pErr != nil {
+		return nil, pErr.Cause
+	}
+	return &objURL, nil
 }
 
 // newClientURL returns an abstracted URL for filesystems and object storage.

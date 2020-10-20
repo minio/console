@@ -340,6 +340,39 @@ paths:
       tags:
         - UserAPI
 
+  /buckets/{bucket_name}/objects/share:
+    get:
+      summary: Shares an Object on a url
+      operationId: ShareObject
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: true
+          type: string
+        - name: expires
+          in: query
+          required: false
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: string
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /buckets/{name}/set-policy:
     put:
       summary: Bucket Set Policy
