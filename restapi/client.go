@@ -59,6 +59,7 @@ type MinioClient interface {
 	getObjectRetention(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error)
 	getObjectLegalHold(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error)
 	putObject(ctx context.Context, bucketName, objectName string, reader io.Reader, objectSize int64, opts minio.PutObjectOptions) (info minio.UploadInfo, err error)
+	putObjectLegalHold(ctx context.Context, bucketName, objectName string, opts minio.PutObjectLegalHoldOptions) error
 }
 
 // Interface implementation
@@ -131,6 +132,10 @@ func (c minioClient) getObjectLegalHold(ctx context.Context, bucketName, objectN
 
 func (c minioClient) putObject(ctx context.Context, bucketName, objectName string, reader io.Reader, objectSize int64, opts minio.PutObjectOptions) (info minio.UploadInfo, err error) {
 	return c.client.PutObject(ctx, bucketName, objectName, reader, objectSize, opts)
+}
+
+func (c minioClient) putObjectLegalHold(ctx context.Context, bucketName, objectName string, opts minio.PutObjectLegalHoldOptions) error {
+	return c.client.PutObjectLegalHold(ctx, bucketName, objectName, opts)
 }
 
 // MCClient interface with all functions to be implemented
