@@ -19,10 +19,12 @@
 package restapi
 
 import (
+	"bytes"
 	"crypto/tls"
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/minio/console/pkg/auth"
 
@@ -229,8 +231,9 @@ func wrapHandlerSinglePageApplication(h http.Handler) http.HandlerFunc {
 		nfrw := &notFoundRedirectRespWr{ResponseWriter: w}
 		h.ServeHTTP(nfrw, r)
 		if nfrw.status == 404 {
-			log.Printf("Redirecting %s to index.html.", r.RequestURI)
-			http.Redirect(w, r, "/index.html", http.StatusFound)
+			indexPage, _ := portalUI.Asset("build/index.html")
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			http.ServeContent(w, r, "index.html", time.Now(), bytes.NewReader(indexPage))
 		}
 	}
 }

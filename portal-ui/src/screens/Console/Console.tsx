@@ -71,19 +71,6 @@ import ObjectBrowser from "./ObjectBrowser/ObjectBrowser";
 import ListObjects from "./Buckets/ListBuckets/Objects/ListObjects/ListObjects";
 import License from "./License/License";
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://material-ui.com/">
-        MinIO
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
 const drawerWidth = 245;
 
 const styles = (theme: Theme) =>
@@ -385,9 +372,7 @@ const Console = ({
                     />
                   ))}
                   {allowedRoutes.length > 0 ? (
-                    <Route exact path="/">
-                      <Redirect to={allowedRoutes[0].path} />
-                    </Route>
+                    <Redirect to={allowedRoutes[0].path} />
                   ) : null}
                 </Switch>
               </Router>
