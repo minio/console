@@ -52,6 +52,7 @@ interface IColumns {
   elementKey: string;
   sortable?: boolean;
   renderFunction?: (input: any) => any;
+  renderFullObject?: boolean;
   globalClass?: any;
 }
 
@@ -84,6 +85,7 @@ interface TableWrapperProps {
   selectedItems?: string[];
   stickyHeader?: boolean;
   radioSelection?: boolean;
+  customEmptyMessage?: string;
   paginatorConfig?: IPaginatorConfig;
 }
 
@@ -192,9 +194,11 @@ const rowColumnsMap = (
     const itemElement = isString(itemData)
       ? itemData
       : get(itemData, column.elementKey, null); // If the element is just a string, we render it as it is
+    const renderConst = column.renderFullObject ? itemData : itemElement;
+
     const renderElement = column.renderFunction
-      ? column.renderFunction(itemElement)
-      : itemElement; // If render function is set, we send the value to the function.
+      ? column.renderFunction(renderConst)
+      : renderConst; // If render function is set, we send the value to the function.
     return (
       <TableCell
         key={`tbRE-${column.elementKey}-${index}`}
@@ -246,6 +250,7 @@ const TableWrapper = ({
   classes,
   stickyHeader = false,
   radioSelection = false,
+  customEmptyMessage = "",
   paginatorConfig,
 }: TableWrapperProps) => {
   const findView = itemActions
@@ -385,7 +390,13 @@ const TableWrapper = ({
           </Table>
         ) : (
           <React.Fragment>
-            {!isLoading && <div>{`There are no ${entityName} yet.`}</div>}
+            {!isLoading && (
+              <div>
+                {customEmptyMessage !== ""
+                  ? customEmptyMessage
+                  : `There are no ${entityName} yet.`}
+              </div>
+            )}
           </React.Fragment>
         )}
       </Paper>

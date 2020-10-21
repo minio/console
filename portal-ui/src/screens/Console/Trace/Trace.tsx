@@ -26,6 +26,7 @@ import { wsProtocol } from "../../../utils/wsUtils";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import { Grid } from "@material-ui/core";
+import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -101,20 +102,50 @@ const Trace = ({
       <PageHeader label={"Trace"} />
       <Grid container>
         <Grid item xs={12} className={classes.container}>
-          <div className={classes.logList}>
-            <ul>
-              {messages.map((m) => {
-                return (
-                  <li key={m.key}>
-                    {timeFromDate(m.time)} - {m.api}[{m.statusCode}{" "}
-                    {m.statusMsg}] {m.api} {m.host} {m.client}{" "}
-                    {m.callStats.duration} ↑ {niceBytes(m.callStats.rx + "")} ↓{" "}
-                    {niceBytes(m.callStats.tx + "")}
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+          <TableWrapper
+            itemActions={[]}
+            columns={[
+              {
+                label: "Time",
+                elementKey: "time",
+                renderFunction: (time: Date) => {
+                  const timeParse = new Date(time);
+                  return timeFromDate(timeParse);
+                },
+              },
+              { label: "Name", elementKey: "api" },
+              {
+                label: "Status",
+                elementKey: "",
+                renderFunction: (fullElement: TraceMessage) =>
+                  `${fullElement.statusCode} ${fullElement.statusMsg}`,
+                renderFullObject: true,
+              },
+              {
+                label: "Location",
+                elementKey: "configuration_id",
+                renderFunction: (fullElement: TraceMessage) =>
+                  `${fullElement.host} ${fullElement.client}`,
+                renderFullObject: true,
+              },
+              { label: "Load Time", elementKey: "callStats.duration" },
+              {
+                label: "Upload",
+                elementKey: "callStats.rx",
+                renderFunction: niceBytes,
+              },
+              {
+                label: "Download",
+                elementKey: "callStats.tx",
+                renderFunction: niceBytes,
+              },
+            ]}
+            isLoading={false}
+            records={messages}
+            entityName="Traces"
+            idField="api"
+            customEmptyMessage="There are no traced Elements yet"
+          />
         </Grid>
       </Grid>
     </React.Fragment>
