@@ -15,7 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { Redirect, Route, Router, Switch } from "react-router-dom";
+import {
+  Redirect,
+  Route,
+  Router,
+  Switch,
+  BrowserRouter,
+} from "react-router-dom";
 import history from "./history";
 import Login from "./screens/LoginPage/LoginPage";
 import Console from "./screens/Console/Console";
@@ -26,6 +32,22 @@ import { AppState } from "./store";
 import { userLoggedIn } from "./actions";
 import LoginCallback from "./screens/LoginPage/LoginCallback";
 import { hot } from "react-hot-loader/root";
+
+interface ProtectedRouteProps {
+  loggedIn: boolean;
+  component: any;
+}
+
+export class ProtectedRoute extends React.Component<ProtectedRouteProps> {
+  render() {
+    const Component = this.props.component;
+    return this.props.loggedIn ? (
+      <Component />
+    ) : (
+      <Redirect to={{ pathname: "/login" }} />
+    );
+  }
+}
 
 const isLoggedIn = () => {
   return (
@@ -47,29 +69,14 @@ interface RoutesProps {
 }
 
 class Routes extends React.Component<RoutesProps> {
-  componentDidMount(): void {
-    if (isLoggedIn()) {
-      this.props.userLoggedIn(true);
-    }
-  }
-
   render() {
+    const loggedIn = isLoggedIn();
     return (
       <Router history={history}>
         <Switch>
           <Route exact path="/oauth_callback" component={LoginCallback} />
           <Route exact path="/login" component={Login} />
-          {this.props.loggedIn ? (
-            <Switch>
-              <Route path="/*" component={Console} />
-              <Route component={NotFoundPage} />
-            </Switch>
-          ) : (
-            <Switch>
-              <Route exact path="/" component={Login} />
-              <Redirect to="/" />
-            </Switch>
-          )}
+          <ProtectedRoute component={Console} loggedIn={loggedIn} />
         </Switch>
       </Router>
     );
