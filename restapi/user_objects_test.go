@@ -20,11 +20,13 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"reflect"
 	"testing"
 	"time"
 
+	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	mc "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
@@ -37,6 +39,7 @@ var minioGetObjectLegalHoldMock func(ctx context.Context, bucketName, objectName
 var minioGetObjectRetentionMock func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error)
 var minioPutObjectMock func(ctx context.Context, bucketName, objectName string, reader io.Reader, objectSize int64, opts minio.PutObjectOptions) (info minio.UploadInfo, err error)
 var minioPutObjectLegalHoldMock func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectLegalHoldOptions) error
+var miinoPutObjectRetentionMock func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error
 
 var mcListMock func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
 var mcRemoveMock func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error
@@ -61,6 +64,10 @@ func (ac minioClientMock) putObject(ctx context.Context, bucketName, objectName 
 
 func (ac minioClientMock) putObjectLegalHold(ctx context.Context, bucketName, objectName string, opts minio.PutObjectLegalHoldOptions) error {
 	return minioPutObjectLegalHoldMock(ctx, bucketName, objectName, opts)
+}
+
+func (ac minioClientMock) putObjectRetention(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
+	return miinoPutObjectRetentionMock(ctx, bucketName, objectName, opts)
 }
 
 // mock functions for s3ClientMock
@@ -701,6 +708,136 @@ func Test_putObjectLegalHold(t *testing.T) {
 				t.Errorf("setObjectLegalHold() error: %v, wantErr: %v", err, tt.wantError)
 				return
 			}
+		})
+	}
+}
+
+func Test_putObjectRetention(t *testing.T) {
+	assert := assert.New(t)
+	ctx := context.Background()
+	client := minioClientMock{}
+	type args struct {
+		bucket        string
+		prefix        string
+		versionID     string
+		opts          *models.PutObjectRetentionRequest
+		retentionFunc func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error
+	}
+	tests := []struct {
+		test      string
+		args      args
+		wantError error
+	}{
+		{
+			test: "Put Object retention governance",
+			args: args{
+				bucket:    "buck1",
+				versionID: "someversion",
+				prefix:    "folder/file.txt",
+				opts: &models.PutObjectRetentionRequest{
+					Expires:          swag.String("2006-01-02T15:04:05Z"),
+					GovernanceBypass: false,
+					Mode:             models.ObjectRetentionModeGovernance,
+				},
+				retentionFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
+					return nil
+				},
+			},
+			wantError: nil,
+		},
+		{
+			test: "Put Object retention compliance",
+			args: args{
+				bucket:    "buck1",
+				versionID: "someversion",
+				prefix:    "folder/file.txt",
+				opts: &models.PutObjectRetentionRequest{
+					Expires:          swag.String("2006-01-02T15:04:05Z"),
+					GovernanceBypass: false,
+					Mode:             models.ObjectRetentionModeCompliance,
+				},
+				retentionFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
+					return nil
+				},
+			},
+			wantError: nil,
+		},
+		{
+			test: "Empty opts should return error",
+			args: args{
+				bucket:    "buck1",
+				versionID: "someversion",
+				prefix:    "folder/file.txt",
+				opts:      nil,
+				retentionFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
+					return nil
+				},
+			},
+			wantError: errors.New("object retention options can't be nil"),
+		},
+		{
+			test: "Empty expire on opts should return error",
+			args: args{
+				bucket:    "buck1",
+				versionID: "someversion",
+				prefix:    "folder/file.txt",
+				opts: &models.PutObjectRetentionRequest{
+					Expires:          nil,
+					GovernanceBypass: false,
+					Mode:             models.ObjectRetentionModeCompliance,
+				},
+				retentionFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
+					return nil
+				},
+			},
+			wantError: errors.New("object retention expires can't be nil"),
+		},
+		{
+			test: "Handle invalid expire time",
+			args: args{
+				bucket:    "buck1",
+				versionID: "someversion",
+				prefix:    "folder/file.txt",
+				opts: &models.PutObjectRetentionRequest{
+					Expires:          swag.String("invalidtime"),
+					GovernanceBypass: false,
+					Mode:             models.ObjectRetentionModeCompliance,
+				},
+				retentionFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
+					return nil
+				},
+			},
+			wantError: errors.New("parsing time \"invalidtime\" as \"2006-01-02T15:04:05Z07:00\": cannot parse \"invalidtime\" as \"2006\""),
+		},
+		{
+			test: "Handle error on retention func",
+			args: args{
+				bucket:    "buck1",
+				versionID: "someversion",
+				prefix:    "folder/file.txt",
+				opts: &models.PutObjectRetentionRequest{
+					Expires:          swag.String("2006-01-02T15:04:05Z"),
+					GovernanceBypass: false,
+					Mode:             models.ObjectRetentionModeCompliance,
+				},
+				retentionFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
+					return errors.New("new Error")
+				},
+			},
+			wantError: errors.New("new Error"),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.test, func(t *testing.T) {
+			miinoPutObjectRetentionMock = tt.args.retentionFunc
+			err := setObjectRetention(ctx, client, tt.args.bucket, tt.args.prefix, tt.args.versionID, tt.args.opts)
+			if tt.wantError != nil {
+				assert.Equal(err.Error(), tt.wantError.Error(), fmt.Sprintf("setObjectRetention() error: %v, wantErr: %v", err, tt.wantError))
+			} else {
+				assert.Nil(err, fmt.Sprintf("setObjectRetention() error: %v, wantErr: %v", err, tt.wantError))
+			}
+
 		})
 	}
 }

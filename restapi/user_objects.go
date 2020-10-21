@@ -99,6 +99,13 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewPutObjectLegalHoldOK()
 	})
+	// set object retention
+	api.UserAPIPutObjectRetentionHandler = user_api.PutObjectRetentionHandlerFunc(func(params user_api.PutObjectRetentionParams, session *models.Principal) middleware.Responder {
+		if err := getSetObjectRetentionResponse(session, params); err != nil {
+			return user_api.NewPutObjectRetentionDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewPutObjectRetentionOK()
+	})
 }
 
 // getListObjectsResponse returns a list of objects
@@ -269,6 +276,7 @@ func deleteMultipleObjects(ctx context.Context, client MCClient, recursive bool)
 	contentCh := make(chan *mc.ClientContent, 1)
 
 	errorCh := client.remove(ctx, isIncomplete, isRemoveBucket, isBypass, contentCh)
+OUTER_LOOP:
 	for content := range client.list(ctx, listOpts) {
 		if content.Err != nil {
 			switch content.Err.ToGoError().(type) {
@@ -286,13 +294,17 @@ func deleteMultipleObjects(ctx context.Context, client MCClient, recursive bool)
 			case contentCh <- content:
 				sent = true
 			case pErr := <-errorCh:
-				switch pErr.ToGoError().(type) {
-				// ignore same as mc
-				case mc.PathInsufficientPermission:
-					// Ignore Permission error.
-					continue
+				if pErr != nil {
+					switch pErr.ToGoError().(type) {
+					// ignore same as mc
+					case mc.PathInsufficientPermission:
+						// Ignore Permission error.
+						continue
+					}
+					close(contentCh)
+					return pErr.Cause
 				}
-				return pErr.Cause
+				break OUTER_LOOP
 			}
 		}
 	}
@@ -437,6 +449,49 @@ func setObjectLegalHold(ctx context.Context, client MinioClient, bucketName, pre
 		lstatus = minio.LegalHoldDisabled
 	}
 	return client.putObjectLegalHold(ctx, bucketName, prefix, minio.PutObjectLegalHoldOptions{VersionID: versionID, Status: &lstatus})
+}
+
+func getSetObjectRetentionResponse(session *models.Principal, params user_api.PutObjectRetentionParams) *models.Error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		return prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+	err = setObjectRetention(ctx, minioClient, params.BucketName, params.Prefix, params.VersionID, params.Body)
+	if err != nil {
+		return prepareError(err)
+	}
+	return nil
+}
+
+func setObjectRetention(ctx context.Context, client MinioClient, bucketName, prefix, versionID string, retentionOps *models.PutObjectRetentionRequest) error {
+	if retentionOps == nil {
+		return errors.New("object retention options can't be nil")
+	}
+	if retentionOps.Expires == nil {
+		return errors.New("object retention expires can't be nil")
+	}
+	var mode minio.RetentionMode
+	if retentionOps.Mode == models.ObjectRetentionModeGovernance {
+		mode = minio.Governance
+	} else {
+		mode = minio.Compliance
+	}
+	retentionUntilDate, err := time.Parse(time.RFC3339, *retentionOps.Expires)
+	if err != nil {
+		return err
+	}
+	opts := minio.PutObjectRetentionOptions{
+		GovernanceBypass: retentionOps.GovernanceBypass,
+		RetainUntilDate:  &retentionUntilDate,
+		Mode:             &mode,
+		VersionID:        versionID,
+	}
+	return client.putObjectRetention(ctx, bucketName, prefix, opts)
 }
 
 // newClientURL returns an abstracted URL for filesystems and object storage.

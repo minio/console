@@ -405,6 +405,38 @@ paths:
       tags:
         - UserAPI
 
+  /buckets/{bucket_name}/objects/retention:
+    put:
+      summary: Put Object's retention status
+      operationId: PutObjectRetention
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/putObjectRetentionRequest"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /buckets/{name}/set-policy:
     put:
       summary: Bucket Set Policy
@@ -3331,3 +3363,36 @@ definitions:
     properties:
       status:
         $ref: "#/definitions/objectLegalHoldStatus"
+
+  objectLegalHoldStatus:
+    type: string
+    enum:
+      - enabled
+      - disabled
+
+  putObjectLegalHoldRequest:
+    type: object
+    required:
+      - status
+    properties:
+      status:
+        $ref: "#/definitions/objectLegalHoldStatus"
+
+  objectRetentionMode:
+    type: string
+    enum:
+      - governance
+      - compliance
+
+  putObjectRetentionRequest:
+    type: object
+    required:
+      - mode
+      - expires
+    properties:
+      mode:
+        $ref: "#/definitions/objectRetentionMode"
+      expires:
+        type: string
+      governance_bypass:
+        type: boolean

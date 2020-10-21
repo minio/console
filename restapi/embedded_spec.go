@@ -517,6 +517,54 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/objects/retention": {
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Put Object's retention status",
+        "operationId": "PutObjectRetention",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "version_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/putObjectRetentionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/objects/share": {
       "get": {
         "tags": [
@@ -3750,6 +3798,13 @@ func init() {
         "disabled"
       ]
     },
+    "objectRetentionMode": {
+      "type": "string",
+      "enum": [
+        "governance",
+        "compliance"
+      ]
+    },
     "parityResponse": {
       "type": "array",
       "items": {
@@ -3888,6 +3943,24 @@ func init() {
       "properties": {
         "status": {
           "$ref": "#/definitions/objectLegalHoldStatus"
+        }
+      }
+    },
+    "putObjectRetentionRequest": {
+      "type": "object",
+      "required": [
+        "mode",
+        "expires"
+      ],
+      "properties": {
+        "expires": {
+          "type": "string"
+        },
+        "governance_bypass": {
+          "type": "boolean"
+        },
+        "mode": {
+          "$ref": "#/definitions/objectRetentionMode"
         }
       }
     },
@@ -5108,6 +5181,54 @@ func init() {
             "required": true,
             "schema": {
               "$ref": "#/definitions/putObjectLegalHoldRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/objects/retention": {
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Put Object's retention status",
+        "operationId": "PutObjectRetention",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "version_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/putObjectRetentionRequest"
             }
           }
         ],
@@ -8836,6 +8957,13 @@ func init() {
         "disabled"
       ]
     },
+    "objectRetentionMode": {
+      "type": "string",
+      "enum": [
+        "governance",
+        "compliance"
+      ]
+    },
     "parityResponse": {
       "type": "array",
       "items": {
@@ -8952,6 +9080,24 @@ func init() {
       "properties": {
         "status": {
           "$ref": "#/definitions/objectLegalHoldStatus"
+        }
+      }
+    },
+    "putObjectRetentionRequest": {
+      "type": "object",
+      "required": [
+        "mode",
+        "expires"
+      ],
+      "properties": {
+        "expires": {
+          "type": "string"
+        },
+        "governance_bypass": {
+          "type": "boolean"
+        },
+        "mode": {
+          "$ref": "#/definitions/objectRetentionMode"
         }
       }
     },
