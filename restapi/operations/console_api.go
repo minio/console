@@ -253,6 +253,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPISetPolicyHandler: admin_api.SetPolicyHandlerFunc(func(params admin_api.SetPolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.SetPolicy has not yet been implemented")
 		}),
+		UserAPIShareObjectHandler: user_api.ShareObjectHandlerFunc(func(params user_api.ShareObjectParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.ShareObject has not yet been implemented")
+		}),
 		AdminAPITenantAddZoneHandler: admin_api.TenantAddZoneHandlerFunc(func(params admin_api.TenantAddZoneParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TenantAddZone has not yet been implemented")
 		}),
@@ -458,6 +461,8 @@ type ConsoleAPI struct {
 	AdminAPISetConfigHandler admin_api.SetConfigHandler
 	// AdminAPISetPolicyHandler sets the operation handler for the set policy operation
 	AdminAPISetPolicyHandler admin_api.SetPolicyHandler
+	// UserAPIShareObjectHandler sets the operation handler for the share object operation
+	UserAPIShareObjectHandler user_api.ShareObjectHandler
 	// AdminAPITenantAddZoneHandler sets the operation handler for the tenant add zone operation
 	AdminAPITenantAddZoneHandler admin_api.TenantAddZoneHandler
 	// AdminAPITenantInfoHandler sets the operation handler for the tenant info operation
@@ -740,6 +745,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPISetPolicyHandler == nil {
 		unregistered = append(unregistered, "admin_api.SetPolicyHandler")
+	}
+	if o.UserAPIShareObjectHandler == nil {
+		unregistered = append(unregistered, "user_api.ShareObjectHandler")
 	}
 	if o.AdminAPITenantAddZoneHandler == nil {
 		unregistered = append(unregistered, "admin_api.TenantAddZoneHandler")
@@ -1122,6 +1130,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/set-policy/{name}"] = admin_api.NewSetPolicy(o.context, o.AdminAPISetPolicyHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/buckets/{bucket_name}/objects/share"] = user_api.NewShareObject(o.context, o.UserAPIShareObjectHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

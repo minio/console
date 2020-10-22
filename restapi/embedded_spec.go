@@ -469,6 +469,54 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/objects/share": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Shares an Object on a url",
+        "operationId": "ShareObject",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "version_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "expires",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/objects/upload": {
       "post": {
         "consumes": [
@@ -4951,6 +4999,54 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "type": "file"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/objects/share": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Shares an Object on a url",
+        "operationId": "ShareObject",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "version_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "expires",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "string"
             }
           },
           "default": {
