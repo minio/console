@@ -145,7 +145,6 @@ export const actionsTray = {
 export const searchField = {
   searchField: {
     flexGrow: 1,
-    marginRight: 30,
     background: "#FFFFFF",
     borderRadius: 5,
     border: "#EAEDEE 1px solid",
