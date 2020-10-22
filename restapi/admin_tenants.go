@@ -679,7 +679,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			return nil, prepareError(errorGeneric)
 		}
 
-		const consoleVersion = "minio/console:v0.4.1"
+		const consoleVersion = "minio/console:v0.4.2"
 		minInst.Spec.Console = &operator.ConsoleConfiguration{
 			Replicas:      1,
 			Image:         consoleVersion,
