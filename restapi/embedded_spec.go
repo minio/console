@@ -469,6 +469,54 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/objects/legalhold": {
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Put Object's legalhold status",
+        "operationId": "PutObjectLegalHold",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "version_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/putObjectLegalHoldRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/objects/share": {
       "get": {
         "tags": [
@@ -3695,6 +3743,13 @@ func init() {
         "get"
       ]
     },
+    "objectLegalHoldStatus": {
+      "type": "string",
+      "enum": [
+        "enabled",
+        "disabled"
+      ]
+    },
     "parityResponse": {
       "type": "array",
       "items": {
@@ -3822,6 +3877,17 @@ func init() {
       "properties": {
         "type": {
           "$ref": "#/definitions/profilerType"
+        }
+      }
+    },
+    "putObjectLegalHoldRequest": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/objectLegalHoldStatus"
         }
       }
     },
@@ -5000,6 +5066,54 @@ func init() {
             "schema": {
               "type": "file"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/objects/legalhold": {
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Put Object's legalhold status",
+        "operationId": "PutObjectLegalHold",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "version_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/putObjectLegalHoldRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
@@ -8715,6 +8829,13 @@ func init() {
         "get"
       ]
     },
+    "objectLegalHoldStatus": {
+      "type": "string",
+      "enum": [
+        "enabled",
+        "disabled"
+      ]
+    },
     "parityResponse": {
       "type": "array",
       "items": {
@@ -8820,6 +8941,17 @@ func init() {
       "properties": {
         "type": {
           "$ref": "#/definitions/profilerType"
+        }
+      }
+    },
+    "putObjectLegalHoldRequest": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/objectLegalHoldStatus"
         }
       }
     },
