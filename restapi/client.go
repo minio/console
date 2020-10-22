@@ -143,6 +143,7 @@ type MCClient interface {
 	remove(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error
 	list(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
 	get(ctx context.Context, opts mc.GetOptions) (io.ReadCloser, *probe.Error)
+	shareDownload(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error)
 }
 
 // Interface implementation
@@ -181,6 +182,10 @@ func (c mcClient) list(ctx context.Context, opts mc.ListOptions) <-chan *mc.Clie
 
 func (c mcClient) get(ctx context.Context, opts mc.GetOptions) (io.ReadCloser, *probe.Error) {
 	return c.client.Get(ctx, opts)
+}
+
+func (c mcClient) shareDownload(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error) {
+	return c.client.ShareDownload(ctx, versionID, expires)
 }
 
 // ConsoleCredentials interface with all functions to be implemented

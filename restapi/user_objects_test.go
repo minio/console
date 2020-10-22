@@ -29,6 +29,7 @@ import (
 	mc "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7"
+	"github.com/stretchr/testify/assert"
 )
 
 var minioListObjectsMock func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo
@@ -39,6 +40,7 @@ var minioPutObject func(ctx context.Context, bucketName, objectName string, read
 var mcListMock func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
 var mcRemoveMock func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error
 var mcGetMock func(ctx context.Context, opts mc.GetOptions) (io.ReadCloser, *probe.Error)
+var mcShareDownloadMock func(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error)
 
 // mock functions for minioClientMock
 func (ac minioClientMock) listObjects(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
@@ -66,6 +68,10 @@ func (c s3ClientMock) remove(ctx context.Context, isIncomplete, isRemoveBucket, 
 
 func (c s3ClientMock) get(ctx context.Context, opts mc.GetOptions) (io.ReadCloser, *probe.Error) {
 	return mcGetMock(ctx, opts)
+}
+
+func (c s3ClientMock) shareDownload(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error) {
+	return mcShareDownloadMock(ctx, versionID, expires)
 }
 
 func Test_listObjects(t *testing.T) {
@@ -542,6 +548,86 @@ func Test_deleteObjects(t *testing.T) {
 				t.Errorf("deleteObjects() error: %v, wantErr: %v", err, tt.wantError)
 				return
 			}
+		})
+	}
+}
+
+func Test_shareObject(t *testing.T) {
+	assert := assert.New(t)
+	ctx := context.Background()
+	client := s3ClientMock{}
+	type args struct {
+		versionID string
+		expires   string
+		shareFunc func(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error)
+	}
+	tests := []struct {
+		test      string
+		args      args
+		wantError error
+		expected  string
+	}{
+		{
+			test: "Get share object url",
+			args: args{
+				versionID: "2121434",
+				expires:   "30s",
+				shareFunc: func(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error) {
+					return "http://someurl", nil
+				},
+			},
+			wantError: nil,
+			expected:  "http://someurl",
+		},
+		{
+			test: "handle invalid expire duration",
+			args: args{
+				versionID: "2121434",
+				expires:   "invalid",
+				shareFunc: func(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error) {
+					return "http://someurl", nil
+				},
+			},
+			wantError: errors.New("time: invalid duration invalid"),
+		},
+		{
+			test: "handle empty expire duration",
+			args: args{
+				versionID: "2121434",
+				expires:   "",
+				shareFunc: func(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error) {
+					return "http://someurl", nil
+				},
+			},
+			wantError: nil,
+			expected:  "http://someurl",
+		},
+		{
+			test: "handle error on share func",
+			args: args{
+				versionID: "2121434",
+				expires:   "3h",
+				shareFunc: func(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error) {
+					return "", probe.NewError(errors.New("probe error"))
+				},
+			},
+			wantError: errors.New("probe error"),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.test, func(t *testing.T) {
+			mcShareDownloadMock = tt.args.shareFunc
+			url, err := getShareObjectURL(ctx, client, tt.args.versionID, tt.args.expires)
+			if tt.wantError != nil {
+				if !reflect.DeepEqual(err, tt.wantError) {
+					t.Errorf("getShareObjectURL() error: %v, wantErr: %v", err, tt.wantError)
+					return
+				}
+			} else {
+				assert.Equal(*url, tt.expected)
+			}
+
 		})
 	}
 }
