@@ -35,7 +35,8 @@ import (
 var minioListObjectsMock func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo
 var minioGetObjectLegalHoldMock func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error)
 var minioGetObjectRetentionMock func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error)
-var minioPutObject func(ctx context.Context, bucketName, objectName string, reader io.Reader, objectSize int64, opts minio.PutObjectOptions) (info minio.UploadInfo, err error)
+var minioPutObjectMock func(ctx context.Context, bucketName, objectName string, reader io.Reader, objectSize int64, opts minio.PutObjectOptions) (info minio.UploadInfo, err error)
+var minioPutObjectLegalHoldMock func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectLegalHoldOptions) error
 
 var mcListMock func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
 var mcRemoveMock func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error
@@ -55,7 +56,11 @@ func (ac minioClientMock) getObjectRetention(ctx context.Context, bucketName, ob
 }
 
 func (ac minioClientMock) putObject(ctx context.Context, bucketName, objectName string, reader io.Reader, objectSize int64, opts minio.PutObjectOptions) (info minio.UploadInfo, err error) {
-	return minioPutObject(ctx, bucketName, objectName, reader, objectSize, opts)
+	return minioPutObjectMock(ctx, bucketName, objectName, reader, objectSize, opts)
+}
+
+func (ac minioClientMock) putObjectLegalHold(ctx context.Context, bucketName, objectName string, opts minio.PutObjectLegalHoldOptions) error {
+	return minioPutObjectLegalHoldMock(ctx, bucketName, objectName, opts)
 }
 
 // mock functions for s3ClientMock
@@ -628,6 +633,74 @@ func Test_shareObject(t *testing.T) {
 				assert.Equal(*url, tt.expected)
 			}
 
+		})
+	}
+}
+
+func Test_putObjectLegalHold(t *testing.T) {
+	ctx := context.Background()
+	client := minioClientMock{}
+	type args struct {
+		bucket        string
+		prefix        string
+		versionID     string
+		status        models.ObjectLegalHoldStatus
+		legalHoldFunc func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectLegalHoldOptions) error
+	}
+	tests := []struct {
+		test      string
+		args      args
+		wantError error
+	}{
+		{
+			test: "Put Object Legal hold enabled status",
+			args: args{
+				bucket:    "buck1",
+				versionID: "someversion",
+				prefix:    "folder/file.txt",
+				status:    models.ObjectLegalHoldStatusEnabled,
+				legalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectLegalHoldOptions) error {
+					return nil
+				},
+			},
+			wantError: nil,
+		},
+		{
+			test: "Put Object Legal hold disabled status",
+			args: args{
+				bucket:    "buck1",
+				versionID: "someversion",
+				prefix:    "folder/file.txt",
+				status:    models.ObjectLegalHoldStatusDisabled,
+				legalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectLegalHoldOptions) error {
+					return nil
+				},
+			},
+			wantError: nil,
+		},
+		{
+			test: "Handle error on legalhold func",
+			args: args{
+				bucket:    "buck1",
+				versionID: "someversion",
+				prefix:    "folder/file.txt",
+				status:    models.ObjectLegalHoldStatusDisabled,
+				legalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectLegalHoldOptions) error {
+					return errors.New("new error")
+				},
+			},
+			wantError: errors.New("new error"),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.test, func(t *testing.T) {
+			minioPutObjectLegalHoldMock = tt.args.legalHoldFunc
+			err := setObjectLegalHold(ctx, client, tt.args.bucket, tt.args.prefix, tt.args.versionID, tt.args.status)
+			if !reflect.DeepEqual(err, tt.wantError) {
+				t.Errorf("setObjectLegalHold() error: %v, wantErr: %v", err, tt.wantError)
+				return
+			}
 		})
 	}
 }

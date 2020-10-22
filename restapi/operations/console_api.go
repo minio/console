@@ -223,6 +223,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIProfilingStopHandler: admin_api.ProfilingStopHandlerFunc(func(params admin_api.ProfilingStopParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ProfilingStop has not yet been implemented")
 		}),
+		UserAPIPutObjectLegalHoldHandler: user_api.PutObjectLegalHoldHandlerFunc(func(params user_api.PutObjectLegalHoldParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.PutObjectLegalHold has not yet been implemented")
+		}),
 		UserAPIRemoteBucketDetailsHandler: user_api.RemoteBucketDetailsHandlerFunc(func(params user_api.RemoteBucketDetailsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.RemoteBucketDetails has not yet been implemented")
 		}),
@@ -441,6 +444,8 @@ type ConsoleAPI struct {
 	AdminAPIProfilingStartHandler admin_api.ProfilingStartHandler
 	// AdminAPIProfilingStopHandler sets the operation handler for the profiling stop operation
 	AdminAPIProfilingStopHandler admin_api.ProfilingStopHandler
+	// UserAPIPutObjectLegalHoldHandler sets the operation handler for the put object legal hold operation
+	UserAPIPutObjectLegalHoldHandler user_api.PutObjectLegalHoldHandler
 	// UserAPIRemoteBucketDetailsHandler sets the operation handler for the remote bucket details operation
 	UserAPIRemoteBucketDetailsHandler user_api.RemoteBucketDetailsHandler
 	// AdminAPIRemoveGroupHandler sets the operation handler for the remove group operation
@@ -715,6 +720,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIProfilingStopHandler == nil {
 		unregistered = append(unregistered, "admin_api.ProfilingStopHandler")
+	}
+	if o.UserAPIPutObjectLegalHoldHandler == nil {
+		unregistered = append(unregistered, "user_api.PutObjectLegalHoldHandler")
 	}
 	if o.UserAPIRemoteBucketDetailsHandler == nil {
 		unregistered = append(unregistered, "user_api.RemoteBucketDetailsHandler")
@@ -1090,6 +1098,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/profiling/stop"] = admin_api.NewProfilingStop(o.context, o.AdminAPIProfilingStopHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/buckets/{bucket_name}/objects/legalhold"] = user_api.NewPutObjectLegalHold(o.context, o.UserAPIPutObjectLegalHoldHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

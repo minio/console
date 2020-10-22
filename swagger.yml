@@ -373,6 +373,38 @@ paths:
       tags:
         - UserAPI
 
+  /buckets/{bucket_name}/objects/legalhold:
+    put:
+      summary: Put Object's legalhold status
+      operationId: PutObjectLegalHold
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/putObjectLegalHoldRequest"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /buckets/{name}/set-policy:
     put:
       summary: Bucket Set Policy
@@ -3285,3 +3317,17 @@ definitions:
     type: array
     items:
       type: string
+
+  objectLegalHoldStatus:
+    type: string
+    enum:
+      - enabled
+      - disabled
+
+  putObjectLegalHoldRequest:
+    type: object
+    required:
+      - status
+    properties:
+      status:
+        $ref: "#/definitions/objectLegalHoldStatus"

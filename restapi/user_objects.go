@@ -92,6 +92,13 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewShareObjectOK().WithPayload(*resp)
 	})
+	// set object legalhold status
+	api.UserAPIPutObjectLegalHoldHandler = user_api.PutObjectLegalHoldHandlerFunc(func(params user_api.PutObjectLegalHoldParams, session *models.Principal) middleware.Responder {
+		if err := getSetObjectLegalHoldResponse(session, params); err != nil {
+			return user_api.NewPutObjectLegalHoldDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewPutObjectLegalHoldOK()
+	})
 }
 
 // getListObjectsResponse returns a list of objects
@@ -403,6 +410,33 @@ func getShareObjectURL(ctx context.Context, client MCClient, versionID string, d
 		return nil, pErr.Cause
 	}
 	return &objURL, nil
+}
+
+func getSetObjectLegalHoldResponse(session *models.Principal, params user_api.PutObjectLegalHoldParams) *models.Error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		return prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+	err = setObjectLegalHold(ctx, minioClient, params.BucketName, params.Prefix, params.VersionID, params.Body.Status)
+	if err != nil {
+		return prepareError(err)
+	}
+	return nil
+}
+
+func setObjectLegalHold(ctx context.Context, client MinioClient, bucketName, prefix, versionID string, status models.ObjectLegalHoldStatus) error {
+	var lstatus minio.LegalHoldStatus
+	if status == models.ObjectLegalHoldStatusEnabled {
+		lstatus = minio.LegalHoldEnabled
+	} else {
+		lstatus = minio.LegalHoldDisabled
+	}
+	return client.putObjectLegalHold(ctx, bucketName, prefix, minio.PutObjectLegalHoldOptions{VersionID: versionID, Status: &lstatus})
 }
 
 // newClientURL returns an abstracted URL for filesystems and object storage.
