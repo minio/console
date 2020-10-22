@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { AppState } from "../../../store";
 import { connect } from "react-redux";
@@ -21,42 +21,51 @@ import { logMessageReceived, logResetMessages } from "./actions";
 import { LogMessage } from "./types";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { timeFromDate } from "../../../common/utils";
-import { isNullOrUndefined } from "util";
 import { wsProtocol } from "../../../utils/wsUtils";
-import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
-import { Grid } from "@material-ui/core";
+import {
+  actionsTray,
+  containerForHeader,
+  searchField,
+} from "../Common/FormComponents/common/styleLibrary";
+import { Button, Grid } from "@material-ui/core";
 import PageHeader from "../Common/PageHeader/PageHeader";
+import TextField from "@material-ui/core/TextField";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import SearchIcon from "@material-ui/icons/Search";
+import { CreateIcon } from "../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
     logList: {
-      background: "white",
-      height: "400px",
+      background: "#fff",
+      minHeight: 400,
+      height: "calc(100vh - 270px)",
       overflow: "auto",
-      "& ul": {
-        margin: "4px",
-        padding: "0px",
-      },
-      "& ul li": {
-        listStyle: "none",
-        margin: "0px",
-        padding: "0px",
-        borderBottom: "1px solid #dedede",
-      },
+      fontSize: 13,
+      padding: "25px 45px",
+      border: "1px solid #EAEDEE",
+      borderRadius: 4,
     },
     tab: {
-      padding: "25px",
+      paddingLeft: 25,
     },
     logerror: {
       color: "#A52A2A",
     },
     logerror_tab: {
       color: "#A52A2A",
-      padding: "25px",
+      paddingLeft: 25,
     },
     ansidefault: {
-      color: "black",
+      color: "#000",
     },
+    highlight: {
+      "& span": {
+        backgroundColor: "#082F5238",
+      },
+    },
+    ...actionsTray,
+    ...searchField,
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -73,6 +82,8 @@ const Logs = ({
   logResetMessages,
   messages,
 }: ILogs) => {
+  const [highlight, setHighlight] = useState("");
+
   useEffect(() => {
     logResetMessages();
     const url = new URL(window.location.toString());
@@ -128,84 +139,145 @@ const Logs = ({
 
   const renderError = (logElement: LogMessage) => {
     let errorElems = [];
-    if (!isNullOrUndefined(logElement.error)) {
+    if (logElement.error !== null && logElement.error !== undefined) {
       if (logElement.api && logElement.api.name) {
+        const errorText = `API: ${logElement.api.name}`;
+
+        const highlightedLine =
+          highlight !== ""
+            ? errorText.toLowerCase().includes(highlight.toLowerCase())
+            : false;
+
         errorElems.push(
-          <li key={`api-${logElement.key}`}>
-            <span className={classes.logerror}>API: {logElement.api.name}</span>
-          </li>
+          <div
+            key={`api-${logElement.key}`}
+            className={`${highlightedLine ? classes.highlight : ""}`}
+          >
+            <br />
+            <span className={classes.logerror}>{errorText}</span>
+          </div>
         );
       }
       if (logElement.time) {
+        const errorText = `Time: ${timeFromDate(logElement.time)}`;
+        const highlightedLine =
+          highlight !== ""
+            ? errorText.toLowerCase().includes(highlight.toLowerCase())
+            : false;
         errorElems.push(
-          <li key={`time-${logElement.key}`}>
-            <span className={classes.logerror}>
-              Time: {timeFromDate(logElement.time)}
-            </span>
-          </li>
+          <div
+            key={`time-${logElement.key}`}
+            className={`${highlightedLine ? classes.highlight : ""}`}
+          >
+            <span className={classes.logerror}>{errorText}</span>
+          </div>
         );
       }
       if (logElement.deploymentid) {
+        const errorText = `DeploymentID: ${logElement.deploymentid}`;
+        const highlightedLine =
+          highlight !== ""
+            ? errorText.toLowerCase().includes(highlight.toLowerCase())
+            : false;
         errorElems.push(
-          <li key={`deploytmentid-${logElement.key}`}>
-            <span className={classes.logerror}>
-              DeploymentID: {logElement.deploymentid}
-            </span>
-          </li>
+          <div
+            key={`deploytmentid-${logElement.key}`}
+            className={`${highlightedLine ? classes.highlight : ""}`}
+          >
+            <span className={classes.logerror}>{errorText}</span>
+          </div>
         );
       }
       if (logElement.requestID) {
+        const errorText = `RequestID: ${logElement.requestID}`;
+        const highlightedLine =
+          highlight !== ""
+            ? errorText.toLowerCase().includes(highlight.toLowerCase())
+            : false;
         errorElems.push(
-          <li key={`requestid-${logElement.key}`}>
-            <span className={classes.logerror}>
-              RequestID: {logElement.requestID}
-            </span>
-          </li>
+          <div
+            key={`requestid-${logElement.key}`}
+            className={`${highlightedLine ? classes.highlight : ""}`}
+          >
+            <span className={classes.logerror}>{errorText}</span>
+          </div>
         );
       }
       if (logElement.remotehost) {
+        const errorText = `RemoteHost: ${logElement.remotehost}`;
+        const highlightedLine =
+          highlight !== ""
+            ? errorText.toLowerCase().includes(highlight.toLowerCase())
+            : false;
         errorElems.push(
-          <li key={`remotehost-${logElement.key}`}>
-            <span className={classes.logerror}>
-              RemoteHost: {logElement.remotehost}
-            </span>
-          </li>
+          <div
+            key={`remotehost-${logElement.key}`}
+            className={`${highlightedLine ? classes.highlight : ""}`}
+          >
+            <span className={classes.logerror}>{errorText}</span>
+          </div>
         );
       }
       if (logElement.host) {
+        const errorText = `Host: ${logElement.host}`;
+        const highlightedLine =
+          highlight !== ""
+            ? errorText.toLowerCase().includes(highlight.toLowerCase())
+            : false;
         errorElems.push(
-          <li key={`host-${logElement.key}`}>
-            <span className={classes.logerror}>Host: {logElement.host}</span>
-          </li>
+          <div
+            key={`host-${logElement.key}`}
+            className={`${highlightedLine ? classes.highlight : ""}`}
+          >
+            <span className={classes.logerror}>{errorText}</span>
+          </div>
         );
       }
       if (logElement.userAgent) {
+        const errorText = `UserAgent: ${logElement.userAgent}`;
+        const highlightedLine =
+          highlight !== ""
+            ? errorText.toLowerCase().includes(highlight.toLowerCase())
+            : false;
         errorElems.push(
-          <li key={`useragent-${logElement.key}`}>
-            <span className={classes.logerror}>
-              UserAgent: {logElement.userAgent}
-            </span>
-          </li>
+          <div
+            key={`useragent-${logElement.key}`}
+            className={`${highlightedLine ? classes.highlight : ""}`}
+          >
+            <span className={classes.logerror}>{errorText}</span>
+          </div>
         );
       }
       if (logElement.error.message) {
+        const errorText = `Error: ${logElement.error.message}`;
+        const highlightedLine =
+          highlight !== ""
+            ? errorText.toLowerCase().includes(highlight.toLowerCase())
+            : false;
         errorElems.push(
-          <li key={`message-${logElement.key}`}>
-            <span className={classes.logerror}>
-              Error: {logElement.error.message}
-            </span>
-          </li>
+          <div
+            key={`message-${logElement.key}`}
+            className={`${highlightedLine ? classes.highlight : ""}`}
+          >
+            <span className={classes.logerror}>{errorText}</span>
+          </div>
         );
       }
       if (logElement.error.source) {
         // for all sources add padding
         for (let s in logElement.error.source) {
+          const errorText = logElement.error.source[s];
+          const highlightedLine =
+            highlight !== ""
+              ? errorText.toLowerCase().includes(highlight.toLowerCase())
+              : false;
           errorElems.push(
-            <li key={`source-${logElement.key}-${s}`}>
-              <span className={classes.logerror_tab}>
-                {logElement.error.source[s]}
-              </span>
-            </li>
+            <div
+              key={`source-${logElement.key}-${s}`}
+              className={`${highlightedLine ? classes.highlight : ""}`}
+            >
+              <span className={classes.logerror_tab}>{errorText}</span>
+            </div>
           );
         }
       }
@@ -226,38 +298,72 @@ const Logs = ({
     // only to the first match.
     let substr = logMessage.replace(tColorRegex, "");
 
+    // in case highlight is set, we select the line that contains the requested string
+    let highlightedLine =
+      highlight !== ""
+        ? logMessage.toLowerCase().includes(highlight.toLowerCase())
+        : false;
+
     // if starts with multiple spaces add padding
     if (substr.startsWith("   ")) {
       return (
-        <li key={logElement.key}>
+        <div
+          key={logElement.key}
+          className={`${highlightedLine ? classes.highlight : ""}`}
+        >
           <span className={classes.tab}>{substr}</span>
-        </li>
+        </div>
       );
-    } else if (!isNullOrUndefined(logElement.error)) {
+    } else if (logElement.error !== null && logElement.error !== undefined) {
       // list error message and all sources and error elems
       return renderError(logElement);
     } else {
       // for all remaining set default class
       return (
-        <li key={logElement.key}>
+        <div
+          key={logElement.key}
+          className={`${highlightedLine ? classes.highlight : ""}`}
+        >
           <span className={classes.ansidefault}>{substr}</span>
-        </li>
+        </div>
       );
     }
   };
+
+  const renderLines = messages.map((m) => {
+    return renderLog(m);
+  });
 
   return (
     <React.Fragment>
       <PageHeader label="Logs" />
       <Grid container>
-        <Grid className={classes.container} item xs={12}>
-          <div className={classes.logList}>
-            <ul>
-              {messages.map((m) => {
-                return renderLog(m);
-              })}
-            </ul>
-          </div>
+        <Grid item xs={12} className={classes.container}>
+          <Grid item xs={12} className={classes.actionsTray}>
+            <TextField
+              placeholder="Highlight Line"
+              className={classes.searchField}
+              id="search-resource"
+              label=""
+              onChange={(val) => {
+                setHighlight(val.target.value);
+              }}
+              InputProps={{
+                disableUnderline: true,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <br />
+          </Grid>
+          <Grid item xs={12}>
+            <div className={classes.logList}>{renderLines}</div>
+          </Grid>
         </Grid>
       </Grid>
     </React.Fragment>
