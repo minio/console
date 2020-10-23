@@ -14,7 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { useEffect, useState } from "react";
-import { Button, Grid, Typography, TextField } from "@material-ui/core";
+import {
+  Button,
+  Grid,
+  Typography,
+  TextField,
+  InputBase,
+} from "@material-ui/core";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { AppState } from "../../../store";
 import { connect } from "react-redux";
@@ -25,8 +31,17 @@ import { niceBytes, timeFromDate } from "../../../common/utils";
 import { wsProtocol } from "../../../utils/wsUtils";
 import api from "../../../common/api";
 import { FormControl, MenuItem, Select } from "@material-ui/core";
-import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
+import {
+  actionsTray,
+  containerForHeader,
+  fieldBasic,
+  searchField,
+} from "../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../Common/PageHeader/PageHeader";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import SearchIcon from "@material-ui/icons/Search";
+import { CreateIcon } from "../../../icons";
+import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -45,30 +60,33 @@ const styles = (theme: Theme) =>
         borderBottom: "1px solid #dedede",
       },
     },
-    actionsTray: {
-      textAlign: "right",
-      "& button": {
-        marginLeft: 10,
-      },
+    searchPrefix: {
+      flexGrow: 1,
+      marginLeft: 15,
     },
-    inputField: {
-      background: "#FFFFFF",
-      padding: 12,
-      borderRadius: 5,
-      marginLeft: 10,
-      boxShadow: "0px 3px 6px #00000012",
-    },
-    fieldContainer: {
-      background: "#FFFFFF",
-      padding: 0,
-      borderRadius: 5,
-      marginLeft: 10,
-      textAlign: "left",
-      minWidth: "206px",
-      boxShadow: "0px 3px 6px #00000012",
-    },
+    ...actionsTray,
+    ...searchField,
     ...containerForHeader(theme.spacing(4)),
   });
+
+const SelectStyled = withStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      width: 450,
+      lineHeight: 1,
+      "label + &": {
+        marginTop: theme.spacing(3),
+      },
+      "& .MuiSelect-select:focus": {
+        backgroundColor: "transparent",
+      },
+    },
+    input: {
+      fontSize: 13,
+      lineHeight: 15,
+    },
+  })
+)(InputBase);
 
 interface IWatch {
   classes: any;
@@ -156,6 +174,7 @@ const Watch = ({
     label: bucketName.name,
     value: bucketName.name,
   }));
+
   return (
     <React.Fragment>
       <PageHeader label="Watch" />
@@ -170,8 +189,9 @@ const Watch = ({
                 onChange={(e) => {
                   setBucketName(e.target.value as string);
                 }}
-                className={classes.fieldContainer}
+                className={classes.searchField}
                 disabled={start}
+                input={<SelectStyled />}
               >
                 <MenuItem
                   value={bucketName}
@@ -192,7 +212,7 @@ const Watch = ({
             </FormControl>
             <TextField
               placeholder="Prefix"
-              className={classes.inputField}
+              className={`${classes.searchField} ${classes.searchPrefix}`}
               id="prefix-resource"
               label=""
               disabled={start}
@@ -205,7 +225,7 @@ const Watch = ({
             />
             <TextField
               placeholder="Suffix"
-              className={classes.inputField}
+              className={`${classes.searchField} ${classes.searchPrefix}`}
               id="suffix-resource"
               label=""
               disabled={start}
@@ -229,18 +249,27 @@ const Watch = ({
           <Grid item xs={12}>
             <br />
           </Grid>
-          <div className={classes.watchList}>
-            <ul>
-              {messages.map((m) => {
-                return (
-                  <li key={m.key}>
-                    {timeFromDate(m.Time)} - {niceBytes(m.Size + "")} - {m.Type}{" "}
-                    - {m.Path}
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+          <TableWrapper
+            columns={[
+              {
+                label: "Time",
+                elementKey: "Time",
+                renderFunction: timeFromDate,
+              },
+              {
+                label: "Size",
+                elementKey: "Size",
+                renderFunction: niceBytes,
+              },
+              { label: "Type", elementKey: "Type" },
+              { label: "Path", elementKey: "Path" },
+            ]}
+            records={messages}
+            entityName={"Watch"}
+            customEmptyMessage={"No Changes at this time"}
+            idField={"watch_table"}
+            isLoading={false}
+          />
         </Grid>
       </Grid>
     </React.Fragment>
