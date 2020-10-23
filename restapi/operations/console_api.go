@@ -226,6 +226,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIPutObjectLegalHoldHandler: user_api.PutObjectLegalHoldHandlerFunc(func(params user_api.PutObjectLegalHoldParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.PutObjectLegalHold has not yet been implemented")
 		}),
+		UserAPIPutObjectRetentionHandler: user_api.PutObjectRetentionHandlerFunc(func(params user_api.PutObjectRetentionParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.PutObjectRetention has not yet been implemented")
+		}),
 		UserAPIRemoteBucketDetailsHandler: user_api.RemoteBucketDetailsHandlerFunc(func(params user_api.RemoteBucketDetailsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.RemoteBucketDetails has not yet been implemented")
 		}),
@@ -446,6 +449,8 @@ type ConsoleAPI struct {
 	AdminAPIProfilingStopHandler admin_api.ProfilingStopHandler
 	// UserAPIPutObjectLegalHoldHandler sets the operation handler for the put object legal hold operation
 	UserAPIPutObjectLegalHoldHandler user_api.PutObjectLegalHoldHandler
+	// UserAPIPutObjectRetentionHandler sets the operation handler for the put object retention operation
+	UserAPIPutObjectRetentionHandler user_api.PutObjectRetentionHandler
 	// UserAPIRemoteBucketDetailsHandler sets the operation handler for the remote bucket details operation
 	UserAPIRemoteBucketDetailsHandler user_api.RemoteBucketDetailsHandler
 	// AdminAPIRemoveGroupHandler sets the operation handler for the remove group operation
@@ -723,6 +728,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIPutObjectLegalHoldHandler == nil {
 		unregistered = append(unregistered, "user_api.PutObjectLegalHoldHandler")
+	}
+	if o.UserAPIPutObjectRetentionHandler == nil {
+		unregistered = append(unregistered, "user_api.PutObjectRetentionHandler")
 	}
 	if o.UserAPIRemoteBucketDetailsHandler == nil {
 		unregistered = append(unregistered, "user_api.RemoteBucketDetailsHandler")
@@ -1102,6 +1110,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/buckets/{bucket_name}/objects/legalhold"] = user_api.NewPutObjectLegalHold(o.context, o.UserAPIPutObjectLegalHoldHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/buckets/{bucket_name}/objects/retention"] = user_api.NewPutObjectRetention(o.context, o.UserAPIPutObjectRetentionHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
