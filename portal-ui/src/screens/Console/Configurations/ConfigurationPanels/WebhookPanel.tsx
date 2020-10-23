@@ -94,10 +94,9 @@ const panels = {
 
 const WebhookPanel = ({ match, classes }: IWebhookPanel) => {
   const [addWebhookOpen, setAddWebhookOpen] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
   const [filter, setFilter] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [webhooks, setWebhooks] = useState<IWebhook[]>([]);
+  // const [webhooks, setWebhooks] = useState<IWebhook[]>([]);
 
   const pathIn = get(match, "path", "");
   const panelToDisplay = pathIn.split("/");
@@ -106,6 +105,8 @@ const WebhookPanel = ({ match, classes }: IWebhookPanel) => {
   if (!panelData) {
     return null;
   }
+
+  const webhooks: IWebhook[] = [];
 
   const filteredRecords: IWebhook[] = webhooks.filter((elementItem) =>
     elementItem.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
@@ -137,7 +138,6 @@ const WebhookPanel = ({ match, classes }: IWebhookPanel) => {
         <Grid item xs={12}>
           <br />
         </Grid>
-        {error !== "" && <Grid container>{error}</Grid>}
         <Grid item xs={12} className={classes.actionsTray}>
           <TextField
             placeholder="Filter"

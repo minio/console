@@ -31,7 +31,6 @@ import AddZoneModal from "./AddZoneModal";
 import AddBucket from "../../Buckets/ListBuckets/AddBucket";
 import ReplicationSetup from "./ReplicationSetup";
 import api from "../../../../common/api";
-import { BucketInfo } from "../../Buckets/types";
 import { ITenant, IZone } from "../ListTenants/types";
 
 interface ITenantDetailsProps {
@@ -94,8 +93,6 @@ const styles = (theme: Theme) =>
 const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [capacity, setCapacity] = useState<number>(0);
-  const [externalIDP, setExternalIDP] = useState<boolean>(false);
-  const [externalKMS, setExternalKMS] = useState<boolean>(false);
   const [zoneCount, setZoneCount] = useState<number>(0);
   const [zones, setZones] = useState<IZone[]>([]);
   const [instances, setInstances] = useState<number>(0);
@@ -103,7 +100,6 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
   const [addZoneOpen, setAddZone] = useState<boolean>(false);
   const [addBucketOpen, setAddBucketOpen] = useState<boolean>(false);
   const [addReplicationOpen, setAddReplicationOpen] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [tenant, setTenant] = useState<ITenant | null>(null);
 
@@ -131,8 +127,6 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
     const tenantName = match.params["tenantName"];
     const tenantNamespace = match.params["tenantNamespace"];
 
-    setLoading(true);
-
     api
       .invoke(
         "GET",
@@ -140,7 +134,7 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
       )
       .then((res: ITenant) => {
         const resZones = !res.zones ? [] : res.zones;
-        const total = res.volume_count * res.volume_size;
+
         let totalInstances = 0;
         let totalVolumes = 0;
         let count = 1;
@@ -165,16 +159,15 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
 
         setTenant(res);
         setError("");
-        setLoading(false);
       })
       .catch((err) => {
         setError(err);
-        setLoading(false);
       });
   };
 
   useEffect(() => {
     loadInfo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -204,6 +197,11 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
             {`Tenant > ${match.params["tenantName"]}`}
           </Typography>
         </Grid>
+        {error !== "" && (
+          <Grid item xs={12}>
+            {error}
+          </Grid>
+        )}
         <Grid item xs={12}>
           <br />
         </Grid>

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect } from "react"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import { RouteComponentProps } from "react-router";
 import storage from "local-storage-fallback";
 import api from "../../common/api";
@@ -36,6 +36,7 @@ const LoginCallback: FC<RouteComponentProps> = ({ location }) => {
       .catch((res: any) => {
         window.location.href = "/login";
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return null;
 };

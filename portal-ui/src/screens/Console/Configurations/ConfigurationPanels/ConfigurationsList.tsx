@@ -18,7 +18,6 @@ import React, { useState } from "react";
 import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import { TextField } from "@material-ui/core";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
@@ -63,7 +62,6 @@ const ConfigurationsList = ({ classes }: IListConfiguration) => {
     configuration_id: "",
     configuration_label: "",
   });
-  const [error, setError] = useState("");
   const [filter, setFilter] = useState("");
 
   const tableActions = [
@@ -103,7 +101,6 @@ const ConfigurationsList = ({ classes }: IListConfiguration) => {
       <PageHeader label="Configurations List" />
       <Grid container>
         <Grid item xs={12} className={classes.container}>
-          {error !== "" && <Grid container>{error}</Grid>}
           <Grid item xs={12} className={classes.actionsTray}>
             <TextField
               placeholder="Filter"

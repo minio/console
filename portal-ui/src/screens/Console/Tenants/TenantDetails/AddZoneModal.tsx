@@ -3,13 +3,8 @@ import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import Grid from "@material-ui/core/Grid";
-import {
-  factorForDropdown,
-  getTotalSize,
-  niceBytes,
-} from "../../../../common/utils";
+import { niceBytes } from "../../../../common/utils";
 import { Button, LinearProgress } from "@material-ui/core";
 import api from "../../../../common/api";
 import { IAddZoneRequest, ITenant } from "../ListTenants/types";

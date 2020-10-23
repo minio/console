@@ -20,7 +20,6 @@ import { TextField } from "@material-ui/core";
 import { red } from "@material-ui/core/colors";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";

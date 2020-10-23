@@ -24,7 +24,6 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import api from "../../../common/api";
 import GroupsSelectors from "./GroupsSelectors";
-import Title from "../../../common/Title";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 
 interface IAddToGroup {

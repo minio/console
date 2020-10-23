@@ -27,12 +27,11 @@ import {
   containerForHeader,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
-import { Button, Grid } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
-import { CreateIcon } from "../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -122,20 +121,7 @@ const Logs = ({
         console.log("closing websockets");
       };
     }
-  }, [logMessageReceived]);
-
-  // replaces a character of a string with other at a given index
-  const replaceWeirdChar = (
-    origString: string,
-    replaceChar: string,
-    index: number
-  ) => {
-    let firstPart = origString.substr(0, index);
-    let lastPart = origString.substr(index + 1);
-
-    let newString = firstPart + replaceChar + lastPart;
-    return newString;
-  };
+  }, [logMessageReceived, logResetMessages]);
 
   const renderError = (logElement: LogMessage) => {
     let errorElems = [];
