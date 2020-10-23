@@ -41,6 +41,7 @@ interface RadioGroupProps {
   id: string;
   name: string;
   tooltip?: string;
+  disableOptions?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   classes: any;
   displayInColumn?: boolean;
@@ -60,6 +61,11 @@ const styles = (theme: Theme) =>
       marginTop: 11,
     },
     optionLabel: {
+      "&.Mui-disabled": {
+        "& .MuiFormControlLabel-label": {
+          color: "#9c9c9c",
+        },
+      },
       "&:last-child": {
         marginRight: 0,
       },
@@ -109,6 +115,7 @@ export const RadioGroupSelector = ({
   name,
   onChange,
   tooltip = "",
+  disableOptions = false,
   classes,
   displayInColumn = false,
 }: RadioGroupProps) => {
@@ -139,9 +146,10 @@ export const RadioGroupSelector = ({
               return (
                 <FormControlLabel
                   key={`rd-${name}-${selectorOption.value}`}
-                  value={selectorOption.value}
+                  value={disableOptions ? "disabled" : selectorOption.value}
                   control={<RadioButton />}
                   label={selectorOption.label}
+                  disabled={disableOptions}
                   className={clsx(classes.optionLabel, {
                     [classes.checkedOption]:
                       selectorOption.value === currentSelection,
