@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
+import clsx from "clsx";
 import Grid from "@material-ui/core/Grid";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -58,8 +59,18 @@ const styles = (theme: Theme) =>
       paddingBottom: 10,
       marginTop: 11,
     },
+    optionLabel: {
+      "&:last-child": {
+        marginRight: 0,
+      },
+      "& .MuiFormControlLabel-label": {
+        fontSize: 12,
+        color: "#000",
+      },
+    },
     checkedOption: {
       "& .MuiFormControlLabel-label": {
+        fontSize: 12,
         color: "#000",
         fontWeight: 700,
       },
@@ -131,11 +142,10 @@ export const RadioGroupSelector = ({
                   value={selectorOption.value}
                   control={<RadioButton />}
                   label={selectorOption.label}
-                  className={
-                    selectorOption.value === currentSelection
-                      ? classes.checkedOption
-                      : ""
-                  }
+                  className={clsx(classes.optionLabel, {
+                    [classes.checkedOption]:
+                      selectorOption.value === currentSelection,
+                  })}
                 />
               );
             })}
