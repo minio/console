@@ -24,6 +24,7 @@ import (
 	"time"
 
 	"github.com/minio/minio-go/v7/pkg/replication"
+	"github.com/minio/minio-go/v7/pkg/sse"
 
 	"errors"
 
@@ -61,6 +62,9 @@ type MinioClient interface {
 	putObject(ctx context.Context, bucketName, objectName string, reader io.Reader, objectSize int64, opts minio.PutObjectOptions) (info minio.UploadInfo, err error)
 	putObjectLegalHold(ctx context.Context, bucketName, objectName string, opts minio.PutObjectLegalHoldOptions) error
 	putObjectRetention(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error
+	setBucketEncryption(ctx context.Context, bucketName string, config *sse.Configuration) error
+	removeBucketEncryption(ctx context.Context, bucketName string) error
+	getBucketEncryption(ctx context.Context, bucketName string) (*sse.Configuration, error)
 }
 
 // Interface implementation
@@ -141,6 +145,21 @@ func (c minioClient) putObjectLegalHold(ctx context.Context, bucketName, objectN
 
 func (c minioClient) putObjectRetention(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
 	return c.client.PutObjectRetention(ctx, bucketName, objectName, opts)
+}
+
+// implements minio.SetBucketEncryption(ctx, bucketName, config)
+func (c minioClient) setBucketEncryption(ctx context.Context, bucketName string, config *sse.Configuration) error {
+	return c.client.SetBucketEncryption(ctx, bucketName, config)
+}
+
+// implements minio.RemoveBucketEncryption(ctx, bucketName)
+func (c minioClient) removeBucketEncryption(ctx context.Context, bucketName string) error {
+	return c.client.RemoveBucketEncryption(ctx, bucketName)
+}
+
+// implements minio.GetBucketEncryption(ctx, bucketName, config)
+func (c minioClient) getBucketEncryption(ctx context.Context, bucketName string) (*sse.Configuration, error) {
+	return c.client.GetBucketEncryption(ctx, bucketName)
 }
 
 // MCClient interface with all functions to be implemented

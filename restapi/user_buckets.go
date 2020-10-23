@@ -25,6 +25,7 @@ import (
 	"time"
 
 	"github.com/minio/minio-go/v7/pkg/replication"
+	"github.com/minio/minio-go/v7/pkg/sse"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
@@ -100,6 +101,28 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 			return user_api.NewAddBucketReplicationDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return user_api.NewAddBucketReplicationCreated()
+	})
+	// enable bucket encryption
+	api.UserAPIEnableBucketEncryptionHandler = user_api.EnableBucketEncryptionHandlerFunc(func(params user_api.EnableBucketEncryptionParams, session *models.Principal) middleware.Responder {
+		if err := enableBucketEncryptionResponse(session, params); err != nil {
+			return user_api.NewEnableBucketEncryptionDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewEnableBucketEncryptionOK()
+	})
+	// disable bucket encryption
+	api.UserAPIDisableBucketEncryptionHandler = user_api.DisableBucketEncryptionHandlerFunc(func(params user_api.DisableBucketEncryptionParams, session *models.Principal) middleware.Responder {
+		if err := disableBucketEncryptionResponse(session, params); err != nil {
+			return user_api.NewDisableBucketEncryptionDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewDisableBucketEncryptionOK()
+	})
+	// get bucket encryption info
+	api.UserAPIGetBucketEncryptionInfoHandler = user_api.GetBucketEncryptionInfoHandlerFunc(func(params user_api.GetBucketEncryptionInfoParams, session *models.Principal) middleware.Responder {
+		response, err := getBucketEncryptionInfoResponse(session, params)
+		if err != nil {
+			return user_api.NewGetBucketEncryptionInfoDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewGetBucketEncryptionInfoOK().WithPayload(response)
 	})
 }
 
@@ -461,4 +484,85 @@ func consoleAccess2policyAccess(bucketAccess models.BucketAccess) (bucketPolicy 
 		bucketPolicy = policy.BucketPolicyNone
 	}
 	return bucketPolicy
+}
+
+// enableBucketEncryption will enable bucket encryption based on two encryption algorithms, sse-s3 (server side encryption with external KMS) or sse-kms (aws s3 kms key)
+func enableBucketEncryption(ctx context.Context, client MinioClient, bucketName string, encryptionType models.BucketEncryptionType, kmsKeyID string) error {
+	var config *sse.Configuration
+	switch encryptionType {
+	case models.BucketEncryptionTypeSseKms:
+		config = sse.NewConfigurationSSEKMS(kmsKeyID)
+	case models.BucketEncryptionTypeSseS3:
+		config = sse.NewConfigurationSSES3()
+	default:
+		return errInvalidEncryptionAlgorithm
+	}
+	return client.setBucketEncryption(ctx, bucketName, config)
+}
+
+// enableBucketEncryptionResponse calls enableBucketEncryption() to create new encryption configuration for provided bucket name
+func enableBucketEncryptionResponse(session *models.Principal, params user_api.EnableBucketEncryptionParams) *models.Error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		return prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+	if err := enableBucketEncryption(ctx, minioClient, params.BucketName, params.Body.EncType, params.Body.KmsKeyID); err != nil {
+		return prepareError(err)
+	}
+	return nil
+}
+
+// disableBucketEncryption will disable bucket for the provided bucket name
+func disableBucketEncryption(ctx context.Context, client MinioClient, bucketName string) error {
+	return client.removeBucketEncryption(ctx, bucketName)
+}
+
+// disableBucketEncryptionResponse calls disableBucketEncryption()
+func disableBucketEncryptionResponse(session *models.Principal, params user_api.DisableBucketEncryptionParams) *models.Error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		return prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+	if err := disableBucketEncryption(ctx, minioClient, params.BucketName); err != nil {
+		return prepareError(err)
+	}
+	return nil
+}
+
+func getBucketEncryptionInfo(ctx context.Context, client MinioClient, bucketName string) (*models.BucketEncryptionInfo, error) {
+	bucketInfo, err := client.getBucketEncryption(ctx, bucketName)
+	if err != nil {
+		return nil, err
+	}
+	if len(bucketInfo.Rules) == 0 {
+		return nil, errorGeneric
+	}
+	return &models.BucketEncryptionInfo{Algorithm: bucketInfo.Rules[0].Apply.SSEAlgorithm, KmsMasterKeyID: bucketInfo.Rules[0].Apply.KmsMasterKeyID}, nil
+}
+
+func getBucketEncryptionInfoResponse(session *models.Principal, params user_api.GetBucketEncryptionInfoParams) (*models.BucketEncryptionInfo, *models.Error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+	bucketInfo, err := getBucketEncryptionInfo(ctx, minioClient, params.BucketName)
+	if err != nil {
+		return nil, prepareError(errSSENotConfigured, err)
+	}
+	return bucketInfo, nil
 }

@@ -20,6 +20,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"reflect"
 	"testing"
 
 	"time"
@@ -27,6 +28,7 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/sse"
 	"github.com/minio/minio/pkg/madmin"
 	"github.com/stretchr/testify/assert"
 )
@@ -37,6 +39,9 @@ var minioMakeBucketWithContextMock func(ctx context.Context, bucketName, locatio
 var minioSetBucketPolicyWithContextMock func(ctx context.Context, bucketName, policy string) error
 var minioRemoveBucketMock func(bucketName string) error
 var minioGetBucketPolicyMock func(bucketName string) (string, error)
+var minioSetBucketEncryptionMock func(ctx context.Context, bucketName string, config *sse.Configuration) error
+var minioRemoveBucketEncryptionMock func(ctx context.Context, bucketName string) error
+var minioGetBucketEncryptionMock func(ctx context.Context, bucketName string) (*sse.Configuration, error)
 
 // Define a mock struct of minio Client interface implementation
 type minioClientMock struct {
@@ -62,9 +67,21 @@ func (mc minioClientMock) removeBucket(ctx context.Context, bucketName string) e
 	return minioRemoveBucketMock(bucketName)
 }
 
-// imock function of getBucketPolicy()
+// mock function of getBucketPolicy()
 func (mc minioClientMock) getBucketPolicy(ctx context.Context, bucketName string) (string, error) {
 	return minioGetBucketPolicyMock(bucketName)
+}
+
+func (mc minioClientMock) setBucketEncryption(ctx context.Context, bucketName string, config *sse.Configuration) error {
+	return minioSetBucketEncryptionMock(ctx, bucketName, config)
+}
+
+func (mc minioClientMock) removeBucketEncryption(ctx context.Context, bucketName string) error {
+	return minioRemoveBucketEncryptionMock(ctx, bucketName)
+}
+
+func (mc minioClientMock) getBucketEncryption(ctx context.Context, bucketName string) (*sse.Configuration, error) {
+	return minioGetBucketEncryptionMock(ctx, bucketName)
 }
 
 var minioAccountUsageInfoMock func(ctx context.Context) (madmin.AccountUsageInfo, error)
@@ -316,4 +333,185 @@ func TestSetBucketAccess(t *testing.T) {
 		assert.Equal("error", err.Error())
 	}
 
+}
+
+func Test_enableBucketEncryption(t *testing.T) {
+	ctx := context.Background()
+	minClient := minioClientMock{}
+	type args struct {
+		ctx                            context.Context
+		client                         MinioClient
+		bucketName                     string
+		encryptionType                 models.BucketEncryptionType
+		kmsKeyID                       string
+		mockEnableBucketEncryptionFunc func(ctx context.Context, bucketName string, config *sse.Configuration) error
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "Bucket encryption enabled correctly",
+			args: args{
+				ctx:            ctx,
+				client:         minClient,
+				bucketName:     "test",
+				encryptionType: "sse-s3",
+				mockEnableBucketEncryptionFunc: func(ctx context.Context, bucketName string, config *sse.Configuration) error {
+					return nil
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "Error when enabling bucket encryption",
+			args: args{
+				ctx:            ctx,
+				client:         minClient,
+				bucketName:     "test",
+				encryptionType: "sse-s3",
+				mockEnableBucketEncryptionFunc: func(ctx context.Context, bucketName string, config *sse.Configuration) error {
+					return errorGenericInvalidSession
+				},
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			minioSetBucketEncryptionMock = tt.args.mockEnableBucketEncryptionFunc
+			if err := enableBucketEncryption(tt.args.ctx, tt.args.client, tt.args.bucketName, tt.args.encryptionType, tt.args.kmsKeyID); (err != nil) != tt.wantErr {
+				t.Errorf("enableBucketEncryption() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func Test_disableBucketEncryption(t *testing.T) {
+	ctx := context.Background()
+	minClient := minioClientMock{}
+	type args struct {
+		ctx                   context.Context
+		client                MinioClient
+		bucketName            string
+		mockBucketDisableFunc func(ctx context.Context, bucketName string) error
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "Bucket encryption disabled correctly",
+			args: args{
+				ctx:        ctx,
+				client:     minClient,
+				bucketName: "test",
+				mockBucketDisableFunc: func(ctx context.Context, bucketName string) error {
+					return nil
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "Error when disabling bucket encryption",
+			args: args{
+				ctx:        ctx,
+				client:     minClient,
+				bucketName: "test",
+				mockBucketDisableFunc: func(ctx context.Context, bucketName string) error {
+					return errorGeneric
+				},
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			minioRemoveBucketEncryptionMock = tt.args.mockBucketDisableFunc
+			if err := disableBucketEncryption(tt.args.ctx, tt.args.client, tt.args.bucketName); (err != nil) != tt.wantErr {
+				t.Errorf("disableBucketEncryption() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func Test_getBucketEncryptionInfo(t *testing.T) {
+	ctx := context.Background()
+	minClient := minioClientMock{}
+	type args struct {
+		ctx                     context.Context
+		client                  MinioClient
+		bucketName              string
+		mockBucketEncryptionGet func(ctx context.Context, bucketName string) (*sse.Configuration, error)
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    *models.BucketEncryptionInfo
+		wantErr bool
+	}{
+		{
+			name: "Bucket encryption info returned correctly",
+			args: args{
+				ctx:        ctx,
+				client:     minClient,
+				bucketName: "test",
+				mockBucketEncryptionGet: func(ctx context.Context, bucketName string) (*sse.Configuration, error) {
+					return &sse.Configuration{
+						Rules: []sse.Rule{
+							{
+								Apply: sse.ApplySSEByDefault{SSEAlgorithm: "AES256", KmsMasterKeyID: ""},
+							},
+						},
+					}, nil
+				},
+			},
+			wantErr: false,
+			want: &models.BucketEncryptionInfo{
+				Algorithm:      "AES256",
+				KmsMasterKeyID: "",
+			},
+		},
+		{
+			name: "Bucket encryption info with no rules",
+			args: args{
+				ctx:        ctx,
+				client:     minClient,
+				bucketName: "test",
+				mockBucketEncryptionGet: func(ctx context.Context, bucketName string) (*sse.Configuration, error) {
+					return &sse.Configuration{
+						Rules: []sse.Rule{},
+					}, nil
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "Error when obtaining bucket encryption info",
+			args: args{
+				ctx:        ctx,
+				client:     minClient,
+				bucketName: "test",
+				mockBucketEncryptionGet: func(ctx context.Context, bucketName string) (*sse.Configuration, error) {
+					return nil, errSSENotConfigured
+				},
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			minioGetBucketEncryptionMock = tt.args.mockBucketEncryptionGet
+			got, err := getBucketEncryptionInfo(tt.args.ctx, tt.args.client, tt.args.bucketName)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("getBucketEncryptionInfo() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("getBucketEncryptionInfo() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
