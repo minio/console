@@ -16,7 +16,6 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { FormControlLabel, Switch } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
@@ -201,6 +200,8 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
     setUser(kv.get("user") ? kv.get("user") + "" : "");
     setPassword(kv.get("password") ? kv.get("password") + "" : "");
     setSslMode(kv.get("sslmode") ? kv.get("sslmode") + "" : " ");
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [useConnectionString]);
 
   return (

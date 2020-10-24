@@ -105,8 +105,8 @@ const CSVMultiSelector = ({
       firstUpdate.current = false;
       return;
     }
-
     debouncedOnChange();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentElements]);
 
   // If the last input is not empty, we add a new one

@@ -14,20 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import {
-  Button,
-  LinearProgress,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@material-ui/core";
+import { Button, LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import {
   modalBasic,
@@ -35,10 +25,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { User } from "../Users/types";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
-import { Policy, PolicyList } from "./types";
 import api from "../../../common/api";
-import { policySort } from "../../../utils/sortFunctions";
-import { Group } from "../Groups/types";
 import PolicySelectors from "./PolicySelectors";
 
 interface ISetPolicyProps {
@@ -132,7 +119,8 @@ const SetPolicy = ({
       setActualPolicy(userPolicy);
       setSelectedPolicy(userPolicy);
     }
-  }, [open]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, selectedGroup, selectedUser]);
 
   const userName = get(selectedUser, "accessKey", "");
 
@@ -144,6 +132,7 @@ const SetPolicy = ({
       modalOpen={open}
       title="Set Policies"
     >
+      {error !== "" && <span className={classes.error}>{error}</span>}
       <Grid item xs={12}>
         <Grid item xs={12} className={classes.predefinedTitle}>
           Selected {selectedGroup !== null ? "Group" : "User"}

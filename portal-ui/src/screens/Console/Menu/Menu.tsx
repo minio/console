@@ -19,16 +19,11 @@ import { connect } from "react-redux";
 import { NavLink } from "react-router-dom";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
-import WebAssetIcon from "@material-ui/icons/WebAsset";
-import HealingIcon from "@material-ui/icons/Healing";
 import DescriptionIcon from "@material-ui/icons/Description";
-import FileCopyIcon from "@material-ui/icons/FileCopy";
 import Collapse from "@material-ui/core/Collapse";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
-import { Divider, Typography, withStyles } from "@material-ui/core";
-import { ExitToApp } from "@material-ui/icons";
-import storage from "local-storage-fallback";
+import { Divider, withStyles } from "@material-ui/core";
 import { createStyles, Theme } from "@material-ui/core/styles";
 import history from "../../../history";
 import logo from "../../../icons/minio_console_logo.svg";
@@ -362,7 +357,7 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
             (menuItem: any) => menuItem.type !== "title"
           );
 
-          if (countableElements.length == 0) {
+          if (countableElements.length === 0) {
             return null;
           }
 
@@ -429,6 +424,7 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
                       );
                     }
                     default:
+                      return null;
                   }
                 })}
                 <Divider />

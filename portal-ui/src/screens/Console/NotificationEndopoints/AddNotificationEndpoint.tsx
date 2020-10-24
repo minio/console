@@ -62,6 +62,7 @@ const styles = (theme: Theme) =>
       height: "80px",
     },
     lambdaNotif: {
+      backgroundColor: "#fff",
       border: "#393939 1px solid",
       borderRadius: 5,
       width: 101,
@@ -289,7 +290,7 @@ const AddNotificationEndpoint = ({
             <div className={classes.iconContainer}>
               {withLogos.map((item) => {
                 return (
-                  <a
+                  <button
                     key={`icon-${item.targetTitle}`}
                     className={classes.lambdaNotif}
                     onClick={() => {
@@ -301,7 +302,7 @@ const AddNotificationEndpoint = ({
                       className={classes.logoButton}
                       alt={item.targetTitle}
                     />
-                  </a>
+                  </button>
                 );
               })}
             </div>

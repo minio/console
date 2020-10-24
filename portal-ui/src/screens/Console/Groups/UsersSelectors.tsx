@@ -20,7 +20,6 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { LinearProgress } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import Title from "../../../common/Title";
 import { UsersList } from "../Users/types";
 import { usersSort } from "../../../utils/sortFunctions";
 import api from "../../../common/api";
@@ -28,10 +27,7 @@ import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import {
-  actionsTray,
-  predefinedList,
-} from "../Common/FormComponents/common/styleLibrary";
+import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
 
 interface IGroupsProps {
   classes: any;

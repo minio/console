@@ -17,13 +17,7 @@
 import React from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../common/api";
-import {
-  Button,
-  Grid,
-  Typography,
-  TextField,
-  InputAdornment,
-} from "@material-ui/core";
+import { Button, Grid, TextField, InputAdornment } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import GroupIcon from "@material-ui/icons/Group";
 import { User, UsersList } from "./types";
@@ -34,7 +28,6 @@ import AddUser from "./AddUser";
 import DeleteUser from "./DeleteUser";
 import AddToGroup from "./AddToGroup";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import DescriptionIcon from "@material-ui/icons/Description";
 import SetPolicy from "../Policies/SetPolicy";
 import {
   actionsTray,
@@ -183,7 +176,6 @@ class Users extends React.Component<IUsersProps, IUsersState> {
     const { classes } = this.props;
     const {
       records,
-      totalRecords,
       addScreenOpen,
       loading,
       page,

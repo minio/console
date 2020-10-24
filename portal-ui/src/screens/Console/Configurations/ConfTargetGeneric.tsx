@@ -20,7 +20,6 @@ import Grid from "@material-ui/core/Grid";
 import { IElementValue, KVField } from "./types";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import RadioGroupSelector from "../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import CSVMultiSelector from "../Common/FormComponents/CSVMultiSelector/CSVMultiSelector";
 import CommentBoxWrapper from "../Common/FormComponents/CommentBoxWrapper/CommentBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
@@ -79,6 +78,7 @@ const ConfTargetGeneric = ({
     });
 
     setValueHolder(values);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fields, defaultVals]);
 
   useEffect(() => {

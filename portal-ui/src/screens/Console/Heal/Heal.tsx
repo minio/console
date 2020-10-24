@@ -1,12 +1,6 @@
 import { HorizontalBar } from "react-chartjs-2";
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Grid,
-  Typography,
-  TextField,
-  Checkbox,
-} from "@material-ui/core";
+import { Button, Grid, TextField, Checkbox } from "@material-ui/core";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { wsProtocol } from "../../../utils/wsUtils";
@@ -171,7 +165,7 @@ const Heal = ({ classes }: IHeal) => {
         };
       }
     }
-  }, [start]);
+  }, [start, bucketName, forceStart, forceStop, prefix, recursive]);
 
   let data = {
     labels: ["Green", "Yellow", "Red", "Grey"],

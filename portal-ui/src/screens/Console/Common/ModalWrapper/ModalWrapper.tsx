@@ -16,12 +16,7 @@
 import React from "react";
 import { Dialog, DialogContent, DialogTitle } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
-import {
-  createStyles,
-  makeStyles,
-  Theme,
-  withStyles,
-} from "@material-ui/core/styles";
+import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 
 interface IModalProps {
   classes: any;

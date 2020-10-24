@@ -16,7 +16,6 @@
 
 import React, { useEffect, useState } from "react";
 import request from "superagent";
-import storage from "local-storage-fallback";
 import { connect, ConnectedProps } from "react-redux";
 import ErrorIcon from "@material-ui/icons/Error";
 import Button from "@material-ui/core/Button";
@@ -31,7 +30,6 @@ import api from "../../common/api";
 import { ILoginDetails, loginStrategyType } from "./types";
 import { setSession } from "../../common/utils";
 import history from "../../history";
-import { Error } from "@material-ui/icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -154,7 +152,6 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
   const [jwt, setJwt] = useState<string>("");
   const [secretKey, setSecretKey] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
   const [loginStrategy, setLoginStrategy] = useState<ILoginDetails>({
     loginStrategy: loginStrategyType.unknown,
     redirect: "",
@@ -170,17 +167,13 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
   };
 
   const fetchConfiguration = () => {
-    setLoading(true);
-
     api
       .invoke("GET", "/api/v1/login")
       .then((loginDetails: ILoginDetails) => {
-        setLoading(false);
         setLoginStrategy(loginDetails);
         setError("");
       })
       .catch((err: any) => {
-        setLoading(false);
         setError(err);
       });
   };

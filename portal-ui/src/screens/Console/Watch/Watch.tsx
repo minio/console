@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Grid,
-  Typography,
-  TextField,
-  InputBase,
-} from "@material-ui/core";
+import { Button, Grid, TextField, InputBase } from "@material-ui/core";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { AppState } from "../../../store";
 import { connect } from "react-redux";
@@ -34,13 +28,9 @@ import { FormControl, MenuItem, Select } from "@material-ui/core";
 import {
   actionsTray,
   containerForHeader,
-  fieldBasic,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
-import { CreateIcon } from "../../../icons";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
 const styles = (theme: Theme) =>
@@ -168,7 +158,15 @@ const Watch = ({
       // reset start status
       setStart(false);
     }
-  }, [watchMessageReceived, start]);
+  }, [
+    watchMessageReceived,
+    start,
+    bucketList,
+    bucketName,
+    prefix,
+    suffix,
+    watchResetMessages,
+  ]);
 
   const bucketNames = bucketList.map((bucketName) => ({
     label: bucketName.name,

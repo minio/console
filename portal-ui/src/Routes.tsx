@@ -15,17 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import {
-  Redirect,
-  Route,
-  Router,
-  Switch,
-  BrowserRouter,
-} from "react-router-dom";
+import { Redirect, Route, Router, Switch } from "react-router-dom";
 import history from "./history";
 import Login from "./screens/LoginPage/LoginPage";
 import Console from "./screens/Console/Console";
-import NotFoundPage from "./screens/NotFoundPage";
 import storage from "local-storage-fallback";
 import { connect } from "react-redux";
 import { AppState } from "./store";

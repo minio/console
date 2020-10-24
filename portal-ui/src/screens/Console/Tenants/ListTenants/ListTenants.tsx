@@ -16,7 +16,6 @@
 
 import React, { useEffect, useState } from "react";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
@@ -93,7 +92,6 @@ const ListTenants = ({ classes }: ITenantsList) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [filterTenants, setFilterTenants] = useState<string>("");
   const [records, setRecords] = useState<any[]>([]);
-  const [offset, setOffset] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   const [page, setPage] = useState<number>(0);
   const [error, setError] = useState<string>("");
@@ -154,17 +152,15 @@ const ListTenants = ({ classes }: ITenantsList) => {
     setRowsPerPage(rPP);
   };
 
-  const openLink = (link: string) => {
-    window.open(link, "_blank");
-  };
-
   const tableActions = [
     { type: "view", onClick: redirectToTenantDetails },
     { type: "delete", onClick: confirmDeleteTenant },
   ];
 
+  const globalOffset = 0;
+
   const filteredRecords = records
-    .slice(offset, offset + rowsPerPage)
+    .slice(globalOffset, globalOffset + rowsPerPage)
     .filter((b: any) => {
       if (filterTenants === "") {
         return true;
@@ -291,6 +287,11 @@ const ListTenants = ({ classes }: ITenantsList) => {
               Create Tenant
             </Button>
           </Grid>
+          {error !== "" && (
+            <Grid item xs={12}>
+              {error}
+            </Grid>
+          )}
           <Grid item xs={12}>
             <br />
           </Grid>

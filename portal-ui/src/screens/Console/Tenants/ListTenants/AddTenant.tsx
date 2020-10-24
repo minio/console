@@ -265,6 +265,8 @@ const AddTenant = ({
   /*Calculate Allocation*/
   useEffect(() => {
     validateClusterSize();
+    setECParityChoices([]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodes, volumeSize, sizeFactor]);
 
   const validateClusterSize = () => {
@@ -660,6 +662,7 @@ const AddTenant = ({
     setEncryptionValid(Object.keys(commonVal).length === 0);
 
     setValidationErrors(commonVal);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     enableEncryption,
     encryptionType,
@@ -920,6 +923,7 @@ const AddTenant = ({
           setAddError(err);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addSending]);
 
   const storeCertInObject = (certName: string, certValue: string) => {

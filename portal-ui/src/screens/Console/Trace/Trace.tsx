@@ -95,7 +95,7 @@ const Trace = ({
         console.log("closing websockets");
       };
     }
-  }, [traceMessageReceived]);
+  }, [traceMessageReceived, traceResetMessages]);
 
   return (
     <React.Fragment>
