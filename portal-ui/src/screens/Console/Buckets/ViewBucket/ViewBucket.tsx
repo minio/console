@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { ChangeEvent } from "react";
 import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
@@ -27,6 +27,7 @@ import {
   BucketEvent,
   BucketEventList,
   BucketInfo,
+  BucketEncryptionInfo,
   BucketList,
   BucketReplication,
   BucketReplicationDestination,
@@ -45,6 +46,9 @@ import { niceBytes } from "../../../../common/utils";
 import AddReplicationModal from "./AddReplicationModal";
 import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../../Common/PageHeader/PageHeader";
+import Checkbox from "@material-ui/core/Checkbox";
+import TableCell from "@material-ui/core/TableCell";
+import EnableBucketEncryption from "./EnableBucketEncryption";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -190,6 +194,7 @@ interface IViewBucketState {
   rowsPerPage: number;
   curTab: number;
   addScreenOpen: boolean;
+  enableEncryptionScreenOpen: boolean;
   deleteOpen: boolean;
   selectedBucket: string;
   selectedEvent: BucketEvent | null;
@@ -198,6 +203,7 @@ interface IViewBucketState {
   replicationSet: boolean;
   openSetReplication: boolean;
   isVersioned: boolean;
+  encryptionEnabled: boolean;
 }
 
 class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
@@ -217,6 +223,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     curTab: 0,
     rowsPerPage: 10,
     addScreenOpen: false,
+    enableEncryptionScreenOpen: false,
     deleteOpen: false,
     selectedBucket: "",
     selectedEvent: null,
@@ -225,6 +232,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     replicationSet: false,
     openSetReplication: false,
     isVersioned: false,
+    encryptionEnabled: false,
   };
 
   fetchEvents() {
@@ -324,6 +332,21 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     });
   }
 
+  fetchBucketEncryptionInfo() {
+    const { match } = this.props;
+    const bucketName = match.params["bucketName"];
+    api
+      .invoke("GET", `/api/v1/buckets/${bucketName}/encryption/info`)
+      .then((res: BucketEncryptionInfo) => {
+        if (res.algorithm) {
+          this.setState({ encryptionEnabled: true });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   closeAddModalAndRefresh() {
     this.setState({ setAccessPolicyScreenOpen: false }, () => {
       this.loadInfo();
@@ -342,6 +365,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     this.loadInfo();
     this.fetchEvents();
     this.fetchBucketsSize();
+    this.fetchBucketEncryptionInfo();
   }
 
   bucketFilter(): void {}
@@ -359,6 +383,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       rowsPerPage,
       deleteOpen,
       addScreenOpen,
+      enableEncryptionScreenOpen,
       selectedEvent,
       bucketSize,
       loadingSize,
@@ -366,6 +391,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       isVersioned,
       replicationRules,
       curTab,
+      encryptionEnabled,
     } = this.state;
 
     const offset = page * rowsPerPage;
@@ -413,6 +439,23 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       this.setState({ openSetReplication: open });
     };
 
+    const handleEncryptionCheckbox = (
+      event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+      if (event.target.checked) {
+        this.setState({ enableEncryptionScreenOpen: true });
+      } else {
+        api
+          .invoke("POST", `/api/v1/buckets/${bucketName}/encryption/disable`)
+          .then(() => {
+            this.setState({ encryptionEnabled: false });
+          })
+          .catch((err: any) => {
+            this.setState({ error: err });
+          });
+      }
+    };
+
     const tableActions = [{ type: "delete", onClick: confirmDeleteEvent }];
 
     const filteredRecords = records.slice(offset, offset + rowsPerPage);
@@ -427,6 +470,16 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
             closeModalAndRefresh={() => {
               this.setState({ addScreenOpen: false });
               this.fetchEvents();
+            }}
+          />
+        )}
+        {enableEncryptionScreenOpen && (
+          <EnableBucketEncryption
+            open={enableEncryptionScreenOpen}
+            selectedBucket={bucketName}
+            closeModalAndRefresh={() => {
+              this.setState({ enableEncryptionScreenOpen: false });
+              this.fetchBucketEncryptionInfo();
             }}
           />
         )}
@@ -488,6 +541,17 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
                       </div>
                       <div>Versioning:</div>
                       <div>{isVersioned ? "Yes" : "No"}&nbsp;</div>
+                      <div>Encryption:</div>
+                      <div>
+                        <Checkbox
+                          color="primary"
+                          inputProps={{
+                            "aria-label": "secondary checkbox",
+                          }}
+                          onChange={(event) => handleEncryptionCheckbox(event)}
+                          checked={encryptionEnabled}
+                        />
+                      </div>
                     </div>
                   </Paper>
                 </div>

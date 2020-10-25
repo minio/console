@@ -674,6 +674,70 @@ paths:
       tags:
         - UserAPI
 
+  /buckets/{bucket_name}/encryption/enable:
+    post:
+      summary: Enable bucket encryption.
+      operationId: EnableBucketEncryption
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/bucketEncryptionRequest"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/encryption/disable:
+    post:
+      summary: Disable bucket encryption.
+      operationId: DisableBucketEncryption
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/encryption/info:
+    get:
+      summary: Get bucket encryption information.
+      operationId: GetBucketEncryptionInfo
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucketEncryptionInfo"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /service-accounts:
     get:
       summary: List User's Service Accounts
@@ -1755,6 +1819,13 @@ paths:
         - AdminAPI
 
 definitions:
+  bucketEncryptionType:
+    type: string
+    enum:
+      - sse-s3
+      - sse-kms
+    default: sse-s3
+
   bucketAccess:
     type: string
     enum:
@@ -1777,6 +1848,22 @@ definitions:
       access:
         $ref: "#/definitions/bucketAccess"
       creation_date:
+        type: string
+
+  bucketEncryptionRequest:
+    type: object
+    properties:
+      encType:
+        $ref: "#/definitions/bucketEncryptionType"
+      kmsKeyID:
+        type: string
+
+  bucketEncryptionInfo:
+    type: object
+    properties:
+      kmsMasterKeyID:
+        type: string
+      algorithm:
         type: string
 
   listBucketsResponse:

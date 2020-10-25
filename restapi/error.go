@@ -29,6 +29,8 @@ var (
 	errGroupNameNotInRequest              = errors.New("error group name not in request")
 	errPolicyNameNotInRequest             = errors.New("error policy name not in request")
 	errPolicyBodyNotInRequest             = errors.New("error policy body not in request")
+	errInvalidEncryptionAlgorithm         = errors.New("error invalid encryption algorithm")
+	errSSENotConfigured                   = errors.New("error server side encryption configuration was not found")
 )
 
 // prepareError receives an error object and parse it against k8sErrors, returns the right error code paired with a generic error message

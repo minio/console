@@ -222,6 +222,101 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/encryption/disable": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Disable bucket encryption.",
+        "operationId": "DisableBucketEncryption",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/encryption/enable": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Enable bucket encryption.",
+        "operationId": "EnableBucketEncryption",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bucketEncryptionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/encryption/info": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Get bucket encryption information.",
+        "operationId": "GetBucketEncryptionInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bucketEncryptionInfo"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/events": {
       "get": {
         "tags": [
@@ -2781,6 +2876,36 @@ func init() {
         "CUSTOM"
       ]
     },
+    "bucketEncryptionInfo": {
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "type": "string"
+        },
+        "kmsMasterKeyID": {
+          "type": "string"
+        }
+      }
+    },
+    "bucketEncryptionRequest": {
+      "type": "object",
+      "properties": {
+        "encType": {
+          "$ref": "#/definitions/bucketEncryptionType"
+        },
+        "kmsKeyID": {
+          "type": "string"
+        }
+      }
+    },
+    "bucketEncryptionType": {
+      "type": "string",
+      "default": "sse-s3",
+      "enum": [
+        "sse-s3",
+        "sse-kms"
+      ]
+    },
     "bucketEventRequest": {
       "type": "object",
       "required": [
@@ -4892,6 +5017,101 @@ func init() {
         "responses": {
           "201": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/encryption/disable": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Disable bucket encryption.",
+        "operationId": "DisableBucketEncryption",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/encryption/enable": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Enable bucket encryption.",
+        "operationId": "EnableBucketEncryption",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bucketEncryptionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/encryption/info": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Get bucket encryption information.",
+        "operationId": "GetBucketEncryptionInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bucketEncryptionInfo"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -7982,6 +8202,36 @@ func init() {
         "PRIVATE",
         "PUBLIC",
         "CUSTOM"
+      ]
+    },
+    "bucketEncryptionInfo": {
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "type": "string"
+        },
+        "kmsMasterKeyID": {
+          "type": "string"
+        }
+      }
+    },
+    "bucketEncryptionRequest": {
+      "type": "object",
+      "properties": {
+        "encType": {
+          "$ref": "#/definitions/bucketEncryptionType"
+        },
+        "kmsKeyID": {
+          "type": "string"
+        }
+      }
+    },
+    "bucketEncryptionType": {
+      "type": "string",
+      "default": "sse-s3",
+      "enum": [
+        "sse-s3",
+        "sse-kms"
       ]
     },
     "bucketEventRequest": {

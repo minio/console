@@ -127,8 +127,17 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIDeleteTenantHandler: admin_api.DeleteTenantHandlerFunc(func(params admin_api.DeleteTenantParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.DeleteTenant has not yet been implemented")
 		}),
+		UserAPIDisableBucketEncryptionHandler: user_api.DisableBucketEncryptionHandlerFunc(func(params user_api.DisableBucketEncryptionParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.DisableBucketEncryption has not yet been implemented")
+		}),
 		UserAPIDownloadObjectHandler: user_api.DownloadObjectHandlerFunc(func(params user_api.DownloadObjectParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DownloadObject has not yet been implemented")
+		}),
+		UserAPIEnableBucketEncryptionHandler: user_api.EnableBucketEncryptionHandlerFunc(func(params user_api.EnableBucketEncryptionParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.EnableBucketEncryption has not yet been implemented")
+		}),
+		UserAPIGetBucketEncryptionInfoHandler: user_api.GetBucketEncryptionInfoHandlerFunc(func(params user_api.GetBucketEncryptionInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.GetBucketEncryptionInfo has not yet been implemented")
 		}),
 		UserAPIGetBucketQuotaHandler: user_api.GetBucketQuotaHandlerFunc(func(params user_api.GetBucketQuotaParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetBucketQuota has not yet been implemented")
@@ -383,8 +392,14 @@ type ConsoleAPI struct {
 	UserAPIDeleteServiceAccountHandler user_api.DeleteServiceAccountHandler
 	// AdminAPIDeleteTenantHandler sets the operation handler for the delete tenant operation
 	AdminAPIDeleteTenantHandler admin_api.DeleteTenantHandler
+	// UserAPIDisableBucketEncryptionHandler sets the operation handler for the disable bucket encryption operation
+	UserAPIDisableBucketEncryptionHandler user_api.DisableBucketEncryptionHandler
 	// UserAPIDownloadObjectHandler sets the operation handler for the download object operation
 	UserAPIDownloadObjectHandler user_api.DownloadObjectHandler
+	// UserAPIEnableBucketEncryptionHandler sets the operation handler for the enable bucket encryption operation
+	UserAPIEnableBucketEncryptionHandler user_api.EnableBucketEncryptionHandler
+	// UserAPIGetBucketEncryptionInfoHandler sets the operation handler for the get bucket encryption info operation
+	UserAPIGetBucketEncryptionInfoHandler user_api.GetBucketEncryptionInfoHandler
 	// UserAPIGetBucketQuotaHandler sets the operation handler for the get bucket quota operation
 	UserAPIGetBucketQuotaHandler user_api.GetBucketQuotaHandler
 	// UserAPIGetBucketReplicationHandler sets the operation handler for the get bucket replication operation
@@ -630,8 +645,17 @@ func (o *ConsoleAPI) Validate() error {
 	if o.AdminAPIDeleteTenantHandler == nil {
 		unregistered = append(unregistered, "admin_api.DeleteTenantHandler")
 	}
+	if o.UserAPIDisableBucketEncryptionHandler == nil {
+		unregistered = append(unregistered, "user_api.DisableBucketEncryptionHandler")
+	}
 	if o.UserAPIDownloadObjectHandler == nil {
 		unregistered = append(unregistered, "user_api.DownloadObjectHandler")
+	}
+	if o.UserAPIEnableBucketEncryptionHandler == nil {
+		unregistered = append(unregistered, "user_api.EnableBucketEncryptionHandler")
+	}
+	if o.UserAPIGetBucketEncryptionInfoHandler == nil {
+		unregistered = append(unregistered, "user_api.GetBucketEncryptionInfoHandler")
 	}
 	if o.UserAPIGetBucketQuotaHandler == nil {
 		unregistered = append(unregistered, "user_api.GetBucketQuotaHandler")
@@ -978,10 +1002,22 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/namespaces/{namespace}/tenants/{tenant}"] = admin_api.NewDeleteTenant(o.context, o.AdminAPIDeleteTenantHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/buckets/{bucket_name}/encryption/disable"] = user_api.NewDisableBucketEncryption(o.context, o.UserAPIDisableBucketEncryptionHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/buckets/{bucket_name}/objects/download"] = user_api.NewDownloadObject(o.context, o.UserAPIDownloadObjectHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/buckets/{bucket_name}/encryption/enable"] = user_api.NewEnableBucketEncryption(o.context, o.UserAPIEnableBucketEncryptionHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/buckets/{bucket_name}/encryption/info"] = user_api.NewGetBucketEncryptionInfo(o.context, o.UserAPIGetBucketEncryptionInfoHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

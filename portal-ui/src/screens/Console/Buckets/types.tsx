@@ -19,6 +19,11 @@ export interface Bucket {
   creation_date: Date;
 }
 
+export interface BucketEncryptionInfo {
+  algorithm: string;
+  kmsMasterKeyID: string;
+}
+
 export interface BucketInfo {
   name: string;
   access: string;
