@@ -174,17 +174,17 @@ class ListObjects extends React.Component<
     xhr.withCredentials = false;
     xhr.onload = function (event) {
       // TODO: handle status
-      if (xhr.status == 401 || xhr.status == 403) {
+      if (xhr.status === 401 || xhr.status === 403) {
         listObjects.showSnackBarMessage(
           "An error occurred while uploading the file."
         );
       }
-      if (xhr.status == 500) {
+      if (xhr.status === 500) {
         listObjects.showSnackBarMessage(
           "An error occurred while uploading the file."
         );
       }
-      if (xhr.status == 200) {
+      if (xhr.status === 200) {
         listObjects.showSnackBarMessage("Object uploaded successfully.");
         listObjects.fetchRecords();
       }
@@ -228,7 +228,7 @@ class ListObjects extends React.Component<
     xhr.responseType = "blob";
 
     xhr.onload = function (e) {
-      if (this.status == 200) {
+      if (this.status === 200) {
         var blob = new Blob([this.response], {
           type: "octet/stream",
         });

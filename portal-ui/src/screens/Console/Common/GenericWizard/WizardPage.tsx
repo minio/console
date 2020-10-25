@@ -51,6 +51,7 @@ const WizardPage = ({ classes, page, pageChange }: IWizardPage) => {
         break;
       case "to":
         pageChange(btn.toPage || 0);
+        break;
       default:
     }
 

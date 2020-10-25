@@ -16,27 +16,12 @@
 
 import React, { useEffect } from "react";
 import clsx from "clsx";
-import {
-  createStyles,
-  StyledProps,
-  Theme,
-  withStyles,
-} from "@material-ui/core/styles";
+import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
-import Link from "@material-ui/core/Link";
 import history from "../../history";
-import {
-  Redirect,
-  Route,
-  RouteComponentProps,
-  Router,
-  Switch,
-  withRouter,
-} from "react-router-dom";
+import { Redirect, Route, Router, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import { AppState } from "../../store";
 import {
@@ -44,7 +29,6 @@ import {
   serverNeedsRestart,
   setMenuOpen,
 } from "../../actions";
-import { ThemedComponentProps } from "@material-ui/core/styles/withTheme";
 import Buckets from "./Buckets/Buckets";
 import Policies from "./Policies/Policies";
 import Permissions from "./Permissions/Permissions";
@@ -319,7 +303,7 @@ const Console = ({
 
   return (
     <React.Fragment>
-      {session.status == "ok" ? (
+      {session.status === "ok" ? (
         <div className={classes.root}>
           <CssBaseline />
           <Drawer

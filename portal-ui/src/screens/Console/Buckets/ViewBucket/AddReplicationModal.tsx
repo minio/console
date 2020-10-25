@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import get from "lodash/get";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
@@ -22,7 +22,6 @@ import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { Button, LinearProgress } from "@material-ui/core";
 import api from "../../../../common/api";
 import { IRemoteBucket } from "../types";

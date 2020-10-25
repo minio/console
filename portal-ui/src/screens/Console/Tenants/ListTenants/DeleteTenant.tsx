@@ -69,6 +69,7 @@ const DeleteTenant = ({
           setDeleteError(err);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deleteLoading]);
 
   const removeRecord = () => {

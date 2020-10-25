@@ -14,20 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
-import {
-  Grid,
-  InputLabel,
-  TextField,
-  TextFieldProps,
-  Tooltip,
-} from "@material-ui/core";
-import { OutlinedInputProps } from "@material-ui/core/OutlinedInput";
-import {
-  createStyles,
-  makeStyles,
-  Theme,
-  withStyles,
-} from "@material-ui/core/styles";
+import { Grid, InputLabel, TextField, Tooltip } from "@material-ui/core";
+import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 import HelpIcon from "@material-ui/icons/Help";
 

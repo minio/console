@@ -23,7 +23,6 @@ import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import CheckboxWrapper from "../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { factorForDropdown, getBytes } from "../../../../common/utils";
 import { AppState } from "../../../../store";
@@ -143,7 +142,7 @@ const AddBucket = ({
 
   useEffect(() => {
     addBucketName(value);
-  }, [value]);
+  }, [value, addBucketName]);
 
   const resetForm = () => {
     setBName("");

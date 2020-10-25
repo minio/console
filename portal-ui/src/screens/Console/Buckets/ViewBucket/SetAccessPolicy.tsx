@@ -94,7 +94,7 @@ class SetAccessPolicy extends React.Component<
   }
 
   render() {
-    const { classes, open, actualPolicy } = this.props;
+    const { classes, open } = this.props;
     const { addLoading, addError, accessPolicy } = this.state;
     return (
       <ModalWrapper

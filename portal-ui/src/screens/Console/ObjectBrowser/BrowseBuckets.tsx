@@ -30,7 +30,6 @@ import { MinTablePaginationActions } from "../../../common/MinTablePaginationAct
 import { Bucket, BucketList } from "../Buckets/types";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
-import history from "../../../history";
 import {
   actionsTray,
   searchField,
@@ -119,7 +118,7 @@ const BrowseBuckets = ({ classes }: IBrowseBucketsProps) => {
           setError(err);
         });
     }
-  }, [loading]);
+  }, [loading, offset, rowsPerPage, page]);
 
   const closeAddModalAndRefresh = () => {
     setAddScreenOpen(false);

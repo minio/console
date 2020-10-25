@@ -18,7 +18,6 @@ import React, { useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import { Button } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
@@ -93,7 +92,6 @@ const ListBuckets = ({
   const [totalRecords, setTotalRecords] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const [deleteError, setDeleteError] = useState<string>("");
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
@@ -219,6 +217,7 @@ const ListBuckets = ({
       )}
       <PageHeader label={"Buckets"} />
       <Grid container>
+        {error !== "" && <span className={classes.error}>{error}</span>}
         <Grid item xs={12} className={classes.container}>
           <Grid item xs={12} className={classes.actionsTray}>
             <TextField

@@ -35,8 +35,7 @@ import {
   BucketReplicationRuleDeleteMarker,
   BucketVersioning,
 } from "../types";
-import { Box, Button } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
+import { Button } from "@material-ui/core";
 import SetAccessPolicy from "./SetAccessPolicy";
 import { MinTablePaginationActions } from "../../../../common/MinTablePaginationActions";
 import { CreateIcon } from "../../../../icons";
@@ -388,7 +387,6 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       selectedEvent,
       bucketSize,
       loadingSize,
-      replicationSet,
       openSetReplication,
       isVersioned,
       replicationRules,

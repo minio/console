@@ -19,7 +19,6 @@ import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
@@ -78,7 +77,6 @@ interface IPoliciesProps {
 
 const Policies = ({ classes }: IPoliciesProps) => {
   const [records, setRecords] = useState<Policy[]>([]);
-  const [totalRecords, setTotalRecords] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
@@ -100,7 +98,6 @@ const Policies = ({ classes }: IPoliciesProps) => {
         .invoke("GET", `/api/v1/policies?offset=${offset}&limit=${rowsPerPage}`)
         .then((res: PolicyList) => {
           const policies = get(res, "policies", []);
-          const total = get(res, "total", 0);
 
           policies.sort((pa, pb) => {
             if (pa.name > pb.name) {
@@ -116,7 +113,6 @@ const Policies = ({ classes }: IPoliciesProps) => {
 
           setLoading(false);
           setRecords(policies);
-          setTotalRecords(total);
           setError("");
 
           // if we get 0 results, and page > 0 , go down 1 page
@@ -137,15 +133,7 @@ const Policies = ({ classes }: IPoliciesProps) => {
           setError(err);
         });
     }
-  }, [
-    loading,
-    setLoading,
-    setRecords,
-    setTotalRecords,
-    setError,
-    setPage,
-    setError,
-  ]);
+  }, [loading, setLoading, setRecords, setError, setPage, page, rowsPerPage]);
 
   const fetchRecords = () => {
     setLoading(true);
@@ -256,6 +244,11 @@ const Policies = ({ classes }: IPoliciesProps) => {
           <Grid item xs={12}>
             <br />
           </Grid>
+          {error && (
+            <Grid item xs={12}>
+              {error}
+            </Grid>
+          )}
           <Grid item xs={12}>
             <TableWrapper
               itemActions={tableActions}
