@@ -35,20 +35,20 @@ import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapp
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     minTableHeader: {
       color: "#393939",
       "& tr": {
         "& th": {
-          fontWeight: "bold"
-        }
-      }
+          fontWeight: "bold",
+        },
+      },
     },
     buttonContainer: {
-      textAlign: "right"
+      textAlign: "right",
     },
-    ...modalBasic
+    ...modalBasic,
   });
 
 interface IEnableBucketEncryptionProps {
@@ -108,12 +108,7 @@ class EnableBucketEncryption extends React.Component<
 
   render() {
     const { classes, open } = this.props;
-    const {
-      loading,
-      encryptionError,
-      kmsKeyID,
-      encryptionType
-    } = this.state;
+    const { loading, encryptionError, kmsKeyID, encryptionType } = this.state;
 
     return (
       <ModalWrapper
@@ -148,7 +143,7 @@ class EnableBucketEncryption extends React.Component<
               <Grid item xs={12}>
                 <SelectWrapper
                   onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                    this.setState({ encryptionType: e.target.value as string});
+                    this.setState({ encryptionType: e.target.value as string });
                   }}
                   id="select-encryption-type"
                   name="select-encryption-type"
@@ -162,7 +157,7 @@ class EnableBucketEncryption extends React.Component<
                     {
                       label: "SSE-KMS",
                       value: "sse-kms",
-                    }
+                    },
                   ]}
                 />
               </Grid>

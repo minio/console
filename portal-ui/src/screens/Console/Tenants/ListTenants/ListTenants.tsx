@@ -33,7 +33,11 @@ import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
 import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 import history from "../../../../history";
 import RefreshIcon from "@material-ui/icons/Refresh";
-import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  actionsTray,
+  containerForHeader,
+  searchField,
+} from "../../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 
 interface ITenantsList {
@@ -70,18 +74,8 @@ const styles = (theme: Theme) =>
         },
       },
     },
-    actionsTray: {
-      textAlign: "right",
-      "& button": {
-        marginLeft: 10,
-      },
-    },
-    searchField: {
-      background: "#FFFFFF",
-      padding: 12,
-      borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012",
-    },
+    ...actionsTray,
+    ...searchField,
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -248,17 +242,6 @@ const ListTenants = ({ classes }: ITenantsList) => {
       <Grid container>
         <Grid item xs={12} className={classes.container}>
           <Grid item xs={12} className={classes.actionsTray}>
-            <IconButton
-              color="primary"
-              aria-label="Refresh Tenant List"
-              component="span"
-              onClick={() => {
-                setIsLoading(true);
-              }}
-            >
-              <RefreshIcon />
-            </IconButton>
-
             <TextField
               placeholder="Search Tenants"
               className={classes.searchField}
@@ -276,6 +259,16 @@ const ListTenants = ({ classes }: ITenantsList) => {
                 ),
               }}
             />
+            <IconButton
+              color="primary"
+              aria-label="Refresh Tenant List"
+              component="span"
+              onClick={() => {
+                setIsLoading(true);
+              }}
+            >
+              <RefreshIcon />
+            </IconButton>
             <Button
               variant="contained"
               color="primary"

@@ -109,7 +109,6 @@ const inputStyles = makeStyles((theme: Theme) =>
     },
     error: {
       color: "#b53b4b",
-      boxShadow: "inset 0px 0px 1px 1px #b53b4b",
     },
   })
 );
@@ -166,12 +165,7 @@ const InputBoxWrapper = ({
         }`}
       >
         {label !== "" && (
-          <InputLabel
-            htmlFor={id}
-            className={`${error !== "" ? classes.fieldLabelError : ""} ${
-              classes.inputLabel
-            }`}
-          >
+          <InputLabel htmlFor={id} className={classes.inputLabel}>
             <span>
               {label}
               {required ? "*" : ""}

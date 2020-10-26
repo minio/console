@@ -76,6 +76,12 @@ const styles = (theme: Theme) =>
       display: "flex",
       alignItems: "center",
     },
+    fieldBottom: {
+      borderBottom: "#9c9c9c 1px solid",
+    },
+    fileInputField: {
+      margin: "13px 0",
+    },
   });
 
 const FileSelector = ({
@@ -98,7 +104,7 @@ const FileSelector = ({
       <Grid
         item
         xs={12}
-        className={`${classes.fieldContainer} ${
+        className={`${classes.fieldBottom} ${classes.fieldContainer} ${
           error !== "" ? classes.errorInField : ""
         }`}
       >
@@ -137,6 +143,7 @@ const FileSelector = ({
               accept={accept}
               required={required}
               disabled={disabled}
+              className={classes.fileInputField}
             />
 
             {value !== "" && (

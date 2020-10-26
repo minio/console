@@ -93,12 +93,7 @@ const CommentBoxWrapper = ({
         }`}
       >
         {label !== "" && (
-          <InputLabel
-            htmlFor={id}
-            className={`${error !== "" ? classes.fieldLabelError : ""} ${
-              classes.inputLabel
-            }`}
-          >
+          <InputLabel htmlFor={id} className={classes.inputLabel}>
             <span>
               {label}
               {required ? "*" : ""}
