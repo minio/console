@@ -99,25 +99,25 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.E
 	ctx := context.Background()
 	mAdmin, err := newSuperMAdminClient()
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, prepareError(err, errorGeneric)
 	}
 	adminClient := adminClient{client: mAdmin}
 	// obtain the configured MinIO region
 	// need it for user authentication
 	location, err := getConfiguredRegionForLogin(adminClient)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, prepareError(err, errorGeneric)
 	}
 	creds, err := newConsoleCredentials(*lr.AccessKey, *lr.SecretKey, location)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, prepareError(err, errInvalidCredentials)
 	}
 	credentials := consoleCredentials{consoleCredentials: creds}
 	// obtain the current policy assigned to this user
 	// necessary for generating the list of allowed endpoints
 	userInfo, err := adminClient.getUserInfo(ctx, *lr.AccessKey)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, prepareError(err, errorGeneric)
 	}
 	policy, _ := adminClient.getPolicy(ctx, userInfo.PolicyName)
 	// by default every user starts with an empty array of available actions
