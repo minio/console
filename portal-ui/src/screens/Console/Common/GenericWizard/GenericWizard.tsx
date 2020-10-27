@@ -30,7 +30,7 @@ const styles = (theme: Theme) =>
       minWidth: 180,
       marginRight: 10,
       "& ul": {
-        padding: 15,
+        padding: "0 15px 0 0",
 
         "& li": {
           listStyle: "lower-roman",

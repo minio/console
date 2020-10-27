@@ -100,6 +100,13 @@ const styles = (theme: Theme) =>
       color: "#dc1f2e",
       fontSize: "0.75rem",
     },
+    h3Section: {
+      marginTop: 0,
+    },
+    descriptionText: {
+      fontSize: 13,
+      color: "#777777",
+    },
     ...modalBasic,
   });
 
@@ -949,8 +956,10 @@ const AddTenant = ({
       componentRender: (
         <React.Fragment>
           <div className={classes.headerElement}>
-            <h3>Name Tenant</h3>
-            <span>How would you like to name this new tenant?</span>
+            <h3 className={classes.h3Section}>Name Tenant</h3>
+            <span className={classes.descriptionText}>
+              How would you like to name this new tenant?
+            </span>
           </div>
           <Grid item xs={12}>
             <InputBoxWrapper
@@ -996,7 +1005,7 @@ const AddTenant = ({
           </Grid>
           <Grid item xs={12}>
             <br />
-            <span>
+            <span className={classes.descriptionText}>
               Check 'Advanced Mode' for additional configuration options, such
               as IDP, Disk Encryption, and customized TLS/SSL Certificates.
               <br />
@@ -1032,8 +1041,10 @@ const AddTenant = ({
       componentRender: (
         <React.Fragment>
           <div className={classes.headerElement}>
-            <h3>Configure</h3>
-            <span>Basic configurations for tenant management</span>
+            <h3 className={classes.h3Section}>Configure</h3>
+            <span className={classes.descriptionText}>
+              Basic configurations for tenant management
+            </span>
           </div>
 
           <Grid item xs={12}>
@@ -1115,8 +1126,8 @@ const AddTenant = ({
       componentRender: (
         <React.Fragment>
           <div className={classes.headerElement}>
-            <h3>IDP</h3>
-            <span>
+            <h3 className={classes.h3Section}>IDP</h3>
+            <span className={classes.descriptionText}>
               Access to the tenant can be controlled via an external Identity
               Manager.
             </span>
@@ -1303,7 +1314,7 @@ const AddTenant = ({
       componentRender: (
         <React.Fragment>
           <div className={classes.headerElement}>
-            <h3>Security</h3>
+            <h3 className={classes.h3Section}>Security</h3>
           </div>
           <Grid item xs={12}>
             <FormSwitchWrapper
@@ -1425,8 +1436,10 @@ const AddTenant = ({
       componentRender: (
         <React.Fragment>
           <div className={classes.headerElement}>
-            <h3>Encryption</h3>
-            <span>How would you like to encrypt the information at rest.</span>
+            <h3 className={classes.h3Section}>Encryption</h3>
+            <span className={classes.descriptionText}>
+              How would you like to encrypt the information at rest.
+            </span>
           </div>
           <Grid item xs={12}>
             <FormSwitchWrapper
@@ -1887,8 +1900,10 @@ const AddTenant = ({
       componentRender: (
         <React.Fragment>
           <div className={classes.headerElement}>
-            <h3>Tenant Size</h3>
-            <span>Please select the desired capacity</span>
+            <h3 className={classes.h3Section}>Tenant Size</h3>
+            <span className={classes.descriptionText}>
+              Please select the desired capacity
+            </span>
           </div>
           <span className={classes.error}>{distribution.error}</span>
           <Grid item xs={12}>
@@ -1927,7 +1942,7 @@ const AddTenant = ({
               </div>
               <div className={classes.sizeFactorContainer}>
                 <SelectWrapper
-                  label=""
+                  label={"Unit"}
                   id="size_factor"
                   name="size_factor"
                   value={sizeFactor}
@@ -1967,7 +1982,7 @@ const AddTenant = ({
                 value={ecParity}
                 options={ecParityChoices}
               />
-              <span>
+              <span className={classes.descriptionText}>
                 Please select the desired parity. This setting will change the
                 max usable capacity in the cluster
               </span>
@@ -2015,8 +2030,10 @@ const AddTenant = ({
       componentRender: (
         <React.Fragment>
           <div className={classes.headerElement}>
-            <h3>Review</h3>
-            <span>Review the details of the new tenant</span>
+            <h3 className={classes.h3Section}>Review</h3>
+            <span className={classes.descriptionText}>
+              Review the details of the new tenant
+            </span>
           </div>
           {addError !== "" && (
             <Grid item xs={12}>
