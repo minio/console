@@ -54,8 +54,14 @@ const styles = (theme: Theme) =>
     ...fieldBasic,
     ...tooltipHelper,
     ...checkboxIcons,
-    labelContainer: {
-      flexGrow: 1,
+    fieldContainer: {
+      ...fieldBasic.fieldContainer,
+      display: "flex",
+      justifyContent: "flex-start",
+      alignItems: "center",
+      margin: "15px 0",
+      marginBottom: 0,
+      flexBasis: "initial",
     },
   });
 
@@ -73,19 +79,7 @@ const CheckboxWrapper = ({
   return (
     <React.Fragment>
       <Grid item xs={12} className={classes.fieldContainer}>
-        {label !== "" && (
-          <InputLabel htmlFor={id} className={classes.inputLabel}>
-            <span>{label}</span>
-            {tooltip !== "" && (
-              <div className={classes.tooltipContainer}>
-                <Tooltip title={tooltip} placement="top-start">
-                  <HelpIcon className={classes.tooltip} />
-                </Tooltip>
-              </div>
-            )}
-          </InputLabel>
-        )}
-        <div className={classes.labelContainer}>
+        <div>
           <Checkbox
             name={name}
             id={id}
@@ -99,6 +93,18 @@ const CheckboxWrapper = ({
             disabled={disabled}
           />
         </div>
+        {label !== "" && (
+          <InputLabel htmlFor={id} className={classes.inputLabel}>
+            <span>{label}</span>
+            {tooltip !== "" && (
+              <div className={classes.tooltipContainer}>
+                <Tooltip title={tooltip} placement="top-start">
+                  <HelpIcon className={classes.tooltip} />
+                </Tooltip>
+              </div>
+            )}
+          </InputLabel>
+        )}
       </Grid>
     </React.Fragment>
   );
