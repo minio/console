@@ -38,6 +38,7 @@ import (
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/minio/minio-go/v7/pkg/notification"
+	"github.com/minio/minio-go/v7/pkg/tags"
 )
 
 func init() {
@@ -65,6 +66,8 @@ type MinioClient interface {
 	setBucketEncryption(ctx context.Context, bucketName string, config *sse.Configuration) error
 	removeBucketEncryption(ctx context.Context, bucketName string) error
 	getBucketEncryption(ctx context.Context, bucketName string) (*sse.Configuration, error)
+	putObjectTagging(ctx context.Context, bucketName, objectName string, otags *tags.Tags, opts minio.PutObjectTaggingOptions) error
+	getObjectTagging(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error)
 }
 
 // Interface implementation
@@ -75,7 +78,7 @@ type minioClient struct {
 	client *minio.Client
 }
 
-// implements minio.ListBucketsWithContext(ctx)
+// implements minio.ListBuckets(ctx)
 func (c minioClient) listBucketsWithContext(ctx context.Context) ([]minio.BucketInfo, error) {
 	return c.client.ListBuckets(ctx)
 }
@@ -160,6 +163,14 @@ func (c minioClient) removeBucketEncryption(ctx context.Context, bucketName stri
 // implements minio.GetBucketEncryption(ctx, bucketName, config)
 func (c minioClient) getBucketEncryption(ctx context.Context, bucketName string) (*sse.Configuration, error) {
 	return c.client.GetBucketEncryption(ctx, bucketName)
+}
+
+func (c minioClient) putObjectTagging(ctx context.Context, bucketName, objectName string, otags *tags.Tags, opts minio.PutObjectTaggingOptions) error {
+	return c.client.PutObjectTagging(ctx, bucketName, objectName, otags, opts)
+}
+
+func (c minioClient) getObjectTagging(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
+	return c.client.GetObjectTagging(ctx, bucketName, objectName, opts)
 }
 
 // MCClient interface with all functions to be implemented

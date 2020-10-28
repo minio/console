@@ -437,6 +437,38 @@ paths:
       tags:
         - UserAPI
 
+  /buckets/{bucket_name}/objects/tags:
+    put:
+      summary: Put Object's tags
+      operationId: PutObjectTags
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/putObjectTagsRequest"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+  
   /buckets/{name}/set-policy:
     put:
       summary: Bucket Set Policy
@@ -1924,6 +1956,10 @@ definitions:
         type: string
       retention_until_date:
         type: string
+      tags:
+        type: object
+        additionalProperties:
+          type: string
 
   makeBucketRequest:
     type: object
@@ -3483,3 +3519,10 @@ definitions:
         type: string
       governance_bypass:
         type: boolean
+
+  putObjectTagsRequest:
+    type: object
+    properties:
+      tags:
+        additionalProperties:
+          type: string

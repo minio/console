@@ -27,61 +27,22 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// BucketObject bucket object
+// PutObjectTagsRequest put object tags request
 //
-// swagger:model bucketObject
-type BucketObject struct {
-
-	// content type
-	ContentType string `json:"content_type,omitempty"`
-
-	// expiration
-	Expiration string `json:"expiration,omitempty"`
-
-	// expiration rule id
-	ExpirationRuleID string `json:"expiration_rule_id,omitempty"`
-
-	// is delete marker
-	IsDeleteMarker bool `json:"is_delete_marker,omitempty"`
-
-	// is latest
-	IsLatest bool `json:"is_latest,omitempty"`
-
-	// last modified
-	LastModified string `json:"last_modified,omitempty"`
-
-	// legal hold status
-	LegalHoldStatus string `json:"legal_hold_status,omitempty"`
-
-	// name
-	Name string `json:"name,omitempty"`
-
-	// retention mode
-	RetentionMode string `json:"retention_mode,omitempty"`
-
-	// retention until date
-	RetentionUntilDate string `json:"retention_until_date,omitempty"`
-
-	// size
-	Size int64 `json:"size,omitempty"`
+// swagger:model putObjectTagsRequest
+type PutObjectTagsRequest struct {
 
 	// tags
 	Tags map[string]string `json:"tags,omitempty"`
-
-	// user tags
-	UserTags map[string]string `json:"user_tags,omitempty"`
-
-	// version id
-	VersionID string `json:"version_id,omitempty"`
 }
 
-// Validate validates this bucket object
-func (m *BucketObject) Validate(formats strfmt.Registry) error {
+// Validate validates this put object tags request
+func (m *PutObjectTagsRequest) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *BucketObject) MarshalBinary() ([]byte, error) {
+func (m *PutObjectTagsRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -89,8 +50,8 @@ func (m *BucketObject) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *BucketObject) UnmarshalBinary(b []byte) error {
-	var res BucketObject
+func (m *PutObjectTagsRequest) UnmarshalBinary(b []byte) error {
+	var res PutObjectTagsRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
