@@ -15,11 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState, useEffect } from "react";
+import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
 import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import AddBucket from "../Buckets/ListBuckets/AddBucket";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
@@ -28,12 +28,16 @@ import { CreateIcon } from "../../../icons";
 import { niceBytes } from "../../../common/utils";
 import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
 import { Bucket, BucketList } from "../Buckets/types";
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import api from "../../../common/api";
 import {
   actionsTray,
+  objectBrowserCommon,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
+import { addRoute, resetRoutesList } from "./actions";
+import BrowserBreadcrumbs from "./BrowserBreadcrumbs";
+import TableWrapper from "../Common/TableWrapper/TableWrapper";
+import AddBucket from "../Buckets/ListBuckets/AddBucket";
+import api from "../../../common/api";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -67,20 +71,47 @@ const styles = (theme: Theme) =>
     },
     usedSpaceCol: {
       width: 150,
+      textAlign: "right",
     },
     subTitleLabel: {
       alignItems: "center",
       display: "flex",
     },
+    bucketName: {
+      display: "flex",
+      alignItems: "center",
+    },
+    iconBucket: {
+      backgroundImage: "url(/images/ob_bucket_clear.svg)",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "center center",
+      width: 16,
+      height: 40,
+      marginRight: 10,
+    },
+    "@global": {
+      ".rowElementRaw:hover  .iconBucketElm": {
+        backgroundImage: "url(/images/ob_bucket_filled.svg)",
+      },
+    },
     ...actionsTray,
     ...searchField,
+    ...objectBrowserCommon,
   });
 
 interface IBrowseBucketsProps {
   classes: any;
+  addRoute: (path: string, label: string) => any;
+  resetRoutesList: (doVar: boolean) => any;
+  match: any;
 }
 
-const BrowseBuckets = ({ classes }: IBrowseBucketsProps) => {
+const BrowseBuckets = ({
+  classes,
+  match,
+  addRoute,
+  resetRoutesList,
+}: IBrowseBucketsProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
@@ -90,6 +121,10 @@ const BrowseBuckets = ({ classes }: IBrowseBucketsProps) => {
   const [filterBuckets, setFilterBuckets] = useState<string>("");
 
   const offset = page * rowsPerPage;
+
+  useEffect(() => {
+    resetRoutesList(true);
+  }, [match]);
 
   useEffect(() => {
     if (loading) {
@@ -146,6 +181,22 @@ const BrowseBuckets = ({ classes }: IBrowseBucketsProps) => {
     setRowsPerPage(rPP);
   };
 
+  const handleViewChange = (idElement: string) => {
+    const currentPath = get(match, "url", "/object-browser");
+    const newPath = `${currentPath}/${idElement}`;
+
+    addRoute(newPath, idElement);
+  };
+
+  const renderBucket = (bucketName: string) => {
+    return (
+      <div className={classes.bucketName}>
+        <div className={`${classes.iconBucket} iconBucketElm`} />
+        <span>{bucketName}</span>
+      </div>
+    );
+  };
+
   return (
     <React.Fragment>
       {addScreenOpen && (
@@ -155,10 +206,24 @@ const BrowseBuckets = ({ classes }: IBrowseBucketsProps) => {
         />
       )}
       <Grid container>
-        <Grid item xs={2} className={classes.subTitleLabel}>
-          <Typography variant="h6">Buckets</Typography>
+        <Grid item xs={12} className={classes.obTitleSection}>
+          <div>
+            <BrowserBreadcrumbs />
+          </div>
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<CreateIcon />}
+              onClick={() => {
+                setAddScreenOpen(true);
+              }}
+            >
+              Create Bucket
+            </Button>
+          </div>
         </Grid>
-        <Grid item xs={10} className={classes.actionsTray}>
+        <Grid item xs={12} className={classes.actionsTray}>
           <TextField
             placeholder="Search Buckets"
             className={classes.searchField}
@@ -176,16 +241,6 @@ const BrowseBuckets = ({ classes }: IBrowseBucketsProps) => {
               ),
             }}
           />
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<CreateIcon />}
-            onClick={() => {
-              setAddScreenOpen(true);
-            }}
-          >
-            Add Bucket
-          </Button>
         </Grid>
         <Grid item xs={12}>
           <br />
@@ -194,15 +249,24 @@ const BrowseBuckets = ({ classes }: IBrowseBucketsProps) => {
           {error !== "" && <span className={classes.errorBlock}>{error}</span>}
           <TableWrapper
             itemActions={[
-              { type: "view", to: `/object-browser`, sendOnlyId: true },
+              {
+                type: "view",
+                sendOnlyId: true,
+                onClick: handleViewChange,
+              },
             ]}
             columns={[
-              { label: "Name", elementKey: "name" },
+              {
+                label: "Name",
+                elementKey: "name",
+                renderFunction: renderBucket,
+              },
               {
                 label: "Used Space",
                 elementKey: "size",
                 renderFunction: niceBytes,
                 globalClass: classes.usedSpaceCol,
+                rowClass: classes.usedSpaceCol,
               },
             ]}
             isLoading={loading}
@@ -230,4 +294,11 @@ const BrowseBuckets = ({ classes }: IBrowseBucketsProps) => {
   );
 };
 
-export default withStyles(styles)(BrowseBuckets);
+const mapDispatchToProps = {
+  addRoute,
+  resetRoutesList,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default withRouter(connector(withStyles(styles)(BrowseBuckets)));

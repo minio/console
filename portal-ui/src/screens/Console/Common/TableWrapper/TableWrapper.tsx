@@ -54,6 +54,7 @@ interface IColumns {
   renderFunction?: (input: any) => any;
   renderFullObject?: boolean;
   globalClass?: any;
+  rowClass?: any;
 }
 
 interface IPaginatorConfig {
@@ -89,12 +90,18 @@ interface TableWrapperProps {
   paginatorConfig?: IPaginatorConfig;
 }
 
-const borderColor = "#eaeaea";
+const borderColor = "#9c9c9c80";
 
 const rowText = {
   fontWeight: 400,
   fontSize: 14,
   borderColor: borderColor,
+  borderWidth: "0.5px",
+  height: 40,
+  transitionDuration: "0.3s",
+  padding: "initial",
+  paddingRight: 6,
+  paddingLeft: 6,
 };
 
 const styles = (theme: Theme) =>
@@ -112,19 +119,29 @@ const styles = (theme: Theme) =>
       border: "#EAEDEE 1px solid",
       borderRadius: 3,
     },
+    allTableSettings: {
+      "& .MuiTableCell-sizeSmall:last-child": {
+        paddingRight: "initial",
+      },
+      "& .MuiTableCell-body.MuiTableCell-sizeSmall:last-child": {
+        paddingRight: 6,
+      },
+    },
     minTableHeader: {
       color: "#393939",
       "& tr": {
         "& th": {
           fontWeight: 700,
           fontSize: 14,
-          paddingBottom: 15,
-          borderColor: borderColor,
+          borderColor: "#39393980",
+          borderWidth: "0.5px",
+          padding: "6px 0 10px",
         },
       },
     },
     rowUnselected: {
       ...rowText,
+      color: "#393939",
     },
     rowSelected: {
       ...rowText,
@@ -137,8 +154,12 @@ const styles = (theme: Theme) =>
       padding: "5px 38px",
     },
     checkBoxHeader: {
+      width: 50,
+      textAlign: "left",
+      paddingRight: 10,
       "&.MuiTableCell-paddingCheckbox": {
-        paddingBottom: 9,
+        paddingBottom: 4,
+        paddingLeft: 0,
       },
     },
     actionsContainer: {
@@ -150,6 +171,7 @@ const styles = (theme: Theme) =>
     },
     checkBoxRow: {
       borderColor: borderColor,
+      padding: "0 10px 0 0",
     },
     loadingBox: {
       paddingTop: "100px",
@@ -160,6 +182,10 @@ const styles = (theme: Theme) =>
 
       "&:hover": {
         backgroundColor: "#ececec",
+
+        "& td": {
+          fontWeight: 600,
+        },
       },
     },
     rowClickable: {
@@ -202,7 +228,9 @@ const rowColumnsMap = (
     return (
       <TableCell
         key={`tbRE-${column.elementKey}-${index}`}
-        className={isSelected ? classes.rowSelected : classes.rowUnselected}
+        className={`${column.rowClass} ${
+          isSelected ? classes.rowSelected : classes.rowUnselected
+        }`}
       >
         {renderElement}
       </TableCell>
@@ -285,15 +313,15 @@ const TableWrapper = ({
           </Grid>
         )}
         {records && !isLoading && records.length > 0 ? (
-          <Table size="small" stickyHeader={stickyHeader}>
+          <Table
+            size="small"
+            stickyHeader={stickyHeader}
+            className={classes.allTableSettings}
+          >
             <TableHead className={classes.minTableHeader}>
               <TableRow>
                 {onSelect && selectedItems && (
-                  <TableCell
-                    padding="checkbox"
-                    align="center"
-                    className={classes.checkBoxHeader}
-                  >
+                  <TableCell align="center" className={classes.checkBoxHeader}>
                     Select
                   </TableCell>
                 )}
@@ -324,17 +352,13 @@ const TableWrapper = ({
                     key={`tb-${entityName}-${index.toString()}`}
                     className={`${findView ? classes.rowClickable : ""} ${
                       classes.rowElement
-                    }`}
+                    } rowElementRaw`}
                     onClick={() => {
                       clickAction(record);
                     }}
                   >
                     {onSelect && selectedItems && (
-                      <TableCell
-                        padding="checkbox"
-                        align="center"
-                        className={classes.checkBoxRow}
-                      >
+                      <TableCell align="center" className={classes.checkBoxRow}>
                         <Checkbox
                           value={isString(record) ? record : record[idField]}
                           color="primary"

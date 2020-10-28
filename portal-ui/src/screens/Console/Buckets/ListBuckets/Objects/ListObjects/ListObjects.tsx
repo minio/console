@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import React, { useState, useEffect } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
@@ -21,7 +22,6 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import { BucketObject, BucketObjectsList } from "./types";
 import api from "../../../../../../common/api";
-import React from "react";
 import TableWrapper from "../../../../Common/TableWrapper/TableWrapper";
 import { niceBytes } from "../../../../../../common/utils";
 import DeleteObject from "./DeleteObject";
@@ -29,6 +29,7 @@ import DeleteObject from "./DeleteObject";
 import {
   actionsTray,
   containerForHeader,
+  objectBrowserCommon,
   searchField,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../../../../Common/PageHeader/PageHeader";
@@ -38,6 +39,20 @@ import { Button, Input } from "@material-ui/core";
 import * as reactMoment from "react-moment";
 import { CreateIcon } from "../../../../../../icons";
 import Snackbar from "@material-ui/core/Snackbar";
+import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
+import get from "lodash/get";
+import { withRouter } from "react-router-dom";
+import { addRoute, setAllRoutes } from "../../../../ObjectBrowser/actions";
+import { connect } from "react-redux";
+import { ObjectBrowserState, Route } from "../../../../ObjectBrowser/reducers";
+
+const commonIcon = {
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "center center",
+  width: 16,
+  height: 40,
+  marginRight: 10,
+};
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -69,93 +84,115 @@ const styles = (theme: Theme) =>
         },
       },
     },
+    fileName: {
+      display: "flex",
+      alignItems: "center",
+    },
+    iconFolder: {
+      backgroundImage: "url(/images/ob_folder_clear.svg)",
+      ...commonIcon,
+    },
+    iconFile: {
+      backgroundImage: "url(/images/ob_file_clear.svg)",
+      ...commonIcon,
+    },
+    "@global": {
+      ".rowElementRaw:hover  .iconFileElm": {
+        backgroundImage: "url(/images/ob_file_filled.svg)",
+      },
+      ".rowElementRaw:hover  .iconFolderElm": {
+        backgroundImage: "url(/images/ob_folder_filled.svg)",
+      },
+    },
     ...actionsTray,
     ...searchField,
+    ...objectBrowserCommon,
     ...containerForHeader(theme.spacing(4)),
   });
 
 interface IListObjectsProps {
   classes: any;
   match: any;
+  addRoute: (param1: string, param2: string) => any;
+  setAllRoutes: (path: string) => any;
+  routesList: Route[];
 }
 
-interface IListObjectsState {
-  records: BucketObject[];
-  totalRecords: number;
-  loading: boolean;
-  error: string;
-  deleteOpen: boolean;
-  deleteError: string;
-  selectedObject: string;
-  selectedBucket: string;
-  filterObjects: string;
-  openSnackbar: boolean;
-  snackBarMessage: string;
+interface ObjectBrowserReducer {
+  objectBrowser: ObjectBrowserState;
 }
 
-class ListObjects extends React.Component<
-  IListObjectsProps,
-  IListObjectsState
-> {
-  state: IListObjectsState = {
-    records: [],
-    totalRecords: 0,
-    loading: false,
-    error: "",
-    deleteOpen: false,
-    deleteError: "",
-    selectedObject: "",
-    selectedBucket: "",
-    filterObjects: "",
-    openSnackbar: false,
-    snackBarMessage: "",
+const ListObjects = ({
+  classes,
+  match,
+  addRoute,
+  setAllRoutes,
+  routesList,
+}: IListObjectsProps) => {
+  const [records, setRecords] = useState<BucketObject[]>([]);
+  const [totalRecords, setTotalRecords] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
+  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+  const [deleteError, setDeleteError] = useState<string>("");
+  const [selectedObject, setSelectedObject] = useState<string>("");
+  const [selectedBucket, setSelectedBucket] = useState<string>("");
+  const [filterObjects, setFilterObjects] = useState<string>("");
+  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
+  const [snackBarMessage, setSnackbarMessage] = useState<string>("");
+
+  useEffect(() => {
+    const bucketName = match.params["bucket"];
+    const internalPaths = match.params[0];
+
+    let extraPath = "";
+    if (internalPaths) {
+      extraPath = `?prefix=${internalPaths}/`;
+    }
+
+    api
+      .invoke("GET", `/api/v1/buckets/${bucketName}/objects${extraPath}`)
+      .then((res: BucketObjectsList) => {
+        setLoading(false);
+        setSelectedBucket(bucketName);
+        setRecords(res.objects || []);
+        setTotalRecords(!res.objects ? 0 : res.total);
+        setError("");
+        // TODO:
+        // if we get 0 results, and page > 0 , go down 1 page
+      })
+      .catch((err: any) => {
+        setLoading(false);
+        setError(err);
+      });
+  }, [loading, match]);
+
+  useEffect(() => {
+    const url = get(match, "url", "/object-browser");
+    if (url !== routesList[routesList.length - 1].route) {
+      setAllRoutes(url);
+    }
+  }, [match, routesList, setAllRoutes]);
+
+  const closeDeleteModalAndRefresh = (refresh: boolean) => {
+    setDeleteOpen(false);
+
+    if (refresh) {
+      setLoading(true);
+    }
   };
 
-  fetchRecords = () => {
-    this.setState({ loading: true }, () => {
-      const { match } = this.props;
-      const bucketName = match.params["bucket"];
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/objects`)
-        .then((res: BucketObjectsList) => {
-          this.setState({
-            loading: false,
-            selectedBucket: bucketName,
-            records: res.objects || [],
-            totalRecords: !res.objects ? 0 : res.total,
-            error: "",
-          });
-          // TODO:
-          // if we get 0 results, and page > 0 , go down 1 page
-        })
-        .catch((err: any) => {
-          this.setState({ loading: false, error: err });
-        });
-    });
+  const showSnackBarMessage = (text: string) => {
+    setSnackbarMessage(text);
+    setOpenSnackbar(true);
   };
 
-  componentDidMount(): void {
-    this.fetchRecords();
-  }
+  const closeSnackBar = () => {
+    setSnackbarMessage("");
+    setOpenSnackbar(false);
+  };
 
-  closeDeleteModalAndRefresh(refresh: boolean) {
-    this.setState({ deleteOpen: false }, () => {
-      if (refresh) {
-        this.fetchRecords();
-      }
-    });
-  }
-
-  showSnackBarMessage(text: string) {
-    this.setState({ openSnackbar: true, snackBarMessage: text });
-  }
-
-  closeSnackBar() {
-    this.setState({ openSnackbar: false, snackBarMessage: `` });
-  }
-
-  upload(e: any, bucketName: string, path: string) {
-    let listObjects = this;
+  const upload = (e: any, bucketName: string, path: string) => {
     if (isNullOrUndefined(e) || isNullOrUndefined(e.target)) {
       return;
     }
@@ -175,24 +212,20 @@ class ListObjects extends React.Component<
     xhr.onload = function (event) {
       // TODO: handle status
       if (xhr.status === 401 || xhr.status === 403) {
-        listObjects.showSnackBarMessage(
-          "An error occurred while uploading the file."
-        );
+        showSnackBarMessage("An error occurred while uploading the file.");
       }
       if (xhr.status === 500) {
-        listObjects.showSnackBarMessage(
-          "An error occurred while uploading the file."
-        );
+        showSnackBarMessage("An error occurred while uploading the file.");
       }
       if (xhr.status === 200) {
-        listObjects.showSnackBarMessage("Object uploaded successfully.");
-        listObjects.fetchRecords();
+        showSnackBarMessage("Object uploaded successfully.");
+        setLoading(true);
       }
     };
 
     xhr.upload.addEventListener("error", (event) => {
       // TODO: handle error
-      this.showSnackBarMessage("An error occurred while uploading the file.");
+      showSnackBarMessage("An error occurred while uploading the file.");
     });
 
     xhr.upload.addEventListener("progress", (event) => {
@@ -200,24 +233,22 @@ class ListObjects extends React.Component<
     });
 
     xhr.onerror = () => {
-      listObjects.showSnackBarMessage(
-        "An error occurred while uploading the file."
-      );
+      showSnackBarMessage("An error occurred while uploading the file.");
     };
 
-    var formData = new FormData();
-    var blobFile = new Blob([file]);
+    const formData = new FormData();
+    const blobFile = new Blob([file]);
 
     formData.append("upfile", blobFile);
     xhr.send(formData);
     e.target.value = null;
-  }
+  };
 
-  download(bucketName: string, objectName: string) {
-    var anchor = document.createElement("a");
+  const download = (bucketName: string, objectName: string) => {
+    const anchor = document.createElement("a");
     document.body.appendChild(anchor);
     const token: string = storage.getItem("token")!;
-    var xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
 
     xhr.open(
       "GET",
@@ -229,10 +260,10 @@ class ListObjects extends React.Component<
 
     xhr.onload = function (e) {
       if (this.status === 200) {
-        var blob = new Blob([this.response], {
+        const blob = new Blob([this.response], {
           type: "octet/stream",
         });
-        var blobUrl = window.URL.createObjectURL(blob);
+        const blobUrl = window.URL.createObjectURL(blob);
 
         anchor.href = blobUrl;
         anchor.download = objectName;
@@ -243,158 +274,199 @@ class ListObjects extends React.Component<
       }
     };
     xhr.send();
-  }
+  };
 
-  bucketFilter(): void {}
+  const displayParsedDate = (date: string) => {
+    return <reactMoment.default>{date}</reactMoment.default>;
+  };
 
-  render() {
-    const { classes } = this.props;
-    const {
-      records,
-      loading,
-      selectedObject,
-      selectedBucket,
-      deleteOpen,
-      filterObjects,
-      snackBarMessage,
-      openSnackbar,
-    } = this.state;
-    const displayParsedDate = (date: string) => {
-      return <reactMoment.default>{date}</reactMoment.default>;
-    };
+  const confirmDeleteObject = (object: string) => {
+    setDeleteOpen(true);
+    setSelectedObject(object);
+  };
 
-    const confirmDeleteObject = (object: string) => {
-      this.setState({ deleteOpen: true, selectedObject: object });
-    };
+  const downloadObject = (object: string) => {
+    download(selectedBucket, object);
+  };
 
-    const downloadObject = (object: string) => {
-      this.download(selectedBucket, object);
-    };
+  const openPath = (idElement: string) => {
+    const currentPath = get(match, "url", "/object-browser");
 
-    const uploadObject = (e: any): void => {
-      // TODO: handle deeper paths/folders
-      let file = e.target.files[0];
-      this.showSnackBarMessage(`Uploading: ${file.name}`);
-      this.upload(e, selectedBucket, "");
-    };
+    // Element is a folder, we redirect to it
+    if (idElement.endsWith("/")) {
+      const idElementClean = idElement
+        .substr(0, idElement.length - 1)
+        .split("/");
+      const lastIndex = idElementClean.length - 1;
+      const newPath = `${currentPath}/${idElementClean[lastIndex]}`;
 
-    const snackBarAction = (
-      <Button
-        color="secondary"
-        size="small"
-        onClick={() => {
-          this.closeSnackBar();
-        }}
-      >
-        Dismiss
-      </Button>
-    );
+      addRoute(newPath, idElementClean[lastIndex]);
+      return;
+    }
 
-    const tableActions = [
-      { type: "download", onClick: downloadObject, sendOnlyId: true },
-      { type: "delete", onClick: confirmDeleteObject, sendOnlyId: true },
-    ];
+    // Element is a file. we open details here
+    // TODO: Add details open function here.
+    //console.log("object", idElementClean);
+  };
 
-    const filteredRecords = records.filter((b: BucketObject) => {
-      if (filterObjects === "") {
-        return true;
-      } else {
-        if (b.name.indexOf(filterObjects) >= 0) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-    });
+  const uploadObject = (e: any): void => {
+    // TODO: handle deeper paths/folders
+    let file = e.target.files[0];
+    showSnackBarMessage(`Uploading: ${file.name}`);
+    upload(e, selectedBucket, "");
+  };
+
+  const snackBarAction = (
+    <Button
+      color="secondary"
+      size="small"
+      onClick={() => {
+        closeSnackBar();
+      }}
+    >
+      Dismiss
+    </Button>
+  );
+
+  const tableActions = [
+    { type: "view", onClick: openPath, sendOnlyId: true },
+    { type: "download", onClick: downloadObject, sendOnlyId: true },
+    { type: "delete", onClick: confirmDeleteObject, sendOnlyId: true },
+  ];
+
+  const displayName = (element: string) => {
+    let elementString = element;
+    let icon = `${classes.iconFile} iconFileElm`;
+    // Element is a folder
+    if (element.endsWith("/")) {
+      icon = `${classes.iconFolder} iconFolderElm`;
+      elementString = element.substr(0, element.length - 1);
+    }
+
+    const splitItem = elementString.split("/");
 
     return (
-      <React.Fragment>
-        {deleteOpen && (
-          <DeleteObject
-            deleteOpen={deleteOpen}
-            selectedBucket={selectedBucket}
-            selectedObject={selectedObject}
-            closeDeleteModalAndRefresh={(refresh: boolean) => {
-              this.closeDeleteModalAndRefresh(refresh);
-            }}
-          />
-        )}
-        <Snackbar
-          open={openSnackbar}
-          message={snackBarMessage}
-          action={snackBarAction}
-        />
-        <PageHeader label="Objects" />
-        <Grid container>
-          <Grid item xs={12} className={classes.container}>
-            <Grid item xs={12} className={classes.actionsTray}>
-              <TextField
-                placeholder="Search Objects"
-                className={classes.searchField}
-                id="search-resource"
-                label=""
-                onChange={(val) => {
-                  this.setState({
-                    filterObjects: val.target.value,
-                  });
-                }}
-                InputProps={{
-                  disableUnderline: true,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-              />
+      <div className={classes.fileName}>
+        <div className={icon} />
+        <span>{splitItem[splitItem.length - 1]}</span>
+      </div>
+    );
+  };
 
-              <>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<CreateIcon />}
-                  component="label"
-                >
-                  Upload Object
-                  <Input
-                    type="file"
-                    onChange={(e) => uploadObject(e)}
-                    id="file-input"
-                    style={{ display: "none" }}
-                  />
-                </Button>
-              </>
-            </Grid>
-            <Grid item xs={12}>
-              <br />
-            </Grid>
-            <Grid item xs={12}>
-              <TableWrapper
-                itemActions={tableActions}
-                columns={[
-                  { label: "Name", elementKey: "name" },
-                  {
-                    label: "Last Modified",
-                    elementKey: "last_modified",
-                    renderFunction: displayParsedDate,
-                  },
-                  {
-                    label: "Size",
-                    elementKey: "size",
-                    renderFunction: niceBytes,
-                  },
-                ]}
-                isLoading={loading}
-                entityName="Objects"
-                idField="name"
-                records={filteredRecords}
-              />
-            </Grid>
+  const filteredRecords = records.filter((b: BucketObject) => {
+    if (filterObjects === "") {
+      return true;
+    } else {
+      if (b.name.indexOf(filterObjects) >= 0) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  });
+
+  return (
+    <React.Fragment>
+      {deleteOpen && (
+        <DeleteObject
+          deleteOpen={deleteOpen}
+          selectedBucket={selectedBucket}
+          selectedObject={selectedObject}
+          closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
+        />
+      )}
+      <Snackbar
+        open={openSnackbar}
+        message={snackBarMessage}
+        action={snackBarAction}
+      />
+      <PageHeader label="Object Browser" />
+      <Grid container>
+        <Grid item xs={12} className={classes.container}>
+          <Grid item xs={12} className={classes.obTitleSection}>
+            <div>
+              <BrowserBreadcrumbs />
+            </div>
+            <div>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<CreateIcon />}
+                component="label"
+              >
+                Upload Object
+                <Input
+                  type="file"
+                  onChange={(e) => uploadObject(e)}
+                  id="file-input"
+                  style={{ display: "none" }}
+                />
+              </Button>
+            </div>
+          </Grid>
+          <Grid item xs={12} className={classes.actionsTray}>
+            <TextField
+              placeholder="Search Objects"
+              className={classes.searchField}
+              id="search-resource"
+              label=""
+              onChange={(val) => {
+                setFilterObjects(val.target.value);
+              }}
+              InputProps={{
+                disableUnderline: true,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <br />
+          </Grid>
+          <Grid item xs={12}>
+            <TableWrapper
+              itemActions={tableActions}
+              columns={[
+                {
+                  label: "Name",
+                  elementKey: "name",
+                  renderFunction: displayName,
+                },
+                {
+                  label: "Last Modified",
+                  elementKey: "last_modified",
+                  renderFunction: displayParsedDate,
+                },
+                {
+                  label: "Size",
+                  elementKey: "size",
+                  renderFunction: niceBytes,
+                },
+              ]}
+              isLoading={loading}
+              entityName="Objects"
+              idField="name"
+              records={filteredRecords}
+            />
           </Grid>
         </Grid>
-      </React.Fragment>
-    );
-  }
-}
+      </Grid>
+    </React.Fragment>
+  );
+};
 
-export default withStyles(styles)(ListObjects);
+const mapStateToProps = ({ objectBrowser }: ObjectBrowserReducer) => ({
+  routesList: get(objectBrowser, "routesList", []),
+});
+
+const mapDispatchToProps = {
+  addRoute,
+  setAllRoutes,
+};
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+export default withRouter(connector(withStyles(styles)(ListObjects)));

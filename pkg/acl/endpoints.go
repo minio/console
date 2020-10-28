@@ -22,27 +22,28 @@ import (
 
 // endpoints definition
 var (
-	configuration     = "/configurations-list"
-	users             = "/users"
-	groups            = "/groups"
-	iamPolicies       = "/policies"
-	dashboard         = "/dashboard"
-	profiling         = "/profiling"
-	trace             = "/trace"
-	logs              = "/logs"
-	watch             = "/watch"
-	notifications     = "/notification-endpoints"
-	buckets           = "/buckets"
-	bucketsDetail     = "/buckets/:bucketName"
-	serviceAccounts   = "/service-accounts"
-	tenants           = "/tenants"
-	tenantsDetail     = "/namespaces/:tenantNamespace/tenants/:tenantName"
-	heal              = "/heal"
-	remoteBuckets     = "/remote-buckets"
-	replication       = "/replication"
-	objectBrowser     = "/object-browser/:bucket?"
-	mainObjectBrowser = "/object-browser"
-	license           = "/license"
+	configuration       = "/configurations-list"
+	users               = "/users"
+	groups              = "/groups"
+	iamPolicies         = "/policies"
+	dashboard           = "/dashboard"
+	profiling           = "/profiling"
+	trace               = "/trace"
+	logs                = "/logs"
+	watch               = "/watch"
+	notifications       = "/notification-endpoints"
+	buckets             = "/buckets"
+	bucketsDetail       = "/buckets/:bucketName"
+	serviceAccounts     = "/service-accounts"
+	tenants             = "/tenants"
+	tenantsDetail       = "/namespaces/:tenantNamespace/tenants/:tenantName"
+	heal                = "/heal"
+	remoteBuckets       = "/remote-buckets"
+	replication         = "/replication"
+	objectBrowser       = "/object-browser/:bucket/*"
+	objectBrowserBucket = "/object-browser/:bucket"
+	mainObjectBrowser   = "/object-browser"
+	license             = "/license"
 )
 
 type ConfigurationActionSet struct {
@@ -245,25 +246,26 @@ var licenseActionSet = ConfigurationActionSet{
 
 // endpointRules contains the mapping between endpoints and ActionSets, additional rules can be added here
 var endpointRules = map[string]ConfigurationActionSet{
-	configuration:     configurationActionSet,
-	users:             usersActionSet,
-	groups:            groupsActionSet,
-	iamPolicies:       iamPoliciesActionSet,
-	dashboard:         dashboardActionSet,
-	profiling:         profilingActionSet,
-	trace:             traceActionSet,
-	logs:              logsActionSet,
-	watch:             watchActionSet,
-	notifications:     notificationsActionSet,
-	buckets:           bucketsActionSet,
-	bucketsDetail:     bucketsActionSet,
-	serviceAccounts:   serviceAccountsActionSet,
-	heal:              healActionSet,
-	remoteBuckets:     remoteBucketsActionSet,
-	replication:       replicationActionSet,
-	objectBrowser:     objectBrowserActionSet,
-	mainObjectBrowser: objectBrowserActionSet,
-	license:           licenseActionSet,
+	configuration:       configurationActionSet,
+	users:               usersActionSet,
+	groups:              groupsActionSet,
+	iamPolicies:         iamPoliciesActionSet,
+	dashboard:           dashboardActionSet,
+	profiling:           profilingActionSet,
+	trace:               traceActionSet,
+	logs:                logsActionSet,
+	watch:               watchActionSet,
+	notifications:       notificationsActionSet,
+	buckets:             bucketsActionSet,
+	bucketsDetail:       bucketsActionSet,
+	serviceAccounts:     serviceAccountsActionSet,
+	heal:                healActionSet,
+	remoteBuckets:       remoteBucketsActionSet,
+	replication:         replicationActionSet,
+	objectBrowser:       objectBrowserActionSet,
+	mainObjectBrowser:   objectBrowserActionSet,
+	objectBrowserBucket: objectBrowserActionSet,
+	license:             licenseActionSet,
 }
 
 // operatorRules contains the mapping between endpoints and ActionSets for operator only mode

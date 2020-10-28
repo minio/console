@@ -232,7 +232,11 @@ const Console = ({
     },
     {
       component: ListObjects,
-      path: "/object-browser/:bucket?",
+      path: "/object-browser/:bucket",
+    },
+    {
+      component: ListObjects,
+      path: "/object-browser/:bucket/*",
     },
     {
       component: Watch,

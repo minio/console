@@ -179,3 +179,31 @@ export const predefinedList = {
     minHeight: 41,
   },
 };
+
+export const objectBrowserCommon = {
+  obTitleSection: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 22,
+    color: "#000",
+    fontWeight: 600,
+    height: 40,
+    lineHeight: "40px",
+  },
+  breadcrumbs: {
+    fontSize: 10,
+    color: "#000",
+    marginTop: 2,
+    "& a": {
+      textDecoration: "none",
+      color: "#000",
+      "&:hover": {
+        textDecoration: "underline",
+      },
+    },
+  },
+};
