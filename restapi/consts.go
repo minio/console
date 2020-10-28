@@ -17,19 +17,18 @@
 package restapi
 
 const (
-	// consts for common configuration
-	ConsoleVersion               = `0.1.0`
-	ConsoleAccessKey             = "CONSOLE_ACCESS_KEY"
-	ConsoleSecretKey             = "CONSOLE_SECRET_KEY"
-	ConsoleMinIOServer           = "CONSOLE_MINIO_SERVER"
-	ConsoleMinIOServerTLSRootCAs = "CONSOLE_MINIO_SERVER_TLS_ROOT_CAS"
-	ConsoleProductionMode        = "CONSOLE_PRODUCTION_MODE"
-	ConsoleHostname              = "CONSOLE_HOSTNAME"
-	ConsolePort                  = "CONSOLE_PORT"
-	ConsoleTLSHostname           = "CONSOLE_TLS_HOSTNAME"
-	ConsoleTLSPort               = "CONSOLE_TLS_PORT"
+	// Constants for common configuration
+	ConsoleVersion        = `0.2.0`
+	ConsoleAccessKey      = "CONSOLE_ACCESS_KEY"
+	ConsoleSecretKey      = "CONSOLE_SECRET_KEY"
+	ConsoleMinIOServer    = "CONSOLE_MINIO_SERVER"
+	ConsoleProductionMode = "CONSOLE_PRODUCTION_MODE"
+	ConsoleHostname       = "CONSOLE_HOSTNAME"
+	ConsolePort           = "CONSOLE_PORT"
+	ConsoleTLSHostname    = "CONSOLE_TLS_HOSTNAME"
+	ConsoleTLSPort        = "CONSOLE_TLS_PORT"
 
-	// consts for Secure middleware
+	// Constants for Secure middleware
 	ConsoleSecureAllowedHosts                    = "CONSOLE_SECURE_ALLOWED_HOSTS"
 	ConsoleSecureAllowedHostsAreRegex            = "CONSOLE_SECURE_ALLOWED_HOSTS_ARE_REGEX"
 	ConsoleSecureFrameDeny                       = "CONSOLE_SECURE_FRAME_DENY"
@@ -49,11 +48,8 @@ const (
 	ConsoleSecureReferrerPolicy                  = "CONSOLE_SECURE_REFERRER_POLICY"
 	ConsoleSecureFeaturePolicy                   = "CONSOLE_SECURE_FEATURE_POLICY"
 	ConsoleSecureExpectCTHeader                  = "CONSOLE_SECURE_EXPECT_CT_HEADER"
-)
 
-// prometheus annotations
-
-const (
+	// Constants for prometheus annotations
 	prometheusPath   = "prometheus.io/path"
 	prometheusPort   = "prometheus.io/port"
 	prometheusScrape = "prometheus.io/scrape"

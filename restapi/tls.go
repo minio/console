@@ -18,36 +18,10 @@ package restapi
 
 import (
 	"crypto/tls"
-	"crypto/x509"
-	"io/ioutil"
-	"log"
 	"net"
 	"net/http"
 	"time"
 )
-
-func getCertPool() *x509.CertPool {
-	rootCAs, _ := x509.SystemCertPool()
-	if rootCAs == nil {
-		// In some systems (like Windows) system cert pool is
-		// not supported or no certificates are present on the
-		// system - so we create a new cert pool.
-		rootCAs = x509.NewCertPool()
-	}
-	caCertFileNames := getMinioServerTLSRootCAs()
-	for _, caCert := range caCertFileNames {
-		pemData, err := ioutil.ReadFile(caCert)
-		if err != nil {
-			// logging this error
-			log.Println(err)
-			continue
-		}
-		rootCAs.AppendCertsFromPEM(pemData)
-	}
-	return rootCAs
-}
-
-var certPool = getCertPool()
 
 func prepareSTSClientTransport(insecure bool) *http.Transport {
 	// This takes github.com/minio/minio/pkg/madmin/transport.go as an example
@@ -74,7 +48,7 @@ func prepareSTSClientTransport(insecure bool) *http.Transport {
 			// Can't use TLSv1.1 because of RC4 cipher usage
 			MinVersion:         tls.VersionTLS12,
 			InsecureSkipVerify: insecure,
-			RootCAs:            certPool,
+			RootCAs:            GlobalRootCAs,
 		},
 	}
 	return DefaultTransport

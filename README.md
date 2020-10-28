@@ -113,11 +113,41 @@ export CONSOLE_MINIO_SERVER=http://localhost:9000
 ./console server
 ```
 
-## Connect Console to a Minio using TLS and a self-signed certificate
+## Run Console with TLS enable
+
+Copy your `public.crt` and `private.key` to `~/.console/certs`, then:
+
+```bash
+./console server
+```
+
+Additionally, `Console` has support for multiple certificates, clients can request them using `SNI`. It expects the following structure:
+
+```bash
+ certs/
+  │
+  ├─ public.crt
+  ├─ private.key
+  │
+  ├─ example.com/
+  │   │
+  │   ├─ public.crt
+  │   └─ private.key
+  └─ foobar.org/
+     │
+     ├─ public.crt
+     └─ private.key
+  ...
 
 ```
-...
-export CONSOLE_MINIO_SERVER_TLS_ROOT_CAS=<certificate_file_name>
+
+Therefore, we read all filenames in the cert directory and check
+for each directory whether it contains a public.crt and private.key.
+
+## Connect Console to a Minio using TLS and a self-signed certificate
+
+Copy the MinIO `ca.crt` under `~/.console/certs/CAs`, then:
+```
 export CONSOLE_MINIO_SERVER=https://localhost:9000
 ./console server
 ```

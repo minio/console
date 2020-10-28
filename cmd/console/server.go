@@ -20,12 +20,16 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
 	"github.com/minio/cli"
+	"github.com/minio/console/pkg/certs"
 	"github.com/minio/console/restapi"
 	"github.com/minio/console/restapi/operations"
+	"github.com/minio/minio/cmd/logger"
+	certsx "github.com/minio/minio/pkg/certs"
 )
 
 // starts the server
@@ -56,14 +60,9 @@ var serverCmd = cli.Command{
 			Usage: "HTTPS server port",
 		},
 		cli.StringFlag{
-			Name:  "tls-certificate",
-			Value: "",
-			Usage: "filename of public cert",
-		},
-		cli.StringFlag{
-			Name:  "tls-key",
-			Value: "",
-			Usage: "filename of private key",
+			Name:  "certs-dir",
+			Value: certs.GlobalCertsCADir.Get(),
+			Usage: "path to certs directory",
 		},
 	},
 }
@@ -82,7 +81,9 @@ func startServer(ctx *cli.Context) error {
 	parser := flags.NewParser(server, flags.Default)
 	parser.ShortDescription = "MinIO Console Server"
 	parser.LongDescription = swaggerSpec.Spec().Info.Description
+
 	server.ConfigureFlags()
+
 	for _, optsGroup := range api.CommandLineOptionsGroups {
 		_, err := parser.AddGroup(optsGroup.ShortDescription, optsGroup.LongDescription, optsGroup.Options)
 		if err != nil {
@@ -106,12 +107,19 @@ func startServer(ctx *cli.Context) error {
 	restapi.Hostname = ctx.String("host")
 	restapi.Port = fmt.Sprintf("%v", ctx.Int("port"))
 
-	tlsCertificatePath := ctx.String("tls-certificate")
-	tlsCertificateKeyPath := ctx.String("tls-key")
+	// Set all certs and CAs directories.
+	globalCertsDir, _ := certs.NewConfigDirFromCtx(ctx, "certs-dir", certs.DefaultCertsDir.Get)
+	certs.GlobalCertsCADir = &certs.ConfigDir{Path: filepath.Join(globalCertsDir.Get(), certs.CertsCADir)}
+	logger.FatalIf(certs.MkdirAllIgnorePerm(certs.GlobalCertsCADir.Get()), "Unable to create certs CA directory at %s", certs.GlobalCertsCADir.Get())
 
-	if tlsCertificatePath != "" && tlsCertificateKeyPath != "" {
-		server.TLSCertificate = flags.Filename(tlsCertificatePath)
-		server.TLSCertificateKey = flags.Filename(tlsCertificateKeyPath)
+	// load all CAs from ~/.console/certs/CAs
+	restapi.GlobalRootCAs, err = certsx.GetRootCAs(certs.GlobalCertsCADir.Get())
+	logger.FatalIf(err, "Failed to read root CAs (%v)", err)
+	// load all certs from ~/.console/certs
+	restapi.GlobalPublicCerts, restapi.GlobalTLSCertsManager, err = certs.GetTLSConfig()
+	logger.FatalIf(err, "Unable to load the TLS configuration")
+
+	if len(restapi.GlobalPublicCerts) > 0 && restapi.GlobalRootCAs != nil {
 		// If TLS certificates are provided enforce the HTTPS schema, meaning console will redirect
 		// plain HTTP connections to HTTPS server
 		server.EnabledListeners = []string{"http", "https"}

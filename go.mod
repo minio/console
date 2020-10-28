@@ -20,6 +20,7 @@ require (
 	github.com/minio/minio v0.0.0-20200927172404-27d9bd04e544
 	github.com/minio/minio-go/v7 v7.0.6-0.20200923173112-bc846cb9b089
 	github.com/minio/operator v0.0.0-20200930213302-ab2bbdfae96c
+	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/secure-io/sio-go v0.3.1
 	github.com/stretchr/testify v1.6.1
