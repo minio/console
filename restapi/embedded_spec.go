@@ -708,6 +708,54 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/objects/tags": {
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Put Object's tags",
+        "operationId": "PutObjectTags",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "version_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/putObjectTagsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/objects/upload": {
       "post": {
         "consumes": [
@@ -2957,6 +3005,12 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
         "user_tags": {
           "type": "object",
           "additionalProperties": {
@@ -4086,6 +4140,16 @@ func init() {
         },
         "mode": {
           "$ref": "#/definitions/objectRetentionMode"
+        }
+      }
+    },
+    "putObjectTagsRequest": {
+      "type": "object",
+      "properties": {
+        "tags": {
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       }
     },
@@ -5503,6 +5567,54 @@ func init() {
             "schema": {
               "type": "string"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/objects/tags": {
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Put Object's tags",
+        "operationId": "PutObjectTags",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "version_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/putObjectTagsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
@@ -8285,6 +8397,12 @@ func init() {
           "type": "integer",
           "format": "int64"
         },
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
         "user_tags": {
           "type": "object",
           "additionalProperties": {
@@ -9348,6 +9466,16 @@ func init() {
         },
         "mode": {
           "$ref": "#/definitions/objectRetentionMode"
+        }
+      }
+    },
+    "putObjectTagsRequest": {
+      "type": "object",
+      "properties": {
+        "tags": {
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       }
     },
