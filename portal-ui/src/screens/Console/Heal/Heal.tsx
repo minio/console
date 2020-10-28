@@ -1,6 +1,12 @@
 import { HorizontalBar } from "react-chartjs-2";
 import React, { useEffect, useState } from "react";
-import { Button, Grid, TextField, Checkbox } from "@material-ui/core";
+import {
+  Button,
+  Grid,
+  TextField,
+  Checkbox,
+  InputBase,
+} from "@material-ui/core";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { wsProtocol } from "../../../utils/wsUtils";
@@ -9,8 +15,13 @@ import { FormControl, MenuItem, Select } from "@material-ui/core";
 import { BucketList, Bucket } from "../Watch/types";
 import { HealStatus, colorH } from "./types";
 import { niceBytes } from "../../../common/utils";
-import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
+import {
+  actionsTray,
+  containerForHeader,
+  searchField,
+} from "../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../Common/PageHeader/PageHeader";
+import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -29,37 +40,53 @@ const styles = (theme: Theme) =>
         borderBottom: "1px solid #dedede",
       },
     },
-    actionsTray: {
-      textAlign: "right",
-      "& button": {
-        marginLeft: 10,
-      },
+    graphContainer: {
+      backgroundColor: "#fff",
+      border: "#EAEDEE 1px solid",
+      borderRadius: 3,
+      padding: "19px 38px",
     },
-    inputField: {
-      background: "#FFFFFF",
-      padding: 12,
-      borderRadius: 5,
-      marginLeft: 10,
-      boxShadow: "0px 3px 6px #00000012",
+    scanInfo: {
+      marginTop: 20,
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "space-between",
     },
-    fieldContainer: {
-      background: "#FFFFFF",
-      padding: 0,
-      borderRadius: 5,
-      marginLeft: 10,
-      textAlign: "left",
-      minWidth: "206",
-      boxShadow: "0px 3px 6px #00000012",
+    scanData: {
+      fontSize: 13,
     },
-    lastElementWPadding: {
-      paddingRight: "78",
+    inlineCheckboxes: {
+      display: "flex",
+      justifyContent: "flex-start",
     },
+    ...actionsTray,
+    ...searchField,
     ...containerForHeader(theme.spacing(4)),
   });
 
 interface IHeal {
   classes: any;
 }
+
+const SelectStyled = withStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      width: 450,
+      lineHeight: 1,
+      marginRight: 15,
+      "label + &": {
+        marginTop: theme.spacing(3),
+      },
+      "& .MuiSelect-select:focus": {
+        backgroundColor: "transparent",
+      },
+    },
+    input: {
+      fontSize: 13,
+      lineHeight: 15,
+    },
+  })
+)(InputBase);
 
 const Heal = ({ classes }: IHeal) => {
   const [start, setStart] = useState(false);
@@ -204,8 +231,8 @@ const Heal = ({ classes }: IHeal) => {
                 onChange={(e) => {
                   setBucketName(e.target.value as string);
                 }}
-                className={classes.fieldContainer}
-                disabled={false}
+                className={classes.searchField}
+                input={<SelectStyled />}
               >
                 <MenuItem value="" key={`select-bucket-name-default`}>
                   Select Bucket
@@ -222,7 +249,7 @@ const Heal = ({ classes }: IHeal) => {
             </FormControl>
             <TextField
               placeholder="Prefix"
-              className={classes.inputField}
+              className={classes.searchField}
               id="prefix-resource"
               label=""
               disabled={false}
@@ -242,75 +269,74 @@ const Heal = ({ classes }: IHeal) => {
             >
               Start
             </Button>
-            <Grid item xs={12}>
-              <span>{"Recursive"}</span>
-              <Checkbox
-                name="recursive"
-                id="recursive"
-                value="recursive"
-                color="primary"
-                inputProps={{ "aria-label": "secondary checkbox" }}
-                checked={recursive}
-                onChange={(e) => {
-                  setRecursive(e.target.checked);
-                }}
-                disabled={false}
-              />
-              <span>{"Force Start"}</span>
-              <Checkbox
-                name="recursive"
-                id="recursive"
-                value="recursive"
-                color="primary"
-                inputProps={{ "aria-label": "secondary checkbox" }}
-                checked={forceStart}
-                onChange={(e) => {
-                  setForceStart(e.target.checked);
-                }}
-                disabled={false}
-              />
-              <span>{"Force Stop"}</span>
-              <Checkbox
-                name="recursive"
-                id="recursive"
-                value="recursive"
-                color="primary"
-                inputProps={{ "aria-label": "secondary checkbox" }}
-                checked={forceStop}
-                onChange={(e) => {
-                  setForceStop(e.target.checked);
-                }}
-                disabled={false}
-              />
-              <span className={classes.lastElementWPadding}>{""}</span>
+          </Grid>
+          <Grid item xs={12} className={classes.inlineCheckboxes}>
+            <CheckboxWrapper
+              name="recursive"
+              id="recursive"
+              value="recursive"
+              checked={recursive}
+              onChange={(e) => {
+                setRecursive(e.target.checked);
+              }}
+              disabled={false}
+              label="Recursive"
+            />
+            <CheckboxWrapper
+              name="forceStart"
+              id="forceStart"
+              value="forceStart"
+              checked={forceStart}
+              onChange={(e) => {
+                setForceStart(e.target.checked);
+              }}
+              disabled={false}
+              label="Force Start"
+            />
+            <CheckboxWrapper
+              name="forceStop"
+              id="forceStop"
+              value="forceStop"
+              checked={forceStop}
+              onChange={(e) => {
+                setForceStop(e.target.checked);
+              }}
+              disabled={false}
+              label="Force Stop"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <br />
+          </Grid>
+          <Grid item xs={12} className={classes.graphContainer}>
+            <HorizontalBar
+              data={data}
+              width={80}
+              height={30}
+              options={{
+                title: {
+                  display: true,
+                  text: "Item's Health Status [%]",
+                  fontSize: 20,
+                },
+                legend: {
+                  display: true,
+                  position: "right",
+                },
+              }}
+            />
+            <Grid item xs={12} className={classes.scanInfo}>
+              <div className={classes.scanData}>
+                <strong>Size scanned:</strong> {hStatus.sizeScanned}
+              </div>
+              <div className={classes.scanData}>
+                <strong>Objects healed:</strong> {hStatus.objectsHealed} /{" "}
+                {hStatus.objectsScanned}
+              </div>
+              <div className={classes.scanData}>
+                <strong>Healing time:</strong> {hStatus.healDuration}s
+              </div>
             </Grid>
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <HorizontalBar
-            data={data}
-            width={100}
-            height={30}
-            options={{
-              title: {
-                display: true,
-                text: "Item's Health Status [%]",
-                fontSize: 20,
-              },
-              legend: {
-                display: true,
-                position: "right",
-              },
-            }}
-          />
-          <Grid item xs={12}>
-            <br />
-            Size scanned: {hStatus.sizeScanned}
-            <br />
-            Objects healed: {hStatus.objectsHealed} / {hStatus.objectsScanned}
-            <br />
-            Healing time: {hStatus.healDuration}s
           </Grid>
         </Grid>
       </Grid>
