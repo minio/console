@@ -37,6 +37,7 @@ import (
 	mc "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/tags"
 )
 
 // enum types
@@ -106,6 +107,12 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewPutObjectRetentionOK()
 	})
+	api.UserAPIPutObjectTagsHandler = user_api.PutObjectTagsHandlerFunc(func(params user_api.PutObjectTagsParams, session *models.Principal) middleware.Responder {
+		if err := getPutObjectTagsResponse(session, params); err != nil {
+			return user_api.NewPutObjectTagsDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewPutObjectTagsOK()
+	})
 }
 
 // getListObjectsResponse returns a list of objects
@@ -165,7 +172,8 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 			IsDeleteMarker: lsObj.IsDeleteMarker,
 			UserTags:       lsObj.UserTags,
 		}
-		if !lsObj.IsDeleteMarker {
+		// only if single object with or without versions; get legalhold, retention and tags
+		if !lsObj.IsDeleteMarker && prefix != "" && !strings.HasSuffix(prefix, "/") {
 			// Add Legal Hold Status if available
 			legalHoldStatus, err := client.getObjectLegalHold(ctx, bucketName, lsObj.Key, minio.GetObjectLegalHoldOptions{VersionID: lsObj.VersionID})
 			if err != nil {
@@ -191,6 +199,12 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 					obj.RetentionMode = string(*retention)
 					obj.RetentionUntilDate = date.String()
 				}
+			}
+			tags, err := client.getObjectTagging(ctx, bucketName, lsObj.Key, minio.GetObjectTaggingOptions{VersionID: lsObj.VersionID})
+			if err != nil {
+				log.Printf("error getting object tags for %s : %s", lsObj.VersionID, err)
+			} else {
+				obj.Tags = tags.ToMap()
 			}
 		}
 		objects = append(objects, obj)
@@ -492,6 +506,34 @@ func setObjectRetention(ctx context.Context, client MinioClient, bucketName, pre
 		VersionID:        versionID,
 	}
 	return client.putObjectRetention(ctx, bucketName, prefix, opts)
+}
+
+func getPutObjectTagsResponse(session *models.Principal, params user_api.PutObjectTagsParams) *models.Error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		return prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+	err = putObjectTags(ctx, minioClient, params.BucketName, params.Prefix, params.VersionID, params.Body.Tags)
+	if err != nil {
+		return prepareError(err)
+	}
+	return nil
+}
+
+func putObjectTags(ctx context.Context, client MinioClient, bucketName, prefix, versionID string, tagMap map[string]string) error {
+	opt := minio.PutObjectTaggingOptions{
+		VersionID: versionID,
+	}
+	otags, err := tags.MapToObjectTags(tagMap)
+	if err != nil {
+		return err
+	}
+	return client.putObjectTagging(ctx, bucketName, prefix, otags, opt)
 }
 
 // newClientURL returns an abstracted URL for filesystems and object storage.

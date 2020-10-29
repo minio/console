@@ -31,6 +31,7 @@ import (
 	mc "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/tags"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -40,6 +41,8 @@ var minioGetObjectRetentionMock func(ctx context.Context, bucketName, objectName
 var minioPutObjectMock func(ctx context.Context, bucketName, objectName string, reader io.Reader, objectSize int64, opts minio.PutObjectOptions) (info minio.UploadInfo, err error)
 var minioPutObjectLegalHoldMock func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectLegalHoldOptions) error
 var miinoPutObjectRetentionMock func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error
+var minioGetObjectTaggingMock func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error)
+var minioPutObjectTaggingMock func(ctx context.Context, bucketName, objectName string, otags *tags.Tags, opts minio.PutObjectTaggingOptions) error
 
 var mcListMock func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
 var mcRemoveMock func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error
@@ -70,6 +73,14 @@ func (ac minioClientMock) putObjectRetention(ctx context.Context, bucketName, ob
 	return miinoPutObjectRetentionMock(ctx, bucketName, objectName, opts)
 }
 
+func (ac minioClientMock) getObjectTagging(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
+	return minioGetObjectTaggingMock(ctx, bucketName, objectName, opts)
+}
+
+func (ac minioClientMock) putObjectTagging(ctx context.Context, bucketName, objectName string, otags *tags.Tags, opts minio.PutObjectTaggingOptions) error {
+	return minioPutObjectTaggingMock(ctx, bucketName, objectName, otags, opts)
+}
+
 // mock functions for s3ClientMock
 func (c s3ClientMock) list(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
 	return mcListMock(ctx, opts)
@@ -92,13 +103,14 @@ func Test_listObjects(t *testing.T) {
 	tretention := time.Now()
 	minClient := minioClientMock{}
 	type args struct {
-		bucketName          string
-		prefix              string
-		recursive           bool
-		withVersions        bool
-		listFunc            func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo
-		objectLegalHoldFunc func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error)
-		objectRetentionFunc func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error)
+		bucketName           string
+		prefix               string
+		recursive            bool
+		withVersions         bool
+		listFunc             func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo
+		objectLegalHoldFunc  func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error)
+		objectRetentionFunc  func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error)
+		objectGetTaggingFunc func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error)
 	}
 	tests := []struct {
 		test         string
@@ -144,6 +156,16 @@ func Test_listObjects(t *testing.T) {
 					m := minio.Governance
 					return &m, &tretention, nil
 				},
+				objectGetTaggingFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
+					tagMap := map[string]string{
+						"tag1": "value1",
+					}
+					otags, err := tags.MapToObjectTags(tagMap)
+					if err != nil {
+						return nil, err
+					}
+					return otags, nil
+				},
 			},
 			expectedResp: []*models.BucketObject{
 				&models.BucketObject{
@@ -154,6 +176,9 @@ func Test_listObjects(t *testing.T) {
 					LegalHoldStatus:    string(minio.LegalHoldEnabled),
 					RetentionMode:      string(minio.Governance),
 					RetentionUntilDate: tretention.String(),
+					Tags: map[string]string{
+						"tag1": "value1",
+					},
 				}, &models.BucketObject{
 					Name:               "obj2",
 					LastModified:       t1.String(),
@@ -162,6 +187,9 @@ func Test_listObjects(t *testing.T) {
 					LegalHoldStatus:    string(minio.LegalHoldEnabled),
 					RetentionMode:      string(minio.Governance),
 					RetentionUntilDate: tretention.String(),
+					Tags: map[string]string{
+						"tag1": "value1",
+					},
 				},
 			},
 			wantError: nil,
@@ -185,6 +213,16 @@ func Test_listObjects(t *testing.T) {
 				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
 					m := minio.Governance
 					return &m, &tretention, nil
+				},
+				objectGetTaggingFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
+					tagMap := map[string]string{
+						"tag1": "value1",
+					}
+					otags, err := tags.MapToObjectTags(tagMap)
+					if err != nil {
+						return nil, err
+					}
+					return otags, nil
 				},
 			},
 			expectedResp: nil,
@@ -225,13 +263,23 @@ func Test_listObjects(t *testing.T) {
 					m := minio.Governance
 					return &m, &tretention, nil
 				},
+				objectGetTaggingFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
+					tagMap := map[string]string{
+						"tag1": "value1",
+					}
+					otags, err := tags.MapToObjectTags(tagMap)
+					if err != nil {
+						return nil, err
+					}
+					return otags, nil
+				},
 			},
 			expectedResp: nil,
 			wantError:    errors.New("error here"),
 		},
 		{
 			// Description: deleted objects with IsDeleteMarker
-			// should not call legsalhold or retention funcs
+			// should not call legsalhold, tag or retention funcs
 			test: "Return deleted objects",
 			args: args{
 				bucketName:   "bucket1",
@@ -270,6 +318,16 @@ func Test_listObjects(t *testing.T) {
 					m := minio.Governance
 					return &m, &tretention, nil
 				},
+				objectGetTaggingFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
+					tagMap := map[string]string{
+						"tag1": "value1",
+					}
+					otags, err := tags.MapToObjectTags(tagMap)
+					if err != nil {
+						return nil, err
+					}
+					return otags, nil
+				},
 			},
 			expectedResp: []*models.BucketObject{
 				&models.BucketObject{
@@ -286,13 +344,16 @@ func Test_listObjects(t *testing.T) {
 					LegalHoldStatus:    string(minio.LegalHoldEnabled),
 					RetentionMode:      string(minio.Governance),
 					RetentionUntilDate: tretention.String(),
+					Tags: map[string]string{
+						"tag1": "value1",
+					},
 				},
 			},
 			wantError: nil,
 		},
 		{
 			// Description: deleted objects with
-			// error on legalhold and retention funcs
+			// error on legalhold, tags or retention funcs
 			// should only log errors
 			test: "Return deleted objects, error on legalhold and retention",
 			args: args{
@@ -322,6 +383,9 @@ func Test_listObjects(t *testing.T) {
 				},
 				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
 					return nil, nil, errors.New("error retention")
+				},
+				objectGetTaggingFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
+					return nil, errors.New("error get tags")
 				},
 			},
 			expectedResp: []*models.BucketObject{
@@ -335,13 +399,13 @@ func Test_listObjects(t *testing.T) {
 			wantError: nil,
 		},
 		{
-			// Description: deleted objects with
-			// error on legalhold and retention funcs
-			// should only log errors
-			test: "Return deleted objects, error on legalhold and retention",
+			// Description: if the prefix end with a `/` meaning it is a folder,
+			// it should not fetch retention, legalhold nor tags for each object
+			// it should only fetch it for single objects with or without versionID
+			test: "Don't get object retention/legalhold/tags for folders",
 			args: args{
 				bucketName:   "bucket1",
-				prefix:       "prefix",
+				prefix:       "prefix/folder/",
 				recursive:    true,
 				withVersions: false,
 				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
@@ -355,6 +419,12 @@ func Test_listObjects(t *testing.T) {
 								Size:         int64(1024),
 								ContentType:  "content",
 							},
+							minio.ObjectInfo{
+								Key:          "obj2",
+								LastModified: t1,
+								Size:         int64(512),
+								ContentType:  "content",
+							},
 						} {
 							objectStatCh <- bucket
 						}
@@ -362,10 +432,22 @@ func Test_listObjects(t *testing.T) {
 					return objectStatCh
 				},
 				objectLegalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
-					return nil, errors.New("error legal")
+					s := minio.LegalHoldEnabled
+					return &s, nil
 				},
 				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
-					return nil, nil, errors.New("error retention")
+					m := minio.Governance
+					return &m, &tretention, nil
+				},
+				objectGetTaggingFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
+					tagMap := map[string]string{
+						"tag1": "value1",
+					}
+					otags, err := tags.MapToObjectTags(tagMap)
+					if err != nil {
+						return nil, err
+					}
+					return otags, nil
 				},
 			},
 			expectedResp: []*models.BucketObject{
@@ -373,6 +455,78 @@ func Test_listObjects(t *testing.T) {
 					Name:         "obj1",
 					LastModified: t1.String(),
 					Size:         int64(1024),
+					ContentType:  "content",
+				}, &models.BucketObject{
+					Name:         "obj2",
+					LastModified: t1.String(),
+					Size:         int64(512),
+					ContentType:  "content",
+				},
+			},
+			wantError: nil,
+		},
+		{
+			// Description: if the prefix is "" meaning it is all contents within a bucket,
+			// it should not fetch retention, legalhold nor tags for each object
+			// it should only fetch it for single objects with or without versionID
+			test: "Don't get object retention/legalhold/tags for empty prefix",
+			args: args{
+				bucketName:   "bucket1",
+				prefix:       "",
+				recursive:    true,
+				withVersions: false,
+				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
+					objectStatCh := make(chan minio.ObjectInfo, 1)
+					go func(objectStatCh chan<- minio.ObjectInfo) {
+						defer close(objectStatCh)
+						for _, bucket := range []minio.ObjectInfo{
+							minio.ObjectInfo{
+								Key:          "obj1",
+								LastModified: t1,
+								Size:         int64(1024),
+								ContentType:  "content",
+							},
+							minio.ObjectInfo{
+								Key:          "obj2",
+								LastModified: t1,
+								Size:         int64(512),
+								ContentType:  "content",
+							},
+						} {
+							objectStatCh <- bucket
+						}
+					}(objectStatCh)
+					return objectStatCh
+				},
+				objectLegalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
+					s := minio.LegalHoldEnabled
+					return &s, nil
+				},
+				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
+					m := minio.Governance
+					return &m, &tretention, nil
+				},
+				objectGetTaggingFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
+					tagMap := map[string]string{
+						"tag1": "value1",
+					}
+					otags, err := tags.MapToObjectTags(tagMap)
+					if err != nil {
+						return nil, err
+					}
+					return otags, nil
+				},
+			},
+			expectedResp: []*models.BucketObject{
+				&models.BucketObject{
+					Name:         "obj1",
+					LastModified: t1.String(),
+					Size:         int64(1024),
+					ContentType:  "content",
+				}, &models.BucketObject{
+					Name:         "obj2",
+					LastModified: t1.String(),
+					Size:         int64(512),
 					ContentType:  "content",
 				},
 			},
@@ -385,6 +539,7 @@ func Test_listObjects(t *testing.T) {
 			minioListObjectsMock = tt.args.listFunc
 			minioGetObjectLegalHoldMock = tt.args.objectLegalHoldFunc
 			minioGetObjectRetentionMock = tt.args.objectRetentionFunc
+			minioGetObjectTaggingMock = tt.args.objectGetTaggingFunc
 			resp, err := listBucketObjects(ctx, minClient, tt.args.bucketName, tt.args.prefix, tt.args.recursive, tt.args.withVersions)
 			if !reflect.DeepEqual(err, tt.wantError) {
 				t.Errorf("listBucketObjects() error: %v, wantErr: %v", err, tt.wantError)
