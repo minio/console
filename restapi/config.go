@@ -17,10 +17,12 @@
 package restapi
 
 import (
+	"crypto/x509"
 	"fmt"
 	"strconv"
 	"strings"
 
+	"github.com/minio/minio/pkg/certs"
 	"github.com/minio/minio/pkg/env"
 )
 
@@ -49,16 +51,6 @@ func getSecretKey() string {
 
 func getMinIOServer() string {
 	return strings.TrimSpace(env.Get(ConsoleMinIOServer, "http://localhost:9000"))
-}
-
-// If CONSOLE_MINIO_SERVER_TLS_ROOT_CAS is true console will load a list of certificates into the
-// http.client rootCAs store, this is useful for testing or when working with self-signed certificates
-func getMinioServerTLSRootCAs() []string {
-	caCertFileNames := strings.TrimSpace(env.Get(ConsoleMinIOServerTLSRootCAs, ""))
-	if caCertFileNames == "" {
-		return []string{}
-	}
-	return strings.Split(caCertFileNames, ",")
 }
 
 func getMinIOEndpoint() string {
@@ -228,3 +220,12 @@ func getSecureFeaturePolicy() string {
 func getSecureExpectCTHeader() string {
 	return env.Get(ConsoleSecureExpectCTHeader, "")
 }
+
+var (
+	// GlobalRootCAs is CA root certificates, a nil value means system certs pool will be used
+	GlobalRootCAs *x509.CertPool
+	// GlobalPublicCerts has certificates Console will use to serve clients
+	GlobalPublicCerts []*x509.Certificate
+	// GlobalTLSCertsManager custom TLS Manager for SNI support
+	GlobalTLSCertsManager *certs.Manager
+)

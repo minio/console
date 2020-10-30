@@ -26,25 +26,33 @@ import (
 	"strings"
 	"time"
 
-	"github.com/minio/console/pkg/auth"
-
-	"github.com/minio/console/models"
-	"github.com/minio/console/pkg"
-
 	assetFS "github.com/elazarl/go-bindata-assetfs"
 
 	portalUI "github.com/minio/console/portal-ui"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/swag"
+	"github.com/minio/console/models"
+	"github.com/minio/console/pkg"
+	"github.com/minio/console/pkg/auth"
 	"github.com/minio/console/restapi/operations"
 	"github.com/unrolled/secure"
 )
 
 //go:generate swagger generate server --target ../../console --name Console --spec ../swagger.yml
 
+var additionalServerFlags = struct {
+	CertsDir string `long:"certs-dir" description:"path to certs directory" env:"CONSOLE_CERTS_DIR"`
+}{}
+
 func configureFlags(api *operations.ConsoleAPI) {
-	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
+	api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{
+		{
+			ShortDescription: "additional server flags",
+			Options:          &additionalServerFlags,
+		},
+	}
 }
 
 func configureAPI(api *operations.ConsoleAPI) http.Handler {
@@ -134,7 +142,14 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 
 // The TLS configuration before HTTPS server starts.
 func configureTLS(tlsConfig *tls.Config) {
-	// Make all necessary changes to the TLS configuration here.
+	// Add the global public crts as part of global root CAs
+	for _, publicCrt := range GlobalPublicCerts {
+		GlobalRootCAs.AddCert(publicCrt)
+	}
+	tlsConfig.RootCAs = GlobalRootCAs
+	if GlobalTLSCertsManager != nil {
+		tlsConfig.GetCertificate = GlobalTLSCertsManager.GetCertificate
+	}
 }
 
 // As soon as server is initialized but not run yet, this function will be called.
