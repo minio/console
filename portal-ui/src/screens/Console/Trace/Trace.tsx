@@ -45,6 +45,12 @@ const styles = (theme: Theme) =>
         borderBottom: "1px solid #dedede",
       },
     },
+    sizeItem: {
+      width: 150,
+    },
+    timeItem: {
+      width: 100,
+    },
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -112,6 +118,7 @@ const Trace = ({
                   const timeParse = new Date(time);
                   return timeFromDate(timeParse);
                 },
+                globalClass: classes.timeItem,
               },
               { label: "Name", elementKey: "api" },
               {
@@ -128,16 +135,22 @@ const Trace = ({
                   `${fullElement.host} ${fullElement.client}`,
                 renderFullObject: true,
               },
-              { label: "Load Time", elementKey: "callStats.duration" },
+              {
+                label: "Load Time",
+                elementKey: "callStats.duration",
+                globalClass: classes.timeItem,
+              },
               {
                 label: "Upload",
                 elementKey: "callStats.rx",
                 renderFunction: niceBytes,
+                globalClass: classes.sizeItem,
               },
               {
                 label: "Download",
                 elementKey: "callStats.tx",
                 renderFunction: niceBytes,
+                globalClass: classes.sizeItem,
               },
             ]}
             isLoading={false}

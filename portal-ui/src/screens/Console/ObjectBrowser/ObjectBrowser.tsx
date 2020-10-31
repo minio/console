@@ -73,7 +73,7 @@ const styles = (theme: Theme) =>
   });
 
 const ObjectBrowser = ({ match, classes }: IObjectBrowserProps) => {
-  const pathIn = get(match, "path", "");
+  const pathIn = get(match, "url", "");
 
   return (
     <React.Fragment>

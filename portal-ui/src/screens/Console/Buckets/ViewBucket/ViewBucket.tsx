@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { ChangeEvent } from "react";
+import React from "react";
 import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
@@ -47,7 +47,6 @@ import AddReplicationModal from "./AddReplicationModal";
 import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import Checkbox from "@material-ui/core/Checkbox";
-import TableCell from "@material-ui/core/TableCell";
 import EnableBucketEncryption from "./EnableBucketEncryption";
 
 const styles = (theme: Theme) =>
