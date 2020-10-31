@@ -754,7 +754,7 @@ const AddTenant = ({
             },
             resources: {
               requests: {
-                memory: parseInt(getBytes(memoryNode, "Gi")),
+                memory: parseInt(getBytes(memoryNode, "GiB")),
               },
             },
             affinity: hardCodedAffinity,
@@ -994,7 +994,6 @@ const AddTenant = ({
               id="storage_class"
               name="storage_class"
               onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                console.log(e.target.value as string);
                 setSelectedStorageClass(e.target.value as string);
               }}
               label="Storage Class"
