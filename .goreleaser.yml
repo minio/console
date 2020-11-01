@@ -107,7 +107,7 @@ dockers:
     goos: linux
     # GOARCH of the built binary that should be used.
     goarch: amd64
-    dockerfile: d
+    dockerfile: Dockerfile.release
     image_templates:
       - "minio/console:{{ .Tag }}"
       - "minio/console:latest"
