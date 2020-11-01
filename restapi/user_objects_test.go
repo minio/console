@@ -755,7 +755,7 @@ func Test_shareObject(t *testing.T) {
 					return "http://someurl", nil
 				},
 			},
-			wantError: errors.New("time: invalid duration invalid"),
+			wantError: errors.New("time: invalid duration \"invalid\""),
 		},
 		{
 			test: "handle empty expire duration",
@@ -788,7 +788,7 @@ func Test_shareObject(t *testing.T) {
 			url, err := getShareObjectURL(ctx, client, tt.args.versionID, tt.args.expires)
 			if tt.wantError != nil {
 				if !reflect.DeepEqual(err, tt.wantError) {
-					t.Errorf("getShareObjectURL() error: %v, wantErr: %v", err, tt.wantError)
+					t.Errorf("getShareObjectURL() error: `%s`, wantErr: `%s`", err, tt.wantError)
 					return
 				}
 			} else {
@@ -988,7 +988,8 @@ func Test_putObjectRetention(t *testing.T) {
 			miinoPutObjectRetentionMock = tt.args.retentionFunc
 			err := setObjectRetention(ctx, client, tt.args.bucket, tt.args.prefix, tt.args.versionID, tt.args.opts)
 			if tt.wantError != nil {
-				assert.Equal(err.Error(), tt.wantError.Error(), fmt.Sprintf("setObjectRetention() error: %v, wantErr: %v", err, tt.wantError))
+				fmt.Println(t.Name())
+				assert.Equal(tt.wantError.Error(), err.Error(), fmt.Sprintf("setObjectRetention() error: `%s`, wantErr: `%s`", err, tt.wantError))
 			} else {
 				assert.Nil(err, fmt.Sprintf("setObjectRetention() error: %v, wantErr: %v", err, tt.wantError))
 			}

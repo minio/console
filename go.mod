@@ -1,6 +1,6 @@
 module github.com/minio/console
 
-go 1.13
+go 1.15
 
 require (
 	github.com/coreos/go-oidc v2.2.1+incompatible

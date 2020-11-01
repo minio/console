@@ -12,6 +12,10 @@ before:
   hooks:
     # you may remove this if you don't use vgo
     - go mod tidy
+    - docker build -f Dockerfile.assets -t consoleassets .
+    - docker create --name extract consoleassets
+    - docker cp extract:/app/bindata_assetfs.go ./portal-ui/
+    - docker rm extract
 
 builds:
   -
