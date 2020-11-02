@@ -17,6 +17,7 @@ import history from "../../../history";
 
 import {
   OBJECT_BROWSER_ADD_ROUTE,
+  OBJECT_BROWSER_CREATE_FOLDER,
   OBJECT_BROWSER_REMOVE_ROUTE_LEVEL,
   OBJECT_BROWSER_RESET_ROUTES_LIST,
   OBJECT_BROWSER_SET_ALL_ROUTES,
@@ -84,6 +85,28 @@ export function objectBrowserReducer(
       return {
         ...state,
         routesList: newSetOfRoutes,
+      };
+    case OBJECT_BROWSER_CREATE_FOLDER:
+      const newFoldersRoutes = [...state.routesList];
+      let lastRoute = state.routesList[state.routesList.length - 1].route;
+
+      const splitElements = action.newRoute.split("/");
+
+      splitElements.forEach((element) => {
+        const folderTrim = element.trim();
+        if (folderTrim !== "") {
+          lastRoute = `${lastRoute}/${folderTrim}`;
+
+          const newItem = { route: lastRoute, label: folderTrim };
+          newFoldersRoutes.push(newItem);
+        }
+      });
+
+      history.push(lastRoute);
+
+      return {
+        ...state,
+        routesList: newFoldersRoutes,
       };
     default:
       return state;
