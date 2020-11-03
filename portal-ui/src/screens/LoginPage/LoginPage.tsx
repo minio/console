@@ -22,14 +22,26 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import { CircularProgress, Paper } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import {
+  CircularProgress,
+  LinearProgress,
+  Paper,
+  TextFieldProps,
+} from "@material-ui/core";
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  withStyles,
+} from "@material-ui/core/styles";
 import { SystemState } from "../../types";
 import { userLoggedIn } from "../../actions";
 import api from "../../common/api";
 import { ILoginDetails, loginStrategyType } from "./types";
 import { setSession } from "../../common/utils";
 import history from "../../history";
+import { isBoolean } from "util";
+import { OutlinedInputProps } from "@material-ui/core/OutlinedInput";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -121,7 +133,32 @@ const styles = (theme: Theme) =>
     jwtInput: {
       marginTop: 45,
     },
+    linearPredef: {
+      height: 10,
+    },
   });
+
+const inputStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    disabled: {
+      "&.MuiInput-underline::before": {
+        borderColor: "#eaeaea",
+        borderBottomStyle: "solid",
+      },
+    },
+  })
+);
+
+function LoginField(props: TextFieldProps) {
+  const classes = inputStyles();
+
+  return (
+    <TextField
+      InputProps={{ classes } as Partial<OutlinedInputProps>}
+      {...props}
+    />
+  );
+}
 
 const mapState = (state: SystemState) => ({
   loggedIn: state.loggedIn,
@@ -156,6 +193,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
     loginStrategy: loginStrategyType.unknown,
     redirect: "",
   });
+  const [loginSending, setLoginSending] = useState<boolean>(false);
 
   const loginStrategyEndpoints: LoginStrategyRoutes = {
     form: "/api/v1/login",
@@ -180,6 +218,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
 
   const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoginSending(true);
     request
       .post(
         loginStrategyEndpoints[loginStrategy.loginStrategy] || "/api/v1/login"
@@ -191,6 +230,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
           // store the jwt token
           setSession(bodyResponse.sessionId);
         } else if (bodyResponse.error) {
+          setLoginSending(false);
           // throw will be moved to catch block once bad login returns 403
           throw bodyResponse.error;
         }
@@ -201,6 +241,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
         history.push("/");
       })
       .catch((err) => {
+        setLoginSending(false);
         setError(err.message);
       });
   };
@@ -225,7 +266,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
           <form className={classes.form} noValidate onSubmit={formSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <TextField
+                <LoginField
                   fullWidth
                   id="accessKey"
                   value={accessKey}
@@ -235,10 +276,11 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
                   label="Enter Access Key"
                   name="accessKey"
                   autoComplete="username"
+                  disabled={loginSending}
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
+                <LoginField
                   fullWidth
                   value={secretKey}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -249,6 +291,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
                   type="password"
                   id="secretKey"
                   autoComplete="current-password"
+                  disabled={loginSending}
                 />
               </Grid>
             </Grid>
@@ -258,10 +301,13 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
                 variant="contained"
                 color="primary"
                 className={classes.submit}
-                disabled={secretKey === "" || accessKey === ""}
+                disabled={secretKey === "" || accessKey === "" || loginSending}
               >
                 Login
               </Button>
+            </Grid>
+            <Grid item xs={12} className={classes.linearPredef}>
+              {loginSending && <LinearProgress />}
             </Grid>
             <Grid item xs={12} className={classes.disclaimer}>
               <strong>Don't have an access key?</strong>
@@ -314,7 +360,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
           <form className={classes.form} noValidate onSubmit={formSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12} className={classes.jwtInput}>
-                <TextField
+                <LoginField
                   required
                   fullWidth
                   id="jwt"
@@ -325,6 +371,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
                   label="JWT"
                   name="jwt"
                   autoComplete="Service Account JWT Token"
+                  disabled={loginSending}
                 />
               </Grid>
             </Grid>
@@ -334,10 +381,13 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
                 variant="contained"
                 color="primary"
                 className={classes.submit}
-                disabled={jwt === ""}
+                disabled={jwt === "" || loginSending}
               >
                 Login
               </Button>
+            </Grid>
+            <Grid item xs={12} className={classes.linearPredef}>
+              {loginSending && <LinearProgress />}
             </Grid>
             <Grid item xs={12} className={classes.disclaimer}>
               <strong>Don't have an access key?</strong>
