@@ -79,6 +79,9 @@ const theme = createMuiTheme({
           fontWeight: 600,
           color: "#767676",
         },
+        "& .MuiButton-iconSizeMedium > *:first-child": {
+          fontSize: 12,
+        },
       },
     },
   },
