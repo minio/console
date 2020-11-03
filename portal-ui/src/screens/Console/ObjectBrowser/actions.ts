@@ -20,6 +20,7 @@ export const OBJECT_BROWSER_RESET_ROUTES_LIST =
 export const OBJECT_BROWSER_REMOVE_ROUTE_LEVEL =
   "OBJECT_BROWSER/REMOVE_ROUTE_LEVEL";
 export const OBJECT_BROWSER_SET_ALL_ROUTES = "OBJECT_BROWSER/SET_ALL_ROUTES";
+export const OBJECT_BROWSER_CREATE_FOLDER = "OBJECT_BROWSER/CREATE_FOLDER";
 
 interface AddRouteAction {
   type: typeof OBJECT_BROWSER_ADD_ROUTE;
@@ -42,11 +43,17 @@ interface SetAllRoutes {
   currentRoute: string;
 }
 
+interface CreateFolder {
+  type: typeof OBJECT_BROWSER_CREATE_FOLDER;
+  newRoute: string;
+}
+
 export type ObjectBrowserActionTypes =
   | AddRouteAction
   | ResetRoutesList
   | RemoveRouteLevel
-  | SetAllRoutes;
+  | SetAllRoutes
+  | CreateFolder;
 
 export const addRoute = (route: string, label: string) => {
   return {
@@ -75,5 +82,12 @@ export const setAllRoutes = (currentRoute: string) => {
   return {
     type: OBJECT_BROWSER_SET_ALL_ROUTES,
     currentRoute,
+  };
+};
+
+export const createFolder = (newRoute: string) => {
+  return {
+    type: OBJECT_BROWSER_CREATE_FOLDER,
+    newRoute,
   };
 };

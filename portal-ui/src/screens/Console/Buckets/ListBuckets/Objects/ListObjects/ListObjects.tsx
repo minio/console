@@ -45,6 +45,9 @@ import { withRouter } from "react-router-dom";
 import { addRoute, setAllRoutes } from "../../../../ObjectBrowser/actions";
 import { connect } from "react-redux";
 import { ObjectBrowserState, Route } from "../../../../ObjectBrowser/reducers";
+import CreateFolderModal from "./CreateFolderModal";
+import { create } from "domain";
+import UploadFile from "../../../../../../icons/UploadFile";
 
 const commonIcon = {
   backgroundRepeat: "no-repeat",
@@ -96,6 +99,11 @@ const styles = (theme: Theme) =>
       backgroundImage: "url(/images/ob_file_clear.svg)",
       ...commonIcon,
     },
+    buttonsContainer: {
+      "& .MuiButtonBase-root": {
+        marginLeft: 10,
+      },
+    },
     "@global": {
       ".rowElementRaw:hover  .iconFileElm": {
         backgroundImage: "url(/images/ob_file_filled.svg)",
@@ -134,6 +142,7 @@ const ListObjects = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+  const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
   const [deleteError, setDeleteError] = useState<string>("");
   const [selectedObject, setSelectedObject] = useState<string>("");
   const [selectedBucket, setSelectedBucket] = useState<string>("");
@@ -180,6 +189,10 @@ const ListObjects = ({
     if (refresh) {
       setLoading(true);
     }
+  };
+
+  const closeAddFolderModal = () => {
+    setCreateFolderOpen(false);
   };
 
   const showSnackBarMessage = (text: string) => {
@@ -310,10 +323,21 @@ const ListObjects = ({
   };
 
   const uploadObject = (e: any): void => {
-    // TODO: handle deeper paths/folders
+    // Handle of deeper routes.
+    const currentPath = routesList[routesList.length - 1].route;
+    const splitPaths = currentPath
+      .split("/")
+      .filter((item) => item.trim() !== "");
+
+    let path = "";
+
+    if (splitPaths.length > 2) {
+      path = `${splitPaths.slice(2).join("/")}/`;
+    }
+
     let file = e.target.files[0];
     showSnackBarMessage(`Uploading: ${file.name}`);
-    upload(e, selectedBucket, "");
+    upload(e, selectedBucket, path);
   };
 
   const snackBarAction = (
@@ -375,6 +399,13 @@ const ListObjects = ({
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
+      {createFolderOpen && (
+        <CreateFolderModal
+          modalOpen={createFolderOpen}
+          folderName={routesList[routesList.length - 1].route}
+          onClose={closeAddFolderModal}
+        />
+      )}
       <Snackbar
         open={openSnackbar}
         message={snackBarMessage}
@@ -387,14 +418,25 @@ const ListObjects = ({
             <div>
               <BrowserBreadcrumbs />
             </div>
-            <div>
+            <div className={classes.buttonsContainer}>
               <Button
                 variant="contained"
                 color="primary"
                 startIcon={<CreateIcon />}
                 component="label"
+                onClick={() => {
+                  setCreateFolderOpen(true);
+                }}
               >
-                Upload Object
+                Create Folder
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<UploadFile />}
+                component="label"
+              >
+                File
                 <Input
                   type="file"
                   onChange={(e) => uploadObject(e)}
