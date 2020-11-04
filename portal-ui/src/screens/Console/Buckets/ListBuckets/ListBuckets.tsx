@@ -134,10 +134,13 @@ const ListBuckets = ({
     }
   }, [loading, page, rowsPerPage]);
 
-  const closeAddModalAndRefresh = () => {
+  const closeAddModalAndRefresh = (refresh: boolean) => {
     addBucketOpen(false);
     addBucketReset();
-    setLoading(true);
+
+    if (refresh) {
+      setLoading(true);
+    }
   };
 
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
@@ -201,9 +204,7 @@ const ListBuckets = ({
       {addBucketModalOpen && (
         <AddBucket
           open={addBucketModalOpen}
-          closeModalAndRefresh={() => {
-            closeAddModalAndRefresh();
-          }}
+          closeModalAndRefresh={closeAddModalAndRefresh}
         />
       )}
       {deleteOpen && (
