@@ -93,9 +93,6 @@ type CreateTenantRequest struct {
 	// secret key
 	SecretKey string `json:"secret_key,omitempty"`
 
-	// service name
-	ServiceName string `json:"service_name,omitempty"`
-
 	// tls
 	TLS *TLSConfiguration `json:"tls,omitempty"`
 

@@ -15,20 +15,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { useState, useEffect } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import { AppState } from "../../../store";
+import { AppState } from "../../../../../store";
 import { connect } from "react-redux";
 import { logMessageReceived, logResetMessages } from "./actions";
 import { LogMessage } from "./types";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { timeFromDate } from "../../../common/utils";
-import { wsProtocol } from "../../../utils/wsUtils";
+import { timeFromDate } from "../../../../../common/utils";
+import { wsProtocol } from "../../../../../utils/wsUtils";
 import {
   actionsTray,
   containerForHeader,
   searchField,
-} from "../Common/FormComponents/common/styleLibrary";
+} from "../../../Common/FormComponents/common/styleLibrary";
 import { Grid } from "@material-ui/core";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
@@ -73,6 +72,8 @@ interface ILogs {
   logMessageReceived: typeof logMessageReceived;
   logResetMessages: typeof logResetMessages;
   messages: LogMessage[];
+  namespace: string;
+  tenant: string;
 }
 
 const Logs = ({
@@ -80,6 +81,8 @@ const Logs = ({
   logMessageReceived,
   logResetMessages,
   messages,
+  namespace,
+  tenant,
 }: ILogs) => {
   const [highlight, setHighlight] = useState("");
 
@@ -92,7 +95,7 @@ const Logs = ({
     const wsProt = wsProtocol(url.protocol);
 
     const c = new W3CWebSocket(
-      `${wsProt}://${url.hostname}:${port}/ws/console`
+      `${wsProt}://${url.hostname}:${port}/ws/console/${namespace}/${tenant}`
     );
 
     let interval: any | null = null;
@@ -321,38 +324,33 @@ const Logs = ({
   });
 
   return (
-    <React.Fragment>
-      <PageHeader label="Logs" />
-      <Grid container>
-        <Grid item xs={12} className={classes.container}>
-          <Grid item xs={12} className={classes.actionsTray}>
-            <TextField
-              placeholder="Highlight Line"
-              className={classes.searchField}
-              id="search-resource"
-              label=""
-              onChange={(val) => {
-                setHighlight(val.target.value);
-              }}
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12}>
-            <div className={classes.logList}>{renderLines}</div>
-          </Grid>
-        </Grid>
+    <Grid item xs={12}>
+      <Grid item xs={12} className={classes.actionsTray}>
+        <TextField
+          placeholder="Highlight Line"
+          className={classes.searchField}
+          id="search-resource"
+          label=""
+          onChange={(val) => {
+            setHighlight(val.target.value);
+          }}
+          InputProps={{
+            disableUnderline: true,
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+        />
       </Grid>
-    </React.Fragment>
+      <Grid item xs={12}>
+        <br />
+      </Grid>
+      <Grid item xs={12}>
+        <div className={classes.logList}>{renderLines}</div>
+      </Grid>
+    </Grid>
   );
 };
 

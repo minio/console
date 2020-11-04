@@ -42,8 +42,6 @@ import ListNotificationEndpoints from "./NotificationEndopoints/ListNotification
 import ConfigurationsList from "./Configurations/ConfigurationPanels/ConfigurationsList";
 import { Button, LinearProgress } from "@material-ui/core";
 import WebhookPanel from "./Configurations/ConfigurationPanels/WebhookPanel";
-import Trace from "./Trace/Trace";
-import Logs from "./Logs/Logs";
 import Heal from "./Heal/Heal";
 import Watch from "./Watch/Watch";
 import ListTenants from "./Tenants/ListTenants/ListTenants";
@@ -253,14 +251,6 @@ const Console = ({
     {
       component: Policies,
       path: "/policies",
-    },
-    {
-      component: Trace,
-      path: "/trace",
-    },
-    {
-      component: Logs,
-      path: "/logs",
     },
     {
       component: Heal,

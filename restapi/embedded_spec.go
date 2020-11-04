@@ -3264,9 +3264,6 @@ func init() {
         "secret_key": {
           "type": "string"
         },
-        "service_name": {
-          "type": "string"
-        },
         "tls": {
           "type": "object",
           "$ref": "#/definitions/tlsConfiguration"
@@ -8654,9 +8651,6 @@ func init() {
           "type": "string"
         },
         "secret_key": {
-          "type": "string"
-        },
-        "service_name": {
           "type": "string"
         },
         "tls": {
