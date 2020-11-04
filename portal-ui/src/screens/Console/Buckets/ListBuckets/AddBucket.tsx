@@ -67,7 +67,7 @@ const styles = (theme: Theme) =>
 interface IAddBucketProps {
   classes: any;
   open: boolean;
-  closeModalAndRefresh: () => void;
+  closeModalAndRefresh: (refresh: boolean) => void;
   addBucketName: typeof addBucketName;
   addBucketVersioned: typeof addBucketVersioned;
   addBucketQuota: typeof addBucketQuota;
@@ -130,7 +130,7 @@ const AddBucket = ({
       .then((res) => {
         setAddLoading(false);
         setAddError("");
-        closeModalAndRefresh();
+        closeModalAndRefresh(true);
       })
       .catch((err) => {
         setAddLoading(false);
@@ -175,7 +175,7 @@ const AddBucket = ({
       modalOpen={open}
       onClose={() => {
         setAddError("");
-        closeModalAndRefresh();
+        closeModalAndRefresh(false);
       }}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"

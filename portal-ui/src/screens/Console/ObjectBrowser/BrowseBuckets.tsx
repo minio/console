@@ -155,9 +155,12 @@ const BrowseBuckets = ({
     }
   }, [loading, offset, rowsPerPage, page]);
 
-  const closeAddModalAndRefresh = () => {
+  const closeAddModalAndRefresh = (refresh: boolean) => {
     setAddScreenOpen(false);
-    setLoading(false);
+
+    if (refresh) {
+      setLoading(true);
+    }
   };
 
   const filteredRecords = records
