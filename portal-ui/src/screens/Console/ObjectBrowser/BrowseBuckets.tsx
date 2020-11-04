@@ -160,14 +160,14 @@ const BrowseBuckets = ({
     setLoading(false);
   };
 
-  const filteredRecords = records
-    .filter((b: Bucket) => {
-      if (filterBuckets === "") {
-        return true;
-      }
-      return b.name.indexOf(filterBuckets) >= 0;
-    })
-    .slice(offset, offset + rowsPerPage);
+  const filteredRecords = records.filter((b: Bucket) => {
+    if (filterBuckets === "") {
+      return true;
+    }
+    return b.name.indexOf(filterBuckets) >= 0;
+  });
+
+  const showInPage = filteredRecords.slice(offset, offset + rowsPerPage);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -270,7 +270,7 @@ const BrowseBuckets = ({
               },
             ]}
             isLoading={loading}
-            records={filteredRecords}
+            records={showInPage}
             entityName="Buckets"
             idField="name"
             paginatorConfig={{
