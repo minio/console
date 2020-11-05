@@ -43,13 +43,11 @@ import {
   LambdaNotificationsIcon,
   MirroringIcon,
   ServiceAccountsIcon,
-  TraceIcon,
   UsersIcon,
   WarpIcon,
 } from "../../../icons";
 import { clearSession } from "../../../common/utils";
 import HealIcon from "../../../icons/HealIcon";
-import ConsoleIcon from "../../../icons/ConsoleIcon";
 import LicenseIcon from "../../../icons/LicenseIcon";
 import LogoutIcon from "../../../icons/LogoutIcon";
 
@@ -246,25 +244,9 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
       group: "Tools",
       type: "item",
       component: NavLink,
-      to: "/logs",
-      name: "Logs",
-      icon: <ConsoleIcon />,
-    },
-    {
-      group: "Tools",
-      type: "item",
-      component: NavLink,
       to: "/watch",
       name: "Watch",
       icon: <WatchIcon />,
-    },
-    {
-      group: "Tools",
-      type: "item",
-      component: NavLink,
-      to: "/trace",
-      name: "Trace",
-      icon: <TraceIcon />,
     },
     {
       group: "Tools",

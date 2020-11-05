@@ -16,17 +16,17 @@
 
 import React, { useEffect } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import { AppState } from "../../../store";
+import { AppState } from "../../../../../store";
 import { connect } from "react-redux";
 import { traceMessageReceived, traceResetMessages } from "./actions";
 import { TraceMessage } from "./types";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { niceBytes, timeFromDate } from "../../../common/utils";
-import { wsProtocol } from "../../../utils/wsUtils";
-import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
-import PageHeader from "../Common/PageHeader/PageHeader";
+import { niceBytes, timeFromDate } from "../../../../../common/utils";
+import { wsProtocol } from "../../../../../utils/wsUtils";
+import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
+import PageHeader from "../../../Common/PageHeader/PageHeader";
 import { Grid } from "@material-ui/core";
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
+import TableWrapper from "../../../Common/TableWrapper/TableWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -59,6 +59,8 @@ interface ITrace {
   traceMessageReceived: typeof traceMessageReceived;
   traceResetMessages: typeof traceResetMessages;
   messages: TraceMessage[];
+  namespace: string;
+  tenant: string;
 }
 
 const Trace = ({
@@ -66,6 +68,8 @@ const Trace = ({
   traceMessageReceived,
   traceResetMessages,
   messages,
+  namespace,
+  tenant,
 }: ITrace) => {
   useEffect(() => {
     traceResetMessages();
@@ -74,7 +78,9 @@ const Trace = ({
     const port = isDev ? "9090" : url.port;
 
     const wsProt = wsProtocol(url.protocol);
-    const c = new W3CWebSocket(`${wsProt}://${url.hostname}:${port}/ws/trace`);
+    const c = new W3CWebSocket(
+      `${wsProt}://${url.hostname}:${port}/ws/trace/${namespace}/${tenant}`
+    );
 
     let interval: any | null = null;
     if (c !== null) {
@@ -104,64 +110,59 @@ const Trace = ({
   }, [traceMessageReceived, traceResetMessages]);
 
   return (
-    <React.Fragment>
-      <PageHeader label={"Trace"} />
-      <Grid container>
-        <Grid item xs={12} className={classes.container}>
-          <TableWrapper
-            itemActions={[]}
-            columns={[
-              {
-                label: "Time",
-                elementKey: "time",
-                renderFunction: (time: Date) => {
-                  const timeParse = new Date(time);
-                  return timeFromDate(timeParse);
-                },
-                globalClass: classes.timeItem,
-              },
-              { label: "Name", elementKey: "api" },
-              {
-                label: "Status",
-                elementKey: "",
-                renderFunction: (fullElement: TraceMessage) =>
-                  `${fullElement.statusCode} ${fullElement.statusMsg}`,
-                renderFullObject: true,
-              },
-              {
-                label: "Location",
-                elementKey: "configuration_id",
-                renderFunction: (fullElement: TraceMessage) =>
-                  `${fullElement.host} ${fullElement.client}`,
-                renderFullObject: true,
-              },
-              {
-                label: "Load Time",
-                elementKey: "callStats.duration",
-                globalClass: classes.timeItem,
-              },
-              {
-                label: "Upload",
-                elementKey: "callStats.rx",
-                renderFunction: niceBytes,
-                globalClass: classes.sizeItem,
-              },
-              {
-                label: "Download",
-                elementKey: "callStats.tx",
-                renderFunction: niceBytes,
-                globalClass: classes.sizeItem,
-              },
-            ]}
-            isLoading={false}
-            records={messages}
-            entityName="Traces"
-            idField="api"
-            customEmptyMessage="There are no traced Elements yet"
-          />
-        </Grid>
-      </Grid>
-    </React.Fragment>
+    <Grid item xs={12}>
+      <TableWrapper
+        itemActions={[]}
+        columns={[
+          {
+            label: "Time",
+            elementKey: "time",
+            renderFunction: (time: Date) => {
+              const timeParse = new Date(time);
+              return timeFromDate(timeParse);
+            },
+            globalClass: classes.timeItem,
+          },
+          { label: "Name", elementKey: "api" },
+          {
+            label: "Status",
+            elementKey: "",
+            renderFunction: (fullElement: TraceMessage) =>
+              `${fullElement.statusCode} ${fullElement.statusMsg}`,
+            renderFullObject: true,
+          },
+          {
+            label: "Location",
+            elementKey: "configuration_id",
+            renderFunction: (fullElement: TraceMessage) =>
+              `${fullElement.host} ${fullElement.client}`,
+            renderFullObject: true,
+          },
+          {
+            label: "Load Time",
+            elementKey: "callStats.duration",
+            globalClass: classes.timeItem,
+          },
+          {
+            label: "Upload",
+            elementKey: "callStats.rx",
+            renderFunction: niceBytes,
+            globalClass: classes.sizeItem,
+          },
+          {
+            label: "Download",
+            elementKey: "callStats.tx",
+            renderFunction: niceBytes,
+            globalClass: classes.sizeItem,
+          },
+        ]}
+        isLoading={false}
+        records={messages}
+        entityName="Traces"
+        idField="api"
+        customEmptyMessage="There are no traced Elements yet"
+      />
+    </Grid>
   );
 };
 

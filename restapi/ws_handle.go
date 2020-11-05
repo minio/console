@@ -22,9 +22,11 @@ import (
 	"net"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/go-openapi/errors"
 	"github.com/gorilla/websocket"
+	"github.com/minio/console/cluster"
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/auth"
 )
@@ -118,15 +120,19 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 
 	wsPath := strings.TrimPrefix(req.URL.Path, wsBasePath)
 	switch {
-	case wsPath == "/trace":
-		wsAdminClient, err := newWebSocketAdminClient(conn, session)
+	case strings.HasPrefix(wsPath, `/trace`):
+		// Trace api only for operator Console
+		namespace, tenant := getTraceOptionsFromReq(req)
+		wsAdminClient, err := newWebSocketTenantAdminClient(conn, session, namespace, tenant)
 		if err != nil {
 			closeWsConn(conn)
 			return
 		}
 		go wsAdminClient.trace()
-	case wsPath == "/console":
-		wsAdminClient, err := newWebSocketAdminClient(conn, session)
+	case strings.HasPrefix(wsPath, `/console`):
+		// Trace api only for operator Console
+		namespace, tenant := getConsoleLogOptionsFromReq(req)
+		wsAdminClient, err := newWebSocketTenantAdminClient(conn, session, namespace, tenant)
 		if err != nil {
 			closeWsConn(conn)
 			return
@@ -157,6 +163,57 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 		// path not found
 		closeWsConn(conn)
 	}
+}
+
+// newWebSocketTenantAdminClient creates a ws Client with a k8s tenant client
+// this is to be used for a kubernetes environment and for a particular tenant
+// in a defined namespace
+func newWebSocketTenantAdminClient(conn *websocket.Conn, session *models.Principal, namespace, tenant string) (*wsAdminClient, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
+	if err != nil {
+		return nil, err
+	}
+	clientSet, err := cluster.K8sClient(session.SessionToken)
+	if err != nil {
+		return nil, err
+	}
+
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+	k8sClient := &k8sClient{
+		client: clientSet,
+	}
+
+	minTenant, err := getTenant(ctx, opClient, namespace, tenant)
+	if err != nil {
+		return nil, err
+	}
+	minTenant.EnsureDefaults()
+
+	svcURL := GetTenantServiceURL(minTenant)
+
+	mAdmin, err := getTenantAdminClient(
+		ctx,
+		k8sClient,
+		minTenant,
+		svcURL,
+		true)
+	if err != nil {
+		return nil, err
+	}
+	// create a websocket connection interface implementation
+	// defining the connection to be used
+	wsConnection := wsConn{conn: conn}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := adminClient{client: mAdmin}
+	// create websocket client and handle request
+	wsAdminClient := &wsAdminClient{conn: wsConnection, client: adminClient}
+	return wsAdminClient, nil
 }
 
 // newWebSocketAdminClient returns a wsAdminClient authenticated as an admin user

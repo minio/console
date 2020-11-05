@@ -32,6 +32,8 @@ import AddBucket from "../../Buckets/ListBuckets/AddBucket";
 import ReplicationSetup from "./ReplicationSetup";
 import api from "../../../../common/api";
 import { ITenant, IZone } from "../ListTenants/types";
+import Logs from "./Logs/Logs";
+import Trace from "./Trace/Trace";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -237,6 +239,8 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
             aria-label="tenant-tabs"
           >
             <Tab label="Zones" />
+            <Tab label="Logs" />
+            <Tab label="Trace" />
           </Tabs>
         </Grid>
         <Grid item xs={6} className={classes.actionsTray}>
@@ -255,42 +259,50 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
           <br />
         </Grid>
         <Grid item xs={12}>
-          <TableWrapper
-            itemActions={[
-              {
-                type: "delete",
-                onClick: (element) => {
-                  console.log(element);
+          {selectedTab === 0 && (
+            <TableWrapper
+              itemActions={[
+                {
+                  type: "delete",
+                  onClick: (element) => {
+                    console.log(element);
+                  },
+                  sendOnlyId: true,
                 },
-                sendOnlyId: true,
-              },
-            ]}
-            columns={[
-              { label: "Name", elementKey: "name" },
-              { label: "Capacity", elementKey: "capacity" },
-              { label: "# of Instances", elementKey: "servers" },
-              { label: "# of Drives", elementKey: "volumes" },
-            ]}
-            isLoading={false}
-            records={zones}
-            entityName="Zones"
-            idField="name"
-            paginatorConfig={{
-              rowsPerPageOptions: [5, 10, 25],
-              colSpan: 3,
-              count: zoneCount,
-              rowsPerPage: 10,
-              page: 0,
-              SelectProps: {
-                inputProps: { "aria-label": "rows per page" },
-                native: true,
-              },
-              ActionsComponent: MinTablePaginationActions,
-              onChangePage: () => {},
-              onChangeRowsPerPage: () => {},
-            }}
-          />
+              ]}
+              columns={[
+                { label: "Name", elementKey: "name" },
+                { label: "Capacity", elementKey: "capacity" },
+                { label: "# of Instances", elementKey: "servers" },
+                { label: "# of Drives", elementKey: "volumes" },
+              ]}
+              isLoading={false}
+              records={zones}
+              entityName="Zones"
+              idField="name"
+              paginatorConfig={{
+                rowsPerPageOptions: [5, 10, 25],
+                colSpan: 3,
+                count: zoneCount,
+                rowsPerPage: 10,
+                page: 0,
+                SelectProps: {
+                  inputProps: { "aria-label": "rows per page" },
+                  native: true,
+                },
+                ActionsComponent: MinTablePaginationActions,
+                onChangePage: () => {},
+                onChangeRowsPerPage: () => {},
+              }}
+            />
+          )}
         </Grid>
+        {selectedTab === 1 && tenant !== null && (
+          <Logs namespace={tenant.namespace} tenant={tenant.name} />
+        )}
+        {selectedTab === 2 && tenant !== null && (
+          <Trace namespace={tenant.namespace} tenant={tenant.name} />
+        )}
       </Grid>
     </React.Fragment>
   );

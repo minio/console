@@ -576,14 +576,16 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	if tenantReq.EnableTLS != nil && *tenantReq.EnableTLS {
 		// If user request autoCert, Operator will generate certificate keypair for MinIO (server), Console (server) and KES (server and app mTLS)
 		isEncryptionEnabled = true
-		minInst.Spec.RequestAutoCert = *tenantReq.EnableTLS
+		minInst.Spec.RequestAutoCert = tenantReq.EnableTLS
 	}
 
-	if !minInst.Spec.RequestAutoCert && tenantReq.TLS != nil && len(tenantReq.TLS.Minio) > 0 {
+	if (minInst.Spec.RequestAutoCert == nil || (minInst.Spec.RequestAutoCert != nil && !*minInst.Spec.RequestAutoCert)) &&
+		tenantReq.TLS != nil &&
+		len(tenantReq.TLS.Minio) > 0 {
 		// User provided TLS certificates for MinIO
 		isEncryptionEnabled = true
 		// disable autoCert
-		minInst.Spec.RequestAutoCert = false
+		minInst.Spec.RequestAutoCert = swag.Bool(false)
 		// Certificates used by the MinIO instance
 		externalCertSecretName := fmt.Sprintf("%s-instance-external-certificates", secretName)
 		externalCertSecret, err := createOrReplaceExternalCertSecrets(ctx, &k8sClient, ns, tenantReq.TLS.Minio, externalCertSecretName, tenantName)
@@ -600,7 +602,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			Value: "on",
 		})
 		// KES client mTLSCertificates used by MinIO instance, only if autoCert is not enabled
-		if !minInst.Spec.RequestAutoCert {
+		if minInst.Spec.RequestAutoCert == nil || (minInst.Spec.RequestAutoCert != nil && !*minInst.Spec.RequestAutoCert) {
 			tenantExternalClientCertSecretName := fmt.Sprintf("%s-tenant-external-client-cert", secretName)
 			certificates := []*models.KeyPairConfiguration{tenantReq.Encryption.Client}
 			certificateSecrets, err := createOrReplaceExternalCertSecrets(ctx, &k8sClient, ns, certificates, tenantExternalClientCertSecretName, tenantName)
@@ -664,7 +666,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 				instanceSecret.Data["CONSOLE_IDP_SECRET"] = []byte(secretID)
 				consoleScheme := "http"
 				consolePort := 9090
-				if minInst.Spec.RequestAutoCert {
+				if minInst.Spec.RequestAutoCert != nil && *minInst.Spec.RequestAutoCert {
 					consoleScheme = "https"
 					consolePort = 9443
 				}
@@ -690,7 +692,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 				},
 			},
 		}
-		if !minInst.Spec.RequestAutoCert && tenantReq.TLS != nil && tenantReq.TLS.Console != nil {
+		if (minInst.Spec.RequestAutoCert == nil || (minInst.Spec.RequestAutoCert != nil && !*minInst.Spec.RequestAutoCert)) && tenantReq.TLS != nil && tenantReq.TLS.Console != nil {
 			// Certificates used by the console instance
 			externalCertSecretName := fmt.Sprintf("%s-console-external-certificates", secretName)
 			certificates := []*models.KeyPairConfiguration{tenantReq.TLS.Console}
@@ -711,10 +713,6 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		}
 	}
 
-	// set the service name if provided
-	if tenantReq.ServiceName != "" {
-		minInst.Spec.ServiceName = tenantReq.ServiceName
-	}
 	// add annotations
 	var annotations map[string]string
 
