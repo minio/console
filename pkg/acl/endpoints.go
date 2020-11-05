@@ -28,8 +28,6 @@ var (
 	iamPolicies         = "/policies"
 	dashboard           = "/dashboard"
 	profiling           = "/profiling"
-	trace               = "/trace"
-	logs                = "/logs"
 	watch               = "/watch"
 	notifications       = "/notification-endpoints"
 	buckets             = "/buckets"
@@ -58,16 +56,6 @@ var configurationActionSet = ConfigurationActionSet{
 	),
 	actions: iampolicy.NewActionSet(
 		iampolicy.ConfigUpdateAdminAction,
-	),
-}
-
-// logsActionSet contains the list of admin actions required for this endpoint to work
-var logsActionSet = ConfigurationActionSet{
-	actionTypes: iampolicy.NewActionSet(
-		iampolicy.AllAdminActions,
-	),
-	actions: iampolicy.NewActionSet(
-		iampolicy.ConsoleLogAdminAction,
 	),
 }
 
@@ -116,16 +104,6 @@ var profilingActionSet = ConfigurationActionSet{
 	),
 	actions: iampolicy.NewActionSet(
 		iampolicy.ProfilingAdminAction,
-	),
-}
-
-// traceActionSet contains the list of admin actions required for this endpoint to work
-var traceActionSet = ConfigurationActionSet{
-	actionTypes: iampolicy.NewActionSet(
-		iampolicy.AllAdminActions,
-	),
-	actions: iampolicy.NewActionSet(
-		iampolicy.TraceAdminAction,
 	),
 }
 
@@ -252,8 +230,6 @@ var endpointRules = map[string]ConfigurationActionSet{
 	iamPolicies:         iamPoliciesActionSet,
 	dashboard:           dashboardActionSet,
 	profiling:           profilingActionSet,
-	trace:               traceActionSet,
-	logs:                logsActionSet,
 	watch:               watchActionSet,
 	notifications:       notificationsActionSet,
 	buckets:             bucketsActionSet,

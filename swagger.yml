@@ -2697,8 +2697,6 @@ definitions:
         type: string
       console_image:
         type: string
-      service_name:
-        type: string
       zones:
         type: array
         items:
