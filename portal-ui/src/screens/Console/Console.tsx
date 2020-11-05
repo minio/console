@@ -131,6 +131,8 @@ const styles = (theme: Theme) =>
     container: {
       paddingBottom: theme.spacing(4),
       margin: 0,
+      width: "100%",
+      maxWidth: "initial",
     },
     paper: {
       padding: theme.spacing(2),
