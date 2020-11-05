@@ -114,10 +114,10 @@ const styles = (theme: Theme) =>
       overflow: "auto",
       flexDirection: "column",
       padding: "19px 38px",
-      minHeight: "200px",
       boxShadow: "none",
       border: "#EAEDEE 1px solid",
       borderRadius: 3,
+      minHeight: "calc(100vh - 340px)",
     },
     allTableSettings: {
       "& .MuiTableCell-sizeSmall:last-child": {
