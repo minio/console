@@ -185,19 +185,19 @@ const ListBuckets = ({
     return <Moment>{date}</Moment>;
   };
 
-  const filteredRecords = records
-    .filter((b: Bucket) => {
-      if (filterBuckets === "") {
+  const filteredRecords = records.filter((b: Bucket) => {
+    if (filterBuckets === "") {
+      return true;
+    } else {
+      if (b.name.indexOf(filterBuckets) >= 0) {
         return true;
       } else {
-        if (b.name.indexOf(filterBuckets) >= 0) {
-          return true;
-        } else {
-          return false;
-        }
+        return false;
       }
-    })
-    .slice(offset, offset + rowsPerPage);
+    }
+  });
+
+  const showInPage = filteredRecords.slice(offset, offset + rowsPerPage);
 
   return (
     <React.Fragment>
@@ -269,13 +269,13 @@ const ListBuckets = ({
                 },
               ]}
               isLoading={loading}
-              records={filteredRecords}
+              records={showInPage}
               entityName="Buckets"
               idField="name"
               paginatorConfig={{
                 rowsPerPageOptions: [5, 10, 25],
                 colSpan: 3,
-                count: totalRecords,
+                count: filteredRecords.length,
                 rowsPerPage: rowsPerPage,
                 page: page,
                 SelectProps: {
