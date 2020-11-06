@@ -25,6 +25,14 @@ import ConsoleIcon from "./TableActionIcons/ConsoleIcon";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import SvgIcon from "@material-ui/core/SvgIcon";
 import { Link } from "react-router-dom";
+import { createStyles, withStyles } from "@material-ui/core/styles";
+
+const styles = () =>
+  createStyles({
+    spacing: {
+      margin: "0 8px",
+    },
+  });
 
 interface IActionButton {
   type: string;
@@ -34,6 +42,7 @@ interface IActionButton {
   selected: boolean;
   sendOnlyId?: boolean;
   idField: string;
+  classes: any;
 }
 
 const defineIcon = (type: string, selected: boolean) => {
@@ -67,6 +76,7 @@ const TableActionButton = ({
   selected,
   to,
   sendOnlyId = false,
+  classes,
 }: IActionButton) => {
   const valueClick = sendOnlyId ? valueToSend[idField] : valueToSend;
 
@@ -82,6 +92,7 @@ const TableActionButton = ({
             }
           : () => null
       }
+      className={classes.spacing}
     >
       {defineIcon(type, selected)}
     </IconButton>
@@ -107,4 +118,4 @@ const TableActionButton = ({
   return null;
 };
 
-export default TableActionButton;
+export default withStyles(styles)(TableActionButton);

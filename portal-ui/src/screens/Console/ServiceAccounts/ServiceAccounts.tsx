@@ -278,20 +278,6 @@ const ServiceAccounts = ({ classes }: IServiceAccountsProps) => {
               idField={""}
               columns={[{ label: "Service Account", elementKey: "" }]}
               itemActions={tableActions}
-              paginatorConfig={{
-                rowsPerPageOptions: [5, 10, 25],
-                colSpan: 4,
-                count: records.length,
-                rowsPerPage: rowsPerPage,
-                page,
-                SelectProps: {
-                  inputProps: { "aria-label": "rows per page" },
-                  native: true,
-                },
-                onChangePage: handleChangePage,
-                onChangeRowsPerPage: handleChangeRowsPerPage,
-                ActionsComponent: MinTablePaginationActions,
-              }}
             />
           </Grid>
         </Grid>

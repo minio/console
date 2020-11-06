@@ -104,7 +104,7 @@ const radioBasic = {
   width: 12,
   height: 12,
   borderRadius: "100%",
-  'input:disabled ~ &': {
+  "input:disabled ~ &": {
     border: "1px solid #9C9C9C",
   },
 };
@@ -120,8 +120,7 @@ export const radioIcons = {
 
 export const containerForHeader = (bottomSpacing: any) => ({
   container: {
-    padding: "110px 33px 30px",
-    paddingBottom: bottomSpacing,
+    padding: "110px 33px 0",
     "& h6": {
       color: "#777777",
       fontSize: 14,
@@ -208,5 +207,11 @@ export const objectBrowserCommon = {
         textDecoration: "underline",
       },
     },
+  },
+};
+
+export const selectorsCommon = {
+  multiSelectTable: {
+    height: 200,
   },
 };
