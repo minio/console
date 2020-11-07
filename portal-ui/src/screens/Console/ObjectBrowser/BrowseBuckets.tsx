@@ -131,10 +131,8 @@ const BrowseBuckets = ({
       api
         .invoke("GET", `/api/v1/buckets?offset=${offset}&limit=${rowsPerPage}`)
         .then((res: BucketList) => {
-          const buckets = get(res, "buckets", []);
-
           setLoading(false);
-          setRecords(buckets);
+          setRecords(res.buckets || []);
           setError("");
           // if we get 0 results, and page > 0 , go down 1 page
           if (
