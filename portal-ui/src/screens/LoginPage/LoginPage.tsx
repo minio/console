@@ -40,7 +40,6 @@ import api from "../../common/api";
 import { ILoginDetails, loginStrategyType } from "./types";
 import { setSession } from "../../common/utils";
 import history from "../../history";
-import { isBoolean } from "util";
 import { OutlinedInputProps } from "@material-ui/core/OutlinedInput";
 
 const styles = (theme: Theme) =>

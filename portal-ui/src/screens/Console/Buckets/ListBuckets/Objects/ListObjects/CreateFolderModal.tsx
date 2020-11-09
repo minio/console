@@ -16,7 +16,7 @@
 
 import React, { useState } from "react";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
-import { Button, Grid, LinearProgress } from "@material-ui/core";
+import { Button, Grid } from "@material-ui/core";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";

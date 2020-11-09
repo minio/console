@@ -46,7 +46,6 @@ import { addRoute, setAllRoutes } from "../../../../ObjectBrowser/actions";
 import { connect } from "react-redux";
 import { ObjectBrowserState, Route } from "../../../../ObjectBrowser/reducers";
 import CreateFolderModal from "./CreateFolderModal";
-import { create } from "domain";
 import UploadFile from "../../../../../../icons/UploadFile";
 
 const commonIcon = {
