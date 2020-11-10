@@ -367,7 +367,6 @@ const TableWrapper = ({
                           onChange={onSelect}
                           onClick={(e) => {
                             e.stopPropagation();
-                            e.preventDefault();
                           }}
                           checkedIcon={
                             <span

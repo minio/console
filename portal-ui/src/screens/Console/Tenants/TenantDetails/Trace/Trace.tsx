@@ -24,7 +24,6 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { niceBytes, timeFromDate } from "../../../../../common/utils";
 import { wsProtocol } from "../../../../../utils/wsUtils";
 import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
-import PageHeader from "../../../Common/PageHeader/PageHeader";
 import { Grid } from "@material-ui/core";
 import TableWrapper from "../../../Common/TableWrapper/TableWrapper";
 
