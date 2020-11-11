@@ -104,6 +104,9 @@ const radioBasic = {
   width: 12,
   height: 12,
   borderRadius: "100%",
+  'input:disabled ~ &': {
+    border: "1px solid #9C9C9C",
+  },
 };
 
 export const radioIcons = {
