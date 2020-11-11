@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
+import clsx from "clsx";
 import Grid from "@material-ui/core/Grid";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -40,6 +41,7 @@ interface RadioGroupProps {
   id: string;
   name: string;
   tooltip?: string;
+  disableOptions?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   classes: any;
   displayInColumn?: boolean;
@@ -58,8 +60,23 @@ const styles = (theme: Theme) =>
       paddingBottom: 10,
       marginTop: 11,
     },
+    optionLabel: {
+      "&.Mui-disabled": {
+        "& .MuiFormControlLabel-label": {
+          color: "#9c9c9c",
+        },
+      },
+      "&:last-child": {
+        marginRight: 0,
+      },
+      "& .MuiFormControlLabel-label": {
+        fontSize: 12,
+        color: "#000",
+      },
+    },
     checkedOption: {
       "& .MuiFormControlLabel-label": {
+        fontSize: 12,
         color: "#000",
         fontWeight: 700,
       },
@@ -98,6 +115,7 @@ export const RadioGroupSelector = ({
   name,
   onChange,
   tooltip = "",
+  disableOptions = false,
   classes,
   displayInColumn = false,
 }: RadioGroupProps) => {
@@ -128,14 +146,14 @@ export const RadioGroupSelector = ({
               return (
                 <FormControlLabel
                   key={`rd-${name}-${selectorOption.value}`}
-                  value={selectorOption.value}
+                  value={disableOptions ? "disabled" : selectorOption.value}
                   control={<RadioButton />}
                   label={selectorOption.label}
-                  className={
-                    selectorOption.value === currentSelection
-                      ? classes.checkedOption
-                      : ""
-                  }
+                  disabled={disableOptions}
+                  className={clsx(classes.optionLabel, {
+                    [classes.checkedOption]:
+                      selectorOption.value === currentSelection,
+                  })}
                 />
               );
             })}
