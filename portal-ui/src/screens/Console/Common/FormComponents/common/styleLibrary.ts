@@ -54,6 +54,7 @@ export const modalBasic = {
     marginLeft: 0,
   },
   clearButton: {
+    fontFamily: "Lato, sans-serif",
     border: "0",
     backgroundColor: "transparent",
     color: "#393939",
