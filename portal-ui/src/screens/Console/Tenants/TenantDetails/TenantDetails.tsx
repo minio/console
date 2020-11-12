@@ -280,20 +280,6 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
               records={zones}
               entityName="Zones"
               idField="name"
-              paginatorConfig={{
-                rowsPerPageOptions: [5, 10, 25],
-                colSpan: 3,
-                count: zoneCount,
-                rowsPerPage: 10,
-                page: 0,
-                SelectProps: {
-                  inputProps: { "aria-label": "rows per page" },
-                  native: true,
-                },
-                ActionsComponent: MinTablePaginationActions,
-                onChangePage: () => {},
-                onChangeRowsPerPage: () => {},
-              }}
             />
           )}
         </Grid>

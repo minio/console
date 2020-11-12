@@ -642,20 +642,6 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
                   records={filteredRecords}
                   entityName="Events"
                   idField="id"
-                  paginatorConfig={{
-                    rowsPerPageOptions: [5, 10, 25],
-                    colSpan: 3,
-                    count: totalRecords,
-                    rowsPerPage: rowsPerPage,
-                    page: page,
-                    SelectProps: {
-                      inputProps: { "aria-label": "rows per page" },
-                      native: true,
-                    },
-                    onChangePage: handleChangePage,
-                    onChangeRowsPerPage: handleChangeRowsPerPage,
-                    ActionsComponent: MinTablePaginationActions,
-                  }}
                 />
               </TabPanel>
               <TabPanel index={1} value={curTab}>
@@ -683,20 +669,6 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
                   records={filteredRules}
                   entityName="Replication Rules"
                   idField="id"
-                  paginatorConfig={{
-                    rowsPerPageOptions: [5, 10, 25],
-                    colSpan: 3,
-                    count: totalRecords,
-                    rowsPerPage: rowsPerPage,
-                    page: page,
-                    SelectProps: {
-                      inputProps: { "aria-label": "rows per page" },
-                      native: true,
-                    },
-                    onChangePage: handleChangePage,
-                    onChangeRowsPerPage: handleChangeRowsPerPage,
-                    ActionsComponent: MinTablePaginationActions,
-                  }}
                 />
               </TabPanel>
             </Grid>

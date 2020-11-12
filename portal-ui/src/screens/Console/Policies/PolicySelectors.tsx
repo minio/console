@@ -25,7 +25,10 @@ import TextField from "@material-ui/core/TextField";
 import api from "../../../common/api";
 import { policySort } from "../../../utils/sortFunctions";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
+import {
+  actionsTray,
+  selectorsCommon,
+} from "../Common/FormComponents/common/styleLibrary";
 import { PolicyList } from "./types";
 
 interface ISelectPolicyProps {
@@ -100,6 +103,7 @@ const styles = (theme: Theme) =>
       },
     },
     ...actionsTray,
+    ...selectorsCommon,
   });
 
 const PolicySelectors = ({
@@ -188,6 +192,7 @@ const PolicySelectors = ({
                   records={filteredRecords}
                   entityName="Policies"
                   idField="name"
+                  customPaperHeight={classes.multiSelectTable}
                   radioSelection
                 />
               </Grid>

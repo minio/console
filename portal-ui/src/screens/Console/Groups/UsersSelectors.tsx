@@ -27,7 +27,10 @@ import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
+import {
+  actionsTray,
+  selectorsCommon,
+} from "../Common/FormComponents/common/styleLibrary";
 
 interface IGroupsProps {
   classes: any;
@@ -102,6 +105,7 @@ const styles = (theme: Theme) =>
       },
     },
     ...actionsTray,
+    ...selectorsCommon,
   });
 
 const UsersSelectors = ({
@@ -211,6 +215,7 @@ const UsersSelectors = ({
                   records={filteredRecords}
                   entityName="Users"
                   idField="accessKey"
+                  customPaperHeight={classes.multiSelectTable}
                 />
               </Grid>
             </React.Fragment>
