@@ -19,7 +19,9 @@ package restapi
 import (
 	"context"
 	"log"
+	"net/http"
 
+	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/acl"
@@ -45,21 +47,36 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 		if err != nil {
 			return user_api.NewLoginDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewLoginCreated().WithPayload(loginResponse)
+		// Custom response writer to set the session cookies
+		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
+			cookie := NewSessionCookieForConsole(loginResponse.SessionID)
+			http.SetCookie(w, &cookie)
+			user_api.NewLoginCreated().WithPayload(loginResponse).WriteResponse(w, p)
+		})
 	})
 	api.UserAPILoginOauth2AuthHandler = user_api.LoginOauth2AuthHandlerFunc(func(params user_api.LoginOauth2AuthParams) middleware.Responder {
 		loginResponse, err := getLoginOauth2AuthResponse(params.Body)
 		if err != nil {
 			return user_api.NewLoginOauth2AuthDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewLoginOauth2AuthCreated().WithPayload(loginResponse)
+		// Custom response writer to set the session cookies
+		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
+			cookie := NewSessionCookieForConsole(loginResponse.SessionID)
+			http.SetCookie(w, &cookie)
+			user_api.NewLoginOauth2AuthCreated().WithPayload(loginResponse).WriteResponse(w, p)
+		})
 	})
 	api.UserAPILoginOperatorHandler = user_api.LoginOperatorHandlerFunc(func(params user_api.LoginOperatorParams) middleware.Responder {
 		loginResponse, err := getLoginOperatorResponse(params.Body)
 		if err != nil {
 			return user_api.NewLoginOperatorDefault(int(err.Code)).WithPayload(err)
 		}
-		return user_api.NewLoginOperatorCreated().WithPayload(loginResponse)
+		// Custom response writer to set the session cookies
+		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
+			cookie := NewSessionCookieForConsole(loginResponse.SessionID)
+			http.SetCookie(w, &cookie)
+			user_api.NewLoginOperatorCreated().WithPayload(loginResponse).WriteResponse(w, p)
+		})
 	})
 }
 

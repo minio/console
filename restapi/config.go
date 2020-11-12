@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/minio/minio/pkg/certs"
 	"github.com/minio/minio/pkg/env"
@@ -40,6 +41,8 @@ var TLSPort = "9443"
 
 // TLSRedirect console tls redirect rule
 var TLSRedirect = "off"
+
+var SessionDuration = 45 * time.Minute
 
 func getAccessKey() string {
 	return env.Get(ConsoleAccessKey, "minioadmin")

@@ -19,8 +19,10 @@ package restapi
 import (
 	"crypto/rand"
 	"io"
+	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
 // Do not use:
@@ -101,4 +103,38 @@ func FileExists(filename string) bool {
 		return false
 	}
 	return !info.IsDir()
+}
+
+func NewSessionCookieForConsole(token string) http.Cookie {
+	expiration := time.Now().Add(SessionDuration)
+
+	return http.Cookie{
+		Path:     "/api", // browser will send cookie only for HTTP request under api path
+		Name:     "token",
+		Value:    token,
+		MaxAge:   int(SessionDuration.Seconds()), // 45 minutes
+		Expires:  expiration,
+		HttpOnly: true,
+		// if len(GlobalPublicCerts) > 0 is true, that means Console is running with TLS enable and the browser
+		// should not leak any cookie if we access the site using HTTP
+		Secure: len(GlobalPublicCerts) > 0,
+		// read more: https://web.dev/samesite-cookies-explained/
+		SameSite: http.SameSiteLaxMode,
+	}
+}
+
+func ExpireSessionCookie() http.Cookie {
+	return http.Cookie{
+		Path:     "/api", // browser will send cookie only for HTTP request under api path
+		Name:     "token",
+		Value:    "",
+		MaxAge:   -1,
+		Expires:  time.Now().Add(-100 * time.Hour),
+		HttpOnly: true,
+		// if len(GlobalPublicCerts) > 0 is true, that means Console is running with TLS enable and the browser
+		// should not leak any cookie if we access the site using HTTP
+		Secure: len(GlobalPublicCerts) > 0,
+		// read more: https://web.dev/samesite-cookies-explained/
+		SameSite: http.SameSiteLaxMode,
+	}
 }
