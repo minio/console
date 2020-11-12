@@ -205,27 +205,6 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
               records={filteredRecords}
               entityName="Notification Endpoints"
               idField="service_name"
-              paginatorConfig={{
-                rowsPerPageOptions: [5, 10, 25],
-                colSpan: 3,
-                count: totalRecords,
-                rowsPerPage: rowsPerPage,
-                page: page,
-                SelectProps: {
-                  inputProps: { "aria-label": "rows per page" },
-                  native: true,
-                },
-                onChangePage: (event: unknown, newPage: number) => {
-                  setPage(newPage);
-                },
-                onChangeRowsPerPage: (
-                  event: React.ChangeEvent<HTMLInputElement>
-                ) => {
-                  const rPP = parseInt(event.target.value, 10);
-                  setRowsPerPage(rPP);
-                },
-                ActionsComponent: MinTablePaginationActions,
-              }}
             />
           </Grid>
         </Grid>

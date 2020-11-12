@@ -257,20 +257,6 @@ const Policies = ({ classes }: IPoliciesProps) => {
               records={paginatedRecords}
               entityName="Policies"
               idField="name"
-              paginatorConfig={{
-                rowsPerPageOptions: [5, 10, 25],
-                colSpan: 3,
-                count: filteredRecords.length,
-                rowsPerPage: rowsPerPage,
-                page: page,
-                SelectProps: {
-                  inputProps: { "aria-label": "rows per page" },
-                  native: true,
-                },
-                onChangePage: handleChangePage,
-                onChangeRowsPerPage: handleChangeRowsPerPage,
-                ActionsComponent: MinTablePaginationActions,
-              }}
             />
           </Grid>
         </Grid>

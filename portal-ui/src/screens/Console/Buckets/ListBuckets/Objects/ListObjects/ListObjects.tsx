@@ -103,6 +103,9 @@ const styles = (theme: Theme) =>
         marginLeft: 10,
       },
     },
+    browsePaper: {
+      height: "calc(100vh - 280px)",
+    },
     "@global": {
       ".rowElementRaw:hover  .iconFileElm": {
         backgroundImage: "url(/images/ob_file_filled.svg)",
@@ -485,12 +488,15 @@ const ListObjects = ({
                   label: "Size",
                   elementKey: "size",
                   renderFunction: niceBytes,
+                  width: 60,
+                  contentTextAlign: "right",
                 },
               ]}
               isLoading={loading}
               entityName="Objects"
               idField="name"
               records={filteredRecords}
+              customPaperHeight={classes.browsePaper}
             />
           </Grid>
         </Grid>
