@@ -18,19 +18,13 @@ import get from "lodash/get";
 import isString from "lodash/isString";
 import {
   LinearProgress,
-  TablePagination,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
   Paper,
   Grid,
   Checkbox,
   Typography,
 } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { TablePaginationActionsProps } from "@material-ui/core/TablePagination/TablePaginationActions";
+import { Table, Column, AutoSizer } from "react-virtualized";
+import { createStyles, withStyles } from "@material-ui/core/styles";
 import TableActionButton from "./TableActionButton";
 import history from "../../../../history";
 import {
@@ -50,28 +44,13 @@ interface ItemActions {
 interface IColumns {
   label: string;
   elementKey: string;
-  sortable?: boolean;
   renderFunction?: (input: any) => any;
   renderFullObject?: boolean;
   globalClass?: any;
   rowClass?: any;
-}
-
-interface IPaginatorConfig {
-  rowsPerPageOptions: number[];
-  colSpan: number;
-  count: number;
-  rowsPerPage: number;
-  page: number;
-  SelectProps: any;
-  onChangePage: (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    page: number
-  ) => void;
-  onChangeRowsPerPage?: React.ChangeEventHandler<
-    HTMLTextAreaElement | HTMLInputElement
-  >;
-  ActionsComponent?: React.ElementType<TablePaginationActionsProps>;
+  width?: number;
+  headerTextAlign?: string;
+  contentTextAlign?: string;
 }
 
 interface TableWrapperProps {
@@ -84,10 +63,9 @@ interface TableWrapperProps {
   classes: any;
   entityName: string;
   selectedItems?: string[];
-  stickyHeader?: boolean;
   radioSelection?: boolean;
   customEmptyMessage?: string;
-  paginatorConfig?: IPaginatorConfig;
+  customPaperHeight?: string;
 }
 
 const borderColor = "#9c9c9c80";
@@ -104,7 +82,7 @@ const rowText = {
   paddingLeft: 6,
 };
 
-const styles = (theme: Theme) =>
+const styles = () =>
   createStyles({
     dialogContainer: {
       padding: "12px 26px 22px",
@@ -117,7 +95,16 @@ const styles = (theme: Theme) =>
       boxShadow: "none",
       border: "#EAEDEE 1px solid",
       borderRadius: 3,
-      minHeight: "calc(100vh - 340px)",
+      minHeight: 200,
+      overflowY: "scroll",
+
+      "&::-webkit-scrollbar": {
+        width: 3,
+        height: 3,
+      },
+    },
+    defaultPaperHeight: {
+      height: "calc(100vh - 205px)",
     },
     allTableSettings: {
       "& .MuiTableCell-sizeSmall:last-child": {
@@ -177,63 +164,143 @@ const styles = (theme: Theme) =>
       paddingTop: "100px",
       paddingBottom: "100px",
     },
-    rowElement: {
-      userSelect: "none",
-
-      "&:hover": {
-        backgroundColor: "#ececec",
-
-        "& td": {
+    "@global": {
+      ".rowLine": {
+        borderBottom: `1px solid ${borderColor}`,
+        height: 40,
+        color: "#393939",
+        fontSize: 14,
+        transitionDuration: 0.3,
+        "&:focus": {
+          outline: "initial",
+        },
+        "&:hover:not(.ReactVirtualized__Table__headerRow)": {
+          userSelect: "none",
+          backgroundColor: "#ececec",
+          fontWeight: 600,
+          "&.canClick": {
+            cursor: "pointer",
+          },
+        },
+        "& .selected": {
+          color: "#081C42",
           fontWeight: 600,
         },
       },
-    },
-    rowClickable: {
-      cursor: "pointer",
+      ".headerItem": {
+        userSelect: "none",
+        fontWeight: 700,
+        fontSize: 14,
+        fontStyle: "initial",
+      },
+      ".ReactVirtualized__Table__headerRow": {
+        fontWeight: 700,
+        fontSize: 14,
+        borderColor: "#39393980",
+        textTransform: "initial",
+      },
+      ".optionsAlignment": {
+        textAlign: "center",
+      },
+      ".text-center": {
+        textAlign: "center",
+      },
+      ".text-right": {
+        textAlign: "right",
+      },
     },
     ...checkboxIcons,
     ...radioIcons,
   });
 
-// Function that renders Title Columns
-const titleColumnsMap = (columns: IColumns[]) => {
-  return columns.map((column: IColumns, index: number) => {
-    return (
-      <TableCell
-        key={`tbCT-${column.elementKey}-${index}`}
-        className={column.globalClass}
-      >
-        {column.label}
-      </TableCell>
-    );
-  });
-};
+const selectWidth = 45;
 
-// Function that renders Rows
-const rowColumnsMap = (
-  columns: IColumns[],
-  itemData: any,
-  classes: any,
+// Function to render elements in table
+const subRenderFunction = (
+  rowData: any,
+  column: IColumns,
   isSelected: boolean
 ) => {
-  return columns.map((column: IColumns, index: number) => {
-    const itemElement = isString(itemData)
-      ? itemData
-      : get(itemData, column.elementKey, null); // If the element is just a string, we render it as it is
-    const renderConst = column.renderFullObject ? itemData : itemElement;
+  const itemElement = isString(rowData)
+    ? rowData
+    : get(rowData, column.elementKey, null); // If the element is just a string, we render it as it is
+  const renderConst = column.renderFullObject ? rowData : itemElement;
 
-    const renderElement = column.renderFunction
-      ? column.renderFunction(renderConst)
-      : renderConst; // If render function is set, we send the value to the function.
+  const renderElement = column.renderFunction
+    ? column.renderFunction(renderConst)
+    : renderConst; // If render function is set, we send the value to the function.
+
+  return (
+    <React.Fragment>
+      <span className={isSelected ? "selected" : ""}>{renderElement}</span>
+    </React.Fragment>
+  );
+};
+
+// Function to calculate common column width for elements with no with size
+const calculateColumnRest = (
+  columns: IColumns[],
+  containerWidth: number,
+  actionsWidth: number,
+  hasSelect: boolean,
+  hasActions: boolean
+) => {
+  let initialValue = containerWidth;
+
+  if (hasSelect) {
+    initialValue -= selectWidth;
+  }
+
+  if (hasActions) {
+    initialValue -= actionsWidth;
+  }
+
+  let freeSpacing = columns.reduce((total, currValue) => {
+    return currValue.width ? total - currValue.width : total;
+  }, initialValue);
+
+  return freeSpacing / columns.filter((el) => !el.width).length;
+};
+
+// Function that renders Columns in table
+const generateColumnsMap = (
+  columns: IColumns[],
+  containerWidth: number,
+  actionsWidth: number,
+  hasSelect: boolean,
+  hasActions: boolean,
+  selectedItems: string[],
+  idField: string
+) => {
+  const commonRestWidth = calculateColumnRest(
+    columns,
+    containerWidth,
+    actionsWidth,
+    hasSelect,
+    hasActions
+  );
+  return columns.map((column: IColumns, index: number) => {
     return (
-      <TableCell
-        key={`tbRE-${column.elementKey}-${index}`}
-        className={`${column.rowClass} ${
-          isSelected ? classes.rowSelected : classes.rowUnselected
+      <Column
+        key={`col-tb-${index.toString()}`}
+        dataKey={column.elementKey}
+        headerClassName={`titleHeader ${
+          column.headerTextAlign ? `text-${column.headerTextAlign}` : ""
         }`}
-      >
-        {renderElement}
-      </TableCell>
+        headerRenderer={() => <React.Fragment>{column.label}</React.Fragment>}
+        className={
+          column.contentTextAlign ? `text-${column.contentTextAlign}` : ""
+        }
+        cellRenderer={({ rowData }) => {
+          const isSelected = selectedItems
+            ? selectedItems.includes(
+                isString(rowData) ? rowData : rowData[idField]
+              )
+            : false;
+          return subRenderFunction(rowData, column, isSelected);
+        }}
+        width={column.width || commonRestWidth}
+      />
     );
   });
 };
@@ -265,6 +332,22 @@ const elementActions = (
   });
 };
 
+// Function to calculate the options column width according elements inside
+const calculateOptionsSize = (containerWidth: number, totalOptions: number) => {
+  const minContainerSize = 80;
+  const sizeOptions = totalOptions * 45;
+
+  if (sizeOptions < minContainerSize) {
+    return minContainerSize;
+  }
+
+  if (sizeOptions > containerWidth) {
+    return containerWidth;
+  }
+
+  return sizeOptions;
+};
+
 // Main function to render the Table Wrapper
 const TableWrapper = ({
   itemActions,
@@ -276,10 +359,9 @@ const TableWrapper = ({
   selectedItems,
   idField,
   classes,
-  stickyHeader = false,
   radioSelection = false,
   customEmptyMessage = "",
-  paginatorConfig,
+  customPaperHeight = "",
 }: TableWrapperProps) => {
   const findView = itemActions
     ? itemActions.find((el) => el.type === "view")
@@ -301,7 +383,13 @@ const TableWrapper = ({
 
   return (
     <Grid item xs={12}>
-      <Paper className={classes.paper}>
+      <Paper
+        className={`${classes.paper} ${
+          customPaperHeight !== ""
+            ? customPaperHeight
+            : classes.defaultPaperHeight
+        }`}
+      >
         {isLoading && (
           <Grid container className={classes.loadingBox}>
             <Grid item xs={12} style={{ textAlign: "center" }}>
@@ -313,104 +401,133 @@ const TableWrapper = ({
           </Grid>
         )}
         {records && !isLoading && records.length > 0 ? (
-          <Table
-            size="small"
-            stickyHeader={stickyHeader}
-            className={classes.allTableSettings}
-          >
-            <TableHead className={classes.minTableHeader}>
-              <TableRow>
-                {onSelect && selectedItems && (
-                  <TableCell align="center" className={classes.checkBoxHeader}>
-                    Select
-                  </TableCell>
-                )}
-                {titleColumnsMap(columns)}
-                {((itemActions && itemActions.length > 1) ||
-                  (itemActions &&
-                    itemActions.length === 1 &&
-                    itemActions[0].type !== "view")) && (
-                  <TableCell
-                    align="center"
-                    className={classes.actionsContainer}
-                  >
-                    Actions
-                  </TableCell>
-                )}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {records.map((record: any, index: number) => {
-                const isSelected = selectedItems
-                  ? selectedItems.includes(
-                      isString(record) ? record : record[idField]
-                    )
-                  : false;
+          <AutoSizer>
+            {({ width, height }: any) => {
+              const optionsWidth = calculateOptionsSize(
+                width,
+                itemActions
+                  ? itemActions.filter((el) => el.type !== "view").length
+                  : 0
+              );
+              const hasSelect: boolean = !!(onSelect && selectedItems);
+              const hasOptions: boolean = !!(
+                (itemActions && itemActions.length > 1) ||
+                (itemActions &&
+                  itemActions.length === 1 &&
+                  itemActions[0].type !== "view")
+              );
+              return (
+                <Table
+                  ref="Table"
+                  disableHeader={false}
+                  headerClassName={"headerItem"}
+                  headerHeight={40}
+                  height={height}
+                  noRowsRenderer={() => (
+                    <React.Fragment>
+                      {customEmptyMessage !== ""
+                        ? customEmptyMessage
+                        : `There are no ${entityName} yet.`}
+                    </React.Fragment>
+                  )}
+                  overscanRowCount={10}
+                  rowHeight={40}
+                  width={width}
+                  rowCount={records.length}
+                  rowGetter={({ index }) => records[index]}
+                  onRowClick={({ rowData }) => {
+                    clickAction(rowData);
+                  }}
+                  rowClassName={`rowLine ${findView ? "canClick" : ""}`}
+                >
+                  {hasSelect && (
+                    <Column
+                      headerRenderer={() => (
+                        <React.Fragment>Select</React.Fragment>
+                      )}
+                      dataKey={idField}
+                      width={selectWidth}
+                      cellRenderer={({ rowData }) => {
+                        const isSelected = selectedItems
+                          ? selectedItems.includes(
+                              isString(rowData) ? rowData : rowData[idField]
+                            )
+                          : false;
 
-                return (
-                  <TableRow
-                    key={`tb-${entityName}-${index.toString()}`}
-                    className={`${findView ? classes.rowClickable : ""} ${
-                      classes.rowElement
-                    } rowElementRaw`}
-                    onClick={() => {
-                      clickAction(record);
-                    }}
-                  >
-                    {onSelect && selectedItems && (
-                      <TableCell align="center" className={classes.checkBoxRow}>
-                        <Checkbox
-                          value={isString(record) ? record : record[idField]}
-                          color="primary"
-                          inputProps={{ "aria-label": "secondary checkbox" }}
-                          checked={isSelected}
-                          onChange={onSelect}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                          checkedIcon={
-                            <span
-                              className={
-                                radioSelection
-                                  ? classes.radioSelectedIcon
-                                  : classes.checkedIcon
-                              }
-                            />
-                          }
-                          icon={
-                            <span
-                              className={
-                                radioSelection
-                                  ? classes.radioUnselectedIcon
-                                  : classes.unCheckedIcon
-                              }
-                            />
-                          }
-                        />
-                      </TableCell>
-                    )}
-                    {rowColumnsMap(columns, record, classes, isSelected)}
-                    {((itemActions && itemActions.length > 1) ||
-                      (itemActions &&
-                        itemActions.length === 1 &&
-                        itemActions[0].type !== "view")) && (
-                      <TableCell
-                        align="center"
-                        className={classes.actionsContainer}
-                      >
-                        {elementActions(
-                          itemActions,
-                          record,
+                        return (
+                          <Checkbox
+                            value={
+                              isString(rowData) ? rowData : rowData[idField]
+                            }
+                            color="primary"
+                            inputProps={{
+                              "aria-label": "secondary checkbox",
+                            }}
+                            checked={isSelected}
+                            onChange={onSelect}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                            }}
+                            checkedIcon={
+                              <span
+                                className={
+                                  radioSelection
+                                    ? classes.radioSelectedIcon
+                                    : classes.checkedIcon
+                                }
+                              />
+                            }
+                            icon={
+                              <span
+                                className={
+                                  radioSelection
+                                    ? classes.radioUnselectedIcon
+                                    : classes.unCheckedIcon
+                                }
+                              />
+                            }
+                          />
+                        );
+                      }}
+                    />
+                  )}
+                  {generateColumnsMap(
+                    columns,
+                    width,
+                    optionsWidth,
+                    hasSelect,
+                    hasOptions,
+                    selectedItems || [],
+                    idField
+                  )}
+                  {hasOptions && (
+                    <Column
+                      headerRenderer={() => (
+                        <React.Fragment>Options</React.Fragment>
+                      )}
+                      dataKey={idField}
+                      width={optionsWidth}
+                      headerClassName="optionsAlignment"
+                      className="optionsAlignment"
+                      cellRenderer={({ rowData }) => {
+                        const isSelected = selectedItems
+                          ? selectedItems.includes(
+                              isString(rowData) ? rowData : rowData[idField]
+                            )
+                          : false;
+                        return elementActions(
+                          itemActions || [],
+                          rowData,
                           isSelected,
                           idField
-                        )}
-                      </TableCell>
-                    )}
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+                        );
+                      }}
+                    />
+                  )}
+                </Table>
+              );
+            }}
+          </AutoSizer>
         ) : (
           <React.Fragment>
             {!isLoading && (
@@ -423,20 +540,6 @@ const TableWrapper = ({
           </React.Fragment>
         )}
       </Paper>
-      {paginatorConfig && (
-        <Grid item xs={12} className={classes.paginatorContainer}>
-          <Table>
-            <TableBody>
-              <TableRow>
-                <TablePagination
-                  {...paginatorConfig}
-                  className={classes.paginatorComponent}
-                />
-              </TableRow>
-            </TableBody>
-          </Table>
-        </Grid>
-      )}
     </Grid>
   );
 };

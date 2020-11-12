@@ -94,6 +94,9 @@ const styles = (theme: Theme) =>
         backgroundImage: "url(/images/ob_bucket_filled.svg)",
       },
     },
+    browsePaper: {
+      height: "calc(100vh - 280px)",
+    },
     ...actionsTray,
     ...searchField,
     ...objectBrowserCommon,
@@ -167,8 +170,6 @@ const BrowseBuckets = ({
     }
     return b.name.indexOf(filterBuckets) >= 0;
   });
-
-  const showInPage = filteredRecords.slice(offset, offset + rowsPerPage);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -268,26 +269,16 @@ const BrowseBuckets = ({
                 renderFunction: niceBytes,
                 globalClass: classes.usedSpaceCol,
                 rowClass: classes.usedSpaceCol,
+                width: 100,
+                contentTextAlign: "right",
+                headerTextAlign: "right",
               },
             ]}
             isLoading={loading}
-            records={showInPage}
+            records={filteredRecords}
             entityName="Buckets"
             idField="name"
-            paginatorConfig={{
-              rowsPerPageOptions: [5, 10, 25],
-              colSpan: 3,
-              count: filteredRecords.length,
-              rowsPerPage: rowsPerPage,
-              page: page,
-              SelectProps: {
-                inputProps: { "aria-label": "rows per page" },
-                native: true,
-              },
-              onChangePage: handleChangePage,
-              onChangeRowsPerPage: handleChangeRowsPerPage,
-              ActionsComponent: MinTablePaginationActions,
-            }}
+            customPaperHeight={classes.browsePaper}
           />
         </Grid>
       </Grid>
