@@ -52,6 +52,7 @@ const commonIcon = {
   backgroundRepeat: "no-repeat",
   backgroundPosition: "center center",
   width: 16,
+  minWidth: 16,
   height: 40,
   marginRight: 10,
 };
@@ -90,6 +91,11 @@ const styles = (theme: Theme) =>
       display: "flex",
       alignItems: "center",
     },
+    fileNameText: {
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    },
     iconFolder: {
       backgroundImage: "url(/images/ob_folder_clear.svg)",
       ...commonIcon,
@@ -107,10 +113,10 @@ const styles = (theme: Theme) =>
       height: "calc(100vh - 280px)",
     },
     "@global": {
-      ".rowElementRaw:hover  .iconFileElm": {
+      ".rowLine:hover  .iconFileElm": {
         backgroundImage: "url(/images/ob_file_filled.svg)",
       },
-      ".rowElementRaw:hover  .iconFolderElm": {
+      ".rowLine:hover  .iconFolderElm": {
         backgroundImage: "url(/images/ob_folder_filled.svg)",
       },
     },
@@ -374,7 +380,9 @@ const ListObjects = ({
     return (
       <div className={classes.fileName}>
         <div className={icon} />
-        <span>{splitItem[splitItem.length - 1]}</span>
+        <span className={classes.fileNameText}>
+          {splitItem[splitItem.length - 1]}
+        </span>
       </div>
     );
   };
