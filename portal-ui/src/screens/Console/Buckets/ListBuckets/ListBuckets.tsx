@@ -197,7 +197,7 @@ const ListBuckets = ({
     }
   });
 
-  const showInPage = filteredRecords.slice(offset, offset + rowsPerPage);
+  const showInPage = filteredRecords;
 
   return (
     <React.Fragment>
@@ -266,26 +266,14 @@ const ListBuckets = ({
                   label: "Size",
                   elementKey: "size",
                   renderFunction: niceBytes,
+                  width: 60,
+                  contentTextAlign: "right",
                 },
               ]}
               isLoading={loading}
               records={showInPage}
               entityName="Buckets"
               idField="name"
-              paginatorConfig={{
-                rowsPerPageOptions: [5, 10, 25],
-                colSpan: 3,
-                count: filteredRecords.length,
-                rowsPerPage: rowsPerPage,
-                page: page,
-                SelectProps: {
-                  inputProps: { "aria-label": "rows per page" },
-                  native: true,
-                },
-                onChangePage: handleChangePage,
-                onChangeRowsPerPage: handleChangeRowsPerPage,
-                ActionsComponent: MinTablePaginationActions,
-              }}
             />
           </Grid>
         </Grid>

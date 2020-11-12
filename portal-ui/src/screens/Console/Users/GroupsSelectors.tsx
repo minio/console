@@ -27,7 +27,10 @@ import { stringSort } from "../../../utils/sortFunctions";
 import { GroupsList } from "../Groups/types";
 import get from "lodash/get";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
+import {
+  actionsTray,
+  selectorsCommon,
+} from "../Common/FormComponents/common/styleLibrary";
 
 interface IGroupsProps {
   classes: any;
@@ -101,6 +104,7 @@ const styles = (theme: Theme) =>
       },
     },
     ...actionsTray,
+    ...selectorsCommon,
   });
 
 const GroupsSelectors = ({
@@ -205,6 +209,7 @@ const GroupsSelectors = ({
                   records={filteredRecords}
                   entityName="Groups"
                   idField=""
+                  customPaperHeight={classes.multiSelectTable}
                 />
               </Grid>
             </React.Fragment>
