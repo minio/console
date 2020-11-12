@@ -90,7 +90,7 @@ const styles = (theme: Theme) =>
       marginRight: 10,
     },
     "@global": {
-      ".rowElementRaw:hover  .iconBucketElm": {
+      ".rowLine:hover  .iconBucketElm": {
         backgroundImage: "url(/images/ob_bucket_filled.svg)",
       },
     },
