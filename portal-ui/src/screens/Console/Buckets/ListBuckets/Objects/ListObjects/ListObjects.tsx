@@ -227,7 +227,6 @@ const ListObjects = ({
     let xhr = new XMLHttpRequest();
 
     xhr.open("POST", uploadUrl, true);
-    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
 
     xhr.withCredentials = false;
     xhr.onload = function (event) {
@@ -276,7 +275,6 @@ const ListObjects = ({
       `/api/v1/buckets/${bucketName}/objects/download?prefix=${objectName}`,
       true
     );
-    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
     xhr.responseType = "blob";
 
     xhr.onload = function (e) {

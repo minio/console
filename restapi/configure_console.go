@@ -21,6 +21,7 @@ package restapi
 import (
 	"bytes"
 	"crypto/tls"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -168,8 +169,10 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json document.
 // So this is a good place to plug in a panic handling middleware, logging and metrics
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
+	// handle cookie or authorization header for session
+	next := AuthenticationMiddleware(handler)
 	// serve static files
-	next := FileServerMiddleware(handler)
+	next = FileServerMiddleware(next)
 	// Secure middleware, this middleware wrap all the previous handlers and add
 	// HTTP security headers
 	secureOptions := secure.Options{
@@ -198,6 +201,31 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	secureMiddleware := secure.New(secureOptions)
 	app := secureMiddleware.Handler(next)
 	return app
+}
+
+func AuthenticationMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// prioritize authorization header and skip
+		if r.Header.Get("Authorization") != "" {
+			next.ServeHTTP(w, r)
+			return
+		}
+		tokenCookie, err := r.Cookie("token")
+		if err != nil {
+			next.ServeHTTP(w, r)
+			return
+		}
+		currentTime := time.Now()
+		if tokenCookie.Expires.After(currentTime) {
+			next.ServeHTTP(w, r)
+			return
+		}
+		token := tokenCookie.Value
+		if token != "" {
+			r.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
+		}
+		next.ServeHTTP(w, r)
+	})
 }
 
 // FileServerMiddleware serves files from the static folder

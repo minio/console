@@ -62,17 +62,12 @@ export const deleteCookie = (name: string) => {
   document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
 };
 
-export const setSession = (token: string) => {
-  setCookie("token", token);
-  storage.setItem("token", token);
-};
-
 export const clearSession = () => {
   storage.removeItem("token");
   deleteCookie("token");
 };
 
-// timeFromdate gets time string from date input
+// timeFromDate gets time string from date input
 export const timeFromDate = (d: Date) => {
   let h = d.getHours() < 10 ? `0${d.getHours()}` : `${d.getHours()}`;
   let m = d.getMinutes() < 10 ? `0${d.getMinutes()}` : `${d.getMinutes()}`;

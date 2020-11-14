@@ -38,7 +38,6 @@ import { SystemState } from "../../types";
 import { userLoggedIn } from "../../actions";
 import api from "../../common/api";
 import { ILoginDetails, loginStrategyType } from "./types";
-import { setSession } from "../../common/utils";
 import history from "../../history";
 import { OutlinedInputProps } from "@material-ui/core/OutlinedInput";
 
@@ -225,10 +224,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
       .send(loginStrategyPayload[loginStrategy.loginStrategy])
       .then((res: any) => {
         const bodyResponse = res.body;
-        if (bodyResponse.sessionId) {
-          // store the jwt token
-          setSession(bodyResponse.sessionId);
-        } else if (bodyResponse.error) {
+        if (bodyResponse.error) {
           setLoginSending(false);
           // throw will be moved to catch block once bad login returns 403
           throw bodyResponse.error;
