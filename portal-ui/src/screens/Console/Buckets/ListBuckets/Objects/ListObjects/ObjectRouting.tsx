@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import ListObjects from "./ListObjects";
 import ObjectDetails from "../ObjectDetails/ObjectDetails";
 import get from "lodash/get";
-import { addRoute, setAllRoutes } from "../../../../ObjectBrowser/actions";
+import { setAllRoutes } from "../../../../ObjectBrowser/actions";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { ObjectBrowserState, Route } from "../../../../ObjectBrowser/reducers";
@@ -13,10 +13,15 @@ interface ObjectBrowserReducer {
 
 interface ObjectRoutingProps {
   routesList: Route[];
+  setAllRoutes: (path: string) => any;
   match: any;
 }
 
-const ObjectRouting = ({ routesList, match }: ObjectRoutingProps) => {
+const ObjectRouting = ({
+  routesList,
+  match,
+  setAllRoutes,
+}: ObjectRoutingProps) => {
   const currentItem = routesList[routesList.length - 1];
 
   useEffect(() => {
@@ -38,10 +43,8 @@ const mapStateToProps = ({ objectBrowser }: ObjectBrowserReducer) => ({
   routesList: get(objectBrowser, "routesList", []),
 });
 
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    dispatchSetAllRoutes: (route: string) => dispatch(setAllRoutes(route)),
-  };
+const mapDispatchToProps = {
+  setAllRoutes,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
