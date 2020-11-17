@@ -49,6 +49,8 @@ import { ISessionResponse } from "./types";
 import TenantDetails from "./Tenants/TenantDetails/TenantDetails";
 import ObjectBrowser from "./ObjectBrowser/ObjectBrowser";
 import ListObjects from "./Buckets/ListBuckets/Objects/ListObjects/ListObjects";
+import ObjectDetails from "./Buckets/ListBuckets/Objects/ObjectDetails/ObjectDetails";
+import ObjectRouting from "./Buckets/ListBuckets/Objects/ListObjects/ObjectRouting";
 import License from "./License/License";
 
 const drawerWidth = 245;
@@ -212,11 +214,11 @@ const Console = ({
       path: "/object-browser",
     },
     {
-      component: ListObjects,
+      component: ObjectRouting,
       path: "/object-browser/:bucket",
     },
     {
-      component: ListObjects,
+      component: ObjectRouting,
       path: "/object-browser/:bucket/*",
     },
     {

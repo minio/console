@@ -179,7 +179,7 @@ const AddGroup = ({
       {selectedGroup !== null && (
         <div className={classes.floatingEnabled}>
           <FormSwitchWrapper
-            indicatorLabel={"Enabled"}
+            indicatorLabels={["Enabled", "Disabled"]}
             checked={groupEnabled}
             value={"group_enabled"}
             id="group-status"

@@ -222,7 +222,7 @@ class AddUserContent extends React.Component<
         {selectedUser !== null && (
           <div className={classes.floatingEnabled}>
             <FormSwitchWrapper
-              indicatorLabel={"Enabled"}
+              indicatorLabels={["Enabled", "Disabled"]}
               checked={enabled}
               value={"user_enabled"}
               id="user-status"

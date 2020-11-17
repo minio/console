@@ -31,7 +31,7 @@ interface IFormSwitch {
   disabled?: boolean;
   tooltip?: string;
   index?: number;
-  indicatorLabel?: string;
+  indicatorLabels?: string[];
   checked: boolean;
   switchOnly?: boolean;
 }
@@ -142,14 +142,21 @@ const StyledSwitch = withStyles({
       opacity: 1,
       height: 15,
     },
+    "&:hover": {
+      backgroundColor: "#fff",
+    },
   },
   checked: {},
   track: {
     height: 15,
-    backgroundColor: "#081C42",
+    backgroundColor: "#9C9C9C",
+    border: "#081C42 1px solid",
     opacity: 1,
     padding: 0,
     marginTop: 1.5,
+    "&$checked": {
+      backgroundColor: "#081C42",
+    },
   },
   thumb: {
     backgroundColor: "#fff",
@@ -172,7 +179,7 @@ const FormSwitchWrapper = ({
   disabled = false,
   switchOnly = false,
   tooltip = "",
-  indicatorLabel = "",
+  indicatorLabels = [],
   classes,
 }: IFormSwitch) => {
   const switchComponent = (
@@ -190,8 +197,10 @@ const FormSwitchWrapper = ({
           disableTouchRipple
           value={value}
         />
-        {indicatorLabel !== "" && (
-          <span className={classes.indicatorLabel}>{indicatorLabel}</span>
+        {indicatorLabels.length === 2 && (
+          <span className={classes.indicatorLabel}>
+            {checked ? indicatorLabels[0] : indicatorLabels[1]}
+          </span>
         )}
       </div>
     </React.Fragment>
