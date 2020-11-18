@@ -143,11 +143,13 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 
 // The TLS configuration before HTTPS server starts.
 func configureTLS(tlsConfig *tls.Config) {
-	// Add the global public crts as part of global root CAs
-	for _, publicCrt := range GlobalPublicCerts {
-		GlobalRootCAs.AddCert(publicCrt)
+	if GlobalRootCAs != nil {
+		// Add the global public crts as part of global root CAs
+		for _, publicCrt := range GlobalPublicCerts {
+			GlobalRootCAs.AddCert(publicCrt)
+		}
+		tlsConfig.RootCAs = GlobalRootCAs
 	}
-	tlsConfig.RootCAs = GlobalRootCAs
 	if GlobalTLSCertsManager != nil {
 		tlsConfig.GetCertificate = GlobalTLSCertsManager.GetCertificate
 	}

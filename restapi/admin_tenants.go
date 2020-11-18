@@ -249,7 +249,13 @@ func getTenantAdminClient(ctx context.Context, client K8sClientI, tenant *operat
 		log.Println("tenant's secret doesn't contain secretkey")
 		return nil, errorGeneric
 	}
-	mAdmin, pErr := NewAdminClientWithInsecure(svcURL, string(accessKey), string(secretkey), insecure)
+	// TODO:
+	// We need to avoid using minio root credentials to talk to tenants, and instead use a different user credentials
+	// when that its implemented we also need to check here if the tenant has LDAP enabled so we authenticate first against AD
+	tenantAccessKey := string(accessKey)
+	tenantSecretKey := string(secretkey)
+	sessionToken := ""
+	mAdmin, pErr := NewAdminClientWithInsecure(svcURL, tenantAccessKey, tenantSecretKey, sessionToken, insecure)
 	if pErr != nil {
 		return nil, pErr.Cause
 	}

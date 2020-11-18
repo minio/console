@@ -18,7 +18,7 @@ package auth
 
 import (
 	"errors"
-	"log"
+	"net/http"
 
 	"github.com/minio/minio-go/v7/pkg/credentials"
 )
@@ -27,13 +27,14 @@ var (
 	errInvalidCredentials = errors.New("invalid Login")
 )
 
-// GetConsoleCredentialsFromLDAP authenticates the user against MinIO when the LDAP integration is enabled
+// GetCredentialsFromLDAP authenticates the user against MinIO when the LDAP integration is enabled
 // if the authentication succeed *credentials.Login object is returned and we continue with the normal STSAssumeRole flow
-func GetConsoleCredentialsFromLDAP(endpoint, ldapUser, ldapPassword string) (*credentials.Credentials, error) {
-	creds, err := credentials.NewLDAPIdentity(endpoint, ldapUser, ldapPassword)
-	if err != nil {
-		log.Println("LDAP authentication error: ", err)
-		return nil, errInvalidCredentials
-	}
+func GetCredentialsFromLDAP(client *http.Client, endpoint, ldapUser, ldapPassword string) (*credentials.Credentials, error) {
+	creds := credentials.New(&credentials.LDAPIdentity{
+		Client:       client,
+		STSEndpoint:  endpoint,
+		LDAPUsername: ldapUser,
+		LDAPPassword: ldapPassword,
+	})
 	return creds, nil
 }
