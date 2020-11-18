@@ -109,7 +109,7 @@ func NewSessionCookieForConsole(token string) http.Cookie {
 	expiration := time.Now().Add(SessionDuration)
 
 	return http.Cookie{
-		Path:     "/api", // browser will send cookie only for HTTP request under api path
+		Path:     "/",
 		Name:     "token",
 		Value:    token,
 		MaxAge:   int(SessionDuration.Seconds()), // 45 minutes
@@ -125,7 +125,7 @@ func NewSessionCookieForConsole(token string) http.Cookie {
 
 func ExpireSessionCookie() http.Cookie {
 	return http.Cookie{
-		Path:     "/api", // browser will send cookie only for HTTP request under api path
+		Path:     "/",
 		Name:     "token",
 		Value:    "",
 		MaxAge:   -1,
