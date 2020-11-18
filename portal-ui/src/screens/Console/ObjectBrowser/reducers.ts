@@ -21,6 +21,7 @@ import {
   OBJECT_BROWSER_REMOVE_ROUTE_LEVEL,
   OBJECT_BROWSER_RESET_ROUTES_LIST,
   OBJECT_BROWSER_SET_ALL_ROUTES,
+  OBJECT_BROWSER_SET_LAST_AS_FILE,
   ObjectBrowserActionTypes,
 } from "./actions";
 
@@ -115,6 +116,20 @@ export function objectBrowserReducer(
       return {
         ...state,
         routesList: newFoldersRoutes,
+      };
+    case OBJECT_BROWSER_SET_LAST_AS_FILE:
+      const currentList = state.routesList;
+      const lastItem = currentList.slice(-1)[0];
+
+      if (lastItem.type === "path") {
+        lastItem.type = "file";
+      }
+
+      const newList = [...currentList.slice(0, -1), lastItem];
+
+      return {
+        ...state,
+        routesList: newList,
       };
     default:
       return state;
