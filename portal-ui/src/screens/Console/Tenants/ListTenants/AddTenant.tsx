@@ -913,8 +913,6 @@ const AddTenant = ({
         .invoke("POST", `/api/v1/tenants`, dataSend)
         .then((res) => {
           const newSrvAcc: NewServiceAccount = {
-            accessKey: res.access_key,
-            secretKey: res.secret_key,
             console: {
               accessKey: res.console.access_key,
               secretKey: res.console.secret_key,
