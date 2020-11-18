@@ -1,5 +1,21 @@
+// This file is part of MinIO Console Server
+// Copyright (c) 2020 MinIO, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import React, { useState, useEffect } from "react";
-import { withRouter } from "react-router-dom";
+import get from "lodash/get";
 import * as reactMoment from "react-moment";
 import clsx from "clsx";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
@@ -17,6 +33,10 @@ import {
   containerForHeader,
   searchField,
 } from "../../../../Common/FormComponents/common/styleLibrary";
+import history from "../../../../../../history";
+import { Route } from "../../../../ObjectBrowser/reducers";
+import { download } from "../utils";
+import api from "../../../../../../common/api";
 import PageHeader from "../../../../Common/PageHeader/PageHeader";
 import ShareIcon from "../../../../../../icons/ShareIcon";
 import DownloadIcon from "../../../../../../icons/DownloadIcon";
@@ -25,13 +45,9 @@ import TableWrapper from "../../../../Common/TableWrapper/TableWrapper";
 import PencilIcon from "../../../../Common/TableWrapper/TableActionIcons/PencilIcon";
 import SetRetention from "./SetRetention";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
-import { Button, Input } from "@material-ui/core";
-import { CreateIcon } from "../../../../../../icons";
-import UploadFile from "../../../../../../icons/UploadFile";
+import DeleteObject from "../ListObjects/DeleteObject";
+import { removeRouteLevel } from "../../../../ObjectBrowser/actions";
 import { connect } from "react-redux";
-import api from "../../../../../../common/api";
-import { ObjectBrowserState, Route } from "../../../../ObjectBrowser/reducers";
-import get from "lodash/get";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -115,6 +131,7 @@ const styles = (theme: Theme) =>
 interface IObjectDetailsProps {
   classes: any;
   routesList: Route[];
+  removeRouteLevel: (newRoute: string) => any;
 }
 
 interface IFileInfo {
@@ -141,12 +158,17 @@ const emptyFile: IFileInfo = {
   version_id: "",
 };
 
-const ObjectDetails = ({ classes, routesList }: IObjectDetailsProps) => {
+const ObjectDetails = ({
+  classes,
+  routesList,
+  removeRouteLevel,
+}: IObjectDetailsProps) => {
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
   const [retentionModalOpen, setRetentionModalOpen] = useState<boolean>(false);
   const [actualInfo, setActualInfo] = useState<IFileInfo>(emptyFile);
   const [versions, setVersions] = useState<IFileInfo[]>([]);
   const [filterVersion, setFilterVersion] = useState<string>("");
+  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
   const currentItem = routesList[routesList.length - 1];
@@ -197,12 +219,8 @@ const ObjectDetails = ({ classes, routesList }: IObjectDetailsProps) => {
     console.log("delete tag");
   };
 
-  const downloadObject = () => {
-    console.log("download object");
-  };
-
-  const confirmDeleteObject = () => {
-    console.log("confirm delete object");
+  const downloadObject = (path: string) => {
+    download(bucketName, path);
   };
 
   const tableActions = [
@@ -216,6 +234,17 @@ const ObjectDetails = ({ classes, routesList }: IObjectDetailsProps) => {
 
   const displayParsedDate = (date: string) => {
     return <reactMoment.default>{date}</reactMoment.default>;
+  };
+
+  const closeDeleteModal = (redirectBack: boolean) => {
+    setDeleteOpen(false);
+
+    if (redirectBack) {
+      const newPath = allPathData.slice(0, -1).join("/");
+
+      removeRouteLevel(newPath);
+      history.push(newPath);
+    }
   };
 
   return (
@@ -232,6 +261,14 @@ const ObjectDetails = ({ classes, routesList }: IObjectDetailsProps) => {
           open={retentionModalOpen}
           closeModalAndRefresh={closeRetentionModal}
           objectName={objectName}
+        />
+      )}
+      {deleteOpen && (
+        <DeleteObject
+          deleteOpen={deleteOpen}
+          selectedBucket={bucketName}
+          selectedObject={pathInBucket}
+          closeDeleteModalAndRefresh={closeDeleteModal}
         />
       )}
       <Grid container>
@@ -307,11 +344,11 @@ const ObjectDetails = ({ classes, routesList }: IObjectDetailsProps) => {
               <div className={classes.actionsIconContainer}>
                 <IconButton
                   color="primary"
-                  aria-label="download/upload"
+                  aria-label="download"
                   size="small"
                   className={classes.actionsIcon}
                   onClick={() => {
-                    console.log("download/upload");
+                    downloadObject(pathInBucket);
                   }}
                 >
                   <DownloadIcon />
@@ -324,7 +361,7 @@ const ObjectDetails = ({ classes, routesList }: IObjectDetailsProps) => {
                   size="small"
                   className={classes.actionsIcon}
                   onClick={() => {
-                    console.log("delete");
+                    setDeleteOpen(true);
                   }}
                 >
                   <DeleteIcon />
@@ -404,4 +441,10 @@ const ObjectDetails = ({ classes, routesList }: IObjectDetailsProps) => {
   );
 };
 
-export default withStyles(styles)(ObjectDetails);
+const mapDispatchToProps = {
+  removeRouteLevel,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default connector(withStyles(styles)(ObjectDetails));
