@@ -100,7 +100,7 @@ const ConfTargetGeneric = ({
 
         return (
           <FormSwitchWrapper
-            indicatorLabel="On"
+            indicatorLabels={["On", "Off"]}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               const value = e.target.checked ? "true" : "false";
               setValueElement(field.name, value, item);

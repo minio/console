@@ -104,7 +104,7 @@ const styles = (theme: Theme) =>
 
 interface IBrowseBucketsProps {
   classes: any;
-  addRoute: (path: string, label: string) => any;
+  addRoute: (path: string, label: string, type: string) => any;
   resetRoutesList: (doVar: boolean) => any;
   match: any;
 }
@@ -187,7 +187,7 @@ const BrowseBuckets = ({
     const currentPath = get(match, "url", "/object-browser");
     const newPath = `${currentPath}/${idElement}`;
 
-    addRoute(newPath, idElement);
+    addRoute(newPath, idElement, "path");
   };
 
   const renderBucket = (bucketName: string) => {
