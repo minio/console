@@ -46,11 +46,11 @@ import Heal from "./Heal/Heal";
 import Watch from "./Watch/Watch";
 import ListTenants from "./Tenants/ListTenants/ListTenants";
 import { ISessionResponse } from "./types";
-import { saveSessionResponse } from "./actions";
 import TenantDetails from "./Tenants/TenantDetails/TenantDetails";
-import { clearSession } from "../../common/utils";
 import ObjectBrowser from "./ObjectBrowser/ObjectBrowser";
 import ListObjects from "./Buckets/ListBuckets/Objects/ListObjects/ListObjects";
+import ObjectDetails from "./Buckets/ListBuckets/Objects/ObjectDetails/ObjectDetails";
+import ObjectRouting from "./Buckets/ListBuckets/Objects/ListObjects/ObjectRouting";
 import License from "./License/License";
 
 const drawerWidth = 245;
@@ -160,7 +160,6 @@ interface IConsoleProps {
   setMenuOpen: typeof setMenuOpen;
   serverNeedsRestart: typeof serverNeedsRestart;
   serverIsLoading: typeof serverIsLoading;
-  saveSessionResponse: typeof saveSessionResponse;
   session: ISessionResponse;
 }
 
@@ -171,24 +170,8 @@ const Console = ({
   isServerLoading,
   serverNeedsRestart,
   serverIsLoading,
-  saveSessionResponse,
   session,
 }: IConsoleProps) => {
-  useEffect(() => {
-    api
-      .invoke("GET", `/api/v1/session`)
-      .then((res) => {
-        saveSessionResponse(res);
-      })
-      .catch(() => {
-        // if server returns 401 for /api/v1/session call invoke function will internally call clearSession()
-        // and redirecto to window.location.href = "/"; and this code will be not reached
-        // in case that not happen we clear session here and redirect as well
-        clearSession();
-        window.location.href = "/login";
-      });
-  }, [saveSessionResponse]);
-
   const restartServer = () => {
     serverIsLoading(true);
     api
@@ -231,11 +214,11 @@ const Console = ({
       path: "/object-browser",
     },
     {
-      component: ListObjects,
+      component: ObjectRouting,
       path: "/object-browser/:bucket",
     },
     {
-      component: ListObjects,
+      component: ObjectRouting,
       path: "/object-browser/:bucket/*",
     },
     {
@@ -375,7 +358,6 @@ const connector = connect(mapState, {
   setMenuOpen,
   serverNeedsRestart,
   serverIsLoading,
-  saveSessionResponse,
 });
 
 export default connector(withStyles(styles)(Console));

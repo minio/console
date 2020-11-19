@@ -15,21 +15,20 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import {SvgIcon} from "@material-ui/core";
+import { SvgIcon } from "@material-ui/core";
 class DeleteIcon extends React.Component {
-    render() {
-        return (<SvgIcon>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-                <title>ic_h_delete</title>
-                <g id="Layer_2" data-name="Layer 2">
-                    <g id="Layer_1-2" data-name="Layer 1">
-                        <path className="cls-1"
-                              d="M0,8H0a8,8,0,0,0,8,8H8a8,8,0,0,0,8-8h0A8,8,0,0,0,8,0H8A8,8,0,0,0,0,8Zm10.007,3.489L8,9.482,5.993,11.489,4.511,10.007,6.518,8,4.511,5.993,5.993,4.511,8,6.518l2.007-2.007,1.482,1.482L9.482,8l2.007,2.007Z"/>
-                    </g>
-                </g>
-            </svg>
-        </SvgIcon>)
-    }
+  render() {
+    return (
+      <SvgIcon>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10.402 13">
+          <path
+            d="M6.761 1V0H3.64v1H.004v1h10.4V1zM.004 2.998l1.672 10h7.052l1.673-10zm3.412 8.243l-.552-6.478h.653l.553 6.472zm3.569 0h-.653l.551-6.472h.654z"
+            className="a"
+          ></path>
+        </svg>
+      </SvgIcon>
+    );
+  }
 }
 
 export default DeleteIcon;

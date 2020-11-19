@@ -14,16 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import storage from "local-storage-fallback";
 import request from "superagent";
 import get from "lodash/get";
 import { clearSession } from "../utils";
 
 export class API {
   invoke(method: string, url: string, data?: object) {
-    const token: string = storage.getItem("token")!;
     return request(method, url)
-      .set("Authorization", `Bearer ${token}`)
       .send(data)
       .then((res) => res.body)
       .catch((err) => {

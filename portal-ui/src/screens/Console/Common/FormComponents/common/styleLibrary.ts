@@ -54,6 +54,7 @@ export const modalBasic = {
     marginLeft: 0,
   },
   clearButton: {
+    fontFamily: "Lato, sans-serif",
     border: "0",
     backgroundColor: "transparent",
     color: "#393939",
@@ -155,12 +156,16 @@ export const searchField = {
     justifyContent: "center",
     padding: "0 16px",
     "& input": {
-      fontSize: 14,
+      fontSize: 12,
+      fontWeight: 700,
       color: "#000",
       "&::placeholder": {
         color: "#393939",
         opacity: 1,
       },
+    },
+    "&:hover": {
+      borderColor: "#000",
     },
   },
 };

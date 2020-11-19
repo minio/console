@@ -33,14 +33,8 @@ import (
 // swagger:model createTenantResponse
 type CreateTenantResponse struct {
 
-	// access key
-	AccessKey string `json:"access_key,omitempty"`
-
 	// console
 	Console *CreateTenantResponseConsole `json:"console,omitempty"`
-
-	// secret key
-	SecretKey string `json:"secret_key,omitempty"`
 }
 
 // Validate validates this create tenant response

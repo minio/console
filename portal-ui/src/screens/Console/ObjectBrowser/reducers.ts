@@ -21,19 +21,23 @@ import {
   OBJECT_BROWSER_REMOVE_ROUTE_LEVEL,
   OBJECT_BROWSER_RESET_ROUTES_LIST,
   OBJECT_BROWSER_SET_ALL_ROUTES,
+  OBJECT_BROWSER_SET_LAST_AS_FILE,
   ObjectBrowserActionTypes,
 } from "./actions";
 
 export interface Route {
   route: string;
   label: string;
+  type: string;
 }
 
 export interface ObjectBrowserState {
   routesList: Route[];
 }
 
-const initialRoute = [{ route: "/object-browser", label: "All Buckets" }];
+const initialRoute = [
+  { route: "/object-browser", label: "All Buckets", type: "path" },
+];
 
 const initialState: ObjectBrowserState = {
   routesList: initialRoute,
@@ -47,7 +51,7 @@ export function objectBrowserReducer(
     case OBJECT_BROWSER_ADD_ROUTE:
       const newRouteList = [
         ...state.routesList,
-        { route: action.route, label: action.label },
+        { route: action.route, label: action.label, type: action.routeType },
       ];
       history.push(action.route);
 
@@ -76,7 +80,12 @@ export function objectBrowserReducer(
       splitRoutes.forEach((route) => {
         if (route !== "" && route !== "object-browser") {
           initRoute = `${initRoute}/${route}`;
-          routesArray.push({ route: initRoute, label: route });
+
+          routesArray.push({
+            route: initRoute,
+            label: route,
+            type: "path",
+          });
         }
       });
 
@@ -97,7 +106,7 @@ export function objectBrowserReducer(
         if (folderTrim !== "") {
           lastRoute = `${lastRoute}/${folderTrim}`;
 
-          const newItem = { route: lastRoute, label: folderTrim };
+          const newItem = { route: lastRoute, label: folderTrim, type: "path" };
           newFoldersRoutes.push(newItem);
         }
       });
@@ -107,6 +116,20 @@ export function objectBrowserReducer(
       return {
         ...state,
         routesList: newFoldersRoutes,
+      };
+    case OBJECT_BROWSER_SET_LAST_AS_FILE:
+      const currentList = state.routesList;
+      const lastItem = currentList.slice(-1)[0];
+
+      if (lastItem.type === "path") {
+        lastItem.type = "file";
+      }
+
+      const newList = [...currentList.slice(0, -1), lastItem];
+
+      return {
+        ...state,
+        routesList: newList,
       };
     default:
       return state;

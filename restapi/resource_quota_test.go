@@ -96,7 +96,7 @@ func Test_ResourceQuota(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "Handle error while fetching storage quota elementss",
+			name: "Handle error while fetching storage quota elements",
 			args: args{
 				ctx:    ctx,
 				client: kClient,

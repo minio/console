@@ -144,7 +144,7 @@ const StyledSwitch = withStyles({
     },
     "&:hover": {
       backgroundColor: "#fff",
-    }
+    },
   },
   checked: {},
   track: {
@@ -156,7 +156,7 @@ const StyledSwitch = withStyles({
     marginTop: 1.5,
     "&$checked": {
       backgroundColor: "#081C42",
-    }
+    },
   },
   thumb: {
     backgroundColor: "#fff",
@@ -198,7 +198,9 @@ const FormSwitchWrapper = ({
           value={value}
         />
         {indicatorLabels.length === 2 && (
-          <span className={classes.indicatorLabel}>{checked ? indicatorLabels[0] : indicatorLabels[1]}</span>
+          <span className={classes.indicatorLabel}>
+            {checked ? indicatorLabels[0] : indicatorLabels[1]}
+          </span>
         )}
       </div>
     </React.Fragment>
