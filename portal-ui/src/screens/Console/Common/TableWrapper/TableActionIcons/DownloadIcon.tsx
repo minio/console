@@ -7,12 +7,16 @@ const DeleteIcon = ({ active = false }: IIcon) => {
       xmlns="http://www.w3.org/2000/svg"
       width="16"
       height="16"
-      viewBox="0 0 10.402 13"
+      viewBox="0 0 13 12.996"
     >
       <path
         fill={active ? selected : unSelected}
-        d="M6.761 1V0H3.64v1H.004v1h10.4V1zM.004 2.998l1.672 10h7.052l1.673-10zm3.412 8.243l-.552-6.478h.653l.553 6.472zm3.569 0h-.653l.551-6.472h.654z"
-      />
+        d="M11.05 9.096v1.95h-9.1v-1.95H0v3.9h13v-3.9z"
+      ></path>
+      <path
+        fill={active ? selected : unSelected}
+        d="M6.5 9.75L9 6.672H7.475V0h-1.95v6.672H4z"
+      ></path>
     </svg>
   );
 };

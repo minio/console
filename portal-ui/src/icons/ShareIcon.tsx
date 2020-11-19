@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2019 MinIO, Inc.
+// Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,14 +15,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { SvgIcon } from "@material-ui/core";
-class DeleteIcon extends React.Component {
+import SvgIcon from "@material-ui/core/SvgIcon";
+
+class ShareIcon extends React.Component {
   render() {
     return (
       <SvgIcon>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10.402 13">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 13">
           <path
-            d="M6.761 1V0H3.64v1H.004v1h10.4V1zM.004 2.998l1.672 10h7.052l1.673-10zm3.412 8.243l-.552-6.478h.653l.553 6.472zm3.569 0h-.653l.551-6.472h.654z"
+            d="M11.05 8.617v2.429h-9.1v-9.1h2.429v-1.95H0v13h13V8.617z"
+            className="a"
+          ></path>
+          <path
+            d="M3.854 9.256h1.95a4.945 4.945 0 013.6-4.74v1.3l.6-.487 2.474-2.012L9.4.817v1.7a6.9 6.9 0 00-5.546 6.739z"
             className="a"
           ></path>
         </svg>
@@ -31,4 +36,4 @@ class DeleteIcon extends React.Component {
   }
 }
 
-export default DeleteIcon;
+export default ShareIcon;

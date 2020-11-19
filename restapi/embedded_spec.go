@@ -3279,9 +3279,6 @@ func init() {
     "createTenantResponse": {
       "type": "object",
       "properties": {
-        "access_key": {
-          "type": "string"
-        },
         "console": {
           "type": "object",
           "properties": {
@@ -3292,9 +3289,6 @@ func init() {
               "type": "string"
             }
           }
-        },
-        "secret_key": {
-          "type": "string"
         }
       }
     },
@@ -8668,9 +8662,6 @@ func init() {
     "createTenantResponse": {
       "type": "object",
       "properties": {
-        "access_key": {
-          "type": "string"
-        },
         "console": {
           "type": "object",
           "properties": {
@@ -8681,9 +8672,6 @@ func init() {
               "type": "string"
             }
           }
-        },
-        "secret_key": {
-          "type": "string"
         }
       }
     },

@@ -42,11 +42,16 @@ import Snackbar from "@material-ui/core/Snackbar";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import get from "lodash/get";
 import { withRouter } from "react-router-dom";
-import { addRoute, setAllRoutes } from "../../../../ObjectBrowser/actions";
+import {
+  addRoute,
+  setAllRoutes,
+  setLastAsFile,
+} from "../../../../ObjectBrowser/actions";
 import { connect } from "react-redux";
 import { ObjectBrowserState, Route } from "../../../../ObjectBrowser/reducers";
 import CreateFolderModal from "./CreateFolderModal";
 import UploadFile from "../../../../../../icons/UploadFile";
+import { download } from "../utils";
 
 const commonIcon = {
   backgroundRepeat: "no-repeat",
@@ -129,9 +134,10 @@ const styles = (theme: Theme) =>
 interface IListObjectsProps {
   classes: any;
   match: any;
-  addRoute: (param1: string, param2: string) => any;
+  addRoute: (param1: string, param2: string, param3: string) => any;
   setAllRoutes: (path: string) => any;
   routesList: Route[];
+  setLastAsFile: () => any;
 }
 
 interface ObjectBrowserReducer {
@@ -144,6 +150,7 @@ const ListObjects = ({
   addRoute,
   setAllRoutes,
   routesList,
+  setLastAsFile,
 }: IListObjectsProps) => {
   const [records, setRecords] = useState<BucketObject[]>([]);
   const [totalRecords, setTotalRecords] = useState<number>(0);
@@ -170,13 +177,16 @@ const ListObjects = ({
     api
       .invoke("GET", `/api/v1/buckets/${bucketName}/objects${extraPath}`)
       .then((res: BucketObjectsList) => {
-        setLoading(false);
         setSelectedBucket(bucketName);
         setRecords(res.objects || []);
         setTotalRecords(!res.objects ? 0 : res.total);
         setError("");
-        // TODO:
-        // if we get 0 results, and page > 0 , go down 1 page
+        // In case no objects were retrieved, We check if item is a file
+        if (!res.objects && extraPath !== "") {
+          verifyIfIsFile();
+          return;
+        }
+        setLoading(false);
       })
       .catch((err: any) => {
         setLoading(false);
@@ -190,6 +200,30 @@ const ListObjects = ({
       setAllRoutes(url);
     }
   }, [match, routesList, setAllRoutes]);
+
+  const verifyIfIsFile = () => {
+    const bucketName = match.params["bucket"];
+    const internalPaths = match.params[0];
+
+    api
+      .invoke(
+        "GET",
+        `/api/v1/buckets/${bucketName}/objects?prefix=${internalPaths}`
+      )
+      .then((res: BucketObjectsList) => {
+        //It is a file since it has elements in the object, setting file flag and waiting for component mount
+        if (res.objects !== null) {
+          setLastAsFile();
+        } else {
+          // It is a folder, we remove loader
+          setLoading(false);
+        }
+      })
+      .catch((err: any) => {
+        setLoading(false);
+        setError(err);
+      });
+  };
 
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
@@ -264,37 +298,6 @@ const ListObjects = ({
     e.target.value = null;
   };
 
-  const download = (bucketName: string, objectName: string) => {
-    const anchor = document.createElement("a");
-    document.body.appendChild(anchor);
-    const token: string = storage.getItem("token")!;
-    const xhr = new XMLHttpRequest();
-
-    xhr.open(
-      "GET",
-      `/api/v1/buckets/${bucketName}/objects/download?prefix=${objectName}`,
-      true
-    );
-    xhr.responseType = "blob";
-
-    xhr.onload = function (e) {
-      if (this.status === 200) {
-        const blob = new Blob([this.response], {
-          type: "octet/stream",
-        });
-        const blobUrl = window.URL.createObjectURL(blob);
-
-        anchor.href = blobUrl;
-        anchor.download = objectName;
-
-        anchor.click();
-        window.URL.revokeObjectURL(blobUrl);
-        anchor.remove();
-      }
-    };
-    xhr.send();
-  };
-
   const displayParsedDate = (date: string) => {
     return <reactMoment.default>{date}</reactMoment.default>;
   };
@@ -319,13 +322,16 @@ const ListObjects = ({
       const lastIndex = idElementClean.length - 1;
       const newPath = `${currentPath}/${idElementClean[lastIndex]}`;
 
-      addRoute(newPath, idElementClean[lastIndex]);
+      addRoute(newPath, idElementClean[lastIndex], "path");
       return;
     }
-
     // Element is a file. we open details here
-    // TODO: Add details open function here.
-    //console.log("object", idElementClean);
+    const pathInArray = idElement.split("/");
+    const fileName = pathInArray[pathInArray.length - 1];
+    const newPath = `${currentPath}/${fileName}`;
+
+    addRoute(newPath, fileName, "file");
+    return;
   };
 
   const uploadObject = (e: any): void => {
@@ -518,6 +524,7 @@ const mapStateToProps = ({ objectBrowser }: ObjectBrowserReducer) => ({
 const mapDispatchToProps = {
   addRoute,
   setAllRoutes,
+  setLastAsFile,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

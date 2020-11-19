@@ -2967,10 +2967,6 @@ definitions:
   createTenantResponse:
     type: object
     properties:
-      access_key:
-        type: string
-      secret_key:
-        type: string
       console:
         type: object
         properties:
