@@ -48,6 +48,8 @@ import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import DeleteObject from "../ListObjects/DeleteObject";
 import { removeRouteLevel } from "../../../../ObjectBrowser/actions";
 import { connect } from "react-redux";
+import AddTagModal from "./AddTagModal";
+import DeleteTagModal from "./DeleteTagModal";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -163,8 +165,12 @@ const ObjectDetails = ({
   routesList,
   removeRouteLevel,
 }: IObjectDetailsProps) => {
+  const [loadObjectData, setLoadObjectData] = useState<boolean>(true);
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
   const [retentionModalOpen, setRetentionModalOpen] = useState<boolean>(false);
+  const [tagModalOpen, setTagModalOpen] = useState<boolean>(false);
+  const [deleteTagModalOpen, setDeleteTagModalOpen] = useState<boolean>(false);
+  const [selectedTag, setSelectedTag] = useState<[string, string]>(["", ""]);
   const [actualInfo, setActualInfo] = useState<IFileInfo>(emptyFile);
   const [versions, setVersions] = useState<IFileInfo[]>([]);
   const [filterVersion, setFilterVersion] = useState<string>("");
@@ -178,22 +184,32 @@ const ObjectDetails = ({
   const pathInBucket = allPathData.slice(3).join("/");
 
   useEffect(() => {
-    api
-      .invoke(
-        "GET",
-        `/api/v1/buckets/${bucketName}/objects?prefix=${pathInBucket}&with_versions=true`
-      )
-      .then((res: IFileInfo[]) => {
-        const result = get(res, "objects", []);
-        setActualInfo(
-          result.find((el: IFileInfo) => el.is_latest) || emptyFile
-        );
-        setVersions(result.filter((el: IFileInfo) => !el.is_latest));
-      })
-      .catch((error) => {
-        setError(error);
-      });
-  }, []);
+    if (loadObjectData) {
+      api
+        .invoke(
+          "GET",
+          `/api/v1/buckets/${bucketName}/objects?prefix=${pathInBucket}&with_versions=true`
+        )
+        .then((res: IFileInfo[]) => {
+          const result = get(res, "objects", []);
+          setActualInfo(
+            result.find((el: IFileInfo) => el.is_latest) || emptyFile
+          );
+          setVersions(result.filter((el: IFileInfo) => !el.is_latest));
+          setLoadObjectData(false);
+        })
+        .catch((error) => {
+          setError(error);
+          setLoadObjectData(false);
+        });
+    }
+  }, [loadObjectData]);
+
+  let tagKeys: string[] = [];
+
+  if (actualInfo.tags) {
+    tagKeys = Object.keys(actualInfo.tags);
+  }
 
   const openRetentionModal = () => {
     setRetentionModalOpen(true);
@@ -215,8 +231,9 @@ const ObjectDetails = ({
     console.log("close share modal");
   };
 
-  const deleteTag = () => {
-    console.log("delete tag");
+  const deleteTag = (tagKey: string, tagLabel: string) => {
+    setSelectedTag([tagKey, tagLabel]);
+    setDeleteTagModalOpen(true);
   };
 
   const downloadObject = (path: string) => {
@@ -247,6 +264,22 @@ const ObjectDetails = ({
     }
   };
 
+  const closeAddTagModal = (reloadObjectData: boolean) => {
+    setTagModalOpen(false);
+
+    if (reloadObjectData) {
+      setLoadObjectData(true);
+    }
+  };
+
+  const closeDeleteTagModal = (reloadObjectData: boolean) => {
+    setDeleteTagModalOpen(false);
+
+    if (reloadObjectData) {
+      setLoadObjectData(true);
+    }
+  };
+
   return (
     <React.Fragment>
       <PageHeader label={"Object Browser"} />
@@ -269,6 +302,27 @@ const ObjectDetails = ({
           selectedBucket={bucketName}
           selectedObject={pathInBucket}
           closeDeleteModalAndRefresh={closeDeleteModal}
+        />
+      )}
+      {tagModalOpen && (
+        <AddTagModal
+          modalOpen={tagModalOpen}
+          currentTags={actualInfo.tags}
+          selectedObject={pathInBucket}
+          versionId={actualInfo.version_id}
+          bucketName={bucketName}
+          onCloseAndUpdate={closeAddTagModal}
+        />
+      )}
+      {deleteTagModalOpen && (
+        <DeleteTagModal
+          deleteOpen={deleteTagModalOpen}
+          currentTags={actualInfo.tags}
+          selectedObject={pathInBucket}
+          versionId={actualInfo.version_id}
+          bucketName={bucketName}
+          onCloseAndUpdate={closeDeleteTagModal}
+          selectedTag={selectedTag}
         />
       )}
       <Grid container>
@@ -371,24 +425,25 @@ const ObjectDetails = ({
           </Grid>
           <Grid item xs={12} className={classes.tagsContainer}>
             <div className={classes.tagText}>Tags:</div>
-            {actualInfo.tags &&
-              Object.keys(actualInfo.tags).map((itemKey, index) => {
-                const tag = get(actualInfo, `tags.${itemKey}`, "");
-                if (tag !== "") {
-                  return (
-                    <Chip
-                      key={`chip-${index}`}
-                      className={classes.tag}
-                      size="small"
-                      label={tag}
-                      color="primary"
-                      deleteIcon={<CloseIcon />}
-                      onDelete={deleteTag}
-                    />
-                  );
-                }
-                return null;
-              })}
+            {tagKeys.map((tagKey, index) => {
+              const tag = get(actualInfo, `tags.${tagKey}`, "");
+              if (tag !== "") {
+                return (
+                  <Chip
+                    key={`chip-${index}`}
+                    className={classes.tag}
+                    size="small"
+                    label={`${tagKey} : ${tag}`}
+                    color="primary"
+                    deleteIcon={<CloseIcon />}
+                    onDelete={() => {
+                      deleteTag(tagKey, tag);
+                    }}
+                  />
+                );
+              }
+              return null;
+            })}
             <Chip
               className={classes.tag}
               icon={<AddIcon />}
@@ -397,6 +452,9 @@ const ObjectDetails = ({
               label="Add tag"
               color="primary"
               variant="outlined"
+              onClick={() => {
+                setTagModalOpen(true);
+              }}
             />
           </Grid>
           <Grid item xs={12} className={classes.actionsTray}>
