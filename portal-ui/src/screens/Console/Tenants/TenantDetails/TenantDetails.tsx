@@ -16,7 +16,10 @@
 
 import React, { useState, useEffect } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  containerForHeader,
+  modalBasic,
+} from "../../Common/FormComponents/common/styleLibrary";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { Button } from "@material-ui/core";
@@ -34,6 +37,7 @@ import api from "../../../../common/api";
 import { ITenant, IZone } from "../ListTenants/types";
 import Logs from "./Logs/Logs";
 import Trace from "./Trace/Trace";
+import PageHeader from "../../Common/PageHeader/PageHeader";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -90,13 +94,14 @@ const styles = (theme: Theme) =>
       textAlign: "right",
     },
     ...modalBasic,
+    ...containerForHeader(theme.spacing(4)),
   });
 
 const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [capacity, setCapacity] = useState<number>(0);
   const [zoneCount, setZoneCount] = useState<number>(0);
-  const [zones, setZones] = useState<IZone[]>([]);
+  const [serverSets, setServerSets] = useState<IZone[]>([]);
   const [instances, setInstances] = useState<number>(0);
   const [volumes, setVolumes] = useState<number>(0);
   const [addZoneOpen, setAddZone] = useState<boolean>(false);
@@ -157,7 +162,7 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
         setVolumes(totalVolumes);
         setInstances(totalInstances);
 
-        setZones(resZones);
+        setServerSets(resZones);
 
         setTenant(res);
         setError("");
@@ -193,12 +198,9 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
           closeModalAndRefresh={closeReplicationAndRefresh}
         />
       )}
+      <PageHeader label={`Tenant > ${match.params["tenantName"]}`} />
+      <Grid item xs={12} className={classes.container} />
       <Grid container>
-        <Grid item xs={12}>
-          <Typography variant="h6">
-            {`Tenant > ${match.params["tenantName"]}`}
-          </Typography>
-        </Grid>
         {error !== "" && (
           <Grid item xs={12}>
             {error}
@@ -214,7 +216,7 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
               <div>{niceBytes(capacity.toString(10))}</div>
               <div>Minio:</div>
               <div>{tenant ? tenant.image : ""}</div>
-              <div>Zones:</div>
+              <div>Clusters:</div>
               <div>{zoneCount}</div>
               <div>Console:</div>
               <div>{tenant ? tenant.console_image : ""}</div>
@@ -238,7 +240,7 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
             }}
             aria-label="tenant-tabs"
           >
-            <Tab label="Zones" />
+            <Tab label="Clusters" />
             <Tab label="Logs" />
             <Tab label="Trace" />
           </Tabs>
@@ -252,7 +254,7 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
               setAddZone(true);
             }}
           >
-            Add Zone
+            Expand Tenant
           </Button>
         </Grid>
         <Grid item xs={12}>
@@ -277,8 +279,8 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
                 { label: "# of Drives", elementKey: "volumes" },
               ]}
               isLoading={false}
-              records={zones}
-              entityName="Zones"
+              records={serverSets}
+              entityName="Servers"
               idField="name"
             />
           )}
