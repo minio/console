@@ -183,8 +183,6 @@ github.com/campoy/unique v0.0.0-20180121183637-88950e537e7e/go.mod h1:9IOqJGCPMS
 github.com/cavaliercoder/go-cpio v0.0.0-20180626203310-925f9528c45e/go.mod h1:oDpT4efm8tSYHXV5tHSdRvBet/b/QzxZ+XyyPehvm3A=
 github.com/census-instrumentation/opencensus-proto v0.2.0/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
-github.com/cesnietor/mc v0.0.0-20201119195918-db08a7f03703 h1:n3CRlkrWpDoON24wwdkuhQs5bzotIwvpo79YX+pCG4Y=
-github.com/cesnietor/mc v0.0.0-20201119195918-db08a7f03703/go.mod h1:B738ZPTRQiyp3uJ3p2W2mqk8Yp1puYASKY7GIhYyHP8=
 github.com/cespare/xxhash v1.1.0 h1:a6HrQnmkObjyL+Gs60czilIUGqrzKutQD6XZog3p+ko=
 github.com/cespare/xxhash v1.1.0/go.mod h1:XrSqR1VqqWfGrhpAt58auRo0WTKS1nRRg3ghfAqPWnc=
 github.com/cespare/xxhash/v2 v2.1.1 h1:6MnRN8NT7+YBpUIWxHtefFZOKTAPgGjpQSxqLNn0+qY=
@@ -799,6 +797,8 @@ github.com/minio/highwayhash v1.0.0 h1:iMSDhgUILCr0TNm8LWlSjF8N0ZIj2qbO8WHp6Q/J2
 github.com/minio/highwayhash v1.0.0/go.mod h1:xQboMTeM9nY9v/LlAOxFctujiv5+Aq2hR5dxBpaMbdc=
 github.com/minio/kes v0.11.0 h1:8ma6OCVSxKT50b1uYXLJro3m7PmZtCLxBaTddQexI5k=
 github.com/minio/kes v0.11.0/go.mod h1:mTF1Bv8YVEtQqF/B7Felp4tLee44Pp+dgI0rhCvgNg8=
+github.com/minio/mc v0.0.0-20201119214335-d4f9ea859d6c h1:/wGiTfC8pFOC2JzwE+XrPeH31LqFR/Dam4Lx1zX3Wag=
+github.com/minio/mc v0.0.0-20201119214335-d4f9ea859d6c/go.mod h1:B738ZPTRQiyp3uJ3p2W2mqk8Yp1puYASKY7GIhYyHP8=
 github.com/minio/md5-simd v1.1.0 h1:QPfiOqlZH+Cj9teu0t9b1nTBfPbyTl16Of5MeuShdK4=
 github.com/minio/md5-simd v1.1.0/go.mod h1:XpBqgZULrMYD3R+M28PcmP0CkI7PEMzB3U77ZrKZ0Gw=
 github.com/minio/minio v0.0.0-20200723003940-b9be841fd222 h1:+XFGpEsqmA033nDX8LtjyPZy01Shivf6E2OL67WoGiE=
