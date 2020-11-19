@@ -51,6 +51,7 @@ import { connect } from "react-redux";
 import { ObjectBrowserState, Route } from "../../../../ObjectBrowser/reducers";
 import CreateFolderModal from "./CreateFolderModal";
 import UploadFile from "../../../../../../icons/UploadFile";
+import { download } from "../utils";
 
 const commonIcon = {
   backgroundRepeat: "no-repeat",
@@ -295,37 +296,6 @@ const ListObjects = ({
     formData.append("upfile", blobFile);
     xhr.send(formData);
     e.target.value = null;
-  };
-
-  const download = (bucketName: string, objectName: string) => {
-    const anchor = document.createElement("a");
-    document.body.appendChild(anchor);
-    const token: string = storage.getItem("token")!;
-    const xhr = new XMLHttpRequest();
-
-    xhr.open(
-      "GET",
-      `/api/v1/buckets/${bucketName}/objects/download?prefix=${objectName}`,
-      true
-    );
-    xhr.responseType = "blob";
-
-    xhr.onload = function (e) {
-      if (this.status === 200) {
-        const blob = new Blob([this.response], {
-          type: "octet/stream",
-        });
-        const blobUrl = window.URL.createObjectURL(blob);
-
-        anchor.href = blobUrl;
-        anchor.download = objectName;
-
-        anchor.click();
-        window.URL.revokeObjectURL(blobUrl);
-        anchor.remove();
-      }
-    };
-    xhr.send();
   };
 
   const displayParsedDate = (date: string) => {
