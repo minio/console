@@ -33,7 +33,8 @@ import (
 type DownloadObjectURL struct {
 	BucketName string
 
-	Prefix string
+	Prefix    string
+	VersionID string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -79,6 +80,11 @@ func (o *DownloadObjectURL) Build() (*url.URL, error) {
 	prefixQ := o.Prefix
 	if prefixQ != "" {
 		qs.Set("prefix", prefixQ)
+	}
+
+	versionIDQ := o.VersionID
+	if versionIDQ != "" {
+		qs.Set("version_id", versionIDQ)
 	}
 
 	_result.RawQuery = qs.Encode()

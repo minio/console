@@ -58,6 +58,11 @@ type DownloadObjectParams struct {
 	  In: query
 	*/
 	Prefix string
+	/*
+	  Required: true
+	  In: query
+	*/
+	VersionID string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -78,6 +83,11 @@ func (o *DownloadObjectParams) BindRequest(r *http.Request, route *middleware.Ma
 
 	qPrefix, qhkPrefix, _ := qs.GetOK("prefix")
 	if err := o.bindPrefix(qPrefix, qhkPrefix, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qVersionID, qhkVersionID, _ := qs.GetOK("version_id")
+	if err := o.bindVersionID(qVersionID, qhkVersionID, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -119,6 +129,27 @@ func (o *DownloadObjectParams) bindPrefix(rawData []string, hasKey bool, formats
 	}
 
 	o.Prefix = raw
+
+	return nil
+}
+
+// bindVersionID binds and validates parameter VersionID from query.
+func (o *DownloadObjectParams) bindVersionID(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	if !hasKey {
+		return errors.Required("version_id", "query", rawData)
+	}
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: true
+	// AllowEmptyValue: false
+	if err := validate.RequiredString("version_id", "query", raw); err != nil {
+		return err
+	}
+
+	o.VersionID = raw
 
 	return nil
 }

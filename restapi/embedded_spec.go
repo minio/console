@@ -546,6 +546,12 @@ func init() {
             "name": "prefix",
             "in": "query",
             "required": true
+          },
+          {
+            "type": "string",
+            "name": "version_id",
+            "in": "query",
+            "required": true
           }
         ],
         "responses": {
@@ -5404,6 +5410,12 @@ func init() {
           {
             "type": "string",
             "name": "prefix",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "version_id",
             "in": "query",
             "required": true
           }
