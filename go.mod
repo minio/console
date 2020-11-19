@@ -17,19 +17,21 @@ require (
 	github.com/minio/cli v1.22.0
 	github.com/minio/kes v0.11.0
 	github.com/minio/mc v0.0.0-20201001165056-7f2df96e4821
-	github.com/minio/minio v0.0.0-20200927172404-27d9bd04e544
-	github.com/minio/minio-go/v7 v7.0.6-0.20200923173112-bc846cb9b089
+	github.com/minio/minio v0.0.0-20201102034248-d8e07f2c41c8
+	github.com/minio/minio-go/v7 v7.0.6-0.20200929220449-755b5633803a
 	github.com/minio/operator v0.0.0-20201022162018-527e5c32132b
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/secure-io/sio-go v0.3.1
 	github.com/stretchr/testify v1.6.1
 	github.com/unrolled/secure v1.0.7
-	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
-	golang.org/x/net v0.0.0-20200904194848-62affa334b73
+	golang.org/x/crypto v0.0.0-20201012173705-84dcc777aaee
+	golang.org/x/net v0.0.0-20201010224723-4f7140c49acb
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	gopkg.in/yaml.v2 v2.3.0
 	k8s.io/api v0.18.6
 	k8s.io/apimachinery v0.18.6
 	k8s.io/client-go v0.18.6
 )
+
+replace github.com/minio/mc => github.com/cesnietor/mc v0.0.0-20201119195918-db08a7f03703

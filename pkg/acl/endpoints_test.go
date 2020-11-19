@@ -177,7 +177,7 @@ func TestGetActionsStringFromPolicy(t *testing.T) {
 			args: args{
 				policy: &iampolicy.AdminDiagnostics,
 			},
-			want: 6,
+			want: 7,
 		},
 	}
 	for _, tt := range tests {

@@ -221,18 +221,17 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 	// create a mc S3Client interface implementation
 	// defining the client to be used
 	mcClient := mcClient{client: s3Client}
-	object, err := downloadObject(ctx, mcClient)
+	object, err := downloadObject(ctx, mcClient, params.VersionID)
 	if err != nil {
 		return nil, prepareError(err)
 	}
 	return object, nil
 }
 
-func downloadObject(ctx context.Context, client MCClient) (io.ReadCloser, error) {
-	// TODO: handle version
+func downloadObject(ctx context.Context, client MCClient, versionID string) (io.ReadCloser, error) {
 	// TODO: handle encripted files
 	var reader io.ReadCloser
-	reader, pErr := client.get(ctx, mc.GetOptions{})
+	reader, pErr := client.get(ctx, mc.GetOptions{VersionID: versionID})
 	if pErr != nil {
 		return nil, pErr.Cause
 	}
@@ -285,7 +284,7 @@ func deleteMultipleObjects(ctx context.Context, client MCClient, recursive bool)
 	isRemoveBucket := false
 	isIncomplete := false
 	isBypass := false
-	listOpts := mc.ListOptions{IsRecursive: recursive, IsIncomplete: isIncomplete, ShowDir: mc.DirNone}
+	listOpts := mc.ListOptions{Recursive: recursive, Incomplete: isIncomplete, ShowDir: mc.DirNone}
 	// TODO: support older Versions
 	contentCh := make(chan *mc.ClientContent, 1)
 
