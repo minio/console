@@ -110,7 +110,10 @@ func startServer(ctx *cli.Context) error {
 	// Set all certs and CAs directories.
 	certs.GlobalCertsDir, _ = certs.NewConfigDirFromCtx(ctx, "certs-dir", certs.DefaultCertsDir.Get)
 	certs.GlobalCertsCADir = &certs.ConfigDir{Path: filepath.Join(certs.GlobalCertsDir.Get(), certs.CertsCADir)}
-	logger.FatalIf(certs.MkdirAllIgnorePerm(certs.GlobalCertsCADir.Get()), "Unable to create certs CA directory at %s", certs.GlobalCertsCADir.Get())
+
+	if err := certs.MkdirAllIgnorePerm(certs.GlobalCertsCADir.Get()); err != nil {
+		log.Println(fmt.Sprintf("Unable to create certs CA directory at %s", certs.GlobalCertsCADir.Get()))
+	}
 
 	// load all CAs from ~/.console/certs/CAs
 	restapi.GlobalRootCAs, err = certsx.GetRootCAs(certs.GlobalCertsCADir.Get())
