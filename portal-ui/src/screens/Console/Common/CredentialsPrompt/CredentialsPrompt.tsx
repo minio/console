@@ -82,14 +82,6 @@ const CredentialsPrompt = ({
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
             A new {entity} has been created with the following details:
-            <ul>
-              <li>
-                <b>Access Key:</b> {newServiceAccount.accessKey}
-              </li>
-              <li>
-                <b>Secret Key:</b> {newServiceAccount.secretKey}
-              </li>
-            </ul>
             {consoleCreds && (
               <React.Fragment>
                 <Grid item xs={12}>
@@ -131,8 +123,6 @@ const CredentialsPrompt = ({
                 download(
                   "credentials.json",
                   JSON.stringify({
-                    access_key: newServiceAccount.accessKey,
-                    secret_key: newServiceAccount.secretKey,
                     ...consoleExtras,
                   })
                 );
