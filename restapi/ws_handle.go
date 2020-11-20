@@ -195,7 +195,7 @@ func newWebSocketTenantAdminClient(conn *websocket.Conn, session *models.Princip
 	minTenant.EnsureDefaults()
 
 	svcURL := GetTenantServiceURL(minTenant)
-
+	// TODO: in the feature we need to load all tenants public certificates under ~/.console/certs/CAs to avoid using insecure: true
 	mAdmin, err := getTenantAdminClient(
 		ctx,
 		k8sClient,

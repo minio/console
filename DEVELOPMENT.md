@@ -11,40 +11,7 @@ $ docker run --rm -p 389:389 -p 636:636 --name my-openldap-container --detach os
 Run the `billy.ldif` file using `ldapadd` command to create a new user and assign it to a group.
 
 ```
-$ cat > billy.ldif << EOF
-# LDIF fragment to create group branch under root
-dn: uid=billy,dc=example,dc=org
-uid: billy
-cn: billy
-sn: 3
-objectClass: top
-objectClass: posixAccount
-objectClass: inetOrgPerson
-loginShell: /bin/bash
-homeDirectory: /home/billy
-uidNumber: 14583102
-gidNumber: 14564100
-userPassword: {SSHA}j3lBh1Seqe4rqF1+NuWmjhvtAni1JC5A
-mail: billy@example.org
-gecos: Billy User
-# Create base group
-dn: ou=groups,dc=example,dc=org
-objectclass:organizationalunit
-ou: groups
-description: generic groups branch
-# create consoleAdmin group (this already exists on minio and have a policy of s3::*)
-dn: cn=consoleAdmin,ou=groups,dc=example,dc=org
-objectClass: top
-objectClass: posixGroup
-gidNumber: 678
-# Assing group to new user
-dn: cn=consoleAdmin,ou=groups,dc=example,dc=org
-changetype: modify
-add: memberuid
-memberuid: billy
-EOF
-
-$ docker cp billy.ldif my-openldap-container:/container/service/slapd/assets/test/billy.ldif
+$ docker cp console/docs/ldap/billy.ldif my-openldap-container:/container/service/slapd/assets/test/billy.ldif
 $ docker exec my-openldap-container ldapadd -x -D "cn=admin,dc=example,dc=org" -w admin -f /container/service/slapd/assets/test/billy.ldif -H ldap://localhost -ZZ
 ```
 

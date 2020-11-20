@@ -29,6 +29,7 @@ import (
 	"github.com/minio/minio/cmd/config"
 	"github.com/minio/minio/cmd/logger"
 	"github.com/minio/minio/pkg/certs"
+	certsx "github.com/minio/minio/pkg/certs"
 	"github.com/mitchellh/go-homedir"
 )
 
@@ -219,4 +220,14 @@ func GetTLSConfig() (x509Certs []*x509.Certificate, manager *certs.Manager, err 
 		}
 	}
 	return x509Certs, manager, nil
+}
+
+func GetAllCertificatesAndCAs() (*x509.CertPool, []*x509.Certificate, *certs.Manager) {
+	// load all CAs from ~/.console/certs/CAs
+	GlobalRootCAs, err := certsx.GetRootCAs(GlobalCertsCADir.Get())
+	logger.FatalIf(err, "Failed to read root CAs (%v)", err)
+	// load all certs from ~/.console/certs
+	globalPublicCerts, globalTLSCertsManager, err := GetTLSConfig()
+	logger.FatalIf(err, "Unable to load the TLS configuration")
+	return GlobalRootCAs, globalPublicCerts, globalTLSCertsManager
 }
