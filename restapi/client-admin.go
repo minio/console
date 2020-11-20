@@ -19,10 +19,13 @@ package restapi
 import (
 	"context"
 	"io"
+	"net/http"
 	"path/filepath"
 	"runtime"
 
 	"github.com/minio/console/models"
+	"github.com/minio/console/pkg/auth"
+	"github.com/minio/console/pkg/auth/ldap"
 	mcCmd "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -34,22 +37,22 @@ import (
 const globalAppName = "console"
 
 // NewAdminClient gives a new madmin client interface
-func NewAdminClient(url, accessKey, secretKey string) (*madmin.AdminClient, *probe.Error) {
-	return NewAdminClientWithInsecure(url, accessKey, secretKey, false)
+func NewAdminClient(url, accessKey, secretKey, sessionToken string) (*madmin.AdminClient, *probe.Error) {
+	return NewAdminClientWithInsecure(url, accessKey, secretKey, sessionToken, false)
 }
 
 // NewAdminClientWithInsecure gives a new madmin client interface either secure or insecure based on parameter
-func NewAdminClientWithInsecure(url, accessKey, secretKey string, insecure bool) (*madmin.AdminClient, *probe.Error) {
+func NewAdminClientWithInsecure(url, accessKey, secretKey, sessionToken string, insecure bool) (*madmin.AdminClient, *probe.Error) {
 	appName := filepath.Base(globalAppName)
-
 	s3Client, err := s3AdminNew(&mcCmd.Config{
-		HostURL:     url,
-		AccessKey:   accessKey,
-		SecretKey:   secretKey,
-		AppName:     appName,
-		AppVersion:  ConsoleVersion,
-		AppComments: []string{appName, runtime.GOOS, runtime.GOARCH},
-		Insecure:    insecure,
+		HostURL:      url,
+		AccessKey:    accessKey,
+		SecretKey:    secretKey,
+		SessionToken: sessionToken,
+		AppName:      appName,
+		AppVersion:   ConsoleVersion,
+		AppComments:  []string{appName, runtime.GOOS, runtime.GOARCH},
+		Insecure:     insecure,
 	})
 	if err != nil {
 		return nil, err.Trace(url)
@@ -304,16 +307,51 @@ func newAdminFromClaims(claims *models.Principal) (*madmin.AdminClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	stsClient := PrepareSTSClient(false)
-	adminClient.SetCustomTransport(stsClient.Transport)
+	adminClient.SetCustomTransport(getSTSClient().Transport)
 	return adminClient, nil
 }
 
+var (
+	consoleAccessKey = getAccessKey()
+	consoleSecretKey = getSecretKey()
+)
+
+// stsClient is an http.Client with Custom TLS Transport that loads certificates from .console/certs/CAs
+var stsClient *http.Client
+var consoleLDAPAdminCreds consoleCredentials
+
+func getSTSClient() *http.Client {
+	if stsClient == nil {
+		stsClient = PrepareSTSClient(false)
+	}
+	return stsClient
+}
+
 func newSuperMAdminClient() (*madmin.AdminClient, error) {
-	endpoint := getMinIOServer()
-	accessKeyID := getAccessKey()
-	secretAccessKey := getSecretKey()
-	adminClient, pErr := NewAdminClient(endpoint, accessKeyID, secretAccessKey)
+	accessKey := consoleAccessKey
+	secretKey := consoleSecretKey
+	sessionToken := ""
+	// If LDAP is enabled (External IDP) in minio, then obtain the session tokens associated with the super admin credentials
+	// configured in console
+	if ldap.GetLDAPEnabled() {
+		// initialize LDAP super Admin Credentials once
+		if consoleLDAPAdminCreds.consoleCredentials == nil {
+			consoleCredentialsFromLDAP, err := auth.GetCredentialsFromLDAP(getSTSClient(), MinioEndpoint, consoleAccessKey, consoleSecretKey)
+			if err != nil {
+				return nil, err
+			}
+			consoleLDAPAdminCreds = consoleCredentials{consoleCredentials: consoleCredentialsFromLDAP}
+		}
+		tokens, err := consoleLDAPAdminCreds.Get()
+		if err != nil {
+			return nil, err
+		}
+		accessKey = tokens.AccessKeyID
+		secretKey = tokens.SecretAccessKey
+		sessionToken = tokens.SessionToken
+	}
+
+	adminClient, pErr := NewAdminClient(MinioEndpoint, accessKey, secretKey, sessionToken)
 	if pErr != nil {
 		return nil, pErr.Cause
 	}

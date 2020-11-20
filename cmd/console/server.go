@@ -28,8 +28,6 @@ import (
 	"github.com/minio/console/pkg/certs"
 	"github.com/minio/console/restapi"
 	"github.com/minio/console/restapi/operations"
-	"github.com/minio/minio/cmd/logger"
-	certsx "github.com/minio/minio/pkg/certs"
 )
 
 // starts the server
@@ -107,22 +105,18 @@ func startServer(ctx *cli.Context) error {
 	restapi.Hostname = ctx.String("host")
 	restapi.Port = fmt.Sprintf("%v", ctx.Int("port"))
 
-	// Set all certs and CAs directories.
+	// Set all certs and CAs directories path
 	certs.GlobalCertsDir, _ = certs.NewConfigDirFromCtx(ctx, "certs-dir", certs.DefaultCertsDir.Get)
 	certs.GlobalCertsCADir = &certs.ConfigDir{Path: filepath.Join(certs.GlobalCertsDir.Get(), certs.CertsCADir)}
 
+	// check if certs and CAs directories exists or can be created
 	if err := certs.MkdirAllIgnorePerm(certs.GlobalCertsCADir.Get()); err != nil {
 		log.Println(fmt.Sprintf("Unable to create certs CA directory at %s", certs.GlobalCertsCADir.Get()))
 	}
+	// load the certificates and the CAs
+	restapi.GlobalRootCAs, restapi.GlobalPublicCerts, restapi.GlobalTLSCertsManager = certs.GetAllCertificatesAndCAs()
 
-	// load all CAs from ~/.console/certs/CAs
-	restapi.GlobalRootCAs, err = certsx.GetRootCAs(certs.GlobalCertsCADir.Get())
-	logger.FatalIf(err, "Failed to read root CAs (%v)", err)
-	// load all certs from ~/.console/certs
-	restapi.GlobalPublicCerts, restapi.GlobalTLSCertsManager, err = certs.GetTLSConfig()
-	logger.FatalIf(err, "Unable to load the TLS configuration")
-
-	if len(restapi.GlobalPublicCerts) > 0 && restapi.GlobalRootCAs != nil {
+	if len(restapi.GlobalPublicCerts) > 0 {
 		// If TLS certificates are provided enforce the HTTPS schema, meaning console will redirect
 		// plain HTTP connections to HTTPS server
 		server.EnabledListeners = []string{"http", "https"}

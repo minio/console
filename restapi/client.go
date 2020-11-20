@@ -289,7 +289,7 @@ func newConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 			if MinioEndpoint == "" {
 				return nil, errors.New("endpoint cannot be empty for AssumeRoleSTS")
 			}
-			creds, err := auth.GetConsoleCredentialsFromLDAP(MinioEndpoint, accessKey, secretKey)
+			creds, err := auth.GetCredentialsFromLDAP(stsClient, MinioEndpoint, accessKey, secretKey)
 			if err != nil {
 				return nil, err
 			}
@@ -307,7 +307,6 @@ func newConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 				Location:        location,
 				DurationSeconds: xjwt.GetConsoleSTSDurationInSeconds(),
 			}
-			stsClient := PrepareSTSClient(false)
 			stsAssumeRole := &credentials.STSAssumeRole{
 				Client:      stsClient,
 				STSEndpoint: MinioEndpoint,
@@ -329,7 +328,6 @@ func getConsoleCredentialsFromSession(claims *models.Principal) *credentials.Cre
 // from the provided session token
 func newMinioClient(claims *models.Principal) (*minio.Client, error) {
 	creds := getConsoleCredentialsFromSession(claims)
-	stsClient := PrepareSTSClient(false)
 	minioClient, err := minio.New(getMinIOEndpoint(), &minio.Options{
 		Creds:     creds,
 		Secure:    getMinIOEndpointIsSecure(),
