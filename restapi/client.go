@@ -266,7 +266,6 @@ func (s consoleSTSAssumeRole) IsExpired() bool {
 	return s.stsAssumeRole.IsExpired()
 }
 
-// STSClient contains http.client configuration need it by STSAssumeRole
 var (
 	MinioEndpoint = getMinIOServer()
 )
@@ -289,7 +288,7 @@ func newConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 			if MinioEndpoint == "" {
 				return nil, errors.New("endpoint cannot be empty for AssumeRoleSTS")
 			}
-			creds, err := auth.GetCredentialsFromLDAP(stsClient, MinioEndpoint, accessKey, secretKey)
+			creds, err := auth.GetCredentialsFromLDAP(GetConsoleSTSClient(), MinioEndpoint, accessKey, secretKey)
 			if err != nil {
 				return nil, err
 			}
@@ -308,7 +307,7 @@ func newConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 				DurationSeconds: xjwt.GetConsoleSTSDurationInSeconds(),
 			}
 			stsAssumeRole := &credentials.STSAssumeRole{
-				Client:      stsClient,
+				Client:      GetConsoleSTSClient(),
 				STSEndpoint: MinioEndpoint,
 				Options:     opts,
 			}
@@ -331,7 +330,7 @@ func newMinioClient(claims *models.Principal) (*minio.Client, error) {
 	minioClient, err := minio.New(getMinIOEndpoint(), &minio.Options{
 		Creds:     creds,
 		Secure:    getMinIOEndpointIsSecure(),
-		Transport: stsClient.Transport,
+		Transport: GetConsoleSTSClient().Transport,
 	})
 	if err != nil {
 		return nil, err
