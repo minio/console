@@ -189,7 +189,7 @@ func Test_getConfiguredRegion(t *testing.T) {
 	for _, tt := range tests {
 		tt.mock()
 		t.Run(tt.name, func(t *testing.T) {
-			if got, _ := getConfiguredRegionForLogin(tt.args.client); got != tt.want {
+			if got, _ := getConfiguredRegionForLogin(context.Background(), tt.args.client); got != tt.want {
 				t.Errorf("getConfiguredRegionForLogin() = %v, want %v", got, tt.want)
 			}
 		})

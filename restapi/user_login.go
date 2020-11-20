@@ -20,6 +20,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
@@ -97,9 +98,9 @@ func login(credentials ConsoleCredentials, actions []string) (*string, error) {
 	return &token, nil
 }
 
-func getConfiguredRegionForLogin(client MinioAdmin) (string, error) {
+func getConfiguredRegionForLogin(ctx context.Context, client MinioAdmin) (string, error) {
 	location := ""
-	configuration, err := getConfig(client, "region")
+	configuration, err := getConfig(ctx, client, "region")
 	if err != nil {
 		log.Println("error obtaining MinIO region:", err)
 		return location, errorGeneric
@@ -113,7 +114,8 @@ func getConfiguredRegionForLogin(client MinioAdmin) (string, error) {
 
 // getLoginResponse performs login() and serializes it to the handler's output
 func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
 	mAdmin, err := newSuperMAdminClient()
 	if err != nil {
 		return nil, prepareError(err, errorGeneric)
@@ -121,9 +123,9 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.E
 	adminClient := adminClient{client: mAdmin}
 	// obtain the configured MinIO region
 	// need it for user authentication
-	location, err := getConfiguredRegionForLogin(adminClient)
+	location, err := getConfiguredRegionForLogin(ctx, adminClient)
 	if err != nil {
-		return nil, prepareError(err, errorGeneric)
+		return nil, prepareError(err, errConnectingToMinio)
 	}
 	creds, err := newConsoleCredentials(*lr.AccessKey, *lr.SecretKey, location)
 	if err != nil {
@@ -158,7 +160,8 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.E
 
 // getLoginDetailsResponse returns information regarding the Console authentication mechanism.
 func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
 	loginStrategy := models.LoginDetailsLoginStrategyForm
 	redirectURL := ""
 	if acl.GetOperatorMode() {
@@ -191,7 +194,8 @@ func loginOauth2Auth(ctx context.Context, provider *auth.IdentityProvider, code,
 }
 
 func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.LoginResponse, *models.Error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
 	if oauth2.IsIdpEnabled() {
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil)
@@ -214,7 +218,7 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 		secretKey := utils.RandomCharString(32)
 		// obtain the configured MinIO region
 		// need it for user authentication
-		location, err := getConfiguredRegionForLogin(adminClient)
+		location, err := getConfiguredRegionForLogin(ctx, adminClient)
 		if err != nil {
 			return nil, prepareError(err)
 		}
