@@ -229,17 +229,35 @@ func (c mcClient) shareDownload(ctx context.Context, versionID string, expires t
 	return c.client.ShareDownload(ctx, versionID, expires)
 }
 
-// ConsoleCredentials interface with all functions to be implemented
+// ConsoleCredentialsI interface with all functions to be implemented
 // by mock when testing, it should include all needed consoleCredentials.Login api calls
 // that are used within this project.
-type ConsoleCredentials interface {
+type ConsoleCredentialsI interface {
 	Get() (credentials.Value, error)
 	Expire()
+	GetAccountAccessKey() string
+	GetAccountSecretKey() string
+	GetActions() []string
 }
 
 // Interface implementation
 type consoleCredentials struct {
 	consoleCredentials *credentials.Credentials
+	accountAccessKey   string
+	accountSecretKey   string
+	actions            []string
+}
+
+func (c consoleCredentials) GetActions() []string {
+	return c.actions
+}
+
+func (c consoleCredentials) GetAccountAccessKey() string {
+	return c.accountAccessKey
+}
+
+func (c consoleCredentials) GetAccountSecretKey() string {
+	return c.accountSecretKey
 }
 
 // implements *Login.Get()
@@ -269,6 +287,7 @@ func (s consoleSTSAssumeRole) IsExpired() bool {
 
 var (
 	MinioEndpoint = getMinIOServer()
+	MinioRegion   = getMinIORegion()
 )
 
 func newConsoleCredentials(accessKey, secretKey, location string) (*credentials.Credentials, error) {
@@ -321,7 +340,7 @@ func newConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 // getConsoleCredentialsFromSession returns the *consoleCredentials.Login associated to the
 // provided session token, this is useful for running the Expire() or IsExpired() operations
 func getConsoleCredentialsFromSession(claims *models.Principal) *credentials.Credentials {
-	return credentials.NewStaticV4(claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken)
+	return credentials.NewStaticV4(claims.STSAccessKeyID, claims.STSSecretAccessKey, claims.STSSessionToken)
 }
 
 // newMinioClient creates a new MinIO client based on the consoleCredentials extracted
@@ -355,7 +374,7 @@ func newS3BucketClient(claims *models.Principal, bucketName string, prefix strin
 		return nil, fmt.Errorf("the provided credentials are invalid")
 	}
 
-	s3Config := newS3Config(endpoint, claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken, false)
+	s3Config := newS3Config(endpoint, claims.STSAccessKeyID, claims.STSSecretAccessKey, claims.STSSessionToken, false)
 	client, pErr := mc.S3New(s3Config)
 	if pErr != nil {
 		return nil, pErr.Cause
@@ -378,7 +397,7 @@ func newTenantS3BucketClient(claims *models.Principal, tenantEndpoint, bucketNam
 		return nil, fmt.Errorf("the provided credentials are invalid")
 	}
 
-	s3Config := newS3Config(tenantEndpoint, claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken, false)
+	s3Config := newS3Config(tenantEndpoint, claims.STSAccessKeyID, claims.STSSecretAccessKey, claims.STSSessionToken, false)
 	client, pErr := mc.S3New(s3Config)
 	if pErr != nil {
 		return nil, pErr.Cause

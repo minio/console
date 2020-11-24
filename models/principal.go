@@ -32,17 +32,23 @@ import (
 // swagger:model principal
 type Principal struct {
 
-	// access key ID
-	AccessKeyID string `json:"accessKeyID,omitempty"`
+	// s t s access key ID
+	STSAccessKeyID string `json:"STSAccessKeyID,omitempty"`
+
+	// s t s secret access key
+	STSSecretAccessKey string `json:"STSSecretAccessKey,omitempty"`
+
+	// s t s session token
+	STSSessionToken string `json:"STSSessionToken,omitempty"`
+
+	// account access key
+	AccountAccessKey string `json:"accountAccessKey,omitempty"`
+
+	// account secret key
+	AccountSecretKey string `json:"accountSecretKey,omitempty"`
 
 	// actions
 	Actions []string `json:"actions"`
-
-	// secret access key
-	SecretAccessKey string `json:"secretAccessKey,omitempty"`
-
-	// session token
-	SessionToken string `json:"sessionToken,omitempty"`
 }
 
 // Validate validates this principal

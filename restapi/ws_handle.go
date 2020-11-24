@@ -187,11 +187,11 @@ func newWebSocketTenantAdminClient(conn *websocket.Conn, session *models.Princip
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return nil, err
 	}
-	clientSet, err := cluster.K8sClient(session.SessionToken)
+	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return nil, err
 	}
@@ -238,12 +238,12 @@ func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, namesp
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	opClientClientSet, err := cluster.OperatorClient(claims.SessionToken)
+	opClientClientSet, err := cluster.OperatorClient(claims.STSSessionToken)
 	if err != nil {
 		return nil, err
 	}
 
-	clientSet, err := cluster.K8sClient(claims.SessionToken)
+	clientSet, err := cluster.K8sClient(claims.STSSessionToken)
 	if err != nil {
 		return nil, err
 	}
@@ -268,8 +268,8 @@ func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, namesp
 	}
 
 	tenantClaims := &models.Principal{
-		AccessKeyID:     tenantCreds.accessKey,
-		SecretAccessKey: tenantCreds.secretKey,
+		STSAccessKeyID:     tenantCreds.accessKey,
+		STSSecretAccessKey: tenantCreds.secretKey,
 	}
 
 	svcURL := GetTenantServiceURL(minTenant)

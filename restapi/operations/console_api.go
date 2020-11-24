@@ -65,6 +65,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		BinProducer:  runtime.ByteStreamProducer(),
 		JSONProducer: runtime.JSONProducer(),
 
+		UserAPIAccountChangePasswordHandler: user_api.AccountChangePasswordHandlerFunc(func(params user_api.AccountChangePasswordParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.AccountChangePassword has not yet been implemented")
+		}),
 		UserAPIAddBucketReplicationHandler: user_api.AddBucketReplicationHandlerFunc(func(params user_api.AddBucketReplicationParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.AddBucketReplication has not yet been implemented")
 		}),
@@ -366,6 +369,8 @@ type ConsoleAPI struct {
 	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
 	APIAuthorizer runtime.Authorizer
 
+	// UserAPIAccountChangePasswordHandler sets the operation handler for the account change password operation
+	UserAPIAccountChangePasswordHandler user_api.AccountChangePasswordHandler
 	// UserAPIAddBucketReplicationHandler sets the operation handler for the add bucket replication operation
 	UserAPIAddBucketReplicationHandler user_api.AddBucketReplicationHandler
 	// AdminAPIAddGroupHandler sets the operation handler for the add group operation
@@ -608,6 +613,9 @@ func (o *ConsoleAPI) Validate() error {
 		unregistered = append(unregistered, "KeyAuth")
 	}
 
+	if o.UserAPIAccountChangePasswordHandler == nil {
+		unregistered = append(unregistered, "user_api.AccountChangePasswordHandler")
+	}
 	if o.UserAPIAddBucketReplicationHandler == nil {
 		unregistered = append(unregistered, "user_api.AddBucketReplicationHandler")
 	}
@@ -959,6 +967,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
 
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/account/change-password"] = user_api.NewAccountChangePassword(o.context, o.UserAPIAccountChangePasswordHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

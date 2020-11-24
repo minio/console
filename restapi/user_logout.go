@@ -42,7 +42,7 @@ func registerLogoutHandlers(api *operations.ConsoleAPI) {
 }
 
 // logout() call Expire() on the provided consoleCredentials
-func logout(credentials ConsoleCredentials) {
+func logout(credentials ConsoleCredentialsI) {
 	credentials.Expire()
 }
 

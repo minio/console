@@ -43,11 +43,11 @@ func getOperatorListBucketsResponse(session *models.Principal, namespace, tenant
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
 	}
-	clientSet, err := cluster.K8sClient(session.SessionToken)
+	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
 	}
