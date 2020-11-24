@@ -72,7 +72,6 @@ func getOperatorListBucketsResponse(session *models.Principal, namespace, tenant
 		k8sClient,
 		minTenant,
 		svcURL,
-		true,
 	)
 	if err != nil {
 		return nil, prepareError(err)

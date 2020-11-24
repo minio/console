@@ -230,13 +230,13 @@ func GetTenantServiceURL(mi *operator.Tenant) (svcURL string) {
 	return fmt.Sprintf("%s://%s", scheme, net.JoinHostPort(svc, strconv.Itoa(port)))
 }
 
-func getTenantAdminClient(ctx context.Context, client K8sClientI, tenant *operator.Tenant, svcURL string, insecure bool) (*madmin.AdminClient, error) {
+func getTenantAdminClient(ctx context.Context, client K8sClientI, tenant *operator.Tenant, svcURL string) (*madmin.AdminClient, error) {
 	tenantCreds, err := getTenantCreds(ctx, client, tenant)
 	if err != nil {
 		return nil, err
 	}
 	sessionToken := ""
-	mAdmin, pErr := NewAdminClientWithInsecure(svcURL, tenantCreds.accessKey, tenantCreds.secretKey, sessionToken, insecure)
+	mAdmin, pErr := NewAdminClientWithInsecure(svcURL, tenantCreds.accessKey, tenantCreds.secretKey, sessionToken, false)
 	if pErr != nil {
 		return nil, pErr.Cause
 	}
@@ -1063,7 +1063,6 @@ func getTenantUsageResponse(session *models.Principal, params admin_api.GetTenan
 		k8sClient,
 		minTenant,
 		svcURL,
-		true,
 	)
 	if err != nil {
 		return nil, prepareError(err, errorUnableToGetTenantUsage)

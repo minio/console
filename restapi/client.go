@@ -337,7 +337,6 @@ func newMinioClient(claims *models.Principal) (*minio.Client, error) {
 // newS3BucketClient creates a new mc S3Client to talk to the server based on a bucket
 func newS3BucketClient(claims *models.Principal, bucketName string, prefix string) (*mc.S3Client, error) {
 	endpoint := getMinIOServer()
-	useTLS := getMinIOEndpointIsSecure()
 
 	if strings.TrimSpace(bucketName) != "" {
 		endpoint += fmt.Sprintf("/%s", bucketName)
@@ -351,7 +350,7 @@ func newS3BucketClient(claims *models.Principal, bucketName string, prefix strin
 		return nil, fmt.Errorf("the provided credentials are invalid")
 	}
 
-	s3Config := newS3Config(endpoint, claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken, !useTLS)
+	s3Config := newS3Config(endpoint, claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken, false)
 	client, pErr := mc.S3New(s3Config)
 	if pErr != nil {
 		return nil, pErr.Cause
@@ -365,7 +364,7 @@ func newS3BucketClient(claims *models.Principal, bucketName string, prefix strin
 }
 
 // newTenantS3BucketClient creates a new mc S3Client for an specific tenant on a namespace to talk to the server based on a bucket
-func newTenantS3BucketClient(claims *models.Principal, tenantEndpoint, bucketName string, isSecure bool) (*mc.S3Client, error) {
+func newTenantS3BucketClient(claims *models.Principal, tenantEndpoint, bucketName string) (*mc.S3Client, error) {
 	if strings.TrimSpace(bucketName) != "" {
 		tenantEndpoint += fmt.Sprintf("/%s", bucketName)
 	}
@@ -374,7 +373,7 @@ func newTenantS3BucketClient(claims *models.Principal, tenantEndpoint, bucketNam
 		return nil, fmt.Errorf("the provided credentials are invalid")
 	}
 
-	s3Config := newS3Config(tenantEndpoint, claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken, !isSecure)
+	s3Config := newS3Config(tenantEndpoint, claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken, false)
 	client, pErr := mc.S3New(s3Config)
 	if pErr != nil {
 		return nil, pErr.Cause
@@ -405,6 +404,7 @@ func newS3Config(endpoint, accessKey, secretKey, sessionToken string, insecure b
 	s3Config.SecretKey = secretKey
 	s3Config.SessionToken = sessionToken
 	s3Config.Signature = "S3v4"
+	s3Config.Transport = prepareSTSClientTransport(insecure)
 
 	return s3Config
 }
