@@ -98,22 +98,26 @@ func getLogTime(lt string) string {
 
 // getConsoleLogOptionsFromReq return tenant name from url
 // path come as : `/console/<namespace>/<tenantName>`
-func getConsoleLogOptionsFromReq(req *http.Request) (namespace, tenant string) {
+func getConsoleLogOptionsFromReq(req *http.Request) (namespace, tenant string, err error) {
 	re := regexp.MustCompile(`(/console/)(.*?)/(.*?)(\?.*?$|$)`)
 	matches := re.FindAllSubmatch([]byte(req.URL.Path), -1)
-	// len matches is always 4
+	if len(matches) == 0 || len(matches[0]) < 4 {
+		return "", "", fmt.Errorf("invalid url: %s", req.URL.Path)
+	}
 	namespace = strings.TrimSpace(string(matches[0][2]))
 	tenant = strings.TrimSpace(string(matches[0][3]))
-	return namespace, tenant
+	return namespace, tenant, nil
 }
 
 // getTraceOptionsFromReq return tenant name from url
 // path come as : `/trace/<namespace>/<tenantName>`
-func getTraceOptionsFromReq(req *http.Request) (namespace, tenant string) {
+func getTraceOptionsFromReq(req *http.Request) (namespace, tenant string, err error) {
 	re := regexp.MustCompile(`(/trace/)(.*?)/(.*?)(\?.*?$|$)`)
 	matches := re.FindAllSubmatch([]byte(req.URL.Path), -1)
-	// len matches is always 4
+	if len(matches) == 0 || len(matches[0]) < 4 {
+		return "", "", fmt.Errorf("invalid url: %s", req.URL.Path)
+	}
 	namespace = strings.TrimSpace(string(matches[0][2]))
 	tenant = strings.TrimSpace(string(matches[0][3]))
-	return namespace, tenant
+	return namespace, tenant, nil
 }

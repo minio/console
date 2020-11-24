@@ -231,6 +231,24 @@ func GetTenantServiceURL(mi *operator.Tenant) (svcURL string) {
 }
 
 func getTenantAdminClient(ctx context.Context, client K8sClientI, tenant *operator.Tenant, svcURL string, insecure bool) (*madmin.AdminClient, error) {
+	tenantCreds, err := getTenantCreds(ctx, client, tenant)
+	if err != nil {
+		return nil, err
+	}
+	sessionToken := ""
+	mAdmin, pErr := NewAdminClientWithInsecure(svcURL, tenantCreds.accessKey, tenantCreds.secretKey, sessionToken, insecure)
+	if pErr != nil {
+		return nil, pErr.Cause
+	}
+	return mAdmin, nil
+}
+
+type tenantKeys struct {
+	accessKey string
+	secretKey string
+}
+
+func getTenantCreds(ctx context.Context, client K8sClientI, tenant *operator.Tenant) (*tenantKeys, error) {
 	if tenant == nil || tenant.Spec.CredsSecret == nil {
 		return nil, errors.New("invalid arguments")
 	}
@@ -239,12 +257,12 @@ func getTenantAdminClient(ctx context.Context, client K8sClientI, tenant *operat
 	if err != nil {
 		return nil, err
 	}
-	accessKey, ok := creds.Data["accesskey"]
+	tenantAccessKey, ok := creds.Data["accesskey"]
 	if !ok {
 		log.Println("tenant's secret doesn't contain accesskey")
 		return nil, errorGeneric
 	}
-	secretkey, ok := creds.Data["secretkey"]
+	tenantSecretKey, ok := creds.Data["secretkey"]
 	if !ok {
 		log.Println("tenant's secret doesn't contain secretkey")
 		return nil, errorGeneric
@@ -252,14 +270,7 @@ func getTenantAdminClient(ctx context.Context, client K8sClientI, tenant *operat
 	// TODO:
 	// We need to avoid using minio root credentials to talk to tenants, and instead use a different user credentials
 	// when that its implemented we also need to check here if the tenant has LDAP enabled so we authenticate first against AD
-	tenantAccessKey := string(accessKey)
-	tenantSecretKey := string(secretkey)
-	sessionToken := ""
-	mAdmin, pErr := NewAdminClientWithInsecure(svcURL, tenantAccessKey, tenantSecretKey, sessionToken, insecure)
-	if pErr != nil {
-		return nil, pErr.Cause
-	}
-	return mAdmin, nil
+	return &tenantKeys{accessKey: string(tenantAccessKey), secretKey: string(tenantSecretKey)}, nil
 }
 
 func getTenant(ctx context.Context, operatorClient OperatorClientI, namespace, tenantName string) (*operator.Tenant, error) {
@@ -1052,7 +1063,8 @@ func getTenantUsageResponse(session *models.Principal, params admin_api.GetTenan
 		k8sClient,
 		minTenant,
 		svcURL,
-		true)
+		true,
+	)
 	if err != nil {
 		return nil, prepareError(err, errorUnableToGetTenantUsage)
 	}

@@ -21,13 +21,11 @@ import {
   modalBasic,
 } from "../../Common/FormComponents/common/styleLibrary";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import { Button } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import { CreateIcon } from "../../../../icons";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import { MinTablePaginationActions } from "../../../../common/MinTablePaginationActions";
 import Paper from "@material-ui/core/Paper";
 import { niceBytes } from "../../../../common/utils";
 import AddZoneModal from "./AddZoneModal";
@@ -37,6 +35,8 @@ import api from "../../../../common/api";
 import { ITenant, IZone } from "../ListTenants/types";
 import Logs from "./Logs/Logs";
 import Trace from "./Trace/Trace";
+import Watch from "./Watch/Watch";
+import Heal from "./Heal/Heal";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 
 interface ITenantDetailsProps {
@@ -230,7 +230,7 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
         <Grid item xs={12}>
           <br />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={7}>
           <Tabs
             value={selectedTab}
             indicatorColor="primary"
@@ -243,9 +243,11 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
             <Tab label="Clusters" />
             <Tab label="Logs" />
             <Tab label="Trace" />
+            <Tab label="Watch" />
+            <Tab label="Heal" />
           </Tabs>
         </Grid>
-        <Grid item xs={6} className={classes.actionsTray}>
+        <Grid item xs={5} className={classes.actionsTray}>
           <Button
             variant="contained"
             color="primary"
@@ -290,6 +292,12 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
         )}
         {selectedTab === 2 && tenant !== null && (
           <Trace namespace={tenant.namespace} tenant={tenant.name} />
+        )}
+        {selectedTab === 3 && tenant !== null && (
+          <Watch namespace={tenant.namespace} tenant={tenant.name} />
+        )}
+        {selectedTab === 4 && tenant !== null && (
+          <Heal namespace={tenant.namespace} tenant={tenant.name} />
         )}
       </Grid>
     </React.Fragment>
