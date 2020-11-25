@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
 import get from "lodash/get";
 import * as reactMoment from "react-moment";
 import clsx from "clsx";
@@ -33,9 +34,11 @@ import {
   containerForHeader,
   searchField,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import history from "../../../../../../history";
+import { IFileInfo } from "./types";
+import { removeRouteLevel } from "../../../../ObjectBrowser/actions";
 import { Route } from "../../../../ObjectBrowser/reducers";
 import { download } from "../utils";
+import history from "../../../../../../history";
 import api from "../../../../../../common/api";
 import PageHeader from "../../../../Common/PageHeader/PageHeader";
 import ShareIcon from "../../../../../../icons/ShareIcon";
@@ -46,10 +49,9 @@ import PencilIcon from "../../../../Common/TableWrapper/TableActionIcons/PencilI
 import SetRetention from "./SetRetention";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import DeleteObject from "../ListObjects/DeleteObject";
-import { removeRouteLevel } from "../../../../ObjectBrowser/actions";
-import { connect } from "react-redux";
 import AddTagModal from "./AddTagModal";
 import DeleteTagModal from "./DeleteTagModal";
+import SetLegalHoldModal from "./SetLegalHoldModal";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -136,18 +138,6 @@ interface IObjectDetailsProps {
   removeRouteLevel: (newRoute: string) => any;
 }
 
-interface IFileInfo {
-  is_latest?: boolean;
-  last_modified: string;
-  legal_hold_status?: string;
-  name: string;
-  retention_mode?: string;
-  retention_until_date?: string;
-  size?: string;
-  tags?: object;
-  version_id: string;
-}
-
 const emptyFile: IFileInfo = {
   is_latest: true,
   last_modified: "",
@@ -171,6 +161,7 @@ const ObjectDetails = ({
   const [tagModalOpen, setTagModalOpen] = useState<boolean>(false);
   const [deleteTagModalOpen, setDeleteTagModalOpen] = useState<boolean>(false);
   const [selectedTag, setSelectedTag] = useState<[string, string]>(["", ""]);
+  const [legalholdOpen, setLegalholdOpen] = useState<boolean>(false);
   const [actualInfo, setActualInfo] = useState<IFileInfo>(emptyFile);
   const [versions, setVersions] = useState<IFileInfo[]>([]);
   const [filterVersion, setFilterVersion] = useState<string>("");
@@ -213,22 +204,18 @@ const ObjectDetails = ({
 
   const openRetentionModal = () => {
     setRetentionModalOpen(true);
-    console.log("open retention modal");
   };
 
   const closeRetentionModal = () => {
     setRetentionModalOpen(false);
-    console.log("close retention modal");
   };
 
   const shareObject = () => {
     setShareFileModalOpen(true);
-    console.log("share object");
   };
 
   const closeShareModal = () => {
     setShareFileModalOpen(false);
-    console.log("close share modal");
   };
 
   const deleteTag = (tagKey: string, tagLabel: string) => {
@@ -268,6 +255,14 @@ const ObjectDetails = ({
     setTagModalOpen(false);
 
     if (reloadObjectData) {
+      setLoadObjectData(true);
+    }
+  };
+
+  const closeLegalholdModal = (reload: boolean) => {
+    setLegalholdOpen(false);
+
+    if (reload) {
       setLoadObjectData(true);
     }
   };
@@ -325,6 +320,15 @@ const ObjectDetails = ({
           selectedTag={selectedTag}
         />
       )}
+      {legalholdOpen && (
+        <SetLegalHoldModal
+          open={legalholdOpen}
+          closeModalAndRefresh={closeLegalholdModal}
+          objectName={pathInBucket}
+          bucketName={bucketName}
+          actualInfo={actualInfo}
+        />
+      )}
       <Grid container>
         <Grid item xs={12} className={classes.container}>
           <Grid item xs={12} className={classes.obTitleSection}>
@@ -350,7 +354,7 @@ const ObjectDetails = ({
                   size="small"
                   className={classes.propertiesIcon}
                   onClick={() => {
-                    console.log("open legal hold modal");
+                    setLegalholdOpen(true);
                   }}
                 >
                   <PencilIcon active={true} />
