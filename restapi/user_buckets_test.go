@@ -35,7 +35,7 @@ import (
 
 // assigning mock at runtime instead of compile time
 var minioListBucketsWithContextMock func(ctx context.Context) ([]minio.BucketInfo, error)
-var minioMakeBucketWithContextMock func(ctx context.Context, bucketName, location string) error
+var minioMakeBucketWithContextMock func(ctx context.Context, bucketName, location string, objectLock bool) error
 var minioSetBucketPolicyWithContextMock func(ctx context.Context, bucketName, policy string) error
 var minioRemoveBucketMock func(bucketName string) error
 var minioGetBucketPolicyMock func(bucketName string) (string, error)
@@ -53,8 +53,8 @@ func (mc minioClientMock) listBucketsWithContext(ctx context.Context) ([]minio.B
 }
 
 // mock function of makeBucketsWithContext()
-func (mc minioClientMock) makeBucketWithContext(ctx context.Context, bucketName, location string) error {
-	return minioMakeBucketWithContextMock(ctx, bucketName, location)
+func (mc minioClientMock) makeBucketWithContext(ctx context.Context, bucketName, location string, objectLock bool) error {
+	return minioMakeBucketWithContextMock(ctx, bucketName, location, objectLock)
 }
 
 // mock function of setBucketPolicyWithContext()
@@ -141,18 +141,18 @@ func TestMakeBucket(t *testing.T) {
 	ctx := context.Background()
 	// Test-1: makeBucket() create a bucket
 	// mock function response from makeBucketWithContext(ctx)
-	minioMakeBucketWithContextMock = func(ctx context.Context, bucketName, location string) error {
+	minioMakeBucketWithContextMock = func(ctx context.Context, bucketName, location string, objectLock bool) error {
 		return nil
 	}
-	if err := makeBucket(ctx, minClient, "bucktest1"); err != nil {
+	if err := makeBucket(ctx, minClient, "bucktest1", true); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 
 	// Test-2 makeBucket() make sure errors are handled correctly when error on MakeBucketWithContext
-	minioMakeBucketWithContextMock = func(ctx context.Context, bucketName, location string) error {
+	minioMakeBucketWithContextMock = func(ctx context.Context, bucketName, location string, objectLock bool) error {
 		return errors.New("error")
 	}
-	if err := makeBucket(ctx, minClient, "bucktest1"); assert.Error(err) {
+	if err := makeBucket(ctx, minClient, "bucktest1", true); assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
 }
