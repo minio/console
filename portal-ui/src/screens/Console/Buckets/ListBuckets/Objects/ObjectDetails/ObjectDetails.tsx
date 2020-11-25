@@ -282,6 +282,8 @@ const ObjectDetails = ({
         <ShareFile
           open={shareFileModalOpen}
           closeModalAndRefresh={closeShareModal}
+          bucketName={bucketName}
+          dataObject={actualInfo}
         />
       )}
       {retentionModalOpen && (

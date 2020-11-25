@@ -1,4 +1,25 @@
-import React, { useState, forwardRef, useImperativeHandle } from "react";
+// This file is part of MinIO Console Server
+// Copyright (c) 2020 MinIO, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import React, {
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  useEffect,
+} from "react";
 import clsx from "clsx";
 import Grid from "@material-ui/core/Grid";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
@@ -11,6 +32,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import InputBase from "@material-ui/core/InputBase";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 import FormSwitchWrapper from "../FormSwitchWrapper/FormSwitchWrapper";
+import { days, months, validDate, years } from "./utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -64,6 +86,7 @@ interface IDateSelectorProps {
   addSwitch?: boolean;
   tooltip?: string;
   borderBottom?: boolean;
+  onDateChange: (date: string, isValid: boolean) => any;
 }
 
 const DateSelector = forwardRef(
@@ -76,6 +99,7 @@ const DateSelector = forwardRef(
       addSwitch = false,
       tooltip = "",
       borderBottom = false,
+      onDateChange,
     }: IDateSelectorProps,
     ref: any
   ) => {
@@ -85,6 +109,11 @@ const DateSelector = forwardRef(
     const [month, setMonth] = useState<string>("");
     const [day, setDay] = useState<string>("");
     const [year, setYear] = useState<string>("");
+
+    useEffect(() => {
+      const [isValid, dateString] = validDate(year, month, day);
+      onDateChange(dateString, isValid);
+    }, [month, day, year]);
 
     const resetDate = () => {
       setMonth("");
@@ -142,13 +171,16 @@ const DateSelector = forwardRef(
             </InputLabel>
             {addSwitch && (
               <FormSwitchWrapper
-                indicatorLabels={["Specific Date", "Always active"]}
+                indicatorLabels={["Specific Date", "Default (7 Days)"]}
                 checked={dateEnabled}
                 value={"date_enabled"}
                 id="date-status"
                 name="date-status"
                 onChange={(e) => {
                   setDateEnabled(e.target.checked);
+                  if (!e.target.checked) {
+                    onDateChange("", true);
+                  }
                 }}
                 switchOnly
               />
@@ -171,15 +203,14 @@ const DateSelector = forwardRef(
               <MenuItem value="" disabled>
                 {"<Month>"}
               </MenuItem>
-              <MenuItem value={"1"}>January</MenuItem>
-              {/* {options.map((option) => (
-              <MenuItem
-                value={option.value}
-                key={`select-${name}-${option.label}`}
-              >
-                {option.label}
-              </MenuItem>
-            ))} */}
+              {months.map((option) => (
+                <MenuItem
+                  value={option.value}
+                  key={`select-${id}-monthOP-${option.label}`}
+                >
+                  {option.label}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <FormControl
@@ -197,16 +228,14 @@ const DateSelector = forwardRef(
               <MenuItem value="" disabled>
                 {"<Day>"}
               </MenuItem>
-              <MenuItem value={"1"}>1</MenuItem>
-              <MenuItem value={"2"}>2</MenuItem>
-              {/* {options.map((option) => (
-              <MenuItem
-                value={option.value}
-                key={`select-${name}-${option.label}`}
-              >
-                {option.label}
-              </MenuItem>
-            ))} */}
+              {days.map((dayNumber) => (
+                <MenuItem
+                  value={dayNumber}
+                  key={`select-${id}-dayOP-${dayNumber}`}
+                >
+                  {dayNumber}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <FormControl
@@ -224,16 +253,11 @@ const DateSelector = forwardRef(
               <MenuItem value="" disabled>
                 {"<Year>"}
               </MenuItem>
-              <MenuItem value={"2020"}>2020</MenuItem>
-              <MenuItem value={"2021"}>2021</MenuItem>
-              {/* {options.map((option) => (
-              <MenuItem
-                value={option.value}
-                key={`select-${name}-${option.label}`}
-              >
-                {option.label}
-              </MenuItem>
-            ))} */}
+              {years.map((year) => (
+                <MenuItem value={year} key={`select-${id}-yearOP-${year}`}>
+                  {year}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </div>

@@ -184,6 +184,13 @@ export const predefinedList = {
     fontSize: 12,
     fontWeight: 600,
     minHeight: 41,
+    height: 41,
+    overflowX: "auto" as const,
+    whiteSpace: "nowrap" as const,
+    scrollbarWidth: "none" as const,
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
   },
 };
 
