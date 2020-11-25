@@ -52,7 +52,7 @@ func init() {
 // that are used within this project.
 type MinioClient interface {
 	listBucketsWithContext(ctx context.Context) ([]minio.BucketInfo, error)
-	makeBucketWithContext(ctx context.Context, bucketName, location string) error
+	makeBucketWithContext(ctx context.Context, bucketName, location string, objectLocking bool) error
 	setBucketPolicyWithContext(ctx context.Context, bucketName, policy string) error
 	removeBucket(ctx context.Context, bucketName string) error
 	getBucketNotification(ctx context.Context, bucketName string) (config notification.Configuration, err error)
@@ -83,10 +83,11 @@ func (c minioClient) listBucketsWithContext(ctx context.Context) ([]minio.Bucket
 	return c.client.ListBuckets(ctx)
 }
 
-// implements minio.MakeBucketWithContext(ctx, bucketName, location)
-func (c minioClient) makeBucketWithContext(ctx context.Context, bucketName, location string) error {
+// implements minio.MakeBucketWithContext(ctx, bucketName, location, objectLocking)
+func (c minioClient) makeBucketWithContext(ctx context.Context, bucketName, location string, objectLocking bool) error {
 	return c.client.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{
-		Region: location,
+		Region:        location,
+		ObjectLocking: objectLocking,
 	})
 }
 
@@ -108,11 +109,6 @@ func (c minioClient) getBucketNotification(ctx context.Context, bucketName strin
 // implements minio.GetBucketPolicy(bucketName)
 func (c minioClient) getBucketPolicy(ctx context.Context, bucketName string) (string, error) {
 	return c.client.GetBucketPolicy(ctx, bucketName)
-}
-
-// implements minio.enableVersioning(ctx, bucketName)
-func (c minioClient) enableVersioning(ctx context.Context, bucketName string) error {
-	return c.client.EnableVersioning(ctx, bucketName)
 }
 
 // implements minio.getBucketVersioning(ctx, bucketName)
