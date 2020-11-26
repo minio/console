@@ -29,7 +29,13 @@ const PredefinedList = ({
         </Grid>
       )}
       <Grid item xs={12} className={classes.predefinedList}>
-        <Grid item xs={12} className={classes.innerContent}>
+        <Grid
+          item
+          xs={12}
+          className={
+            multiLine ? classes.innerContentMultiline : classes.innerContent
+          }
+        >
           {content}
         </Grid>
       </Grid>

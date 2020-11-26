@@ -194,6 +194,15 @@ export const predefinedList = {
       display: "none",
     },
   },
+  innerContentMultiline: {
+    width: "100%",
+    maxHeight: 100,
+    overflowY: "auto" as const,
+    scrollbarWidth: "none" as const,
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+  },
 };
 
 export const objectBrowserCommon = {
