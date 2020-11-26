@@ -184,7 +184,9 @@ export const predefinedList = {
     fontSize: 12,
     fontWeight: 600,
     minHeight: 41,
-    height: 41,
+  },
+  innerContent: {
+    width: "100%",
     overflowX: "auto" as const,
     whiteSpace: "nowrap" as const,
     scrollbarWidth: "none" as const,

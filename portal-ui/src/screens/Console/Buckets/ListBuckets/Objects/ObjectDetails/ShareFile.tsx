@@ -15,6 +15,7 @@ import { CopyIcon } from "../../../../../../icons";
 import api from "../../../../../../common/api";
 import get from "lodash/get";
 import { IFileInfo } from "./types";
+import PredefinedList from "../../../../Common/FormComponents/PredefinedList/PredefinedList";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -174,8 +175,8 @@ const ShareFile = ({
             />
           </Grid>
           <Grid container item xs={12}>
-            <Grid item xs={10} className={classes.predefinedList}>
-              {shareURL}
+            <Grid item xs={10}>
+              <PredefinedList content={shareURL} />
             </Grid>
             <Grid item xs={2} className={classes.copyButtonContainer}>
               <CopyToClipboard text={shareURL}>
