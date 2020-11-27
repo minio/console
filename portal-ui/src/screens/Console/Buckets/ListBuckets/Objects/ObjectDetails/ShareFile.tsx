@@ -5,15 +5,11 @@ import Typography from "@material-ui/core/Typography";
 import Snackbar from "@material-ui/core/Snackbar";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
-import {
-  modalBasic,
-  predefinedList,
-} from "../../../../Common/FormComponents/common/styleLibrary";
+import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import DateSelector from "../../../../Common/FormComponents/DateSelector/DateSelector";
 import { CopyIcon } from "../../../../../../icons";
 import api from "../../../../../../common/api";
-import get from "lodash/get";
 import { IFileInfo } from "./types";
 import PredefinedList from "../../../../Common/FormComponents/PredefinedList/PredefinedList";
 
@@ -29,7 +25,6 @@ const styles = (theme: Theme) =>
       color: "red",
     },
     ...modalBasic,
-    ...predefinedList,
   });
 
 interface IShareFileProps {
