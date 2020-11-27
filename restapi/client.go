@@ -389,7 +389,7 @@ func newTenantS3BucketClient(claims *models.Principal, tenantEndpoint, bucketNam
 // newS3Config simply creates a new Config struct using the passed
 // parameters.
 func newS3Config(endpoint, accessKey, secretKey, sessionToken string, insecure bool) *mc.Config {
-	// We have a valid alias and hostConfig. We populate the
+	// We have a valid alias and hostConfig. We populate the/
 	// consoleCredentials from the match found in the config file.
 	s3Config := new(mc.Config)
 
