@@ -110,7 +110,7 @@ func TestListBucket(t *testing.T) {
 	// get list buckets response this response should have Name, CreationDate, Size and Access
 	// as part of of each bucket
 	function := "getaAcountUsageInfo()"
-	bucketList, err := getaAcountUsageInfo(ctx, adminClient)
+	bucketList, err := getAccountUsageInfo(ctx, adminClient)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -127,7 +127,7 @@ func TestListBucket(t *testing.T) {
 	minioAccountUsageInfoMock = func(ctx context.Context) (madmin.AccountUsageInfo, error) {
 		return madmin.AccountUsageInfo{}, errors.New("error")
 	}
-	_, err = getaAcountUsageInfo(ctx, adminClient)
+	_, err = getAccountUsageInfo(ctx, adminClient)
 	if assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}

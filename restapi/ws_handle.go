@@ -122,7 +122,12 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	switch {
 	case strings.HasPrefix(wsPath, `/trace`):
 		// Trace api only for operator Console
-		namespace, tenant := getTraceOptionsFromReq(req)
+		namespace, tenant, err := getTraceOptionsFromReq(req)
+		if err != nil {
+			log.Println("error getting trace options:", err)
+			closeWsConn(conn)
+			return
+		}
 		wsAdminClient, err := newWebSocketTenantAdminClient(conn, session, namespace, tenant)
 		if err != nil {
 			closeWsConn(conn)
@@ -131,7 +136,12 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 		go wsAdminClient.trace()
 	case strings.HasPrefix(wsPath, `/console`):
 		// Trace api only for operator Console
-		namespace, tenant := getConsoleLogOptionsFromReq(req)
+		namespace, tenant, err := getConsoleLogOptionsFromReq(req)
+		if err != nil {
+			log.Println("error getting log options:", err)
+			closeWsConn(conn)
+			return
+		}
 		wsAdminClient, err := newWebSocketTenantAdminClient(conn, session, namespace, tenant)
 		if err != nil {
 			closeWsConn(conn)
@@ -145,15 +155,20 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 			closeWsConn(conn)
 			return
 		}
-		wsAdminClient, err := newWebSocketAdminClient(conn, session)
+		wsAdminClient, err := newWebSocketTenantAdminClient(conn, session, hOptions.Namespace, hOptions.Tenant)
 		if err != nil {
 			closeWsConn(conn)
 			return
 		}
 		go wsAdminClient.heal(hOptions)
 	case strings.HasPrefix(wsPath, `/watch`):
-		wOptions := getWatchOptionsFromReq(req)
-		wsS3Client, err := newWebSocketS3Client(conn, session, wOptions.BucketName)
+		wOptions, err := getWatchOptionsFromReq(req)
+		if err != nil {
+			log.Println("error getting watch options:", err)
+			closeWsConn(conn)
+			return
+		}
+		wsS3Client, err := newWebSocketS3Client(conn, session, wOptions.Namespace, wOptions.Tenant, wOptions.BucketName)
 		if err != nil {
 			closeWsConn(conn)
 			return
@@ -195,37 +210,15 @@ func newWebSocketTenantAdminClient(conn *websocket.Conn, session *models.Princip
 	minTenant.EnsureDefaults()
 
 	svcURL := GetTenantServiceURL(minTenant)
-	// TODO: in the feature we need to load all tenants public certificates under ~/.console/certs/CAs to avoid using insecure: true
+	// getTenantAdminClient will use all certificates under ~/.console/certs/CAs to trust the TLS connections with MinIO tenants
 	mAdmin, err := getTenantAdminClient(
 		ctx,
 		k8sClient,
 		minTenant,
 		svcURL,
-		true)
+		true,
+	)
 	if err != nil {
-		return nil, err
-	}
-	// create a websocket connection interface implementation
-	// defining the connection to be used
-	wsConnection := wsConn{conn: conn}
-	// create a minioClient interface implementation
-	// defining the client to be used
-	adminClient := adminClient{client: mAdmin}
-	// create websocket client and handle request
-	wsAdminClient := &wsAdminClient{conn: wsConnection, client: adminClient}
-	return wsAdminClient, nil
-}
-
-// newWebSocketAdminClient returns a wsAdminClient authenticated as an admin user
-func newWebSocketAdminClient(conn *websocket.Conn, autClaims *models.Principal) (*wsAdminClient, error) {
-	// Only start Websocket Interaction after user has been
-	// authenticated with MinIO
-	mAdmin, err := newAdminFromClaims(autClaims)
-	if err != nil {
-		log.Println("error creating Madmin Client:", err)
-		// close connection
-		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-		conn.Close()
 		return nil, err
 	}
 	// create a websocket connection interface implementation
@@ -240,10 +233,49 @@ func newWebSocketAdminClient(conn *websocket.Conn, autClaims *models.Principal) 
 }
 
 // newWebSocketS3Client returns a wsAdminClient authenticated as Console admin
-func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, bucketName string) (*wsS3Client, error) {
+func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, namespace, tenant, bucketName string) (*wsS3Client, error) {
 	// Only start Websocket Interaction after user has been
 	// authenticated with MinIO
-	s3Client, err := newS3BucketClient(claims, bucketName, "")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	opClientClientSet, err := cluster.OperatorClient(claims.SessionToken)
+	if err != nil {
+		return nil, err
+	}
+
+	clientSet, err := cluster.K8sClient(claims.SessionToken)
+	if err != nil {
+		return nil, err
+	}
+
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+	k8sClient := &k8sClient{
+		client: clientSet,
+	}
+
+	minTenant, err := getTenant(ctx, opClient, namespace, tenant)
+	if err != nil {
+		return nil, err
+	}
+	minTenant.EnsureDefaults()
+
+	// Get Tenant Creds and substitute session ones
+	tenantCreds, err := getTenantCreds(ctx, k8sClient, minTenant)
+	if err != nil {
+		return nil, err
+	}
+
+	tenantClaims := &models.Principal{
+		AccessKeyID:     tenantCreds.accessKey,
+		SecretAccessKey: tenantCreds.secretKey,
+	}
+
+	svcURL := GetTenantServiceURL(minTenant)
+	// TODO: change isSecure: true to minTenant.TLS() and add support to S3Client to accept custom TLS Transport
+	s3Client, err := newTenantS3BucketClient(tenantClaims, svcURL, bucketName, false)
 	if err != nil {
 		log.Println("error creating S3Client:", err)
 		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
@@ -332,7 +364,7 @@ func (wsc *wsAdminClient) console() {
 	sendWsCloseMessage(wsc.conn, err)
 }
 
-func (wsc *wsS3Client) watch(params watchOptions) {
+func (wsc *wsS3Client) watch(params *watchOptions) {
 	defer func() {
 		log.Println("watch stopped")
 		// close connection after return
