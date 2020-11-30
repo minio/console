@@ -285,9 +285,9 @@ func getListBucketsResponse(session *models.Principal) (*models.ListBucketsRespo
 }
 
 // makeBucket creates a bucket for an specific minio client
-func makeBucket(ctx context.Context, client MinioClient, bucketName string) error {
+func makeBucket(ctx context.Context, client MinioClient, bucketName string, objectLocking bool) error {
 	// creates a new bucket with bucketName with a context to control cancellations and timeouts.
-	if err := client.makeBucketWithContext(ctx, bucketName, "us-east-1"); err != nil {
+	if err := client.makeBucketWithContext(ctx, bucketName, "us-east-1", objectLocking); err != nil {
 		return err
 	}
 	return nil
@@ -309,16 +309,10 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 
-	if err := makeBucket(ctx, minioClient, *br.Name); err != nil {
+	if err := makeBucket(ctx, minioClient, *br.Name, br.Versioning); err != nil {
 		return prepareError(err)
 	}
-	// if versioned
-	if br.Versioning {
-		// we will tolerate this call failing
-		if err := minioClient.enableVersioning(ctx, *br.Name); err != nil {
-			log.Println("error versioning bucket:", err)
-		}
-	}
+
 	// if it has support for
 	if br.Quota != nil && br.Quota.Enabled != nil && *br.Quota.Enabled {
 		mAdmin, err := newMAdminClient(session)
