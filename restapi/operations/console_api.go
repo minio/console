@@ -275,6 +275,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPISetPolicyHandler: admin_api.SetPolicyHandlerFunc(func(params admin_api.SetPolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.SetPolicy has not yet been implemented")
 		}),
+		AdminAPISetPolicyMultipleHandler: admin_api.SetPolicyMultipleHandlerFunc(func(params admin_api.SetPolicyMultipleParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.SetPolicyMultiple has not yet been implemented")
+		}),
 		UserAPIShareObjectHandler: user_api.ShareObjectHandlerFunc(func(params user_api.ShareObjectParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.ShareObject has not yet been implemented")
 		}),
@@ -497,6 +500,8 @@ type ConsoleAPI struct {
 	AdminAPISetConfigHandler admin_api.SetConfigHandler
 	// AdminAPISetPolicyHandler sets the operation handler for the set policy operation
 	AdminAPISetPolicyHandler admin_api.SetPolicyHandler
+	// AdminAPISetPolicyMultipleHandler sets the operation handler for the set policy multiple operation
+	AdminAPISetPolicyMultipleHandler admin_api.SetPolicyMultipleHandler
 	// UserAPIShareObjectHandler sets the operation handler for the share object operation
 	UserAPIShareObjectHandler user_api.ShareObjectHandler
 	// AdminAPITenantAddZoneHandler sets the operation handler for the tenant add zone operation
@@ -802,6 +807,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPISetPolicyHandler == nil {
 		unregistered = append(unregistered, "admin_api.SetPolicyHandler")
+	}
+	if o.AdminAPISetPolicyMultipleHandler == nil {
+		unregistered = append(unregistered, "admin_api.SetPolicyMultipleHandler")
 	}
 	if o.UserAPIShareObjectHandler == nil {
 		unregistered = append(unregistered, "user_api.ShareObjectHandler")
@@ -1215,6 +1223,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/set-policy/{name}"] = admin_api.NewSetPolicy(o.context, o.AdminAPISetPolicyHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/set-policy-multi/{name}"] = admin_api.NewSetPolicyMultiple(o.context, o.AdminAPISetPolicyMultipleHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

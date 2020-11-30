@@ -1238,6 +1238,30 @@ paths:
       tags:
         - AdminAPI
 
+  /set-policy-multi/{name}:
+    put:
+      summary: Set policy to multiple users/groups
+      operationId: SetPolicyMultiple
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/setPolicyMultipleRequest"
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
   /configs/{name}:
     get:
       summary: Configuration info
@@ -2107,6 +2131,23 @@ definitions:
         $ref: "#/definitions/policyEntity"
       entityName:
         type: string
+
+  setPolicyMultipleRequest:
+    type: object
+    properties:
+      users:
+        type: array
+        items:
+          $ref: "#/definitions/iamEntity"
+      groups:
+        type: array
+        items:
+          $ref: "#/definitions/iamEntity"
+  
+  iamEntity:
+    type: string
+    pattern: '^[\w+=,.@-]{1,64}$'
+
   addPolicyRequest:
     type: object
     required:

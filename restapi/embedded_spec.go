@@ -2458,6 +2458,42 @@ func init() {
         }
       }
     },
+    "/set-policy-multi/{name}": {
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Set policy to multiple users/groups",
+        "operationId": "SetPolicyMultiple",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/setPolicyMultipleRequest"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/set-policy/{name}": {
       "put": {
         "tags": [
@@ -3463,6 +3499,10 @@ func init() {
         }
       }
     },
+    "iamEntity": {
+      "type": "string",
+      "pattern": "^[\\w+=,.@-]{1,64}$"
+    },
     "idpConfiguration": {
       "type": "object",
       "properties": {
@@ -4354,6 +4394,23 @@ func init() {
           "minItems": 1,
           "items": {
             "$ref": "#/definitions/configurationKV"
+          }
+        }
+      }
+    },
+    "setPolicyMultipleRequest": {
+      "type": "object",
+      "properties": {
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/iamEntity"
+          }
+        },
+        "users": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/iamEntity"
           }
         }
       }
@@ -7361,6 +7418,42 @@ func init() {
         }
       }
     },
+    "/set-policy-multi/{name}": {
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Set policy to multiple users/groups",
+        "operationId": "SetPolicyMultiple",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/setPolicyMultipleRequest"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/set-policy/{name}": {
       "put": {
         "tags": [
@@ -8889,6 +8982,10 @@ func init() {
         }
       }
     },
+    "iamEntity": {
+      "type": "string",
+      "pattern": "^[\\w+=,.@-]{1,64}$"
+    },
     "idpConfiguration": {
       "type": "object",
       "properties": {
@@ -9714,6 +9811,23 @@ func init() {
           "minItems": 1,
           "items": {
             "$ref": "#/definitions/configurationKV"
+          }
+        }
+      }
+    },
+    "setPolicyMultipleRequest": {
+      "type": "object",
+      "properties": {
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/iamEntity"
+          }
+        },
+        "users": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/iamEntity"
           }
         }
       }

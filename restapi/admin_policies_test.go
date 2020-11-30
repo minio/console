@@ -21,6 +21,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"testing"
 
 	"errors"
@@ -207,5 +208,71 @@ func TestSetPolicy(t *testing.T) {
 	}
 	if err := setPolicy(ctx, adminClient, policyName, entityName, entityObject); funcAssert.Error(err) {
 		funcAssert.Equal("error", err.Error())
+	}
+}
+
+func Test_SetPolicyMultiple(t *testing.T) {
+	ctx := context.Background()
+	adminClient := adminClientMock{}
+
+	type args struct {
+		policyName    string
+		users         []models.IamEntity
+		groups        []models.IamEntity
+		setPolicyFunc func(policyName, entityName string, isGroup bool) error
+	}
+	tests := []struct {
+		name          string
+		args          args
+		errorExpected error
+	}{
+		{
+			name: "Set policy to multiple users and groups",
+			args: args{
+				policyName: "readonly",
+				users:      []models.IamEntity{"user1", "user2"},
+				groups:     []models.IamEntity{"group1", "group2"},
+				setPolicyFunc: func(policyName, entityName string, isGroup bool) error {
+					return nil
+				},
+			},
+			errorExpected: nil,
+		},
+		{
+			name: "Return error on set policy function",
+			args: args{
+				policyName: "readonly",
+				users:      []models.IamEntity{"user1", "user2"},
+				groups:     []models.IamEntity{"group1", "group2"},
+				setPolicyFunc: func(policyName, entityName string, isGroup bool) error {
+					return errors.New("error set")
+				},
+			},
+			errorExpected: errors.New("error set"),
+		},
+		{
+			// Description: Empty lists of users and groups are acceptable
+			name: "Empty lists of users and groups",
+			args: args{
+				policyName: "readonly",
+				users:      []models.IamEntity{},
+				groups:     []models.IamEntity{},
+				setPolicyFunc: func(policyName, entityName string, isGroup bool) error {
+					return nil
+				},
+			},
+			errorExpected: nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			minioSetPolicyMock = tt.args.setPolicyFunc
+			got := setPolicyMultipleEntities(ctx, adminClient, tt.args.policyName, tt.args.users, tt.args.groups)
+			if !reflect.DeepEqual(got, tt.errorExpected) {
+				ji, _ := json.Marshal(got)
+				vi, _ := json.Marshal(tt.errorExpected)
+				t.Errorf("got %s want %s", ji, vi)
+			}
+		})
 	}
 }
