@@ -185,7 +185,7 @@ func getTenantUpdateEncryptionResponse(session *models.Principal, params admin_a
 
 // getKESConfiguration will generate the KES server certificate secrets, the tenant client secrets for mTLS authentication between MinIO and KES and the
 // kes-configuration.yaml file used by the KES service (how to connect to the external KMS, eg: Vault, AWS, Gemalto, etc)
-func getKESConfiguration(ctx context.Context, clientSet K8sClientI, ns string, encryptionCfg *models.EncryptionConfiguration, secretName, tenantName string, autoCert *bool) (kesConfiguration *operator.KESConfig, err error) {
+func getKESConfiguration(ctx context.Context, clientSet K8sClientI, ns string, encryptionCfg *models.EncryptionConfiguration, secretName, tenantName string) (kesConfiguration *operator.KESConfig, err error) {
 	// Secrets used by the KES service
 	//
 	// kesExternalCertSecretName is the name of the secret that will store the certificates for TLS in the KES server, eg: server.key and server.crt
@@ -196,15 +196,15 @@ func getKESConfiguration(ctx context.Context, clientSet K8sClientI, ns string, e
 	kesConfigurationSecretName := fmt.Sprintf("%s-kes-configuration", secretName)
 
 	kesConfiguration = &operator.KESConfig{
-		Image:    "minio/kes:v0.11.0",
+		Image:    KESImageVersion,
 		Replicas: 1,
 	}
 	// Using custom image for KES
 	if encryptionCfg.Image != "" {
 		kesConfiguration.Image = encryptionCfg.Image
 	}
-	// Generate server certificates for KES only if autoCert is disabled
-	if autoCert == nil || (autoCert != nil && !*autoCert) {
+	// Generate server certificates for KES
+	if encryptionCfg.Server != nil {
 		certificates := []*models.KeyPairConfiguration{encryptionCfg.Server}
 		certificateSecrets, err := createOrReplaceExternalCertSecrets(ctx, clientSet, ns, certificates, kesExternalCertSecretName, tenantName)
 		if err != nil {

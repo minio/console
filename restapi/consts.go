@@ -54,3 +54,9 @@ const (
 	prometheusPort   = "prometheus.io/port"
 	prometheusScrape = "prometheus.io/scrape"
 )
+
+// Image versions
+const (
+	KESImageVersion     = "minio/kes:v0.12.1"
+	ConsoleImageVersion = "minio/console:v0.4.6"
+)
