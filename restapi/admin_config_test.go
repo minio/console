@@ -564,7 +564,7 @@ func Test_getConfig(t *testing.T) {
 	for _, tt := range tests {
 		tt.mock()
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := getConfig(tt.args.client, tt.args.name)
+			got, err := getConfig(context.Background(), tt.args.client, tt.args.name)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getConfig() error = %v, wantErr %v", err, tt.wantErr)
 				return
