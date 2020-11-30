@@ -18,13 +18,11 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import {
-  modalBasic,
-  predefinedList,
-} from "../Common/FormComponents/common/styleLibrary";
+import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import api from "../../../common/api";
 import GroupsSelectors from "./GroupsSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
+import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
 
 interface IAddToGroup {
   open: boolean;
@@ -48,7 +46,6 @@ const styles = (theme: Theme) =>
       textAlign: "right",
     },
     ...modalBasic,
-    ...predefinedList,
   });
 
 const AddToGroup = ({
@@ -121,18 +118,11 @@ const AddToGroup = ({
       {accepted ? (
         <React.Fragment>
           <Grid container>
-            <Grid item xs={12} className={classes.predefinedTitle}>
-              Groups
-            </Grid>
-            <Grid item xs={12} className={classes.predefinedList}>
-              {selectedGroups.join(", ")}
-            </Grid>
-            <Grid item xs={12} className={classes.predefinedTitle}>
-              Users
-            </Grid>
-            <Grid item xs={12} className={classes.predefinedList}>
-              {checkedUsers.join(", ")}
-            </Grid>
+            <PredefinedList
+              label={"Groups"}
+              content={selectedGroups.join(", ")}
+            />
+            <PredefinedList label={"Users"} content={checkedUsers.join(", ")} />
           </Grid>
           <br />
           <br />
@@ -153,13 +143,10 @@ const AddToGroup = ({
                   </Typography>
                 </Grid>
               )}
-
-              <Grid item xs={12} className={classes.predefinedTitle}>
-                Selected Users
-              </Grid>
-              <Grid item xs={12} className={classes.predefinedList}>
-                {checkedUsers.join(", ")}
-              </Grid>
+              <PredefinedList
+                label={"Selected Users"}
+                content={checkedUsers.join(", ")}
+              />
               <Grid item xs={12}>
                 <br />
               </Grid>
