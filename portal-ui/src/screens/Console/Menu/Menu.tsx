@@ -241,22 +241,6 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
       icon: <IAMPoliciesIcon />,
     },
     {
-      group: "Tools",
-      type: "item",
-      component: NavLink,
-      to: "/watch",
-      name: "Watch",
-      icon: <WatchIcon />,
-    },
-    {
-      group: "Tools",
-      type: "item",
-      component: NavLink,
-      to: "/heal",
-      name: "Heal",
-      icon: <HealIcon />,
-    },
-    {
       group: "Admin",
       type: "item",
       component: NavLink,

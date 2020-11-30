@@ -42,8 +42,6 @@ import ListNotificationEndpoints from "./NotificationEndopoints/ListNotification
 import ConfigurationsList from "./Configurations/ConfigurationPanels/ConfigurationsList";
 import { Button, LinearProgress } from "@material-ui/core";
 import WebhookPanel from "./Configurations/ConfigurationPanels/WebhookPanel";
-import Heal from "./Heal/Heal";
-import Watch from "./Watch/Watch";
 import ListTenants from "./Tenants/ListTenants/ListTenants";
 import { ISessionResponse } from "./types";
 import TenantDetails from "./Tenants/TenantDetails/TenantDetails";
@@ -222,10 +220,6 @@ const Console = ({
       path: "/object-browser/:bucket/*",
     },
     {
-      component: Watch,
-      path: "/watch",
-    },
-    {
       component: Users,
       path: "/users",
     },
@@ -236,10 +230,6 @@ const Console = ({
     {
       component: Policies,
       path: "/policies",
-    },
-    {
-      component: Heal,
-      path: "/heal",
     },
     {
       component: ListNotificationEndpoints,

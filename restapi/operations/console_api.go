@@ -38,6 +38,7 @@ import (
 
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations/admin_api"
+	"github.com/minio/console/restapi/operations/operator_api"
 	"github.com/minio/console/restapi/operations/user_api"
 )
 
@@ -219,6 +220,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		AdminAPINotificationEndpointListHandler: admin_api.NotificationEndpointListHandlerFunc(func(params admin_api.NotificationEndpointListParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.NotificationEndpointList has not yet been implemented")
+		}),
+		OperatorAPIOperatorListBucketsHandler: operator_api.OperatorListBucketsHandlerFunc(func(params operator_api.OperatorListBucketsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.OperatorListBuckets has not yet been implemented")
 		}),
 		AdminAPIPolicyInfoHandler: admin_api.PolicyInfoHandlerFunc(func(params admin_api.PolicyInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.PolicyInfo has not yet been implemented")
@@ -457,6 +461,8 @@ type ConsoleAPI struct {
 	UserAPIMakeBucketHandler user_api.MakeBucketHandler
 	// AdminAPINotificationEndpointListHandler sets the operation handler for the notification endpoint list operation
 	AdminAPINotificationEndpointListHandler admin_api.NotificationEndpointListHandler
+	// OperatorAPIOperatorListBucketsHandler sets the operation handler for the operator list buckets operation
+	OperatorAPIOperatorListBucketsHandler operator_api.OperatorListBucketsHandler
 	// AdminAPIPolicyInfoHandler sets the operation handler for the policy info operation
 	AdminAPIPolicyInfoHandler admin_api.PolicyInfoHandler
 	// UserAPIPostBucketsBucketNameObjectsUploadHandler sets the operation handler for the post buckets bucket name objects upload operation
@@ -742,6 +748,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPINotificationEndpointListHandler == nil {
 		unregistered = append(unregistered, "admin_api.NotificationEndpointListHandler")
+	}
+	if o.OperatorAPIOperatorListBucketsHandler == nil {
+		unregistered = append(unregistered, "operator_api.OperatorListBucketsHandler")
 	}
 	if o.AdminAPIPolicyInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.PolicyInfoHandler")
@@ -1134,6 +1143,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/admin/notification_endpoints"] = admin_api.NewNotificationEndpointList(o.context, o.AdminAPINotificationEndpointListHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/operator/{namespace}/{tenant}/buckets"] = operator_api.NewOperatorListBuckets(o.context, o.OperatorAPIOperatorListBucketsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

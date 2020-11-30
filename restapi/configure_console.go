@@ -133,6 +133,8 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerObjectsHandlers(api)
 	// Register Bucket Quota's Handlers
 	registerBucketQuotaHandlers(api)
+	// List buckets
+	registerOperatorBucketsHandlers(api)
 
 	api.PreServerShutdown = func() {}
 

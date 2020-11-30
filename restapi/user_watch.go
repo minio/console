@@ -30,11 +30,13 @@ import (
 )
 
 type watchOptions struct {
+	Namespace  string
+	Tenant     string
 	BucketName string
 	mc.WatchOptions
 }
 
-func startWatch(ctx context.Context, conn WSConn, wsc MCClient, options watchOptions) error {
+func startWatch(ctx context.Context, conn WSConn, wsc MCClient, options *watchOptions) error {
 	wo, pErr := wsc.watch(ctx, options.WatchOptions)
 	if pErr != nil {
 		fmt.Println("error initializing watch:", pErr.Cause)
@@ -80,21 +82,26 @@ func startWatch(ctx context.Context, conn WSConn, wsc MCClient, options watchOpt
 
 // getWatchOptionsFromReq gets bucket name, events, prefix, suffix from a websocket
 // watch path if defined.
-// path come as : `/watch/bucket1` and query params come on request form
-func getWatchOptionsFromReq(req *http.Request) watchOptions {
+// path come as : `/watch/<namespace>/<tenantName>/bucket1` and query
+// params come on request form
+func getWatchOptionsFromReq(req *http.Request) (*watchOptions, error) {
 	wOptions := watchOptions{}
 	// Default Events if not defined
 	wOptions.Events = []string{"put", "get", "delete"}
 
-	re := regexp.MustCompile(`(/watch/)(.*?$)`)
+	re := regexp.MustCompile(`(/watch/)(.*?)/(.*?)/(.*?)(\?.*?$|$)`)
 	matches := re.FindAllSubmatch([]byte(req.URL.Path), -1)
-	// len matches is always 3
 	// matches comes as e.g.
-	// [["...", "/watch/" "bucket1"]]
+	// [["...", "/watch/", "namespace", "tenant", "bucket1"]]
 	// [["/watch/" "/watch/" ""]]
 
-	// bucket name is on the second group, third position
-	wOptions.BucketName = strings.TrimSpace(string(matches[0][2]))
+	if len(matches) == 0 || len(matches[0]) < 5 {
+		return nil, fmt.Errorf("invalid url: %s", req.URL.Path)
+	}
+
+	wOptions.Namespace = strings.TrimSpace(string(matches[0][2]))
+	wOptions.Tenant = strings.TrimSpace(string(matches[0][3]))
+	wOptions.BucketName = strings.TrimSpace(string(matches[0][4]))
 
 	events := req.FormValue("events")
 	if strings.TrimSpace(events) != "" {
@@ -102,5 +109,5 @@ func getWatchOptionsFromReq(req *http.Request) watchOptions {
 	}
 	wOptions.Prefix = req.FormValue("prefix")
 	wOptions.Suffix = req.FormValue("suffix")
-	return wOptions
+	return &wOptions, nil
 }

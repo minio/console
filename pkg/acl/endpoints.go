@@ -28,14 +28,12 @@ var (
 	iamPolicies         = "/policies"
 	dashboard           = "/dashboard"
 	profiling           = "/profiling"
-	watch               = "/watch"
 	notifications       = "/notification-endpoints"
 	buckets             = "/buckets"
 	bucketsDetail       = "/buckets/:bucketName"
 	serviceAccounts     = "/service-accounts"
 	tenants             = "/tenants"
 	tenantsDetail       = "/namespaces/:tenantNamespace/tenants/:tenantName"
-	heal                = "/heal"
 	remoteBuckets       = "/remote-buckets"
 	replication         = "/replication"
 	objectBrowser       = "/object-browser/:bucket/*"
@@ -122,16 +120,6 @@ var usersActionSet = ConfigurationActionSet{
 	),
 }
 
-// watchActionSet contains the list of admin actions required for this endpoint to work
-var watchActionSet = ConfigurationActionSet{
-	actionTypes: iampolicy.NewActionSet(
-		iampolicy.AllAdminActions,
-	),
-	actions: iampolicy.NewActionSet(
-		iampolicy.ListenBucketNotificationAction,
-	),
-}
-
 // notificationsActionSet contains the list of admin actions required for this endpoint to work
 var notificationsActionSet = ConfigurationActionSet{
 	actionTypes: iampolicy.NewActionSet(
@@ -182,16 +170,6 @@ var tenantsActionSet = ConfigurationActionSet{
 	actions:     iampolicy.NewActionSet(),
 }
 
-// healActionSet contains the list of admin actions required for this endpoint to work
-var healActionSet = ConfigurationActionSet{
-	actionTypes: iampolicy.NewActionSet(
-		iampolicy.AllAdminActions,
-	),
-	actions: iampolicy.NewActionSet(
-		iampolicy.HealAdminAction,
-	),
-}
-
 var remoteBucketsActionSet = ConfigurationActionSet{
 	actionTypes: iampolicy.NewActionSet(
 		iampolicy.AllAdminActions,
@@ -230,12 +208,10 @@ var endpointRules = map[string]ConfigurationActionSet{
 	iamPolicies:         iamPoliciesActionSet,
 	dashboard:           dashboardActionSet,
 	profiling:           profilingActionSet,
-	watch:               watchActionSet,
 	notifications:       notificationsActionSet,
 	buckets:             bucketsActionSet,
 	bucketsDetail:       bucketsActionSet,
 	serviceAccounts:     serviceAccountsActionSet,
-	heal:                healActionSet,
 	remoteBuckets:       remoteBucketsActionSet,
 	replication:         replicationActionSet,
 	objectBrowser:       objectBrowserActionSet,
