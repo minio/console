@@ -19,14 +19,12 @@ import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import {
-  modalBasic,
-  predefinedList,
-} from "../Common/FormComponents/common/styleLibrary";
+import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import { User } from "../Users/types";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import api from "../../../common/api";
 import PolicySelectors from "./PolicySelectors";
+import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
 
 interface ISetPolicyProps {
   classes: any;
@@ -39,7 +37,6 @@ interface ISetPolicyProps {
 const styles = (theme: Theme) =>
   createStyles({
     ...modalBasic,
-    ...predefinedList,
     buttonContainer: {
       textAlign: "right",
     },
@@ -134,20 +131,13 @@ const SetPolicy = ({
     >
       {error !== "" && <span className={classes.error}>{error}</span>}
       <Grid item xs={12}>
-        <Grid item xs={12} className={classes.predefinedTitle}>
-          Selected {selectedGroup !== null ? "Group" : "User"}
-        </Grid>
-        <Grid item xs={12} className={classes.predefinedList}>
-          {selectedGroup !== null ? selectedGroup : userName}
-        </Grid>
+        <PredefinedList
+          label={`Selected ${selectedGroup !== null ? "Group" : "User"}`}
+          content={selectedGroup !== null ? selectedGroup : userName}
+        />
       </Grid>
       <Grid item xs={12}>
-        <Grid item xs={12} className={classes.predefinedTitle}>
-          Current Policy
-        </Grid>
-        <Grid item xs={12} className={classes.predefinedList}>
-          {actualPolicy}
-        </Grid>
+        <PredefinedList label={"Current Policy"} content={actualPolicy} />
       </Grid>
       <PolicySelectors
         selectedPolicy={selectedPolicy}
