@@ -96,9 +96,7 @@ func getListConfigResponse(session *models.Principal) (*models.ListConfigRespons
 }
 
 // getConfig gets the key values for a defined configuration
-func getConfig(client MinioAdmin, name string) ([]*models.ConfigurationKV, error) {
-	ctx := context.Background()
-
+func getConfig(ctx context.Context, client MinioAdmin, name string) ([]*models.ConfigurationKV, error) {
 	configKeysHelp, err := client.helpConfigKV(ctx, name, "", false)
 	if err != nil {
 		return nil, err
@@ -125,6 +123,7 @@ func getConfig(client MinioAdmin, name string) ([]*models.ConfigurationKV, error
 
 // getConfigResponse performs getConfig() and serializes it to the handler's output
 func getConfigResponse(session *models.Principal, params admin_api.ConfigInfoParams) (*models.Configuration, *models.Error) {
+	ctx := context.Background()
 	mAdmin, err := newMAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
@@ -133,7 +132,7 @@ func getConfigResponse(session *models.Principal, params admin_api.ConfigInfoPar
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
 
-	configkv, err := getConfig(adminClient, params.Name)
+	configkv, err := getConfig(ctx, adminClient, params.Name)
 	if err != nil {
 		return nil, prepareError(err)
 	}
