@@ -21,12 +21,10 @@ import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBo
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { IElementValue } from "../types";
-import {
-  modalBasic,
-  predefinedList,
-} from "../../Common/FormComponents/common/styleLibrary";
+import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import CommentBoxWrapper from "../../Common/FormComponents/CommentBoxWrapper/CommentBoxWrapper";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import PredefinedList from "../../Common/FormComponents/PredefinedList/PredefinedList";
 
 interface IConfPostgresProps {
   onChange: (newValue: IElementValue[]) => void;
@@ -36,7 +34,6 @@ interface IConfPostgresProps {
 const styles = (theme: Theme) =>
   createStyles({
     ...modalBasic,
-    ...predefinedList,
   });
 
 const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
@@ -318,12 +315,10 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
               />
             </Grid>
           </Grid>
-          <Grid item xs={12} className={classes.predefinedTitle}>
-            Connection String
-          </Grid>
-          <Grid item xs={12} className={classes.predefinedList}>
-            {connectionString}
-          </Grid>
+          <PredefinedList
+            label={"Connection String"}
+            content={connectionString}
+          />
           <Grid item xs={12}>
             <br />
           </Grid>

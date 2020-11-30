@@ -307,7 +307,7 @@ func newAdminFromClaims(claims *models.Principal) (*madmin.AdminClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	adminClient.SetCustomTransport(getSTSClient().Transport)
+	adminClient.SetCustomTransport(GetConsoleSTSClient().Transport)
 	return adminClient, nil
 }
 
@@ -316,16 +316,19 @@ var (
 	consoleSecretKey = getSecretKey()
 )
 
-// stsClient is an http.Client with Custom TLS Transport that loads certificates from .console/certs/CAs
+// stsClient is a custom http client, this client should not be called directly and instead be
+// called using GetConsoleSTSClient() to ensure is initialized and the certificates are loaded correctly
 var stsClient *http.Client
-var consoleLDAPAdminCreds consoleCredentials
 
-func getSTSClient() *http.Client {
+// GetConsoleSTSClient will initialize the console STS Client with Custom TLS Transport that with loads certs at .console/certs/CAs
+func GetConsoleSTSClient() *http.Client {
 	if stsClient == nil {
 		stsClient = PrepareSTSClient(false)
 	}
 	return stsClient
 }
+
+var consoleLDAPAdminCreds consoleCredentials
 
 func newSuperMAdminClient() (*madmin.AdminClient, error) {
 	accessKey := consoleAccessKey
@@ -336,7 +339,7 @@ func newSuperMAdminClient() (*madmin.AdminClient, error) {
 	if ldap.GetLDAPEnabled() {
 		// initialize LDAP super Admin Credentials once
 		if consoleLDAPAdminCreds.consoleCredentials == nil {
-			consoleCredentialsFromLDAP, err := auth.GetCredentialsFromLDAP(getSTSClient(), MinioEndpoint, consoleAccessKey, consoleSecretKey)
+			consoleCredentialsFromLDAP, err := auth.GetCredentialsFromLDAP(GetConsoleSTSClient(), MinioEndpoint, consoleAccessKey, consoleSecretKey)
 			if err != nil {
 				return nil, err
 			}

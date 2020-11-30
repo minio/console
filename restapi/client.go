@@ -52,7 +52,7 @@ func init() {
 // that are used within this project.
 type MinioClient interface {
 	listBucketsWithContext(ctx context.Context) ([]minio.BucketInfo, error)
-	makeBucketWithContext(ctx context.Context, bucketName, location string) error
+	makeBucketWithContext(ctx context.Context, bucketName, location string, objectLocking bool) error
 	setBucketPolicyWithContext(ctx context.Context, bucketName, policy string) error
 	removeBucket(ctx context.Context, bucketName string) error
 	getBucketNotification(ctx context.Context, bucketName string) (config notification.Configuration, err error)
@@ -83,10 +83,11 @@ func (c minioClient) listBucketsWithContext(ctx context.Context) ([]minio.Bucket
 	return c.client.ListBuckets(ctx)
 }
 
-// implements minio.MakeBucketWithContext(ctx, bucketName, location)
-func (c minioClient) makeBucketWithContext(ctx context.Context, bucketName, location string) error {
+// implements minio.MakeBucketWithContext(ctx, bucketName, location, objectLocking)
+func (c minioClient) makeBucketWithContext(ctx context.Context, bucketName, location string, objectLocking bool) error {
 	return c.client.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{
-		Region: location,
+		Region:        location,
+		ObjectLocking: objectLocking,
 	})
 }
 
@@ -108,11 +109,6 @@ func (c minioClient) getBucketNotification(ctx context.Context, bucketName strin
 // implements minio.GetBucketPolicy(bucketName)
 func (c minioClient) getBucketPolicy(ctx context.Context, bucketName string) (string, error) {
 	return c.client.GetBucketPolicy(ctx, bucketName)
-}
-
-// implements minio.enableVersioning(ctx, bucketName)
-func (c minioClient) enableVersioning(ctx context.Context, bucketName string) error {
-	return c.client.EnableVersioning(ctx, bucketName)
 }
 
 // implements minio.getBucketVersioning(ctx, bucketName)
@@ -266,7 +262,6 @@ func (s consoleSTSAssumeRole) IsExpired() bool {
 	return s.stsAssumeRole.IsExpired()
 }
 
-// STSClient contains http.client configuration need it by STSAssumeRole
 var (
 	MinioEndpoint = getMinIOServer()
 )
@@ -289,7 +284,7 @@ func newConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 			if MinioEndpoint == "" {
 				return nil, errors.New("endpoint cannot be empty for AssumeRoleSTS")
 			}
-			creds, err := auth.GetCredentialsFromLDAP(stsClient, MinioEndpoint, accessKey, secretKey)
+			creds, err := auth.GetCredentialsFromLDAP(GetConsoleSTSClient(), MinioEndpoint, accessKey, secretKey)
 			if err != nil {
 				return nil, err
 			}
@@ -308,7 +303,7 @@ func newConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 				DurationSeconds: xjwt.GetConsoleSTSDurationInSeconds(),
 			}
 			stsAssumeRole := &credentials.STSAssumeRole{
-				Client:      stsClient,
+				Client:      GetConsoleSTSClient(),
 				STSEndpoint: MinioEndpoint,
 				Options:     opts,
 			}
@@ -331,7 +326,7 @@ func newMinioClient(claims *models.Principal) (*minio.Client, error) {
 	minioClient, err := minio.New(getMinIOEndpoint(), &minio.Options{
 		Creds:     creds,
 		Secure:    getMinIOEndpointIsSecure(),
-		Transport: stsClient.Transport,
+		Transport: GetConsoleSTSClient().Transport,
 	})
 	if err != nil {
 		return nil, err
@@ -369,9 +364,32 @@ func newS3BucketClient(claims *models.Principal, bucketName string, prefix strin
 	return s3Client, nil
 }
 
+// newTenantS3BucketClient creates a new mc S3Client for an specific tenant on a namespace to talk to the server based on a bucket
+func newTenantS3BucketClient(claims *models.Principal, tenantEndpoint, bucketName string, isSecure bool) (*mc.S3Client, error) {
+	if strings.TrimSpace(bucketName) != "" {
+		tenantEndpoint += fmt.Sprintf("/%s", bucketName)
+	}
+
+	if claims == nil {
+		return nil, fmt.Errorf("the provided credentials are invalid")
+	}
+
+	s3Config := newS3Config(tenantEndpoint, claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken, !isSecure)
+	client, pErr := mc.S3New(s3Config)
+	if pErr != nil {
+		return nil, pErr.Cause
+	}
+	s3Client, ok := client.(*mc.S3Client)
+	if !ok {
+		return nil, fmt.Errorf("the provided url doesn't point to a S3 server")
+	}
+
+	return s3Client, nil
+}
+
 // newS3Config simply creates a new Config struct using the passed
 // parameters.
-func newS3Config(endpoint, accessKey, secretKey, sessionToken string, isSecure bool) *mc.Config {
+func newS3Config(endpoint, accessKey, secretKey, sessionToken string, insecure bool) *mc.Config {
 	// We have a valid alias and hostConfig. We populate the
 	// consoleCredentials from the match found in the config file.
 	s3Config := new(mc.Config)
@@ -380,12 +398,13 @@ func newS3Config(endpoint, accessKey, secretKey, sessionToken string, isSecure b
 	s3Config.AppVersion = ""     // TODO: get this from constant or build
 	s3Config.AppComments = []string{}
 	s3Config.Debug = false
-	s3Config.Insecure = isSecure
+	s3Config.Insecure = insecure
 
 	s3Config.HostURL = endpoint
 	s3Config.AccessKey = accessKey
 	s3Config.SecretKey = secretKey
 	s3Config.SessionToken = sessionToken
 	s3Config.Signature = "S3v4"
+
 	return s3Config
 }

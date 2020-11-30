@@ -47,7 +47,7 @@ func TestWatch(t *testing.T) {
 	testReceiver := make(chan []mc.EventInfo, testStreamSize)
 	isClosed := false // testReceiver is closed?
 	textToReceive := "test message"
-	testOptions := watchOptions{}
+	testOptions := &watchOptions{}
 	testOptions.BucketName = "bucktest"
 	testOptions.Prefix = "file/"
 	testOptions.Suffix = ".png"
@@ -199,60 +199,67 @@ func TestWatch(t *testing.T) {
 	}
 
 	// Test-6: getWatchOptionsFromReq return parameters from path
-	u, err := url.Parse("http://localhost/api/v1/watch/bucket1?prefix=&suffix=.jpg&events=put,get")
+	u, err := url.Parse("http://localhost/api/v1/watch/namespace/tenantName/bucket1?prefix=&suffix=.jpg&events=put,get")
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", "url.Parse()", err.Error())
 	}
 	req := &http.Request{
 		URL: u,
 	}
-	opts := getWatchOptionsFromReq(req)
-	expectedOptions := watchOptions{
-		BucketName: "bucket1",
+	opts, err := getWatchOptionsFromReq(req)
+	if assert.NoError(err) {
+		expectedOptions := watchOptions{
+			BucketName: "bucket1",
+		}
+		expectedOptions.Prefix = ""
+		expectedOptions.Suffix = ".jpg"
+		expectedOptions.Events = []string{"put", "get"}
+		assert.Equal(expectedOptions.BucketName, opts.BucketName)
+		assert.Equal(expectedOptions.Prefix, opts.Prefix)
+		assert.Equal(expectedOptions.Suffix, opts.Suffix)
+		assert.Equal(expectedOptions.Events, opts.Events)
 	}
-	expectedOptions.Prefix = ""
-	expectedOptions.Suffix = ".jpg"
-	expectedOptions.Events = []string{"put", "get"}
-	assert.Equal(expectedOptions.BucketName, opts.BucketName)
-	assert.Equal(expectedOptions.Prefix, opts.Prefix)
-	assert.Equal(expectedOptions.Suffix, opts.Suffix)
-	assert.Equal(expectedOptions.Events, opts.Events)
 
 	// Test-7: getWatchOptionsFromReq return default events if not defined
-	u, err = url.Parse("http://localhost/api/v1/watch/bucket1?prefix=&suffix=.jpg&events=")
+	u, err = url.Parse("http://localhost/api/v1/watch/namespace/tenantName/bucket1?prefix=&suffix=.jpg&events=")
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", "url.Parse()", err.Error())
 	}
 	req = &http.Request{
 		URL: u,
 	}
-	opts = getWatchOptionsFromReq(req)
-	expectedOptions = watchOptions{
-		BucketName: "bucket1",
+	opts, err = getWatchOptionsFromReq(req)
+	if assert.NoError(err) {
+		expectedOptions := watchOptions{
+			BucketName: "bucket1",
+		}
+		expectedOptions.Prefix = ""
+		expectedOptions.Suffix = ".jpg"
+		expectedOptions.Events = []string{"put", "get", "delete"}
+		assert.Equal(expectedOptions.BucketName, opts.BucketName)
+		assert.Equal(expectedOptions.Prefix, opts.Prefix)
+		assert.Equal(expectedOptions.Suffix, opts.Suffix)
+		assert.Equal(expectedOptions.Events, opts.Events)
+
 	}
-	expectedOptions.Prefix = ""
-	expectedOptions.Suffix = ".jpg"
-	expectedOptions.Events = []string{"put", "get", "delete"}
-	assert.Equal(expectedOptions.BucketName, opts.BucketName)
-	assert.Equal(expectedOptions.Prefix, opts.Prefix)
-	assert.Equal(expectedOptions.Suffix, opts.Suffix)
-	assert.Equal(expectedOptions.Events, opts.Events)
 
 	// Test-8: getWatchOptionsFromReq return default events if not defined
-	u, err = url.Parse("http://localhost/api/v1/watch/bucket2?prefix=&suffix=")
+	u, err = url.Parse("http://localhost/api/v1/watch/namespace/tenantName/bucket2?prefix=&suffix=")
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", "url.Parse()", err.Error())
 	}
 	req = &http.Request{
 		URL: u,
 	}
-	opts = getWatchOptionsFromReq(req)
-	expectedOptions = watchOptions{
-		BucketName: "bucket2",
+	opts, err = getWatchOptionsFromReq(req)
+	if assert.NoError(err) {
+		expectedOptions := watchOptions{
+			BucketName: "bucket2",
+		}
+		expectedOptions.Events = []string{"put", "get", "delete"}
+		assert.Equal(expectedOptions.BucketName, opts.BucketName)
+		assert.Equal(expectedOptions.Prefix, opts.Prefix)
+		assert.Equal(expectedOptions.Suffix, opts.Suffix)
+		assert.Equal(expectedOptions.Events, opts.Events)
 	}
-	expectedOptions.Events = []string{"put", "get", "delete"}
-	assert.Equal(expectedOptions.BucketName, opts.BucketName)
-	assert.Equal(expectedOptions.Prefix, opts.Prefix)
-	assert.Equal(expectedOptions.Suffix, opts.Suffix)
-	assert.Equal(expectedOptions.Events, opts.Events)
 }

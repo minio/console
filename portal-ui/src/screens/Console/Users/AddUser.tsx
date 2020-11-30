@@ -19,16 +19,14 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import {
-  modalBasic,
-  predefinedList,
-} from "../Common/FormComponents/common/styleLibrary";
+import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import { User } from "./types";
 import api from "../../../common/api";
 import GroupsSelectors from "./GroupsSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -45,7 +43,6 @@ const styles = (theme: Theme) =>
       textAlign: "right",
     },
     ...modalBasic,
-    ...predefinedList,
   });
 
 interface IAddUserContentProps {
@@ -269,14 +266,10 @@ class AddUserContent extends React.Component<
                 />
 
                 {selectedUser !== null ? (
-                  <React.Fragment>
-                    <Grid item xs={12} className={classes.predefinedTitle}>
-                      Current Groups
-                    </Grid>
-                    <Grid item xs={12} className={classes.predefinedList}>
-                      {currentGroups.join(", ")}
-                    </Grid>
-                  </React.Fragment>
+                  <PredefinedList
+                    label={"Current Groups"}
+                    content={currentGroups.join(", ")}
+                  />
                 ) : (
                   <InputBoxWrapper
                     id="standard-multiline-static"

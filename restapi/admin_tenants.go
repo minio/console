@@ -231,6 +231,24 @@ func GetTenantServiceURL(mi *operator.Tenant) (svcURL string) {
 }
 
 func getTenantAdminClient(ctx context.Context, client K8sClientI, tenant *operator.Tenant, svcURL string, insecure bool) (*madmin.AdminClient, error) {
+	tenantCreds, err := getTenantCreds(ctx, client, tenant)
+	if err != nil {
+		return nil, err
+	}
+	sessionToken := ""
+	mAdmin, pErr := NewAdminClientWithInsecure(svcURL, tenantCreds.accessKey, tenantCreds.secretKey, sessionToken, insecure)
+	if pErr != nil {
+		return nil, pErr.Cause
+	}
+	return mAdmin, nil
+}
+
+type tenantKeys struct {
+	accessKey string
+	secretKey string
+}
+
+func getTenantCreds(ctx context.Context, client K8sClientI, tenant *operator.Tenant) (*tenantKeys, error) {
 	if tenant == nil || tenant.Spec.CredsSecret == nil {
 		return nil, errors.New("invalid arguments")
 	}
@@ -239,12 +257,12 @@ func getTenantAdminClient(ctx context.Context, client K8sClientI, tenant *operat
 	if err != nil {
 		return nil, err
 	}
-	accessKey, ok := creds.Data["accesskey"]
+	tenantAccessKey, ok := creds.Data["accesskey"]
 	if !ok {
 		log.Println("tenant's secret doesn't contain accesskey")
 		return nil, errorGeneric
 	}
-	secretkey, ok := creds.Data["secretkey"]
+	tenantSecretKey, ok := creds.Data["secretkey"]
 	if !ok {
 		log.Println("tenant's secret doesn't contain secretkey")
 		return nil, errorGeneric
@@ -252,14 +270,7 @@ func getTenantAdminClient(ctx context.Context, client K8sClientI, tenant *operat
 	// TODO:
 	// We need to avoid using minio root credentials to talk to tenants, and instead use a different user credentials
 	// when that its implemented we also need to check here if the tenant has LDAP enabled so we authenticate first against AD
-	tenantAccessKey := string(accessKey)
-	tenantSecretKey := string(secretkey)
-	sessionToken := ""
-	mAdmin, pErr := NewAdminClientWithInsecure(svcURL, tenantAccessKey, tenantSecretKey, sessionToken, insecure)
-	if pErr != nil {
-		return nil, pErr.Cause
-	}
-	return mAdmin, nil
+	return &tenantKeys{accessKey: string(tenantAccessKey), secretKey: string(tenantSecretKey)}, nil
 }
 
 func getTenant(ctx context.Context, operatorClient OperatorClientI, namespace, tenantName string) (*operator.Tenant, error) {
@@ -433,6 +444,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	tenantReq := params.Body
 	minioImage := tenantReq.Image
 	ctx := context.Background()
+	consoleHasTLS := false
 
 	if minioImage == "" {
 		minImg, err := cluster.GetMinioImage()
@@ -579,19 +591,20 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 
 	isEncryptionEnabled := false
-	if tenantReq.EnableTLS != nil && *tenantReq.EnableTLS {
-		// If user request autoCert, Operator will generate certificate keypair for MinIO (server), Console (server) and KES (server and app mTLS)
-		isEncryptionEnabled = true
-		minInst.Spec.RequestAutoCert = tenantReq.EnableTLS
-	}
 
-	if (minInst.Spec.RequestAutoCert == nil || (minInst.Spec.RequestAutoCert != nil && !*minInst.Spec.RequestAutoCert)) &&
-		tenantReq.TLS != nil &&
-		len(tenantReq.TLS.Minio) > 0 {
-		// User provided TLS certificates for MinIO
+	if tenantReq.EnableTLS != nil {
+		// if enableTLS is defined in the create tenant request we assign the value
+		// to the RequestAutoCert attribute in the tenant spec
+		minInst.Spec.RequestAutoCert = tenantReq.EnableTLS
+		if *tenantReq.EnableTLS {
+			// requestAutoCert is enabled, MinIO will be deployed with TLS enabled and encryption can be enabled
+			isEncryptionEnabled = true
+			consoleHasTLS = true
+		}
+	}
+	// External TLS certificates for MinIO
+	if tenantReq.TLS != nil && len(tenantReq.TLS.Minio) > 0 {
 		isEncryptionEnabled = true
-		// disable autoCert
-		minInst.Spec.RequestAutoCert = swag.Bool(false)
 		// Certificates used by the MinIO instance
 		externalCertSecretName := fmt.Sprintf("%s-instance-external-certificates", secretName)
 		externalCertSecret, err := createOrReplaceExternalCertSecrets(ctx, &k8sClient, ns, tenantReq.TLS.Minio, externalCertSecretName, tenantName)
@@ -600,15 +613,10 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		}
 		minInst.Spec.ExternalCertSecret = externalCertSecret
 	}
-
+	// If encryption configuration is present and TLS will be enabled (using AutoCert or External certificates)
 	if tenantReq.Encryption != nil && isEncryptionEnabled {
-		// Enable auto encryption
-		minInst.Spec.Env = append(minInst.Spec.Env, corev1.EnvVar{
-			Name:  "MINIO_KMS_AUTO_ENCRYPTION",
-			Value: "on",
-		})
-		// KES client mTLSCertificates used by MinIO instance, only if autoCert is not enabled
-		if minInst.Spec.RequestAutoCert == nil || (minInst.Spec.RequestAutoCert != nil && !*minInst.Spec.RequestAutoCert) {
+		// KES client mTLSCertificates used by MinIO instance
+		if tenantReq.Encryption.Client != nil {
 			tenantExternalClientCertSecretName := fmt.Sprintf("%s-tenant-external-client-cert", secretName)
 			certificates := []*models.KeyPairConfiguration{tenantReq.Encryption.Client}
 			certificateSecrets, err := createOrReplaceExternalCertSecrets(ctx, &k8sClient, ns, certificates, tenantExternalClientCertSecretName, tenantName)
@@ -619,8 +627,9 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 				minInst.Spec.ExternalClientCertSecret = certificateSecrets[0]
 			}
 		}
+
 		// KES configuration for Tenant instance
-		minInst.Spec.KES, err = getKESConfiguration(ctx, &k8sClient, ns, tenantReq.Encryption, secretName, tenantName, minInst.Spec.RequestAutoCert)
+		minInst.Spec.KES, err = getKESConfiguration(ctx, &k8sClient, ns, tenantReq.Encryption, secretName, tenantName)
 		if err != nil {
 			return nil, prepareError(errorGeneric)
 		}
@@ -661,7 +670,32 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			},
 		}
 
-		// Enable IDP (Open ID Connect) for console
+		minInst.Spec.Console = &operator.ConsoleConfiguration{
+			Replicas:      1,
+			Image:         ConsoleImageVersion,
+			ConsoleSecret: &corev1.LocalObjectReference{Name: consoleSecretName},
+			Resources: corev1.ResourceRequirements{
+				Requests: map[corev1.ResourceName]resource.Quantity{
+					"memory": resource.MustParse("64Mi"),
+				},
+			},
+		}
+		if tenantReq.TLS != nil && tenantReq.TLS.Console != nil {
+			consoleHasTLS = true
+			// Certificates used by the console instance
+			externalCertSecretName := fmt.Sprintf("%s-console-external-certificates", secretName)
+			certificates := []*models.KeyPairConfiguration{tenantReq.TLS.Console}
+			externalCertSecret, err := createOrReplaceExternalCertSecrets(ctx, &k8sClient, ns, certificates, externalCertSecretName, tenantName)
+			if err != nil {
+				return nil, prepareError(errorGeneric)
+			}
+			if len(externalCertSecret) > 0 {
+				minInst.Spec.Console.ExternalCertSecret = externalCertSecret[0]
+			}
+		}
+
+		// If IDP is not already enabled via LDAP (Active Directory) and OIDC configuration is present then
+		// enable oidc for console
 		if !idpEnabled && tenantReq.Idp != nil && tenantReq.Idp.Oidc != nil {
 			url := *tenantReq.Idp.Oidc.URL
 			clientID := *tenantReq.Idp.Oidc.ClientID
@@ -672,7 +706,8 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 				instanceSecret.Data["CONSOLE_IDP_SECRET"] = []byte(secretID)
 				consoleScheme := "http"
 				consolePort := 9090
-				if minInst.Spec.RequestAutoCert != nil && *minInst.Spec.RequestAutoCert {
+				// If Console will be deployed with TLS enabled (using AutoCert or External certificates)
+				if consoleHasTLS {
 					consoleScheme = "https"
 					consolePort = 9443
 				}
@@ -685,30 +720,6 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		_, err = clientSet.CoreV1().Secrets(ns).Create(ctx, &instanceSecret, metav1.CreateOptions{})
 		if err != nil {
 			return nil, prepareError(errorGeneric)
-		}
-
-		const consoleVersion = "minio/console:v0.4.5"
-		minInst.Spec.Console = &operator.ConsoleConfiguration{
-			Replicas:      1,
-			Image:         consoleVersion,
-			ConsoleSecret: &corev1.LocalObjectReference{Name: consoleSecretName},
-			Resources: corev1.ResourceRequirements{
-				Requests: map[corev1.ResourceName]resource.Quantity{
-					"memory": resource.MustParse("64Mi"),
-				},
-			},
-		}
-		if (minInst.Spec.RequestAutoCert == nil || (minInst.Spec.RequestAutoCert != nil && !*minInst.Spec.RequestAutoCert)) && tenantReq.TLS != nil && tenantReq.TLS.Console != nil {
-			// Certificates used by the console instance
-			externalCertSecretName := fmt.Sprintf("%s-console-external-certificates", secretName)
-			certificates := []*models.KeyPairConfiguration{tenantReq.TLS.Console}
-			externalCertSecret, err := createOrReplaceExternalCertSecrets(ctx, &k8sClient, ns, certificates, externalCertSecretName, tenantName)
-			if err != nil {
-				return nil, prepareError(errorGeneric)
-			}
-			if len(externalCertSecret) > 0 {
-				minInst.Spec.Console.ExternalCertSecret = externalCertSecret[0]
-			}
 		}
 
 		// Set Labels, Annotations and Node Selector for Console
@@ -1052,7 +1063,8 @@ func getTenantUsageResponse(session *models.Principal, params admin_api.GetTenan
 		k8sClient,
 		minTenant,
 		svcURL,
-		true)
+		true,
+	)
 	if err != nil {
 		return nil, prepareError(err, errorUnableToGetTenantUsage)
 	}

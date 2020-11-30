@@ -20,12 +20,10 @@ import Grid from "@material-ui/core/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import { IElementValue } from "../types";
-import {
-  modalBasic,
-  predefinedList,
-} from "../../Common/FormComponents/common/styleLibrary";
+import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import CommentBoxWrapper from "../../Common/FormComponents/CommentBoxWrapper/CommentBoxWrapper";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import PredefinedList from "../../Common/FormComponents/PredefinedList/PredefinedList";
 
 interface IConfMySqlProps {
   onChange: (newValue: IElementValue[]) => void;
@@ -35,7 +33,6 @@ interface IConfMySqlProps {
 const styles = (theme: Theme) =>
   createStyles({
     ...modalBasic,
-    ...predefinedList,
   });
 
 const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
@@ -226,12 +223,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
               />
             </Grid>
           </Grid>
-          <Grid item xs={12} className={classes.predefinedTitle}>
-            Connection String
-          </Grid>
-          <Grid item xs={12} className={classes.predefinedList}>
-            {dsnString}
-          </Grid>
+          <PredefinedList label={"Connection String"} content={dsnString} />
           <Grid item xs={12}>
             <br />
           </Grid>

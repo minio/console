@@ -185,6 +185,24 @@ export const predefinedList = {
     fontWeight: 600,
     minHeight: 41,
   },
+  innerContent: {
+    width: "100%",
+    overflowX: "auto" as const,
+    whiteSpace: "nowrap" as const,
+    scrollbarWidth: "none" as const,
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+  },
+  innerContentMultiline: {
+    width: "100%",
+    maxHeight: 100,
+    overflowY: "auto" as const,
+    scrollbarWidth: "none" as const,
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+  },
 };
 
 export const objectBrowserCommon = {

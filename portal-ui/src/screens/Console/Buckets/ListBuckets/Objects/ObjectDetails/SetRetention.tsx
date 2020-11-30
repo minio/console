@@ -115,6 +115,7 @@ const SetRetention = ({
             disableOptions={dateFieldDisabled()}
             ref={dateElement}
             borderBottom={true}
+            onDateChange={() => {}}
           />
         </Grid>
         <Grid item xs={12} className={classes.buttonContainer}>
