@@ -38,11 +38,7 @@ export const years = Array.from(
   (_, numYear) => numYear + currentYear
 );
 
-export const validDate = (
-  year: string,
-  month: string,
-  day: string
-): [boolean, string] => {
+export const validDate = (year: string, month: string, day: string): any[] => {
   const currentDate = Date.parse(`${year}-${month}-${day}`);
 
   if (isNaN(currentDate)) {

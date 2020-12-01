@@ -15,16 +15,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 export interface Permission {
-    id: string;
-    name: string;
-    slug: string;
-    description: string;
-    effect: string;
-    resources: any[];
-    actions: any[];
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  effect: string;
+  resources: any[];
+  actions: any[];
 }
 
 export interface PermissionList {
-    permissions: Permission[];
-    total:number;
+  permissions: Permission[];
+  total: number;
 }

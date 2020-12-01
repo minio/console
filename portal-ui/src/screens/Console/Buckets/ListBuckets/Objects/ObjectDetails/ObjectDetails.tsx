@@ -160,7 +160,7 @@ const ObjectDetails = ({
   const [retentionModalOpen, setRetentionModalOpen] = useState<boolean>(false);
   const [tagModalOpen, setTagModalOpen] = useState<boolean>(false);
   const [deleteTagModalOpen, setDeleteTagModalOpen] = useState<boolean>(false);
-  const [selectedTag, setSelectedTag] = useState<[string, string]>(["", ""]);
+  const [selectedTag, setSelectedTag] = useState<string[]>(["", ""]);
   const [legalholdOpen, setLegalholdOpen] = useState<boolean>(false);
   const [actualInfo, setActualInfo] = useState<IFileInfo>(emptyFile);
   const [versions, setVersions] = useState<IFileInfo[]>([]);
@@ -447,25 +447,26 @@ const ObjectDetails = ({
           </Grid>
           <Grid item xs={12} className={classes.tagsContainer}>
             <div className={classes.tagText}>Tags:</div>
-            {tagKeys.map((tagKey, index) => {
-              const tag = get(actualInfo, `tags.${tagKey}`, "");
-              if (tag !== "") {
-                return (
-                  <Chip
-                    key={`chip-${index}`}
-                    className={classes.tag}
-                    size="small"
-                    label={`${tagKey} : ${tag}`}
-                    color="primary"
-                    deleteIcon={<CloseIcon />}
-                    onDelete={() => {
-                      deleteTag(tagKey, tag);
-                    }}
-                  />
-                );
-              }
-              return null;
-            })}
+            {tagKeys &&
+              tagKeys.map((tagKey, index) => {
+                const tag = get(actualInfo, `tags.${tagKey}`, "");
+                if (tag !== "") {
+                  return (
+                    <Chip
+                      key={`chip-${index}`}
+                      className={classes.tag}
+                      size="small"
+                      label={`${tagKey} : ${tag}`}
+                      color="primary"
+                      deleteIcon={<CloseIcon />}
+                      onDelete={() => {
+                        deleteTag(tagKey, tag);
+                      }}
+                    />
+                  );
+                }
+                return null;
+              })}
             <Chip
               className={classes.tag}
               icon={<AddIcon />}

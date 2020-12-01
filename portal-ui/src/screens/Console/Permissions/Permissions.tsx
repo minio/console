@@ -29,7 +29,7 @@ import {
   IconButton,
   LinearProgress,
   TableFooter,
-  TablePagination
+  TablePagination,
 } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -48,49 +48,49 @@ import PlayArrowRoundedIcon from "@material-ui/icons/PlayArrowRounded";
 const styles = (theme: Theme) =>
   createStyles({
     seeMore: {
-      marginTop: theme.spacing(3)
+      marginTop: theme.spacing(3),
     },
     paper: {
       display: "flex",
       overflow: "auto",
-      flexDirection: "column"
+      flexDirection: "column",
     },
     addSideBar: {
       width: "320px",
-      padding: "20px"
+      padding: "20px",
     },
     errorBlock: {
-      color: "red"
+      color: "red",
     },
     tableToolbar: {
       paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0)
+      paddingRight: theme.spacing(0),
     },
     wrapCell: {
       maxWidth: "200px",
       whiteSpace: "normal",
-      wordWrap: "break-word"
+      wordWrap: "break-word",
     },
     minTableHeader: {
       color: "#393939",
       "& tr": {
         "& th": {
-          fontWeight: "bold"
-        }
-      }
+          fontWeight: "bold",
+        },
+      },
     },
     actionsTray: {
       textAlign: "right",
       "& button": {
-        marginLeft: 10
-      }
+        marginLeft: 10,
+      },
     },
     searchField: {
       background: "#FFFFFF",
       padding: 12,
       borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012"
-    }
+      boxShadow: "0px 3px 6px #00000012",
+    },
   });
 
 interface IPermissionsProps {
@@ -124,7 +124,7 @@ class Permissions extends React.Component<
     page: 0,
     rowsPerPage: 10,
     deleteOpen: false,
-    selectedPermission: null
+    selectedPermission: null,
   };
 
   fetchRecords() {
@@ -141,7 +141,7 @@ class Permissions extends React.Component<
             loading: false,
             records: res.permissions,
             totalRecords: res.total,
-            error: ""
+            error: "",
           });
           // if we get 0 results, and page > 0 , go down 1 page
           if (
@@ -156,7 +156,7 @@ class Permissions extends React.Component<
             });
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.setState({ loading: false, error: err });
         });
     });
@@ -190,7 +190,7 @@ class Permissions extends React.Component<
       page,
       rowsPerPage,
       deleteOpen,
-      selectedPermission
+      selectedPermission,
     } = this.state;
 
     const handleChangePage = (event: unknown, newPage: number) => {
@@ -211,14 +211,14 @@ class Permissions extends React.Component<
     const confirmDeletePermission = (selectedPermission: Permission) => {
       this.setState({
         deleteOpen: true,
-        selectedPermission: selectedPermission
+        selectedPermission: selectedPermission,
       });
     };
 
     const editPermission = (selectedPermission: Permission) => {
       this.setState({
         addScreenOpen: true,
-        selectedPermission: selectedPermission
+        selectedPermission: selectedPermission,
       });
     };
 
@@ -266,7 +266,7 @@ class Permissions extends React.Component<
                   <InputAdornment position="start">
                     <SearchIcon />
                   </InputAdornment>
-                )
+                ),
               }}
             />
             <Button
@@ -276,7 +276,7 @@ class Permissions extends React.Component<
               onClick={() => {
                 this.setState({
                   addScreenOpen: true,
-                  selectedPermission: null
+                  selectedPermission: null,
                 });
               }}
             >
@@ -288,7 +288,7 @@ class Permissions extends React.Component<
               startIcon={<PlayArrowRoundedIcon />}
               onClick={() => {
                 this.setState({
-                  addScreenOpen: true
+                  addScreenOpen: true,
                 });
               }}
             >
@@ -315,7 +315,7 @@ class Permissions extends React.Component<
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {records.map(row => (
+                    {records.map((row) => (
                       <TableRow key={row.name}>
                         <TableCell padding="checkbox">
                           <Checkbox
@@ -332,7 +332,7 @@ class Permissions extends React.Component<
                         </TableCell>
                         <TableCell>{row.effect}</TableCell>
                         <TableCell className={classes.wrapCell}>
-                          {row.resources.map(r => r.bucket_name).join(", ")}
+                          {row.resources.map((r) => r.bucket_name).join(", ")}
                         </TableCell>
                         <TableCell>
                           {actionLabel(row.actions[0].type)}
@@ -368,7 +368,7 @@ class Permissions extends React.Component<
                         page={page}
                         SelectProps={{
                           inputProps: { "aria-label": "rows per page" },
-                          native: true
+                          native: true,
                         }}
                         onChangePage={handleChangePage}
                         onChangeRowsPerPage={handleChangeRowsPerPage}

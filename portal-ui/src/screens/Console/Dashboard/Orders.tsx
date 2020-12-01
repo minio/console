@@ -60,17 +60,17 @@ const rows = [
     "Long Branch, NJ",
     "VISA ⠀•••• 5919",
     212.79
-  )
+  ),
 ];
 
 function preventDefault(event: React.MouseEvent) {
   event.preventDefault();
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   seeMore: {
-    marginTop: theme.spacing(3)
-  }
+    marginTop: theme.spacing(3),
+  },
 }));
 
 export default function Orders() {
@@ -89,7 +89,7 @@ export default function Orders() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map(row => (
+          {rows.map((row) => (
             <TableRow key={row.id}>
               <TableCell>{row.date}</TableCell>
               <TableCell>{row.name}</TableCell>

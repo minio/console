@@ -23,7 +23,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  LinearProgress
+  LinearProgress,
 } from "@material-ui/core";
 import api from "../../../common/api";
 import { Permission, PermissionList } from "./types";
@@ -32,8 +32,8 @@ import Typography from "@material-ui/core/Typography";
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
-    }
+      color: "red",
+    },
   });
 
 interface IDeletePermissionProps {
@@ -54,7 +54,7 @@ class DeletePermission extends React.Component<
 > {
   state: IDeletePermissionState = {
     deleteLoading: false,
-    deleteError: ""
+    deleteError: "",
   };
 
   removeRecord() {
@@ -69,23 +69,23 @@ class DeletePermission extends React.Component<
     this.setState({ deleteLoading: true }, () => {
       api
         .invoke("DELETE", `/api/v1/permissions/${selectedPermission.id}`, {
-          id: selectedPermission.id
+          id: selectedPermission.id,
         })
         .then((res: PermissionList) => {
           this.setState(
             {
               deleteLoading: false,
-              deleteError: ""
+              deleteError: "",
             },
             () => {
               this.props.closeDeleteModalAndRefresh(true);
             }
           );
         })
-        .catch(err => {
+        .catch((err) => {
           this.setState({
             deleteLoading: false,
-            deleteError: err
+            deleteError: err,
           });
         });
     });
@@ -114,7 +114,8 @@ class DeletePermission extends React.Component<
         <DialogContent>
           {deleteLoading && <LinearProgress />}
           <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete permission{" "}<b>{selectedPermission.name}</b>?
+            Are you sure you want to delete permission{" "}
+            <b>{selectedPermission.name}</b>?
             {deleteError !== "" && (
               <React.Fragment>
                 <br />
