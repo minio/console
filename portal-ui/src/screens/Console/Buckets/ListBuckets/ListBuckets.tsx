@@ -27,7 +27,6 @@ import { Bucket, BucketList } from "../types";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import AddBucket from "./AddBucket";
 import DeleteBucket from "./DeleteBucket";
-import { MinTablePaginationActions } from "../../../../common/MinTablePaginationActions";
 import { CreateIcon } from "../../../../icons";
 import { niceBytes } from "../../../../common/utils";
 import { AppState } from "../../../../store";
@@ -89,11 +88,8 @@ const ListBuckets = ({
   addBucketReset,
 }: IListBucketsProps) => {
   const [records, setRecords] = useState<Bucket[]>([]);
-  const [totalRecords, setTotalRecords] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const [page, setPage] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedBucket, setSelectedBucket] = useState<string>("");
   const [filterBuckets, setFilterBuckets] = useState<string>("");
@@ -102,28 +98,12 @@ const ListBuckets = ({
     if (loading) {
       const fetchRecords = () => {
         setLoading(true);
-        const offset = page * rowsPerPage;
         api
-          .invoke(
-            "GET",
-            `/api/v1/buckets?offset=${offset}&limit=${rowsPerPage}`
-          )
+          .invoke("GET", `/api/v1/buckets`)
           .then((res: BucketList) => {
             setLoading(false);
             setRecords(res.buckets || []);
-            setTotalRecords(!res.buckets ? 0 : res.total);
             setError("");
-            // if we get 0 results, and page > 0 , go down 1 page
-            if (
-              (res.buckets === undefined ||
-                res.buckets == null ||
-                res.buckets.length === 0) &&
-              page > 0
-            ) {
-              const newPage = page - 1;
-              setPage(newPage);
-              setLoading(true);
-            }
           })
           .catch((err: any) => {
             setLoading(false);
@@ -132,7 +112,7 @@ const ListBuckets = ({
       };
       fetchRecords();
     }
-  }, [loading, page, rowsPerPage]);
+  }, [loading]);
 
   const closeAddModalAndRefresh = (refresh: boolean) => {
     addBucketOpen(false);
@@ -156,30 +136,17 @@ const ListBuckets = ({
 
   useEffect(() => {
     setLoading(true);
-  }, [page, rowsPerPage]);
+  }, []);
 
   const confirmDeleteBucket = (bucket: string) => {
     setDeleteOpen(true);
     setSelectedBucket(bucket);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const rPP = parseInt(event.target.value, 10);
-    setPage(0);
-    setRowsPerPage(rPP);
-  };
   const tableActions = [
     { type: "view", to: `/buckets`, sendOnlyId: true },
     { type: "delete", onClick: confirmDeleteBucket, sendOnlyId: true },
   ];
-
-  const offset = page * rowsPerPage;
 
   const displayParsedDate = (date: string) => {
     return <Moment>{date}</Moment>;
@@ -196,8 +163,6 @@ const ListBuckets = ({
       }
     }
   });
-
-  const showInPage = filteredRecords;
 
   return (
     <React.Fragment>
@@ -271,7 +236,7 @@ const ListBuckets = ({
                 },
               ]}
               isLoading={loading}
-              records={showInPage}
+              records={filteredRecords}
               entityName="Buckets"
               idField="name"
             />

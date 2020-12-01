@@ -22,7 +22,6 @@ import SearchIcon from "@material-ui/icons/Search";
 import { Button, IconButton } from "@material-ui/core";
 import { CreateIcon } from "../../../../icons";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import { MinTablePaginationActions } from "../../../../common/MinTablePaginationActions";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../../common/api";
 import { ITenant, ITenantsResponse } from "./types";
@@ -86,8 +85,6 @@ const ListTenants = ({ classes }: ITenantsList) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [filterTenants, setFilterTenants] = useState<string>("");
   const [records, setRecords] = useState<any[]>([]);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
-  const [page, setPage] = useState<number>(0);
   const [error, setError] = useState<string>("");
   const [showNewCredentials, setShowNewCredentials] = useState<boolean>(false);
   const [
@@ -134,48 +131,28 @@ const ListTenants = ({ classes }: ITenantsList) => {
     setCreatedAccount(null);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const rPP = parseInt(event.target.value, 10);
-    setPage(0);
-    setRowsPerPage(rPP);
-  };
-
   const tableActions = [
     { type: "view", onClick: redirectToTenantDetails },
     { type: "delete", onClick: confirmDeleteTenant },
   ];
 
-  const globalOffset = 0;
-
-  const filteredRecords = records
-    .slice(globalOffset, globalOffset + rowsPerPage)
-    .filter((b: any) => {
-      if (filterTenants === "") {
+  const filteredRecords = records.filter((b: any) => {
+    if (filterTenants === "") {
+      return true;
+    } else {
+      if (b.name.indexOf(filterTenants) >= 0) {
         return true;
       } else {
-        if (b.name.indexOf(filterTenants) >= 0) {
-          return true;
-        } else {
-          return false;
-        }
+        return false;
       }
-    });
+    }
+  });
 
   useEffect(() => {
     if (isLoading) {
       const fetchRecords = () => {
-        const offset = page * rowsPerPage;
         api
-          .invoke(
-            "GET",
-            `/api/v1/tenants?offset=${offset}&limit=${rowsPerPage}`
-          )
+          .invoke("GET", `/api/v1/tenants`)
           .then((res: ITenantsResponse) => {
             if (res === null) {
               setIsLoading(false);
@@ -193,12 +170,6 @@ const ListTenants = ({ classes }: ITenantsList) => {
             setRecords(resTenants);
             setError("");
             setIsLoading(false);
-
-            // if we get 0 results, and page > 0 , go down 1 page
-            if ((!res.tenants || res.tenants.length === 0) && page > 0) {
-              const newPage = page - 1;
-              setPage(newPage);
-            }
           })
           .catch((err) => {
             setError(err);
@@ -207,7 +178,7 @@ const ListTenants = ({ classes }: ITenantsList) => {
       };
       fetchRecords();
     }
-  }, [isLoading, page, rowsPerPage]);
+  }, [isLoading]);
 
   useEffect(() => {
     setIsLoading(true);
