@@ -18,6 +18,7 @@ var (
 	errorGenericUnauthorized   = errors.New("unauthorized")
 	errorGenericForbidden      = errors.New("forbidden")
 	errorGenericNotFound       = errors.New("not found")
+	errConnectingToMinio       = errors.New("unable to connect to MinIO instance")
 	// Explicit error messages
 	errorInvalidErasureCodingValue        = errors.New("invalid Erasure Coding Value")
 	errorUnableToGetTenantUsage           = errors.New("unable to get tenant usage")

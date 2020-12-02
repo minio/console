@@ -184,9 +184,20 @@ export const predefinedList = {
     fontSize: 12,
     fontWeight: 600,
     minHeight: 41,
-    height: 41,
+  },
+  innerContent: {
+    width: "100%",
     overflowX: "auto" as const,
     whiteSpace: "nowrap" as const,
+    scrollbarWidth: "none" as const,
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+  },
+  innerContentMultiline: {
+    width: "100%",
+    maxHeight: 100,
+    overflowY: "auto" as const,
     scrollbarWidth: "none" as const,
     "&::-webkit-scrollbar": {
       display: "none",

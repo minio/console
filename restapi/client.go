@@ -364,9 +364,32 @@ func newS3BucketClient(claims *models.Principal, bucketName string, prefix strin
 	return s3Client, nil
 }
 
+// newTenantS3BucketClient creates a new mc S3Client for an specific tenant on a namespace to talk to the server based on a bucket
+func newTenantS3BucketClient(claims *models.Principal, tenantEndpoint, bucketName string, isSecure bool) (*mc.S3Client, error) {
+	if strings.TrimSpace(bucketName) != "" {
+		tenantEndpoint += fmt.Sprintf("/%s", bucketName)
+	}
+
+	if claims == nil {
+		return nil, fmt.Errorf("the provided credentials are invalid")
+	}
+
+	s3Config := newS3Config(tenantEndpoint, claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken, !isSecure)
+	client, pErr := mc.S3New(s3Config)
+	if pErr != nil {
+		return nil, pErr.Cause
+	}
+	s3Client, ok := client.(*mc.S3Client)
+	if !ok {
+		return nil, fmt.Errorf("the provided url doesn't point to a S3 server")
+	}
+
+	return s3Client, nil
+}
+
 // newS3Config simply creates a new Config struct using the passed
 // parameters.
-func newS3Config(endpoint, accessKey, secretKey, sessionToken string, isSecure bool) *mc.Config {
+func newS3Config(endpoint, accessKey, secretKey, sessionToken string, insecure bool) *mc.Config {
 	// We have a valid alias and hostConfig. We populate the
 	// consoleCredentials from the match found in the config file.
 	s3Config := new(mc.Config)
@@ -375,12 +398,13 @@ func newS3Config(endpoint, accessKey, secretKey, sessionToken string, isSecure b
 	s3Config.AppVersion = ""     // TODO: get this from constant or build
 	s3Config.AppComments = []string{}
 	s3Config.Debug = false
-	s3Config.Insecure = isSecure
+	s3Config.Insecure = insecure
 
 	s3Config.HostURL = endpoint
 	s3Config.AccessKey = accessKey
 	s3Config.SecretKey = secretKey
 	s3Config.SessionToken = sessionToken
 	s3Config.Signature = "S3v4"
+
 	return s3Config
 }

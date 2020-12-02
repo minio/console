@@ -68,6 +68,13 @@ func registersPoliciesHandler(api *operations.ConsoleAPI) {
 		}
 		return admin_api.NewSetPolicyNoContent()
 	})
+	// Set Policy Multiple User/Groups
+	api.AdminAPISetPolicyMultipleHandler = admin_api.SetPolicyMultipleHandlerFunc(func(params admin_api.SetPolicyMultipleParams, session *models.Principal) middleware.Responder {
+		if err := getSetPolicyMultipleResponse(session, params.Name, params.Body); err != nil {
+			return admin_api.NewSetPolicyMultipleDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewSetPolicyMultipleNoContent()
+	})
 }
 
 // listPolicies calls MinIO server to list all policy names present on the server.
@@ -244,6 +251,37 @@ func getSetPolicyResponse(session *models.Principal, name string, params *models
 
 	if err := setPolicy(ctx, adminClient, name, *params.EntityName, params.EntityType); err != nil {
 		return prepareError(err)
+	}
+	return nil
+}
+
+func getSetPolicyMultipleResponse(session *models.Principal, name string, params *models.SetPolicyMultipleRequest) *models.Error {
+	ctx := context.Background()
+	mAdmin, err := newMAdminClient(session)
+	if err != nil {
+		return prepareError(err)
+	}
+	// create a MinIO Admin Client interface implementation
+	// defining the client to be used
+	adminClient := adminClient{client: mAdmin}
+
+	if err := setPolicyMultipleEntities(ctx, adminClient, name, params.Users, params.Groups); err != nil {
+		return prepareError(err)
+	}
+	return nil
+}
+
+// setPolicyMultipleEntities sets a policy to multiple users/groups
+func setPolicyMultipleEntities(ctx context.Context, client MinioAdmin, policyName string, users, groups []models.IamEntity) error {
+	for _, user := range users {
+		if err := client.setPolicy(ctx, policyName, string(user), false); err != nil {
+			return err
+		}
+	}
+	for _, group := range groups {
+		if err := client.setPolicy(ctx, policyName, string(group), true); err != nil {
+			return err
+		}
 	}
 	return nil
 }

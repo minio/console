@@ -1982,6 +1982,43 @@ func init() {
         }
       }
     },
+    "/operator/{namespace}/{tenant}/buckets": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "List Buckets for Operator Console",
+        "operationId": "OperatorListBuckets",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listBucketsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/policies": {
       "get": {
         "tags": [
@@ -2411,6 +2448,42 @@ func init() {
             "schema": {
               "$ref": "#/definitions/sessionResponse"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/set-policy-multi/{name}": {
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Set policy to multiple users/groups",
+        "operationId": "SetPolicyMultiple",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/setPolicyMultipleRequest"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
@@ -3426,6 +3499,10 @@ func init() {
         }
       }
     },
+    "iamEntity": {
+      "type": "string",
+      "pattern": "^[\\w+=,.@-]{1,64}$"
+    },
     "idpConfiguration": {
       "type": "object",
       "properties": {
@@ -4317,6 +4394,23 @@ func init() {
           "minItems": 1,
           "items": {
             "$ref": "#/definitions/configurationKV"
+          }
+        }
+      }
+    },
+    "setPolicyMultipleRequest": {
+      "type": "object",
+      "properties": {
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/iamEntity"
+          }
+        },
+        "users": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/iamEntity"
           }
         }
       }
@@ -6848,6 +6942,43 @@ func init() {
         }
       }
     },
+    "/operator/{namespace}/{tenant}/buckets": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "List Buckets for Operator Console",
+        "operationId": "OperatorListBuckets",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listBucketsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/policies": {
       "get": {
         "tags": [
@@ -7277,6 +7408,42 @@ func init() {
             "schema": {
               "$ref": "#/definitions/sessionResponse"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/set-policy-multi/{name}": {
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Set policy to multiple users/groups",
+        "operationId": "SetPolicyMultiple",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/setPolicyMultipleRequest"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
@@ -8815,6 +8982,10 @@ func init() {
         }
       }
     },
+    "iamEntity": {
+      "type": "string",
+      "pattern": "^[\\w+=,.@-]{1,64}$"
+    },
     "idpConfiguration": {
       "type": "object",
       "properties": {
@@ -9640,6 +9811,23 @@ func init() {
           "minItems": 1,
           "items": {
             "$ref": "#/definitions/configurationKV"
+          }
+        }
+      }
+    },
+    "setPolicyMultipleRequest": {
+      "type": "object",
+      "properties": {
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/iamEntity"
+          }
+        },
+        "users": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/iamEntity"
           }
         }
       }
