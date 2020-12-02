@@ -33,4 +33,5 @@ jobs:
         run: |
           make verifiers
           make test
+          make crosscompile
           make console
