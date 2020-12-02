@@ -84,11 +84,11 @@ func (mc minioClientMock) getBucketEncryption(ctx context.Context, bucketName st
 	return minioGetBucketEncryptionMock(ctx, bucketName)
 }
 
-var minioAccountUsageInfoMock func(ctx context.Context) (madmin.AccountUsageInfo, error)
+var minioAccountInfoMock func(ctx context.Context) (madmin.AccountInfo, error)
 
 // mock function of dataUsageInfo() needed for list bucket's usage
-func (ac adminClientMock) accountUsageInfo(ctx context.Context) (madmin.AccountUsageInfo, error) {
-	return minioAccountUsageInfoMock(ctx)
+func (ac adminClientMock) accountInfo(ctx context.Context) (madmin.AccountInfo, error) {
+	return minioAccountInfoMock(ctx)
 }
 
 func TestListBucket(t *testing.T) {
@@ -96,7 +96,7 @@ func TestListBucket(t *testing.T) {
 	adminClient := adminClientMock{}
 	ctx := context.Background()
 	// Test-1 : getaAcountUsageInfo() Get response from minio client with two buckets
-	mockBucketList := madmin.AccountUsageInfo{
+	mockBucketList := madmin.AccountInfo{
 		AccountName: "test",
 		Buckets: []madmin.BucketUsageInfo{
 			{Name: "bucket-1", Created: time.Now(), Size: 1024},
@@ -104,13 +104,13 @@ func TestListBucket(t *testing.T) {
 		},
 	}
 	// mock function response from listBucketsWithContext(ctx)
-	minioAccountUsageInfoMock = func(ctx context.Context) (madmin.AccountUsageInfo, error) {
+	minioAccountInfoMock = func(ctx context.Context) (madmin.AccountInfo, error) {
 		return mockBucketList, nil
 	}
 	// get list buckets response this response should have Name, CreationDate, Size and Access
 	// as part of of each bucket
 	function := "getaAcountUsageInfo()"
-	bucketList, err := getAccountUsageInfo(ctx, adminClient)
+	bucketList, err := getAccountInfo(ctx, adminClient)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -124,10 +124,10 @@ func TestListBucket(t *testing.T) {
 	}
 
 	// Test-2 : getaAcountUsageInfo() Return and see that the error is handled correctly and returned
-	minioAccountUsageInfoMock = func(ctx context.Context) (madmin.AccountUsageInfo, error) {
-		return madmin.AccountUsageInfo{}, errors.New("error")
+	minioAccountInfoMock = func(ctx context.Context) (madmin.AccountInfo, error) {
+		return madmin.AccountInfo{}, errors.New("error")
 	}
-	_, err = getAccountUsageInfo(ctx, adminClient)
+	_, err = getAccountInfo(ctx, adminClient)
 	if assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
