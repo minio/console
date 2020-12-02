@@ -245,9 +245,9 @@ func getBucketVersionedResponse(session *models.Principal, bucketName string) (*
 	return listBucketsResponse, nil
 }
 
-// getAccountUsageInfo fetches a list of all buckets allowed to that particular client from MinIO Servers
-func getAccountUsageInfo(ctx context.Context, client MinioAdmin) ([]*models.Bucket, error) {
-	info, err := client.accountUsageInfo(ctx)
+// getAccountInfo fetches a list of all buckets allowed to that particular client from MinIO Servers
+func getAccountInfo(ctx context.Context, client MinioAdmin) ([]*models.Bucket, error) {
+	info, err := client.accountInfo(ctx)
 	if err != nil {
 		return []*models.Bucket{}, err
 	}
@@ -271,7 +271,7 @@ func getListBucketsResponse(session *models.Principal) (*models.ListBucketsRespo
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
-	buckets, err := getAccountUsageInfo(ctx, adminClient)
+	buckets, err := getAccountInfo(ctx, adminClient)
 	if err != nil {
 		return nil, prepareError(err)
 	}
