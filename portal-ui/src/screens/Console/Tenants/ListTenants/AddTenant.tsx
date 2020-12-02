@@ -189,7 +189,15 @@ const AddTenant = ({
   const [encryptionValid, setEncryptionValid] = useState<boolean>(false);
 
   // Custom Elements
+  const [customImage, setCustomImage] = useState<boolean>(false);
   const [customDockerhub, setCustomDockerhub] = useState<boolean>(false);
+  const [imageRegistry, setImageRegistry] = useState<string>("");
+  const [imageRegistryUsername, setImageRegistryUsername] = useState<string>(
+    ""
+  );
+  const [imageRegistryPassword, setImageRegistryPassword] = useState<string>(
+    ""
+  );
 
   // FilesBase64
   const [filesBase64, setFilesBase64] = useState<any>({
@@ -366,7 +374,7 @@ const AddTenant = ({
   useEffect(() => {
     let customAccountValidation: IValidation[] = [];
 
-    if (customDockerhub) {
+    if (customImage) {
       customAccountValidation = [
         ...customAccountValidation,
         {
@@ -385,6 +393,26 @@ const AddTenant = ({
             "Format must be of form: 'minio/console:VERSION'",
         },
       ];
+      if (customDockerhub) {
+        customAccountValidation = [
+          ...customAccountValidation,
+          {
+            fieldKey: "registry",
+            required: true,
+            value: imageRegistry,
+          },
+          {
+            fieldKey: "registryUsername",
+            required: true,
+            value: imageRegistryUsername,
+          },
+          {
+            fieldKey: "registryPassword",
+            required: true,
+            value: imageRegistryPassword,
+          },
+        ];
+      }
     }
 
     const commonVal = commonFormValidation(customAccountValidation);
@@ -392,7 +420,15 @@ const AddTenant = ({
     setConfigureValid(Object.keys(commonVal).length === 0);
 
     setValidationErrors(commonVal);
-  }, [customDockerhub, imageName, consoleImage]);
+  }, [
+    customImage,
+    imageName,
+    consoleImage,
+    customDockerhub,
+    imageRegistry,
+    imageRegistryUsername,
+    imageRegistryPassword,
+  ]);
 
   useEffect(() => {
     let customIDPValidation: IValidation[] = [];
@@ -763,6 +799,17 @@ const AddTenant = ({
         erasureCodingParity: parseInt(erasureCode, 10),
       };
 
+      if (customDockerhub) {
+        dataSend = {
+          ...dataSend,
+          image_registry: {
+            registry: imageRegistry,
+            username: imageRegistryUsername,
+            password: imageRegistryPassword,
+          },
+        };
+      }
+
       if (tlsType === "customcert") {
         let tenantCerts: any = null;
         let consoleCerts: any = null;
@@ -1046,20 +1093,20 @@ const AddTenant = ({
 
           <Grid item xs={12}>
             <FormSwitchWrapper
-              value="custom_dockerhub"
-              id="custom_dockerhub"
-              name="custom_dockerhub"
-              checked={customDockerhub}
+              value="custom_image"
+              id="custom_image"
+              name="custom_image"
+              checked={customImage}
               onChange={(e) => {
                 const targetD = e.target;
                 const checked = targetD.checked;
 
-                setCustomDockerhub(checked);
+                setCustomImage(checked);
               }}
               label={"Use custom image"}
             />
           </Grid>
-          {customDockerhub && (
+          {customImage && (
             <React.Fragment>
               Please enter the MinIO image from dockerhub to use
               <Grid item xs={12}>
@@ -1073,7 +1120,7 @@ const AddTenant = ({
                   label="MinIO's Image"
                   value={imageName}
                   error={validationErrors["image"] || ""}
-                  placeholder="Eg. minio/minio:RELEASE.2020-05-08T02-40-49Z"
+                  placeholder="E.g. minio/minio:RELEASE.2020-05-08T02-40-49Z"
                   required
                 />
               </Grid>
@@ -1088,7 +1135,70 @@ const AddTenant = ({
                   label="Console's Image"
                   value={consoleImage}
                   error={validationErrors["consoleImage"] || ""}
-                  placeholder="Eg. minio/console:v0.3.13"
+                  placeholder="E.g. minio/console:v0.3.13"
+                  required
+                />
+              </Grid>
+            </React.Fragment>
+          )}
+          {customImage && (
+            <React.Fragment>
+              <Grid item xs={12}>
+                <FormSwitchWrapper
+                  value="custom_docker_hub"
+                  id="custom_docker_hub"
+                  name="custom_docker_hub"
+                  checked={customDockerhub}
+                  onChange={(e) => {
+                    const targetD = e.target;
+                    const checked = targetD.checked;
+
+                    setCustomDockerhub(checked);
+                  }}
+                  label={"Set/Update Image Registry"}
+                />
+              </Grid>
+            </React.Fragment>
+          )}
+          {customDockerhub && (
+            <React.Fragment>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="registry"
+                  name="registry"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setImageRegistry(e.target.value);
+                  }}
+                  label="Endpoint"
+                  value={imageRegistry}
+                  error={validationErrors["registry"] || ""}
+                  placeholder="E.g. https://index.docker.io/v1/"
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="registryUsername"
+                  name="registryUsername"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setImageRegistryUsername(e.target.value);
+                  }}
+                  label="Username"
+                  value={imageRegistryUsername}
+                  error={validationErrors["registryUsername"] || ""}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="registryPassword"
+                  name="registryPassword"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setImageRegistryPassword(e.target.value);
+                  }}
+                  label="Password"
+                  value={imageRegistryPassword}
+                  error={validationErrors["registryPassword"] || ""}
                   required
                 />
               </Grid>
@@ -2053,7 +2163,7 @@ const AddTenant = ({
                 <TableCell>{tenantName}</TableCell>
               </TableRow>
 
-              {customDockerhub && (
+              {customImage && (
                 <TableRow>
                   <TableCell align="right" className={classes.tableTitle}>
                     MinIO Image

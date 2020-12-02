@@ -65,6 +65,13 @@ export interface ITenantCreator {
   encryption?: IEncryptionConfiguration;
   idp?: IIDPConfiguration;
   annotations?: Object;
+  image_registry?: ImageRegistry;
+}
+
+export interface ImageRegistry {
+  registry: string;
+  username: string;
+  password: string;
 }
 
 export interface ITenantUpdateObject {
