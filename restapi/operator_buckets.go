@@ -80,7 +80,7 @@ func getOperatorListBucketsResponse(session *models.Principal, namespace, tenant
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
-	buckets, err := getAccountUsageInfo(ctx, adminClient)
+	buckets, err := getAccountInfo(ctx, adminClient)
 	if err != nil {
 		return nil, prepareError(err)
 	}

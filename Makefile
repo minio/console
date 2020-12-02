@@ -30,6 +30,9 @@ fmt:
 	@GO111MODULE=on gofmt -d cmd/
 	@GO111MODULE=on gofmt -d cluster/
 
+crosscompile:
+	@(env bash $(PWD)/cross-compile.sh)
+
 lint:
 	@echo "Running $@ check"
 	@GO111MODULE=on ${GOPATH}/bin/golangci-lint cache clean
