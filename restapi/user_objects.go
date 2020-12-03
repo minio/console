@@ -478,20 +478,21 @@ func getSetObjectRetentionResponse(session *models.Principal, params user_api.Pu
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
-	err = setObjectRetention(ctx, minioClient, params.BucketName, params.Prefix, params.VersionID, params.Body)
+	err = setObjectRetention(ctx, minioClient, params.BucketName, params.VersionID, params.Prefix, params.Body)
 	if err != nil {
 		return prepareError(err)
 	}
 	return nil
 }
 
-func setObjectRetention(ctx context.Context, client MinioClient, bucketName, prefix, versionID string, retentionOps *models.PutObjectRetentionRequest) error {
+func setObjectRetention(ctx context.Context, client MinioClient, bucketName, versionID, prefix string, retentionOps *models.PutObjectRetentionRequest) error {
 	if retentionOps == nil {
 		return errors.New("object retention options can't be nil")
 	}
 	if retentionOps.Expires == nil {
 		return errors.New("object retention expires can't be nil")
 	}
+
 	var mode minio.RetentionMode
 	if retentionOps.Mode == models.ObjectRetentionModeGovernance {
 		mode = minio.Governance

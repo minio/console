@@ -868,6 +868,42 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/retention": {
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Set Bucket's retention config",
+        "operationId": "SetBucketRetentionConfig",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/putBucketRetentionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/versioning": {
       "get": {
         "tags": [
@@ -4057,6 +4093,13 @@ func init() {
         "compliance"
       ]
     },
+    "objectRetentionUnit": {
+      "type": "string",
+      "enum": [
+        "days",
+        "years"
+      ]
+    },
     "parityResponse": {
       "type": "array",
       "items": {
@@ -4184,6 +4227,26 @@ func init() {
       "properties": {
         "type": {
           "$ref": "#/definitions/profilerType"
+        }
+      }
+    },
+    "putBucketRetentionRequest": {
+      "type": "object",
+      "required": [
+        "mode",
+        "unit",
+        "validity"
+      ],
+      "properties": {
+        "mode": {
+          "$ref": "#/definitions/objectRetentionMode"
+        },
+        "unit": {
+          "$ref": "#/definitions/objectRetentionUnit"
+        },
+        "validity": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -5816,6 +5879,42 @@ func init() {
         ],
         "responses": {
           "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/retention": {
+      "put": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Set Bucket's retention config",
+        "operationId": "SetBucketRetentionConfig",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/putBucketRetentionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
             "description": "A successful response."
           },
           "default": {
@@ -9495,6 +9594,13 @@ func init() {
         "compliance"
       ]
     },
+    "objectRetentionUnit": {
+      "type": "string",
+      "enum": [
+        "days",
+        "years"
+      ]
+    },
     "parityResponse": {
       "type": "array",
       "items": {
@@ -9600,6 +9706,26 @@ func init() {
       "properties": {
         "type": {
           "$ref": "#/definitions/profilerType"
+        }
+      }
+    },
+    "putBucketRetentionRequest": {
+      "type": "object",
+      "required": [
+        "mode",
+        "unit",
+        "validity"
+      ],
+      "properties": {
+        "mode": {
+          "$ref": "#/definitions/objectRetentionMode"
+        },
+        "unit": {
+          "$ref": "#/definitions/objectRetentionUnit"
+        },
+        "validity": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
