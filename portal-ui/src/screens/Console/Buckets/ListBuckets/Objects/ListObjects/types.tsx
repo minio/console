@@ -19,6 +19,7 @@ export interface BucketObject {
   size: number;
   last_modified: Date;
   content_type: string;
+  version_id: string;
 }
 
 export interface BucketObjectsList {
