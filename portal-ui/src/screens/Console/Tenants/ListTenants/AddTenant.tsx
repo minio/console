@@ -134,7 +134,7 @@ const AddTenant = ({
   const [namespace, setNamespace] = useState<string>("");
   const [advancedMode, setAdvancedMode] = useState<boolean>(false);
   const [consoleImage, setConsoleImage] = useState<string>("");
-  const [idpSelection, setIdpSelection] = useState<string>("none");
+  const [idpSelection, setIdpSelection] = useState<string>("Built-in");
   const [openIDURL, setOpenIDURL] = useState<string>("");
   const [openIDClientID, setOpenIDClientID] = useState<string>("");
   const [openIDSecretID, setOpenIDSecretID] = useState<string>("");
@@ -432,7 +432,7 @@ const AddTenant = ({
   useEffect(() => {
     let customIDPValidation: IValidation[] = [];
 
-    if (idpSelection === "none") {
+    if (idpSelection === "Built-in") {
       setIdpValid(true);
       setValidationErrors({});
 
@@ -920,7 +920,7 @@ const AddTenant = ({
         };
       }
 
-      if (idpSelection !== "none") {
+      if (idpSelection !== "Built-in") {
         let dataIDP: any = {};
 
         switch (idpSelection) {
@@ -1233,7 +1233,7 @@ const AddTenant = ({
                 setIdpSelection(e.target.value);
               }}
               selectorOptions={[
-                { label: "None", value: "none" },
+                { label: "Built-in", value: "Built-in" },
                 { label: "OpenID", value: "OpenID" },
                 { label: "Active Directory", value: "AD" },
               ]}
