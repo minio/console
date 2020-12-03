@@ -119,6 +119,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIDeleteObjectHandler: user_api.DeleteObjectHandlerFunc(func(params user_api.DeleteObjectParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteObject has not yet been implemented")
 		}),
+		UserAPIDeleteObjectRetentionHandler: user_api.DeleteObjectRetentionHandlerFunc(func(params user_api.DeleteObjectRetentionParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.DeleteObjectRetention has not yet been implemented")
+		}),
 		UserAPIDeleteRemoteBucketHandler: user_api.DeleteRemoteBucketHandlerFunc(func(params user_api.DeleteRemoteBucketParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteRemoteBucket has not yet been implemented")
 		}),
@@ -266,6 +269,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPISetBucketQuotaHandler: user_api.SetBucketQuotaHandlerFunc(func(params user_api.SetBucketQuotaParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.SetBucketQuota has not yet been implemented")
 		}),
+		UserAPISetBucketRetentionConfigHandler: user_api.SetBucketRetentionConfigHandlerFunc(func(params user_api.SetBucketRetentionConfigParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.SetBucketRetentionConfig has not yet been implemented")
+		}),
 		UserAPISetBucketVersioningHandler: user_api.SetBucketVersioningHandlerFunc(func(params user_api.SetBucketVersioningParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.SetBucketVersioning has not yet been implemented")
 		}),
@@ -396,6 +402,8 @@ type ConsoleAPI struct {
 	UserAPIDeleteBucketEventHandler user_api.DeleteBucketEventHandler
 	// UserAPIDeleteObjectHandler sets the operation handler for the delete object operation
 	UserAPIDeleteObjectHandler user_api.DeleteObjectHandler
+	// UserAPIDeleteObjectRetentionHandler sets the operation handler for the delete object retention operation
+	UserAPIDeleteObjectRetentionHandler user_api.DeleteObjectRetentionHandler
 	// UserAPIDeleteRemoteBucketHandler sets the operation handler for the delete remote bucket operation
 	UserAPIDeleteRemoteBucketHandler user_api.DeleteRemoteBucketHandler
 	// UserAPIDeleteServiceAccountHandler sets the operation handler for the delete service account operation
@@ -494,6 +502,8 @@ type ConsoleAPI struct {
 	UserAPISessionCheckHandler user_api.SessionCheckHandler
 	// UserAPISetBucketQuotaHandler sets the operation handler for the set bucket quota operation
 	UserAPISetBucketQuotaHandler user_api.SetBucketQuotaHandler
+	// UserAPISetBucketRetentionConfigHandler sets the operation handler for the set bucket retention config operation
+	UserAPISetBucketRetentionConfigHandler user_api.SetBucketRetentionConfigHandler
 	// UserAPISetBucketVersioningHandler sets the operation handler for the set bucket versioning operation
 	UserAPISetBucketVersioningHandler user_api.SetBucketVersioningHandler
 	// AdminAPISetConfigHandler sets the operation handler for the set config operation
@@ -652,6 +662,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.UserAPIDeleteObjectHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteObjectHandler")
 	}
+	if o.UserAPIDeleteObjectRetentionHandler == nil {
+		unregistered = append(unregistered, "user_api.DeleteObjectRetentionHandler")
+	}
 	if o.UserAPIDeleteRemoteBucketHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteRemoteBucketHandler")
 	}
@@ -798,6 +811,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPISetBucketQuotaHandler == nil {
 		unregistered = append(unregistered, "user_api.SetBucketQuotaHandler")
+	}
+	if o.UserAPISetBucketRetentionConfigHandler == nil {
+		unregistered = append(unregistered, "user_api.SetBucketRetentionConfigHandler")
 	}
 	if o.UserAPISetBucketVersioningHandler == nil {
 		unregistered = append(unregistered, "user_api.SetBucketVersioningHandler")
@@ -1018,6 +1034,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
+	o.handlers["DELETE"]["/buckets/{bucket_name}/objects/retention"] = user_api.NewDeleteObjectRetention(o.context, o.UserAPIDeleteObjectRetentionHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
 	o.handlers["DELETE"]["/remote-buckets/{source-bucket-name}/{arn}"] = user_api.NewDeleteRemoteBucket(o.context, o.UserAPIDeleteRemoteBucketHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
@@ -1211,6 +1231,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/buckets/{name}/quota"] = user_api.NewSetBucketQuota(o.context, o.UserAPISetBucketQuotaHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/buckets/{bucket_name}/retention"] = user_api.NewSetBucketRetentionConfig(o.context, o.UserAPISetBucketRetentionConfigHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
