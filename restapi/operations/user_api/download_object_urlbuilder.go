@@ -34,7 +34,7 @@ type DownloadObjectURL struct {
 	BucketName string
 
 	Prefix    string
-	VersionID string
+	VersionID *string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -82,7 +82,10 @@ func (o *DownloadObjectURL) Build() (*url.URL, error) {
 		qs.Set("prefix", prefixQ)
 	}
 
-	versionIDQ := o.VersionID
+	var versionIDQ string
+	if o.VersionID != nil {
+		versionIDQ = *o.VersionID
+	}
 	if versionIDQ != "" {
 		qs.Set("version_id", versionIDQ)
 	}

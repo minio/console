@@ -228,10 +228,14 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 	return object, nil
 }
 
-func downloadObject(ctx context.Context, client MCClient, versionID string) (io.ReadCloser, error) {
+func downloadObject(ctx context.Context, client MCClient, versionID *string) (io.ReadCloser, error) {
 	// TODO: handle encripted files
 	var reader io.ReadCloser
-	reader, pErr := client.get(ctx, mc.GetOptions{VersionID: versionID})
+	var version string
+	if versionID != nil {
+		version = *versionID
+	}
+	reader, pErr := client.get(ctx, mc.GetOptions{VersionID: version})
 	if pErr != nil {
 		return nil, pErr.Cause
 	}

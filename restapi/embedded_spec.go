@@ -550,8 +550,7 @@ func init() {
           {
             "type": "string",
             "name": "version_id",
-            "in": "query",
-            "required": true
+            "in": "query"
           }
         ],
         "responses": {
@@ -5573,8 +5572,7 @@ func init() {
           {
             "type": "string",
             "name": "version_id",
-            "in": "query",
-            "required": true
+            "in": "query"
           }
         ],
         "responses": {
