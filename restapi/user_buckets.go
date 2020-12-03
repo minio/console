@@ -24,8 +24,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/replication"
 	"github.com/minio/minio-go/v7/pkg/sse"
+
+	"errors"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
@@ -123,6 +126,13 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 			return user_api.NewGetBucketEncryptionInfoDefault(int(err.Code)).WithPayload(err)
 		}
 		return user_api.NewGetBucketEncryptionInfoOK().WithPayload(response)
+	})
+	// set bucket retention config
+	api.UserAPISetBucketRetentionConfigHandler = user_api.SetBucketRetentionConfigHandlerFunc(func(params user_api.SetBucketRetentionConfigParams, session *models.Principal) middleware.Responder {
+		if err := getSetBucketRetentionConfigResponse(session, params); err != nil {
+			return user_api.NewSetBucketRetentionConfigDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewSetBucketRetentionConfigOK()
 	})
 }
 
@@ -559,4 +569,52 @@ func getBucketEncryptionInfoResponse(session *models.Principal, params user_api.
 		return nil, prepareError(errSSENotConfigured, err)
 	}
 	return bucketInfo, nil
+}
+
+// setBucketRetentionConfig sets object lock configuration on a bucket
+func setBucketRetentionConfig(ctx context.Context, client MinioClient, bucketName string, mode models.ObjectRetentionMode, unit models.ObjectRetentionUnit, validity *int32) error {
+	if validity == nil {
+		return errors.New("retention validity can't be nil")
+	}
+
+	var retentionMode minio.RetentionMode
+	switch mode {
+	case models.ObjectRetentionModeGovernance:
+		retentionMode = minio.Governance
+	case models.ObjectRetentionModeCompliance:
+		retentionMode = minio.Compliance
+	default:
+		return errors.New("invalid retention mode")
+	}
+
+	var retentionUnit minio.ValidityUnit
+	switch unit {
+	case models.ObjectRetentionUnitDays:
+		retentionUnit = minio.Days
+	case models.ObjectRetentionUnitYears:
+		retentionUnit = minio.Years
+	default:
+		return errors.New("invalid retention unit")
+	}
+
+	retentionValidity := uint(*validity)
+	return client.setObjectLockConfig(ctx, bucketName, &retentionMode, &retentionValidity, &retentionUnit)
+}
+
+func getSetBucketRetentionConfigResponse(session *models.Principal, params user_api.SetBucketRetentionConfigParams) *models.Error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		return prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+
+	err = setBucketRetentionConfig(ctx, minioClient, params.BucketName, params.Body.Mode, params.Body.Unit, params.Body.Validity)
+	if err != nil {
+		return prepareError(err)
+	}
+	return nil
 }

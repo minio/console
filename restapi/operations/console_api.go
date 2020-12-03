@@ -266,6 +266,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPISetBucketQuotaHandler: user_api.SetBucketQuotaHandlerFunc(func(params user_api.SetBucketQuotaParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.SetBucketQuota has not yet been implemented")
 		}),
+		UserAPISetBucketRetentionConfigHandler: user_api.SetBucketRetentionConfigHandlerFunc(func(params user_api.SetBucketRetentionConfigParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.SetBucketRetentionConfig has not yet been implemented")
+		}),
 		UserAPISetBucketVersioningHandler: user_api.SetBucketVersioningHandlerFunc(func(params user_api.SetBucketVersioningParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.SetBucketVersioning has not yet been implemented")
 		}),
@@ -494,6 +497,8 @@ type ConsoleAPI struct {
 	UserAPISessionCheckHandler user_api.SessionCheckHandler
 	// UserAPISetBucketQuotaHandler sets the operation handler for the set bucket quota operation
 	UserAPISetBucketQuotaHandler user_api.SetBucketQuotaHandler
+	// UserAPISetBucketRetentionConfigHandler sets the operation handler for the set bucket retention config operation
+	UserAPISetBucketRetentionConfigHandler user_api.SetBucketRetentionConfigHandler
 	// UserAPISetBucketVersioningHandler sets the operation handler for the set bucket versioning operation
 	UserAPISetBucketVersioningHandler user_api.SetBucketVersioningHandler
 	// AdminAPISetConfigHandler sets the operation handler for the set config operation
@@ -798,6 +803,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPISetBucketQuotaHandler == nil {
 		unregistered = append(unregistered, "user_api.SetBucketQuotaHandler")
+	}
+	if o.UserAPISetBucketRetentionConfigHandler == nil {
+		unregistered = append(unregistered, "user_api.SetBucketRetentionConfigHandler")
 	}
 	if o.UserAPISetBucketVersioningHandler == nil {
 		unregistered = append(unregistered, "user_api.SetBucketVersioningHandler")
@@ -1211,6 +1219,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/buckets/{name}/quota"] = user_api.NewSetBucketQuota(o.context, o.UserAPISetBucketQuotaHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/buckets/{bucket_name}/retention"] = user_api.NewSetBucketRetentionConfig(o.context, o.UserAPISetBucketRetentionConfigHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

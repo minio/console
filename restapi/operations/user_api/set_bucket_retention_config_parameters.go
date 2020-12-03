@@ -23,70 +23,78 @@ package user_api
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"io"
 	"net/http"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/validate"
+
+	"github.com/minio/console/models"
 )
 
-// NewDownloadObjectParams creates a new DownloadObjectParams object
+// NewSetBucketRetentionConfigParams creates a new SetBucketRetentionConfigParams object
 // no default values defined in spec.
-func NewDownloadObjectParams() DownloadObjectParams {
+func NewSetBucketRetentionConfigParams() SetBucketRetentionConfigParams {
 
-	return DownloadObjectParams{}
+	return SetBucketRetentionConfigParams{}
 }
 
-// DownloadObjectParams contains all the bound params for the download object operation
+// SetBucketRetentionConfigParams contains all the bound params for the set bucket retention config operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters Download Object
-type DownloadObjectParams struct {
+// swagger:parameters SetBucketRetentionConfig
+type SetBucketRetentionConfigParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
 	/*
 	  Required: true
+	  In: body
+	*/
+	Body *models.PutBucketRetentionRequest
+	/*
+	  Required: true
 	  In: path
 	*/
 	BucketName string
-	/*
-	  Required: true
-	  In: query
-	*/
-	Prefix string
-	/*
-	  In: query
-	*/
-	VersionID *string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewDownloadObjectParams() beforehand.
-func (o *DownloadObjectParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewSetBucketRetentionConfigParams() beforehand.
+func (o *SetBucketRetentionConfigParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
 
-	qs := runtime.Values(r.URL.Query())
+	if runtime.HasBody(r) {
+		defer r.Body.Close()
+		var body models.PutBucketRetentionRequest
+		if err := route.Consumer.Consume(r.Body, &body); err != nil {
+			if err == io.EOF {
+				res = append(res, errors.Required("body", "body", ""))
+			} else {
+				res = append(res, errors.NewParseError("body", "body", "", err))
+			}
+		} else {
+			// validate body object
+			if err := body.Validate(route.Formats); err != nil {
+				res = append(res, err)
+			}
 
+			if len(res) == 0 {
+				o.Body = &body
+			}
+		}
+	} else {
+		res = append(res, errors.Required("body", "body", ""))
+	}
 	rBucketName, rhkBucketName, _ := route.Params.GetOK("bucket_name")
 	if err := o.bindBucketName(rBucketName, rhkBucketName, route.Formats); err != nil {
-		res = append(res, err)
-	}
-
-	qPrefix, qhkPrefix, _ := qs.GetOK("prefix")
-	if err := o.bindPrefix(qPrefix, qhkPrefix, route.Formats); err != nil {
-		res = append(res, err)
-	}
-
-	qVersionID, qhkVersionID, _ := qs.GetOK("version_id")
-	if err := o.bindVersionID(qVersionID, qhkVersionID, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -97,7 +105,7 @@ func (o *DownloadObjectParams) BindRequest(r *http.Request, route *middleware.Ma
 }
 
 // bindBucketName binds and validates parameter BucketName from path.
-func (o *DownloadObjectParams) bindBucketName(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *SetBucketRetentionConfigParams) bindBucketName(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -107,45 +115,6 @@ func (o *DownloadObjectParams) bindBucketName(rawData []string, hasKey bool, for
 	// Parameter is provided by construction from the route
 
 	o.BucketName = raw
-
-	return nil
-}
-
-// bindPrefix binds and validates parameter Prefix from query.
-func (o *DownloadObjectParams) bindPrefix(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	if !hasKey {
-		return errors.Required("prefix", "query", rawData)
-	}
-	var raw string
-	if len(rawData) > 0 {
-		raw = rawData[len(rawData)-1]
-	}
-
-	// Required: true
-	// AllowEmptyValue: false
-	if err := validate.RequiredString("prefix", "query", raw); err != nil {
-		return err
-	}
-
-	o.Prefix = raw
-
-	return nil
-}
-
-// bindVersionID binds and validates parameter VersionID from query.
-func (o *DownloadObjectParams) bindVersionID(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	var raw string
-	if len(rawData) > 0 {
-		raw = rawData[len(rawData)-1]
-	}
-
-	// Required: false
-	// AllowEmptyValue: false
-	if raw == "" { // empty values pass all other validations
-		return nil
-	}
-
-	o.VersionID = &raw
 
 	return nil
 }

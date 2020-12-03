@@ -14,22 +14,28 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import storage from "local-storage-fallback";
+import { isNullOrUndefined } from "util";
 
-export const download = (bucketName: string, objectName: string) => {
+export const download = (
+  bucketName: string,
+  objectPath: string,
+  versionID: any
+) => {
   const anchor = document.createElement("a");
   document.body.appendChild(anchor);
-  const token: string = storage.getItem("token")!;
   const xhr = new XMLHttpRequest();
+  const allPathData = objectPath.split("/");
+  const objectName = allPathData[allPathData.length - 1];
 
-  xhr.open(
-    "GET",
-    `/api/v1/buckets/${bucketName}/objects/download?prefix=${objectName}`,
-    true
-  );
+  let path = `/api/v1/buckets/${bucketName}/objects/download?prefix=${objectPath}`;
+  if (!isNullOrUndefined(versionID) && versionID !== "null") {
+    path = path.concat(`&version_id=${versionID}`);
+  }
+
+  xhr.open("GET", path, true);
   xhr.responseType = "blob";
 
-  xhr.onload = function (e) {
+  xhr.onload = function(e) {
     if (this.status === 200) {
       const blob = new Blob([this.response], {
         type: "octet/stream",
