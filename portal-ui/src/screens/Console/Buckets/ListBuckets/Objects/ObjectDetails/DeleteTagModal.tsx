@@ -18,7 +18,7 @@ interface IDeleteTagModal {
   deleteOpen: boolean;
   currentTags: any;
   bucketName: string;
-  versionId: string;
+  versionId: string | null;
   selectedTag: [string, string];
   onCloseAndUpdate: (refresh: boolean) => void;
   selectedObject: string;

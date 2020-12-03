@@ -40,7 +40,7 @@ var minioGetObjectLegalHoldMock func(ctx context.Context, bucketName, objectName
 var minioGetObjectRetentionMock func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error)
 var minioPutObjectMock func(ctx context.Context, bucketName, objectName string, reader io.Reader, objectSize int64, opts minio.PutObjectOptions) (info minio.UploadInfo, err error)
 var minioPutObjectLegalHoldMock func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectLegalHoldOptions) error
-var miinoPutObjectRetentionMock func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error
+var minioPutObjectRetentionMock func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error
 var minioGetObjectTaggingMock func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error)
 var minioPutObjectTaggingMock func(ctx context.Context, bucketName, objectName string, otags *tags.Tags, opts minio.PutObjectTaggingOptions) error
 
@@ -70,7 +70,7 @@ func (ac minioClientMock) putObjectLegalHold(ctx context.Context, bucketName, ob
 }
 
 func (ac minioClientMock) putObjectRetention(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
-	return miinoPutObjectRetentionMock(ctx, bucketName, objectName, opts)
+	return minioPutObjectRetentionMock(ctx, bucketName, objectName, opts)
 }
 
 func (ac minioClientMock) getObjectTagging(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
@@ -985,7 +985,7 @@ func Test_putObjectRetention(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
-			miinoPutObjectRetentionMock = tt.args.retentionFunc
+			minioPutObjectRetentionMock = tt.args.retentionFunc
 			err := setObjectRetention(ctx, client, tt.args.bucket, tt.args.prefix, tt.args.versionID, tt.args.opts)
 			if tt.wantError != nil {
 				fmt.Println(t.Name())
@@ -994,6 +994,47 @@ func Test_putObjectRetention(t *testing.T) {
 				assert.Nil(err, fmt.Sprintf("setObjectRetention() error: %v, wantErr: %v", err, tt.wantError))
 			}
 
+		})
+	}
+}
+
+func Test_deleteObjectRetention(t *testing.T) {
+	assert := assert.New(t)
+	ctx := context.Background()
+	client := minioClientMock{}
+	type args struct {
+		bucket        string
+		prefix        string
+		versionID     string
+		retentionFunc func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error
+	}
+	tests := []struct {
+		test      string
+		args      args
+		wantError error
+	}{
+		{
+			test: "Delete Object retention governance",
+			args: args{
+				bucket:    "buck1",
+				versionID: "someversion",
+				prefix:    "folder/file.txt",
+				retentionFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
+					return nil
+				},
+			},
+			wantError: nil,
+		}}
+	for _, tt := range tests {
+		t.Run(tt.test, func(t *testing.T) {
+			minioPutObjectRetentionMock = tt.args.retentionFunc
+			err := deleteObjectRetention(ctx, client, tt.args.bucket, tt.args.prefix, tt.args.versionID)
+			if tt.wantError != nil {
+				fmt.Println(t.Name())
+				assert.Equal(tt.wantError.Error(), err.Error(), fmt.Sprintf("deleteObjectRetention() error: `%s`, wantErr: `%s`", err, tt.wantError))
+			} else {
+				assert.Nil(err, fmt.Sprintf("deleteObjectRetention() error: %v, wantErr: %v", err, tt.wantError))
+			}
 		})
 	}
 }

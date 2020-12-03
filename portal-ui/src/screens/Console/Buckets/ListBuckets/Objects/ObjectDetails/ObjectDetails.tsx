@@ -147,7 +147,7 @@ const emptyFile: IFileInfo = {
   retention_until_date: "",
   size: "0",
   tags: {},
-  version_id: "",
+  version_id: null,
 };
 
 const ObjectDetails = ({
@@ -206,8 +206,11 @@ const ObjectDetails = ({
     setRetentionModalOpen(true);
   };
 
-  const closeRetentionModal = () => {
+  const closeRetentionModal = (updateInfo: boolean) => {
     setRetentionModalOpen(false);
+    if (updateInfo) {
+      setLoadObjectData(true);
+    }
   };
 
   const shareObject = () => {
@@ -232,9 +235,12 @@ const ObjectDetails = ({
     { type: "download", onClick: downloadObject },
   ];
 
-  const filteredRecords = versions.filter((version) =>
-    version.version_id.includes(filterVersion)
-  );
+  const filteredRecords = versions.filter((version) => {
+    if (version.version_id) {
+      return version.version_id.includes(filterVersion);
+    }
+    return false;
+  });
 
   const displayParsedDate = (date: string) => {
     return <reactMoment.default>{date}</reactMoment.default>;
@@ -291,6 +297,8 @@ const ObjectDetails = ({
           open={retentionModalOpen}
           closeModalAndRefresh={closeRetentionModal}
           objectName={objectName}
+          objectInfo={actualInfo}
+          bucketName={bucketName}
         />
       )}
       {deleteOpen && (
@@ -340,52 +348,60 @@ const ObjectDetails = ({
           </Grid>
           <br />
           <Grid item xs={12} className={classes.propertiesContainer}>
-            <div className={classes.propertiesItem}>
-              <div>
-                <span className={classes.propertiesItemBold}>Legal Hold:</span>
-                <span className={classes.propertiesValue}>
-                  {actualInfo.legal_hold_status
-                    ? actualInfo.legal_hold_status.toLowerCase()
-                    : "Off"}
-                </span>
-              </div>
-              <div>
-                <IconButton
-                  color="primary"
-                  aria-label="legal-hold"
-                  size="small"
-                  className={classes.propertiesIcon}
-                  onClick={() => {
-                    setLegalholdOpen(true);
-                  }}
-                >
-                  <PencilIcon active={true} />
-                </IconButton>
-              </div>
-            </div>
-            <div className={classes.propertiesItem}>
-              <div>
-                <span className={classes.propertiesItemBold}>Retention:</span>
-                <span className={classes.propertiesValue}>
-                  {actualInfo.retention_mode
-                    ? actualInfo.retention_mode.toLowerCase()
-                    : "Undefined"}
-                </span>
-              </div>
-              <div>
-                <IconButton
-                  color="primary"
-                  aria-label="retention"
-                  size="small"
-                  className={classes.propertiesIcon}
-                  onClick={() => {
-                    openRetentionModal();
-                  }}
-                >
-                  <PencilIcon active={true} />
-                </IconButton>
-              </div>
-            </div>
+            {actualInfo.version_id && actualInfo.version_id !== "null" && (
+              <React.Fragment>
+                <div className={classes.propertiesItem}>
+                  <div>
+                    <span className={classes.propertiesItemBold}>
+                      Legal Hold:
+                    </span>
+                    <span className={classes.propertiesValue}>
+                      {actualInfo.legal_hold_status
+                        ? actualInfo.legal_hold_status.toLowerCase()
+                        : "Off"}
+                    </span>
+                  </div>
+                  <div>
+                    <IconButton
+                      color="primary"
+                      aria-label="legal-hold"
+                      size="small"
+                      className={classes.propertiesIcon}
+                      onClick={() => {
+                        setLegalholdOpen(true);
+                      }}
+                    >
+                      <PencilIcon active={true} />
+                    </IconButton>
+                  </div>
+                </div>
+                <div className={classes.propertiesItem}>
+                  <div>
+                    <span className={classes.propertiesItemBold}>
+                      Retention:
+                    </span>
+                    <span className={classes.propertiesValue}>
+                      {actualInfo.retention_mode
+                        ? actualInfo.retention_mode.toLowerCase()
+                        : "Undefined"}
+                    </span>
+                  </div>
+                  <div>
+                    <IconButton
+                      color="primary"
+                      aria-label="retention"
+                      size="small"
+                      className={classes.propertiesIcon}
+                      onClick={() => {
+                        openRetentionModal();
+                      }}
+                    >
+                      <PencilIcon active={true} />
+                    </IconButton>
+                  </div>
+                </div>
+              </React.Fragment>
+            )}
             <div className={classes.propertiesItem}>
               <div className={classes.propertiesItemBold}>File Actions:</div>
               <div className={classes.actionsIconContainer}>

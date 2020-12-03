@@ -146,7 +146,7 @@ export const RadioGroupSelector = ({
               return (
                 <FormControlLabel
                   key={`rd-${name}-${selectorOption.value}`}
-                  value={disableOptions ? "disabled" : selectorOption.value}
+                  value={selectorOption.value}
                   control={<RadioButton />}
                   label={selectorOption.label}
                   disabled={disableOptions}

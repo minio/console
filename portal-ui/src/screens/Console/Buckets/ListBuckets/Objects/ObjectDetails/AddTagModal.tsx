@@ -10,7 +10,7 @@ interface ITagModal {
   modalOpen: boolean;
   currentTags: any;
   bucketName: string;
-  versionId: string;
+  versionId: string | null;
   onCloseAndUpdate: (refresh: boolean) => void;
   selectedObject: string;
   classes: any;
