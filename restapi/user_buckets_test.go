@@ -42,6 +42,7 @@ var minioGetBucketPolicyMock func(bucketName string) (string, error)
 var minioSetBucketEncryptionMock func(ctx context.Context, bucketName string, config *sse.Configuration) error
 var minioRemoveBucketEncryptionMock func(ctx context.Context, bucketName string) error
 var minioGetBucketEncryptionMock func(ctx context.Context, bucketName string) (*sse.Configuration, error)
+var minioSetObjectLockConfig func(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error
 
 // Define a mock struct of minio Client interface implementation
 type minioClientMock struct {
@@ -82,6 +83,10 @@ func (mc minioClientMock) removeBucketEncryption(ctx context.Context, bucketName
 
 func (mc minioClientMock) getBucketEncryption(ctx context.Context, bucketName string) (*sse.Configuration, error) {
 	return minioGetBucketEncryptionMock(ctx, bucketName)
+}
+
+func (mc minioClientMock) setObjectLockConfig(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error {
+	return minioSetObjectLockConfig(ctx, bucketName, mode, validity, unit)
 }
 
 var minioAccountInfoMock func(ctx context.Context) (madmin.AccountInfo, error)
@@ -511,6 +516,129 @@ func Test_getBucketEncryptionInfo(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("getBucketEncryptionInfo() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_SetBucketRetentionConfig(t *testing.T) {
+	assert := assert.New(t)
+	ctx := context.Background()
+	minClient := minioClientMock{}
+	type args struct {
+		ctx                     context.Context
+		client                  MinioClient
+		bucketName              string
+		mode                    models.ObjectRetentionMode
+		unit                    models.ObjectRetentionUnit
+		validity                *int32
+		mockBucketRetentionFunc func(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error
+	}
+	tests := []struct {
+		name          string
+		args          args
+		expectedError error
+	}{
+		{
+			name: "Set Bucket Retention Config",
+			args: args{
+				ctx:        ctx,
+				client:     minClient,
+				bucketName: "test",
+				mode:       models.ObjectRetentionModeCompliance,
+				unit:       models.ObjectRetentionUnitDays,
+				validity:   swag.Int32(2),
+				mockBucketRetentionFunc: func(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error {
+					return nil
+				},
+			},
+			expectedError: nil,
+		},
+		{
+			name: "Set Bucket Retention Config 2",
+			args: args{
+				ctx:        ctx,
+				client:     minClient,
+				bucketName: "test",
+				mode:       models.ObjectRetentionModeGovernance,
+				unit:       models.ObjectRetentionUnitYears,
+				validity:   swag.Int32(2),
+				mockBucketRetentionFunc: func(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error {
+					return nil
+				},
+			},
+			expectedError: nil,
+		},
+		{
+			name: "Invalid validity",
+			args: args{
+				ctx:        ctx,
+				client:     minClient,
+				bucketName: "test",
+				mode:       models.ObjectRetentionModeCompliance,
+				unit:       models.ObjectRetentionUnitDays,
+				validity:   nil,
+				mockBucketRetentionFunc: func(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error {
+					return nil
+				},
+			},
+			expectedError: errors.New("retention validity can't be nil"),
+		},
+		{
+			name: "Invalid retention mode",
+			args: args{
+				ctx:        ctx,
+				client:     minClient,
+				bucketName: "test",
+				mode:       models.ObjectRetentionMode("othermode"),
+				unit:       models.ObjectRetentionUnitDays,
+				validity:   swag.Int32(2),
+				mockBucketRetentionFunc: func(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error {
+					return nil
+				},
+			},
+			expectedError: errors.New("invalid retention mode"),
+		},
+		{
+			name: "Invalid retention unit",
+			args: args{
+				ctx:        ctx,
+				client:     minClient,
+				bucketName: "test",
+				mode:       models.ObjectRetentionModeCompliance,
+				unit:       models.ObjectRetentionUnit("otherunit"),
+				validity:   swag.Int32(2),
+				mockBucketRetentionFunc: func(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error {
+					return nil
+				},
+			},
+			expectedError: errors.New("invalid retention unit"),
+		},
+		{
+			name: "Handle error on objec lock function",
+			args: args{
+				ctx:        ctx,
+				client:     minClient,
+				bucketName: "test",
+				mode:       models.ObjectRetentionModeCompliance,
+				unit:       models.ObjectRetentionUnitDays,
+				validity:   swag.Int32(2),
+				mockBucketRetentionFunc: func(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error {
+					return errors.New("error func")
+				},
+			},
+			expectedError: errors.New("error func"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			minioSetObjectLockConfig = tt.args.mockBucketRetentionFunc
+			err := setBucketRetentionConfig(tt.args.ctx, tt.args.client, tt.args.bucketName, tt.args.mode, tt.args.unit, tt.args.validity)
+			if tt.expectedError != nil {
+				fmt.Println(t.Name())
+				assert.Equal(tt.expectedError.Error(), err.Error(), fmt.Sprintf("setObjectRetention() error: `%s`, wantErr: `%s`", err, tt.expectedError))
+			} else {
+				assert.Nil(err, fmt.Sprintf("setBucketRetentionConfig() error: %v, wantErr: %v", err, tt.expectedError))
 			}
 		})
 	}

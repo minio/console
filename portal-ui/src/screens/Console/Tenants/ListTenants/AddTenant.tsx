@@ -133,9 +133,8 @@ const AddTenant = ({
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [namespace, setNamespace] = useState<string>("");
   const [advancedMode, setAdvancedMode] = useState<boolean>(false);
-  const [enablePrometheus, setEnablePrometheus] = useState<boolean>(false);
   const [consoleImage, setConsoleImage] = useState<string>("");
-  const [idpSelection, setIdpSelection] = useState<string>("none");
+  const [idpSelection, setIdpSelection] = useState<string>("Built-in");
   const [openIDURL, setOpenIDURL] = useState<string>("");
   const [openIDClientID, setOpenIDClientID] = useState<string>("");
   const [openIDSecretID, setOpenIDSecretID] = useState<string>("");
@@ -433,7 +432,7 @@ const AddTenant = ({
   useEffect(() => {
     let customIDPValidation: IValidation[] = [];
 
-    if (idpSelection === "none") {
+    if (idpSelection === "Built-in") {
       setIdpValid(true);
       setValidationErrors({});
 
@@ -775,7 +774,7 @@ const AddTenant = ({
         secret_key: "",
         enable_tls: enableTLS && tlsType === "autocert",
         enable_console: true,
-        enable_prometheus: enablePrometheus,
+        enable_prometheus: true,
         service_name: "",
         image: imageName,
         console_image: consoleImage,
@@ -921,7 +920,7 @@ const AddTenant = ({
         };
       }
 
-      if (idpSelection !== "none") {
+      if (idpSelection !== "Built-in") {
         let dataIDP: any = {};
 
         switch (idpSelection) {
@@ -1204,21 +1203,6 @@ const AddTenant = ({
               </Grid>
             </React.Fragment>
           )}
-          <Grid item xs={12}>
-            <FormSwitchWrapper
-              value="enable_prometheus"
-              id="enable_prometheus"
-              name="enable_prometheus"
-              checked={enablePrometheus}
-              onChange={(e) => {
-                const targetD = e.target;
-                const checked = targetD.checked;
-
-                setEnablePrometheus(checked);
-              }}
-              label={"Enable prometheus integration"}
-            />
-          </Grid>
         </React.Fragment>
       ),
       buttons: [
@@ -1249,7 +1233,7 @@ const AddTenant = ({
                 setIdpSelection(e.target.value);
               }}
               selectorOptions={[
-                { label: "None", value: "none" },
+                { label: "Built-in", value: "Built-in" },
                 { label: "OpenID", value: "OpenID" },
                 { label: "Active Directory", value: "AD" },
               ]}

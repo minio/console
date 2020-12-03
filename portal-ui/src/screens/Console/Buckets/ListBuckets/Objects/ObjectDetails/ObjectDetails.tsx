@@ -226,13 +226,13 @@ const ObjectDetails = ({
     setDeleteTagModalOpen(true);
   };
 
-  const downloadObject = (path: string) => {
-    download(bucketName, path);
+  const downloadObject = (object: IFileInfo) => {
+    download(bucketName, pathInBucket, object.version_id);
   };
 
   const tableActions = [
     { type: "share", onClick: shareObject, sendOnlyId: true },
-    { type: "download", onClick: downloadObject, sendOnlyId: true },
+    { type: "download", onClick: downloadObject },
   ];
 
   const filteredRecords = versions.filter((version) => {
@@ -424,7 +424,7 @@ const ObjectDetails = ({
                   size="small"
                   className={classes.actionsIcon}
                   onClick={() => {
-                    downloadObject(pathInBucket);
+                    downloadObject(actualInfo);
                   }}
                 >
                   <DownloadIcon />
