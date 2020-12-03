@@ -29,12 +29,12 @@ import (
 	"strings"
 )
 
-// DownloadObjectURL generates an URL for the download object operation
-type DownloadObjectURL struct {
+// DeleteObjectRetentionURL generates an URL for the delete object retention operation
+type DeleteObjectRetentionURL struct {
 	BucketName string
 
 	Prefix    string
-	VersionID *string
+	VersionID string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -44,7 +44,7 @@ type DownloadObjectURL struct {
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *DownloadObjectURL) WithBasePath(bp string) *DownloadObjectURL {
+func (o *DeleteObjectRetentionURL) WithBasePath(bp string) *DeleteObjectRetentionURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -52,21 +52,21 @@ func (o *DownloadObjectURL) WithBasePath(bp string) *DownloadObjectURL {
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *DownloadObjectURL) SetBasePath(bp string) {
+func (o *DeleteObjectRetentionURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *DownloadObjectURL) Build() (*url.URL, error) {
+func (o *DeleteObjectRetentionURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/buckets/{bucket_name}/objects/download"
+	var _path = "/buckets/{bucket_name}/objects/retention"
 
 	bucketName := o.BucketName
 	if bucketName != "" {
 		_path = strings.Replace(_path, "{bucket_name}", bucketName, -1)
 	} else {
-		return nil, errors.New("bucketName is required on DownloadObjectURL")
+		return nil, errors.New("bucketName is required on DeleteObjectRetentionURL")
 	}
 
 	_basePath := o._basePath
@@ -82,10 +82,7 @@ func (o *DownloadObjectURL) Build() (*url.URL, error) {
 		qs.Set("prefix", prefixQ)
 	}
 
-	var versionIDQ string
-	if o.VersionID != nil {
-		versionIDQ = *o.VersionID
-	}
+	versionIDQ := o.VersionID
 	if versionIDQ != "" {
 		qs.Set("version_id", versionIDQ)
 	}
@@ -96,7 +93,7 @@ func (o *DownloadObjectURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *DownloadObjectURL) Must(u *url.URL, err error) *url.URL {
+func (o *DeleteObjectRetentionURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -107,17 +104,17 @@ func (o *DownloadObjectURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *DownloadObjectURL) String() string {
+func (o *DeleteObjectRetentionURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *DownloadObjectURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *DeleteObjectRetentionURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on DownloadObjectURL")
+		return nil, errors.New("scheme is required for a full url on DeleteObjectRetentionURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on DownloadObjectURL")
+		return nil, errors.New("host is required for a full url on DeleteObjectRetentionURL")
 	}
 
 	base, err := o.Build()
@@ -131,6 +128,6 @@ func (o *DownloadObjectURL) BuildFull(scheme, host string) (*url.URL, error) {
 }
 
 // StringFull returns the string representation of a complete url
-func (o *DownloadObjectURL) StringFull(scheme, host string) string {
+func (o *DeleteObjectRetentionURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

@@ -223,6 +223,30 @@ paths:
       tags:
         - UserAPI
 
+  /buckets/{bucket_name}/retention:
+    put:
+      summary: Set Bucket's retention config
+      operationId: SetBucketRetentionConfig
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/putObjectRetentionRequest"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /buckets/{bucket_name}/objects:
     get:
       summary: List Objects
@@ -330,7 +354,7 @@ paths:
           type: string
         - name: version_id
           in: query
-          required: true
+          required: false
           type: string
       responses:
         200:
@@ -431,6 +455,31 @@ paths:
           required: true
           schema:
             $ref: "#/definitions/putObjectRetentionRequest"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    delete:
+      summary: Delete Object retention from an object
+      operationId: DeleteObjectRetention
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: true
+          type: string
       responses:
         200:
           description: A successful response.
@@ -3590,3 +3639,24 @@ definitions:
       tags:
         additionalProperties:
           type: string
+  
+  objectRetentionUnit:
+    type: string
+    enum:
+      - days
+      - years
+
+  putBucketRetentionRequest:
+    type: object
+    required:
+      - mode
+      - unit
+      - validity
+    properties:
+      mode:
+        $ref: "#/definitions/objectRetentionMode"
+      unit:
+        $ref: "#/definitions/objectRetentionUnit"
+      validity:
+        type: integer
+        format: int32

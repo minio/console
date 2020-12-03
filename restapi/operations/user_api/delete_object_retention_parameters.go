@@ -32,18 +32,18 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// NewDownloadObjectParams creates a new DownloadObjectParams object
+// NewDeleteObjectRetentionParams creates a new DeleteObjectRetentionParams object
 // no default values defined in spec.
-func NewDownloadObjectParams() DownloadObjectParams {
+func NewDeleteObjectRetentionParams() DeleteObjectRetentionParams {
 
-	return DownloadObjectParams{}
+	return DeleteObjectRetentionParams{}
 }
 
-// DownloadObjectParams contains all the bound params for the download object operation
+// DeleteObjectRetentionParams contains all the bound params for the delete object retention operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters Download Object
-type DownloadObjectParams struct {
+// swagger:parameters DeleteObjectRetention
+type DeleteObjectRetentionParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
@@ -59,16 +59,17 @@ type DownloadObjectParams struct {
 	*/
 	Prefix string
 	/*
+	  Required: true
 	  In: query
 	*/
-	VersionID *string
+	VersionID string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewDownloadObjectParams() beforehand.
-func (o *DownloadObjectParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewDeleteObjectRetentionParams() beforehand.
+func (o *DeleteObjectRetentionParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
@@ -97,7 +98,7 @@ func (o *DownloadObjectParams) BindRequest(r *http.Request, route *middleware.Ma
 }
 
 // bindBucketName binds and validates parameter BucketName from path.
-func (o *DownloadObjectParams) bindBucketName(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *DeleteObjectRetentionParams) bindBucketName(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -112,7 +113,7 @@ func (o *DownloadObjectParams) bindBucketName(rawData []string, hasKey bool, for
 }
 
 // bindPrefix binds and validates parameter Prefix from query.
-func (o *DownloadObjectParams) bindPrefix(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *DeleteObjectRetentionParams) bindPrefix(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	if !hasKey {
 		return errors.Required("prefix", "query", rawData)
 	}
@@ -133,19 +134,22 @@ func (o *DownloadObjectParams) bindPrefix(rawData []string, hasKey bool, formats
 }
 
 // bindVersionID binds and validates parameter VersionID from query.
-func (o *DownloadObjectParams) bindVersionID(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *DeleteObjectRetentionParams) bindVersionID(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	if !hasKey {
+		return errors.Required("version_id", "query", rawData)
+	}
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
 	}
 
-	// Required: false
+	// Required: true
 	// AllowEmptyValue: false
-	if raw == "" { // empty values pass all other validations
-		return nil
+	if err := validate.RequiredString("version_id", "query", raw); err != nil {
+		return err
 	}
 
-	o.VersionID = &raw
+	o.VersionID = raw
 
 	return nil
 }

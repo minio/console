@@ -107,6 +107,14 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewPutObjectRetentionOK()
 	})
+	// delete object retention
+	api.UserAPIDeleteObjectRetentionHandler = user_api.DeleteObjectRetentionHandlerFunc(func(params user_api.DeleteObjectRetentionParams, session *models.Principal) middleware.Responder {
+		if err := deleteObjectRetentionResponse(session, params); err != nil {
+			return user_api.NewDeleteObjectRetentionDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewDeleteObjectRetentionOK()
+	})
+	// set tags in object
 	api.UserAPIPutObjectTagsHandler = user_api.PutObjectTagsHandlerFunc(func(params user_api.PutObjectTagsParams, session *models.Principal) middleware.Responder {
 		if err := getPutObjectTagsResponse(session, params); err != nil {
 			return user_api.NewPutObjectTagsDefault(int(err.Code)).WithPayload(err)
@@ -228,10 +236,14 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 	return object, nil
 }
 
-func downloadObject(ctx context.Context, client MCClient, versionID string) (io.ReadCloser, error) {
+func downloadObject(ctx context.Context, client MCClient, versionID *string) (io.ReadCloser, error) {
 	// TODO: handle encripted files
 	var reader io.ReadCloser
-	reader, pErr := client.get(ctx, mc.GetOptions{VersionID: versionID})
+	var version string
+	if versionID != nil {
+		version = *versionID
+	}
+	reader, pErr := client.get(ctx, mc.GetOptions{VersionID: version})
 	if pErr != nil {
 		return nil, pErr.Cause
 	}
@@ -474,20 +486,21 @@ func getSetObjectRetentionResponse(session *models.Principal, params user_api.Pu
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
-	err = setObjectRetention(ctx, minioClient, params.BucketName, params.Prefix, params.VersionID, params.Body)
+	err = setObjectRetention(ctx, minioClient, params.BucketName, params.VersionID, params.Prefix, params.Body)
 	if err != nil {
 		return prepareError(err)
 	}
 	return nil
 }
 
-func setObjectRetention(ctx context.Context, client MinioClient, bucketName, prefix, versionID string, retentionOps *models.PutObjectRetentionRequest) error {
+func setObjectRetention(ctx context.Context, client MinioClient, bucketName, versionID, prefix string, retentionOps *models.PutObjectRetentionRequest) error {
 	if retentionOps == nil {
 		return errors.New("object retention options can't be nil")
 	}
 	if retentionOps.Expires == nil {
 		return errors.New("object retention expires can't be nil")
 	}
+
 	var mode minio.RetentionMode
 	if retentionOps.Mode == models.ObjectRetentionModeGovernance {
 		mode = minio.Governance
@@ -504,6 +517,32 @@ func setObjectRetention(ctx context.Context, client MinioClient, bucketName, pre
 		Mode:             &mode,
 		VersionID:        versionID,
 	}
+	return client.putObjectRetention(ctx, bucketName, prefix, opts)
+}
+
+func deleteObjectRetentionResponse(session *models.Principal, params user_api.DeleteObjectRetentionParams) *models.Error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		return prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+	err = deleteObjectRetention(ctx, minioClient, params.BucketName, params.Prefix, params.VersionID)
+	if err != nil {
+		return prepareError(err)
+	}
+	return nil
+}
+
+func deleteObjectRetention(ctx context.Context, client MinioClient, bucketName, prefix, versionID string) error {
+	opts := minio.PutObjectRetentionOptions{
+		GovernanceBypass: true,
+		VersionID:        versionID,
+	}
+
 	return client.putObjectRetention(ctx, bucketName, prefix, opts)
 }
 
