@@ -153,12 +153,9 @@ const ListObjects = ({
   setLastAsFile,
 }: IListObjectsProps) => {
   const [records, setRecords] = useState<BucketObject[]>([]);
-  const [totalRecords, setTotalRecords] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
-  const [deleteError, setDeleteError] = useState<string>("");
   const [selectedObject, setSelectedObject] = useState<string>("");
   const [selectedBucket, setSelectedBucket] = useState<string>("");
   const [filterObjects, setFilterObjects] = useState<string>("");
@@ -179,8 +176,6 @@ const ListObjects = ({
       .then((res: BucketObjectsList) => {
         setSelectedBucket(bucketName);
         setRecords(res.objects || []);
-        setTotalRecords(!res.objects ? 0 : res.total);
-        setError("");
         // In case no objects were retrieved, We check if item is a file
         if (!res.objects && extraPath !== "") {
           verifyIfIsFile();
@@ -190,7 +185,6 @@ const ListObjects = ({
       })
       .catch((err: any) => {
         setLoading(false);
-        setError(err);
       });
   }, [loading, match]);
 
@@ -221,7 +215,6 @@ const ListObjects = ({
       })
       .catch((err: any) => {
         setLoading(false);
-        setError(err);
       });
   };
 
@@ -263,7 +256,7 @@ const ListObjects = ({
     xhr.open("POST", uploadUrl, true);
 
     xhr.withCredentials = false;
-    xhr.onload = function (event) {
+    xhr.onload = function(event) {
       // TODO: handle status
       if (xhr.status === 401 || xhr.status === 403) {
         showSnackBarMessage("An error occurred while uploading the file.");
@@ -307,8 +300,8 @@ const ListObjects = ({
     setSelectedObject(object);
   };
 
-  const downloadObject = (object: string) => {
-    download(selectedBucket, object);
+  const downloadObject = (object: BucketObject) => {
+    download(selectedBucket, object.name, object.version_id);
   };
 
   const openPath = (idElement: string) => {
@@ -366,7 +359,7 @@ const ListObjects = ({
 
   const tableActions = [
     { type: "view", onClick: openPath, sendOnlyId: true },
-    { type: "download", onClick: downloadObject, sendOnlyId: true },
+    { type: "download", onClick: downloadObject },
     { type: "delete", onClick: confirmDeleteObject, sendOnlyId: true },
   ];
 
