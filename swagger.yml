@@ -464,6 +464,31 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
+    delete:
+      summary: Delete Object retention from an object
+      operationId: DeleteObjectRetention
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
 
   /buckets/{bucket_name}/objects/tags:
     put:
