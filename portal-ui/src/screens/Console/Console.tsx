@@ -14,9 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { Fragment } from "react";
 import clsx from "clsx";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Button, LinearProgress } from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
 import Container from "@material-ui/core/Container";
@@ -29,6 +30,7 @@ import {
   serverNeedsRestart,
   setMenuOpen,
 } from "../../actions";
+import { ISessionResponse } from "./types";
 import Buckets from "./Buckets/Buckets";
 import Policies from "./Policies/Policies";
 import Dashboard from "./Dashboard/Dashboard";
@@ -38,11 +40,9 @@ import Account from "./Account/Account";
 import Users from "./Users/Users";
 import Groups from "./Groups/Groups";
 import ListNotificationEndpoints from "./NotificationEndopoints/ListNotificationEndpoints";
-import ConfigurationsList from "./Configurations/ConfigurationPanels/ConfigurationsList";
-import { Button, LinearProgress } from "@material-ui/core";
+import ConfigurationMain from "./Configurations/ConfigurationMain";
 import WebhookPanel from "./Configurations/ConfigurationPanels/WebhookPanel";
 import ListTenants from "./Tenants/ListTenants/ListTenants";
-import { ISessionResponse } from "./types";
 import TenantDetails from "./Tenants/TenantDetails/TenantDetails";
 import ObjectBrowser from "./ObjectBrowser/ObjectBrowser";
 import ObjectRouting from "./Buckets/ListBuckets/Objects/ListObjects/ObjectRouting";
@@ -253,8 +253,8 @@ const Console = ({
       path: "/notification-endpoints",
     },
     {
-      component: ConfigurationsList,
-      path: "/configurations-list",
+      component: ConfigurationMain,
+      path: "/settings",
     },
     {
       component: Account,
@@ -284,7 +284,7 @@ const Console = ({
   const allowedRoutes = routes.filter((route: any) => allowedPages[route.path]);
 
   return (
-    <React.Fragment>
+    <Fragment>
       {session.status === "ok" ? (
         <div className={classes.root}>
           <CssBaseline />
@@ -305,12 +305,12 @@ const Console = ({
             {needsRestart && (
               <div className={classes.warningBar}>
                 {isServerLoading ? (
-                  <React.Fragment>
+                  <Fragment>
                     The server is restarting.
                     <LinearProgress />
-                  </React.Fragment>
+                  </Fragment>
                 ) : (
-                  <React.Fragment>
+                  <Fragment>
                     The instance needs to be restarted for configuration changes
                     to take effect.{" "}
                     <Button
@@ -322,7 +322,7 @@ const Console = ({
                     >
                       Restart
                     </Button>
-                  </React.Fragment>
+                  </Fragment>
                 )}
               </div>
             )}
@@ -346,7 +346,7 @@ const Console = ({
           </main>
         </div>
       ) : null}
-    </React.Fragment>
+    </Fragment>
   );
 };
 
