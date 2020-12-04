@@ -13,7 +13,7 @@ All `console` needs is a MinIO user with admin privileges and URL pointing to yo
 > Note: We don't recommend using MinIO's Operator Credentials
 
 1. Create a user for `console` using `mc`. 
-```
+```bash
 $ set +o history
 $ mc admin user add myminio console YOURCONSOLESECRET
 $ set -o history
@@ -21,7 +21,7 @@ $ set -o history
 
 2. Create a policy for `console` with access to everything (for testing and debugging)
 
-```
+```json
 $ cat > consoleAdmin.json << EOF
 {
 	"Version": "2012-10-17",
@@ -57,7 +57,7 @@ $ mc admin policy set myminio consoleAdmin user=console
 
 ### Note
 Additionally, you can create policies to limit the privileges for `console` users, for example, if you want the user to only have access to dashboard, buckets, notifications and watch page, the policy should look like this:
-```
+```json
 {
 	"Version": "2012-10-17",
 	"Statement": [{
@@ -100,7 +100,7 @@ Additionally, you can create policies to limit the privileges for `console` user
 ## Run Console server
 To run the server:
 
-```
+```bash
 #required to encrypt jwet payload
 export CONSOLE_PBKDF_PASSPHRASE=SECRET
 
