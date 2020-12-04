@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState, useEffect } from "react";
+import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import {
   containerForHeader,
@@ -38,10 +39,16 @@ import Trace from "./Trace/Trace";
 import Watch from "./Watch/Watch";
 import Heal from "./Heal/Heal";
 import PageHeader from "../../Common/PageHeader/PageHeader";
+import UsageBarWrapper from "../../Common/UsageBarWrapper/UsageBarWrapper";
 
 interface ITenantDetailsProps {
   classes: any;
   match: any;
+}
+
+interface ITenantUsage {
+  used: string;
+  disk_used: string;
 }
 
 const styles = (theme: Theme) =>
@@ -109,6 +116,12 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
   const [addReplicationOpen, setAddReplicationOpen] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [tenant, setTenant] = useState<ITenant | null>(null);
+  const [loadingUsage, setLoadingUsage] = useState<boolean>(true);
+  const [usageError, setUsageError] = useState<string>("");
+  const [usage, setUsage] = useState<number>(0);
+
+  const tenantName = match.params["tenantName"];
+  const tenantNamespace = match.params["tenantNamespace"];
 
   const onCloseZoneAndRefresh = (reload: boolean) => {
     setAddZone(false);
@@ -131,9 +144,6 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
   };
 
   const loadInfo = () => {
-    const tenantName = match.params["tenantName"];
-    const tenantNamespace = match.params["tenantNamespace"];
-
     api
       .invoke(
         "GET",
@@ -172,8 +182,28 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
       });
   };
 
+  const loadUsage = () => {
+    api
+      .invoke(
+        "GET",
+        `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/usage`
+      )
+      .then((result: ITenantUsage) => {
+        const usage = get(result, "disk_used", "0");
+        setUsage(parseInt(usage));
+        setUsageError("");
+        setLoadingUsage(false);
+      })
+      .catch((err) => {
+        setUsageError(err);
+        setUsage(0);
+        setLoadingUsage(false);
+      });
+  };
+
   useEffect(() => {
     loadInfo();
+    loadUsage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -209,7 +239,7 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
         <Grid item xs={12}>
           <br />
         </Grid>
-        <Grid item xs={12} className={classes.containerHeader}>
+        <Grid item xs={9} className={classes.containerHeader}>
           <Paper className={classes.paperContainer}>
             <div className={classes.infoGrid}>
               <div>Capacity:</div>
@@ -226,6 +256,16 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
               <div>{volumes}</div>
             </div>
           </Paper>
+        </Grid>
+        <Grid item xs={3}>
+          <UsageBarWrapper
+            currValue={usage}
+            maxValue={tenant ? tenant.total_size : 0}
+            label={"Storage"}
+            renderFunction={niceBytes}
+            error={usageError}
+            loading={loadingUsage}
+          />
         </Grid>
         <Grid item xs={12}>
           <br />
