@@ -18,9 +18,6 @@ import React, { useState, Fragment } from "react";
 import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import { TextField } from "@material-ui/core";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
 import history from "../../../../history";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import { configurationElements } from "../utils";
@@ -59,34 +56,6 @@ const styles = (theme: Theme) =>
       "&::-webkit-scrollbar": {
         display: "none",
       },
-    },
-    settingsOptionsContainer: {
-      height: "calc(100vh - 244px)",
-      backgroundColor: "#fff",
-      border: "#EAEDEE 1px solid",
-      borderRadius: 3,
-      marginTop: 15,
-    },
-    backButton: {
-      cursor: "pointer",
-      fontSize: 10,
-      fontWeight: 600,
-      color: "#000",
-      backgroundColor: "transparent",
-      border: 0,
-      padding: 0,
-      display: "flex",
-      alignItems: "center",
-      "&:active, &:focus": {
-        outline: 0,
-      },
-      "& svg": {
-        width: 10,
-        marginRight: 4,
-      },
-    },
-    backContainer: {
-      margin: "20px 38px 0",
     },
     ...searchField,
     ...actionsTray,
@@ -136,7 +105,7 @@ const ConfigurationsList = ({ classes }: IListConfiguration) => {
   };
 
   return (
-    <React.Fragment>
+    <Fragment>
       <Grid container>
         <Grid item xs={12}>
           <Grid item xs={12}>
@@ -191,7 +160,7 @@ const ConfigurationsList = ({ classes }: IListConfiguration) => {
           </Grid>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

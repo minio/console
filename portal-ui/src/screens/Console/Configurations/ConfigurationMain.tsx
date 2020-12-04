@@ -6,6 +6,7 @@ import { containerForHeader } from "../Common/FormComponents/common/styleLibrary
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import ConfigurationsList from "./ConfigurationPanels/ConfigurationsList";
+import ListNotificationEndpoints from "./NotificationEndpoints/ListNotificationEndpoints";
 
 interface IConfigurationMain {
   classes: any;
@@ -50,7 +51,11 @@ const ConfigurationMain = ({ classes }: IConfigurationMain) => {
                 <ConfigurationsList />
               </Grid>
             )}
-            {selectedTab === 1 && <div>Lambda notifications</div>}
+            {selectedTab === 1 && (
+              <Grid item xs={12}>
+                <ListNotificationEndpoints />
+              </Grid>
+            )}
           </Grid>
         </Grid>
       </Grid>
