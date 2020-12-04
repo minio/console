@@ -16,8 +16,8 @@ require (
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/minio/cli v1.22.0
 	github.com/minio/kes v0.11.0
-	github.com/minio/mc v0.0.0-20201202024448-00873e4b9326
-	github.com/minio/minio v0.0.0-20201202000049-3ca046b40876
+	github.com/minio/mc v0.0.0-20201203214312-c691cc548890
+	github.com/minio/minio v0.0.0-20201203235615-de9b64834eda
 	github.com/minio/minio-go/v7 v7.0.6
 	github.com/minio/operator v0.0.0-20201022162018-527e5c32132b
 	github.com/mitchellh/go-homedir v1.1.0
