@@ -15,85 +15,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import {
-  createStyles,
-  StyledProps,
-  Theme,
-  withStyles,
-} from "@material-ui/core/styles";
+import { createStyles, Theme } from "@material-ui/core/styles";
 
 import history from "../../../history";
-import {
-  Route,
-  RouteComponentProps,
-  Router,
-  Switch,
-  withRouter,
-} from "react-router-dom";
+import { Route, Router, Switch, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { AppState } from "../../../store";
 import { setMenuOpen } from "../../../actions";
-import { ThemedComponentProps } from "@material-ui/core/styles/withTheme";
 import NotFoundPage from "../../NotFoundPage";
 import ListBuckets from "./ListBuckets/ListBuckets";
 import ViewBucket from "./ViewBucket/ViewBucket";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    root: {
-      display: "flex",
-    },
-    toolbar: {
-      background: theme.palette.background.default,
-      color: "black",
-      paddingRight: 24, // keep right padding when drawer closed
-    },
-    toolbarIcon: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "flex-end",
-      padding: "0 8px",
-      ...theme.mixins.toolbar,
-    },
-    appBar: {
-      zIndex: theme.zIndex.drawer + 1,
-      transition: theme.transitions.create(["width", "margin"], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-    },
-
-    menuButton: {
-      marginRight: 36,
-    },
-    menuButtonHidden: {
-      display: "none",
-    },
-    title: {
-      flexGrow: 1,
-    },
-    appBarSpacer: {
-      height: "5px",
-    },
-    content: {
-      flexGrow: 1,
-      height: "100vh",
-      overflow: "auto",
-    },
-    container: {
-      paddingTop: theme.spacing(4),
-      paddingBottom: theme.spacing(4),
-    },
-    paper: {
-      padding: theme.spacing(2),
-      display: "flex",
-      overflow: "auto",
-      flexDirection: "column",
-    },
-    fixedHeight: {
-      minHeight: 240,
-    },
-  });
 
 const mapState = (state: AppState) => ({
   open: state.system.sidebarOpen,
@@ -101,27 +32,16 @@ const mapState = (state: AppState) => ({
 
 const connector = connect(mapState, { setMenuOpen });
 
-interface BucketsProps {
-  open: boolean;
-  title: string;
-  classes: any;
-  setMenuOpen: typeof setMenuOpen;
-}
+const Buckets = () => {
+  return (
+    <Router history={history}>
+      <Switch>
+        <Route path="/buckets/:bucketName" component={ViewBucket} />
+        <Route path="/" component={ListBuckets} />
+        <Route component={NotFoundPage} />
+      </Switch>
+    </Router>
+  );
+};
 
-class Buckets extends React.Component<
-  BucketsProps & RouteComponentProps & StyledProps & ThemedComponentProps
-> {
-  render() {
-    return (
-      <Router history={history}>
-        <Switch>
-          <Route path="/buckets/:bucketName" component={ViewBucket} />
-          <Route path="/" component={ListBuckets} />
-          <Route component={NotFoundPage} />
-        </Switch>
-      </Router>
-    );
-  }
-}
-
-export default withRouter(connector(withStyles(styles)(Buckets)));
+export default withRouter(connector(Buckets));

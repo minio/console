@@ -256,7 +256,7 @@ const ListObjects = ({
     xhr.open("POST", uploadUrl, true);
 
     xhr.withCredentials = false;
-    xhr.onload = function(event) {
+    xhr.onload = function (event) {
       // TODO: handle status
       if (xhr.status === 401 || xhr.status === 403) {
         showSnackBarMessage("An error occurred while uploading the file.");

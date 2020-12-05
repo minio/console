@@ -350,4 +350,4 @@ const connector = connect(mapState, {
   serverIsLoading,
 });
 
-export default connector(withStyles(styles)(Console));
+export default withStyles(styles)(connector(Console));
