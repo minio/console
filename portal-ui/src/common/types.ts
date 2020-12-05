@@ -34,8 +34,8 @@ export interface ITenant {
   volume_count: string;
   volume_size: string;
   volumes_per_server?: string;
-  zone_count: string;
-  zones?: IZoneModel[];
+  pool_count: string;
+  pools?: IPoolModel[];
   used_capacity?: string;
   endpoint?: string;
   storage_class?: string;
@@ -58,7 +58,7 @@ export interface ITenantCreator {
   secret_key: string;
   image: string;
   console_image: string;
-  zones: IZoneModel[];
+  pools: IPoolModel[];
   namespace: string;
   erasureCodingParity: number;
   tls?: ITLSTenantConfiguration;
@@ -299,7 +299,7 @@ export interface IArchivedTenant {
   capacity: number;
 }
 
-export interface IZoneModel {
+export interface IPoolModel {
   name?: string;
   servers: number;
   volumes_per_server: number;
@@ -309,8 +309,8 @@ export interface IZoneModel {
   resources?: IResourceModel;
 }
 
-export interface IUpdateZone {
-  zones: IZoneModel[];
+export interface IUpdatePool {
+  pools: IPoolModel[];
 }
 
 export interface INode {

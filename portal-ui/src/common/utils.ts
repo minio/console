@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import storage from "local-storage-fallback";
-import { ICapacity, IZoneModel } from "./types";
+import { ICapacity, IPoolModel } from "./types";
 
 const minStReq = 1073741824; // Minimal Space required for MinIO
 const minMemReq = 2147483648; // Minimal Memory required for MinIO in bytes
@@ -204,7 +204,7 @@ export const calculateDistribution = (
 
   if (parseInt(requestedSizeBytes, 10) < minStReq) {
     return {
-      error: "The zone size must be greater than 1Gi",
+      error: "The pool size must be greater than 1Gi",
       nodes: 0,
       persistentVolumes: 0,
       disks: 0,
@@ -324,9 +324,9 @@ const structureCalc = (
   };
 };
 
-// Zone Name Generator
-export const generateZoneName = (zones: IZoneModel[]) => {
-  const zoneCounter = zones.length;
+// Pool Name Generator
+export const generatePoolName = (pools: IPoolModel[]) => {
+  const poolCounter = pools.length;
 
-  return `zone-${zoneCounter}`;
+  return `pool-${poolCounter}`;
 };

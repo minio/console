@@ -50,14 +50,14 @@ type TenantList struct {
 	// namespace
 	Namespace string `json:"namespace,omitempty"`
 
+	// pool count
+	PoolCount int64 `json:"pool_count,omitempty"`
+
 	// total size
 	TotalSize int64 `json:"total_size,omitempty"`
 
 	// volume count
 	VolumeCount int64 `json:"volume_count,omitempty"`
-
-	// zone count
-	ZoneCount int64 `json:"zone_count,omitempty"`
 }
 
 // Validate validates this tenant list

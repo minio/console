@@ -34,18 +34,18 @@ import (
 	"github.com/minio/console/models"
 )
 
-// NewTenantAddZoneParams creates a new TenantAddZoneParams object
+// NewTenantUpdatePoolsParams creates a new TenantUpdatePoolsParams object
 // no default values defined in spec.
-func NewTenantAddZoneParams() TenantAddZoneParams {
+func NewTenantUpdatePoolsParams() TenantUpdatePoolsParams {
 
-	return TenantAddZoneParams{}
+	return TenantUpdatePoolsParams{}
 }
 
-// TenantAddZoneParams contains all the bound params for the tenant add zone operation
+// TenantUpdatePoolsParams contains all the bound params for the tenant update pools operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters TenantAddZone
-type TenantAddZoneParams struct {
+// swagger:parameters TenantUpdatePools
+type TenantUpdatePoolsParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
@@ -54,7 +54,7 @@ type TenantAddZoneParams struct {
 	  Required: true
 	  In: body
 	*/
-	Body *models.Zone
+	Body *models.PoolUpdateRequest
 	/*
 	  Required: true
 	  In: path
@@ -70,15 +70,15 @@ type TenantAddZoneParams struct {
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewTenantAddZoneParams() beforehand.
-func (o *TenantAddZoneParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewTenantUpdatePoolsParams() beforehand.
+func (o *TenantUpdatePoolsParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		var body models.Zone
+		var body models.PoolUpdateRequest
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
 				res = append(res, errors.Required("body", "body", ""))
@@ -115,7 +115,7 @@ func (o *TenantAddZoneParams) BindRequest(r *http.Request, route *middleware.Mat
 }
 
 // bindNamespace binds and validates parameter Namespace from path.
-func (o *TenantAddZoneParams) bindNamespace(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *TenantUpdatePoolsParams) bindNamespace(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -130,7 +130,7 @@ func (o *TenantAddZoneParams) bindNamespace(rawData []string, hasKey bool, forma
 }
 
 // bindTenant binds and validates parameter Tenant from path.
-func (o *TenantAddZoneParams) bindTenant(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *TenantUpdatePoolsParams) bindTenant(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]

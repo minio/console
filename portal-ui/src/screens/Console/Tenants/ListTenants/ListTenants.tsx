@@ -294,7 +294,7 @@ const ListTenants = ({ classes }: ITenantsList) => {
               columns={[
                 { label: "Name", elementKey: "name" },
                 { label: "Capacity", elementKey: "capacity" },
-                { label: "# of Zones", elementKey: "zone_count" },
+                { label: "# of Pools", elementKey: "pool_count" },
                 { label: "State", elementKey: "currentState" },
               ]}
               isLoading={isLoading}
