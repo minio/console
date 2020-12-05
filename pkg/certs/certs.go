@@ -28,12 +28,9 @@ import (
 	"github.com/minio/cli"
 	"github.com/minio/minio/cmd/config"
 	"github.com/minio/minio/cmd/logger"
-	"github.com/minio/minio/pkg/certs"
-	certsx "github.com/minio/minio/pkg/certs"
+	xcerts "github.com/minio/minio/pkg/certs"
 	"github.com/mitchellh/go-homedir"
 )
-
-type GetCertificateFunc = certs.GetCertificateFunc
 
 // ConfigDir - points to a user set directory.
 type ConfigDir struct {
@@ -142,7 +139,7 @@ func getPrivateKeyFile() string {
 	return filepath.Join(GlobalCertsDir.Get(), PrivateKeyFile)
 }
 
-func GetTLSConfig() (x509Certs []*x509.Certificate, manager *certs.Manager, err error) {
+func GetTLSConfig() (x509Certs []*x509.Certificate, manager *xcerts.Manager, err error) {
 
 	ctx := context.Background()
 
@@ -154,7 +151,7 @@ func GetTLSConfig() (x509Certs []*x509.Certificate, manager *certs.Manager, err 
 		return nil, nil, err
 	}
 
-	manager, err = certs.NewManager(ctx, getPublicCertFile(), getPrivateKeyFile(), config.LoadX509KeyPair)
+	manager, err = xcerts.NewManager(ctx, getPublicCertFile(), getPrivateKeyFile(), config.LoadX509KeyPair)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -222,9 +219,9 @@ func GetTLSConfig() (x509Certs []*x509.Certificate, manager *certs.Manager, err 
 	return x509Certs, manager, nil
 }
 
-func GetAllCertificatesAndCAs() (*x509.CertPool, []*x509.Certificate, *certs.Manager) {
+func GetAllCertificatesAndCAs() (*x509.CertPool, []*x509.Certificate, *xcerts.Manager) {
 	// load all CAs from ~/.console/certs/CAs
-	GlobalRootCAs, err := certsx.GetRootCAs(GlobalCertsCADir.Get())
+	GlobalRootCAs, err := xcerts.GetRootCAs(GlobalCertsCADir.Get())
 	logger.FatalIf(err, "Failed to read root CAs (%v)", err)
 	// load all certs from ~/.console/certs
 	globalPublicCerts, globalTLSCertsManager, err := GetTLSConfig()
