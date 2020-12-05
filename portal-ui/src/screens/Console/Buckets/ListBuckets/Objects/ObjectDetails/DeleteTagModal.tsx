@@ -6,7 +6,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Grid,
   LinearProgress,
 } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
@@ -19,7 +18,7 @@ interface IDeleteTagModal {
   currentTags: any;
   bucketName: string;
   versionId: string | null;
-  selectedTag: [string, string];
+  selectedTag: string[];
   onCloseAndUpdate: (refresh: boolean) => void;
   selectedObject: string;
   classes: any;

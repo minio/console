@@ -23,7 +23,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  LinearProgress
+  LinearProgress,
 } from "@material-ui/core";
 import api from "../../../common/api";
 import Typography from "@material-ui/core/Typography";
@@ -39,15 +39,15 @@ interface IDeleteGroup {
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
-    }
+      color: "red",
+    },
   });
 
 const DeleteGroup = ({
   selectedGroup,
   deleteOpen,
   closeDeleteModalAndRefresh,
-  classes
+  classes,
 }: IDeleteGroup) => {
   const [isDeleting, setDeleteLoading] = useState<boolean>(false);
   const [deleteError, setError] = useState<string>("");
@@ -67,7 +67,7 @@ const DeleteGroup = ({
 
             closeDeleteModalAndRefresh(true);
           })
-          .catch(err => {
+          .catch((err) => {
             setDeleteLoading(false);
             setError(err);
           });

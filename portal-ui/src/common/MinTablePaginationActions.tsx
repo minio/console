@@ -19,7 +19,7 @@ import {
   createStyles,
   makeStyles,
   Theme,
-  useTheme
+  useTheme,
 } from "@material-ui/core/styles";
 import React from "react";
 import { IconButton } from "@material-ui/core";
@@ -31,8 +31,8 @@ const useStyles1 = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexShrink: 0,
-      marginLeft: theme.spacing(2.5)
-    }
+      marginLeft: theme.spacing(2.5),
+    },
   })
 );
 

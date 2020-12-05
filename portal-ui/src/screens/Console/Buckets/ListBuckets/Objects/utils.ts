@@ -35,7 +35,7 @@ export const download = (
   xhr.open("GET", path, true);
   xhr.responseType = "blob";
 
-  xhr.onload = function(e) {
+  xhr.onload = function (e) {
     if (this.status === 200) {
       const blob = new Blob([this.response], {
         type: "octet/stream",

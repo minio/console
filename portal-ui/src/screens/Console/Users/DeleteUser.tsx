@@ -23,7 +23,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  LinearProgress
+  LinearProgress,
 } from "@material-ui/core";
 import api from "../../../common/api";
 import { User, UsersList } from "./types";
@@ -32,8 +32,8 @@ import Typography from "@material-ui/core/Typography";
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: "red"
-    }
+      color: "red",
+    },
   });
 
 interface IDeleteUserProps {
@@ -51,7 +51,7 @@ interface IDeleteUserState {
 class DeleteUser extends React.Component<IDeleteUserProps, IDeleteUserState> {
   state: IDeleteUserState = {
     deleteLoading: false,
-    deleteError: ""
+    deleteError: "",
   };
 
   removeRecord() {
@@ -66,23 +66,23 @@ class DeleteUser extends React.Component<IDeleteUserProps, IDeleteUserState> {
     this.setState({ deleteLoading: true }, () => {
       api
         .invoke("DELETE", `/api/v1/users/${selectedUser.accessKey}`, {
-          id: selectedUser.id
+          id: selectedUser.id,
         })
         .then((res: UsersList) => {
           this.setState(
             {
               deleteLoading: false,
-              deleteError: ""
+              deleteError: "",
             },
             () => {
               this.props.closeDeleteModalAndRefresh(true);
             }
           );
         })
-        .catch(err => {
+        .catch((err) => {
           this.setState({
             deleteLoading: false,
-            deleteError: err
+            deleteError: err,
           });
         });
     });
