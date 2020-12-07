@@ -365,7 +365,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
                   }
                   label="JWT"
                   name="jwt"
-                  autoComplete="Service Account JWT Token"
+                  autoComplete="off"
                   disabled={loginSending}
                 />
               </Grid>
