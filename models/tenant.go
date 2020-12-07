@@ -59,18 +59,18 @@ type Tenant struct {
 	// namespace
 	Namespace string `json:"namespace,omitempty"`
 
+	// pools
+	Pools []*Pool `json:"pools"`
+
 	// total size
 	TotalSize int64 `json:"total_size,omitempty"`
-
-	// zones
-	Zones []*Zone `json:"zones"`
 }
 
 // Validate validates this tenant
 func (m *Tenant) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateZones(formats); err != nil {
+	if err := m.validatePools(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -80,21 +80,21 @@ func (m *Tenant) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Tenant) validateZones(formats strfmt.Registry) error {
+func (m *Tenant) validatePools(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Zones) { // not required
+	if swag.IsZero(m.Pools) { // not required
 		return nil
 	}
 
-	for i := 0; i < len(m.Zones); i++ {
-		if swag.IsZero(m.Zones[i]) { // not required
+	for i := 0; i < len(m.Pools); i++ {
+		if swag.IsZero(m.Pools[i]) { // not required
 			continue
 		}
 
-		if m.Zones[i] != nil {
-			if err := m.Zones[i].Validate(formats); err != nil {
+		if m.Pools[i] != nil {
+			if err := m.Pools[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("zones" + "." + strconv.Itoa(i))
+					return ve.ValidateName("pools" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
