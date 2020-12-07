@@ -34,7 +34,7 @@ import Policies from "./Policies/Policies";
 import Dashboard from "./Dashboard/Dashboard";
 import Menu from "./Menu/Menu";
 import api from "../../common/api";
-import ServiceAccounts from "./ServiceAccounts/ServiceAccounts";
+import Account from "./Account/Account";
 import Users from "./Users/Users";
 import Groups from "./Groups/Groups";
 import ListNotificationEndpoints from "./NotificationEndopoints/ListNotificationEndpoints";
@@ -237,8 +237,12 @@ const Console = ({
       path: "/configurations-list",
     },
     {
-      component: ServiceAccounts,
-      path: "/service-accounts",
+      component: Permissions,
+      path: "/permissions",
+    },
+    {
+      component: Account,
+      path: "/account",
     },
     {
       component: WebhookPanel,
@@ -290,20 +294,20 @@ const Console = ({
                     <LinearProgress />
                   </React.Fragment>
                 ) : (
-                  <React.Fragment>
-                    The instance needs to be restarted for configuration changes
+                    <React.Fragment>
+                      The instance needs to be restarted for configuration changes
                     to take effect.{" "}
-                    <Button
-                      color="secondary"
-                      size="small"
-                      onClick={() => {
-                        restartServer();
-                      }}
-                    >
-                      Restart
+                      <Button
+                        color="secondary"
+                        size="small"
+                        onClick={() => {
+                          restartServer();
+                        }}
+                      >
+                        Restart
                     </Button>
-                  </React.Fragment>
-                )}
+                    </React.Fragment>
+                  )}
               </div>
             )}
             <Container className={classes.container}>

@@ -56,6 +56,10 @@ func getMinIOServer() string {
 	return strings.TrimSpace(env.Get(ConsoleMinIOServer, "http://localhost:9000"))
 }
 
+func getMinIORegion() string {
+	return strings.TrimSpace(env.Get(ConsoleMinIORegion, ""))
+}
+
 func getMinIOEndpoint() string {
 	server := getMinIOServer()
 	if strings.Contains(server, "://") {

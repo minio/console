@@ -47,3 +47,7 @@ func (ac adminClientMock) removeRemoteBucket(ctx context.Context, bucket, arn st
 func (ac adminClientMock) addRemoteBucket(ctx context.Context, bucket string, target *madmin.BucketTarget) (string, error) {
 	return "", nil
 }
+
+func (ac adminClientMock) changePassword(ctx context.Context, accessKey, secretKey string) error {
+	return minioChangePasswordMock(ctx, accessKey, secretKey)
+}
