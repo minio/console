@@ -24,7 +24,6 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import { Policy, PolicyList } from "./types";
 import { CreateIcon } from "../../../icons";
-import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
 import AddPolicy from "./AddPolicy";
 import DeletePolicy from "./DeletePolicy";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
@@ -80,8 +79,6 @@ const Policies = ({ classes }: IPoliciesProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedPolicy, setSelectedPolicy] = useState<string>("");
   const [filterPolicies, setFilterPolicies] = useState<string>("");
@@ -93,9 +90,8 @@ const Policies = ({ classes }: IPoliciesProps) => {
 
   useEffect(() => {
     if (loading) {
-      const offset = page * rowsPerPage;
       api
-        .invoke("GET", `/api/v1/policies?offset=${offset}&limit=${rowsPerPage}`)
+        .invoke("GET", `/api/v1/policies`)
         .then((res: PolicyList) => {
           const policies = get(res, "policies", []);
 
@@ -114,26 +110,13 @@ const Policies = ({ classes }: IPoliciesProps) => {
           setLoading(false);
           setRecords(policies);
           setError("");
-
-          // if we get 0 results, and page > 0 , go down 1 page
-          if (
-            (res.policies === undefined ||
-              res.policies == null ||
-              res.policies.length === 0) &&
-            page > 0
-          ) {
-            const newPage = page - 1;
-
-            setPage(newPage);
-            fetchRecords();
-          }
         })
         .catch((err) => {
           setLoading(false);
           setError(err);
         });
     }
-  }, [loading, setLoading, setRecords, setError, setPage, page, rowsPerPage]);
+  }, [loading, setLoading, setRecords, setError]);
 
   const fetchRecords = () => {
     setLoading(true);
@@ -155,18 +138,6 @@ const Policies = ({ classes }: IPoliciesProps) => {
     }
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const rPP = parseInt(event.target.value, 10);
-    setPage(0);
-    setRowsPerPage(rPP);
-  };
-
   const confirmDeletePolicy = (policy: string) => {
     setDeleteOpen(true);
     setSelectedPolicy(policy);
@@ -185,11 +156,6 @@ const Policies = ({ classes }: IPoliciesProps) => {
   const filteredRecords = records.filter((elementItem) =>
     elementItem.name.includes(filterPolicies)
   );
-
-  const beginRecord = page * rowsPerPage;
-  const endRecords = beginRecord + rowsPerPage;
-
-  const paginatedRecords = filteredRecords.slice(beginRecord, endRecords);
 
   return (
     <React.Fragment>
@@ -217,7 +183,6 @@ const Policies = ({ classes }: IPoliciesProps) => {
               id="search-resource"
               label=""
               onChange={(val) => {
-                setPage(0);
                 setFilterPolicies(val.target.value);
               }}
               InputProps={{
@@ -254,7 +219,7 @@ const Policies = ({ classes }: IPoliciesProps) => {
               itemActions={tableActions}
               columns={[{ label: "Name", elementKey: "name" }]}
               isLoading={loading}
-              records={paginatedRecords}
+              records={filteredRecords}
               entityName="Policies"
               idField="name"
             />
