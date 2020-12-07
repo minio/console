@@ -22,7 +22,6 @@ import SearchIcon from "@material-ui/icons/Search";
 import GroupIcon from "@material-ui/icons/Group";
 import { User, UsersList } from "./types";
 import { usersSort } from "../../../utils/sortFunctions";
-import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
 import { CreateIcon } from "../../../icons";
 import AddUser from "./AddUser";
 import DeleteUser from "./DeleteUser";
@@ -82,13 +81,10 @@ interface IUsersProps {
 
 interface IUsersState {
   records: User[];
-  totalRecords: number;
   loading: boolean;
   error: string;
   deleteError: string;
   addScreenOpen: boolean;
-  page: number;
-  rowsPerPage: number;
   deleteOpen: boolean;
   selectedUser: User | null;
   addGroupOpen: boolean;
@@ -100,13 +96,10 @@ interface IUsersState {
 class Users extends React.Component<IUsersProps, IUsersState> {
   state: IUsersState = {
     records: [],
-    totalRecords: 0,
     loading: false,
     error: "",
     deleteError: "",
     addScreenOpen: false,
-    page: 0,
-    rowsPerPage: 10,
     deleteOpen: false,
     selectedUser: null,
     addGroupOpen: false,
@@ -117,25 +110,15 @@ class Users extends React.Component<IUsersProps, IUsersState> {
 
   fetchRecords() {
     this.setState({ loading: true }, () => {
-      const { page, rowsPerPage } = this.state;
-      const offset = page * rowsPerPage;
       api
-        .invoke("GET", `/api/v1/users?offset=${offset}&limit=${rowsPerPage}`)
+        .invoke("GET", `/api/v1/users`)
         .then((res: UsersList) => {
           const users = res.users === null ? [] : res.users;
           this.setState({
             loading: false,
             records: users.sort(usersSort),
-            totalRecords: users.length,
             error: "",
           });
-          // if we get 0 results, and page > 0 , go down 1 page
-          if ((!users || users.length === 0) && page > 0) {
-            const newPage = page - 1;
-            this.setState({ page: newPage }, () => {
-              this.fetchRecords();
-            });
-          }
         })
         .catch((err) => {
           this.setState({ loading: false, error: err });
@@ -178,8 +161,6 @@ class Users extends React.Component<IUsersProps, IUsersState> {
       records,
       addScreenOpen,
       loading,
-      page,
-      rowsPerPage,
       deleteOpen,
       selectedUser,
       filter,
@@ -188,25 +169,9 @@ class Users extends React.Component<IUsersProps, IUsersState> {
       setPolicyOpen,
     } = this.state;
 
-    const handleChangePage = (event: unknown, newPage: number) => {
-      this.setState({ page: newPage });
-    };
-
-    const handleChangeRowsPerPage = (
-      event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-      const rPP = parseInt(event.target.value, 10);
-      this.setState({ page: 0, rowsPerPage: rPP });
-    };
-
     const filteredRecords = records.filter((elementItem) =>
       elementItem.accessKey.includes(filter)
     );
-
-    const beginRecord = page * rowsPerPage;
-    const endRecords = beginRecord + rowsPerPage;
-
-    const paginatedRecords = filteredRecords.slice(beginRecord, endRecords);
 
     const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
       const targetD = e.target;
@@ -315,7 +280,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
                   ),
                 }}
                 onChange={(e) => {
-                  this.setState({ filter: e.target.value, page: 0 });
+                  this.setState({ filter: e.target.value });
                 }}
               />
               <Button
@@ -358,7 +323,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
                 onSelect={selectionChanged}
                 selectedItems={checkedUsers}
                 isLoading={loading}
-                records={paginatedRecords}
+                records={filteredRecords}
                 entityName="Users"
                 idField="accessKey"
               />

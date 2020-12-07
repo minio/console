@@ -30,7 +30,6 @@ import logo from "../../../icons/minio_console_logo.svg";
 import { AppState } from "../../../store";
 import { userLoggedIn } from "../../../actions";
 import api from "../../../common/api";
-import WatchIcon from "../../../icons/WatchIcon";
 import { menuGroups } from "./utils";
 import { IMenuProps } from "./types";
 import {
@@ -47,7 +46,6 @@ import {
   WarpIcon,
 } from "../../../icons";
 import { clearSession } from "../../../common/utils";
-import HealIcon from "../../../icons/HealIcon";
 import LicenseIcon from "../../../icons/LicenseIcon";
 import LogoutIcon from "../../../icons/LogoutIcon";
 

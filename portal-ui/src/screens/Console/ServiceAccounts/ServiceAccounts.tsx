@@ -21,7 +21,6 @@ import api from "../../../common/api";
 import { Button } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
-import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
 import AddServiceAccount from "./AddServiceAccount";
 import DeleteServiceAccount from "./DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
@@ -94,8 +93,6 @@ const ServiceAccounts = ({ classes }: IServiceAccountsProps) => {
   const [error, setError] = useState<string>("");
   const [filter, setFilter] = useState<string>("");
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedServiceAccount, setSelectedServiceAccount] = useState<
     string | null
@@ -120,20 +117,13 @@ const ServiceAccounts = ({ classes }: IServiceAccountsProps) => {
           setLoading(false);
           setRecords(serviceAccounts);
           setError("");
-
-          // if we get 0 results, and page > 0 , go down 1 page
-          if ((!serviceAccounts || serviceAccounts.length === 0) && page > 0) {
-            const newPage = page - 1;
-            setPage(newPage);
-            fetchRecords();
-          }
         })
         .catch((err) => {
           setError(err);
           setLoading(false);
         });
     }
-  }, [loading, setLoading, setRecords, setError, page, setPage]);
+  }, [loading, setLoading, setRecords, setError]);
 
   const fetchRecords = () => {
     setLoading(true);
@@ -162,19 +152,6 @@ const ServiceAccounts = ({ classes }: IServiceAccountsProps) => {
     setNewServiceAccount(null);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const rPP = parseInt(event.target.value, 10);
-
-    setPage(0);
-    setRowsPerPage(rPP);
-  };
-
   const confirmDeleteServiceAccount = (selectedServiceAccount: string) => {
     setSelectedServiceAccount(selectedServiceAccount);
     setDeleteOpen(true);
@@ -187,11 +164,6 @@ const ServiceAccounts = ({ classes }: IServiceAccountsProps) => {
   const filteredRecords = records.filter((elementItem) =>
     elementItem.toLowerCase().includes(filter.toLowerCase())
   );
-
-  const beginRecord = page * rowsPerPage;
-  const endRecords = beginRecord + rowsPerPage;
-
-  const paginatedRecords = filteredRecords.slice(beginRecord, endRecords);
 
   return (
     <React.Fragment>
@@ -241,7 +213,6 @@ const ServiceAccounts = ({ classes }: IServiceAccountsProps) => {
               }}
               onChange={(e) => {
                 setFilter(e.target.value);
-                setPage(0);
               }}
             />
             <Button
@@ -273,7 +244,7 @@ const ServiceAccounts = ({ classes }: IServiceAccountsProps) => {
           <Grid item xs={12}>
             <TableWrapper
               isLoading={loading}
-              records={paginatedRecords}
+              records={filteredRecords}
               entityName={"Service Accounts"}
               idField={""}
               columns={[{ label: "Service Account", elementKey: "" }]}

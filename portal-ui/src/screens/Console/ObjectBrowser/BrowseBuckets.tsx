@@ -26,7 +26,6 @@ import SearchIcon from "@material-ui/icons/Search";
 import { Button } from "@material-ui/core";
 import { CreateIcon } from "../../../icons";
 import { niceBytes } from "../../../common/utils";
-import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
 import { Bucket, BucketList } from "../Buckets/types";
 import {
   actionsTray,
@@ -116,14 +115,10 @@ const BrowseBuckets = ({
   resetRoutesList,
 }: IBrowseBucketsProps) => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [page, setPage] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
   const [error, setError] = useState<string>("");
   const [records, setRecords] = useState<Bucket[]>([]);
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
   const [filterBuckets, setFilterBuckets] = useState<string>("");
-
-  const offset = page * rowsPerPage;
 
   useEffect(() => {
     resetRoutesList(true);
@@ -132,29 +127,18 @@ const BrowseBuckets = ({
   useEffect(() => {
     if (loading) {
       api
-        .invoke("GET", `/api/v1/buckets?offset=${offset}&limit=${rowsPerPage}`)
+        .invoke("GET", `/api/v1/buckets`)
         .then((res: BucketList) => {
           setLoading(false);
           setRecords(res.buckets || []);
           setError("");
-          // if we get 0 results, and page > 0 , go down 1 page
-          if (
-            (res.buckets === undefined ||
-              res.buckets == null ||
-              res.buckets.length === 0) &&
-            page > 0
-          ) {
-            const newPage = page - 1;
-            setPage(newPage);
-            setLoading(true);
-          }
         })
         .catch((err: any) => {
           setLoading(false);
           setError(err);
         });
     }
-  }, [loading, offset, rowsPerPage, page]);
+  }, [loading]);
 
   const closeAddModalAndRefresh = (refresh: boolean) => {
     setAddScreenOpen(false);
@@ -170,18 +154,6 @@ const BrowseBuckets = ({
     }
     return b.name.indexOf(filterBuckets) >= 0;
   });
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const rPP = parseInt(event.target.value, 10);
-    setPage(0);
-    setRowsPerPage(rPP);
-  };
 
   const handleViewChange = (idElement: string) => {
     const currentPath = get(match, "url", "/object-browser");

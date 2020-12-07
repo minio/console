@@ -22,7 +22,6 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
-import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
 import {
   NotificationEndpointItem,
   NotificationEndpointsList,
@@ -67,9 +66,6 @@ const styles = (theme: Theme) =>
 const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
   //Local States
   const [records, setRecords] = useState<TransformedEndpointItem[]>([]);
-  const [totalRecords, setTotalRecords] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
-  const [page, setPage] = useState<number>(0);
   const [filter, setFilter] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -88,7 +84,6 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
               resNotEndList = res.notification_endpoints;
             }
             setRecords(notificationTransform(resNotEndList));
-            setTotalRecords(resNotEndList.length);
             setError("");
             setIsLoading(false);
           })
