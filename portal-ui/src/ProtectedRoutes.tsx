@@ -20,7 +20,6 @@ import { connect } from "react-redux";
 import { AppState } from "./store";
 import { userLoggedIn } from "./actions";
 import api from "./common/api";
-import { clearSession } from "./common/utils";
 import { saveSessionResponse } from "./screens/Console/actions";
 
 const mapState = (state: AppState) => ({

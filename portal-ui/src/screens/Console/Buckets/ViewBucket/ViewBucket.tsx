@@ -37,7 +37,6 @@ import {
 } from "../types";
 import { Button } from "@material-ui/core";
 import SetAccessPolicy from "./SetAccessPolicy";
-import { MinTablePaginationActions } from "../../../../common/MinTablePaginationActions";
 import { CreateIcon } from "../../../../icons";
 import AddEvent from "./AddEvent";
 import DeleteEvent from "./DeleteEvent";
@@ -181,7 +180,6 @@ interface IViewBucketState {
   info: BucketInfo | null;
   records: BucketEvent[];
   replicationRules: BucketReplicationRule[];
-  totalRecords: number;
   loadingBucket: boolean;
   loadingEvents: boolean;
   loadingSize: boolean;
@@ -189,8 +187,6 @@ interface IViewBucketState {
   deleteError: string;
   errBucket: string;
   setAccessPolicyScreenOpen: boolean;
-  page: number;
-  rowsPerPage: number;
   curTab: number;
   addScreenOpen: boolean;
   enableEncryptionScreenOpen: boolean;
@@ -210,7 +206,6 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     info: null,
     records: [],
     replicationRules: [],
-    totalRecords: 0,
     loadingBucket: true,
     loadingEvents: true,
     loadingSize: true,
@@ -218,9 +213,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     deleteError: "",
     errBucket: "",
     setAccessPolicyScreenOpen: false,
-    page: 0,
     curTab: 0,
-    rowsPerPage: 10,
     addScreenOpen: false,
     enableEncryptionScreenOpen: false,
     deleteOpen: false,
@@ -236,28 +229,18 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
 
   fetchEvents() {
     this.setState({ loadingBucket: true }, () => {
-      const { page } = this.state;
       const { match } = this.props;
       const bucketName = match.params["bucketName"];
       api
         .invoke("GET", `/api/v1/buckets/${bucketName}/events`)
         .then((res: BucketEventList) => {
           const events = get(res, "events", []);
-          const total = get(res, "total", 0);
 
           this.setState({
             loadingEvents: false,
             records: events || [],
-            totalRecords: total,
             error: "",
           });
-          // if we get 0 results, and page > 0 , go down 1 page
-          if ((!events || res.events.length === 0) && page > 0) {
-            const newPage = page - 1;
-            this.setState({ page: newPage }, () => {
-              this.fetchEvents();
-            });
-          }
         })
         .catch((err: any) => {
           this.setState({ loadingEvents: false, error: err });
@@ -374,12 +357,9 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     const {
       info,
       records,
-      totalRecords,
       setAccessPolicyScreenOpen,
       loadingEvents,
       loadingBucket,
-      page,
-      rowsPerPage,
       deleteOpen,
       addScreenOpen,
       enableEncryptionScreenOpen,
@@ -393,20 +373,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
       encryptionEnabled,
     } = this.state;
 
-    const offset = page * rowsPerPage;
-
     const bucketName = match.params["bucketName"];
-
-    const handleChangePage = (event: unknown, newPage: number) => {
-      this.setState({ page: newPage });
-    };
-
-    const handleChangeRowsPerPage = (
-      event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-      const rPP = parseInt(event.target.value, 10);
-      this.setState({ page: 0, rowsPerPage: rPP });
-    };
 
     const confirmDeleteEvent = (evnt: BucketEvent) => {
       this.setState({ deleteOpen: true, selectedEvent: evnt });
@@ -456,9 +423,6 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
     };
 
     const tableActions = [{ type: "delete", onClick: confirmDeleteEvent }];
-
-    const filteredRecords = records.slice(offset, offset + rowsPerPage);
-    const filteredRules = replicationRules.slice(offset, offset + rowsPerPage);
 
     return (
       <React.Fragment>
@@ -639,7 +603,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
                     { label: "Suffix", elementKey: "suffix" },
                   ]}
                   isLoading={loadingEvents}
-                  records={filteredRecords}
+                  records={records}
                   entityName="Events"
                   idField="id"
                 />
@@ -666,7 +630,7 @@ class ViewBucket extends React.Component<IViewBucketProps, IViewBucketState> {
                     { label: "Status", elementKey: "status" },
                   ]}
                   isLoading={loadingEvents}
-                  records={filteredRules}
+                  records={replicationRules}
                   entityName="Replication Rules"
                   idField="id"
                 />
