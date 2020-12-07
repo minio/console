@@ -23,65 +23,29 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"strconv"
-
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
-// ZoneUpdateRequest zone update request
+// PoolResources If provided, use these requests and limit for cpu/memory resource allocation
 //
-// swagger:model zoneUpdateRequest
-type ZoneUpdateRequest struct {
+// swagger:model poolResources
+type PoolResources struct {
 
-	// zones
-	// Required: true
-	Zones []*Zone `json:"zones"`
+	// Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+	Limits map[string]int64 `json:"limits,omitempty"`
+
+	// Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+	Requests map[string]int64 `json:"requests,omitempty"`
 }
 
-// Validate validates this zone update request
-func (m *ZoneUpdateRequest) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateZones(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *ZoneUpdateRequest) validateZones(formats strfmt.Registry) error {
-
-	if err := validate.Required("zones", "body", m.Zones); err != nil {
-		return err
-	}
-
-	for i := 0; i < len(m.Zones); i++ {
-		if swag.IsZero(m.Zones[i]) { // not required
-			continue
-		}
-
-		if m.Zones[i] != nil {
-			if err := m.Zones[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("zones" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
+// Validate validates this pool resources
+func (m *PoolResources) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *ZoneUpdateRequest) MarshalBinary() ([]byte, error) {
+func (m *PoolResources) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -89,8 +53,8 @@ func (m *ZoneUpdateRequest) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *ZoneUpdateRequest) UnmarshalBinary(b []byte) error {
-	var res ZoneUpdateRequest
+func (m *PoolResources) UnmarshalBinary(b []byte) error {
+	var res PoolResources
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -29,18 +29,18 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// ZoneTolerationSeconds TolerationSeconds represents the period of time the toleration (which must be of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default, it is not set, which means tolerate the taint forever (do not evict). Zero and negative values will be treated as 0 (evict immediately) by the system.
+// PoolTolerationSeconds TolerationSeconds represents the period of time the toleration (which must be of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default, it is not set, which means tolerate the taint forever (do not evict). Zero and negative values will be treated as 0 (evict immediately) by the system.
 //
-// swagger:model zoneTolerationSeconds
-type ZoneTolerationSeconds struct {
+// swagger:model poolTolerationSeconds
+type PoolTolerationSeconds struct {
 
 	// seconds
 	// Required: true
 	Seconds *int64 `json:"seconds"`
 }
 
-// Validate validates this zone toleration seconds
-func (m *ZoneTolerationSeconds) Validate(formats strfmt.Registry) error {
+// Validate validates this pool toleration seconds
+func (m *PoolTolerationSeconds) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateSeconds(formats); err != nil {
@@ -53,7 +53,7 @@ func (m *ZoneTolerationSeconds) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ZoneTolerationSeconds) validateSeconds(formats strfmt.Registry) error {
+func (m *PoolTolerationSeconds) validateSeconds(formats strfmt.Registry) error {
 
 	if err := validate.Required("seconds", "body", m.Seconds); err != nil {
 		return err
@@ -63,7 +63,7 @@ func (m *ZoneTolerationSeconds) validateSeconds(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *ZoneTolerationSeconds) MarshalBinary() ([]byte, error) {
+func (m *PoolTolerationSeconds) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -71,8 +71,8 @@ func (m *ZoneTolerationSeconds) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *ZoneTolerationSeconds) UnmarshalBinary(b []byte) error {
-	var res ZoneTolerationSeconds
+func (m *PoolTolerationSeconds) UnmarshalBinary(b []byte) error {
+	var res PoolTolerationSeconds
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

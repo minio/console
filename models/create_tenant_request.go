@@ -90,15 +90,15 @@ type CreateTenantRequest struct {
 	// Required: true
 	Namespace *string `json:"namespace"`
 
+	// pools
+	// Required: true
+	Pools []*Pool `json:"pools"`
+
 	// secret key
 	SecretKey string `json:"secret_key,omitempty"`
 
 	// tls
 	TLS *TLSConfiguration `json:"tls,omitempty"`
-
-	// zones
-	// Required: true
-	Zones []*Zone `json:"zones"`
 }
 
 // Validate validates this create tenant request
@@ -129,11 +129,11 @@ func (m *CreateTenantRequest) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateTLS(formats); err != nil {
+	if err := m.validatePools(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateZones(formats); err != nil {
+	if err := m.validateTLS(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -237,6 +237,31 @@ func (m *CreateTenantRequest) validateNamespace(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *CreateTenantRequest) validatePools(formats strfmt.Registry) error {
+
+	if err := validate.Required("pools", "body", m.Pools); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(m.Pools); i++ {
+		if swag.IsZero(m.Pools[i]) { // not required
+			continue
+		}
+
+		if m.Pools[i] != nil {
+			if err := m.Pools[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("pools" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *CreateTenantRequest) validateTLS(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.TLS) { // not required
@@ -250,31 +275,6 @@ func (m *CreateTenantRequest) validateTLS(formats strfmt.Registry) error {
 			}
 			return err
 		}
-	}
-
-	return nil
-}
-
-func (m *CreateTenantRequest) validateZones(formats strfmt.Registry) error {
-
-	if err := validate.Required("zones", "body", m.Zones); err != nil {
-		return err
-	}
-
-	for i := 0; i < len(m.Zones); i++ {
-		if swag.IsZero(m.Zones[i]) { // not required
-			continue
-		}
-
-		if m.Zones[i] != nil {
-			if err := m.Zones[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("zones" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
 	}
 
 	return nil

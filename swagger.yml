@@ -236,7 +236,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: "#/definitions/putObjectRetentionRequest"
+            $ref: "#/definitions/putBucketRetentionRequest"
       responses:
         200:
           description: A successful response.
@@ -1715,10 +1715,10 @@ paths:
       tags:
         - AdminAPI
 
-  /namespaces/{namespace}/tenants/{tenant}/zones:
+  /namespaces/{namespace}/tenants/{tenant}/pools:
     post:
-      summary: Tenant Add Zone
-      operationId: TenantAddZone
+      summary: Tenant Add Pool
+      operationId: TenantAddPool
       parameters:
         - name: namespace
           in: path
@@ -1732,7 +1732,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: "#/definitions/zone"
+            $ref: "#/definitions/pool"
       responses:
         201:
           description: A successful response.
@@ -1743,8 +1743,8 @@ paths:
       tags:
         - AdminAPI
     put:
-      summary: Tenant Update Zones
-      operationId: TenantUpdateZones
+      summary: Tenant Update Pools
+      operationId: TenantUpdatePools
       parameters:
         - name: namespace
           in: path
@@ -1758,7 +1758,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: "#/definitions/zoneUpdateRequest"
+            $ref: "#/definitions/poolUpdateRequest"
       responses:
         200:
           description: A successful response.
@@ -2711,10 +2711,10 @@ definitions:
         type: string
       currentState:
         type: string
-      zones:
+      pools:
         type: array
         items:
-          $ref: "#/definitions/zone"
+          $ref: "#/definitions/pool"
       image:
         type: string
       console_image:
@@ -2742,7 +2742,7 @@ definitions:
     properties:
       name:
         type: string
-      zone_count:
+      pool_count:
         type: integer
       instance_count:
         type: integer
@@ -2807,7 +2807,7 @@ definitions:
     required:
       - name
       - namespace
-      - zones
+      - pools
     properties:
       name:
         type: string
@@ -2816,10 +2816,10 @@ definitions:
         type: string
       console_image:
         type: string
-      zones:
+      pools:
         type: array
         items:
-          $ref: "#/definitions/zone"
+          $ref: "#/definitions/pool"
       mounth_path:
         type: string
       access_key:
@@ -3093,7 +3093,7 @@ definitions:
             type: string
           secret_key:
             type: string
-  zone:
+  pool:
     type: object
     required:
       - servers
@@ -3125,7 +3125,7 @@ definitions:
             additionalProperties:
               type: string
       resources:
-        $ref: "#/definitions/zoneResources"
+        $ref: "#/definitions/poolResources"
       node_selector:
         type: object
         additionalProperties:
@@ -3135,11 +3135,11 @@ definitions:
           labels for the pod to be scheduled on that node. More info:
           https://kubernetes.io/docs/concepts/configuration/assign-pod-node/"
       affinity:
-        $ref: "#/definitions/zoneAffinity"
+        $ref: "#/definitions/poolAffinity"
       tolerations:
-        $ref: "#/definitions/zoneTolerations"
+        $ref: "#/definitions/poolTolerations"
 
-  zoneTolerations:
+  poolTolerations:
     description: Tolerations allows users to set entries like effect,
       key, operator, value.
     items:
@@ -3166,7 +3166,7 @@ definitions:
             category.
           type: string
         tolerationSeconds:
-          $ref: "#/definitions/zoneTolerationSeconds"
+          $ref: "#/definitions/poolTolerationSeconds"
         value:
           description: Value is the taint value the toleration matches
             to. If the operator is Exists, the value should be empty,
@@ -3175,7 +3175,7 @@ definitions:
       type: object
     type: array
 
-  zoneTolerationSeconds:
+  poolTolerationSeconds:
     description: TolerationSeconds represents the period of
       time the toleration (which must be of effect NoExecute,
       otherwise this field is ignored) tolerates the taint.
@@ -3190,7 +3190,7 @@ definitions:
         type: integer
         format: int64
 
-  zoneResources:
+  poolResources:
     description: If provided, use these requests and limit for cpu/memory
       resource allocation
     properties:
@@ -3213,7 +3213,7 @@ definitions:
         type: object
     type: object
 
-  zoneAffinity:
+  poolAffinity:
     description: If specified, affinity will define the pod's scheduling
       constraints
     properties:
@@ -3275,7 +3275,7 @@ definitions:
         type: object
       podAffinity:
         description: Describes pod affinity scheduling rules (e.g.
-          co-locate this pod in the same node, zone, etc. as some
+          co-locate this pod in the same node, pool, etc. as some
           other pod(s)).
         properties:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -3325,7 +3325,7 @@ definitions:
         type: object
       podAntiAffinity:
         description: Describes pod anti-affinity scheduling rules
-          (e.g. avoid putting this pod in the same node, zone, etc.
+          (e.g. avoid putting this pod in the same node, pool, etc.
           as some other pod(s)).
         properties:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -3564,15 +3564,15 @@ definitions:
       delete_pvcs:
         type: boolean
 
-  zoneUpdateRequest:
+  poolUpdateRequest:
     type: object
     required:
-      - zones
+      - pools
     properties:
-      zones:
+      pools:
         type: array
         items:
-          $ref: "#/definitions/zone"
+          $ref: "#/definitions/pool"
 
   maxAllocatableMemResponse:
     type: object
