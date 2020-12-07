@@ -31,23 +31,23 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// ZoneAffinity If specified, affinity will define the pod's scheduling constraints
+// PoolAffinity If specified, affinity will define the pod's scheduling constraints
 //
-// swagger:model zoneAffinity
-type ZoneAffinity struct {
+// swagger:model poolAffinity
+type PoolAffinity struct {
 
 	// node affinity
-	NodeAffinity *ZoneAffinityNodeAffinity `json:"nodeAffinity,omitempty"`
+	NodeAffinity *PoolAffinityNodeAffinity `json:"nodeAffinity,omitempty"`
 
 	// pod affinity
-	PodAffinity *ZoneAffinityPodAffinity `json:"podAffinity,omitempty"`
+	PodAffinity *PoolAffinityPodAffinity `json:"podAffinity,omitempty"`
 
 	// pod anti affinity
-	PodAntiAffinity *ZoneAffinityPodAntiAffinity `json:"podAntiAffinity,omitempty"`
+	PodAntiAffinity *PoolAffinityPodAntiAffinity `json:"podAntiAffinity,omitempty"`
 }
 
-// Validate validates this zone affinity
-func (m *ZoneAffinity) Validate(formats strfmt.Registry) error {
+// Validate validates this pool affinity
+func (m *PoolAffinity) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateNodeAffinity(formats); err != nil {
@@ -68,7 +68,7 @@ func (m *ZoneAffinity) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ZoneAffinity) validateNodeAffinity(formats strfmt.Registry) error {
+func (m *PoolAffinity) validateNodeAffinity(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.NodeAffinity) { // not required
 		return nil
@@ -86,7 +86,7 @@ func (m *ZoneAffinity) validateNodeAffinity(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ZoneAffinity) validatePodAffinity(formats strfmt.Registry) error {
+func (m *PoolAffinity) validatePodAffinity(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.PodAffinity) { // not required
 		return nil
@@ -104,7 +104,7 @@ func (m *ZoneAffinity) validatePodAffinity(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ZoneAffinity) validatePodAntiAffinity(formats strfmt.Registry) error {
+func (m *PoolAffinity) validatePodAntiAffinity(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.PodAntiAffinity) { // not required
 		return nil
@@ -123,7 +123,7 @@ func (m *ZoneAffinity) validatePodAntiAffinity(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *ZoneAffinity) MarshalBinary() ([]byte, error) {
+func (m *PoolAffinity) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -131,8 +131,8 @@ func (m *ZoneAffinity) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *ZoneAffinity) UnmarshalBinary(b []byte) error {
-	var res ZoneAffinity
+func (m *PoolAffinity) UnmarshalBinary(b []byte) error {
+	var res PoolAffinity
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
@@ -140,20 +140,20 @@ func (m *ZoneAffinity) UnmarshalBinary(b []byte) error {
 	return nil
 }
 
-// ZoneAffinityNodeAffinity Describes node affinity scheduling rules for the pod.
+// PoolAffinityNodeAffinity Describes node affinity scheduling rules for the pod.
 //
-// swagger:model ZoneAffinityNodeAffinity
-type ZoneAffinityNodeAffinity struct {
+// swagger:model PoolAffinityNodeAffinity
+type PoolAffinityNodeAffinity struct {
 
 	// The scheduler will prefer to schedule pods to nodes that satisfy the affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding "weight" to the sum if the node matches the corresponding matchExpressions; the node(s) with the highest sum are the most preferred.
-	PreferredDuringSchedulingIgnoredDuringExecution []*ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0 `json:"preferredDuringSchedulingIgnoredDuringExecution"`
+	PreferredDuringSchedulingIgnoredDuringExecution []*PoolAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0 `json:"preferredDuringSchedulingIgnoredDuringExecution"`
 
 	// required during scheduling ignored during execution
-	RequiredDuringSchedulingIgnoredDuringExecution *ZoneAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution `json:"requiredDuringSchedulingIgnoredDuringExecution,omitempty"`
+	RequiredDuringSchedulingIgnoredDuringExecution *PoolAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution `json:"requiredDuringSchedulingIgnoredDuringExecution,omitempty"`
 }
 
-// Validate validates this zone affinity node affinity
-func (m *ZoneAffinityNodeAffinity) Validate(formats strfmt.Registry) error {
+// Validate validates this pool affinity node affinity
+func (m *PoolAffinityNodeAffinity) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validatePreferredDuringSchedulingIgnoredDuringExecution(formats); err != nil {
@@ -170,7 +170,7 @@ func (m *ZoneAffinityNodeAffinity) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ZoneAffinityNodeAffinity) validatePreferredDuringSchedulingIgnoredDuringExecution(formats strfmt.Registry) error {
+func (m *PoolAffinityNodeAffinity) validatePreferredDuringSchedulingIgnoredDuringExecution(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.PreferredDuringSchedulingIgnoredDuringExecution) { // not required
 		return nil
@@ -195,7 +195,7 @@ func (m *ZoneAffinityNodeAffinity) validatePreferredDuringSchedulingIgnoredDurin
 	return nil
 }
 
-func (m *ZoneAffinityNodeAffinity) validateRequiredDuringSchedulingIgnoredDuringExecution(formats strfmt.Registry) error {
+func (m *PoolAffinityNodeAffinity) validateRequiredDuringSchedulingIgnoredDuringExecution(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.RequiredDuringSchedulingIgnoredDuringExecution) { // not required
 		return nil
@@ -214,7 +214,7 @@ func (m *ZoneAffinityNodeAffinity) validateRequiredDuringSchedulingIgnoredDuring
 }
 
 // MarshalBinary interface implementation
-func (m *ZoneAffinityNodeAffinity) MarshalBinary() ([]byte, error) {
+func (m *PoolAffinityNodeAffinity) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -222,8 +222,8 @@ func (m *ZoneAffinityNodeAffinity) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *ZoneAffinityNodeAffinity) UnmarshalBinary(b []byte) error {
-	var res ZoneAffinityNodeAffinity
+func (m *PoolAffinityNodeAffinity) UnmarshalBinary(b []byte) error {
+	var res PoolAffinityNodeAffinity
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
@@ -231,10 +231,10 @@ func (m *ZoneAffinityNodeAffinity) UnmarshalBinary(b []byte) error {
 	return nil
 }
 
-// ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0 An empty preferred scheduling term matches all objects with implicit weight 0 (i.e. it's a no-op). A null preferred scheduling term matches no objects (i.e. is also a no-op).
+// PoolAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0 An empty preferred scheduling term matches all objects with implicit weight 0 (i.e. it's a no-op). A null preferred scheduling term matches no objects (i.e. is also a no-op).
 //
-// swagger:model ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0
-type ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0 struct {
+// swagger:model PoolAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0
+type PoolAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0 struct {
 
 	// A node selector term, associated with the corresponding weight.
 	// Required: true
@@ -245,8 +245,8 @@ type ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItem
 	Weight *int32 `json:"weight"`
 }
 
-// Validate validates this zone affinity node affinity preferred during scheduling ignored during execution items0
-func (m *ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) Validate(formats strfmt.Registry) error {
+// Validate validates this pool affinity node affinity preferred during scheduling ignored during execution items0
+func (m *PoolAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validatePreference(formats); err != nil {
@@ -263,7 +263,7 @@ func (m *ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecution
 	return nil
 }
 
-func (m *ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) validatePreference(formats strfmt.Registry) error {
+func (m *PoolAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) validatePreference(formats strfmt.Registry) error {
 
 	if err := validate.Required("preference", "body", m.Preference); err != nil {
 		return err
@@ -281,7 +281,7 @@ func (m *ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecution
 	return nil
 }
 
-func (m *ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) validateWeight(formats strfmt.Registry) error {
+func (m *PoolAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) validateWeight(formats strfmt.Registry) error {
 
 	if err := validate.Required("weight", "body", m.Weight); err != nil {
 		return err
@@ -291,7 +291,7 @@ func (m *ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecution
 }
 
 // MarshalBinary interface implementation
-func (m *ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) MarshalBinary() ([]byte, error) {
+func (m *PoolAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -299,8 +299,8 @@ func (m *ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecution
 }
 
 // UnmarshalBinary interface implementation
-func (m *ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) UnmarshalBinary(b []byte) error {
-	var res ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0
+func (m *PoolAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) UnmarshalBinary(b []byte) error {
+	var res PoolAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
@@ -308,18 +308,18 @@ func (m *ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecution
 	return nil
 }
 
-// ZoneAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution If the affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to an update), the system may or may not try to eventually evict the pod from its node.
+// PoolAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution If the affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to an update), the system may or may not try to eventually evict the pod from its node.
 //
-// swagger:model ZoneAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution
-type ZoneAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution struct {
+// swagger:model PoolAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution
+type PoolAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution struct {
 
 	// Required. A list of node selector terms. The terms are ORed.
 	// Required: true
 	NodeSelectorTerms []*NodeSelectorTerm `json:"nodeSelectorTerms"`
 }
 
-// Validate validates this zone affinity node affinity required during scheduling ignored during execution
-func (m *ZoneAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution) Validate(formats strfmt.Registry) error {
+// Validate validates this pool affinity node affinity required during scheduling ignored during execution
+func (m *PoolAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateNodeSelectorTerms(formats); err != nil {
@@ -332,7 +332,7 @@ func (m *ZoneAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution)
 	return nil
 }
 
-func (m *ZoneAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution) validateNodeSelectorTerms(formats strfmt.Registry) error {
+func (m *PoolAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution) validateNodeSelectorTerms(formats strfmt.Registry) error {
 
 	if err := validate.Required("nodeAffinity"+"."+"requiredDuringSchedulingIgnoredDuringExecution"+"."+"nodeSelectorTerms", "body", m.NodeSelectorTerms); err != nil {
 		return err
@@ -358,7 +358,7 @@ func (m *ZoneAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution)
 }
 
 // MarshalBinary interface implementation
-func (m *ZoneAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution) MarshalBinary() ([]byte, error) {
+func (m *PoolAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -366,8 +366,8 @@ func (m *ZoneAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution)
 }
 
 // UnmarshalBinary interface implementation
-func (m *ZoneAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution) UnmarshalBinary(b []byte) error {
-	var res ZoneAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution
+func (m *PoolAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution) UnmarshalBinary(b []byte) error {
+	var res PoolAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
@@ -375,20 +375,20 @@ func (m *ZoneAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution)
 	return nil
 }
 
-// ZoneAffinityPodAffinity Describes pod affinity scheduling rules (e.g. co-locate this pod in the same node, zone, etc. as some other pod(s)).
+// PoolAffinityPodAffinity Describes pod affinity scheduling rules (e.g. co-locate this pod in the same node, pool, etc. as some other pod(s)).
 //
-// swagger:model ZoneAffinityPodAffinity
-type ZoneAffinityPodAffinity struct {
+// swagger:model PoolAffinityPodAffinity
+type PoolAffinityPodAffinity struct {
 
 	// The scheduler will prefer to schedule pods to nodes that satisfy the affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding "weight" to the sum if the node has pods which matches the corresponding podAffinityTerm; the node(s) with the highest sum are the most preferred.
-	PreferredDuringSchedulingIgnoredDuringExecution []*ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0 `json:"preferredDuringSchedulingIgnoredDuringExecution"`
+	PreferredDuringSchedulingIgnoredDuringExecution []*PoolAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0 `json:"preferredDuringSchedulingIgnoredDuringExecution"`
 
 	// If the affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to a pod label update), the system may or may not try to eventually evict the pod from its node. When there are multiple elements, the lists of nodes corresponding to each podAffinityTerm are intersected, i.e. all terms must be satisfied.
 	RequiredDuringSchedulingIgnoredDuringExecution []*PodAffinityTerm `json:"requiredDuringSchedulingIgnoredDuringExecution"`
 }
 
-// Validate validates this zone affinity pod affinity
-func (m *ZoneAffinityPodAffinity) Validate(formats strfmt.Registry) error {
+// Validate validates this pool affinity pod affinity
+func (m *PoolAffinityPodAffinity) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validatePreferredDuringSchedulingIgnoredDuringExecution(formats); err != nil {
@@ -405,7 +405,7 @@ func (m *ZoneAffinityPodAffinity) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ZoneAffinityPodAffinity) validatePreferredDuringSchedulingIgnoredDuringExecution(formats strfmt.Registry) error {
+func (m *PoolAffinityPodAffinity) validatePreferredDuringSchedulingIgnoredDuringExecution(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.PreferredDuringSchedulingIgnoredDuringExecution) { // not required
 		return nil
@@ -430,7 +430,7 @@ func (m *ZoneAffinityPodAffinity) validatePreferredDuringSchedulingIgnoredDuring
 	return nil
 }
 
-func (m *ZoneAffinityPodAffinity) validateRequiredDuringSchedulingIgnoredDuringExecution(formats strfmt.Registry) error {
+func (m *PoolAffinityPodAffinity) validateRequiredDuringSchedulingIgnoredDuringExecution(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.RequiredDuringSchedulingIgnoredDuringExecution) { // not required
 		return nil
@@ -456,7 +456,7 @@ func (m *ZoneAffinityPodAffinity) validateRequiredDuringSchedulingIgnoredDuringE
 }
 
 // MarshalBinary interface implementation
-func (m *ZoneAffinityPodAffinity) MarshalBinary() ([]byte, error) {
+func (m *PoolAffinityPodAffinity) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -464,8 +464,8 @@ func (m *ZoneAffinityPodAffinity) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *ZoneAffinityPodAffinity) UnmarshalBinary(b []byte) error {
-	var res ZoneAffinityPodAffinity
+func (m *PoolAffinityPodAffinity) UnmarshalBinary(b []byte) error {
+	var res PoolAffinityPodAffinity
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
@@ -473,10 +473,10 @@ func (m *ZoneAffinityPodAffinity) UnmarshalBinary(b []byte) error {
 	return nil
 }
 
-// ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0 The weights of all of the matched WeightedPodAffinityTerm fields are added per-node to find the most preferred node(s)
+// PoolAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0 The weights of all of the matched WeightedPodAffinityTerm fields are added per-node to find the most preferred node(s)
 //
-// swagger:model ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0
-type ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0 struct {
+// swagger:model PoolAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0
+type PoolAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0 struct {
 
 	// pod affinity term
 	// Required: true
@@ -487,8 +487,8 @@ type ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems
 	Weight *int32 `json:"weight"`
 }
 
-// Validate validates this zone affinity pod affinity preferred during scheduling ignored during execution items0
-func (m *ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) Validate(formats strfmt.Registry) error {
+// Validate validates this pool affinity pod affinity preferred during scheduling ignored during execution items0
+func (m *PoolAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validatePodAffinityTerm(formats); err != nil {
@@ -505,7 +505,7 @@ func (m *ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionI
 	return nil
 }
 
-func (m *ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) validatePodAffinityTerm(formats strfmt.Registry) error {
+func (m *PoolAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) validatePodAffinityTerm(formats strfmt.Registry) error {
 
 	if err := validate.Required("podAffinityTerm", "body", m.PodAffinityTerm); err != nil {
 		return err
@@ -523,7 +523,7 @@ func (m *ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionI
 	return nil
 }
 
-func (m *ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) validateWeight(formats strfmt.Registry) error {
+func (m *PoolAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) validateWeight(formats strfmt.Registry) error {
 
 	if err := validate.Required("weight", "body", m.Weight); err != nil {
 		return err
@@ -533,7 +533,7 @@ func (m *ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionI
 }
 
 // MarshalBinary interface implementation
-func (m *ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) MarshalBinary() ([]byte, error) {
+func (m *PoolAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -541,8 +541,8 @@ func (m *ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionI
 }
 
 // UnmarshalBinary interface implementation
-func (m *ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) UnmarshalBinary(b []byte) error {
-	var res ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0
+func (m *PoolAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) UnmarshalBinary(b []byte) error {
+	var res PoolAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
@@ -550,20 +550,20 @@ func (m *ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionI
 	return nil
 }
 
-// ZoneAffinityPodAntiAffinity Describes pod anti-affinity scheduling rules (e.g. avoid putting this pod in the same node, zone, etc. as some other pod(s)).
+// PoolAffinityPodAntiAffinity Describes pod anti-affinity scheduling rules (e.g. avoid putting this pod in the same node, pool, etc. as some other pod(s)).
 //
-// swagger:model ZoneAffinityPodAntiAffinity
-type ZoneAffinityPodAntiAffinity struct {
+// swagger:model PoolAffinityPodAntiAffinity
+type PoolAffinityPodAntiAffinity struct {
 
 	// The scheduler will prefer to schedule pods to nodes that satisfy the anti-affinity expressions specified by this field, but it may choose a node that violates one or more of the expressions. The node that is most preferred is the one with the greatest sum of weights, i.e. for each node that meets all of the scheduling requirements (resource request, requiredDuringScheduling anti-affinity expressions, etc.), compute a sum by iterating through the elements of this field and adding "weight" to the sum if the node has pods which matches the corresponding podAffinityTerm; the node(s) with the highest sum are the most preferred.
-	PreferredDuringSchedulingIgnoredDuringExecution []*ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0 `json:"preferredDuringSchedulingIgnoredDuringExecution"`
+	PreferredDuringSchedulingIgnoredDuringExecution []*PoolAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0 `json:"preferredDuringSchedulingIgnoredDuringExecution"`
 
 	// If the anti-affinity requirements specified by this field are not met at scheduling time, the pod will not be scheduled onto the node. If the anti-affinity requirements specified by this field cease to be met at some point during pod execution (e.g. due to a pod label update), the system may or may not try to eventually evict the pod from its node. When there are multiple elements, the lists of nodes corresponding to each podAffinityTerm are intersected, i.e. all terms must be satisfied.
 	RequiredDuringSchedulingIgnoredDuringExecution []*PodAffinityTerm `json:"requiredDuringSchedulingIgnoredDuringExecution"`
 }
 
-// Validate validates this zone affinity pod anti affinity
-func (m *ZoneAffinityPodAntiAffinity) Validate(formats strfmt.Registry) error {
+// Validate validates this pool affinity pod anti affinity
+func (m *PoolAffinityPodAntiAffinity) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validatePreferredDuringSchedulingIgnoredDuringExecution(formats); err != nil {
@@ -580,7 +580,7 @@ func (m *ZoneAffinityPodAntiAffinity) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ZoneAffinityPodAntiAffinity) validatePreferredDuringSchedulingIgnoredDuringExecution(formats strfmt.Registry) error {
+func (m *PoolAffinityPodAntiAffinity) validatePreferredDuringSchedulingIgnoredDuringExecution(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.PreferredDuringSchedulingIgnoredDuringExecution) { // not required
 		return nil
@@ -605,7 +605,7 @@ func (m *ZoneAffinityPodAntiAffinity) validatePreferredDuringSchedulingIgnoredDu
 	return nil
 }
 
-func (m *ZoneAffinityPodAntiAffinity) validateRequiredDuringSchedulingIgnoredDuringExecution(formats strfmt.Registry) error {
+func (m *PoolAffinityPodAntiAffinity) validateRequiredDuringSchedulingIgnoredDuringExecution(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.RequiredDuringSchedulingIgnoredDuringExecution) { // not required
 		return nil
@@ -631,7 +631,7 @@ func (m *ZoneAffinityPodAntiAffinity) validateRequiredDuringSchedulingIgnoredDur
 }
 
 // MarshalBinary interface implementation
-func (m *ZoneAffinityPodAntiAffinity) MarshalBinary() ([]byte, error) {
+func (m *PoolAffinityPodAntiAffinity) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -639,8 +639,8 @@ func (m *ZoneAffinityPodAntiAffinity) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *ZoneAffinityPodAntiAffinity) UnmarshalBinary(b []byte) error {
-	var res ZoneAffinityPodAntiAffinity
+func (m *PoolAffinityPodAntiAffinity) UnmarshalBinary(b []byte) error {
+	var res PoolAffinityPodAntiAffinity
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
@@ -648,10 +648,10 @@ func (m *ZoneAffinityPodAntiAffinity) UnmarshalBinary(b []byte) error {
 	return nil
 }
 
-// ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0 The weights of all of the matched WeightedPodAffinityTerm fields are added per-node to find the most preferred node(s)
+// PoolAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0 The weights of all of the matched WeightedPodAffinityTerm fields are added per-node to find the most preferred node(s)
 //
-// swagger:model ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0
-type ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0 struct {
+// swagger:model PoolAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0
+type PoolAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0 struct {
 
 	// pod affinity term
 	// Required: true
@@ -662,8 +662,8 @@ type ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionI
 	Weight *int32 `json:"weight"`
 }
 
-// Validate validates this zone affinity pod anti affinity preferred during scheduling ignored during execution items0
-func (m *ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) Validate(formats strfmt.Registry) error {
+// Validate validates this pool affinity pod anti affinity preferred during scheduling ignored during execution items0
+func (m *PoolAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validatePodAffinityTerm(formats); err != nil {
@@ -680,7 +680,7 @@ func (m *ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecut
 	return nil
 }
 
-func (m *ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) validatePodAffinityTerm(formats strfmt.Registry) error {
+func (m *PoolAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) validatePodAffinityTerm(formats strfmt.Registry) error {
 
 	if err := validate.Required("podAffinityTerm", "body", m.PodAffinityTerm); err != nil {
 		return err
@@ -698,7 +698,7 @@ func (m *ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecut
 	return nil
 }
 
-func (m *ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) validateWeight(formats strfmt.Registry) error {
+func (m *PoolAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) validateWeight(formats strfmt.Registry) error {
 
 	if err := validate.Required("weight", "body", m.Weight); err != nil {
 		return err
@@ -708,7 +708,7 @@ func (m *ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecut
 }
 
 // MarshalBinary interface implementation
-func (m *ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) MarshalBinary() ([]byte, error) {
+func (m *PoolAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -716,8 +716,8 @@ func (m *ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecut
 }
 
 // UnmarshalBinary interface implementation
-func (m *ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) UnmarshalBinary(b []byte) error {
-	var res ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0
+func (m *PoolAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) UnmarshalBinary(b []byte) error {
+	var res PoolAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

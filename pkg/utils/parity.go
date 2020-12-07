@@ -185,9 +185,9 @@ func getTotalSizes(argPatterns []ellipses.ArgPattern) []uint64 {
 }
 
 // PossibleParityValues returns possible parities for input args,
-// parties are calculated in uniform manner for one zone or
-// multiple zones, ensuring that parities returned are common
-// and applicable across all zones.
+// parties are calculated in uniform manner for one pool or
+// multiple pools, ensuring that parities returned are common
+// and applicable across all pools.
 func PossibleParityValues(args ...string) ([]string, error) {
 	setIndexes, err := parseEndpointSet(args...)
 	if err != nil {

@@ -30,13 +30,13 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// ZoneTolerations Tolerations allows users to set entries like effect, key, operator, value.
+// PoolTolerations Tolerations allows users to set entries like effect, key, operator, value.
 //
-// swagger:model zoneTolerations
-type ZoneTolerations []*ZoneTolerationsItems0
+// swagger:model poolTolerations
+type PoolTolerations []*PoolTolerationsItems0
 
-// Validate validates this zone tolerations
-func (m ZoneTolerations) Validate(formats strfmt.Registry) error {
+// Validate validates this pool tolerations
+func (m PoolTolerations) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	for i := 0; i < len(m); i++ {
@@ -61,10 +61,10 @@ func (m ZoneTolerations) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-// ZoneTolerationsItems0 The pod this Toleration is attached to tolerates any taint that matches the triple <key,value,effect> using the matching operator <operator>.
+// PoolTolerationsItems0 The pod this Toleration is attached to tolerates any taint that matches the triple <key,value,effect> using the matching operator <operator>.
 //
-// swagger:model ZoneTolerationsItems0
-type ZoneTolerationsItems0 struct {
+// swagger:model PoolTolerationsItems0
+type PoolTolerationsItems0 struct {
 
 	// Effect indicates the taint effect to match. Empty means match all taint effects. When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
 	Effect string `json:"effect,omitempty"`
@@ -76,14 +76,14 @@ type ZoneTolerationsItems0 struct {
 	Operator string `json:"operator,omitempty"`
 
 	// toleration seconds
-	TolerationSeconds *ZoneTolerationSeconds `json:"tolerationSeconds,omitempty"`
+	TolerationSeconds *PoolTolerationSeconds `json:"tolerationSeconds,omitempty"`
 
 	// Value is the taint value the toleration matches to. If the operator is Exists, the value should be empty, otherwise just a regular string.
 	Value string `json:"value,omitempty"`
 }
 
-// Validate validates this zone tolerations items0
-func (m *ZoneTolerationsItems0) Validate(formats strfmt.Registry) error {
+// Validate validates this pool tolerations items0
+func (m *PoolTolerationsItems0) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateTolerationSeconds(formats); err != nil {
@@ -96,7 +96,7 @@ func (m *ZoneTolerationsItems0) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ZoneTolerationsItems0) validateTolerationSeconds(formats strfmt.Registry) error {
+func (m *PoolTolerationsItems0) validateTolerationSeconds(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.TolerationSeconds) { // not required
 		return nil
@@ -115,7 +115,7 @@ func (m *ZoneTolerationsItems0) validateTolerationSeconds(formats strfmt.Registr
 }
 
 // MarshalBinary interface implementation
-func (m *ZoneTolerationsItems0) MarshalBinary() ([]byte, error) {
+func (m *PoolTolerationsItems0) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -123,8 +123,8 @@ func (m *ZoneTolerationsItems0) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *ZoneTolerationsItems0) UnmarshalBinary(b []byte) error {
-	var res ZoneTolerationsItems0
+func (m *PoolTolerationsItems0) UnmarshalBinary(b []byte) error {
+	var res PoolTolerationsItems0
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -29,11 +29,11 @@ import { CreateIcon } from "../../../../icons";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import Paper from "@material-ui/core/Paper";
 import { niceBytes } from "../../../../common/utils";
-import AddZoneModal from "./AddZoneModal";
+import AddPoolModal from "./AddPoolModal";
 import AddBucket from "../../Buckets/ListBuckets/AddBucket";
 import ReplicationSetup from "./ReplicationSetup";
 import api from "../../../../common/api";
-import { ITenant, IZone } from "../ListTenants/types";
+import { ITenant, IPool } from "../ListTenants/types";
 import Logs from "./Logs/Logs";
 import Trace from "./Trace/Trace";
 import Watch from "./Watch/Watch";
@@ -107,11 +107,11 @@ const styles = (theme: Theme) =>
 const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [capacity, setCapacity] = useState<number>(0);
-  const [zoneCount, setZoneCount] = useState<number>(0);
-  const [serverSets, setServerSets] = useState<IZone[]>([]);
+  const [poolCount, setPoolCount] = useState<number>(0);
+  const [serverSets, setServerSets] = useState<IPool[]>([]);
   const [instances, setInstances] = useState<number>(0);
   const [volumes, setVolumes] = useState<number>(0);
-  const [addZoneOpen, setAddZone] = useState<boolean>(false);
+  const [addPoolOpen, setAddPool] = useState<boolean>(false);
   const [addBucketOpen, setAddBucketOpen] = useState<boolean>(false);
   const [addReplicationOpen, setAddReplicationOpen] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
@@ -123,8 +123,8 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
   const tenantName = match.params["tenantName"];
   const tenantNamespace = match.params["tenantNamespace"];
 
-  const onCloseZoneAndRefresh = (reload: boolean) => {
-    setAddZone(false);
+  const onClosePoolAndRefresh = (reload: boolean) => {
+    setAddPool(false);
 
     if (reload) {
       console.log("reload");
@@ -150,29 +150,29 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
         `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}`
       )
       .then((res: ITenant) => {
-        const resZones = !res.zones ? [] : res.zones;
+        const resPools = !res.pools ? [] : res.pools;
 
         let totalInstances = 0;
         let totalVolumes = 0;
         let count = 1;
-        for (let zone of resZones) {
+        for (let pool of resPools) {
           const cap =
-            zone.volumes_per_server *
-            zone.servers *
-            zone.volume_configuration.size;
-          zone.name = `zone-${count}`;
-          zone.capacity = niceBytes(cap + "");
-          zone.volumes = zone.servers * zone.volumes_per_server;
-          totalInstances += zone.servers;
-          totalVolumes += zone.volumes;
+            pool.volumes_per_server *
+            pool.servers *
+            pool.volume_configuration.size;
+          pool.name = `pool-${count}`;
+          pool.capacity = niceBytes(cap + "");
+          pool.volumes = pool.servers * pool.volumes_per_server;
+          totalInstances += pool.servers;
+          totalVolumes += pool.volumes;
           count += 1;
         }
         setCapacity(res.total_size);
-        setZoneCount(resZones.length);
+        setPoolCount(resPools.length);
         setVolumes(totalVolumes);
         setInstances(totalInstances);
 
-        setServerSets(resZones);
+        setServerSets(resPools);
 
         setTenant(res);
         setError("");
@@ -209,10 +209,10 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
 
   return (
     <React.Fragment>
-      {addZoneOpen && tenant !== null && (
-        <AddZoneModal
-          open={addZoneOpen}
-          onCloseZoneAndReload={onCloseZoneAndRefresh}
+      {addPoolOpen && tenant !== null && (
+        <AddPoolModal
+          open={addPoolOpen}
+          onClosePoolAndReload={onClosePoolAndRefresh}
           tenant={tenant}
         />
       )}
@@ -247,7 +247,7 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
               <div>Minio:</div>
               <div>{tenant ? tenant.image : ""}</div>
               <div>Clusters:</div>
-              <div>{zoneCount}</div>
+              <div>{poolCount}</div>
               <div>Console:</div>
               <div>{tenant ? tenant.console_image : ""}</div>
               <div>Instances:</div>
@@ -293,7 +293,7 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
             color="primary"
             startIcon={<CreateIcon />}
             onClick={() => {
-              setAddZone(true);
+              setAddPool(true);
             }}
           >
             Expand Tenant
