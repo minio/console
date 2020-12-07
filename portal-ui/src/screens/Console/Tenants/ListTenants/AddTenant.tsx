@@ -33,7 +33,7 @@ import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/For
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import {
   calculateDistribution,
-  generateZoneName,
+  generatePoolName,
   getBytes,
   k8sfactorForDropdown,
   niceBytes,
@@ -91,7 +91,7 @@ const styles = (theme: Theme) =>
       fontWeight: 700,
       width: "30%",
     },
-    zoneError: {
+    poolError: {
       color: "#dc1f2e",
       fontSize: "0.75rem",
       paddingLeft: 120,
@@ -737,7 +737,7 @@ const AddTenant = ({
   /* Send Information to backend */
   useEffect(() => {
     if (addSending) {
-      const zoneName = generateZoneName([]);
+      const poolName = generatePoolName([]);
 
       const hardCodedAffinity: IAffinityModel = {
         podAntiAffinity: {
@@ -751,9 +751,9 @@ const AddTenant = ({
                     values: [tenantName],
                   },
                   {
-                    key: "v1.min.io/zone",
+                    key: "v1.min.io/pool",
                     operator: "In",
-                    values: [zoneName],
+                    values: [poolName],
                   },
                 ],
               },
@@ -778,9 +778,9 @@ const AddTenant = ({
         service_name: "",
         image: imageName,
         console_image: consoleImage,
-        zones: [
+        pools: [
           {
-            name: zoneName,
+            name: poolName,
             servers: distribution.nodes,
             volumes_per_server: distribution.disks,
             volume_configuration: {

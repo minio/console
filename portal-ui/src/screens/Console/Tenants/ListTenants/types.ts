@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface IZone {
+export interface IPool {
   name: string;
   servers: number;
   volumes_per_server: number;
@@ -24,7 +24,7 @@ export interface IZone {
   volumes: number;
 }
 
-export interface IAddZoneRequest {
+export interface IAddPoolRequest {
   name: string;
   servers: number;
   volumes_per_server: number;
@@ -43,14 +43,14 @@ export interface ITenant {
   namespace: string;
   image: string;
   console_image: string;
-  zone_count: number;
+  pool_count: number;
   currentState: string;
   instance_count: 4;
   creation_date: Date;
   volume_size: number;
   volume_count: number;
   volumes_per_server: number;
-  zones: IZone[];
+  pools: IPool[];
   // computed
   capacity: string;
 }

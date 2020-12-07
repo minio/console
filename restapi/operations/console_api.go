@@ -287,8 +287,8 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIShareObjectHandler: user_api.ShareObjectHandlerFunc(func(params user_api.ShareObjectParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.ShareObject has not yet been implemented")
 		}),
-		AdminAPITenantAddZoneHandler: admin_api.TenantAddZoneHandlerFunc(func(params admin_api.TenantAddZoneParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.TenantAddZone has not yet been implemented")
+		AdminAPITenantAddPoolHandler: admin_api.TenantAddPoolHandlerFunc(func(params admin_api.TenantAddPoolParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.TenantAddPool has not yet been implemented")
 		}),
 		AdminAPITenantInfoHandler: admin_api.TenantInfoHandlerFunc(func(params admin_api.TenantInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TenantInfo has not yet been implemented")
@@ -299,8 +299,8 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPITenantUpdateEncryptionHandler: admin_api.TenantUpdateEncryptionHandlerFunc(func(params admin_api.TenantUpdateEncryptionParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TenantUpdateEncryption has not yet been implemented")
 		}),
-		AdminAPITenantUpdateZonesHandler: admin_api.TenantUpdateZonesHandlerFunc(func(params admin_api.TenantUpdateZonesParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.TenantUpdateZones has not yet been implemented")
+		AdminAPITenantUpdatePoolsHandler: admin_api.TenantUpdatePoolsHandlerFunc(func(params admin_api.TenantUpdatePoolsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.TenantUpdatePools has not yet been implemented")
 		}),
 		AdminAPIUpdateGroupHandler: admin_api.UpdateGroupHandlerFunc(func(params admin_api.UpdateGroupParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.UpdateGroup has not yet been implemented")
@@ -514,16 +514,16 @@ type ConsoleAPI struct {
 	AdminAPISetPolicyMultipleHandler admin_api.SetPolicyMultipleHandler
 	// UserAPIShareObjectHandler sets the operation handler for the share object operation
 	UserAPIShareObjectHandler user_api.ShareObjectHandler
-	// AdminAPITenantAddZoneHandler sets the operation handler for the tenant add zone operation
-	AdminAPITenantAddZoneHandler admin_api.TenantAddZoneHandler
+	// AdminAPITenantAddPoolHandler sets the operation handler for the tenant add pool operation
+	AdminAPITenantAddPoolHandler admin_api.TenantAddPoolHandler
 	// AdminAPITenantInfoHandler sets the operation handler for the tenant info operation
 	AdminAPITenantInfoHandler admin_api.TenantInfoHandler
 	// AdminAPITenantUpdateCertificateHandler sets the operation handler for the tenant update certificate operation
 	AdminAPITenantUpdateCertificateHandler admin_api.TenantUpdateCertificateHandler
 	// AdminAPITenantUpdateEncryptionHandler sets the operation handler for the tenant update encryption operation
 	AdminAPITenantUpdateEncryptionHandler admin_api.TenantUpdateEncryptionHandler
-	// AdminAPITenantUpdateZonesHandler sets the operation handler for the tenant update zones operation
-	AdminAPITenantUpdateZonesHandler admin_api.TenantUpdateZonesHandler
+	// AdminAPITenantUpdatePoolsHandler sets the operation handler for the tenant update pools operation
+	AdminAPITenantUpdatePoolsHandler admin_api.TenantUpdatePoolsHandler
 	// AdminAPIUpdateGroupHandler sets the operation handler for the update group operation
 	AdminAPIUpdateGroupHandler admin_api.UpdateGroupHandler
 	// AdminAPIUpdateTenantHandler sets the operation handler for the update tenant operation
@@ -830,8 +830,8 @@ func (o *ConsoleAPI) Validate() error {
 	if o.UserAPIShareObjectHandler == nil {
 		unregistered = append(unregistered, "user_api.ShareObjectHandler")
 	}
-	if o.AdminAPITenantAddZoneHandler == nil {
-		unregistered = append(unregistered, "admin_api.TenantAddZoneHandler")
+	if o.AdminAPITenantAddPoolHandler == nil {
+		unregistered = append(unregistered, "admin_api.TenantAddPoolHandler")
 	}
 	if o.AdminAPITenantInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.TenantInfoHandler")
@@ -842,8 +842,8 @@ func (o *ConsoleAPI) Validate() error {
 	if o.AdminAPITenantUpdateEncryptionHandler == nil {
 		unregistered = append(unregistered, "admin_api.TenantUpdateEncryptionHandler")
 	}
-	if o.AdminAPITenantUpdateZonesHandler == nil {
-		unregistered = append(unregistered, "admin_api.TenantUpdateZonesHandler")
+	if o.AdminAPITenantUpdatePoolsHandler == nil {
+		unregistered = append(unregistered, "admin_api.TenantUpdatePoolsHandler")
 	}
 	if o.AdminAPIUpdateGroupHandler == nil {
 		unregistered = append(unregistered, "admin_api.UpdateGroupHandler")
@@ -1258,7 +1258,7 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/namespaces/{namespace}/tenants/{tenant}/zones"] = admin_api.NewTenantAddZone(o.context, o.AdminAPITenantAddZoneHandler)
+	o.handlers["POST"]["/namespaces/{namespace}/tenants/{tenant}/pools"] = admin_api.NewTenantAddPool(o.context, o.AdminAPITenantAddPoolHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -1274,7 +1274,7 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/namespaces/{namespace}/tenants/{tenant}/zones"] = admin_api.NewTenantUpdateZones(o.context, o.AdminAPITenantUpdateZonesHandler)
+	o.handlers["PUT"]["/namespaces/{namespace}/tenants/{tenant}/pools"] = admin_api.NewTenantUpdatePools(o.context, o.AdminAPITenantUpdatePoolsHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

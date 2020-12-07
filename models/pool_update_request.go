@@ -23,29 +23,65 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"strconv"
+
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
-// ZoneResources If provided, use these requests and limit for cpu/memory resource allocation
+// PoolUpdateRequest pool update request
 //
-// swagger:model zoneResources
-type ZoneResources struct {
+// swagger:model poolUpdateRequest
+type PoolUpdateRequest struct {
 
-	// Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-	Limits map[string]int64 `json:"limits,omitempty"`
-
-	// Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-	Requests map[string]int64 `json:"requests,omitempty"`
+	// pools
+	// Required: true
+	Pools []*Pool `json:"pools"`
 }
 
-// Validate validates this zone resources
-func (m *ZoneResources) Validate(formats strfmt.Registry) error {
+// Validate validates this pool update request
+func (m *PoolUpdateRequest) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validatePools(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PoolUpdateRequest) validatePools(formats strfmt.Registry) error {
+
+	if err := validate.Required("pools", "body", m.Pools); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(m.Pools); i++ {
+		if swag.IsZero(m.Pools[i]) { // not required
+			continue
+		}
+
+		if m.Pools[i] != nil {
+			if err := m.Pools[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("pools" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *ZoneResources) MarshalBinary() ([]byte, error) {
+func (m *PoolUpdateRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -53,8 +89,8 @@ func (m *ZoneResources) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *ZoneResources) UnmarshalBinary(b []byte) error {
-	var res ZoneResources
+func (m *PoolUpdateRequest) UnmarshalBinary(b []byte) error {
+	var res PoolUpdateRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -30,14 +30,14 @@ import (
 	"github.com/minio/console/models"
 )
 
-// TenantUpdateZonesOKCode is the HTTP code returned for type TenantUpdateZonesOK
-const TenantUpdateZonesOKCode int = 200
+// TenantUpdatePoolsOKCode is the HTTP code returned for type TenantUpdatePoolsOK
+const TenantUpdatePoolsOKCode int = 200
 
-/*TenantUpdateZonesOK A successful response.
+/*TenantUpdatePoolsOK A successful response.
 
-swagger:response tenantUpdateZonesOK
+swagger:response tenantUpdatePoolsOK
 */
-type TenantUpdateZonesOK struct {
+type TenantUpdatePoolsOK struct {
 
 	/*
 	  In: Body
@@ -45,25 +45,25 @@ type TenantUpdateZonesOK struct {
 	Payload *models.Tenant `json:"body,omitempty"`
 }
 
-// NewTenantUpdateZonesOK creates TenantUpdateZonesOK with default headers values
-func NewTenantUpdateZonesOK() *TenantUpdateZonesOK {
+// NewTenantUpdatePoolsOK creates TenantUpdatePoolsOK with default headers values
+func NewTenantUpdatePoolsOK() *TenantUpdatePoolsOK {
 
-	return &TenantUpdateZonesOK{}
+	return &TenantUpdatePoolsOK{}
 }
 
-// WithPayload adds the payload to the tenant update zones o k response
-func (o *TenantUpdateZonesOK) WithPayload(payload *models.Tenant) *TenantUpdateZonesOK {
+// WithPayload adds the payload to the tenant update pools o k response
+func (o *TenantUpdatePoolsOK) WithPayload(payload *models.Tenant) *TenantUpdatePoolsOK {
 	o.Payload = payload
 	return o
 }
 
-// SetPayload sets the payload to the tenant update zones o k response
-func (o *TenantUpdateZonesOK) SetPayload(payload *models.Tenant) {
+// SetPayload sets the payload to the tenant update pools o k response
+func (o *TenantUpdatePoolsOK) SetPayload(payload *models.Tenant) {
 	o.Payload = payload
 }
 
 // WriteResponse to the client
-func (o *TenantUpdateZonesOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *TenantUpdatePoolsOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
 	if o.Payload != nil {
@@ -74,11 +74,11 @@ func (o *TenantUpdateZonesOK) WriteResponse(rw http.ResponseWriter, producer run
 	}
 }
 
-/*TenantUpdateZonesDefault Generic error response.
+/*TenantUpdatePoolsDefault Generic error response.
 
-swagger:response tenantUpdateZonesDefault
+swagger:response tenantUpdatePoolsDefault
 */
-type TenantUpdateZonesDefault struct {
+type TenantUpdatePoolsDefault struct {
 	_statusCode int
 
 	/*
@@ -87,41 +87,41 @@ type TenantUpdateZonesDefault struct {
 	Payload *models.Error `json:"body,omitempty"`
 }
 
-// NewTenantUpdateZonesDefault creates TenantUpdateZonesDefault with default headers values
-func NewTenantUpdateZonesDefault(code int) *TenantUpdateZonesDefault {
+// NewTenantUpdatePoolsDefault creates TenantUpdatePoolsDefault with default headers values
+func NewTenantUpdatePoolsDefault(code int) *TenantUpdatePoolsDefault {
 	if code <= 0 {
 		code = 500
 	}
 
-	return &TenantUpdateZonesDefault{
+	return &TenantUpdatePoolsDefault{
 		_statusCode: code,
 	}
 }
 
-// WithStatusCode adds the status to the tenant update zones default response
-func (o *TenantUpdateZonesDefault) WithStatusCode(code int) *TenantUpdateZonesDefault {
+// WithStatusCode adds the status to the tenant update pools default response
+func (o *TenantUpdatePoolsDefault) WithStatusCode(code int) *TenantUpdatePoolsDefault {
 	o._statusCode = code
 	return o
 }
 
-// SetStatusCode sets the status to the tenant update zones default response
-func (o *TenantUpdateZonesDefault) SetStatusCode(code int) {
+// SetStatusCode sets the status to the tenant update pools default response
+func (o *TenantUpdatePoolsDefault) SetStatusCode(code int) {
 	o._statusCode = code
 }
 
-// WithPayload adds the payload to the tenant update zones default response
-func (o *TenantUpdateZonesDefault) WithPayload(payload *models.Error) *TenantUpdateZonesDefault {
+// WithPayload adds the payload to the tenant update pools default response
+func (o *TenantUpdatePoolsDefault) WithPayload(payload *models.Error) *TenantUpdatePoolsDefault {
 	o.Payload = payload
 	return o
 }
 
-// SetPayload sets the payload to the tenant update zones default response
-func (o *TenantUpdateZonesDefault) SetPayload(payload *models.Error) {
+// SetPayload sets the payload to the tenant update pools default response
+func (o *TenantUpdatePoolsDefault) SetPayload(payload *models.Error) {
 	o.Payload = payload
 }
 
 // WriteResponse to the client
-func (o *TenantUpdateZonesDefault) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *TenantUpdatePoolsDefault) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(o._statusCode)
 	if o.Payload != nil {

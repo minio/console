@@ -115,13 +115,13 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 		return admin_api.NewUpdateTenantCreated()
 	})
 
-	// Add Tenant Zones
-	api.AdminAPITenantAddZoneHandler = admin_api.TenantAddZoneHandlerFunc(func(params admin_api.TenantAddZoneParams, session *models.Principal) middleware.Responder {
-		err := getTenantAddZoneResponse(session, params)
+	// Add Tenant Pools
+	api.AdminAPITenantAddPoolHandler = admin_api.TenantAddPoolHandlerFunc(func(params admin_api.TenantAddPoolParams, session *models.Principal) middleware.Responder {
+		err := getTenantAddPoolResponse(session, params)
 		if err != nil {
-			return admin_api.NewTenantAddZoneDefault(int(err.Code)).WithPayload(err)
+			return admin_api.NewTenantAddPoolDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewTenantAddZoneCreated()
+		return admin_api.NewTenantAddPoolCreated()
 	})
 
 	// Get Tenant Usage
@@ -133,13 +133,13 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 		return admin_api.NewGetTenantUsageOK().WithPayload(payload)
 	})
 
-	// Update Tenant Zones
-	api.AdminAPITenantUpdateZonesHandler = admin_api.TenantUpdateZonesHandlerFunc(func(params admin_api.TenantUpdateZonesParams, session *models.Principal) middleware.Responder {
-		resp, err := getTenantUpdateZoneResponse(session, params)
+	// Update Tenant Pools
+	api.AdminAPITenantUpdatePoolsHandler = admin_api.TenantUpdatePoolsHandlerFunc(func(params admin_api.TenantUpdatePoolsParams, session *models.Principal) middleware.Responder {
+		resp, err := getTenantUpdatePoolResponse(session, params)
 		if err != nil {
-			return admin_api.NewTenantUpdateZonesDefault(int(err.Code)).WithPayload(err)
+			return admin_api.NewTenantUpdatePoolsDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewTenantUpdateZonesOK().WithPayload(resp)
+		return admin_api.NewTenantUpdatePoolsOK().WithPayload(resp)
 	})
 
 	// Update Tenant Certificates
@@ -300,13 +300,13 @@ func isPrometheusEnabled(annotations map[string]string) bool {
 }
 
 func getTenantInfo(tenant *operator.Tenant) *models.Tenant {
-	var zones []*models.Zone
+	var pools []*models.Pool
 	consoleImage := ""
 	var totalSize int64
-	for _, z := range tenant.Spec.Zones {
-		zones = append(zones, parseTenantZone(&z))
-		zoneSize := int64(z.Servers) * int64(z.VolumesPerServer) * z.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value()
-		totalSize = totalSize + zoneSize
+	for _, p := range tenant.Spec.Pools {
+		pools = append(pools, parseTenantPool(&p))
+		poolSize := int64(p.Servers) * int64(p.VolumesPerServer) * p.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value()
+		totalSize = totalSize + poolSize
 	}
 	var deletion string
 	if tenant.ObjectMeta.DeletionTimestamp != nil {
@@ -323,7 +323,7 @@ func getTenantInfo(tenant *operator.Tenant) *models.Tenant {
 		Name:             tenant.Name,
 		TotalSize:        totalSize,
 		CurrentState:     tenant.Status.CurrentState,
-		Zones:            zones,
+		Pools:            pools,
 		Namespace:        tenant.ObjectMeta.Namespace,
 		Image:            tenant.Spec.Image,
 		ConsoleImage:     consoleImage,
@@ -374,12 +374,12 @@ func listTenants(ctx context.Context, operatorClient OperatorClientI, namespace 
 		var totalSize int64
 		var instanceCount int64
 		var volumeCount int64
-		for _, zone := range tenant.Spec.Zones {
-			instanceCount = instanceCount + int64(zone.Servers)
-			volumeCount = volumeCount + int64(zone.Servers*zone.VolumesPerServer)
-			if zone.VolumeClaimTemplate != nil {
-				zoneSize := int64(zone.VolumesPerServer) * int64(zone.Servers) * zone.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value()
-				totalSize = totalSize + zoneSize
+		for _, pool := range tenant.Spec.Pools {
+			instanceCount = instanceCount + int64(pool.Servers)
+			volumeCount = volumeCount + int64(pool.Servers*pool.VolumesPerServer)
+			if pool.VolumeClaimTemplate != nil {
+				poolSize := int64(pool.VolumesPerServer) * int64(pool.Servers) * pool.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value()
+				totalSize = totalSize + poolSize
 			}
 		}
 
@@ -392,7 +392,7 @@ func listTenants(ctx context.Context, operatorClient OperatorClientI, namespace 
 			CreationDate:  tenant.ObjectMeta.CreationTimestamp.String(),
 			DeletionDate:  deletion,
 			Name:          tenant.ObjectMeta.Name,
-			ZoneCount:     int64(len(tenant.Spec.Zones)),
+			PoolCount:     int64(len(tenant.Spec.Pools)),
 			InstanceCount: instanceCount,
 			VolumeCount:   volumeCount,
 			CurrentState:  tenant.Status.CurrentState,
@@ -737,13 +737,14 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		annotations = tenantReq.Annotations
 		minInst.Annotations = annotations
 	}
-	// set the zones if they are provided
-	for _, zone := range tenantReq.Zones {
-		zone, err := parseTenantZoneRequest(zone)
+	// set the pools if they are provided
+	for _, pool := range tenantReq.Pools {
+		pool, err := parseTenantPoolRequest(pool)
 		if err != nil {
+			log.Println("parseTenantPoolRequest", err)
 			return nil, prepareError(err)
 		}
-		minInst.Spec.Zones = append(minInst.Spec.Zones, *zone)
+		minInst.Spec.Pools = append(minInst.Spec.Pools, *pool)
 	}
 
 	// Set Mount Path if provided
@@ -785,6 +786,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 
 	_, err = opClient.MinioV1().Tenants(ns).Create(context.Background(), &minInst, metav1.CreateOptions{})
 	if err != nil {
+		log.Println("Create", err)
 		return nil, prepareError(err)
 	}
 
@@ -911,21 +913,21 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClientI, cli
 	if params.Body.EnablePrometheus && currentAnnotations != nil {
 		// add prometheus annotations to the tenant
 		minInst.Annotations = addAnnotations(currentAnnotations, prometheusAnnotations)
-		// add prometheus annotations to the each zone
-		if minInst.Spec.Zones != nil {
-			for _, zone := range minInst.Spec.Zones {
-				zoneAnnotations := zone.VolumeClaimTemplate.GetObjectMeta().GetAnnotations()
-				zone.VolumeClaimTemplate.GetObjectMeta().SetAnnotations(addAnnotations(zoneAnnotations, prometheusAnnotations))
+		// add prometheus annotations to the each pool
+		if minInst.Spec.Pools != nil {
+			for _, pool := range minInst.Spec.Pools {
+				poolAnnotations := pool.VolumeClaimTemplate.GetObjectMeta().GetAnnotations()
+				pool.VolumeClaimTemplate.GetObjectMeta().SetAnnotations(addAnnotations(poolAnnotations, prometheusAnnotations))
 			}
 		}
 	} else {
 		// remove prometheus annotations to the tenant
 		minInst.Annotations = removeAnnotations(currentAnnotations, prometheusAnnotations)
-		// add prometheus annotations from each zone
-		if minInst.Spec.Zones != nil {
-			for _, zone := range minInst.Spec.Zones {
-				zoneAnnotations := zone.VolumeClaimTemplate.GetObjectMeta().GetAnnotations()
-				zone.VolumeClaimTemplate.GetObjectMeta().SetAnnotations(removeAnnotations(zoneAnnotations, prometheusAnnotations))
+		// add prometheus annotations from each pool
+		if minInst.Spec.Pools != nil {
+			for _, pool := range minInst.Spec.Pools {
+				poolAnnotations := pool.VolumeClaimTemplate.GetObjectMeta().GetAnnotations()
+				pool.VolumeClaimTemplate.GetObjectMeta().SetAnnotations(removeAnnotations(poolAnnotations, prometheusAnnotations))
 			}
 		}
 	}
@@ -988,19 +990,19 @@ func getUpdateTenantResponse(session *models.Principal, params admin_api.UpdateT
 	return nil
 }
 
-// addTenantZone creates a zone to a defined tenant
-func addTenantZone(ctx context.Context, operatorClient OperatorClientI, params admin_api.TenantAddZoneParams) error {
+// addTenantPool creates a pool to a defined tenant
+func addTenantPool(ctx context.Context, operatorClient OperatorClientI, params admin_api.TenantAddPoolParams) error {
 	tenant, err := operatorClient.TenantGet(ctx, params.Namespace, params.Tenant, metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
 
-	zoneParams := params.Body
-	zone, err := parseTenantZoneRequest(zoneParams)
+	poolParams := params.Body
+	pool, err := parseTenantPoolRequest(poolParams)
 	if err != nil {
 		return err
 	}
-	tenant.Spec.Zones = append(tenant.Spec.Zones, *zone)
+	tenant.Spec.Pools = append(tenant.Spec.Pools, *pool)
 	payloadBytes, err := json.Marshal(tenant)
 	if err != nil {
 		return err
@@ -1013,7 +1015,7 @@ func addTenantZone(ctx context.Context, operatorClient OperatorClientI, params a
 	return nil
 }
 
-func getTenantAddZoneResponse(session *models.Principal, params admin_api.TenantAddZoneParams) *models.Error {
+func getTenantAddPoolResponse(session *models.Principal, params admin_api.TenantAddPoolParams) *models.Error {
 	ctx := context.Background()
 	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
@@ -1022,8 +1024,8 @@ func getTenantAddZoneResponse(session *models.Principal, params admin_api.Tenant
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
-	if err := addTenantZone(ctx, opClient, params); err != nil {
-		return prepareError(err, errors.New("unable to add zone"))
+	if err := addTenantPool(ctx, opClient, params); err != nil {
+		return prepareError(err, errors.New("unable to add pool"))
 	}
 	return nil
 }
@@ -1080,26 +1082,26 @@ func getTenantUsageResponse(session *models.Principal, params admin_api.GetTenan
 	return info, nil
 }
 
-// parseTenantZoneRequest parse zone request and returns the equivalent
-// operator.Zone object
-func parseTenantZoneRequest(zoneParams *models.Zone) (*operator.Zone, error) {
-	if zoneParams.VolumeConfiguration == nil {
+// parseTenantPoolRequest parse pool request and returns the equivalent
+// operator.Pool object
+func parseTenantPoolRequest(poolParams *models.Pool) (*operator.Pool, error) {
+	if poolParams.VolumeConfiguration == nil {
 		return nil, errors.New("a volume configuration must be specified")
 	}
 
-	if zoneParams.VolumeConfiguration.Size == nil || *zoneParams.VolumeConfiguration.Size <= int64(0) {
+	if poolParams.VolumeConfiguration.Size == nil || *poolParams.VolumeConfiguration.Size <= int64(0) {
 		return nil, errors.New("volume size must be greater than 0")
 	}
 
-	if zoneParams.Servers == nil || *zoneParams.Servers <= 0 {
+	if poolParams.Servers == nil || *poolParams.Servers <= 0 {
 		return nil, errors.New("number of servers must be greater than 0")
 	}
 
-	if zoneParams.VolumesPerServer == nil || *zoneParams.VolumesPerServer <= 0 {
+	if poolParams.VolumesPerServer == nil || *poolParams.VolumesPerServer <= 0 {
 		return nil, errors.New("number of volumes per server must be greater than 0")
 	}
 
-	volumeSize := resource.NewQuantity(*zoneParams.VolumeConfiguration.Size, resource.DecimalExponent)
+	volumeSize := resource.NewQuantity(*poolParams.VolumeConfiguration.Size, resource.DecimalExponent)
 	volTemp := corev1.PersistentVolumeClaimSpec{
 		AccessModes: []corev1.PersistentVolumeAccessMode{
 			corev1.ReadWriteOnce,
@@ -1110,18 +1112,18 @@ func parseTenantZoneRequest(zoneParams *models.Zone) (*operator.Zone, error) {
 			},
 		},
 	}
-	if zoneParams.VolumeConfiguration.StorageClassName != "" {
-		volTemp.StorageClassName = &zoneParams.VolumeConfiguration.StorageClassName
+	if poolParams.VolumeConfiguration.StorageClassName != "" {
+		volTemp.StorageClassName = &poolParams.VolumeConfiguration.StorageClassName
 	}
 
 	// parse resources' requests
 	resourcesRequests := make(corev1.ResourceList)
 	resourcesLimits := make(corev1.ResourceList)
-	if zoneParams.Resources != nil {
-		for key, val := range zoneParams.Resources.Requests {
+	if poolParams.Resources != nil {
+		for key, val := range poolParams.Resources.Requests {
 			resourcesRequests[corev1.ResourceName(key)] = *resource.NewQuantity(val, resource.BinarySI)
 		}
-		for key, val := range zoneParams.Resources.Limits {
+		for key, val := range poolParams.Resources.Limits {
 			resourcesLimits[corev1.ResourceName(key)] = *resource.NewQuantity(val, resource.BinarySI)
 		}
 	}
@@ -1129,14 +1131,14 @@ func parseTenantZoneRequest(zoneParams *models.Zone) (*operator.Zone, error) {
 	// parse Node Affinity
 	nodeSelectorTerms := []corev1.NodeSelectorTerm{}
 	preferredSchedulingTerm := []corev1.PreferredSchedulingTerm{}
-	if zoneParams.Affinity != nil && zoneParams.Affinity.NodeAffinity != nil {
-		if zoneParams.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution != nil {
-			for _, elem := range zoneParams.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution.NodeSelectorTerms {
+	if poolParams.Affinity != nil && poolParams.Affinity.NodeAffinity != nil {
+		if poolParams.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution != nil {
+			for _, elem := range poolParams.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution.NodeSelectorTerms {
 				term := parseModelsNodeSelectorTerm(elem)
 				nodeSelectorTerms = append(nodeSelectorTerms, term)
 			}
 		}
-		for _, elem := range zoneParams.Affinity.NodeAffinity.PreferredDuringSchedulingIgnoredDuringExecution {
+		for _, elem := range poolParams.Affinity.NodeAffinity.PreferredDuringSchedulingIgnoredDuringExecution {
 			pst := corev1.PreferredSchedulingTerm{
 				Weight:     *elem.Weight,
 				Preference: parseModelsNodeSelectorTerm(elem.Preference),
@@ -1157,11 +1159,11 @@ func parseTenantZoneRequest(zoneParams *models.Zone) (*operator.Zone, error) {
 	// parse Pod Affinity
 	podAffinityTerms := []corev1.PodAffinityTerm{}
 	weightedPodAffinityTerms := []corev1.WeightedPodAffinityTerm{}
-	if zoneParams.Affinity != nil && zoneParams.Affinity.PodAffinity != nil {
-		for _, elem := range zoneParams.Affinity.PodAffinity.RequiredDuringSchedulingIgnoredDuringExecution {
+	if poolParams.Affinity != nil && poolParams.Affinity.PodAffinity != nil {
+		for _, elem := range poolParams.Affinity.PodAffinity.RequiredDuringSchedulingIgnoredDuringExecution {
 			podAffinityTerms = append(podAffinityTerms, parseModelPodAffinityTerm(elem))
 		}
-		for _, elem := range zoneParams.Affinity.PodAffinity.PreferredDuringSchedulingIgnoredDuringExecution {
+		for _, elem := range poolParams.Affinity.PodAffinity.PreferredDuringSchedulingIgnoredDuringExecution {
 			wAffinityTerm := corev1.WeightedPodAffinityTerm{
 				Weight:          *elem.Weight,
 				PodAffinityTerm: parseModelPodAffinityTerm(elem.PodAffinityTerm),
@@ -1180,11 +1182,11 @@ func parseTenantZoneRequest(zoneParams *models.Zone) (*operator.Zone, error) {
 	// parse Pod Anti Affinity
 	podAntiAffinityTerms := []corev1.PodAffinityTerm{}
 	weightedPodAntiAffinityTerms := []corev1.WeightedPodAffinityTerm{}
-	if zoneParams.Affinity != nil && zoneParams.Affinity.PodAntiAffinity != nil {
-		for _, elem := range zoneParams.Affinity.PodAntiAffinity.RequiredDuringSchedulingIgnoredDuringExecution {
+	if poolParams.Affinity != nil && poolParams.Affinity.PodAntiAffinity != nil {
+		for _, elem := range poolParams.Affinity.PodAntiAffinity.RequiredDuringSchedulingIgnoredDuringExecution {
 			podAntiAffinityTerms = append(podAntiAffinityTerms, parseModelPodAffinityTerm(elem))
 		}
-		for _, elem := range zoneParams.Affinity.PodAntiAffinity.PreferredDuringSchedulingIgnoredDuringExecution {
+		for _, elem := range poolParams.Affinity.PodAntiAffinity.PreferredDuringSchedulingIgnoredDuringExecution {
 			wAffinityTerm := corev1.WeightedPodAffinityTerm{
 				Weight:          *elem.Weight,
 				PodAffinityTerm: parseModelPodAffinityTerm(elem.PodAffinityTerm),
@@ -1211,7 +1213,7 @@ func parseTenantZoneRequest(zoneParams *models.Zone) (*operator.Zone, error) {
 
 	// parse tolerations
 	tolerations := []corev1.Toleration{}
-	for _, elem := range zoneParams.Tolerations {
+	for _, elem := range poolParams.Tolerations {
 		var tolerationSeconds *int64
 		if elem.TolerationSeconds != nil {
 			// elem.TolerationSeconds.Seconds is allowed to be nil
@@ -1232,26 +1234,26 @@ func parseTenantZoneRequest(zoneParams *models.Zone) (*operator.Zone, error) {
 	vct := &corev1.PersistentVolumeClaim{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:        "data",
-			Labels:      zoneParams.VolumeConfiguration.Labels,
-			Annotations: zoneParams.VolumeConfiguration.Annotations,
+			Labels:      poolParams.VolumeConfiguration.Labels,
+			Annotations: poolParams.VolumeConfiguration.Annotations,
 		},
 		Spec: volTemp,
 	}
 
-	zone := &operator.Zone{
-		Name:                zoneParams.Name,
-		Servers:             int32(*zoneParams.Servers),
-		VolumesPerServer:    *zoneParams.VolumesPerServer,
+	pool := &operator.Pool{
+		Name:                poolParams.Name,
+		Servers:             int32(*poolParams.Servers),
+		VolumesPerServer:    *poolParams.VolumesPerServer,
 		VolumeClaimTemplate: vct,
 		Resources: corev1.ResourceRequirements{
 			Requests: resourcesRequests,
 			Limits:   resourcesLimits,
 		},
-		NodeSelector: zoneParams.NodeSelector,
+		NodeSelector: poolParams.NodeSelector,
 		Affinity:     affinity,
 		Tolerations:  tolerations,
 	}
-	return zone, nil
+	return pool, nil
 }
 
 func parseModelPodAffinityTerm(term *models.PodAffinityTerm) corev1.PodAffinityTerm {
@@ -1297,30 +1299,30 @@ func parseModelsNodeSelectorTerm(elem *models.NodeSelectorTerm) corev1.NodeSelec
 	return term
 }
 
-// parseTenantZone operator Zone object and returns the equivalent
-// models.Zone object
-func parseTenantZone(zone *operator.Zone) *models.Zone {
+// parseTenantPool operator pool object and returns the equivalent
+// models.Pool object
+func parseTenantPool(pool *operator.Pool) *models.Pool {
 	var size *int64
 	var storageClassName string
-	if zone.VolumeClaimTemplate != nil {
-		size = swag.Int64(zone.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value())
-		if zone.VolumeClaimTemplate.Spec.StorageClassName != nil {
-			storageClassName = *zone.VolumeClaimTemplate.Spec.StorageClassName
+	if pool.VolumeClaimTemplate != nil {
+		size = swag.Int64(pool.VolumeClaimTemplate.Spec.Resources.Requests.Storage().Value())
+		if pool.VolumeClaimTemplate.Spec.StorageClassName != nil {
+			storageClassName = *pool.VolumeClaimTemplate.Spec.StorageClassName
 		}
 	}
 
 	// parse resources' requests
-	var resources *models.ZoneResources
+	var resources *models.PoolResources
 	resourcesRequests := make(map[string]int64)
 	resourcesLimits := make(map[string]int64)
-	for key, val := range zone.Resources.Requests {
+	for key, val := range pool.Resources.Requests {
 		resourcesRequests[key.String()] = val.Value()
 	}
-	for key, val := range zone.Resources.Limits {
+	for key, val := range pool.Resources.Limits {
 		resourcesLimits[key.String()] = val.Value()
 	}
 	if len(resourcesRequests) > 0 || len(resourcesLimits) > 0 {
-		resources = &models.ZoneResources{
+		resources = &models.PoolResources{
 			Limits:   resourcesLimits,
 			Requests: resourcesRequests,
 		}
@@ -1328,17 +1330,17 @@ func parseTenantZone(zone *operator.Zone) *models.Zone {
 
 	// parse Node Affinity
 	nodeSelectorTerms := []*models.NodeSelectorTerm{}
-	preferredSchedulingTerm := []*models.ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{}
+	preferredSchedulingTerm := []*models.PoolAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{}
 
-	if zone.Affinity != nil && zone.Affinity.NodeAffinity != nil {
-		if zone.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution != nil {
-			for _, elem := range zone.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution.NodeSelectorTerms {
+	if pool.Affinity != nil && pool.Affinity.NodeAffinity != nil {
+		if pool.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution != nil {
+			for _, elem := range pool.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution.NodeSelectorTerms {
 				term := parseNodeSelectorTerm(&elem)
 				nodeSelectorTerms = append(nodeSelectorTerms, term)
 			}
 		}
-		for _, elem := range zone.Affinity.NodeAffinity.PreferredDuringSchedulingIgnoredDuringExecution {
-			pst := &models.ZoneAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{
+		for _, elem := range pool.Affinity.NodeAffinity.PreferredDuringSchedulingIgnoredDuringExecution {
+			pst := &models.PoolAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{
 				Weight:     swag.Int32(elem.Weight),
 				Preference: parseNodeSelectorTerm(&elem.Preference),
 			}
@@ -1346,10 +1348,10 @@ func parseTenantZone(zone *operator.Zone) *models.Zone {
 		}
 	}
 
-	var nodeAffinity *models.ZoneAffinityNodeAffinity
+	var nodeAffinity *models.PoolAffinityNodeAffinity
 	if len(nodeSelectorTerms) > 0 || len(preferredSchedulingTerm) > 0 {
-		nodeAffinity = &models.ZoneAffinityNodeAffinity{
-			RequiredDuringSchedulingIgnoredDuringExecution: &models.ZoneAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution{
+		nodeAffinity = &models.PoolAffinityNodeAffinity{
+			RequiredDuringSchedulingIgnoredDuringExecution: &models.PoolAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution{
 				NodeSelectorTerms: nodeSelectorTerms,
 			},
 			PreferredDuringSchedulingIgnoredDuringExecution: preferredSchedulingTerm,
@@ -1358,23 +1360,23 @@ func parseTenantZone(zone *operator.Zone) *models.Zone {
 
 	// parse Pod Affinity
 	podAffinityTerms := []*models.PodAffinityTerm{}
-	weightedPodAffinityTerms := []*models.ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{}
+	weightedPodAffinityTerms := []*models.PoolAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{}
 
-	if zone.Affinity != nil && zone.Affinity.PodAffinity != nil {
-		for _, elem := range zone.Affinity.PodAffinity.RequiredDuringSchedulingIgnoredDuringExecution {
+	if pool.Affinity != nil && pool.Affinity.PodAffinity != nil {
+		for _, elem := range pool.Affinity.PodAffinity.RequiredDuringSchedulingIgnoredDuringExecution {
 			podAffinityTerms = append(podAffinityTerms, parsePodAffinityTerm(&elem))
 		}
-		for _, elem := range zone.Affinity.PodAffinity.PreferredDuringSchedulingIgnoredDuringExecution {
-			wAffinityTerm := &models.ZoneAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{
+		for _, elem := range pool.Affinity.PodAffinity.PreferredDuringSchedulingIgnoredDuringExecution {
+			wAffinityTerm := &models.PoolAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{
 				Weight:          swag.Int32(elem.Weight),
 				PodAffinityTerm: parsePodAffinityTerm(&elem.PodAffinityTerm),
 			}
 			weightedPodAffinityTerms = append(weightedPodAffinityTerms, wAffinityTerm)
 		}
 	}
-	var podAffinity *models.ZoneAffinityPodAffinity
+	var podAffinity *models.PoolAffinityPodAffinity
 	if len(podAffinityTerms) > 0 || len(weightedPodAffinityTerms) > 0 {
-		podAffinity = &models.ZoneAffinityPodAffinity{
+		podAffinity = &models.PoolAffinityPodAffinity{
 			RequiredDuringSchedulingIgnoredDuringExecution:  podAffinityTerms,
 			PreferredDuringSchedulingIgnoredDuringExecution: weightedPodAffinityTerms,
 		}
@@ -1382,14 +1384,14 @@ func parseTenantZone(zone *operator.Zone) *models.Zone {
 
 	// parse Pod Anti Affinity
 	podAntiAffinityTerms := []*models.PodAffinityTerm{}
-	weightedPodAntiAffinityTerms := []*models.ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{}
+	weightedPodAntiAffinityTerms := []*models.PoolAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{}
 
-	if zone.Affinity != nil && zone.Affinity.PodAntiAffinity != nil {
-		for _, elem := range zone.Affinity.PodAntiAffinity.RequiredDuringSchedulingIgnoredDuringExecution {
+	if pool.Affinity != nil && pool.Affinity.PodAntiAffinity != nil {
+		for _, elem := range pool.Affinity.PodAntiAffinity.RequiredDuringSchedulingIgnoredDuringExecution {
 			podAntiAffinityTerms = append(podAntiAffinityTerms, parsePodAffinityTerm(&elem))
 		}
-		for _, elem := range zone.Affinity.PodAntiAffinity.PreferredDuringSchedulingIgnoredDuringExecution {
-			wAffinityTerm := &models.ZoneAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{
+		for _, elem := range pool.Affinity.PodAntiAffinity.PreferredDuringSchedulingIgnoredDuringExecution {
+			wAffinityTerm := &models.PoolAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0{
 				Weight:          swag.Int32(elem.Weight),
 				PodAffinityTerm: parsePodAffinityTerm(&elem.PodAffinityTerm),
 			}
@@ -1397,18 +1399,18 @@ func parseTenantZone(zone *operator.Zone) *models.Zone {
 		}
 	}
 
-	var podAntiAffinity *models.ZoneAffinityPodAntiAffinity
+	var podAntiAffinity *models.PoolAffinityPodAntiAffinity
 	if len(podAntiAffinityTerms) > 0 || len(weightedPodAntiAffinityTerms) > 0 {
-		podAntiAffinity = &models.ZoneAffinityPodAntiAffinity{
+		podAntiAffinity = &models.PoolAffinityPodAntiAffinity{
 			RequiredDuringSchedulingIgnoredDuringExecution:  podAntiAffinityTerms,
 			PreferredDuringSchedulingIgnoredDuringExecution: weightedPodAntiAffinityTerms,
 		}
 	}
 
 	// build affinity object
-	var affinity *models.ZoneAffinity
+	var affinity *models.PoolAffinity
 	if nodeAffinity != nil || podAffinity != nil || podAntiAffinity != nil {
-		affinity = &models.ZoneAffinity{
+		affinity = &models.PoolAffinity{
 			NodeAffinity:    nodeAffinity,
 			PodAffinity:     podAffinity,
 			PodAntiAffinity: podAntiAffinity,
@@ -1416,15 +1418,15 @@ func parseTenantZone(zone *operator.Zone) *models.Zone {
 	}
 
 	// parse tolerations
-	var tolerations models.ZoneTolerations
-	for _, elem := range zone.Tolerations {
-		var tolerationSecs *models.ZoneTolerationSeconds
+	var tolerations models.PoolTolerations
+	for _, elem := range pool.Tolerations {
+		var tolerationSecs *models.PoolTolerationSeconds
 		if elem.TolerationSeconds != nil {
-			tolerationSecs = &models.ZoneTolerationSeconds{
+			tolerationSecs = &models.PoolTolerationSeconds{
 				Seconds: elem.TolerationSeconds,
 			}
 		}
-		toleration := &models.ZoneTolerationsItems0{
+		toleration := &models.PoolTolerationsItems0{
 			Key:               elem.Key,
 			Operator:          string(elem.Operator),
 			Value:             elem.Value,
@@ -1434,20 +1436,20 @@ func parseTenantZone(zone *operator.Zone) *models.Zone {
 		tolerations = append(tolerations, toleration)
 	}
 
-	zoneModel := &models.Zone{
-		Name:             zone.Name,
-		Servers:          swag.Int64(int64(zone.Servers)),
-		VolumesPerServer: swag.Int32(zone.VolumesPerServer),
-		VolumeConfiguration: &models.ZoneVolumeConfiguration{
+	poolModel := &models.Pool{
+		Name:             pool.Name,
+		Servers:          swag.Int64(int64(pool.Servers)),
+		VolumesPerServer: swag.Int32(pool.VolumesPerServer),
+		VolumeConfiguration: &models.PoolVolumeConfiguration{
 			Size:             size,
 			StorageClassName: storageClassName,
 		},
-		NodeSelector: zone.NodeSelector,
+		NodeSelector: pool.NodeSelector,
 		Resources:    resources,
 		Affinity:     affinity,
 		Tolerations:  tolerations,
 	}
-	return zoneModel
+	return poolModel
 }
 
 func parsePodAffinityTerm(term *corev1.PodAffinityTerm) *models.PodAffinityTerm {
@@ -1493,7 +1495,7 @@ func parseNodeSelectorTerm(term *corev1.NodeSelectorTerm) *models.NodeSelectorTe
 	return &t
 }
 
-func getTenantUpdateZoneResponse(session *models.Principal, params admin_api.TenantUpdateZonesParams) (*models.Tenant, *models.Error) {
+func getTenantUpdatePoolResponse(session *models.Principal, params admin_api.TenantUpdatePoolsParams) (*models.Tenant, *models.Error) {
 	ctx := context.Background()
 	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
 	if err != nil {
@@ -1504,9 +1506,9 @@ func getTenantUpdateZoneResponse(session *models.Principal, params admin_api.Ten
 		client: opClientClientSet,
 	}
 
-	t, err := updateTenantZones(ctx, opClient, params.Namespace, params.Tenant, params.Body.Zones)
+	t, err := updateTenantPools(ctx, opClient, params.Namespace, params.Tenant, params.Body.Pools)
 	if err != nil {
-		log.Println("error updating Tenant's zones:", err)
+		log.Println("error updating Tenant's pools:", err)
 		return nil, prepareError(err)
 	}
 
@@ -1515,33 +1517,33 @@ func getTenantUpdateZoneResponse(session *models.Principal, params admin_api.Ten
 	return tenant, nil
 }
 
-// updateTenantZones Sets the Tenant's zones to the ones provided by the request
+// updateTenantPools Sets the Tenant's pools to the ones provided by the request
 //
-// It does the equivalent to a PUT request on Tenant's zones
-func updateTenantZones(
+// It does the equivalent to a PUT request on Tenant's pools
+func updateTenantPools(
 	ctx context.Context,
 	operatorClient OperatorClientI,
 	namespace string,
 	tenantName string,
-	zonesReq []*models.Zone) (*operator.Tenant, error) {
+	poolsReq []*models.Pool) (*operator.Tenant, error) {
 
 	minInst, err := operatorClient.TenantGet(ctx, namespace, tenantName, metav1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}
 
-	// set the zones if they are provided
-	var newZoneArray []operator.Zone
-	for _, zone := range zonesReq {
-		zone, err := parseTenantZoneRequest(zone)
+	// set the pools if they are provided
+	var newPoolArray []operator.Pool
+	for _, pool := range poolsReq {
+		pool, err := parseTenantPoolRequest(pool)
 		if err != nil {
 			return nil, err
 		}
-		newZoneArray = append(newZoneArray, *zone)
+		newPoolArray = append(newPoolArray, *pool)
 	}
 
-	// replace zones array
-	minInst.Spec.Zones = newZoneArray
+	// replace pools array
+	minInst.Spec.Pools = newPoolArray
 
 	minInst = minInst.DeepCopy()
 	minInst.EnsureDefaults()

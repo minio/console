@@ -7,13 +7,13 @@ import Grid from "@material-ui/core/Grid";
 import { niceBytes } from "../../../../common/utils";
 import { Button, LinearProgress } from "@material-ui/core";
 import api from "../../../../common/api";
-import { IAddZoneRequest, ITenant } from "../ListTenants/types";
+import { IAddPoolRequest, ITenant } from "../ListTenants/types";
 
-interface IAddZoneProps {
+interface IAddPoolProps {
   tenant: ITenant;
   classes: any;
   open: boolean;
-  onCloseZoneAndReload: (shouldReload: boolean) => void;
+  onClosePoolAndReload: (shouldReload: boolean) => void;
 }
 
 const styles = (theme: Theme) =>
@@ -58,12 +58,12 @@ const styles = (theme: Theme) =>
     ...modalBasic,
   });
 
-const AddZoneModal = ({
+const AddPoolModal = ({
   tenant,
   classes,
   open,
-  onCloseZoneAndReload,
-}: IAddZoneProps) => {
+  onClosePoolAndReload,
+}: IAddPoolProps) => {
   const [addSending, setAddSending] = useState<boolean>(false);
   const [numberOfNodes, setNumberOfNodes] = useState<number>(0);
   const [volumeSize, setVolumeSize] = useState<number>(0);
@@ -74,9 +74,9 @@ const AddZoneModal = ({
 
   return (
     <ModalWrapper
-      onClose={() => onCloseZoneAndReload(false)}
+      onClose={() => onClosePoolAndReload(false)}
       modalOpen={open}
-      title="Add Zone"
+      title="Add Pool"
     >
       <form
         noValidate
@@ -84,7 +84,7 @@ const AddZoneModal = ({
         onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
           e.preventDefault();
           setAddSending(true);
-          const data: IAddZoneRequest = {
+          const data: IAddPoolRequest = {
             name: "",
             servers: numberOfNodes,
             volumes_per_server: volumesPerServer,
@@ -97,12 +97,12 @@ const AddZoneModal = ({
           api
             .invoke(
               "POST",
-              `/api/v1/namespaces/${tenant.namespace}/tenants/${tenant.name}/zones`,
+              `/api/v1/namespaces/${tenant.namespace}/tenants/${tenant.name}/pools`,
               data
             )
             .then(() => {
               setAddSending(false);
-              onCloseZoneAndReload(true);
+              onClosePoolAndReload(true);
             })
             .catch((err) => {
               setAddSending(false);
@@ -124,8 +124,8 @@ const AddZoneModal = ({
         </Grid>
         <Grid item xs={12}>
           <InputBoxWrapper
-            id="zone_size"
-            name="zone_size"
+            id="pool_size"
+            name="pool_size"
             type="number"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setVolumeSize(parseInt(e.target.value));
@@ -184,4 +184,4 @@ const AddZoneModal = ({
   );
 };
 
-export default withStyles(styles)(AddZoneModal);
+export default withStyles(styles)(AddPoolModal);

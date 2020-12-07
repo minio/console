@@ -26,16 +26,16 @@ import {
   tooltipHelper,
 } from "../../Common/FormComponents/common/styleLibrary";
 import DeleteIcon from "../../../../icons/DeleteIcon";
-import { IZone } from "./types";
+import { IPool } from "./types";
 
-interface IZonesMultiSelector {
-  elements: IZone[];
+interface IPoolsMultiSelector {
+  elements: IPool[];
   name: string;
   label: string;
   tooltip?: string;
   classes: any;
 
-  onChange: (elements: IZone[]) => void;
+  onChange: (elements: IPool[]) => void;
 }
 
 const gridBasic = {
@@ -78,15 +78,15 @@ const styles = (theme: Theme) =>
     },
   });
 
-const ZonesMultiSelector = ({
+const PoolsMultiSelector = ({
   elements,
   name,
   label,
   tooltip = "",
   onChange,
   classes,
-}: IZonesMultiSelector) => {
-  const defaultZone: IZone = {
+}: IPoolsMultiSelector) => {
+  const defaultPool: IPool = {
     name: "",
     servers: 0,
     capacity: "",
@@ -95,7 +95,7 @@ const ZonesMultiSelector = ({
     volume_configuration: { size: 0, storage_class: "", labels: null },
   };
 
-  const [currentElements, setCurrentElements] = useState<IZone[]>([]);
+  const [currentElements, setCurrentElements] = useState<IPool[]>([]);
   const [internalCounter, setInternalCounter] = useState<number>(1);
   const bottomList = createRef<HTMLDivElement>();
 
@@ -108,7 +108,7 @@ const ZonesMultiSelector = ({
   useEffect(() => {
     if (currentElements.length === 0 && elements.length === 0) {
       // Initial Value
-      setCurrentElements([{ ...defaultZone, name: "zone-1" }]);
+      setCurrentElements([{ ...defaultPool, name: "pool-1" }]);
     } else if (currentElements.length === 0 && elements.length > 0) {
       setCurrentElements(elements);
       setInternalCounter(elements.length);
@@ -116,7 +116,7 @@ const ZonesMultiSelector = ({
   }, [currentElements, elements]);
 
   // If the last input is not empty, we add a new one
-  const addEmptyRow = (elementsUp: IZone[]) => {
+  const addEmptyRow = (elementsUp: IPool[]) => {
     const lastElement = elementsUp[elementsUp.length - 1];
     const internalElement = internalCounter + 1;
     if (
@@ -125,8 +125,8 @@ const ZonesMultiSelector = ({
       !isNaN(lastElement.servers)
     ) {
       elementsUp.push({
-        ...defaultZone,
-        name: `zone-${internalElement}`,
+        ...defaultPool,
+        name: `pool-${internalElement}`,
       });
       const refScroll = bottomList.current;
 
@@ -147,7 +147,7 @@ const ZonesMultiSelector = ({
     let updatedElement = [...currentElements];
     const index = get(e.target, "dataset.index", 0);
 
-    const rowPosition: IZone = updatedElement[index];
+    const rowPosition: IPool = updatedElement[index];
 
     rowPosition.servers =
       field === "servers" ? parseInt(e.target.value) : rowPosition.servers;
@@ -159,19 +159,19 @@ const ZonesMultiSelector = ({
     setCurrentElements(updatedElement);
   };
 
-  const deleteElement = (zoneToRemove: number) => {
-    const zonesClone = [...currentElements];
+  const deleteElement = (poolToRemove: number) => {
+    const poolsClone = [...currentElements];
 
-    const newArray = zonesClone
-      .slice(0, zoneToRemove)
-      .concat(zonesClone.slice(zoneToRemove + 1, zonesClone.length));
+    const newArray = poolsClone
+      .slice(0, poolToRemove)
+      .concat(poolsClone.slice(poolToRemove + 1, poolsClone.length));
 
     setCurrentElements(newArray);
   };
 
   const inputs = currentElements.map((element, index) => {
     return (
-      <React.Fragment key={`zone-${name}-${index.toString()}`}>
+      <React.Fragment key={`pool-${name}-${index.toString()}`}>
         <div>
           <InputBoxWrapper
             id={`${name}-${index.toString()}-name`}
@@ -180,7 +180,7 @@ const ZonesMultiSelector = ({
             value={currentElements[index].name}
             onChange={(e) => onChangeElement(e, "name")}
             index={index}
-            key={`Zones-${name}-${index.toString()}-name`}
+            key={`Pools-${name}-${index.toString()}-name`}
           />
         </div>
         <div>
@@ -193,7 +193,7 @@ const ZonesMultiSelector = ({
             value={currentElements[index].servers.toString(10)}
             onChange={(e) => onChangeElement(e, "servers")}
             index={index}
-            key={`Zones-${name}-${index.toString()}-servers`}
+            key={`Pools-${name}-${index.toString()}-servers`}
           />
         </div>
         <div className={classes.deleteIconContainer}>
@@ -239,4 +239,4 @@ const ZonesMultiSelector = ({
   );
 };
 
-export default withStyles(styles)(ZonesMultiSelector);
+export default withStyles(styles)(PoolsMultiSelector);
