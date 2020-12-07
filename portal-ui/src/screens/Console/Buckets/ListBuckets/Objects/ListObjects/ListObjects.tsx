@@ -256,7 +256,7 @@ const ListObjects = ({
     xhr.open("POST", uploadUrl, true);
 
     xhr.withCredentials = false;
-    xhr.onload = function (event) {
+    xhr.onload = function(event) {
       // TODO: handle status
       if (xhr.status === 401 || xhr.status === 403) {
         showSnackBarMessage("An error occurred while uploading the file.");
@@ -291,8 +291,18 @@ const ListObjects = ({
     e.target.value = null;
   };
 
-  const displayParsedDate = (date: string) => {
-    return <reactMoment.default>{date}</reactMoment.default>;
+  const displayParsedDate = (object: BucketObject) => {
+    if (object.name.endsWith("/")) {
+      return "";
+    }
+    return <reactMoment.default>{object.last_modified}</reactMoment.default>;
+  };
+
+  const displayNiceBytes = (object: BucketObject) => {
+    if (object.name.endsWith("/")) {
+      return "";
+    }
+    return niceBytes(String(object.size));
   };
 
   const confirmDeleteObject = (object: string) => {
@@ -488,11 +498,13 @@ const ListObjects = ({
                   label: "Last Modified",
                   elementKey: "last_modified",
                   renderFunction: displayParsedDate,
+                  renderFullObject: true,
                 },
                 {
                   label: "Size",
                   elementKey: "size",
-                  renderFunction: niceBytes,
+                  renderFunction: displayNiceBytes,
+                  renderFullObject: true,
                   width: 60,
                   contentTextAlign: "right",
                 },
