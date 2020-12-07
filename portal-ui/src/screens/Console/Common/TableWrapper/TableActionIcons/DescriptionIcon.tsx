@@ -1,7 +1,7 @@
 import React from "react";
 import { IIcon, selected, unSelected } from "./common";
 
-const PencilIcon = ({ active = false }: IIcon) => {
+const DescriptionIcon = ({ active = false }: IIcon) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -18,4 +18,4 @@ const PencilIcon = ({ active = false }: IIcon) => {
   );
 };
 
-export default PencilIcon;
+export default DescriptionIcon;
