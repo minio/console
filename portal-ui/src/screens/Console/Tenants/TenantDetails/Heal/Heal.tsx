@@ -9,13 +9,11 @@ import { FormControl, MenuItem, Select } from "@material-ui/core";
 import { BucketList, Bucket } from "../Watch/types";
 import { HealStatus, colorH } from "./types";
 import { niceBytes } from "../../../../../common/utils";
-import InputLabel from "@material-ui/core/InputLabel";
 import {
   actionsTray,
   containerForHeader,
   searchField,
 } from "../../../Common/FormComponents/common/styleLibrary";
-import PageHeader from "../../../Common/PageHeader/PageHeader";
 import CheckboxWrapper from "../../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 
 const styles = (theme: Theme) =>

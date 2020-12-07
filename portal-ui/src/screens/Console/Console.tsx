@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect } from "react";
+import React from "react";
 import clsx from "clsx";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -31,7 +31,6 @@ import {
 } from "../../actions";
 import Buckets from "./Buckets/Buckets";
 import Policies from "./Policies/Policies";
-import Permissions from "./Permissions/Permissions";
 import Dashboard from "./Dashboard/Dashboard";
 import Menu from "./Menu/Menu";
 import api from "../../common/api";
@@ -46,8 +45,6 @@ import ListTenants from "./Tenants/ListTenants/ListTenants";
 import { ISessionResponse } from "./types";
 import TenantDetails from "./Tenants/TenantDetails/TenantDetails";
 import ObjectBrowser from "./ObjectBrowser/ObjectBrowser";
-import ListObjects from "./Buckets/ListBuckets/Objects/ListObjects/ListObjects";
-import ObjectDetails from "./Buckets/ListBuckets/Objects/ObjectDetails/ObjectDetails";
 import ObjectRouting from "./Buckets/ListBuckets/Objects/ListObjects/ObjectRouting";
 import License from "./License/License";
 
@@ -238,10 +235,6 @@ const Console = ({
     {
       component: ConfigurationsList,
       path: "/configurations-list",
-    },
-    {
-      component: Permissions,
-      path: "/permissions",
     },
     {
       component: ServiceAccounts,

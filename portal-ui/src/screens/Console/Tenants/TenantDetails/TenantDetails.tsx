@@ -22,7 +22,7 @@ import {
   modalBasic,
 } from "../../Common/FormComponents/common/styleLibrary";
 import Grid from "@material-ui/core/Grid";
-import { Button } from "@material-ui/core";
+import { Button, IconButton } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import { CreateIcon } from "../../../../icons";
@@ -40,6 +40,9 @@ import Watch from "./Watch/Watch";
 import Heal from "./Heal/Heal";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import UsageBarWrapper from "../../Common/UsageBarWrapper/UsageBarWrapper";
+import UpdateTenantModal from "./UpdateTenantModal";
+import EditIcon from "@material-ui/icons/Edit";
+import PencilIcon from "../../Common/TableWrapper/TableActionIcons/PencilIcon";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -100,6 +103,18 @@ const styles = (theme: Theme) =>
     actionsTray: {
       textAlign: "right",
     },
+    updateButton: {
+      backgroundColor: "transparent",
+      border: 0,
+      padding: "0 6px",
+      cursor: "pointer",
+      "&:focus, &:active": {
+        outline: "none",
+      },
+      "& svg": {
+        height: 12,
+      },
+    },
     ...modalBasic,
     ...containerForHeader(theme.spacing(4)),
   });
@@ -119,6 +134,7 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
   const [loadingUsage, setLoadingUsage] = useState<boolean>(true);
   const [usageError, setUsageError] = useState<string>("");
   const [usage, setUsage] = useState<number>(0);
+  const [updateMinioVersion, setUpdateMinioVersion] = useState<boolean>(false);
 
   const tenantName = match.params["tenantName"];
   const tenantNamespace = match.params["tenantNamespace"];
@@ -228,6 +244,16 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
           closeModalAndRefresh={closeReplicationAndRefresh}
         />
       )}
+      {updateMinioVersion && (
+        <UpdateTenantModal
+          open={updateMinioVersion}
+          closeModalAndRefresh={() => {
+            setUpdateMinioVersion(false);
+          }}
+          idTenant={tenantName}
+          namespace={tenantNamespace}
+        />
+      )}
       <PageHeader label={`Tenant > ${match.params["tenantName"]}`} />
       <Grid item xs={12} className={classes.container} />
       <Grid container>
@@ -245,7 +271,17 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
               <div>Capacity:</div>
               <div>{niceBytes(capacity.toString(10))}</div>
               <div>Minio:</div>
-              <div>{tenant ? tenant.image : ""}</div>
+              <div>
+                {tenant ? tenant.image : ""}{" "}
+                <button
+                  className={classes.updateButton}
+                  onClick={() => {
+                    setUpdateMinioVersion(true);
+                  }}
+                >
+                  <PencilIcon active={false} />
+                </button>
+              </div>
               <div>Clusters:</div>
               <div>{poolCount}</div>
               <div>Console:</div>

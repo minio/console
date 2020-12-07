@@ -23,7 +23,6 @@ import SearchIcon from "@material-ui/icons/Search";
 import { Button } from "@material-ui/core";
 import { CreateIcon } from "../../../icons";
 import api from "../../../common/api";
-import { MinTablePaginationActions } from "../../../common/MinTablePaginationActions";
 import { GroupsList } from "./types";
 import { stringSort } from "../../../utils/sortFunctions";
 import AddGroup from "../Groups/AddGroup";
@@ -88,24 +87,9 @@ const Groups = ({ classes }: IGroupsProps) => {
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [loading, isLoading] = useState<boolean>(false);
   const [records, setRecords] = useState<any[]>([]);
-  const [totalRecords, setTotalRecords] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
-  const [page, setPage] = useState<number>(0);
   const [error, setError] = useState<string>("");
   const [filter, setFilter] = useState<string>("");
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const rPP = parseInt(event.target.value, 10);
-    setPage(0);
-    setRowsPerPage(rPP);
-  };
 
   useEffect(() => {
     isLoading(true);
@@ -113,30 +97,21 @@ const Groups = ({ classes }: IGroupsProps) => {
 
   useEffect(() => {
     isLoading(true);
-  }, [page, rowsPerPage]);
+  }, []);
 
   useEffect(() => {
     if (loading) {
       const fetchRecords = () => {
-        const offset = page * rowsPerPage;
         api
-          .invoke("GET", `/api/v1/groups?offset=${offset}&limit=${rowsPerPage}`)
+          .invoke("GET", `/api/v1/groups`)
           .then((res: GroupsList) => {
             let resGroups: string[] = [];
             if (res.groups !== null) {
               resGroups = res.groups.sort(stringSort);
             }
             setRecords(resGroups);
-            const total = !res.total ? 0 : res.total;
-            setTotalRecords(total);
             setError("");
             isLoading(false);
-
-            // if we get 0 results, and page > 0 , go down 1 page
-            if ((!res.groups || res.groups.length === 0) && page > 0) {
-              const newPage = page - 1;
-              setPage(newPage);
-            }
           })
           .catch((err) => {
             setError(err);
@@ -145,7 +120,7 @@ const Groups = ({ classes }: IGroupsProps) => {
       };
       fetchRecords();
     }
-  }, [loading, page, rowsPerPage]);
+  }, [loading]);
 
   const closeAddModalAndRefresh = () => {
     setGroupOpen(false);
