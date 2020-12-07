@@ -22,6 +22,7 @@ const (
 	ConsoleAccessKey      = "CONSOLE_ACCESS_KEY"
 	ConsoleSecretKey      = "CONSOLE_SECRET_KEY"
 	ConsoleMinIOServer    = "CONSOLE_MINIO_SERVER"
+	ConsoleMinIORegion    = "CONSOLE_MINIO_REGION"
 	ConsoleProductionMode = "CONSOLE_PRODUCTION_MODE"
 	ConsoleHostname       = "CONSOLE_HOSTNAME"
 	ConsolePort           = "CONSOLE_PORT"

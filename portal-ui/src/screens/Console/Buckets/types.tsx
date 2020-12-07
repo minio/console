@@ -85,6 +85,11 @@ export interface MakeBucketRequest {
   quota?: QuotaRequest;
 }
 
+export interface ChangePasswordRequest {
+  current_secret_key: string;
+  new_secret_key: string;
+}
+
 export interface IRemoteBucket {
   name: string;
   accessKey: string;

@@ -136,6 +136,28 @@ paths:
       tags:
         - UserAPI
 
+  /account/change-password:
+    post:
+      summary: Change password of currently logged in user.
+      operationId: AccountChangePassword
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/accountChangePasswordRequest"
+      responses:
+        201:
+          description: A successful login.
+          schema:
+            $ref: "#/definitions/loginResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /buckets:
     get:
       summary: List Buckets
@@ -1953,6 +1975,18 @@ paths:
         - OperatorAPI
 
 definitions:
+
+  accountChangePasswordRequest:
+    type: object
+    required:
+      - current_secret_key
+      - new_secret_key
+    properties:
+      current_secret_key:
+        type: string
+      new_secret_key:
+        type: string
+
   bucketEncryptionType:
     type: string
     enum:
@@ -2460,16 +2494,20 @@ definitions:
   principal:
     type: object
     properties:
-      accessKeyID:
+      STSAccessKeyID:
         type: string
-      secretAccessKey:
+      STSSecretAccessKey:
         type: string
-      sessionToken:
+      STSSessionToken:
         type: string
       actions:
         type: array
         items:
           type: string
+      accountAccessKey:
+        type: string
+      accountSecretKey:
+        type: string
   startProfilingItem:
     type: object
     properties:

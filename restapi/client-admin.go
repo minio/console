@@ -105,6 +105,8 @@ type MinioAdmin interface {
 	getRemoteBucket(ctx context.Context, bucket, arnType string) (targets *madmin.BucketTarget, err error)
 	removeRemoteBucket(ctx context.Context, bucket, arn string) error
 	addRemoteBucket(ctx context.Context, bucket string, target *madmin.BucketTarget) (string, error)
+	// Account password management
+	changePassword(ctx context.Context, accessKey, secretKey string) error
 }
 
 // Interface implementation
@@ -115,14 +117,18 @@ type adminClient struct {
 	client *madmin.AdminClient
 }
 
+func (ac adminClient) changePassword(ctx context.Context, accessKey, secretKey string) error {
+	return ac.client.SetUser(ctx, accessKey, secretKey, madmin.AccountEnabled)
+}
+
 // implements madmin.ListUsers()
 func (ac adminClient) listUsers(ctx context.Context) (map[string]madmin.UserInfo, error) {
 	return ac.client.ListUsers(ctx)
 }
 
 // implements madmin.AddUser()
-func (ac adminClient) addUser(ctx context.Context, acessKey, secretKey string) error {
-	return ac.client.AddUser(ctx, acessKey, secretKey)
+func (ac adminClient) addUser(ctx context.Context, accessKey, secretKey string) error {
+	return ac.client.AddUser(ctx, accessKey, secretKey)
 }
 
 // implements madmin.RemoveUser()
@@ -301,7 +307,7 @@ func newAdminFromClaims(claims *models.Principal) (*madmin.AdminClient, error) {
 	endpoint := getMinIOEndpoint()
 
 	adminClient, err := madmin.NewWithOptions(endpoint, &madmin.Options{
-		Creds:  credentials.NewStaticV4(claims.AccessKeyID, claims.SecretAccessKey, claims.SessionToken),
+		Creds:  credentials.NewStaticV4(claims.STSAccessKeyID, claims.STSSecretAccessKey, claims.STSSessionToken),
 		Secure: tlsEnabled,
 	})
 	if err != nil {

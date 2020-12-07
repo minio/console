@@ -31,7 +31,7 @@ var (
 	notifications       = "/notification-endpoints"
 	buckets             = "/buckets"
 	bucketsDetail       = "/buckets/:bucketName"
-	serviceAccounts     = "/service-accounts"
+	serviceAccounts     = "/account"
 	tenants             = "/tenants"
 	tenantsDetail       = "/namespaces/:tenantNamespace/tenants/:tenantName"
 	remoteBuckets       = "/remote-buckets"

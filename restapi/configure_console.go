@@ -80,10 +80,12 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 			return nil, errors.New(401, "incorrect api key auth")
 		}
 		return &models.Principal{
-			AccessKeyID:     claims.AccessKeyID,
-			Actions:         claims.Actions,
-			SecretAccessKey: claims.SecretAccessKey,
-			SessionToken:    claims.SessionToken,
+			STSAccessKeyID:     claims.STSAccessKeyID,
+			Actions:            claims.Actions,
+			STSSecretAccessKey: claims.STSSecretAccessKey,
+			STSSessionToken:    claims.STSSessionToken,
+			AccountAccessKey:   claims.AccountAccessKey,
+			AccountSecretKey:   claims.AccountSecretKey,
 		}, nil
 	}
 
@@ -135,6 +137,8 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerBucketQuotaHandlers(api)
 	// List buckets
 	registerOperatorBucketsHandlers(api)
+	// Register Account handlers
+	registerAccountHandlers(api)
 
 	api.PreServerShutdown = func() {}
 

@@ -29,8 +29,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// Define a mock struct of ConsoleCredentials interface implementation
+// Define a mock struct of ConsoleCredentialsI interface implementation
 type consoleCredentialsMock struct{}
+
+func (ac consoleCredentialsMock) GetActions() []string {
+	return []string{}
+}
+
+func (ac consoleCredentialsMock) GetAccountAccessKey() string {
+	return ""
+}
+
+func (ac consoleCredentialsMock) GetAccountSecretKey() string {
+	return ""
+}
 
 // Common mocks
 var consoleCredentialsGetMock func() (credentials.Value, error)
@@ -52,7 +64,7 @@ func TestLogin(t *testing.T) {
 			SignerType:      0,
 		}, nil
 	}
-	token, err := login(consoleCredentials, []string{""})
+	token, err := login(consoleCredentials)
 	funcAssert.NotEmpty(token, "Token was returned empty")
 	funcAssert.Nil(err, "error creating a session")
 
@@ -60,7 +72,7 @@ func TestLogin(t *testing.T) {
 	consoleCredentialsGetMock = func() (credentials.Value, error) {
 		return credentials.Value{}, errors.New("")
 	}
-	_, err = login(consoleCredentials, []string{""})
+	_, err = login(consoleCredentials)
 	funcAssert.NotNil(err, "not error returned creating a session")
 }
 

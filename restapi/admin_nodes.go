@@ -123,7 +123,7 @@ func min(x, y int64) int64 {
 
 func getMaxAllocatableMemoryResponse(session *models.Principal, numNodes int32) (*models.MaxAllocatableMemResponse, *models.Error) {
 	ctx := context.Background()
-	client, err := cluster.K8sClient(session.SessionToken)
+	client, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
 	}

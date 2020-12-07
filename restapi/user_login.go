@@ -83,14 +83,14 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 
 // login performs a check of consoleCredentials against MinIO, generates some claims and returns the jwt
 // for subsequent authentication
-func login(credentials ConsoleCredentials, actions []string) (*string, error) {
+func login(credentials ConsoleCredentialsI) (*string, error) {
 	// try to obtain consoleCredentials,
 	tokens, err := credentials.Get()
 	if err != nil {
 		return nil, err
 	}
 	// if we made it here, the consoleCredentials work, generate a jwt with claims
-	token, err := auth.NewEncryptedTokenForClient(&tokens, actions)
+	token, err := auth.NewEncryptedTokenForClient(&tokens, credentials.GetAccountAccessKey(), credentials.GetAccountSecretKey(), credentials.GetActions())
 	if err != nil {
 		log.Println("error authenticating user", err)
 		return nil, errInvalidCredentials
@@ -112,33 +112,22 @@ func getConfiguredRegionForLogin(ctx context.Context, client MinioAdmin) (string
 	return location, nil
 }
 
-// getLoginResponse performs login() and serializes it to the handler's output
-func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-	defer cancel()
-	mAdmin, err := newSuperMAdminClient()
+func getConsoleCredentials(ctx context.Context, accessKey, secretKey string) (*consoleCredentials, error) {
+	mAdminClient, err := newMAdminClient(&models.Principal{
+		STSAccessKeyID:     accessKey,
+		STSSecretAccessKey: secretKey,
+	})
 	if err != nil {
-		return nil, prepareError(err, errorGeneric)
+		return nil, err
 	}
-	adminClient := adminClient{client: mAdmin}
-	// obtain the configured MinIO region
-	// need it for user authentication
-	location, err := getConfiguredRegionForLogin(ctx, adminClient)
-	if err != nil {
-		return nil, prepareError(err, errConnectingToMinio)
-	}
-	creds, err := newConsoleCredentials(*lr.AccessKey, *lr.SecretKey, location)
-	if err != nil {
-		return nil, prepareError(err, errInvalidCredentials)
-	}
-	credentials := consoleCredentials{consoleCredentials: creds}
+	userAdminClient := adminClient{client: mAdminClient}
 	// obtain the current policy assigned to this user
 	// necessary for generating the list of allowed endpoints
-	userInfo, err := adminClient.getUserInfo(ctx, *lr.AccessKey)
+	userInfo, err := userAdminClient.getUserInfo(ctx, accessKey)
 	if err != nil {
-		return nil, prepareError(err, errorGeneric)
+		return nil, err
 	}
-	policy, _ := adminClient.getPolicy(ctx, userInfo.PolicyName)
+	policy, _ := userAdminClient.getPolicy(ctx, userInfo.PolicyName)
 	// by default every user starts with an empty array of available actions
 	// therefore we would have access only to pages that doesn't require any privilege
 	// ie: service-account page
@@ -147,7 +136,29 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.E
 	if policy != nil {
 		actions = acl.GetActionsStringFromPolicy(policy)
 	}
-	sessionID, err := login(credentials, actions)
+	creds, err := newConsoleCredentials(accessKey, secretKey, MinioRegion)
+	if err != nil {
+		return nil, err
+	}
+	// consoleCredentials will be sts credentials, account credentials will be need it in the scenario the user wish
+	return &consoleCredentials{
+		consoleCredentials: creds,
+		accountAccessKey:   accessKey,
+		accountSecretKey:   secretKey,
+		actions:            actions,
+	}, nil
+}
+
+// getLoginResponse performs login() and serializes it to the handler's output
+func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.Error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	// prepare console credentials
+	credentials, err := getConsoleCredentials(ctx, *lr.AccessKey, *lr.SecretKey)
+	if err != nil {
+		return nil, prepareError(errInvalidCredentials, nil, err)
+	}
+	sessionID, err := login(credentials)
 	if err != nil {
 		return nil, prepareError(errInvalidCredentials, nil, err)
 	}
@@ -250,8 +261,8 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 		if err != nil {
 			return nil, prepareError(err)
 		}
-		credentials := consoleCredentials{consoleCredentials: creds}
-		token, err := login(credentials, actions)
+		credentials := consoleCredentials{consoleCredentials: creds, actions: actions}
+		token, err := login(credentials)
 		if err != nil {
 			return nil, prepareError(errInvalidCredentials, nil, err)
 		}
@@ -270,9 +281,8 @@ func getLoginOperatorResponse(lmr *models.LoginOperatorRequest) (*models.LoginRe
 	if err != nil {
 		return nil, prepareError(err)
 	}
-	credentials := consoleCredentials{consoleCredentials: creds}
-	var actions []string
-	token, err := login(credentials, actions)
+	credentials := consoleCredentials{consoleCredentials: creds, actions: []string{}}
+	token, err := login(credentials)
 	if err != nil {
 		return nil, prepareError(errInvalidCredentials, nil, err)
 	}
