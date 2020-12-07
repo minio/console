@@ -16,30 +16,29 @@
 
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
-class UsersIcon extends React.Component {
-  render() {
-    return (
-      <SvgIcon>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6.131 10">
-          <g transform="translate(193 719.787)">
-            <g transform="translate(-193 -719.787)">
-              <path
-                d="M3,0h.131a3,3,0,0,1,3,3V5a0,0,0,0,1,0,0H0A0,0,0,0,1,0,5V3A3,3,0,0,1,3,0Z"
-                transform="translate(0 5)"
-              />
-              <ellipse
-                cx="2.065"
-                cy="2"
-                rx="2.065"
-                ry="2"
-                transform="translate(1 0)"
-              />
-            </g>
+
+const UsersIcon = () => {
+  return (
+    <SvgIcon>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6.131 10">
+        <g transform="translate(193 719.787)">
+          <g transform="translate(-193 -719.787)">
+            <path
+              d="M3,0h.131a3,3,0,0,1,3,3V5a0,0,0,0,1,0,0H0A0,0,0,0,1,0,5V3A3,3,0,0,1,3,0Z"
+              transform="translate(0 5)"
+            />
+            <ellipse
+              cx="2.065"
+              cy="2"
+              rx="2.065"
+              ry="2"
+              transform="translate(1 0)"
+            />
           </g>
-        </svg>
-      </SvgIcon>
-    );
-  }
-}
+        </g>
+      </svg>
+    </SvgIcon>
+  );
+};
 
 export default UsersIcon;

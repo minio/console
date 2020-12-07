@@ -16,35 +16,29 @@
 
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
-class CreateIcon extends React.Component {
-  render() {
-    return (
-      <SvgIcon>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12">
-          <g
-            id="Group_55"
-            data-name="Group 55"
-            transform="translate(1002 -2555)"
-          >
-            <rect
-              id="Rectangle_29"
-              width="2"
-              height="12"
-              transform="translate(-997 2555)"
-              fill="#fff"
-            />
-            <rect
-              id="Rectangle_30"
-              width="2"
-              height="12"
-              transform="translate(-990 2560) rotate(90)"
-              fill="#fff"
-            />
-          </g>
-        </svg>
-      </SvgIcon>
-    );
-  }
-}
+const CreateIcon = () => {
+  return (
+    <SvgIcon>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12">
+        <g id="Group_55" data-name="Group 55" transform="translate(1002 -2555)">
+          <rect
+            id="Rectangle_29"
+            width="2"
+            height="12"
+            transform="translate(-997 2555)"
+            fill="#fff"
+          />
+          <rect
+            id="Rectangle_30"
+            width="2"
+            height="12"
+            transform="translate(-990 2560) rotate(90)"
+            fill="#fff"
+          />
+        </g>
+      </svg>
+    </SvgIcon>
+  );
+};
 
 export default CreateIcon;

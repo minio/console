@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import React from "react";
+import React, { useState } from "react";
 import {
   Button,
   Dialog,
@@ -48,106 +48,89 @@ interface IDeleteBucketState {
   deleteError: string;
 }
 
-class DeleteBucket extends React.Component<
-  IDeleteBucketProps,
-  IDeleteBucketState
-> {
-  state: IDeleteBucketState = {
-    deleteLoading: false,
-    deleteError: "",
-  };
+const DeleteBucket = ({
+  classes,
+  closeDeleteModalAndRefresh,
+  deleteOpen,
+  selectedBucket,
+}: IDeleteBucketProps) => {
+  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
+  const [deleteError, setDeleteError] = useState<string>("");
 
-  removeRecord() {
-    const { deleteLoading } = this.state;
-    const { selectedBucket } = this.props;
+  const removeRecord = () => {
     if (deleteLoading) {
       return;
     }
-    this.setState({ deleteLoading: true }, () => {
-      api
-        .invoke("DELETE", `/api/v1/buckets/${selectedBucket}`, {
-          name: selectedBucket,
-        })
-        .then((res: BucketList) => {
-          this.setState(
-            {
-              deleteLoading: false,
-              deleteError: "",
-            },
-            () => {
-              this.props.closeDeleteModalAndRefresh(true);
-            }
-          );
-        })
-        .catch((err) => {
-          this.setState({
-            deleteLoading: false,
-            deleteError: err,
-          });
-        });
-    });
-  }
+    setDeleteLoading(true);
 
-  render() {
-    const { classes, deleteOpen, selectedBucket } = this.props;
-    const { deleteLoading, deleteError } = this.state;
+    api
+      .invoke("DELETE", `/api/v1/buckets/${selectedBucket}`, {
+        name: selectedBucket,
+      })
+      .then((res: BucketList) => {
+        setDeleteLoading(false);
+        setDeleteError("");
+        closeDeleteModalAndRefresh(true);
+      })
+      .catch((err) => {
+        setDeleteLoading(false);
+        setDeleteError(err);
+      });
+  };
 
-    return (
-      <Dialog
-        open={deleteOpen}
-        onClose={() => {
-          this.setState({ deleteError: "" }, () => {
-            this.props.closeDeleteModalAndRefresh(false);
-          });
-        }}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">Delete Bucket</DialogTitle>
-        <DialogContent>
-          {deleteLoading && <LinearProgress />}
-          <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete bucket <b>{selectedBucket}</b>?{" "}
-            <br />A bucket can only be deleted if it's empty.
-            {deleteError !== "" && (
-              <React.Fragment>
-                <br />
-                <Typography
-                  component="p"
-                  variant="body1"
-                  className={classes.errorBlock}
-                >
-                  {deleteError}
-                </Typography>
-              </React.Fragment>
-            )}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              this.setState({ deleteError: "" }, () => {
-                this.props.closeDeleteModalAndRefresh(false);
-              });
-            }}
-            color="primary"
-            disabled={deleteLoading}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              this.removeRecord();
-            }}
-            color="secondary"
-            autoFocus
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
-}
+  return (
+    <Dialog
+      open={deleteOpen}
+      onClose={() => {
+        setDeleteError("");
+        closeDeleteModalAndRefresh(false);
+      }}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle id="alert-dialog-title">Delete Bucket</DialogTitle>
+      <DialogContent>
+        {deleteLoading && <LinearProgress />}
+        <DialogContentText id="alert-dialog-description">
+          Are you sure you want to delete bucket <b>{selectedBucket}</b>? <br />
+          A bucket can only be deleted if it's empty.
+          {deleteError !== "" && (
+            <React.Fragment>
+              <br />
+              <Typography
+                component="p"
+                variant="body1"
+                className={classes.errorBlock}
+              >
+                {deleteError}
+              </Typography>
+            </React.Fragment>
+          )}
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={() => {
+            setDeleteError("");
+            closeDeleteModalAndRefresh(false);
+          }}
+          color="primary"
+          disabled={deleteLoading}
+        >
+          Cancel
+        </Button>
+        <Button
+          onClick={() => {
+            removeRecord();
+          }}
+          color="secondary"
+          autoFocus
+        >
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 export default withStyles(styles)(DeleteBucket);

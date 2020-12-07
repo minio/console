@@ -16,24 +16,23 @@
 
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
-class WarpIcon extends React.Component {
-  render() {
-    return (
-      <SvgIcon>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
-          <g transform="translate(43 439)">
-            <path d="M27.5,10" transform="translate(-61 -439)" />
-            <rect width="1.5" height="2" transform="translate(-43 -431)" />
-            <rect width="1.5" height="6" transform="translate(-38.75 -435)" />
-            <rect width="1.5" height="8" transform="translate(-36.625 -437)" />
-            <rect width="1.5" height="4" transform="translate(-40.875 -433)" />
-            <rect width="1.5" height="10" transform="translate(-34.5 -439)" />
-            <path d="M18.5,10" transform="translate(-61 -439)" />
-          </g>
-        </svg>
-      </SvgIcon>
-    );
-  }
-}
+
+const WarpIcon = () => {
+  return (
+    <SvgIcon>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
+        <g transform="translate(43 439)">
+          <path d="M27.5,10" transform="translate(-61 -439)" />
+          <rect width="1.5" height="2" transform="translate(-43 -431)" />
+          <rect width="1.5" height="6" transform="translate(-38.75 -435)" />
+          <rect width="1.5" height="8" transform="translate(-36.625 -437)" />
+          <rect width="1.5" height="4" transform="translate(-40.875 -433)" />
+          <rect width="1.5" height="10" transform="translate(-34.5 -439)" />
+          <path d="M18.5,10" transform="translate(-61 -439)" />
+        </g>
+      </svg>
+    </SvgIcon>
+  );
+};
 
 export default WarpIcon;

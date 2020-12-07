@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import React from "react";
+import React, { useState } from "react";
 import {
   Button,
   Dialog,
@@ -48,100 +48,84 @@ interface IDeletePolicyState {
   deleteError: string;
 }
 
-class DeletePolicy extends React.Component<
-  IDeletePolicyProps,
-  IDeletePolicyState
-> {
-  state: IDeletePolicyState = {
-    deleteLoading: false,
-    deleteError: "",
-  };
-  removeRecord() {
-    const { deleteLoading } = this.state;
-    const { selectedPolicy } = this.props;
+const DeletePolicy = ({
+  classes,
+  closeDeleteModalAndRefresh,
+  deleteOpen,
+  selectedPolicy,
+}: IDeletePolicyProps) => {
+  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
+  const [deleteError, setDeleteError] = useState<string>("");
+  const removeRecord = () => {
     if (deleteLoading) {
       return;
     }
-    this.setState({ deleteLoading: true }, () => {
-      api
-        .invoke("DELETE", `/api/v1/policies/${selectedPolicy}`)
-        .then((res: PolicyList) => {
-          this.setState(
-            {
-              deleteLoading: false,
-              deleteError: "",
-            },
-            () => {
-              this.props.closeDeleteModalAndRefresh(true);
-            }
-          );
-        })
-        .catch((err) => {
-          this.setState({
-            deleteLoading: false,
-            deleteError: err,
-          });
-        });
-    });
-  }
-  render() {
-    const { classes, deleteOpen, selectedPolicy } = this.props;
-    const { deleteLoading, deleteError } = this.state;
-    return (
-      <Dialog
-        open={deleteOpen}
-        onClose={() => {
-          this.setState({ deleteError: "" }, () => {
-            this.props.closeDeleteModalAndRefresh(false);
-          });
-        }}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">Delete Policy</DialogTitle>
-        <DialogContent>
-          {deleteLoading && <LinearProgress />}
-          <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete policy <b>{selectedPolicy}</b>?.
-            {deleteError !== "" && (
-              <React.Fragment>
-                <br />
-                <Typography
-                  component="p"
-                  variant="body1"
-                  className={classes.errorBlock}
-                >
-                  {deleteError}
-                </Typography>
-              </React.Fragment>
-            )}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              this.setState({ deleteError: "" }, () => {
-                this.props.closeDeleteModalAndRefresh(false);
-              });
-            }}
-            color="primary"
-            disabled={deleteLoading}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              this.removeRecord();
-            }}
-            color="secondary"
-            autoFocus
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
-}
+    setDeleteLoading(true);
+    api
+      .invoke("DELETE", `/api/v1/policies/${selectedPolicy}`)
+      .then((res: PolicyList) => {
+        setDeleteLoading(false);
+        setDeleteError("");
+
+        closeDeleteModalAndRefresh(true);
+      })
+      .catch((err) => {
+        setDeleteLoading(false);
+        setDeleteError(err);
+      });
+  };
+  return (
+    <Dialog
+      open={deleteOpen}
+      onClose={() => {
+        setDeleteError("");
+        closeDeleteModalAndRefresh(false);
+      }}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle id="alert-dialog-title">Delete Policy</DialogTitle>
+      <DialogContent>
+        {deleteLoading && <LinearProgress />}
+        <DialogContentText id="alert-dialog-description">
+          Are you sure you want to delete policy <b>{selectedPolicy}</b>?.
+          {deleteError !== "" && (
+            <React.Fragment>
+              <br />
+              <Typography
+                component="p"
+                variant="body1"
+                className={classes.errorBlock}
+              >
+                {deleteError}
+              </Typography>
+            </React.Fragment>
+          )}
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={() => {
+            setDeleteError("");
+            closeDeleteModalAndRefresh(false);
+          }}
+          color="primary"
+          disabled={deleteLoading}
+        >
+          Cancel
+        </Button>
+        <Button
+          onClick={() => {
+            removeRecord();
+          }}
+          color="secondary"
+          autoFocus
+        >
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 export default withStyles(styles)(DeletePolicy);

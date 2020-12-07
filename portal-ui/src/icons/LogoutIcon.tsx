@@ -16,32 +16,30 @@
 
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
-class LogoutIcon extends React.Component {
-  render() {
-    return (
-      <SvgIcon>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12.122 10.571">
-          <g transform="translate(0 0.5)">
-            <path
-              style={{ fill: "none", stroke: "rgba(255,255,255,0.8)" }}
-              d="M4816.27,3755.205v-2.939h8.539v9.571h-8.539v-2.932"
-              transform="translate(-4813.187 -3752.266)"
-            />
-            <path
-              style={{ fill: "none", stroke: "rgba(255,255,255,0.8)" }}
-              d="M4813.187,3757.052h8.081"
-              transform="translate(-4813.187 -3752.266)"
-            />
-            <path
-              style={{ fill: "none", stroke: "rgba(255,255,255,0.8)" }}
-              d="M4806.5,3756.511l2.265,2.063-2.265,2.063"
-              transform="translate(-4800.808 -3753.863)"
-            />
-          </g>
-        </svg>
-      </SvgIcon>
-    );
-  }
-}
+const LogoutIcon = () => {
+  return (
+    <SvgIcon>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12.122 10.571">
+        <g transform="translate(0 0.5)">
+          <path
+            style={{ fill: "none", stroke: "rgba(255,255,255,0.8)" }}
+            d="M4816.27,3755.205v-2.939h8.539v9.571h-8.539v-2.932"
+            transform="translate(-4813.187 -3752.266)"
+          />
+          <path
+            style={{ fill: "none", stroke: "rgba(255,255,255,0.8)" }}
+            d="M4813.187,3757.052h8.081"
+            transform="translate(-4813.187 -3752.266)"
+          />
+          <path
+            style={{ fill: "none", stroke: "rgba(255,255,255,0.8)" }}
+            d="M4806.5,3756.511l2.265,2.063-2.265,2.063"
+            transform="translate(-4800.808 -3753.863)"
+          />
+        </g>
+      </svg>
+    </SvgIcon>
+  );
+};
 
 export default LogoutIcon;

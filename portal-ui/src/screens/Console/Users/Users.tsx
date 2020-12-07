@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../common/api";
-import { Button, Grid, TextField, InputAdornment } from "@material-ui/core";
+import { Button, Grid, InputAdornment, TextField } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import GroupIcon from "@material-ui/icons/Group";
 import { User, UsersList } from "./types";
@@ -93,246 +93,210 @@ interface IUsersState {
   setPolicyOpen: boolean;
 }
 
-class Users extends React.Component<IUsersProps, IUsersState> {
-  state: IUsersState = {
-    records: [],
-    loading: false,
-    error: "",
-    deleteError: "",
-    addScreenOpen: false,
-    deleteOpen: false,
-    selectedUser: null,
-    addGroupOpen: false,
-    filter: "",
-    checkedUsers: [],
-    setPolicyOpen: false,
+const Users = ({ classes }: IUsersProps) => {
+  const [records, setRecords] = useState<User[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [deleteError, setDeleteError] = useState<string>("");
+  const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
+  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [addGroupOpen, setAddGroupOpen] = useState<boolean>(false);
+  const [filter, setFilter] = useState<string>("");
+  const [checkedUsers, setCheckedUsers] = useState<string[]>([]);
+  const [policyOpen, setPolicyOpen] = useState<boolean>(false);
+
+  const fetchRecords = () => {
+    setLoading(true);
+    api
+      .invoke("GET", `/api/v1/users`)
+      .then((res: UsersList) => {
+        const users = res.users === null ? [] : res.users;
+
+        setLoading(false);
+        setError("");
+        setRecords(users.sort(usersSort));
+      })
+      .catch((err) => {
+        setLoading(false);
+        setError(err);
+      });
   };
 
-  fetchRecords() {
-    this.setState({ loading: true }, () => {
-      api
-        .invoke("GET", `/api/v1/users`)
-        .then((res: UsersList) => {
-          const users = res.users === null ? [] : res.users;
-          this.setState({
-            loading: false,
-            records: users.sort(usersSort),
-            error: "",
-          });
-        })
-        .catch((err) => {
-          this.setState({ loading: false, error: err });
-        });
-    });
-  }
+  const closeAddModalAndRefresh = () => {
+    setAddScreenOpen(false);
+    fetchRecords();
+  };
 
-  closeAddModalAndRefresh() {
-    this.setState({ addScreenOpen: false }, () => {
-      this.fetchRecords();
-    });
-  }
+  const closeDeleteModalAndRefresh = (refresh: boolean) => {
+    setDeleteOpen(false);
+    if (refresh) {
+      fetchRecords();
+    }
+  };
 
-  closeDeleteModalAndRefresh(refresh: boolean) {
-    this.setState({ deleteOpen: false }, () => {
-      if (refresh) {
-        this.fetchRecords();
-      }
-    });
-  }
-
-  closeAddGroupBulk(unCheckAll: boolean = false) {
-    let newStates = { addGroupOpen: false };
-    let addUsers = {};
-
+  const closeAddGroupBulk = (unCheckAll: boolean = false) => {
+    setAddGroupOpen(false);
     if (unCheckAll) {
-      addUsers = { checkedUsers: [] };
+      setCheckedUsers([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchRecords();
+  }, []);
+
+  const filteredRecords = records.filter((elementItem) =>
+    elementItem.accessKey.includes(filter)
+  );
+
+  const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const targetD = e.target;
+    const value = targetD.value;
+    const checked = targetD.checked;
+
+    let elements: string[] = [...checkedUsers]; // We clone the checkedUsers array
+
+    if (checked) {
+      // If the user has checked this field we need to push this to checkedUsersList
+      elements.push(value);
+    } else {
+      // User has unchecked this field, we need to remove it from the list
+      elements = elements.filter((element) => element !== value);
     }
 
-    this.setState({ ...newStates, ...addUsers });
-  }
+    setCheckedUsers(elements);
 
-  componentDidMount(): void {
-    this.fetchRecords();
-  }
+    return elements;
+  };
 
-  render() {
-    const { classes } = this.props;
-    const {
-      records,
-      addScreenOpen,
-      loading,
-      deleteOpen,
-      selectedUser,
-      filter,
-      checkedUsers,
-      addGroupOpen,
-      setPolicyOpen,
-    } = this.state;
+  const viewAction = (selectionElement: any): void => {
+    setAddScreenOpen(true);
+    setSelectedUser(selectionElement);
+  };
 
-    const filteredRecords = records.filter((elementItem) =>
-      elementItem.accessKey.includes(filter)
-    );
+  const setPolicyAction = (selectionElement: any): void => {
+    setPolicyOpen(true);
+    setSelectedUser(selectionElement);
+  };
 
-    const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const targetD = e.target;
-      const value = targetD.value;
-      const checked = targetD.checked;
+  const deleteAction = (selectionElement: any): void => {
+    setDeleteOpen(true);
+    setSelectedUser(selectionElement);
+  };
 
-      let elements: string[] = [...checkedUsers]; // We clone the checkedUsers array
+  const tableActions = [
+    { type: "view", onClick: viewAction },
+    { type: "description", onClick: setPolicyAction },
+    { type: "delete", onClick: deleteAction },
+  ];
 
-      if (checked) {
-        // If the user has checked this field we need to push this to checkedUsersList
-        elements.push(value);
-      } else {
-        // User has unchecked this field, we need to remove it from the list
-        elements = elements.filter((element) => element !== value);
-      }
+  return (
+    <React.Fragment>
+      {addScreenOpen && (
+        <AddUser
+          open={addScreenOpen}
+          selectedUser={selectedUser}
+          closeModalAndRefresh={() => {
+            closeAddModalAndRefresh();
+          }}
+        />
+      )}
+      {policyOpen && (
+        <SetPolicy
+          open={policyOpen}
+          selectedUser={selectedUser}
+          selectedGroup={null}
+          closeModalAndRefresh={() => {
+            setPolicyOpen(false);
+            fetchRecords();
+          }}
+        />
+      )}
+      {deleteOpen && (
+        <DeleteUser
+          deleteOpen={deleteOpen}
+          selectedUser={selectedUser}
+          closeDeleteModalAndRefresh={(refresh: boolean) => {
+            closeDeleteModalAndRefresh(refresh);
+          }}
+        />
+      )}
+      {addGroupOpen && (
+        <AddToGroup
+          open={addGroupOpen}
+          checkedUsers={checkedUsers}
+          closeModalAndRefresh={(close: boolean) => {
+            closeAddGroupBulk(close);
+          }}
+        />
+      )}
+      <PageHeader label={"Users"} />
+      <Grid container>
+        <Grid item xs={12} className={classes.container}>
+          <Grid item xs={12} className={classes.actionsTray}>
+            <TextField
+              placeholder="Search Users"
+              className={classes.searchField}
+              id="search-resource"
+              label=""
+              InputProps={{
+                disableUnderline: true,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+              onChange={(e) => {
+                setFilter(e.target.value);
+              }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<GroupIcon />}
+              disabled={checkedUsers.length <= 0}
+              onClick={() => {
+                if (checkedUsers.length > 0) {
+                  setAddGroupOpen(true);
+                }
+              }}
+            >
+              Add to Group
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<CreateIcon />}
+              onClick={() => {
+                setAddScreenOpen(true);
+                setSelectedUser(null);
+              }}
+            >
+              Create User
+            </Button>
+          </Grid>
 
-      this.setState({
-        checkedUsers: elements,
-      });
-
-      return elements;
-    };
-
-    const viewAction = (selectionElement: any): void => {
-      this.setState({
-        addScreenOpen: true,
-        selectedUser: selectionElement,
-      });
-    };
-
-    const setPolicyAction = (selectionElement: any): void => {
-      this.setState({
-        setPolicyOpen: true,
-        selectedUser: selectionElement,
-      });
-    };
-
-    const deleteAction = (selectionElement: any): void => {
-      this.setState({
-        deleteOpen: true,
-        selectedUser: selectionElement,
-      });
-    };
-
-    const tableActions = [
-      { type: "view", onClick: viewAction },
-      { type: "description", onClick: setPolicyAction },
-      { type: "delete", onClick: deleteAction },
-    ];
-
-    return (
-      <React.Fragment>
-        {addScreenOpen && (
-          <AddUser
-            open={addScreenOpen}
-            selectedUser={selectedUser}
-            closeModalAndRefresh={() => {
-              this.closeAddModalAndRefresh();
-            }}
-          />
-        )}
-        {setPolicyOpen && (
-          <SetPolicy
-            open={setPolicyOpen}
-            selectedUser={selectedUser}
-            selectedGroup={null}
-            closeModalAndRefresh={() => {
-              this.setState({ setPolicyOpen: false });
-              this.fetchRecords();
-            }}
-          />
-        )}
-        {deleteOpen && (
-          <DeleteUser
-            deleteOpen={deleteOpen}
-            selectedUser={selectedUser}
-            closeDeleteModalAndRefresh={(refresh: boolean) => {
-              this.closeDeleteModalAndRefresh(refresh);
-            }}
-          />
-        )}
-        {addGroupOpen && (
-          <AddToGroup
-            open={addGroupOpen}
-            checkedUsers={checkedUsers}
-            closeModalAndRefresh={(close: boolean) => {
-              this.closeAddGroupBulk(close);
-            }}
-          />
-        )}
-        <PageHeader label={"Users"} />
-        <Grid container>
-          <Grid item xs={12} className={classes.container}>
-            <Grid item xs={12} className={classes.actionsTray}>
-              <TextField
-                placeholder="Search Users"
-                className={classes.searchField}
-                id="search-resource"
-                label=""
-                InputProps={{
-                  disableUnderline: true,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                onChange={(e) => {
-                  this.setState({ filter: e.target.value });
-                }}
-              />
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<GroupIcon />}
-                disabled={checkedUsers.length <= 0}
-                onClick={() => {
-                  if (checkedUsers.length > 0) {
-                    this.setState({
-                      addGroupOpen: true,
-                    });
-                  }
-                }}
-              >
-                Add to Group
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<CreateIcon />}
-                onClick={() => {
-                  this.setState({
-                    addScreenOpen: true,
-                    selectedUser: null,
-                  });
-                }}
-              >
-                Create User
-              </Button>
-            </Grid>
-
-            <Grid item xs={12}>
-              <br />
-            </Grid>
-            <Grid item xs={12}>
-              <TableWrapper
-                itemActions={tableActions}
-                columns={[{ label: "Access Key", elementKey: "accessKey" }]}
-                onSelect={selectionChanged}
-                selectedItems={checkedUsers}
-                isLoading={loading}
-                records={filteredRecords}
-                entityName="Users"
-                idField="accessKey"
-              />
-            </Grid>
+          <Grid item xs={12}>
+            <br />
+          </Grid>
+          <Grid item xs={12}>
+            <TableWrapper
+              itemActions={tableActions}
+              columns={[{ label: "Access Key", elementKey: "accessKey" }]}
+              onSelect={selectionChanged}
+              selectedItems={checkedUsers}
+              isLoading={loading}
+              records={filteredRecords}
+              entityName="Users"
+              idField="accessKey"
+            />
           </Grid>
         </Grid>
-      </React.Fragment>
-    );
-  }
-}
+      </Grid>
+    </React.Fragment>
+  );
+};
 
 export default withStyles(styles)(Users);

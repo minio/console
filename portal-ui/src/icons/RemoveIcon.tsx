@@ -16,18 +16,17 @@
 
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
-class RemoveIcon extends React.Component {
-  render() {
-    return (
-      <SvgIcon viewBox="0 0 11.656 3.101">
-        <path
-          fill="#081c42"
-          d="M-13157.172,1879.551h-11.656v-3.1h11.656v3.1Z"
-          transform="translate(13168.828 -1876.449)"
-        />
-      </SvgIcon>
-    );
-  }
-}
+
+const RemoveIcon = () => {
+  return (
+    <SvgIcon viewBox="0 0 11.656 3.101">
+      <path
+        fill="#081c42"
+        d="M-13157.172,1879.551h-11.656v-3.1h11.656v3.1Z"
+        transform="translate(13168.828 -1876.449)"
+      />
+    </SvgIcon>
+  );
+};
 
 export default RemoveIcon;
