@@ -286,9 +286,9 @@ func Test_TenantInfo(t *testing.T) {
 						Namespace:         "minio-ns",
 					},
 					Spec: operator.TenantSpec{
-						Zones: []operator.Zone{
+						Pools: []operator.Pool{
 							{
-								Name:             "zone1",
+								Name:             "pool1",
 								Servers:          int32(2),
 								VolumesPerServer: 4,
 								VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
@@ -316,12 +316,12 @@ func Test_TenantInfo(t *testing.T) {
 				Name:         "tenant1",
 				TotalSize:    int64(8388608),
 				CurrentState: "ready",
-				Zones: []*models.Zone{
+				Pools: []*models.Pool{
 					{
-						Name:             "zone1",
+						Name:             "pool1",
 						Servers:          swag.Int64(int64(2)),
 						VolumesPerServer: swag.Int32(4),
-						VolumeConfiguration: &models.ZoneVolumeConfiguration{
+						VolumeConfiguration: &models.PoolVolumeConfiguration{
 							StorageClassName: "standard",
 							Size:             swag.Int64(1024 * 1024),
 						},
@@ -351,9 +351,9 @@ func Test_TenantInfo(t *testing.T) {
 						},
 					},
 					Spec: operator.TenantSpec{
-						Zones: []operator.Zone{
+						Pools: []operator.Pool{
 							{
-								Name:             "zone1",
+								Name:             "pool1",
 								Servers:          int32(2),
 								VolumesPerServer: 4,
 								VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
@@ -381,12 +381,12 @@ func Test_TenantInfo(t *testing.T) {
 				Name:         "tenant1",
 				TotalSize:    int64(8388608),
 				CurrentState: "ready",
-				Zones: []*models.Zone{
+				Pools: []*models.Pool{
 					{
-						Name:             "zone1",
+						Name:             "pool1",
 						Servers:          swag.Int64(int64(2)),
 						VolumesPerServer: swag.Int32(4),
-						VolumeConfiguration: &models.ZoneVolumeConfiguration{
+						VolumeConfiguration: &models.PoolVolumeConfiguration{
 							StorageClassName: "standard",
 							Size:             swag.Int64(1024 * 1024),
 						},
@@ -413,7 +413,7 @@ func Test_TenantInfo(t *testing.T) {
 						},
 					},
 					Spec: operator.TenantSpec{
-						Zones: []operator.Zone{},
+						Pools: []operator.Pool{},
 						Image: "minio/minio:RELEASE.2020-06-14T18-32-17Z",
 					},
 					Status: operator.TenantStatus{
@@ -445,7 +445,7 @@ func Test_TenantInfo(t *testing.T) {
 						},
 					},
 					Spec: operator.TenantSpec{
-						Zones: []operator.Zone{},
+						Pools: []operator.Pool{},
 						Image: "minio/minio:RELEASE.2020-06-14T18-32-17Z",
 						Console: &operator.ConsoleConfiguration{
 							Image: "minio/console:master",
@@ -539,7 +539,7 @@ func Test_deleteTenantAction(t *testing.T) {
 							Namespace: "minio-tenant",
 							Labels: map[string]string{
 								operator.TenantLabel: "tenant1",
-								operator.ZoneLabel:   "zone-1",
+								operator.PoolLabel:   "pool-1",
 							},
 						},
 					},
@@ -566,7 +566,7 @@ func Test_deleteTenantAction(t *testing.T) {
 							Namespace: "minio-tenant",
 							Labels: map[string]string{
 								operator.TenantLabel: "tenant1",
-								operator.ZoneLabel:   "zone-1",
+								operator.PoolLabel:   "pool-1",
 							},
 						},
 					},
@@ -593,7 +593,7 @@ func Test_deleteTenantAction(t *testing.T) {
 							Namespace: "minio-tenant",
 							Labels: map[string]string{
 								operator.TenantLabel: "tenant1",
-								operator.ZoneLabel:   "zone-1",
+								operator.PoolLabel:   "pool-1",
 							},
 						},
 					},
@@ -620,7 +620,7 @@ func Test_deleteTenantAction(t *testing.T) {
 							Namespace: "minio-tenant",
 							Labels: map[string]string{
 								operator.TenantLabel: "tenant1",
-								operator.ZoneLabel:   "zone-1",
+								operator.PoolLabel:   "pool-1",
 							},
 						},
 					},
@@ -648,7 +648,7 @@ func Test_deleteTenantAction(t *testing.T) {
 							Namespace: "minio-tenant",
 							Labels: map[string]string{
 								operator.TenantLabel: "tenant1",
-								operator.ZoneLabel:   "zone-1",
+								operator.PoolLabel:   "pool-1",
 							},
 						},
 					},
@@ -671,7 +671,7 @@ func Test_deleteTenantAction(t *testing.T) {
 	}
 }
 
-func Test_TenantAddZone(t *testing.T) {
+func Test_TenantAddPool(t *testing.T) {
 	opClient := opClientMock{}
 
 	type args struct {
@@ -680,7 +680,7 @@ func Test_TenantAddZone(t *testing.T) {
 		nameSpace       string
 		mockTenantPatch func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error)
 		mockTenantGet   func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error)
-		params          admin_api.TenantAddZoneParams
+		params          admin_api.TenantAddPoolParams
 	}
 	tests := []struct {
 		name    string
@@ -688,7 +688,7 @@ func Test_TenantAddZone(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "Add zone, no errors",
+			name: "Add pool, no errors",
 			args: args{
 				ctx:            context.Background(),
 				operatorClient: opClient,
@@ -699,11 +699,11 @@ func Test_TenantAddZone(t *testing.T) {
 				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
 					return &v1.Tenant{}, nil
 				},
-				params: admin_api.TenantAddZoneParams{
-					Body: &models.Zone{
-						Name:    "zone-1",
+				params: admin_api.TenantAddPoolParams{
+					Body: &models.Pool{
+						Name:    "pool-1",
 						Servers: swag.Int64(int64(4)),
-						VolumeConfiguration: &models.ZoneVolumeConfiguration{
+						VolumeConfiguration: &models.PoolVolumeConfiguration{
 							Size:             swag.Int64(2147483648),
 							StorageClassName: "standard",
 						},
@@ -713,7 +713,7 @@ func Test_TenantAddZone(t *testing.T) {
 			},
 			wantErr: false,
 		}, {
-			name: "Add zone, error size",
+			name: "Add pool, error size",
 			args: args{
 				ctx:            context.Background(),
 				operatorClient: opClient,
@@ -724,11 +724,11 @@ func Test_TenantAddZone(t *testing.T) {
 				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
 					return &v1.Tenant{}, nil
 				},
-				params: admin_api.TenantAddZoneParams{
-					Body: &models.Zone{
-						Name:    "zone-1",
+				params: admin_api.TenantAddPoolParams{
+					Body: &models.Pool{
+						Name:    "pool-1",
 						Servers: swag.Int64(int64(4)),
-						VolumeConfiguration: &models.ZoneVolumeConfiguration{
+						VolumeConfiguration: &models.PoolVolumeConfiguration{
 							Size:             swag.Int64(0),
 							StorageClassName: "standard",
 						},
@@ -739,7 +739,7 @@ func Test_TenantAddZone(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "Add zone, error servers negative",
+			name: "Add pool, error servers negative",
 			args: args{
 				ctx:            context.Background(),
 				operatorClient: opClient,
@@ -750,11 +750,11 @@ func Test_TenantAddZone(t *testing.T) {
 				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
 					return &v1.Tenant{}, nil
 				},
-				params: admin_api.TenantAddZoneParams{
-					Body: &models.Zone{
-						Name:    "zone-1",
+				params: admin_api.TenantAddPoolParams{
+					Body: &models.Pool{
+						Name:    "pool-1",
 						Servers: swag.Int64(int64(-1)),
-						VolumeConfiguration: &models.ZoneVolumeConfiguration{
+						VolumeConfiguration: &models.PoolVolumeConfiguration{
 							Size:             swag.Int64(2147483648),
 							StorageClassName: "standard",
 						},
@@ -765,7 +765,7 @@ func Test_TenantAddZone(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "Add zone, error volumes per server negative",
+			name: "Add pool, error volumes per server negative",
 			args: args{
 				ctx:            context.Background(),
 				operatorClient: opClient,
@@ -776,11 +776,11 @@ func Test_TenantAddZone(t *testing.T) {
 				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
 					return &v1.Tenant{}, nil
 				},
-				params: admin_api.TenantAddZoneParams{
-					Body: &models.Zone{
-						Name:    "zone-1",
+				params: admin_api.TenantAddPoolParams{
+					Body: &models.Pool{
+						Name:    "pool-1",
 						Servers: swag.Int64(int64(4)),
-						VolumeConfiguration: &models.ZoneVolumeConfiguration{
+						VolumeConfiguration: &models.PoolVolumeConfiguration{
 							Size:             swag.Int64(2147483648),
 							StorageClassName: "standard",
 						},
@@ -802,9 +802,9 @@ func Test_TenantAddZone(t *testing.T) {
 				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
 					return &v1.Tenant{}, nil
 				},
-				params: admin_api.TenantAddZoneParams{
-					Body: &models.Zone{
-						Name:    "zone-1",
+				params: admin_api.TenantAddPoolParams{
+					Body: &models.Pool{
+						Name:    "pool-1",
 						Servers: swag.Int64(int64(4)),
 					},
 				},
@@ -823,9 +823,9 @@ func Test_TenantAddZone(t *testing.T) {
 				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
 					return nil, errors.New("errors")
 				},
-				params: admin_api.TenantAddZoneParams{
-					Body: &models.Zone{
-						Name:    "zone-1",
+				params: admin_api.TenantAddPoolParams{
+					Body: &models.Pool{
+						Name:    "pool-1",
 						Servers: swag.Int64(int64(4)),
 					},
 				},
@@ -837,8 +837,8 @@ func Test_TenantAddZone(t *testing.T) {
 		opClientTenantGetMock = tt.args.mockTenantGet
 		opClientTenantPatchMock = tt.args.mockTenantPatch
 		t.Run(tt.name, func(t *testing.T) {
-			if err := addTenantZone(tt.args.ctx, tt.args.operatorClient, tt.args.params); (err != nil) != tt.wantErr {
-				t.Errorf("addTenantZone() error = %v, wantErr %v", err, tt.wantErr)
+			if err := addTenantPool(tt.args.ctx, tt.args.operatorClient, tt.args.params); (err != nil) != tt.wantErr {
+				t.Errorf("addTenantPool() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

@@ -30,40 +30,40 @@ import (
 	"github.com/minio/console/models"
 )
 
-// TenantUpdateZonesHandlerFunc turns a function with the right signature into a tenant update zones handler
-type TenantUpdateZonesHandlerFunc func(TenantUpdateZonesParams, *models.Principal) middleware.Responder
+// TenantAddPoolHandlerFunc turns a function with the right signature into a tenant add pool handler
+type TenantAddPoolHandlerFunc func(TenantAddPoolParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn TenantUpdateZonesHandlerFunc) Handle(params TenantUpdateZonesParams, principal *models.Principal) middleware.Responder {
+func (fn TenantAddPoolHandlerFunc) Handle(params TenantAddPoolParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
-// TenantUpdateZonesHandler interface for that can handle valid tenant update zones params
-type TenantUpdateZonesHandler interface {
-	Handle(TenantUpdateZonesParams, *models.Principal) middleware.Responder
+// TenantAddPoolHandler interface for that can handle valid tenant add pool params
+type TenantAddPoolHandler interface {
+	Handle(TenantAddPoolParams, *models.Principal) middleware.Responder
 }
 
-// NewTenantUpdateZones creates a new http.Handler for the tenant update zones operation
-func NewTenantUpdateZones(ctx *middleware.Context, handler TenantUpdateZonesHandler) *TenantUpdateZones {
-	return &TenantUpdateZones{Context: ctx, Handler: handler}
+// NewTenantAddPool creates a new http.Handler for the tenant add pool operation
+func NewTenantAddPool(ctx *middleware.Context, handler TenantAddPoolHandler) *TenantAddPool {
+	return &TenantAddPool{Context: ctx, Handler: handler}
 }
 
-/*TenantUpdateZones swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/zones AdminAPI tenantUpdateZones
+/*TenantAddPool swagger:route POST /namespaces/{namespace}/tenants/{tenant}/pools AdminAPI tenantAddPool
 
-Tenant Update Zones
+Tenant Add Pool
 
 */
-type TenantUpdateZones struct {
+type TenantAddPool struct {
 	Context *middleware.Context
-	Handler TenantUpdateZonesHandler
+	Handler TenantAddPoolHandler
 }
 
-func (o *TenantUpdateZones) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *TenantAddPool) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		r = rCtx
 	}
-	var Params = NewTenantUpdateZonesParams()
+	var Params = NewTenantAddPoolParams()
 
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {

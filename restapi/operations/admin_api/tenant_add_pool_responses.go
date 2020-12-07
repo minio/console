@@ -30,35 +30,35 @@ import (
 	"github.com/minio/console/models"
 )
 
-// TenantAddZoneCreatedCode is the HTTP code returned for type TenantAddZoneCreated
-const TenantAddZoneCreatedCode int = 201
+// TenantAddPoolCreatedCode is the HTTP code returned for type TenantAddPoolCreated
+const TenantAddPoolCreatedCode int = 201
 
-/*TenantAddZoneCreated A successful response.
+/*TenantAddPoolCreated A successful response.
 
-swagger:response tenantAddZoneCreated
+swagger:response tenantAddPoolCreated
 */
-type TenantAddZoneCreated struct {
+type TenantAddPoolCreated struct {
 }
 
-// NewTenantAddZoneCreated creates TenantAddZoneCreated with default headers values
-func NewTenantAddZoneCreated() *TenantAddZoneCreated {
+// NewTenantAddPoolCreated creates TenantAddPoolCreated with default headers values
+func NewTenantAddPoolCreated() *TenantAddPoolCreated {
 
-	return &TenantAddZoneCreated{}
+	return &TenantAddPoolCreated{}
 }
 
 // WriteResponse to the client
-func (o *TenantAddZoneCreated) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *TenantAddPoolCreated) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
 
 	rw.WriteHeader(201)
 }
 
-/*TenantAddZoneDefault Generic error response.
+/*TenantAddPoolDefault Generic error response.
 
-swagger:response tenantAddZoneDefault
+swagger:response tenantAddPoolDefault
 */
-type TenantAddZoneDefault struct {
+type TenantAddPoolDefault struct {
 	_statusCode int
 
 	/*
@@ -67,41 +67,41 @@ type TenantAddZoneDefault struct {
 	Payload *models.Error `json:"body,omitempty"`
 }
 
-// NewTenantAddZoneDefault creates TenantAddZoneDefault with default headers values
-func NewTenantAddZoneDefault(code int) *TenantAddZoneDefault {
+// NewTenantAddPoolDefault creates TenantAddPoolDefault with default headers values
+func NewTenantAddPoolDefault(code int) *TenantAddPoolDefault {
 	if code <= 0 {
 		code = 500
 	}
 
-	return &TenantAddZoneDefault{
+	return &TenantAddPoolDefault{
 		_statusCode: code,
 	}
 }
 
-// WithStatusCode adds the status to the tenant add zone default response
-func (o *TenantAddZoneDefault) WithStatusCode(code int) *TenantAddZoneDefault {
+// WithStatusCode adds the status to the tenant add pool default response
+func (o *TenantAddPoolDefault) WithStatusCode(code int) *TenantAddPoolDefault {
 	o._statusCode = code
 	return o
 }
 
-// SetStatusCode sets the status to the tenant add zone default response
-func (o *TenantAddZoneDefault) SetStatusCode(code int) {
+// SetStatusCode sets the status to the tenant add pool default response
+func (o *TenantAddPoolDefault) SetStatusCode(code int) {
 	o._statusCode = code
 }
 
-// WithPayload adds the payload to the tenant add zone default response
-func (o *TenantAddZoneDefault) WithPayload(payload *models.Error) *TenantAddZoneDefault {
+// WithPayload adds the payload to the tenant add pool default response
+func (o *TenantAddPoolDefault) WithPayload(payload *models.Error) *TenantAddPoolDefault {
 	o.Payload = payload
 	return o
 }
 
-// SetPayload sets the payload to the tenant add zone default response
-func (o *TenantAddZoneDefault) SetPayload(payload *models.Error) {
+// SetPayload sets the payload to the tenant add pool default response
+func (o *TenantAddPoolDefault) SetPayload(payload *models.Error) {
 	o.Payload = payload
 }
 
 // WriteResponse to the client
-func (o *TenantAddZoneDefault) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *TenantAddPoolDefault) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(o._statusCode)
 	if o.Payload != nil {

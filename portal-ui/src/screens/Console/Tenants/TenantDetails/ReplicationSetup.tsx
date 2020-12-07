@@ -76,7 +76,7 @@ const ReplicationSetup = ({
   return (
     <ModalWrapper
       modalOpen={open}
-      title="Add Zone"
+      title="Add Pool"
       onClose={() => {
         closeModalAndRefresh(false);
       }}
