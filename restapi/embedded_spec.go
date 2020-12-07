@@ -52,6 +52,39 @@ func init() {
   },
   "basePath": "/api/v1",
   "paths": {
+    "/account/change-password": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Change password of currently logged in user.",
+        "operationId": "AccountChangePassword",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/accountChangePasswordRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful login.",
+            "schema": {
+              "$ref": "#/definitions/loginResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/admin/arns": {
       "get": {
         "tags": [
@@ -2909,6 +2942,21 @@ func init() {
     }
   },
   "definitions": {
+    "accountChangePasswordRequest": {
+      "type": "object",
+      "required": [
+        "current_secret_key",
+        "new_secret_key"
+      ],
+      "properties": {
+        "current_secret_key": {
+          "type": "string"
+        },
+        "new_secret_key": {
+          "type": "string"
+        }
+      }
+    },
     "addBucketReplication": {
       "type": "object",
       "properties": {
@@ -4490,7 +4538,19 @@ func init() {
     "principal": {
       "type": "object",
       "properties": {
-        "accessKeyID": {
+        "STSAccessKeyID": {
+          "type": "string"
+        },
+        "STSSecretAccessKey": {
+          "type": "string"
+        },
+        "STSSessionToken": {
+          "type": "string"
+        },
+        "accountAccessKey": {
+          "type": "string"
+        },
+        "accountSecretKey": {
           "type": "string"
         },
         "actions": {
@@ -4498,12 +4558,6 @@ func init() {
           "items": {
             "type": "string"
           }
-        },
-        "secretAccessKey": {
-          "type": "string"
-        },
-        "sessionToken": {
-          "type": "string"
         }
       }
     },
@@ -5112,6 +5166,39 @@ func init() {
   },
   "basePath": "/api/v1",
   "paths": {
+    "/account/change-password": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Change password of currently logged in user.",
+        "operationId": "AccountChangePassword",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/accountChangePasswordRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful login.",
+            "schema": {
+              "$ref": "#/definitions/loginResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/admin/arns": {
       "get": {
         "tags": [
@@ -8492,6 +8579,21 @@ func init() {
         }
       }
     },
+    "accountChangePasswordRequest": {
+      "type": "object",
+      "required": [
+        "current_secret_key",
+        "new_secret_key"
+      ],
+      "properties": {
+        "current_secret_key": {
+          "type": "string"
+        },
+        "new_secret_key": {
+          "type": "string"
+        }
+      }
+    },
     "addBucketReplication": {
       "type": "object",
       "properties": {
@@ -9938,7 +10040,19 @@ func init() {
     "principal": {
       "type": "object",
       "properties": {
-        "accessKeyID": {
+        "STSAccessKeyID": {
+          "type": "string"
+        },
+        "STSSecretAccessKey": {
+          "type": "string"
+        },
+        "STSSessionToken": {
+          "type": "string"
+        },
+        "accountAccessKey": {
+          "type": "string"
+        },
+        "accountSecretKey": {
           "type": "string"
         },
         "actions": {
@@ -9946,12 +10060,6 @@ func init() {
           "items": {
             "type": "string"
           }
-        },
-        "secretAccessKey": {
-          "type": "string"
-        },
-        "sessionToken": {
-          "type": "string"
         }
       }
     },

@@ -85,14 +85,14 @@ func tenantUpdateCertificates(ctx context.Context, operatorClient OperatorClient
 func getTenantUpdateCertificatesResponse(session *models.Principal, params admin_api.TenantUpdateCertificateParams) *models.Error {
 	ctx := context.Background()
 	// get Kubernetes Client
-	clientSet, err := cluster.K8sClient(session.SessionToken)
+	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return prepareError(err, errorUnableToUpdateTenantCertificates)
 	}
 	k8sClient := k8sClient{
 		client: clientSet,
 	}
-	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return prepareError(err, errorUnableToUpdateTenantCertificates)
 	}
@@ -163,14 +163,14 @@ func tenantUpdateEncryption(ctx context.Context, operatorClient OperatorClientI,
 func getTenantUpdateEncryptionResponse(session *models.Principal, params admin_api.TenantUpdateEncryptionParams) *models.Error {
 	ctx := context.Background()
 	// get Kubernetes Client
-	clientSet, err := cluster.K8sClient(session.SessionToken)
+	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return prepareError(err, errorUpdatingEncryptionConfig)
 	}
 	k8sClient := k8sClient{
 		client: clientSet,
 	}
-	opClientClientSet, err := cluster.OperatorClient(session.SessionToken)
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return prepareError(err, errorUpdatingEncryptionConfig)
 	}

@@ -24,6 +24,7 @@ import (
 	"crypto/sha1"
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -58,12 +59,14 @@ func IsSessionTokenValid(token string) bool {
 	return err == nil
 }
 
-// DecryptedClaims claims struct for decrypted credentials
-type DecryptedClaims struct {
-	AccessKeyID     string
-	SecretAccessKey string
-	SessionToken    string
-	Actions         []string
+// TokenClaims claims struct for decrypted credentials
+type TokenClaims struct {
+	STSAccessKeyID     string   `json:"stsAccessKeyID,omitempty"`
+	STSSecretAccessKey string   `json:"stsSecretAccessKey,omitempty"`
+	STSSessionToken    string   `json:"stsSessionToken,omitempty"`
+	AccountAccessKey   string   `json:"accountAccessKey,omitempty"`
+	AccountSecretKey   string   `json:"accountSecretKey,omitempty"`
+	Actions            []string `json:"actions,omitempty"`
 }
 
 // SessionTokenAuthenticate takes a session token, decode it, extract claims and validate the signature
@@ -71,12 +74,15 @@ type DecryptedClaims struct {
 //
 // returns claims after validation in the following format:
 //
-//	type DecryptedClaims struct {
-//		AccessKeyID
-//		SecretAccessKey
-//		SessionToken
+//	type TokenClaims struct {
+//		STSAccessKeyID
+//		STSSecretAccessKey
+//		STSSessionToken
+//		AccountAccessKey
+//		AccountSecretKey
+//		Actions
 //	}
-func SessionTokenAuthenticate(token string) (*DecryptedClaims, error) {
+func SessionTokenAuthenticate(token string) (*TokenClaims, error) {
 	if token == "" {
 		return nil, errNoAuthToken
 	}
@@ -94,9 +100,16 @@ func SessionTokenAuthenticate(token string) (*DecryptedClaims, error) {
 
 // NewEncryptedTokenForClient generates a new session token with claims based on the provided STS credentials, first
 // encrypts the claims and the sign them
-func NewEncryptedTokenForClient(credentials *credentials.Value, actions []string) (string, error) {
+func NewEncryptedTokenForClient(credentials *credentials.Value, accountAccessKey, accountSecretKey string, actions []string) (string, error) {
 	if credentials != nil {
-		encryptedClaims, err := encryptClaims(credentials.AccessKeyID, credentials.SecretAccessKey, credentials.SessionToken, actions)
+		encryptedClaims, err := encryptClaims(&TokenClaims{
+			STSAccessKeyID:     credentials.AccessKeyID,
+			STSSecretAccessKey: credentials.SecretAccessKey,
+			STSSessionToken:    credentials.SessionToken,
+			AccountAccessKey:   accountAccessKey,
+			AccountSecretKey:   accountSecretKey,
+			Actions:            actions,
+		})
 		if err != nil {
 			return "", err
 		}
@@ -107,8 +120,11 @@ func NewEncryptedTokenForClient(credentials *credentials.Value, actions []string
 
 // encryptClaims() receives the STS claims, concatenate them and encrypt them using AES-GCM
 // returns a base64 encoded ciphertext
-func encryptClaims(accessKeyID, secretAccessKey, sessionToken string, actions []string) (string, error) {
-	payload := []byte(fmt.Sprintf("%s#%s#%s#%s", accessKeyID, secretAccessKey, sessionToken, strings.Join(actions, ",")))
+func encryptClaims(credentials *TokenClaims) (string, error) {
+	payload, err := json.Marshal(credentials)
+	if err != nil {
+		return "", err
+	}
 	ciphertext, err := encrypt(payload, []byte{})
 	if err != nil {
 		log.Println(err)
@@ -117,8 +133,8 @@ func encryptClaims(accessKeyID, secretAccessKey, sessionToken string, actions []
 	return base64.StdEncoding.EncodeToString(ciphertext), nil
 }
 
-// decryptClaims() receives base64 encoded ciphertext, decode it, decrypt it (AES-GCM) and produces a *DecryptedClaims object
-func decryptClaims(ciphertext string) (*DecryptedClaims, error) {
+// decryptClaims() receives base64 encoded ciphertext, decode it, decrypt it (AES-GCM) and produces a *TokenClaims object
+func decryptClaims(ciphertext string) (*TokenClaims, error) {
 	decoded, err := base64.StdEncoding.DecodeString(ciphertext)
 	if err != nil {
 		log.Println(err)
@@ -129,19 +145,13 @@ func decryptClaims(ciphertext string) (*DecryptedClaims, error) {
 		log.Println(err)
 		return nil, errClaimsFormat
 	}
-	s := strings.Split(string(plaintext), "#")
-	// Validate that the decrypted string has the right format "accessKeyID:secretAccessKey:sessionToken"
-	if len(s) != 4 {
+	tokenClaims := &TokenClaims{}
+	err = json.Unmarshal(plaintext, tokenClaims)
+	if err != nil {
+		log.Println(err)
 		return nil, errClaimsFormat
 	}
-	accessKeyID, secretAccessKey, sessionToken, actions := s[0], s[1], s[2], s[3]
-	actionsList := strings.Split(actions, ",")
-	return &DecryptedClaims{
-		AccessKeyID:     accessKeyID,
-		SecretAccessKey: secretAccessKey,
-		SessionToken:    sessionToken,
-		Actions:         actionsList,
-	}, nil
+	return tokenClaims, nil
 }
 
 const (
@@ -315,9 +325,11 @@ func GetClaimsFromTokenInRequest(req *http.Request) (*models.Principal, error) {
 		return nil, err
 	}
 	return &models.Principal{
-		AccessKeyID:     claims.AccessKeyID,
-		Actions:         claims.Actions,
-		SecretAccessKey: claims.SecretAccessKey,
-		SessionToken:    claims.SessionToken,
+		STSAccessKeyID:     claims.STSAccessKeyID,
+		Actions:            claims.Actions,
+		STSSecretAccessKey: claims.STSSecretAccessKey,
+		STSSessionToken:    claims.STSSessionToken,
+		AccountAccessKey:   claims.AccountAccessKey,
+		AccountSecretKey:   claims.AccountSecretKey,
 	}, nil
 }

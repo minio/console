@@ -18,7 +18,6 @@ var (
 	errorGenericUnauthorized   = errors.New("unauthorized")
 	errorGenericForbidden      = errors.New("forbidden")
 	errorGenericNotFound       = errors.New("not found")
-	errConnectingToMinio       = errors.New("unable to connect to MinIO instance")
 	// Explicit error messages
 	errorInvalidErasureCodingValue        = errors.New("invalid Erasure Coding Value")
 	errorUnableToGetTenantUsage           = errors.New("unable to get tenant usage")
@@ -32,6 +31,7 @@ var (
 	errPolicyBodyNotInRequest             = errors.New("error policy body not in request")
 	errInvalidEncryptionAlgorithm         = errors.New("error invalid encryption algorithm")
 	errSSENotConfigured                   = errors.New("error server side encryption configuration was not found")
+	errChangePassword                     = errors.New("unable to update password, please check your current password")
 )
 
 // prepareError receives an error object and parse it against k8sErrors, returns the right error code paired with a generic error message
@@ -89,6 +89,11 @@ func prepareError(err ...error) *models.Error {
 		if errors.Is(err[0], errorGenericInvalidSession) {
 			errorCode = 401
 			errorMessage = errorGenericInvalidSession.Error()
+		}
+		// account change password
+		if errors.Is(err[0], errChangePassword) {
+			errorCode = 403
+			errorMessage = errChangePassword.Error()
 		}
 		if madmin.ToErrorResponse(err[0]).Code == "InvalidAccessKeyId" {
 			errorCode = 401

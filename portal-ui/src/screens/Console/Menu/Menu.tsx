@@ -202,8 +202,8 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
       group: "User",
       type: "item",
       component: NavLink,
-      to: "/service-accounts",
-      name: "Service Accounts",
+      to: "/account",
+      name: "Account",
       icon: <ServiceAccountsIcon />,
     },
     {

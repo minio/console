@@ -36,14 +36,14 @@ func TestNewJWTWithClaimsForClient(t *testing.T) {
 	funcAssert := assert.New(t)
 	// Test-1 : NewEncryptedTokenForClient() is generated correctly without errors
 	function := "NewEncryptedTokenForClient()"
-	token, err := NewEncryptedTokenForClient(creds, []string{""})
+	token, err := NewEncryptedTokenForClient(creds, "", "", []string{""})
 	if err != nil || token == "" {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err)
 	}
 	// saving token for future tests
 	goodToken = token
 	// Test-2 : NewEncryptedTokenForClient() throws error because of empty credentials
-	if _, err = NewEncryptedTokenForClient(nil, []string{""}); err != nil {
+	if _, err = NewEncryptedTokenForClient(nil, "", "", []string{""}); err != nil {
 		funcAssert.Equal("provided credentials are empty", err.Error())
 	}
 }
@@ -56,9 +56,9 @@ func TestJWTAuthenticate(t *testing.T) {
 	if err != nil || claims == nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err)
 	} else {
-		funcAssert.Equal(claims.AccessKeyID, creds.AccessKeyID)
-		funcAssert.Equal(claims.SecretAccessKey, creds.SecretAccessKey)
-		funcAssert.Equal(claims.SessionToken, creds.SessionToken)
+		funcAssert.Equal(claims.STSAccessKeyID, creds.AccessKeyID)
+		funcAssert.Equal(claims.STSSecretAccessKey, creds.SecretAccessKey)
+		funcAssert.Equal(claims.STSSessionToken, creds.SessionToken)
 	}
 	// Test-2 : SessionTokenAuthenticate() return an error because of a tampered token
 	if _, err := SessionTokenAuthenticate(badToken); err != nil {
