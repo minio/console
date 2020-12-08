@@ -47,6 +47,10 @@ import TenantDetails from "./Tenants/TenantDetails/TenantDetails";
 import ObjectBrowser from "./ObjectBrowser/ObjectBrowser";
 import ObjectRouting from "./Buckets/ListBuckets/Objects/ListObjects/ObjectRouting";
 import License from "./License/License";
+import Trace from "./Trace/Trace";
+import Logs from "./Logs/Logs";
+import Heal from "./Heal/Heal";
+import Watch from "./Watch/Watch";
 
 const drawerWidth = 245;
 
@@ -217,6 +221,10 @@ const Console = ({
       path: "/object-browser/:bucket/*",
     },
     {
+      component: Watch,
+      path: "/watch",
+    },
+    {
       component: Users,
       path: "/users",
     },
@@ -227,6 +235,18 @@ const Console = ({
     {
       component: Policies,
       path: "/policies",
+    },
+    {
+      component: Heal,
+      path: "/heal",
+    },
+    {
+      component: Trace,
+      path: "/trace",
+    },
+    {
+      component: Logs,
+      path: "/logs",
     },
     {
       component: ListNotificationEndpoints,
@@ -294,20 +314,20 @@ const Console = ({
                     <LinearProgress />
                   </React.Fragment>
                 ) : (
-                    <React.Fragment>
-                      The instance needs to be restarted for configuration changes
+                  <React.Fragment>
+                    The instance needs to be restarted for configuration changes
                     to take effect.{" "}
-                      <Button
-                        color="secondary"
-                        size="small"
-                        onClick={() => {
-                          restartServer();
-                        }}
-                      >
-                        Restart
+                    <Button
+                      color="secondary"
+                      size="small"
+                      onClick={() => {
+                        restartServer();
+                      }}
+                    >
+                      Restart
                     </Button>
-                    </React.Fragment>
-                  )}
+                  </React.Fragment>
+                )}
               </div>
             )}
             <Container className={classes.container}>

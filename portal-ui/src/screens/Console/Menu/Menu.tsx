@@ -44,10 +44,14 @@ import {
   ServiceAccountsIcon,
   UsersIcon,
   WarpIcon,
+  TraceIcon,
 } from "../../../icons";
 import { clearSession } from "../../../common/utils";
 import LicenseIcon from "../../../icons/LicenseIcon";
 import LogoutIcon from "../../../icons/LogoutIcon";
+import ConsoleIcon from "../../../icons/ConsoleIcon";
+import HealIcon from "../../../icons/HealIcon";
+import WatchIcon from "../../../icons/WatchIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -237,6 +241,38 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
       to: "/policies",
       name: "IAM Policies",
       icon: <IAMPoliciesIcon />,
+    },
+    {
+      group: "Tools",
+      type: "item",
+      component: NavLink,
+      to: "/logs",
+      name: "Logs",
+      icon: <ConsoleIcon />,
+    },
+    {
+      group: "Tools",
+      type: "item",
+      component: NavLink,
+      to: "/watch",
+      name: "Watch",
+      icon: <WatchIcon />,
+    },
+    {
+      group: "Tools",
+      type: "item",
+      component: NavLink,
+      to: "/trace",
+      name: "Trace",
+      icon: <TraceIcon />,
+    },
+    {
+      group: "Tools",
+      type: "item",
+      component: NavLink,
+      to: "/heal",
+      name: "Heal",
+      icon: <HealIcon />,
     },
     {
       group: "Admin",

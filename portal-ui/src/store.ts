@@ -17,9 +17,9 @@
 import { applyMiddleware, combineReducers, compose, createStore } from "redux";
 import thunk from "redux-thunk";
 import { systemReducer } from "./reducer";
-import { traceReducer } from "./screens/Console/Tenants/TenantDetails/Trace/reducers";
-import { logReducer } from "./screens/Console/Tenants/TenantDetails/Logs/reducers";
-import { watchReducer } from "./screens/Console/Tenants/TenantDetails/Watch/reducers";
+import { traceReducer } from "./screens/Console/Trace/reducers";
+import { logReducer } from "./screens/Console/Logs/reducers";
+import { watchReducer } from "./screens/Console/Watch/reducers";
 import { consoleReducer } from "./screens/Console/reducer";
 import { bucketsReducer } from "./screens/Console/Buckets/reducers";
 import { objectBrowserReducer } from "./screens/Console/ObjectBrowser/reducers";

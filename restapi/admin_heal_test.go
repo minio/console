@@ -205,7 +205,7 @@ func TestHeal(t *testing.T) {
 	}
 
 	// Test-3: getHealOptionsFromReq return heal options from request
-	u, _ := url.Parse("http://localhost/api/v1/heal/namespace/tenantName/bucket1?prefix=file/&recursive=true&force-start=true&force-stop=true&remove=true&dry-run=true&scan=deep")
+	u, _ := url.Parse("http://localhost/api/v1/heal/bucket1?prefix=file/&recursive=true&force-start=true&force-stop=true&remove=true&dry-run=true&scan=deep")
 	req := &http.Request{
 		URL: u,
 	}
@@ -231,7 +231,7 @@ func TestHeal(t *testing.T) {
 	}
 
 	// Test-4: getHealOptionsFromReq return error if boolean value not valid
-	u, _ = url.Parse("http://localhost/api/v1/heal/namespace/tenantName/bucket1?prefix=file/&recursive=nonbool&force-start=true&force-stop=true&remove=true&dry-run=true&scan=deep")
+	u, _ = url.Parse("http://localhost/api/v1/heal/bucket1?prefix=file/&recursive=nonbool&force-start=true&force-stop=true&remove=true&dry-run=true&scan=deep")
 	req = &http.Request{
 		URL: u,
 	}
@@ -240,7 +240,7 @@ func TestHeal(t *testing.T) {
 		assert.Equal("strconv.ParseBool: parsing \"nonbool\": invalid syntax", err.Error())
 	}
 	// Test-5: getHealOptionsFromReq return error if boolean value not valid
-	u, _ = url.Parse("http://localhost/api/v1/heal/namespace/tenantName/bucket1?prefix=file/&recursive=true&force-start=true&force-stop=true&remove=nonbool&dry-run=true&scan=deep")
+	u, _ = url.Parse("http://localhost/api/v1/heal/bucket1?prefix=file/&recursive=true&force-start=true&force-stop=true&remove=nonbool&dry-run=true&scan=deep")
 	req = &http.Request{
 		URL: u,
 	}
@@ -249,7 +249,7 @@ func TestHeal(t *testing.T) {
 		assert.Equal("strconv.ParseBool: parsing \"nonbool\": invalid syntax", err.Error())
 	}
 	// Test-6: getHealOptionsFromReq return error if boolean value not valid
-	u, _ = url.Parse("http://localhost/api/v1/heal/namespace/tenantName/bucket1?prefix=file/&recursive=true&force-start=nonbool&force-stop=true&remove=true&dry-run=true&scan=deep")
+	u, _ = url.Parse("http://localhost/api/v1/heal/bucket1?prefix=file/&recursive=true&force-start=nonbool&force-stop=true&remove=true&dry-run=true&scan=deep")
 	req = &http.Request{
 		URL: u,
 	}
@@ -258,7 +258,7 @@ func TestHeal(t *testing.T) {
 		assert.Equal("strconv.ParseBool: parsing \"nonbool\": invalid syntax", err.Error())
 	}
 	// Test-7: getHealOptionsFromReq return error if boolean value not valid
-	u, _ = url.Parse("http://localhost/api/v1/heal/namespace/tenantName/bucket1?prefix=file/&recursive=true&force-start=true&force-stop=nonbool&remove=true&dry-run=true&scan=deep")
+	u, _ = url.Parse("http://localhost/api/v1/heal/bucket1?prefix=file/&recursive=true&force-start=true&force-stop=nonbool&remove=true&dry-run=true&scan=deep")
 	req = &http.Request{
 		URL: u,
 	}
@@ -267,7 +267,7 @@ func TestHeal(t *testing.T) {
 		assert.Equal("strconv.ParseBool: parsing \"nonbool\": invalid syntax", err.Error())
 	}
 	// Test-8: getHealOptionsFromReq return error if boolean value not valid
-	u, _ = url.Parse("http://localhost/api/v1/heal/namespace/tenantName/bucket1?prefix=file/&recursive=true&force-start=true&force-stop=true&remove=true&dry-run=nonbool&scan=deep")
+	u, _ = url.Parse("http://localhost/api/v1/heal/bucket1?prefix=file/&recursive=true&force-start=true&force-stop=true&remove=true&dry-run=nonbool&scan=deep")
 	req = &http.Request{
 		URL: u,
 	}
