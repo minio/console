@@ -16,19 +16,17 @@
 
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
-class AddIcon extends React.Component {
-  render() {
-    return (
-      <SvgIcon viewBox="0 0 12 12">
-        <path
-          fill="#081c42"
-          className="a"
-          d="M-13160.269,1885.114h-3.235v-4.381h-4.382V1877.5h4.382v-4.381h3.235v4.381h4.383v3.238h-4.383v4.38Z"
-          transform="translate(13167.886 -1873.114)"
-        />
-      </SvgIcon>
-    );
-  }
-}
+const AddIcon = () => {
+  return (
+    <SvgIcon viewBox="0 0 12 12">
+      <path
+        fill="#081c42"
+        className="a"
+        d="M-13160.269,1885.114h-3.235v-4.381h-4.382V1877.5h4.382v-4.381h3.235v4.381h4.383v3.238h-4.383v4.38Z"
+        transform="translate(13167.886 -1873.114)"
+      />
+    </SvgIcon>
+  );
+};
 
 export default AddIcon;

@@ -16,16 +16,15 @@
 
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
-class BucketsIcon extends React.Component {
-  render() {
-    return (
-      <SvgIcon>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
-          <path d="M8.392,10H1.608L0,0H10Z" />
-        </svg>
-      </SvgIcon>
-    );
-  }
-}
+
+const BucketsIcon = () => {
+  return (
+    <SvgIcon>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
+        <path d="M8.392,10H1.608L0,0H10Z" />
+      </svg>
+    </SvgIcon>
+  );
+};
 
 export default BucketsIcon;

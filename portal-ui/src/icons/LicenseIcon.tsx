@@ -17,31 +17,29 @@
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
 
-class LicenseIcon extends React.Component {
-  render() {
-    return (
-      <SvgIcon>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 11">
-          <path fill="#fff" d="M11 11H0V2h11v9zM2 8v1h7V8zm0-3v1h5V5z"></path>
-          <g
-            fill="#07274a"
-            stroke="#fdfdfd"
-            strokeWidth="0.5"
-            transform="translate(7)"
-          >
-            <circle cx="3" cy="3" r="3" stroke="none"></circle>
-            <circle cx="3" cy="3" r="2.75" fill="none"></circle>
-          </g>
-          <path
-            fill="none"
-            stroke="#fff"
-            strokeWidth="0.5"
-            d="M8.73 2.794l.954.953 1.471-1.471"
-          ></path>
-        </svg>
-      </SvgIcon>
-    );
-  }
-}
+const LicenseIcon = () => {
+  return (
+    <SvgIcon>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 11">
+        <path fill="#fff" d="M11 11H0V2h11v9zM2 8v1h7V8zm0-3v1h5V5z"></path>
+        <g
+          fill="#07274a"
+          stroke="#fdfdfd"
+          strokeWidth="0.5"
+          transform="translate(7)"
+        >
+          <circle cx="3" cy="3" r="3" stroke="none"></circle>
+          <circle cx="3" cy="3" r="2.75" fill="none"></circle>
+        </g>
+        <path
+          fill="none"
+          stroke="#fff"
+          strokeWidth="0.5"
+          d="M8.73 2.794l.954.953 1.471-1.471"
+        ></path>
+      </svg>
+    </SvgIcon>
+  );
+};
 
 export default LicenseIcon;

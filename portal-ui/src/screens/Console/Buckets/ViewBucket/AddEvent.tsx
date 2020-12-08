@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { Button, LinearProgress } from "@material-ui/core";
@@ -68,250 +68,225 @@ interface IAddEventState {
   arnList: string[];
 }
 
-class AddEvent extends React.Component<IAddEventProps, IAddEventState> {
-  state: IAddEventState = {
-    addLoading: false,
-    addError: "",
-    prefix: "",
-    suffix: "",
-    arn: "",
-    selectedEvents: [],
-    arnList: [],
-  };
+const AddEvent = ({
+  classes,
+  open,
+  selectedBucket,
+  closeModalAndRefresh,
+}: IAddEventProps) => {
+  const [addLoading, setAddLoading] = useState<boolean>(false);
+  const [addError, setAddError] = useState<string>("");
+  const [prefix, setPrefix] = useState<string>("");
+  const [suffix, setSuffix] = useState<string>("");
+  const [arn, setArn] = useState<string>("");
+  const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
+  const [arnList, setArnList] = useState<string[]>([]);
 
-  addRecord(event: React.FormEvent) {
+  const addRecord = (event: React.FormEvent) => {
     event.preventDefault();
-    const { prefix, suffix, addLoading, arn, selectedEvents } = this.state;
-    const { selectedBucket } = this.props;
     if (addLoading) {
       return;
     }
-    this.setState({ addLoading: true }, () => {
-      api
-        .invoke("POST", `/api/v1/buckets/${selectedBucket}/events`, {
-          configuration: {
-            arn: arn,
-            events: selectedEvents,
-            prefix: prefix,
-            suffix: suffix,
-          },
-          ignoreExisting: true,
-        })
-        .then((res) => {
-          this.setState(
-            {
-              addLoading: false,
-              addError: "",
-            },
-            () => {
-              this.props.closeModalAndRefresh();
-            }
-          );
-        })
-        .catch((err) => {
-          this.setState({
-            addLoading: false,
-            addError: err,
-          });
-        });
-    });
-  }
+    setAddLoading(true);
+    api
+      .invoke("POST", `/api/v1/buckets/${selectedBucket}/events`, {
+        configuration: {
+          arn: arn,
+          events: selectedEvents,
+          prefix: prefix,
+          suffix: suffix,
+        },
+        ignoreExisting: true,
+      })
+      .then((res) => {
+        setAddLoading(false);
+        setAddError("");
+        closeModalAndRefresh();
+      })
+      .catch((err) => {
+        setAddLoading(false);
+        setAddError(err);
+      });
+  };
 
-  fetchArnList() {
-    this.setState({ addLoading: true }, () => {
-      api
-        .invoke("GET", `/api/v1/admin/arns`)
-        .then((res: ArnList) => {
-          let arns: string[] = [];
-          if (res.arns !== null) {
-            arns = res.arns;
-          }
-          this.setState({
-            addLoading: false,
-            arnList: arns,
-            addError: "",
-          });
-        })
-        .catch((err: any) => {
-          this.setState({ addLoading: false, addError: err });
-        });
-    });
-  }
+  const fetchArnList = () => {
+    setAddLoading(true);
+    api
+      .invoke("GET", `/api/v1/admin/arns`)
+      .then((res: ArnList) => {
+        let arns: string[] = [];
+        if (res.arns !== null) {
+          arns = res.arns;
+        }
+        setAddLoading(false);
+        setAddError("");
+        setArnList(arns);
+      })
+      .catch((err: any) => {
+        setAddLoading(false);
+        setAddError(err);
+      });
+  };
 
-  componentDidMount(): void {
-    this.fetchArnList();
-  }
+  useEffect(() => {
+    fetchArnList();
+  }, []);
 
-  render() {
-    const { classes, open } = this.props;
-    const {
-      addLoading,
-      addError,
-      arn,
-      selectedEvents,
-      arnList,
-      prefix,
-      suffix,
-    } = this.state;
+  const events = [
+    { label: "PUT - Object Uploaded", value: "put" },
+    { label: "GET - Object accessed", value: "get" },
+    { label: "DELETE - Object Deleted", value: "delete" },
+  ];
 
-    const events = [
-      { label: "PUT - Object Uploaded", value: "put" },
-      { label: "GET - Object accessed", value: "get" },
-      { label: "DELETE - Object Deleted", value: "delete" },
-    ];
+  const handleClick = (
+    event: React.MouseEvent<unknown> | ChangeEvent<unknown>,
+    name: string
+  ) => {
+    const selectedIndex = selectedEvents.indexOf(name);
+    let newSelected: string[] = [];
 
-    const handleClick = (
-      event: React.MouseEvent<unknown> | ChangeEvent<unknown>,
-      name: string
-    ) => {
-      const selectedIndex = selectedEvents.indexOf(name);
-      let newSelected: string[] = [];
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selectedEvents, name);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selectedEvents.slice(1));
+    } else if (selectedIndex === selectedEvents.length - 1) {
+      newSelected = newSelected.concat(selectedEvents.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selectedEvents.slice(0, selectedIndex),
+        selectedEvents.slice(selectedIndex + 1)
+      );
+    }
+    setSelectedEvents(newSelected);
+  };
 
-      if (selectedIndex === -1) {
-        newSelected = newSelected.concat(selectedEvents, name);
-      } else if (selectedIndex === 0) {
-        newSelected = newSelected.concat(selectedEvents.slice(1));
-      } else if (selectedIndex === selectedEvents.length - 1) {
-        newSelected = newSelected.concat(selectedEvents.slice(0, -1));
-      } else if (selectedIndex > 0) {
-        newSelected = newSelected.concat(
-          selectedEvents.slice(0, selectedIndex),
-          selectedEvents.slice(selectedIndex + 1)
-        );
-      }
+  const arnValues = arnList.map((arnConstant) => ({
+    label: arnConstant,
+    value: arnConstant,
+  }));
 
-      this.setState({ selectedEvents: newSelected });
-    };
-
-    const arnValues = arnList.map((arnConstant) => ({
-      label: arnConstant,
-      value: arnConstant,
-    }));
-
-    return (
-      <ModalWrapper
-        modalOpen={open}
-        onClose={() => {
-          this.setState({ addError: "" }, () => {
-            this.props.closeModalAndRefresh();
-          });
+  return (
+    <ModalWrapper
+      modalOpen={open}
+      onClose={() => {
+        setAddError("");
+        closeModalAndRefresh();
+      }}
+      title="Subscribe To Event"
+    >
+      <form
+        noValidate
+        autoComplete="off"
+        onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+          addRecord(e);
         }}
-        title="Subscribe To Event"
       >
-        <form
-          noValidate
-          autoComplete="off"
-          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-            this.addRecord(e);
-          }}
-        >
-          <Grid container>
-            <Grid item xs={12} className={classes.formScrollable}>
-              {addError !== "" && (
-                <Grid item xs={12}>
-                  <Typography
-                    component="p"
-                    variant="body1"
-                    className={classes.errorBlock}
-                  >
-                    {addError}
-                  </Typography>
-                </Grid>
-              )}
+        <Grid container>
+          <Grid item xs={12} className={classes.formScrollable}>
+            {addError !== "" && (
               <Grid item xs={12}>
-                <SelectWrapper
-                  onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                    this.setState({ arn: e.target.value as string });
-                  }}
-                  id="select-access-policy"
-                  name="select-access-policy"
-                  label={"ARN"}
-                  value={arn}
-                  options={arnValues}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <Table size="medium">
-                  <TableHead className={classes.minTableHeader}>
-                    <TableRow>
-                      <TableCell>Select</TableCell>
-                      <TableCell>Event</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {events.map((row) => (
-                      <TableRow
-                        key={`group-${row.value}`}
-                        onClick={(event) => handleClick(event, row.value)}
-                      >
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            value={row.value}
-                            color="primary"
-                            inputProps={{
-                              "aria-label": "secondary checkbox",
-                            }}
-                            onChange={(event) => handleClick(event, row.value)}
-                            checked={selectedEvents.includes(row.value)}
-                          />
-                        </TableCell>
-                        <TableCell className={classes.wrapCell}>
-                          {row.label}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </Grid>
-              <Grid item xs={12}>
-                <br />
-              </Grid>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="prefix-input"
-                  name="prefix-input"
-                  label="Prefix"
-                  value={prefix}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    this.setState({ prefix: e.target.value });
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <InputBoxWrapper
-                  id="suffix-input"
-                  name="suffix-input"
-                  label="Suffix"
-                  value={suffix}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    this.setState({ suffix: e.target.value });
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <br />
-              </Grid>
-            </Grid>
-            <Grid item xs={12} className={classes.buttonContainer}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={addLoading}
-              >
-                Save
-              </Button>
-            </Grid>
-            {addLoading && (
-              <Grid item xs={12}>
-                <LinearProgress />
+                <Typography
+                  component="p"
+                  variant="body1"
+                  className={classes.errorBlock}
+                >
+                  {addError}
+                </Typography>
               </Grid>
             )}
+            <Grid item xs={12}>
+              <SelectWrapper
+                onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                  setArn(e.target.value as string);
+                }}
+                id="select-access-policy"
+                name="select-access-policy"
+                label={"ARN"}
+                value={arn}
+                options={arnValues}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Table size="medium">
+                <TableHead className={classes.minTableHeader}>
+                  <TableRow>
+                    <TableCell>Select</TableCell>
+                    <TableCell>Event</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {events.map((row) => (
+                    <TableRow
+                      key={`group-${row.value}`}
+                      onClick={(event) => handleClick(event, row.value)}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          value={row.value}
+                          color="primary"
+                          inputProps={{
+                            "aria-label": "secondary checkbox",
+                          }}
+                          onChange={(event) => handleClick(event, row.value)}
+                          checked={selectedEvents.includes(row.value)}
+                        />
+                      </TableCell>
+                      <TableCell className={classes.wrapCell}>
+                        {row.label}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Grid>
+            <Grid item xs={12}>
+              <br />
+            </Grid>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="prefix-input"
+                name="prefix-input"
+                label="Prefix"
+                value={prefix}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setPrefix(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="suffix-input"
+                name="suffix-input"
+                label="Suffix"
+                value={suffix}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setSuffix(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <br />
+            </Grid>
           </Grid>
-        </form>
-      </ModalWrapper>
-    );
-  }
-}
+          <Grid item xs={12} className={classes.buttonContainer}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={addLoading}
+            >
+              Save
+            </Button>
+          </Grid>
+          {addLoading && (
+            <Grid item xs={12}>
+              <LinearProgress />
+            </Grid>
+          )}
+        </Grid>
+      </form>
+    </ModalWrapper>
+  );
+};
 
 export default withStyles(styles)(AddEvent);

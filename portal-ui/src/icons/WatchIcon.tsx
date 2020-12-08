@@ -16,44 +16,43 @@
 
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
-class WatchIcon extends React.Component {
-  render() {
-    return (
-      <SvgIcon>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
-          <g transform="translate(213 720)">
-            <g transform="translate(-105 -720)">
-              <rect width="1.5" height="4" transform="translate(-108)" />
-              <rect width="1.5" height="4" transform="translate(-108 6)" />
-              <rect width="1.5" height="4" transform="translate(-99.5 6)" />
-              <rect width="1.5" height="4" transform="translate(-99.5)" />
-              <rect
-                width="1.5"
-                height="4"
-                transform="translate(-98) rotate(90)"
-              />
-              <rect
-                width="1.5"
-                height="4"
-                transform="translate(-104) rotate(90)"
-              />
-              <rect
-                width="1.5"
-                height="4"
-                transform="translate(-104 8.5) rotate(90)"
-              />
-              <rect
-                width="1.5"
-                height="4"
-                transform="translate(-98 8.5) rotate(90)"
-              />
-              <circle cx="2" cy="2" r="2" transform="translate(-105 3)" />
-            </g>
+
+const WatchIcon = () => {
+  return (
+    <SvgIcon>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
+        <g transform="translate(213 720)">
+          <g transform="translate(-105 -720)">
+            <rect width="1.5" height="4" transform="translate(-108)" />
+            <rect width="1.5" height="4" transform="translate(-108 6)" />
+            <rect width="1.5" height="4" transform="translate(-99.5 6)" />
+            <rect width="1.5" height="4" transform="translate(-99.5)" />
+            <rect
+              width="1.5"
+              height="4"
+              transform="translate(-98) rotate(90)"
+            />
+            <rect
+              width="1.5"
+              height="4"
+              transform="translate(-104) rotate(90)"
+            />
+            <rect
+              width="1.5"
+              height="4"
+              transform="translate(-104 8.5) rotate(90)"
+            />
+            <rect
+              width="1.5"
+              height="4"
+              transform="translate(-98 8.5) rotate(90)"
+            />
+            <circle cx="2" cy="2" r="2" transform="translate(-105 3)" />
           </g>
-        </svg>
-      </SvgIcon>
-    );
-  }
-}
+        </g>
+      </svg>
+    </SvgIcon>
+  );
+};
 
 export default WatchIcon;

@@ -16,33 +16,32 @@
 
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
-class DashboardIcon extends React.Component {
-  render() {
-    return (
-      <SvgIcon>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
-          <g transform="translate(249 720)">
-            <rect
-              width="6"
-              height="5"
-              transform="translate(-244 -720) rotate(90)"
-            />
-            <rect width="4" height="4" transform="translate(-243 -720)" />
-            <rect
-              width="5"
-              height="4"
-              transform="translate(-239 -715) rotate(90)"
-            />
-            <rect
-              width="5"
-              height="3"
-              transform="translate(-244 -710) rotate(180)"
-            />
-          </g>
-        </svg>
-      </SvgIcon>
-    );
-  }
-}
+
+const DashboardIcon = () => {
+  return (
+    <SvgIcon>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
+        <g transform="translate(249 720)">
+          <rect
+            width="6"
+            height="5"
+            transform="translate(-244 -720) rotate(90)"
+          />
+          <rect width="4" height="4" transform="translate(-243 -720)" />
+          <rect
+            width="5"
+            height="4"
+            transform="translate(-239 -715) rotate(90)"
+          />
+          <rect
+            width="5"
+            height="3"
+            transform="translate(-244 -710) rotate(180)"
+          />
+        </g>
+      </svg>
+    </SvgIcon>
+  );
+};
 
 export default DashboardIcon;

@@ -16,20 +16,18 @@
 
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
-class MirroringIcon extends React.Component {
-  render() {
-    return (
-      <SvgIcon>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
-          <g transform="translate(61 439)">
-            <rect width="1.5" height="10" transform="translate(-56.75 -439)" />
-            <path d="M6.5,10V0h.572L10,10Z" transform="translate(-61 -439)" />
-            <path d="M3.5,10V0H2.928L0,10Z" transform="translate(-61 -439)" />
-          </g>
-        </svg>
-      </SvgIcon>
-    );
-  }
-}
+const MirroringIcon = () => {
+  return (
+    <SvgIcon>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
+        <g transform="translate(61 439)">
+          <rect width="1.5" height="10" transform="translate(-56.75 -439)" />
+          <path d="M6.5,10V0h.572L10,10Z" transform="translate(-61 -439)" />
+          <path d="M3.5,10V0H2.928L0,10Z" transform="translate(-61 -439)" />
+        </g>
+      </svg>
+    </SvgIcon>
+  );
+};
 
 export default MirroringIcon;

@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { Button, LinearProgress } from "@material-ui/core";
@@ -39,130 +39,106 @@ interface ISetAccessPolicyProps {
   closeModalAndRefresh: () => void;
 }
 
-interface ISetAccessPolicyState {
-  addLoading: boolean;
-  addError: string;
-  accessPolicy: string;
-}
-
-class SetAccessPolicy extends React.Component<
-  ISetAccessPolicyProps,
-  ISetAccessPolicyState
-> {
-  state: ISetAccessPolicyState = {
-    addLoading: false,
-    addError: "",
-    accessPolicy: "",
-  };
-
-  addRecord(event: React.FormEvent) {
+const SetAccessPolicy = ({
+  classes,
+  open,
+  bucketName,
+  actualPolicy,
+  closeModalAndRefresh,
+}: ISetAccessPolicyProps) => {
+  const [addLoading, setAddLoading] = useState<boolean>(false);
+  const [addError, setAddError] = useState<string>("");
+  const [accessPolicy, setAccessPolicy] = useState<string>("");
+  const addRecord = (event: React.FormEvent) => {
     event.preventDefault();
-    const { addLoading, accessPolicy } = this.state;
-    const { bucketName } = this.props;
     if (addLoading) {
       return;
     }
-    this.setState({ addLoading: true }, () => {
-      api
-        .invoke("PUT", `/api/v1/buckets/${bucketName}/set-policy`, {
-          access: accessPolicy,
-        })
-        .then((res) => {
-          this.setState(
-            {
-              addLoading: false,
-              addError: "",
-            },
-            () => {
-              this.props.closeModalAndRefresh();
-            }
-          );
-        })
-        .catch((err) => {
-          this.setState({
-            addLoading: false,
-            addError: err,
-          });
-        });
-    });
-  }
+    setAddLoading(true);
+    api
+      .invoke("PUT", `/api/v1/buckets/${bucketName}/set-policy`, {
+        access: accessPolicy,
+      })
+      .then((res) => {
+        setAddLoading(false);
+        setAddError("");
+        closeModalAndRefresh();
+      })
+      .catch((err) => {
+        setAddLoading(false);
+        setAddError(err);
+      });
+  };
 
-  componentDidMount() {
-    const { actualPolicy } = this.props;
+  useEffect(() => {
+    setAccessPolicy(actualPolicy);
+  }, []);
 
-    this.setState({ accessPolicy: actualPolicy });
-  }
-
-  render() {
-    const { classes, open } = this.props;
-    const { addLoading, addError, accessPolicy } = this.state;
-    return (
-      <ModalWrapper
-        title="Change Access Policy"
-        modalOpen={open}
-        onClose={() => {
-          this.setState({ addError: "" }, () => {
-            this.props.closeModalAndRefresh();
-          });
+  return (
+    <ModalWrapper
+      title="Change Access Policy"
+      modalOpen={open}
+      onClose={() => {
+        setAddError("");
+        closeModalAndRefresh();
+      }}
+    >
+      <form
+        noValidate
+        autoComplete="off"
+        onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+          addRecord(e);
         }}
       >
-        <form
-          noValidate
-          autoComplete="off"
-          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-            this.addRecord(e);
-          }}
-        >
-          <Grid container>
-            <Grid item xs={12} className={classes.formScrollable}>
-              {addError !== "" && (
-                <Grid item xs={12}>
-                  <Typography
-                    component="p"
-                    variant="body1"
-                    className={classes.errorBlock}
-                  >
-                    {addError}
-                  </Typography>
-                </Grid>
-              )}
+        <Grid container>
+          <Grid item xs={12} className={classes.formScrollable}>
+            {addError !== "" && (
               <Grid item xs={12}>
-                <SelectWrapper
-                  value={accessPolicy}
-                  label="Access Policy"
-                  id="select-access-policy"
-                  name="select-access-policy"
-                  onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                    this.setState({ accessPolicy: e.target.value as string });
-                  }}
-                  options={[
-                    { value: "PRIVATE", label: "Private" },
-                    { value: "PUBLIC", label: "Public" },
-                  ]}
-                />
-              </Grid>
-            </Grid>
-            <Grid item xs={12}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-                disabled={addLoading}
-              >
-                Set
-              </Button>
-            </Grid>
-            {addLoading && (
-              <Grid item xs={12}>
-                <LinearProgress />
+                <Typography
+                  component="p"
+                  variant="body1"
+                  className={classes.errorBlock}
+                >
+                  {addError}
+                </Typography>
               </Grid>
             )}
+            <Grid item xs={12}>
+              <SelectWrapper
+                value={accessPolicy}
+                label="Access Policy"
+                id="select-access-policy"
+                name="select-access-policy"
+                onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                  setAccessPolicy(e.target.value as string);
+                }}
+                options={[
+                  { value: "PRIVATE", label: "Private" },
+                  { value: "PUBLIC", label: "Public" },
+                ]}
+              />
+            </Grid>
           </Grid>
-        </form>
-      </ModalWrapper>
-    );
-  }
-}
+          <Grid item xs={12}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              disabled={addLoading}
+            >
+              Set
+            </Button>
+          </Grid>
+          {addLoading && (
+            <Grid item xs={12}>
+              <LinearProgress />
+            </Grid>
+          )}
+        </Grid>
+      </form>
+    </ModalWrapper>
+  );
+};
 
 export default withStyles(styles)(SetAccessPolicy);

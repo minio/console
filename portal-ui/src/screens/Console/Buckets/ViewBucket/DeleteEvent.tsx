@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import get from "lodash/get";
 import {
@@ -45,23 +45,17 @@ interface IDeleteEventProps {
   bucketEvent: BucketEvent | null;
 }
 
-interface IDeleteEventState {
-  deleteLoading: boolean;
-  deleteError: string;
-}
+const DeleteEvent = ({
+  classes,
+  closeDeleteModalAndRefresh,
+  deleteOpen,
+  selectedBucket,
+  bucketEvent,
+}: IDeleteEventProps) => {
+  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
+  const [deleteError, setDeleteError] = useState<string>("");
 
-class DeleteEvent extends React.Component<
-  IDeleteEventProps,
-  IDeleteEventState
-> {
-  state: IDeleteEventState = {
-    deleteLoading: false,
-    deleteError: "",
-  };
-
-  removeRecord() {
-    const { deleteLoading } = this.state;
-    const { selectedBucket, bucketEvent } = this.props;
+  const removeRecord = () => {
     if (deleteLoading) {
       return;
     }
@@ -69,99 +63,84 @@ class DeleteEvent extends React.Component<
       return;
     }
 
-    this.setState({ deleteLoading: true }, () => {
-      const events = get(bucketEvent, "events", []);
-      const prefix = get(bucketEvent, "prefix", "");
-      const suffix = get(bucketEvent, "suffix", "");
-      api
-        .invoke(
-          "DELETE",
-          `/api/v1/buckets/${selectedBucket}/events/${bucketEvent.arn}`,
-          {
-            events,
-            prefix,
-            suffix,
-          }
-        )
-        .then((res: BucketList) => {
-          this.setState(
-            {
-              deleteLoading: false,
-              deleteError: "",
-            },
-            () => {
-              this.props.closeDeleteModalAndRefresh(true);
-            }
-          );
-        })
-        .catch((err) => {
-          this.setState({
-            deleteLoading: false,
-            deleteError: err,
-          });
-        });
-    });
-  }
+    setDeleteLoading(true);
 
-  render() {
-    const { classes, deleteOpen } = this.props;
-    const { deleteLoading, deleteError } = this.state;
+    const events = get(bucketEvent, "events", []);
+    const prefix = get(bucketEvent, "prefix", "");
+    const suffix = get(bucketEvent, "suffix", "");
+    api
+      .invoke(
+        "DELETE",
+        `/api/v1/buckets/${selectedBucket}/events/${bucketEvent.arn}`,
+        {
+          events,
+          prefix,
+          suffix,
+        }
+      )
+      .then((res: BucketList) => {
+        setDeleteLoading(false);
+        setDeleteError("");
+        closeDeleteModalAndRefresh(true);
+      })
+      .catch((err) => {
+        setDeleteLoading(false);
+        setDeleteError(err);
+      });
+  };
 
-    return (
-      <Dialog
-        open={deleteOpen}
-        onClose={() => {
-          this.setState({ deleteError: "" }, () => {
-            this.props.closeDeleteModalAndRefresh(false);
-          });
-        }}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">Delete Bucket</DialogTitle>
-        <DialogContent>
-          {deleteLoading && <LinearProgress />}
-          <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete this event?
-            {deleteError !== "" && (
-              <React.Fragment>
-                <br />
-                <Typography
-                  component="p"
-                  variant="body1"
-                  className={classes.errorBlock}
-                >
-                  {deleteError}
-                </Typography>
-              </React.Fragment>
-            )}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              this.setState({ deleteError: "" }, () => {
-                this.props.closeDeleteModalAndRefresh(false);
-              });
-            }}
-            color="primary"
-            disabled={deleteLoading}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              this.removeRecord();
-            }}
-            color="secondary"
-            autoFocus
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
-}
+  return (
+    <Dialog
+      open={deleteOpen}
+      onClose={() => {
+        setDeleteError("");
+        closeDeleteModalAndRefresh(false);
+      }}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle id="alert-dialog-title">Delete Bucket</DialogTitle>
+      <DialogContent>
+        {deleteLoading && <LinearProgress />}
+        <DialogContentText id="alert-dialog-description">
+          Are you sure you want to delete this event?
+          {deleteError !== "" && (
+            <React.Fragment>
+              <br />
+              <Typography
+                component="p"
+                variant="body1"
+                className={classes.errorBlock}
+              >
+                {deleteError}
+              </Typography>
+            </React.Fragment>
+          )}
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={() => {
+            setDeleteError("");
+            closeDeleteModalAndRefresh(false);
+          }}
+          color="primary"
+          disabled={deleteLoading}
+        >
+          Cancel
+        </Button>
+        <Button
+          onClick={() => {
+            removeRecord();
+          }}
+          color="secondary"
+          autoFocus
+        >
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 export default withStyles(styles)(DeleteEvent);

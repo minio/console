@@ -16,24 +16,22 @@
 
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
-class ServiceAccountIcon extends React.Component {
-  render() {
-    return (
-      <SvgIcon>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13.856 16">
-          <title>ic_service-accounts</title>
-          <g id="Layer_2" data-name="Layer 2">
-            <g id="Layer_1-2" data-name="Layer 1">
-              <path
-                className="cls-1"
-                d="M6.928,0,0,4v8l6.928,4,6.928-4V4Zm0,10.286A2.286,2.286,0,1,1,9.215,8,2.286,2.286,0,0,1,6.928,10.286Z"
-              />
-            </g>
+const ServiceAccountIcon = () => {
+  return (
+    <SvgIcon>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13.856 16">
+        <title>ic_service-accounts</title>
+        <g id="Layer_2" data-name="Layer 2">
+          <g id="Layer_1-2" data-name="Layer 1">
+            <path
+              className="cls-1"
+              d="M6.928,0,0,4v8l6.928,4,6.928-4V4Zm0,10.286A2.286,2.286,0,1,1,9.215,8,2.286,2.286,0,0,1,6.928,10.286Z"
+            />
           </g>
-        </svg>
-      </SvgIcon>
-    );
-  }
-}
+        </g>
+      </svg>
+    </SvgIcon>
+  );
+};
 
 export default ServiceAccountIcon;

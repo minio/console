@@ -16,24 +16,23 @@
 
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
-class CopyIcon extends React.Component {
-  render() {
-    return (
-      <SvgIcon>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-          <title>ic_h_copy-new_sl</title>
-          <g id="Layer_2" data-name="Layer 2">
-            <g id="Layer_1-2" data-name="Layer 1">
-              <path
-                className="cls-1"
-                d="M0,0V16H16V0ZM11.886,9.048H9.048v2.838h-2.1V9.048H4.114v-2.1H6.952V4.114h2.1V6.952h2.838Z"
-              />
-            </g>
+
+const CopyIcon = () => {
+  return (
+    <SvgIcon>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+        <title>ic_h_copy-new_sl</title>
+        <g id="Layer_2" data-name="Layer 2">
+          <g id="Layer_1-2" data-name="Layer 1">
+            <path
+              className="cls-1"
+              d="M0,0V16H16V0ZM11.886,9.048H9.048v2.838h-2.1V9.048H4.114v-2.1H6.952V4.114h2.1V6.952h2.838Z"
+            />
           </g>
-        </svg>
-      </SvgIcon>
-    );
-  }
-}
+        </g>
+      </svg>
+    </SvgIcon>
+  );
+};
 
 export default CopyIcon;

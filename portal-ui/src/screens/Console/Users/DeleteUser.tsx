@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import React from "react";
+import React, { useState } from "react";
 import {
   Button,
   Dialog,
@@ -48,110 +48,94 @@ interface IDeleteUserState {
   deleteError: string;
 }
 
-class DeleteUser extends React.Component<IDeleteUserProps, IDeleteUserState> {
-  state: IDeleteUserState = {
-    deleteLoading: false,
-    deleteError: "",
-  };
+const DeleteUser = ({
+  classes,
+  closeDeleteModalAndRefresh,
+  deleteOpen,
+  selectedUser,
+}: IDeleteUserProps) => {
+  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
+  const [deleteError, setDeleteError] = useState<string>("");
 
-  removeRecord() {
-    const { deleteLoading } = this.state;
-    const { selectedUser } = this.props;
+  const removeRecord = () => {
     if (deleteLoading) {
       return;
     }
     if (selectedUser == null) {
       return;
     }
-    this.setState({ deleteLoading: true }, () => {
-      api
-        .invoke("DELETE", `/api/v1/users/${selectedUser.accessKey}`, {
-          id: selectedUser.id,
-        })
-        .then((res: UsersList) => {
-          this.setState(
-            {
-              deleteLoading: false,
-              deleteError: "",
-            },
-            () => {
-              this.props.closeDeleteModalAndRefresh(true);
-            }
-          );
-        })
-        .catch((err) => {
-          this.setState({
-            deleteLoading: false,
-            deleteError: err,
-          });
-        });
-    });
+    setDeleteLoading(true);
+    api
+      .invoke("DELETE", `/api/v1/users/${selectedUser.accessKey}`, {
+        id: selectedUser.id,
+      })
+      .then((res: UsersList) => {
+        setDeleteLoading(false);
+        setDeleteError("");
+        closeDeleteModalAndRefresh(true);
+      })
+      .catch((err) => {
+        setDeleteLoading(false);
+        setDeleteError(err);
+      });
+  };
+
+  if (selectedUser === null) {
+    return <div />;
   }
 
-  render() {
-    const { classes, deleteOpen, selectedUser } = this.props;
-    const { deleteLoading, deleteError } = this.state;
-
-    if (selectedUser === null) {
-      return <div />;
-    }
-
-    return (
-      <Dialog
-        open={deleteOpen}
-        onClose={() => {
-          this.setState({ deleteError: "" }, () => {
-            this.props.closeDeleteModalAndRefresh(false);
-          });
-        }}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">Delete User</DialogTitle>
-        <DialogContent>
-          {deleteLoading && <LinearProgress />}
-          <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete user <b>{selectedUser.accessKey}</b>
-            ?
-            {deleteError !== "" && (
-              <React.Fragment>
-                <br />
-                <Typography
-                  component="p"
-                  variant="body1"
-                  className={classes.errorBlock}
-                >
-                  {deleteError}
-                </Typography>
-              </React.Fragment>
-            )}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              this.setState({ deleteError: "" }, () => {
-                this.props.closeDeleteModalAndRefresh(false);
-              });
-            }}
-            color="primary"
-            disabled={deleteLoading}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              this.removeRecord();
-            }}
-            color="secondary"
-            autoFocus
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
-}
+  return (
+    <Dialog
+      open={deleteOpen}
+      onClose={() => {
+        setDeleteError("");
+        closeDeleteModalAndRefresh(false);
+      }}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle id="alert-dialog-title">Delete User</DialogTitle>
+      <DialogContent>
+        {deleteLoading && <LinearProgress />}
+        <DialogContentText id="alert-dialog-description">
+          Are you sure you want to delete user <b>{selectedUser.accessKey}</b>?
+          {deleteError !== "" && (
+            <React.Fragment>
+              <br />
+              <Typography
+                component="p"
+                variant="body1"
+                className={classes.errorBlock}
+              >
+                {deleteError}
+              </Typography>
+            </React.Fragment>
+          )}
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={() => {
+            setDeleteError("");
+            closeDeleteModalAndRefresh(false);
+          }}
+          color="primary"
+          disabled={deleteLoading}
+        >
+          Cancel
+        </Button>
+        <Button
+          onClick={() => {
+            removeRecord();
+          }}
+          color="secondary"
+          autoFocus
+        >
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 export default withStyles(styles)(DeleteUser);
