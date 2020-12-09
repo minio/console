@@ -284,12 +284,9 @@ func GetAuthorizedEndpoints(actions []string) []string {
 		rangeTake = operatorRules
 	}
 
-	if len(actions) == 0 {
-		return []string{}
-	}
 	// Prepare new ActionSet structure that will hold all the user actions
 	userAllowedAction := actionsStringToActionSet(actions)
-	allowedEndpoints := []string{}
+	var allowedEndpoints []string
 	for endpoint, rules := range rangeTake {
 		// check if user policy matches s3:* or admin:* typesIntersection
 		endpointActionTypes := rules.actionTypes
