@@ -94,11 +94,11 @@ func TestGetAuthorizedEndpoints(t *testing.T) {
 			want: 16,
 		},
 		{
-			name: "no endpoints",
+			name: "Console User - default endpoints",
 			args: args{
 				[]string{},
 			},
-			want: 0,
+			want: 5,
 		},
 	}
 
@@ -138,11 +138,11 @@ func TestOperatorOnlyEndpoints(t *testing.T) {
 			want: 2,
 		},
 		{
-			name: "Operator Only - no endpoints",
+			name: "Operator Only - default endpoints",
 			args: args{
 				[]string{},
 			},
-			want: 0,
+			want: 2,
 		},
 	}
 
