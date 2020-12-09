@@ -16,21 +16,22 @@
 import React, { useEffect, useState } from "react";
 import { Button, Grid, TextField, InputBase } from "@material-ui/core";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import { AppState } from "../../../../../store";
+import { AppState } from "../../../store";
 import { connect } from "react-redux";
 import { watchMessageReceived, watchResetMessages } from "./actions";
 import { EventInfo, BucketList, Bucket } from "./types";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { niceBytes, timeFromDate } from "../../../../../common/utils";
-import { wsProtocol } from "../../../../../utils/wsUtils";
-import api from "../../../../../common/api";
+import { niceBytes, timeFromDate } from "../../../common/utils";
+import { wsProtocol } from "../../../utils/wsUtils";
+import api from "../../../common/api";
 import { FormControl, MenuItem, Select } from "@material-ui/core";
 import {
   actionsTray,
   containerForHeader,
   searchField,
-} from "../../../Common/FormComponents/common/styleLibrary";
-import TableWrapper from "../../../Common/TableWrapper/TableWrapper";
+} from "../Common/FormComponents/common/styleLibrary";
+import TableWrapper from "../Common/TableWrapper/TableWrapper";
+import PageHeader from "../Common/PageHeader/PageHeader";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -84,8 +85,6 @@ interface IWatch {
   watchMessageReceived: typeof watchMessageReceived;
   watchResetMessages: typeof watchResetMessages;
   messages: EventInfo[];
-  namespace: string;
-  tenant: string;
 }
 
 const Watch = ({
@@ -93,8 +92,6 @@ const Watch = ({
   watchMessageReceived,
   watchResetMessages,
   messages,
-  namespace,
-  tenant,
 }: IWatch) => {
   const [start, setStart] = useState(false);
   const [bucketName, setBucketName] = useState("Select Bucket");
@@ -104,7 +101,7 @@ const Watch = ({
 
   const fetchBucketList = () => {
     api
-      .invoke("GET", `/api/v1/operator/${namespace}/${tenant}/buckets`)
+      .invoke("GET", `/api/v1/buckets`)
       .then((res: BucketList) => {
         let buckets: Bucket[] = [];
         if (res.buckets !== null) {
@@ -130,7 +127,7 @@ const Watch = ({
 
       const wsProt = wsProtocol(url.protocol);
       const c = new W3CWebSocket(
-        `${wsProt}://${url.hostname}:${port}/ws/watch/${namespace}/${tenant}/${bucketName}?prefix=${prefix}&suffix=${suffix}`
+        `${wsProt}://${url.hostname}:${port}/ws/watch/${bucketName}?prefix=${prefix}&suffix=${suffix}`
       );
 
       let interval: any | null = null;
@@ -181,98 +178,103 @@ const Watch = ({
   }));
 
   return (
-    <Grid item xs={12}>
-      <Grid item xs={12} className={classes.actionsTray}>
-        <FormControl variant="outlined">
-          <Select
-            id="bucket-name"
-            name="bucket-name"
-            value={bucketName}
-            onChange={(e) => {
-              setBucketName(e.target.value as string);
-            }}
-            className={classes.searchField}
-            disabled={start}
-            input={<SelectStyled />}
-          >
-            <MenuItem
-              value={bucketName}
-              key={`select-bucket-name-default`}
-              disabled={true}
-            >
-              Select Bucket
-            </MenuItem>
-            {bucketNames.map((option) => (
-              <MenuItem
-                value={option.value}
-                key={`select-bucket-name-${option.label}`}
+    <React.Fragment>
+      <PageHeader label="Watch" />
+      <Grid container>
+        <Grid item xs={12} className={classes.container}>
+          <Grid item xs={12} className={classes.actionsTray}>
+            <FormControl variant="outlined">
+              <Select
+                id="bucket-name"
+                name="bucket-name"
+                value={bucketName}
+                onChange={(e) => {
+                  setBucketName(e.target.value as string);
+                }}
+                className={classes.searchField}
+                disabled={start}
+                input={<SelectStyled />}
               >
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <TextField
-          placeholder="Prefix"
-          className={`${classes.searchField} ${classes.searchPrefix}`}
-          id="prefix-resource"
-          label=""
-          disabled={start}
-          InputProps={{
-            disableUnderline: true,
-          }}
-          onChange={(e) => {
-            setPrefix(e.target.value);
-          }}
-        />
-        <TextField
-          placeholder="Suffix"
-          className={`${classes.searchField} ${classes.searchPrefix}`}
-          id="suffix-resource"
-          label=""
-          disabled={start}
-          InputProps={{
-            disableUnderline: true,
-          }}
-          onChange={(e) => {
-            setSuffix(e.target.value);
-          }}
-        />
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          disabled={start}
-          onClick={() => setStart(true)}
-        >
-          Start
-        </Button>
+                <MenuItem
+                  value={bucketName}
+                  key={`select-bucket-name-default`}
+                  disabled={true}
+                >
+                  Select Bucket
+                </MenuItem>
+                {bucketNames.map((option) => (
+                  <MenuItem
+                    value={option.value}
+                    key={`select-bucket-name-${option.label}`}
+                  >
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField
+              placeholder="Prefix"
+              className={`${classes.searchField} ${classes.searchPrefix}`}
+              id="prefix-resource"
+              label=""
+              disabled={start}
+              InputProps={{
+                disableUnderline: true,
+              }}
+              onChange={(e) => {
+                setPrefix(e.target.value);
+              }}
+            />
+            <TextField
+              placeholder="Suffix"
+              className={`${classes.searchField} ${classes.searchPrefix}`}
+              id="suffix-resource"
+              label=""
+              disabled={start}
+              InputProps={{
+                disableUnderline: true,
+              }}
+              onChange={(e) => {
+                setSuffix(e.target.value);
+              }}
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={start}
+              onClick={() => setStart(true)}
+            >
+              Start
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            <br />
+          </Grid>
+          <TableWrapper
+            columns={[
+              {
+                label: "Time",
+                elementKey: "Time",
+                renderFunction: timeFromDate,
+              },
+              {
+                label: "Size",
+                elementKey: "Size",
+                renderFunction: niceBytes,
+              },
+              { label: "Type", elementKey: "Type" },
+              { label: "Path", elementKey: "Path" },
+            ]}
+            records={messages}
+            entityName={"Watch"}
+            customEmptyMessage={"No Changes at this time"}
+            idField={"watch_table"}
+            isLoading={false}
+          />
+        </Grid>
       </Grid>
-      <Grid item xs={12}>
-        <br />
-      </Grid>
-      <TableWrapper
-        columns={[
-          {
-            label: "Time",
-            elementKey: "Time",
-            renderFunction: timeFromDate,
-          },
-          {
-            label: "Size",
-            elementKey: "Size",
-            renderFunction: niceBytes,
-          },
-          { label: "Type", elementKey: "Type" },
-          { label: "Path", elementKey: "Path" },
-        ]}
-        records={messages}
-        entityName={"Watch"}
-        customEmptyMessage={"No Changes at this time"}
-        idField={"watch_table"}
-        isLoading={false}
-      />
-    </Grid>
+    </React.Fragment>
   );
 };
 

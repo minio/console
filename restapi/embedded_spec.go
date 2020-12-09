@@ -2088,43 +2088,6 @@ func init() {
         }
       }
     },
-    "/operator/{namespace}/{tenant}/buckets": {
-      "get": {
-        "tags": [
-          "OperatorAPI"
-        ],
-        "summary": "List Buckets for Operator Console",
-        "operationId": "OperatorListBuckets",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "namespace",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "tenant",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/listBucketsResponse"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
     "/policies": {
       "get": {
         "tags": [
@@ -7191,43 +7154,6 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/tenantUsage"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/operator/{namespace}/{tenant}/buckets": {
-      "get": {
-        "tags": [
-          "OperatorAPI"
-        ],
-        "summary": "List Buckets for Operator Console",
-        "operationId": "OperatorListBuckets",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "namespace",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "tenant",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/listBucketsResponse"
             }
           },
           "default": {

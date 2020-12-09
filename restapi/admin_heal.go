@@ -103,8 +103,6 @@ type healStatus struct {
 }
 
 type healOptions struct {
-	Namespace  string
-	Tenant     string
 	BucketName string
 	Prefix     string
 	ForceStart bool
@@ -319,18 +317,16 @@ func getHRITypeAndName(i madmin.HealResultItem) (typ, name string) {
 // and query params come on request form
 func getHealOptionsFromReq(req *http.Request) (*healOptions, error) {
 	hOptions := healOptions{}
-	re := regexp.MustCompile(`(/heal/)(.*?)/(.*?)/(.*?)(\?.*?$|$)`)
+	re := regexp.MustCompile(`(/heal/)(.*?)(\?.*?$|$)`)
 	matches := re.FindAllSubmatch([]byte(req.URL.Path), -1)
 	// matches comes as e.g.
-	// [["...", "/heal/", "namespace", "tenant", "bucket1"]]
+	// [["...", "/heal/", "bucket1"]]
 	// [["/heal/" "/heal/" ""]]
 
-	if len(matches) == 0 || len(matches[0]) < 5 {
+	if len(matches) == 0 || len(matches[0]) < 3 {
 		return nil, fmt.Errorf("invalid url: %s", req.URL.Path)
 	}
-	hOptions.Namespace = strings.TrimSpace(string(matches[0][2]))
-	hOptions.Tenant = strings.TrimSpace(string(matches[0][3]))
-	hOptions.BucketName = strings.TrimSpace(string(matches[0][4]))
+	hOptions.BucketName = strings.TrimSpace(string(matches[0][2]))
 	hOptions.Prefix = req.FormValue("prefix")
 	hOptions.HealOpts.ScanMode = transformScanStr(req.FormValue("scan"))
 

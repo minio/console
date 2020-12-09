@@ -30,8 +30,6 @@ import (
 )
 
 type watchOptions struct {
-	Namespace  string
-	Tenant     string
 	BucketName string
 	mc.WatchOptions
 }
@@ -89,19 +87,17 @@ func getWatchOptionsFromReq(req *http.Request) (*watchOptions, error) {
 	// Default Events if not defined
 	wOptions.Events = []string{"put", "get", "delete"}
 
-	re := regexp.MustCompile(`(/watch/)(.*?)/(.*?)/(.*?)(\?.*?$|$)`)
+	re := regexp.MustCompile(`(/watch/)(.*?$)`)
 	matches := re.FindAllSubmatch([]byte(req.URL.Path), -1)
 	// matches comes as e.g.
-	// [["...", "/watch/", "namespace", "tenant", "bucket1"]]
+	// [["...", "/watch/", "bucket1"]]
 	// [["/watch/" "/watch/" ""]]
 
-	if len(matches) == 0 || len(matches[0]) < 5 {
+	if len(matches) == 0 || len(matches[0]) < 3 {
 		return nil, fmt.Errorf("invalid url: %s", req.URL.Path)
 	}
 
-	wOptions.Namespace = strings.TrimSpace(string(matches[0][2]))
-	wOptions.Tenant = strings.TrimSpace(string(matches[0][3]))
-	wOptions.BucketName = strings.TrimSpace(string(matches[0][4]))
+	wOptions.BucketName = strings.TrimSpace(string(matches[0][2]))
 
 	events := req.FormValue("events")
 	if strings.TrimSpace(events) != "" {
