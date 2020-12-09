@@ -42,8 +42,9 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 		return nil, prepareError(errorGenericInvalidSession)
 	}
 	sessionResp := &models.SessionResponse{
-		Pages:  acl.GetAuthorizedEndpoints(session.Actions),
-		Status: models.SessionResponseStatusOk,
+		Pages:    acl.GetAuthorizedEndpoints(session.Actions),
+		Status:   models.SessionResponseStatusOk,
+		Operator: acl.GetOperatorMode(),
 	}
 	return sessionResp, nil
 }

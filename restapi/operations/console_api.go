@@ -289,6 +289,15 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIShareObjectHandler: user_api.ShareObjectHandlerFunc(func(params user_api.ShareObjectParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.ShareObject has not yet been implemented")
 		}),
+		AdminAPISubscriptionActivateHandler: admin_api.SubscriptionActivateHandlerFunc(func(params admin_api.SubscriptionActivateParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.SubscriptionActivate has not yet been implemented")
+		}),
+		AdminAPISubscriptionInfoHandler: admin_api.SubscriptionInfoHandlerFunc(func(params admin_api.SubscriptionInfoParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.SubscriptionInfo has not yet been implemented")
+		}),
+		AdminAPISubscriptionValidateHandler: admin_api.SubscriptionValidateHandlerFunc(func(params admin_api.SubscriptionValidateParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.SubscriptionValidate has not yet been implemented")
+		}),
 		AdminAPITenantAddPoolHandler: admin_api.TenantAddPoolHandlerFunc(func(params admin_api.TenantAddPoolParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TenantAddPool has not yet been implemented")
 		}),
@@ -518,6 +527,12 @@ type ConsoleAPI struct {
 	AdminAPISetPolicyMultipleHandler admin_api.SetPolicyMultipleHandler
 	// UserAPIShareObjectHandler sets the operation handler for the share object operation
 	UserAPIShareObjectHandler user_api.ShareObjectHandler
+	// AdminAPISubscriptionActivateHandler sets the operation handler for the subscription activate operation
+	AdminAPISubscriptionActivateHandler admin_api.SubscriptionActivateHandler
+	// AdminAPISubscriptionInfoHandler sets the operation handler for the subscription info operation
+	AdminAPISubscriptionInfoHandler admin_api.SubscriptionInfoHandler
+	// AdminAPISubscriptionValidateHandler sets the operation handler for the subscription validate operation
+	AdminAPISubscriptionValidateHandler admin_api.SubscriptionValidateHandler
 	// AdminAPITenantAddPoolHandler sets the operation handler for the tenant add pool operation
 	AdminAPITenantAddPoolHandler admin_api.TenantAddPoolHandler
 	// AdminAPITenantInfoHandler sets the operation handler for the tenant info operation
@@ -836,6 +851,15 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIShareObjectHandler == nil {
 		unregistered = append(unregistered, "user_api.ShareObjectHandler")
+	}
+	if o.AdminAPISubscriptionActivateHandler == nil {
+		unregistered = append(unregistered, "admin_api.SubscriptionActivateHandler")
+	}
+	if o.AdminAPISubscriptionInfoHandler == nil {
+		unregistered = append(unregistered, "admin_api.SubscriptionInfoHandler")
+	}
+	if o.AdminAPISubscriptionValidateHandler == nil {
+		unregistered = append(unregistered, "admin_api.SubscriptionValidateHandler")
 	}
 	if o.AdminAPITenantAddPoolHandler == nil {
 		unregistered = append(unregistered, "admin_api.TenantAddPoolHandler")
@@ -1266,6 +1290,18 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/buckets/{bucket_name}/objects/share"] = user_api.NewShareObject(o.context, o.UserAPIShareObjectHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/subscription/namespaces/{namespace}/tenants/{tenant}/activate"] = admin_api.NewSubscriptionActivate(o.context, o.AdminAPISubscriptionActivateHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/subscription/info"] = admin_api.NewSubscriptionInfo(o.context, o.AdminAPISubscriptionInfoHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/subscription/validate"] = admin_api.NewSubscriptionValidate(o.context, o.AdminAPISubscriptionValidateHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

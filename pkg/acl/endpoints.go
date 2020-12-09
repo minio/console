@@ -258,6 +258,7 @@ var endpointRules = map[string]ConfigurationActionSet{
 var operatorRules = map[string]ConfigurationActionSet{
 	tenants:       tenantsActionSet,
 	tenantsDetail: tenantsActionSet,
+	license:       licenseActionSet,
 }
 
 // operatorOnly ENV variable

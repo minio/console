@@ -220,6 +220,11 @@ func getSecureExpectCTHeader() string {
 	return env.Get(ConsoleSecureExpectCTHeader, "")
 }
 
+// GetSubnetLicense returns the current subnet jwt license
+func GetSubnetLicense() string {
+	return env.Get(ConsoleSubnetLicense, "")
+}
+
 var (
 	// GlobalRootCAs is CA root certificates, a nil value means system certs pool will be used
 	GlobalRootCAs *x509.CertPool

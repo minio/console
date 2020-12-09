@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -25,6 +25,18 @@ import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import { planDetails, planItems, planButtons } from "./utils";
+import ActivationModal from "./ActivationModal";
+import api from "../../../common/api";
+import { LicenseInfo } from "./types";
+import { LinearProgress } from "@material-ui/core";
+import { AppState } from "../../../store";
+import { connect } from "react-redux";
+
+const mapState = (state: AppState) => ({
+  operatorMode: state.system.operatorMode,
+});
+
+const connector = connect(mapState, null);
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -137,199 +149,316 @@ const styles = (theme: Theme) =>
       fontSize: 15,
       fontWeight: 700,
     },
+    licenseButton: {
+      float: "right",
+      marginTop: 25,
+      marginRight: 25,
+    },
     ...containerForHeader(theme.spacing(4)),
   });
 
-interface ILicense {
+interface ILicenseProps {
   classes: any;
+  operatorMode: boolean;
 }
 
-const License = ({ classes }: ILicense) => {
+const License = ({ classes, operatorMode }: ILicenseProps) => {
+  const closeModalAndFetchLicenseInfo = () => {
+    setActivateProductModal(false);
+    fetchLicenseInfo();
+  };
+  const fetchLicenseInfo = () => {
+    setLoadingLicenseInfo(true);
+    api
+      .invoke("GET", `/api/v1/subscription/info`)
+      .then((res: LicenseInfo) => {
+        setLicenseInfo(res);
+        setLoadingLicenseInfo(false);
+      })
+      .catch((err: any) => {
+        setLoadingLicenseInfo(false);
+      });
+  };
+
+  const [activateProductModal, setActivateProductModal] = useState<boolean>(
+    false
+  );
+
+  const [licenseInfo, setLicenseInfo] = useState<LicenseInfo>();
+  const [loadingLicenseInfo, setLoadingLicenseInfo] = useState<boolean>(true);
+
+  useEffect(() => {
+    fetchLicenseInfo();
+  }, []);
+
+  if (loadingLicenseInfo) {
+    return (
+      <Grid item xs={12}>
+        <LinearProgress />
+      </Grid>
+    );
+  }
+  console.log("operatorMode", operatorMode);
   return (
     <React.Fragment>
-      <PageHeader label="License" />
-      <Grid container>
-        <Grid item xs={12} className={classes.container}>
-          <Paper className={classes.paper}>
-            <Grid container>
-              <Grid item xs={12}>
-                <Typography
-                  component="h2"
-                  variant="h6"
-                  className={classes.pageTitle}
-                >
-                  Upgrade to commercial license
-                </Typography>
-              </Grid>
-              <Grid container item xs={12} className={classes.tableContainer}>
-                <Grid container item xs={12}>
-                  <Grid item xs={3} className={classes.detailsContainer} />
-                  {planDetails.map((details: any) => {
-                    return (
-                      <Grid
-                        container
-                        item
-                        xs={3}
-                        className={clsx(
-                          classes.detailsContainer,
-                          classes.detailsContainerBorder,
-                          {
-                            [classes.detailsContainerBorderHighlighted]:
-                              details.title !== "Community",
-                          }
-                        )}
-                      >
-                        <Grid item xs={12} className={classes.detailsTitle}>
-                          {details.title}
-                        </Grid>
-                        <Grid item xs={12} className={classes.detailsPrice}>
-                          {details.price}
-                        </Grid>
-                        <Grid
-                          item
-                          xs={12}
-                          className={classes.detailsCapacityMax}
-                        >
-                          {details.capacityMax || ""}
-                        </Grid>
-                        <Grid
-                          item
-                          xs={12}
-                          className={classes.detailsCapacityMin}
-                        >
-                          {details.capacityMin}
-                        </Grid>
-                      </Grid>
-                    );
-                  })}
+      {licenseInfo ? (
+        <React.Fragment>
+          <PageHeader label="License" />
+          <Grid item xs={12} className={classes.container}>
+            <Paper className={classes.paper}>
+              <Grid container>
+                <Grid item xs={12}>
+                  <Typography
+                    component="h2"
+                    variant="h6"
+                    className={classes.pageTitle}
+                  >
+                    Subscription Information
+                  </Typography>
+                  Account ID: {licenseInfo.account_id}
+                  <br />
+                  <br />
+                  Email: {licenseInfo.email}
+                  <br />
+                  <br />
+                  Plan: {licenseInfo.plan}
+                  <br />
+                  <br />
+                  Organization: {licenseInfo.organization}
+                  <br />
+                  <br />
+                  Storage Capacity: {licenseInfo.storage_capacity}
+                  <br />
+                  <br />
+                  Expiration: {licenseInfo.expires_at}
                 </Grid>
-                {planItems.map((item: any) => {
-                  return (
-                    <Grid
-                      container
-                      item
-                      xs={12}
-                      className={clsx(
-                        classes.itemContainer,
-                        item.communityDetail && classes.itemContainerDetail
-                      )}
+              </Grid>
+            </Paper>
+          </Grid>
+        </React.Fragment>
+      ) : (
+        <React.Fragment>
+          <PageHeader label="License" />
+          {operatorMode ? (
+            <Button
+              className={classes.licenseButton}
+              variant="contained"
+              color="primary"
+              onClick={() => setActivateProductModal(true)}
+            >
+              Activate Product
+            </Button>
+          ) : null}
+          <Grid container>
+            <Grid item xs={12} className={classes.container}>
+              <Paper className={classes.paper}>
+                <Grid container>
+                  {operatorMode ? (
+                    <ActivationModal
+                      open={activateProductModal}
+                      closeModal={() => closeModalAndFetchLicenseInfo()}
+                    />
+                  ) : null}
+                  <Grid item xs={12}>
+                    <Typography
+                      component="h2"
+                      variant="h6"
+                      className={classes.pageTitle}
                     >
+                      Upgrade to commercial license
+                    </Typography>
+                  </Grid>
+                  <Grid
+                    container
+                    item
+                    xs={12}
+                    className={classes.tableContainer}
+                  >
+                    <Grid container item xs={12}>
+                      <Grid item xs={3} className={classes.detailsContainer} />
+                      {planDetails.map((details: any) => {
+                        return (
+                          <Grid
+                            key={details.id}
+                            container
+                            item
+                            xs={3}
+                            className={clsx(
+                              classes.detailsContainer,
+                              classes.detailsContainerBorder,
+                              {
+                                [classes.detailsContainerBorderHighlighted]:
+                                  details.title !== "Community",
+                              }
+                            )}
+                          >
+                            <Grid item xs={12} className={classes.detailsTitle}>
+                              {details.title}
+                            </Grid>
+                            <Grid item xs={12} className={classes.detailsPrice}>
+                              {details.price}
+                            </Grid>
+                            <Grid
+                              item
+                              xs={12}
+                              className={classes.detailsCapacityMax}
+                            >
+                              {details.capacityMax || ""}
+                            </Grid>
+                            <Grid
+                              item
+                              xs={12}
+                              className={classes.detailsCapacityMin}
+                            >
+                              {details.capacityMin}
+                            </Grid>
+                          </Grid>
+                        );
+                      })}
+                    </Grid>
+                    {planItems.map((item: any) => {
+                      return (
+                        <Grid
+                          key={item.id}
+                          container
+                          item
+                          xs={12}
+                          className={clsx(
+                            classes.itemContainer,
+                            item.communityDetail && classes.itemContainerDetail
+                          )}
+                        >
+                          <Grid
+                            item
+                            xs={3}
+                            className={clsx(
+                              classes.item,
+                              classes.field,
+                              classes.itemFirst
+                            )}
+                          >
+                            {item.field}
+                          </Grid>
+                          <Grid container item xs={3} className={classes.item}>
+                            <Grid item xs={12}>
+                              {item.community === "N/A" ? (
+                                ""
+                              ) : item.community === "Yes" ? (
+                                <CheckCircleIcon
+                                  className={classes.checkIcon}
+                                />
+                              ) : (
+                                item.community
+                              )}
+                            </Grid>
+                            {item.communityDetail !== undefined && (
+                              <Grid item xs={12}>
+                                {item.communityDetail}
+                              </Grid>
+                            )}
+                          </Grid>
+                          <Grid
+                            container
+                            item
+                            xs={3}
+                            className={clsx(
+                              classes.item,
+                              classes.itemHighlighted
+                            )}
+                          >
+                            <Grid item xs={12}>
+                              {item.standard === "N/A" ? (
+                                ""
+                              ) : item.standard === "Yes" ? (
+                                <CheckCircleIcon
+                                  className={classes.checkIcon}
+                                />
+                              ) : (
+                                item.standard
+                              )}
+                            </Grid>
+                            {item.standardDetail !== undefined && (
+                              <Grid item xs={12}>
+                                {item.standardDetail}
+                              </Grid>
+                            )}
+                          </Grid>
+                          <Grid
+                            container
+                            item
+                            xs={3}
+                            className={clsx(
+                              classes.item,
+                              classes.itemHighlighted
+                            )}
+                          >
+                            <Grid item xs={12}>
+                              {item.enterprise === "N/A" ? (
+                                ""
+                              ) : item.enterprise === "Yes" ? (
+                                <CheckCircleIcon
+                                  className={classes.checkIcon}
+                                />
+                              ) : (
+                                item.enterprise
+                              )}
+                            </Grid>
+                            {item.enterpriseDetail !== undefined && (
+                              <Grid item xs={12}>
+                                {item.enterpriseDetail}
+                              </Grid>
+                            )}
+                          </Grid>
+                        </Grid>
+                      );
+                    })}
+                    <Grid container item xs={12}>
                       <Grid
                         item
                         xs={3}
                         className={clsx(
-                          classes.item,
-                          classes.field,
-                          classes.itemFirst
+                          classes.buttonContainer,
+                          classes.buttonContainerBlank
                         )}
-                      >
-                        {item.field}
-                      </Grid>
-                      <Grid container item xs={3} className={classes.item}>
-                        <Grid item xs={12}>
-                          {item.community === "N/A" ? (
-                            ""
-                          ) : item.community === "Yes" ? (
-                            <CheckCircleIcon className={classes.checkIcon} />
-                          ) : (
-                            item.community
-                          )}
-                        </Grid>
-                        {item.communityDetail !== undefined && (
-                          <Grid item xs={12}>
-                            {item.communityDetail}
+                      />
+                      {planButtons.map((button: any) => {
+                        return (
+                          <Grid
+                            key={button.id}
+                            container
+                            item
+                            xs={3}
+                            className={clsx(classes.buttonContainer, {
+                              [classes.buttonContainerHighlighted]:
+                                button.text === "Subscribe",
+                            })}
+                          >
+                            <Button
+                              variant={
+                                button.text === "Subscribe"
+                                  ? "contained"
+                                  : "outlined"
+                              }
+                              color="primary"
+                              className={classes.button}
+                              target="_blank"
+                              href={button.link}
+                            >
+                              {button.text}
+                            </Button>
                           </Grid>
-                        )}
-                      </Grid>
-                      <Grid
-                        container
-                        item
-                        xs={3}
-                        className={clsx(classes.item, classes.itemHighlighted)}
-                      >
-                        <Grid item xs={12}>
-                          {item.standard === "N/A" ? (
-                            ""
-                          ) : item.standard === "Yes" ? (
-                            <CheckCircleIcon className={classes.checkIcon} />
-                          ) : (
-                            item.standard
-                          )}
-                        </Grid>
-                        {item.standardDetail !== undefined && (
-                          <Grid item xs={12}>
-                            {item.standardDetail}
-                          </Grid>
-                        )}
-                      </Grid>
-                      <Grid
-                        container
-                        item
-                        xs={3}
-                        className={clsx(classes.item, classes.itemHighlighted)}
-                      >
-                        <Grid item xs={12}>
-                          {item.enterprise === "N/A" ? (
-                            ""
-                          ) : item.enterprise === "Yes" ? (
-                            <CheckCircleIcon className={classes.checkIcon} />
-                          ) : (
-                            item.enterprise
-                          )}
-                        </Grid>
-                        {item.enterpriseDetail !== undefined && (
-                          <Grid item xs={12}>
-                            {item.enterpriseDetail}
-                          </Grid>
-                        )}
-                      </Grid>
+                        );
+                      })}
                     </Grid>
-                  );
-                })}
-                <Grid container item xs={12}>
-                  <Grid
-                    item
-                    xs={3}
-                    className={clsx(
-                      classes.buttonContainer,
-                      classes.buttonContainerBlank
-                    )}
-                  />
-                  {planButtons.map((button: any) => {
-                    return (
-                      <Grid
-                        container
-                        item
-                        xs={3}
-                        className={clsx(classes.buttonContainer, {
-                          [classes.buttonContainerHighlighted]:
-                            button.text === "Subscribe",
-                        })}
-                      >
-                        <Button
-                          variant={
-                            button.text === "Subscribe"
-                              ? "contained"
-                              : "outlined"
-                          }
-                          color="primary"
-                          className={classes.button}
-                          target="_blank"
-                          href={button.link}
-                        >
-                          {button.text}
-                        </Button>
-                      </Grid>
-                    );
-                  })}
+                  </Grid>
                 </Grid>
-              </Grid>
+              </Paper>
             </Grid>
-          </Paper>
-        </Grid>
-      </Grid>
+          </Grid>
+        </React.Fragment>
+      )}
     </React.Fragment>
   );
 };
 
-export default withStyles(styles)(License);
+export default connector(withStyles(styles)(License));
