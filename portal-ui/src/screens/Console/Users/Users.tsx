@@ -97,7 +97,6 @@ const Users = ({ classes }: IUsersProps) => {
   const [records, setRecords] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const [deleteError, setDeleteError] = useState<string>("");
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -233,6 +232,11 @@ const Users = ({ classes }: IUsersProps) => {
       )}
       <PageHeader label={"Users"} />
       <Grid container>
+        {error !== "" && (
+          <Grid item xs={12}>
+            {error}
+          </Grid>
+        )}
         <Grid item xs={12} className={classes.container}>
           <Grid item xs={12} className={classes.actionsTray}>
             <TextField

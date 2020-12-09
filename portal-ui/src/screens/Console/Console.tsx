@@ -237,10 +237,6 @@ const Console = ({
       path: "/configurations-list",
     },
     {
-      component: Permissions,
-      path: "/permissions",
-    },
-    {
       component: Account,
       path: "/account",
     },
@@ -294,20 +290,20 @@ const Console = ({
                     <LinearProgress />
                   </React.Fragment>
                 ) : (
-                    <React.Fragment>
-                      The instance needs to be restarted for configuration changes
+                  <React.Fragment>
+                    The instance needs to be restarted for configuration changes
                     to take effect.{" "}
-                      <Button
-                        color="secondary"
-                        size="small"
-                        onClick={() => {
-                          restartServer();
-                        }}
-                      >
-                        Restart
+                    <Button
+                      color="secondary"
+                      size="small"
+                      onClick={() => {
+                        restartServer();
+                      }}
+                    >
+                      Restart
                     </Button>
-                    </React.Fragment>
-                  )}
+                  </React.Fragment>
+                )}
               </div>
             )}
             <Container className={classes.container}>
