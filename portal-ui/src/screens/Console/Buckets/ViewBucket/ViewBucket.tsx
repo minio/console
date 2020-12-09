@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
@@ -211,7 +211,6 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
   const [loadingSize, setLoadingSize] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
-  const [deleteError, setDeleteError] = useState<string>("");
   const [errBucket, setErrBucket] = useState<string>("");
   const [accessPolicyScreenOpen, setAccessPolicyScreenOpen] = useState<boolean>(
     false
@@ -223,11 +222,9 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
     setEnableEncryptionScreenOpen,
   ] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
-  const [selectedBucket, setSelectedBucket] = useState<string>("");
   const [selectedEvent, setSelectedEvent] = useState<BucketEvent | null>(null);
   const [bucketSize, setBucketSize] = useState<string>("0");
   const [errorSize, setErrorSize] = useState<string>("");
-  const [replicationSet, setReplicationSet] = useState<boolean>(false);
   const [openSetReplication, setOpenSetReplication] = useState<boolean>(false);
   const [isVersioned, setIsVersioned] = useState<boolean>(false);
   const [encryptionEnabled, setEncryptionEnabled] = useState<boolean>(false);
@@ -268,7 +265,7 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
       });
   };
 
-  const fetchBucketsSize = () => {
+  const fetchBucketsSize = useCallback(() => {
     const bucketName = match.params["bucketName"];
     setLoadingSize(true);
     api
@@ -290,9 +287,9 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
         setLoadingSize(false);
         setErrorSize(err);
       });
-  };
+  }, []);
 
-  const loadInfo = () => {
+  const loadInfo = useCallback(() => {
     const bucketName = match.params["bucketName"];
     setLoadingBucket(true);
 
@@ -306,7 +303,7 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
         setLoadingBucket(false);
         setErrBucket(err);
       });
-  };
+  }, [match]);
 
   const fetchBucketEncryptionInfo = () => {
     const bucketName = match.params["bucketName"];
@@ -339,7 +336,7 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
     fetchEvents();
     fetchBucketsSize();
     fetchBucketEncryptionInfo();
-  }, []);
+  }, [loadInfo]);
 
   const bucketName = match.params["bucketName"];
 
@@ -437,6 +434,11 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
       )}
       <PageHeader label={`Bucket > ${match.params["bucketName"]}`} />
       <Grid container>
+        {error !== "" && (
+          <Grid item xs={12}>
+            {error}
+          </Grid>
+        )}
         <Grid item xs={12} className={classes.container}>
           <Grid item xs={12}>
             <div className={classes.headerContainer}>
