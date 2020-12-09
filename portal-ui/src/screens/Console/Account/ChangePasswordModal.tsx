@@ -62,7 +62,7 @@ const ChangePassword = ({
   const changePassword = (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (newPassword != reNewPassword) {
+    if (newPassword !== reNewPassword) {
       setError("New passwords don't match");
       return;
     }

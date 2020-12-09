@@ -257,10 +257,6 @@ const Console = ({
       path: "/configurations-list",
     },
     {
-      component: Permissions,
-      path: "/permissions",
-    },
-    {
       component: Account,
       path: "/account",
     },
