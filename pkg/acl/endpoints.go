@@ -40,6 +40,10 @@ var (
 	objectBrowserBucket = "/object-browser/:bucket"
 	mainObjectBrowser   = "/object-browser"
 	license             = "/license"
+	watch               = "/watch"
+	heal                = "/heal"
+	trace               = "/trace"
+	logs                = "/logs"
 )
 
 type ConfigurationActionSet struct {
@@ -200,6 +204,46 @@ var licenseActionSet = ConfigurationActionSet{
 	actions:     iampolicy.NewActionSet(),
 }
 
+// watchActionSet contains the list of admin actions required for this endpoint to work
+var watchActionSet = ConfigurationActionSet{
+	actionTypes: iampolicy.NewActionSet(
+		iampolicy.AllAdminActions,
+	),
+	actions: iampolicy.NewActionSet(
+		iampolicy.ListenBucketNotificationAction,
+	),
+}
+
+// healActionSet contains the list of admin actions required for this endpoint to work
+var healActionSet = ConfigurationActionSet{
+	actionTypes: iampolicy.NewActionSet(
+		iampolicy.AllAdminActions,
+	),
+	actions: iampolicy.NewActionSet(
+		iampolicy.HealAdminAction,
+	),
+}
+
+// logsActionSet contains the list of admin actions required for this endpoint to work
+var logsActionSet = ConfigurationActionSet{
+	actionTypes: iampolicy.NewActionSet(
+		iampolicy.AllAdminActions,
+	),
+	actions: iampolicy.NewActionSet(
+		iampolicy.ConsoleLogAdminAction,
+	),
+}
+
+// traceActionSet contains the list of admin actions required for this endpoint to work
+var traceActionSet = ConfigurationActionSet{
+	actionTypes: iampolicy.NewActionSet(
+		iampolicy.AllAdminActions,
+	),
+	actions: iampolicy.NewActionSet(
+		iampolicy.TraceAdminAction,
+	),
+}
+
 // endpointRules contains the mapping between endpoints and ActionSets, additional rules can be added here
 var endpointRules = map[string]ConfigurationActionSet{
 	configuration:       configurationActionSet,
@@ -218,6 +262,10 @@ var endpointRules = map[string]ConfigurationActionSet{
 	mainObjectBrowser:   objectBrowserActionSet,
 	objectBrowserBucket: objectBrowserActionSet,
 	license:             licenseActionSet,
+	watch:               watchActionSet,
+	heal:                healActionSet,
+	trace:               traceActionSet,
+	logs:                logsActionSet,
 }
 
 // operatorRules contains the mapping between endpoints and ActionSets for operator only mode

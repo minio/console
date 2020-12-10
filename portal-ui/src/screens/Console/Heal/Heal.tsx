@@ -3,18 +3,19 @@ import React, { useEffect, useState } from "react";
 import { Button, Grid, TextField, InputBase } from "@material-ui/core";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { wsProtocol } from "../../../../../utils/wsUtils";
-import api from "../../../../../common/api";
+import { wsProtocol } from "../../../utils/wsUtils";
+import api from "../../../common/api";
 import { FormControl, MenuItem, Select } from "@material-ui/core";
 import { BucketList, Bucket } from "../Watch/types";
 import { HealStatus, colorH } from "./types";
-import { niceBytes } from "../../../../../common/utils";
+import { niceBytes } from "../../../common/utils";
 import {
   actionsTray,
   containerForHeader,
   searchField,
-} from "../../../Common/FormComponents/common/styleLibrary";
-import CheckboxWrapper from "../../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
+} from "../Common/FormComponents/common/styleLibrary";
+import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
+import PageHeader from "../Common/PageHeader/PageHeader";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -59,8 +60,6 @@ const styles = (theme: Theme) =>
 
 interface IHeal {
   classes: any;
-  namespace: string;
-  tenant: string;
 }
 
 const SelectStyled = withStyles((theme: Theme) =>
@@ -85,7 +84,7 @@ const SelectStyled = withStyles((theme: Theme) =>
   })
 )(InputBase);
 
-const Heal = ({ classes, namespace, tenant }: IHeal) => {
+const Heal = ({ classes }: IHeal) => {
   const [start, setStart] = useState(false);
   const [bucketName, setBucketName] = useState("");
   const [bucketList, setBucketList] = useState<Bucket[]>([]);
@@ -105,7 +104,7 @@ const Heal = ({ classes, namespace, tenant }: IHeal) => {
 
   const fetchBucketList = () => {
     api
-      .invoke("GET", `/api/v1/operator/${namespace}/${tenant}/buckets`)
+      .invoke("GET", `/api/v1/buckets`)
       .then((res: BucketList) => {
         let buckets: Bucket[] = [];
         if (res.buckets !== null) {
@@ -152,7 +151,7 @@ const Heal = ({ classes, namespace, tenant }: IHeal) => {
 
       const wsProt = wsProtocol(url.protocol);
       const c = new W3CWebSocket(
-        `${wsProt}://${url.hostname}:${port}/ws/heal/${namespace}/${tenant}/${bucketName}?prefix=${prefix}&recursive=${recursive}&force-start=${forceStart}&force-stop=${forceStop}`
+        `${wsProt}://${url.hostname}:${port}/ws/heal/${bucketName}?prefix=${prefix}&recursive=${recursive}&force-start=${forceStart}&force-stop=${forceStop}`
       );
 
       if (c !== null) {
@@ -215,125 +214,130 @@ const Heal = ({ classes, namespace, tenant }: IHeal) => {
     value: bucketName.name,
   }));
   return (
-    <Grid item xs={12}>
-      <Grid item xs={12} className={classes.actionsTray}>
-        <FormControl variant="outlined">
-          <Select
-            id="bucket-name"
-            name="bucket-name"
-            value={bucketName}
-            onChange={(e) => {
-              setBucketName(e.target.value as string);
-            }}
-            className={classes.searchField}
-            input={<SelectStyled />}
-            displayEmpty
-          >
-            <MenuItem value="" key={`select-bucket-name-default`}>
-              Select Bucket
-            </MenuItem>
-            {bucketNames.map((option) => (
-              <MenuItem
-                value={option.value}
-                key={`select-bucket-name-${option.label}`}
+    <React.Fragment>
+      <PageHeader label="Heal" />
+      <Grid container className={classes.container}>
+        <Grid item xs={12}>
+          <Grid item xs={12} className={classes.actionsTray}>
+            <FormControl variant="outlined">
+              <Select
+                id="bucket-name"
+                name="bucket-name"
+                value={bucketName}
+                onChange={(e) => {
+                  setBucketName(e.target.value as string);
+                }}
+                className={classes.searchField}
+                input={<SelectStyled />}
+                displayEmpty
               >
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <TextField
-          placeholder="Prefix"
-          className={classes.searchField}
-          id="prefix-resource"
-          label=""
-          disabled={false}
-          InputProps={{
-            disableUnderline: true,
-          }}
-          onChange={(e) => {
-            setPrefix(e.target.value);
-          }}
-        />
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          disabled={start}
-          onClick={() => setStart(true)}
-        >
-          Start
-        </Button>
-      </Grid>
-      <Grid item xs={12} className={classes.inlineCheckboxes}>
-        <CheckboxWrapper
-          name="recursive"
-          id="recursive"
-          value="recursive"
-          checked={recursive}
-          onChange={(e) => {
-            setRecursive(e.target.checked);
-          }}
-          disabled={false}
-          label="Recursive"
-        />
-        <CheckboxWrapper
-          name="forceStart"
-          id="forceStart"
-          value="forceStart"
-          checked={forceStart}
-          onChange={(e) => {
-            setForceStart(e.target.checked);
-          }}
-          disabled={false}
-          label="Force Start"
-        />
-        <CheckboxWrapper
-          name="forceStop"
-          id="forceStop"
-          value="forceStop"
-          checked={forceStop}
-          onChange={(e) => {
-            setForceStop(e.target.checked);
-          }}
-          disabled={false}
-          label="Force Stop"
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <br />
-      </Grid>
-      <Grid item xs={12} className={classes.graphContainer}>
-        <HorizontalBar
-          data={data}
-          width={80}
-          height={30}
-          options={{
-            title: {
-              display: true,
-              text: "Item's Health Status [%]",
-              fontSize: 20,
-            },
-            legend: {
-              display: true,
-              position: "right",
-            },
-          }}
-        />
-        <Grid item xs={12} className={classes.scanInfo}>
-          <div className={classes.scanData}>
-            <strong>Size scanned:</strong> {hStatus.sizeScanned}
-          </div>
-          <div className={classes.scanData}>
-            <strong>Objects healed:</strong> {hStatus.objectsHealed} /{" "}
-            {hStatus.objectsScanned}
-          </div>
-          <div className={classes.scanData}>
-            <strong>Healing time:</strong> {hStatus.healDuration}s
-          </div>
+                <MenuItem value="" key={`select-bucket-name-default`}>
+                  Select Bucket
+                </MenuItem>
+                {bucketNames.map((option) => (
+                  <MenuItem
+                    value={option.value}
+                    key={`select-bucket-name-${option.label}`}
+                  >
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField
+              placeholder="Prefix"
+              className={classes.searchField}
+              id="prefix-resource"
+              label=""
+              disabled={false}
+              InputProps={{
+                disableUnderline: true,
+              }}
+              onChange={(e) => {
+                setPrefix(e.target.value);
+              }}
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={start}
+              onClick={() => setStart(true)}
+            >
+              Start
+            </Button>
+          </Grid>
+          <Grid item xs={12} className={classes.inlineCheckboxes}>
+            <CheckboxWrapper
+              name="recursive"
+              id="recursive"
+              value="recursive"
+              checked={recursive}
+              onChange={(e) => {
+                setRecursive(e.target.checked);
+              }}
+              disabled={false}
+              label="Recursive"
+            />
+            <CheckboxWrapper
+              name="forceStart"
+              id="forceStart"
+              value="forceStart"
+              checked={forceStart}
+              onChange={(e) => {
+                setForceStart(e.target.checked);
+              }}
+              disabled={false}
+              label="Force Start"
+            />
+            <CheckboxWrapper
+              name="forceStop"
+              id="forceStop"
+              value="forceStop"
+              checked={forceStop}
+              onChange={(e) => {
+                setForceStop(e.target.checked);
+              }}
+              disabled={false}
+              label="Force Stop"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <br />
+          </Grid>
+          <Grid item xs={12} className={classes.graphContainer}>
+            <HorizontalBar
+              data={data}
+              width={80}
+              height={30}
+              options={{
+                title: {
+                  display: true,
+                  text: "Item's Health Status [%]",
+                  fontSize: 20,
+                },
+                legend: {
+                  display: true,
+                  position: "right",
+                },
+              }}
+            />
+            <Grid item xs={12} className={classes.scanInfo}>
+              <div className={classes.scanData}>
+                <strong>Size scanned:</strong> {hStatus.sizeScanned}
+              </div>
+              <div className={classes.scanData}>
+                <strong>Objects healed:</strong> {hStatus.objectsHealed} /{" "}
+                {hStatus.objectsScanned}
+              </div>
+              <div className={classes.scanData}>
+                <strong>Healing time:</strong> {hStatus.healDuration}s
+              </div>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
-    </Grid>
+    </React.Fragment>
   );
 };
 
