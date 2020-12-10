@@ -22,7 +22,7 @@ import (
 
 // endpoints definition
 var (
-	configuration       = "/configurations-list"
+	configuration       = "/settings"
 	users               = "/users"
 	groups              = "/groups"
 	iamPolicies         = "/policies"

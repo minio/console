@@ -123,7 +123,6 @@ const WebhookPanel = ({ match, classes }: IWebhookPanel) => {
     <React.Fragment>
       {addWebhookOpen && (
         <EditConfiguration
-          open={addWebhookOpen}
           closeModalAndRefresh={() => {
             setIsLoading(true);
             setAddWebhookOpen(false);
