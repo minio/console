@@ -217,10 +217,9 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
   );
   const [curTab, setCurTab] = useState<number>(0);
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
-  const [
-    enableEncryptionScreenOpen,
-    setEnableEncryptionScreenOpen,
-  ] = useState<boolean>(false);
+  const [enableEncryptionScreenOpen, setEnableEncryptionScreenOpen] = useState<
+    boolean
+  >(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedEvent, setSelectedEvent] = useState<BucketEvent | null>(null);
   const [bucketSize, setBucketSize] = useState<string>("0");
