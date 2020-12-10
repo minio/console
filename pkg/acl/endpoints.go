@@ -22,13 +22,12 @@ import (
 
 // endpoints definition
 var (
-	configuration       = "/configurations-list"
+	configuration       = "/settings"
 	users               = "/users"
 	groups              = "/groups"
 	iamPolicies         = "/policies"
 	dashboard           = "/dashboard"
 	profiling           = "/profiling"
-	notifications       = "/notification-endpoints"
 	buckets             = "/buckets"
 	bucketsDetail       = "/buckets/:bucketName"
 	serviceAccounts     = "/account"
@@ -121,18 +120,6 @@ var usersActionSet = ConfigurationActionSet{
 		iampolicy.GetUserAdminAction,
 		iampolicy.EnableUserAdminAction,
 		iampolicy.DisableUserAdminAction,
-	),
-}
-
-// notificationsActionSet contains the list of admin actions required for this endpoint to work
-var notificationsActionSet = ConfigurationActionSet{
-	actionTypes: iampolicy.NewActionSet(
-		iampolicy.AllActions,
-	),
-	actions: iampolicy.NewActionSet(
-		iampolicy.ListenBucketNotificationAction,
-		iampolicy.PutBucketNotificationAction,
-		iampolicy.GetBucketNotificationAction,
 	),
 }
 
@@ -252,7 +239,6 @@ var endpointRules = map[string]ConfigurationActionSet{
 	iamPolicies:         iamPoliciesActionSet,
 	dashboard:           dashboardActionSet,
 	profiling:           profilingActionSet,
-	notifications:       notificationsActionSet,
 	buckets:             bucketsActionSet,
 	bucketsDetail:       bucketsActionSet,
 	serviceAccounts:     serviceAccountsActionSet,

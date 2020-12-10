@@ -238,3 +238,57 @@ export const selectorsCommon = {
     height: 200,
   },
 };
+
+export const settingsCommon = {
+  customTitle: {
+    fontSize: 18,
+    color: "#000",
+    fontWeight: 600,
+    padding: "12px 0",
+    borderBottom: "#eaedee 1px solid",
+    marginBottom: 10,
+    margin: "15px 38px 27px",
+  },
+  settingsFormContainer: {
+    height: "calc(100vh - 421px)",
+    padding: "15px 38px",
+    overflowY: "auto" as const,
+    scrollbarWidth: "none" as const,
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+  },
+  settingsButtonContainer: {
+    borderTop: "1px solid #EAEAEA",
+    padding: "15px 38px",
+    textAlign: "right" as const,
+  },
+  settingsOptionsContainer: {
+    height: "calc(100vh - 244px)",
+    backgroundColor: "#fff",
+    border: "#EAEDEE 1px solid",
+    borderRadius: 3,
+    marginTop: 15,
+  },
+  backButton: {
+    cursor: "pointer",
+    fontSize: 10,
+    fontWeight: 600,
+    color: "#000",
+    backgroundColor: "transparent",
+    border: 0,
+    padding: 0,
+    display: "flex",
+    alignItems: "center",
+    "&:active, &:focus": {
+      outline: 0,
+    },
+    "& svg": {
+      width: 10,
+      marginRight: 4,
+    },
+  },
+  backContainer: {
+    margin: "20px 38px 0",
+  },
+};

@@ -14,13 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import { TextField } from "@material-ui/core";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
 import history from "../../../../history";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import { configurationElements } from "../utils";
@@ -30,8 +27,10 @@ import {
   actionsTray,
   containerForHeader,
   searchField,
+  settingsCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
-import PageHeader from "../../Common/PageHeader/PageHeader";
+import SlideOptions from "../../Common/SlideOptions/SlideOptions";
+import BackSettingsIcon from "../../../../icons/BackSettingsIcon";
 
 interface IListConfiguration {
   classes: any;
@@ -51,18 +50,31 @@ const styles = (theme: Theme) =>
     iconText: {
       lineHeight: "24px",
     },
+    customConfigurationPage: {
+      height: "calc(100vh - 324px)",
+      scrollbarWidth: "none" as const,
+      "&::-webkit-scrollbar": {
+        display: "none",
+      },
+    },
     ...searchField,
     ...actionsTray,
+    ...settingsCommon,
     ...containerForHeader(theme.spacing(4)),
   });
 
+const initialConfiguration = {
+  configuration_id: "",
+  configuration_label: "",
+};
+
 const ConfigurationsList = ({ classes }: IListConfiguration) => {
   const [editScreenOpen, setEditScreenOpen] = useState(false);
-  const [selectedConfiguration, setSelectedConfiguration] = useState({
-    configuration_id: "",
-    configuration_label: "",
-  });
+  const [selectedConfiguration, setSelectedConfiguration] = useState(
+    initialConfiguration
+  );
   const [filter, setFilter] = useState("");
+  const [currentConfiguration, setCurrentConfiguration] = useState<number>(0);
 
   const tableActions = [
     {
@@ -73,8 +85,8 @@ const ConfigurationsList = ({ classes }: IListConfiguration) => {
           // We redirect Browser
           history.push(url);
         } else {
+          setCurrentConfiguration(1);
           setSelectedConfiguration(element);
-          setEditScreenOpen(true);
         }
       },
     },
@@ -87,57 +99,68 @@ const ConfigurationsList = ({ classes }: IListConfiguration) => {
         .includes(filter.toLocaleLowerCase())
   );
 
+  const backToInitialConfig = () => {
+    setCurrentConfiguration(0);
+    setSelectedConfiguration(initialConfiguration);
+  };
+
   return (
-    <React.Fragment>
-      {editScreenOpen && (
-        <EditConfiguration
-          open={editScreenOpen}
-          closeModalAndRefresh={() => {
-            setEditScreenOpen(false);
-          }}
-          selectedConfiguration={selectedConfiguration}
-        />
-      )}
-      <PageHeader label="Configurations List" />
+    <Fragment>
       <Grid container>
-        <Grid item xs={12} className={classes.container}>
-          <Grid item xs={12} className={classes.actionsTray}>
-            <TextField
-              placeholder="Filter"
-              className={classes.searchField}
-              id="search-resource"
-              label=""
-              onChange={(event) => {
-                setFilter(event.target.value);
-              }}
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
+        <Grid item xs={12}>
           <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12}>
-            <TableWrapper
-              itemActions={tableActions}
-              columns={[
-                { label: "Configuration", elementKey: "configuration_id" },
-              ]}
-              isLoading={false}
-              records={filteredRecords}
-              entityName="Configurations"
-              idField="configuration_id"
-            />
+            <div className={classes.settingsOptionsContainer}>
+              <SlideOptions
+                slideOptions={[
+                  <Fragment>
+                    <Grid item xs={12} className={classes.customTitle}>
+                      Configuration Types
+                    </Grid>
+                    <TableWrapper
+                      itemActions={tableActions}
+                      columns={[
+                        {
+                          label: "Configuration",
+                          elementKey: "configuration_id",
+                        },
+                      ]}
+                      isLoading={false}
+                      records={filteredRecords}
+                      entityName="Configurations"
+                      idField="configuration_id"
+                      customPaperHeight={classes.customConfigurationPage}
+                      noBackground
+                    />
+                  </Fragment>,
+                  <Fragment>
+                    <Grid item xs={12} className={classes.backContainer}>
+                      <button
+                        onClick={backToInitialConfig}
+                        className={classes.backButton}
+                      >
+                        <BackSettingsIcon />
+                        Back To Configurations
+                      </button>
+                    </Grid>
+                    <Grid item xs={12}>
+                      {currentConfiguration === 1 ? (
+                        <EditConfiguration
+                          closeModalAndRefresh={() => {
+                            setCurrentConfiguration(0);
+                          }}
+                          selectedConfiguration={selectedConfiguration}
+                        />
+                      ) : null}
+                    </Grid>
+                  </Fragment>,
+                ]}
+                currentSlide={currentConfiguration}
+              />
+            </div>
           </Grid>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

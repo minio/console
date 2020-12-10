@@ -278,16 +278,8 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
       group: "Admin",
       type: "item",
       component: NavLink,
-      to: "/notification-endpoints",
-      name: "Lambda Notifications",
-      icon: <LambdaNotificationsIcon />,
-    },
-    {
-      group: "Admin",
-      type: "item",
-      component: NavLink,
-      to: "/configurations-list",
-      name: "Configurations List",
+      to: "/settings",
+      name: "Settings",
       icon: <ConfigurationsListIcon />,
     },
     {

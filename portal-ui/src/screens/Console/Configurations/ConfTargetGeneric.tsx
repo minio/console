@@ -161,7 +161,7 @@ const ConfTargetGeneric = ({
 
   return (
     <Grid container>
-      <Grid xs={12} item className={classes.formScrollable}>
+      <Grid xs={12} item>
         {fieldsElements.map((field, item) => (
           <React.Fragment key={field.name}>
             <Grid item xs={12}>

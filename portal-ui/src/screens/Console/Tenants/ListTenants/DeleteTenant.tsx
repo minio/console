@@ -28,7 +28,8 @@ import Typography from "@material-ui/core/Typography";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../../common/api";
 import { ITenant } from "./types";
-
+import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import Grid from "@material-ui/core/Grid";
 interface IDeleteTenant {
   classes: any;
   deleteOpen: boolean;
@@ -51,6 +52,7 @@ const DeleteTenant = ({
 }: IDeleteTenant) => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState("");
+  const [retypeTenant, setRetypeTenant] = useState("");
 
   useEffect(() => {
     if (deleteLoading) {
@@ -73,6 +75,10 @@ const DeleteTenant = ({
   }, [deleteLoading]);
 
   const removeRecord = () => {
+    if (retypeTenant !== selectedTenant.name) {
+      setDeleteError("Tenant name is not correct");
+      return;
+    }
     setDeleteLoading(true);
   };
 
@@ -90,7 +96,18 @@ const DeleteTenant = ({
       <DialogContent>
         {deleteLoading && <LinearProgress />}
         <DialogContentText id="alert-dialog-description">
-          Are you sure you want to delete tenant <b>{selectedTenant.name}</b>?
+          To continue please type <b>{selectedTenant.name}</b> in the box.
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="retype-tenant"
+              name="retype-tenant"
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setRetypeTenant(event.target.value);
+              }}
+              label=""
+              value={retypeTenant}
+            />
+          </Grid>
           {deleteError !== "" && (
             <React.Fragment>
               <br />
@@ -116,7 +133,12 @@ const DeleteTenant = ({
         >
           Cancel
         </Button>
-        <Button onClick={removeRecord} color="secondary" autoFocus>
+        <Button
+          onClick={removeRecord}
+          color="secondary"
+          autoFocus
+          disabled={retypeTenant === ""}
+        >
           Delete
         </Button>
       </DialogActions>

@@ -202,7 +202,7 @@ const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
   }, [useConnectionString]);
 
   return (
-    <Grid container className={classes.formScrollable}>
+    <Grid container>
       <Grid item xs={12}>
         <FormSwitchWrapper
           label={"Manually Configure String"}
