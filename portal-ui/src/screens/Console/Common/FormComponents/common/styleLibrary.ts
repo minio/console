@@ -263,4 +263,32 @@ export const settingsCommon = {
     padding: "15px 38px",
     textAlign: "right" as const,
   },
+  settingsOptionsContainer: {
+    height: "calc(100vh - 244px)",
+    backgroundColor: "#fff",
+    border: "#EAEDEE 1px solid",
+    borderRadius: 3,
+    marginTop: 15,
+  },
+  backButton: {
+    cursor: "pointer",
+    fontSize: 10,
+    fontWeight: 600,
+    color: "#000",
+    backgroundColor: "transparent",
+    border: 0,
+    padding: 0,
+    display: "flex",
+    alignItems: "center",
+    "&:active, &:focus": {
+      outline: 0,
+    },
+    "& svg": {
+      width: 10,
+      marginRight: 4,
+    },
+  },
+  backContainer: {
+    margin: "20px 38px 0",
+  },
 };

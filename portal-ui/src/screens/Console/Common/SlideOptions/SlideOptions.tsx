@@ -48,7 +48,6 @@ const SlideOptions = ({
   return (
     <AutoSizer>
       {({ width, height }: any) => {
-        console.log(width, height);
         const currentSliderPosition = currentSlide * width;
         const containerSize = width * slideOptions.length;
         return (
@@ -61,9 +60,13 @@ const SlideOptions = ({
                   width: `${containerSize}px`,
                 }}
               >
-                {slideOptions.map((block: any) => {
+                {slideOptions.map((block: any, index: number) => {
                   return (
-                    <div className={classes.slide} style={{ width }}>
+                    <div
+                      className={classes.slide}
+                      style={{ width }}
+                      key={`slide-panel-${index.toString()}`}
+                    >
                       {block}
                     </div>
                   );
