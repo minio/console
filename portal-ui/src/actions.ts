@@ -16,35 +16,43 @@
 
 import {
   MENU_OPEN,
+  OPERATOR_MODE,
   SERVER_IS_LOADING,
   SERVER_NEEDS_RESTART,
-  USER_LOGGED
+  USER_LOGGED,
 } from "./types";
 
 export function userLoggedIn(loggedIn: boolean) {
   return {
     type: USER_LOGGED,
-    logged: loggedIn
+    logged: loggedIn,
+  };
+}
+
+export function consoleOperatorMode(operatorMode: boolean) {
+  return {
+    type: OPERATOR_MODE,
+    operatorMode: operatorMode,
   };
 }
 
 export function setMenuOpen(open: boolean) {
   return {
     type: MENU_OPEN,
-    open: open
+    open: open,
   };
 }
 
 export function serverNeedsRestart(needsRestart: boolean) {
   return {
     type: SERVER_NEEDS_RESTART,
-    needsRestart: needsRestart
+    needsRestart: needsRestart,
   };
 }
 
 export function serverIsLoading(isLoading: boolean) {
   return {
     type: SERVER_IS_LOADING,
-    isLoading: isLoading
+    isLoading: isLoading,
   };
 }

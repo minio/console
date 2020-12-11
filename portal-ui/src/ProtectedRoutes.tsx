@@ -18,9 +18,10 @@ import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { AppState } from "./store";
-import { userLoggedIn } from "./actions";
+import { consoleOperatorMode, userLoggedIn } from "./actions";
 import api from "./common/api";
 import { saveSessionResponse } from "./screens/Console/actions";
+import { ISessionResponse } from "./screens/Console/types";
 
 const mapState = (state: AppState) => ({
   loggedIn: state.system.loggedIn,
@@ -28,6 +29,7 @@ const mapState = (state: AppState) => ({
 
 const connector = connect(mapState, {
   userLoggedIn,
+  consoleOperatorMode,
   saveSessionResponse,
 });
 
@@ -35,6 +37,7 @@ interface ProtectedRouteProps {
   loggedIn: boolean;
   Component: any;
   userLoggedIn: typeof userLoggedIn;
+  consoleOperatorMode: typeof consoleOperatorMode;
   saveSessionResponse: typeof saveSessionResponse;
 }
 
@@ -42,16 +45,22 @@ const ProtectedRoute = ({
   Component,
   loggedIn,
   userLoggedIn,
+  consoleOperatorMode,
   saveSessionResponse,
 }: ProtectedRouteProps) => {
   const [sessionLoading, setSessionLoading] = useState<boolean>(true);
   useEffect(() => {
     api
       .invoke("GET", `/api/v1/session`)
-      .then((res) => {
+      .then((res: ISessionResponse) => {
         saveSessionResponse(res);
         userLoggedIn(true);
         setSessionLoading(false);
+        // check for tenants presence, that indicates we are in operator mode
+        if (res.pages.includes("/tenants")) {
+          consoleOperatorMode(true);
+          document.title = "MinIO Operator";
+        }
       })
       .catch(() => setSessionLoading(false));
   }, [saveSessionResponse]);

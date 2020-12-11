@@ -27,6 +27,7 @@ import { Divider, withStyles } from "@material-ui/core";
 import { createStyles, Theme } from "@material-ui/core/styles";
 import history from "../../../history";
 import logo from "../../../icons/minio_console_logo.svg";
+import operator_logo from "../../../icons/minio_operator_logo.svg";
 import { AppState } from "../../../store";
 import { userLoggedIn } from "../../../actions";
 import api from "../../../common/api";
@@ -149,6 +150,7 @@ const styles = (theme: Theme) =>
 
 const mapState = (state: AppState) => ({
   open: state.system.loggedIn,
+  operatorMode: state.system.operatorMode,
 });
 
 const connector = connect(mapState, { userLoggedIn });
@@ -165,7 +167,7 @@ const menuStateBuilder = () => {
   return elements;
 };
 
-const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
+const Menu = ({ userLoggedIn, classes, pages, operatorMode }: IMenuProps) => {
   const [menuOpen, setMenuOpen] = useState<any>(menuStateBuilder());
 
   const logout = () => {
@@ -337,7 +339,7 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
   return (
     <React.Fragment>
       <div className={classes.logo}>
-        <img src={logo} alt="logo" />
+        <img src={operatorMode ? operator_logo : logo} alt="logo" />
       </div>
       <List className={classes.menuList}>
         {menuGroups.map((groupMember, index) => {
