@@ -323,6 +323,16 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 		return prepareError(err)
 	}
 
+	// make sure to delete bucket if an error occurs after bucket was created
+	defer func() {
+		if err != nil {
+			log.Println("error creating bucket:", err)
+			if err := removeBucket(minioClient, *br.Name); err != nil {
+				log.Println("error removing bucket:", err)
+			}
+		}
+	}()
+
 	// if it has support for
 	if br.Quota != nil && br.Quota.Enabled != nil && *br.Quota.Enabled {
 		mAdmin, err := newMAdminClient(session)
@@ -335,6 +345,14 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 		// we will tolerate this call failing
 		if err := setBucketQuota(ctx, &adminClient, br.Name, br.Quota); err != nil {
 			log.Println("error versioning bucket:", err)
+		}
+	}
+
+	// Set Bucket Retention Configuration if defined
+	if br.Retention != nil {
+		err = setBucketRetentionConfig(ctx, minioClient, *br.Name, br.Retention.Mode, br.Retention.Unit, br.Retention.Validity)
+		if err != nil {
+			return prepareError(err)
 		}
 	}
 	return nil
