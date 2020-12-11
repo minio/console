@@ -16,20 +16,22 @@
 
 import {
   MENU_OPEN,
+  OPERATOR_MODE,
   SERVER_IS_LOADING,
   SERVER_NEEDS_RESTART,
   SystemActionTypes,
   SystemState,
-  USER_LOGGED
+  USER_LOGGED,
 } from "./types";
 
 const initialState: SystemState = {
   loggedIn: false,
+  operatorMode: false,
   session: "",
   userName: "",
   sidebarOpen: true,
   serverNeedsRestart: false,
-  serverIsLoading: false
+  serverIsLoading: false,
 };
 
 export function systemReducer(
@@ -40,23 +42,28 @@ export function systemReducer(
     case USER_LOGGED:
       return {
         ...state,
-        loggedIn: action.logged
+        loggedIn: action.logged,
+      };
+    case OPERATOR_MODE:
+      return {
+        ...state,
+        operatorMode: action.operatorMode,
       };
     case MENU_OPEN:
       return {
         ...state,
-        sidebarOpen: action.open
+        sidebarOpen: action.open,
       };
     case SERVER_NEEDS_RESTART:
       return {
         ...state,
-        serverNeedsRestart: action.needsRestart
+        serverNeedsRestart: action.needsRestart,
       };
 
     case SERVER_IS_LOADING:
       return {
         ...state,
-        serverIsLoading: action.isLoading
+        serverIsLoading: action.isLoading,
       };
     default:
       return state;
