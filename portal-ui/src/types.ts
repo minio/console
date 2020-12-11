@@ -16,6 +16,7 @@
 
 export interface SystemState {
   loggedIn: boolean;
+  operatorMode: boolean;
   sidebarOpen: boolean;
   session: string;
   userName: string;
@@ -24,6 +25,7 @@ export interface SystemState {
 }
 
 export const USER_LOGGED = "USER_LOGGED";
+export const OPERATOR_MODE = "OPERATOR_MODE";
 export const MENU_OPEN = "MENU_OPEN";
 export const SERVER_NEEDS_RESTART = "SERVER_NEEDS_RESTART";
 export const SERVER_IS_LOADING = "SERVER_IS_LOADING";
@@ -31,6 +33,11 @@ export const SERVER_IS_LOADING = "SERVER_IS_LOADING";
 interface UserLoggedAction {
   type: typeof USER_LOGGED;
   logged: boolean;
+}
+
+interface OperatorModeAction {
+  type: typeof OPERATOR_MODE;
+  operatorMode: boolean;
 }
 
 interface SetMenuOpenAction {
@@ -50,6 +57,7 @@ interface ServerIsLoading {
 
 export type SystemActionTypes =
   | UserLoggedAction
+  | OperatorModeAction
   | SetMenuOpenAction
   | ServerNeedsRestartAction
   | ServerIsLoading;
