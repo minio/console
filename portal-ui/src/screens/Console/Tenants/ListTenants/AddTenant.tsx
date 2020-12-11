@@ -32,6 +32,7 @@ import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/For
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import {
   calculateDistribution,
+  erasureCodeCalc,
   generatePoolName,
   getBytes,
   k8sfactorForDropdown,
@@ -46,12 +47,14 @@ import { IWizardElement } from "../../Common/GenericWizard/types";
 import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
+import ErrorBlock from "../../../shared/ErrorBlock";
 import {
   IAffinityModel,
   ICapacity,
+  IErasureCodeCalc,
   ITenantCreator,
 } from "../../../../common/types";
-import ErrorBlock from "../../../shared/ErrorBlock";
+import { ecListTransform, Opts } from "./utils";
 
 interface IAddTenantProps {
   open: boolean;
@@ -107,11 +110,6 @@ const styles = (theme: Theme) =>
     ...modalBasic,
   });
 
-interface Opts {
-  label: string;
-  value: string;
-}
-
 const AddTenant = ({
   open,
   closeModalAndRefresh,
@@ -165,7 +163,9 @@ const AddTenant = ({
   const [vaultRetry, setVaultRetry] = useState<string>("0");
   const [vaultPing, setVaultPing] = useState<string>("0");
   const [ecParityChoices, setECParityChoices] = useState<Opts[]>([]);
+  const [cleanECChoices, setCleanECChoices] = useState<string[]>([]);
   const [nodes, setNodes] = useState<string>("4");
+  const [drivesPerServer, setDrivesPerServer] = useState<string>("1");
   const [memoryNode, setMemoryNode] = useState<string>("2");
   const [ecParity, setECParity] = useState<string>("");
   const [distribution, setDistribution] = useState<any>({
@@ -174,6 +174,14 @@ const AddTenant = ({
     persistentVolumes: 0,
     disks: 0,
     volumePerDisk: 0,
+  });
+  const [ecParityCalc, setEcParityCalc] = useState<IErasureCodeCalc>({
+    error: 0,
+    defaultEC: "",
+    erasureCodeSet: 0,
+    maxEC: "",
+    rawCapacity: "0",
+    storageFactors: [],
   });
 
   // Forms Validation
@@ -271,34 +279,66 @@ const AddTenant = ({
       return debounceNamespace.cancel;
     }
   }, [namespace, debounceNamespace]);
+
+  useEffect(() => {
+    if (ecParityChoices.length > 0 && distribution.error === "") {
+      const ecCodeValidated = erasureCodeCalc(
+        cleanECChoices,
+        distribution.persistentVolumes,
+        distribution.pvSize,
+        distribution.nodes
+      );
+
+      setEcParityCalc(ecCodeValidated);
+      setECParity(ecCodeValidated.defaultEC);
+    }
+  }, [ecParityChoices.length, distribution, cleanECChoices]);
   /*End debounce functions*/
 
   /*Calculate Allocation*/
   useEffect(() => {
     validateClusterSize();
-    setECParityChoices([]);
+    getECValue();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodes, volumeSize, sizeFactor]);
+  }, [nodes, volumeSize, sizeFactor, drivesPerServer]);
 
   const validateClusterSize = () => {
     const size = volumeSize;
     const factor = sizeFactor;
     const limitSize = getBytes("12", "Ti", true);
 
-    const capacityElement: ICapacity = {
+    const clusterCapacity: ICapacity = {
       unit: factor,
       value: size.toString(),
     };
 
     const distrCalculate = calculateDistribution(
-      capacityElement,
+      clusterCapacity,
       parseInt(nodes),
-      parseInt(limitSize)
+      parseInt(limitSize),
+      parseInt(drivesPerServer)
     );
 
     setDistribution(distrCalculate);
   };
 
+  const getECValue = () => {
+    setECParity("");
+
+    if (nodes.trim() !== "" && drivesPerServer.trim() !== "") {
+      api
+        .invoke("GET", `/api/v1/get-parity/${nodes}/${drivesPerServer}`)
+        .then((ecList: string[]) => {
+          setECParityChoices(ecListTransform(ecList));
+          setCleanECChoices(ecList);
+        })
+        .catch((err: any) => {
+          setECParityChoices([]);
+          setConfigValid(false);
+          setECParity("");
+        });
+    }
+  };
   /*Calculate Allocation End*/
 
   /* Validations of pages */
@@ -355,17 +395,34 @@ const AddTenant = ({
         customValidation: parseInt(memoryNode) < 2,
         customValidationMessage: "Memory size must be greater than 2Gi",
       },
+      {
+        fieldKey: "drivesps",
+        required: true,
+        value: drivesPerServer,
+        customValidation: parseInt(drivesPerServer) < 1,
+        customValidationMessage: "There must be at least one drive",
+      },
     ]);
 
     setConfigValid(
       !("nodes" in commonValidation) &&
         !("volume_size" in commonValidation) &&
         !("memory_per_node" in commonValidation) &&
-        distribution.error === ""
+        !("drivesps" in commonValidation) &&
+        distribution.error === "" &&
+        ecParityCalc.error === 0
     );
 
     setValidationErrors(commonValidation);
-  }, [nodes, volumeSize, sizeFactor, memoryNode, distribution]);
+  }, [
+    nodes,
+    volumeSize,
+    sizeFactor,
+    memoryNode,
+    distribution,
+    drivesPerServer,
+    ecParityCalc,
+  ]);
 
   useEffect(() => {
     let customAccountValidation: IValidation[] = [];
@@ -760,9 +817,7 @@ const AddTenant = ({
         },
       };
 
-      const ecLimit = "EC:0";
-
-      const erasureCode = ecLimit.split(":")[1];
+      const erasureCode = ecParity.split(":")[1];
 
       let dataSend: ITenantCreator = {
         name: tenantName,
@@ -990,6 +1045,10 @@ const AddTenant = ({
       closeModalAndRefresh(false, null);
     },
   };
+
+  const usableInformation = ecParityCalc.storageFactors.find(
+    (element) => element.erasureCode === ecParity
+  );
 
   const wizardSteps: IWizardElement[] = [
     {
@@ -2004,11 +2063,27 @@ const AddTenant = ({
                 setNodes(e.target.value);
                 clearValidationError("nodes");
               }}
-              label="Number of Nodes"
+              label="Number of Servers"
               value={nodes}
               min="4"
               required
               error={validationErrors["nodes"] || ""}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="drivesps"
+              name="drivesps"
+              type="number"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setDrivesPerServer(e.target.value);
+                clearValidationError("drivesps");
+              }}
+              label="Number of Drives per Server"
+              value={drivesPerServer}
+              min="1"
+              required
+              error={validationErrors["drivesps"] || ""}
             />
           </Grid>
           <Grid item xs={12}>
@@ -2077,12 +2152,20 @@ const AddTenant = ({
               </span>
             </Grid>
           )}
-          <h5>Resource Allocation</h5>
+          <h4>Resource Allocation</h4>
           <Table className={classes.table} aria-label="simple table">
             <TableBody>
               <TableRow>
                 <TableCell component="th" scope="row">
-                  Volumes per Node
+                  Number of Servers
+                </TableCell>
+                <TableCell align="right">
+                  {parseInt(nodes) > 0 ? nodes : "-"}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell component="th" scope="row">
+                  Drives per Server
                 </TableCell>
                 <TableCell align="right">
                   {distribution ? distribution.disks : "-"}
@@ -2090,7 +2173,7 @@ const AddTenant = ({
               </TableRow>
               <TableRow>
                 <TableCell component="th" scope="row">
-                  Disk Size
+                  Drive Capacity
                 </TableCell>
                 <TableCell align="right">
                   {distribution ? niceBytes(distribution.pvSize) : "-"}
@@ -2106,6 +2189,52 @@ const AddTenant = ({
               </TableRow>
             </TableBody>
           </Table>
+          {ecParityCalc.error === 0 && usableInformation && (
+            <React.Fragment>
+              <h4>Erasure Code Configuration</h4>
+              <Table className={classes.table} aria-label="simple table">
+                <TableBody>
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      EC Parity
+                    </TableCell>
+                    <TableCell align="right">
+                      {ecParity !== "" ? ecParity : "-"}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      Raw Capacity
+                    </TableCell>
+                    <TableCell align="right">
+                      {niceBytes(ecParityCalc.rawCapacity)}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      Usable Capacity
+                    </TableCell>
+                    <TableCell align="right">
+                      {niceBytes(usableInformation.maxCapacity)}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      Number of server failures to tolerate
+                    </TableCell>
+                    <TableCell align="right">
+                      {distribution
+                        ? Math.floor(
+                            usableInformation.maxFailureTolerations /
+                              distribution.disks
+                          )
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </React.Fragment>
+          )}
         </React.Fragment>
       ),
       buttons: [

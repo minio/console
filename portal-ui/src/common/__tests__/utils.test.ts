@@ -14,7 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { getBytes, niceBytes, setMemoryResource } from "../utils";
+import {
+  erasureCodeCalc,
+  getBytes,
+  niceBytes,
+  setMemoryResource,
+} from "../utils";
 
 test("A variety of formatting results", () => {
   expect(niceBytes("1024")).toBe("1.0 KiB");
@@ -50,5 +55,31 @@ test("Determine the amount of memory to use", () => {
     error: "",
     limit: 34359738368,
     request: 2147483648,
+  });
+});
+
+test("Determine the correct values for EC Parity calculation", () => {
+  expect(erasureCodeCalc([], 50, 5000, 4)).toStrictEqual({
+    error: 1,
+    defaultEC: "",
+    erasureCodeSet: 0,
+    maxEC: "",
+    rawCapacity: "0",
+    storageFactors: [],
+  });
+  expect(erasureCodeCalc(["EC:2"], 4, 26843545600, 4)).toStrictEqual({
+    error: 0,
+    storageFactors: [
+      {
+        erasureCode: "EC:2",
+        storageFactor: 2,
+        maxCapacity: "53687091200",
+        maxFailureTolerations: 2,
+      },
+    ],
+    maxEC: "EC:2",
+    rawCapacity: "107374182400",
+    erasureCodeSet: 4,
+    defaultEC: "EC:2",
   });
 });

@@ -250,19 +250,11 @@ export interface IStorageDistribution {
   pvSize: number;
 }
 
-export interface IErasureCodeCalc {
-  error: number;
-  maxEC: string;
-  erasureCodeSet: number;
-  rawCapacity: string;
-  storageFactors: IStorageFactors[];
-  defaultEC: string;
-}
-
 export interface IStorageFactors {
   erasureCode: string;
   storageFactor: number;
   maxCapacity: string;
+  maxFailureTolerations: number;
 }
 
 export interface ITenantHealthInList {
@@ -337,4 +329,13 @@ export interface IDisk {
 export interface ICapacity {
   value: string;
   unit: string;
+}
+
+export interface IErasureCodeCalc {
+  error: number;
+  maxEC: string;
+  erasureCodeSet: number;
+  rawCapacity: string;
+  defaultEC: string;
+  storageFactors: IStorageFactors[];
 }
