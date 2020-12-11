@@ -79,10 +79,17 @@ export interface QuotaRequest {
   amount: number;
 }
 
+export interface RetentionRequest {
+  mode: string;
+  unit: string;
+  validity: number;
+}
+
 export interface MakeBucketRequest {
   name: string;
   versioning: boolean;
   quota?: QuotaRequest;
+  retention?: RetentionRequest;
 }
 
 export interface ChangePasswordRequest {
