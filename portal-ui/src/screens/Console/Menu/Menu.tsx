@@ -44,10 +44,14 @@ import {
   ServiceAccountsIcon,
   UsersIcon,
   WarpIcon,
+  TraceIcon,
 } from "../../../icons";
 import { clearSession } from "../../../common/utils";
 import LicenseIcon from "../../../icons/LicenseIcon";
 import LogoutIcon from "../../../icons/LogoutIcon";
+import ConsoleIcon from "../../../icons/ConsoleIcon";
+import HealIcon from "../../../icons/HealIcon";
+import WatchIcon from "../../../icons/WatchIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -239,19 +243,43 @@ const Menu = ({ userLoggedIn, classes, pages }: IMenuProps) => {
       icon: <IAMPoliciesIcon />,
     },
     {
-      group: "Admin",
+      group: "Tools",
       type: "item",
       component: NavLink,
-      to: "/notification-endpoints",
-      name: "Lambda Notifications",
-      icon: <LambdaNotificationsIcon />,
+      to: "/logs",
+      name: "Logs",
+      icon: <ConsoleIcon />,
+    },
+    {
+      group: "Tools",
+      type: "item",
+      component: NavLink,
+      to: "/watch",
+      name: "Watch",
+      icon: <WatchIcon />,
+    },
+    {
+      group: "Tools",
+      type: "item",
+      component: NavLink,
+      to: "/trace",
+      name: "Trace",
+      icon: <TraceIcon />,
+    },
+    {
+      group: "Tools",
+      type: "item",
+      component: NavLink,
+      to: "/heal",
+      name: "Heal",
+      icon: <HealIcon />,
     },
     {
       group: "Admin",
       type: "item",
       component: NavLink,
-      to: "/configurations-list",
-      name: "Configurations List",
+      to: "/settings",
+      name: "Settings",
       icon: <ConfigurationsListIcon />,
     },
     {

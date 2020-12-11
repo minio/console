@@ -22,11 +22,9 @@ import (
 	"net"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/go-openapi/errors"
 	"github.com/gorilla/websocket"
-	"github.com/minio/console/cluster"
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/auth"
 )
@@ -121,28 +119,14 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	wsPath := strings.TrimPrefix(req.URL.Path, wsBasePath)
 	switch {
 	case strings.HasPrefix(wsPath, `/trace`):
-		// Trace api only for operator Console
-		namespace, tenant, err := getTraceOptionsFromReq(req)
-		if err != nil {
-			log.Println("error getting trace options:", err)
-			closeWsConn(conn)
-			return
-		}
-		wsAdminClient, err := newWebSocketTenantAdminClient(conn, session, namespace, tenant)
+		wsAdminClient, err := newWebSocketAdminClient(conn, session)
 		if err != nil {
 			closeWsConn(conn)
 			return
 		}
 		go wsAdminClient.trace()
 	case strings.HasPrefix(wsPath, `/console`):
-		// Trace api only for operator Console
-		namespace, tenant, err := getConsoleLogOptionsFromReq(req)
-		if err != nil {
-			log.Println("error getting log options:", err)
-			closeWsConn(conn)
-			return
-		}
-		wsAdminClient, err := newWebSocketTenantAdminClient(conn, session, namespace, tenant)
+		wsAdminClient, err := newWebSocketAdminClient(conn, session)
 		if err != nil {
 			closeWsConn(conn)
 			return
@@ -155,7 +139,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 			closeWsConn(conn)
 			return
 		}
-		wsAdminClient, err := newWebSocketTenantAdminClient(conn, session, hOptions.Namespace, hOptions.Tenant)
+		wsAdminClient, err := newWebSocketAdminClient(conn, session)
 		if err != nil {
 			closeWsConn(conn)
 			return
@@ -168,7 +152,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 			closeWsConn(conn)
 			return
 		}
-		wsS3Client, err := newWebSocketS3Client(conn, session, wOptions.Namespace, wOptions.Tenant, wOptions.BucketName)
+		wsS3Client, err := newWebSocketS3Client(conn, session, wOptions.BucketName)
 		if err != nil {
 			closeWsConn(conn)
 			return
@@ -180,44 +164,13 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-// newWebSocketTenantAdminClient creates a ws Client with a k8s tenant client
-// this is to be used for a kubernetes environment and for a particular tenant
-// in a defined namespace
-func newWebSocketTenantAdminClient(conn *websocket.Conn, session *models.Principal, namespace, tenant string) (*wsAdminClient, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
+// newWebSocketAdminClient returns a wsAdminClient authenticated as an admin user
+func newWebSocketAdminClient(conn *websocket.Conn, autClaims *models.Principal) (*wsAdminClient, error) {
+	// Only start Websocket Interaction after user has been
+	// authenticated with MinIO
+	mAdmin, err := newAdminFromClaims(autClaims)
 	if err != nil {
-		return nil, err
-	}
-	clientSet, err := cluster.K8sClient(session.STSSessionToken)
-	if err != nil {
-		return nil, err
-	}
-
-	opClient := &operatorClient{
-		client: opClientClientSet,
-	}
-	k8sClient := &k8sClient{
-		client: clientSet,
-	}
-
-	minTenant, err := getTenant(ctx, opClient, namespace, tenant)
-	if err != nil {
-		return nil, err
-	}
-	minTenant.EnsureDefaults()
-
-	svcURL := GetTenantServiceURL(minTenant)
-	// getTenantAdminClient will use all certificates under ~/.console/certs/CAs to trust the TLS connections with MinIO tenants
-	mAdmin, err := getTenantAdminClient(
-		ctx,
-		k8sClient,
-		minTenant,
-		svcURL,
-	)
-	if err != nil {
+		log.Println("error creating Madmin Client:", err)
 		return nil, err
 	}
 	// create a websocket connection interface implementation
@@ -232,53 +185,12 @@ func newWebSocketTenantAdminClient(conn *websocket.Conn, session *models.Princip
 }
 
 // newWebSocketS3Client returns a wsAdminClient authenticated as Console admin
-func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, namespace, tenant, bucketName string) (*wsS3Client, error) {
+func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, bucketName string) (*wsS3Client, error) {
 	// Only start Websocket Interaction after user has been
 	// authenticated with MinIO
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	opClientClientSet, err := cluster.OperatorClient(claims.STSSessionToken)
-	if err != nil {
-		return nil, err
-	}
-
-	clientSet, err := cluster.K8sClient(claims.STSSessionToken)
-	if err != nil {
-		return nil, err
-	}
-
-	opClient := &operatorClient{
-		client: opClientClientSet,
-	}
-	k8sClient := &k8sClient{
-		client: clientSet,
-	}
-
-	minTenant, err := getTenant(ctx, opClient, namespace, tenant)
-	if err != nil {
-		return nil, err
-	}
-	minTenant.EnsureDefaults()
-
-	// Get Tenant Creds and substitute session ones
-	tenantCreds, err := getTenantCreds(ctx, k8sClient, minTenant)
-	if err != nil {
-		return nil, err
-	}
-
-	tenantClaims := &models.Principal{
-		STSAccessKeyID:     tenantCreds.accessKey,
-		STSSecretAccessKey: tenantCreds.secretKey,
-	}
-
-	svcURL := GetTenantServiceURL(minTenant)
-
-	s3Client, err := newTenantS3BucketClient(tenantClaims, svcURL, bucketName)
+	s3Client, err := newS3BucketClient(claims, bucketName, "")
 	if err != nil {
 		log.Println("error creating S3Client:", err)
-		_ = conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-		_ = conn.Close()
 		return nil, err
 	}
 	// create a websocket connection interface implementation

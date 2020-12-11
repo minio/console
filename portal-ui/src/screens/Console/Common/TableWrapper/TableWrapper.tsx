@@ -66,6 +66,7 @@ interface TableWrapperProps {
   radioSelection?: boolean;
   customEmptyMessage?: string;
   customPaperHeight?: string;
+  noBackground?: boolean;
 }
 
 const borderColor = "#9c9c9c80";
@@ -102,6 +103,10 @@ const styles = () =>
         width: 3,
         height: 3,
       },
+    },
+    noBackground: {
+      backgroundColor: "transparent",
+      border: 0,
     },
     defaultPaperHeight: {
       height: "calc(100vh - 205px)",
@@ -362,6 +367,7 @@ const TableWrapper = ({
   radioSelection = false,
   customEmptyMessage = "",
   customPaperHeight = "",
+  noBackground = false,
 }: TableWrapperProps) => {
   const findView = itemActions
     ? itemActions.find((el) => el.type === "view")
@@ -385,6 +391,8 @@ const TableWrapper = ({
     <Grid item xs={12}>
       <Paper
         className={`${classes.paper} ${
+          noBackground ? classes.noBackground : ""
+        } ${
           customPaperHeight !== ""
             ? customPaperHeight
             : classes.defaultPaperHeight

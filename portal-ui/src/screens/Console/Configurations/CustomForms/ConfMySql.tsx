@@ -131,7 +131,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
   };
 
   return (
-    <Grid container className={classes.formScrollable}>
+    <Grid container>
       <Grid item xs={12}>
         <FormSwitchWrapper
           label={"Enter DNS String"}

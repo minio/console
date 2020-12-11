@@ -34,14 +34,9 @@ import AddBucket from "../../Buckets/ListBuckets/AddBucket";
 import ReplicationSetup from "./ReplicationSetup";
 import api from "../../../../common/api";
 import { ITenant, IPool } from "../ListTenants/types";
-import Logs from "./Logs/Logs";
-import Trace from "./Trace/Trace";
-import Watch from "./Watch/Watch";
-import Heal from "./Heal/Heal";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import UsageBarWrapper from "../../Common/UsageBarWrapper/UsageBarWrapper";
 import UpdateTenantModal from "./UpdateTenantModal";
-import EditIcon from "@material-ui/icons/Edit";
 import PencilIcon from "../../Common/TableWrapper/TableActionIcons/PencilIcon";
 
 interface ITenantDetailsProps {
@@ -306,7 +301,7 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
         <Grid item xs={12}>
           <br />
         </Grid>
-        <Grid item xs={7}>
+        <Grid item xs={6}>
           <Tabs
             value={selectedTab}
             indicatorColor="primary"
@@ -317,13 +312,9 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
             aria-label="tenant-tabs"
           >
             <Tab label="Clusters" />
-            <Tab label="Logs" />
-            <Tab label="Trace" />
-            <Tab label="Watch" />
-            <Tab label="Heal" />
           </Tabs>
         </Grid>
-        <Grid item xs={5} className={classes.actionsTray}>
+        <Grid item xs={6} className={classes.actionsTray}>
           <Button
             variant="contained"
             color="primary"
@@ -363,18 +354,6 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
             />
           )}
         </Grid>
-        {selectedTab === 1 && tenant !== null && (
-          <Logs namespace={tenant.namespace} tenant={tenant.name} />
-        )}
-        {selectedTab === 2 && tenant !== null && (
-          <Trace namespace={tenant.namespace} tenant={tenant.name} />
-        )}
-        {selectedTab === 3 && tenant !== null && (
-          <Watch namespace={tenant.namespace} tenant={tenant.name} />
-        )}
-        {selectedTab === 4 && tenant !== null && (
-          <Heal namespace={tenant.namespace} tenant={tenant.name} />
-        )}
       </Grid>
     </React.Fragment>
   );
