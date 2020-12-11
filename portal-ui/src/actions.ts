@@ -16,6 +16,7 @@
 
 import {
   MENU_OPEN,
+  OPERATOR_MODE,
   SERVER_IS_LOADING,
   SERVER_NEEDS_RESTART,
   USER_LOGGED,
@@ -25,6 +26,13 @@ export function userLoggedIn(loggedIn: boolean) {
   return {
     type: USER_LOGGED,
     logged: loggedIn,
+  };
+}
+
+export function consoleOperatorMode(operatorMode: boolean) {
+  return {
+    type: OPERATOR_MODE,
+    operatorMode: operatorMode,
   };
 }
 

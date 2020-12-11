@@ -3902,6 +3902,9 @@ func init() {
         "quota": {
           "$ref": "#/definitions/setBucketQuota"
         },
+        "retention": {
+          "$ref": "#/definitions/putBucketRetentionRequest"
+        },
         "versioning": {
           "type": "boolean"
         }
@@ -9501,6 +9504,9 @@ func init() {
         },
         "quota": {
           "$ref": "#/definitions/setBucketQuota"
+        },
+        "retention": {
+          "$ref": "#/definitions/putBucketRetentionRequest"
         },
         "versioning": {
           "type": "boolean"

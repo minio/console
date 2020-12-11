@@ -20,4 +20,5 @@ export interface IMenuProps {
   classes: any;
   userLoggedIn: typeof userLoggedIn;
   pages: string[];
+  operatorMode: boolean;
 }

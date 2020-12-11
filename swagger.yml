@@ -2083,6 +2083,9 @@ definitions:
         type: boolean
       quota:
         $ref: "#/definitions/setBucketQuota"
+      retention:
+        $ref: "#/definitions/putBucketRetentionRequest"
+      
   error:
     type: object
     required:

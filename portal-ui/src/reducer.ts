@@ -16,6 +16,7 @@
 
 import {
   MENU_OPEN,
+  OPERATOR_MODE,
   SERVER_IS_LOADING,
   SERVER_NEEDS_RESTART,
   SystemActionTypes,
@@ -25,6 +26,7 @@ import {
 
 const initialState: SystemState = {
   loggedIn: false,
+  operatorMode: false,
   session: "",
   userName: "",
   sidebarOpen: true,
@@ -41,6 +43,11 @@ export function systemReducer(
       return {
         ...state,
         loggedIn: action.logged,
+      };
+    case OPERATOR_MODE:
+      return {
+        ...state,
+        operatorMode: action.operatorMode,
       };
     case MENU_OPEN:
       return {
