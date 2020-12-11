@@ -222,6 +222,7 @@ const ListObjects = ({
     setDeleteOpen(false);
 
     if (refresh) {
+      showSnackBarMessage(`Object '${selectedObject}' deleted successfully.`);
       setLoading(true);
     }
   };
