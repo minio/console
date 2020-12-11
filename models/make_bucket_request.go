@@ -41,6 +41,9 @@ type MakeBucketRequest struct {
 	// quota
 	Quota *SetBucketQuota `json:"quota,omitempty"`
 
+	// retention
+	Retention *PutBucketRetentionRequest `json:"retention,omitempty"`
+
 	// versioning
 	Versioning bool `json:"versioning,omitempty"`
 }
@@ -54,6 +57,10 @@ func (m *MakeBucketRequest) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateQuota(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRetention(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -82,6 +89,24 @@ func (m *MakeBucketRequest) validateQuota(formats strfmt.Registry) error {
 		if err := m.Quota.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("quota")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *MakeBucketRequest) validateRetention(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Retention) { // not required
+		return nil
+	}
+
+	if m.Retention != nil {
+		if err := m.Retention.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("retention")
 			}
 			return err
 		}
