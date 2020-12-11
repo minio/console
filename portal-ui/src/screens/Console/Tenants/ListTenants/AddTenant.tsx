@@ -1050,7 +1050,8 @@ const AddTenant = ({
             <br />
             <span className={classes.descriptionText}>
               Check 'Advanced Mode' for additional configuration options, such
-              as IDP, Disk Encryption, and customized TLS/SSL Certificates.
+              as configuring an Identity Provider, Encryption at rest, and
+              customized TLS/SSL Certificates.
               <br />
               Leave 'Advanced Mode' unchecked to use the secure default settings
               for the tenant.
@@ -1212,12 +1213,12 @@ const AddTenant = ({
       ],
     },
     {
-      label: "IDP",
+      label: "Identity Provider",
       advancedOnly: true,
       componentRender: (
         <React.Fragment>
           <div className={classes.headerElement}>
-            <h3 className={classes.h3Section}>IDP</h3>
+            <h3 className={classes.h3Section}>Identity Provider</h3>
             <span className={classes.descriptionText}>
               Access to the tenant can be controlled via an external Identity
               Manager.
@@ -1228,7 +1229,7 @@ const AddTenant = ({
               currentSelection={idpSelection}
               id="idp-options"
               name="idp-options"
-              label="IDP Selection"
+              label="Protocol"
               onChange={(e) => {
                 setIdpSelection(e.target.value);
               }}
