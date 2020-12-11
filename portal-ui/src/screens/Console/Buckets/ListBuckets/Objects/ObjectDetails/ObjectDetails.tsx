@@ -194,7 +194,7 @@ const ObjectDetails = ({
           setLoadObjectData(false);
         });
     }
-  }, [loadObjectData]);
+  }, [loadObjectData, bucketName, pathInBucket]);
 
   let tagKeys: string[] = [];
 
@@ -341,6 +341,11 @@ const ObjectDetails = ({
       )}
       <Grid container>
         <Grid item xs={12} className={classes.container}>
+          {error !== "" && (
+            <Grid item xs={12}>
+              {error}
+            </Grid>
+          )}
           <Grid item xs={12} className={classes.obTitleSection}>
             <div>
               <BrowserBreadcrumbs />

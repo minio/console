@@ -69,11 +69,9 @@ const initialConfiguration = {
 };
 
 const ConfigurationsList = ({ classes }: IListConfiguration) => {
-  const [editScreenOpen, setEditScreenOpen] = useState(false);
   const [selectedConfiguration, setSelectedConfiguration] = useState(
     initialConfiguration
   );
-  const [filter, setFilter] = useState("");
   const [currentConfiguration, setCurrentConfiguration] = useState<number>(0);
 
   const tableActions = [
@@ -91,13 +89,6 @@ const ConfigurationsList = ({ classes }: IListConfiguration) => {
       },
     },
   ];
-
-  const filteredRecords: IConfigurationElement[] = configurationElements.filter(
-    (elementItem) =>
-      elementItem.configuration_id
-        .toLocaleLowerCase()
-        .includes(filter.toLocaleLowerCase())
-  );
 
   const backToInitialConfig = () => {
     setCurrentConfiguration(0);
@@ -125,7 +116,7 @@ const ConfigurationsList = ({ classes }: IListConfiguration) => {
                         },
                       ]}
                       isLoading={false}
-                      records={filteredRecords}
+                      records={configurationElements}
                       entityName="Configurations"
                       idField="configuration_id"
                       customPaperHeight={classes.customConfigurationPage}

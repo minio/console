@@ -63,7 +63,7 @@ const ProtectedRoute = ({
         }
       })
       .catch(() => setSessionLoading(false));
-  }, [saveSessionResponse]);
+  }, [saveSessionResponse, consoleOperatorMode, userLoggedIn]);
 
   // if we still trying to retrieve user session render nothing
   if (sessionLoading) {
