@@ -94,6 +94,8 @@ const styles = (theme: Theme) =>
       fontWeight: 700,
       fontSize: 14,
       borderRadius: 8,
+      padding: 10,
+      boxSizing: "border-box",
     },
     mainContainer: {
       position: "relative",
@@ -133,6 +135,9 @@ const styles = (theme: Theme) =>
     },
     linearPredef: {
       height: 10,
+    },
+    errorIconStyle: {
+      marginRight: 3,
     },
   });
 
@@ -404,8 +409,8 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
     <React.Fragment>
       {error !== "" && (
         <div className={classes.errorBlock}>
-          <ErrorIcon fontSize="small" />
-          &nbsp;{error}
+          <ErrorIcon fontSize="small" className={classes.errorIconStyle} />{" "}
+          {error}
         </div>
       )}
       <Paper className={classes.paper}>
