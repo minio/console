@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
@@ -33,7 +33,6 @@ import {
   searchField,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../../../../Common/PageHeader/PageHeader";
-import storage from "local-storage-fallback";
 import { isNullOrUndefined } from "util";
 import { Button, Input } from "@material-ui/core";
 import * as reactMoment from "react-moment";
@@ -166,6 +165,29 @@ const ListObjects = ({
     const bucketName = match.params["bucket"];
     const internalPaths = match.params[0];
 
+    const verifyIfIsFile = () => {
+      const bucketName = match.params["bucket"];
+      const internalPaths = match.params[0];
+
+      api
+        .invoke(
+          "GET",
+          `/api/v1/buckets/${bucketName}/objects?prefix=${internalPaths}`
+        )
+        .then((res: BucketObjectsList) => {
+          //It is a file since it has elements in the object, setting file flag and waiting for component mount
+          if (res.objects !== null) {
+            setLastAsFile();
+          } else {
+            // It is a folder, we remove loader
+            setLoading(false);
+          }
+        })
+        .catch((err: any) => {
+          setLoading(false);
+        });
+    };
+
     let extraPath = "";
     if (internalPaths) {
       extraPath = `?prefix=${internalPaths}/`;
@@ -186,7 +208,7 @@ const ListObjects = ({
       .catch((err: any) => {
         setLoading(false);
       });
-  }, [loading, match]);
+  }, [loading, match, setLastAsFile]);
 
   useEffect(() => {
     const url = get(match, "url", "/object-browser");
@@ -194,29 +216,6 @@ const ListObjects = ({
       setAllRoutes(url);
     }
   }, [match, routesList, setAllRoutes]);
-
-  const verifyIfIsFile = () => {
-    const bucketName = match.params["bucket"];
-    const internalPaths = match.params[0];
-
-    api
-      .invoke(
-        "GET",
-        `/api/v1/buckets/${bucketName}/objects?prefix=${internalPaths}`
-      )
-      .then((res: BucketObjectsList) => {
-        //It is a file since it has elements in the object, setting file flag and waiting for component mount
-        if (res.objects !== null) {
-          setLastAsFile();
-        } else {
-          // It is a folder, we remove loader
-          setLoading(false);
-        }
-      })
-      .catch((err: any) => {
-        setLoading(false);
-      });
-  };
 
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
@@ -245,7 +244,6 @@ const ListObjects = ({
     if (isNullOrUndefined(e) || isNullOrUndefined(e.target)) {
       return;
     }
-    const token: string = storage.getItem("token")!;
     e.preventDefault();
     let file = e.target.files[0];
     const fileName = file.name;
