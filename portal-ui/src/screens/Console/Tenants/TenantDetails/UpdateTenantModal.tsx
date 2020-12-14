@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useEffect } from "react";
+import React, { useState, Fragment, useEffect, useCallback } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { Button, Grid } from "@material-ui/core";
@@ -33,7 +33,6 @@ const UpdateTenantModal = ({
   idTenant,
   classes,
 }: IUpdateTenantModal) => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSending, setIsSending] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [minioImage, setMinioImage] = useState<string>("");
@@ -51,13 +50,29 @@ const UpdateTenantModal = ({
   const [validMinioImage, setValidMinioImage] = useState<boolean>(true);
   const [validConsoleImage, setValidConsoleImage] = useState<boolean>(true);
 
+  const validateImage = useCallback(
+    (fieldToCheck: string) => {
+      const pattern = new RegExp("^$|^((.*?)/(.*?):(.+))$");
+
+      switch (fieldToCheck) {
+        case "consoleImage":
+          setValidConsoleImage(pattern.test(consoleImage));
+          break;
+        case "minioImage":
+          setValidMinioImage(pattern.test(minioImage));
+          break;
+      }
+    },
+    [consoleImage, minioImage]
+  );
+
   useEffect(() => {
     validateImage("minioImage");
-  }, [minioImage]);
+  }, [minioImage, validateImage]);
 
   useEffect(() => {
     validateImage("consoleImage");
-  }, [consoleImage]);
+  }, [consoleImage, validateImage]);
 
   const closeAction = () => {
     closeModalAndRefresh(false);
@@ -109,19 +124,6 @@ const UpdateTenantModal = ({
         setError(error);
         setIsSending(false);
       });
-  };
-
-  const validateImage = (fieldToCheck: string) => {
-    const pattern = new RegExp("^$|^((.*?)/(.*?):(.+))$");
-
-    switch (fieldToCheck) {
-      case "consoleImage":
-        setValidConsoleImage(pattern.test(consoleImage));
-        break;
-      case "minioImage":
-        setValidMinioImage(pattern.test(minioImage));
-        break;
-    }
   };
 
   return (

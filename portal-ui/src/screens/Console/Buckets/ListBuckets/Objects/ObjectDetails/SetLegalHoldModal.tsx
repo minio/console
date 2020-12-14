@@ -50,7 +50,7 @@ const SetLegalHoldModal = ({
   useEffect(() => {
     const status = get(actualInfo, "legal_hold_status", "OFF");
     setLegalHoldEnabled(status === "ON");
-  }, []);
+  }, [actualInfo]);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();

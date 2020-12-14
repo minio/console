@@ -122,7 +122,7 @@ const BrowseBuckets = ({
 
   useEffect(() => {
     resetRoutesList(true);
-  }, [match]);
+  }, [match, resetRoutesList]);
 
   useEffect(() => {
     if (loading) {

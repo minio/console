@@ -39,7 +39,6 @@ import api from "../../common/api";
 import Account from "./Account/Account";
 import Users from "./Users/Users";
 import Groups from "./Groups/Groups";
-import ListNotificationEndpoints from "./Configurations/NotificationEndpoints/ListNotificationEndpoints";
 import ConfigurationMain from "./Configurations/ConfigurationMain";
 import WebhookPanel from "./Configurations/ConfigurationPanels/WebhookPanel";
 import ListTenants from "./Tenants/ListTenants/ListTenants";

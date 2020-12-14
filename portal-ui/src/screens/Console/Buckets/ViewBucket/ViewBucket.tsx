@@ -229,7 +229,7 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
   const [isVersioned, setIsVersioned] = useState<boolean>(false);
   const [encryptionEnabled, setEncryptionEnabled] = useState<boolean>(false);
 
-  const fetchEvents = () => {
+  const fetchEvents = useCallback(() => {
     setLoadingBucket(true);
     const bucketName = match.params["bucketName"];
     api
@@ -263,7 +263,7 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
       .catch((err: any) => {
         setError(err);
       });
-  };
+  }, [match]);
 
   const fetchBucketsSize = useCallback(() => {
     const bucketName = match.params["bucketName"];
@@ -287,7 +287,7 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
         setLoadingSize(false);
         setErrorSize(err);
       });
-  }, []);
+  }, [match]);
 
   const loadInfo = useCallback(() => {
     const bucketName = match.params["bucketName"];
@@ -305,7 +305,7 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
       });
   }, [match]);
 
-  const fetchBucketEncryptionInfo = () => {
+  const fetchBucketEncryptionInfo = useCallback(() => {
     const bucketName = match.params["bucketName"];
     api
       .invoke("GET", `/api/v1/buckets/${bucketName}/encryption/info`)
@@ -317,7 +317,7 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
       .catch((err) => {
         console.log(err);
       });
-  };
+  }, [match]);
 
   const closeAddModalAndRefresh = () => {
     setAccessPolicyScreenOpen(false);
@@ -336,7 +336,7 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
     fetchEvents();
     fetchBucketsSize();
     fetchBucketEncryptionInfo();
-  }, [loadInfo]);
+  }, [loadInfo, fetchEvents, fetchBucketsSize, fetchBucketEncryptionInfo]);
 
   const bucketName = match.params["bucketName"];
 
@@ -437,6 +437,16 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
         {error !== "" && (
           <Grid item xs={12}>
             {error}
+          </Grid>
+        )}
+        {errBucket !== "" && (
+          <Grid item xs={12}>
+            {errBucket}
+          </Grid>
+        )}
+        {errorSize !== "" && (
+          <Grid item xs={12}>
+            {errorSize}
           </Grid>
         )}
         <Grid item xs={12} className={classes.container}>

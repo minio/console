@@ -113,7 +113,7 @@ const DateSelector = forwardRef(
     useEffect(() => {
       const [isValid, dateString] = validDate(year, month, day);
       onDateChange(dateString, isValid);
-    }, [month, day, year]);
+    }, [month, day, year, onDateChange]);
 
     const resetDate = () => {
       setMonth("");

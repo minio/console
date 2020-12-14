@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { Button, LinearProgress } from "@material-ui/core";
@@ -66,6 +66,27 @@ const AddUserContent = ({
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [currentGroups, setCurrentGroups] = useState<string[]>([]);
 
+  const getUserInformation = useCallback(() => {
+    if (!selectedUser) {
+      return null;
+    }
+
+    api
+      .invoke("GET", `/api/v1/users/${selectedUser.accessKey}`)
+      .then((res) => {
+        setAddLoading(false);
+        setAddError("");
+        setAccessKey(res.accessKey);
+        setSelectedGroups(res.memberOf || []);
+        setCurrentGroups(res.memberOf || []);
+        setEnabled(res.status === "enabled");
+      })
+      .catch((err) => {
+        setAddLoading(false);
+        setAddError(err);
+      });
+  }, [selectedUser]);
+
   useEffect(() => {
     if (selectedUser == null) {
       setAccessKey("");
@@ -74,7 +95,7 @@ const AddUserContent = ({
     } else {
       getUserInformation();
     }
-  }, []);
+  }, [selectedUser, getUserInformation]);
 
   const saveRecord = (event: React.FormEvent) => {
     event.preventDefault();
@@ -117,27 +138,6 @@ const AddUserContent = ({
           setAddError(err);
         });
     }
-  };
-
-  const getUserInformation = () => {
-    if (!selectedUser) {
-      return null;
-    }
-
-    api
-      .invoke("GET", `/api/v1/users/${selectedUser.accessKey}`)
-      .then((res) => {
-        setAddLoading(false);
-        setAddError("");
-        setAccessKey(res.accessKey);
-        setSelectedGroups(res.memberOf || []);
-        setCurrentGroups(res.memberOf || []);
-        setEnabled(res.status === "enabled");
-      })
-      .catch((err) => {
-        setAddLoading(false);
-        setAddError(err);
-      });
   };
 
   const resetForm = () => {

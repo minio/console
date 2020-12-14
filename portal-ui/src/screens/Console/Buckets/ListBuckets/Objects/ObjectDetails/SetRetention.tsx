@@ -77,7 +77,7 @@ const SetRetention = ({
       setType(objectInfo.retention_mode.toLowerCase());
       setAlreadyConfigured(true);
     }
-  }, []);
+  }, [objectInfo]);
 
   const dateElement = useRef<IRefObject>(null);
 

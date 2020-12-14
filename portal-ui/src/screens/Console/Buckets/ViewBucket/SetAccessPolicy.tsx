@@ -72,7 +72,7 @@ const SetAccessPolicy = ({
 
   useEffect(() => {
     setAccessPolicy(actualPolicy);
-  }, []);
+  }, [setAccessPolicy, actualPolicy]);
 
   return (
     <ModalWrapper
