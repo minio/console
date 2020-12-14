@@ -94,11 +94,11 @@ export const k8sfactorForDropdown = () => {
 export const getBytes = (
   value: string,
   unit: string,
-  fork8s: boolean = false
+  fromk8s: boolean = false
 ) => {
   const vl: number = parseFloat(value);
 
-  const unitsTake = fork8s ? k8sCalcUnits : units;
+  const unitsTake = fromk8s ? k8sCalcUnits : units;
 
   const powFactor = unitsTake.findIndex((element) => element === unit);
 
