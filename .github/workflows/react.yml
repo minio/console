@@ -1,0 +1,15 @@
+name: "React Tests"
+on:
+  push:
+  pull_request:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install modules
+        working-directory: ./portal-ui
+        run: yarn
+      - name: Run tests
+        working-directory: ./portal-ui
+        run: yarn test
