@@ -30,6 +30,7 @@ import {
   selectorsCommon,
 } from "../Common/FormComponents/common/styleLibrary";
 import { PolicyList } from "./types";
+import ErrorBlock from "../../shared/ErrorBlock";
 
 interface ISelectPolicyProps {
   classes: any;
@@ -52,9 +53,6 @@ const styles = (theme: Theme) =>
     addSideBar: {
       width: "320px",
       padding: "20px",
-    },
-    errorBlock: {
-      color: "red",
     },
     tableToolbar: {
       paddingLeft: theme.spacing(2),
@@ -161,7 +159,9 @@ const PolicySelectors = ({
       <Grid item xs={12}>
         <Paper className={classes.paper}>
           {loading && <LinearProgress />}
-          {error !== "" && <div>{error}</div>}
+          {error !== "" && (
+            <ErrorBlock errorMessage={error} withBreak={false} />
+          )}
           {records != null && records.length > 0 ? (
             <React.Fragment>
               <Grid item xs={12} className={classes.actionsTray}>

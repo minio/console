@@ -28,14 +28,9 @@ import {
 } from "@material-ui/core";
 import api from "../../../../common/api";
 import { BucketEvent, BucketList } from "../types";
-import Typography from "@material-ui/core/Typography";
+import ErrorBlock from "../../../shared/ErrorBlock";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    errorBlock: {
-      color: "red",
-    },
-  });
+const styles = (theme: Theme) => createStyles({});
 
 interface IDeleteEventProps {
   classes: any;
@@ -104,18 +99,7 @@ const DeleteEvent = ({
         {deleteLoading && <LinearProgress />}
         <DialogContentText id="alert-dialog-description">
           Are you sure you want to delete this event?
-          {deleteError !== "" && (
-            <React.Fragment>
-              <br />
-              <Typography
-                component="p"
-                variant="body1"
-                className={classes.errorBlock}
-              >
-                {deleteError}
-              </Typography>
-            </React.Fragment>
-          )}
+          {deleteError !== "" && <ErrorBlock errorMessage={deleteError} />}
         </DialogContentText>
       </DialogContent>
       <DialogActions>

@@ -38,6 +38,7 @@ import {
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../../Common/PageHeader/PageHeader";
+import ErrorBlock from "../../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -53,9 +54,6 @@ const styles = (theme: Theme) =>
     addSideBar: {
       width: "320px",
       padding: "20px",
-    },
-    errorBlock: {
-      color: "red",
     },
     tableToolbar: {
       paddingLeft: theme.spacing(2),
@@ -183,7 +181,11 @@ const ListBuckets = ({
       )}
       <PageHeader label={"Buckets"} />
       <Grid container>
-        {error !== "" && <span className={classes.error}>{error}</span>}
+        {error !== "" && (
+          <Grid item xs={12}>
+            <ErrorBlock errorMessage={error} withBreak={false} />
+          </Grid>
+        )}
         <Grid item xs={12} className={classes.container}>
           <Grid item xs={12} className={classes.actionsTray}>
             <TextField

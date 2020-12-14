@@ -34,6 +34,7 @@ import {
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../Common/PageHeader/PageHeader";
+import ErrorBlock from "../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -49,9 +50,6 @@ const styles = (theme: Theme) =>
     addSideBar: {
       width: "320px",
       padding: "20px",
-    },
-    errorBlock: {
-      color: "red",
     },
     tableToolbar: {
       paddingLeft: theme.spacing(2),
@@ -211,7 +209,7 @@ const Policies = ({ classes }: IPoliciesProps) => {
           </Grid>
           {error && (
             <Grid item xs={12}>
-              {error}
+              <ErrorBlock errorMessage={error} withBreak={false} />
             </Grid>
           )}
           <Grid item xs={12}>

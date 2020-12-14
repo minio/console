@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import React, { useState } from "react";
 import {
   Button,
@@ -27,29 +26,15 @@ import {
 } from "@material-ui/core";
 import api from "../../../common/api";
 import { PolicyList } from "./types";
-import Typography from "@material-ui/core/Typography";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    errorBlock: {
-      color: "red",
-    },
-  });
+import ErrorBlock from "../../shared/ErrorBlock";
 
 interface IDeletePolicyProps {
-  classes: any;
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedPolicy: string;
 }
 
-interface IDeletePolicyState {
-  deleteLoading: boolean;
-  deleteError: string;
-}
-
 const DeletePolicy = ({
-  classes,
   closeDeleteModalAndRefresh,
   deleteOpen,
   selectedPolicy,
@@ -89,18 +74,7 @@ const DeletePolicy = ({
         {deleteLoading && <LinearProgress />}
         <DialogContentText id="alert-dialog-description">
           Are you sure you want to delete policy <b>{selectedPolicy}</b>?.
-          {deleteError !== "" && (
-            <React.Fragment>
-              <br />
-              <Typography
-                component="p"
-                variant="body1"
-                className={classes.errorBlock}
-              >
-                {deleteError}
-              </Typography>
-            </React.Fragment>
-          )}
+          {deleteError !== "" && <ErrorBlock errorMessage={deleteError} />}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -128,4 +102,4 @@ const DeletePolicy = ({
   );
 };
 
-export default withStyles(styles)(DeletePolicy);
+export default DeletePolicy;

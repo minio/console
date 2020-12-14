@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import React, { useState } from "react";
 import {
   Button,
@@ -27,29 +26,15 @@ import {
 } from "@material-ui/core";
 import api from "../../../../common/api";
 import { BucketList } from "../types";
-import Typography from "@material-ui/core/Typography";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    errorBlock: {
-      color: "red",
-    },
-  });
+import ErrorBlock from "../../../shared/ErrorBlock";
 
 interface IDeleteBucketProps {
-  classes: any;
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedBucket: string;
 }
 
-interface IDeleteBucketState {
-  deleteLoading: boolean;
-  deleteError: string;
-}
-
 const DeleteBucket = ({
-  classes,
   closeDeleteModalAndRefresh,
   deleteOpen,
   selectedBucket,
@@ -94,18 +79,7 @@ const DeleteBucket = ({
         <DialogContentText id="alert-dialog-description">
           Are you sure you want to delete bucket <b>{selectedBucket}</b>? <br />
           A bucket can only be deleted if it's empty.
-          {deleteError !== "" && (
-            <React.Fragment>
-              <br />
-              <Typography
-                component="p"
-                variant="body1"
-                className={classes.errorBlock}
-              >
-                {deleteError}
-              </Typography>
-            </React.Fragment>
-          )}
+          {deleteError !== "" && <ErrorBlock errorMessage={deleteError} />}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -133,4 +107,4 @@ const DeleteBucket = ({
   );
 };
 
-export default withStyles(styles)(DeleteBucket);
+export default DeleteBucket;

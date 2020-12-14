@@ -6,6 +6,7 @@ import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBo
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import api from "../../../../common/api";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import ErrorBlock from "../../../shared/ErrorBlock";
 
 interface IUpdateTenantModal {
   open: boolean;
@@ -17,9 +18,6 @@ interface IUpdateTenantModal {
 
 const styles = (theme: Theme) =>
   createStyles({
-    errorBlock: {
-      color: "red",
-    },
     buttonContainer: {
       textAlign: "right",
     },
@@ -133,8 +131,12 @@ const UpdateTenantModal = ({
       onClose={closeAction}
     >
       <Grid container>
+        {error !== "" && (
+          <Grid item xs={12}>
+            <ErrorBlock errorMessage={error} withBreak={false} />
+          </Grid>
+        )}
         <Grid item xs={12} className={classes.formScrollable}>
-          {error !== "" && <span className={classes.errorBlock}>{error}</span>}
           <span>
             Please enter the MinIO image from dockerhub to use. If blank, then
             latest build will be used.

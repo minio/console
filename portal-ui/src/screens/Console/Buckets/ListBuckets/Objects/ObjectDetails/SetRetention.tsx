@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
@@ -25,7 +25,7 @@ import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapp
 import RadioGroupSelector from "../../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import DateSelector from "../../../../Common/FormComponents/DateSelector/DateSelector";
 import api from "../../../../../../common/api";
-import Typography from "@material-ui/core/Typography";
+import ErrorBlock from "../../../../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -36,9 +36,6 @@ const styles = (theme: Theme) =>
     },
     buttonContainer: {
       textAlign: "right",
-    },
-    errorBlock: {
-      color: "red",
     },
     ...modalBasic,
   });
@@ -170,16 +167,9 @@ const SetRetention = ({
       }}
     >
       {error !== "" && (
-        <React.Fragment>
-          <br />
-          <Typography
-            component="p"
-            variant="body1"
-            className={classes.errorBlock}
-          >
-            {error}
-          </Typography>
-        </React.Fragment>
+        <Grid item xs={12}>
+          <ErrorBlock errorMessage={error} />
+        </Grid>
       )}
       <Grid item xs={12} className={classes.objectName}>
         {objectName}

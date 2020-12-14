@@ -52,6 +52,7 @@ import DeleteObject from "../ListObjects/DeleteObject";
 import AddTagModal from "./AddTagModal";
 import DeleteTagModal from "./DeleteTagModal";
 import SetLegalHoldModal from "./SetLegalHoldModal";
+import ErrorBlock from "../../../../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -343,7 +344,7 @@ const ObjectDetails = ({
         <Grid item xs={12} className={classes.container}>
           {error !== "" && (
             <Grid item xs={12}>
-              {error}
+              <ErrorBlock errorMessage={error} />
             </Grid>
           )}
           <Grid item xs={12} className={classes.obTitleSection}>

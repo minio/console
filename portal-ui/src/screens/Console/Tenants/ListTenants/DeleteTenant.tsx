@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Dialog,
@@ -24,28 +24,19 @@ import {
   DialogTitle,
   LinearProgress,
 } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../../common/api";
 import { ITenant } from "./types";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import Grid from "@material-ui/core/Grid";
+import ErrorBlock from "../../../shared/ErrorBlock";
+
 interface IDeleteTenant {
-  classes: any;
   deleteOpen: boolean;
   selectedTenant: ITenant;
   closeDeleteModalAndRefresh: (refreshList: boolean) => any;
 }
 
-const styles = (theme: Theme) =>
-  createStyles({
-    errorBlock: {
-      color: "red",
-    },
-  });
-
 const DeleteTenant = ({
-  classes,
   deleteOpen,
   selectedTenant,
   closeDeleteModalAndRefresh,
@@ -108,18 +99,7 @@ const DeleteTenant = ({
               value={retypeTenant}
             />
           </Grid>
-          {deleteError !== "" && (
-            <React.Fragment>
-              <br />
-              <Typography
-                component="p"
-                variant="body1"
-                className={classes.errorBlock}
-              >
-                {deleteError}
-              </Typography>
-            </React.Fragment>
-          )}
+          {deleteError !== "" && <ErrorBlock errorMessage={deleteError} />}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -146,4 +126,4 @@ const DeleteTenant = ({
   );
 };
 
-export default withStyles(styles)(DeleteTenant);
+export default DeleteTenant;

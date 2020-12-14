@@ -47,6 +47,7 @@ import { containerForHeader } from "../../Common/FormComponents/common/styleLibr
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import Checkbox from "@material-ui/core/Checkbox";
 import EnableBucketEncryption from "./EnableBucketEncryption";
+import ErrorBlock from "../../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -62,9 +63,6 @@ const styles = (theme: Theme) =>
     addSideBar: {
       width: "320px",
       padding: "20px",
-    },
-    errorBlock: {
-      color: "red",
     },
     tableToolbar: {
       paddingLeft: theme.spacing(2),
@@ -436,7 +434,7 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
       <Grid container>
         {error !== "" && (
           <Grid item xs={12}>
-            {error}
+            <ErrorBlock errorMessage={error} withBreak={false} />
           </Grid>
         )}
         {errBucket !== "" && (

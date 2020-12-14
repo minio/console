@@ -19,7 +19,6 @@ import debounce from "lodash/debounce";
 import get from "lodash/get";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { LinearProgress } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
@@ -52,6 +51,7 @@ import {
   ICapacity,
   ITenantCreator,
 } from "../../../../common/types";
+import ErrorBlock from "../../../shared/ErrorBlock";
 
 interface IAddTenantProps {
   open: boolean;
@@ -64,9 +64,6 @@ interface IAddTenantProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    errorBlock: {
-      color: "red",
-    },
     buttonContainer: {
       textAlign: "right",
     },
@@ -2129,13 +2126,7 @@ const AddTenant = ({
           </div>
           {addError !== "" && (
             <Grid item xs={12}>
-              <Typography
-                component="p"
-                variant="body1"
-                className={classes.errorBlock}
-              >
-                {addError}
-              </Typography>
+              <ErrorBlock errorMessage={addError} withBreak={false} />
             </Grid>
           )}
 

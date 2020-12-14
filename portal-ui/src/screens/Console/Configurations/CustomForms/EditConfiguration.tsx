@@ -20,7 +20,6 @@ import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import api from "../../../../common/api";
 import ConfTargetGeneric from "../ConfTargetGeneric";
 import { serverNeedsRestart } from "../../../../actions";
@@ -30,14 +29,12 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import { fieldsConfigurations, removeEmptyFields } from "../utils";
 import { IConfigurationElement, IElementValue } from "../types";
+import ErrorBlock from "../../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
     ...settingsCommon,
-    errorBlock: {
-      color: "red",
-    },
     strongText: {
       fontWeight: 700,
     },
@@ -154,13 +151,7 @@ const EditConfiguration = ({
             )}
             {errorConfig !== "" && (
               <Grid item xs={12}>
-                <Typography
-                  component="p"
-                  variant="body1"
-                  className={classes.errorBlock}
-                >
-                  {errorConfig}
-                </Typography>
+                <ErrorBlock errorMessage={errorConfig} withBreak={false} />
               </Grid>
             )}
             <ConfTargetGeneric

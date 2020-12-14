@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import React, { useState } from "react";
 import {
   Button,
@@ -26,17 +25,9 @@ import {
   LinearProgress,
 } from "@material-ui/core";
 import api from "../../../../../../common/api";
-import Typography from "@material-ui/core/Typography";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    errorBlock: {
-      color: "red",
-    },
-  });
+import ErrorBlock from "../../../../../shared/ErrorBlock";
 
 interface IDeleteObjectProps {
-  classes: any;
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedObject: string;
@@ -49,7 +40,6 @@ interface IDeleteObjectState {
 }
 
 const DeleteObject = ({
-  classes,
   closeDeleteModalAndRefresh,
   deleteOpen,
   selectedBucket,
@@ -101,14 +91,7 @@ const DeleteObject = ({
           Are you sure you want to delete: <b>{selectedObject}</b>?{" "}
           {deleteError !== "" && (
             <React.Fragment>
-              <br />
-              <Typography
-                component="p"
-                variant="body1"
-                className={classes.errorBlock}
-              >
-                {deleteError}
-              </Typography>
+              <ErrorBlock errorMessage={deleteError} />
             </React.Fragment>
           )}
         </DialogContentText>
@@ -139,4 +122,4 @@ const DeleteObject = ({
   );
 };
 
-export default withStyles(styles)(DeleteObject);
+export default DeleteObject;

@@ -38,9 +38,6 @@ interface IListConfiguration {
 
 const styles = (theme: Theme) =>
   createStyles({
-    errorBlock: {
-      color: "red",
-    },
     strongText: {
       fontWeight: 700,
     },

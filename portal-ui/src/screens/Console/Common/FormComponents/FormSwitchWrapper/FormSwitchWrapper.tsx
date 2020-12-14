@@ -52,9 +52,6 @@ const styles = (theme: Theme) =>
       width: "320px",
       padding: "20px",
     },
-    errorBlock: {
-      color: "red",
-    },
     tableToolbar: {
       paddingLeft: theme.spacing(2),
       paddingRight: theme.spacing(0),

@@ -18,9 +18,6 @@ interface IAddPoolProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    errorBlock: {
-      color: "red",
-    },
     buttonContainer: {
       textAlign: "right",
     },
