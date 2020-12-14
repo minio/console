@@ -3,7 +3,7 @@
 A graphical user interface for [MinIO](https://github.com/minio/minio)
 
 
-| Dashboard  | Adding A User |
+| Dashboard  | Creating a bucket |
 | ------------- | ------------- |
 | ![Dashboard](images/pic1.png)  | ![Dashboard](images/pic2.png) |
 
