@@ -35,6 +35,7 @@ import {
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../Common/PageHeader/PageHeader";
+import ErrorBlock from "../../shared/ErrorBlock";
 
 interface IGroupsProps {
   classes: any;
@@ -55,9 +56,6 @@ const styles = (theme: Theme) =>
     addSideBar: {
       width: "320px",
       padding: "20px",
-    },
-    errorBlock: {
-      color: "red",
     },
     tableToolbar: {
       paddingLeft: theme.spacing(2),
@@ -189,7 +187,11 @@ const Groups = ({ classes }: IGroupsProps) => {
       <PageHeader label={"Groups"} />
       <Grid container>
         <Grid item xs={12} className={classes.container}>
-          {error !== "" ? <Grid container>{error}</Grid> : <React.Fragment />}
+          {error !== "" && (
+            <Grid container>
+              <ErrorBlock errorMessage={error} withBreak={false} />
+            </Grid>
+          )}
           <Grid item xs={12} className={classes.actionsTray}>
             <TextField
               placeholder="Search Groups"

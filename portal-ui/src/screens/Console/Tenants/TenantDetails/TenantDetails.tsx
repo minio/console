@@ -38,6 +38,7 @@ import PageHeader from "../../Common/PageHeader/PageHeader";
 import UsageBarWrapper from "../../Common/UsageBarWrapper/UsageBarWrapper";
 import UpdateTenantModal from "./UpdateTenantModal";
 import PencilIcon from "../../Common/TableWrapper/TableActionIcons/PencilIcon";
+import ErrorBlock from "../../../shared/ErrorBlock";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -51,9 +52,6 @@ interface ITenantUsage {
 
 const styles = (theme: Theme) =>
   createStyles({
-    errorBlock: {
-      color: "red",
-    },
     buttonContainer: {
       textAlign: "right",
     },
@@ -254,7 +252,7 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
       <Grid container>
         {error !== "" && (
           <Grid item xs={12}>
-            {error}
+            <ErrorBlock errorMessage={error} withBreak={false} />
           </Grid>
         )}
         <Grid item xs={12}>

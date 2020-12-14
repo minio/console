@@ -37,6 +37,7 @@ import BrowserBreadcrumbs from "./BrowserBreadcrumbs";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import AddBucket from "../Buckets/ListBuckets/AddBucket";
 import api from "../../../common/api";
+import ErrorBlock from "../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -52,9 +53,6 @@ const styles = (theme: Theme) =>
     addSideBar: {
       width: "320px",
       padding: "20px",
-    },
-    errorBlock: {
-      color: "red",
     },
     tableToolbar: {
       paddingLeft: theme.spacing(2),
@@ -220,7 +218,9 @@ const BrowseBuckets = ({
           <br />
         </Grid>
         <Grid item xs={12}>
-          {error !== "" && <span className={classes.errorBlock}>{error}</span>}
+          {error !== "" && (
+            <ErrorBlock errorMessage={error} withBreak={false} />
+          )}
           <TableWrapper
             itemActions={[
               {

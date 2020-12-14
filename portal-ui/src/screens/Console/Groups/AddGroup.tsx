@@ -18,7 +18,6 @@ import React, { useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import api from "../../../common/api";
 import UsersSelectors from "./UsersSelectors";
@@ -26,6 +25,7 @@ import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
+import ErrorBlock from "../../shared/ErrorBlock";
 
 interface IGroupProps {
   open: boolean;
@@ -42,9 +42,6 @@ interface MainGroupProps {
 
 const styles = (theme: Theme) =>
   createStyles({
-    errorBlock: {
-      color: "red",
-    },
     strongText: {
       fontWeight: 700,
     },
@@ -193,13 +190,7 @@ const AddGroup = ({
           <Grid item xs={12} className={classes.formScrollable}>
             {addError !== "" && (
               <Grid item xs={12}>
-                <Typography
-                  component="p"
-                  variant="body1"
-                  className={classes.errorBlock}
-                >
-                  {addError}
-                </Typography>
+                <ErrorBlock errorMessage={addError} withBreak={false} />
               </Grid>
             )}
 

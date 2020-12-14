@@ -18,7 +18,6 @@ import React, { useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { Button, LinearProgress } from "@material-ui/core";
 import {
@@ -28,12 +27,10 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { ChangePasswordRequest } from "../Buckets/types";
 import api from "../../../common/api";
+import ErrorBlock from "../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
-    errorBlock: {
-      color: "red",
-    },
     buttonContainer: {
       textAlign: "right",
     },
@@ -120,13 +117,7 @@ const ChangePassword = ({
           <Grid item xs={12} className={classes.formScrollable}>
             {error !== "" && (
               <Grid item xs={12}>
-                <Typography
-                  component="p"
-                  variant="body1"
-                  className={classes.errorBlock}
-                >
-                  {error}
-                </Typography>
+                <ErrorBlock errorMessage={error} />
               </Grid>
             )}
             <Grid item xs={12}>

@@ -39,6 +39,7 @@ import {
 import Divider from "@material-ui/core/Divider";
 import LockIcon from "@material-ui/icons/Lock";
 import ChangePasswordModal from "./ChangePasswordModal";
+import ErrorBlock from "../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -54,9 +55,6 @@ const styles = (theme: Theme) =>
       width: "480px",
       minWidth: "320px",
       padding: "20px",
-    },
-    errorBlock: {
-      color: "red",
     },
     tableToolbar: {
       paddingLeft: theme.spacing(2),
@@ -274,13 +272,7 @@ const Account = ({ classes }: IServiceAccountsProps) => {
           </Grid>
           {error !== "" && (
             <Grid item xs={12}>
-              <Typography
-                component="p"
-                variant="body1"
-                className={classes.errorBlock}
-              >
-                {error}
-              </Typography>
+              <ErrorBlock errorMessage={error} withBreak={false} />
             </Grid>
           )}
           <Grid item xs={12}>

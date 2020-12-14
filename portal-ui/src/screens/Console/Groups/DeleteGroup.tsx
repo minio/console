@@ -14,8 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Dialog,
@@ -26,28 +25,19 @@ import {
   LinearProgress,
 } from "@material-ui/core";
 import api from "../../../common/api";
-import Typography from "@material-ui/core/Typography";
 import { UsersList } from "../Users/types";
+import ErrorBlock from "../../shared/ErrorBlock";
 
 interface IDeleteGroup {
   selectedGroup: string;
   deleteOpen: boolean;
   closeDeleteModalAndRefresh: any;
-  classes: any;
 }
-
-const styles = (theme: Theme) =>
-  createStyles({
-    errorBlock: {
-      color: "red",
-    },
-  });
 
 const DeleteGroup = ({
   selectedGroup,
   deleteOpen,
   closeDeleteModalAndRefresh,
-  classes,
 }: IDeleteGroup) => {
   const [isDeleting, setDeleteLoading] = useState<boolean>(false);
   const [deleteError, setError] = useState<string>("");
@@ -94,18 +84,7 @@ const DeleteGroup = ({
           {isDeleting && <LinearProgress />}
           <DialogContentText id="alert-dialog-description">
             Are you sure you want to delete group <b>{selectedGroup}</b>?
-            {deleteError !== "" && (
-              <React.Fragment>
-                <br />
-                <Typography
-                  component="p"
-                  variant="body1"
-                  className={classes.errorBlock}
-                >
-                  {deleteError}
-                </Typography>
-              </React.Fragment>
-            )}
+            {deleteError !== "" && <ErrorBlock errorMessage={deleteError} />}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -127,4 +106,4 @@ const DeleteGroup = ({
   );
 };
 
-export default withStyles(styles)(DeleteGroup);
+export default DeleteGroup;

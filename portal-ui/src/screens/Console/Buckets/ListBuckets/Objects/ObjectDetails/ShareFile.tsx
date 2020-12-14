@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import CopyToClipboard from "react-copy-to-clipboard";
-import Typography from "@material-ui/core/Typography";
 import Snackbar from "@material-ui/core/Snackbar";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
@@ -12,6 +11,7 @@ import { CopyIcon } from "../../../../../../icons";
 import api from "../../../../../../common/api";
 import { IFileInfo } from "./types";
 import PredefinedList from "../../../../Common/FormComponents/PredefinedList/PredefinedList";
+import ErrorBlock from "../../../../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -20,9 +20,6 @@ const styles = (theme: Theme) =>
     },
     modalContent: {
       paddingBottom: 53,
-    },
-    errorBlock: {
-      color: "red",
     },
     ...modalBasic,
   });
@@ -149,13 +146,7 @@ const ShareFile = ({
         <Grid container className={classes.modalContent}>
           {error !== "" && (
             <Grid item xs={12}>
-              <Typography
-                component="p"
-                variant="body1"
-                className={classes.errorBlock}
-              >
-                {error}
-              </Typography>
+              <ErrorBlock errorMessage={error} withBreak={false} />
             </Grid>
           )}
           <Grid item xs={12} className={classes.dateContainer}>

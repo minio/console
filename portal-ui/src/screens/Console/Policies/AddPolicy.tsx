@@ -16,7 +16,6 @@
 
 import React, { useEffect, useState } from "react";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../common/api";
@@ -28,12 +27,10 @@ import {
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
+import ErrorBlock from "../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
-    errorBlock: {
-      color: "red",
-    },
     jsonPolicyEditor: {
       minHeight: 400,
       width: "100%",
@@ -129,13 +126,7 @@ const AddPolicy = ({
           <Grid item xs={12} className={classes.formScrollable}>
             {addError !== "" && (
               <Grid item xs={12}>
-                <Typography
-                  component="p"
-                  variant="body1"
-                  className={classes.errorBlock}
-                >
-                  {addError}
-                </Typography>
+                <ErrorBlock errorMessage={addError} />
               </Grid>
             )}
             <Grid item xs={12}>

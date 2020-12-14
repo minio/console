@@ -24,6 +24,7 @@ import HelpIcon from "@material-ui/icons/Help";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 import { fileProcess } from "./utils";
+import ErrorBlock from "../../../../shared/ErrorBlock";
 
 interface InputBoxProps {
   label: string;
@@ -161,12 +162,7 @@ const FileSelector = ({
               </IconButton>
             )}
 
-            {error !== "" && (
-              <React.Fragment>
-                <br />
-                <span className={classes.errorText}>{error}</span>
-              </React.Fragment>
-            )}
+            {error !== "" && <ErrorBlock errorMessage={error} />}
           </div>
         ) : (
           <div className={classes.fileReselect}>

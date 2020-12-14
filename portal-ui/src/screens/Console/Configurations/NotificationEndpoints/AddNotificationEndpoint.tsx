@@ -19,7 +19,6 @@ import get from "lodash/get";
 import Grid from "@material-ui/core/Grid";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
 import ConfPostgres from "../CustomForms/ConfPostgres";
 import api from "../../../../common/api";
 import { serverNeedsRestart } from "../../../../actions";
@@ -28,8 +27,8 @@ import ConfMySql from "../CustomForms/ConfMySql";
 import ConfTargetGeneric from "../ConfTargetGeneric";
 import {
   notificationEndpointsFields,
-  notifyPostgres,
   notifyMysql,
+  notifyPostgres,
   removeEmptyFields,
 } from "../utils";
 import { IElementValue } from "../types";
@@ -38,14 +37,12 @@ import {
   settingsCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { servicesList } from "./utils";
+import ErrorBlock from "../../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
     ...modalBasic,
     ...settingsCommon,
-    errorBlock: {
-      color: "red",
-    },
     strongText: {
       fontWeight: 700,
     },
@@ -157,13 +154,7 @@ const AddNotificationEndpoint = ({
             <Grid item xs={12} className={classes.settingsFormContainer}>
               {addError !== "" && (
                 <Grid item xs={12}>
-                  <Typography
-                    component="p"
-                    variant="body1"
-                    className={classes.errorBlock}
-                  >
-                    {addError}
-                  </Typography>
+                  <ErrorBlock errorMessage={addError} withBreak={false} />
                 </Grid>
               )}
               {srvComponent}

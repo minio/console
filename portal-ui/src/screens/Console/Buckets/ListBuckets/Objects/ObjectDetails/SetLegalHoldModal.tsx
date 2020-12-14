@@ -8,6 +8,7 @@ import { IFileInfo } from "./types";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import api from "../../../../../../common/api";
+import ErrorBlock from "../../../../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -18,9 +19,6 @@ const styles = (theme: Theme) =>
     },
     buttonContainer: {
       textAlign: "right",
-    },
-    errorBlock: {
-      color: "red",
     },
     ...modalBasic,
   });
@@ -85,7 +83,7 @@ const SetLegalHoldModal = ({
         closeModalAndRefresh(false);
       }}
     >
-      {error !== "" && <span className={classes.errorBlock}>{error}</span>}
+      {error !== "" && <ErrorBlock errorMessage={error} withBreak={false} />}
       <Grid item xs={12} className={classes.objectName}>
         {objectName}
       </Grid>

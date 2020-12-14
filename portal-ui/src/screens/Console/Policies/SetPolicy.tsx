@@ -25,6 +25,7 @@ import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import api from "../../../common/api";
 import PolicySelectors from "./PolicySelectors";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
+import ErrorBlock from "../../shared/ErrorBlock";
 
 interface ISetPolicyProps {
   classes: any;
@@ -129,7 +130,11 @@ const SetPolicy = ({
       modalOpen={open}
       title="Set Policies"
     >
-      {error !== "" && <span className={classes.error}>{error}</span>}
+      {error !== "" && (
+        <Grid item xs={12}>
+          <ErrorBlock errorMessage={error} withBreak={false} />
+        </Grid>
+      )}
       <Grid item xs={12}>
         <PredefinedList
           label={`Selected ${selectedGroup !== null ? "Group" : "User"}`}

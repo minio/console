@@ -14,9 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
 import {
   Button,
   Dialog,
@@ -27,12 +26,10 @@ import {
   LinearProgress,
 } from "@material-ui/core";
 import api from "../../../common/api";
+import ErrorBlock from "../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
-    errorBlock: {
-      color: "red",
-    },
     wrapText: {
       maxWidth: "200px",
       whiteSpace: "normal",
@@ -95,18 +92,7 @@ const DeleteServiceAccount = ({
         <DialogContentText id="alert-dialog-description">
           Are you sure you want to delete service account{" "}
           <b className={classes.wrapText}>{selectedServiceAccount}</b>?
-          {deleteError !== "" && (
-            <React.Fragment>
-              <br />
-              <Typography
-                component="p"
-                variant="body1"
-                className={classes.errorBlock}
-              >
-                {deleteError}
-              </Typography>
-            </React.Fragment>
-          )}
+          {deleteError !== "" && <ErrorBlock errorMessage={deleteError} />}
         </DialogContentText>
       </DialogContent>
       <DialogActions>

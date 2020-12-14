@@ -13,16 +13,16 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import api from "../../../common/api";
 import GroupsSelectors from "./GroupsSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
+import ErrorBlock from "../../shared/ErrorBlock";
 
 interface IAddToGroup {
   open: boolean;
@@ -33,9 +33,6 @@ interface IAddToGroup {
 
 const styles = (theme: Theme) =>
   createStyles({
-    errorBlock: {
-      color: "red",
-    },
     strongText: {
       fontWeight: 700,
     },
@@ -134,13 +131,7 @@ const AddToGroup = ({
             <Grid item xs={12} className={classes.formScrollable}>
               {updatingError !== "" && (
                 <Grid item xs={12}>
-                  <Typography
-                    component="p"
-                    variant="body1"
-                    className={classes.errorBlock}
-                  >
-                    {updatingError}
-                  </Typography>
+                  <ErrorBlock errorMessage={updatingError} withBreak={false} />
                 </Grid>
               )}
               <PredefinedList

@@ -43,6 +43,7 @@ import {
 import SlideOptions from "../../Common/SlideOptions/SlideOptions";
 import BackSettingsIcon from "../../../../icons/BackSettingsIcon";
 import NotificationTypeSelector from "./NotificationTypeSelector";
+import ErrorBlock from "../../../shared/ErrorBlock";
 
 interface IListNotificationEndpoints {
   classes: any;
@@ -54,9 +55,6 @@ const styles = (theme: Theme) =>
     ...searchField,
     ...settingsCommon,
     ...containerForHeader(theme.spacing(4)),
-    errorBlock: {
-      color: "red",
-    },
     strongText: {
       fontWeight: 700,
     },
@@ -186,7 +184,11 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
                     </Grid>
 
                     <Grid item xs={12} className={classes.lambdaContainer}>
-                      {error !== "" && <Grid container>{error}</Grid>}
+                      {error !== "" && (
+                        <Grid container>
+                          <ErrorBlock errorMessage={error} withBreak={false} />
+                        </Grid>
+                      )}
                       <Grid item xs={12} className={classes.actionsTray}>
                         <TextField
                           placeholder="Filter"

@@ -25,7 +25,7 @@ import Grid from "@material-ui/core/Grid";
 
 const styles = (theme: Theme) =>
   createStyles({
-    errorBlock: {
+    warningBlock: {
       color: "red",
     },
     buttonContainer: {
@@ -100,7 +100,7 @@ const CredentialsPrompt = ({
             <Typography
               component="p"
               variant="body1"
-              className={classes.errorBlock}
+              className={classes.warningBlock}
             >
               Write these down, as this is the only time the secret will be
               displayed.

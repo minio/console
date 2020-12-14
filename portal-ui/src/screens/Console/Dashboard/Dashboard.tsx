@@ -29,6 +29,7 @@ import { containerForHeader } from "../Common/FormComponents/common/styleLibrary
 import AllBucketsIcon from "../../../icons/AllBucketsIcon";
 import UsageIcon from "../../../icons/UsageIcon";
 import EgressIcon from "../../../icons/EgressIcon";
+import ErrorBlock from "../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -200,7 +201,11 @@ const Dashboard = ({ classes }: IDashboardProps) => {
       <div className={classes.dashboardBG} />
       <Grid container className={classes.dashboardContainer}>
         <Grid container spacing={3} className={classes.container}>
-          {error !== "" && <Grid container>{error}</Grid>}
+          {error !== "" && (
+            <Grid container>
+              <ErrorBlock errorMessage={error} />
+            </Grid>
+          )}
           {loading ? (
             <Grid item xs={12} md={12} lg={12}>
               <LinearProgress />

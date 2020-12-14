@@ -5,6 +5,7 @@ import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
 import api from "../../../../../../common/api";
+import ErrorBlock from "../../../../../shared/ErrorBlock";
 
 interface ITagModal {
   modalOpen: boolean;
@@ -83,7 +84,9 @@ const AddTagModal = ({
           <h3 className={classes.pathLabel}>
             Selected Object: {selectedObject}
           </h3>
-          {error !== "" && <span>{error}</span>}
+          {error !== "" && (
+            <ErrorBlock errorMessage={error} withBreak={false} />
+          )}
           <Grid item xs={12}>
             <InputBoxWrapper
               value={newKey}
