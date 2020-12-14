@@ -22,6 +22,10 @@ export const ADD_BUCKET_QUOTA_TYPE = "ADD_BUCKET_QUOTA_TYPE";
 export const ADD_BUCKET_QUOTA_SIZE = "ADD_BUCKET_QUOTA_SIZE";
 export const ADD_BUCKET_QUOTA_UNIT = "ADD_BUCKET_QUOTA_UNIT";
 export const ADD_BUCKET_RESET = "ADD_BUCKET_RESET";
+export const ADD_BUCKET_RETENTION = "ADD_BUCKET_RETENTION";
+export const ADD_BUCKET_RETENTION_MODE = "ADD_BUCKET_RETENTION_MODE";
+export const ADD_BUCKET_RETENTION_UNIT = "ADD_BUCKET_RETENTION_UNIT";
+export const ADD_BUCKET_RETENTION_VALIDITY = "ADD_BUCKET_RETENTION_VALIDITY";
 
 interface AddBucketOpenAction {
   type: typeof ADD_BUCKET_OPEN;
@@ -61,6 +65,25 @@ interface AddBucketResetAction {
   type: typeof ADD_BUCKET_RESET;
 }
 
+interface AddBucketRetentionAction {
+  type: typeof ADD_BUCKET_RETENTION;
+  retention: boolean;
+}
+
+interface AddBucketRetentionModeAction {
+  type: typeof ADD_BUCKET_RETENTION_MODE;
+  retentionMode: string;
+}
+
+interface AddBucketRetentionUnitAction {
+  type: typeof ADD_BUCKET_RETENTION_UNIT;
+  retentionUnit: string;
+}
+interface AddBucketRetentionValidityAction {
+  type: typeof ADD_BUCKET_RETENTION_VALIDITY;
+  retentionValidity: number;
+}
+
 export type BucketActionTypes =
   | AddBucketOpenAction
   | AddBucketNameAction
@@ -69,7 +92,11 @@ export type BucketActionTypes =
   | AddBucketQuotaTypeAction
   | AddBucketQuotaSizeAction
   | AddBucketQuotaUnitAction
-  | AddBucketResetAction;
+  | AddBucketResetAction
+  | AddBucketRetentionAction
+  | AddBucketRetentionModeAction
+  | AddBucketRetentionUnitAction
+  | AddBucketRetentionValidityAction;
 
 export function addBucketOpen(open: boolean) {
   return {
@@ -122,5 +149,33 @@ export function addBucketQuotaUnit(quotaUnit: string) {
 export function addBucketReset() {
   return {
     type: ADD_BUCKET_RESET,
+  };
+}
+
+export function addBucketRetention(retention: boolean) {
+  return {
+    type: ADD_BUCKET_RETENTION,
+    retention: retention,
+  };
+}
+
+export function addBucketRetentionMode(mode: string) {
+  return {
+    type: ADD_BUCKET_RETENTION_MODE,
+    retentionMode: mode,
+  };
+}
+
+export function addBucketRetentionUnit(unit: string) {
+  return {
+    type: ADD_BUCKET_RETENTION_UNIT,
+    retentionUnit: unit,
+  };
+}
+
+export function addBucketRetentionValidity(validity: number) {
+  return {
+    type: ADD_BUCKET_RETENTION_VALIDITY,
+    retentionValidity: validity,
   };
 }
