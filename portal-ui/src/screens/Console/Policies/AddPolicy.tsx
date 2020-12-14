@@ -100,7 +100,7 @@ const AddPolicy = ({
         policyEdit ? JSON.stringify(JSON.parse(policyEdit.policy), null, 4) : ""
       );
     }
-  }, []);
+  }, [policyEdit]);
 
   const resetForm = () => {
     setPolicyName("");

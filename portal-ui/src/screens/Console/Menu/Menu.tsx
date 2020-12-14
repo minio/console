@@ -40,12 +40,11 @@ import {
   DashboardIcon,
   GroupsIcon,
   IAMPoliciesIcon,
-  LambdaNotificationsIcon,
   MirroringIcon,
   ServiceAccountsIcon,
+  TraceIcon,
   UsersIcon,
   WarpIcon,
-  TraceIcon,
 } from "../../../icons";
 import { clearSession } from "../../../common/utils";
 import LicenseIcon from "../../../icons/LicenseIcon";

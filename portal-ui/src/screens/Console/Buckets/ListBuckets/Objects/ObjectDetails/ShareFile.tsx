@@ -42,13 +42,13 @@ const ShareFile = ({
   bucketName,
   dataObject,
 }: IShareFileProps) => {
-  const [shareURL, setShareURL] = useState("");
-  const [isLoadingFile, setIsLoadingFile] = useState(false);
-  const [error, setError] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
-  const [dateValid, setDateValid] = useState(true);
-  const [openSnack, setOpenSnack] = useState(false);
-  const [snackBarMessage, setSnackbarMessage] = useState("");
+  const [shareURL, setShareURL] = useState<string>("");
+  const [isLoadingFile, setIsLoadingFile] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [dateValid, setDateValid] = useState<boolean>(true);
+  const [openSnack, setOpenSnack] = useState<boolean>(false);
+  const [snackBarMessage, setSnackbarMessage] = useState<string>("");
 
   const showSnackBarMessage = (text: string) => {
     setSnackbarMessage(text);
@@ -66,13 +66,13 @@ const ShareFile = ({
       setSelectedDate(newDate);
       return;
     }
-    setShareURL("");
     setSelectedDate("");
   };
 
   useEffect(() => {
     if (dateValid) {
       setIsLoadingFile(true);
+      setShareURL("");
 
       const slDate = new Date(`${selectedDate}T23:59:59`);
       const currDate = new Date();
@@ -116,9 +116,7 @@ const ShareFile = ({
         });
       return;
     }
-
-    setShareURL("");
-  }, [dataObject, selectedDate]);
+  }, [dataObject, selectedDate, bucketName, dateValid, setShareURL]);
 
   const snackBarAction = (
     <Button
