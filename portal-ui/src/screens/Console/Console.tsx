@@ -50,6 +50,7 @@ import Trace from "./Trace/Trace";
 import Logs from "./Logs/Logs";
 import Heal from "./Heal/Heal";
 import Watch from "./Watch/Watch";
+import LogsSearchMain from "./Logs/LogSearch/LogsSearchMain";
 
 const drawerWidth = 245;
 
@@ -270,6 +271,10 @@ const Console = ({
     {
       component: TenantDetails,
       path: "/namespaces/:tenantNamespace/tenants/:tenantName",
+    },
+    {
+      component: LogsSearchMain,
+      path: "/log-search",
     },
     {
       component: License,

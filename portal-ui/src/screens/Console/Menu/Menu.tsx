@@ -21,6 +21,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import DescriptionIcon from "@material-ui/icons/Description";
 import Collapse from "@material-ui/core/Collapse";
+import PageviewIcon from "@material-ui/icons/Pageview";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
 import { Divider, withStyles } from "@material-ui/core";
@@ -250,6 +251,14 @@ const Menu = ({ userLoggedIn, classes, pages, operatorMode }: IMenuProps) => {
       to: "/logs",
       name: "Logs",
       icon: <ConsoleIcon />,
+    },
+    {
+      group: "Tools",
+      type: "item",
+      component: NavLink,
+      to: "/log-search",
+      name: "Audit Log Search",
+      icon: <PageviewIcon />,
     },
     {
       group: "Tools",
