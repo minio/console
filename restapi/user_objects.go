@@ -173,7 +173,7 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 		obj := &models.BucketObject{
 			Name:           lsObj.Key,
 			Size:           lsObj.Size,
-			LastModified:   lsObj.LastModified.String(),
+			LastModified:   lsObj.LastModified.Format(time.RFC3339),
 			ContentType:    lsObj.ContentType,
 			VersionID:      lsObj.VersionID,
 			IsLatest:       lsObj.IsLatest,

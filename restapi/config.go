@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/minio/minio/pkg/certs"
@@ -43,6 +44,12 @@ var TLSPort = "9443"
 var TLSRedirect = "off"
 
 var SessionDuration = 45 * time.Minute
+
+var logSearchAPI string
+var logSearchURL string
+var prometheusURL string
+
+var once sync.Once
 
 func getAccessKey() string {
 	return env.Get(ConsoleAccessKey, "minioadmin")
@@ -226,6 +233,33 @@ func getSecureFeaturePolicy() string {
 
 func getSecureExpectCTHeader() string {
 	return env.Get(ConsoleSecureExpectCTHeader, "")
+}
+
+func getLogSearchAPIToken() string {
+	once.Do(func() {
+		initVars()
+	})
+	return logSearchAPI
+}
+
+func getLogSearchURL() string {
+	once.Do(func() {
+		initVars()
+	})
+	return logSearchURL
+}
+
+func getPrometheusURL() string {
+	once.Do(func() {
+		initVars()
+	})
+	return prometheusURL
+}
+
+func initVars() {
+	logSearchAPI = env.Get(LogSearchQueryAuthToken, "")
+	logSearchURL = env.Get(LogSearchURL, "http://localhost:8080")
+	prometheusURL = env.Get(PrometheusURL, "http://localhost:9091")
 }
 
 var (

@@ -1713,6 +1713,70 @@ func init() {
         }
       }
     },
+    "/logs/search": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Search the logs",
+        "operationId": "LogSearch",
+        "parameters": [
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "Filter Parameters",
+            "name": "fp",
+            "in": "query"
+          },
+          {
+            "type": "number",
+            "format": "int32",
+            "default": 10,
+            "name": "pageSize",
+            "in": "query"
+          },
+          {
+            "type": "number",
+            "format": "int32",
+            "default": 0,
+            "name": "pageNo",
+            "in": "query"
+          },
+          {
+            "enum": [
+              "timeDesc",
+              "timeAsc"
+            ],
+            "type": "string",
+            "default": "timeDesc",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "timeStart",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/logSearchResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/resourcequotas/{resource-quota-name}": {
       "get": {
         "tags": [
@@ -3029,6 +3093,12 @@ func init() {
         },
         "usage": {
           "type": "integer"
+        },
+        "widgets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/widget"
+          }
         }
       }
     },
@@ -3869,6 +3939,15 @@ func init() {
           "items": {
             "$ref": "#/definitions/user"
           }
+        }
+      }
+    },
+    "logSearchResponse": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "object",
+          "title": "list of resulting tenants"
         }
       }
     },
@@ -4725,6 +4804,23 @@ func init() {
         }
       }
     },
+    "resultTarget": {
+      "type": "object",
+      "properties": {
+        "legendFormat": {
+          "type": "string"
+        },
+        "result": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/widgetResult"
+          }
+        },
+        "resultType": {
+          "type": "string"
+        }
+      }
+    },
     "serviceAccountCreds": {
       "type": "object",
       "properties": {
@@ -5177,6 +5273,54 @@ func init() {
               "type": "string"
             }
           }
+        }
+      }
+    },
+    "widget": {
+      "type": "object",
+      "properties": {
+        "options": {
+          "type": "object",
+          "properties": {
+            "reduceOptions": {
+              "type": "object",
+              "properties": {
+                "calcs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/resultTarget"
+          }
+        },
+        "title": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "widgetResult": {
+      "type": "object",
+      "properties": {
+        "metric": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "values": {
+          "type": "array",
+          "items": {}
         }
       }
     }
@@ -6864,6 +7008,70 @@ func init() {
         "responses": {
           "200": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/logs/search": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Search the logs",
+        "operationId": "LogSearch",
+        "parameters": [
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "Filter Parameters",
+            "name": "fp",
+            "in": "query"
+          },
+          {
+            "type": "number",
+            "format": "int32",
+            "default": 10,
+            "name": "pageSize",
+            "in": "query"
+          },
+          {
+            "type": "number",
+            "format": "int32",
+            "default": 0,
+            "name": "pageNo",
+            "in": "query"
+          },
+          {
+            "enum": [
+              "timeDesc",
+              "timeAsc"
+            ],
+            "type": "string",
+            "default": "timeDesc",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "timeStart",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/logSearchResponse"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -8621,6 +8829,33 @@ func init() {
         }
       }
     },
+    "WidgetOptions": {
+      "type": "object",
+      "properties": {
+        "reduceOptions": {
+          "type": "object",
+          "properties": {
+            "calcs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "WidgetOptionsReduceOptions": {
+      "type": "object",
+      "properties": {
+        "calcs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "accountChangePasswordRequest": {
       "type": "object",
       "required": [
@@ -8713,6 +8948,12 @@ func init() {
         },
         "usage": {
           "type": "integer"
+        },
+        "widgets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/widget"
+          }
         }
       }
     },
@@ -9556,6 +9797,15 @@ func init() {
         }
       }
     },
+    "logSearchResponse": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "object",
+          "title": "list of resulting tenants"
+        }
+      }
+    },
     "loginDetails": {
       "type": "object",
       "properties": {
@@ -10274,6 +10524,23 @@ func init() {
         }
       }
     },
+    "resultTarget": {
+      "type": "object",
+      "properties": {
+        "legendFormat": {
+          "type": "string"
+        },
+        "result": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/widgetResult"
+          }
+        },
+        "resultType": {
+          "type": "string"
+        }
+      }
+    },
     "serviceAccountCreds": {
       "type": "object",
       "properties": {
@@ -10726,6 +10993,54 @@ func init() {
               "type": "string"
             }
           }
+        }
+      }
+    },
+    "widget": {
+      "type": "object",
+      "properties": {
+        "options": {
+          "type": "object",
+          "properties": {
+            "reduceOptions": {
+              "type": "object",
+              "properties": {
+                "calcs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/resultTarget"
+          }
+        },
+        "title": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "widgetResult": {
+      "type": "object",
+      "properties": {
+        "metric": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "values": {
+          "type": "array",
+          "items": {}
         }
       }
     }

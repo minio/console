@@ -18,6 +18,12 @@ package restapi
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -69,27 +75,511 @@ func getAdminInfo(ctx context.Context, client MinioAdmin) (*usageInfo, error) {
 	}, nil
 }
 
+type Target struct {
+	Expr         string
+	Interval     string
+	LegendFormat string
+}
+
+type ReduceOptions struct {
+	Calcs []string
+}
+
+type MetricOptions struct {
+	ReduceOptions ReduceOptions
+}
+
+type Metric struct {
+	Title   string
+	Type    string
+	Options MetricOptions
+	Targets []Target
+}
+
+var widgets = []Metric{
+	{
+		Title: "Uptime",
+		Type:  "stat",
+
+		Options: MetricOptions{
+			ReduceOptions: ReduceOptions{
+				Calcs: []string{
+					"mean",
+				},
+			},
+		},
+
+		Targets: []Target{
+			{
+				Expr:         "time() - max(process_start_time_seconds)",
+				LegendFormat: "{{instance}}",
+			},
+		},
+	},
+	{
+		Title: "Total Online disks",
+		Type:  "stat",
+
+		Options: MetricOptions{
+			ReduceOptions: ReduceOptions{
+				Calcs: []string{
+					"mean",
+				},
+			},
+		},
+
+		Targets: []Target{
+			{
+				Expr:         "sum(minio_disks_total)",
+				LegendFormat: "Total online disks in MinIO Cluster",
+			},
+		},
+	},
+	{
+		Title: "Total Data",
+		Type:  "gauge",
+
+		Options: MetricOptions{
+			ReduceOptions: ReduceOptions{
+				Calcs: []string{
+					"lastNotNull",
+				},
+			},
+		},
+
+		Targets: []Target{
+			{
+				Expr:         "topk(1, sum(bucket_usage_size) by (instance))",
+				LegendFormat: "",
+			},
+		},
+	},
+	{
+		Title: "Data Growth",
+		Type:  "graph",
+		Targets: []Target{
+			{
+				Expr:         "topk(1, sum(bucket_usage_size) by (instance))",
+				LegendFormat: "Total Storage Used",
+			},
+		},
+	},
+	{
+		Title: "Object size distribution",
+		Type:  "bargauge",
+
+		Options: MetricOptions{
+			ReduceOptions: ReduceOptions{
+				Calcs: []string{
+					"mean",
+				},
+			},
+		},
+
+		Targets: []Target{
+			{
+				Expr:         "max by (object_size) (bucket_objects_histogram)",
+				LegendFormat: "{{object_size}}",
+			},
+		},
+	},
+	{
+		Title: "Total Offline disks",
+		Type:  "singlestat",
+		Targets: []Target{
+			{
+				Expr:         "sum(minio_disks_offline)",
+				LegendFormat: "Total offline disks in MinIO Cluster",
+			},
+		},
+	},
+	{
+		Title: "Total Online Servers",
+		Type:  "stat",
+
+		Options: MetricOptions{
+			ReduceOptions: ReduceOptions{
+				Calcs: []string{
+					"mean",
+				},
+			},
+		},
+
+		Targets: []Target{
+			{
+				Expr:         "count by (instances) (minio_version_info)",
+				LegendFormat: "",
+			},
+		},
+	},
+	{
+		Title: "Total S3 Traffic Inbound",
+		Type:  "stat",
+
+		Options: MetricOptions{
+			ReduceOptions: ReduceOptions{
+				Calcs: []string{
+					"mean",
+				},
+			},
+		},
+
+		Targets: []Target{
+			{
+				Expr:         "sum without (instance) (s3_rx_bytes_total)",
+				LegendFormat: "",
+			},
+		},
+	},
+	{
+		Title: "Number of Buckets",
+		Type:  "stat",
+
+		Options: MetricOptions{
+			ReduceOptions: ReduceOptions{
+				Calcs: []string{
+					"lastNotNull",
+				},
+			},
+		},
+
+		Targets: []Target{
+			{
+				Expr:         "count(count by (bucket) (bucket_objects_count))",
+				LegendFormat: "",
+			},
+		},
+	},
+	{
+		Title: "S3 API Request & Error Rate",
+		Type:  "graph",
+		Targets: []Target{
+			{
+				Expr:         "sum without (instance,api)(rate(s3_requests_total[10m]))",
+				LegendFormat: "S3 Requests",
+			},
+			{
+				Expr:         "sum without (instance,api)(rate(s3_errors_total[10m]))",
+				LegendFormat: "S3 Errors",
+			},
+		},
+	},
+	{
+		Title: "Total Open FDs",
+		Type:  "stat",
+
+		Options: MetricOptions{
+			ReduceOptions: ReduceOptions{
+				Calcs: []string{
+					"mean",
+				},
+			},
+		},
+
+		Targets: []Target{
+			{
+				Expr:         "sum without (instance)(process_open_fds)",
+				LegendFormat: "",
+			},
+		},
+	},
+	{
+		Title: "Total S3 Traffic Outbound",
+		Type:  "stat",
+
+		Options: MetricOptions{
+			ReduceOptions: ReduceOptions{
+				Calcs: []string{
+					"mean",
+				},
+			},
+		},
+
+		Targets: []Target{
+			{
+				Expr:         "sum without (instance)(s3_tx_bytes_total)",
+				LegendFormat: "",
+			},
+		},
+	},
+	{
+		Title: "Number of Objects",
+		Type:  "stat",
+
+		Options: MetricOptions{
+			ReduceOptions: ReduceOptions{
+				Calcs: []string{
+					"lastNotNull",
+				},
+			},
+		},
+
+		Targets: []Target{
+			{
+				Expr:         "topk(1, sum(bucket_objects_count) by (instance))",
+				LegendFormat: "",
+			},
+		},
+	},
+	{
+		Title: "Total Goroutines",
+		Type:  "stat",
+
+		Options: MetricOptions{
+			ReduceOptions: ReduceOptions{
+				Calcs: []string{
+					"mean",
+				},
+			},
+		},
+
+		Targets: []Target{
+			{
+				Expr:         "sum without (instance) (go_goroutines)",
+				LegendFormat: "",
+			},
+		},
+	},
+	{
+		Title: "S3 API Data Transfer",
+		Type:  "graph",
+		Targets: []Target{
+			{
+				Expr:         "sum without (instance,api)(rate(s3_tx_bytes_total[5m]))",
+				LegendFormat: "S3 Data Sent",
+			},
+			{
+				Expr:         "sum without (instance,api)(rate(s3_rx_bytes_total[5m]))",
+				LegendFormat: "S3 Data Received",
+			},
+		},
+	},
+	{
+		Title: "Total S3 API Data Transfer",
+		Type:  "graph",
+		Targets: []Target{
+			{
+				Expr:         "sum without (instance) (s3_rx_bytes_total)",
+				LegendFormat: "S3 Bytes Received {{instance}}",
+			},
+			{
+				Expr:         "sum without (instance) (s3_tx_bytes_total)",
+				LegendFormat: "S3 Bytes Sent {{instance}}",
+			},
+		},
+	},
+	{
+		Title: "Active S3 Requests",
+		Type:  "graph",
+		Targets: []Target{
+			{
+				Expr:         "s3_requests_current{instance=~\"$instance\"}",
+				LegendFormat: "Instance {{instance}} function {{api}}",
+			},
+		},
+	},
+	{
+		Title: "Internode Data Transfer",
+		Type:  "graph",
+		Targets: []Target{
+			{
+				Expr:         "internode_rx_bytes_total{instance=~\"$instance\"}",
+				LegendFormat: "Internode Bytes Received {{instance}}",
+			},
+			{
+				Expr:         "internode_tx_bytes_total{instance=~\"$instance\"}",
+				LegendFormat: "Internode Bytes Sent {{instance}}",
+			},
+		},
+	},
+	{
+		Title: "Online Disks",
+		Type:  "graph",
+		Targets: []Target{
+			{
+				Expr:         "minio_disks_total{instance=~\"$instance\"} - minio_disks_offline{instance=~\"$instance\"}",
+				LegendFormat: "Online Disks {{instance}}",
+			},
+		},
+	},
+	{
+		Title: "Disk Usage",
+		Type:  "graph",
+		Targets: []Target{
+			{
+				Expr:         "disk_storage_used{disk=~\"$disk\",instance=~\"$instance\"}",
+				LegendFormat: "Used Capacity {{instance}} {{disk}}",
+			},
+		},
+	},
+}
+
+type Widget struct {
+	Title string
+	Type  string
+}
+
+type DataResult struct {
+	Metric map[string]string `json:"metric"`
+	Values []interface{}     `json:"values"`
+}
+
+type PromRespData struct {
+	ResultType string       `json:"resultType"`
+	Result     []DataResult `json:"result"`
+}
+type PromResp struct {
+	Status string       `json:"status"`
+	Data   PromRespData `json:"data"`
+}
+
 // getAdminInfoResponse returns the response containing total buckets, objects and usage.
 func getAdminInfoResponse(session *models.Principal) (*models.AdminInfoResponse, *models.Error) {
-	mAdmin, err := newMAdminClient(session)
-	if err != nil {
-		return nil, prepareError(err)
+	//mAdmin, err := newMAdminClient(session)
+	//if err != nil {
+	//	return nil, prepareError(err)
+	//}
+	//// create a minioClient interface implementation
+	//// defining the client to be used
+	//adminClient := adminClient{client: mAdmin}
+	//// 20 seconds timeout
+	//ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	//defer cancel()
+	//// serialize output
+	//usage, err := getAdminInfo(ctx, adminClient)
+	//if err != nil {
+	//	return nil, prepareError(err)
+	//}
+	//sessionResp := &models.AdminInfoResponse{
+	//	Buckets: usage.Buckets,
+	//	Objects: usage.Objects,
+	//	Usage:   usage.Usage,
+	//}
+
+	// launch a goroutines per widget
+
+	results := make(chan models.Widget)
+
+	for _, m := range widgets {
+		go func(m Metric) {
+			targetResults := make(chan *models.ResultTarget)
+			// for each target we will launch another goroutine to fetch the values
+			for _, target := range m.Targets {
+				go func(target Target) {
+
+					apiType := "query_range"
+					now := time.Now()
+					extraParamters := fmt.Sprintf("&start=%d&end=%d&step=15", now.Add(-15*time.Minute).Unix(), now.Unix())
+
+					endpoint := fmt.Sprintf("%s/api/v1/%s?query=%s%s", getPrometheusURL(), apiType, url.QueryEscape(target.Expr), extraParamters)
+
+					resp, err := http.Get(endpoint)
+					if err != nil {
+						panic(err)
+					}
+					defer func() {
+						if err := resp.Body.Close(); err != nil {
+							log.Println(err)
+						}
+					}()
+
+					if resp.StatusCode != 200 {
+						body, err := ioutil.ReadAll(resp.Body)
+						if err != nil {
+							log.Println(err)
+							return
+						}
+						log.Println(endpoint)
+						log.Println(string(body))
+						return
+					}
+
+					var response PromResp
+					jd := json.NewDecoder(resp.Body)
+					if err = jd.Decode(&response); err != nil {
+						log.Println(err)
+						return
+					}
+					//body, _ := ioutil.ReadAll(resp.Body)
+					//err = json.Unmarshal(body, &response)
+					//if err != nil {
+					//	log.Println(err)
+					//}
+
+					targetResult := models.ResultTarget{
+						LegendFormat: target.LegendFormat,
+						ResultType:   response.Data.ResultType,
+					}
+					log.Println(target.LegendFormat)
+					for _, r := range response.Data.Result {
+						targetResult.Result = append(targetResult.Result, &models.WidgetResult{
+							Metric: r.Metric,
+							Values: r.Values,
+						})
+					}
+
+					//xx, err := json.Marshal(response)
+					//if err != nil {
+					//	log.Println(err)
+					//}
+					//log.Println("----", m.Title)
+					//log.Println(string(body))
+					//log.Println(string(xx))
+					//log.Println("=====")
+
+					targetResults <- &targetResult
+
+				}(target)
+			}
+
+			wdgtResult := models.Widget{
+				Title: m.Title,
+				Type:  m.Type,
+			}
+			if len(m.Options.ReduceOptions.Calcs) > 0 {
+				wdgtResult.Options = &models.WidgetOptions{
+					ReduceOptions: &models.WidgetOptionsReduceOptions{
+						Calcs: m.Options.ReduceOptions.Calcs,
+					},
+				}
+			}
+			// count how many targets we have received
+			targetsReceived := 0
+
+			for res := range targetResults {
+				wdgtResult.Targets = append(wdgtResult.Targets, res)
+				targetsReceived++
+				// upon receiving the total number of targets needed, we can close the channel to not lock the goroutine
+				if targetsReceived >= len(m.Targets) {
+					close(targetResults)
+				}
+			}
+
+			results <- wdgtResult
+		}(m)
 	}
-	// create a minioClient interface implementation
-	// defining the client to be used
-	adminClient := adminClient{client: mAdmin}
-	// 20 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-	defer cancel()
-	// serialize output
-	usage, err := getAdminInfo(ctx, adminClient)
-	if err != nil {
-		return nil, prepareError(err)
+
+	// count the number of widgets that have completed calculating
+	totalWidgets := 0
+	sessionResp := &models.AdminInfoResponse{}
+
+	var wdgts []*models.Widget
+	// wait for as many goroutines that come back in less than 1 second
+WaitLoop:
+	for {
+		select {
+		case <-time.After(1 * time.Second):
+			break WaitLoop
+		case res := <-results:
+			wdgts = append(wdgts, &res)
+			totalWidgets++
+			if totalWidgets >= len(widgets) {
+				break WaitLoop
+			}
+		}
 	}
-	sessionResp := &models.AdminInfoResponse{
-		Buckets: usage.Buckets,
-		Objects: usage.Objects,
-		Usage:   usage.Usage,
-	}
+
+	sessionResp.Widgets = wdgts
+
 	return sessionResp, nil
 }
