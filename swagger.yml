@@ -3616,20 +3616,6 @@ definitions:
       status:
         $ref: "#/definitions/objectLegalHoldStatus"
 
-  objectLegalHoldStatus:
-    type: string
-    enum:
-      - enabled
-      - disabled
-
-  putObjectLegalHoldRequest:
-    type: object
-    required:
-      - status
-    properties:
-      status:
-        $ref: "#/definitions/objectLegalHoldStatus"
-
   objectRetentionMode:
     type: string
     enum:
