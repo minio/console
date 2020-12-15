@@ -15,7 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import storage from "local-storage-fallback";
-import { ICapacity, IPoolModel } from "./types";
+import {
+  ICapacity,
+  IErasureCodeCalc,
+  IPoolModel,
+  IStorageFactors,
+} from "./types";
 
 const minStReq = 1073741824; // Minimal Space required for MinIO
 const minMemReq = 2147483648; // Minimal Memory required for MinIO in bytes
@@ -193,7 +198,8 @@ export const setMemoryResource = (
 export const calculateDistribution = (
   capacityToUse: ICapacity,
   forcedNodes: number = 0,
-  limitSize: number = 0
+  limitSize: number = 0,
+  drivesPerServer: number = 0
 ) => {
   let numberOfNodes = {};
   const requestedSizeBytes = getBytes(
@@ -222,7 +228,22 @@ export const calculateDistribution = (
     };
   }
 
-  numberOfNodes = calculateStorage(requestedSizeBytes, forcedNodes, limitSize);
+  if (drivesPerServer <= 0) {
+    return {
+      error: "Number of drives must be at least 1",
+      nodes: 0,
+      persistentVolumes: 0,
+      disks: 0,
+      pvSize: 0,
+    };
+  }
+
+  numberOfNodes = calculateStorage(
+    requestedSizeBytes,
+    forcedNodes,
+    limitSize,
+    drivesPerServer
+  );
 
   return numberOfNodes;
 };
@@ -230,14 +251,21 @@ export const calculateDistribution = (
 const calculateStorage = (
   requestedBytes: string,
   forcedNodes: number,
-  limitSize: number
+  limitSize: number,
+  drivesPerServer: number
 ) => {
   // Size validation
   const intReqBytes = parseInt(requestedBytes, 10);
   const maxDiskSize = minStReq * 256; // 256 GiB
 
   // We get the distribution
-  return structureCalc(forcedNodes, intReqBytes, maxDiskSize, limitSize);
+  return structureCalc(
+    forcedNodes,
+    intReqBytes,
+    maxDiskSize,
+    limitSize,
+    drivesPerServer
+  );
 };
 
 const structureCalc = (
@@ -321,6 +349,67 @@ const structureCalc = (
     persistentVolumes: numberPersistentVolumes,
     disks: volumesPerServer,
     pvSize: persistentVolumeSize,
+  };
+};
+
+// Erasure Code Parity Calc
+export const erasureCodeCalc = (
+  parityValidValues: string[],
+  totalDisks: number,
+  pvSize: number,
+  totalNodes: number
+): IErasureCodeCalc => {
+  // Parity Values is empty
+  if (parityValidValues.length < 1) {
+    return {
+      error: 1,
+      defaultEC: "",
+      erasureCodeSet: 0,
+      maxEC: "",
+      rawCapacity: "0",
+      storageFactors: [],
+    };
+  }
+
+  const totalStorage = totalDisks * pvSize;
+  const maxEC = parityValidValues[0];
+  const maxParityNumber = parseInt(maxEC.split(":")[1], 10);
+
+  const erasureStripeSet = maxParityNumber * 2; // ESS is calculated by multiplying maximum parity by two.
+
+  const storageFactors: IStorageFactors[] = parityValidValues.map(
+    (currentParity) => {
+      const parityNumber = parseInt(currentParity.split(":")[1], 10);
+      const storageFactor =
+        erasureStripeSet / (erasureStripeSet - parityNumber);
+
+      const maxCapacity = Math.floor(totalStorage / storageFactor);
+      const maxTolerations =
+        totalDisks - Math.floor(totalDisks / storageFactor);
+      return {
+        erasureCode: currentParity,
+        storageFactor,
+        maxCapacity: maxCapacity.toString(10),
+        maxFailureTolerations: maxTolerations,
+      };
+    }
+  );
+
+  let defaultEC = maxEC;
+
+  const fourVar = parityValidValues.find((element) => element === "EC:4");
+
+  if (totalDisks >= 8 && totalNodes > 16 && fourVar) {
+    defaultEC = "EC:4";
+  }
+
+  return {
+    error: 0,
+    storageFactors,
+    maxEC,
+    rawCapacity: totalStorage.toString(10),
+    erasureCodeSet: erasureStripeSet,
+    defaultEC,
   };
 };
 
