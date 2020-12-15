@@ -37,6 +37,7 @@ import {
 } from "../types";
 import { Button } from "@material-ui/core";
 import SetAccessPolicy from "./SetAccessPolicy";
+import SetRetentionConfig from "./SetRetentionConfig";
 import { CreateIcon } from "../../../../icons";
 import AddEvent from "./AddEvent";
 import DeleteEvent from "./DeleteEvent";
@@ -215,10 +216,9 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
   );
   const [curTab, setCurTab] = useState<number>(0);
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
-  const [
-    enableEncryptionScreenOpen,
-    setEnableEncryptionScreenOpen,
-  ] = useState<boolean>(false);
+  const [enableEncryptionScreenOpen, setEnableEncryptionScreenOpen] = useState<
+    boolean
+  >(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedEvent, setSelectedEvent] = useState<BucketEvent | null>(null);
   const [bucketSize, setBucketSize] = useState<string>("0");
@@ -226,6 +226,9 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
   const [openSetReplication, setOpenSetReplication] = useState<boolean>(false);
   const [isVersioned, setIsVersioned] = useState<boolean>(false);
   const [encryptionEnabled, setEncryptionEnabled] = useState<boolean>(false);
+  const [retentionConfigOpen, setRetentionConfigOpen] = useState<boolean>(
+    false
+  );
 
   const fetchEvents = useCallback(() => {
     setLoadingBucket(true);
@@ -319,6 +322,7 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
 
   const closeAddModalAndRefresh = () => {
     setAccessPolicyScreenOpen(false);
+    setRetentionConfigOpen(false);
     loadInfo();
   };
 
@@ -420,6 +424,15 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
           }}
         />
       )}
+      {retentionConfigOpen && (
+        <SetRetentionConfig
+          bucketName={bucketName}
+          open={retentionConfigOpen}
+          closeModalAndRefresh={() => {
+            closeAddModalAndRefresh();
+          }}
+        />
+      )}
       {openSetReplication && (
         <AddReplicationModal
           closeModalAndRefresh={() => {
@@ -509,6 +522,19 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
                     }}
                   >
                     Change Access Policy
+                  </Button>
+                </div>
+                <div>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    size="medium"
+                    onClick={() => {
+                      setRetentionConfigOpen(true);
+                    }}
+                  >
+                    Set Retention Configuration
                   </Button>
                 </div>
               </div>
