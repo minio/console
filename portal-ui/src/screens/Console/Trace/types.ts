@@ -23,7 +23,8 @@ export interface CallStats {
 
 export interface TraceMessage {
   client: string;
-  time: Date;
+  time: string;
+  ptime: Date;
   statusCode: number;
   api: string;
   query: string;

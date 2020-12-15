@@ -34,6 +34,7 @@ interface IFormSwitch {
   indicatorLabels?: string[];
   checked: boolean;
   switchOnly?: boolean;
+  containerClass?: string;
 }
 
 const styles = (theme: Theme) =>
@@ -177,11 +178,12 @@ const FormSwitchWrapper = ({
   switchOnly = false,
   tooltip = "",
   indicatorLabels = [],
+  containerClass = "",
   classes,
 }: IFormSwitch) => {
   const switchComponent = (
     <React.Fragment>
-      <div className={classes.switchContainer}>
+      <div className={`${classes.switchContainer} ${containerClass}`}>
         <StyledSwitch
           checked={checked}
           onChange={onChange}

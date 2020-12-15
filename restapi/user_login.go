@@ -176,7 +176,19 @@ func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
 	loginStrategy := models.LoginDetailsLoginStrategyForm
 	redirectURL := ""
 	if acl.GetOperatorMode() {
-		loginStrategy = models.LoginDetailsLoginStrategyServiceAccount
+		if oauth2.IsIdpEnabled() {
+			loginStrategy = models.LoginDetailsLoginStrategyRedirect
+			// initialize new oauth2 client
+			oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil)
+			if err != nil {
+				return nil, prepareError(err)
+			}
+			// Validate user against IDP
+			identityProvider := &auth.IdentityProvider{Client: oauth2Client}
+			redirectURL = identityProvider.GenerateLoginURL()
+		} else {
+			loginStrategy = models.LoginDetailsLoginStrategyServiceAccount
+		}
 	} else if oauth2.IsIdpEnabled() {
 		loginStrategy = models.LoginDetailsLoginStrategyRedirect
 		// initialize new oauth2 client
@@ -207,7 +219,22 @@ func loginOauth2Auth(ctx context.Context, provider *auth.IdentityProvider, code,
 func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.LoginResponse, *models.Error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
-	if oauth2.IsIdpEnabled() {
+	if acl.GetOperatorMode() {
+		creds, err := newConsoleCredentials("", getK8sSAToken(), "")
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		credentials := consoleCredentials{consoleCredentials: creds, actions: []string{}}
+		token, err := login(credentials)
+		if err != nil {
+			return nil, prepareError(errInvalidCredentials, nil, err)
+		}
+		// serialize output
+		loginResponse := &models.LoginResponse{
+			SessionID: *token,
+		}
+		return loginResponse, nil
+	} else if oauth2.IsIdpEnabled() {
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil)
 		if err != nil {

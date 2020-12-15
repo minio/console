@@ -26,11 +26,19 @@ import (
 	"errors"
 	"net/url"
 	golangswaggerpaths "path"
+
+	"github.com/go-openapi/swag"
 )
 
 // AdminInfoURL generates an URL for the admin info operation
 type AdminInfoURL struct {
+	End   *int64
+	Start *int64
+	Step  *int64
+
 	_basePath string
+	// avoid unkeyed usage
+	_ struct{}
 }
 
 // WithBasePath sets the base path for this url builder, only required when it's different from the
@@ -59,6 +67,34 @@ func (o *AdminInfoURL) Build() (*url.URL, error) {
 		_basePath = "/api/v1"
 	}
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
+
+	qs := make(url.Values)
+
+	var endQ string
+	if o.End != nil {
+		endQ = swag.FormatInt64(*o.End)
+	}
+	if endQ != "" {
+		qs.Set("end", endQ)
+	}
+
+	var startQ string
+	if o.Start != nil {
+		startQ = swag.FormatInt64(*o.Start)
+	}
+	if startQ != "" {
+		qs.Set("start", startQ)
+	}
+
+	var stepQ string
+	if o.Step != nil {
+		stepQ = swag.FormatInt64(*o.Step)
+	}
+	if stepQ != "" {
+		qs.Set("step", stepQ)
+	}
+
+	_result.RawQuery = qs.Encode()
 
 	return &_result, nil
 }

@@ -19,8 +19,10 @@ package restapi
 import (
 	"crypto/x509"
 	"fmt"
+	"io/ioutil"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/minio/minio/pkg/certs"
@@ -43,6 +45,12 @@ var TLSPort = "9443"
 var TLSRedirect = "off"
 
 var SessionDuration = 45 * time.Minute
+
+var logSearchAPI string
+var logSearchURL string
+var prometheusURL string
+
+var once sync.Once
 
 func getAccessKey() string {
 	return env.Get(ConsoleAccessKey, "minioadmin")
@@ -228,6 +236,33 @@ func getSecureExpectCTHeader() string {
 	return env.Get(ConsoleSecureExpectCTHeader, "")
 }
 
+func getLogSearchAPIToken() string {
+	once.Do(func() {
+		initVars()
+	})
+	return logSearchAPI
+}
+
+func getLogSearchURL() string {
+	once.Do(func() {
+		initVars()
+	})
+	return logSearchURL
+}
+
+func getPrometheusURL() string {
+	once.Do(func() {
+		initVars()
+	})
+	return prometheusURL
+}
+
+func initVars() {
+	logSearchAPI = env.Get(LogSearchQueryAuthToken, "")
+	logSearchURL = env.Get(LogSearchURL, "http://localhost:8080")
+	prometheusURL = env.Get(PrometheusURL, "http://localhost:9091")
+}
+
 var (
 	// GlobalRootCAs is CA root certificates, a nil value means system certs pool will be used
 	GlobalRootCAs *x509.CertPool
@@ -236,3 +271,13 @@ var (
 	// GlobalTLSCertsManager custom TLS Manager for SNI support
 	GlobalTLSCertsManager *certs.Manager
 )
+
+// getK8sSAToken assumes the plugin is running inside a k8s pod and extract the current service account from the
+// /var/run/secrets/kubernetes.io/serviceaccount/token file
+func getK8sSAToken() string {
+	dat, err := ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/token")
+	if err != nil {
+		return env.Get("CONSOLE_OPERATOR_SA_TOKEN", "")
+	}
+	return string(dat)
+}

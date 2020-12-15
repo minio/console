@@ -21,6 +21,7 @@ import { Button, LinearProgress } from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
 import Container from "@material-ui/core/Container";
+import Snackbar from "@material-ui/core/Snackbar";
 import history from "../../history";
 import { Redirect, Route, Router, Switch } from "react-router-dom";
 import { connect } from "react-redux";
@@ -48,10 +49,9 @@ import ObjectBrowser from "./ObjectBrowser/ObjectBrowser";
 import ObjectRouting from "./Buckets/ListBuckets/Objects/ListObjects/ObjectRouting";
 import License from "./License/License";
 import Trace from "./Trace/Trace";
-import Logs from "./Logs/Logs";
+import LogsMain from "./Logs/LogsMain";
 import Heal from "./Heal/Heal";
 import Watch from "./Watch/Watch";
-import Snackbar from "@material-ui/core/Snackbar";
 
 const drawerWidth = 245;
 
@@ -285,7 +285,7 @@ const Console = ({
       path: "/trace",
     },
     {
-      component: Logs,
+      component: LogsMain,
       path: "/logs",
     },
     {

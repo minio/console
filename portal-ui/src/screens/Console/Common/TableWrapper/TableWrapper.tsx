@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React from "react";
+import React, { useState, Fragment } from "react";
 import get from "lodash/get";
 import isString from "lodash/isString";
 import {
@@ -22,15 +22,19 @@ import {
   Grid,
   Checkbox,
   Typography,
+  IconButton,
+  Popover,
 } from "@material-ui/core";
 import { Table, Column, AutoSizer } from "react-virtualized";
 import { createStyles, withStyles } from "@material-ui/core/styles";
+import ViewColumnIcon from "@material-ui/icons/ViewColumn";
 import TableActionButton from "./TableActionButton";
 import history from "../../../../history";
 import {
   checkboxIcons,
   radioIcons,
 } from "../FormComponents/common/styleLibrary";
+import CheckboxWrapper from "../FormComponents/CheckboxWrapper/CheckboxWrapper";
 
 //Interfaces for table Items
 
@@ -67,6 +71,9 @@ interface TableWrapperProps {
   customEmptyMessage?: string;
   customPaperHeight?: string;
   noBackground?: boolean;
+  columnsSelector?: boolean;
+  columnsShown?: string[];
+  onColumnChange?: (column: string, state: boolean) => any;
 }
 
 const borderColor = "#9c9c9c80";
@@ -98,7 +105,7 @@ const styles = () =>
       borderRadius: 3,
       minHeight: 200,
       overflowY: "scroll",
-
+      position: "relative",
       "&::-webkit-scrollbar": {
         width: 3,
         height: 3,
@@ -169,6 +176,26 @@ const styles = () =>
       paddingTop: "100px",
       paddingBottom: "100px",
     },
+    overlayColumnSelection: {
+      position: "absolute",
+      right: 0,
+      top: 0,
+    },
+    popoverContainer: {
+      position: "relative",
+    },
+    popoverContent: {
+      maxHeight: 250,
+      overflowY: "auto",
+      padding: "0 10px 10px",
+    },
+    shownColumnsLabel: {
+      color: "#9c9c9c",
+      fontSize: 12,
+      padding: 10,
+      borderBottom: "#eaeaea 1px solid",
+      width: "100%",
+    },
     "@global": {
       ".rowLine": {
         borderBottom: `1px solid ${borderColor}`,
@@ -236,9 +263,9 @@ const subRenderFunction = (
     : renderConst; // If render function is set, we send the value to the function.
 
   return (
-    <React.Fragment>
+    <Fragment>
       <span className={isSelected ? "selected" : ""}>{renderElement}</span>
-    </React.Fragment>
+    </Fragment>
   );
 };
 
@@ -248,8 +275,18 @@ const calculateColumnRest = (
   containerWidth: number,
   actionsWidth: number,
   hasSelect: boolean,
-  hasActions: boolean
+  hasActions: boolean,
+  columnsSelector: boolean,
+  columnsShown: string[]
 ) => {
+  let colsItems = [...columns];
+
+  if (columnsSelector) {
+    colsItems = columns.filter((column) =>
+      columnsShown.includes(column.elementKey)
+    );
+  }
+
   let initialValue = containerWidth;
 
   if (hasSelect) {
@@ -260,11 +297,11 @@ const calculateColumnRest = (
     initialValue -= actionsWidth;
   }
 
-  let freeSpacing = columns.reduce((total, currValue) => {
+  let freeSpacing = colsItems.reduce((total, currValue) => {
     return currValue.width ? total - currValue.width : total;
   }, initialValue);
 
-  return freeSpacing / columns.filter((el) => !el.width).length;
+  return freeSpacing / colsItems.filter((el) => !el.width).length;
 };
 
 // Function that renders Columns in table
@@ -275,16 +312,24 @@ const generateColumnsMap = (
   hasSelect: boolean,
   hasActions: boolean,
   selectedItems: string[],
-  idField: string
+  idField: string,
+  columnsSelector: boolean,
+  columnsShown: string[]
 ) => {
   const commonRestWidth = calculateColumnRest(
     columns,
     containerWidth,
     actionsWidth,
     hasSelect,
-    hasActions
+    hasActions,
+    columnsSelector,
+    columnsShown
   );
   return columns.map((column: IColumns, index: number) => {
+    if (columnsSelector && !columnsShown.includes(column.elementKey)) {
+      return null;
+    }
+
     return (
       <Column
         key={`col-tb-${index.toString()}`}
@@ -292,7 +337,7 @@ const generateColumnsMap = (
         headerClassName={`titleHeader ${
           column.headerTextAlign ? `text-${column.headerTextAlign}` : ""
         }`}
-        headerRenderer={() => <React.Fragment>{column.label}</React.Fragment>}
+        headerRenderer={() => <Fragment>{column.label}</Fragment>}
         className={
           column.contentTextAlign ? `text-${column.contentTextAlign}` : ""
         }
@@ -368,7 +413,13 @@ const TableWrapper = ({
   customEmptyMessage = "",
   customPaperHeight = "",
   noBackground = false,
+  columnsSelector = false,
+  columnsShown = [],
+  onColumnChange = (column: string, state: boolean) => {},
 }: TableWrapperProps) => {
+  const [columnSelectorOpen, setColumnSelectorOpen] = useState<boolean>(false);
+  const [anchorEl, setAnchorEl] = React.useState<any>(null);
+
   const findView = itemActions
     ? itemActions.find((el) => el.type === "view")
     : null;
@@ -385,6 +436,64 @@ const TableWrapper = ({
         findView.onClick(valueClick);
       }
     }
+  };
+
+  const openColumnsSelector = (event: { currentTarget: any }) => {
+    setColumnSelectorOpen(!columnSelectorOpen);
+    setAnchorEl(event.currentTarget);
+  };
+
+  const closeColumnSelector = () => {
+    setColumnSelectorOpen(false);
+    setAnchorEl(null);
+  };
+
+  const columnsSelection = (columns: IColumns[]) => {
+    return (
+      <Fragment>
+        <IconButton
+          aria-describedby={"columnsSelector"}
+          color="primary"
+          onClick={openColumnsSelector}
+        >
+          <ViewColumnIcon fontSize="inherit" />
+        </IconButton>
+        <Popover
+          anchorEl={anchorEl}
+          id={"columnsSelector"}
+          open={columnSelectorOpen}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+          onClose={closeColumnSelector}
+          className={classes.popoverContainer}
+        >
+          <div className={classes.shownColumnsLabel}>Shown Columns</div>
+          <div className={classes.popoverContent}>
+            {columns.map((column: IColumns) => {
+              return (
+                <CheckboxWrapper
+                  key={`tableColumns-${column.label}`}
+                  label={column.label}
+                  checked={columnsShown.includes(column.elementKey)}
+                  onChange={(e) => {
+                    onColumnChange(column.elementKey, e.target.checked);
+                  }}
+                  id={`chbox-${column.label}`}
+                  name={`chbox-${column.label}`}
+                  value={column.label}
+                />
+              );
+            })}
+          </div>
+        </Popover>
+      </Fragment>
+    );
   };
 
   return (
@@ -407,6 +516,11 @@ const TableWrapper = ({
               <LinearProgress />
             </Grid>
           </Grid>
+        )}
+        {columnsSelector && !isLoading && records.length > 0 && (
+          <div className={classes.overlayColumnSelection}>
+            {columnsSelection(columns)}
+          </div>
         )}
         {records && !isLoading && records.length > 0 ? (
           <AutoSizer>
@@ -432,11 +546,11 @@ const TableWrapper = ({
                   headerHeight={40}
                   height={height}
                   noRowsRenderer={() => (
-                    <React.Fragment>
+                    <Fragment>
                       {customEmptyMessage !== ""
                         ? customEmptyMessage
                         : `There are no ${entityName} yet.`}
-                    </React.Fragment>
+                    </Fragment>
                   )}
                   overscanRowCount={10}
                   rowHeight={40}
@@ -450,9 +564,7 @@ const TableWrapper = ({
                 >
                   {hasSelect && (
                     <Column
-                      headerRenderer={() => (
-                        <React.Fragment>Select</React.Fragment>
-                      )}
+                      headerRenderer={() => <Fragment>Select</Fragment>}
                       dataKey={idField}
                       width={selectWidth}
                       cellRenderer={({ rowData }) => {
@@ -506,13 +618,13 @@ const TableWrapper = ({
                     hasSelect,
                     hasOptions,
                     selectedItems || [],
-                    idField
+                    idField,
+                    columnsSelector,
+                    columnsShown
                   )}
                   {hasOptions && (
                     <Column
-                      headerRenderer={() => (
-                        <React.Fragment>Options</React.Fragment>
-                      )}
+                      headerRenderer={() => <Fragment>Options</Fragment>}
                       dataKey={idField}
                       width={optionsWidth}
                       headerClassName="optionsAlignment"
@@ -537,7 +649,7 @@ const TableWrapper = ({
             }}
           </AutoSizer>
         ) : (
-          <React.Fragment>
+          <Fragment>
             {!isLoading && (
               <div>
                 {customEmptyMessage !== ""
@@ -545,7 +657,7 @@ const TableWrapper = ({
                   : `There are no ${entityName} yet.`}
               </div>
             )}
-          </React.Fragment>
+          </Fragment>
         )}
       </Paper>
     </Grid>

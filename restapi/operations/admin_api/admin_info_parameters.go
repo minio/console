@@ -26,14 +26,25 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 )
 
 // NewAdminInfoParams creates a new AdminInfoParams object
-// no default values defined in spec.
+// with the default values initialized.
 func NewAdminInfoParams() AdminInfoParams {
 
-	return AdminInfoParams{}
+	var (
+		// initialize parameters with default values
+
+		stepDefault = int64(15)
+	)
+
+	return AdminInfoParams{
+		Step: &stepDefault,
+	}
 }
 
 // AdminInfoParams contains all the bound params for the admin info operation
@@ -44,6 +55,20 @@ type AdminInfoParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
+
+	/*
+	  In: query
+	*/
+	End *int64
+	/*
+	  In: query
+	*/
+	Start *int64
+	/*
+	  In: query
+	  Default: 15
+	*/
+	Step *int64
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -55,8 +80,92 @@ func (o *AdminInfoParams) BindRequest(r *http.Request, route *middleware.Matched
 
 	o.HTTPRequest = r
 
+	qs := runtime.Values(r.URL.Query())
+
+	qEnd, qhkEnd, _ := qs.GetOK("end")
+	if err := o.bindEnd(qEnd, qhkEnd, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qStart, qhkStart, _ := qs.GetOK("start")
+	if err := o.bindStart(qStart, qhkStart, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qStep, qhkStep, _ := qs.GetOK("step")
+	if err := o.bindStep(qStep, qhkStep, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// bindEnd binds and validates parameter End from query.
+func (o *AdminInfoParams) bindEnd(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+	if raw == "" { // empty values pass all other validations
+		return nil
+	}
+
+	value, err := swag.ConvertInt64(raw)
+	if err != nil {
+		return errors.InvalidType("end", "query", "int64", raw)
+	}
+	o.End = &value
+
+	return nil
+}
+
+// bindStart binds and validates parameter Start from query.
+func (o *AdminInfoParams) bindStart(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+	if raw == "" { // empty values pass all other validations
+		return nil
+	}
+
+	value, err := swag.ConvertInt64(raw)
+	if err != nil {
+		return errors.InvalidType("start", "query", "int64", raw)
+	}
+	o.Start = &value
+
+	return nil
+}
+
+// bindStep binds and validates parameter Step from query.
+func (o *AdminInfoParams) bindStep(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewAdminInfoParams()
+		return nil
+	}
+
+	value, err := swag.ConvertInt64(raw)
+	if err != nil {
+		return errors.InvalidType("step", "query", "int64", raw)
+	}
+	o.Step = &value
+
 	return nil
 }

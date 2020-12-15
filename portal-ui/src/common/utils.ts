@@ -419,3 +419,68 @@ export const generatePoolName = (pools: IPoolModel[]) => {
 
   return `pool-${poolCounter}`;
 };
+
+// seconds / minutes /hours / Days / Years calculator
+export const niceDays = (secondsValue: string) => {
+  let seconds = parseFloat(secondsValue);
+
+  const days = Math.floor(seconds / (3600 * 24));
+
+  seconds -= days * 3600 * 24;
+  const hours = Math.floor(seconds / 3600);
+  seconds -= hours * 3600;
+  const minutes = Math.floor(seconds / 60);
+  seconds -= minutes * 60;
+
+  if (days > 365) {
+    const years = days / 365;
+    return `${years} year${Math.floor(years) === 1 ? "" : "s"}`;
+  }
+
+  if (days > 30) {
+    const months = Math.floor(days / 30);
+    const diffDays = days - months * 30;
+
+    return `${months} month${Math.floor(months) === 1 ? "" : "s"} ${
+      diffDays > 0 ? `${diffDays} day${diffDays > 1 ? "s" : ""}` : ""
+    }`;
+  }
+
+  if (days >= 1 && days <= 30) {
+    return `${days} day${days > 1 ? "s" : ""}`;
+  }
+
+  return `${hours >= 1 ? `${hours} hour${hours > 1 ? "s" : ""}` : ""} ${
+    minutes >= 1 && hours === 0
+      ? `${minutes} minute${minutes > 1 ? "s" : ""}`
+      : ""
+  } ${
+    seconds >= 1 && minutes === 0 && hours === 0
+      ? `${seconds} second${seconds > 1 ? "s" : ""}`
+      : ""
+  }`;
+};
+
+export const getTimeFromTimestamp = (
+  timestamp: string,
+  fullDate: boolean = false
+) => {
+  const dateObject = new Date(parseInt(timestamp) * 1000);
+
+  if (fullDate) {
+    return `${dateObject.getFullYear()}-${String(
+      dateObject.getMonth()
+    ).padStart(2, "0")}-${String(dateObject.getDay()).padStart(
+      2,
+      "0"
+    )} ${dateObject.getHours()}:${String(dateObject.getMinutes()).padStart(
+      2,
+      "0"
+    )}:${String(dateObject.getSeconds()).padStart(2, "0")}`;
+  }
+
+  return `${dateObject.getHours()}:${String(dateObject.getMinutes()).padStart(
+    2,
+    "0"
+  )}`;
+};
