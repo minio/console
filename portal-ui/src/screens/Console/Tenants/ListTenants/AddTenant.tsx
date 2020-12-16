@@ -20,7 +20,7 @@ import get from "lodash/get";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import Grid from "@material-ui/core/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { LinearProgress } from "@material-ui/core";
+import {LinearProgress, Typography} from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -1480,6 +1480,18 @@ const AddTenant = ({
             />
             Enable TLS for the tenant, this is required for Encryption
             Configuration
+            {enableTLS && (
+              <React.Fragment>
+                <br/>
+                <br/>
+                <Typography variant="caption" display="block" gutterBottom>
+                  Autocert: minio-operator will generate all TLS certificates automatically
+                </Typography>
+                <Typography variant="caption" display="block" gutterBottom>
+                  Custom certificates: allow user to provide your own certificates
+                </Typography>
+              </React.Fragment>
+            )}
           </Grid>
           {enableTLS && (
             <React.Fragment>
