@@ -69,6 +69,7 @@ type MinioClient interface {
 	putObjectTagging(ctx context.Context, bucketName, objectName string, otags *tags.Tags, opts minio.PutObjectTaggingOptions) error
 	getObjectTagging(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error)
 	setObjectLockConfig(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error
+	getBucketObjectLockConfig(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error)
 }
 
 // Interface implementation
@@ -172,6 +173,10 @@ func (c minioClient) getObjectTagging(ctx context.Context, bucketName, objectNam
 
 func (c minioClient) setObjectLockConfig(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error {
 	return c.client.SetObjectLockConfig(ctx, bucketName, mode, validity, unit)
+}
+
+func (c minioClient) getBucketObjectLockConfig(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
+	return c.client.GetBucketObjectLockConfig(ctx, bucketName)
 }
 
 // MCClient interface with all functions to be implemented

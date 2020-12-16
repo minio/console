@@ -246,6 +246,25 @@ paths:
         - UserAPI
 
   /buckets/{bucket_name}/retention:
+    get:
+      summary: Get Bucket's retention config
+      operationId: GetBucketRetentionConfig
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/getBucketRetentionConfig"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
     put:
       summary: Set Bucket's retention config
       operationId: SetBucketRetentionConfig
@@ -3676,3 +3695,15 @@ definitions:
       validity:
         type: integer
         format: int32
+  
+  getBucketRetentionConfig:
+    type: object
+    properties:
+      mode:
+        $ref: "#/definitions/objectRetentionMode"
+      unit:
+        $ref: "#/definitions/objectRetentionUnit"
+      validity:
+        type: integer
+        format: int32
+        
