@@ -323,7 +323,7 @@ func newConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 	default:
 		{
 			if MinioEndpoint == "" || accessKey == "" || secretKey == "" {
-				return nil, errors.New("creredentials endpont, access and secretkey are mandatory for AssumeRoleSTS")
+				return nil, errors.New("credentials endpoint, access and secret key are mandatory for AssumeRoleSTS")
 			}
 			opts := credentials.STSAssumeRoleOptions{
 				AccessKey:       accessKey,
