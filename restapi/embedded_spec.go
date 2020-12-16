@@ -940,6 +940,35 @@ func init() {
       }
     },
     "/buckets/{bucket_name}/retention": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Get Bucket's retention config",
+        "operationId": "GetBucketRetentionConfig",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/getBucketRetentionConfig"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "put": {
         "tags": [
           "UserAPI"
@@ -3563,6 +3592,21 @@ func init() {
         }
       }
     },
+    "getBucketRetentionConfig": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "$ref": "#/definitions/objectRetentionMode"
+        },
+        "unit": {
+          "$ref": "#/definitions/objectRetentionUnit"
+        },
+        "validity": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
     "group": {
       "type": "object",
       "properties": {
@@ -6020,6 +6064,35 @@ func init() {
       }
     },
     "/buckets/{bucket_name}/retention": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Get Bucket's retention config",
+        "operationId": "GetBucketRetentionConfig",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/getBucketRetentionConfig"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
       "put": {
         "tags": [
           "UserAPI"
@@ -9163,6 +9236,21 @@ func init() {
               }
             }
           }
+        }
+      }
+    },
+    "getBucketRetentionConfig": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "$ref": "#/definitions/objectRetentionMode"
+        },
+        "unit": {
+          "$ref": "#/definitions/objectRetentionUnit"
+        },
+        "validity": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

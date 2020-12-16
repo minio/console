@@ -151,6 +151,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIGetBucketReplicationHandler: user_api.GetBucketReplicationHandlerFunc(func(params user_api.GetBucketReplicationParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetBucketReplication has not yet been implemented")
 		}),
+		UserAPIGetBucketRetentionConfigHandler: user_api.GetBucketRetentionConfigHandlerFunc(func(params user_api.GetBucketRetentionConfigParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.GetBucketRetentionConfig has not yet been implemented")
+		}),
 		UserAPIGetBucketVersioningHandler: user_api.GetBucketVersioningHandlerFunc(func(params user_api.GetBucketVersioningParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetBucketVersioning has not yet been implemented")
 		}),
@@ -423,6 +426,8 @@ type ConsoleAPI struct {
 	UserAPIGetBucketQuotaHandler user_api.GetBucketQuotaHandler
 	// UserAPIGetBucketReplicationHandler sets the operation handler for the get bucket replication operation
 	UserAPIGetBucketReplicationHandler user_api.GetBucketReplicationHandler
+	// UserAPIGetBucketRetentionConfigHandler sets the operation handler for the get bucket retention config operation
+	UserAPIGetBucketRetentionConfigHandler user_api.GetBucketRetentionConfigHandler
 	// UserAPIGetBucketVersioningHandler sets the operation handler for the get bucket versioning operation
 	UserAPIGetBucketVersioningHandler user_api.GetBucketVersioningHandler
 	// AdminAPIGetMaxAllocatableMemHandler sets the operation handler for the get max allocatable mem operation
@@ -693,6 +698,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIGetBucketReplicationHandler == nil {
 		unregistered = append(unregistered, "user_api.GetBucketReplicationHandler")
+	}
+	if o.UserAPIGetBucketRetentionConfigHandler == nil {
+		unregistered = append(unregistered, "user_api.GetBucketRetentionConfigHandler")
 	}
 	if o.UserAPIGetBucketVersioningHandler == nil {
 		unregistered = append(unregistered, "user_api.GetBucketVersioningHandler")
@@ -1074,6 +1082,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/buckets/{bucket_name}/replication"] = user_api.NewGetBucketReplication(o.context, o.UserAPIGetBucketReplicationHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/buckets/{bucket_name}/retention"] = user_api.NewGetBucketRetentionConfig(o.context, o.UserAPIGetBucketRetentionConfigHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
