@@ -1710,6 +1710,79 @@ func init() {
         }
       }
     },
+    "/logs/search": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Search the logs",
+        "operationId": "LogSearch",
+        "parameters": [
+          {
+            "enum": [
+              "reqinfo",
+              "raw"
+            ],
+            "type": "string",
+            "name": "q",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "name": "fp",
+            "in": "query"
+          },
+          {
+            "type": "number",
+            "format": "int32",
+            "default": 10,
+            "name": "pageSize",
+            "in": "query"
+          },
+          {
+            "type": "number",
+            "format": "int32",
+            "default": 0,
+            "name": "pageNo",
+            "in": "query"
+          },
+          {
+            "enum": [
+              "timeDesc",
+              "timeAsc"
+            ],
+            "type": "string",
+            "default": "timeDesc",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "timeStart",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/logSearchResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/resourcequotas/{resource-quota-name}": {
       "get": {
         "tags": [
@@ -3866,6 +3939,15 @@ func init() {
           "items": {
             "$ref": "#/definitions/user"
           }
+        }
+      }
+    },
+    "logSearchResponse": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "object",
+          "title": "list of resulting tenants"
         }
       }
     },
@@ -6834,6 +6916,79 @@ func init() {
         }
       }
     },
+    "/logs/search": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Search the logs",
+        "operationId": "LogSearch",
+        "parameters": [
+          {
+            "enum": [
+              "reqinfo",
+              "raw"
+            ],
+            "type": "string",
+            "name": "q",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "name": "fp",
+            "in": "query"
+          },
+          {
+            "type": "number",
+            "format": "int32",
+            "default": 10,
+            "name": "pageSize",
+            "in": "query"
+          },
+          {
+            "type": "number",
+            "format": "int32",
+            "default": 0,
+            "name": "pageNo",
+            "in": "query"
+          },
+          {
+            "enum": [
+              "timeDesc",
+              "timeAsc"
+            ],
+            "type": "string",
+            "default": "timeDesc",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "timeStart",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/logSearchResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/resourcequotas/{resource-quota-name}": {
       "get": {
         "tags": [
@@ -9513,6 +9668,15 @@ func init() {
           "items": {
             "$ref": "#/definitions/user"
           }
+        }
+      }
+    },
+    "logSearchResponse": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "object",
+          "title": "list of resulting tenants"
         }
       }
     },
