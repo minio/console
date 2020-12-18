@@ -22,6 +22,8 @@ export interface SystemState {
   userName: string;
   serverNeedsRestart: boolean;
   serverIsLoading: boolean;
+  loadingProgress: number;
+  snackBarMessage: string;
 }
 
 export const USER_LOGGED = "USER_LOGGED";
@@ -29,6 +31,8 @@ export const OPERATOR_MODE = "OPERATOR_MODE";
 export const MENU_OPEN = "MENU_OPEN";
 export const SERVER_NEEDS_RESTART = "SERVER_NEEDS_RESTART";
 export const SERVER_IS_LOADING = "SERVER_IS_LOADING";
+export const SET_LOADING_PROGRESS = "SET_LOADING_PROGRESS";
+export const SET_SNACK_BAR_MESSAGE = "SET_SNACK_BAR_MESSAGE";
 
 interface UserLoggedAction {
   type: typeof USER_LOGGED;
@@ -54,10 +58,21 @@ interface ServerIsLoading {
   type: typeof SERVER_IS_LOADING;
   isLoading: boolean;
 }
+interface SetLoadingProgress {
+  type: typeof SET_LOADING_PROGRESS;
+  loadingProgress: number;
+}
+
+interface SetSnackBarMessage {
+  type: typeof SET_SNACK_BAR_MESSAGE;
+  snackBarMessage: string;
+}
 
 export type SystemActionTypes =
   | UserLoggedAction
   | OperatorModeAction
   | SetMenuOpenAction
   | ServerNeedsRestartAction
-  | ServerIsLoading;
+  | ServerIsLoading
+  | SetLoadingProgress
+  | SetSnackBarMessage;

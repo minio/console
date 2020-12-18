@@ -20,6 +20,8 @@ import {
   SERVER_IS_LOADING,
   SERVER_NEEDS_RESTART,
   USER_LOGGED,
+  SET_LOADING_PROGRESS,
+  SET_SNACK_BAR_MESSAGE,
 } from "./types";
 
 export function userLoggedIn(loggedIn: boolean) {
@@ -56,3 +58,17 @@ export function serverIsLoading(isLoading: boolean) {
     isLoading: isLoading,
   };
 }
+
+export const setLoadingProgress = (progress: number) => {
+  return {
+    type: SET_LOADING_PROGRESS,
+    loadingProgress: progress,
+  };
+};
+
+export const setSnackBarMessage = (message: string) => {
+  return {
+    type: SET_SNACK_BAR_MESSAGE,
+    snackBarMessage: message,
+  };
+};
