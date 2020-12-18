@@ -37,7 +37,6 @@ import { isNullOrUndefined } from "util";
 import { Button, Input } from "@material-ui/core";
 import * as reactMoment from "react-moment";
 import { CreateIcon } from "../../../../../../icons";
-import Snackbar from "@material-ui/core/Snackbar";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import get from "lodash/get";
 import { withRouter } from "react-router-dom";
@@ -51,6 +50,10 @@ import { ObjectBrowserState, Route } from "../../../../ObjectBrowser/reducers";
 import CreateFolderModal from "./CreateFolderModal";
 import UploadFile from "../../../../../../icons/UploadFile";
 import { download } from "../utils";
+import {
+  setLoadingProgress,
+  setSnackBarMessage,
+} from "../../../../../../actions";
 
 const commonIcon = {
   backgroundRepeat: "no-repeat",
@@ -134,6 +137,8 @@ interface IListObjectsProps {
   setAllRoutes: (path: string) => any;
   routesList: Route[];
   setLastAsFile: () => any;
+  setLoadingProgress: typeof setLoadingProgress;
+  setSnackBarMessage: typeof setSnackBarMessage;
 }
 
 interface ObjectBrowserReducer {
@@ -147,6 +152,8 @@ const ListObjects = ({
   setAllRoutes,
   routesList,
   setLastAsFile,
+  setLoadingProgress,
+  setSnackBarMessage,
 }: IListObjectsProps) => {
   const [records, setRecords] = useState<BucketObject[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -155,8 +162,6 @@ const ListObjects = ({
   const [selectedObject, setSelectedObject] = useState<string>("");
   const [selectedBucket, setSelectedBucket] = useState<string>("");
   const [filterObjects, setFilterObjects] = useState<string>("");
-  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
-  const [snackBarMessage, setSnackbarMessage] = useState<string>("");
 
   useEffect(() => {
     const bucketName = match.params["bucket"];
@@ -185,26 +190,28 @@ const ListObjects = ({
         });
     };
 
-    let extraPath = "";
-    if (internalPaths) {
-      extraPath = `?prefix=${internalPaths}/`;
-    }
+    if (loading) {
+      let extraPath = "";
+      if (internalPaths) {
+        extraPath = `?prefix=${internalPaths}/`;
+      }
 
-    api
-      .invoke("GET", `/api/v1/buckets/${bucketName}/objects${extraPath}`)
-      .then((res: BucketObjectsList) => {
-        setSelectedBucket(bucketName);
-        setRecords(res.objects || []);
-        // In case no objects were retrieved, We check if item is a file
-        if (!res.objects && extraPath !== "") {
-          verifyIfIsFile();
-          return;
-        }
-        setLoading(false);
-      })
-      .catch((err: any) => {
-        setLoading(false);
-      });
+      api
+        .invoke("GET", `/api/v1/buckets/${bucketName}/objects${extraPath}`)
+        .then((res: BucketObjectsList) => {
+          setSelectedBucket(bucketName);
+          setRecords(res.objects || []);
+          // In case no objects were retrieved, We check if item is a file
+          if (!res.objects && extraPath !== "") {
+            verifyIfIsFile();
+            return;
+          }
+          setLoading(false);
+        })
+        .catch((err: any) => {
+          setLoading(false);
+        });
+    }
   }, [loading, match, setLastAsFile]);
 
   useEffect(() => {
@@ -218,23 +225,13 @@ const ListObjects = ({
     setDeleteOpen(false);
 
     if (refresh) {
-      showSnackBarMessage(`Object '${selectedObject}' deleted successfully.`);
+      setSnackBarMessage(`Object '${selectedObject}' deleted successfully.`);
       setLoading(true);
     }
   };
 
   const closeAddFolderModal = () => {
     setCreateFolderOpen(false);
-  };
-
-  const showSnackBarMessage = (text: string) => {
-    setSnackbarMessage(text);
-    setOpenSnackbar(true);
-  };
-
-  const closeSnackBar = () => {
-    setSnackbarMessage("");
-    setOpenSnackbar(false);
   };
 
   const upload = (e: any, bucketName: string, path: string) => {
@@ -252,31 +249,34 @@ const ListObjects = ({
     xhr.open("POST", uploadUrl, true);
 
     xhr.withCredentials = false;
-    xhr.onload = function (event) {
-      // TODO: handle status
-      if (xhr.status === 401 || xhr.status === 403) {
-        showSnackBarMessage("An error occurred while uploading the file.");
-      }
-      if (xhr.status === 500) {
-        showSnackBarMessage("An error occurred while uploading the file.");
+    xhr.onload = function(event) {
+      if (
+        xhr.status === 401 ||
+        xhr.status === 403 ||
+        xhr.status === 400 ||
+        xhr.status === 500
+      ) {
+        setSnackBarMessage("An error occurred while uploading the file.");
       }
       if (xhr.status === 200) {
-        showSnackBarMessage("Object uploaded successfully.");
-        setLoading(true);
+        setSnackBarMessage("Object uploaded successfully.");
       }
     };
 
     xhr.upload.addEventListener("error", (event) => {
-      // TODO: handle error
-      showSnackBarMessage("An error occurred while uploading the file.");
+      setSnackBarMessage("An error occurred while uploading the file.");
     });
 
     xhr.upload.addEventListener("progress", (event) => {
-      // TODO: handle progress with event.loaded, event.total
+      setLoadingProgress(Math.floor((event.loaded * 100) / event.total));
     });
 
     xhr.onerror = () => {
-      showSnackBarMessage("An error occurred while uploading the file.");
+      setSnackBarMessage("An error occurred while uploading the file.");
+    };
+    xhr.onloadend = () => {
+      setLoading(true);
+      setLoadingProgress(100);
     };
 
     const formData = new FormData();
@@ -346,22 +346,8 @@ const ListObjects = ({
       path = `${splitPaths.slice(2).join("/")}/`;
     }
 
-    let file = e.target.files[0];
-    showSnackBarMessage(`Uploading: ${file.name}`);
     upload(e, selectedBucket, path);
   };
-
-  const snackBarAction = (
-    <Button
-      color="secondary"
-      size="small"
-      onClick={() => {
-        closeSnackBar();
-      }}
-    >
-      Dismiss
-    </Button>
-  );
 
   const tableActions = [
     { type: "view", onClick: openPath, sendOnlyId: true },
@@ -419,11 +405,6 @@ const ListObjects = ({
           onClose={closeAddFolderModal}
         />
       )}
-      <Snackbar
-        open={openSnackbar}
-        message={snackBarMessage}
-        action={snackBarAction}
-      />
       <PageHeader label="Object Browser" />
       <Grid container>
         <Grid item xs={12} className={classes.container}>
@@ -526,6 +507,8 @@ const mapDispatchToProps = {
   addRoute,
   setAllRoutes,
   setLastAsFile,
+  setLoadingProgress,
+  setSnackBarMessage,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import CopyToClipboard from "react-copy-to-clipboard";
-import Snackbar from "@material-ui/core/Snackbar";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
@@ -12,6 +11,8 @@ import api from "../../../../../../common/api";
 import { IFileInfo } from "./types";
 import PredefinedList from "../../../../Common/FormComponents/PredefinedList/PredefinedList";
 import ErrorBlock from "../../../../../shared/ErrorBlock";
+import { setSnackBarMessage } from "../../../../../../actions";
+import { connect } from "react-redux";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -30,6 +31,7 @@ interface IShareFileProps {
   bucketName: string;
   dataObject: IFileInfo;
   closeModalAndRefresh: () => void;
+  setSnackBarMessage: typeof setSnackBarMessage;
 }
 
 const ShareFile = ({
@@ -38,24 +40,13 @@ const ShareFile = ({
   closeModalAndRefresh,
   bucketName,
   dataObject,
+  setSnackBarMessage,
 }: IShareFileProps) => {
   const [shareURL, setShareURL] = useState<string>("");
   const [isLoadingFile, setIsLoadingFile] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [dateValid, setDateValid] = useState<boolean>(true);
-  const [openSnack, setOpenSnack] = useState<boolean>(false);
-  const [snackBarMessage, setSnackbarMessage] = useState<string>("");
-
-  const showSnackBarMessage = (text: string) => {
-    setSnackbarMessage(text);
-    setOpenSnack(true);
-  };
-
-  const closeSnackBar = () => {
-    setSnackbarMessage("");
-    setOpenSnack(false);
-  };
 
   const dateChanged = (newDate: string, isValid: boolean) => {
     setDateValid(isValid);
@@ -115,27 +106,8 @@ const ShareFile = ({
     }
   }, [dataObject, selectedDate, bucketName, dateValid, setShareURL]);
 
-  const snackBarAction = (
-    <Button
-      color="secondary"
-      size="small"
-      onClick={() => {
-        closeSnackBar();
-      }}
-    >
-      Dismiss
-    </Button>
-  );
-
   return (
     <React.Fragment>
-      {openSnack && (
-        <Snackbar
-          open={openSnack}
-          message={snackBarMessage}
-          action={snackBarAction}
-        />
-      )}
       <ModalWrapper
         title="Share File"
         modalOpen={open}
@@ -169,7 +141,7 @@ const ShareFile = ({
                   color="primary"
                   startIcon={<CopyIcon />}
                   onClick={() => {
-                    showSnackBarMessage("Share URL Copied to clipboard");
+                    setSnackBarMessage("Share URL Copied to clipboard");
                   }}
                   disabled={shareURL === "" || isLoadingFile}
                 >
@@ -184,4 +156,10 @@ const ShareFile = ({
   );
 };
 
-export default withStyles(styles)(ShareFile);
+const mapState = (state: IShareFileProps) => ({});
+
+const connector = connect(mapState, {
+  setSnackBarMessage,
+});
+
+export default withStyles(styles)(connector(ShareFile));
