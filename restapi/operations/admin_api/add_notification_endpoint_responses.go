@@ -42,7 +42,7 @@ type AddNotificationEndpointCreated struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.NotificationEndpoint `json:"body,omitempty"`
+	Payload *models.SetNotificationEndpointResponse `json:"body,omitempty"`
 }
 
 // NewAddNotificationEndpointCreated creates AddNotificationEndpointCreated with default headers values
@@ -52,13 +52,13 @@ func NewAddNotificationEndpointCreated() *AddNotificationEndpointCreated {
 }
 
 // WithPayload adds the payload to the add notification endpoint created response
-func (o *AddNotificationEndpointCreated) WithPayload(payload *models.NotificationEndpoint) *AddNotificationEndpointCreated {
+func (o *AddNotificationEndpointCreated) WithPayload(payload *models.SetNotificationEndpointResponse) *AddNotificationEndpointCreated {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the add notification endpoint created response
-func (o *AddNotificationEndpointCreated) SetPayload(payload *models.NotificationEndpoint) {
+func (o *AddNotificationEndpointCreated) SetPayload(payload *models.SetNotificationEndpointResponse) {
 	o.Payload = payload
 }
 

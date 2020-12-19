@@ -16,16 +16,16 @@ require (
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/minio/cli v1.22.0
 	github.com/minio/kes v0.11.0
-	github.com/minio/mc v0.0.0-20201203214312-c691cc548890
-	github.com/minio/minio v0.0.0-20201203235615-de9b64834eda
-	github.com/minio/minio-go/v7 v7.0.7-0.20201216191541-930886abcf30
+	github.com/minio/mc v0.0.0-20201220181029-41c804b179de
+	github.com/minio/minio v0.0.0-20201221162327-6df6ac0f3410
+	github.com/minio/minio-go/v7 v7.0.7-0.20201217170524-3baf9ea06f7c
 	github.com/minio/operator v0.0.0-20201204220226-9901d1d0766c
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/secure-io/sio-go v0.3.1
 	github.com/stretchr/testify v1.6.1
 	github.com/unrolled/secure v1.0.7
-	golang.org/x/crypto v0.0.0-20201012173705-84dcc777aaee
+	golang.org/x/crypto v0.0.0-20201124201722-c8d3bf9c5392
 	golang.org/x/net v0.0.0-20201010224723-4f7140c49acb
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	gopkg.in/yaml.v2 v2.3.0
