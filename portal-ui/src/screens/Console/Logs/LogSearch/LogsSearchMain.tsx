@@ -198,6 +198,16 @@ export const LogsSearchMain = ({ classes }: ILogSearchProps) => {
   const [object, setObject] = useState<string>("");
   const [requestID, setRequestID] = useState<string>("");
   const [responseStatus, setResponseStatus] = useState<string>("");
+  const [columnsShown, setColumnsShown] = useState<string[]>([
+    "id",
+    "api_name",
+    "bucket",
+    "object",
+    "remote_host",
+    "request_id",
+    "user_agent",
+    "response_status",
+  ]);
 
   useEffect(() => {
     if (loading) {
@@ -207,17 +217,19 @@ export const LogsSearchMain = ({ classes }: ILogSearchProps) => {
       if (logSearchAPI === "reqInfo") {
         setRecords([
           {
-            id: "0001-01-01T00:00:00Z",
-            api_name: "",
-            bucket: "",
-            object: "",
-            time_to_response_ns: 0,
-            remote_host: "",
-            request_id: "",
-            user_agent: "",
-            response_status: "",
-            response_status_code: 0,
-            request_content_length: null,
+            id: "2020-12-15T19:40:41.760375Z",
+            api_name: "WebUpload",
+            bucket: "lol2",
+            object:
+              "ns-1-warp-job-continious-load-put-02-62pqt-1604607189825924838.log",
+            time_to_response_ns: 339943575,
+            remote_host: "192.168.86.28",
+            request_id: "1650FB2DDFEFE503",
+            user_agent:
+              "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36",
+            response_status: "OK",
+            response_status_code: 200,
+            request_content_length: 14,
             response_content_length: null,
           },
           {
@@ -360,6 +372,19 @@ export const LogsSearchMain = ({ classes }: ILogSearchProps) => {
 
   const triggerLoad = () => {
     setLoading(true);
+  };
+
+  const selectColumn = (colName: string, active: boolean) => {
+    let newArray = [...columnsShown];
+
+    if (!active) {
+      newArray = columnsShown.filter((element) => element !== colName);
+    } else {
+      if (!newArray.includes(colName)) {
+        newArray.push(colName);
+      }
+    }
+    setColumnsShown(newArray);
   };
 
   return (
@@ -532,7 +557,7 @@ export const LogsSearchMain = ({ classes }: ILogSearchProps) => {
           <Grid item xs={12}>
             <TableWrapper
               columns={[
-                { label: "ID", elementKey: "id" },
+                { label: "Timestamp", elementKey: "id" },
                 { label: "API Name", elementKey: "api_name" },
                 { label: "Bucket", elementKey: "bucket" },
                 { label: "Object", elementKey: "object" },
@@ -543,7 +568,19 @@ export const LogsSearchMain = ({ classes }: ILogSearchProps) => {
                 { label: "Remote Host", elementKey: "remote_host" },
                 { label: "Request ID", elementKey: "request_id" },
                 { label: "User Agent", elementKey: "user_agent" },
-                { label: "Response Status", elementKey: "response_status" },
+                {
+                  label: "Response Status",
+                  elementKey: "response_status",
+                  renderFunction: (element) => (
+                    <Fragment>
+                      <span>
+                        {element.response_status_code} (
+                        {element.response_status})
+                      </span>
+                    </Fragment>
+                  ),
+                  renderFullObject: true,
+                },
                 {
                   label: "Request Content Length",
                   elementKey: "request_content_length",
@@ -558,6 +595,9 @@ export const LogsSearchMain = ({ classes }: ILogSearchProps) => {
               entityName="Logs"
               customEmptyMessage={"There is no information with this criteria"}
               idField="request_id"
+              columnsSelector
+              columnsShown={columnsShown}
+              onColumnChange={selectColumn}
             />
           </Grid>
         </Grid>
