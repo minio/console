@@ -14,10 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import clsx from "clsx";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, LinearProgress } from "@material-ui/core";
+import Snackbar from "@material-ui/core/Snackbar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
 import Container from "@material-ui/core/Container";
@@ -29,6 +30,7 @@ import {
   serverIsLoading,
   serverNeedsRestart,
   setMenuOpen,
+  setSnackBarMessage,
 } from "../../actions";
 import { ISessionResponse } from "./types";
 import Buckets from "./Buckets/Buckets";
@@ -58,6 +60,9 @@ const styles = (theme: Theme) =>
   createStyles({
     root: {
       display: "flex",
+      "& .MuiPaper-root": {
+        borderRadius: "0px 0px 15px 15px",
+      },
     },
     toolbar: {
       background: theme.palette.background.default,
@@ -148,6 +153,34 @@ const styles = (theme: Theme) =>
       lineHeight: "60px",
       textAlign: "center",
     },
+    snackBar: {
+      backgroundColor: "#081F44",
+      fontWeight: "bold",
+      fontFamily: "Lato, sans-serif",
+      fontSize: 14,
+      padding: "0px 20px 0px 20px;",
+
+      "& div": {
+        textAlign: "center",
+        padding: "6px 30px",
+      },
+    },
+    snackBarExternal: {
+      top: "-17px",
+      position: "absolute",
+      minWidth: "348px",
+      whiteSpace: "nowrap",
+      height: "33px",
+    },
+    snackDiv: {
+      top: "17px",
+      left: "50%",
+      position: "absolute",
+    },
+    progress: {
+      height: "3px",
+      backgroundColor: "#eaeaea",
+    },
   });
 
 interface IConsoleProps {
@@ -160,6 +193,9 @@ interface IConsoleProps {
   serverNeedsRestart: typeof serverNeedsRestart;
   serverIsLoading: typeof serverIsLoading;
   session: ISessionResponse;
+  loadingProgress: number;
+  snackBarMessage: string;
+  setSnackBarMessage: typeof setSnackBarMessage;
 }
 
 const Console = ({
@@ -170,7 +206,12 @@ const Console = ({
   serverNeedsRestart,
   serverIsLoading,
   session,
+  loadingProgress,
+  snackBarMessage,
+  setSnackBarMessage,
 }: IConsoleProps) => {
+  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
+
   const restartServer = () => {
     serverIsLoading(true);
     api
@@ -283,6 +324,20 @@ const Console = ({
   ];
   const allowedRoutes = routes.filter((route: any) => allowedPages[route.path]);
 
+  const closeSnackBar = () => {
+    setOpenSnackbar(false);
+    setSnackBarMessage("");
+  };
+
+  useEffect(() => {
+    if (snackBarMessage === "") {
+      setOpenSnackbar(false);
+      return;
+    }
+    // Open SnackBar
+    setOpenSnackbar(true);
+  }, [snackBarMessage]);
+
   return (
     <Fragment>
       {session.status === "ok" ? (
@@ -307,7 +362,7 @@ const Console = ({
                 {isServerLoading ? (
                   <Fragment>
                     The server is restarting.
-                    <LinearProgress />
+                    <LinearProgress className={classes.progress} />
                   </Fragment>
                 ) : (
                   <Fragment>
@@ -326,6 +381,27 @@ const Console = ({
                 )}
               </div>
             )}
+            {loadingProgress < 100 && (
+              <LinearProgress
+                className={classes.progress}
+                variant="determinate"
+                value={loadingProgress}
+              />
+            )}
+            <div className={classes.snackDiv}>
+              <Snackbar
+                open={openSnackbar}
+                onClose={() => {
+                  closeSnackBar();
+                }}
+                message={snackBarMessage}
+                autoHideDuration={5000}
+                className={classes.snackBarExternal}
+                ContentProps={{
+                  className: classes.snackBar,
+                }}
+              />
+            </div>
             <Container className={classes.container}>
               <Router history={history}>
                 <Switch>
@@ -355,12 +431,15 @@ const mapState = (state: AppState) => ({
   needsRestart: state.system.serverNeedsRestart,
   isServerLoading: state.system.serverIsLoading,
   session: state.console.session,
+  loadingProgress: state.system.loadingProgress,
+  snackBarMessage: state.system.snackBarMessage,
 });
 
 const connector = connect(mapState, {
   setMenuOpen,
   serverNeedsRestart,
   serverIsLoading,
+  setSnackBarMessage,
 });
 
 export default withStyles(styles)(connector(Console));

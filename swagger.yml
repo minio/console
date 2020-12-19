@@ -19,7 +19,7 @@ securityDefinitions:
     tokenUrl: http://min.io
 # Apply the key security definition to all APIs
 security:
-  - key: []
+  - key: [ ]
 paths:
   /login:
     get:
@@ -35,7 +35,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       # Exclude this API from the authentication requirement
-      security: []
+      security: [ ]
       tags:
         - UserAPI
     post:
@@ -57,7 +57,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       # Exclude this API from the authentication requirement
-      security: []
+      security: [ ]
       tags:
         - UserAPI
   /login/operator:
@@ -79,7 +79,7 @@ paths:
           description: Generic error response.
           schema:
             $ref: "#/definitions/error"
-      security: []
+      security: [ ]
       tags:
         - UserAPI
 
@@ -102,7 +102,7 @@ paths:
           description: Generic error response.
           schema:
             $ref: "#/definitions/error"
-      security: []
+      security: [ ]
       tags:
         - UserAPI
 
@@ -562,7 +562,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-  
+
   /buckets/{name}/set-policy:
     put:
       summary: Bucket Set Policy
@@ -1592,7 +1592,51 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-
+  /logs/search:
+    get:
+      summary: Search the logs
+      operationId: LogSearch
+      parameters:
+        - name: q
+          in: query
+          required: true
+          type: string
+          enum: [ reqinfo,raw ]
+        - name: fp
+          in: query
+          collectionFormat: multi
+          type: array
+          items:
+            type: string
+        - name: pageSize
+          in: query
+          type: number
+          format: int32
+          default: 10
+        - name: pageNo
+          in: query
+          type: number
+          format: int32
+          default: 0
+        - name: order
+          in: query
+          type: string
+          enum: [timeDesc, timeAsc]
+          default: timeDesc
+        - name: timeStart
+          in: query
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/logSearchResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
   /tenants:
     get:
       summary: List Tenant of All Namespaces
@@ -2104,7 +2148,7 @@ definitions:
         $ref: "#/definitions/setBucketQuota"
       retention:
         $ref: "#/definitions/putBucketRetentionRequest"
-      
+
   error:
     type: object
     required:
@@ -2223,7 +2267,7 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/iamEntity"
-  
+
   iamEntity:
     type: string
     pattern: '^[\w+=,.@-]{1,64}$'
@@ -2452,7 +2496,7 @@ definitions:
     properties:
       loginStrategy:
         type: string
-        enum: [form, redirect, service-account]
+        enum: [ form, redirect, service-account ]
       redirect:
         type: string
   loginOauth2AuthRequest:
@@ -2551,7 +2595,7 @@ definitions:
           type: string
       status:
         type: string
-        enum: [ok]
+        enum: [ ok ]
   adminInfoResponse:
     type: object
     properties:
@@ -2689,7 +2733,7 @@ definitions:
         type: string
       service:
         type: string
-        enum: [replication]
+        enum: [ replication ]
   createRemoteBucket:
     required:
       - accessKey
@@ -2793,6 +2837,13 @@ definitions:
         type: string
       namespace:
         type: string
+
+  logSearchResponse:
+    type: object
+    properties:
+      results:
+        type: object
+        title: list of resulting tenants
 
   listTenantsResponse:
     type: object
@@ -3660,7 +3711,7 @@ definitions:
       tags:
         additionalProperties:
           type: string
-  
+
   objectRetentionUnit:
     type: string
     enum:
