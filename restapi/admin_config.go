@@ -49,10 +49,11 @@ func registerConfigHandlers(api *operations.ConsoleAPI) {
 	})
 	// Set Configuration
 	api.AdminAPISetConfigHandler = admin_api.SetConfigHandlerFunc(func(params admin_api.SetConfigParams, session *models.Principal) middleware.Responder {
-		if err := setConfigResponse(session, params.Name, params.Body); err != nil {
+		resp, err := setConfigResponse(session, params.Name, params.Body)
+		if err != nil {
 			return admin_api.NewSetConfigDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewSetConfigNoContent()
+		return admin_api.NewSetConfigOK().WithPayload(resp)
 	})
 }
 
@@ -144,15 +145,16 @@ func getConfigResponse(session *models.Principal, params admin_api.ConfigInfoPar
 }
 
 // setConfig sets a configuration with the defined key values
-func setConfig(ctx context.Context, client MinioAdmin, configName *string, kvs []*models.ConfigurationKV) error {
+func setConfig(ctx context.Context, client MinioAdmin, configName *string, kvs []*models.ConfigurationKV) (restart bool, err error) {
 	config := buildConfig(configName, kvs)
-	if err := client.setConfigKV(ctx, *config); err != nil {
-		return err
+	restart, err = client.setConfigKV(ctx, *config)
+	if err != nil {
+		return false, err
 	}
-	return nil
+	return restart, nil
 }
 
-func setConfigWithARNAccountID(ctx context.Context, client MinioAdmin, configName *string, kvs []*models.ConfigurationKV, arnAccountID string) error {
+func setConfigWithARNAccountID(ctx context.Context, client MinioAdmin, configName *string, kvs []*models.ConfigurationKV, arnAccountID string) (restart bool, err error) {
 	// if arnAccountID is not empty the configuration will be treated as a notification target
 	// arnAccountID will be used as an identifier for that specific target
 	// docs: https://docs.min.io/docs/minio-bucket-notification-guide.html
@@ -174,10 +176,10 @@ func buildConfig(configName *string, kvs []*models.ConfigurationKV) *string {
 }
 
 // setConfigResponse implements setConfig() to be used by handler
-func setConfigResponse(session *models.Principal, name string, configRequest *models.SetConfigRequest) *models.Error {
+func setConfigResponse(session *models.Principal, name string, configRequest *models.SetConfigRequest) (*models.SetConfigResponse, *models.Error) {
 	mAdmin, err := newMAdminClient(session)
 	if err != nil {
-		return prepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
@@ -186,8 +188,9 @@ func setConfigResponse(session *models.Principal, name string, configRequest *mo
 
 	ctx := context.Background()
 
-	if err := setConfigWithARNAccountID(ctx, adminClient, &configName, configRequest.KeyValues, configRequest.ArnResourceID); err != nil {
-		return prepareError(err)
+	needsRestart, err := setConfigWithARNAccountID(ctx, adminClient, &configName, configRequest.KeyValues, configRequest.ArnResourceID)
+	if err != nil {
+		return nil, prepareError(err)
 	}
-	return nil
+	return &models.SetConfigResponse{Restart: needsRestart}, nil
 }

@@ -562,7 +562,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-  
+
   /buckets/{name}/set-policy:
     put:
       summary: Bucket Set Policy
@@ -1386,8 +1386,10 @@ paths:
           schema:
             $ref: "#/definitions/setConfigRequest"
       responses:
-        204:
+        200:
           description: A successful response.
+          schema:
+            $ref: "#/definitions/setConfigResponse"
         default:
           description: Generic error response.
           schema:
@@ -1508,7 +1510,7 @@ paths:
         201:
           description: A successful response.
           schema:
-            $ref: "#/definitions/notificationEndpoint"
+            $ref: "#/definitions/setNotificationEndpointResponse"
         default:
           description: Generic error response.
           schema:
@@ -1969,7 +1971,6 @@ paths:
         - AdminAPI
 
 definitions:
-
   accountChangePasswordRequest:
     type: object
     required:
@@ -2104,7 +2105,7 @@ definitions:
         $ref: "#/definitions/setBucketQuota"
       retention:
         $ref: "#/definitions/putBucketRetentionRequest"
-      
+
   error:
     type: object
     required:
@@ -2223,7 +2224,7 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/iamEntity"
-  
+
   iamEntity:
     type: string
     pattern: '^[\w+=,.@-]{1,64}$'
@@ -2614,6 +2615,23 @@ definitions:
         type: object
         additionalProperties:
           type: string
+  setNotificationEndpointResponse:
+    type: object
+    required:
+      - service
+      - account_id
+      - properties
+    properties:
+      service:
+        $ref: "#/definitions/nofiticationService"
+      account_id:
+        type: string
+      properties:
+        type: object
+        additionalProperties:
+          type: string
+      restart:
+        type: boolean
   notifEndpointResponse:
     type: object
     properties:
@@ -3660,7 +3678,7 @@ definitions:
       tags:
         additionalProperties:
           type: string
-  
+
   objectRetentionUnit:
     type: string
     enum:
@@ -3681,7 +3699,7 @@ definitions:
       validity:
         type: integer
         format: int32
-  
+
   getBucketRetentionConfig:
     type: object
     properties:
@@ -3692,4 +3710,10 @@ definitions:
       validity:
         type: integer
         format: int32
-        
+
+  setConfigResponse:
+    type: object
+    properties:
+      restart:
+        description: Returns wheter server needs to restart to apply changes or not
+        type: boolean

@@ -30,28 +30,48 @@ import (
 	"github.com/minio/console/models"
 )
 
-// SetConfigNoContentCode is the HTTP code returned for type SetConfigNoContent
-const SetConfigNoContentCode int = 204
+// SetConfigOKCode is the HTTP code returned for type SetConfigOK
+const SetConfigOKCode int = 200
 
-/*SetConfigNoContent A successful response.
+/*SetConfigOK A successful response.
 
-swagger:response setConfigNoContent
+swagger:response setConfigOK
 */
-type SetConfigNoContent struct {
+type SetConfigOK struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.SetConfigResponse `json:"body,omitempty"`
 }
 
-// NewSetConfigNoContent creates SetConfigNoContent with default headers values
-func NewSetConfigNoContent() *SetConfigNoContent {
+// NewSetConfigOK creates SetConfigOK with default headers values
+func NewSetConfigOK() *SetConfigOK {
 
-	return &SetConfigNoContent{}
+	return &SetConfigOK{}
+}
+
+// WithPayload adds the payload to the set config o k response
+func (o *SetConfigOK) WithPayload(payload *models.SetConfigResponse) *SetConfigOK {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the set config o k response
+func (o *SetConfigOK) SetPayload(payload *models.SetConfigResponse) {
+	o.Payload = payload
 }
 
 // WriteResponse to the client
-func (o *SetConfigNoContent) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *SetConfigOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
-
-	rw.WriteHeader(204)
+	rw.WriteHeader(200)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
 }
 
 /*SetConfigDefault Generic error response.
