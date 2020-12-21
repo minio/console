@@ -249,7 +249,7 @@ const ListObjects = ({
     xhr.open("POST", uploadUrl, true);
 
     xhr.withCredentials = false;
-    xhr.onload = function(event) {
+    xhr.onload = function (event) {
       if (
         xhr.status === 401 ||
         xhr.status === 403 ||

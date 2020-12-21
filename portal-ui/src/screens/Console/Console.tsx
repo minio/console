@@ -59,7 +59,7 @@ const styles = (theme: Theme) =>
   createStyles({
     root: {
       display: "flex",
-      "& .MuiPaper-root": {
+      "& .MuiPaper-root.MuiSnackbarContent-root": {
         borderRadius: "0px 0px 15px 15px",
       },
     },
