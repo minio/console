@@ -173,7 +173,7 @@ func init() {
           "201": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/notificationEndpoint"
+              "$ref": "#/definitions/setNotificationEndpointResponse"
             }
           },
           "default": {
@@ -1356,8 +1356,11 @@ func init() {
           }
         ],
         "responses": {
-          "204": {
-            "description": "A successful response."
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/setConfigResponse"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -4824,6 +4827,40 @@ func init() {
         }
       }
     },
+    "setConfigResponse": {
+      "type": "object",
+      "properties": {
+        "restart": {
+          "description": "Returns wheter server needs to restart to apply changes or not",
+          "type": "boolean"
+        }
+      }
+    },
+    "setNotificationEndpointResponse": {
+      "type": "object",
+      "required": [
+        "service",
+        "account_id",
+        "properties"
+      ],
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "restart": {
+          "type": "boolean"
+        },
+        "service": {
+          "$ref": "#/definitions/nofiticationService"
+        }
+      }
+    },
     "setPolicyMultipleRequest": {
       "type": "object",
       "properties": {
@@ -5297,7 +5334,7 @@ func init() {
           "201": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/notificationEndpoint"
+              "$ref": "#/definitions/setNotificationEndpointResponse"
             }
           },
           "default": {
@@ -6480,8 +6517,11 @@ func init() {
           }
         ],
         "responses": {
-          "204": {
-            "description": "A successful response."
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/setConfigResponse"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -10333,6 +10373,40 @@ func init() {
           "items": {
             "$ref": "#/definitions/configurationKV"
           }
+        }
+      }
+    },
+    "setConfigResponse": {
+      "type": "object",
+      "properties": {
+        "restart": {
+          "description": "Returns wheter server needs to restart to apply changes or not",
+          "type": "boolean"
+        }
+      }
+    },
+    "setNotificationEndpointResponse": {
+      "type": "object",
+      "required": [
+        "service",
+        "account_id",
+        "properties"
+      ],
+      "properties": {
+        "account_id": {
+          "type": "string"
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "restart": {
+          "type": "boolean"
+        },
+        "service": {
+          "$ref": "#/definitions/nofiticationService"
         }
       }
     },
