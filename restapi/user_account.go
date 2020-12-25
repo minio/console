@@ -80,7 +80,7 @@ func getChangePasswordResponse(session *models.Principal, params user_api.Accoun
 	}
 	// user credentials are updated at this point, we need to generate a new admin client and authenticate using
 	// the new credentials
-	credentials, err := getConsoleCredentials(ctx, accessKey, newSecretKey)
+	credentials, err := getConsoleCredentials(ctx, accessKey, newSecretKey, "")
 	if err != nil {
 		return nil, prepareError(errInvalidCredentials, nil, err)
 	}

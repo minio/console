@@ -20,26 +20,28 @@ import (
 	"context"
 
 	"github.com/minio/console/pkg/auth/idp/oauth2"
+
+	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
-// IdentityProviderClient interface with all functions to be implemented
-// by mock when testing, it should include all IdentityProviderClient respective api calls
+// IdentityProviderI interface with all functions to be implemented
+// by mock when testing, it should include all IdentityProvider respective api calls
 // that are used within this project.
-type IdentityProviderClient interface {
-	VerifyIdentity(ctx context.Context, code, state string) (*oauth2.User, error)
+type IdentityProviderI interface {
+	VerifyIdentity(ctx context.Context, code, state string) (*credentials.Credentials, error)
 	GenerateLoginURL() string
 }
 
 // Interface implementation
 //
-// Define the structure of a IdentityProvider Client and define the functions that are actually used
+// Define the structure of a IdentityProvider with Client inside and define the functions that are used
 // during the authentication flow.
 type IdentityProvider struct {
-	Client IdentityProviderClient
+	Client *oauth2.Provider
 }
 
 // VerifyIdentity will verify the user identity against the idp using the authorization code flow
-func (c IdentityProvider) VerifyIdentity(ctx context.Context, code, state string) (*oauth2.User, error) {
+func (c IdentityProvider) VerifyIdentity(ctx context.Context, code, state string) (*credentials.Credentials, error) {
 	return c.Client.VerifyIdentity(ctx, code, state)
 }
 

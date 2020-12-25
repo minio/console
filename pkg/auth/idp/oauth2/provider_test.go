@@ -69,30 +69,3 @@ func TestGenerateLoginURL(t *testing.T) {
 	url := oauth2Provider.GenerateLoginURL()
 	funcAssert.NotEqual("", url)
 }
-
-func TestVerifyIdentity(t *testing.T) {
-	ctx := context.Background()
-	funcAssert := assert.New(t)
-	// mock data
-	oauth2Provider := Provider{
-		oauth2Config: Oauth2configMock{},
-		oidcProvider: &oidc.Provider{},
-	}
-	// Test-1 : VerifyIdentity() should fail because of bad state token
-	_, err := oauth2Provider.VerifyIdentity(ctx, "AAABBBCCCDDDEEEFFF", "badtoken")
-	funcAssert.NotNil(err)
-	// Test-2 : VerifyIdentity() should fail because no id_token is provided by the idp
-	oauth2ConfigExchangeMock = func(ctx context.Context, code string, opts ...oauth2.AuthCodeOption) (*oauth2.Token, error) {
-		return &oauth2.Token{}, nil
-	}
-	state := GetRandomStateWithHMAC(32)
-	code := "AAABBBCCCDDDEEEFFF"
-	_, err = oauth2Provider.VerifyIdentity(ctx, code, state)
-	funcAssert.NotNil(err)
-	// Test-3 : VerifyIdentity() should fail because no id_token is provided by the idp
-	// TODO
-	// Test-4 : VerifyIdentity() should fail because oidcProvider.Verifier returned an error
-	// TODO
-	// Test-5 : VerifyIdentity() should fail because idToken.Claims contains invalid fields
-	// TODO
-}
