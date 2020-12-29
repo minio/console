@@ -253,7 +253,10 @@ func (wsc *wsAdminClient) trace() {
 
 	ctx := wsReadClientCtx(wsc.conn)
 
-	err := startTraceInfo(ctx, wsc.conn, wsc.client)
+	err := startTraceInfo(ctx, wsc.conn, wsc.client, serviceTraceOpts{
+		AllTraffic: false,
+		ErrOnly:    false,
+	})
 
 	sendWsCloseMessage(wsc.conn, err)
 }
