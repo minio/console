@@ -83,7 +83,7 @@ func TestAdminTrace(t *testing.T) {
 		writesCount++
 		return nil
 	}
-	if err := startTraceInfo(ctx, mockWSConn, adminClient); err != nil {
+	if err := startTraceInfo(ctx, mockWSConn, adminClient, serviceTraceOpts{AllTraffic: true, ErrOnly: false}); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	// check that the TestReceiver got the same number of data from trace.
@@ -95,7 +95,7 @@ func TestAdminTrace(t *testing.T) {
 	connWriteMessageMock = func(messageType int, data []byte) error {
 		return fmt.Errorf("error on write")
 	}
-	if err := startTraceInfo(ctx, mockWSConn, adminClient); assert.Error(err) {
+	if err := startTraceInfo(ctx, mockWSConn, adminClient, serviceTraceOpts{}); assert.Error(err) {
 		assert.Equal("error on write", err.Error())
 	}
 
@@ -121,7 +121,7 @@ func TestAdminTrace(t *testing.T) {
 	connWriteMessageMock = func(messageType int, data []byte) error {
 		return nil
 	}
-	if err := startTraceInfo(ctx, mockWSConn, adminClient); assert.Error(err) {
+	if err := startTraceInfo(ctx, mockWSConn, adminClient, serviceTraceOpts{}); assert.Error(err) {
 		assert.Equal("error on trace", err.Error())
 	}
 }
