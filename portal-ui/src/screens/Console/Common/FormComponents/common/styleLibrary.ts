@@ -339,4 +339,33 @@ export const widgetCommon = {
     width: "100%",
     height: "calc(100% - 15px)",
   },
+  contentContainerWithLabel: {
+    height: "calc(100% - 25px)",
+  },
+  legendBlock: {
+    position: "absolute" as const,
+    bottom: 5,
+    display: "flex" as const,
+    width: "100%",
+    height: 15,
+  },
+  singleLegendContainer: {
+    display: "flex",
+    alignItems: "center",
+    padding: "0 10px",
+    maxWidth: "100%",
+  },
+  colorContainer: {
+    width: 8,
+    height: 8,
+    minWidth: 8,
+    borderRadius: "100%",
+    marginRight: 5,
+  },
+  legendLabel: {
+    fontSize: "80%",
+    color: "#393939",
+    whiteSpace: "nowrap" as const,
+    maxWidth: "calc(100% - 14px)",
+  },
 };

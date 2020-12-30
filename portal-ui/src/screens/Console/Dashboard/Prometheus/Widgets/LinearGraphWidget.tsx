@@ -57,7 +57,9 @@ const LinearGraphWidget = ({
   return (
     <div className={classes.singleValueContainer}>
       <div className={classes.titleContainer}>{title}</div>
-      <div className={classes.contentContainer}>
+      <div
+        className={`${classes.contentContainer} ${classes.contentContainerWithLabel}`}
+      >
         <ResponsiveContainer>
           <AreaChart
             data={data}
@@ -82,7 +84,6 @@ const LinearGraphWidget = ({
               tick={{ fontSize: "70%" }}
             />
             <Tooltip formatter={(item) => yAxisFormatter(item.toString())} />
-            <Legend />
             {linearConfiguration.map((section, index) => {
               return (
                 <Area
@@ -97,6 +98,19 @@ const LinearGraphWidget = ({
             })}
           </AreaChart>
         </ResponsiveContainer>
+      </div>
+      <div className={classes.legendBlock}>
+        {linearConfiguration.map((section, index) => {
+          return (
+            <div className={classes.singleLegendContainer}>
+              <div
+                className={classes.colorContainer}
+                style={{ backgroundColor: section.lineColor }}
+              />
+              <div className={classes.legendLabel}>{section.keyLabel}</div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
