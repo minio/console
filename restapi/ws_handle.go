@@ -108,6 +108,10 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	upgrader.CheckOrigin = func(r *http.Request) bool {
+		return true
+	}
+
 	// upgrades the HTTP server connection to the WebSocket protocol.
 	conn, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {

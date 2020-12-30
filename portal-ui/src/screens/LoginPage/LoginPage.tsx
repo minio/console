@@ -213,6 +213,12 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
       .then((loginDetails: ILoginDetails) => {
         setLoginStrategy(loginDetails);
         setError("");
+        if (
+          loginDetails.loginStrategy === "redirect" &&
+          loginDetails.redirect !== ""
+        ) {
+          //location.href = loginDetails.redirect;
+        }
       })
       .catch((err: any) => {
         setError(err);

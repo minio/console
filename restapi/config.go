@@ -19,6 +19,7 @@ package restapi
 import (
 	"crypto/x509"
 	"fmt"
+	"io/ioutil"
 	"strconv"
 	"strings"
 	"sync"
@@ -270,3 +271,13 @@ var (
 	// GlobalTLSCertsManager custom TLS Manager for SNI support
 	GlobalTLSCertsManager *certs.Manager
 )
+
+// getK8sSAToken assumes the plugin is running inside a k8s pod and extract the current service account from the
+// /var/run/secrets/kubernetes.io/serviceaccount/token file
+func getK8sSAToken() string {
+	dat, err := ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/token")
+	if err != nil {
+		return env.Get("CONSOLE_OPERATOR_SA_TOKEN", "")
+	}
+	return string(dat)
+}

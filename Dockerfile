@@ -33,7 +33,7 @@ RUN go mod download
 ADD . /go/src/github.com/minio/console/
 WORKDIR /go/src/github.com/minio/console/
 
-COPY --from=uilayer /app/bindata_assetfs.go /go/src/github.com/minio/console/portal-ui/
+COPY --from=uilayer /app/bindata_assetfs.go /go/src/github.com/minio/console/portal-ui/bindata_assetfs.go
 
 ENV CGO_ENABLED=0
 
