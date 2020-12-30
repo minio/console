@@ -141,9 +141,9 @@ const PrDashboard = ({ classes }: IPrDashboard) => {
       .invoke(
         "GET",
         `/api/v1/admin/info?${
-          timeStart !== null ? `timeStart=${timeStart.unix()}` : ""
+          timeStart !== null ? `start=${timeStart.unix()}` : ""
         }${timeStart !== null && timeEnd !== null ? "&" : ""}${
-          timeEnd !== null ? `timeEnd=${timeEnd.unix()}` : ""
+          timeEnd !== null ? `end=${timeEnd.unix()}` : ""
         }`
       )
       .then((res: any) => {
