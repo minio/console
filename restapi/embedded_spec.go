@@ -3515,6 +3515,12 @@ func init() {
         "erasureCodingParity": {
           "type": "integer"
         },
+        "expose_console": {
+          "type": "boolean"
+        },
+        "expose_minio": {
+          "type": "boolean"
+        },
         "idp": {
           "type": "object",
           "$ref": "#/definitions/idpConfiguration"
@@ -9387,6 +9393,12 @@ func init() {
         },
         "erasureCodingParity": {
           "type": "integer"
+        },
+        "expose_console": {
+          "type": "boolean"
+        },
+        "expose_minio": {
+          "type": "boolean"
         },
         "idp": {
           "type": "object",

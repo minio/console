@@ -3020,6 +3020,10 @@ definitions:
       console:
         type: object
         $ref: "#/definitions/consoleConfiguration"
+      expose_minio:
+        type: boolean
+      expose_console:
+        type: boolean
 
   metadataFields:
     type: object

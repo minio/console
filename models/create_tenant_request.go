@@ -63,6 +63,12 @@ type CreateTenantRequest struct {
 	// erasure coding parity
 	ErasureCodingParity int64 `json:"erasureCodingParity,omitempty"`
 
+	// expose console
+	ExposeConsole bool `json:"expose_console,omitempty"`
+
+	// expose minio
+	ExposeMinio bool `json:"expose_minio,omitempty"`
+
 	// idp
 	Idp *IdpConfiguration `json:"idp,omitempty"`
 

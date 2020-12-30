@@ -30,6 +30,7 @@ import (
 	"strings"
 	"time"
 
+	"gopkg.in/yaml.v2"
 	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/types"
 
@@ -778,6 +779,26 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	if tenantReq.ConsoleImage != "" {
 		minInst.Spec.Console.Image = tenantReq.ConsoleImage
 	}
+	// default activate lgo search and prometheus
+	minInst.Spec.Log = &operator.LogConfig{
+		Image: "miniodev/logsearch:v4.0.0",
+		Audit: &operator.AuditConfig{DiskCapacityGB: swag.Int(10)},
+	}
+	minInst.Spec.Prometheus = &operator.PrometheusConfig{
+		DiskCapacityDB: swag.Int(5),
+	}
+
+	// expose services
+	if tenantReq.ExposeMinio || tenantReq.ExposeConsole {
+		minInst.Spec.ExposeServices = &operator.ExposeServices{
+			MinIO:   tenantReq.ExposeMinio,
+			Console: tenantReq.ExposeConsole,
+		}
+		log.Println("happened")
+	}
+
+	yo, _ := yaml.Marshal(minInst)
+	log.Println(string(yo))
 
 	opClient, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
