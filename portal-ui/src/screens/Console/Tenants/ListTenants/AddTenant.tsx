@@ -20,7 +20,7 @@ import get from "lodash/get";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import Grid from "@material-ui/core/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import {LinearProgress, Typography} from "@material-ui/core";
+import { LinearProgress, Typography } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -1390,6 +1390,20 @@ const AddTenant = ({
                   label={"Server Insecure"}
                 />
               </Grid>
+              {ADServerInsecure ? (
+                <Grid item xs={12}>
+                  <Typography
+                    className={classes.error}
+                    variant="caption"
+                    display="block"
+                    gutterBottom
+                  >
+                    Warning: All traffic with Active Directory will be
+                    unencrypted
+                  </Typography>
+                  <br />
+                </Grid>
+              ) : null}
               <Grid item xs={12}>
                 <InputBoxWrapper
                   id="ad_userNameFilter"
@@ -1482,13 +1496,15 @@ const AddTenant = ({
             Configuration
             {enableTLS && (
               <React.Fragment>
-                <br/>
-                <br/>
+                <br />
+                <br />
                 <Typography variant="caption" display="block" gutterBottom>
-                  Autocert: minio-operator will generate all TLS certificates automatically
+                  Autocert: minio-operator will generate all TLS certificates
+                  automatically
                 </Typography>
                 <Typography variant="caption" display="block" gutterBottom>
-                  Custom certificates: allow user to provide your own certificates
+                  Custom certificates: allow user to provide your own
+                  certificates
                 </Typography>
               </React.Fragment>
             )}

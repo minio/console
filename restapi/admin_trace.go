@@ -48,14 +48,15 @@ type callStats struct {
 	Ttfb     string `json:"timeToFirstByte"`
 }
 
+type serviceTraceOpts struct {
+	AllTraffic bool
+	ErrOnly    bool
+}
+
 // startTraceInfo starts trace of the servers
-func startTraceInfo(ctx context.Context, conn WSConn, client MinioAdmin) error {
-	// trace all traffic
-	allTraffic := true
-	// Trace failed requests only
-	errOnly := false
+func startTraceInfo(ctx context.Context, conn WSConn, client MinioAdmin, opts serviceTraceOpts) error {
 	// Start listening on all trace activity.
-	traceCh := client.serviceTrace(ctx, allTraffic, errOnly)
+	traceCh := client.serviceTrace(ctx, opts.AllTraffic, opts.ErrOnly)
 	for {
 		select {
 		case <-ctx.Done():

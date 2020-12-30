@@ -95,7 +95,7 @@ func getNotificationEndpointsResponse(session *models.Principal) (*models.NotifE
 	return notfEndpointResp, nil
 }
 
-func addNotificationEndpoint(ctx context.Context, client MinioAdmin, params *admin_api.AddNotificationEndpointParams) (*models.NotificationEndpoint, error) {
+func addNotificationEndpoint(ctx context.Context, client MinioAdmin, params *admin_api.AddNotificationEndpointParams) (*models.SetNotificationEndpointResponse, error) {
 	configs := []*models.ConfigurationKV{}
 	var configName string
 
@@ -133,20 +133,21 @@ func addNotificationEndpoint(ctx context.Context, client MinioAdmin, params *adm
 		})
 	}
 
-	err := setConfigWithARNAccountID(ctx, client, &configName, configs, *params.Body.AccountID)
+	needsRestart, err := setConfigWithARNAccountID(ctx, client, &configName, configs, *params.Body.AccountID)
 	if err != nil {
 		return nil, err
 	}
 
-	return &models.NotificationEndpoint{
+	return &models.SetNotificationEndpointResponse{
 		AccountID:  params.Body.AccountID,
 		Properties: params.Body.Properties,
 		Service:    params.Body.Service,
+		Restart:    needsRestart,
 	}, nil
 }
 
 // getNotificationEndpointsResponse returns a list of notification endpoints in the instance
-func getAddNotificationEndpointResponse(session *models.Principal, params *admin_api.AddNotificationEndpointParams) (*models.NotificationEndpoint, *models.Error) {
+func getAddNotificationEndpointResponse(session *models.Principal, params *admin_api.AddNotificationEndpointParams) (*models.SetNotificationEndpointResponse, *models.Error) {
 	mAdmin, err := newMAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)

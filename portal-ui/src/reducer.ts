@@ -22,6 +22,8 @@ import {
   SystemActionTypes,
   SystemState,
   USER_LOGGED,
+  SET_LOADING_PROGRESS,
+  SET_SNACK_BAR_MESSAGE,
 } from "./types";
 
 const initialState: SystemState = {
@@ -32,6 +34,8 @@ const initialState: SystemState = {
   sidebarOpen: true,
   serverNeedsRestart: false,
   serverIsLoading: false,
+  loadingProgress: 100,
+  snackBarMessage: "",
 };
 
 export function systemReducer(
@@ -64,6 +68,16 @@ export function systemReducer(
       return {
         ...state,
         serverIsLoading: action.isLoading,
+      };
+    case SET_LOADING_PROGRESS:
+      return {
+        ...state,
+        loadingProgress: action.loadingProgress,
+      };
+    case SET_SNACK_BAR_MESSAGE:
+      return {
+        ...state,
+        snackBarMessage: action.snackBarMessage,
       };
     default:
       return state;

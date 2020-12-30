@@ -39,8 +39,8 @@ func Test_addNotificationEndpoint(t *testing.T) {
 	tests := []struct {
 		name          string
 		args          args
-		mockSetConfig func(kv string) error
-		want          *models.NotificationEndpoint
+		mockSetConfig func(kv string) (restart bool, err error)
+		want          *models.SetNotificationEndpointResponse
 		wantErr       bool
 	}{
 		{
@@ -61,10 +61,10 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) error {
-				return nil
+			mockSetConfig: func(kv string) (restart bool, err error) {
+				return false, nil
 			},
-			want: &models.NotificationEndpoint{
+			want: &models.SetNotificationEndpointResponse{
 				AccountID: swag.String("1"),
 				Properties: map[string]string{
 					"host":     "localhost",
@@ -72,6 +72,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					"password": "passwrd",
 				},
 				Service: "postgres",
+				Restart: false,
 			},
 			wantErr: false,
 		},
@@ -93,8 +94,8 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) error {
-				return errors.New("error")
+			mockSetConfig: func(kv string) (restart bool, err error) {
+				return false, errors.New("error")
 			},
 			want:    nil,
 			wantErr: true,
@@ -117,10 +118,10 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) error {
-				return nil
+			mockSetConfig: func(kv string) (restart bool, err error) {
+				return false, nil
 			},
-			want: &models.NotificationEndpoint{
+			want: &models.SetNotificationEndpointResponse{
 				AccountID: swag.String("1"),
 				Properties: map[string]string{
 					"host":     "localhost",
@@ -128,6 +129,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					"password": "passwrd",
 				},
 				Service: "mysql",
+				Restart: false,
 			},
 			wantErr: false,
 		},
@@ -147,15 +149,16 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) error {
-				return nil
+			mockSetConfig: func(kv string) (restart bool, err error) {
+				return false, nil
 			},
-			want: &models.NotificationEndpoint{
+			want: &models.SetNotificationEndpointResponse{
 				AccountID: swag.String("1"),
 				Properties: map[string]string{
 					"brokers": "http://localhost:8080/broker1",
 				},
 				Service: "kafka",
+				Restart: false,
 			},
 			wantErr: false,
 		},
@@ -175,15 +178,16 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) error {
-				return nil
+			mockSetConfig: func(kv string) (restart bool, err error) {
+				return false, nil
 			},
-			want: &models.NotificationEndpoint{
+			want: &models.SetNotificationEndpointResponse{
 				AccountID: swag.String("1"),
 				Properties: map[string]string{
 					"url": "http://localhost:8080/broker1",
 				},
 				Service: "amqp",
+				Restart: false,
 			},
 			wantErr: false,
 		},
@@ -204,16 +208,17 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) error {
-				return nil
+			mockSetConfig: func(kv string) (restart bool, err error) {
+				return false, nil
 			},
-			want: &models.NotificationEndpoint{
+			want: &models.SetNotificationEndpointResponse{
 				AccountID: swag.String("1"),
 				Properties: map[string]string{
 					"broker": "http://localhost:8080/broker1",
 					"topic":  "minio",
 				},
 				Service: "mqtt",
+				Restart: false,
 			},
 			wantErr: false,
 		},
@@ -235,10 +240,10 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) error {
-				return nil
+			mockSetConfig: func(kv string) (restart bool, err error) {
+				return false, nil
 			},
-			want: &models.NotificationEndpoint{
+			want: &models.SetNotificationEndpointResponse{
 				AccountID: swag.String("1"),
 				Properties: map[string]string{
 					"url":    "http://localhost:8080/broker1",
@@ -246,6 +251,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					"format": "namespace",
 				},
 				Service: "elasticsearch",
+				Restart: false,
 			},
 			wantErr: false,
 		},
@@ -267,10 +273,10 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) error {
-				return nil
+			mockSetConfig: func(kv string) (restart bool, err error) {
+				return false, nil
 			},
-			want: &models.NotificationEndpoint{
+			want: &models.SetNotificationEndpointResponse{
 				AccountID: swag.String("1"),
 				Properties: map[string]string{
 					"address": "http://localhost:8080/broker1",
@@ -278,6 +284,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					"format":  "namespace",
 				},
 				Service: "redis",
+				Restart: false,
 			},
 			wantErr: false,
 		},
@@ -298,16 +305,17 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) error {
-				return nil
+			mockSetConfig: func(kv string) (restart bool, err error) {
+				return false, nil
 			},
-			want: &models.NotificationEndpoint{
+			want: &models.SetNotificationEndpointResponse{
 				AccountID: swag.String("1"),
 				Properties: map[string]string{
 					"address": "http://localhost:8080/broker1",
 					"subject": "minio",
 				},
 				Service: "nats",
+				Restart: false,
 			},
 			wantErr: false,
 		},
@@ -327,15 +335,16 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) error {
-				return nil
+			mockSetConfig: func(kv string) (restart bool, err error) {
+				return false, nil
 			},
-			want: &models.NotificationEndpoint{
+			want: &models.SetNotificationEndpointResponse{
 				AccountID: swag.String("1"),
 				Properties: map[string]string{
 					"endpoint": "http://localhost:8080/broker1",
 				},
 				Service: "webhook",
+				Restart: false,
 			},
 			wantErr: false,
 		},
@@ -356,16 +365,17 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) error {
-				return nil
+			mockSetConfig: func(kv string) (restart bool, err error) {
+				return false, nil
 			},
-			want: &models.NotificationEndpoint{
+			want: &models.SetNotificationEndpointResponse{
 				AccountID: swag.String("1"),
 				Properties: map[string]string{
 					"nsqd_address": "http://localhost:8080/broker1",
 					"topic":        "minio",
 				},
 				Service: "nsq",
+				Restart: false,
 			},
 			wantErr: false,
 		},
@@ -387,11 +397,44 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) error {
-				return errors.New("invalid config")
+			mockSetConfig: func(kv string) (restart bool, err error) {
+				return false, errors.New("invalid config")
 			},
 			want:    nil,
 			wantErr: true,
+		},
+		{
+			name: "valid config, restart required",
+			args: args{
+				ctx:    context.Background(),
+				client: client,
+				params: &admin_api.AddNotificationEndpointParams{
+					HTTPRequest: nil,
+					Body: &models.NotificationEndpoint{
+						AccountID: swag.String("1"),
+						Properties: map[string]string{
+							"host":     "localhost",
+							"user":     "user",
+							"password": "passwrd",
+						},
+						Service: "postgres",
+					},
+				},
+			},
+			mockSetConfig: func(kv string) (restart bool, err error) {
+				return true, nil
+			},
+			want: &models.SetNotificationEndpointResponse{
+				AccountID: swag.String("1"),
+				Properties: map[string]string{
+					"host":     "localhost",
+					"user":     "user",
+					"password": "passwrd",
+				},
+				Service: "postgres",
+				Restart: true,
+			},
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {

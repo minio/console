@@ -37,7 +37,7 @@ import (
 // assigning mock at runtime instead of compile time
 var minioHelpConfigKVMock func(subSys, key string, envOnly bool) (madmin.Help, error)
 var minioGetConfigKVMock func(key string) ([]byte, error)
-var minioSetConfigKVMock func(kv string) error
+var minioSetConfigKVMock func(kv string) (restart bool, err error)
 
 // mock function helpConfigKV()
 func (ac adminClientMock) helpConfigKV(ctx context.Context, subSys, key string, envOnly bool) (madmin.Help, error) {
@@ -50,7 +50,7 @@ func (ac adminClientMock) getConfigKV(ctx context.Context, name string) ([]byte,
 }
 
 // mock function setConfigKV()
-func (ac adminClientMock) setConfigKV(ctx context.Context, kv string) error {
+func (ac adminClientMock) setConfigKV(ctx context.Context, kv string) (restart bool, err error) {
 	return minioSetConfigKVMock(kv)
 }
 
@@ -108,8 +108,8 @@ func TestSetConfig(t *testing.T) {
 	adminClient := adminClientMock{}
 	function := "setConfig()"
 	// mock function response from setConfig()
-	minioSetConfigKVMock = func(kv string) error {
-		return nil
+	minioSetConfigKVMock = func(kv string) (restart bool, err error) {
+		return false, nil
 	}
 	configName := "notify_postgres"
 	kvs := []*models.ConfigurationKV{
@@ -125,18 +125,31 @@ func TestSetConfig(t *testing.T) {
 
 	ctx := context.Background()
 	// Test-1 : setConfig() sets a config with two key value pairs
-	err := setConfig(ctx, adminClient, &configName, kvs)
+	restart, err := setConfig(ctx, adminClient, &configName, kvs)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
+	assert.Equal(restart, false)
 
 	// Test-2 : setConfig() returns error, handle properly
-	minioSetConfigKVMock = func(kv string) error {
-		return errors.New("error")
+	minioSetConfigKVMock = func(kv string) (restart bool, err error) {
+		return false, errors.New("error")
 	}
-	if err := setConfig(ctx, adminClient, &configName, kvs); assert.Error(err) {
+	restart, err = setConfig(ctx, adminClient, &configName, kvs)
+	if assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
+	assert.Equal(restart, false)
+
+	// Test-4 : setConfig() set config, need restart
+	minioSetConfigKVMock = func(kv string) (restart bool, err error) {
+		return true, nil
+	}
+	restart, err = setConfig(ctx, adminClient, &configName, kvs)
+	if err != nil {
+		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+	}
+	assert.Equal(restart, true)
 
 }
 
@@ -201,6 +214,7 @@ func Test_buildConfig(t *testing.T) {
 }
 
 func Test_setConfigWithARN(t *testing.T) {
+	assert := assert.New(t)
 	client := adminClientMock{}
 
 	type args struct {
@@ -213,8 +227,9 @@ func Test_setConfigWithARN(t *testing.T) {
 	tests := []struct {
 		name          string
 		args          args
-		mockSetConfig func(kv string) error
+		mockSetConfig func(kv string) (restart bool, err error)
 		wantErr       bool
+		expected      bool
 	}{
 		{
 			name: "Set valid config with arn",
@@ -230,10 +245,31 @@ func Test_setConfigWithARN(t *testing.T) {
 				},
 				arn: "1",
 			},
-			mockSetConfig: func(kv string) error {
-				return nil
+			mockSetConfig: func(kv string) (restart bool, err error) {
+				return false, nil
 			},
-			wantErr: false,
+			wantErr:  false,
+			expected: false,
+		},
+		{
+			name: "Set valid config, expect restart",
+			args: args{
+				ctx:        context.Background(),
+				client:     client,
+				configName: swag.String("notify_kafka"),
+				kvs: []*models.ConfigurationKV{
+					{
+						Key:   "brokers",
+						Value: "http://localhost:8080/broker1,http://localhost:8080/broker2",
+					},
+				},
+				arn: "1",
+			},
+			mockSetConfig: func(kv string) (restart bool, err error) {
+				return true, nil
+			},
+			wantErr:  false,
+			expected: true,
 		},
 		{
 			name: "Set valid config without arn",
@@ -249,10 +285,11 @@ func Test_setConfigWithARN(t *testing.T) {
 				},
 				arn: "",
 			},
-			mockSetConfig: func(kv string) error {
-				return nil
+			mockSetConfig: func(kv string) (restart bool, err error) {
+				return false, nil
 			},
-			wantErr: false,
+			wantErr:  false,
+			expected: false,
 		},
 		{
 			name: "Setting an incorrect config",
@@ -268,19 +305,22 @@ func Test_setConfigWithARN(t *testing.T) {
 				},
 				arn: "",
 			},
-			mockSetConfig: func(kv string) error {
-				return errors.New("error")
+			mockSetConfig: func(kv string) (restart bool, err error) {
+				return false, errors.New("error")
 			},
-			wantErr: true,
+			wantErr:  true,
+			expected: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// mock function response from setConfig()
 			minioSetConfigKVMock = tt.mockSetConfig
-			if err := setConfigWithARNAccountID(tt.args.ctx, tt.args.client, tt.args.configName, tt.args.kvs, tt.args.arn); (err != nil) != tt.wantErr {
+			restart, err := setConfigWithARNAccountID(tt.args.ctx, tt.args.client, tt.args.configName, tt.args.kvs, tt.args.arn)
+			if (err != nil) != tt.wantErr {
 				t.Errorf("setConfigWithARNAccountID() error = %v, wantErr %v", err, tt.wantErr)
 			}
+			assert.Equal(restart, tt.expected)
 		})
 	}
 }
