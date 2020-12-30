@@ -384,7 +384,7 @@ const AddTenant = ({
       {
         fieldKey: "namespace",
         required: true,
-        value: tenantName,
+        value: namespace,
         customValidation: storageClasses.length < 1,
         customValidationMessage: "Please enter a valid namespace",
       },
