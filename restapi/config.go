@@ -49,6 +49,7 @@ var SessionDuration = 45 * time.Minute
 var logSearchAPI string
 var logSearchURL string
 var prometheusURL string
+var consoleImage string
 
 var once sync.Once
 
@@ -261,6 +262,7 @@ func initVars() {
 	logSearchAPI = env.Get(LogSearchQueryAuthToken, "")
 	logSearchURL = env.Get(LogSearchURL, "http://localhost:8080")
 	prometheusURL = env.Get(PrometheusURL, "http://localhost:9091")
+	consoleImage = env.Get("CONSOLE_OPERATOR_CONSOLE_IMAGE", ConsoleImageDefaultVersion)
 }
 
 var (
@@ -280,4 +282,11 @@ func getK8sSAToken() string {
 		return env.Get("CONSOLE_OPERATOR_SA_TOKEN", "")
 	}
 	return string(dat)
+}
+
+func getConsoleImage() string {
+	once.Do(func() {
+		initVars()
+	})
+	return consoleImage
 }
