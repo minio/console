@@ -231,6 +231,25 @@ export const panelsConfiguration: IDashboardPanel[] = [
   },
 ];
 
+const calculateMainValue = (elements: any[], metricCalc: string) => {
+  switch (metricCalc) {
+    case "mean":
+      const sumValues = elements.reduce((accumulator, currValue) => {
+        return accumulator + parseFloat(currValue[1]);
+      }, 0);
+
+      const mean = Math.floor(sumValues / elements.length);
+
+      return ["", mean.toString()];
+    default:
+      const sortResult = elements.sort(
+        (value1: any[], value2: any[]) => value1[0] - value2[0]
+      );
+
+      return sortResult[sortResult.length - 1];
+  }
+};
+
 export const getWidgetsWithValue = (payload: any[]) => {
   return panelsConfiguration.map((panelItem) => {
     const payloadData = payload.find(
@@ -248,16 +267,17 @@ export const getWidgetsWithValue = (payload: any[]) => {
         if (typeOfPayload === "stat" || typeOfPayload === "singlestat") {
           // We sort values & get the last value
           const elements = get(payloadData, "targets[0].result[0].values", []);
-
-          const sortResult = elements.sort(
-            (value1: any[], value2: any[]) => value1[0] - value2[0]
+          const metricCalc = get(
+            payloadData,
+            "options.reduceOptions.calcs[0]",
+            "lastNotNull"
           );
 
-          const lastValue = sortResult[sortResult.length - 1];
+          const valueDisplay = calculateMainValue(elements, metricCalc);
 
           const data = panelItem.labelDisplayFunction
-            ? panelItem.labelDisplayFunction(lastValue[1])
-            : lastValue[1];
+            ? panelItem.labelDisplayFunction(valueDisplay[1])
+            : valueDisplay[1];
 
           return {
             ...panelItem,
@@ -268,6 +288,16 @@ export const getWidgetsWithValue = (payload: any[]) => {
       case widgetType.pieChart:
         if (typeOfPayload === "gauge") {
           const chartSeries = get(payloadData, "targets[0].result", []);
+          const metricCalc = get(
+            payloadData,
+            "options.reduceOptions.calcs[0]",
+            "lastNotNull"
+          );
+
+          const totalValues = calculateMainValue(
+            chartSeries[0].values,
+            metricCalc
+          );
 
           const values = chartSeries.map((elementValue: any) => {
             const values = get(elementValue, "values", []);
@@ -281,10 +311,6 @@ export const getWidgetsWithValue = (payload: any[]) => {
             const value = sortResult[sortResult.length - 1];
             return { name: metricName, value: parseInt(value) };
           });
-
-          const totalValues = values.reduce((ac: number, currValue: any) => {
-            return ac + parseInt(currValue.value);
-          }, 0);
 
           const innerLabel = panelItem.labelDisplayFunction
             ? panelItem.labelDisplayFunction(totalValues)
@@ -378,11 +404,17 @@ export const getWidgetsWithValue = (payload: any[]) => {
         if (typeOfPayload === "stat") {
           // We sort values & get the last value
           const elements = get(payloadData, "targets[0].result[0].values", []);
+          const metricCalc = get(
+            payloadData,
+            "options.reduceOptions.calcs[0]",
+            "lastNotNull"
+          );
+
+          const valueDisplay = calculateMainValue(elements, metricCalc);
 
           const sortResult = elements.sort(
             (value1: any[], value2: any[]) => value1[0] - value2[0]
           );
-          const lastValue = sortResult[sortResult.length - 1];
 
           let valuesForBackground = [];
 
@@ -395,8 +427,8 @@ export const getWidgetsWithValue = (payload: any[]) => {
           });
 
           const innerLabel = panelItem.labelDisplayFunction
-            ? panelItem.labelDisplayFunction(lastValue[1])
-            : lastValue[1];
+            ? panelItem.labelDisplayFunction(valueDisplay[1])
+            : valueDisplay[1];
 
           return {
             ...panelItem,

@@ -57,11 +57,6 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-// TODO: Add custom shape for barchart (gradients)
-// TODO: Check font sizes
-// TODO: Check colors for graphs
-// TODO: Custom components for tooltips & bar chart x-axis
-
 const PrDashboard = ({ classes }: IPrDashboard) => {
   const [timeStart, setTimeStart] = useState<any>(null);
   const [timeEnd, setTimeEnd] = useState<any>(null);
