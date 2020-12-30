@@ -39,7 +39,7 @@ export const units = [
 export const k8sUnits = ["Ki", "Mi", "Gi", "Ti", "Pi", "Ei"];
 export const k8sCalcUnits = ["B", ...k8sUnits];
 
-export const niceBytes = (x: string) => {
+export const niceBytes = (x: string, showK8sUnits: boolean = false) => {
   let l = 0,
     n = parseInt(x, 10) || 0;
 
@@ -48,7 +48,12 @@ export const niceBytes = (x: string) => {
   }
   //include a decimal point and a tenths-place digit if presenting
   //less than ten of KB or greater units
-  return n.toFixed(n < 10 && l > 0 ? 1 : 0) + " " + units[l];
+  const k8sUnitsN = ["B", ...k8sUnits];
+  return (
+    n.toFixed(n < 10 && l > 0 ? 1 : 0) +
+    " " +
+    (showK8sUnits ? k8sUnitsN[l] : units[l])
+  );
 };
 
 export const setCookie = (name: string, val: string) => {
