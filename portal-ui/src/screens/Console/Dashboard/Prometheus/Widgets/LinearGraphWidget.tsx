@@ -19,7 +19,6 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
-  Legend,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -28,7 +27,6 @@ import {
 import { ILinearGraphConfiguration } from "./types";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
-import { niceBytes } from "../../../../../common/utils";
 import LineChartTooltip from "./tooltips/LineChartTooltip";
 
 interface ILinearGraphWidget {

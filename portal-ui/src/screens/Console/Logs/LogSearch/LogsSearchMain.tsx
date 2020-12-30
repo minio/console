@@ -117,7 +117,6 @@ const styles = (theme: Theme) =>
 const LogsSearchMain = ({ classes }: ILogSearchProps) => {
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
-  const [logSearchAPI, setLogSearchAPI] = useState<string>("reqInfo");
   const [timeStart, setTimeStart] = useState<any>(null);
   const [timeEnd, setTimeEnd] = useState<any>(null);
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
@@ -176,7 +175,7 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
           setError(err);
         });
     }
-  }, [loading, logSearchAPI]);
+  }, [loading]);
 
   const triggerLoad = () => {
     setLoading(true);
@@ -282,18 +281,16 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
           className={`${classes.actionsTray} ${classes.endLineAction}`}
         >
           <div>
-            {logSearchAPI === "reqInfo" && (
-              <button
-                type="button"
-                className={`${classes.advancedLabel} overrideMargin`}
-                onClick={() => {
-                  setFilterOpen(!filterOpen);
-                }}
-              >
-                Advanced Filters{" "}
-                {filterOpen ? <ArrowDropUp /> : <ArrowDropDownIcon />}
-              </button>
-            )}
+            <button
+              type="button"
+              className={`${classes.advancedLabel} overrideMargin`}
+              onClick={() => {
+                setFilterOpen(!filterOpen);
+              }}
+            >
+              Advanced Filters{" "}
+              {filterOpen ? <ArrowDropUp /> : <ArrowDropDownIcon />}
+            </button>
           </div>
           <Button
             type="button"

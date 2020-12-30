@@ -27,7 +27,6 @@ import {
 import { IBarChartConfiguration } from "./types";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
-import LineChartTooltip from "./tooltips/LineChartTooltip";
 import BarChartTooltip from "./tooltips/BarChartTooltip";
 
 interface IBarChartWidget {
