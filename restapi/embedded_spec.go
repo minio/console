@@ -3515,6 +3515,12 @@ func init() {
         "erasureCodingParity": {
           "type": "integer"
         },
+        "expose_console": {
+          "type": "boolean"
+        },
+        "expose_minio": {
+          "type": "boolean"
+        },
         "idp": {
           "type": "object",
           "$ref": "#/definitions/idpConfiguration"
@@ -5054,6 +5060,17 @@ func init() {
         },
         "enable_prometheus": {
           "type": "boolean"
+        },
+        "endpoints": {
+          "type": "object",
+          "properties": {
+            "console": {
+              "type": "string"
+            },
+            "minio": {
+              "type": "string"
+            }
+          }
         },
         "image": {
           "type": "string"
@@ -8820,6 +8837,17 @@ func init() {
         }
       }
     },
+    "TenantEndpoints": {
+      "type": "object",
+      "properties": {
+        "console": {
+          "type": "string"
+        },
+        "minio": {
+          "type": "string"
+        }
+      }
+    },
     "VaultConfigurationApprole": {
       "type": "object",
       "required": [
@@ -9387,6 +9415,12 @@ func init() {
         },
         "erasureCodingParity": {
           "type": "integer"
+        },
+        "expose_console": {
+          "type": "boolean"
+        },
+        "expose_minio": {
+          "type": "boolean"
         },
         "idp": {
           "type": "object",
@@ -10792,6 +10826,17 @@ func init() {
         },
         "enable_prometheus": {
           "type": "boolean"
+        },
+        "endpoints": {
+          "type": "object",
+          "properties": {
+            "console": {
+              "type": "string"
+            },
+            "minio": {
+              "type": "string"
+            }
+          }
         },
         "image": {
           "type": "string"

@@ -191,6 +191,8 @@ const AddTenant = ({
     rawCapacity: "0",
     storageFactors: [],
   });
+  const [exposeMinIO, setExposeMinIO] = useState<boolean>(true);
+  const [exposeConsole, setExposeConsole] = useState<boolean>(true);
 
   // Forms Validation
   const [nameTenantValid, setNameTenantValid] = useState<boolean>(false);
@@ -862,6 +864,8 @@ const AddTenant = ({
         service_name: "",
         image: imageName,
         console_image: consoleImage,
+        expose_minio: exposeMinIO,
+        expose_console: exposeConsole,
         pools: [
           {
             name: poolName,
@@ -1292,6 +1296,42 @@ const AddTenant = ({
               </Grid>
             </React.Fragment>
           )}
+          <div className={classes.headerElement}>
+            <h3 className={classes.h3Section}>Expose Services</h3>
+            <span className={classes.descriptionText}>
+              Whether the tenant's services should request an external IP.
+            </span>
+          </div>
+          <Grid item xs={12}>
+            <FormSwitchWrapper
+              value="expose_minio"
+              id="expose_minio"
+              name="expose_minio"
+              checked={exposeMinIO}
+              onChange={(e) => {
+                const targetD = e.target;
+                const checked = targetD.checked;
+
+                setExposeMinIO(checked);
+              }}
+              label={"Expose MiniO Service"}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormSwitchWrapper
+              value="expose_console"
+              id="expose_console"
+              name="expose_console"
+              checked={exposeConsole}
+              onChange={(e) => {
+                const targetD = e.target;
+                const checked = targetD.checked;
+
+                setExposeConsole(checked);
+              }}
+              label={"Expose Console Service"}
+            />
+          </Grid>
         </React.Fragment>
       ),
       buttons: [

@@ -2876,6 +2876,13 @@ definitions:
         format: int64
       enable_prometheus:
         type: boolean
+      endpoints:
+        type: object
+        properties:
+          minio:
+            type: string
+          console:
+            type: string
 
   tenantUsage:
     type: object
@@ -3020,6 +3027,10 @@ definitions:
       console:
         type: object
         $ref: "#/definitions/consoleConfiguration"
+      expose_minio:
+        type: boolean
+      expose_console:
+        type: boolean
 
   metadataFields:
     type: object

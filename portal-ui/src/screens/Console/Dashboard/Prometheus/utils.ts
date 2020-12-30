@@ -41,17 +41,7 @@ export const widgetsLayout = [
   { w: 8, h: 2, x: 0, y: 4, i: "panel-15", moved: false, static: false },
 ];
 
-const colorsMain = [
-  "#6992B7",
-  "#E2AD17",
-  "#22B573",
-  "#F7655E",
-  "#0071BC",
-  "#F9E6C5",
-  "#A6E8C4",
-  "#F4CECE",
-  "#ADD5E0",
-];
+const colorsMain = ["#081C42", "#ad7800", "#42C91A", "#C72C48"];
 
 export const panelsConfiguration: IDashboardPanel[] = [
   {
@@ -120,7 +110,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     widgetConfiguration: [
       {
         dataKey: "a",
-        color: colorsMain[0],
+        color: "#081C42",
         background: {
           fill: "rgba(0,0,0,0.1)",
         },
@@ -147,8 +137,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     innerLabel: "N/A",
     type: widgetType.singleRep,
     layoutIdentifier: "panel-8",
-    color: "#22B573",
-    fillColor: "#A6E8C4",
+    color: "#42C91A",
     labelDisplayFunction: niceBytes,
   },
   {
@@ -157,8 +146,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     innerLabel: "N/A",
     type: widgetType.singleRep,
     layoutIdentifier: "panel-9",
-    color: "#22B573",
-    fillColor: "#A6E8C4",
+    color: "#42C91A",
     labelDisplayFunction: niceBytes,
   },
   {
@@ -166,8 +154,6 @@ export const panelsConfiguration: IDashboardPanel[] = [
     data: [],
     innerLabel: "N/A",
     type: widgetType.singleRep,
-    color: "#0071BC",
-    fillColor: "#ADD5E0",
     layoutIdentifier: "panel-10",
   },
   {
@@ -175,8 +161,6 @@ export const panelsConfiguration: IDashboardPanel[] = [
     data: [],
     innerLabel: "N/A",
     type: widgetType.singleRep,
-    color: "#0071BC",
-    fillColor: "#ADD5E0",
     layoutIdentifier: "panel-11",
   },
   {
@@ -201,8 +185,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     innerLabel: "N/A",
     type: widgetType.singleRep,
     layoutIdentifier: "panel-13",
-    color: "#F7655E",
-    fillColor: "#F4CECE",
+    color: "#C72C48",
   },
   {
     title: "Total Goroutines",
@@ -210,8 +193,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     innerLabel: "N/A",
     type: widgetType.singleRep,
     layoutIdentifier: "panel-14",
-    color: "#F7655E",
-    fillColor: "#F4CECE",
+    color: "#C72C48",
   },
   {
     title: "S3 API Data Transfer",
@@ -231,25 +213,6 @@ export const panelsConfiguration: IDashboardPanel[] = [
   },
 ];
 
-const calculateMainValue = (elements: any[], metricCalc: string) => {
-  switch (metricCalc) {
-    case "mean":
-      const sumValues = elements.reduce((accumulator, currValue) => {
-        return accumulator + parseFloat(currValue[1]);
-      }, 0);
-
-      const mean = Math.floor(sumValues / elements.length);
-
-      return ["", mean.toString()];
-    default:
-      const sortResult = elements.sort(
-        (value1: any[], value2: any[]) => value1[0] - value2[0]
-      );
-
-      return sortResult[sortResult.length - 1];
-  }
-};
-
 export const getWidgetsWithValue = (payload: any[]) => {
   return panelsConfiguration.map((panelItem) => {
     const payloadData = payload.find(
@@ -267,17 +230,16 @@ export const getWidgetsWithValue = (payload: any[]) => {
         if (typeOfPayload === "stat" || typeOfPayload === "singlestat") {
           // We sort values & get the last value
           const elements = get(payloadData, "targets[0].result[0].values", []);
-          const metricCalc = get(
-            payloadData,
-            "options.reduceOptions.calcs[0]",
-            "lastNotNull"
+
+          const sortResult = elements.sort(
+            (value1: any[], value2: any[]) => value1[0] - value2[0]
           );
 
-          const valueDisplay = calculateMainValue(elements, metricCalc);
+          const lastValue = sortResult[sortResult.length - 1];
 
           const data = panelItem.labelDisplayFunction
-            ? panelItem.labelDisplayFunction(valueDisplay[1])
-            : valueDisplay[1];
+            ? panelItem.labelDisplayFunction(lastValue[1])
+            : lastValue[1];
 
           return {
             ...panelItem,
@@ -288,16 +250,6 @@ export const getWidgetsWithValue = (payload: any[]) => {
       case widgetType.pieChart:
         if (typeOfPayload === "gauge") {
           const chartSeries = get(payloadData, "targets[0].result", []);
-          const metricCalc = get(
-            payloadData,
-            "options.reduceOptions.calcs[0]",
-            "lastNotNull"
-          );
-
-          const totalValues = calculateMainValue(
-            chartSeries[0].values,
-            metricCalc
-          );
 
           const values = chartSeries.map((elementValue: any) => {
             const values = get(elementValue, "values", []);
@@ -311,6 +263,10 @@ export const getWidgetsWithValue = (payload: any[]) => {
             const value = sortResult[sortResult.length - 1];
             return { name: metricName, value: parseInt(value) };
           });
+
+          const totalValues = values.reduce((ac: number, currValue: any) => {
+            return ac + parseInt(currValue.value);
+          }, 0);
 
           const innerLabel = panelItem.labelDisplayFunction
             ? panelItem.labelDisplayFunction(totalValues)
@@ -404,17 +360,11 @@ export const getWidgetsWithValue = (payload: any[]) => {
         if (typeOfPayload === "stat") {
           // We sort values & get the last value
           const elements = get(payloadData, "targets[0].result[0].values", []);
-          const metricCalc = get(
-            payloadData,
-            "options.reduceOptions.calcs[0]",
-            "lastNotNull"
-          );
-
-          const valueDisplay = calculateMainValue(elements, metricCalc);
 
           const sortResult = elements.sort(
             (value1: any[], value2: any[]) => value1[0] - value2[0]
           );
+          const lastValue = sortResult[sortResult.length - 1];
 
           let valuesForBackground = [];
 
@@ -427,8 +377,8 @@ export const getWidgetsWithValue = (payload: any[]) => {
           });
 
           const innerLabel = panelItem.labelDisplayFunction
-            ? panelItem.labelDisplayFunction(valueDisplay[1])
-            : valueDisplay[1];
+            ? panelItem.labelDisplayFunction(lastValue[1])
+            : lastValue[1];
 
           return {
             ...panelItem,

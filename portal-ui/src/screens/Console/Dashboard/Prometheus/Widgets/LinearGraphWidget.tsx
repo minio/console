@@ -19,6 +19,7 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  Legend,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -27,7 +28,7 @@ import {
 import { ILinearGraphConfiguration } from "./types";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
-import LineChartTooltip from "./tooltips/LineChartTooltip";
+import { niceBytes } from "../../../../../common/utils";
 
 interface ILinearGraphWidget {
   classes: any;
@@ -73,7 +74,7 @@ const LinearGraphWidget = ({
               dataKey="name"
               tickFormatter={xAxisFormatter}
               interval={5}
-              tick={{ fontSize: "70%" }}
+              tick={{ fontSize: "70%", transform: "rotateZ(45)" }}
               tickCount={10}
             />
             <YAxis
@@ -82,14 +83,7 @@ const LinearGraphWidget = ({
               tickFormatter={yAxisFormatter}
               tick={{ fontSize: "70%" }}
             />
-            <Tooltip
-              content={
-                <LineChartTooltip
-                  linearConfiguration={linearConfiguration}
-                  yAxisFormatter={yAxisFormatter}
-                />
-              }
-            />
+            <Tooltip formatter={(item) => yAxisFormatter(item.toString())} />
             {linearConfiguration.map((section, index) => {
               return (
                 <Area
@@ -108,10 +102,7 @@ const LinearGraphWidget = ({
       <div className={classes.legendBlock}>
         {linearConfiguration.map((section, index) => {
           return (
-            <div
-              className={classes.singleLegendContainer}
-              key={`legend-${section.keyLabel}-${index.toString()}`}
-            >
+            <div className={classes.singleLegendContainer}>
               <div
                 className={classes.colorContainer}
                 style={{ backgroundColor: section.lineColor }}

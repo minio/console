@@ -483,7 +483,6 @@ export const getTimeFromTimestamp = (
       "0"
     )}:${String(dateObject.getSeconds()).padStart(2, "0")}`;
   }
-
   return `${dateObject.getHours()}:${String(dateObject.getMinutes()).padStart(
     2,
     "0"

@@ -30,6 +30,7 @@ import (
 	"strings"
 	"time"
 
+	"gopkg.in/yaml.v2"
 	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/types"
 
@@ -351,6 +352,45 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 	}
 
 	info := getTenantInfo(minTenant)
+
+	// get tenant service
+	k8sClient, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	minTenant.EnsureDefaults()
+	//minio service
+	minSvc, err := k8sClient.CoreV1().Services(minTenant.Namespace).Get(ctx, minTenant.MinIOCIServiceName(), metav1.GetOptions{})
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	//console service
+	conSvc, err := k8sClient.CoreV1().Services(minTenant.Namespace).Get(ctx, minTenant.ConsoleCIServiceName(), metav1.GetOptions{})
+	if err != nil {
+		return nil, prepareError(err)
+	}
+
+	schema := "http"
+	consolePort := ""
+	if minTenant.TLS() {
+		schema = "https"
+		consolePort = ":9443"
+	}
+	var minioEndpoint string
+	var consoleEndpoint string
+	if len(minSvc.Status.LoadBalancer.Ingress) > 0 {
+		minioEndpoint = fmt.Sprintf("%s://%s", schema, minSvc.Status.LoadBalancer.Ingress[0].IP)
+	}
+	if len(conSvc.Status.LoadBalancer.Ingress) > 0 {
+		consoleEndpoint = fmt.Sprintf("%s://%s%s", schema, conSvc.Status.LoadBalancer.Ingress[0].IP, consolePort)
+	}
+	if minioEndpoint != "" || consoleEndpoint != "" {
+		info.Endpoints = &models.TenantEndpoints{
+			Console: consoleEndpoint,
+			Minio:   minioEndpoint,
+		}
+	}
+
 	return info, nil
 }
 
@@ -778,6 +818,26 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	if tenantReq.ConsoleImage != "" {
 		minInst.Spec.Console.Image = tenantReq.ConsoleImage
 	}
+	// default activate lgo search and prometheus
+	minInst.Spec.Log = &operator.LogConfig{
+		Image: "miniodev/logsearch:v4.0.0",
+		Audit: &operator.AuditConfig{DiskCapacityGB: swag.Int(10)},
+	}
+	minInst.Spec.Prometheus = &operator.PrometheusConfig{
+		DiskCapacityDB: swag.Int(5),
+	}
+
+	// expose services
+	if tenantReq.ExposeMinio || tenantReq.ExposeConsole {
+		minInst.Spec.ExposeServices = &operator.ExposeServices{
+			MinIO:   tenantReq.ExposeMinio,
+			Console: tenantReq.ExposeConsole,
+		}
+		log.Println("happened")
+	}
+
+	yo, _ := yaml.Marshal(minInst)
+	log.Println(string(yo))
 
 	opClient, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {

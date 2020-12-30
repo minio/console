@@ -15,19 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import {
-  Bar,
-  BarChart,
-  ResponsiveContainer,
-  XAxis,
-  Text,
-  YAxis,
-  Tooltip,
-} from "recharts";
+import { Bar, BarChart, ResponsiveContainer, XAxis, Text } from "recharts";
 import { IBarChartConfiguration } from "./types";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
-import BarChartTooltip from "./tooltips/BarChartTooltip";
 
 interface IBarChartWidget {
   classes: any;
@@ -46,15 +37,30 @@ const CustomizedAxisTick = ({ x, y, payload }: any) => {
     <g transform={`translate(${x},${y})`}>
       <Text
         width={50}
-        fontSize={"63%"}
-        textAnchor="end"
-        verticalAnchor="middle"
+        scaleToFit
+        textAnchor="middle"
+        verticalAnchor="start"
         angle={0}
         fill="#333"
       >
         {payload.value}
       </Text>
     </g>
+  );
+};
+
+const CustomLabel = ({ x, y, value, fill, width }: any) => {
+  return (
+    <text
+      x={x + width / 2}
+      y={y}
+      dy={-4}
+      fontSize="70%"
+      fill={fill}
+      textAnchor="middle"
+    >
+      {value}
+    </text>
   );
 };
 
@@ -69,33 +75,16 @@ const BarChartWidget = ({
       <div className={classes.titleContainer}>{title}</div>
       <div className={classes.contentContainer}>
         <ResponsiveContainer>
-          <BarChart data={data} layout={"vertical"} barCategoryGap={1}>
-            <XAxis type="number" hide />
-            <YAxis
-              dataKey="name"
-              type="category"
-              interval={0}
-              tick={<CustomizedAxisTick />}
-              tickLine={false}
-              axisLine={false}
-              width={150}
-            />
+          <BarChart data={data}>
+            <XAxis dataKey="name" interval={0} tick={<CustomizedAxisTick />} />
             {barChartConfiguration.map((bar) => (
               <Bar
                 key={`bar-${bar.dataKey}`}
                 dataKey={bar.dataKey}
                 fill={bar.color}
-                background={bar.background}
+                label={<CustomLabel />}
               />
             ))}
-            <Tooltip
-              cursor={{ fill: "rgba(255, 255, 255, 0.3)" }}
-              content={
-                <BarChartTooltip
-                  barChartConfiguration={barChartConfiguration}
-                />
-              }
-            />
           </BarChart>
         </ResponsiveContainer>
       </div>

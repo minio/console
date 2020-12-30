@@ -57,6 +57,11 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
+// TODO: Add custom shape for barchart (gradients)
+// TODO: Check font sizes
+// TODO: Check colors for graphs
+// TODO: Custom components for tooltips & bar chart x-axis
+
 const PrDashboard = ({ classes }: IPrDashboard) => {
   const [timeStart, setTimeStart] = useState<any>(null);
   const [timeEnd, setTimeEnd] = useState<any>(null);
@@ -113,14 +118,12 @@ const PrDashboard = ({ classes }: IPrDashboard) => {
             />
           );
         case widgetType.singleRep:
-          const fillColor = value.fillColor ? value.fillColor : value.color;
           return (
             <SingleRepWidget
               title={value.title}
               data={value.data as IDataSRep[]}
               label={value.innerLabel as string}
               color={value.color as string}
-              fillColor={fillColor as string}
             />
           );
         default:
