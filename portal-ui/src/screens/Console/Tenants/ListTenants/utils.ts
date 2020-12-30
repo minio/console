@@ -31,6 +31,8 @@ export interface IQuotas {
   name: string;
 }
 
+export const minMemReq = 2147483648;
+
 export const ecListTransform = (ecList: string[]): Opts[] => {
   return ecList.map((value) => {
     return { label: value, value };

@@ -64,3 +64,9 @@ export interface ITenant {
 export interface ITenantsResponse {
   tenants: ITenant[];
 }
+
+export interface IMemorySize {
+  error: string;
+  limit: number;
+  request: number;
+}

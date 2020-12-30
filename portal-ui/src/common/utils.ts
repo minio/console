@@ -488,3 +488,33 @@ export const getTimeFromTimestamp = (
     "0"
   )}`;
 };
+
+export const calculateBytes = (
+  x: string,
+  showDecimals = false,
+  roundFloor = true
+) => {
+  const bytes = parseInt(x, 10);
+
+  if (bytes === 0) {
+    return { total: 0, unit: k8sCalcUnits[0] };
+  }
+
+  // Gi : GiB
+  const k = 1024;
+
+  // Get unit for measure
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  const fractionDigits = showDecimals ? 0 : 1;
+
+  const bytesUnit = bytes / Math.pow(k, i);
+
+  const roundedUnit = roundFloor ? Math.floor(bytesUnit) : bytesUnit;
+
+  // Get Unit parsed
+  const unitParsed = parseFloat(roundedUnit.toFixed(fractionDigits));
+  const finalUnit = k8sCalcUnits[i];
+
+  return { total: unitParsed, unit: finalUnit };
+};

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import debounce from "lodash/debounce";
 import get from "lodash/get";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
@@ -37,6 +37,7 @@ import {
   getBytes,
   k8sfactorForDropdown,
   niceBytes,
+  setMemoryResource,
 } from "../../../../common/utils";
 import {
   commonFormValidation,
@@ -61,6 +62,7 @@ import {
   IQuotas,
   Opts,
 } from "./utils";
+import { IMemorySize } from "./types";
 
 interface IAddTenantProps {
   open: boolean;
@@ -176,6 +178,11 @@ const AddTenant = ({
   const [ecParity, setECParity] = useState<string>("");
   const [maxAllocableMemo, setMaxAllocableMemo] = useState<number>(0);
   const [limitSize, setLimitSize] = useState<any>({});
+  const [memorySize, setMemorySize] = useState<IMemorySize>({
+    error: "",
+    limit: 0,
+    request: 0,
+  });
   const [distribution, setDistribution] = useState<any>({
     error: "",
     nodes: 0,
@@ -277,6 +284,21 @@ const AddTenant = ({
       });
   };
 
+  const validateMemorySize = useCallback(() => {
+    const memSize = parseInt(memoryNode) || 0;
+    const clusterSize = volumeSize || 0;
+    const maxMemSize = maxAllocableMemo || 0;
+    const clusterSizeFactor = sizeFactor;
+
+    const clusterSizeBytes = getBytes(
+      clusterSize.toString(10),
+      clusterSizeFactor
+    );
+    const memoSize = setMemoryResource(memSize, clusterSizeBytes, maxMemSize);
+
+    setMemorySize(memoSize);
+  }, [maxAllocableMemo, memoryNode, sizeFactor, volumeSize]);
+
   const getMaxAllocableMemory = (nodes: string) => {
     if (nodes !== "" && !isNaN(parseInt(nodes))) {
       api
@@ -285,7 +307,8 @@ const AddTenant = ({
           `/api/v1/cluster/max-allocatable-memory?num_nodes=${nodes}`
         )
         .then((res: { max_memory: number }) => {
-          setMaxAllocableMemo(res.max_memory);
+          const maxMemory = res.max_memory ? res.max_memory : 0;
+          setMaxAllocableMemo(maxMemory);
         })
         .catch((err: any) => {
           setMaxAllocableMemo(0);
@@ -293,6 +316,14 @@ const AddTenant = ({
         });
     }
   };
+
+  useEffect(() => {
+    validateMemorySize();
+  }, [memoryNode, validateMemorySize]);
+
+  useEffect(() => {
+    validateMemorySize();
+  }, [maxAllocableMemo, validateMemorySize]);
 
   const debounceNamespace = useCallback(
     debounce(getNamespaceInformation, 500),
@@ -444,7 +475,8 @@ const AddTenant = ({
         !("memory_per_node" in commonValidation) &&
         !("drivesps" in commonValidation) &&
         distribution.error === "" &&
-        ecParityCalc.error === 0
+        ecParityCalc.error === 0 &&
+        memorySize.error === ""
     );
 
     setValidationErrors(commonValidation);
@@ -456,6 +488,7 @@ const AddTenant = ({
     distribution,
     drivesPerServer,
     ecParityCalc,
+    memorySize,
   ]);
 
   useEffect(() => {
@@ -877,7 +910,10 @@ const AddTenant = ({
             },
             resources: {
               requests: {
-                memory: parseInt(getBytes(memoryNode, "GiB")),
+                memory: memorySize.request,
+              },
+              limits: {
+                memory: memorySize.limit,
               },
             },
             affinity: hardCodedAffinity,
@@ -2154,6 +2190,7 @@ const AddTenant = ({
             </span>
           </div>
           <span className={classes.error}>{distribution.error}</span>
+          <span className={classes.error}>{memorySize.error}</span>
           <Grid item xs={12}>
             <InputBoxWrapper
               id="nodes"
@@ -2197,7 +2234,7 @@ const AddTenant = ({
                     setVolumeSize(e.target.value);
                     clearValidationError("volume_size");
                   }}
-                  label="Size"
+                  label="Total Size"
                   value={volumeSize}
                   required
                   error={validationErrors["volume_size"] || ""}
@@ -2405,7 +2442,7 @@ const AddTenant = ({
 
               <TableRow>
                 <TableCell align="right" className={classes.tableTitle}>
-                  Volume Size
+                  Total Size
                 </TableCell>
                 <TableCell>
                   {volumeSize} {sizeFactor}
