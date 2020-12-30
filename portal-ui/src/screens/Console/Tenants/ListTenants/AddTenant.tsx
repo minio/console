@@ -54,7 +54,13 @@ import {
   IErasureCodeCalc,
   ITenantCreator,
 } from "../../../../common/types";
-import { ecListTransform, Opts } from "./utils";
+import {
+  ecListTransform,
+  getLimitSizes,
+  IQuotaElement,
+  IQuotas,
+  Opts,
+} from "./utils";
 
 interface IAddTenantProps {
   open: boolean;
@@ -168,6 +174,8 @@ const AddTenant = ({
   const [drivesPerServer, setDrivesPerServer] = useState<string>("1");
   const [memoryNode, setMemoryNode] = useState<string>("2");
   const [ecParity, setECParity] = useState<string>("");
+  const [maxAllocableMemo, setMaxAllocableMemo] = useState<number>(0);
+  const [limitSize, setLimitSize] = useState<any>({});
   const [distribution, setDistribution] = useState<any>({
     error: "",
     nodes: 0,
@@ -246,8 +254,9 @@ const AddTenant = ({
         "GET",
         `/api/v1/namespaces/${namespace}/resourcequotas/${namespace}-storagequota`
       )
-      .then((res: string[]) => {
-        const elements = get(res, "elements", []);
+      .then((res: IQuotas) => {
+        const elements: IQuotaElement[] = get(res, "elements", []);
+        setLimitSize(getLimitSizes(res));
 
         const newStorage = elements.map((storageClass: any) => {
           const name = get(storageClass, "name", "").split(
@@ -266,6 +275,23 @@ const AddTenant = ({
       .catch((err: any) => {
         console.log(err);
       });
+  };
+
+  const getMaxAllocableMemory = (nodes: string) => {
+    if (nodes !== "" && !isNaN(parseInt(nodes))) {
+      api
+        .invoke(
+          "GET",
+          `/api/v1/cluster/max-allocatable-memory?num_nodes=${nodes}`
+        )
+        .then((res: { max_memory: number }) => {
+          setMaxAllocableMemo(res.max_memory);
+        })
+        .catch((err: any) => {
+          setMaxAllocableMemo(0);
+          console.error(err);
+        });
+    }
   };
 
   const debounceNamespace = useCallback(
@@ -301,6 +327,7 @@ const AddTenant = ({
   useEffect(() => {
     validateClusterSize();
     getECValue();
+    getMaxAllocableMemory(nodes);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodes, volumeSize, sizeFactor, drivesPerServer]);
 
@@ -387,8 +414,13 @@ const AddTenant = ({
         fieldKey: "volume_size",
         required: true,
         value: volumeSize,
-        customValidation: parseInt(parsedSize) < 1073741824,
-        customValidationMessage: "Volume size must be greater than 1Gi",
+        customValidation:
+          parseInt(parsedSize) < 1073741824 ||
+          parseInt(parsedSize) > limitSize[selectedStorageClass],
+        customValidationMessage: `Volume size must be greater than 1Gi and less than ${niceBytes(
+          limitSize[selectedStorageClass],
+          true
+        )}`,
       },
       {
         fieldKey: "memory_per_node",
@@ -2186,39 +2218,41 @@ const AddTenant = ({
               </div>
             </div>
           </Grid>
-          <Grid item xs={12}>
-            <InputBoxWrapper
-              type="number"
-              id="memory_per_node"
-              name="memory_per_node"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setMemoryNode(e.target.value);
-                clearValidationError("memory_per_node");
-              }}
-              label="Memory per Node [Gi]"
-              value={memoryNode}
-              required
-              error={validationErrors["memory_per_node"] || ""}
-              min="2"
-            />
-          </Grid>
           {advancedMode && (
-            <Grid item xs={12}>
-              <SelectWrapper
-                id="ec_parity"
-                name="ec_parity"
-                onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                  setECParity(e.target.value as string);
-                }}
-                label="Erasure Code Parity"
-                value={ecParity}
-                options={ecParityChoices}
-              />
-              <span className={classes.descriptionText}>
-                Please select the desired parity. This setting will change the
-                max usable capacity in the cluster
-              </span>
-            </Grid>
+            <React.Fragment>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  type="number"
+                  id="memory_per_node"
+                  name="memory_per_node"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setMemoryNode(e.target.value);
+                    clearValidationError("memory_per_node");
+                  }}
+                  label="Memory per Node [Gi]"
+                  value={memoryNode}
+                  required
+                  error={validationErrors["memory_per_node"] || ""}
+                  min="2"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <SelectWrapper
+                  id="ec_parity"
+                  name="ec_parity"
+                  onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                    setECParity(e.target.value as string);
+                  }}
+                  label="Erasure Code Parity"
+                  value={ecParity}
+                  options={ecParityChoices}
+                />
+                <span className={classes.descriptionText}>
+                  Please select the desired parity. This setting will change the
+                  max usable capacity in the cluster
+                </span>
+              </Grid>
+            </React.Fragment>
           )}
           <h4>Resource Allocation</h4>
           <Table className={classes.table} aria-label="simple table">
@@ -2255,6 +2289,14 @@ const AddTenant = ({
                   {distribution ? distribution.persistentVolumes : "-"}
                 </TableCell>
               </TableRow>
+              {!advancedMode && (
+                <TableRow>
+                  <TableCell component="th" scope="row">
+                    Memory per Node
+                  </TableCell>
+                  <TableCell align="right">{memoryNode} Gi</TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
           {ecParityCalc.error === 0 && usableInformation && (
