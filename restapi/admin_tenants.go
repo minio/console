@@ -371,8 +371,10 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 	}
 
 	schema := "http"
+	consolePort := ""
 	if minTenant.TLS() {
 		schema = "https"
+		consolePort = ":9443"
 	}
 	var minioEndpoint string
 	var consoleEndpoint string
@@ -380,7 +382,7 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 		minioEndpoint = fmt.Sprintf("%s://%s", schema, minSvc.Status.LoadBalancer.Ingress[0].IP)
 	}
 	if len(conSvc.Status.LoadBalancer.Ingress) > 0 {
-		consoleEndpoint = fmt.Sprintf("%s://%s", schema, conSvc.Status.LoadBalancer.Ingress[0].IP)
+		consoleEndpoint = fmt.Sprintf("%s://%s%s", schema, conSvc.Status.LoadBalancer.Ingress[0].IP, consolePort)
 	}
 	if minioEndpoint != "" || consoleEndpoint != "" {
 		info.Endpoints = &models.TenantEndpoints{
