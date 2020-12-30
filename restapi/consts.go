@@ -61,6 +61,6 @@ const (
 
 // Image versions
 const (
-	KESImageVersion     = "minio/kes:v0.12.1"
-	ConsoleImageVersion = "minio/console:v0.4.6"
+	KESImageVersion            = "minio/kes:v0.12.1"
+	ConsoleImageDefaultVersion = "miniodev/console:demo"
 )

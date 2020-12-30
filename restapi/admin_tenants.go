@@ -371,7 +371,7 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 	}
 
 	schema := "http"
-	consolePort := ""
+	consolePort := ":9090"
 	if minTenant.TLS() {
 		schema = "https"
 		consolePort = ":9443"
@@ -712,7 +712,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 
 		minInst.Spec.Console = &operator.ConsoleConfiguration{
 			Replicas:      1,
-			Image:         ConsoleImageVersion,
+			Image:         getConsoleImage(),
 			ConsoleSecret: &corev1.LocalObjectReference{Name: consoleSecretName},
 			Resources: corev1.ResourceRequirements{
 				Requests: map[corev1.ResourceName]resource.Quantity{
