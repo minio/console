@@ -35,7 +35,7 @@ import (
 func registerAdminInfoHandlers(api *operations.ConsoleAPI) {
 	// return usage stats
 	api.AdminAPIAdminInfoHandler = admin_api.AdminInfoHandlerFunc(func(params admin_api.AdminInfoParams, session *models.Principal) middleware.Responder {
-		infoResp, err := getAdminInfoResponse(session)
+		infoResp, err := getAdminInfoResponse(session, params)
 		if err != nil {
 			return admin_api.NewAdminInfoDefault(int(err.Code)).WithPayload(err)
 		}
@@ -434,7 +434,7 @@ type PromResp struct {
 }
 
 // getAdminInfoResponse returns the response containing total buckets, objects and usage.
-func getAdminInfoResponse(session *models.Principal) (*models.AdminInfoResponse, *models.Error) {
+func getAdminInfoResponse(session *models.Principal, params admin_api.AdminInfoParams) (*models.AdminInfoResponse, *models.Error) {
 	//mAdmin, err := newMAdminClient(session)
 	//if err != nil {
 	//	return nil, prepareError(err)
@@ -470,6 +470,10 @@ func getAdminInfoResponse(session *models.Principal) (*models.AdminInfoResponse,
 					apiType := "query_range"
 					now := time.Now()
 					extraParamters := fmt.Sprintf("&start=%d&end=%d&step=15", now.Add(-15*time.Minute).Unix(), now.Unix())
+
+					if params.Start != nil && params.End != nil {
+						extraParamters = fmt.Sprintf("&start=%d&end=%d&step=15", params.Start, params.End)
+					}
 
 					endpoint := fmt.Sprintf("%s/api/v1/%s?query=%s%s", getPrometheusURL(), apiType, url.QueryEscape(target.Expr), extraParamters)
 

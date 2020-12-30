@@ -115,6 +115,18 @@ func init() {
         ],
         "summary": "Returns information about the deployment",
         "operationId": "AdminInfo",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "name": "end",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -5420,6 +5432,18 @@ func init() {
         ],
         "summary": "Returns information about the deployment",
         "operationId": "AdminInfo",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "name": "end",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "description": "A successful response.",
