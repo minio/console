@@ -16,6 +16,8 @@
 
 export interface NewServiceAccount {
   console?: ConsoleSA;
+  accessKey?: string;
+  secretKey?: string;
 }
 
 export interface ConsoleSA {
