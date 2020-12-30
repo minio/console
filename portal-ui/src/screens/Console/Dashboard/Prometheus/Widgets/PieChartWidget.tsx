@@ -52,18 +52,6 @@ const PieChartWidget = ({
       <div className={classes.contentContainer}>
         <ResponsiveContainer>
           <PieChart margin={{ top: 5, bottom: 5 }}>
-            {middleLabel && (
-              <text
-                x={"50%"}
-                y={"50%"}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fontWeight={600}
-                fontSize={14}
-              >
-                {middleLabel}
-              </text>
-            )}
             {dataOuter && (
               <Pie
                 data={dataOuter}
@@ -145,6 +133,18 @@ const PieChartWidget = ({
                   );
                 })}
               </Pie>
+            )}
+            {middleLabel && (
+              <text
+                x={"50%"}
+                y={"50%"}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fontWeight={600}
+                fontSize={14}
+              >
+                {middleLabel}
+              </text>
             )}
           </PieChart>
         </ResponsiveContainer>

@@ -118,12 +118,14 @@ const PrDashboard = ({ classes }: IPrDashboard) => {
             />
           );
         case widgetType.singleRep:
+          const fillColor = value.fillColor ? value.fillColor : value.color;
           return (
             <SingleRepWidget
               title={value.title}
               data={value.data as IDataSRep[]}
               label={value.innerLabel as string}
               color={value.color as string}
+              fillColor={fillColor as string}
             />
           );
         default:

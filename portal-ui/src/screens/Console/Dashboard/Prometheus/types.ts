@@ -40,6 +40,7 @@ export interface IDashboardPanel {
     | IBarChartConfiguration[]
     | IPieChartConfiguration;
   color?: string;
+  fillColor?: string;
   innerLabel?: string;
   labelDisplayFunction?: (value: string) => any;
   disableYAxis?: boolean;

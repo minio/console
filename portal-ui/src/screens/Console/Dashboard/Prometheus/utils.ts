@@ -41,7 +41,17 @@ export const widgetsLayout = [
   { w: 8, h: 2, x: 0, y: 4, i: "panel-15", moved: false, static: false },
 ];
 
-const colorsMain = ["#081C42", "#ad7800", "#42C91A", "#C72C48"];
+const colorsMain = [
+  "#6992B7",
+  "#E2AD17",
+  "#22B573",
+  "#F7655E",
+  "#0071BC",
+  "#F9E6C5",
+  "#A6E8C4",
+  "#F4CECE",
+  "#ADD5E0",
+];
 
 export const panelsConfiguration: IDashboardPanel[] = [
   {
@@ -110,7 +120,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     widgetConfiguration: [
       {
         dataKey: "a",
-        color: "#081C42",
+        color: colorsMain[0],
         background: {
           fill: "rgba(0,0,0,0.1)",
         },
@@ -137,7 +147,8 @@ export const panelsConfiguration: IDashboardPanel[] = [
     innerLabel: "N/A",
     type: widgetType.singleRep,
     layoutIdentifier: "panel-8",
-    color: "#42C91A",
+    color: "#22B573",
+    fillColor: "#A6E8C4",
     labelDisplayFunction: niceBytes,
   },
   {
@@ -146,7 +157,8 @@ export const panelsConfiguration: IDashboardPanel[] = [
     innerLabel: "N/A",
     type: widgetType.singleRep,
     layoutIdentifier: "panel-9",
-    color: "#42C91A",
+    color: "#22B573",
+    fillColor: "#A6E8C4",
     labelDisplayFunction: niceBytes,
   },
   {
@@ -154,6 +166,8 @@ export const panelsConfiguration: IDashboardPanel[] = [
     data: [],
     innerLabel: "N/A",
     type: widgetType.singleRep,
+    color: "#0071BC",
+    fillColor: "#ADD5E0",
     layoutIdentifier: "panel-10",
   },
   {
@@ -161,6 +175,8 @@ export const panelsConfiguration: IDashboardPanel[] = [
     data: [],
     innerLabel: "N/A",
     type: widgetType.singleRep,
+    color: "#0071BC",
+    fillColor: "#ADD5E0",
     layoutIdentifier: "panel-11",
   },
   {
@@ -185,7 +201,8 @@ export const panelsConfiguration: IDashboardPanel[] = [
     innerLabel: "N/A",
     type: widgetType.singleRep,
     layoutIdentifier: "panel-13",
-    color: "#C72C48",
+    color: "#F7655E",
+    fillColor: "#F4CECE",
   },
   {
     title: "Total Goroutines",
@@ -193,7 +210,8 @@ export const panelsConfiguration: IDashboardPanel[] = [
     innerLabel: "N/A",
     type: widgetType.singleRep,
     layoutIdentifier: "panel-14",
-    color: "#C72C48",
+    color: "#F7655E",
+    fillColor: "#F4CECE",
   },
   {
     title: "S3 API Data Transfer",

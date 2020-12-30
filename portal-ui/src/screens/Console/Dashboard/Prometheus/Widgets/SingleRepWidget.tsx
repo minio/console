@@ -25,6 +25,7 @@ interface ISingleRepWidget {
   title: string;
   data: IDataSRep[];
   color: string;
+  fillColor: string;
   label: string;
 }
 
@@ -38,6 +39,7 @@ const SingleRepWidget = ({
   title,
   data,
   color,
+  fillColor,
   label,
 }: ISingleRepWidget) => {
   return (
@@ -46,6 +48,14 @@ const SingleRepWidget = ({
       <div className={classes.contentContainer}>
         <ResponsiveContainer>
           <AreaChart data={data}>
+            <YAxis domain={[0, (dataMax) => dataMax * 2]} hide={true} />
+            <Area
+              type="monotone"
+              dataKey={"value"}
+              stroke={color}
+              fill={fillColor}
+              fillOpacity={1}
+            />
             <text
               x={"50%"}
               y={"50%"}
@@ -57,14 +67,6 @@ const SingleRepWidget = ({
             >
               {label}
             </text>
-            <YAxis domain={[0, (dataMax) => dataMax * 2]} hide={true} />
-            <Area
-              type="monotone"
-              dataKey={"value"}
-              stroke={color}
-              fill={color}
-              fillOpacity={0.3}
-            />
           </AreaChart>
         </ResponsiveContainer>
       </div>
