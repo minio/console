@@ -138,8 +138,14 @@ const Account = ({ classes }: IServiceAccountsProps) => {
     fetchRecords();
 
     if (res !== null) {
+      const nsa: NewServiceAccount = {
+        console: {
+          accessKey: `${res.accessKey}`,
+          secretKey: `${res.secretKey}`,
+        },
+      };
+      setNewServiceAccount(nsa);
       setShowNewCredentials(true);
-      setNewServiceAccount(res);
     }
   };
 
