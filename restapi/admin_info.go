@@ -459,20 +459,18 @@ func getAdminInfoResponse(session *models.Principal, params admin_api.AdminInfoP
 	// launch a goroutines per widget
 
 	results := make(chan models.Widget)
-
 	for _, m := range widgets {
-		go func(m Metric) {
+		go func(m Metric, params admin_api.AdminInfoParams) {
 			targetResults := make(chan *models.ResultTarget)
 			// for each target we will launch another goroutine to fetch the values
 			for _, target := range m.Targets {
-				go func(target Target) {
-
+				go func(target Target, params admin_api.AdminInfoParams) {
 					apiType := "query_range"
 					now := time.Now()
-					extraParamters := fmt.Sprintf("&start=%d&end=%d&step=15", now.Add(-15*time.Minute).Unix(), now.Unix())
+					extraParamters := fmt.Sprintf("&start=%d&end=%d&step=%d", now.Add(-15*time.Minute).Unix(), now.Unix(), *params.Step)
 
 					if params.Start != nil && params.End != nil {
-						extraParamters = fmt.Sprintf("&start=%d&end=%d&step=15", params.Start, params.End)
+						extraParamters = fmt.Sprintf("&start=%d&end=%d&step=%d", *params.Start, *params.End, *params.Step)
 					}
 
 					endpoint := fmt.Sprintf("%s/api/v1/%s?query=%s%s", getPrometheusURL(), apiType, url.QueryEscape(target.Expr), extraParamters)
@@ -494,6 +492,7 @@ func getAdminInfoResponse(session *models.Principal, params admin_api.AdminInfoP
 							return
 						}
 						log.Println(endpoint)
+						log.Println(resp.StatusCode)
 						log.Println(string(body))
 						return
 					}
@@ -514,7 +513,6 @@ func getAdminInfoResponse(session *models.Principal, params admin_api.AdminInfoP
 						LegendFormat: target.LegendFormat,
 						ResultType:   response.Data.ResultType,
 					}
-					log.Println(target.LegendFormat)
 					for _, r := range response.Data.Result {
 						targetResult.Result = append(targetResult.Result, &models.WidgetResult{
 							Metric: r.Metric,
@@ -533,7 +531,7 @@ func getAdminInfoResponse(session *models.Principal, params admin_api.AdminInfoP
 
 					targetResults <- &targetResult
 
-				}(target)
+				}(target, params)
 			}
 
 			wdgtResult := models.Widget{
@@ -560,7 +558,7 @@ func getAdminInfoResponse(session *models.Principal, params admin_api.AdminInfoP
 			}
 
 			results <- wdgtResult
-		}(m)
+		}(m, params)
 	}
 
 	// count the number of widgets that have completed calculating

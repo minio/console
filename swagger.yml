@@ -1461,6 +1461,10 @@ paths:
         - name: end
           in: query
           type: integer
+        - name: step
+          default: 15
+          in: query
+          type: integer
       responses:
         200:
           description: A successful response.

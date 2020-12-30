@@ -125,6 +125,12 @@ func init() {
             "type": "integer",
             "name": "end",
             "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 15,
+            "name": "step",
+            "in": "query"
           }
         ],
         "responses": {
@@ -5441,6 +5447,12 @@ func init() {
           {
             "type": "integer",
             "name": "end",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 15,
+            "name": "step",
             "in": "query"
           }
         ],
