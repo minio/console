@@ -352,6 +352,43 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 	}
 
 	info := getTenantInfo(minTenant)
+
+	// get tenant service
+	k8sClient, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	minTenant.EnsureDefaults()
+	//minio service
+	minSvc, err := k8sClient.CoreV1().Services(minTenant.Namespace).Get(ctx, minTenant.MinIOCIServiceName(), metav1.GetOptions{})
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	//console service
+	conSvc, err := k8sClient.CoreV1().Services(minTenant.Namespace).Get(ctx, minTenant.ConsoleCIServiceName(), metav1.GetOptions{})
+	if err != nil {
+		return nil, prepareError(err)
+	}
+
+	schema := "http"
+	if minTenant.TLS() {
+		schema = "https"
+	}
+	var minioEndpoint string
+	var consoleEndpoint string
+	if len(minSvc.Status.LoadBalancer.Ingress) > 0 {
+		minioEndpoint = fmt.Sprintf("%s://%s", schema, minSvc.Status.LoadBalancer.Ingress[0].IP)
+	}
+	if len(conSvc.Status.LoadBalancer.Ingress) > 0 {
+		consoleEndpoint = fmt.Sprintf("%s://%s", schema, conSvc.Status.LoadBalancer.Ingress[0].IP)
+	}
+	if minioEndpoint != "" || consoleEndpoint != "" {
+		info.Endpoints = &models.TenantEndpoints{
+			Console: consoleEndpoint,
+			Minio:   minioEndpoint,
+		}
+	}
+
 	return info, nil
 }
 

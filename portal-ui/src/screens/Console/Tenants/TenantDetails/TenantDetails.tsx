@@ -283,6 +283,22 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
               <div>{instances}</div>
               <div>Volumes:</div>
               <div>{volumes}</div>
+              {tenant?.endpoints && (
+                <React.Fragment>
+                  <div>Endpoint:</div>
+                  <div>
+                    <a href={tenant?.endpoints.minio} target="_blank">
+                      {tenant?.endpoints.minio}
+                    </a>
+                  </div>
+                  <div>Console:</div>
+                  <div>
+                    <a href={tenant?.endpoints.console} target="_blank">
+                      {tenant?.endpoints.console}
+                    </a>
+                  </div>
+                </React.Fragment>
+              )}
             </div>
           </Paper>
         </Grid>

@@ -369,3 +369,36 @@ export const widgetCommon = {
     maxWidth: "calc(100% - 14px)",
   },
 };
+
+export const tooltipCommon = {
+  customTooltip: {
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    border: "#eaeaea 1px solid",
+    borderRadius: 3,
+    padding: "5px 10px",
+  },
+  labelContainer: {
+    display: "flex" as const,
+    alignItems: "center" as const,
+  },
+  labelColor: {
+    width: 6,
+    height: 6,
+    display: "block" as const,
+    borderRadius: "100%",
+    marginRight: 5,
+  },
+  itemValue: {
+    fontSize: "75%",
+    color: "#393939",
+  },
+  valueContainer: {
+    fontWeight: 600,
+  },
+  timeStampTitle: {
+    fontSize: "80%",
+    color: "#9c9c9c",
+    textAlign: "center" as const,
+    marginBottom: 6,
+  },
+};

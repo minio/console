@@ -5061,6 +5061,17 @@ func init() {
         "enable_prometheus": {
           "type": "boolean"
         },
+        "endpoints": {
+          "type": "object",
+          "properties": {
+            "console": {
+              "type": "string"
+            },
+            "minio": {
+              "type": "string"
+            }
+          }
+        },
         "image": {
           "type": "string"
         },
@@ -8826,6 +8837,17 @@ func init() {
         }
       }
     },
+    "TenantEndpoints": {
+      "type": "object",
+      "properties": {
+        "console": {
+          "type": "string"
+        },
+        "minio": {
+          "type": "string"
+        }
+      }
+    },
     "VaultConfigurationApprole": {
       "type": "object",
       "required": [
@@ -10804,6 +10826,17 @@ func init() {
         },
         "enable_prometheus": {
           "type": "boolean"
+        },
+        "endpoints": {
+          "type": "object",
+          "properties": {
+            "console": {
+              "type": "string"
+            },
+            "minio": {
+              "type": "string"
+            }
+          }
         },
         "image": {
           "type": "string"

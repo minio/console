@@ -461,9 +461,23 @@ export const niceDays = (secondsValue: string) => {
   }`;
 };
 
-export const getTimeFromTimestamp = (timestamp: string) => {
+export const getTimeFromTimestamp = (
+  timestamp: string,
+  fullDate: boolean = false
+) => {
   const dateObject = new Date(parseInt(timestamp) * 1000);
 
+  if (fullDate) {
+    return `${dateObject.getFullYear()}-${String(
+      dateObject.getMonth()
+    ).padStart(2, "0")}-${String(dateObject.getDay()).padStart(
+      2,
+      "0"
+    )} ${dateObject.getHours()}:${String(dateObject.getMinutes()).padStart(
+      2,
+      "0"
+    )}:${String(dateObject.getSeconds()).padStart(2, "0")}`;
+  }
   return `${dateObject.getHours()}:${String(dateObject.getMinutes()).padStart(
     2,
     "0"
