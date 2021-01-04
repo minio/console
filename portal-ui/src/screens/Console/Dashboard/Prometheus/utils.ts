@@ -340,8 +340,8 @@ export const getWidgetsWithValue = (payload: any[]) => {
               series.push({
                 dataKey: keyName,
                 keyLabel: targetMaster.legendFormat,
-                lineColor: colorsMain[index] || colorsMain[0],
-                fillColor: colorsMain[index] || colorsMain[0],
+                lineColor: "",
+                fillColor: "",
               });
 
               // we iterate over values and create elements
@@ -365,13 +365,33 @@ export const getWidgetsWithValue = (payload: any[]) => {
             }
           );
 
+          const sortedSeries = series.sort((series1: any, series2: any) => {
+            if (series1.keyLabel < series2.keyLabel) {
+              return -1;
+            }
+            if (series1.keyLabel > series2.keyLabel) {
+              return 1;
+            }
+            return 0;
+          });
+
+          const seriesWithColors = sortedSeries.map(
+            (serialC: any, index: number) => {
+              return {
+                ...serialC,
+                lineColor: colorsMain[index] || colorsMain[0],
+                fillColor: colorsMain[index] || colorsMain[0],
+              };
+            }
+          );
+
           const sortedVals = plotValues.sort(
             (value1: any, value2: any) => value1.name - value2.name
           );
 
           return {
             ...panelItem,
-            widgetConfiguration: series,
+            widgetConfiguration: seriesWithColors,
             data: sortedVals,
           };
         }
