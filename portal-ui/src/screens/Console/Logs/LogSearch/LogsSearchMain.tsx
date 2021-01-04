@@ -31,6 +31,7 @@ import { IReqInfoSearchResults, ISearchResponse } from "./types";
 import FilterInputWrapper from "../../Common/FormComponents/FilterInputWrapper/FilterInputWrapper";
 import api from "../../../../common/api";
 import DateTimePickerWrapper from "../../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
+import { niceBytes } from "../../../../common/utils";
 
 interface ILogSearchProps {
   classes: any;
@@ -333,10 +334,12 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
               {
                 label: "Request Content Length",
                 elementKey: "request_content_length",
+                renderFunction: niceBytes,
               },
               {
                 label: "Response Content Length",
                 elementKey: "response_content_length",
+                renderFunction: niceBytes,
               },
             ]}
             isLoading={loading}
