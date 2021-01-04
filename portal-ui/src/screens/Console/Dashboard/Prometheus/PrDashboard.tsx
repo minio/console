@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, Fragment } from "react";
 import ReactGridLayout from "react-grid-layout";
 import Grid from "@material-ui/core/Grid";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
@@ -43,6 +43,7 @@ import {
   widgetsLayout,
 } from "./utils";
 import { Button } from "@material-ui/core";
+import ErrorBlock from "../../../shared/ErrorBlock";
 
 interface IPrDashboard {
   classes: any;
@@ -64,6 +65,7 @@ const PrDashboard = ({ classes }: IPrDashboard) => {
   const [panelInformation, setPanelInformation] = useState<IDashboardPanel[]>(
     panelsConfiguration
   );
+  const [error, setError] = useState<string>("");
 
   const minHeight = 600;
 
@@ -144,13 +146,20 @@ const PrDashboard = ({ classes }: IPrDashboard) => {
         }`
       )
       .then((res: any) => {
-        const widgetsWithValue = getWidgetsWithValue(res.widgets);
+        if (res.widgets) {
+          const widgetsWithValue = getWidgetsWithValue(res.widgets);
+          setPanelInformation(widgetsWithValue);
+          setError("");
+        } else {
+          setError(
+            "Widget information could not be retrieved at this time. Please try again"
+          );
+        }
 
-        setPanelInformation(widgetsWithValue);
         setLoading(false);
       })
       .catch((err) => {
-        // setError(err);
+        setError(err);
         setLoading(false);
       });
   };
@@ -167,6 +176,14 @@ const PrDashboard = ({ classes }: IPrDashboard) => {
 
   return (
     <Grid container className={classes.container}>
+      <Grid item xs={12}>
+        {error !== "" && (
+          <Fragment>
+            <ErrorBlock errorMessage={error} withBreak={false} />
+            <br />
+          </Fragment>
+        )}
+      </Grid>
       <Grid
         item
         xs={12}
