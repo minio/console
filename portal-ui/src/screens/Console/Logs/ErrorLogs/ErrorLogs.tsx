@@ -115,6 +115,7 @@ const ErrorLogs = ({
         console.log("connection closed by server");
       };
       return () => {
+        timeFromDate;
         c.close(1000);
         clearInterval(interval);
         console.log("closing websockets");

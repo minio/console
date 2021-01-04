@@ -128,7 +128,7 @@ func TestListBucket(t *testing.T) {
 	assert.Equal(len(mockBucketList.Buckets), len(bucketList), fmt.Sprintf("Failed on %s: length of bucket's lists is not the same", function))
 	for i, b := range bucketList {
 		assert.Equal(mockBucketList.Buckets[i].Name, *b.Name)
-		assert.Equal(mockBucketList.Buckets[i].Created.String(), b.CreationDate)
+		assert.Equal(mockBucketList.Buckets[i].Created.Format(time.RFC3339), b.CreationDate)
 		assert.Equal(mockBucketList.Buckets[i].Name, *b.Name)
 		assert.Equal(int64(mockBucketList.Buckets[i].Size), b.Size)
 	}

@@ -311,7 +311,7 @@ func getTenantInfo(tenant *operator.Tenant) *models.Tenant {
 	}
 	var deletion string
 	if tenant.ObjectMeta.DeletionTimestamp != nil {
-		deletion = tenant.ObjectMeta.DeletionTimestamp.String()
+		deletion = tenant.ObjectMeta.DeletionTimestamp.Format(time.RFC3339)
 	}
 
 	if tenant.HasConsoleEnabled() {
@@ -319,7 +319,7 @@ func getTenantInfo(tenant *operator.Tenant) *models.Tenant {
 	}
 
 	return &models.Tenant{
-		CreationDate:     tenant.ObjectMeta.CreationTimestamp.String(),
+		CreationDate:     tenant.ObjectMeta.CreationTimestamp.Format(time.RFC3339),
 		DeletionDate:     deletion,
 		Name:             tenant.Name,
 		TotalSize:        totalSize,
@@ -425,11 +425,11 @@ func listTenants(ctx context.Context, operatorClient OperatorClientI, namespace 
 
 		var deletion string
 		if tenant.ObjectMeta.DeletionTimestamp != nil {
-			deletion = tenant.ObjectMeta.DeletionTimestamp.String()
+			deletion = tenant.ObjectMeta.DeletionTimestamp.Format(time.RFC3339)
 		}
 
 		tenants = append(tenants, &models.TenantList{
-			CreationDate:  tenant.ObjectMeta.CreationTimestamp.String(),
+			CreationDate:  tenant.ObjectMeta.CreationTimestamp.Format(time.RFC3339),
 			DeletionDate:  deletion,
 			Name:          tenant.ObjectMeta.Name,
 			PoolCount:     int64(len(tenant.Spec.Pools)),
