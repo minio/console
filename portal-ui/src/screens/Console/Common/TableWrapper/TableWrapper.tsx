@@ -72,6 +72,7 @@ interface TableWrapperProps {
   customPaperHeight?: string;
   noBackground?: boolean;
   columnsSelector?: boolean;
+  textSelectable?: boolean;
   columnsShown?: string[];
   onColumnChange?: (column: string, state: boolean) => any;
 }
@@ -212,6 +213,9 @@ const styles = () =>
           fontWeight: 600,
           "&.canClick": {
             cursor: "pointer",
+          },
+          "&.canSelectText": {
+            userSelect: "text",
           },
         },
         "& .selected": {
@@ -414,6 +418,7 @@ const TableWrapper = ({
   customPaperHeight = "",
   noBackground = false,
   columnsSelector = false,
+  textSelectable = false,
   columnsShown = [],
   onColumnChange = (column: string, state: boolean) => {},
 }: TableWrapperProps) => {
@@ -560,7 +565,9 @@ const TableWrapper = ({
                   onRowClick={({ rowData }) => {
                     clickAction(rowData);
                   }}
-                  rowClassName={`rowLine ${findView ? "canClick" : ""}`}
+                  rowClassName={`rowLine ${findView ? "canClick" : ""} ${
+                    !findView && textSelectable ? "canSelectText" : ""
+                  }`}
                 >
                   {hasSelect && (
                     <Column

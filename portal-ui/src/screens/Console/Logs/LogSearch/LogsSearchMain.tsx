@@ -350,6 +350,7 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
             customPaperHeight={
               filterOpen ? classes.tableFOpen : classes.tableFClosed
             }
+            textSelectable
           />
         </Grid>
       </Grid>
