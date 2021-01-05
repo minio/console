@@ -221,7 +221,6 @@ const PrDashboard = ({ classes }: IPrDashboard) => {
                 {panels}
               </ReactGridLayout>
             );
-            c;
           }}
         </AutoSizer>
       </Grid>
