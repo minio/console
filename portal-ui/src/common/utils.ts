@@ -451,7 +451,13 @@ export const niceDays = (secondsValue: string) => {
     }`;
   }
 
-  if (days >= 1 && days <= 30) {
+  if (days >= 7 && days <= 30) {
+    const weeks = Math.floor(days / 7);
+
+    return `${Math.floor(weeks)} week${weeks === 1 ? "" : "s"}`;
+  }
+
+  if (days >= 1 && days <= 6) {
     return `${days} day${days > 1 ? "s" : ""}`;
   }
 

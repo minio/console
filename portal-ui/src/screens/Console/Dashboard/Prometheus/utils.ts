@@ -396,8 +396,8 @@ export const getWidgetsWithValue = (payload: any[]) => {
           });
 
           const innerLabel = panelItem.labelDisplayFunction
-            ? panelItem.labelDisplayFunction(totalValues)
-            : totalValues;
+            ? panelItem.labelDisplayFunction(totalValues[1])
+            : totalValues[1];
 
           return {
             ...panelItem,
