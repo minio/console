@@ -28,6 +28,8 @@ import {
 import { Table, Column, AutoSizer, InfiniteLoader } from "react-virtualized";
 import { createStyles, withStyles } from "@material-ui/core/styles";
 import ViewColumnIcon from "@material-ui/icons/ViewColumn";
+import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
 import TableActionButton from "./TableActionButton";
 import history from "../../../../history";
 import {
@@ -58,6 +60,17 @@ interface IColumns {
   enableSort?: boolean;
 }
 
+interface IInfiniteScrollConfig {
+  loadMoreRecords: () => Promise<any>;
+  recordsCount: number;
+}
+
+interface ISortConfig {
+  triggerSort: (val: any) => any;
+  currentSort: string;
+  currentDirection: "ASC" | "DESC" | undefined;
+}
+
 interface TableWrapperProps {
   itemActions?: ItemActions[] | null;
   columns: IColumns[];
@@ -76,8 +89,8 @@ interface TableWrapperProps {
   textSelectable?: boolean;
   columnsShown?: string[];
   onColumnChange?: (column: string, state: boolean) => any;
-  loadMoreRecords?: () => Promise<any>;
-  recordsCount?: number;
+  infiniteScrollConfig?: IInfiniteScrollConfig;
+  sortConfig?: ISortConfig;
 }
 
 const borderColor = "#9c9c9c80";
@@ -231,6 +244,9 @@ const styles = () =>
         fontWeight: 700,
         fontSize: 14,
         fontStyle: "initial",
+        display: "flex",
+        alignItems: "center",
+        outline: "none",
       },
       ".ReactVirtualized__Table__headerRow": {
         fontWeight: 700,
@@ -321,7 +337,9 @@ const generateColumnsMap = (
   selectedItems: string[],
   idField: string,
   columnsSelector: boolean,
-  columnsShown: string[]
+  columnsShown: string[],
+  sortColumn: string,
+  sortDirection: "ASC" | "DESC" | undefined
 ) => {
   const commonRestWidth = calculateColumnRest(
     columns,
@@ -346,7 +364,20 @@ const generateColumnsMap = (
         headerClassName={`titleHeader ${
           column.headerTextAlign ? `text-${column.headerTextAlign}` : ""
         }`}
-        headerRenderer={() => <Fragment>{column.label}</Fragment>}
+        headerRenderer={() => (
+          <Fragment>
+            {sortColumn === column.elementKey && (
+              <Fragment>
+                {sortDirection === "ASC" ? (
+                  <ArrowDropDownIcon />
+                ) : (
+                  <ArrowDropUpIcon />
+                )}
+              </Fragment>
+            )}
+            {column.label}
+          </Fragment>
+        )}
         className={
           column.contentTextAlign ? `text-${column.contentTextAlign}` : ""
         }
@@ -360,6 +391,7 @@ const generateColumnsMap = (
         }}
         width={column.width || commonRestWidth}
         disableSort={disableSort}
+        defaultSortDirection={"ASC"}
       />
     );
   });
@@ -427,10 +459,8 @@ const TableWrapper = ({
   textSelectable = false,
   columnsShown = [],
   onColumnChange = (column: string, state: boolean) => {},
-  loadMoreRecords = () => {
-    return new Promise(() => true);
-  },
-  recordsCount,
+  infiniteScrollConfig,
+  sortConfig,
 }: TableWrapperProps) => {
   const [columnSelectorOpen, setColumnSelectorOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = React.useState<any>(null);
@@ -540,8 +570,16 @@ const TableWrapper = ({
         {records && !isLoading && records.length > 0 ? (
           <InfiniteLoader
             isRowLoaded={({ index }) => !!records[index]}
-            loadMoreRows={loadMoreRecords}
-            rowCount={recordsCount || records.length}
+            loadMoreRows={
+              infiniteScrollConfig
+                ? infiniteScrollConfig.loadMoreRecords
+                : () => new Promise(() => true)
+            }
+            rowCount={
+              infiniteScrollConfig
+                ? infiniteScrollConfig.recordsCount
+                : records.length
+            }
           >
             {({ onRowsRendered, registerChild }) => (
               <AutoSizer>
@@ -585,6 +623,11 @@ const TableWrapper = ({
                         !findView && textSelectable ? "canSelectText" : ""
                       }`}
                       onRowsRendered={onRowsRendered}
+                      sort={sortConfig ? sortConfig.triggerSort : undefined}
+                      sortBy={sortConfig ? sortConfig.currentSort : undefined}
+                      sortDirection={
+                        sortConfig ? sortConfig.currentDirection : undefined
+                      }
                     >
                       {hasSelect && (
                         <Column
@@ -644,7 +687,9 @@ const TableWrapper = ({
                         selectedItems || [],
                         idField,
                         columnsSelector,
-                        columnsShown
+                        columnsShown,
+                        sortConfig ? sortConfig.currentSort : "",
+                        sortConfig ? sortConfig.currentDirection : undefined
                       )}
                       {hasOptions && (
                         <Column

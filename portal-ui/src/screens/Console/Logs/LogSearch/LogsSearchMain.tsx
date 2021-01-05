@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState, useEffect } from "react";
+import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, Grid } from "@material-ui/core";
 import { ArrowDropUp } from "@material-ui/icons";
@@ -129,6 +130,9 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
   const [object, setObject] = useState<string>("");
   const [requestID, setRequestID] = useState<string>("");
   const [responseStatus, setResponseStatus] = useState<string>("");
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC" | undefined>(
+    "DESC"
+  );
   const [columnsShown, setColumnsShown] = useState<string[]>([
     "time",
     "api_name",
@@ -163,7 +167,9 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
           "GET",
           `/api/v1/logs/search?q=reqinfo${
             queryParams !== "" ? `${queryParams}` : ""
-          }&pageSize=1000&pageNo=0&order=timeDesc${
+          }&pageSize=1000&pageNo=0&order=${
+            sortOrder === "DESC" ? "timeDesc" : "timeAsc"
+          }${
             timeStart !== null ? `&timeStart=${timeStart.toISOString()}` : ""
           }${timeEnd !== null ? `&timeEnd=${timeEnd.toISOString()}` : ""}`
         )
@@ -177,7 +183,7 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
           setError(err);
         });
     }
-  }, [loading, logSearchAPI]);
+  }, [loading, logSearchAPI, sortOrder]);
 
   const triggerLoad = () => {
     setLoading(true);
@@ -194,6 +200,12 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
       }
     }
     setColumnsShown(newArray);
+  };
+
+  const sortChange = (sortData: any) => {
+    const newSortDirection = get(sortData, "sortDirection", "DESC");
+    setSortOrder(newSortDirection);
+    setLoading(true);
   };
 
   return (
@@ -308,7 +320,7 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
         <Grid item xs={12}>
           <TableWrapper
             columns={[
-              { label: "Timestamp", elementKey: "time" },
+              { label: "Timestamp", elementKey: "time", enableSort: true },
               { label: "API Name", elementKey: "api_name" },
               { label: "Bucket", elementKey: "bucket" },
               { label: "Object", elementKey: "object" },
@@ -353,6 +365,11 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
             customPaperHeight={
               filterOpen ? classes.tableFOpen : classes.tableFClosed
             }
+            sortConfig={{
+              currentSort: "time",
+              currentDirection: sortOrder,
+              triggerSort: sortChange,
+            }}
             textSelectable
           />
         </Grid>
