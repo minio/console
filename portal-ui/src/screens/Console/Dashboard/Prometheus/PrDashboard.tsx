@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useMemo, useState, Fragment } from "react";
-import ReactGridLayout from "react-grid-layout";
+import ReactGridLayout, { Layout } from "react-grid-layout";
 import Grid from "@material-ui/core/Grid";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import {
@@ -38,9 +38,10 @@ import DateTimePickerWrapper from "../../Common/FormComponents/DateTimePickerWra
 import { IDashboardPanel, widgetType } from "./types";
 import api from "../../../../common/api";
 import {
+  getDashboardDistribution,
   getWidgetsWithValue,
   panelsConfiguration,
-  widgetsLayout,
+  saveDashboardDistribution,
 } from "./utils";
 import { Button } from "@material-ui/core";
 import ErrorBlock from "../../../shared/ErrorBlock";
@@ -174,6 +175,8 @@ const PrDashboard = ({ classes }: IPrDashboard) => {
     }
   }, [loading]);
 
+  const dashboardDistr = getDashboardDistribution();
+
   return (
     <Grid container className={classes.container}>
       <Grid item xs={12}>
@@ -211,15 +214,14 @@ const PrDashboard = ({ classes }: IPrDashboard) => {
                 width={width}
                 cols={8}
                 containerPadding={[10, 10]}
-                onLayoutChange={(layout) => {
-                  //console.log(layout);
-                }}
-                layout={widgetsLayout}
+                onLayoutChange={saveDashboardDistribution}
+                layout={dashboardDistr}
                 rowHeight={hpanel / 6}
               >
                 {panels}
               </ReactGridLayout>
             );
+            c;
           }}
         </AutoSizer>
       </Grid>

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import get from "lodash/get";
+import { Layout } from "react-grid-layout";
 import { IDashboardPanel, widgetType } from "./types";
 import {
   getTimeFromTimestamp,
@@ -22,7 +23,9 @@ import {
   niceDays,
 } from "../../../../common/utils";
 
-export const widgetsLayout = [
+const dLocalStorageV = "dashboardConfig";
+
+export const defaultWidgetsLayout: Layout[] = [
   { w: 1, h: 2, x: 0, y: 0, i: "panel-0", moved: false, static: false },
   { w: 1, h: 1, x: 1, y: 0, i: "panel-1", moved: false, static: false },
   { w: 1, h: 1, x: 1, y: 1, i: "panel-2", moved: false, static: false },
@@ -541,4 +544,18 @@ export const getWidgetsWithValue = (payload: any[]) => {
 
     return panelItem;
   });
+};
+
+export const saveDashboardDistribution = (configuration: Layout[]) => {
+  localStorage.setItem(dLocalStorageV, btoa(JSON.stringify(configuration)));
+};
+
+export const getDashboardDistribution = () => {
+  const storedConfiguration = localStorage.getItem(dLocalStorageV);
+
+  if (!storedConfiguration) {
+    return defaultWidgetsLayout;
+  }
+
+  return JSON.parse(atob(storedConfiguration));
 };
