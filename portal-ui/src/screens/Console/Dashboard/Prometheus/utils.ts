@@ -39,6 +39,11 @@ export const widgetsLayout = [
   { w: 1, h: 1, x: 7, y: 2, i: "panel-13", moved: false, static: false },
   { w: 1, h: 1, x: 7, y: 3, i: "panel-14", moved: false, static: false },
   { w: 8, h: 2, x: 0, y: 4, i: "panel-15", moved: false, static: false },
+  { w: 4, h: 2, x: 0, y: 5, i: "panel-16", moved: false, static: false },
+  { w: 4, h: 2, x: 5, y: 5, i: "panel-17", moved: false, static: false },
+  { w: 8, h: 2, x: 0, y: 7, i: "panel-18", moved: false, static: false },
+  { w: 4, h: 2, x: 0, y: 9, i: "panel-19", moved: false, static: false },
+  { w: 4, h: 2, x: 5, y: 9, i: "panel-20", moved: false, static: false },
 ];
 
 const colorsMain = [
@@ -228,6 +233,81 @@ export const panelsConfiguration: IDashboardPanel[] = [
     layoutIdentifier: "panel-15",
     disableYAxis: true,
     xAxisFormatter: getTimeFromTimestamp,
+  },
+  {
+    title: "Total S3 API Data Transfer",
+    data: [],
+    widgetConfiguration: [
+      {
+        dataKey: "",
+        keyLabel: "",
+        lineColor: "#000",
+        fillColor: "#000",
+      },
+    ],
+    type: widgetType.linearGraph,
+    layoutIdentifier: "panel-16",
+    yAxisFormatter: niceBytes,
+    xAxisFormatter: getTimeFromTimestamp,
+  },
+  {
+    title: "Active S3 Requests",
+    data: [],
+    widgetConfiguration: [
+      {
+        dataKey: "",
+        keyLabel: "",
+        lineColor: "#000",
+        fillColor: "#000",
+      },
+    ],
+    type: widgetType.linearGraph,
+    layoutIdentifier: "panel-17",
+  },
+  {
+    title: "Internode Data Transfer",
+    data: [],
+    widgetConfiguration: [
+      {
+        dataKey: "",
+        keyLabel: "",
+        lineColor: "#000",
+        fillColor: "#000",
+      },
+    ],
+    type: widgetType.linearGraph,
+    layoutIdentifier: "panel-18",
+    yAxisFormatter: niceBytes,
+  },
+  {
+    title: "Online Disks",
+    data: [],
+    widgetConfiguration: [
+      {
+        dataKey: "",
+        keyLabel: "",
+        lineColor: "#000",
+        fillColor: "#000",
+      },
+    ],
+    type: widgetType.linearGraph,
+    layoutIdentifier: "panel-19",
+    disableYAxis: true,
+  },
+  {
+    title: "Disk Usage",
+    data: [],
+    widgetConfiguration: [
+      {
+        dataKey: "",
+        keyLabel: "",
+        lineColor: "#000",
+        fillColor: "#000",
+      },
+    ],
+    type: widgetType.linearGraph,
+    layoutIdentifier: "panel-20",
+    yAxisFormatter: niceBytes,
   },
 ];
 
