@@ -21,6 +21,7 @@ import { Grid } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
+import moment from "moment/moment";
 import { AppState } from "../../../../store";
 import { logMessageReceived, logResetMessages } from "../actions";
 import { LogMessage } from "../types";
@@ -105,8 +106,9 @@ const ErrorLogs = ({
       };
       c.onmessage = (message: IMessageEvent) => {
         // console.log(message.data.toString())
+        // FORMAT: 00:35:17 UTC 01/01/2021
         let m: LogMessage = JSON.parse(message.data.toString());
-        m.time = new Date(m.time.toString());
+        m.time = moment(m.time, "HH:mm:s UTC MM/DD/YYYY").toDate();
         m.key = Math.random();
         logMessageReceived(m);
       };
