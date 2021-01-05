@@ -221,6 +221,10 @@ const ListObjects = ({
     }
   }, [match, routesList, setAllRoutes]);
 
+  useEffect(() => {
+    setLoading(true);
+  }, [routesList, setLoading]);
+
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
 
