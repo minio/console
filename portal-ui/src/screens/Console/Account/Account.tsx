@@ -103,10 +103,9 @@ const Account = ({ classes }: IServiceAccountsProps) => {
     newServiceAccount,
     setNewServiceAccount,
   ] = useState<NewServiceAccount | null>(null);
-  const [
-    changePasswordModalOpen,
-    setChangePasswordModalOpen,
-  ] = useState<boolean>(false);
+  const [changePasswordModalOpen, setChangePasswordModalOpen] = useState<
+    boolean
+  >(false);
 
   useEffect(() => {
     fetchRecords();
@@ -139,8 +138,14 @@ const Account = ({ classes }: IServiceAccountsProps) => {
     fetchRecords();
 
     if (res !== null) {
+      const nsa: NewServiceAccount = {
+        console: {
+          accessKey: `${res.accessKey}`,
+          secretKey: `${res.secretKey}`,
+        },
+      };
+      setNewServiceAccount(nsa);
       setShowNewCredentials(true);
-      setNewServiceAccount(res);
     }
   };
 
