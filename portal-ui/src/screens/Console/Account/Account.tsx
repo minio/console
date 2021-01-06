@@ -103,9 +103,10 @@ const Account = ({ classes }: IServiceAccountsProps) => {
     newServiceAccount,
     setNewServiceAccount,
   ] = useState<NewServiceAccount | null>(null);
-  const [changePasswordModalOpen, setChangePasswordModalOpen] = useState<
-    boolean
-  >(false);
+  const [
+    changePasswordModalOpen,
+    setChangePasswordModalOpen,
+  ] = useState<boolean>(false);
 
   useEffect(() => {
     fetchRecords();

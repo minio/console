@@ -24,6 +24,8 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -94,6 +96,15 @@ type Metric struct {
 	Type    string
 	Options MetricOptions
 	Targets []Target
+}
+
+type WidgetLabel struct {
+	Name string
+}
+
+var labels = []WidgetLabel{
+	{Name: "instance"},
+	{Name: "disk"},
 }
 
 var widgets = []Metric{
@@ -433,6 +444,15 @@ type PromResp struct {
 	Data   PromRespData `json:"data"`
 }
 
+type LabelResponse struct {
+	Status string   `json:"status"`
+	Data   []string `json:"data"`
+}
+type LabelResults struct {
+	Label    string
+	Response LabelResponse
+}
+
 // getAdminInfoResponse returns the response containing total buckets, objects and usage.
 func getAdminInfoResponse(session *models.Principal, params admin_api.AdminInfoParams) (*models.AdminInfoResponse, *models.Error) {
 	//mAdmin, err := newMAdminClient(session)
@@ -456,6 +476,65 @@ func getAdminInfoResponse(session *models.Principal, params admin_api.AdminInfoP
 	//	Usage:   usage.Usage,
 	//}
 
+	labelResultsCh := make(chan LabelResults)
+
+	for _, lbl := range labels {
+		log.Println("ll", lbl.Name)
+		go func(lbl WidgetLabel) {
+			log.Println("lxl", lbl.Name)
+			endpoint := fmt.Sprintf("%s/api/v1/label/%s/values", getPrometheusURL(), lbl.Name)
+
+			resp, err := http.Get(endpoint)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			defer func() {
+				if err := resp.Body.Close(); err != nil {
+					log.Println(err)
+				}
+			}()
+
+			if resp.StatusCode != 200 {
+				body, err := ioutil.ReadAll(resp.Body)
+				if err != nil {
+					log.Println(err)
+					return
+				}
+				log.Println(endpoint)
+				log.Println(resp.StatusCode)
+				log.Println(string(body))
+				return
+			}
+
+			var response LabelResponse
+			jd := json.NewDecoder(resp.Body)
+			if err = jd.Decode(&response); err != nil {
+				log.Println(err)
+				return
+			}
+
+			labelResultsCh <- LabelResults{Label: lbl.Name, Response: response}
+
+		}(lbl)
+	}
+
+	labelMap := make(map[string][]string)
+
+	// wait for as many goroutines that come back in less than 1 second
+LabelsWaitLoop:
+	for {
+		select {
+		case <-time.After(1 * time.Second):
+			break LabelsWaitLoop
+		case res := <-labelResultsCh:
+			labelMap[res.Label] = res.Response.Data
+			if len(labelMap) >= len(labels) {
+				break LabelsWaitLoop
+			}
+		}
+	}
+
 	// launch a goroutines per widget
 
 	results := make(chan models.Widget)
@@ -473,11 +552,23 @@ func getAdminInfoResponse(session *models.Principal, params admin_api.AdminInfoP
 						extraParamters = fmt.Sprintf("&start=%d&end=%d&step=%d", *params.Start, *params.End, *params.Step)
 					}
 
-					endpoint := fmt.Sprintf("%s/api/v1/%s?query=%s%s", getPrometheusURL(), apiType, url.QueryEscape(target.Expr), extraParamters)
+					queryExpr := target.Expr
 
+					if strings.Contains(queryExpr, "$") {
+						var re = regexp.MustCompile(`\$([a-z]+)`)
+
+						for _, match := range re.FindAllStringSubmatch(queryExpr, -1) {
+							if val, ok := labelMap[match[1]]; ok {
+								queryExpr = strings.ReplaceAll(queryExpr, "$"+match[1], fmt.Sprintf("(%s)", strings.Join(val, "|")))
+							}
+						}
+					}
+
+					endpoint := fmt.Sprintf("%s/api/v1/%s?query=%s%s", getPrometheusURL(), apiType, url.QueryEscape(queryExpr), extraParamters)
 					resp, err := http.Get(endpoint)
 					if err != nil {
-						panic(err)
+						log.Println(err)
+						return
 					}
 					defer func() {
 						if err := resp.Body.Close(); err != nil {
