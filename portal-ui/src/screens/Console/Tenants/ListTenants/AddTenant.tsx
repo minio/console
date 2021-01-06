@@ -489,6 +489,8 @@ const AddTenant = ({
     drivesPerServer,
     ecParityCalc,
     memorySize,
+    limitSize,
+    selectedStorageClass,
   ]);
 
   useEffect(() => {
