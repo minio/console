@@ -229,11 +229,7 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
     setLoading(true);
   };
 
-  const loadMoreRecords = (elements: {
-    startIndex: number;
-    stopIndex: number;
-  }) => {
-    console.log("New Records Set");
+  const loadMoreRecords = (_: { startIndex: number; stopIndex: number }) => {
     fetchRecords();
     return new Promise((resolve) => {
       recordsResp = resolve;
