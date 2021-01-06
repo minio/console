@@ -29,10 +29,10 @@ import {
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { IReqInfoSearchResults, ISearchResponse } from "./types";
-import FilterInputWrapper from "../../Common/FormComponents/FilterInputWrapper/FilterInputWrapper";
+import { niceBytes, nsToSeconds } from "../../../../common/utils";
 import api from "../../../../common/api";
+import FilterInputWrapper from "../../Common/FormComponents/FilterInputWrapper/FilterInputWrapper";
 import DateTimePickerWrapper from "../../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
-import { niceBytes } from "../../../../common/utils";
 
 interface ILogSearchProps {
   classes: any;
@@ -352,10 +352,6 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
               { label: "API Name", elementKey: "api_name" },
               { label: "Bucket", elementKey: "bucket" },
               { label: "Object", elementKey: "object" },
-              {
-                label: "Time to Response NS",
-                elementKey: "time_to_response_ns",
-              },
               { label: "Remote Host", elementKey: "remote_host" },
               { label: "Request ID", elementKey: "request_id" },
               { label: "User Agent", elementKey: "user_agent" },
@@ -380,6 +376,12 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
                 label: "Response Content Length",
                 elementKey: "response_content_length",
                 renderFunction: niceBytes,
+              },
+              {
+                label: "Time to Response NS",
+                elementKey: "time_to_response_ns",
+                renderFunction: nsToSeconds,
+                contentTextAlign: "right",
               },
             ]}
             isLoading={loading}

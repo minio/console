@@ -524,3 +524,10 @@ export const calculateBytes = (
 
   return { total: unitParsed, unit: finalUnit };
 };
+
+export const nsToSeconds = (nanoseconds: number) => {
+  const conversion = nanoseconds * 0.000000001;
+  const round = Math.round((conversion + Number.EPSILON) * 10000) / 10000;
+
+  return `${round} s`;
+};
