@@ -14,8 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useMemo, useState, Fragment } from "react";
-import ReactGridLayout, { Layout } from "react-grid-layout";
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+  Fragment,
+  useCallback,
+} from "react";
+import ReactGridLayout from "react-grid-layout";
 import Grid from "@material-ui/core/Grid";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import {
@@ -136,7 +142,7 @@ const PrDashboard = ({ classes }: IPrDashboard) => {
     });
   }, [panelInformation]);
 
-  const fetchUsage = () => {
+  const fetchUsage = useCallback(() => {
     api
       .invoke(
         "GET",
@@ -163,7 +169,7 @@ const PrDashboard = ({ classes }: IPrDashboard) => {
         setError(err);
         setLoading(false);
       });
-  };
+  }, [timeStart, timeEnd]);
 
   const triggerLoad = () => {
     setLoading(true);
@@ -173,7 +179,7 @@ const PrDashboard = ({ classes }: IPrDashboard) => {
     if (loading) {
       fetchUsage();
     }
-  }, [loading]);
+  }, [loading, fetchUsage]);
 
   const dashboardDistr = getDashboardDistribution();
 

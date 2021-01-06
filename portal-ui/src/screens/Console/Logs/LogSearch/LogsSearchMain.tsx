@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect, useCallback } from "react";
 import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, Grid } from "@material-ui/core";
@@ -119,7 +119,6 @@ const styles = (theme: Theme) =>
 const LogsSearchMain = ({ classes }: ILogSearchProps) => {
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
-  const [logSearchAPI, setLogSearchAPI] = useState<string>("reqInfo");
   const [timeStart, setTimeStart] = useState<any>(null);
   const [timeEnd, setTimeEnd] = useState<any>(null);
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
@@ -148,7 +147,7 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
 
   let recordsResp: any = null;
 
-  const fetchRecords = () => {
+  const fetchRecords = useCallback(() => {
     if (!alreadyFetching) {
       setAlreadyFetching(true);
       let queryParams = `${bucket !== "" ? `&fp=bucket:${bucket}` : ""}${
@@ -196,16 +195,31 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
           setError(err);
         });
     }
-  };
+  }, [
+    bucket,
+    object,
+    apiName,
+    requestID,
+    userAgent,
+    responseStatus,
+    nextPage,
+    sortOrder,
+    timeStart,
+    timeEnd,
+    alreadyFetching,
+    records,
+    recordsResp,
+  ]);
 
   useEffect(() => {
     if (loading) {
       setRecords([]);
       fetchRecords();
     }
-  }, [loading, logSearchAPI, sortOrder]);
+  }, [loading, sortOrder, fetchRecords]);
 
   const triggerLoad = () => {
+    setNextPage(0);
     setLoading(true);
   };
 
@@ -323,18 +337,16 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
           className={`${classes.actionsTray} ${classes.endLineAction}`}
         >
           <div>
-            {logSearchAPI === "reqInfo" && (
-              <button
-                type="button"
-                className={`${classes.advancedLabel} overrideMargin`}
-                onClick={() => {
-                  setFilterOpen(!filterOpen);
-                }}
-              >
-                Advanced Filters{" "}
-                {filterOpen ? <ArrowDropUp /> : <ArrowDropDownIcon />}
-              </button>
-            )}
+            <button
+              type="button"
+              className={`${classes.advancedLabel} overrideMargin`}
+              onClick={() => {
+                setFilterOpen(!filterOpen);
+              }}
+            >
+              Advanced Filters{" "}
+              {filterOpen ? <ArrowDropUp /> : <ArrowDropDownIcon />}
+            </button>
           </div>
           <Button
             type="button"

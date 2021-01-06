@@ -372,9 +372,9 @@ const generateColumnsMap = (
             {sortColumn === column.elementKey && (
               <Fragment>
                 {sortDirection === "ASC" ? (
-                  <ArrowDropDownIcon />
-                ) : (
                   <ArrowDropUpIcon />
+                ) : (
+                  <ArrowDropDownIcon />
                 )}
               </Fragment>
             )}
