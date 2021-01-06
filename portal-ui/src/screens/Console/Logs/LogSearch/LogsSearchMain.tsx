@@ -143,11 +143,14 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
     "user_agent",
     "response_status",
   ]);
+  const [nextPage, setNextPage] = useState<number>(0);
+  const [alreadyFetching, setAlreadyFetching] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (loading) {
-      setRecords([]);
+  let recordsResp: any = null;
 
+  const fetchRecords = () => {
+    if (!alreadyFetching) {
+      setAlreadyFetching(true);
       let queryParams = `${bucket !== "" ? `&fp=bucket:${bucket}` : ""}${
         object !== "" ? `&fp=object:${object}` : ""
       }${apiName !== "" ? `&fp=api_name:${apiName}` : ""}${
@@ -167,21 +170,38 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
           "GET",
           `/api/v1/logs/search?q=reqinfo${
             queryParams !== "" ? `${queryParams}` : ""
-          }&pageSize=1000&pageNo=0&order=${
+          }&pageSize=100&pageNo=${nextPage}&order=${
             sortOrder === "DESC" ? "timeDesc" : "timeAsc"
           }${
             timeStart !== null ? `&timeStart=${timeStart.toISOString()}` : ""
           }${timeEnd !== null ? `&timeEnd=${timeEnd.toISOString()}` : ""}`
         )
         .then((res: ISearchResponse) => {
+          const fetchedResults = res.results || [];
+          const newResultSet = [...records, ...fetchedResults];
+
           setLoading(false);
-          setRecords(res.results || []);
+          setAlreadyFetching(false);
+          setRecords(newResultSet);
           setError("");
+          setNextPage(nextPage + 1);
+
+          if (recordsResp !== null) {
+            recordsResp();
+          }
         })
         .catch((err: any) => {
           setLoading(false);
+          setAlreadyFetching(false);
           setError(err);
         });
+    }
+  };
+
+  useEffect(() => {
+    if (loading) {
+      setRecords([]);
+      fetchRecords();
     }
   }, [loading, logSearchAPI, sortOrder]);
 
@@ -205,7 +225,19 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
   const sortChange = (sortData: any) => {
     const newSortDirection = get(sortData, "sortDirection", "DESC");
     setSortOrder(newSortDirection);
+    setNextPage(0);
     setLoading(true);
+  };
+
+  const loadMoreRecords = (elements: {
+    startIndex: number;
+    stopIndex: number;
+  }) => {
+    console.log("New Records Set");
+    fetchRecords();
+    return new Promise((resolve) => {
+      recordsResp = resolve;
+    });
   };
 
   return (
@@ -369,6 +401,10 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
               currentSort: "time",
               currentDirection: sortOrder,
               triggerSort: sortChange,
+            }}
+            infiniteScrollConfig={{
+              recordsCount: 1000000,
+              loadMoreRecords: loadMoreRecords,
             }}
             textSelectable
           />

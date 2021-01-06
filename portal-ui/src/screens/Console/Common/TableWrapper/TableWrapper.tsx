@@ -61,7 +61,10 @@ interface IColumns {
 }
 
 interface IInfiniteScrollConfig {
-  loadMoreRecords: () => Promise<any>;
+  loadMoreRecords: (indexElements: {
+    startIndex: number;
+    stopIndex: number;
+  }) => Promise<any>;
   recordsCount: number;
 }
 
