@@ -455,26 +455,31 @@ type LabelResults struct {
 
 // getAdminInfoResponse returns the response containing total buckets, objects and usage.
 func getAdminInfoResponse(session *models.Principal, params admin_api.AdminInfoParams) (*models.AdminInfoResponse, *models.Error) {
-	//mAdmin, err := newMAdminClient(session)
-	//if err != nil {
-	//	return nil, prepareError(err)
-	//}
-	//// create a minioClient interface implementation
-	//// defining the client to be used
-	//adminClient := adminClient{client: mAdmin}
-	//// 20 seconds timeout
-	//ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-	//defer cancel()
-	//// serialize output
-	//usage, err := getAdminInfo(ctx, adminClient)
-	//if err != nil {
-	//	return nil, prepareError(err)
-	//}
-	//sessionResp := &models.AdminInfoResponse{
-	//	Buckets: usage.Buckets,
-	//	Objects: usage.Objects,
-	//	Usage:   usage.Usage,
-	//}
+	prometheusURL := getPrometheusURL()
+
+	if prometheusURL == "" {
+		mAdmin, err := newMAdminClient(session)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		// create a minioClient interface implementation
+		// defining the client to be used
+		adminClient := adminClient{client: mAdmin}
+		// 20 seconds timeout
+		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+		defer cancel()
+		// serialize output
+		usage, err := getAdminInfo(ctx, adminClient)
+		if err != nil {
+			return nil, prepareError(err)
+		}
+		sessionResp := &models.AdminInfoResponse{
+			Buckets: usage.Buckets,
+			Objects: usage.Objects,
+			Usage:   usage.Usage,
+		}
+		return sessionResp, nil
+	}
 
 	labelResultsCh := make(chan LabelResults)
 
@@ -482,7 +487,7 @@ func getAdminInfoResponse(session *models.Principal, params admin_api.AdminInfoP
 		log.Println("ll", lbl.Name)
 		go func(lbl WidgetLabel) {
 			log.Println("lxl", lbl.Name)
-			endpoint := fmt.Sprintf("%s/api/v1/label/%s/values", getPrometheusURL(), lbl.Name)
+			endpoint := fmt.Sprintf("%s/api/v1/label/%s/values", prometheusURL, lbl.Name)
 
 			resp, err := http.Get(endpoint)
 			if err != nil {

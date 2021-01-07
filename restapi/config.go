@@ -261,7 +261,7 @@ func getPrometheusURL() string {
 func initVars() {
 	logSearchAPI = env.Get(LogSearchQueryAuthToken, "")
 	logSearchURL = env.Get(LogSearchURL, "http://localhost:8080")
-	prometheusURL = env.Get(PrometheusURL, "http://localhost:9091")
+	prometheusURL = env.Get(PrometheusURL, "")
 	consoleImage = env.Get("CONSOLE_OPERATOR_CONSOLE_IMAGE", ConsoleImageDefaultVersion)
 }
 

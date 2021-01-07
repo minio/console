@@ -14,12 +14,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import PrDashboard from "./Prometheus/PrDashboard";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import Grid from "@material-ui/core/Grid";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import BasicDashboard from "./BasicDashboard/BasicDashboard";
+import { LinearProgress } from "@material-ui/core";
+import api from "../../../common/api";
+import { Usage } from "./types";
 
 interface IDashboardSimple {
   classes: any;
@@ -31,12 +35,47 @@ const styles = (theme: Theme) =>
   });
 
 const Dashboard = ({ classes }: IDashboardSimple) => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [basicResult, setBasicResult] = useState<Usage | null>(null);
+  const [error, setError] = useState<string>("");
+
+  useEffect(() => {
+    if (loading) {
+      fetchUsage();
+    }
+  }, [loading]);
+
+  const fetchUsage = () => {
+    api
+      .invoke("GET", `/api/v1/admin/info`)
+      .then((res: Usage) => {
+        setBasicResult(res);
+        setError("");
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err);
+        setLoading(false);
+      });
+  };
+
   return (
     <Fragment>
       <PageHeader label="Dashboard" />
-      <div className={classes.dashboardBG} />
-      <Grid container className={classes.dashboardContainer}>
-        <PrDashboard />
+      <Grid container>
+        {loading ? (
+          <Grid item xs={12} className={classes.container}>
+            <LinearProgress />
+          </Grid>
+        ) : (
+          <Fragment>
+            {basicResult && basicResult.widgets !== null ? (
+              <PrDashboard />
+            ) : (
+              <BasicDashboard usage={basicResult} error={error} />
+            )}
+          </Fragment>
+        )}
       </Grid>
     </Fragment>
   );
