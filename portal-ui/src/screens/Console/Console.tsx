@@ -52,6 +52,7 @@ import Trace from "./Trace/Trace";
 import LogsMain from "./Logs/LogsMain";
 import Heal from "./Heal/Heal";
 import Watch from "./Watch/Watch";
+import HealthInfo from "./HealthInfo/HealthInfo";
 
 const drawerWidth = 245;
 
@@ -287,6 +288,10 @@ const Console = ({
     {
       component: LogsMain,
       path: "/logs",
+    },
+    {
+      component: HealthInfo,
+      path: "/health-info",
     },
     {
       component: ConfigurationMain,
