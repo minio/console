@@ -665,8 +665,6 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			Data: map[string][]byte{
 				"CONSOLE_PBKDF_PASSPHRASE": []byte(RandomCharString(16)),
 				"CONSOLE_PBKDF_SALT":       []byte(RandomCharString(8)),
-				"CONSOLE_ACCESS_KEY":       []byte(consoleAccess),
-				"CONSOLE_SECRET_KEY":       []byte(consoleSecret),
 			},
 		}
 

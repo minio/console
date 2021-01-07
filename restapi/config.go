@@ -44,14 +44,6 @@ var TLSRedirect = "off"
 
 var SessionDuration = 45 * time.Minute
 
-func getAccessKey() string {
-	return env.Get(ConsoleAccessKey, "minioadmin")
-}
-
-func getSecretKey() string {
-	return env.Get(ConsoleSecretKey, "minioadmin")
-}
-
 func getMinIOServer() string {
 	return strings.TrimSpace(env.Get(ConsoleMinIOServer, "http://localhost:9000"))
 }

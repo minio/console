@@ -19,8 +19,6 @@ package restapi
 const (
 	// Constants for common configuration
 	ConsoleVersion        = `0.2.0`
-	ConsoleAccessKey      = "CONSOLE_ACCESS_KEY"
-	ConsoleSecretKey      = "CONSOLE_SECRET_KEY"
 	ConsoleMinIOServer    = "CONSOLE_MINIO_SERVER"
 	ConsoleMinIORegion    = "CONSOLE_MINIO_REGION"
 	ConsoleProductionMode = "CONSOLE_PRODUCTION_MODE"

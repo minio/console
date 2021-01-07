@@ -101,14 +101,13 @@ Additionally, you can create policies to limit the privileges for `console` user
 To run the server:
 
 ```bash
-#required to encrypt jwet payload
+# Salt to encrypt JWT payload
 export CONSOLE_PBKDF_PASSPHRASE=SECRET
 
 #required to encrypt jwet payload
 export CONSOLE_PBKDF_SALT=SECRET
 
-export CONSOLE_ACCESS_KEY=console
-export CONSOLE_SECRET_KEY=YOURCONSOLESECRET
+# MinIO endpoint
 export CONSOLE_MINIO_SERVER=http://localhost:9000
 ./console server
 ```

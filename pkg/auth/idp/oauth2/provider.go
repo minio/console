@@ -26,6 +26,9 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
+
+	"github.com/minio/minio-go/v7/pkg/credentials"
 
 	"github.com/coreos/go-oidc"
 	"github.com/minio/console/pkg/auth/utils"
@@ -110,14 +113,13 @@ func NewOauth2ProviderClient(ctx context.Context, scopes []string) (*Provider, e
 		scopes = []string{oidc.ScopeOpenID, "profile", "app_metadata", "user_metadata", "email"}
 	}
 	client := new(Provider)
-	config := xoauth2.Config{
+	client.oauth2Config = &xoauth2.Config{
 		ClientID:     GetIdpClientID(),
 		ClientSecret: GetIdpSecret(),
 		RedirectURL:  GetIdpCallbackURL(),
 		Endpoint:     provider.Endpoint(),
 		Scopes:       scopes,
 	}
-	client.oauth2Config = &config
 	client.oidcProvider = provider
 	client.ClientID = GetIdpClientID()
 
@@ -137,7 +139,7 @@ type User struct {
 	LastLogin         string                 `json:"last_login"`
 	LastPasswordReset string                 `json:"last_password_reset"`
 	LoginsCount       int                    `json:"logins_count"`
-	Mltifactor        string                 `json:"multifactor"`
+	MultiFactor       string                 `json:"multifactor"`
 	Name              string                 `json:"name"`
 	Nickname          string                 `json:"nickname"`
 	PhoneNumber       string                 `json:"phone_number"`
@@ -150,39 +152,31 @@ type User struct {
 }
 
 // VerifyIdentity will contact the configured IDP and validate the user identity based on the authorization code
-func (client *Provider) VerifyIdentity(ctx context.Context, code, state string) (*User, error) {
+func (client *Provider) VerifyIdentity(ctx context.Context, code, state string) (*credentials.Credentials, error) {
 	// verify the provided state is valid (prevents CSRF attacks)
 	if !validateOauth2State(state) {
 		return nil, errGeneric
 	}
-	// verify the authorization code against the identity oidcProvider
-	// idp will return a token in exchange
-	token, err := client.oauth2Config.Exchange(ctx, code)
+	getWebTokenExpiry := func() (*credentials.WebIdentityToken, error) {
+		oauth2Token, err := client.oauth2Config.Exchange(ctx, code)
+		if err != nil {
+			return nil, err
+		}
+		if !oauth2Token.Valid() {
+			return nil, errors.New("invalid token")
+		}
+
+		return &credentials.WebIdentityToken{
+			Token:  oauth2Token.Extra("id_token").(string),
+			Expiry: int(oauth2Token.Expiry.Sub(time.Now().UTC()).Seconds()),
+		}, nil
+	}
+	stsEndpoint := GetSTSEndpoint()
+	sts, err := credentials.NewSTSWebIdentity(stsEndpoint, getWebTokenExpiry)
 	if err != nil {
-		log.Println("Failed to verify authorization code", err)
-		return nil, errGeneric
+		return nil, err
 	}
-	// extract and check id_token field is provided in the response
-	rawIDToken, ok := token.Extra("id_token").(string)
-	if !ok {
-		log.Println("No id_token field in oauth2 token")
-		return nil, errGeneric
-	}
-	config := &oidc.Config{
-		ClientID: client.ClientID,
-	}
-	idToken, err := client.oidcProvider.Verifier(config).Verify(ctx, rawIDToken)
-	if err != nil {
-		log.Println("Failed to verify ID token", err)
-		return nil, errGeneric
-	}
-	var profile User
-	// Populate the profile object using the claims included in the token
-	if err := idToken.Claims(&profile); err != nil {
-		log.Println("Failed to read profile information", err)
-		return nil, errGeneric
-	}
-	return &profile, nil
+	return sts, nil
 }
 
 // validateOauth2State validates the provided state was originated using the same
