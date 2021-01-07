@@ -22,6 +22,7 @@ import {
   niceBytes,
   niceDays,
 } from "../../../../common/utils";
+import { keys } from "@material-ui/core/styles/createBreakpoints";
 
 const dLocalStorageV = "dashboardConfig";
 
@@ -333,6 +334,16 @@ const calculateMainValue = (elements: any[], metricCalc: string) => {
   }
 };
 
+const constructLabelNames = (metrics: any, legendFormat: string) => {
+  const keysToReplace = Object.keys(metrics);
+  const expToReplace = new RegExp(`{{(${keysToReplace.join("|")})}}`, "g");
+
+  return legendFormat.replace(expToReplace, (matchItem) => {
+    const nwMatchItem = matchItem.replace(/({{|}})/g, "");
+    return metrics[nwMatchItem];
+  });
+};
+
 export const getWidgetsWithValue = (payload: any[]) => {
   return panelsConfiguration.map((panelItem) => {
     const payloadData = payload.find(
@@ -418,32 +429,44 @@ export const getWidgetsWithValue = (payload: any[]) => {
               targetMaster: { legendFormat: string; result: any[] },
               index: number
             ) => {
-              const keyName = `key_${index}`;
-              // Add a new serie to plot variables
-              series.push({
-                dataKey: keyName,
-                keyLabel: targetMaster.legendFormat,
-                lineColor: "",
-                fillColor: "",
-              });
+              // Add a new serie to plot variables in case it is not from multiple values
+              const results = get(targetMaster, "result", []);
+              const legendFormat = targetMaster.legendFormat;
 
-              // we iterate over values and create elements
-              const values = get(targetMaster, "result[0].values", []);
-
-              values.forEach((valInfo: any[]) => {
-                const itemIndex = plotValues.findIndex(
-                  (element) => element.name === valInfo[0]
+              results.forEach((itemVals: { metric: object; values: any[] }) => {
+                // Label Creation
+                const labelName = constructLabelNames(
+                  itemVals.metric,
+                  legendFormat
                 );
+                const keyName = `key_${index}${labelName}`;
 
-                // Element not exists yet
-                if (itemIndex === -1) {
-                  let itemToPush: any = { name: valInfo[0] };
-                  itemToPush[keyName] = valInfo[1];
+                // series creation with recently created label
+                series.push({
+                  dataKey: keyName,
+                  keyLabel: labelName,
+                  lineColor: "",
+                  fillColor: "",
+                });
 
-                  plotValues.push(itemToPush);
-                } else {
-                  plotValues[itemIndex][keyName] = valInfo[1];
-                }
+                // we iterate over values and create elements
+                const values = get(itemVals, "values", []);
+
+                values.forEach((valInfo: any[]) => {
+                  const itemIndex = plotValues.findIndex(
+                    (element) => element.name === valInfo[0]
+                  );
+
+                  // Element not exists yet
+                  if (itemIndex === -1) {
+                    let itemToPush: any = { name: valInfo[0] };
+                    itemToPush[keyName] = valInfo[1];
+
+                    plotValues.push(itemToPush);
+                  } else {
+                    plotValues[itemIndex][keyName] = valInfo[1];
+                  }
+                });
               });
             }
           );
