@@ -92,6 +92,7 @@ interface TableWrapperProps {
   textSelectable?: boolean;
   columnsShown?: string[];
   onColumnChange?: (column: string, state: boolean) => any;
+  autoScrollToBottom?: boolean;
   infiniteScrollConfig?: IInfiniteScrollConfig;
   sortConfig?: ISortConfig;
 }
@@ -464,6 +465,7 @@ const TableWrapper = ({
   onColumnChange = (column: string, state: boolean) => {},
   infiniteScrollConfig,
   sortConfig,
+  autoScrollToBottom = false,
 }: TableWrapperProps) => {
   const [columnSelectorOpen, setColumnSelectorOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = React.useState<any>(null);
@@ -630,6 +632,9 @@ const TableWrapper = ({
                       sortBy={sortConfig ? sortConfig.currentSort : undefined}
                       sortDirection={
                         sortConfig ? sortConfig.currentDirection : undefined
+                      }
+                      scrollToIndex={
+                        autoScrollToBottom ? records.length - 1 : -1
                       }
                     >
                       {hasSelect && (

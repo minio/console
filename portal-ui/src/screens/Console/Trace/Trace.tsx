@@ -161,6 +161,7 @@ const Trace = ({
             entityName="Traces"
             idField="api"
             customEmptyMessage="There are no traced Elements yet"
+            autoScrollToBottom
           />
         </Grid>
       </Grid>
