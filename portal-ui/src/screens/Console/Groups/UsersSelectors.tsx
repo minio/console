@@ -187,10 +187,10 @@ const UsersSelectors = ({
             <React.Fragment>
               <Grid item xs={12} className={classes.actionsTray}>
                 <span className={classes.actionsTitle}>
-                  {editMode ? "Edit" : "Assign"} Members
+                  {editMode ? "Edit Members" : "Assign Users"}
                 </span>
                 <TextField
-                  placeholder="Filter Groups"
+                  placeholder="Filter Users"
                   className={classes.filterField}
                   id="search-resource"
                   label=""
