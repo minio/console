@@ -21,6 +21,7 @@ import {
   getTimeFromTimestamp,
   niceBytes,
   niceDays,
+  textToRGBColor,
 } from "../../../../common/utils";
 
 const dLocalStorageV = "dashboardConfig";
@@ -491,8 +492,10 @@ export const getWidgetsWithValue = (payload: any[]) => {
             (serialC: any, index: number) => {
               return {
                 ...serialC,
-                lineColor: colorsMain[index] || colorsMain[0],
-                fillColor: colorsMain[index] || colorsMain[0],
+                lineColor:
+                  colorsMain[index] || textToRGBColor(serialC.keyLabel),
+                fillColor:
+                  colorsMain[index] || textToRGBColor(serialC.keyLabel),
               };
             }
           );

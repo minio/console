@@ -531,3 +531,15 @@ export const nsToSeconds = (nanoseconds: number) => {
 
   return `${round} s`;
 };
+
+export const textToRGBColor = (text: string) => {
+  const splitText = text.split("");
+
+  const hashVl = splitText.reduce((acc, currItem) => {
+    return acc + currItem.charCodeAt(0) + ((acc << 5) - acc);
+  }, 0);
+
+  const hashColored = ((hashVl * 100) & 0x00ffffff).toString(16).toUpperCase();
+
+  return `#${hashColored.padStart(6, "0")}`;
+};
