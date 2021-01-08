@@ -22,7 +22,6 @@ import {
   niceBytes,
   niceDays,
 } from "../../../../common/utils";
-import { keys } from "@material-ui/core/styles/createBreakpoints";
 
 const dLocalStorageV = "dashboardConfig";
 
@@ -267,6 +266,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     ],
     type: widgetType.linearGraph,
     layoutIdentifier: "panel-17",
+    xAxisFormatter: getTimeFromTimestamp,
   },
   {
     title: "Internode Data Transfer",
@@ -282,6 +282,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     type: widgetType.linearGraph,
     layoutIdentifier: "panel-18",
     yAxisFormatter: niceBytes,
+    xAxisFormatter: getTimeFromTimestamp,
   },
   {
     title: "Online Disks",
@@ -297,6 +298,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     type: widgetType.linearGraph,
     layoutIdentifier: "panel-19",
     disableYAxis: true,
+    xAxisFormatter: getTimeFromTimestamp,
   },
   {
     title: "Disk Usage",
@@ -312,6 +314,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     type: widgetType.linearGraph,
     layoutIdentifier: "panel-20",
     yAxisFormatter: niceBytes,
+    xAxisFormatter: getTimeFromTimestamp,
   },
 ];
 
@@ -338,10 +341,13 @@ const constructLabelNames = (metrics: any, legendFormat: string) => {
   const keysToReplace = Object.keys(metrics);
   const expToReplace = new RegExp(`{{(${keysToReplace.join("|")})}}`, "g");
 
-  return legendFormat.replace(expToReplace, (matchItem) => {
+  const replacedLegend = legendFormat.replace(expToReplace, (matchItem) => {
     const nwMatchItem = matchItem.replace(/({{|}})/g, "");
     return metrics[nwMatchItem];
   });
+
+  // In case not all the legends were replaced, we remove the placeholders.
+  return replacedLegend.replace(/{{(.*?)}}/g, "");
 };
 
 export const getWidgetsWithValue = (payload: any[]) => {

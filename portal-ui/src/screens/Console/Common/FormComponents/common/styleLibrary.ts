@@ -348,6 +348,8 @@ export const widgetCommon = {
     display: "flex" as const,
     width: "100%",
     height: 15,
+    flexWrap: "wrap" as const,
+    overflowY: "auto" as const,
   },
   singleLegendContainer: {
     display: "flex",
@@ -366,16 +368,19 @@ export const widgetCommon = {
     fontSize: "80%",
     color: "#393939",
     whiteSpace: "nowrap" as const,
-    maxWidth: "calc(100% - 14px)",
+    overflow: "hidden" as const,
+    textOverflow: "ellipsis" as const,
   },
 };
 
 export const tooltipCommon = {
   customTooltip: {
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    backgroundColor: "rgba(255, 255, 255, 0.90)",
     border: "#eaeaea 1px solid",
     borderRadius: 3,
     padding: "5px 10px",
+    maxHeight: 300,
+    overflowY: "auto" as const,
   },
   labelContainer: {
     display: "flex" as const,

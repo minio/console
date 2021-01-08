@@ -42,6 +42,27 @@ interface ILinearGraphWidget {
 const styles = (theme: Theme) =>
   createStyles({
     ...widgetCommon,
+    containerElements: {
+      display: "flex",
+      flexDirection: "column",
+      height: "calc(100% - 18px)",
+    },
+    chartCont: {
+      position: "relative",
+      flexGrow: 1,
+      minHeight: "65%",
+      height: 1,
+    },
+    legendChart: {
+      display: "flex",
+      flexWrap: "wrap",
+      flex: "0 1 auto",
+      maxHeight: "35%",
+      margin: 0,
+      overflowY: "auto",
+      position: "relative",
+      textAlign: "center",
+    },
   });
 
 const LinearGraphWidget = ({
@@ -56,70 +77,78 @@ const LinearGraphWidget = ({
   return (
     <div className={classes.singleValueContainer}>
       <div className={classes.titleContainer}>{title}</div>
-      <div
-        className={`${classes.contentContainer} ${classes.contentContainerWithLabel}`}
-      >
-        <ResponsiveContainer>
-          <AreaChart
-            data={data}
-            margin={{ top: 5, right: 20, left: hideYAxis ? 20 : 5, bottom: 5 }}
-          >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              strokeWidth={1}
-              strokeOpacity={0.5}
-            />
-            <XAxis
-              dataKey="name"
-              tickFormatter={xAxisFormatter}
-              interval={5}
-              tick={{ fontSize: "70%" }}
-              tickCount={10}
-            />
-            <YAxis
-              domain={[0, (dataMax) => dataMax * 4]}
-              hide={hideYAxis}
-              tickFormatter={yAxisFormatter}
-              tick={{ fontSize: "70%" }}
-            />
-            <Tooltip
-              content={
-                <LineChartTooltip
-                  linearConfiguration={linearConfiguration}
-                  yAxisFormatter={yAxisFormatter}
-                />
-              }
-            />
-            {linearConfiguration.map((section, index) => {
-              return (
-                <Area
-                  key={`area-${section.dataKey}-${index.toString()}`}
-                  type="monotone"
-                  dataKey={section.dataKey}
-                  stroke={section.lineColor}
-                  fill={section.fillColor}
-                  fillOpacity={0.3}
-                />
-              );
-            })}
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-      <div className={classes.legendBlock}>
-        {linearConfiguration.map((section, index) => {
-          return (
-            <div
-              className={classes.singleLegendContainer}
-              key={`legend-${section.keyLabel}-${index.toString()}`}
+      <div className={classes.containerElements}>
+        <div className={classes.chartCont}>
+          <ResponsiveContainer>
+            <AreaChart
+              data={data}
+              margin={{
+                top: 5,
+                right: 20,
+                left: hideYAxis ? 20 : 5,
+                bottom: 0,
+              }}
             >
-              <div
-                className={classes.colorContainer}
-                style={{ backgroundColor: section.lineColor }}
+              <CartesianGrid
+                strokeDasharray="3 3"
+                strokeWidth={1}
+                strokeOpacity={0.5}
               />
-              <div className={classes.legendLabel}>{section.keyLabel}</div>
-            </div>
-          );
-        })}
+              <XAxis
+                dataKey="name"
+                tickFormatter={xAxisFormatter}
+                interval={5}
+                tick={{ fontSize: "70%" }}
+                tickCount={10}
+              />
+              <YAxis
+                domain={[0, (dataMax) => dataMax * 4]}
+                hide={hideYAxis}
+                tickFormatter={yAxisFormatter}
+                tick={{ fontSize: "70%" }}
+              />
+              {linearConfiguration.map((section, index) => {
+                return (
+                  <Area
+                    key={`area-${section.dataKey}-${index.toString()}`}
+                    type="monotone"
+                    dataKey={section.dataKey}
+                    stroke={section.lineColor}
+                    fill={section.fillColor}
+                    fillOpacity={0.3}
+                  />
+                );
+              })}
+              <Tooltip
+                content={
+                  <LineChartTooltip
+                    linearConfiguration={linearConfiguration}
+                    yAxisFormatter={yAxisFormatter}
+                  />
+                }
+                wrapperStyle={{
+                  zIndex: 5000,
+                }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+        <div className={classes.legendChart}>
+          {linearConfiguration.map((section, index) => {
+            return (
+              <div
+                className={classes.singleLegendContainer}
+                key={`legend-${section.keyLabel}-${index.toString()}`}
+              >
+                <div
+                  className={classes.colorContainer}
+                  style={{ backgroundColor: section.lineColor }}
+                />
+                <div className={classes.legendLabel}>{section.keyLabel}</div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
