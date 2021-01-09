@@ -53,14 +53,6 @@ var consoleImage string
 
 var once sync.Once
 
-func getAccessKey() string {
-	return env.Get(ConsoleAccessKey, "minioadmin")
-}
-
-func getSecretKey() string {
-	return env.Get(ConsoleSecretKey, "minioadmin")
-}
-
 func getMinIOServer() string {
 	return strings.TrimSpace(env.Get(ConsoleMinIOServer, "http://localhost:9000"))
 }

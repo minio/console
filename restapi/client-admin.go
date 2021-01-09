@@ -24,8 +24,6 @@ import (
 	"runtime"
 
 	"github.com/minio/console/models"
-	"github.com/minio/console/pkg/auth"
-	"github.com/minio/console/pkg/auth/ldap"
 	mcCmd "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -317,11 +315,6 @@ func newAdminFromClaims(claims *models.Principal) (*madmin.AdminClient, error) {
 	return adminClient, nil
 }
 
-var (
-	consoleAccessKey = getAccessKey()
-	consoleSecretKey = getSecretKey()
-)
-
 // stsClient is a custom http client, this client should not be called directly and instead be
 // called using GetConsoleSTSClient() to ensure is initialized and the certificates are loaded correctly
 var stsClient *http.Client
@@ -332,37 +325,4 @@ func GetConsoleSTSClient() *http.Client {
 		stsClient = PrepareSTSClient(false)
 	}
 	return stsClient
-}
-
-var consoleLDAPAdminCreds consoleCredentials
-
-func newSuperMAdminClient() (*madmin.AdminClient, error) {
-	accessKey := consoleAccessKey
-	secretKey := consoleSecretKey
-	sessionToken := ""
-	// If LDAP is enabled (External IDP) in minio, then obtain the session tokens associated with the super admin credentials
-	// configured in console
-	if ldap.GetLDAPEnabled() {
-		// initialize LDAP super Admin Credentials once
-		if consoleLDAPAdminCreds.consoleCredentials == nil {
-			consoleCredentialsFromLDAP, err := auth.GetCredentialsFromLDAP(GetConsoleSTSClient(), MinioEndpoint, consoleAccessKey, consoleSecretKey)
-			if err != nil {
-				return nil, err
-			}
-			consoleLDAPAdminCreds = consoleCredentials{consoleCredentials: consoleCredentialsFromLDAP}
-		}
-		tokens, err := consoleLDAPAdminCreds.Get()
-		if err != nil {
-			return nil, err
-		}
-		accessKey = tokens.AccessKeyID
-		secretKey = tokens.SecretAccessKey
-		sessionToken = tokens.SessionToken
-	}
-
-	adminClient, pErr := NewAdminClient(MinioEndpoint, accessKey, secretKey, sessionToken)
-	if pErr != nil {
-		return nil, pErr.Cause
-	}
-	return adminClient, nil
 }

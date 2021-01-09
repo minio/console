@@ -19,9 +19,15 @@
 package oauth2
 
 import (
+	"strings"
+
 	"github.com/minio/console/pkg/auth/utils"
 	"github.com/minio/minio/pkg/env"
 )
+
+func GetSTSEndpoint() string {
+	return strings.TrimSpace(env.Get(ConsoleMinIOServer, "http://localhost:9000"))
+}
 
 func GetIdpURL() string {
 	return env.Get(ConsoleIdpURL, "")
@@ -38,10 +44,6 @@ func GetIdpSecret() string {
 // Public endpoint used by the identity oidcProvider when redirecting the user after identity verification
 func GetIdpCallbackURL() string {
 	return env.Get(ConsoleIdpCallbackURL, "")
-}
-
-func GetIdpAdminRoles() string {
-	return env.Get(ConsoleIdpAdminRoles, "")
 }
 
 func IsIdpEnabled() bool {
@@ -63,9 +65,4 @@ var defaultSaltForIdpHmac = utils.RandomCharString(64)
 // GetSaltForIdpHmac returns salt for the pbkdf2 function used to sign the oauth2 state parameter
 func getSaltForIdpHmac() string {
 	return env.Get(ConsoleIdpHmacSalt, defaultSaltForIdpHmac)
-}
-
-// GetSaltForIdpHmac returns the policy to be assigned to the users authenticating via an IDP
-func GetIDPPolicyForUser() string {
-	return env.Get(ConsoleIdpPolicyUser, "consoleAdmin")
 }

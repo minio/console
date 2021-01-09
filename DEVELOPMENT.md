@@ -86,9 +86,6 @@ export MINIO_IDENTITY_LDAP_SERVER_INSECURE=on
 ## Run Console
 
 ```
-export CONSOLE_ACCESS_KEY=minio
-export CONSOLE_SECRET_KEY=minio123
-...
 export CONSOLE_LDAP_ENABLED=on
 ./console server
 ```

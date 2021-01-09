@@ -19,13 +19,16 @@ package restapi
 import (
 	"context"
 	"errors"
+	"reflect"
 	"testing"
 
-	"github.com/minio/console/pkg/auth"
-	"github.com/minio/console/pkg/auth/idp/oauth2"
-	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/minio/minio/cmd/config"
 	"github.com/minio/minio/pkg/madmin"
+
+	iampolicy "github.com/minio/minio/pkg/iam/policy"
+
+	"github.com/minio/console/pkg/auth"
+
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -76,133 +79,110 @@ func TestLogin(t *testing.T) {
 	funcAssert.NotNil(err, "not error returned creating a session")
 }
 
-type IdentityProviderClientMock struct{}
+type IdentityProviderMock struct{}
 
-var idpVerifyIdentityMock func(ctx context.Context, code, state string) (*oauth2.User, error)
+var idpVerifyIdentityMock func(ctx context.Context, code, state string) (*credentials.Credentials, error)
 var idpGenerateLoginURLMock func() string
 
-func (ac IdentityProviderClientMock) VerifyIdentity(ctx context.Context, code, state string) (*oauth2.User, error) {
+func (ac IdentityProviderMock) VerifyIdentity(ctx context.Context, code, state string) (*credentials.Credentials, error) {
 	return idpVerifyIdentityMock(ctx, code, state)
 }
 
-func (ac IdentityProviderClientMock) GenerateLoginURL() string {
+func (ac IdentityProviderMock) GenerateLoginURL() string {
 	return idpGenerateLoginURLMock()
 }
 
-// TestLoginOauth2Auth is the main function that test the Oauth2 Authentication
-func TestLoginOauth2Auth(t *testing.T) {
-	ctx := context.Background()
-	funcAssert := assert.New(t)
-	// mock data
+func Test_validateUserAgainstIDP(t *testing.T) {
+	provider := IdentityProviderMock{}
 	mockCode := "EAEAEAE"
 	mockState := "HUEHUEHUE"
-	idpClientMock := IdentityProviderClientMock{}
-	identityProvider := &auth.IdentityProvider{Client: idpClientMock}
-	// Test-1 : loginOauth2Auth() correctly authenticates the user
-	idpVerifyIdentityMock = func(ctx context.Context, code, state string) (*oauth2.User, error) {
-		return &oauth2.User{}, nil
-	}
-	function := "loginOauth2Auth()"
-	_, err := loginOauth2Auth(ctx, identityProvider, mockCode, mockState)
-	if err != nil {
-		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
-	}
-	// Test-2 : loginOauth2Auth() returns an error
-	idpVerifyIdentityMock = func(ctx context.Context, code, state string) (*oauth2.User, error) {
-		return nil, errors.New("error")
-	}
-	if _, err := loginOauth2Auth(ctx, identityProvider, mockCode, mockState); funcAssert.Error(err) {
-		funcAssert.Equal(errInvalidCredentials.Error(), err.Error())
-	}
-}
-
-func Test_getConfiguredRegion(t *testing.T) {
-	client := adminClientMock{}
 	type args struct {
-		client adminClientMock
+		ctx      context.Context
+		provider auth.IdentityProviderI
+		code     string
+		state    string
 	}
-
 	tests := []struct {
-		name string
-		args args
-		want string
-		mock func()
+		name     string
+		args     args
+		want     *credentials.Credentials
+		wantErr  bool
+		mockFunc func()
 	}{
-		// If MinIO returns an error, we return empty region name
 		{
-			name: "region",
+			name: "failed to verify user identity with idp",
 			args: args{
-				client: client,
+				ctx:      context.Background(),
+				provider: provider,
+				code:     mockCode,
+				state:    mockState,
 			},
-			want: "",
-			mock: func() {
-				// mock function response from getConfig()
-				minioGetConfigKVMock = func(key string) ([]byte, error) {
-					return nil, errors.New("invalid config")
-				}
-				// mock function response from listConfig()
-				minioHelpConfigKVMock = func(subSys, key string, envOnly bool) (madmin.Help, error) {
-					return madmin.Help{}, errors.New("no help")
-				}
-			},
-		},
-		// MinIO returns an empty region name
-		{
-			name: "region",
-			args: args{
-				client: client,
-			},
-			want: "",
-			mock: func() {
-				// mock function response from getConfig()
-				minioGetConfigKVMock = func(key string) ([]byte, error) {
-					return []byte("region name= "), nil
-				}
-				// mock function response from listConfig()
-				minioHelpConfigKVMock = func(subSys, key string, envOnly bool) (madmin.Help, error) {
-					return madmin.Help{
-						SubSys:          config.RegionSubSys,
-						Description:     "label the location of the server",
-						MultipleTargets: false,
-						KeysHelp: []madmin.HelpKV{
-							{
-								Key:             "name",
-								Description:     "name of the location of the server e.g. \"us-west-rack2\"",
-								Optional:        true,
-								Type:            "string",
-								MultipleTargets: false,
-							},
-							{
-								Key:             "comment",
-								Description:     "optionally add a comment to this setting",
-								Optional:        true,
-								Type:            "sentence",
-								MultipleTargets: false,
-							},
-						},
-					}, nil
-				}
-			},
-		},
-		// MinIO returns the asia region
-		{
-			name: "region",
-			args: args{
-				client: client,
-			},
-			want: "asia",
-			mock: func() {
-				minioGetConfigKVMock = func(key string) ([]byte, error) {
-					return []byte("region name=asia "), nil
+			want:    nil,
+			wantErr: true,
+			mockFunc: func() {
+				idpVerifyIdentityMock = func(ctx context.Context, code, state string) (*credentials.Credentials, error) {
+					return nil, errors.New("something went wrong")
 				}
 			},
 		},
 	}
 	for _, tt := range tests {
-		tt.mock()
 		t.Run(tt.name, func(t *testing.T) {
-			if got, _ := getConfiguredRegionForLogin(context.Background(), tt.args.client); got != tt.want {
-				t.Errorf("getConfiguredRegionForLogin() = %v, want %v", got, tt.want)
+			if tt.mockFunc != nil {
+				tt.mockFunc()
+			}
+			got, err := verifyUserAgainstIDP(tt.args.ctx, tt.args.provider, tt.args.code, tt.args.state)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("verifyUserAgainstIDP() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("verifyUserAgainstIDP() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_getAccountPolicy(t *testing.T) {
+	client := adminClientMock{}
+	type args struct {
+		ctx    context.Context
+		client MinioAdmin
+	}
+	tests := []struct {
+		name     string
+		args     args
+		want     *iampolicy.Policy
+		wantErr  bool
+		mockFunc func()
+	}{
+		{
+			name: "error getting account policy",
+			args: args{
+				ctx:    context.Background(),
+				client: client,
+			},
+			want:    nil,
+			wantErr: true,
+			mockFunc: func() {
+				minioAccountInfoMock = func(ctx context.Context) (madmin.AccountInfo, error) {
+					return madmin.AccountInfo{}, errors.New("something went wrong")
+				}
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.mockFunc != nil {
+				tt.mockFunc()
+			}
+			got, err := getAccountPolicy(tt.args.ctx, tt.args.client)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("getAccountPolicy() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("getAccountPolicy() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
