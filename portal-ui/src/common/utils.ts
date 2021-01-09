@@ -480,7 +480,7 @@ export const getTimeFromTimestamp = (
 
   if (fullDate) {
     return `${dateObject.getFullYear()}-${String(
-      dateObject.getMonth()
+      dateObject.getMonth() + 1
     ).padStart(2, "0")}-${String(dateObject.getDay()).padStart(
       2,
       "0"
