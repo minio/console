@@ -143,11 +143,20 @@ const PrDashboard = ({ classes }: IPrDashboard) => {
   }, [panelInformation]);
 
   const fetchUsage = useCallback(() => {
+    let stepCalc = 15;
+
+    if (timeStart !== null && timeEnd !== null) {
+      const secondsInPeriod = timeEnd.unix() - timeStart.unix();
+      const periods = secondsInPeriod / 60;
+
+      stepCalc = periods < 1 ? 15 : periods;
+    }
+
     api
       .invoke(
         "GET",
-        `/api/v1/admin/info?${
-          timeStart !== null ? `start=${timeStart.unix()}` : ""
+        `/api/v1/admin/info?step=${stepCalc}&${
+          timeStart !== null ? `&start=${timeStart.unix()}` : ""
         }${timeStart !== null && timeEnd !== null ? "&" : ""}${
           timeEnd !== null ? `end=${timeEnd.unix()}` : ""
         }`
