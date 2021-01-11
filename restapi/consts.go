@@ -47,7 +47,7 @@ const (
 	ConsoleSecureReferrerPolicy                  = "CONSOLE_SECURE_REFERRER_POLICY"
 	ConsoleSecureFeaturePolicy                   = "CONSOLE_SECURE_FEATURE_POLICY"
 	ConsoleSecureExpectCTHeader                  = "CONSOLE_SECURE_EXPECT_CT_HEADER"
-	LogSearchQueryAuthToken                      = "LOGSEARCH_QUERY_AUTH_TOKEN"
+	LogSearchQueryAuthToken                      = "CONSOLE_LOGSEARCH_QUERY_AUTH_TOKEN"
 	LogSearchURL                                 = "CONSOLE_LOG_QUERY_URL"
 	PrometheusURL                                = "CONSOLE_PROMETHEUS_URL"
 
