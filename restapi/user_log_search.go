@@ -37,7 +37,7 @@ func registerLogSearchHandlers(api *operations.ConsoleAPI) {
 	api.UserAPILogSearchHandler = user_api.LogSearchHandlerFunc(func(params user_api.LogSearchParams, session *models.Principal) middleware.Responder {
 		searchResp, err := getLogSearchResponse(params)
 		if err != nil {
-			return user_api.NewSessionCheckDefault(int(err.Code)).WithPayload(err)
+			return user_api.NewLogSearchDefault(int(err.Code)).WithPayload(err)
 		}
 		return user_api.NewLogSearchOK().WithPayload(searchResp)
 	})
