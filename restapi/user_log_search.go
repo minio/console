@@ -68,10 +68,7 @@ func getLogSearchResponse(params user_api.LogSearchParams) (*models.LogSearchRes
 	resp, err := http.Get(endpoint)
 	if err != nil {
 		log.Println(err)
-		return nil, &models.Error{
-			Code:    500,
-			Message: swag.String(err.Error()),
-		}
+		return nil, prepareError(err)
 	}
 	defer resp.Body.Close()
 
@@ -80,16 +77,13 @@ func getLogSearchResponse(params user_api.LogSearchParams) (*models.LogSearchRes
 		s, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			log.Println(err)
-			return nil, &models.Error{
-				Code:    500,
-				Message: swag.String(err.Error()),
-			}
+			return nil, prepareError(err)
 		}
 
 		log.Println(string(s))
 		return nil, &models.Error{
 			Code:    500,
-			Message: swag.String("Errror retrieveing logs"),
+			Message: swag.String("Error retrieving logs"),
 		}
 	}
 
@@ -97,10 +91,7 @@ func getLogSearchResponse(params user_api.LogSearchParams) (*models.LogSearchRes
 
 	if err := json.NewDecoder(resp.Body).Decode(&results); err != nil {
 		log.Println(err)
-		return nil, &models.Error{
-			Code:    500,
-			Message: swag.String(err.Error()),
-		}
+		return nil, prepareError(err)
 	}
 	response := models.LogSearchResponse{
 		Results: results,
