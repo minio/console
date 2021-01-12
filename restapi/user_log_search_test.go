@@ -19,15 +19,16 @@ package restapi
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/go-openapi/swag"
-	"github.com/minio/console/models"
-	logsearchServer "github.com/minio/operator/logsearchapi/server"
-	asrt "github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/go-openapi/swag"
+	"github.com/minio/console/models"
+	logsearchServer "github.com/minio/operator/logsearchapi/server"
+	asrt "github.com/stretchr/testify/assert"
 )
 
 func TestLogSearch(t *testing.T) {
