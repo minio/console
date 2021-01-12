@@ -97,6 +97,12 @@ export interface ChangePasswordRequest {
   new_secret_key: string;
 }
 
+export interface SubscriptionActivateRequest {
+  license: string;
+  email: string;
+  password: string;
+}
+
 export interface IRemoteBucket {
   name: string;
   accessKey: string;

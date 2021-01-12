@@ -22,7 +22,7 @@ import {
   modalBasic,
 } from "../../Common/FormComponents/common/styleLibrary";
 import Grid from "@material-ui/core/Grid";
-import { Button } from "@material-ui/core";
+import { Button, Typography } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import { CreateIcon } from "../../../../icons";
@@ -39,6 +39,8 @@ import UsageBarWrapper from "../../Common/UsageBarWrapper/UsageBarWrapper";
 import UpdateTenantModal from "./UpdateTenantModal";
 import PencilIcon from "../../Common/TableWrapper/TableActionIcons/PencilIcon";
 import ErrorBlock from "../../../shared/ErrorBlock";
+import { LicenseInfo } from "../../License/types";
+import { Link } from "react-router-dom";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -108,6 +110,9 @@ const styles = (theme: Theme) =>
         height: 12,
       },
     },
+    noUnderLine: {
+      textDecoration: "none",
+    },
     ...modalBasic,
     ...containerForHeader(theme.spacing(4)),
   });
@@ -128,6 +133,11 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
   const [usageError, setUsageError] = useState<string>("");
   const [usage, setUsage] = useState<number>(0);
   const [updateMinioVersion, setUpdateMinioVersion] = useState<boolean>(false);
+  const [licenseInfo, setLicenseInfo] = useState<LicenseInfo>();
+  const [loadingLicenseInfo, setLoadingLicenseInfo] = useState<boolean>(true);
+  const [loadingActivateProduct, setLoadingActivateProduct] = useState<boolean>(
+    false
+  );
 
   const tenantName = match.params["tenantName"];
   const tenantNamespace = match.params["tenantNamespace"];
@@ -150,6 +160,28 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
     if (reload) {
       console.log("reload");
     }
+  };
+
+  const activateProduct = (namespace: string, tenant: string) => {
+    if (loadingActivateProduct) {
+      return;
+    }
+    setLoadingActivateProduct(true);
+    api
+      .invoke(
+        "POST",
+        `/api/v1/subscription/namespaces/${namespace}/tenants/${tenant}/activate`,
+        {}
+      )
+      .then(() => {
+        setLoadingActivateProduct(false);
+        setError("");
+        loadInfo();
+      })
+      .catch((err) => {
+        setLoadingActivateProduct(false);
+        setError(err);
+      });
   };
 
   const loadInfo = () => {
@@ -210,9 +242,23 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
       });
   };
 
+  const fetchLicenseInfo = () => {
+    setLoadingLicenseInfo(true);
+    api
+      .invoke("GET", `/api/v1/subscription/info`)
+      .then((res: LicenseInfo) => {
+        setLicenseInfo(res);
+        setLoadingLicenseInfo(false);
+      })
+      .catch((err: any) => {
+        setLoadingLicenseInfo(false);
+      });
+  };
+
   useEffect(() => {
     loadInfo();
     loadUsage();
+    fetchLicenseInfo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -310,6 +356,7 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
             aria-label="tenant-tabs"
           >
             <Tab label="Clusters" />
+            <Tab label="License" />
           </Tabs>
         </Grid>
         <Grid item xs={6} className={classes.actionsTray}>
@@ -350,6 +397,79 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
               entityName="Servers"
               idField="name"
             />
+          )}
+          {selectedTab === 1 && (
+            <React.Fragment>
+              <Grid container>
+                <Grid item xs={12}>
+                  <Paper className={classes.paper}>
+                    {tenant && tenant.subnet_license ? (
+                      <Grid className={classes.paperContainer}>
+                        <Typography
+                          component="h2"
+                          variant="h6"
+                          className={classes.pageTitle}
+                        >
+                          Subscription Information
+                        </Typography>
+                        Account ID: {tenant.subnet_license.account_id}
+                        <br />
+                        <br />
+                        Email: {tenant.subnet_license.email}
+                        <br />
+                        <br />
+                        Plan: {tenant.subnet_license.plan}
+                        <br />
+                        <br />
+                        Organization: {tenant.subnet_license.organization}
+                        <br />
+                        <br />
+                        Storage Capacity:{" "}
+                        {tenant.subnet_license.storage_capacity}
+                        <br />
+                        <br />
+                        Expiration: {tenant.subnet_license.expires_at}
+                      </Grid>
+                    ) : (
+                      !loadingLicenseInfo && (
+                        <Grid className={classes.paperContainer}>
+                          {!licenseInfo && (
+                            <Link
+                              to={"/license"}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                              }}
+                              className={classes.noUnderLine}
+                            >
+                              <Button
+                                className={classes.licenseButton}
+                                variant="contained"
+                                color="primary"
+                              >
+                                Activate Product
+                              </Button>
+                            </Link>
+                          )}
+                          {licenseInfo && tenant && (
+                            <Button
+                              disabled={loadingActivateProduct}
+                              className={classes.licenseButton}
+                              variant="contained"
+                              color="primary"
+                              onClick={() =>
+                                activateProduct(tenant.namespace, tenant.name)
+                              }
+                            >
+                              Attach License
+                            </Button>
+                          )}
+                        </Grid>
+                      )
+                    )}
+                  </Paper>
+                </Grid>
+              </Grid>
+            </React.Fragment>
           )}
         </Grid>
       </Grid>

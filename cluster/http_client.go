@@ -17,6 +17,7 @@
 package cluster
 
 import (
+	"io"
 	"net/http"
 )
 
@@ -25,6 +26,8 @@ import (
 // that are used within this project.
 type HTTPClientI interface {
 	Get(url string) (resp *http.Response, err error)
+	Post(url, contentType string, body io.Reader) (resp *http.Response, err error)
+	Do(req *http.Request) (*http.Response, error)
 }
 
 // HTTPClient Interface implementation
@@ -37,4 +40,14 @@ type HTTPClient struct {
 // Get implements http.Client.Get()
 func (c *HTTPClient) Get(url string) (resp *http.Response, err error) {
 	return c.Client.Get(url)
+}
+
+// Post implements http.Client.Post()
+func (c *HTTPClient) Post(url, contentType string, body io.Reader) (resp *http.Response, err error) {
+	return c.Client.Post(url, contentType, body)
+}
+
+// Do implements http.Client.Do()
+func (c *HTTPClient) Do(req *http.Request) (*http.Response, error) {
+	return c.Client.Do(req)
 }

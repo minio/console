@@ -1,5 +1,5 @@
 // This file is part of MinIO Kubernetes Cloud
-// Copyright (c) 2019 MinIO, Inc.
+// Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -21,5 +21,4 @@ const (
 	ConsoleK8SAPIServerTLSRootCA = "CONSOLE_K8S_API_SERVER_TLS_ROOT_CA"
 	ConsoleMinioImage            = "CONSOLE_MINIO_IMAGE"
 	ConsoleMCImage               = "CONSOLE_MC_IMAGE"
-	ConsoleNamespace             = "CONSOLE_NAMESPACE"
 )

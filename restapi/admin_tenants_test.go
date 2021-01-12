@@ -21,6 +21,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"reflect"
@@ -47,6 +48,8 @@ var opClientTenantGetMock func(ctx context.Context, namespace string, tenantName
 var opClientTenantPatchMock func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error)
 var opClientTenantListMock func(ctx context.Context, namespace string, opts metav1.ListOptions) (*v1.TenantList, error)
 var httpClientGetMock func(url string) (resp *http.Response, err error)
+var httpClientPostMock func(url, contentType string, body io.Reader) (resp *http.Response, err error)
+var httpClientDoMock func(req *http.Request) (*http.Response, error)
 var k8sclientGetSecretMock func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error)
 var k8sclientGetServiceMock func(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*corev1.Service, error)
 
@@ -73,6 +76,16 @@ func (ac opClientMock) TenantList(ctx context.Context, namespace string, opts me
 // mock function of get()
 func (h httpClientMock) Get(url string) (resp *http.Response, err error) {
 	return httpClientGetMock(url)
+}
+
+// mock function of post()
+func (h httpClientMock) Post(url, contentType string, body io.Reader) (resp *http.Response, err error) {
+	return httpClientPostMock(url, contentType, body)
+}
+
+// mock function of Do()
+func (h httpClientMock) Do(req *http.Request) (*http.Response, error) {
+	return httpClientDoMock(req)
 }
 
 func (c k8sClientMock) getSecret(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {

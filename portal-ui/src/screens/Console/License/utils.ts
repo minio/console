@@ -16,17 +16,20 @@
 
 export const planDetails = [
   {
+    id: 0,
     title: "Community",
     price: "Free",
     capacityMin: "(No minimum)",
   },
   {
+    id: 1,
     title: "Standard",
     price: "$10/TB/month",
     capacityMax: "Up to 10PB. No additional charges for capacity over 10PB",
     capacityMin: "(25TB minimum)",
   },
   {
+    id: 2,
     title: "Enterprise",
     price: "$20/TB/month",
     capacityMax: "Up to 5PB. No additional charges for capacity over 5PB",
@@ -36,6 +39,7 @@ export const planDetails = [
 
 export const planItems = [
   {
+    id: 0,
     field: "License",
     community: "100% Open Source",
     communityDetail: "Apache License v2, GNU AGPL v3",
@@ -45,18 +49,21 @@ export const planItems = [
     enterpriseDetail: "Commercial + Open Source",
   },
   {
+    id: 1,
     field: "Software Release",
     community: "Update to latest",
     standard: "1 Year Long Term Support",
     enterprise: "5 Years Long Term Support",
   },
   {
+    id: 2,
     field: "SLA",
     community: "No SLA",
     standard: "<24 hours",
     enterprise: "<1 hour",
   },
   {
+    id: 3,
     field: "Support",
     community: "Community:",
     communityDetail: "Public Slack Channel + Github Issues",
@@ -66,36 +73,42 @@ export const planItems = [
     enterpriseDetail: "Support via SUBNET",
   },
   {
+    id: 4,
     field: "Security Updates & Critical Bugs",
     community: "Self Update",
     standard: "Guided Update",
     enterprise: "Guided Update",
   },
   {
+    id: 5,
     field: "Panic Button",
     community: "N/A",
     standard: "1 per year",
     enterprise: "Unlimited",
   },
   {
+    id: 6,
     field: "Annual Architecture Review",
     community: "N/A",
     standard: "Yes",
     enterprise: "Yes",
   },
   {
+    id: 7,
     field: "Annual Performance Review",
     community: "N/A",
     standard: "Yes",
     enterprise: "Yes",
   },
   {
+    id: 8,
     field: "Indemnification",
     community: "N/A",
     standard: "N/A",
     enterprise: "Yes",
   },
   {
+    id: 9,
     field: "Security + Policy Review",
     community: "N/A",
     standard: "N/A",
@@ -105,14 +118,17 @@ export const planItems = [
 
 export const planButtons = [
   {
+    id: 0,
     text: "Slack Community",
     link: "https://slack.min.io",
   },
   {
+    id: 1,
     text: "Subscribe",
     link: "https://min.io/pricing",
   },
   {
+    id: 2,
     text: "Subscribe",
     link: "https://min.io/pricing",
   },

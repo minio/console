@@ -1,5 +1,5 @@
 // This file is part of MinIO Kubernetes Cloud
-// Copyright (c) 2019 MinIO, Inc.
+// Copyright (c) 2020 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -64,13 +64,8 @@ func GetNsFromFile() string {
 	return string(dat)
 }
 
-// This operation will run only once at console startup
-var namespace = GetNsFromFile()
-
-// Returns the namespace in which the controller is installed
-func GetNs() string {
-	return env.Get(ConsoleNamespace, namespace)
-}
+// Namespace will run only once at console startup
+var Namespace = GetNsFromFile()
 
 // getLatestMinIOImage returns the latest docker image for MinIO if found on the internet
 func getLatestMinIOImage(client HTTPClientI) (*string, error) {

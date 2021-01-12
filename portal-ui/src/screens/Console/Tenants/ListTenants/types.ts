@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { LicenseInfo } from "../../License/types";
+
 export interface IPool {
   name: string;
   servers: number;
@@ -53,6 +55,7 @@ export interface ITenant {
   pools: IPool[];
   // computed
   capacity: string;
+  subnet_license: LicenseInfo;
 }
 
 export interface ITenantsResponse {

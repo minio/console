@@ -57,7 +57,7 @@ const ProtectedRoute = ({
         userLoggedIn(true);
         setSessionLoading(false);
         // check for tenants presence, that indicates we are in operator mode
-        if (res.pages.includes("/tenants")) {
+        if (res.operator) {
           consoleOperatorMode(true);
           document.title = "MinIO Operator";
         }

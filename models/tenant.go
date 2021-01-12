@@ -62,6 +62,9 @@ type Tenant struct {
 	// pools
 	Pools []*Pool `json:"pools"`
 
+	// subnet license
+	SubnetLicense *License `json:"subnet_license,omitempty"`
+
 	// total size
 	TotalSize int64 `json:"total_size,omitempty"`
 }
@@ -71,6 +74,10 @@ func (m *Tenant) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validatePools(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSubnetLicense(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -100,6 +107,24 @@ func (m *Tenant) validatePools(formats strfmt.Registry) error {
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *Tenant) validateSubnetLicense(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.SubnetLicense) { // not required
+		return nil
+	}
+
+	if m.SubnetLicense != nil {
+		if err := m.SubnetLicense.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("subnet_license")
+			}
+			return err
+		}
 	}
 
 	return nil
