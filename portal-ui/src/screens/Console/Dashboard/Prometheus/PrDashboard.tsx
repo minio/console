@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, {
-  useEffect,
-  useMemo,
-  useState,
-  Fragment,
-  useCallback,
-} from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import ReactGridLayout from "react-grid-layout";
 import Grid from "@material-ui/core/Grid";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
@@ -50,10 +44,12 @@ import {
   saveDashboardDistribution,
 } from "./utils";
 import { Button } from "@material-ui/core";
-import ErrorBlock from "../../../shared/ErrorBlock";
+import { connect } from "react-redux";
+import { setErrorSnackMessage } from "../../../../actions";
 
 interface IPrDashboard {
   classes: any;
+  displayErrorMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -65,14 +61,13 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const PrDashboard = ({ classes }: IPrDashboard) => {
+const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
   const [timeStart, setTimeStart] = useState<any>(null);
   const [timeEnd, setTimeEnd] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [panelInformation, setPanelInformation] = useState<IDashboardPanel[]>(
     panelsConfiguration
   );
-  const [error, setError] = useState<string>("");
 
   const minHeight = 600;
 
@@ -137,7 +132,7 @@ const PrDashboard = ({ classes }: IPrDashboard) => {
       }
     };
 
-    return panelInformation.map((val, idx) => {
+    return panelInformation.map((val) => {
       return <div key={val.layoutIdentifier}>{componentToUse(val)}</div>;
     });
   }, [panelInformation]);
@@ -165,9 +160,8 @@ const PrDashboard = ({ classes }: IPrDashboard) => {
         if (res.widgets) {
           const widgetsWithValue = getWidgetsWithValue(res.widgets);
           setPanelInformation(widgetsWithValue);
-          setError("");
         } else {
-          setError(
+          displayErrorMessage(
             "Widget information could not be retrieved at this time. Please try again"
           );
         }
@@ -175,10 +169,10 @@ const PrDashboard = ({ classes }: IPrDashboard) => {
         setLoading(false);
       })
       .catch((err) => {
-        setError(err);
+        displayErrorMessage(err);
         setLoading(false);
       });
-  }, [timeStart, timeEnd]);
+  }, [timeStart, timeEnd, displayErrorMessage]);
 
   const triggerLoad = () => {
     setLoading(true);
@@ -194,14 +188,6 @@ const PrDashboard = ({ classes }: IPrDashboard) => {
 
   return (
     <Grid container className={classes.container}>
-      <Grid item xs={12}>
-        {error !== "" && (
-          <Fragment>
-            <ErrorBlock errorMessage={error} withBreak={false} />
-            <br />
-          </Fragment>
-        )}
-      </Grid>
       <Grid
         item
         xs={12}
@@ -243,4 +229,8 @@ const PrDashboard = ({ classes }: IPrDashboard) => {
   );
 };
 
-export default withStyles(styles)(PrDashboard);
+const connector = connect(null, {
+  displayErrorMessage: setErrorSnackMessage,
+});
+
+export default withStyles(styles)(connector(PrDashboard));

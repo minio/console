@@ -24,7 +24,10 @@ import {
   USER_LOGGED,
   SET_LOADING_PROGRESS,
   SET_SNACK_BAR_MESSAGE,
+  SET_ERROR_SNACK_MESSAGE,
   SET_SERVER_DIAG_STAT,
+  SET_SNACK_MODAL_MESSAGE,
+  SET_MODAL_ERROR_MESSAGE,
 } from "./types";
 
 const initialState: SystemState = {
@@ -36,7 +39,14 @@ const initialState: SystemState = {
   serverNeedsRestart: false,
   serverIsLoading: false,
   loadingProgress: 100,
-  snackBarMessage: "",
+  snackBar: {
+    message: "",
+    type: "message",
+  },
+  modalSnackBar: {
+    message: "",
+    type: "message",
+  },
   serverDiagnosticStatus: "",
 };
 
@@ -79,7 +89,22 @@ export function systemReducer(
     case SET_SNACK_BAR_MESSAGE:
       return {
         ...state,
-        snackBarMessage: action.snackBarMessage,
+        snackBar: { message: action.message, type: "message" },
+      };
+    case SET_ERROR_SNACK_MESSAGE:
+      return {
+        ...state,
+        snackBar: { message: action.message, type: "error" },
+      };
+    case SET_SNACK_MODAL_MESSAGE:
+      return {
+        ...state,
+        modalSnackBar: { message: action.message, type: "message" },
+      };
+    case SET_MODAL_ERROR_MESSAGE:
+      return {
+        ...state,
+        modalSnackBar: { message: action.message, type: "error" },
       };
     case SET_SERVER_DIAG_STAT:
       return {

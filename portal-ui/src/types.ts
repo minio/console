@@ -13,6 +13,10 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+export interface snackBarMessage {
+  message: string;
+  type: "message" | "error";
+}
 
 export interface SystemState {
   loggedIn: boolean;
@@ -23,7 +27,8 @@ export interface SystemState {
   serverNeedsRestart: boolean;
   serverIsLoading: boolean;
   loadingProgress: number;
-  snackBarMessage: string;
+  snackBar: snackBarMessage;
+  modalSnackBar: snackBarMessage;
   serverDiagnosticStatus: string;
 }
 
@@ -35,6 +40,9 @@ export const SERVER_IS_LOADING = "SERVER_IS_LOADING";
 export const SET_LOADING_PROGRESS = "SET_LOADING_PROGRESS";
 export const SET_SNACK_BAR_MESSAGE = "SET_SNACK_BAR_MESSAGE";
 export const SET_SERVER_DIAG_STAT = "SET_SERVER_DIAG_STAT";
+export const SET_ERROR_SNACK_MESSAGE = "SET_ERROR_SNACK_MESSAGE";
+export const SET_SNACK_MODAL_MESSAGE = "SET_SNACK_MODAL_MESSAGE";
+export const SET_MODAL_ERROR_MESSAGE = "SET_MODAL_ERROR_MESSAGE";
 
 interface UserLoggedAction {
   type: typeof USER_LOGGED;
@@ -65,14 +73,29 @@ interface SetLoadingProgress {
   loadingProgress: number;
 }
 
-interface SetSnackBarMessage {
-  type: typeof SET_SNACK_BAR_MESSAGE;
-  snackBarMessage: string;
-}
-
 interface SetServerDiagStat {
   type: typeof SET_SERVER_DIAG_STAT;
   serverDiagnosticStatus: string;
+}
+
+interface SetSnackBarMessage {
+  type: typeof SET_SNACK_BAR_MESSAGE;
+  message: string;
+}
+
+interface SetErrorSnackMessage {
+  type: typeof SET_ERROR_SNACK_MESSAGE;
+  message: string;
+}
+
+interface SetModalSnackMessage {
+  type: typeof SET_SNACK_MODAL_MESSAGE;
+  message: string;
+}
+
+interface SetModalErrorMessage {
+  type: typeof SET_MODAL_ERROR_MESSAGE;
+  message: string;
 }
 
 export type SystemActionTypes =
@@ -82,5 +105,8 @@ export type SystemActionTypes =
   | ServerNeedsRestartAction
   | ServerIsLoading
   | SetLoadingProgress
+  | SetServerDiagStat
   | SetSnackBarMessage
-  | SetServerDiagStat;
+  | SetErrorSnackMessage
+  | SetModalSnackMessage
+  | SetModalErrorMessage;

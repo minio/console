@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import {
@@ -38,13 +39,14 @@ import PageHeader from "../../Common/PageHeader/PageHeader";
 import UsageBarWrapper from "../../Common/UsageBarWrapper/UsageBarWrapper";
 import UpdateTenantModal from "./UpdateTenantModal";
 import PencilIcon from "../../Common/TableWrapper/TableActionIcons/PencilIcon";
-import ErrorBlock from "../../../shared/ErrorBlock";
 import { LicenseInfo } from "../../License/types";
 import { Link } from "react-router-dom";
+import { setErrorSnackMessage } from "../../../../actions";
 
 interface ITenantDetailsProps {
   classes: any;
   match: any;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 interface ITenantUsage {
@@ -117,7 +119,11 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
+const TenantDetails = ({
+  classes,
+  match,
+  setErrorSnackMessage,
+}: ITenantDetailsProps) => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [capacity, setCapacity] = useState<number>(0);
   const [poolCount, setPoolCount] = useState<number>(0);
@@ -127,7 +133,6 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
   const [addPoolOpen, setAddPool] = useState<boolean>(false);
   const [addBucketOpen, setAddBucketOpen] = useState<boolean>(false);
   const [addReplicationOpen, setAddReplicationOpen] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
   const [tenant, setTenant] = useState<ITenant | null>(null);
   const [loadingUsage, setLoadingUsage] = useState<boolean>(true);
   const [usageError, setUsageError] = useState<string>("");
@@ -175,12 +180,11 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
       )
       .then(() => {
         setLoadingActivateProduct(false);
-        setError("");
         loadInfo();
       })
       .catch((err) => {
         setLoadingActivateProduct(false);
-        setError(err);
+        setErrorSnackMessage(err);
       });
   };
 
@@ -216,10 +220,9 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
         setServerSets(resPools);
 
         setTenant(res);
-        setError("");
       })
       .catch((err) => {
-        setError(err);
+        setErrorSnackMessage(err);
       });
   };
 
@@ -296,11 +299,6 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
       <PageHeader label={`Tenant > ${match.params["tenantName"]}`} />
       <Grid item xs={12} className={classes.container} />
       <Grid container>
-        {error !== "" && (
-          <Grid item xs={12}>
-            <ErrorBlock errorMessage={error} withBreak={false} />
-          </Grid>
-        )}
         <Grid item xs={12}>
           <br />
         </Grid>
@@ -501,4 +499,8 @@ const TenantDetails = ({ classes, match }: ITenantDetailsProps) => {
   );
 };
 
-export default withStyles(styles)(TenantDetails);
+const connector = connect(null, {
+  setErrorSnackMessage,
+});
+
+export default withStyles(styles)(connector(TenantDetails));

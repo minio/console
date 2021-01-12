@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,22 +15,24 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import get from "lodash/get";
-import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
-import Grid from "@material-ui/core/Grid";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { Button, LinearProgress } from "@material-ui/core";
-import api from "../../../../common/api";
+import get from "lodash/get";
+import Grid from "@material-ui/core/Grid";
+import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { IRemoteBucket } from "../types";
-import ErrorBlock from "../../../shared/ErrorBlock";
+import { setModalErrorSnackMessage } from "../../../../actions";
+import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
+import api from "../../../../common/api";
 
 interface IReplicationModal {
   open: boolean;
   closeModalAndRefresh: () => any;
   classes: any;
   bucketName: string;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -54,8 +56,8 @@ const AddReplicationModal = ({
   closeModalAndRefresh,
   classes,
   bucketName,
+  setModalErrorSnackMessage,
 }: IReplicationModal) => {
-  const [addError, setAddError] = useState("");
   const [addLoading, setAddLoading] = useState(false);
   const [accessKey, setAccessKey] = useState("");
   const [secretKey, setSecretKey] = useState("");
@@ -99,22 +101,21 @@ const AddReplicationModal = ({
                 )
                 .then(() => {
                   setAddLoading(false);
-                  setAddError("");
                   closeModalAndRefresh();
                 })
                 .catch((err) => {
                   setAddLoading(false);
-                  setAddError(err);
+                  setModalErrorSnackMessage(err);
                 });
             }
           })
           .catch((err) => {
-            setAddError(err);
+            setModalErrorSnackMessage(err);
           });
       })
       .catch((err) => {
         setAddLoading(false);
-        setAddError(err);
+        setModalErrorSnackMessage(err);
       });
   };
 
@@ -122,7 +123,6 @@ const AddReplicationModal = ({
     <ModalWrapper
       modalOpen={open}
       onClose={() => {
-        setAddError("");
         closeModalAndRefresh();
       }}
       title="Set Bucket Replication"
@@ -138,16 +138,10 @@ const AddReplicationModal = ({
       >
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
-            {addError !== "" && (
-              <Grid item xs={12}>
-                <ErrorBlock errorMessage={addError} withBreak={false} />
-              </Grid>
-            )}
-
             <Grid item xs={12}>
               <InputBoxWrapper
-                id="target"
-                name="target"
+                id="accessKey"
+                name="accessKey"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setAccessKey(e.target.value);
                 }}
@@ -157,8 +151,8 @@ const AddReplicationModal = ({
             </Grid>
             <Grid item xs={12}>
               <InputBoxWrapper
-                id="target"
-                name="target"
+                id="secretKey"
+                name="secretKey"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setSecretKey(e.target.value);
                 }}
@@ -168,8 +162,8 @@ const AddReplicationModal = ({
             </Grid>
             <Grid item xs={12}>
               <InputBoxWrapper
-                id="target"
-                name="target"
+                id="targetURL"
+                name="targetURL"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setTargetURL(e.target.value);
                 }}
@@ -180,8 +174,8 @@ const AddReplicationModal = ({
             </Grid>
             <Grid item xs={12}>
               <InputBoxWrapper
-                id="target"
-                name="target"
+                id="targetBucket"
+                name="targetBucket"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setTargetBucket(e.target.value);
                 }}
@@ -191,8 +185,8 @@ const AddReplicationModal = ({
             </Grid>
             <Grid item xs={12}>
               <InputBoxWrapper
-                id="target"
-                name="target"
+                id="region"
+                name="region"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setRegion(e.target.value);
                 }}
@@ -222,4 +216,8 @@ const AddReplicationModal = ({
   );
 };
 
-export default withStyles(styles)(AddReplicationModal);
+const connector = connect(null, {
+  setModalErrorSnackMessage,
+});
+
+export default withStyles(styles)(connector(AddReplicationModal));

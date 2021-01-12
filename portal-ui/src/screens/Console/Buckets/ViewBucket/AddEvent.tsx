@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
@@ -27,10 +28,10 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Table from "@material-ui/core/Table";
 import { ArnList } from "../types";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import { setModalErrorSnackMessage } from "../../../../actions";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import ErrorBlock from "../../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -53,16 +54,7 @@ interface IAddEventProps {
   open: boolean;
   selectedBucket: string;
   closeModalAndRefresh: () => void;
-}
-
-interface IAddEventState {
-  addLoading: boolean;
-  addError: string;
-  prefix: string;
-  suffix: string;
-  arn: string;
-  selectedEvents: string[];
-  arnList: string[];
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const AddEvent = ({
@@ -70,9 +62,9 @@ const AddEvent = ({
   open,
   selectedBucket,
   closeModalAndRefresh,
+  setModalErrorSnackMessage,
 }: IAddEventProps) => {
   const [addLoading, setAddLoading] = useState<boolean>(false);
-  const [addError, setAddError] = useState<string>("");
   const [prefix, setPrefix] = useState<string>("");
   const [suffix, setSuffix] = useState<string>("");
   const [arn, setArn] = useState<string>("");
@@ -95,18 +87,17 @@ const AddEvent = ({
         },
         ignoreExisting: true,
       })
-      .then((res) => {
+      .then(() => {
         setAddLoading(false);
-        setAddError("");
         closeModalAndRefresh();
       })
       .catch((err) => {
         setAddLoading(false);
-        setAddError(err);
+        setModalErrorSnackMessage(err);
       });
   };
 
-  const fetchArnList = () => {
+  const fetchArnList = useCallback(() => {
     setAddLoading(true);
     api
       .invoke("GET", `/api/v1/admin/arns`)
@@ -116,18 +107,17 @@ const AddEvent = ({
           arns = res.arns;
         }
         setAddLoading(false);
-        setAddError("");
         setArnList(arns);
       })
       .catch((err: any) => {
         setAddLoading(false);
-        setAddError(err);
+        setModalErrorSnackMessage(err);
       });
-  };
+  }, [setModalErrorSnackMessage]);
 
   useEffect(() => {
     fetchArnList();
-  }, []);
+  }, [fetchArnList]);
 
   const events = [
     { label: "PUT - Object Uploaded", value: "put" },
@@ -166,7 +156,6 @@ const AddEvent = ({
     <ModalWrapper
       modalOpen={open}
       onClose={() => {
-        setAddError("");
         closeModalAndRefresh();
       }}
       title="Subscribe To Event"
@@ -180,11 +169,6 @@ const AddEvent = ({
       >
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
-            {addError !== "" && (
-              <Grid item xs={12}>
-                <ErrorBlock errorMessage={addError} withBreak={false} />
-              </Grid>
-            )}
             <Grid item xs={12}>
               <SelectWrapper
                 onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
@@ -280,4 +264,8 @@ const AddEvent = ({
   );
 };
 
-export default withStyles(styles)(AddEvent);
+const connector = connect(null, {
+  setModalErrorSnackMessage,
+});
+
+export default withStyles(styles)(connector(AddEvent));

@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,8 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import get from "lodash/get";
+import { connect } from "react-redux";
 import {
   Button,
   Dialog,
@@ -28,27 +28,24 @@ import {
 } from "@material-ui/core";
 import api from "../../../../common/api";
 import { BucketEvent, BucketList } from "../types";
-import ErrorBlock from "../../../shared/ErrorBlock";
-
-const styles = (theme: Theme) => createStyles({});
+import { setErrorSnackMessage } from "../../../../actions";
 
 interface IDeleteEventProps {
-  classes: any;
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedBucket: string;
   bucketEvent: BucketEvent | null;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const DeleteEvent = ({
-  classes,
   closeDeleteModalAndRefresh,
   deleteOpen,
   selectedBucket,
   bucketEvent,
+  setErrorSnackMessage,
 }: IDeleteEventProps) => {
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
-  const [deleteError, setDeleteError] = useState<string>("");
 
   const removeRecord = () => {
     if (deleteLoading) {
@@ -75,12 +72,11 @@ const DeleteEvent = ({
       )
       .then((res: BucketList) => {
         setDeleteLoading(false);
-        setDeleteError("");
         closeDeleteModalAndRefresh(true);
       })
       .catch((err) => {
         setDeleteLoading(false);
-        setDeleteError(err);
+        setErrorSnackMessage(err);
       });
   };
 
@@ -88,24 +84,21 @@ const DeleteEvent = ({
     <Dialog
       open={deleteOpen}
       onClose={() => {
-        setDeleteError("");
         closeDeleteModalAndRefresh(false);
       }}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">Delete Bucket</DialogTitle>
+      <DialogTitle id="alert-dialog-title">Delete Event</DialogTitle>
       <DialogContent>
         {deleteLoading && <LinearProgress />}
         <DialogContentText id="alert-dialog-description">
-          Are you sure you want to delete this event?
-          {deleteError !== "" && <ErrorBlock errorMessage={deleteError} />}
+          Are you sure you want to delete the this event?
         </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button
           onClick={() => {
-            setDeleteError("");
             closeDeleteModalAndRefresh(false);
           }}
           color="primary"
@@ -127,4 +120,8 @@ const DeleteEvent = ({
   );
 };
 
-export default withStyles(styles)(DeleteEvent);
+const connector = connect(null, {
+  setErrorSnackMessage,
+});
+
+export default connector(DeleteEvent);

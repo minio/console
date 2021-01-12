@@ -52,7 +52,7 @@ import DeleteObject from "../ListObjects/DeleteObject";
 import AddTagModal from "./AddTagModal";
 import DeleteTagModal from "./DeleteTagModal";
 import SetLegalHoldModal from "./SetLegalHoldModal";
-import ErrorBlock from "../../../../../shared/ErrorBlock";
+import { setErrorSnackMessage } from "../../../../../../actions";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -137,6 +137,7 @@ interface IObjectDetailsProps {
   classes: any;
   routesList: Route[];
   removeRouteLevel: (newRoute: string) => any;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const emptyFile: IFileInfo = {
@@ -155,6 +156,7 @@ const ObjectDetails = ({
   classes,
   routesList,
   removeRouteLevel,
+  setErrorSnackMessage,
 }: IObjectDetailsProps) => {
   const [loadObjectData, setLoadObjectData] = useState<boolean>(true);
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
@@ -167,7 +169,6 @@ const ObjectDetails = ({
   const [versions, setVersions] = useState<IFileInfo[]>([]);
   const [filterVersion, setFilterVersion] = useState<string>("");
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
 
   const currentItem = routesList[routesList.length - 1];
   const allPathData = currentItem.route.split("/");
@@ -191,11 +192,11 @@ const ObjectDetails = ({
           setLoadObjectData(false);
         })
         .catch((error) => {
-          setError(error);
+          setErrorSnackMessage(error);
           setLoadObjectData(false);
         });
     }
-  }, [loadObjectData, bucketName, pathInBucket]);
+  }, [loadObjectData, bucketName, pathInBucket, setErrorSnackMessage]);
 
   let tagKeys: string[] = [];
 
@@ -342,11 +343,6 @@ const ObjectDetails = ({
       )}
       <Grid container>
         <Grid item xs={12} className={classes.container}>
-          {error !== "" && (
-            <Grid item xs={12}>
-              <ErrorBlock errorMessage={error} />
-            </Grid>
-          )}
           <Grid item xs={12} className={classes.obTitleSection}>
             <div>
               <BrowserBreadcrumbs />
@@ -530,6 +526,7 @@ const ObjectDetails = ({
 
 const mapDispatchToProps = {
   removeRouteLevel,
+  setErrorSnackMessage,
 };
 
 const connector = connect(null, mapDispatchToProps);

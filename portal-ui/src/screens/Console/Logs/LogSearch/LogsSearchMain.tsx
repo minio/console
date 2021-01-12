@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,13 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState, useEffect, useCallback } from "react";
+import { connect } from "react-redux";
 import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, Grid } from "@material-ui/core";
 import { ArrowDropUp } from "@material-ui/icons";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import ErrorBlock from "../../../shared/ErrorBlock";
 import {
   actionsTray,
   containerForHeader,
@@ -30,12 +29,15 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import { IReqInfoSearchResults, ISearchResponse } from "./types";
 import { niceBytes, nsToSeconds } from "../../../../common/utils";
+import { setErrorSnackMessage } from "../../../../actions";
 import api from "../../../../common/api";
+import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import FilterInputWrapper from "../../Common/FormComponents/FilterInputWrapper/FilterInputWrapper";
 import DateTimePickerWrapper from "../../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
 
 interface ILogSearchProps {
   classes: any;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -116,8 +118,7 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const LogsSearchMain = ({ classes }: ILogSearchProps) => {
-  const [error, setError] = useState<string>("");
+const LogsSearchMain = ({ classes, setErrorSnackMessage }: ILogSearchProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [timeStart, setTimeStart] = useState<any>(null);
   const [timeEnd, setTimeEnd] = useState<any>(null);
@@ -182,7 +183,6 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
           setLoading(false);
           setAlreadyFetching(false);
           setRecords(newResultSet);
-          setError("");
           setNextPage(nextPage + 1);
 
           if (recordsResp !== null) {
@@ -192,7 +192,7 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
         .catch((err: any) => {
           setLoading(false);
           setAlreadyFetching(false);
-          setError(err);
+          setErrorSnackMessage(err);
         });
     }
   }, [
@@ -209,6 +209,7 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
     alreadyFetching,
     records,
     recordsResp,
+    setErrorSnackMessage,
   ]);
 
   useEffect(() => {
@@ -253,12 +254,6 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
   return (
     <Fragment>
       <Grid container className={classes.logsSubContainer}>
-        {error !== "" && (
-          <Grid item xs={12}>
-            <ErrorBlock errorMessage={error} />
-          </Grid>
-        )}
-
         <Grid
           item
           xs={12}
@@ -424,4 +419,10 @@ const LogsSearchMain = ({ classes }: ILogSearchProps) => {
   );
 };
 
-export default withStyles(styles)(LogsSearchMain);
+const mapDispatchToProps = {
+  setErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default withStyles(styles)(connector(LogsSearchMain));

@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -13,22 +13,25 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
+import { setModalErrorSnackMessage } from "../../../actions";
 import api from "../../../common/api";
 import GroupsSelectors from "./GroupsSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
-import ErrorBlock from "../../shared/ErrorBlock";
 
 interface IAddToGroup {
   open: boolean;
   checkedUsers: any;
   closeModalAndRefresh: any;
   classes: any;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -50,11 +53,11 @@ const AddToGroup = ({
   checkedUsers,
   closeModalAndRefresh,
   classes,
+  setModalErrorSnackMessage,
 }: IAddToGroup) => {
   //Local States
   const [saving, isSaving] = useState<boolean>(false);
   const [accepted, setAccepted] = useState<boolean>(false);
-  const [updatingError, setError] = useState<string>("");
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
 
   //Effects
@@ -66,27 +69,28 @@ const AddToGroup = ({
             groups: selectedGroups,
             users: checkedUsers,
           })
-          .then((res) => {
+          .then(() => {
             isSaving(false);
-            setError("");
             setAccepted(true);
           })
           .catch((err) => {
             isSaving(false);
-            setError(err);
+            setModalErrorSnackMessage(err);
           });
       } else {
         isSaving(false);
-        setError("You need to select at least one group to assign");
+        setModalErrorSnackMessage(
+          "You need to select at least one group to assign"
+        );
       }
     }
   }, [
     saving,
     isSaving,
-    setError,
     closeModalAndRefresh,
     selectedGroups,
     checkedUsers,
+    setModalErrorSnackMessage,
   ]);
 
   //Fetch Actions
@@ -129,11 +133,6 @@ const AddToGroup = ({
         <form noValidate autoComplete="off" onSubmit={setSaving}>
           <Grid container>
             <Grid item xs={12} className={classes.formScrollable}>
-              {updatingError !== "" && (
-                <Grid item xs={12}>
-                  <ErrorBlock errorMessage={updatingError} withBreak={false} />
-                </Grid>
-              )}
               <PredefinedList
                 label={"Selected Users"}
                 content={checkedUsers.join(", ")}
@@ -178,4 +177,10 @@ const AddToGroup = ({
   );
 };
 
-export default withStyles(styles)(AddToGroup);
+const mapDispatchToProps = {
+  setModalErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default withStyles(styles)(connector(AddToGroup));

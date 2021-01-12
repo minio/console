@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,23 +15,25 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
+import { setModalErrorSnackMessage } from "../../../actions";
 import api from "../../../common/api";
 import UsersSelectors from "./UsersSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
-import ErrorBlock from "../../shared/ErrorBlock";
 
 interface IGroupProps {
   open: boolean;
   selectedGroup: any;
   closeModalAndRefresh: any;
   classes: any;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 interface MainGroupProps {
@@ -59,12 +61,12 @@ const AddGroup = ({
   selectedGroup,
   closeModalAndRefresh,
   classes,
+  setModalErrorSnackMessage,
 }: IGroupProps) => {
   //Local States
   const [groupName, setGroupName] = useState<string>("");
   const [groupEnabled, setGroupEnabled] = useState<boolean>(false);
   const [saving, isSaving] = useState<boolean>(false);
-  const [addError, setError] = useState<string>("");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [loadingGroup, isLoadingGroup] = useState<boolean>(false);
   const [validGroup, setValidGroup] = useState<boolean>(false);
@@ -95,12 +97,11 @@ const AddGroup = ({
             })
             .then((res) => {
               isSaving(false);
-              setError("");
               closeModalAndRefresh();
             })
             .catch((err) => {
               isSaving(false);
-              setError(err);
+              setModalErrorSnackMessage(err);
             });
         } else {
           api
@@ -110,12 +111,11 @@ const AddGroup = ({
             })
             .then((res) => {
               isSaving(false);
-              setError("");
               closeModalAndRefresh();
             })
             .catch((err) => {
               isSaving(false);
-              setError(err);
+              setModalErrorSnackMessage(err);
             });
         }
       };
@@ -128,6 +128,7 @@ const AddGroup = ({
     groupEnabled,
     selectedGroup,
     closeModalAndRefresh,
+    setModalErrorSnackMessage,
   ]);
 
   useEffect(() => {
@@ -141,13 +142,13 @@ const AddGroup = ({
             setSelectedUsers(res.members);
           })
           .catch((err) => {
-            setError(err);
+            setModalErrorSnackMessage(err);
             isLoadingGroup(false);
           });
       };
       fetchGroupInfo();
     }
-  }, [loadingGroup, selectedGroup]);
+  }, [loadingGroup, selectedGroup, setModalErrorSnackMessage]);
 
   //Fetch Actions
   const setSaving = (event: React.FormEvent) => {
@@ -188,12 +189,6 @@ const AddGroup = ({
       <form noValidate autoComplete="off" onSubmit={setSaving}>
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
-            {addError !== "" && (
-              <Grid item xs={12}>
-                <ErrorBlock errorMessage={addError} withBreak={false} />
-              </Grid>
-            )}
-
             {selectedGroup === null ? (
               <React.Fragment>
                 <Grid item xs={12}>
@@ -250,4 +245,10 @@ const AddGroup = ({
   );
 };
 
-export default withStyles(styles)(AddGroup);
+const mapDispatchToProps = {
+  setModalErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default withStyles(styles)(connector(AddGroup));

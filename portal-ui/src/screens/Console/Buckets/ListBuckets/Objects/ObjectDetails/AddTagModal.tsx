@@ -1,11 +1,28 @@
+// This file is part of MinIO Console Server
+// Copyright (c) 2021 MinIO, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import React, { useState } from "react";
+import { connect } from "react-redux";
 import { Button, Grid } from "@material-ui/core";
-import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
+import { setModalErrorSnackMessage } from "../../../../../../actions";
+import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import api from "../../../../../../common/api";
-import ErrorBlock from "../../../../../shared/ErrorBlock";
 
 interface ITagModal {
   modalOpen: boolean;
@@ -14,6 +31,7 @@ interface ITagModal {
   versionId: string | null;
   onCloseAndUpdate: (refresh: boolean) => void;
   selectedObject: string;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
   classes: any;
 }
 
@@ -36,11 +54,11 @@ const AddTagModal = ({
   onCloseAndUpdate,
   bucketName,
   versionId,
+  setModalErrorSnackMessage,
   classes,
 }: ITagModal) => {
   const [newKey, setNewKey] = useState<string>("");
   const [newLabel, setNewLabel] = useState<string>("");
-  const [error, setError] = useState<string>("");
   const [isSending, setIsSending] = useState<boolean>(false);
 
   const resetForm = () => {
@@ -66,7 +84,7 @@ const AddTagModal = ({
         onCloseAndUpdate(true);
       })
       .catch((error) => {
-        setError(error);
+        setModalErrorSnackMessage(error);
         setIsSending(false);
       });
   };
@@ -84,9 +102,6 @@ const AddTagModal = ({
           <h3 className={classes.pathLabel}>
             Selected Object: {selectedObject}
           </h3>
-          {error !== "" && (
-            <ErrorBlock errorMessage={error} withBreak={false} />
-          )}
           <Grid item xs={12}>
             <InputBoxWrapper
               value={newKey}
@@ -138,4 +153,10 @@ const AddTagModal = ({
   );
 };
 
-export default withStyles(styles)(AddTagModal);
+const mapDispatchToProps = {
+  setModalErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default withStyles(styles)(connector(AddTagModal));

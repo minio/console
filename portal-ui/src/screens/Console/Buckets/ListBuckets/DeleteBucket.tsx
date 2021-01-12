@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
+import { connect } from "react-redux";
 import {
   Button,
   Dialog,
@@ -24,50 +25,48 @@ import {
   DialogTitle,
   LinearProgress,
 } from "@material-ui/core";
-import api from "../../../../common/api";
 import { BucketList } from "../types";
-import ErrorBlock from "../../../shared/ErrorBlock";
+import { setErrorSnackMessage } from "../../../../actions";
+import api from "../../../../common/api";
 
 interface IDeleteBucketProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedBucket: string;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const DeleteBucket = ({
   closeDeleteModalAndRefresh,
   deleteOpen,
   selectedBucket,
+  setErrorSnackMessage,
 }: IDeleteBucketProps) => {
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
-  const [deleteError, setDeleteError] = useState<string>("");
 
   const removeRecord = () => {
-    if (deleteLoading) {
-      return;
-    }
-    setDeleteLoading(true);
+    if (!deleteLoading) {
+      setDeleteLoading(true);
 
-    api
-      .invoke("DELETE", `/api/v1/buckets/${selectedBucket}`, {
-        name: selectedBucket,
-      })
-      .then((res: BucketList) => {
-        setDeleteLoading(false);
-        setDeleteError("");
-        closeDeleteModalAndRefresh(true);
-      })
-      .catch((err) => {
-        setDeleteLoading(false);
-        setDeleteError(err);
-      });
+      api
+        .invoke("DELETE", `/api/v1/buckets/${selectedBucket}`, {
+          name: selectedBucket,
+        })
+        .then((res: BucketList) => {
+          setDeleteLoading(false);
+          closeDeleteModalAndRefresh(true);
+        })
+        .catch((err) => {
+          setDeleteLoading(false);
+          setErrorSnackMessage(err);
+        });
+    }
   };
 
   return (
     <Dialog
       open={deleteOpen}
       onClose={() => {
-        setDeleteError("");
         closeDeleteModalAndRefresh(false);
       }}
       aria-labelledby="alert-dialog-title"
@@ -79,13 +78,11 @@ const DeleteBucket = ({
         <DialogContentText id="alert-dialog-description">
           Are you sure you want to delete bucket <b>{selectedBucket}</b>? <br />
           A bucket can only be deleted if it's empty.
-          {deleteError !== "" && <ErrorBlock errorMessage={deleteError} />}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button
           onClick={() => {
-            setDeleteError("");
             closeDeleteModalAndRefresh(false);
           }}
           color="primary"
@@ -107,4 +104,10 @@ const DeleteBucket = ({
   );
 };
 
-export default DeleteBucket;
+const mapDispatchToProps = {
+  setErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default connector(DeleteBucket);

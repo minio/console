@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,21 +15,20 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import get from "lodash/get";
 import { connect } from "react-redux";
+import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import api from "../../../../common/api";
 import ConfTargetGeneric from "../ConfTargetGeneric";
-import { serverNeedsRestart } from "../../../../actions";
+import { serverNeedsRestart, setErrorSnackMessage } from "../../../../actions";
 import {
   fieldBasic,
   settingsCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { fieldsConfigurations, removeEmptyFields } from "../utils";
 import { IConfigurationElement, IElementValue } from "../types";
-import ErrorBlock from "../../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -57,6 +56,7 @@ const styles = (theme: Theme) =>
 interface IAddNotificationEndpointProps {
   closeModalAndRefresh: any;
   serverNeedsRestart: typeof serverNeedsRestart;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
   selectedConfiguration: IConfigurationElement;
   classes: any;
 }
@@ -65,13 +65,13 @@ const EditConfiguration = ({
   closeModalAndRefresh,
   serverNeedsRestart,
   selectedConfiguration,
+  setErrorSnackMessage,
   classes,
 }: IAddNotificationEndpointProps) => {
   //Local States
   const [valuesObj, setValueObj] = useState<IElementValue[]>([]);
   const [saving, setSaving] = useState<boolean>(false);
   const [loadingConfig, setLoadingConfig] = useState<boolean>(true);
-  const [errorConfig, setErrorConfig] = useState<string>("");
   const [configValues, setConfigValues] = useState<IElementValue[]>([]);
   //Effects
   useEffect(() => {
@@ -86,11 +86,11 @@ const EditConfiguration = ({
         })
         .catch((err) => {
           setLoadingConfig(false);
-          setErrorConfig(err);
+          setErrorSnackMessage(err);
         });
     }
     setLoadingConfig(false);
-  }, [selectedConfiguration]);
+  }, [selectedConfiguration, setErrorSnackMessage]);
 
   useEffect(() => {
     if (saving) {
@@ -103,16 +103,15 @@ const EditConfiguration = ({
           `/api/v1/configs/${selectedConfiguration.configuration_id}`,
           payload
         )
-        .then((res) => {
+        .then(() => {
           setSaving(false);
-          setErrorConfig("");
           serverNeedsRestart(true);
 
           closeModalAndRefresh();
         })
         .catch((err) => {
           setSaving(false);
-          setErrorConfig(err);
+          setErrorSnackMessage(err);
         });
     }
   }, [
@@ -121,6 +120,7 @@ const EditConfiguration = ({
     selectedConfiguration,
     valuesObj,
     closeModalAndRefresh,
+    setErrorSnackMessage,
   ]);
 
   //Fetch Actions
@@ -149,11 +149,6 @@ const EditConfiguration = ({
                 <LinearProgress />
               </Grid>
             )}
-            {errorConfig !== "" && (
-              <Grid item xs={12}>
-                <ErrorBlock errorMessage={errorConfig} withBreak={false} />
-              </Grid>
-            )}
             <ConfTargetGeneric
               fields={
                 fieldsConfigurations[selectedConfiguration.configuration_id]
@@ -178,6 +173,11 @@ const EditConfiguration = ({
   );
 };
 
-const connector = connect(null, { serverNeedsRestart });
+const mapDispatchToProps = {
+  serverNeedsRestart,
+  setErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
 
 export default connector(withStyles(styles)(EditConfiguration));

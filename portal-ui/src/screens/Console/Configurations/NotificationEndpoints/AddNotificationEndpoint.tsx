@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,16 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
+import { connect } from "react-redux";
 import get from "lodash/get";
 import Grid from "@material-ui/core/Grid";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
 import ConfPostgres from "../CustomForms/ConfPostgres";
 import api from "../../../../common/api";
-import { serverNeedsRestart } from "../../../../actions";
-import { connect } from "react-redux";
-import ConfMySql from "../CustomForms/ConfMySql";
-import ConfTargetGeneric from "../ConfTargetGeneric";
+import { serverNeedsRestart, setErrorSnackMessage } from "../../../../actions";
 import {
   notificationEndpointsFields,
   notifyMysql,
@@ -37,7 +35,8 @@ import {
   settingsCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { servicesList } from "./utils";
-import ErrorBlock from "../../../shared/ErrorBlock";
+import ConfMySql from "../CustomForms/ConfMySql";
+import ConfTargetGeneric from "../ConfTargetGeneric";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -70,6 +69,7 @@ interface IAddNotificationEndpointProps {
   service: string;
   saveAndRefresh: any;
   serverNeedsRestart: typeof serverNeedsRestart;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
   classes: any;
 }
 
@@ -78,11 +78,11 @@ const AddNotificationEndpoint = ({
   saveAndRefresh,
   serverNeedsRestart,
   classes,
+  setErrorSnackMessage,
 }: IAddNotificationEndpointProps) => {
   //Local States
   const [valuesArr, setValueArr] = useState<IElementValue[]>([]);
   const [saving, setSaving] = useState<boolean>(false);
-  const [addError, setError] = useState<string>("");
 
   //Effects
 
@@ -95,16 +95,22 @@ const AddNotificationEndpoint = ({
         .invoke("PUT", `/api/v1/configs/${service}`, payload)
         .then(() => {
           setSaving(false);
-          setError("");
           serverNeedsRestart(true);
           saveAndRefresh();
         })
         .catch((err) => {
           setSaving(false);
-          setError(err);
+          setErrorSnackMessage(err);
         });
     }
-  }, [saving, serverNeedsRestart, service, valuesArr, saveAndRefresh]);
+  }, [
+    saving,
+    serverNeedsRestart,
+    service,
+    valuesArr,
+    saveAndRefresh,
+    setErrorSnackMessage,
+  ]);
 
   //Fetch Actions
   const submitForm = (event: React.FormEvent) => {
@@ -152,11 +158,6 @@ const AddNotificationEndpoint = ({
               Notification Target
             </Grid>
             <Grid item xs={12} className={classes.settingsFormContainer}>
-              {addError !== "" && (
-                <Grid item xs={12}>
-                  <ErrorBlock errorMessage={addError} withBreak={false} />
-                </Grid>
-              )}
               {srvComponent}
             </Grid>
             <Grid item xs={12} className={classes.settingsButtonContainer}>
@@ -177,6 +178,11 @@ const AddNotificationEndpoint = ({
   );
 };
 
-const connector = connect(null, { serverNeedsRestart });
+const mapDispatchToProps = {
+  serverNeedsRestart,
+  setErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
 
 export default connector(withStyles(styles)(AddNotificationEndpoint));

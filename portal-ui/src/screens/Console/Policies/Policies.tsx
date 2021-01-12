@@ -1,5 +1,5 @@
 // This file is part of MinIO Kubernetes Cloud
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
 import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
@@ -24,17 +25,17 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import { Policy, PolicyList } from "./types";
 import { CreateIcon } from "../../../icons";
-import AddPolicy from "./AddPolicy";
-import DeletePolicy from "./DeletePolicy";
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import api from "../../../common/api";
+import { setErrorSnackMessage } from "../../../actions";
 import {
   actionsTray,
   containerForHeader,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
+import AddPolicy from "./AddPolicy";
+import DeletePolicy from "./DeletePolicy";
+import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import ErrorBlock from "../../shared/ErrorBlock";
+import api from "../../../common/api";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -70,12 +71,12 @@ const styles = (theme: Theme) =>
 
 interface IPoliciesProps {
   classes: any;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
-const Policies = ({ classes }: IPoliciesProps) => {
+const Policies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
   const [records, setRecords] = useState<Policy[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedPolicy, setSelectedPolicy] = useState<string>("");
@@ -107,14 +108,13 @@ const Policies = ({ classes }: IPoliciesProps) => {
 
           setLoading(false);
           setRecords(policies);
-          setError("");
         })
         .catch((err) => {
           setLoading(false);
-          setError(err);
+          setErrorSnackMessage(err);
         });
     }
-  }, [loading, setLoading, setRecords, setError]);
+  }, [loading, setLoading, setRecords, setErrorSnackMessage]);
 
   const fetchRecords = () => {
     setLoading(true);
@@ -207,11 +207,6 @@ const Policies = ({ classes }: IPoliciesProps) => {
           <Grid item xs={12}>
             <br />
           </Grid>
-          {error && (
-            <Grid item xs={12}>
-              <ErrorBlock errorMessage={error} withBreak={false} />
-            </Grid>
-          )}
           <Grid item xs={12}>
             <TableWrapper
               itemActions={tableActions}
@@ -228,4 +223,10 @@ const Policies = ({ classes }: IPoliciesProps) => {
   );
 };
 
-export default withStyles(styles)(Policies);
+const mapDispatchToProps = {
+  setErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default withStyles(styles)(connector(Policies));

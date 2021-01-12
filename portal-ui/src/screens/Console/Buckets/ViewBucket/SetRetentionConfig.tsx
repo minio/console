@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -13,14 +13,16 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import React, { useEffect, useState } from "react";
-import Grid from "@material-ui/core/Grid";
+import { connect } from "react-redux";
 import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import { setModalErrorSnackMessage } from "../../../../actions";
 import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import ErrorBlock from "../../../shared/ErrorBlock";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 
@@ -34,6 +36,7 @@ interface ISetRetentionConfigProps {
   open: boolean;
   bucketName: string;
   closeModalAndRefresh: () => void;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const SetRetentionConfig = ({
@@ -41,9 +44,9 @@ const SetRetentionConfig = ({
   open,
   bucketName,
   closeModalAndRefresh,
+  setModalErrorSnackMessage,
 }: ISetRetentionConfigProps) => {
   const [addLoading, setAddLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
   const [retentionMode, setRetentionMode] = useState<string>("compliance");
   const [retentionUnit, setRetentionUnit] = useState<string>("days");
   const [retentionValidity, setRetentionValidity] = useState<number>(1);
@@ -61,14 +64,13 @@ const SetRetentionConfig = ({
         unit: retentionUnit,
         validity: retentionValidity,
       })
-      .then((res) => {
+      .then(() => {
         setAddLoading(false);
-        setError("");
         closeModalAndRefresh();
       })
       .catch((err) => {
         setAddLoading(false);
-        setError(err);
+        setModalErrorSnackMessage(err);
       });
   };
 
@@ -85,7 +87,6 @@ const SetRetentionConfig = ({
       title="Set Retention Configuration"
       modalOpen={open}
       onClose={() => {
-        setError("");
         closeModalAndRefresh();
       }}
     >
@@ -98,11 +99,6 @@ const SetRetentionConfig = ({
       >
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
-            {error !== "" && (
-              <Grid item xs={12}>
-                <ErrorBlock errorMessage={error} withBreak={false} />
-              </Grid>
-            )}
             <Grid item xs={12}>
               <RadioGroupSelector
                 currentSelection={retentionMode}
@@ -170,4 +166,8 @@ const SetRetentionConfig = ({
   );
 };
 
-export default withStyles(styles)(SetRetentionConfig);
+const connector = connect(null, {
+  setModalErrorSnackMessage,
+});
+
+export default withStyles(styles)(connector(SetRetentionConfig));

@@ -1,5 +1,5 @@
 // This file is part of MinIO Kubernetes Cloud
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
+import { connect } from "react-redux";
 import {
   Button,
   Dialog,
@@ -26,21 +27,22 @@ import {
 } from "@material-ui/core";
 import api from "../../../common/api";
 import { PolicyList } from "./types";
-import ErrorBlock from "../../shared/ErrorBlock";
+import { setErrorSnackMessage } from "../../../actions";
 
 interface IDeletePolicyProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedPolicy: string;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const DeletePolicy = ({
   closeDeleteModalAndRefresh,
   deleteOpen,
   selectedPolicy,
+  setErrorSnackMessage,
 }: IDeletePolicyProps) => {
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
-  const [deleteError, setDeleteError] = useState<string>("");
   const removeRecord = () => {
     if (deleteLoading) {
       return;
@@ -50,20 +52,18 @@ const DeletePolicy = ({
       .invoke("DELETE", `/api/v1/policies/${selectedPolicy}`)
       .then((res: PolicyList) => {
         setDeleteLoading(false);
-        setDeleteError("");
 
         closeDeleteModalAndRefresh(true);
       })
       .catch((err) => {
         setDeleteLoading(false);
-        setDeleteError(err);
+        setErrorSnackMessage(err);
       });
   };
   return (
     <Dialog
       open={deleteOpen}
       onClose={() => {
-        setDeleteError("");
         closeDeleteModalAndRefresh(false);
       }}
       aria-labelledby="alert-dialog-title"
@@ -74,13 +74,11 @@ const DeletePolicy = ({
         {deleteLoading && <LinearProgress />}
         <DialogContentText id="alert-dialog-description">
           Are you sure you want to delete policy <b>{selectedPolicy}</b>?.
-          {deleteError !== "" && <ErrorBlock errorMessage={deleteError} />}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button
           onClick={() => {
-            setDeleteError("");
             closeDeleteModalAndRefresh(false);
           }}
           color="primary"
@@ -102,4 +100,10 @@ const DeletePolicy = ({
   );
 };
 
-export default DeletePolicy;
+const mapDispatchToProps = {
+  setErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default connector(DeletePolicy);

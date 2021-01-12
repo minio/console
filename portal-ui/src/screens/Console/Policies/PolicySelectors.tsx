@@ -1,5 +1,5 @@
 // This file is part of MinIO Kubernetes Cloud
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { LinearProgress } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
@@ -22,20 +23,21 @@ import Grid from "@material-ui/core/Grid";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import TextField from "@material-ui/core/TextField";
-import api from "../../../common/api";
 import { policySort } from "../../../utils/sortFunctions";
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import {
   actionsTray,
   selectorsCommon,
 } from "../Common/FormComponents/common/styleLibrary";
 import { PolicyList } from "./types";
-import ErrorBlock from "../../shared/ErrorBlock";
+import { setModalErrorSnackMessage } from "../../../actions";
+import api from "../../../common/api";
+import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
 interface ISelectPolicyProps {
   classes: any;
   selectedPolicy?: string;
   setSelectedPolicy: any;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -108,12 +110,28 @@ const PolicySelectors = ({
   classes,
   selectedPolicy = "",
   setSelectedPolicy,
+  setModalErrorSnackMessage,
 }: ISelectPolicyProps) => {
   // Local State
   const [records, setRecords] = useState<any[]>([]);
   const [loading, isLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
   const [filter, setFilter] = useState<string>("");
+
+  const fetchPolicies = useCallback(() => {
+    isLoading(true);
+
+    api
+      .invoke("GET", `/api/v1/policies?limit=1000`)
+      .then((res: PolicyList) => {
+        const policies = res.policies === null ? [] : res.policies;
+        isLoading(false);
+        setRecords(policies.sort(policySort));
+      })
+      .catch((err) => {
+        isLoading(false);
+        setModalErrorSnackMessage(err);
+      });
+  }, [setModalErrorSnackMessage]);
 
   //Effects
   useEffect(() => {
@@ -124,24 +142,7 @@ const PolicySelectors = ({
     if (loading) {
       fetchPolicies();
     }
-  }, [loading]);
-
-  const fetchPolicies = () => {
-    isLoading(true);
-
-    api
-      .invoke("GET", `/api/v1/policies?limit=1000`)
-      .then((res: PolicyList) => {
-        const policies = res.policies === null ? [] : res.policies;
-        isLoading(false);
-        setRecords(policies.sort(policySort));
-        setError("");
-      })
-      .catch((err) => {
-        isLoading(false);
-        setError(err);
-      });
-  };
+  }, [loading, fetchPolicies]);
 
   const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     const targetD = e.target;
@@ -159,9 +160,6 @@ const PolicySelectors = ({
       <Grid item xs={12}>
         <Paper className={classes.paper}>
           {loading && <LinearProgress />}
-          {error !== "" && (
-            <ErrorBlock errorMessage={error} withBreak={false} />
-          )}
           {records != null && records.length > 0 ? (
             <React.Fragment>
               <Grid item xs={12} className={classes.actionsTray}>
@@ -206,4 +204,8 @@ const PolicySelectors = ({
   );
 };
 
-export default withStyles(styles)(PolicySelectors);
+const connector = connect(null, {
+  setModalErrorSnackMessage,
+});
+
+export default withStyles(styles)(connector(PolicySelectors));

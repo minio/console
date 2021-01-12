@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -48,7 +48,6 @@ import { IWizardElement } from "../../Common/GenericWizard/types";
 import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
-import ErrorBlock from "../../../shared/ErrorBlock";
 import {
   IAffinityModel,
   ICapacity,
@@ -65,6 +64,8 @@ import {
 } from "./utils";
 import { IMemorySize } from "./types";
 import Divider from "@material-ui/core/Divider";
+import { connect } from "react-redux";
+import { setModalErrorSnackMessage } from "../../../../actions";
 
 interface IAddTenantProps {
   open: boolean;
@@ -72,6 +73,7 @@ interface IAddTenantProps {
     reloadData: boolean,
     res: NewServiceAccount | null
   ) => any;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
   classes: any;
 }
 
@@ -123,11 +125,11 @@ const styles = (theme: Theme) =>
 const AddTenant = ({
   open,
   closeModalAndRefresh,
+  setModalErrorSnackMessage,
   classes,
 }: IAddTenantProps) => {
   // Fields
   const [addSending, setAddSending] = useState<boolean>(false);
-  const [addError, setAddError] = useState<string>("");
   const [tenantName, setTenantName] = useState<string>("");
   const [imageName, setImageName] = useState<string>("");
   const [volumeSize, setVolumeSize] = useState<string>("100");
@@ -1133,12 +1135,11 @@ const AddTenant = ({
           };
 
           setAddSending(false);
-          setAddError("");
           closeModalAndRefresh(true, newSrvAcc);
         })
         .catch((err) => {
           setAddSending(false);
-          setAddError(err);
+          setModalErrorSnackMessage(err);
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -2534,12 +2535,6 @@ const AddTenant = ({
               Review the details of the new tenant
             </span>
           </div>
-          {addError !== "" && (
-            <Grid item xs={12}>
-              <ErrorBlock errorMessage={addError} withBreak={false} />
-            </Grid>
-          )}
-
           <Table size="small">
             <TableBody>
               <TableRow>
@@ -2622,7 +2617,6 @@ const AddTenant = ({
       title="Create Tenant"
       modalOpen={open}
       onClose={() => {
-        setAddError("");
         closeModalAndRefresh(false, null);
       }}
       aria-labelledby="alert-dialog-title"
@@ -2639,4 +2633,8 @@ const AddTenant = ({
   );
 };
 
-export default withStyles(styles)(AddTenant);
+const connector = connect(null, {
+  setModalErrorSnackMessage,
+});
+
+export default withStyles(styles)(connector(AddTenant));

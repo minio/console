@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -42,7 +42,7 @@ import {
 import { useDebounce } from "use-debounce";
 import { MakeBucketRequest } from "../types";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import ErrorBlock from "../../../shared/ErrorBlock";
+import { setModalErrorSnackMessage } from "../../../../actions";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -80,6 +80,7 @@ interface IAddBucketProps {
   addBucketRetentionMode: typeof addBucketRetentionMode;
   addBucketRetentionUnit: typeof addBucketRetentionUnit;
   addBucketRetentionValidity: typeof addBucketRetentionValidity;
+  setModalError: typeof setModalErrorSnackMessage;
   bucketName: string;
   versioned: boolean;
   enableQuota: boolean;
@@ -106,6 +107,7 @@ const AddBucket = ({
   addBucketRetentionMode,
   addBucketRetentionUnit,
   addBucketRetentionValidity,
+  setModalError,
   bucketName,
   versioned,
   enableQuota,
@@ -118,7 +120,6 @@ const AddBucket = ({
   retentionValidity,
 }: IAddBucketProps) => {
   const [addLoading, setAddLoading] = useState<boolean>(false);
-  const [addError, setAddError] = useState<string>("");
   const [sendEnabled, setSendEnabled] = useState<boolean>(false);
 
   const addRecord = (event: React.FormEvent) => {
@@ -154,12 +155,11 @@ const AddBucket = ({
       .invoke("POST", "/api/v1/buckets", request)
       .then((res) => {
         setAddLoading(false);
-        setAddError("");
         closeModalAndRefresh(true);
       })
       .catch((err) => {
         setAddLoading(false);
-        setAddError(err);
+        setModalError(err);
       });
 
     resetForm();
@@ -232,7 +232,6 @@ const AddBucket = ({
       title="Create Bucket"
       modalOpen={open}
       onClose={() => {
-        setAddError("");
         closeModalAndRefresh(false);
       }}
       aria-labelledby="alert-dialog-title"
@@ -247,11 +246,6 @@ const AddBucket = ({
       >
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
-            {addError !== "" && (
-              <Grid item xs={12}>
-                <ErrorBlock errorMessage={addError} withBreak={false} />
-              </Grid>
-            )}
             <Grid item xs={12}>
               <InputBoxWrapper
                 id="bucket-name"
@@ -458,6 +452,7 @@ const connector = connect(mapState, {
   addBucketRetentionMode: addBucketRetentionMode,
   addBucketRetentionUnit: addBucketRetentionUnit,
   addBucketRetentionValidity: addBucketRetentionValidity,
+  setModalError: setModalErrorSnackMessage,
 });
 
 export default connector(withStyles(styles)(AddBucket));

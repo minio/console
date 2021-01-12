@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -33,11 +33,11 @@ import {
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
 import { addRoute, resetRoutesList } from "./actions";
+import { setErrorSnackMessage } from "../../../actions";
 import BrowserBreadcrumbs from "./BrowserBreadcrumbs";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import AddBucket from "../Buckets/ListBuckets/AddBucket";
 import api from "../../../common/api";
-import ErrorBlock from "../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -103,6 +103,7 @@ interface IBrowseBucketsProps {
   classes: any;
   addRoute: (path: string, label: string, type: string) => any;
   resetRoutesList: (doVar: boolean) => any;
+  displayErrorMessage: typeof setErrorSnackMessage;
   match: any;
 }
 
@@ -111,9 +112,9 @@ const BrowseBuckets = ({
   match,
   addRoute,
   resetRoutesList,
+  displayErrorMessage,
 }: IBrowseBucketsProps) => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
   const [records, setRecords] = useState<Bucket[]>([]);
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
   const [filterBuckets, setFilterBuckets] = useState<string>("");
@@ -129,14 +130,13 @@ const BrowseBuckets = ({
         .then((res: BucketList) => {
           setLoading(false);
           setRecords(res.buckets || []);
-          setError("");
         })
         .catch((err: any) => {
           setLoading(false);
-          setError(err);
+          displayErrorMessage(err);
         });
     }
-  }, [loading]);
+  }, [loading, displayErrorMessage]);
 
   const closeAddModalAndRefresh = (refresh: boolean) => {
     setAddScreenOpen(false);
@@ -218,9 +218,6 @@ const BrowseBuckets = ({
           <br />
         </Grid>
         <Grid item xs={12}>
-          {error !== "" && (
-            <ErrorBlock errorMessage={error} withBreak={false} />
-          )}
           <TableWrapper
             itemActions={[
               {
@@ -261,6 +258,7 @@ const BrowseBuckets = ({
 const mapDispatchToProps = {
   addRoute,
   resetRoutesList,
+  displayErrorMessage: setErrorSnackMessage,
 };
 
 const connector = connect(null, mapDispatchToProps);

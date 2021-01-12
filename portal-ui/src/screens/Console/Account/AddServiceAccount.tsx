@@ -23,7 +23,8 @@ import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import api from "../../../common/api";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
-import ErrorBlock from "../../shared/ErrorBlock";
+import { setModalErrorSnackMessage } from "../../../actions";
+import { connect } from "react-redux";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -46,15 +47,16 @@ interface IAddServiceAccountProps {
   classes: any;
   open: boolean;
   closeModalAndRefresh: (res: NewServiceAccount | null) => void;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const AddServiceAccount = ({
   classes,
   open,
   closeModalAndRefresh,
+  setModalErrorSnackMessage,
 }: IAddServiceAccountProps) => {
   const [addSending, setAddSending] = useState(false);
-  const [addError, setAddError] = useState("");
   const [policyDefinition, setPolicyDefinition] = useState("");
 
   useEffect(() => {
@@ -65,18 +67,17 @@ const AddServiceAccount = ({
         })
         .then((res) => {
           setAddSending(false);
-          setAddError("");
           closeModalAndRefresh(res);
         })
         .catch((err) => {
           setAddSending(false);
-          setAddError(err);
+          setModalErrorSnackMessage(err);
         });
     }
   }, [
     addSending,
     setAddSending,
-    setAddError,
+    setModalErrorSnackMessage,
     policyDefinition,
     closeModalAndRefresh,
   ]);
@@ -107,11 +108,6 @@ const AddServiceAccount = ({
       >
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
-            {addError !== "" && (
-              <Grid item xs={12}>
-                <ErrorBlock errorMessage={addError} withBreak={false} />
-              </Grid>
-            )}
             <div className={classes.infoDetails}>
               Service Accounts inherit the policy explicitly attached to the
               parent user and the policy attached to each group in which the
@@ -157,4 +153,10 @@ const AddServiceAccount = ({
   );
 };
 
-export default withStyles(styles)(AddServiceAccount);
+const mapDispatchToProps = {
+  setModalErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default withStyles(styles)(connector(AddServiceAccount));

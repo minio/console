@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -28,21 +28,23 @@ import api from "../../../../common/api";
 import { ITenant } from "./types";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import Grid from "@material-ui/core/Grid";
-import ErrorBlock from "../../../shared/ErrorBlock";
+import { connect } from "react-redux";
+import { setErrorSnackMessage } from "../../../../actions";
 
 interface IDeleteTenant {
   deleteOpen: boolean;
   selectedTenant: ITenant;
   closeDeleteModalAndRefresh: (refreshList: boolean) => any;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const DeleteTenant = ({
   deleteOpen,
   selectedTenant,
   closeDeleteModalAndRefresh,
+  setErrorSnackMessage,
 }: IDeleteTenant) => {
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [deleteError, setDeleteError] = useState("");
   const [retypeTenant, setRetypeTenant] = useState("");
 
   useEffect(() => {
@@ -54,12 +56,11 @@ const DeleteTenant = ({
         )
         .then(() => {
           setDeleteLoading(false);
-          setDeleteError("");
           closeDeleteModalAndRefresh(true);
         })
         .catch((err) => {
           setDeleteLoading(false);
-          setDeleteError(err);
+          setErrorSnackMessage(err);
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -67,7 +68,7 @@ const DeleteTenant = ({
 
   const removeRecord = () => {
     if (retypeTenant !== selectedTenant.name) {
-      setDeleteError("Tenant name is not correct");
+      setErrorSnackMessage("Tenant name is not correct");
       return;
     }
     setDeleteLoading(true);
@@ -77,7 +78,6 @@ const DeleteTenant = ({
     <Dialog
       open={deleteOpen}
       onClose={() => {
-        setDeleteError("");
         closeDeleteModalAndRefresh(false);
       }}
       aria-labelledby="alert-dialog-title"
@@ -99,13 +99,11 @@ const DeleteTenant = ({
               value={retypeTenant}
             />
           </Grid>
-          {deleteError !== "" && <ErrorBlock errorMessage={deleteError} />}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button
           onClick={() => {
-            setDeleteError("");
             closeDeleteModalAndRefresh(false);
           }}
           color="primary"
@@ -126,4 +124,8 @@ const DeleteTenant = ({
   );
 };
 
-export default DeleteTenant;
+const connector = connect(null, {
+  setErrorSnackMessage,
+});
+
+export default connector(DeleteTenant);

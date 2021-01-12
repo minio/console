@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
+import { connect } from "react-redux";
 import {
   Button,
   Dialog,
@@ -26,8 +27,8 @@ import {
 } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
+import { setErrorSnackMessage } from "../../../../../../actions";
 import api from "../../../../../../common/api";
-import Typography from "@material-ui/core/Typography";
 
 interface IDeleteTagModal {
   deleteOpen: boolean;
@@ -37,6 +38,7 @@ interface IDeleteTagModal {
   selectedTag: string[];
   onCloseAndUpdate: (refresh: boolean) => void;
   selectedObject: string;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
   classes: any;
 }
 
@@ -60,9 +62,9 @@ const DeleteTagModal = ({
   onCloseAndUpdate,
   bucketName,
   versionId,
+  setErrorSnackMessage,
   classes,
 }: IDeleteTagModal) => {
-  const [deleteError, setDeleteError] = useState<string>("");
   const [deleteLoading, setDeleteSending] = useState<boolean>(false);
   const [tagKey, tagLabel] = selectedTag;
 
@@ -82,7 +84,7 @@ const DeleteTagModal = ({
         onCloseAndUpdate(true);
       })
       .catch((error) => {
-        setDeleteError(error);
+        setErrorSnackMessage(error);
         setDeleteSending(false);
       });
   };
@@ -105,18 +107,6 @@ const DeleteTagModal = ({
             {tagKey} : {tagLabel}
           </b>{" "}
           from {selectedObject}?
-          {deleteError !== "" && (
-            <React.Fragment>
-              <br />
-              <Typography
-                component="p"
-                variant="body1"
-                className={classes.errorBlock}
-              >
-                {deleteError}
-              </Typography>
-            </React.Fragment>
-          )}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -137,4 +127,10 @@ const DeleteTagModal = ({
   );
 };
 
-export default withStyles(styles)(DeleteTagModal);
+const mapDispatchToProps = {
+  setErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default withStyles(styles)(connector(DeleteTagModal));

@@ -1,14 +1,31 @@
+// This file is part of MinIO Console Server
+// Copyright (c) 2021 MinIO, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import get from "lodash/get";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
+import { setModalErrorSnackMessage } from "../../../../../../actions";
 import { IFileInfo } from "./types";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import api from "../../../../../../common/api";
-import ErrorBlock from "../../../../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -30,6 +47,7 @@ interface ISetRetentionProps {
   objectName: string;
   bucketName: string;
   actualInfo: IFileInfo;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const SetLegalHoldModal = ({
@@ -39,10 +57,10 @@ const SetLegalHoldModal = ({
   objectName,
   bucketName,
   actualInfo,
+  setModalErrorSnackMessage,
 }: ISetRetentionProps) => {
   const [legalHoldEnabled, setLegalHoldEnabled] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
   const versionId = actualInfo.version_id;
 
   useEffect(() => {
@@ -60,12 +78,12 @@ const SetLegalHoldModal = ({
         `/api/v1/buckets/${bucketName}/objects/legalhold?prefix=${objectName}&version_id=${versionId}`,
         { status: legalHoldEnabled ? "enabled" : "disabled" }
       )
-      .then((res) => {
+      .then(() => {
         setIsSaving(false);
         closeModalAndRefresh(true);
       })
       .catch((error) => {
-        setError(error);
+        setModalErrorSnackMessage(error);
         setIsSaving(false);
       });
   };
@@ -83,7 +101,6 @@ const SetLegalHoldModal = ({
         closeModalAndRefresh(false);
       }}
     >
-      {error !== "" && <ErrorBlock errorMessage={error} withBreak={false} />}
       <Grid item xs={12} className={classes.objectName}>
         {objectName}
       </Grid>
@@ -133,4 +150,10 @@ const SetLegalHoldModal = ({
   );
 };
 
-export default withStyles(styles)(SetLegalHoldModal);
+const mapDispatchToProps = {
+  setModalErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default withStyles(styles)(connector(SetLegalHoldModal));

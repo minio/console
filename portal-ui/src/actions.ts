@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -23,6 +23,9 @@ import {
   SET_LOADING_PROGRESS,
   SET_SNACK_BAR_MESSAGE,
   SET_SERVER_DIAG_STAT,
+  SET_ERROR_SNACK_MESSAGE,
+  SET_SNACK_MODAL_MESSAGE,
+  SET_MODAL_ERROR_MESSAGE,
 } from "./types";
 
 export function userLoggedIn(loggedIn: boolean) {
@@ -67,16 +70,37 @@ export const setLoadingProgress = (progress: number) => {
   };
 };
 
-export const setSnackBarMessage = (message: string) => {
-  return {
-    type: SET_SNACK_BAR_MESSAGE,
-    snackBarMessage: message,
-  };
-};
-
 export const setServerDiagStat = (status: string) => {
   return {
     type: SET_SERVER_DIAG_STAT,
     serverDiagnosticStatus: status,
+  };
+};
+
+export const setSnackBarMessage = (message: string) => {
+  return {
+    type: SET_SNACK_BAR_MESSAGE,
+    message,
+  };
+};
+
+export const setErrorSnackMessage = (message: string) => {
+  return {
+    type: SET_ERROR_SNACK_MESSAGE,
+    message,
+  };
+};
+
+export const setModalSnackMessage = (message: string) => {
+  return {
+    type: SET_SNACK_MODAL_MESSAGE,
+    message,
+  };
+};
+
+export const setModalErrorSnackMessage = (message: string) => {
+  return {
+    type: SET_MODAL_ERROR_MESSAGE,
+    message,
   };
 };

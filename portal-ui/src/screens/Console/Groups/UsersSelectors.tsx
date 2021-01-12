@@ -1,5 +1,5 @@
-// This file is part of MinIO Kubernetes Cloud
-// Copyright (c) 2020 MinIO, Inc.
+// This file is part of MinIO Console Server
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { LinearProgress } from "@material-ui/core";
@@ -31,13 +31,15 @@ import {
   actionsTray,
   selectorsCommon,
 } from "../Common/FormComponents/common/styleLibrary";
-import ErrorBlock from "../../shared/ErrorBlock";
+import { setModalErrorSnackMessage } from "../../../actions";
+import { connect } from "react-redux";
 
 interface IGroupsProps {
   classes: any;
   selectedUsers: string[];
   setSelectedUsers: any;
   editMode?: boolean;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -111,12 +113,31 @@ const UsersSelectors = ({
   selectedUsers,
   setSelectedUsers,
   editMode = false,
+  setModalErrorSnackMessage,
 }: IGroupsProps) => {
   //Local States
   const [records, setRecords] = useState<any[]>([]);
   const [loading, isLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
   const [filter, setFilter] = useState<string>("");
+
+  const fetchUsers = useCallback(() => {
+    api
+      .invoke("GET", `/api/v1/users`)
+      .then((res: UsersList) => {
+        let users = get(res, "users", []);
+
+        if (!users) {
+          users = [];
+        }
+
+        setRecords(users.sort(usersSort));
+        isLoading(false);
+      })
+      .catch((err) => {
+        setModalErrorSnackMessage(err);
+        isLoading(false);
+      });
+  }, [setModalErrorSnackMessage]);
 
   //Effects
   useEffect(() => {
@@ -127,7 +148,7 @@ const UsersSelectors = ({
     if (loading) {
       fetchUsers();
     }
-  }, [loading]);
+  }, [loading, fetchUsers]);
 
   const selUsers = !selectedUsers ? [] : selectedUsers;
 
@@ -151,26 +172,6 @@ const UsersSelectors = ({
     return elements;
   };
 
-  const fetchUsers = () => {
-    api
-      .invoke("GET", `/api/v1/users`)
-      .then((res: UsersList) => {
-        let users = get(res, "users", []);
-
-        if (!users) {
-          users = [];
-        }
-
-        setRecords(users.sort(usersSort));
-        setError("");
-        isLoading(false);
-      })
-      .catch((err) => {
-        setError(err);
-        isLoading(false);
-      });
-  };
-
   const filteredRecords = records.filter((elementItem) =>
     elementItem.accessKey.includes(filter)
   );
@@ -180,9 +181,6 @@ const UsersSelectors = ({
       <Grid item xs={12}>
         <Paper className={classes.paper}>
           {loading && <LinearProgress />}
-          {error !== "" && (
-            <ErrorBlock errorMessage={error} withBreak={false} />
-          )}
           {records != null && records.length > 0 ? (
             <React.Fragment>
               <Grid item xs={12} className={classes.actionsTray}>
@@ -228,4 +226,10 @@ const UsersSelectors = ({
   );
 };
 
-export default withStyles(styles)(UsersSelectors);
+const mapDispatchToProps = {
+  setModalErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default withStyles(styles)(connector(UsersSelectors));

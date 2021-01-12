@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,18 +15,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useCallback, useEffect, useState } from "react";
+import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import { User } from "./types";
+import { setModalErrorSnackMessage } from "../../../actions";
 import api from "../../../common/api";
 import GroupsSelectors from "./GroupsSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
-import ErrorBlock from "../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -47,16 +48,17 @@ interface IAddUserContentProps {
   closeModalAndRefresh: () => void;
   selectedUser: User | null;
   open: boolean;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
-const AddUserContent = ({
+const AddUser = ({
   classes,
   closeModalAndRefresh,
   selectedUser,
   open,
+  setModalErrorSnackMessage,
 }: IAddUserContentProps) => {
   const [addLoading, setAddLoading] = useState<boolean>(false);
-  const [addError, setAddError] = useState<string>("");
   const [accessKey, setAccessKey] = useState<string>("");
   const [secretKey, setSecretKey] = useState<string>("");
   const [enabled, setEnabled] = useState<boolean>(false);
@@ -72,7 +74,6 @@ const AddUserContent = ({
       .invoke("GET", `/api/v1/users/${selectedUser.accessKey}`)
       .then((res) => {
         setAddLoading(false);
-        setAddError("");
         setAccessKey(res.accessKey);
         setSelectedGroups(res.memberOf || []);
         setCurrentGroups(res.memberOf || []);
@@ -80,9 +81,9 @@ const AddUserContent = ({
       })
       .catch((err) => {
         setAddLoading(false);
-        setAddError(err);
+        setModalErrorSnackMessage(err);
       });
-  }, [selectedUser]);
+  }, [selectedUser, setModalErrorSnackMessage]);
 
   useEffect(() => {
     if (selectedUser == null) {
@@ -109,13 +110,11 @@ const AddUserContent = ({
         })
         .then((res) => {
           setAddLoading(false);
-          setAddError("");
-
           closeModalAndRefresh();
         })
         .catch((err) => {
           setAddLoading(false);
-          setAddError(err);
+          setModalErrorSnackMessage(err);
         });
     } else {
       api
@@ -126,13 +125,11 @@ const AddUserContent = ({
         })
         .then((res) => {
           setAddLoading(false);
-          setAddError("");
           closeModalAndRefresh();
         })
         .catch((err) => {
-          console.log(err);
           setAddLoading(false);
-          setAddError(err);
+          setModalErrorSnackMessage(err);
         });
     }
   };
@@ -185,12 +182,6 @@ const AddUserContent = ({
         >
           <Grid container>
             <Grid item xs={12} className={classes.formScrollable}>
-              {addError !== "" && (
-                <Grid item xs={12}>
-                  <ErrorBlock errorMessage={addError} withBreak={false} />
-                </Grid>
-              )}
-
               <InputBoxWrapper
                 id="accesskey-input"
                 name="accesskey-input"
@@ -261,16 +252,10 @@ const AddUserContent = ({
   );
 };
 
-const AddUserWrapper = withStyles(styles)(AddUserContent);
-
-interface IAddUserProps {
-  open: boolean;
-  closeModalAndRefresh: () => void;
-  selectedUser: User | null;
-}
-
-const AddUser = (props: IAddUserProps) => {
-  return <AddUserWrapper {...props} />;
+const mapDispatchToProps = {
+  setModalErrorSnackMessage,
 };
 
-export default AddUser;
+const connector = connect(null, mapDispatchToProps);
+
+export default withStyles(styles)(connector(AddUser));

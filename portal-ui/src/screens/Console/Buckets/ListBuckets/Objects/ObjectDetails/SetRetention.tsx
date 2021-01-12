@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,17 +15,18 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useRef, useState } from "react";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
 import { IFileInfo } from "./types";
+import { setModalErrorSnackMessage } from "../../../../../../actions";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import RadioGroupSelector from "../../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import DateSelector from "../../../../Common/FormComponents/DateSelector/DateSelector";
 import api from "../../../../../../common/api";
-import ErrorBlock from "../../../../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -47,6 +48,7 @@ interface ISetRetentionProps {
   objectName: string;
   bucketName: string;
   objectInfo: IFileInfo;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 interface IRefObject {
@@ -60,9 +62,9 @@ const SetRetention = ({
   objectName,
   objectInfo,
   bucketName,
+  setModalErrorSnackMessage,
 }: ISetRetentionProps) => {
   const [statusEnabled, setStatusEnabled] = useState<boolean>(true);
-  const [error, setError] = useState("");
   const [type, setType] = useState<string>("");
   const [date, setDate] = useState<string>("");
   const [isDateValid, setIsDateValid] = useState<boolean>(false);
@@ -113,7 +115,7 @@ const SetRetention = ({
         closeModalAndRefresh(true);
       })
       .catch((error) => {
-        setError(error);
+        setModalErrorSnackMessage(error);
         setIsSaving(false);
       });
   };
@@ -127,12 +129,12 @@ const SetRetention = ({
         "DELETE",
         `/api/v1/buckets/${bucketName}/objects/retention?prefix=${selectedObject}&version_id=${versionId}`
       )
-      .then((res: any) => {
+      .then(() => {
         setIsSaving(false);
         closeModalAndRefresh(true);
       })
       .catch((error) => {
-        setError(error);
+        setModalErrorSnackMessage(error);
         setIsSaving(false);
       });
   };
@@ -166,11 +168,6 @@ const SetRetention = ({
         closeModalAndRefresh(false);
       }}
     >
-      {error !== "" && (
-        <Grid item xs={12}>
-          <ErrorBlock errorMessage={error} />
-        </Grid>
-      )}
       <Grid item xs={12} className={classes.objectName}>
         {objectName}
       </Grid>
@@ -255,4 +252,10 @@ const SetRetention = ({
   );
 };
 
-export default withStyles(styles)(SetRetention);
+const mapDispatchToProps = {
+  setModalErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default withStyles(styles)(connector(SetRetention));

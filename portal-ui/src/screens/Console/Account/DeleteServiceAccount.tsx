@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import {
   Button,
@@ -25,8 +26,8 @@ import {
   DialogTitle,
   LinearProgress,
 } from "@material-ui/core";
+import { setErrorSnackMessage } from "../../../actions";
 import api from "../../../common/api";
-import ErrorBlock from "../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -42,6 +43,7 @@ interface IDeleteServiceAccountProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedServiceAccount: string | null;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const DeleteServiceAccount = ({
@@ -49,9 +51,9 @@ const DeleteServiceAccount = ({
   closeDeleteModalAndRefresh,
   deleteOpen,
   selectedServiceAccount,
+  setErrorSnackMessage,
 }: IDeleteServiceAccountProps) => {
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [deleteError, setDeleteError] = useState("");
 
   useEffect(() => {
     if (deleteLoading) {
@@ -59,15 +61,19 @@ const DeleteServiceAccount = ({
         .invoke("DELETE", `/api/v1/service-accounts/${selectedServiceAccount}`)
         .then(() => {
           setDeleteLoading(false);
-          setDeleteError("");
           closeDeleteModalAndRefresh(true);
         })
         .catch((err) => {
           setDeleteLoading(false);
-          setDeleteError(err);
+          setErrorSnackMessage(err);
         });
     }
-  }, [deleteLoading, closeDeleteModalAndRefresh, selectedServiceAccount]);
+  }, [
+    deleteLoading,
+    closeDeleteModalAndRefresh,
+    selectedServiceAccount,
+    setErrorSnackMessage,
+  ]);
 
   const removeRecord = () => {
     if (selectedServiceAccount == null) {
@@ -92,7 +98,6 @@ const DeleteServiceAccount = ({
         <DialogContentText id="alert-dialog-description">
           Are you sure you want to delete service account{" "}
           <b className={classes.wrapText}>{selectedServiceAccount}</b>?
-          {deleteError !== "" && <ErrorBlock errorMessage={deleteError} />}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -113,4 +118,10 @@ const DeleteServiceAccount = ({
   );
 };
 
-export default withStyles(styles)(DeleteServiceAccount);
+const mapDispatchToProps = {
+  setErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default withStyles(styles)(connector(DeleteServiceAccount));
