@@ -32,7 +32,7 @@ import (
 // swagger:model logSearchResponse
 type LogSearchResponse struct {
 
-	// list of resulting tenants
+	// list of log search responses
 	Results interface{} `json:"results,omitempty"`
 }
 

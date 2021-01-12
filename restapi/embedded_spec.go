@@ -3971,7 +3971,7 @@ func init() {
       "properties": {
         "results": {
           "type": "object",
-          "title": "list of resulting tenants"
+          "title": "list of log search responses"
         }
       }
     },
@@ -9872,7 +9872,7 @@ func init() {
       "properties": {
         "results": {
           "type": "object",
-          "title": "list of resulting tenants"
+          "title": "list of log search responses"
         }
       }
     },

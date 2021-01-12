@@ -48,7 +48,6 @@ func init() {
 
 // getLogSearchResponse performs a query to Log Search if Enabled
 func getLogSearchResponse(params user_api.LogSearchParams) (*models.LogSearchResponse, *models.Error) {
-
 	token := getLogSearchAPIToken()
 	endpoint := fmt.Sprintf("%s/api/query?token=%s&q=reqinfo", getLogSearchURL(), token)
 	for _, fp := range params.Fp {
@@ -57,7 +56,7 @@ func getLogSearchResponse(params user_api.LogSearchParams) (*models.LogSearchRes
 
 	endpoint = fmt.Sprintf("%s&%s=ok", endpoint, *params.Order)
 
-	// timestart
+	// timeStart
 	if params.TimeStart != nil && *params.TimeStart != "" {
 		endpoint = fmt.Sprintf("%s&timeStart=%s", endpoint, *params.TimeStart)
 	}
@@ -65,6 +64,10 @@ func getLogSearchResponse(params user_api.LogSearchParams) (*models.LogSearchRes
 	endpoint = fmt.Sprintf("%s&pageSize=%d", endpoint, *params.PageSize)
 	endpoint = fmt.Sprintf("%s&pageNo=%d", endpoint, *params.PageNo)
 
+	return logSearch(endpoint)
+}
+
+func logSearch(endpoint string) (*models.LogSearchResponse, *models.Error) {
 	resp, err := http.Get(endpoint)
 	if err != nil {
 		log.Println(err)
@@ -81,6 +84,7 @@ func getLogSearchResponse(params user_api.LogSearchParams) (*models.LogSearchRes
 		}
 
 		log.Println(string(s))
+
 		return nil, &models.Error{
 			Code:    500,
 			Message: swag.String("Error retrieving logs"),
@@ -98,5 +102,4 @@ func getLogSearchResponse(params user_api.LogSearchParams) (*models.LogSearchRes
 	}
 
 	return &response, nil
-
 }

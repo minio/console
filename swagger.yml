@@ -2921,7 +2921,7 @@ definitions:
     properties:
       results:
         type: object
-        title: list of resulting tenants
+        title: list of log search responses
 
   listTenantsResponse:
     type: object
