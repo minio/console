@@ -426,7 +426,10 @@ export const getWidgetsWithValue = (payload: any[]) => {
         break;
       case widgetType.linearGraph:
         if (typeOfPayload === "graph") {
-          const targets = get(payloadData, "targets", []);
+          let targets = get(payloadData, "targets", []);
+          if (targets === null) {
+            targets = [];
+          }
 
           const series: any[] = [];
           const plotValues: any[] = [];
@@ -437,8 +440,11 @@ export const getWidgetsWithValue = (payload: any[]) => {
               index: number
             ) => {
               // Add a new serie to plot variables in case it is not from multiple values
-              const results = get(targetMaster, "result", []);
+              let results = get(targetMaster, "result", []);
               const legendFormat = targetMaster.legendFormat;
+              if (results === null) {
+                results = [];
+              }
 
               results.forEach((itemVals: { metric: object; values: any[] }) => {
                 // Label Creation
@@ -457,7 +463,10 @@ export const getWidgetsWithValue = (payload: any[]) => {
                 });
 
                 // we iterate over values and create elements
-                const values = get(itemVals, "values", []);
+                let values = get(itemVals, "values", []);
+                if (values === null) {
+                  values = [];
+                }
 
                 values.forEach((valInfo: any[]) => {
                   const itemIndex = plotValues.findIndex(
@@ -538,7 +547,10 @@ export const getWidgetsWithValue = (payload: any[]) => {
       case widgetType.singleRep:
         if (typeOfPayload === "stat") {
           // We sort values & get the last value
-          const elements = get(payloadData, "targets[0].result[0].values", []);
+          let elements = get(payloadData, "targets[0].result[0].values", []);
+          if (elements === null) {
+            elements = [];
+          }
           const metricCalc = get(
             payloadData,
             "options.reduceOptions.calcs[0]",
