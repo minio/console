@@ -50,6 +50,9 @@ type Tenant struct {
 	// enable prometheus
 	EnablePrometheus bool `json:"enable_prometheus,omitempty"`
 
+	// endpoints
+	Endpoints *TenantEndpoints `json:"endpoints,omitempty"`
+
 	// image
 	Image string `json:"image,omitempty"`
 
@@ -73,6 +76,10 @@ type Tenant struct {
 func (m *Tenant) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateEndpoints(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validatePools(formats); err != nil {
 		res = append(res, err)
 	}
@@ -84,6 +91,24 @@ func (m *Tenant) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Tenant) validateEndpoints(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Endpoints) { // not required
+		return nil
+	}
+
+	if m.Endpoints != nil {
+		if err := m.Endpoints.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("endpoints")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -141,6 +166,41 @@ func (m *Tenant) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *Tenant) UnmarshalBinary(b []byte) error {
 	var res Tenant
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// TenantEndpoints tenant endpoints
+//
+// swagger:model TenantEndpoints
+type TenantEndpoints struct {
+
+	// console
+	Console string `json:"console,omitempty"`
+
+	// minio
+	Minio string `json:"minio,omitempty"`
+}
+
+// Validate validates this tenant endpoints
+func (m *TenantEndpoints) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *TenantEndpoints) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *TenantEndpoints) UnmarshalBinary(b []byte) error {
+	var res TenantEndpoints
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

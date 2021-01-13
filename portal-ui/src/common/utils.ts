@@ -39,7 +39,7 @@ export const units = [
 export const k8sUnits = ["Ki", "Mi", "Gi", "Ti", "Pi", "Ei"];
 export const k8sCalcUnits = ["B", ...k8sUnits];
 
-export const niceBytes = (x: string) => {
+export const niceBytes = (x: string, showK8sUnits: boolean = false) => {
   let l = 0,
     n = parseInt(x, 10) || 0;
 
@@ -48,7 +48,12 @@ export const niceBytes = (x: string) => {
   }
   //include a decimal point and a tenths-place digit if presenting
   //less than ten of KB or greater units
-  return n.toFixed(n < 10 && l > 0 ? 1 : 0) + " " + units[l];
+  const k8sUnitsN = ["B", ...k8sUnits];
+  return (
+    n.toFixed(n < 10 && l > 0 ? 1 : 0) +
+    " " +
+    (showK8sUnits ? k8sUnitsN[l] : units[l])
+  );
 };
 
 export const setCookie = (name: string, val: string) => {
@@ -418,4 +423,123 @@ export const generatePoolName = (pools: IPoolModel[]) => {
   const poolCounter = pools.length;
 
   return `pool-${poolCounter}`;
+};
+
+// seconds / minutes /hours / Days / Years calculator
+export const niceDays = (secondsValue: string) => {
+  let seconds = parseFloat(secondsValue);
+
+  const days = Math.floor(seconds / (3600 * 24));
+
+  seconds -= days * 3600 * 24;
+  const hours = Math.floor(seconds / 3600);
+  seconds -= hours * 3600;
+  const minutes = Math.floor(seconds / 60);
+  seconds -= minutes * 60;
+
+  if (days > 365) {
+    const years = days / 365;
+    return `${years} year${Math.floor(years) === 1 ? "" : "s"}`;
+  }
+
+  if (days > 30) {
+    const months = Math.floor(days / 30);
+    const diffDays = days - months * 30;
+
+    return `${months} month${Math.floor(months) === 1 ? "" : "s"} ${
+      diffDays > 0 ? `${diffDays} day${diffDays > 1 ? "s" : ""}` : ""
+    }`;
+  }
+
+  if (days >= 7 && days <= 30) {
+    const weeks = Math.floor(days / 7);
+
+    return `${Math.floor(weeks)} week${weeks === 1 ? "" : "s"}`;
+  }
+
+  if (days >= 1 && days <= 6) {
+    return `${days} day${days > 1 ? "s" : ""}`;
+  }
+
+  return `${hours >= 1 ? `${hours} hour${hours > 1 ? "s" : ""}` : ""} ${
+    minutes >= 1 && hours === 0
+      ? `${minutes} minute${minutes > 1 ? "s" : ""}`
+      : ""
+  } ${
+    seconds >= 1 && minutes === 0 && hours === 0
+      ? `${seconds} second${seconds > 1 ? "s" : ""}`
+      : ""
+  }`;
+};
+
+export const getTimeFromTimestamp = (
+  timestamp: string,
+  fullDate: boolean = false
+) => {
+  const dateObject = new Date(parseInt(timestamp) * 1000);
+
+  if (fullDate) {
+    return `${dateObject.getFullYear()}-${String(
+      dateObject.getMonth() + 1
+    ).padStart(2, "0")}-${String(dateObject.getDay()).padStart(
+      2,
+      "0"
+    )} ${dateObject.getHours()}:${String(dateObject.getMinutes()).padStart(
+      2,
+      "0"
+    )}:${String(dateObject.getSeconds()).padStart(2, "0")}`;
+  }
+  return `${dateObject.getHours()}:${String(dateObject.getMinutes()).padStart(
+    2,
+    "0"
+  )}`;
+};
+
+export const calculateBytes = (
+  x: string,
+  showDecimals = false,
+  roundFloor = true
+) => {
+  const bytes = parseInt(x, 10);
+
+  if (bytes === 0) {
+    return { total: 0, unit: k8sCalcUnits[0] };
+  }
+
+  // Gi : GiB
+  const k = 1024;
+
+  // Get unit for measure
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  const fractionDigits = showDecimals ? 0 : 1;
+
+  const bytesUnit = bytes / Math.pow(k, i);
+
+  const roundedUnit = roundFloor ? Math.floor(bytesUnit) : bytesUnit;
+
+  // Get Unit parsed
+  const unitParsed = parseFloat(roundedUnit.toFixed(fractionDigits));
+  const finalUnit = k8sCalcUnits[i];
+
+  return { total: unitParsed, unit: finalUnit };
+};
+
+export const nsToSeconds = (nanoseconds: number) => {
+  const conversion = nanoseconds * 0.000000001;
+  const round = Math.round((conversion + Number.EPSILON) * 10000) / 10000;
+
+  return `${round} s`;
+};
+
+export const textToRGBColor = (text: string) => {
+  const splitText = text.split("");
+
+  const hashVl = splitText.reduce((acc, currItem) => {
+    return acc + currItem.charCodeAt(0) + ((acc << 5) - acc);
+  }, 0);
+
+  const hashColored = ((hashVl * 100) & 0x00ffffff).toString(16).toUpperCase();
+
+  return `#${hashColored.padStart(6, "0")}`;
 };

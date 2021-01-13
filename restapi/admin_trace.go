@@ -23,6 +23,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/minio/minio/pkg/madmin"
@@ -92,7 +93,7 @@ func shortTrace(info *madmin.ServiceTraceInfo) shortTraceMsg {
 	t := info.Trace
 	s := shortTraceMsg{}
 
-	s.Time = t.ReqInfo.Time.String()
+	s.Time = t.ReqInfo.Time.Format(time.RFC3339)
 	s.Path = t.ReqInfo.Path
 	s.Query = t.ReqInfo.RawQuery
 	s.FuncName = t.FuncName

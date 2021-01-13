@@ -24,6 +24,11 @@ console
 
 dist/
 
+# Ignore node_modules
+
+portal-ui/node_modules/
+portal-ui/build/
+
 # Ignore tls cert and key
 private.key
 public.crt

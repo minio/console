@@ -135,9 +135,22 @@ export const containerForHeader = (bottomSpacing: any) => ({
 });
 
 export const actionsTray = {
+  label: {
+    color: "#393939",
+    fontWeight: 600,
+    fontSize: 13,
+    alignSelf: "center" as const,
+    whiteSpace: "nowrap" as const,
+    "&:not(:first-of-type)": {
+      marginLeft: 10,
+    },
+  },
+  timeContainers: {
+    height: 40,
+  },
   actionsTray: {
-    display: "flex",
-    justifyContent: "space-between",
+    display: "flex" as const,
+    justifyContent: "space-between" as const,
     "& button": {
       flexGrow: 0,
       marginLeft: 15,
@@ -290,5 +303,107 @@ export const settingsCommon = {
   },
   backContainer: {
     margin: "20px 38px 0",
+  },
+};
+
+export const logsCommon = {
+  logsSubContainer: {
+    height: "calc(100vh - 230px)",
+    padding: "15px 33px",
+  },
+};
+
+export const widgetCommon = {
+  singleValueContainer: {
+    position: "relative" as const,
+    flexGrow: 1,
+    width: "100%",
+    height: "100%",
+    border: "#EAEAEA 1px solid",
+    borderRadius: 5,
+    backgroundColor: "#fff",
+  },
+  titleContainer: {
+    color: "#393939",
+    fontWeight: 600,
+    height: 15,
+    textAlign: "center" as const,
+    fontSize: 10,
+  },
+  contentContainer: {
+    flexGrow: 2,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+    display: "flex" as const,
+    position: "absolute" as const,
+    width: "100%",
+    height: "calc(100% - 15px)",
+  },
+  contentContainerWithLabel: {
+    height: "calc(100% - 25px)",
+  },
+  legendBlock: {
+    position: "absolute" as const,
+    bottom: 5,
+    display: "flex" as const,
+    width: "100%",
+    height: 15,
+    flexWrap: "wrap" as const,
+    overflowY: "auto" as const,
+  },
+  singleLegendContainer: {
+    display: "flex",
+    alignItems: "center",
+    padding: "0 10px",
+    maxWidth: "100%",
+  },
+  colorContainer: {
+    width: 8,
+    height: 8,
+    minWidth: 8,
+    borderRadius: "100%",
+    marginRight: 5,
+  },
+  legendLabel: {
+    fontSize: "80%",
+    color: "#393939",
+    whiteSpace: "nowrap" as const,
+    overflow: "hidden" as const,
+    textOverflow: "ellipsis" as const,
+  },
+};
+
+export const tooltipCommon = {
+  customTooltip: {
+    backgroundColor: "rgba(255, 255, 255, 0.90)",
+    border: "#eaeaea 1px solid",
+    borderRadius: 3,
+    padding: "5px 10px",
+    maxHeight: 300,
+    overflowY: "auto" as const,
+  },
+  labelContainer: {
+    display: "flex" as const,
+    alignItems: "center" as const,
+  },
+  labelColor: {
+    width: 6,
+    height: 6,
+    display: "block" as const,
+    borderRadius: "100%",
+    marginRight: 5,
+  },
+  itemValue: {
+    fontSize: "75%",
+    color: "#393939",
+  },
+  valueContainer: {
+    fontWeight: 600,
+  },
+  timeStampTitle: {
+    fontSize: "80%",
+    color: "#9c9c9c",
+    textAlign: "center" as const,
+    marginBottom: 6,
   },
 };

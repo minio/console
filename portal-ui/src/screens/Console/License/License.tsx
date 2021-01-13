@@ -198,7 +198,6 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
       </Grid>
     );
   }
-  console.log("operatorMode", operatorMode);
   return (
     <React.Fragment>
       {licenseInfo ? (

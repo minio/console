@@ -58,6 +58,8 @@ export interface ITenantCreator {
   secret_key: string;
   image: string;
   console_image: string;
+  expose_minio: boolean;
+  expose_console: boolean;
   pools: IPoolModel[];
   namespace: string;
   erasureCodingParity: number;

@@ -170,23 +170,23 @@ func Test_listObjects(t *testing.T) {
 			expectedResp: []*models.BucketObject{
 				&models.BucketObject{
 					Name:               "obj1",
-					LastModified:       t1.String(),
+					LastModified:       t1.Format(time.RFC3339),
 					Size:               int64(1024),
 					ContentType:        "content",
 					LegalHoldStatus:    string(minio.LegalHoldEnabled),
 					RetentionMode:      string(minio.Governance),
-					RetentionUntilDate: tretention.String(),
+					RetentionUntilDate: tretention.Format(time.RFC3339),
 					Tags: map[string]string{
 						"tag1": "value1",
 					},
 				}, &models.BucketObject{
 					Name:               "obj2",
-					LastModified:       t1.String(),
+					LastModified:       t1.Format(time.RFC3339),
 					Size:               int64(512),
 					ContentType:        "content",
 					LegalHoldStatus:    string(minio.LegalHoldEnabled),
 					RetentionMode:      string(minio.Governance),
-					RetentionUntilDate: tretention.String(),
+					RetentionUntilDate: tretention.Format(time.RFC3339),
 					Tags: map[string]string{
 						"tag1": "value1",
 					},
@@ -332,18 +332,18 @@ func Test_listObjects(t *testing.T) {
 			expectedResp: []*models.BucketObject{
 				&models.BucketObject{
 					Name:           "obj1",
-					LastModified:   t1.String(),
+					LastModified:   t1.Format(time.RFC3339),
 					Size:           int64(1024),
 					ContentType:    "content",
 					IsDeleteMarker: true,
 				}, &models.BucketObject{
 					Name:               "obj2",
-					LastModified:       t1.String(),
+					LastModified:       t1.Format(time.RFC3339),
 					Size:               int64(512),
 					ContentType:        "content",
 					LegalHoldStatus:    string(minio.LegalHoldEnabled),
 					RetentionMode:      string(minio.Governance),
-					RetentionUntilDate: tretention.String(),
+					RetentionUntilDate: tretention.Format(time.RFC3339),
 					Tags: map[string]string{
 						"tag1": "value1",
 					},
@@ -391,7 +391,7 @@ func Test_listObjects(t *testing.T) {
 			expectedResp: []*models.BucketObject{
 				&models.BucketObject{
 					Name:         "obj1",
-					LastModified: t1.String(),
+					LastModified: t1.Format(time.RFC3339),
 					Size:         int64(1024),
 					ContentType:  "content",
 				},
@@ -453,12 +453,12 @@ func Test_listObjects(t *testing.T) {
 			expectedResp: []*models.BucketObject{
 				&models.BucketObject{
 					Name:         "obj1",
-					LastModified: t1.String(),
+					LastModified: t1.Format(time.RFC3339),
 					Size:         int64(1024),
 					ContentType:  "content",
 				}, &models.BucketObject{
 					Name:         "obj2",
-					LastModified: t1.String(),
+					LastModified: t1.Format(time.RFC3339),
 					Size:         int64(512),
 					ContentType:  "content",
 				},
@@ -520,12 +520,12 @@ func Test_listObjects(t *testing.T) {
 			expectedResp: []*models.BucketObject{
 				&models.BucketObject{
 					Name:         "obj1",
-					LastModified: t1.String(),
+					LastModified: t1.Format(time.RFC3339),
 					Size:         int64(1024),
 					ContentType:  "content",
 				}, &models.BucketObject{
 					Name:         "obj2",
-					LastModified: t1.String(),
+					LastModified: t1.Format(time.RFC3339),
 					Size:         int64(512),
 					ContentType:  "content",
 				},

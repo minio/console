@@ -15,10 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 export interface LicenseInfo {
-  account_id: number,
+  account_id: number;
   email: string;
   expires_at: string;
   plan: string;
-  storage_capacity: number,
+  storage_capacity: number;
   organization: string;
 }

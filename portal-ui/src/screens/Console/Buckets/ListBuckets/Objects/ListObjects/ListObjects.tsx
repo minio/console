@@ -200,7 +200,24 @@ const ListObjects = ({
         .invoke("GET", `/api/v1/buckets/${bucketName}/objects${extraPath}`)
         .then((res: BucketObjectsList) => {
           setSelectedBucket(bucketName);
-          setRecords(res.objects || []);
+
+          const records: BucketObject[] = res.objects || [];
+          const folders: BucketObject[] = [];
+          const files: BucketObject[] = [];
+
+          records.forEach((record) => {
+            // this is a folder
+            if (record.name.endsWith("/")) {
+              folders.push(record);
+            } else {
+              // this is a file
+              files.push(record);
+            }
+          });
+
+          const recordsInElement = [...folders, ...files];
+
+          setRecords(recordsInElement);
           // In case no objects were retrieved, We check if item is a file
           if (!res.objects && extraPath !== "") {
             verifyIfIsFile();

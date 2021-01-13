@@ -13,35 +13,35 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React, { useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import { AppState } from "../../../store";
-import { connect } from "react-redux";
-import { logMessageReceived, logResetMessages } from "./actions";
-import { LogMessage } from "./types";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { timeFromDate } from "../../../common/utils";
-import { wsProtocol } from "../../../utils/wsUtils";
-import {
-  actionsTray,
-  containerForHeader,
-  searchField,
-} from "../Common/FormComponents/common/styleLibrary";
+import { connect } from "react-redux";
 import { Grid } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
-import PageHeader from "../Common/PageHeader/PageHeader";
+import moment from "moment/moment";
+import { AppState } from "../../../../store";
+import { logMessageReceived, logResetMessages } from "../actions";
+import { LogMessage } from "../types";
+import { timeFromDate } from "../../../../common/utils";
+import { wsProtocol } from "../../../../utils/wsUtils";
+import {
+  actionsTray,
+  logsCommon,
+  searchField,
+} from "../../Common/FormComponents/common/styleLibrary";
 
 const styles = (theme: Theme) =>
   createStyles({
     logList: {
       background: "#fff",
       minHeight: 400,
-      height: "calc(100vh - 270px)",
+      height: "calc(100vh - 304px)",
       overflow: "auto",
       fontSize: 13,
-      padding: "25px 45px",
+      padding: "25px 45px 0",
       border: "1px solid #EAEDEE",
       borderRadius: 4,
     },
@@ -65,7 +65,7 @@ const styles = (theme: Theme) =>
     },
     ...actionsTray,
     ...searchField,
-    ...containerForHeader(theme.spacing(4)),
+    ...logsCommon,
   });
 
 interface ILogs {
@@ -73,11 +73,9 @@ interface ILogs {
   logMessageReceived: typeof logMessageReceived;
   logResetMessages: typeof logResetMessages;
   messages: LogMessage[];
-  namespace: string;
-  tenant: string;
 }
 
-const Logs = ({
+const ErrorLogs = ({
   classes,
   logMessageReceived,
   logResetMessages,
@@ -108,8 +106,9 @@ const Logs = ({
       };
       c.onmessage = (message: IMessageEvent) => {
         // console.log(message.data.toString())
+        // FORMAT: 00:35:17 UTC 01/01/2021
         let m: LogMessage = JSON.parse(message.data.toString());
-        m.time = new Date(m.time.toString());
+        m.time = moment(m.time, "HH:mm:s UTC MM/DD/YYYY").toDate();
         m.key = Math.random();
         logMessageReceived(m);
       };
@@ -323,38 +322,35 @@ const Logs = ({
   });
 
   return (
-    <React.Fragment>
-      <PageHeader label="Logs" />
-      <Grid container>
-        <Grid item xs={12} className={classes.container}>
-          <Grid item xs={12} className={classes.actionsTray}>
-            <TextField
-              placeholder="Highlight Line"
-              className={classes.searchField}
-              id="search-resource"
-              label=""
-              onChange={(val) => {
-                setHighlight(val.target.value);
-              }}
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12}>
-            <div className={classes.logList}>{renderLines}</div>
-          </Grid>
+    <Fragment>
+      <Grid container className={classes.logsSubContainer}>
+        <Grid item xs={12} className={classes.actionsTray}>
+          <TextField
+            placeholder="Highlight Line"
+            className={classes.searchField}
+            id="search-resource"
+            label=""
+            onChange={(val) => {
+              setHighlight(val.target.value);
+            }}
+            InputProps={{
+              disableUnderline: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <br />
+        </Grid>
+        <Grid item xs={12}>
+          <div className={classes.logList}>{renderLines}</div>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
 };
 
@@ -367,4 +363,4 @@ const connector = connect(mapState, {
   logResetMessages: logResetMessages,
 });
 
-export default connector(withStyles(styles)(Logs));
+export default withStyles(styles)(connector(ErrorLogs));

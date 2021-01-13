@@ -19,7 +19,7 @@ securityDefinitions:
     tokenUrl: http://min.io
 # Apply the key security definition to all APIs
 security:
-  - key: []
+  - key: [ ]
 paths:
   /login:
     get:
@@ -35,7 +35,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       # Exclude this API from the authentication requirement
-      security: []
+      security: [ ]
       tags:
         - UserAPI
     post:
@@ -57,7 +57,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       # Exclude this API from the authentication requirement
-      security: []
+      security: [ ]
       tags:
         - UserAPI
   /login/operator:
@@ -79,7 +79,7 @@ paths:
           description: Generic error response.
           schema:
             $ref: "#/definitions/error"
-      security: []
+      security: [ ]
       tags:
         - UserAPI
 
@@ -102,7 +102,7 @@ paths:
           description: Generic error response.
           schema:
             $ref: "#/definitions/error"
-      security: []
+      security: [ ]
       tags:
         - UserAPI
 
@@ -1516,6 +1516,17 @@ paths:
     get:
       summary: Returns information about the deployment
       operationId: AdminInfo
+      parameters:
+        - name: start
+          in: query
+          type: integer
+        - name: end
+          in: query
+          type: integer
+        - name: step
+          default: 15
+          in: query
+          type: integer
       responses:
         200:
           description: A successful response.
@@ -1656,7 +1667,47 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-
+  /logs/search:
+    get:
+      summary: Search the logs
+      operationId: LogSearch
+      parameters:
+        - name: fp
+          description: Filter Parameters
+          in: query
+          collectionFormat: multi
+          type: array
+          items:
+            type: string
+        - name: pageSize
+          in: query
+          type: number
+          format: int32
+          default: 10
+        - name: pageNo
+          in: query
+          type: number
+          format: int32
+          default: 0
+        - name: order
+          in: query
+          type: string
+          enum: [ timeDesc, timeAsc ]
+          default: timeDesc
+        - name: timeStart
+          in: query
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/logSearchResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
   /tenants:
     get:
       summary: List Tenant of All Namespaces
@@ -2515,7 +2566,7 @@ definitions:
     properties:
       loginStrategy:
         type: string
-        enum: [form, redirect, service-account]
+        enum: [ form, redirect, service-account ]
       redirect:
         type: string
   loginOauth2AuthRequest:
@@ -2617,6 +2668,48 @@ definitions:
         enum: [ok]
       operator:
         type: boolean
+  widgetResult:
+    type: object
+    properties:
+      metric:
+        type: object
+        additionalProperties:
+          type: string
+      values:
+        type: array
+        items: { }
+  resultTarget:
+    type: object
+    properties:
+      legendFormat:
+        type: string
+      resultType:
+        type: string
+      result:
+        type: array
+        items:
+          $ref: "#/definitions/widgetResult"
+  widget:
+    type: object
+    properties:
+      title:
+        type: string
+      type:
+        type: string
+      options:
+        type: object
+        properties:
+          reduceOptions:
+            type: object
+            properties:
+              calcs:
+                type: array
+                items:
+                  type: string
+      targets:
+        type: array
+        items:
+          $ref: "#/definitions/resultTarget"
   adminInfoResponse:
     type: object
     properties:
@@ -2626,6 +2719,10 @@ definitions:
         type: integer
       usage:
         type: integer
+      widgets:
+        type: array
+        items:
+          $ref: "#/definitions/widget"
   arnsResponse:
     type: object
     properties:
@@ -2771,7 +2868,7 @@ definitions:
         type: string
       service:
         type: string
-        enum: [replication]
+        enum: [ replication ]
   createRemoteBucket:
     required:
       - accessKey
@@ -2845,6 +2942,14 @@ definitions:
         type: boolean
       subnet_license:
         $ref: "#/definitions/license"
+      endpoints:
+        type: object
+        properties:
+          minio:
+            type: string
+          console:
+            type: string
+
   tenantUsage:
     type: object
     properties:
@@ -2876,6 +2981,13 @@ definitions:
         type: string
       namespace:
         type: string
+
+  logSearchResponse:
+    type: object
+    properties:
+      results:
+        type: object
+        title: list of log search responses
 
   listTenantsResponse:
     type: object
@@ -2981,6 +3093,10 @@ definitions:
       console:
         type: object
         $ref: "#/definitions/consoleConfiguration"
+      expose_minio:
+        type: boolean
+      expose_console:
+        type: boolean
 
   metadataFields:
     type: object
