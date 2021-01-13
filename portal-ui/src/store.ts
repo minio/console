@@ -19,6 +19,7 @@ import thunk from "redux-thunk";
 import { systemReducer } from "./reducer";
 import { traceReducer } from "./screens/Console/Trace/reducers";
 import { logReducer } from "./screens/Console/Logs/reducers";
+import { healthInfoReducer } from "./screens/Console/HealthInfo/reducers";
 import { watchReducer } from "./screens/Console/Watch/reducers";
 import { consoleReducer } from "./screens/Console/reducer";
 import { bucketsReducer } from "./screens/Console/Buckets/reducers";
@@ -32,6 +33,7 @@ const globalReducer = combineReducers({
   console: consoleReducer,
   buckets: bucketsReducer,
   objectBrowser: objectBrowserReducer,
+  healthInfo: healthInfoReducer,
 });
 
 declare global {

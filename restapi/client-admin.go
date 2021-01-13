@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"runtime"
+	"time"
 
 	"github.com/minio/console/models"
 	mcCmd "github.com/minio/mc/cmd"
@@ -105,6 +106,8 @@ type MinioAdmin interface {
 	addRemoteBucket(ctx context.Context, bucket string, target *madmin.BucketTarget) (string, error)
 	// Account password management
 	changePassword(ctx context.Context, accessKey, secretKey string) error
+
+	serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) <-chan madmin.HealthInfo
 }
 
 // Interface implementation
@@ -286,9 +289,13 @@ func (ac adminClient) addRemoteBucket(ctx context.Context, bucket string, target
 	return ac.client.SetRemoteTarget(ctx, bucket, target)
 }
 
-// addRemoteBucket sets up a remote target for this bucket
 func (ac adminClient) setBucketQuota(ctx context.Context, bucket string, quota *madmin.BucketQuota) error {
 	return ac.client.SetBucketQuota(ctx, bucket, quota)
+}
+
+// serverHealthInfo implements mc.ServerHealthInfo - Connect to a minio server and call Health Info Management API
+func (ac adminClient) serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) <-chan madmin.HealthInfo {
+	return ac.client.ServerHealthInfo(ctx, healthDataTypes, deadline)
 }
 
 func newMAdminClient(sessionClaims *models.Principal) (*madmin.AdminClient, error) {

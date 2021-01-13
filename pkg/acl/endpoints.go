@@ -43,6 +43,7 @@ var (
 	heal                = "/heal"
 	trace               = "/trace"
 	logs                = "/logs"
+	healthInfo          = "/health-info"
 )
 
 type ConfigurationActionSet struct {
@@ -231,6 +232,16 @@ var traceActionSet = ConfigurationActionSet{
 	),
 }
 
+// healthInfoActionSet contains the list of admin actions required for this endpoint to work
+var healthInfoActionSet = ConfigurationActionSet{
+	actionTypes: iampolicy.NewActionSet(
+		iampolicy.AllAdminActions,
+	),
+	actions: iampolicy.NewActionSet(
+		iampolicy.HealthInfoAdminAction,
+	),
+}
+
 // endpointRules contains the mapping between endpoints and ActionSets, additional rules can be added here
 var endpointRules = map[string]ConfigurationActionSet{
 	configuration:       configurationActionSet,
@@ -252,6 +263,7 @@ var endpointRules = map[string]ConfigurationActionSet{
 	heal:                healActionSet,
 	trace:               traceActionSet,
 	logs:                logsActionSet,
+	healthInfo:          healthInfoActionSet,
 }
 
 // operatorRules contains the mapping between endpoints and ActionSets for operator only mode

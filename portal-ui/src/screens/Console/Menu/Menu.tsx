@@ -52,6 +52,7 @@ import LogoutIcon from "../../../icons/LogoutIcon";
 import ConsoleIcon from "../../../icons/ConsoleIcon";
 import HealIcon from "../../../icons/HealIcon";
 import WatchIcon from "../../../icons/WatchIcon";
+import TrackChangesSharpIcon from "@material-ui/icons/TrackChangesSharp";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -274,6 +275,14 @@ const Menu = ({ userLoggedIn, classes, pages, operatorMode }: IMenuProps) => {
       to: "/heal",
       name: "Heal",
       icon: <HealIcon />,
+    },
+    {
+      group: "Tools",
+      type: "item",
+      component: NavLink,
+      to: "/health-info",
+      name: "Diagnostic",
+      icon: <TrackChangesSharpIcon />,
     },
     {
       group: "Admin",
