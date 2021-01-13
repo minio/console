@@ -409,7 +409,6 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 		}
 	}
 
-
 	return info, nil
 }
 
