@@ -173,7 +173,7 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 		obj := &models.BucketObject{
 			Name:           lsObj.Key,
 			Size:           lsObj.Size,
-			LastModified:   lsObj.LastModified.String(),
+			LastModified:   lsObj.LastModified.Format(time.RFC3339),
 			ContentType:    lsObj.ContentType,
 			VersionID:      lsObj.VersionID,
 			IsLatest:       lsObj.IsLatest,
@@ -205,7 +205,7 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 				if retention != nil && retUntilDate != nil {
 					date := *retUntilDate
 					obj.RetentionMode = string(*retention)
-					obj.RetentionUntilDate = date.String()
+					obj.RetentionUntilDate = date.Format(time.RFC3339)
 				}
 			}
 			tags, err := client.getObjectTagging(ctx, bucketName, lsObj.Key, minio.GetObjectTaggingOptions{VersionID: lsObj.VersionID})

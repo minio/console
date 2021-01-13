@@ -39,6 +39,11 @@ export interface IVolumeConfiguration {
   labels: { [key: string]: any } | null;
 }
 
+export interface IEndpoints {
+  minio: string;
+  console: string;
+}
+
 export interface ITenant {
   total_size: number;
   name: string;
@@ -53,6 +58,7 @@ export interface ITenant {
   volume_count: number;
   volumes_per_server: number;
   pools: IPool[];
+  endpoints: IEndpoints;
   // computed
   capacity: string;
   subnet_license: LicenseInfo;
@@ -60,4 +66,10 @@ export interface ITenant {
 
 export interface ITenantsResponse {
   tenants: ITenant[];
+}
+
+export interface IMemorySize {
+  error: string;
+  limit: number;
+  request: number;
 }

@@ -31,7 +31,6 @@ import (
 
 var (
 	errCantDetermineMinIOImage = errors.New("can't determine MinIO Image")
-	errCantDetermineMCImage    = errors.New("can't determine MC Image")
 )
 
 func GetK8sAPIServer() string {
@@ -119,45 +118,4 @@ func GetLatestMinioImage(client HTTPClientI) (*string, error) {
 		return nil, err
 	}
 	return latestMinIOImage, nil
-}
-
-// getLatestMCImage returns the latest docker image for MC if found on the internet
-func getLatestMCImage() (*string, error) {
-	// Create an http client with a 4 second timeout
-	client := http.Client{
-		Timeout: 4 * time.Second,
-	}
-	resp, err := client.Get("https://dl.min.io/client/mc/release/linux-amd64/")
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	var re = regexp.MustCompile(`(?m)\.\/mc\.(RELEASE.*?Z)"`)
-	// look for a single match
-	matches := re.FindAllStringSubmatch(string(body), 1)
-	for i := range matches {
-		release := matches[i][1]
-		dockerImage := fmt.Sprintf("minio/mc:%s", release)
-		return &dockerImage, nil
-	}
-	return nil, errCantDetermineMCImage
-}
-
-var latestMCImage, errLatestMCImage = getLatestMCImage()
-
-func GetMCImage() (*string, error) {
-	image := strings.TrimSpace(env.Get(ConsoleMCImage, ""))
-	// if there is a preferred image configured by the user we'll always return that
-	if image != "" {
-		return &image, nil
-	}
-	if errLatestMCImage != nil {
-		return nil, errLatestMCImage
-	}
-	return latestMCImage, nil
 }

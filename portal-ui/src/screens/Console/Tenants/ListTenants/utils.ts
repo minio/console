@@ -14,13 +14,45 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import get from "lodash/get";
+
 export interface Opts {
   label: string;
   value: string;
 }
 
+export interface IQuotaElement {
+  hard: number;
+  name: string;
+}
+
+export interface IQuotas {
+  elements?: IQuotaElement[];
+  name: string;
+}
+
+export const minMemReq = 2147483648;
+
 export const ecListTransform = (ecList: string[]): Opts[] => {
   return ecList.map((value) => {
     return { label: value, value };
   });
+};
+
+export const getLimitSizes = (resourceQuotas: IQuotas) => {
+  const quotas: IQuotaElement[] = get(resourceQuotas, "elements", []);
+
+  const returnQuotas: any = {};
+
+  quotas.forEach((rsQuota) => {
+    const stCName = rsQuota.name.split(
+      ".storageclass.storage.k8s.io/requests.storage"
+    )[0];
+    const hard = get(rsQuota, "hard", 0);
+    const used = get(rsQuota, "used", 0);
+
+    returnQuotas[stCName] = hard - used;
+  });
+
+  return returnQuotas;
 };

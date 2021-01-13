@@ -26,6 +26,7 @@ import (
 	"net/http"
 	"reflect"
 	"testing"
+	"time"
 
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/cluster"
@@ -325,7 +326,7 @@ func Test_TenantInfo(t *testing.T) {
 				},
 			},
 			want: &models.Tenant{
-				CreationDate: testTimeStamp.String(),
+				CreationDate: testTimeStamp.Format(time.RFC3339),
 				Name:         "tenant1",
 				TotalSize:    int64(8388608),
 				CurrentState: "ready",
@@ -389,8 +390,8 @@ func Test_TenantInfo(t *testing.T) {
 				},
 			},
 			want: &models.Tenant{
-				CreationDate: testTimeStamp.String(),
-				DeletionDate: testTimeStamp.String(),
+				CreationDate: testTimeStamp.Format(time.RFC3339),
+				DeletionDate: testTimeStamp.Format(time.RFC3339),
 				Name:         "tenant1",
 				TotalSize:    int64(8388608),
 				CurrentState: "ready",
@@ -435,7 +436,7 @@ func Test_TenantInfo(t *testing.T) {
 				},
 			},
 			want: &models.Tenant{
-				CreationDate:     testTimeStamp.String(),
+				CreationDate:     testTimeStamp.Format(time.RFC3339),
 				Name:             "tenant1",
 				CurrentState:     "ready",
 				Namespace:        "minio-ns",
@@ -470,7 +471,7 @@ func Test_TenantInfo(t *testing.T) {
 				},
 			},
 			want: &models.Tenant{
-				CreationDate:     testTimeStamp.String(),
+				CreationDate:     testTimeStamp.Format(time.RFC3339),
 				Name:             "tenant1",
 				CurrentState:     "ready",
 				Namespace:        "minio-ns",

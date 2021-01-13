@@ -48,6 +48,11 @@ const (
 	ConsoleSecureReferrerPolicy                  = "CONSOLE_SECURE_REFERRER_POLICY"
 	ConsoleSecureFeaturePolicy                   = "CONSOLE_SECURE_FEATURE_POLICY"
 	ConsoleSecureExpectCTHeader                  = "CONSOLE_SECURE_EXPECT_CT_HEADER"
+	ConsoleOperatorSAToken                       = "CONSOLE_OPERATOR_SA_TOKEN"
+	ConsoleOperatorConsoleImage                  = "CONSOLE_OPERATOR_CONSOLE_IMAGE"
+	LogSearchURL                                 = "CONSOLE_LOG_QUERY_URL"
+	PrometheusURL                                = "CONSOLE_PROMETHEUS_URL"
+	LogSearchQueryAuthToken                      = "LOGSEARCH_QUERY_AUTH_TOKEN"
 
 	// Constants for prometheus annotations
 	prometheusPath   = "prometheus.io/path"
@@ -57,8 +62,8 @@ const (
 
 // Image versions
 const (
-	KESImageVersion     = "minio/kes:v0.12.1"
-	ConsoleImageVersion = "minio/console:v0.4.6"
+	KESImageVersion            = "minio/kes:v0.13.1"
+	ConsoleImageDefaultVersion = "minio/console:v0.4.6"
 )
 
 // K8s

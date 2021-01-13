@@ -37,6 +37,7 @@ import {
   getBytes,
   k8sfactorForDropdown,
   niceBytes,
+  setMemoryResource,
 } from "../../../../common/utils";
 import {
   commonFormValidation,
@@ -54,7 +55,14 @@ import {
   IErasureCodeCalc,
   ITenantCreator,
 } from "../../../../common/types";
-import { ecListTransform, Opts } from "./utils";
+import {
+  ecListTransform,
+  getLimitSizes,
+  IQuotaElement,
+  IQuotas,
+  Opts,
+} from "./utils";
+import { IMemorySize } from "./types";
 
 interface IAddTenantProps {
   open: boolean;
@@ -168,6 +176,13 @@ const AddTenant = ({
   const [drivesPerServer, setDrivesPerServer] = useState<string>("1");
   const [memoryNode, setMemoryNode] = useState<string>("2");
   const [ecParity, setECParity] = useState<string>("");
+  const [maxAllocableMemo, setMaxAllocableMemo] = useState<number>(0);
+  const [limitSize, setLimitSize] = useState<any>({});
+  const [memorySize, setMemorySize] = useState<IMemorySize>({
+    error: "",
+    limit: 0,
+    request: 0,
+  });
   const [distribution, setDistribution] = useState<any>({
     error: "",
     nodes: 0,
@@ -183,6 +198,8 @@ const AddTenant = ({
     rawCapacity: "0",
     storageFactors: [],
   });
+  const [exposeMinIO, setExposeMinIO] = useState<boolean>(true);
+  const [exposeConsole, setExposeConsole] = useState<boolean>(true);
 
   // Forms Validation
   const [nameTenantValid, setNameTenantValid] = useState<boolean>(false);
@@ -244,8 +261,9 @@ const AddTenant = ({
         "GET",
         `/api/v1/namespaces/${namespace}/resourcequotas/${namespace}-storagequota`
       )
-      .then((res: string[]) => {
-        const elements = get(res, "elements", []);
+      .then((res: IQuotas) => {
+        const elements: IQuotaElement[] = get(res, "elements", []);
+        setLimitSize(getLimitSizes(res));
 
         const newStorage = elements.map((storageClass: any) => {
           const name = get(storageClass, "name", "").split(
@@ -265,6 +283,47 @@ const AddTenant = ({
         console.log(err);
       });
   };
+
+  const validateMemorySize = useCallback(() => {
+    const memSize = parseInt(memoryNode) || 0;
+    const clusterSize = volumeSize || 0;
+    const maxMemSize = maxAllocableMemo || 0;
+    const clusterSizeFactor = sizeFactor;
+
+    const clusterSizeBytes = getBytes(
+      clusterSize.toString(10),
+      clusterSizeFactor
+    );
+    const memoSize = setMemoryResource(memSize, clusterSizeBytes, maxMemSize);
+
+    setMemorySize(memoSize);
+  }, [maxAllocableMemo, memoryNode, sizeFactor, volumeSize]);
+
+  const getMaxAllocableMemory = (nodes: string) => {
+    if (nodes !== "" && !isNaN(parseInt(nodes))) {
+      api
+        .invoke(
+          "GET",
+          `/api/v1/cluster/max-allocatable-memory?num_nodes=${nodes}`
+        )
+        .then((res: { max_memory: number }) => {
+          const maxMemory = res.max_memory ? res.max_memory : 0;
+          setMaxAllocableMemo(maxMemory);
+        })
+        .catch((err: any) => {
+          setMaxAllocableMemo(0);
+          console.error(err);
+        });
+    }
+  };
+
+  useEffect(() => {
+    validateMemorySize();
+  }, [memoryNode, validateMemorySize]);
+
+  useEffect(() => {
+    validateMemorySize();
+  }, [maxAllocableMemo, validateMemorySize]);
 
   const debounceNamespace = useCallback(
     debounce(getNamespaceInformation, 500),
@@ -299,6 +358,7 @@ const AddTenant = ({
   useEffect(() => {
     validateClusterSize();
     getECValue();
+    getMaxAllocableMemory(nodes);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodes, volumeSize, sizeFactor, drivesPerServer]);
 
@@ -355,7 +415,7 @@ const AddTenant = ({
       {
         fieldKey: "namespace",
         required: true,
-        value: tenantName,
+        value: namespace,
         customValidation: storageClasses.length < 1,
         customValidationMessage: "Please enter a valid namespace",
       },
@@ -385,8 +445,13 @@ const AddTenant = ({
         fieldKey: "volume_size",
         required: true,
         value: volumeSize,
-        customValidation: parseInt(parsedSize) < 1073741824,
-        customValidationMessage: "Volume size must be greater than 1Gi",
+        customValidation:
+          parseInt(parsedSize) < 1073741824 ||
+          parseInt(parsedSize) > limitSize[selectedStorageClass],
+        customValidationMessage: `Volume size must be greater than 1Gi and less than ${niceBytes(
+          limitSize[selectedStorageClass],
+          true
+        )}`,
       },
       {
         fieldKey: "memory_per_node",
@@ -410,7 +475,8 @@ const AddTenant = ({
         !("memory_per_node" in commonValidation) &&
         !("drivesps" in commonValidation) &&
         distribution.error === "" &&
-        ecParityCalc.error === 0
+        ecParityCalc.error === 0 &&
+        memorySize.error === ""
     );
 
     setValidationErrors(commonValidation);
@@ -422,6 +488,9 @@ const AddTenant = ({
     distribution,
     drivesPerServer,
     ecParityCalc,
+    memorySize,
+    limitSize,
+    selectedStorageClass,
   ]);
 
   useEffect(() => {
@@ -830,6 +899,8 @@ const AddTenant = ({
         service_name: "",
         image: imageName,
         console_image: consoleImage,
+        expose_minio: exposeMinIO,
+        expose_console: exposeConsole,
         pools: [
           {
             name: poolName,
@@ -841,7 +912,10 @@ const AddTenant = ({
             },
             resources: {
               requests: {
-                memory: parseInt(getBytes(memoryNode, "GiB")),
+                memory: memorySize.request,
+              },
+              limits: {
+                memory: memorySize.limit,
               },
             },
             affinity: hardCodedAffinity,
@@ -1260,6 +1334,42 @@ const AddTenant = ({
               </Grid>
             </React.Fragment>
           )}
+          <div className={classes.headerElement}>
+            <h3 className={classes.h3Section}>Expose Services</h3>
+            <span className={classes.descriptionText}>
+              Whether the tenant's services should request an external IP.
+            </span>
+          </div>
+          <Grid item xs={12}>
+            <FormSwitchWrapper
+              value="expose_minio"
+              id="expose_minio"
+              name="expose_minio"
+              checked={exposeMinIO}
+              onChange={(e) => {
+                const targetD = e.target;
+                const checked = targetD.checked;
+
+                setExposeMinIO(checked);
+              }}
+              label={"Expose MiniO Service"}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormSwitchWrapper
+              value="expose_console"
+              id="expose_console"
+              name="expose_console"
+              checked={exposeConsole}
+              onChange={(e) => {
+                const targetD = e.target;
+                const checked = targetD.checked;
+
+                setExposeConsole(checked);
+              }}
+              label={"Expose Console Service"}
+            />
+          </Grid>
         </React.Fragment>
       ),
       buttons: [
@@ -2082,6 +2192,7 @@ const AddTenant = ({
             </span>
           </div>
           <span className={classes.error}>{distribution.error}</span>
+          <span className={classes.error}>{memorySize.error}</span>
           <Grid item xs={12}>
             <InputBoxWrapper
               id="nodes"
@@ -2125,7 +2236,7 @@ const AddTenant = ({
                     setVolumeSize(e.target.value);
                     clearValidationError("volume_size");
                   }}
-                  label="Size"
+                  label="Total Size"
                   value={volumeSize}
                   required
                   error={validationErrors["volume_size"] || ""}
@@ -2146,39 +2257,41 @@ const AddTenant = ({
               </div>
             </div>
           </Grid>
-          <Grid item xs={12}>
-            <InputBoxWrapper
-              type="number"
-              id="memory_per_node"
-              name="memory_per_node"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setMemoryNode(e.target.value);
-                clearValidationError("memory_per_node");
-              }}
-              label="Memory per Node [Gi]"
-              value={memoryNode}
-              required
-              error={validationErrors["memory_per_node"] || ""}
-              min="2"
-            />
-          </Grid>
           {advancedMode && (
-            <Grid item xs={12}>
-              <SelectWrapper
-                id="ec_parity"
-                name="ec_parity"
-                onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                  setECParity(e.target.value as string);
-                }}
-                label="Erasure Code Parity"
-                value={ecParity}
-                options={ecParityChoices}
-              />
-              <span className={classes.descriptionText}>
-                Please select the desired parity. This setting will change the
-                max usable capacity in the cluster
-              </span>
-            </Grid>
+            <React.Fragment>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  type="number"
+                  id="memory_per_node"
+                  name="memory_per_node"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setMemoryNode(e.target.value);
+                    clearValidationError("memory_per_node");
+                  }}
+                  label="Memory per Node [Gi]"
+                  value={memoryNode}
+                  required
+                  error={validationErrors["memory_per_node"] || ""}
+                  min="2"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <SelectWrapper
+                  id="ec_parity"
+                  name="ec_parity"
+                  onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                    setECParity(e.target.value as string);
+                  }}
+                  label="Erasure Code Parity"
+                  value={ecParity}
+                  options={ecParityChoices}
+                />
+                <span className={classes.descriptionText}>
+                  Please select the desired parity. This setting will change the
+                  max usable capacity in the cluster
+                </span>
+              </Grid>
+            </React.Fragment>
           )}
           <h4>Resource Allocation</h4>
           <Table className={classes.table} aria-label="simple table">
@@ -2215,6 +2328,14 @@ const AddTenant = ({
                   {distribution ? distribution.persistentVolumes : "-"}
                 </TableCell>
               </TableRow>
+              {!advancedMode && (
+                <TableRow>
+                  <TableCell component="th" scope="row">
+                    Memory per Node
+                  </TableCell>
+                  <TableCell align="right">{memoryNode} Gi</TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
           {ecParityCalc.error === 0 && usableInformation && (
@@ -2323,7 +2444,7 @@ const AddTenant = ({
 
               <TableRow>
                 <TableCell align="right" className={classes.tableTitle}>
-                  Volume Size
+                  Total Size
                 </TableCell>
                 <TableCell>
                   {volumeSize} {sizeFactor}

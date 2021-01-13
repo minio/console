@@ -115,6 +115,24 @@ func init() {
         ],
         "summary": "Returns information about the deployment",
         "operationId": "AdminInfo",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "name": "end",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 15,
+            "name": "step",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1703,6 +1721,70 @@ func init() {
         "responses": {
           "200": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/logs/search": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Search the logs",
+        "operationId": "LogSearch",
+        "parameters": [
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "Filter Parameters",
+            "name": "fp",
+            "in": "query"
+          },
+          {
+            "type": "number",
+            "format": "int32",
+            "default": 10,
+            "name": "pageSize",
+            "in": "query"
+          },
+          {
+            "type": "number",
+            "format": "int32",
+            "default": 0,
+            "name": "pageNo",
+            "in": "query"
+          },
+          {
+            "enum": [
+              "timeDesc",
+              "timeAsc"
+            ],
+            "type": "string",
+            "default": "timeDesc",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "timeStart",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/logSearchResponse"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -3119,6 +3201,12 @@ func init() {
         },
         "usage": {
           "type": "integer"
+        },
+        "widgets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/widget"
+          }
         }
       }
     },
@@ -3516,6 +3604,12 @@ func init() {
         },
         "erasureCodingParity": {
           "type": "integer"
+        },
+        "expose_console": {
+          "type": "boolean"
+        },
+        "expose_minio": {
+          "type": "boolean"
         },
         "idp": {
           "type": "object",
@@ -3982,6 +4076,15 @@ func init() {
           "items": {
             "$ref": "#/definitions/user"
           }
+        }
+      }
+    },
+    "logSearchResponse": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "object",
+          "title": "list of log search responses"
         }
       }
     },
@@ -4838,6 +4941,23 @@ func init() {
         }
       }
     },
+    "resultTarget": {
+      "type": "object",
+      "properties": {
+        "legendFormat": {
+          "type": "string"
+        },
+        "result": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/widgetResult"
+          }
+        },
+        "resultType": {
+          "type": "string"
+        }
+      }
+    },
     "serviceAccountCreds": {
       "type": "object",
       "properties": {
@@ -5070,6 +5190,17 @@ func init() {
         },
         "enable_prometheus": {
           "type": "boolean"
+        },
+        "endpoints": {
+          "type": "object",
+          "properties": {
+            "console": {
+              "type": "string"
+            },
+            "minio": {
+              "type": "string"
+            }
+          }
         },
         "image": {
           "type": "string"
@@ -5312,6 +5443,54 @@ func init() {
           }
         }
       }
+    },
+    "widget": {
+      "type": "object",
+      "properties": {
+        "options": {
+          "type": "object",
+          "properties": {
+            "reduceOptions": {
+              "type": "object",
+              "properties": {
+                "calcs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/resultTarget"
+          }
+        },
+        "title": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "widgetResult": {
+      "type": "object",
+      "properties": {
+        "metric": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "values": {
+          "type": "array",
+          "items": {}
+        }
+      }
     }
   },
   "securityDefinitions": {
@@ -5409,6 +5588,24 @@ func init() {
         ],
         "summary": "Returns information about the deployment",
         "operationId": "AdminInfo",
+        "parameters": [
+          {
+            "type": "integer",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "name": "end",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "default": 15,
+            "name": "step",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -6997,6 +7194,70 @@ func init() {
         "responses": {
           "200": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/logs/search": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Search the logs",
+        "operationId": "LogSearch",
+        "parameters": [
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi",
+            "description": "Filter Parameters",
+            "name": "fp",
+            "in": "query"
+          },
+          {
+            "type": "number",
+            "format": "int32",
+            "default": 10,
+            "name": "pageSize",
+            "in": "query"
+          },
+          {
+            "type": "number",
+            "format": "int32",
+            "default": 0,
+            "name": "pageNo",
+            "in": "query"
+          },
+          {
+            "enum": [
+              "timeDesc",
+              "timeAsc"
+            ],
+            "type": "string",
+            "default": "timeDesc",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "timeStart",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/logSearchResponse"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -8799,6 +9060,17 @@ func init() {
         }
       }
     },
+    "TenantEndpoints": {
+      "type": "object",
+      "properties": {
+        "console": {
+          "type": "string"
+        },
+        "minio": {
+          "type": "string"
+        }
+      }
+    },
     "VaultConfigurationApprole": {
       "type": "object",
       "required": [
@@ -8841,6 +9113,33 @@ func init() {
         },
         "key": {
           "type": "string"
+        }
+      }
+    },
+    "WidgetOptions": {
+      "type": "object",
+      "properties": {
+        "reduceOptions": {
+          "type": "object",
+          "properties": {
+            "calcs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "WidgetOptionsReduceOptions": {
+      "type": "object",
+      "properties": {
+        "calcs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -8936,6 +9235,12 @@ func init() {
         },
         "usage": {
           "type": "integer"
+        },
+        "widgets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/widget"
+          }
         }
       }
     },
@@ -9333,6 +9638,12 @@ func init() {
         },
         "erasureCodingParity": {
           "type": "integer"
+        },
+        "expose_console": {
+          "type": "boolean"
+        },
+        "expose_minio": {
+          "type": "boolean"
         },
         "idp": {
           "type": "object",
@@ -9799,6 +10110,15 @@ func init() {
           "items": {
             "$ref": "#/definitions/user"
           }
+        }
+      }
+    },
+    "logSearchResponse": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "object",
+          "title": "list of log search responses"
         }
       }
     },
@@ -10520,6 +10840,23 @@ func init() {
         }
       }
     },
+    "resultTarget": {
+      "type": "object",
+      "properties": {
+        "legendFormat": {
+          "type": "string"
+        },
+        "result": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/widgetResult"
+          }
+        },
+        "resultType": {
+          "type": "string"
+        }
+      }
+    },
     "serviceAccountCreds": {
       "type": "object",
       "properties": {
@@ -10752,6 +11089,17 @@ func init() {
         },
         "enable_prometheus": {
           "type": "boolean"
+        },
+        "endpoints": {
+          "type": "object",
+          "properties": {
+            "console": {
+              "type": "string"
+            },
+            "minio": {
+              "type": "string"
+            }
+          }
         },
         "image": {
           "type": "string"
@@ -10992,6 +11340,54 @@ func init() {
               "type": "string"
             }
           }
+        }
+      }
+    },
+    "widget": {
+      "type": "object",
+      "properties": {
+        "options": {
+          "type": "object",
+          "properties": {
+            "reduceOptions": {
+              "type": "object",
+              "properties": {
+                "calcs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/resultTarget"
+          }
+        },
+        "title": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "widgetResult": {
+      "type": "object",
+      "properties": {
+        "metric": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "values": {
+          "type": "array",
+          "items": {}
         }
       }
     }

@@ -27,6 +27,7 @@ import { containerForHeader } from "../Common/FormComponents/common/styleLibrary
 import { Grid } from "@material-ui/core";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
+import moment from "moment/moment";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -89,7 +90,7 @@ const Trace = ({
       };
       c.onmessage = (message: IMessageEvent) => {
         let m: TraceMessage = JSON.parse(message.data.toString());
-        m.time = new Date(m.time.toString());
+        m.ptime = moment(m.time, "YYYY-MM-DD HH:mm:s.SSSS +0000 UTC").toDate();
         m.key = Math.random();
         traceMessageReceived(m);
       };
@@ -115,7 +116,7 @@ const Trace = ({
             columns={[
               {
                 label: "Time",
-                elementKey: "time",
+                elementKey: "ptime",
                 renderFunction: (time: Date) => {
                   const timeParse = new Date(time);
                   return timeFromDate(timeParse);
@@ -160,6 +161,7 @@ const Trace = ({
             entityName="Traces"
             idField="api"
             customEmptyMessage="There are no traced Elements yet"
+            autoScrollToBottom
           />
         </Grid>
       </Grid>

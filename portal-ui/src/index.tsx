@@ -22,6 +22,8 @@ import configureStore from "./store";
 import * as serviceWorker from "./serviceWorker";
 import { ThemeProvider, withStyles } from "@material-ui/core/styles";
 import "react-virtualized/styles.css";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
 
 import "./index.css";
 import theme from "./theme/main";

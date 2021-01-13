@@ -23,6 +23,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"strconv"
+
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -40,10 +43,47 @@ type AdminInfoResponse struct {
 
 	// usage
 	Usage int64 `json:"usage,omitempty"`
+
+	// widgets
+	Widgets []*Widget `json:"widgets"`
 }
 
 // Validate validates this admin info response
 func (m *AdminInfoResponse) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateWidgets(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *AdminInfoResponse) validateWidgets(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Widgets) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Widgets); i++ {
+		if swag.IsZero(m.Widgets[i]) { // not required
+			continue
+		}
+
+		if m.Widgets[i] != nil {
+			if err := m.Widgets[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("widgets" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 

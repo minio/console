@@ -19,8 +19,10 @@ package restapi
 import (
 	"crypto/x509"
 	"fmt"
+	"io/ioutil"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/minio/minio/pkg/certs"
@@ -43,6 +45,13 @@ var TLSPort = "9443"
 var TLSRedirect = "off"
 
 var SessionDuration = 45 * time.Minute
+
+var logSearchAPI string
+var logSearchURL string
+var prometheusURL string
+var consoleImage string
+
+var once sync.Once
 
 func getMinIOServer() string {
 	return strings.TrimSpace(env.Get(ConsoleMinIOServer, "http://localhost:9000"))
@@ -220,9 +229,37 @@ func getSecureExpectCTHeader() string {
 	return env.Get(ConsoleSecureExpectCTHeader, "")
 }
 
+func getLogSearchAPIToken() string {
+	once.Do(func() {
+		initVars()
+	})
+	return logSearchAPI
+}
+
+func getLogSearchURL() string {
+	once.Do(func() {
+		initVars()
+	})
+	return logSearchURL
+}
+
+func getPrometheusURL() string {
+	once.Do(func() {
+		initVars()
+	})
+	return prometheusURL
+}
+
 // GetSubnetLicense returns the current subnet jwt license
 func GetSubnetLicense() string {
 	return env.Get(ConsoleSubnetLicense, "")
+}
+
+func initVars() {
+	logSearchAPI = env.Get(LogSearchQueryAuthToken, "")
+	logSearchURL = env.Get(LogSearchURL, "http://localhost:8080")
+	prometheusURL = env.Get(PrometheusURL, "")
+	consoleImage = env.Get(ConsoleOperatorConsoleImage, ConsoleImageDefaultVersion)
 }
 
 var (
@@ -233,3 +270,20 @@ var (
 	// GlobalTLSCertsManager custom TLS Manager for SNI support
 	GlobalTLSCertsManager *certs.Manager
 )
+
+// getK8sSAToken assumes the plugin is running inside a k8s pod and extract the current service account from the
+// /var/run/secrets/kubernetes.io/serviceaccount/token file
+func getK8sSAToken() string {
+	dat, err := ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/token")
+	if err != nil {
+		return env.Get(ConsoleOperatorSAToken, "")
+	}
+	return string(dat)
+}
+
+func getConsoleImage() string {
+	once.Do(func() {
+		initVars()
+	})
+	return consoleImage
+}
