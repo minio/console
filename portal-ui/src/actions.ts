@@ -22,6 +22,7 @@ import {
   USER_LOGGED,
   SET_LOADING_PROGRESS,
   SET_SNACK_BAR_MESSAGE,
+  SET_SERVER_DIAG_STAT,
 } from "./types";
 
 export function userLoggedIn(loggedIn: boolean) {
@@ -70,5 +71,12 @@ export const setSnackBarMessage = (message: string) => {
   return {
     type: SET_SNACK_BAR_MESSAGE,
     snackBarMessage: message,
+  };
+};
+
+export const setServerDiagStat = (status: string) => {
+  return {
+    type: SET_SERVER_DIAG_STAT,
+    serverDiagnosticStatus: status,
   };
 };

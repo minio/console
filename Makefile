@@ -50,7 +50,7 @@ swagger-gen:
 	@swagger generate server -A console --main-package=console --exclude-main -P models.Principal -f ./swagger.yml -r NOTICE
 
 assets:
-	@(cd portal-ui; yarn install; make build-static; cd ..)
+	@(cd portal-ui; yarn install; make build-static; yarn prettier --write . --loglevel warn;  cd ..)
 
 test:
 	@(GO111MODULE=on go test -race -v github.com/minio/console/restapi/...)

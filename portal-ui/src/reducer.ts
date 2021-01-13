@@ -24,6 +24,7 @@ import {
   USER_LOGGED,
   SET_LOADING_PROGRESS,
   SET_SNACK_BAR_MESSAGE,
+  SET_SERVER_DIAG_STAT,
 } from "./types";
 
 const initialState: SystemState = {
@@ -36,6 +37,7 @@ const initialState: SystemState = {
   serverIsLoading: false,
   loadingProgress: 100,
   snackBarMessage: "",
+  serverDiagnosticStatus: "",
 };
 
 export function systemReducer(
@@ -78,6 +80,11 @@ export function systemReducer(
       return {
         ...state,
         snackBarMessage: action.snackBarMessage,
+      };
+    case SET_SERVER_DIAG_STAT:
+      return {
+        ...state,
+        serverDiagnosticStatus: action.serverDiagnosticStatus,
       };
     default:
       return state;
