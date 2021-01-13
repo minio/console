@@ -231,12 +231,13 @@ func getKESConfiguration(ctx context.Context, clientSet K8sClientI, ns string, e
 // secrets to be used by the operator for TLS encryption
 func createOrReplaceExternalCertSecrets(ctx context.Context, clientSet K8sClientI, ns string, keyPairs []*models.KeyPairConfiguration, secretName, tenantName string) ([]*operator.LocalCertificateReference, error) {
 	var keyPairSecrets []*operator.LocalCertificateReference
-	for _, keyPair := range keyPairs {
+	for i, keyPair := range keyPairs {
+		secretName := fmt.Sprintf("%s-%d", secretName, i)
 		if keyPair == nil || keyPair.Crt == nil || keyPair.Key == nil || *keyPair.Crt == "" || *keyPair.Key == "" {
 			return nil, errors.New("certificate files must not be empty")
 		}
 		// delete secret with same name if exists
-		err := clientSet.deleteSecret(ctx, ns, secretName, metav1.DeleteOptions{})
+		err := clientSet.deleteSecret(ctx, ns, fmt.Sprintf("%s-%d", secretName, i), metav1.DeleteOptions{})
 		if err != nil {
 			// log the error if any and continue
 			log.Println(err)
@@ -289,8 +290,8 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 		log.Println(err)
 	}
 	// if autoCert is enabled then Operator will generate the client certificates, calculate the client cert identity
-	// and pass it to KES via the $MINIO_KES_IDENTITY variable
-	clientCrtIdentity := "$MINIO_KES_IDENTITY"
+	// and pass it to KES via the ${MINIO_KES_IDENTITY} variable
+	clientCrtIdentity := "${MINIO_KES_IDENTITY}"
 	// If a client certificate is provided proceed to calculate the identity
 	if encryptionCfg.Client != nil {
 		// Client certificate for KES used by Minio to mTLS
