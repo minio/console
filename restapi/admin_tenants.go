@@ -336,7 +336,6 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 	// 5 seconds timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
@@ -353,19 +352,38 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 
 	info := getTenantInfo(minTenant)
 
-	// get tenant service
-	k8sClient, err := cluster.K8sClient(session.STSSessionToken)
+	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
 	}
+
+	if minTenant.Spec.Console != nil {
+		k8sClient := k8sClient{
+			client: clientSet,
+		}
+		// obtain current subnet license for tenant (if exists)
+		license, _ := getSubscriptionLicense(context.Background(), &k8sClient, params.Namespace, minTenant.Spec.Console.ConsoleSecret.Name)
+		if license != "" {
+			client := &cluster.HTTPClient{
+				Client: GetConsoleSTSClient(),
+			}
+			licenseInfo, _, _ := subscriptionValidate(client, license, "", "")
+			// if licenseInfo is present attach it to the tenantInfo response
+			if licenseInfo != nil {
+				info.SubnetLicense = licenseInfo
+			}
+		}
+	}
+
+	// get tenant service
 	minTenant.EnsureDefaults()
 	//minio service
-	minSvc, err := k8sClient.CoreV1().Services(minTenant.Namespace).Get(ctx, minTenant.MinIOCIServiceName(), metav1.GetOptions{})
+	minSvc, err := clientSet.CoreV1().Services(minTenant.Namespace).Get(ctx, minTenant.MinIOCIServiceName(), metav1.GetOptions{})
 	if err != nil {
 		return nil, prepareError(err)
 	}
 	//console service
-	conSvc, err := k8sClient.CoreV1().Services(minTenant.Namespace).Get(ctx, minTenant.ConsoleCIServiceName(), metav1.GetOptions{})
+	conSvc, err := clientSet.CoreV1().Services(minTenant.Namespace).Get(ctx, minTenant.ConsoleCIServiceName(), metav1.GetOptions{})
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -390,6 +408,7 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 			Minio:   minioEndpoint,
 		}
 	}
+
 
 	return info, nil
 }
@@ -551,13 +570,13 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		}
 	}()
 
-	var envrionmentVariables []corev1.EnvVar
+	var environmentVariables []corev1.EnvVar
 	// Check the Erasure Coding Parity for validity and pass it to Tenant
 	if tenantReq.ErasureCodingParity > 0 {
 		if tenantReq.ErasureCodingParity < 2 || tenantReq.ErasureCodingParity > 8 {
 			return nil, prepareError(errorInvalidErasureCodingValue)
 		}
-		envrionmentVariables = append(envrionmentVariables, corev1.EnvVar{
+		environmentVariables = append(environmentVariables, corev1.EnvVar{
 			Name:  "MINIO_STORAGE_CLASS_STANDARD",
 			Value: fmt.Sprintf("EC:%d", tenantReq.ErasureCodingParity),
 		})
@@ -575,7 +594,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			CredsSecret: &corev1.LocalObjectReference{
 				Name: secretName,
 			},
-			Env: envrionmentVariables,
+			Env: environmentVariables,
 		},
 	}
 	idpEnabled := false
@@ -693,6 +712,19 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		consoleSecretName := fmt.Sprintf("%s-secret", consoleSelector)
 		consoleAccess = RandomCharString(16)
 		consoleSecret = RandomCharString(32)
+
+		consoleSecretData := map[string][]byte{
+			"CONSOLE_PBKDF_PASSPHRASE": []byte(RandomCharString(16)),
+			"CONSOLE_PBKDF_SALT":       []byte(RandomCharString(8)),
+			"CONSOLE_ACCESS_KEY":       []byte(consoleAccess),
+			"CONSOLE_SECRET_KEY":       []byte(consoleSecret),
+		}
+		// If Subnet License is present in k8s secrets, copy that to the CONSOLE_SUBNET_LICENSE env variable
+		// of the console tenant
+		license, _ := getSubscriptionLicense(ctx, &k8sClient, cluster.Namespace, OperatorSubnetLicenseSecretName)
+		if license != "" {
+			consoleSecretData[ConsoleSubnetLicense] = []byte(license)
+		}
 		imm := true
 		instanceSecret := corev1.Secret{
 			ObjectMeta: metav1.ObjectMeta{
@@ -702,10 +734,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 				},
 			},
 			Immutable: &imm,
-			Data: map[string][]byte{
-				"CONSOLE_PBKDF_PASSPHRASE": []byte(RandomCharString(16)),
-				"CONSOLE_PBKDF_SALT":       []byte(RandomCharString(8)),
-			},
+			Data:      consoleSecretData,
 		}
 
 		minInst.Spec.Console = &operator.ConsoleConfiguration{

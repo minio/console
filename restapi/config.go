@@ -250,6 +250,11 @@ func getPrometheusURL() string {
 	return prometheusURL
 }
 
+// GetSubnetLicense returns the current subnet jwt license
+func GetSubnetLicense() string {
+	return env.Get(ConsoleSubnetLicense, "")
+}
+
 func initVars() {
 	logSearchAPI = env.Get(LogSearchQueryAuthToken, "")
 	logSearchURL = env.Get(LogSearchURL, "http://localhost:8080")

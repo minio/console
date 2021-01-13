@@ -23,6 +23,7 @@ export interface ConsoleState {
 
 const initialState: ConsoleState = {
   session: {
+    operator: false,
     status: "",
     pages: [],
   },

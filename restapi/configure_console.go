@@ -123,6 +123,8 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerAdminBucketRemoteHandlers(api)
 	// Register admin log search
 	registerLogSearchHandlers(api)
+	// Register admin subscription handlers
+	registerSubscriptionHandlers(api)
 
 	// Operator Console
 	// Register tenant handlers

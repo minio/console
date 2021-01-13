@@ -36,6 +36,9 @@ import (
 // swagger:model sessionResponse
 type SessionResponse struct {
 
+	// operator
+	Operator bool `json:"operator,omitempty"`
+
 	// pages
 	Pages []string `json:"pages"`
 

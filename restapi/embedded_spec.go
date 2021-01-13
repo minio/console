@@ -2713,6 +2713,96 @@ func init() {
         }
       }
     },
+    "/subscription/info": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Subscription info",
+        "operationId": "SubscriptionInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/license"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subscription/namespaces/{namespace}/tenants/{tenant}/activate": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Activate a particular tenant using the existing subscription license",
+        "operationId": "SubscriptionActivate",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subscription/validate": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Validate a provided subscription license",
+        "operationId": "SubscriptionValidate",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subscriptionValidateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/license"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/tenants": {
       "get": {
         "tags": [
@@ -3820,6 +3910,29 @@ func init() {
         }
       }
     },
+    "license": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "integer"
+        },
+        "email": {
+          "type": "string"
+        },
+        "expires_at": {
+          "type": "string"
+        },
+        "organization": {
+          "type": "string"
+        },
+        "plan": {
+          "type": "string"
+        },
+        "storage_capacity": {
+          "type": "integer"
+        }
+      }
+    },
     "listBucketEventsResponse": {
       "type": "object",
       "properties": {
@@ -4874,6 +4987,9 @@ func init() {
     "sessionResponse": {
       "type": "object",
       "properties": {
+        "operator": {
+          "type": "boolean"
+        },
         "pages": {
           "type": "array",
           "items": {
@@ -5043,6 +5159,20 @@ func init() {
         }
       }
     },
+    "subscriptionValidateRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
     "tenant": {
       "type": "object",
       "properties": {
@@ -5086,6 +5216,9 @@ func init() {
           "items": {
             "$ref": "#/definitions/pool"
           }
+        },
+        "subnet_license": {
+          "$ref": "#/definitions/license"
         },
         "total_size": {
           "type": "integer",
@@ -8053,6 +8186,96 @@ func init() {
         }
       }
     },
+    "/subscription/info": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Subscription info",
+        "operationId": "SubscriptionInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/license"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subscription/namespaces/{namespace}/tenants/{tenant}/activate": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Activate a particular tenant using the existing subscription license",
+        "operationId": "SubscriptionActivate",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/subscription/validate": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Validate a provided subscription license",
+        "operationId": "SubscriptionValidate",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/subscriptionValidateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/license"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/tenants": {
       "get": {
         "tags": [
@@ -9721,6 +9944,29 @@ func init() {
         }
       }
     },
+    "license": {
+      "type": "object",
+      "properties": {
+        "account_id": {
+          "type": "integer"
+        },
+        "email": {
+          "type": "string"
+        },
+        "expires_at": {
+          "type": "string"
+        },
+        "organization": {
+          "type": "string"
+        },
+        "plan": {
+          "type": "string"
+        },
+        "storage_capacity": {
+          "type": "integer"
+        }
+      }
+    },
     "listBucketEventsResponse": {
       "type": "object",
       "properties": {
@@ -10640,6 +10886,9 @@ func init() {
     "sessionResponse": {
       "type": "object",
       "properties": {
+        "operator": {
+          "type": "boolean"
+        },
         "pages": {
           "type": "array",
           "items": {
@@ -10809,6 +11058,20 @@ func init() {
         }
       }
     },
+    "subscriptionValidateRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
     "tenant": {
       "type": "object",
       "properties": {
@@ -10852,6 +11115,9 @@ func init() {
           "items": {
             "$ref": "#/definitions/pool"
           }
+        },
+        "subnet_license": {
+          "$ref": "#/definitions/license"
         },
         "total_size": {
           "type": "integer",

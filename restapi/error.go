@@ -32,6 +32,8 @@ var (
 	errInvalidEncryptionAlgorithm         = errors.New("error invalid encryption algorithm")
 	errSSENotConfigured                   = errors.New("error server side encryption configuration was not found")
 	errChangePassword                     = errors.New("unable to update password, please check your current password")
+	errInvalidLicense                     = errors.New("invalid license key")
+	errLicenseNotFound                    = errors.New("license not found")
 )
 
 // prepareError receives an error object and parse it against k8sErrors, returns the right error code paired with a generic error message
@@ -94,6 +96,14 @@ func prepareError(err ...error) *models.Error {
 		if errors.Is(err[0], errChangePassword) {
 			errorCode = 403
 			errorMessage = errChangePassword.Error()
+		}
+		if errors.Is(err[0], errLicenseNotFound) {
+			errorCode = 404
+			errorMessage = errLicenseNotFound.Error()
+		}
+		if errors.Is(err[0], errInvalidLicense) {
+			errorCode = 404
+			errorMessage = errInvalidLicense.Error()
 		}
 		if madmin.ToErrorResponse(err[0]).Code == "InvalidAccessKeyId" {
 			errorCode = 401

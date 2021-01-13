@@ -17,4 +17,5 @@
 export interface ISessionResponse {
   status: string;
   pages: string[];
+  operator: boolean;
 }

@@ -26,6 +26,7 @@ const (
 	ConsolePort           = "CONSOLE_PORT"
 	ConsoleTLSHostname    = "CONSOLE_TLS_HOSTNAME"
 	ConsoleTLSPort        = "CONSOLE_TLS_PORT"
+	ConsoleSubnetLicense  = "CONSOLE_SUBNET_LICENSE"
 
 	// Constants for Secure middleware
 	ConsoleSecureAllowedHosts                    = "CONSOLE_SECURE_ALLOWED_HOSTS"
@@ -61,4 +62,10 @@ const (
 const (
 	KESImageVersion            = "minio/kes:v0.12.1"
 	ConsoleImageDefaultVersion = "miniodev/console:demo"
+)
+
+// K8s
+
+const (
+	OperatorSubnetLicenseSecretName = "subnet-license"
 )
