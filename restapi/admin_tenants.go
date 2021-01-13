@@ -394,7 +394,7 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 	if minTenant.TLS() {
 		schema = "https"
 	}
-	if minTenant.AutoCert() || minTenant.Spec.Console != nil && minTenant.ConsoleExternalCert() {
+	if minTenant.AutoCert() || minTenant.ConsoleExternalCert() {
 		consolePort = ":9443"
 	}
 	var minioEndpoint string
