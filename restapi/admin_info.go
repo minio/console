@@ -484,9 +484,7 @@ func getAdminInfoResponse(session *models.Principal, params admin_api.AdminInfoP
 	labelResultsCh := make(chan LabelResults)
 
 	for _, lbl := range labels {
-		log.Println("ll", lbl.Name)
 		go func(lbl WidgetLabel) {
-			log.Println("lxl", lbl.Name)
 			endpoint := fmt.Sprintf("%s/api/v1/label/%s/values", prometheusURL, lbl.Name)
 
 			resp, err := http.Get(endpoint)

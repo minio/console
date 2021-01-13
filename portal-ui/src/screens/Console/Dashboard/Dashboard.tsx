@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState, Fragment } from "react";
+import get from "lodash/get";
 import PrDashboard from "./Prometheus/PrDashboard";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import Grid from "@material-ui/core/Grid";
@@ -59,6 +60,8 @@ const Dashboard = ({ classes }: IDashboardSimple) => {
       });
   };
 
+  const widgets = get(basicResult, "widgets", null);
+
   return (
     <Fragment>
       <PageHeader label="Dashboard" />
@@ -69,7 +72,7 @@ const Dashboard = ({ classes }: IDashboardSimple) => {
           </Grid>
         ) : (
           <Fragment>
-            {basicResult && basicResult.widgets !== null ? (
+            {widgets !== null ? (
               <PrDashboard />
             ) : (
               <BasicDashboard usage={basicResult} error={error} />
