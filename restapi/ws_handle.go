@@ -22,6 +22,7 @@ import (
 	"net"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/go-openapi/errors"
 	"github.com/gorilla/websocket"
@@ -132,6 +133,19 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		go wsAdminClient.console()
+	case strings.HasPrefix(wsPath, `/health-info`):
+		deadline, err := getHealthInfoOptionsFromReq(req)
+		if err != nil {
+			log.Println("error getting health info options:", err)
+			closeWsConn(conn)
+			return
+		}
+		wsAdminClient, err := newWebSocketAdminClient(conn, session)
+		if err != nil {
+			closeWsConn(conn)
+			return
+		}
+		go wsAdminClient.healthInfo(deadline)
 	case strings.HasPrefix(wsPath, `/heal`):
 		hOptions, err := getHealOptionsFromReq(req)
 		if err != nil {
@@ -308,10 +322,26 @@ func (wsc *wsAdminClient) heal(opts *healOptions) {
 	sendWsCloseMessage(wsc.conn, err)
 }
 
+func (wsc *wsAdminClient) healthInfo(deadline *time.Duration) {
+	defer func() {
+		log.Println("health info stopped")
+		// close connection after return
+		wsc.conn.close()
+	}()
+	log.Println("health info started")
+
+	ctx := wsReadClientCtx(wsc.conn)
+
+	err := startHealthInfo(ctx, wsc.conn, wsc.client, deadline)
+
+	sendWsCloseMessage(wsc.conn, err)
+}
+
 // sendWsCloseMessage sends Websocket Connection Close Message indicating the Status Code
 // see https://tools.ietf.org/html/rfc6455#page-45
 func sendWsCloseMessage(conn WSConn, err error) {
 	if err != nil {
+		log.Print("original ws error: ", err.Error())
 		// If connection exceeded read deadline send Close
 		// Message Policy Violation code since we don't want
 		// to let the receiver figure out the read deadline.
@@ -322,7 +352,7 @@ func sendWsCloseMessage(conn WSConn, err error) {
 			return
 		}
 		// else, internal server error
-		conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseInternalServerErr, err.Error()))
+		conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseInternalServerErr, errorGeneric.Error()))
 		return
 	}
 	// normal closure

@@ -33,6 +33,14 @@ export interface IQuotas {
 
 export const minMemReq = 2147483648;
 
+export interface KeyPair {
+  id: string;
+  encoded_cert: string;
+  encoded_key: string;
+  cert: string;
+  key: string;
+}
+
 export const ecListTransform = (ecList: string[]): Opts[] => {
   return ecList.map((value) => {
     return { label: value, value };

@@ -20,7 +20,7 @@ import get from "lodash/get";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import Grid from "@material-ui/core/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { LinearProgress, Typography } from "@material-ui/core";
+import { Button, LinearProgress, Typography } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -61,8 +61,10 @@ import {
   IQuotaElement,
   IQuotas,
   Opts,
+  KeyPair,
 } from "./utils";
 import { IMemorySize } from "./types";
+import Divider from "@material-ui/core/Divider";
 
 interface IAddTenantProps {
   open: boolean;
@@ -130,6 +132,12 @@ const AddTenant = ({
   const [imageName, setImageName] = useState<string>("");
   const [volumeSize, setVolumeSize] = useState<string>("100");
   const [enableTLS, setEnableTLS] = useState<boolean>(true);
+  const [enableAutoCert, setEnableAutoCert] = useState<boolean>(true);
+  const [enableCustomCerts, setEnableCustomCerts] = useState<boolean>(false);
+  const [
+    enableCustomCertsForKES,
+    setEnableCustomCertsForKES,
+  ] = useState<boolean>(false);
   const [sizeFactor, setSizeFactor] = useState<string>("Gi");
   const [storageClasses, setStorageClassesList] = useState<Opts[]>([]);
   const [selectedStorageClass, setSelectedStorageClass] = useState<string>("");
@@ -148,7 +156,6 @@ const AddTenant = ({
   const [ADGroupBaseDN, setADGroupBaseDN] = useState<string>("");
   const [ADGroupSearchFilter, setADGroupSearchFilter] = useState<string>("");
   const [ADNameAttribute, setADNameAttribute] = useState<string>("");
-  const [tlsType, setTLSType] = useState<string>("autocert");
   const [enableEncryption, setEnableEncryption] = useState<boolean>(false);
   const [encryptionType, setEncryptionType] = useState<string>("vault");
   const [gemaltoEndpoint, setGemaltoEndpoint] = useState<string>("");
@@ -222,8 +229,6 @@ const AddTenant = ({
 
   // FilesBase64
   const [filesBase64, setFilesBase64] = useState<any>({
-    tlsKey: "",
-    tlsCert: "",
     consoleKey: "",
     consoleCert: "",
     serverKey: "",
@@ -237,8 +242,15 @@ const AddTenant = ({
   });
 
   // Files States
-  const [tlsKeyVal, setTlsKeyVal] = useState<string>("");
-  const [tlsCertVal, setTlsCertVal] = useState<string>("");
+  const [minioCertificates, setMinioCertificates] = useState<KeyPair[]>([
+    {
+      id: Date.now().toString(),
+      key: "",
+      cert: "",
+      encoded_key: "",
+      encoded_cert: "",
+    },
+  ]);
   const [consoleKeyVal, setConsoleKeyVal] = useState<string>("");
   const [consoleCertVal, setConsoleCertVal] = useState<string>("");
   const [serverKeyVal, setServerKeyVal] = useState<string>("");
@@ -249,6 +261,48 @@ const AddTenant = ({
   const [vaultCertVal, setVaultCertVal] = useState<string>("");
   const [vaultCAVal, setVaultCAVal] = useState<string>("");
   const [gemaltoCAVal, setGemaltoCAVal] = useState<string>("");
+
+  // Certificates functions
+  const addKeyPair = () => {
+    setMinioCertificates((currentCertificates) => [
+      ...currentCertificates,
+      {
+        id: Date.now().toString(),
+        key: "",
+        cert: "",
+        encoded_key: "",
+        encoded_cert: "",
+      },
+    ]);
+  };
+
+  const deleteKeyPair = (id: string) => {
+    if (minioCertificates.length > 1) {
+      setMinioCertificates(
+        minioCertificates.filter((item: KeyPair) => item.id !== id)
+      );
+    }
+  };
+
+  const addFileToKeyPair = (
+    id: string,
+    key: string,
+    fileName: string,
+    value: string
+  ) => {
+    setMinioCertificates(
+      minioCertificates.map((item: KeyPair) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            [key]: fileName,
+            [`encoded_${key}`]: value,
+          };
+        }
+        return item;
+      })
+    );
+  };
 
   /*Debounce functions*/
 
@@ -632,76 +686,49 @@ const AddTenant = ({
   ]);
 
   useEffect(() => {
-    let securityValidation: IValidation[] = [];
-
     if (!enableTLS) {
       setSecurityValid(true);
       setValidationErrors({});
       return;
     }
-
-    if (tlsType === "autocert") {
+    if (enableAutoCert) {
       setSecurityValid(true);
       setValidationErrors({});
       return;
     }
-
-    securityValidation = [
-      ...securityValidation,
-      {
-        fieldKey: "tlsKey",
-        required: true,
-        value: filesBase64.tlsKey,
-      },
-      {
-        fieldKey: "tlsCert",
-        required: true,
-        value: filesBase64.tlsCert,
-      },
-      {
-        fieldKey: "consoleKey",
-        required: true,
-        value: filesBase64.consoleKey,
-      },
-      {
-        fieldKey: "consoleCert",
-        required: true,
-        value: filesBase64.consoleCert,
-      },
-    ];
-
-    const commonVal = commonFormValidation(securityValidation);
-
-    setSecurityValid(Object.keys(commonVal).length === 0);
-
-    setValidationErrors(commonVal);
-  }, [enableTLS, filesBase64, tlsType]);
+    if (enableCustomCerts) {
+      setSecurityValid(true);
+      setValidationErrors({});
+      return;
+    }
+    setSecurityValid(false);
+  }, [enableTLS, enableAutoCert, enableCustomCerts]);
 
   useEffect(() => {
     let encryptionValidation: IValidation[] = [];
 
     if (enableEncryption) {
-      if (enableTLS && tlsType !== "autocert") {
+      if (enableCustomCerts) {
         encryptionValidation = [
           ...encryptionValidation,
           {
             fieldKey: "serverKey",
-            required: true,
+            required: !enableAutoCert,
             value: filesBase64.serverKey,
           },
           {
             fieldKey: "serverCert",
-            required: true,
+            required: !enableAutoCert,
             value: filesBase64.serverCert,
           },
           {
             fieldKey: "clientKey",
-            required: true,
+            required: !enableAutoCert,
             value: filesBase64.clientKey,
           },
           {
             fieldKey: "clientCert",
-            required: true,
+            required: !enableAutoCert,
             value: filesBase64.clientCert,
           },
         ];
@@ -716,11 +743,6 @@ const AddTenant = ({
             value: vaultEndpoint,
           },
           {
-            fieldKey: "vault_engine",
-            required: true,
-            value: vaultEngine,
-          },
-          {
             fieldKey: "vault_id",
             required: true,
             value: vaultId,
@@ -731,30 +753,15 @@ const AddTenant = ({
             value: vaultSecret,
           },
           {
-            fieldKey: "vault_key",
-            required: true,
-            value: filesBase64.vaultKey,
-          },
-          {
-            fieldKey: "vault_cert",
-            required: true,
-            value: filesBase64.vaultCert,
-          },
-          {
-            fieldKey: "vault_ca",
-            required: true,
-            value: filesBase64.vaultCA,
-          },
-          {
             fieldKey: "vault_ping",
-            required: true,
+            required: false,
             value: vaultPing,
             customValidation: parseInt(vaultPing) < 0,
             customValidationMessage: "Value needs to be 0 or greater",
           },
           {
             fieldKey: "vault_retry",
-            required: true,
+            required: false,
             value: vaultRetry,
             customValidation: parseInt(vaultRetry) < 0,
             customValidationMessage: "Value needs to be 0 or greater",
@@ -808,15 +815,10 @@ const AddTenant = ({
           },
           {
             fieldKey: "gemalto_retry",
-            required: true,
+            required: false,
             value: gemaltoRetry,
             customValidation: parseInt(gemaltoRetry) < 0,
             customValidationMessage: "Value needs to be 0 or greater",
-          },
-          {
-            fieldKey: "gemalto_ca",
-            required: true,
-            value: filesBase64.gemaltoCA,
           },
         ];
       }
@@ -893,7 +895,7 @@ const AddTenant = ({
         namespace: namespace,
         access_key: "",
         secret_key: "",
-        enable_tls: enableTLS && tlsType === "autocert",
+        enable_tls: enableAutoCert,
         enable_console: true,
         enable_prometheus: true,
         service_name: "",
@@ -935,36 +937,36 @@ const AddTenant = ({
         };
       }
 
-      if (tlsType === "customcert") {
-        let tenantCerts: any = null;
-        let consoleCerts: any = null;
-        if (filesBase64.tlsCert !== "" && filesBase64.tlsKey !== "") {
-          tenantCerts = {
-            minio: {
-              crt: filesBase64.tlsCert,
-              key: filesBase64.tlsKey,
-            },
-          };
-        }
+      let tenantCerts: any = null;
+      let consoleCerts: any = null;
+      if (minioCertificates.length > 0) {
+        tenantCerts = {
+          minio: minioCertificates
+            .map((keyPair: KeyPair) => ({
+              crt: keyPair.encoded_cert,
+              key: keyPair.encoded_key,
+            }))
+            .filter((keyPair) => keyPair.crt && keyPair.key),
+        };
+      }
 
-        if (filesBase64.consoleCert !== "" && filesBase64.consoleKey !== "") {
-          consoleCerts = {
-            console: {
-              crt: filesBase64.consoleCert,
-              key: filesBase64.consoleKey,
-            },
-          };
-        }
+      if (filesBase64.consoleCert !== "" && filesBase64.consoleKey !== "") {
+        consoleCerts = {
+          console: {
+            crt: filesBase64.consoleCert,
+            key: filesBase64.consoleKey,
+          },
+        };
+      }
 
-        if (tenantCerts || consoleCerts) {
-          dataSend = {
-            ...dataSend,
-            tls: {
-              ...tenantCerts,
-              ...consoleCerts,
-            },
-          };
-        }
+      if (tenantCerts || consoleCerts) {
+        dataSend = {
+          ...dataSend,
+          tls: {
+            ...tenantCerts,
+            ...consoleCerts,
+          },
+        };
       }
 
       if (enableEncryption) {
@@ -972,6 +974,12 @@ const AddTenant = ({
 
         switch (encryptionType) {
           case "gemalto":
+            let gemaltoCA = {};
+            if (filesBase64.gemaltoCA !== "") {
+              gemaltoCA = {
+                ca: filesBase64.gemaltoCA,
+              };
+            }
             insertEncrypt = {
               gemalto: {
                 keysecure: {
@@ -979,10 +987,10 @@ const AddTenant = ({
                   credentials: {
                     token: gemaltoToken,
                     domain: gemaltoDomain,
-                    retry: gemaltoRetry,
+                    retry: parseInt(gemaltoRetry),
                   },
                   tls: {
-                    ca: filesBase64.gemaltoCA,
+                    ...gemaltoCA,
                   },
                 },
               },
@@ -1005,6 +1013,28 @@ const AddTenant = ({
             };
             break;
           case "vault":
+            let vaultKeyPair = null;
+            let vaultCA = null;
+            if (filesBase64.vaultKey !== "" && filesBase64.vaultCert !== "") {
+              vaultKeyPair = {
+                key: filesBase64.vaultKey,
+                crt: filesBase64.vaultCert,
+              };
+            }
+            if (filesBase64.vaultCA !== "") {
+              vaultCA = {
+                ca: filesBase64.vaultCA,
+              };
+            }
+            let vaultTLS = null;
+            if (vaultKeyPair || vaultCA) {
+              vaultTLS = {
+                tls: {
+                  ...vaultKeyPair,
+                  ...vaultCA,
+                },
+              };
+            }
             insertEncrypt = {
               vault: {
                 endpoint: vaultEndpoint,
@@ -1015,32 +1045,43 @@ const AddTenant = ({
                   engine: vaultAppRoleEngine,
                   id: vaultId,
                   secret: vaultSecret,
-                  retry: vaultRetry,
+                  retry: parseInt(vaultRetry),
                 },
-                tls: {
-                  key: filesBase64.vaultKey,
-                  crt: filesBase64.vaultCert,
-                  ca: filesBase64.vaultCA,
-                },
+                ...vaultTLS,
                 status: {
-                  ping: vaultPing,
+                  ping: parseInt(vaultPing),
                 },
               },
             };
             break;
         }
 
-        dataSend = {
-          ...dataSend,
-          encryption: {
+        let encryptionServerKeyPair: any = {};
+        let encryptionClientKeyPair: any = {};
+
+        if (filesBase64.clientKey !== "" && filesBase64.clientCert !== "") {
+          encryptionClientKeyPair = {
             client: {
               key: filesBase64.clientKey,
               crt: filesBase64.clientCert,
             },
+          };
+        }
+
+        if (filesBase64.serverKey !== "" && filesBase64.serverCert !== "") {
+          encryptionServerKeyPair = {
             server: {
               key: filesBase64.serverKey,
               crt: filesBase64.serverCert,
             },
+          };
+        }
+
+        dataSend = {
+          ...dataSend,
+          encryption: {
+            ...encryptionClientKeyPair,
+            ...encryptionServerKeyPair,
             ...insertEncrypt,
           },
         };
@@ -1123,6 +1164,16 @@ const AddTenant = ({
   const usableInformation = ecParityCalc.storageFactors.find(
     (element) => element.erasureCode === ecParity
   );
+
+  let encryptionAvailable = false;
+  if (
+    enableTLS &&
+    (enableAutoCert ||
+      minioCertificates.filter((item) => item.encoded_key && item.encoded_cert)
+        .length > 0)
+  ) {
+    encryptionAvailable = true;
+  }
 
   const wizardSteps: IWizardElement[] = [
     {
@@ -1609,100 +1660,156 @@ const AddTenant = ({
                 <br />
                 <br />
                 <Typography variant="caption" display="block" gutterBottom>
-                  Autocert: minio-operator will generate all TLS certificates
+                  AutoCert: MinIO Operator will generate all TLS certificates
                   automatically
                 </Typography>
                 <Typography variant="caption" display="block" gutterBottom>
-                  Custom certificates: allow user to provide your own
+                  Custom certificates: Allow user to provide your own
                   certificates
                 </Typography>
+                <br />
               </React.Fragment>
             )}
           </Grid>
           {enableTLS && (
             <React.Fragment>
               <Grid item xs={12}>
-                <RadioGroupSelector
-                  currentSelection={tlsType}
-                  id="tls-options"
-                  name="tls-options"
-                  label="TLS Options"
+                <FormSwitchWrapper
+                  value="enableAutoCert"
+                  id="enableAutoCert"
+                  name="enableAutoCert"
+                  checked={enableAutoCert}
                   onChange={(e) => {
-                    setTLSType(e.target.value);
+                    const targetD = e.target;
+                    const checked = targetD.checked;
+
+                    setEnableAutoCert(checked);
                   }}
-                  selectorOptions={[
-                    { label: "Autocert", value: "autocert" },
-                    { label: "Custom Certificate", value: "customcert" },
-                  ]}
+                  label={"Enable AutoCert"}
+                />
+                <FormSwitchWrapper
+                  value="enableCustomCerts"
+                  id="enableCustomCerts"
+                  name="enableCustomCerts"
+                  checked={enableCustomCerts}
+                  onChange={(e) => {
+                    const targetD = e.target;
+                    const checked = targetD.checked;
+
+                    setEnableCustomCerts(checked);
+                  }}
+                  label={"Custom Certificates"}
                 />
               </Grid>
-              {tlsType !== "autocert" && (
+              {enableCustomCerts && (
                 <React.Fragment>
-                  <h5>MinIO TLS Certs</h5>
-                  <Grid item xs={12}>
-                    <FileSelector
-                      onChange={(encodedValue, fileName) => {
-                        storeCertInObject("tlsKey", encodedValue);
-                        setTlsKeyVal(fileName);
-                        clearValidationError("tlsKey");
-                      }}
-                      accept=".key,.pem"
-                      id="tlsKey"
-                      name="tlsKey"
-                      label="Key"
-                      error={validationErrors["tlsKey"] || ""}
-                      value={tlsKeyVal}
-                      required
-                    />
+                  <Grid container>
+                    <Grid item xs={12}>
+                      <Typography
+                        variant="overline"
+                        display="block"
+                        gutterBottom
+                      >
+                        MinIO Certificates
+                      </Typography>
+                    </Grid>
+                    {minioCertificates.map((keyPair: KeyPair) => (
+                      <React.Fragment key={keyPair.id}>
+                        <Grid item xs={5}>
+                          <FileSelector
+                            onChange={(encodedValue, fileName) => {
+                              addFileToKeyPair(
+                                keyPair.id,
+                                "key",
+                                fileName,
+                                encodedValue
+                              );
+                            }}
+                            accept=".key,.pem"
+                            id="tlsKey"
+                            name="tlsKey"
+                            label="Key"
+                            value={keyPair.key}
+                          />
+                        </Grid>
+                        <Grid item xs={5}>
+                          <FileSelector
+                            onChange={(encodedValue, fileName) => {
+                              addFileToKeyPair(
+                                keyPair.id,
+                                "cert",
+                                fileName,
+                                encodedValue
+                              );
+                            }}
+                            accept=".cer,.crt,.cert,.pem"
+                            id="tlsCert"
+                            name="tlsCert"
+                            label="Cert"
+                            value={keyPair.cert}
+                          />
+                        </Grid>
+                        <Grid item xs={1}>
+                          <Button
+                            onClick={() => {
+                              deleteKeyPair(keyPair.id);
+                            }}
+                            color="secondary"
+                          >
+                            Remove
+                          </Button>
+                        </Grid>
+                      </React.Fragment>
+                    ))}
+                    <Grid item xs={12}>
+                      <Button onClick={addKeyPair} color="primary">
+                        Add More
+                      </Button>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={12}>
-                    <FileSelector
-                      onChange={(encodedValue, fileName) => {
-                        storeCertInObject("tlsCert", encodedValue);
-                        setTlsCertVal(fileName);
-                        clearValidationError("tlsCert");
-                      }}
-                      accept=".cer,.crt,.cert,.pem"
-                      id="tlsCert"
-                      name="tlsCert"
-                      label="Cert"
-                      error={validationErrors["tlsCert"] || ""}
-                      value={tlsCertVal}
-                      required
-                    />
+                  <Grid container>
+                    <Grid item xs={12}>
+                      <br />
+                      <Divider />
+                      <br />
+                    </Grid>
                   </Grid>
-                  <h5>Console TLS Certs</h5>
-                  <Grid item xs={12}>
-                    <FileSelector
-                      onChange={(encodedValue, fileName) => {
-                        storeCertInObject("consoleKey", encodedValue);
-                        setConsoleKeyVal(fileName);
-                        clearValidationError("consoleKey");
-                      }}
-                      accept=".key,.pem"
-                      id="consoleKey"
-                      name="consoleKey"
-                      label="Key"
-                      error={validationErrors["consoleKey"] || ""}
-                      value={consoleKeyVal}
-                      required
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <FileSelector
-                      onChange={(encodedValue, fileName) => {
-                        storeCertInObject("consoleCert", encodedValue);
-                        setConsoleCertVal(fileName);
-                        clearValidationError("consoleCert");
-                      }}
-                      accept=".cer,.crt,.cert,.pem"
-                      id="consoleCert"
-                      name="consoleCert"
-                      label="Cert"
-                      error={validationErrors["consoleCert"] || ""}
-                      value={consoleCertVal}
-                      required
-                    />
+                  <Grid container>
+                    <Grid item xs={12}>
+                      <Typography
+                        variant="overline"
+                        display="block"
+                        gutterBottom
+                      >
+                        Console Certificates
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <FileSelector
+                        onChange={(encodedValue, fileName) => {
+                          storeCertInObject("consoleKey", encodedValue);
+                          setConsoleKeyVal(fileName);
+                        }}
+                        accept=".key,.pem"
+                        id="consoleKey"
+                        name="consoleKey"
+                        label="Key"
+                        value={consoleKeyVal}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <FileSelector
+                        onChange={(encodedValue, fileName) => {
+                          storeCertInObject("consoleCert", encodedValue);
+                          setConsoleCertVal(fileName);
+                        }}
+                        accept=".cer,.crt,.cert,.pem"
+                        id="consoleCert"
+                        name="consoleCert"
+                        label="Cert"
+                        value={consoleCertVal}
+                      />
+                    </Grid>
                   </Grid>
                 </React.Fragment>
               )}
@@ -1740,7 +1847,7 @@ const AddTenant = ({
                 setEnableEncryption(checked);
               }}
               label={"Enable Server Side Encryption"}
-              disabled={!enableTLS}
+              disabled={!encryptionAvailable}
             />
           </Grid>
           {enableEncryption && (
@@ -1761,80 +1868,115 @@ const AddTenant = ({
                   ]}
                 />
               </Grid>
-
-              {enableTLS && tlsType !== "autocert" && (
-                <React.Fragment>
-                  <h5>Server</h5>
-                  <Grid item xs={12}>
-                    <FileSelector
-                      onChange={(encodedValue, fileName) => {
-                        storeCertInObject("serverKey", encodedValue);
-                        setServerKeyVal(fileName);
-                        clearValidationError("serverKey");
-                      }}
-                      accept=".key,.pem"
-                      id="serverKey"
-                      name="serverKey"
-                      label="Key"
-                      error={validationErrors["serverKey"] || ""}
-                      value={serverKeyVal}
-                      required
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <FileSelector
-                      onChange={(encodedValue, fileName) => {
-                        storeCertInObject("serverCert", encodedValue);
-                        setServerCertVal(fileName);
-                        clearValidationError("serverCert");
-                      }}
-                      accept=".cer,.crt,.cert,.pem"
-                      id="serverCert"
-                      name="serverCert"
-                      label="Cert"
-                      error={validationErrors["serverCert"] || ""}
-                      value={serverCertVal}
-                      required
-                    />
-                  </Grid>
-                  <h5>Client</h5>
-                  <Grid item xs={12}>
-                    <FileSelector
-                      onChange={(encodedValue, fileName) => {
-                        storeCertInObject("clientKey", encodedValue);
-                        setClientKeyVal(fileName);
-                        clearValidationError("clientKey");
-                      }}
-                      accept=".key,.pem"
-                      id="clientKey"
-                      name="clientKey"
-                      label="Key"
-                      error={validationErrors["clientKey"] || ""}
-                      value={clientKeyVal}
-                      required
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <FileSelector
-                      onChange={(encodedValue, fileName) => {
-                        storeCertInObject("clientCert", encodedValue);
-                        setClientCertVal(fileName);
-                        clearValidationError("clientCert");
-                      }}
-                      accept=".cer,.crt,.cert,.pem"
-                      id="clientCert"
-                      name="clientCert"
-                      label="Cert"
-                      error={validationErrors["clientCert"] || ""}
-                      value={clientCertVal}
-                      required
-                    />
-                  </Grid>
-                </React.Fragment>
-              )}
-
               {encryptionType === "vault" && (
                 <React.Fragment>
+                  <Grid item xs={12}>
+                    <FormSwitchWrapper
+                      value="enableCustomCertsForKES"
+                      id="enableCustomCertsForKES"
+                      name="enableCustomCertsForKES"
+                      checked={enableCustomCertsForKES || !enableAutoCert}
+                      onChange={(e) => {
+                        const targetD = e.target;
+                        const checked = targetD.checked;
+
+                        setEnableCustomCertsForKES(checked);
+                      }}
+                      label={"Custom Certificates"}
+                      disabled={!enableAutoCert}
+                    />
+                  </Grid>
+                  {(enableCustomCertsForKES || !enableAutoCert) && (
+                    <React.Fragment>
+                      <Grid item xs={12}>
+                        <Typography
+                          variant="overline"
+                          display="block"
+                          gutterBottom
+                        >
+                          Encryption Service Certificates
+                        </Typography>
+                      </Grid>
+                      <Grid container>
+                        <Grid item xs={6}>
+                          <FileSelector
+                            onChange={(encodedValue, fileName) => {
+                              storeCertInObject("serverKey", encodedValue);
+                              setServerKeyVal(fileName);
+                              clearValidationError("serverKey");
+                            }}
+                            accept=".key,.pem"
+                            id="serverKey"
+                            name="serverKey"
+                            label="Key"
+                            error={validationErrors["serverKey"] || ""}
+                            value={serverKeyVal}
+                            required={!enableAutoCert}
+                          />
+                        </Grid>
+                        <Grid item xs={6}>
+                          <FileSelector
+                            onChange={(encodedValue, fileName) => {
+                              storeCertInObject("serverCert", encodedValue);
+                              setServerCertVal(fileName);
+                              clearValidationError("serverCert");
+                            }}
+                            accept=".cer,.crt,.cert,.pem"
+                            id="serverCert"
+                            name="serverCert"
+                            label="Cert"
+                            error={validationErrors["serverCert"] || ""}
+                            value={serverCertVal}
+                            required={!enableAutoCert}
+                          />
+                        </Grid>
+                      </Grid>
+
+                      <Grid item xs={12}>
+                        <Typography
+                          variant="overline"
+                          display="block"
+                          gutterBottom
+                        >
+                          Mutual TLS authentication
+                        </Typography>
+                      </Grid>
+                      <Grid container>
+                        <Grid item xs={6}>
+                          <FileSelector
+                            onChange={(encodedValue, fileName) => {
+                              storeCertInObject("clientKey", encodedValue);
+                              setClientKeyVal(fileName);
+                              clearValidationError("clientKey");
+                            }}
+                            accept=".key,.pem"
+                            id="clientKey"
+                            name="clientKey"
+                            label="Key"
+                            error={validationErrors["clientKey"] || ""}
+                            value={clientKeyVal}
+                            required={!enableAutoCert}
+                          />
+                        </Grid>
+                        <Grid item xs={6}>
+                          <FileSelector
+                            onChange={(encodedValue, fileName) => {
+                              storeCertInObject("clientCert", encodedValue);
+                              setClientCertVal(fileName);
+                              clearValidationError("clientCert");
+                            }}
+                            accept=".cer,.crt,.cert,.pem"
+                            id="clientCert"
+                            name="clientCert"
+                            label="Cert"
+                            error={validationErrors["clientCert"] || ""}
+                            value={clientCertVal}
+                            required={!enableAutoCert}
+                          />
+                        </Grid>
+                      </Grid>
+                    </React.Fragment>
+                  )}
                   <Grid item xs={12}>
                     <InputBoxWrapper
                       id="vault_endpoint"
@@ -1859,8 +2001,6 @@ const AddTenant = ({
                       }}
                       label="Engine"
                       value={vaultEngine}
-                      error={validationErrors["vault_engine"] || ""}
-                      required
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -1905,7 +2045,7 @@ const AddTenant = ({
                         setVaultId(e.target.value);
                         clearValidationError("vault_id");
                       }}
-                      label="Id"
+                      label="AppRole ID"
                       value={vaultId}
                       error={validationErrors["vault_id"] || ""}
                       required
@@ -1919,7 +2059,7 @@ const AddTenant = ({
                         setVaultSecret(e.target.value);
                         clearValidationError("vault_secret");
                       }}
-                      label="Secret"
+                      label="AppRole Secret"
                       value={vaultSecret}
                       error={validationErrors["vault_secret"] || ""}
                       required
@@ -1935,44 +2075,41 @@ const AddTenant = ({
                         setVaultRetry(e.target.value);
                         clearValidationError("vault_retry");
                       }}
-                      label="Retry"
+                      label="Retry (Seconds)"
                       value={vaultRetry}
                       error={validationErrors["vault_retry"] || ""}
-                      required
                     />
                   </Grid>
-                  <h5>TLS</h5>
-                  <Grid item xs={12}>
-                    <FileSelector
-                      onChange={(encodedValue, fileName) => {
-                        storeCertInObject("vaultKey", encodedValue);
-                        setVaultKeyVal(fileName);
-                        clearValidationError("vault_key");
-                      }}
-                      accept=".key,.pem"
-                      id="vault_key"
-                      name="vault_key"
-                      label="Key"
-                      error={validationErrors["vault_key"] || ""}
-                      value={vaultKeyVal}
-                      required
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <FileSelector
-                      onChange={(encodedValue, fileName) => {
-                        storeCertInObject("vaultCert", encodedValue);
-                        setVaultCertVal(fileName);
-                        clearValidationError("vault_cert");
-                      }}
-                      accept=".cer,.crt,.cert,.pem"
-                      id="vault_cert"
-                      name="vault_cert"
-                      label="Cert"
-                      error={validationErrors["vault_cert"] || ""}
-                      value={vaultCertVal}
-                      required
-                    />
+                  <h5>Mutual TLS authentication (optional)</h5>
+                  <Grid container>
+                    <Grid item xs={6}>
+                      <FileSelector
+                        onChange={(encodedValue, fileName) => {
+                          storeCertInObject("vaultKey", encodedValue);
+                          setVaultKeyVal(fileName);
+                          clearValidationError("vault_key");
+                        }}
+                        accept=".key,.pem"
+                        id="vault_key"
+                        name="vault_key"
+                        label="Key"
+                        value={vaultKeyVal}
+                      />
+                    </Grid>
+                    <Grid item xs={6}>
+                      <FileSelector
+                        onChange={(encodedValue, fileName) => {
+                          storeCertInObject("vaultCert", encodedValue);
+                          setVaultCertVal(fileName);
+                          clearValidationError("vault_cert");
+                        }}
+                        accept=".cer,.crt,.cert,.pem"
+                        id="vault_cert"
+                        name="vault_cert"
+                        label="Cert"
+                        value={vaultCertVal}
+                      />
+                    </Grid>
                   </Grid>
                   <Grid item xs={12}>
                     <FileSelector
@@ -1985,9 +2122,7 @@ const AddTenant = ({
                       id="vault_ca"
                       name="vault_ca"
                       label="CA"
-                      error={validationErrors["vault_ca"] || ""}
                       value={vaultCAVal}
-                      required
                     />
                   </Grid>
                   <h5>Status</h5>
@@ -2001,10 +2136,9 @@ const AddTenant = ({
                         setVaultPing(e.target.value);
                         clearValidationError("vault_ping");
                       }}
-                      label="Ping"
+                      label="Ping (Seconds)"
                       value={vaultPing}
                       error={validationErrors["vault_ping"] || ""}
-                      required
                     />
                   </Grid>
                 </React.Fragment>
@@ -2086,7 +2220,7 @@ const AddTenant = ({
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setAWSToken(e.target.value);
                       }}
-                      label="Secret Key"
+                      label="Token"
                       value={awsToken}
                     />
                   </Grid>
@@ -2147,12 +2281,12 @@ const AddTenant = ({
                         setGemaltoRetry(e.target.value);
                         clearValidationError("gemalto_retry");
                       }}
-                      label="Domain"
+                      label="Retry (seconds)"
                       value={gemaltoRetry}
                       error={validationErrors["gemalto_retry"] || ""}
                     />
                   </Grid>
-                  <h5>TLS</h5>
+                  <h5>Custom CA Root certificate verification</h5>
                   <Grid item xs={12}>
                     <FileSelector
                       onChange={(encodedValue, fileName) => {
@@ -2164,9 +2298,7 @@ const AddTenant = ({
                       id="gemalto_ca"
                       name="gemalto_ca"
                       label="CA"
-                      error={validationErrors["gemalto_ca"] || ""}
                       value={gemaltoCAVal}
-                      required
                     />
                   </Grid>
                 </React.Fragment>
