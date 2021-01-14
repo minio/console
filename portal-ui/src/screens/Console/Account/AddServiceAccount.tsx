@@ -34,6 +34,11 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
+    infoDetails: {
+      color: "#393939",
+      fontSize: 12,
+      fontStyle: "italic",
+    },
     ...modalBasic,
   });
 
@@ -107,10 +112,17 @@ const AddServiceAccount = ({
                 <ErrorBlock errorMessage={addError} withBreak={false} />
               </Grid>
             )}
+            <div className={classes.infoDetails}>
+              Service Accounts inherit the policy explicitly attached to the
+              parent user and the policy attached to each group in which the
+              parent user has membership. You can specify an optional
+              JSON-formatted policy below to restrict the Service Account access
+              to a subset of actions and resources explicitly allowed for the
+              parent user. You cannot modify the Service Account optional policy
+              after saving.
+            </div>
             <CodeMirrorWrapper
               value={policyDefinition}
-              label="Optional Policy"
-              tooltip="A policy that restricts this service account can be attached."
               onBeforeChange={(editor, data, value) => {
                 setPolicyDefinition(value);
               }}
