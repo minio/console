@@ -146,7 +146,7 @@ const AddPolicy = ({
               <br />
             </Grid>
             <CodeMirrorWrapper
-              label="Write Policy"
+              label={`${policyEdit ? "" : "Write "}Policy`}
               value={policyDefinition}
               onBeforeChange={(editor, data, value) => {
                 setPolicyDefinition(value);
