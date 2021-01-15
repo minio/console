@@ -356,17 +356,12 @@ paths:
       consumes:
         - multipart/form-data
       parameters:
-        - in: formData
-          name: upfile
-          type: file
-          required: true
         - name: bucket_name
           in: path
           required: true
           type: string
         - name: prefix
           in: query
-          required: true
           type: string
       responses:
         200:

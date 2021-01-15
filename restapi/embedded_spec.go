@@ -861,12 +861,6 @@ func init() {
         "summary": "Uploads an Object.",
         "parameters": [
           {
-            "type": "file",
-            "name": "upfile",
-            "in": "formData",
-            "required": true
-          },
-          {
             "type": "string",
             "name": "bucket_name",
             "in": "path",
@@ -875,8 +869,7 @@ func init() {
           {
             "type": "string",
             "name": "prefix",
-            "in": "query",
-            "required": true
+            "in": "query"
           }
         ],
         "responses": {
@@ -6334,12 +6327,6 @@ func init() {
         "summary": "Uploads an Object.",
         "parameters": [
           {
-            "type": "file",
-            "name": "upfile",
-            "in": "formData",
-            "required": true
-          },
-          {
             "type": "string",
             "name": "bucket_name",
             "in": "path",
@@ -6348,8 +6335,7 @@ func init() {
           {
             "type": "string",
             "name": "prefix",
-            "in": "query",
-            "required": true
+            "in": "query"
           }
         ],
         "responses": {

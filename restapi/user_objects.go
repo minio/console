@@ -380,27 +380,84 @@ func getUploadObjectResponse(session *models.Principal, params user_api.PostBuck
 	if err != nil {
 		return prepareError(err)
 	}
-	// get size from request form
-	var objectSize int64
-	if params.HTTPRequest.MultipartForm == nil {
-		return prepareError(errors.New("request MultipartForm is nil"))
-	}
-	if file, ok := params.HTTPRequest.MultipartForm.File["upfile"]; ok {
-		if len(file) > 0 {
-			objectSize = file[0].Size
-		} else {
-			return prepareError(errors.New("file not present in request"))
-		}
-	} else {
-		return prepareError(errors.New("`upfile` should be on MultipartForm.File map"))
-	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
-	if err := uploadObject(ctx, minioClient, params.BucketName, params.Prefix, objectSize, params.Upfile); err != nil {
-		return prepareError(err)
+	if err := uploadFiles(ctx, minioClient, params); err != nil {
+		prepareError(err, errorGeneric)
 	}
 	return nil
+}
+
+// uploadFiles gets files from http.Request form and uploads them to MinIO
+func uploadFiles(ctx context.Context, client MinioClient, params user_api.PostBucketsBucketNameObjectsUploadParams) error {
+	var prefix string
+	if params.Prefix != nil {
+		prefix = *params.Prefix
+	}
+
+	// get object files from request
+	objFiles, err := getFormFiles(params.HTTPRequest)
+	if err != nil {
+		return err
+	}
+
+	// upload files one by one
+	for _, obj := range objFiles {
+		objectPrefix := fmt.Sprintf("%s%s", prefix, obj.name)
+		if err := uploadObject(ctx, client, params.BucketName, objectPrefix, obj.size, obj.file); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+type objectFile struct {
+	name string
+	size int64
+	file *runtime.File
+}
+
+// getFormFiles parses the request body and gets all the files from the Request
+// it includes name, size and file content
+func getFormFiles(r *http.Request) (files []*objectFile, err error) {
+	if r == nil {
+		return nil, errors.New("http.Request is nil")
+	}
+	// parse a request body as multipart/form-data.
+	// 32 << 20 is default max memory
+	if err := r.ParseMultipartForm(32 << 20); err != nil {
+		if err != http.ErrNotMultipart {
+			return nil, err
+		} else if err := r.ParseForm(); err != nil {
+			return nil, err
+		}
+	}
+
+	if r.MultipartForm != nil && r.MultipartForm.File != nil {
+		for fileName, file := range r.MultipartForm.File {
+			if fhs := file; len(fhs) > 0 {
+				f, err := fhs[0].Open()
+				if err != nil {
+					return nil, err
+				}
+				of := &objectFile{
+					name: fileName,
+					size: fhs[0].Size,
+					file: &runtime.File{
+						Data:   f,
+						Header: fhs[0],
+					},
+				}
+				files = append(files, of)
+			} else {
+				return nil, errors.New("file not present in request")
+			}
+		}
+	} else {
+		return nil, errors.New("request MultipartForm or MultipartForm.File is nil")
+	}
+	return files, nil
 }
 
 func uploadObject(ctx context.Context, client MinioClient, bucketName, prefix string, objectSize int64, object io.ReadCloser) error {
