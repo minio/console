@@ -86,6 +86,7 @@ interface IDateSelectorProps {
   addSwitch?: boolean;
   tooltip?: string;
   borderBottom?: boolean;
+  value?: string;
   onDateChange: (date: string, isValid: boolean) => any;
 }
 
@@ -100,6 +101,7 @@ const DateSelector = forwardRef(
       tooltip = "",
       borderBottom = false,
       onDateChange,
+      value = "",
     }: IDateSelectorProps,
     ref: any
   ) => {
@@ -109,6 +111,18 @@ const DateSelector = forwardRef(
     const [month, setMonth] = useState<string>("");
     const [day, setDay] = useState<string>("");
     const [year, setYear] = useState<string>("");
+
+    useEffect(() => {
+      // verify if there is a current value
+      // assume is in the format "2021-12-30"
+      if (value !== "") {
+        const valueSplit = value.split("-");
+        setYear(valueSplit[0]);
+        setMonth(valueSplit[1]);
+        // Turn to single digit to be displayed on dropdown buttons
+        setDay(`${parseInt(valueSplit[2])}`);
+      }
+    }, [value]);
 
     useEffect(() => {
       const [isValid, dateString] = validDate(year, month, day);

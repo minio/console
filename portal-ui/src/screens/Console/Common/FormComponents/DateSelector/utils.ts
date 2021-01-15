@@ -56,3 +56,9 @@ export const validDate = (year: string, month: string, day: string): any[] => {
 
   return [parsedDate === dateString, dateString];
 };
+
+// twoDigitDate gets a two digit string number used for months or days
+// returns "NaN" if number is NaN
+export const twoDigitDate = (num: number): string => {
+  return num < 10 ? `0${num}` : `${num}`;
+};
