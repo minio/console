@@ -33,7 +33,6 @@ import {
   searchField,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../../../../Common/PageHeader/PageHeader";
-import { isNullOrUndefined } from "util";
 import { Button, Input } from "@material-ui/core";
 import * as reactMoment from "react-moment";
 import { CreateIcon } from "../../../../../../icons";
@@ -256,16 +255,28 @@ const ListObjects = ({
   };
 
   const upload = (e: any, bucketName: string, path: string) => {
-    if (isNullOrUndefined(e) || isNullOrUndefined(e.target)) {
+    if (
+      e === null ||
+      e === undefined ||
+      e.target === null ||
+      e.target === undefined
+    ) {
       return;
     }
     e.preventDefault();
-    let file = e.target.files[0];
-    const fileName = file.name;
-
-    const objectName = `${path}${fileName}`;
-    let uploadUrl = `/api/v1/buckets/${bucketName}/objects/upload?prefix=${objectName}`;
+    let files = e.target.files;
+    let uploadUrl = `/api/v1/buckets/${bucketName}/objects/upload`;
+    if (path !== "") {
+      uploadUrl = `${uploadUrl}?prefix=${path}`;
+    }
     let xhr = new XMLHttpRequest();
+    const areMultipleFiles = files.length > 1 ? true : false;
+    const errorMessage = `An error occurred while uploading the file${
+      areMultipleFiles ? "s" : ""
+    }.`;
+    const okMessage = `Object${
+      areMultipleFiles ? "s" : ``
+    } uploaded successfully.`;
 
     xhr.open("POST", uploadUrl, true);
 
@@ -277,15 +288,15 @@ const ListObjects = ({
         xhr.status === 400 ||
         xhr.status === 500
       ) {
-        setSnackBarMessage("An error occurred while uploading the file.");
+        setSnackBarMessage(errorMessage);
       }
       if (xhr.status === 200) {
-        setSnackBarMessage("Object uploaded successfully.");
+        setSnackBarMessage(okMessage);
       }
     };
 
     xhr.upload.addEventListener("error", (event) => {
-      setSnackBarMessage("An error occurred while uploading the file.");
+      setSnackBarMessage(errorMessage);
     });
 
     xhr.upload.addEventListener("progress", (event) => {
@@ -293,7 +304,7 @@ const ListObjects = ({
     });
 
     xhr.onerror = () => {
-      setSnackBarMessage("An error occurred while uploading the file.");
+      setSnackBarMessage(errorMessage);
     };
     xhr.onloadend = () => {
       setLoading(true);
@@ -301,9 +312,13 @@ const ListObjects = ({
     };
 
     const formData = new FormData();
-    const blobFile = new Blob([file]);
 
-    formData.append("upfile", blobFile);
+    for (let file of files) {
+      const fileName = file.name;
+      const blobFile = new Blob([file]);
+      formData.append(fileName, blobFile);
+    }
+
     xhr.send(formData);
     e.target.value = null;
   };
@@ -454,6 +469,7 @@ const ListObjects = ({
                 File
                 <Input
                   type="file"
+                  inputProps={{ multiple: true }}
                   onChange={(e) => uploadObject(e)}
                   id="file-input"
                   style={{ display: "none" }}

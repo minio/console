@@ -33,7 +33,7 @@ import (
 type PostBucketsBucketNameObjectsUploadURL struct {
 	BucketName string
 
-	Prefix string
+	Prefix *string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -76,7 +76,10 @@ func (o *PostBucketsBucketNameObjectsUploadURL) Build() (*url.URL, error) {
 
 	qs := make(url.Values)
 
-	prefixQ := o.Prefix
+	var prefixQ string
+	if o.Prefix != nil {
+		prefixQ = *o.Prefix
+	}
 	if prefixQ != "" {
 		qs.Set("prefix", prefixQ)
 	}
