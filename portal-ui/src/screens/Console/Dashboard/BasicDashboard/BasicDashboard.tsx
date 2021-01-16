@@ -26,7 +26,6 @@ import { containerForHeader } from "../../Common/FormComponents/common/styleLibr
 import AllBucketsIcon from "../../../../icons/AllBucketsIcon";
 import UsageIcon from "../../../../icons/UsageIcon";
 import EgressIcon from "../../../../icons/EgressIcon";
-import ErrorBlock from "../../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -91,10 +90,9 @@ const styles = (theme: Theme) =>
 interface IDashboardProps {
   classes: any;
   usage: Usage | null;
-  error: string;
 }
 
-const BasicDashboard = ({ classes, usage, error }: IDashboardProps) => {
+const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   const prettyUsage = (usage: string | undefined) => {
@@ -129,11 +127,6 @@ const BasicDashboard = ({ classes, usage, error }: IDashboardProps) => {
       <div className={classes.dashboardBG} />
       <Grid container className={classes.dashboardContainer}>
         <Grid container spacing={3} className={classes.container}>
-          {error !== "" && (
-            <Grid container>
-              <ErrorBlock errorMessage={error} />
-            </Grid>
-          )}
           <Grid item className={classes.notationContainer}>
             <Paper className={fixedHeightPaper}>
               <Grid container direction="row" alignItems="center">

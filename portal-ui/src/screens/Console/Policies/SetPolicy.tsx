@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,17 +15,18 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import { User } from "../Users/types";
+import { setModalErrorSnackMessage } from "../../../actions";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import api from "../../../common/api";
 import PolicySelectors from "./PolicySelectors";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
-import ErrorBlock from "../../shared/ErrorBlock";
 
 interface ISetPolicyProps {
   classes: any;
@@ -33,6 +34,7 @@ interface ISetPolicyProps {
   selectedUser: User | null;
   selectedGroup: string | null;
   open: boolean;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -48,13 +50,13 @@ const SetPolicy = ({
   closeModalAndRefresh,
   selectedUser,
   selectedGroup,
+  setModalErrorSnackMessage,
   open,
 }: ISetPolicyProps) => {
   //Local States
   const [loading, setLoading] = useState<boolean>(false);
   const [actualPolicy, setActualPolicy] = useState<string>("");
   const [selectedPolicy, setSelectedPolicy] = useState<string>("");
-  const [error, setError] = useState<string>("");
 
   const setPolicyAction = () => {
     let entity = "user";
@@ -75,14 +77,13 @@ const SetPolicy = ({
         entityName: value,
         entityType: entity,
       })
-      .then((res: any) => {
+      .then(() => {
         setLoading(false);
-        setError("");
         closeModalAndRefresh();
       })
       .catch((err) => {
         setLoading(false);
-        setError(err);
+        setModalErrorSnackMessage(err);
       });
   };
 
@@ -96,7 +97,7 @@ const SetPolicy = ({
           setSelectedPolicy(groupPolicy);
         })
         .catch((err) => {
-          setError(err);
+          setModalErrorSnackMessage(err);
           setLoading(false);
         });
     }
@@ -130,11 +131,6 @@ const SetPolicy = ({
       modalOpen={open}
       title="Set Policies"
     >
-      {error !== "" && (
-        <Grid item xs={12}>
-          <ErrorBlock errorMessage={error} withBreak={false} />
-        </Grid>
-      )}
       <Grid item xs={12}>
         <PredefinedList
           label={`Selected ${selectedGroup !== null ? "Group" : "User"}`}
@@ -179,4 +175,10 @@ const SetPolicy = ({
   );
 };
 
-export default withStyles(styles)(SetPolicy);
+const mapDispatchToProps = {
+  setModalErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default withStyles(styles)(connector(SetPolicy));

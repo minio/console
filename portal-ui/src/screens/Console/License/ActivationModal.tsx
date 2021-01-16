@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,19 +14,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import React, { useState } from "react";
-import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
+import { connect } from "react-redux";
+import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import { SubscriptionActivateRequest } from "../Buckets/types";
+import { setModalErrorSnackMessage } from "../../../actions";
+import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
+import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import api from "../../../common/api";
-import { LinearProgress } from "@material-ui/core";
-import ErrorBlock from "../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -53,13 +54,18 @@ interface IActivationModal {
   classes: any;
   open: boolean;
   closeModal: () => void;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
-const ActivationModal = ({ classes, open, closeModal }: IActivationModal) => {
+const ActivationModal = ({
+  classes,
+  open,
+  closeModal,
+  setModalErrorSnackMessage,
+}: IActivationModal) => {
   const [license, setLicense] = useState<string>("");
   const [subnetPassword, setSubnetPassword] = useState<string>("");
   const [subnetEmail, setSubnetEmail] = useState<string>("");
-  const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
   const activateProduct = () => {
@@ -74,12 +80,11 @@ const ActivationModal = ({ classes, open, closeModal }: IActivationModal) => {
     };
     api
       .invoke("POST", "/api/v1/subscription/validate", request)
-      .then((res) => {
+      .then(() => {
         setLoading(false);
         setLicense("");
         setSubnetPassword("");
         setSubnetEmail("");
-        setError("");
         closeModal();
       })
       .catch((err) => {
@@ -87,7 +92,7 @@ const ActivationModal = ({ classes, open, closeModal }: IActivationModal) => {
         setLicense("");
         setSubnetPassword("");
         setSubnetEmail("");
-        setError(err);
+        setModalErrorSnackMessage(err);
       });
   };
 
@@ -99,17 +104,11 @@ const ActivationModal = ({ classes, open, closeModal }: IActivationModal) => {
         setLicense("");
         setSubnetPassword("");
         setSubnetEmail("");
-        setError("");
         closeModal();
       }}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      {error !== "" && (
-        <Grid item xs={12}>
-          <ErrorBlock errorMessage={error} withBreak={false} />
-        </Grid>
-      )}
       <Grid container alignItems="center" item xs={12}>
         <Grid item className={classes.subnetLicenseKey} xs={6}>
           <Grid item xs={12}>
@@ -203,4 +202,10 @@ const ActivationModal = ({ classes, open, closeModal }: IActivationModal) => {
   ) : null;
 };
 
-export default withStyles(styles)(ActivationModal);
+const mapDispatchToProps = {
+  setModalErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default withStyles(styles)(connector(ActivationModal));

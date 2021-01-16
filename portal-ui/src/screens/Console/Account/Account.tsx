@@ -15,12 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import api from "../../../common/api";
 import { Button } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
+import { setErrorSnackMessage } from "../../../actions";
 import AddServiceAccount from "./AddServiceAccount";
 import DeleteServiceAccount from "./DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
@@ -39,7 +41,6 @@ import {
 import Divider from "@material-ui/core/Divider";
 import LockIcon from "@material-ui/icons/Lock";
 import ChangePasswordModal from "./ChangePasswordModal";
-import ErrorBlock from "../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -86,12 +87,12 @@ const styles = (theme: Theme) =>
 
 interface IServiceAccountsProps {
   classes: any;
+  displayErrorMessage: typeof setErrorSnackMessage;
 }
 
-const Account = ({ classes }: IServiceAccountsProps) => {
+const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
   const [records, setRecords] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
   const [filter, setFilter] = useState<string>("");
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
@@ -121,14 +122,13 @@ const Account = ({ classes }: IServiceAccountsProps) => {
 
           setLoading(false);
           setRecords(serviceAccounts);
-          setError("");
         })
         .catch((err) => {
-          setError(err);
+          displayErrorMessage(err);
           setLoading(false);
         });
     }
-  }, [loading, setLoading, setRecords, setError]);
+  }, [loading, setLoading, setRecords, displayErrorMessage]);
 
   const fetchRecords = () => {
     setLoading(true);
@@ -276,11 +276,6 @@ const Account = ({ classes }: IServiceAccountsProps) => {
           <Grid item xs={12}>
             <br />
           </Grid>
-          {error !== "" && (
-            <Grid item xs={12}>
-              <ErrorBlock errorMessage={error} withBreak={false} />
-            </Grid>
-          )}
           <Grid item xs={12}>
             <TableWrapper
               isLoading={loading}
@@ -297,4 +292,8 @@ const Account = ({ classes }: IServiceAccountsProps) => {
   );
 };
 
-export default withStyles(styles)(Account);
+const connector = connect(null, {
+  displayErrorMessage: setErrorSnackMessage,
+});
+
+export default withStyles(styles)(connector(Account));

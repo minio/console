@@ -1,18 +1,36 @@
+// This file is part of MinIO Console Server
+// Copyright (c) 2021 MinIO, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import React, { useState, Fragment, useEffect, useCallback } from "react";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { Button, Grid } from "@material-ui/core";
+import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import { setModalErrorSnackMessage } from "../../../../actions";
+import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import api from "../../../../common/api";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
-import ErrorBlock from "../../../shared/ErrorBlock";
 
 interface IUpdateTenantModal {
   open: boolean;
   closeModalAndRefresh: (update: boolean) => any;
   namespace: string;
   idTenant: string;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
   classes: any;
 }
 
@@ -29,10 +47,10 @@ const UpdateTenantModal = ({
   closeModalAndRefresh,
   namespace,
   idTenant,
+  setModalErrorSnackMessage,
   classes,
 }: IUpdateTenantModal) => {
   const [isSending, setIsSending] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
   const [minioImage, setMinioImage] = useState<string>("");
   const [consoleImage, setConsoleImage] = useState<string>("");
   const [imageRegistry, setImageRegistry] = useState<boolean>(false);
@@ -114,12 +132,12 @@ const UpdateTenantModal = ({
         `/api/v1/namespaces/${namespace}/tenants/${idTenant}`,
         payload
       )
-      .then((res) => {
+      .then(() => {
         setIsSending(false);
         closeModalAndRefresh(true);
       })
       .catch((error) => {
-        setError(error);
+        setModalErrorSnackMessage(error);
         setIsSending(false);
       });
   };
@@ -131,11 +149,6 @@ const UpdateTenantModal = ({
       onClose={closeAction}
     >
       <Grid container>
-        {error !== "" && (
-          <Grid item xs={12}>
-            <ErrorBlock errorMessage={error} withBreak={false} />
-          </Grid>
-        )}
         <Grid item xs={12} className={classes.formScrollable}>
           <span>
             Please enter the MinIO image from dockerhub to use. If blank, then
@@ -253,4 +266,8 @@ const UpdateTenantModal = ({
   );
 };
 
-export default withStyles(styles)(UpdateTenantModal);
+const connector = connect(null, {
+  setModalErrorSnackMessage,
+});
+
+export default withStyles(styles)(connector(UpdateTenantModal));

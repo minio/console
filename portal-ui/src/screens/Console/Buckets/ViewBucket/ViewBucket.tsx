@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
@@ -48,7 +48,8 @@ import { containerForHeader } from "../../Common/FormComponents/common/styleLibr
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import Checkbox from "@material-ui/core/Checkbox";
 import EnableBucketEncryption from "./EnableBucketEncryption";
-import ErrorBlock from "../../../shared/ErrorBlock";
+import { connect } from "react-redux";
+import { setErrorSnackMessage } from "../../../../actions";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -143,6 +144,7 @@ const styles = (theme: Theme) =>
 interface IViewBucketProps {
   classes: any;
   match: any;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 interface TabPanelProps {
@@ -175,32 +177,11 @@ function a11yProps(index: any) {
   };
 }
 
-interface IViewBucketState {
-  info: BucketInfo | null;
-  records: BucketEvent[];
-  replicationRules: BucketReplicationRule[];
-  loadingBucket: boolean;
-  loadingEvents: boolean;
-  loadingSize: boolean;
-  error: string;
-  deleteError: string;
-  errBucket: string;
-  setAccessPolicyScreenOpen: boolean;
-  curTab: number;
-  addScreenOpen: boolean;
-  enableEncryptionScreenOpen: boolean;
-  deleteOpen: boolean;
-  selectedBucket: string;
-  selectedEvent: BucketEvent | null;
-  bucketSize: string;
-  errorSize: string;
-  replicationSet: boolean;
-  openSetReplication: boolean;
-  isVersioned: boolean;
-  encryptionEnabled: boolean;
-}
-
-const ViewBucket = ({ classes, match }: IViewBucketProps) => {
+const ViewBucket = ({
+  classes,
+  match,
+  setErrorSnackMessage,
+}: IViewBucketProps) => {
   const [info, setInfo] = useState<BucketInfo | null>(null);
   const [records, setRecords] = useState<BucketEvent[]>([]);
   const [replicationRules, setReplicationRules] = useState<
@@ -208,9 +189,10 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
   >([]);
   const [loadingBucket, setLoadingBucket] = useState<boolean>(true);
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
+  const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
+  const [loadingReplication, setLoadingReplication] = useState<boolean>(true);
   const [loadingSize, setLoadingSize] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
-  const [errBucket, setErrBucket] = useState<string>("");
+  const [loadingEncryption, setLoadingEncryption] = useState<boolean>(true);
   const [accessPolicyScreenOpen, setAccessPolicyScreenOpen] = useState<boolean>(
     false
   );
@@ -223,7 +205,6 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedEvent, setSelectedEvent] = useState<BucketEvent | null>(null);
   const [bucketSize, setBucketSize] = useState<string>("0");
-  const [errorSize, setErrorSize] = useState<string>("");
   const [openSetReplication, setOpenSetReplication] = useState<boolean>(false);
   const [isVersioned, setIsVersioned] = useState<boolean>(false);
   const [encryptionEnabled, setEncryptionEnabled] = useState<boolean>(false);
@@ -231,117 +212,149 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
     false
   );
 
-  const fetchEvents = useCallback(() => {
+  const bucketName = match.params["bucketName"];
+
+  useEffect(() => {
+    if (loadingEvents) {
+      api
+        .invoke("GET", `/api/v1/buckets/${bucketName}/events`)
+        .then((res: BucketEventList) => {
+          const events = get(res, "events", []);
+          setLoadingEvents(false);
+          setRecords(events || []);
+        })
+        .catch((err: any) => {
+          setLoadingEvents(false);
+          setErrorSnackMessage(err);
+        });
+    }
+  }, [loadingEvents, setErrorSnackMessage, bucketName]);
+
+  useEffect(() => {
+    if (loadingVersioning) {
+      api
+        .invoke("GET", `/api/v1/buckets/${bucketName}/versioning`)
+        .then((res: BucketVersioning) => {
+          setIsVersioned(res.is_versioned);
+          setLoadingVersioning(false);
+        })
+        .catch((err: any) => {
+          setErrorSnackMessage(err);
+          setLoadingVersioning(false);
+        });
+    }
+  }, [loadingVersioning, setErrorSnackMessage, bucketName]);
+
+  useEffect(() => {
+    if (loadingReplication) {
+      api
+        .invoke("GET", `/api/v1/buckets/${bucketName}/replication`)
+        .then((res: BucketReplication) => {
+          const r = res.rules ? res.rules : [];
+          setReplicationRules(r);
+          setLoadingReplication(false);
+        })
+        .catch((err: any) => {
+          setErrorSnackMessage(err);
+          setLoadingReplication(false);
+        });
+    }
+  }, [loadingReplication, setErrorSnackMessage, bucketName]);
+
+  useEffect(() => {
+    if (loadingSize) {
+      api
+        .invoke("GET", `/api/v1/buckets`)
+        .then((res: BucketList) => {
+          const resBuckets = get(res, "buckets", []);
+
+          const bucketInfo = resBuckets.find(
+            (bucket) => bucket.name === bucketName
+          );
+          const size = get(bucketInfo, "size", "0");
+
+          setLoadingSize(false);
+          setBucketSize(size);
+        })
+        .catch((err: any) => {
+          setLoadingSize(false);
+          setErrorSnackMessage(err);
+        });
+    }
+  }, [loadingSize, setErrorSnackMessage, bucketName]);
+
+  useEffect(() => {
+    if (loadingBucket) {
+      api
+        .invoke("GET", `/api/v1/buckets/${bucketName}`)
+        .then((res: BucketInfo) => {
+          setLoadingBucket(false);
+          setInfo(res);
+        })
+        .catch((err) => {
+          setLoadingBucket(false);
+          setErrorSnackMessage(err);
+        });
+    }
+  }, [loadingBucket, setErrorSnackMessage, bucketName]);
+
+  useEffect(() => {
+    if (loadingEncryption) {
+      api
+        .invoke("GET", `/api/v1/buckets/${bucketName}/encryption/info`)
+        .then((res: BucketEncryptionInfo) => {
+          if (res.algorithm) {
+            setEncryptionEnabled(true);
+          }
+          setLoadingEncryption(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          setLoadingEncryption(false);
+        });
+    }
+  }, [loadingEncryption, bucketName]);
+
+  const loadAllBucketData = () => {
     setLoadingBucket(true);
-    const bucketName = match.params["bucketName"];
-    api
-      .invoke("GET", `/api/v1/buckets/${bucketName}/events`)
-      .then((res: BucketEventList) => {
-        const events = get(res, "events", []);
-        setLoadingEvents(false);
-        setError("");
-        setRecords(events || []);
-      })
-      .catch((err: any) => {
-        setLoadingEvents(false);
-        setError(err);
-      });
-
-    api
-      .invoke("GET", `/api/v1/buckets/${bucketName}/versioning`)
-      .then((res: BucketVersioning) => {
-        setIsVersioned(res.is_versioned);
-      })
-      .catch((err: any) => {
-        setError(err);
-      });
-
-    api
-      .invoke("GET", `/api/v1/buckets/${bucketName}/replication`)
-      .then((res: BucketReplication) => {
-        const r = res.rules ? res.rules : [];
-        setReplicationRules(r);
-      })
-      .catch((err: any) => {
-        setError(err);
-      });
-  }, [match]);
-
-  const fetchBucketsSize = useCallback(() => {
-    const bucketName = match.params["bucketName"];
     setLoadingSize(true);
-    api
-      .invoke("GET", `/api/v1/buckets`)
-      .then((res: BucketList) => {
-        const resBuckets = get(res, "buckets", []);
+    setLoadingReplication(true);
+    setLoadingVersioning(true);
+    setLoadingEvents(true);
+    setLoadingEncryption(true);
+  };
 
-        const bucketInfo = resBuckets.find(
-          (bucket) => bucket.name === bucketName
-        );
+  const closeAddEventAndRefresh = () => {
+    setAddScreenOpen(false);
+    loadAllBucketData();
+  };
 
-        const size = get(bucketInfo, "size", "0");
+  const closeEnableBucketEncryption = () => {
+    setEnableEncryptionScreenOpen(false);
+    loadAllBucketData();
+  };
 
-        setLoadingSize(false);
-        setErrorSize("");
-        setBucketSize(size);
-      })
-      .catch((err: any) => {
-        setLoadingSize(false);
-        setErrorSize(err);
-      });
-  }, [match]);
-
-  const loadInfo = useCallback(() => {
-    const bucketName = match.params["bucketName"];
-    setLoadingBucket(true);
-
-    api
-      .invoke("GET", `/api/v1/buckets/${bucketName}`)
-      .then((res: BucketInfo) => {
-        setLoadingBucket(false);
-        setInfo(res);
-      })
-      .catch((err) => {
-        setLoadingBucket(false);
-        setErrBucket(err);
-      });
-  }, [match]);
-
-  const fetchBucketEncryptionInfo = useCallback(() => {
-    const bucketName = match.params["bucketName"];
-    api
-      .invoke("GET", `/api/v1/buckets/${bucketName}/encryption/info`)
-      .then((res: BucketEncryptionInfo) => {
-        if (res.algorithm) {
-          setEncryptionEnabled(true);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [match]);
-
-  const closeAddModalAndRefresh = () => {
+  const closeSetAccessPolicy = () => {
     setAccessPolicyScreenOpen(false);
+    loadAllBucketData();
+  };
+
+  const closeRetentionConfig = () => {
     setRetentionConfigOpen(false);
-    loadInfo();
+    loadAllBucketData();
+  };
+
+  const closeAddReplication = () => {
+    setOpenReplicationOpen(false);
+    loadAllBucketData();
   };
 
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
     if (refresh) {
-      fetchEvents();
+      loadAllBucketData();
     }
   };
-
-  useEffect(() => {
-    loadInfo();
-    fetchEvents();
-    fetchBucketsSize();
-    fetchBucketEncryptionInfo();
-  }, [loadInfo, fetchEvents, fetchBucketsSize, fetchBucketEncryptionInfo]);
-
-  const bucketName = match.params["bucketName"];
 
   const confirmDeleteEvent = (evnt: BucketEvent) => {
     setDeleteOpen(true);
@@ -386,7 +399,7 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
           setEncryptionEnabled(false);
         })
         .catch((err: any) => {
-          setError(err);
+          setErrorSnackMessage(err);
         });
     }
   };
@@ -399,20 +412,14 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
         <AddEvent
           open={addScreenOpen}
           selectedBucket={bucketName}
-          closeModalAndRefresh={() => {
-            setAddScreenOpen(false);
-            fetchEvents();
-          }}
+          closeModalAndRefresh={closeAddEventAndRefresh}
         />
       )}
       {enableEncryptionScreenOpen && (
         <EnableBucketEncryption
           open={enableEncryptionScreenOpen}
           selectedBucket={bucketName}
-          closeModalAndRefresh={() => {
-            setEnableEncryptionScreenOpen(false);
-            fetchBucketEncryptionInfo();
-          }}
+          closeModalAndRefresh={closeEnableBucketEncryption}
         />
       )}
       {accessPolicyScreenOpen && (
@@ -420,47 +427,33 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
           bucketName={bucketName}
           open={accessPolicyScreenOpen}
           actualPolicy={accessPolicy}
-          closeModalAndRefresh={() => {
-            closeAddModalAndRefresh();
-          }}
+          closeModalAndRefresh={closeSetAccessPolicy}
         />
       )}
       {retentionConfigOpen && (
         <SetRetentionConfig
           bucketName={bucketName}
           open={retentionConfigOpen}
-          closeModalAndRefresh={() => {
-            closeAddModalAndRefresh();
-          }}
+          closeModalAndRefresh={closeRetentionConfig}
         />
       )}
       {openSetReplication && (
         <AddReplicationModal
-          closeModalAndRefresh={() => {
-            setOpenReplicationOpen(false);
-            fetchEvents();
-          }}
+          closeModalAndRefresh={closeAddReplication}
           open={openSetReplication}
           bucketName={bucketName}
         />
       )}
+      {deleteOpen && (
+        <DeleteEvent
+          deleteOpen={deleteOpen}
+          selectedBucket={bucketName}
+          bucketEvent={selectedEvent}
+          closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
+        />
+      )}
       <PageHeader label={`Bucket > ${match.params["bucketName"]}`} />
       <Grid container>
-        {error !== "" && (
-          <Grid item xs={12}>
-            <ErrorBlock errorMessage={error} withBreak={false} />
-          </Grid>
-        )}
-        {errBucket !== "" && (
-          <Grid item xs={12}>
-            {errBucket}
-          </Grid>
-        )}
-        {errorSize !== "" && (
-          <Grid item xs={12}>
-            {errorSize}
-          </Grid>
-        )}
         <Grid item xs={12} className={classes.container}>
           <Grid item xs={12}>
             <div className={classes.headerContainer}>
@@ -638,17 +631,12 @@ const ViewBucket = ({ classes, match }: IViewBucketProps) => {
           </Grid>
         </Grid>
       </Grid>
-
-      <DeleteEvent
-        deleteOpen={deleteOpen}
-        selectedBucket={bucketName}
-        bucketEvent={selectedEvent}
-        closeDeleteModalAndRefresh={(refresh: boolean) => {
-          closeDeleteModalAndRefresh(refresh);
-        }}
-      />
     </React.Fragment>
   );
 };
 
-export default withStyles(styles)(ViewBucket);
+const connector = connect(null, {
+  setErrorSnackMessage,
+});
+
+export default withStyles(styles)(connector(ViewBucket));

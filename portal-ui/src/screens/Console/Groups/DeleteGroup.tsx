@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import {
   Button,
   Dialog,
@@ -25,22 +26,22 @@ import {
   LinearProgress,
 } from "@material-ui/core";
 import api from "../../../common/api";
-import { UsersList } from "../Users/types";
-import ErrorBlock from "../../shared/ErrorBlock";
+import { setErrorSnackMessage } from "../../../actions";
 
 interface IDeleteGroup {
   selectedGroup: string;
   deleteOpen: boolean;
   closeDeleteModalAndRefresh: any;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const DeleteGroup = ({
   selectedGroup,
   deleteOpen,
   closeDeleteModalAndRefresh,
+  setErrorSnackMessage,
 }: IDeleteGroup) => {
   const [isDeleting, setDeleteLoading] = useState<boolean>(false);
-  const [deleteError, setError] = useState<string>("");
 
   useEffect(() => {
     if (isDeleting) {
@@ -51,23 +52,25 @@ const DeleteGroup = ({
 
         api
           .invoke("DELETE", `/api/v1/groups/${selectedGroup}`)
-          .then((res: UsersList) => {
+          .then(() => {
             setDeleteLoading(false);
-            setError("");
-
             closeDeleteModalAndRefresh(true);
           })
           .catch((err) => {
             setDeleteLoading(false);
-            setError(err);
+            setErrorSnackMessage(err);
           });
       };
       removeRecord();
     }
-  }, [isDeleting, selectedGroup, closeDeleteModalAndRefresh]);
+  }, [
+    isDeleting,
+    selectedGroup,
+    closeDeleteModalAndRefresh,
+    setErrorSnackMessage,
+  ]);
 
   const closeNoAction = () => {
-    setError("");
     closeDeleteModalAndRefresh(false);
   };
 
@@ -84,7 +87,6 @@ const DeleteGroup = ({
           {isDeleting && <LinearProgress />}
           <DialogContentText id="alert-dialog-description">
             Are you sure you want to delete group <b>{selectedGroup}</b>?
-            {deleteError !== "" && <ErrorBlock errorMessage={deleteError} />}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -106,4 +108,10 @@ const DeleteGroup = ({
   );
 };
 
-export default DeleteGroup;
+const mapDispatchToProps = {
+  setErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default connector(DeleteGroup);

@@ -52,6 +52,7 @@ import { download } from "../utils";
 import {
   setLoadingProgress,
   setSnackBarMessage,
+  setErrorSnackMessage,
 } from "../../../../../../actions";
 
 const commonIcon = {
@@ -138,6 +139,7 @@ interface IListObjectsProps {
   setLastAsFile: () => any;
   setLoadingProgress: typeof setLoadingProgress;
   setSnackBarMessage: typeof setSnackBarMessage;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 interface ObjectBrowserReducer {
@@ -153,6 +155,7 @@ const ListObjects = ({
   setLastAsFile,
   setLoadingProgress,
   setSnackBarMessage,
+  setErrorSnackMessage,
 }: IListObjectsProps) => {
   const [records, setRecords] = useState<BucketObject[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -186,6 +189,7 @@ const ListObjects = ({
         })
         .catch((err: any) => {
           setLoading(false);
+          setErrorSnackMessage(err);
         });
     };
 
@@ -226,9 +230,10 @@ const ListObjects = ({
         })
         .catch((err: any) => {
           setLoading(false);
+          setErrorSnackMessage(err);
         });
     }
-  }, [loading, match, setLastAsFile]);
+  }, [loading, match, setLastAsFile, setErrorSnackMessage]);
 
   useEffect(() => {
     const url = get(match, "url", "/object-browser");
@@ -546,6 +551,7 @@ const mapDispatchToProps = {
   setLastAsFile,
   setLoadingProgress,
   setSnackBarMessage,
+  setErrorSnackMessage,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

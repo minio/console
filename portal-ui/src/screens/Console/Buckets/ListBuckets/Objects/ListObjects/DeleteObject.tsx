@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
+import { connect } from "react-redux";
 import {
   Button,
   Dialog,
@@ -24,19 +25,15 @@ import {
   DialogTitle,
   LinearProgress,
 } from "@material-ui/core";
+import { setErrorSnackMessage } from "../../../../../../actions";
 import api from "../../../../../../common/api";
-import ErrorBlock from "../../../../../shared/ErrorBlock";
 
 interface IDeleteObjectProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedObject: string;
   selectedBucket: string;
-}
-
-interface IDeleteObjectState {
-  deleteLoading: boolean;
-  deleteError: string;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const DeleteObject = ({
@@ -44,15 +41,15 @@ const DeleteObject = ({
   deleteOpen,
   selectedBucket,
   selectedObject,
+  setErrorSnackMessage,
 }: IDeleteObjectProps) => {
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
-  const [deleteError, setDeleteError] = useState<string>("");
 
   const removeRecord = () => {
     if (deleteLoading) {
       return;
     }
-    var recursive = false;
+    let recursive = false;
     if (selectedObject.endsWith("/")) {
       recursive = true;
     }
@@ -62,15 +59,13 @@ const DeleteObject = ({
         "DELETE",
         `/api/v1/buckets/${selectedBucket}/objects?path=${selectedObject}&recursive=${recursive}`
       )
-      .then((res: any) => {
+      .then(() => {
         setDeleteLoading(false);
-        setDeleteError("");
-
         closeDeleteModalAndRefresh(true);
       })
       .catch((err) => {
         setDeleteLoading(false);
-        setDeleteError(err);
+        setErrorSnackMessage(err);
       });
   };
 
@@ -78,7 +73,6 @@ const DeleteObject = ({
     <Dialog
       open={deleteOpen}
       onClose={() => {
-        setDeleteError("");
         closeDeleteModalAndRefresh(false);
       }}
       aria-labelledby="alert-dialog-title"
@@ -89,17 +83,11 @@ const DeleteObject = ({
         {deleteLoading && <LinearProgress />}
         <DialogContentText id="alert-dialog-description">
           Are you sure you want to delete: <b>{selectedObject}</b>?{" "}
-          {deleteError !== "" && (
-            <React.Fragment>
-              <ErrorBlock errorMessage={deleteError} />
-            </React.Fragment>
-          )}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button
           onClick={() => {
-            setDeleteError("");
             closeDeleteModalAndRefresh(false);
           }}
           color="primary"
@@ -109,7 +97,6 @@ const DeleteObject = ({
         </Button>
         <Button
           onClick={() => {
-            setDeleteError("");
             removeRecord();
           }}
           color="secondary"
@@ -122,4 +109,10 @@ const DeleteObject = ({
   );
 };
 
-export default DeleteObject;
+const mapDispatchToProps = {
+  setErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default connector(DeleteObject);

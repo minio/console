@@ -1,5 +1,5 @@
 // This file is part of MinIO Kubernetes Cloud
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,11 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../common/api";
 import { Policy } from "./types";
+import { setModalErrorSnackMessage } from "../../../actions";
 import {
   fieldBasic,
   modalBasic,
@@ -27,7 +29,6 @@ import {
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
-import ErrorBlock from "../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -47,13 +48,7 @@ interface IAddPolicyProps {
   open: boolean;
   closeModalAndRefresh: (refresh: boolean) => void;
   policyEdit: Policy;
-}
-
-interface IAddPolicyState {
-  addLoading: boolean;
-  addError: string;
-  policyName: string;
-  policyDefinition: string;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const AddPolicy = ({
@@ -61,9 +56,9 @@ const AddPolicy = ({
   open,
   closeModalAndRefresh,
   policyEdit,
+  setModalErrorSnackMessage,
 }: IAddPolicyProps) => {
   const [addLoading, setAddLoading] = useState<boolean>(false);
-  const [addError, setAddError] = useState<string>("");
   const [policyName, setPolicyName] = useState<string>("");
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
 
@@ -80,13 +75,12 @@ const AddPolicy = ({
       })
       .then((res) => {
         setAddLoading(false);
-        setAddError("");
 
         closeModalAndRefresh(true);
       })
       .catch((err) => {
         setAddLoading(false);
-        setAddError(err);
+        setModalErrorSnackMessage(err);
       });
   };
 
@@ -110,7 +104,6 @@ const AddPolicy = ({
     <ModalWrapper
       modalOpen={open}
       onClose={() => {
-        setAddError("");
         closeModalAndRefresh(false);
       }}
       title={`${policyEdit ? "Info" : "Create"} Policy`}
@@ -124,11 +117,6 @@ const AddPolicy = ({
       >
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
-            {addError !== "" && (
-              <Grid item xs={12}>
-                <ErrorBlock errorMessage={addError} />
-              </Grid>
-            )}
             <Grid item xs={12}>
               <InputBoxWrapper
                 id="policy-name"
@@ -187,4 +175,10 @@ const AddPolicy = ({
   );
 };
 
-export default withStyles(styles)(AddPolicy);
+const mapDispatchToProps = {
+  setModalErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default withStyles(styles)(connector(AddPolicy));

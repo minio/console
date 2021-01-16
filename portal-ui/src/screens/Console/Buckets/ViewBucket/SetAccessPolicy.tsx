@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -13,15 +13,17 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import React, { useEffect, useState } from "react";
-import Grid from "@material-ui/core/Grid";
+import { connect } from "react-redux";
 import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import { setModalErrorSnackMessage } from "../../../../actions";
 import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import ErrorBlock from "../../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -34,6 +36,7 @@ interface ISetAccessPolicyProps {
   bucketName: string;
   actualPolicy: string;
   closeModalAndRefresh: () => void;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const SetAccessPolicy = ({
@@ -42,9 +45,9 @@ const SetAccessPolicy = ({
   bucketName,
   actualPolicy,
   closeModalAndRefresh,
+  setModalErrorSnackMessage,
 }: ISetAccessPolicyProps) => {
   const [addLoading, setAddLoading] = useState<boolean>(false);
-  const [addError, setAddError] = useState<string>("");
   const [accessPolicy, setAccessPolicy] = useState<string>("");
   const addRecord = (event: React.FormEvent) => {
     event.preventDefault();
@@ -58,12 +61,11 @@ const SetAccessPolicy = ({
       })
       .then((res) => {
         setAddLoading(false);
-        setAddError("");
         closeModalAndRefresh();
       })
       .catch((err) => {
         setAddLoading(false);
-        setAddError(err);
+        setModalErrorSnackMessage(err);
       });
   };
 
@@ -76,7 +78,6 @@ const SetAccessPolicy = ({
       title="Change Access Policy"
       modalOpen={open}
       onClose={() => {
-        setAddError("");
         closeModalAndRefresh();
       }}
     >
@@ -89,11 +90,6 @@ const SetAccessPolicy = ({
       >
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
-            {addError !== "" && (
-              <Grid item xs={12}>
-                <ErrorBlock errorMessage={addError} withBreak={false} />
-              </Grid>
-            )}
             <Grid item xs={12}>
               <SelectWrapper
                 value={accessPolicy}
@@ -132,4 +128,8 @@ const SetAccessPolicy = ({
   );
 };
 
-export default withStyles(styles)(SetAccessPolicy);
+const connector = connect(null, {
+  setModalErrorSnackMessage,
+});
+
+export default withStyles(styles)(connector(SetAccessPolicy));

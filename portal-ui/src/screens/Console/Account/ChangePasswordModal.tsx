@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import Grid from "@material-ui/core/Grid";
@@ -27,7 +28,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { ChangePasswordRequest } from "../Buckets/types";
 import api from "../../../common/api";
-import ErrorBlock from "../../shared/ErrorBlock";
+import { setModalErrorSnackMessage } from "../../../actions";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -43,24 +44,25 @@ interface IChangePasswordProps {
   classes: any;
   open: boolean;
   closeModal: () => void;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const ChangePassword = ({
   classes,
   open,
   closeModal,
+  setModalErrorSnackMessage,
 }: IChangePasswordProps) => {
   const [currentPassword, setCurrentPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [reNewPassword, setReNewPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
 
   const changePassword = (event: React.FormEvent) => {
     event.preventDefault();
 
     if (newPassword !== reNewPassword) {
-      setError("New passwords don't match");
+      setModalErrorSnackMessage("New passwords don't match");
       return;
     }
 
@@ -78,7 +80,6 @@ const ChangePassword = ({
       .invoke("POST", "/api/v1/account/change-password", request)
       .then((res) => {
         setLoading(false);
-        setError("");
         setNewPassword("");
         setReNewPassword("");
         setCurrentPassword("");
@@ -89,7 +90,7 @@ const ChangePassword = ({
         setNewPassword("");
         setReNewPassword("");
         setCurrentPassword("");
-        setError(err);
+        setModalErrorSnackMessage(err);
       });
   };
 
@@ -115,11 +116,6 @@ const ChangePassword = ({
       >
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
-            {error !== "" && (
-              <Grid item xs={12}>
-                <ErrorBlock errorMessage={error} />
-              </Grid>
-            )}
             <Grid item xs={12}>
               <InputBoxWrapper
                 id="current-password"
@@ -185,4 +181,8 @@ const ChangePassword = ({
   ) : null;
 };
 
-export default withStyles(styles)(ChangePassword);
+const connector = connect(null, {
+  setModalErrorSnackMessage,
+});
+
+export default withStyles(styles)(connector(ChangePassword));

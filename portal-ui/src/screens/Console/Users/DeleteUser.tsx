@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
+import { connect } from "react-redux";
 import {
   Button,
   Dialog,
@@ -26,21 +27,22 @@ import {
 } from "@material-ui/core";
 import api from "../../../common/api";
 import { User, UsersList } from "./types";
-import ErrorBlock from "../../shared/ErrorBlock";
+import { setErrorSnackMessage } from "../../../actions";
 
 interface IDeleteUserProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedUser: User | null;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const DeleteUser = ({
   closeDeleteModalAndRefresh,
   deleteOpen,
   selectedUser,
+  setErrorSnackMessage,
 }: IDeleteUserProps) => {
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
-  const [deleteError, setDeleteError] = useState<string>("");
 
   const removeRecord = () => {
     if (deleteLoading) {
@@ -56,12 +58,11 @@ const DeleteUser = ({
       })
       .then((res: UsersList) => {
         setDeleteLoading(false);
-        setDeleteError("");
         closeDeleteModalAndRefresh(true);
       })
       .catch((err) => {
         setDeleteLoading(false);
-        setDeleteError(err);
+        setErrorSnackMessage(err);
       });
   };
 
@@ -73,7 +74,6 @@ const DeleteUser = ({
     <Dialog
       open={deleteOpen}
       onClose={() => {
-        setDeleteError("");
         closeDeleteModalAndRefresh(false);
       }}
       aria-labelledby="alert-dialog-title"
@@ -84,13 +84,11 @@ const DeleteUser = ({
         {deleteLoading && <LinearProgress />}
         <DialogContentText id="alert-dialog-description">
           Are you sure you want to delete user <b>{selectedUser.accessKey}</b>?
-          {deleteError !== "" && <ErrorBlock errorMessage={deleteError} />}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button
           onClick={() => {
-            setDeleteError("");
             closeDeleteModalAndRefresh(false);
           }}
           color="primary"
@@ -112,4 +110,10 @@ const DeleteUser = ({
   );
 };
 
-export default DeleteUser;
+const mapDispatchToProps = {
+  setErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default connector(DeleteUser);

@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -405,5 +405,50 @@ export const tooltipCommon = {
     color: "#9c9c9c",
     textAlign: "center" as const,
     marginBottom: 6,
+  },
+};
+
+export const snackBarCommon = {
+  snackBar: {
+    backgroundColor: "#081F44",
+    fontWeight: 400,
+    fontFamily: "Lato, sans-serif",
+    fontSize: 14,
+    padding: "0px 20px 0px 20px;",
+    boxShadow: "none" as const,
+    "&.MuiPaper-root.MuiSnackbarContent-root": {
+      borderRadius: "0px 0px 5px 5px",
+    },
+    "& div": {
+      textAlign: "center" as const,
+      padding: "6px 30px",
+      width: "100%",
+      overflowX: "hidden",
+      textOverflow: "ellipsis",
+    },
+  },
+  errorSnackBar: {
+    backgroundColor: "#C72C48",
+    color: "#fff",
+  },
+  snackBarExternal: {
+    top: "-17px",
+    position: "absolute" as const,
+    minWidth: "348px",
+    whiteSpace: "nowrap" as const,
+    height: "33px",
+  },
+  snackDiv: {
+    top: "17px",
+    left: "50%",
+    position: "absolute" as const,
+  },
+  snackBarModal: {
+    top: 0,
+    position: "absolute" as const,
+    minWidth: "348px",
+    whiteSpace: "nowrap" as const,
+    height: "33px",
+    maxWidth: "calc(100% - 140px)",
   },
 };

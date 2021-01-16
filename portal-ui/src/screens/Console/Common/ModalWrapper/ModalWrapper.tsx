@@ -13,10 +13,16 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React from "react";
-import { Dialog, DialogContent, DialogTitle } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import IconButton from "@material-ui/core/IconButton";
+import Snackbar from "@material-ui/core/Snackbar";
+import { Dialog, DialogContent, DialogTitle } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { snackBarCommon } from "../FormComponents/common/styleLibrary";
+import { AppState } from "../../../../store";
+import { snackBarMessage } from "../../../../types";
+import { setModalSnackMessage } from "../../../../actions";
 
 interface IModalProps {
   classes: any;
@@ -25,6 +31,8 @@ interface IModalProps {
   title: string;
   children: any;
   wideLimit?: boolean;
+  modalSnackMessage?: snackBarMessage;
+  setModalSnackMessage: typeof setModalSnackMessage;
 }
 
 const baseCloseLine = {
@@ -95,6 +103,7 @@ const styles = (theme: Theme) =>
       width: "100%",
       maxWidth: 765,
     },
+    ...snackBarCommon,
   });
 
 const ModalWrapper = ({
@@ -104,7 +113,27 @@ const ModalWrapper = ({
   children,
   classes,
   wideLimit = true,
+  modalSnackMessage,
+  setModalSnackMessage,
 }: IModalProps) => {
+  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (modalSnackMessage) {
+      if (modalSnackMessage.message === "") {
+        setOpenSnackbar(false);
+        return;
+      }
+      // Open SnackBar
+      setOpenSnackbar(true);
+    }
+  }, [modalSnackMessage]);
+
+  const closeSnackBar = () => {
+    setOpenSnackbar(false);
+    setModalSnackMessage("");
+  };
+
   const customSize = wideLimit
     ? {
         classes: {
@@ -112,6 +141,7 @@ const ModalWrapper = ({
         },
       }
     : { maxWidth: "md" as const, fullWidth: true };
+
   return (
     <Dialog
       open={modalOpen}
@@ -121,6 +151,26 @@ const ModalWrapper = ({
       {...customSize}
     >
       <div className={classes.dialogContainer}>
+        <Snackbar
+          open={openSnackbar}
+          className={classes.snackBarModal}
+          onClose={() => {
+            closeSnackBar();
+          }}
+          message={modalSnackMessage ? modalSnackMessage.message : ""}
+          ContentProps={{
+            className: `${classes.snackBar} ${
+              modalSnackMessage && modalSnackMessage.type === "error"
+                ? classes.errorSnackBar
+                : ""
+            }`,
+          }}
+          autoHideDuration={
+            modalSnackMessage && modalSnackMessage.type === "error"
+              ? 10000
+              : 5000
+          }
+        />
         <div className={classes.closeContainer}>
           <IconButton
             aria-label="close"
@@ -142,4 +192,12 @@ const ModalWrapper = ({
   );
 };
 
-export default withStyles(styles)(ModalWrapper);
+const mapState = (state: AppState) => ({
+  modalSnackMessage: state.system.modalSnackBar,
+});
+
+const connector = connect(mapState, {
+  setModalSnackMessage,
+});
+
+export default withStyles(styles)(connector(ModalWrapper));

@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -33,6 +33,8 @@ import {
   setSnackBarMessage,
 } from "../../actions";
 import { ISessionResponse } from "./types";
+import { snackBarMessage } from "../../types";
+import { snackBarCommon } from "./Common/FormComponents/common/styleLibrary";
 import Buckets from "./Buckets/Buckets";
 import Policies from "./Policies/Policies";
 import Dashboard from "./Dashboard/Dashboard";
@@ -61,7 +63,8 @@ const styles = (theme: Theme) =>
     root: {
       display: "flex",
       "& .MuiPaper-root.MuiSnackbarContent-root": {
-        borderRadius: "0px 0px 15px 15px",
+        borderRadius: "0px 0px 5px 5px",
+        boxShadow: "none",
       },
     },
     toolbar: {
@@ -153,34 +156,11 @@ const styles = (theme: Theme) =>
       lineHeight: "60px",
       textAlign: "center",
     },
-    snackBar: {
-      backgroundColor: "#081F44",
-      fontWeight: "bold",
-      fontFamily: "Lato, sans-serif",
-      fontSize: 14,
-      padding: "0px 20px 0px 20px;",
-
-      "& div": {
-        textAlign: "center",
-        padding: "6px 30px",
-      },
-    },
-    snackBarExternal: {
-      top: "-17px",
-      position: "absolute",
-      minWidth: "348px",
-      whiteSpace: "nowrap",
-      height: "33px",
-    },
-    snackDiv: {
-      top: "17px",
-      left: "50%",
-      position: "absolute",
-    },
     progress: {
       height: "3px",
       backgroundColor: "#eaeaea",
     },
+    ...snackBarCommon,
   });
 
 interface IConsoleProps {
@@ -194,7 +174,7 @@ interface IConsoleProps {
   serverIsLoading: typeof serverIsLoading;
   session: ISessionResponse;
   loadingProgress: number;
-  snackBarMessage: string;
+  snackBarMessage: snackBarMessage;
   setSnackBarMessage: typeof setSnackBarMessage;
 }
 
@@ -330,7 +310,7 @@ const Console = ({
   };
 
   useEffect(() => {
-    if (snackBarMessage === "") {
+    if (snackBarMessage.message === "") {
       setOpenSnackbar(false);
       return;
     }
@@ -394,11 +374,17 @@ const Console = ({
                 onClose={() => {
                   closeSnackBar();
                 }}
-                message={snackBarMessage}
-                autoHideDuration={5000}
+                autoHideDuration={
+                  snackBarMessage.type === "error" ? 10000 : 5000
+                }
+                message={snackBarMessage.message}
                 className={classes.snackBarExternal}
                 ContentProps={{
-                  className: classes.snackBar,
+                  className: `${classes.snackBar} ${
+                    snackBarMessage.type === "error"
+                      ? classes.errorSnackBar
+                      : ""
+                  }`,
                 }}
               />
             </div>
@@ -432,7 +418,7 @@ const mapState = (state: AppState) => ({
   isServerLoading: state.system.serverIsLoading,
   session: state.console.session,
   loadingProgress: state.system.loadingProgress,
-  snackBarMessage: state.system.snackBarMessage,
+  snackBarMessage: state.system.snackBar,
 });
 
 const connector = connect(mapState, {

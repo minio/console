@@ -1,5 +1,5 @@
-// This file is part of MinIO Kubernetes Cloud
-// Copyright (c) 2020 MinIO, Inc.
+// This file is part of MinIO Console Server
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,29 +14,32 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { LinearProgress } from "@material-ui/core";
+import get from "lodash/get";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import TextField from "@material-ui/core/TextField";
-import api from "../../../common/api";
+
 import { stringSort } from "../../../utils/sortFunctions";
 import { GroupsList } from "../Groups/types";
-import get from "lodash/get";
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import {
   actionsTray,
   selectorsCommon,
 } from "../Common/FormComponents/common/styleLibrary";
-import ErrorBlock from "../../shared/ErrorBlock";
+import { setModalErrorSnackMessage } from "../../../actions";
+import api from "../../../common/api";
+import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
 interface IGroupsProps {
   classes: any;
   selectedGroups: string[];
   setSelectedGroups: any;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -109,12 +112,30 @@ const GroupsSelectors = ({
   classes,
   selectedGroups,
   setSelectedGroups,
+  setModalErrorSnackMessage,
 }: IGroupsProps) => {
   // Local State
   const [records, setRecords] = useState<any[]>([]);
   const [loading, isLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
   const [filter, setFilter] = useState<string>("");
+
+  const fetchGroups = useCallback(() => {
+    api
+      .invoke("GET", `/api/v1/groups`)
+      .then((res: GroupsList) => {
+        let groups = get(res, "groups", []);
+
+        if (!groups) {
+          groups = [];
+        }
+        setRecords(groups.sort(stringSort));
+        isLoading(false);
+      })
+      .catch((err) => {
+        setModalErrorSnackMessage(err);
+        isLoading(false);
+      });
+  }, [setModalErrorSnackMessage]);
 
   //Effects
   useEffect(() => {
@@ -125,28 +146,9 @@ const GroupsSelectors = ({
     if (loading) {
       fetchGroups();
     }
-  }, [loading]);
+  }, [loading, fetchGroups]);
 
   const selGroups = !selectedGroups ? [] : selectedGroups;
-
-  const fetchGroups = () => {
-    api
-      .invoke("GET", `/api/v1/groups`)
-      .then((res: GroupsList) => {
-        let groups = get(res, "groups", []);
-
-        if (!groups) {
-          groups = [];
-        }
-        setRecords(groups.sort(stringSort));
-        setError("");
-        isLoading(false);
-      })
-      .catch((err) => {
-        setError(err);
-        isLoading(false);
-      });
-  };
 
   const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     const targetD = e.target;
@@ -176,9 +178,6 @@ const GroupsSelectors = ({
       <Grid item xs={12}>
         <Paper className={classes.paper}>
           {loading && <LinearProgress />}
-          {error !== "" && (
-            <ErrorBlock errorMessage={error} withBreak={false} />
-          )}
           {records != null && records.length > 0 ? (
             <React.Fragment>
               <Grid item xs={12} className={classes.actionsTray}>
@@ -222,4 +221,10 @@ const GroupsSelectors = ({
   );
 };
 
-export default withStyles(styles)(GroupsSelectors);
+const mapDispatchToProps = {
+  setModalErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default withStyles(styles)(connector(GroupsSelectors));

@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState, Fragment } from "react";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { TextField } from "@material-ui/core";
 import { red } from "@material-ui/core/colors";
@@ -30,23 +31,23 @@ import {
 } from "./types";
 import { notificationTransform } from "./utils";
 import { CreateIcon } from "../../../../icons";
-import api from "../../../../common/api";
-
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import AddNotificationEndpoint from "./AddNotificationEndpoint";
+import { setErrorSnackMessage } from "../../../../actions";
 import {
   actionsTray,
   containerForHeader,
   searchField,
   settingsCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
+import api from "../../../../common/api";
 import SlideOptions from "../../Common/SlideOptions/SlideOptions";
 import BackSettingsIcon from "../../../../icons/BackSettingsIcon";
 import NotificationTypeSelector from "./NotificationTypeSelector";
-import ErrorBlock from "../../../shared/ErrorBlock";
 
 interface IListNotificationEndpoints {
   classes: any;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -80,11 +81,13 @@ const styles = (theme: Theme) =>
     },
   });
 
-const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
+const ListNotificationEndpoints = ({
+  classes,
+  setErrorSnackMessage,
+}: IListNotificationEndpoints) => {
   //Local States
   const [records, setRecords] = useState<TransformedEndpointItem[]>([]);
   const [filter, setFilter] = useState<string>("");
-  const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [currentPanel, setCurrentPanel] = useState<number>(0);
   const [service, setService] = useState<string>("");
@@ -102,41 +105,26 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
               resNotEndList = res.notification_endpoints;
             }
             setRecords(notificationTransform(resNotEndList));
-            setError("");
             setIsLoading(false);
           })
           .catch((err) => {
-            setError(err);
+            setErrorSnackMessage(err);
             setIsLoading(false);
           });
       };
       fetchRecords();
     }
-  }, [isLoading]);
+  }, [isLoading, setErrorSnackMessage]);
 
   useEffect(() => {
     setIsLoading(true);
   }, []);
 
-  const tableActions = [
-    {
-      type: "delete",
-      onClick: (row: any) => {
-        //confirmDeleteBucket(row.name);
-      },
-    },
-  ];
-
   const filteredRecords = records.filter((b: TransformedEndpointItem) => {
     if (filter === "") {
       return true;
-    } else {
-      if (b.service_name.indexOf(filter) >= 0) {
-        return true;
-      } else {
-        return false;
-      }
     }
+    return b.service_name.indexOf(filter) >= 0;
   });
 
   const statusDisplay = (status: string) => {
@@ -184,11 +172,6 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
                     </Grid>
 
                     <Grid item xs={12} className={classes.lambdaContainer}>
-                      {error !== "" && (
-                        <Grid container>
-                          <ErrorBlock errorMessage={error} withBreak={false} />
-                        </Grid>
-                      )}
                       <Grid item xs={12} className={classes.actionsTray}>
                         <TextField
                           placeholder="Filter"
@@ -221,7 +204,7 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
                       </Grid>
                       <Grid item xs={12}>
                         <TableWrapper
-                          itemActions={tableActions}
+                          itemActions={[]}
                           columns={[
                             {
                               label: "Status",
@@ -288,4 +271,10 @@ const ListNotificationEndpoints = ({ classes }: IListNotificationEndpoints) => {
   );
 };
 
-export default withStyles(styles)(ListNotificationEndpoints);
+const mapDispatchToProps = {
+  setErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default withStyles(styles)(connector(ListNotificationEndpoints));

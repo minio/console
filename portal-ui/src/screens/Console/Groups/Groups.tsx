@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
@@ -22,24 +23,25 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import { Button } from "@material-ui/core";
 import { CreateIcon } from "../../../icons";
-import api from "../../../common/api";
+import { setErrorSnackMessage } from "../../../actions";
 import { GroupsList } from "./types";
 import { stringSort } from "../../../utils/sortFunctions";
-import AddGroup from "../Groups/AddGroup";
-import DeleteGroup from "./DeleteGroup";
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import SetPolicy from "../Policies/SetPolicy";
 import {
   actionsTray,
   containerForHeader,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
+import api from "../../../common/api";
+import AddGroup from "../Groups/AddGroup";
+import DeleteGroup from "./DeleteGroup";
+import TableWrapper from "../Common/TableWrapper/TableWrapper";
+import SetPolicy from "../Policies/SetPolicy";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import ErrorBlock from "../../shared/ErrorBlock";
 
 interface IGroupsProps {
   classes: any;
   openGroupModal: any;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -79,13 +81,12 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const Groups = ({ classes }: IGroupsProps) => {
+const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
   const [addGroupOpen, setGroupOpen] = useState<boolean>(false);
   const [selectedGroup, setSelectedGroup] = useState<any>(null);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [loading, isLoading] = useState<boolean>(false);
   const [records, setRecords] = useState<any[]>([]);
-  const [error, setError] = useState<string>("");
   const [filter, setFilter] = useState<string>("");
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
 
@@ -108,17 +109,16 @@ const Groups = ({ classes }: IGroupsProps) => {
               resGroups = res.groups.sort(stringSort);
             }
             setRecords(resGroups);
-            setError("");
             isLoading(false);
           })
           .catch((err) => {
-            setError(err);
+            setErrorSnackMessage(err);
             isLoading(false);
           });
       };
       fetchRecords();
     }
-  }, [loading]);
+  }, [loading, setErrorSnackMessage]);
 
   const closeAddModalAndRefresh = () => {
     setGroupOpen(false);
@@ -187,11 +187,6 @@ const Groups = ({ classes }: IGroupsProps) => {
       <PageHeader label={"Groups"} />
       <Grid container>
         <Grid item xs={12} className={classes.container}>
-          {error !== "" && (
-            <Grid container>
-              <ErrorBlock errorMessage={error} withBreak={false} />
-            </Grid>
-          )}
           <Grid item xs={12} className={classes.actionsTray}>
             <TextField
               placeholder="Search Groups"
@@ -242,4 +237,10 @@ const Groups = ({ classes }: IGroupsProps) => {
   );
 };
 
-export default withStyles(styles)(Groups);
+const mapDispatchToProps = {
+  setErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default withStyles(styles)(connector(Groups));

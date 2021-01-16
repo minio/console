@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../common/api";
 import { Button, Grid, InputAdornment, TextField } from "@material-ui/core";
@@ -23,18 +24,18 @@ import GroupIcon from "@material-ui/icons/Group";
 import { User, UsersList } from "./types";
 import { usersSort } from "../../../utils/sortFunctions";
 import { CreateIcon } from "../../../icons";
-import AddUser from "./AddUser";
-import DeleteUser from "./DeleteUser";
-import AddToGroup from "./AddToGroup";
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import SetPolicy from "../Policies/SetPolicy";
 import {
   actionsTray,
   containerForHeader,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
+import { setErrorSnackMessage } from "../../../actions";
+import AddUser from "./AddUser";
+import DeleteUser from "./DeleteUser";
+import AddToGroup from "./AddToGroup";
+import TableWrapper from "../Common/TableWrapper/TableWrapper";
+import SetPolicy from "../Policies/SetPolicy";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import ErrorBlock from "../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -75,26 +76,12 @@ const styles = (theme: Theme) =>
 
 interface IUsersProps {
   classes: any;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
-interface IUsersState {
-  records: User[];
-  loading: boolean;
-  error: string;
-  deleteError: string;
-  addScreenOpen: boolean;
-  deleteOpen: boolean;
-  selectedUser: User | null;
-  addGroupOpen: boolean;
-  filter: string;
-  checkedUsers: string[];
-  setPolicyOpen: boolean;
-}
-
-const Users = ({ classes }: IUsersProps) => {
+const Users = ({ classes, setErrorSnackMessage }: IUsersProps) => {
   const [records, setRecords] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -103,7 +90,7 @@ const Users = ({ classes }: IUsersProps) => {
   const [checkedUsers, setCheckedUsers] = useState<string[]>([]);
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
 
-  const fetchRecords = () => {
+  const fetchRecords = useCallback(() => {
     setLoading(true);
     api
       .invoke("GET", `/api/v1/users`)
@@ -111,14 +98,13 @@ const Users = ({ classes }: IUsersProps) => {
         const users = res.users === null ? [] : res.users;
 
         setLoading(false);
-        setError("");
         setRecords(users.sort(usersSort));
       })
       .catch((err) => {
         setLoading(false);
-        setError(err);
+        setErrorSnackMessage(err);
       });
-  };
+  }, [setLoading, setRecords, setErrorSnackMessage]);
 
   const closeAddModalAndRefresh = () => {
     setAddScreenOpen(false);
@@ -141,7 +127,7 @@ const Users = ({ classes }: IUsersProps) => {
 
   useEffect(() => {
     fetchRecords();
-  }, []);
+  }, [fetchRecords]);
 
   const filteredRecords = records.filter((elementItem) =>
     elementItem.accessKey.includes(filter)
@@ -230,11 +216,6 @@ const Users = ({ classes }: IUsersProps) => {
       )}
       <PageHeader label={"Users"} />
       <Grid container>
-        {error !== "" && (
-          <Grid item xs={12}>
-            <ErrorBlock errorMessage={error} />
-          </Grid>
-        )}
         <Grid item xs={12} className={classes.container}>
           <Grid item xs={12} className={classes.actionsTray}>
             <TextField
@@ -301,4 +282,10 @@ const Users = ({ classes }: IUsersProps) => {
   );
 };
 
-export default withStyles(styles)(Users);
+const mapDispatchToProps = {
+  setErrorSnackMessage,
+};
+
+const connector = connect(null, mapDispatchToProps);
+
+export default withStyles(styles)(connector(Users));

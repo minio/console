@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,15 +15,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
+import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import api from "../../../../common/api";
+import { setModalErrorSnackMessage } from "../../../../actions";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import ErrorBlock from "../../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -46,6 +47,7 @@ interface IEnableBucketEncryptionProps {
   open: boolean;
   selectedBucket: string;
   closeModalAndRefresh: () => void;
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
 const EnableBucketEncryption = ({
@@ -53,9 +55,9 @@ const EnableBucketEncryption = ({
   open,
   selectedBucket,
   closeModalAndRefresh,
+  setModalErrorSnackMessage,
 }: IEnableBucketEncryptionProps) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [encryptionError, setEncryptionError] = useState<string>("");
   const [kmsKeyID, setKmsKeyID] = useState<string>("");
   const [encryptionType, setEncryptionType] = useState<string>("sse-s3");
 
@@ -71,13 +73,11 @@ const EnableBucketEncryption = ({
       })
       .then(() => {
         setLoading(false);
-        setEncryptionError("");
-
         closeModalAndRefresh();
       })
       .catch((err: any) => {
         setLoading(false);
-        setEncryptionError(err);
+        setModalErrorSnackMessage(err);
       });
   };
 
@@ -85,7 +85,6 @@ const EnableBucketEncryption = ({
     <ModalWrapper
       modalOpen={open}
       onClose={() => {
-        setEncryptionError("");
         closeModalAndRefresh();
       }}
       title="Enable Bucket Encryption"
@@ -99,11 +98,6 @@ const EnableBucketEncryption = ({
       >
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
-            {encryptionError !== "" && (
-              <Grid item xs={12}>
-                <ErrorBlock errorMessage={encryptionError} withBreak={false} />
-              </Grid>
-            )}
             <Grid item xs={12}>
               <SelectWrapper
                 onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
@@ -166,4 +160,8 @@ const EnableBucketEncryption = ({
   );
 };
 
-export default withStyles(styles)(EnableBucketEncryption);
+const connector = connect(null, {
+  setModalErrorSnackMessage,
+});
+
+export default withStyles(styles)(connector(EnableBucketEncryption));

@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,33 +15,35 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import { Button, IconButton } from "@material-ui/core";
-import { CreateIcon } from "../../../../icons";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import api from "../../../../common/api";
 import { ITenant, ITenantsResponse } from "./types";
 import { niceBytes } from "../../../../common/utils";
-import DeleteTenant from "./DeleteTenant";
-import AddTenant from "./AddTenant";
 import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
-import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
-import history from "../../../../history";
-import RefreshIcon from "@material-ui/icons/Refresh";
 import {
   actionsTray,
   containerForHeader,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
+import { setErrorSnackMessage } from "../../../../actions";
+import { CreateIcon } from "../../../../icons";
+import api from "../../../../common/api";
+import TableWrapper from "../../Common/TableWrapper/TableWrapper";
+import DeleteTenant from "./DeleteTenant";
+import AddTenant from "./AddTenant";
+import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
+import history from "../../../../history";
+import RefreshIcon from "@material-ui/icons/Refresh";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import ErrorBlock from "../../../shared/ErrorBlock";
 
 interface ITenantsList {
   classes: any;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -76,14 +78,13 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const ListTenants = ({ classes }: ITenantsList) => {
+const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
   const [createTenantOpen, setCreateTenantOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedTenant, setSelectedTenant] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [filterTenants, setFilterTenants] = useState<string>("");
   const [records, setRecords] = useState<any[]>([]);
-  const [error, setError] = useState<string>("");
   const [showNewCredentials, setShowNewCredentials] = useState<boolean>(false);
   const [
     createdAccount,
@@ -166,17 +167,16 @@ const ListTenants = ({ classes }: ITenantsList) => {
             }
 
             setRecords(resTenants);
-            setError("");
             setIsLoading(false);
           })
           .catch((err) => {
-            setError(err);
+            setErrorSnackMessage(err);
             setIsLoading(false);
           });
       };
       fetchRecords();
     }
-  }, [isLoading]);
+  }, [isLoading, setErrorSnackMessage]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -249,11 +249,6 @@ const ListTenants = ({ classes }: ITenantsList) => {
               Create Tenant
             </Button>
           </Grid>
-          {error !== "" && (
-            <Grid item xs={12}>
-              <ErrorBlock errorMessage={error} withBreak={false} />
-            </Grid>
-          )}
           <Grid item xs={12}>
             <br />
           </Grid>
@@ -278,4 +273,8 @@ const ListTenants = ({ classes }: ITenantsList) => {
   );
 };
 
-export default withStyles(styles)(ListTenants);
+const connector = connect(null, {
+  setErrorSnackMessage,
+});
+
+export default withStyles(styles)(connector(ListTenants));

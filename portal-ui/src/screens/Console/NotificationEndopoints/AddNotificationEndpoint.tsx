@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -16,16 +16,11 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import get from "lodash/get";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
-import ConfPostgres from "../Configurations/CustomForms/ConfPostgres";
-import api from "../../../common/api";
-import { serverNeedsRestart } from "../../../actions";
-import { connect } from "react-redux";
-import ConfMySql from "../Configurations/CustomForms/ConfMySql";
-import ConfTargetGeneric from "../Configurations/ConfTargetGeneric";
+import { serverNeedsRestart, setErrorSnackMessage } from "../../../actions";
 import {
   notificationEndpointsFields,
   notifyPostgres,
@@ -42,7 +37,11 @@ import {
 } from "../Configurations/utils";
 import { IElementValue } from "../Configurations/types";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
-import ErrorBlock from "../../shared/ErrorBlock";
+import ConfMySql from "../Configurations/CustomForms/ConfMySql";
+import ConfTargetGeneric from "../Configurations/ConfTargetGeneric";
+import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
+import ConfPostgres from "../Configurations/CustomForms/ConfPostgres";
+import api from "../../../common/api";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -132,22 +131,22 @@ interface IAddNotificationEndpointProps {
   closeModalAndRefresh: any;
   serverNeedsRestart: typeof serverNeedsRestart;
   classes: any;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const AddNotificationEndpoint = ({
   open,
   closeModalAndRefresh,
   serverNeedsRestart,
+  setErrorSnackMessage,
   classes,
 }: IAddNotificationEndpointProps) => {
   //Local States
   const [service, setService] = useState<string>("");
   const [valuesArr, setValueArr] = useState<IElementValue[]>([]);
   const [saving, setSaving] = useState<boolean>(false);
-  const [addError, setError] = useState<string>("");
 
   //Effects
-
   useEffect(() => {
     if (saving) {
       const payload = {
@@ -157,17 +156,23 @@ const AddNotificationEndpoint = ({
         .invoke("PUT", `/api/v1/configs/${service}`, payload)
         .then((res) => {
           setSaving(false);
-          setError("");
           serverNeedsRestart(true);
 
           closeModalAndRefresh();
         })
         .catch((err) => {
           setSaving(false);
-          setError(err);
+          setErrorSnackMessage(err);
         });
     }
-  }, [saving, serverNeedsRestart, service, valuesArr, closeModalAndRefresh]);
+  }, [
+    saving,
+    serverNeedsRestart,
+    service,
+    valuesArr,
+    closeModalAndRefresh,
+    setErrorSnackMessage,
+  ]);
 
   //Fetch Actions
   const submitForm = (event: React.FormEvent) => {
@@ -320,11 +325,6 @@ const AddNotificationEndpoint = ({
       )}
       {service !== "" && (
         <React.Fragment>
-          {addError !== "" && (
-            <Grid item xs={12}>
-              <ErrorBlock errorMessage={addError} withBreak={false} />
-            </Grid>
-          )}
           <form noValidate onSubmit={submitForm}>
             <Grid item xs={12} className={classes.lambdaFormIndicator}>
               {targetElement && targetElement.logo !== "" && (
@@ -374,6 +374,6 @@ const AddNotificationEndpoint = ({
   );
 };
 
-const connector = connect(null, { serverNeedsRestart });
+const connector = connect(null, { serverNeedsRestart, setErrorSnackMessage });
 
 export default connector(withStyles(styles)(AddNotificationEndpoint));

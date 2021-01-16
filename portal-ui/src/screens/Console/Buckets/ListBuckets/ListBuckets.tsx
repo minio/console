@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,30 +15,30 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
 import { Button } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import Moment from "react-moment";
-import api from "../../../../common/api";
 import { Bucket, BucketList } from "../types";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import AddBucket from "./AddBucket";
-import DeleteBucket from "./DeleteBucket";
 import { CreateIcon } from "../../../../icons";
 import { niceBytes } from "../../../../common/utils";
 import { AppState } from "../../../../store";
-import { connect } from "react-redux";
 import { addBucketOpen, addBucketReset } from "../actions";
+import { setErrorSnackMessage } from "../../../../actions";
 import {
   actionsTray,
   containerForHeader,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
+import api from "../../../../common/api";
+import TableWrapper from "../../Common/TableWrapper/TableWrapper";
+import AddBucket from "./AddBucket";
+import DeleteBucket from "./DeleteBucket";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import ErrorBlock from "../../../shared/ErrorBlock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -77,6 +77,7 @@ interface IListBucketsProps {
   addBucketOpen: typeof addBucketOpen;
   addBucketModalOpen: boolean;
   addBucketReset: typeof addBucketReset;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 const ListBuckets = ({
@@ -84,10 +85,10 @@ const ListBuckets = ({
   addBucketOpen,
   addBucketModalOpen,
   addBucketReset,
+  setErrorSnackMessage,
 }: IListBucketsProps) => {
   const [records, setRecords] = useState<Bucket[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedBucket, setSelectedBucket] = useState<string>("");
   const [filterBuckets, setFilterBuckets] = useState<string>("");
@@ -101,16 +102,15 @@ const ListBuckets = ({
           .then((res: BucketList) => {
             setLoading(false);
             setRecords(res.buckets || []);
-            setError("");
           })
           .catch((err: any) => {
             setLoading(false);
-            setError(err);
+            setErrorSnackMessage(err);
           });
       };
       fetchRecords();
     }
-  }, [loading]);
+  }, [loading, setErrorSnackMessage]);
 
   const closeAddModalAndRefresh = (refresh: boolean) => {
     addBucketOpen(false);
@@ -127,14 +127,6 @@ const ListBuckets = ({
       setLoading(true);
     }
   };
-
-  useEffect(() => {
-    setLoading(true);
-  }, []);
-
-  useEffect(() => {
-    setLoading(true);
-  }, []);
 
   const confirmDeleteBucket = (bucket: string) => {
     setDeleteOpen(true);
@@ -181,11 +173,6 @@ const ListBuckets = ({
       )}
       <PageHeader label={"Buckets"} />
       <Grid container>
-        {error !== "" && (
-          <Grid item xs={12}>
-            <ErrorBlock errorMessage={error} withBreak={false} />
-          </Grid>
-        )}
         <Grid item xs={12} className={classes.container}>
           <Grid item xs={12} className={classes.actionsTray}>
             <TextField
@@ -254,8 +241,9 @@ const mapState = (state: AppState) => ({
 });
 
 const connector = connect(mapState, {
-  addBucketOpen: addBucketOpen,
-  addBucketReset: addBucketReset,
+  addBucketOpen,
+  addBucketReset,
+  setErrorSnackMessage,
 });
 
 export default connector(withStyles(styles)(ListBuckets));

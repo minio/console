@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment } from "react";
+import React, { useEffect, useState, Fragment, useCallback } from "react";
+import { connect } from "react-redux";
 import get from "lodash/get";
 import PrDashboard from "./Prometheus/PrDashboard";
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -25,9 +26,11 @@ import BasicDashboard from "./BasicDashboard/BasicDashboard";
 import { LinearProgress } from "@material-ui/core";
 import api from "../../../common/api";
 import { Usage } from "./types";
+import { setErrorSnackMessage } from "../../../actions";
 
 interface IDashboardSimple {
   classes: any;
+  displayErrorMessage: typeof setErrorSnackMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -35,30 +38,28 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const Dashboard = ({ classes }: IDashboardSimple) => {
+const Dashboard = ({ classes, displayErrorMessage }: IDashboardSimple) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [basicResult, setBasicResult] = useState<Usage | null>(null);
-  const [error, setError] = useState<string>("");
+
+  const fetchUsage = useCallback(() => {
+    api
+      .invoke("GET", `/api/v1/admin/info`)
+      .then((res: Usage) => {
+        setBasicResult(res);
+        setLoading(false);
+      })
+      .catch((err) => {
+        displayErrorMessage(err);
+        setLoading(false);
+      });
+  }, [setBasicResult, setLoading, displayErrorMessage]);
 
   useEffect(() => {
     if (loading) {
       fetchUsage();
     }
-  }, [loading]);
-
-  const fetchUsage = () => {
-    api
-      .invoke("GET", `/api/v1/admin/info`)
-      .then((res: Usage) => {
-        setBasicResult(res);
-        setError("");
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err);
-        setLoading(false);
-      });
-  };
+  }, [loading, fetchUsage]);
 
   const widgets = get(basicResult, "widgets", null);
 
@@ -75,7 +76,7 @@ const Dashboard = ({ classes }: IDashboardSimple) => {
             {widgets !== null ? (
               <PrDashboard />
             ) : (
-              <BasicDashboard usage={basicResult} error={error} />
+              <BasicDashboard usage={basicResult} />
             )}
           </Fragment>
         )}
@@ -84,4 +85,8 @@ const Dashboard = ({ classes }: IDashboardSimple) => {
   );
 };
 
-export default withStyles(styles)(Dashboard);
+const connector = connect(null, {
+  displayErrorMessage: setErrorSnackMessage,
+});
+
+export default withStyles(styles)(connector(Dashboard));
