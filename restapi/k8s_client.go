@@ -20,6 +20,7 @@ import (
 	"context"
 
 	v1 "k8s.io/api/core/v1"
+	storagev1 "k8s.io/api/storage/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 )
@@ -29,6 +30,8 @@ import (
 // that are used within this project.
 type K8sClientI interface {
 	getResourceQuota(ctx context.Context, namespace, resource string, opts metav1.GetOptions) (*v1.ResourceQuota, error)
+	getNamespace(ctx context.Context, name string, opts metav1.GetOptions) (*v1.Namespace, error)
+	getStorageClasses(ctx context.Context, opts metav1.ListOptions) (*storagev1.StorageClassList, error)
 	getSecret(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*v1.Secret, error)
 	getService(ctx context.Context, namespace, serviceName string, opts metav1.GetOptions) (*v1.Service, error)
 	deletePodCollection(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error
@@ -65,4 +68,12 @@ func (c *k8sClient) deleteSecret(ctx context.Context, namespace string, name str
 
 func (c *k8sClient) createSecret(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error) {
 	return c.client.CoreV1().Secrets(namespace).Create(ctx, secret, opts)
+}
+
+func (c *k8sClient) getNamespace(ctx context.Context, name string, opts metav1.GetOptions) (*v1.Namespace, error) {
+	return c.client.CoreV1().Namespaces().Get(ctx, name, opts)
+}
+
+func (c *k8sClient) getStorageClasses(ctx context.Context, opts metav1.ListOptions) (*storagev1.StorageClassList, error) {
+	return c.client.StorageV1().StorageClasses().List(ctx, opts)
 }

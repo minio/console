@@ -18,6 +18,9 @@ package restapi
 
 import (
 	"context"
+	"fmt"
+
+	"k8s.io/apimachinery/pkg/api/errors"
 
 	"github.com/minio/console/cluster"
 
@@ -43,6 +46,30 @@ func registerResourceQuotaHandlers(api *operations.ConsoleAPI) {
 func getResourceQuota(ctx context.Context, client K8sClientI, namespace, resourcequota string) (*models.ResourceQuota, error) {
 	resourceQuota, err := client.getResourceQuota(ctx, namespace, resourcequota, metav1.GetOptions{})
 	if err != nil {
+		// if there's no resource quotas
+		if errors.IsNotFound(err) {
+			// validate if at least the namespace is valid, if it is, return all storage classes with max capacity
+			_, err := client.getNamespace(ctx, namespace, metav1.GetOptions{})
+			if err != nil {
+				return nil, err
+			}
+			storageClasses, err := client.getStorageClasses(ctx, metav1.ListOptions{})
+			if err != nil {
+				return nil, err
+			}
+			rq := models.ResourceQuota{Name: resourceQuota.Name}
+			for _, sc := range storageClasses.Items {
+				// Create Resource element with hard limit maxed out
+				name := fmt.Sprintf("%s.storageclass.storage.k8s.io/requests.storage", sc.Name)
+				element := models.ResourceQuotaElement{
+					Name: name,
+					Hard: 9223372036854775807,
+				}
+				rq.Elements = append(rq.Elements, &element)
+			}
+			return &rq, nil
+		}
+
 		return nil, err
 	}
 	rq := models.ResourceQuota{Name: resourceQuota.Name}
@@ -78,7 +105,6 @@ func getResourceQuotaResponse(session *models.Principal, params admin_api.GetRes
 	resourceQuota, err := getResourceQuota(ctx, k8sClient, params.Namespace, params.ResourceQuotaName)
 	if err != nil {
 		return nil, prepareError(err)
-
 	}
 	return resourceQuota, nil
 }
