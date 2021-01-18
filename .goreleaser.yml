@@ -7,85 +7,69 @@ release:
    github:
     owner: minio
     name: console
+   extra_files:
+     - glob: "*.minisig"
 
 before:
   hooks:
     # you may remove this if you don't use vgo
     - go mod tidy
-    - docker build -f Dockerfile.assets -t consoleassets .
-    - docker create --name extract consoleassets
-    - docker cp extract:/app/bindata_assetfs.go ./portal-ui/
-    - docker rm extract
 
 builds:
   -
     goos:
-      - freebsd
-      - windows
       - linux
       - darwin
+      - windows
     goarch:
       - amd64
+      - ppc64le
+      - s390x
       - arm64
-
     ignore:
       - goos: darwin
         goarch: arm64
       - goos: darwin
         goarch: arm
-      - goos: darwin
-        goarch: ppc64le
-      - goos: darwin
-        goarch: s390x
       - goos: windows
         goarch: arm64
       - goos: windows
         goarch: arm
-      - goos: windows
-        goarch: ppc64le
-      - goos: windows
-        goarch: s390x
-      - goos: freebsd
-        goarch: arm
-      - goos: freebsd
-        goarch: arm64
-      - goos: freebsd
-        goarch: ppc64le
-      - goos: freebsd
-        goarch: s390x
 
     env:
       - CGO_ENABLED=0
+
     main: ./cmd/console/
+
     flags:
       - -trimpath
       - --tags=kqueue
+
     ldflags:
       - -s -w -X github.com/minio/console/pkg.ReleaseTag={{.Tag}} -X github.com/minio/console/pkg.CommitID={{.FullCommit}} -X github.com/minio/console/pkg.Version={{.Version}} -X github.com/minio/console/pkg.ShortCommitID={{.ShortCommit}} -X github.com/minio/console/pkg.ReleaseTime={{.Date}}
+
 archives:
   -
+    name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
+    format: binary
     replacements:
-      darwin: Darwin
-      linux: Linux
-      windows: Windows
-      freebsd: FreeBSD
-      amd64: x86_64
-    format_overrides:
-      - goos: windows
-        format: zip
-    files:
-      - README.md
-      - LICENSE
-checksum:
-  name_template: 'checksums.txt'
+      arm: arm
+
+signs:
+  -
+    signature: "${artifact}.minisig"
+    cmd: "sh"
+    args:
+      - '-c'
+      - 'minisign -s /media/${USER}/minio/minisign.key -Sm ${artifact} < /media/${USER}/minio/minisign-passphrase'
+    artifacts: all
+
 snapshot:
-  name_template: 'snapshot-{{ time "2006-01-02" }}'
+  name_template: v0.0.0@{{.ShortCommit}}
+
 changelog:
   sort: asc
-  filters:
-    exclude:
-      - '^docs:'
-      - '^test:'
+
 nfpms:
   -
     vendor: MinIO Inc.
@@ -96,18 +80,55 @@ nfpms:
     formats:
       - deb
       - rpm
-    replacements:
-      darwin: Darwin
-      linux: Linux
-      freebsd: FreeBSD
-      amd64: x86_64
+
 dockers:
-  -
-    # GOOS of the built binary that should be used.
-    goos: linux
-    # GOARCH of the built binary that should be used.
-    goarch: amd64
-    dockerfile: Dockerfile.release
-    image_templates:
-      - "minio/console:{{ .Tag }}"
-      - "minio/console:latest"
+- image_templates:
+  - "minio/console:{{ .Version }}-amd64"
+  use_buildx: true
+  dockerfile: Dockerfile.release
+  extra_files:
+    - LICENSE
+    - CREDITS
+  build_flag_templates:
+  - "--platform=linux/amd64"
+- image_templates:
+  - "minio/console:{{ .Version }}-ppc64le"
+  use_buildx: true
+  dockerfile: Dockerfile.release
+  extra_files:
+    - LICENSE
+    - CREDITS
+  build_flag_templates:
+  - "--platform=linux/ppc64le"
+- image_templates:
+  - "minio/console:{{ .Version }}-s390x"
+  use_buildx: true
+  dockerfile: Dockerfile.release
+  extra_files:
+    - LICENSE
+    - CREDITS
+  build_flag_templates:
+  - "--platform=linux/s390x"
+- image_templates:
+  - "minio/console:{{ .Version }}-arm64"
+  use_buildx: true
+  goarch: arm64
+  dockerfile: Dockerfile.release
+  extra_files:
+    - LICENSE
+    - CREDITS
+  build_flag_templates:
+  - "--platform=linux/arm64"
+docker_manifests:
+- name_template: minio/console:{{ .Version }}
+  image_templates:
+  - minio/console:{{ .Version }}-amd64
+  - minio/console:{{ .Version }}-arm64
+  - minio/console:{{ .Version }}-ppc64le
+  - minio/console:{{ .Version }}-s390x
+- name_template: minio/console:latest
+  image_templates:
+  - minio/console:{{ .Version }}-amd64
+  - minio/console:{{ .Version }}-arm64
+  - minio/console:{{ .Version }}-ppc64le
+  - minio/console:{{ .Version }}-s390x
