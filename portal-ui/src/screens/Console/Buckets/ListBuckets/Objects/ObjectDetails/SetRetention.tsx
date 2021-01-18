@@ -27,6 +27,7 @@ import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapp
 import RadioGroupSelector from "../../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import DateSelector from "../../../../Common/FormComponents/DateSelector/DateSelector";
 import api from "../../../../../../common/api";
+import { twoDigitDate } from "../../../../Common/FormComponents/DateSelector/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -74,6 +75,19 @@ const SetRetention = ({
   useEffect(() => {
     if (objectInfo.retention_mode) {
       setType(objectInfo.retention_mode.toLowerCase());
+      setAlreadyConfigured(true);
+    }
+    // get retention_until_date if defined
+    if (objectInfo.retention_until_date) {
+      const valueDate = new Date(objectInfo.retention_until_date);
+      if (valueDate.toString() !== "Invalid Date") {
+        const year = valueDate.getFullYear();
+        const month = twoDigitDate(valueDate.getMonth() + 1);
+        const day = valueDate.getDate();
+        if (!isNaN(day) && month !== "NaN" && !isNaN(year)) {
+          setDate(`${year}-${month}-${day}`);
+        }
+      }
       setAlreadyConfigured(true);
     }
   }, [objectInfo]);
@@ -217,10 +231,13 @@ const SetRetention = ({
             label="Date"
             disableOptions={dateFieldDisabled()}
             ref={dateElement}
+            value={date}
             borderBottom={true}
             onDateChange={(date: string, isValid: boolean) => {
               setIsDateValid(isValid);
-              setDate(date);
+              if (isValid) {
+                setDate(date);
+              }
             }}
           />
         </Grid>
