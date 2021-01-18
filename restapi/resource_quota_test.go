@@ -5,6 +5,8 @@ import (
 	"reflect"
 	"testing"
 
+	storagev1 "k8s.io/api/storage/v1"
+
 	"errors"
 
 	"github.com/minio/console/models"
@@ -16,10 +18,22 @@ import (
 type k8sClientMock struct{}
 
 var k8sclientGetResourceQuotaMock func(ctx context.Context, namespace, resource string, opts metav1.GetOptions) (*v1.ResourceQuota, error)
+var k8sclientGetNameSpaceMock func(ctx context.Context, name string, opts metav1.GetOptions) (*v1.Namespace, error)
+var k8sclientStorageClassesMock func(ctx context.Context, opts metav1.ListOptions) (*storagev1.StorageClassList, error)
 
 // mock functions
 func (c k8sClientMock) getResourceQuota(ctx context.Context, namespace, resource string, opts metav1.GetOptions) (*v1.ResourceQuota, error) {
 	return k8sclientGetResourceQuotaMock(ctx, namespace, resource, opts)
+}
+
+// mock functions
+func (c k8sClientMock) getNamespace(ctx context.Context, name string, opts metav1.GetOptions) (*v1.Namespace, error) {
+	return k8sclientGetNameSpaceMock(ctx, name, opts)
+}
+
+// mock functions
+func (c k8sClientMock) getStorageClasses(ctx context.Context, opts metav1.ListOptions) (*storagev1.StorageClassList, error) {
+	return k8sclientStorageClassesMock(ctx, opts)
 }
 
 func Test_ResourceQuota(t *testing.T) {
