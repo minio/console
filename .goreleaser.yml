@@ -3,7 +3,7 @@
 project_name: console
 
 release:
-   name_template: "Version {{.Version}}"
+   name_template: "Release version {{.Version}}"
    github:
     owner: minio
     name: console
@@ -83,7 +83,7 @@ nfpms:
 
 dockers:
 - image_templates:
-  - "minio/console:v{{ .Version }}-amd64"
+  - "minio/console:{{ .Tag }}-amd64"
   use_buildx: true
   dockerfile: Dockerfile.release
   extra_files:
@@ -92,7 +92,7 @@ dockers:
   build_flag_templates:
   - "--platform=linux/amd64"
 - image_templates:
-  - "minio/console:v{{ .Version }}-ppc64le"
+  - "minio/console:{{ .Tag }}-ppc64le"
   use_buildx: true
   dockerfile: Dockerfile.release
   extra_files:
@@ -101,7 +101,7 @@ dockers:
   build_flag_templates:
   - "--platform=linux/ppc64le"
 - image_templates:
-  - "minio/console:v{{ .Version }}-s390x"
+  - "minio/console:{{ .Tag }}-s390x"
   use_buildx: true
   dockerfile: Dockerfile.release
   extra_files:
@@ -110,7 +110,7 @@ dockers:
   build_flag_templates:
   - "--platform=linux/s390x"
 - image_templates:
-  - "minio/console:v{{ .Version }}-arm64"
+  - "minio/console:{{ .Tag }}-arm64"
   use_buildx: true
   goarch: arm64
   dockerfile: Dockerfile.release
@@ -120,15 +120,15 @@ dockers:
   build_flag_templates:
   - "--platform=linux/arm64"
 docker_manifests:
-- name_template: minio/console:v{{ .Version }}
+- name_template: minio/console:{{ .Tag }}
   image_templates:
-  - minio/console:{{ .Version }}-amd64
-  - minio/console:{{ .Version }}-arm64
-  - minio/console:{{ .Version }}-ppc64le
-  - minio/console:{{ .Version }}-s390x
+  - minio/console:{{ .Tag }}-amd64
+  - minio/console:{{ .Tag }}-arm64
+  - minio/console:{{ .Tag }}-ppc64le
+  - minio/console:{{ .Tag }}-s390x
 - name_template: minio/console:latest
   image_templates:
-  - minio/console:{{ .Version }}-amd64
-  - minio/console:{{ .Version }}-arm64
-  - minio/console:{{ .Version }}-ppc64le
-  - minio/console:{{ .Version }}-s390x
+  - minio/console:{{ .Tag }}-amd64
+  - minio/console:{{ .Tag }}-arm64
+  - minio/console:{{ .Tag }}-ppc64le
+  - minio/console:{{ .Tag }}-s390x
