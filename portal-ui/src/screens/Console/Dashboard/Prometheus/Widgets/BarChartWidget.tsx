@@ -20,7 +20,6 @@ import {
   BarChart,
   ResponsiveContainer,
   XAxis,
-  Text,
   YAxis,
   Tooltip,
 } from "recharts";
