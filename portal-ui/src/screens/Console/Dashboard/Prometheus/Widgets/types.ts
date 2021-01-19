@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -42,4 +42,9 @@ export interface ISinglePieConfiguration {
 
 export interface IDataSRep {
   value: number;
+}
+
+export interface IBarChartRelation {
+  originTag: string;
+  displayTag: string;
 }

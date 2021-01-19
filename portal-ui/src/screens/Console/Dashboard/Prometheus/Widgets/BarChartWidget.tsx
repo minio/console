@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -43,18 +43,16 @@ const styles = (theme: Theme) =>
 
 const CustomizedAxisTick = ({ x, y, payload }: any) => {
   return (
-    <g transform={`translate(${x},${y})`}>
-      <Text
-        width={50}
-        fontSize={"63%"}
-        textAnchor="end"
-        verticalAnchor="middle"
-        angle={0}
-        fill="#333"
-      >
-        {payload.value}
-      </Text>
-    </g>
+    <text
+      width={50}
+      fontSize={"63%"}
+      textAnchor="end"
+      fill="#333"
+      transform={`translate(${x},${y})`}
+      dy={3}
+    >
+      {payload.value}
+    </text>
   );
 };
 

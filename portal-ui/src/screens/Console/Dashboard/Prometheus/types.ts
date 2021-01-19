@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 
 import {
   IBarChartConfiguration,
+  IBarChartRelation,
   IDataSRep,
   ILinearGraphConfiguration,
   IPieChartConfiguration,
@@ -46,4 +47,5 @@ export interface IDashboardPanel {
   disableYAxis?: boolean;
   xAxisFormatter?: (item: string) => string;
   yAxisFormatter?: (item: string) => string;
+  customStructure?: IBarChartRelation[];
 }
