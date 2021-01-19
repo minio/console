@@ -2,27 +2,27 @@
 
 A graphical user interface for [MinIO](https://github.com/minio/minio)
 
-
 | Dashboard  | Creating a bucket |
 | ------------- | ------------- |
 | ![Dashboard](images/pic1.png)  | ![Dashboard](images/pic2.png) |
 
-## Setup
+### Setup
 
 All `console` needs is a MinIO user with admin privileges and URL pointing to your MinIO deployment.
 > Note: We don't recommend using MinIO's Operator Credentials
 
-1. Create a user for `console` using `mc`. 
+#### 1. Create a user `console` using `mc`
+
 ```bash
-$ set +o history
-$ mc admin user add myminio console YOURCONSOLESECRET
-$ set -o history
+mc admin user add myminio/
+Enter Access Key: console
+Enter Secret Key: xxxxxxxx
 ```
 
-2. Create a policy for `console` with access to everything (for testing and debugging)
+#### 2. Create a policy for `console` with admin access to all resources (for testing)
 
-```json
-$ cat > consoleAdmin.json << EOF
+```sh
+cat > admin.json << EOF
 {
 	"Version": "2012-10-17",
 	"Statement": [{
@@ -45,18 +45,20 @@ $ cat > consoleAdmin.json << EOF
 	]
 }
 EOF
-$ mc admin policy add myminio consoleAdmin consoleAdmin.json
 ```
 
-3. Set the policy for the new `console` user
-
-```
-$ mc admin policy set myminio consoleAdmin user=console
+```sh
+mc admin policy add myminio/ consoleAdmin admin.json
 ```
 
+#### 3. Set the policy for the new `console` user
 
-### Note
-Additionally, you can create policies to limit the privileges for `console` users, for example, if you want the user to only have access to dashboard, buckets, notifications and watch page, the policy should look like this:
+```sh
+mc admin policy set myminio consoleAdmin user=console
+```
+
+> NOTE: Additionally, you can create policies to limit the privileges for other `console` users, for example, if you want the user to only have access to dashboard, buckets, notifications and watch page, the policy should look like this:
+
 ```json
 {
 	"Version": "2012-10-17",
@@ -97,32 +99,41 @@ Additionally, you can create policies to limit the privileges for `console` user
 }
 ```
 
-## Run Console server
-To run the server:
+## Start Console service:
 
-```bash
+Before running console service, following environment settings must be supplied
+```sh
 # Salt to encrypt JWT payload
 export CONSOLE_PBKDF_PASSPHRASE=SECRET
 
-#required to encrypt jwet payload
+# Required to encrypt JWT payload
 export CONSOLE_PBKDF_SALT=SECRET
 
-# MinIO endpoint
+# MinIO Endpoint
 export CONSOLE_MINIO_SERVER=http://localhost:9000
-./console server
 ```
 
-## Run Console with TLS enable
+Now start the console service.
+```
+./console server
+2021-01-19 02:36:08.893735 I | 2021/01/19 02:36:08 server.go:129: Serving console at http://localhost:9090
+```
+
+By default `console` runs on port `9090` this can be changed with `--port` of your choice.
+
+## Start Console service with TLS:
 
 Copy your `public.crt` and `private.key` to `~/.console/certs`, then:
 
-```bash
+```sh
 ./console server
+2021-01-19 02:36:08.893735 I | 2021/01/19 02:36:08 server.go:129: Serving console at https://localhost:9090
 ```
 
-Additionally, `Console` has support for multiple certificates, clients can request them using `SNI`. It expects the following structure:
+For advanced users, `console` has support for multiple certificates to service clients through multiple domains.
 
-```bash
+Following tree structure is expected for supporting multiple domains:
+```sh
  certs/
   │
   ├─ public.crt
@@ -139,9 +150,6 @@ Additionally, `Console` has support for multiple certificates, clients can reque
   ...
 
 ```
-
-Therefore, we read all filenames in the cert directory and check
-for each directory whether it contains a public.crt and private.key.
 
 ## Connect Console to a Minio using TLS and a self-signed certificate
 

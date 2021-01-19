@@ -72,9 +72,9 @@ changelog:
 
 nfpms:
   -
-    vendor: MinIO Inc.
+    vendor: MinIO, Inc.
     homepage: https://github.com/minio/console
-    maintainer: MinIO <minio@minio.io>
+    maintainer: MinIO Development <dev@min.io>
     description: MinIO Console Server
     license: GNU Affero General Public License v3.0
     formats:
