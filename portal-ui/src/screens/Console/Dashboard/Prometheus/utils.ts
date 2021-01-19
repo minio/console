@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2020 MinIO, Inc.
+// Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -133,6 +133,33 @@ export const panelsConfiguration: IDashboardPanel[] = [
         background: {
           fill: "rgba(0,0,0,0.1)",
         },
+      },
+    ],
+    customStructure: [
+      { originTag: "LESS_THAN_1024_B", displayTag: "Less than 1024B" },
+      {
+        originTag: "BETWEEN_1024_B_AND_1_MB",
+        displayTag: "Between 1024B and 1MB",
+      },
+      {
+        originTag: "BETWEEN_1_MB_AND_10_MB",
+        displayTag: "Between 1MB and 10MB",
+      },
+      {
+        originTag: "BETWEEN_10_MB_AND_64_MB",
+        displayTag: "Between 10MB and 64MB",
+      },
+      {
+        originTag: "BETWEEN_64_MB_AND_128_MB",
+        displayTag: "Between 64MB and 128MB",
+      },
+      {
+        originTag: "BETWEEN_128_MB_AND_512_MB",
+        displayTag: "Between 128MB and 512MB",
+      },
+      {
+        originTag: "GREATER_THAN_512_MB",
+        displayTag: "Greater than 512MB",
       },
     ],
     type: widgetType.barChart,
@@ -523,20 +550,44 @@ export const getWidgetsWithValue = (payload: any[]) => {
       case widgetType.barChart:
         if (typeOfPayload === "bargauge") {
           const chartBars = get(payloadData, "targets[0].result", []);
+          const sortFunction = (value1: any[], value2: any[]) =>
+            value1[0] - value2[0];
 
-          const values = chartBars.map((elementValue: any) => {
-            const metricKeyItem = Object.keys(elementValue.metric);
+          let values = [];
+          if (panelItem.customStructure) {
+            values = panelItem.customStructure.map((structureItem) => {
+              const metricTake = chartBars.find((element: any) => {
+                const metricKeyItem = Object.keys(element.metric);
 
-            const metricName = elementValue.metric[metricKeyItem[0]];
+                const metricName = element.metric[metricKeyItem[0]];
 
-            const elements = get(elementValue, "values", []);
+                return metricName === structureItem.originTag;
+              });
 
-            const sortResult = elements.sort(
-              (value1: any[], value2: any[]) => value1[0] - value2[0]
-            );
-            const lastValue = sortResult[sortResult.length - 1];
-            return { name: metricName, a: parseInt(lastValue[1]) };
-          });
+              const elements = get(metricTake, "values", []);
+
+              const sortResult = elements.sort(sortFunction);
+              const lastValue = sortResult[sortResult.length - 1];
+
+              return {
+                name: structureItem.displayTag,
+                a: parseInt(lastValue[1]),
+              };
+            });
+          } else {
+            // If no configuration is set, we construct the series for bar chart and return the element
+            values = chartBars.map((elementValue: any) => {
+              const metricKeyItem = Object.keys(elementValue.metric);
+
+              const metricName = elementValue.metric[metricKeyItem[0]];
+
+              const elements = get(elementValue, "values", []);
+
+              const sortResult = elements.sort(sortFunction);
+              const lastValue = sortResult[sortResult.length - 1];
+              return { name: metricName, a: parseInt(lastValue[1]) };
+            });
+          }
 
           return {
             ...panelItem,
