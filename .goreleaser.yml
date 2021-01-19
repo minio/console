@@ -83,7 +83,7 @@ nfpms:
 
 dockers:
 - image_templates:
-  - "minio/console:{{ .Version }}-amd64"
+  - "minio/console:v{{ .Version }}-amd64"
   use_buildx: true
   dockerfile: Dockerfile.release
   extra_files:
@@ -92,7 +92,7 @@ dockers:
   build_flag_templates:
   - "--platform=linux/amd64"
 - image_templates:
-  - "minio/console:{{ .Version }}-ppc64le"
+  - "minio/console:v{{ .Version }}-ppc64le"
   use_buildx: true
   dockerfile: Dockerfile.release
   extra_files:
@@ -101,7 +101,7 @@ dockers:
   build_flag_templates:
   - "--platform=linux/ppc64le"
 - image_templates:
-  - "minio/console:{{ .Version }}-s390x"
+  - "minio/console:v{{ .Version }}-s390x"
   use_buildx: true
   dockerfile: Dockerfile.release
   extra_files:
@@ -110,7 +110,7 @@ dockers:
   build_flag_templates:
   - "--platform=linux/s390x"
 - image_templates:
-  - "minio/console:{{ .Version }}-arm64"
+  - "minio/console:v{{ .Version }}-arm64"
   use_buildx: true
   goarch: arm64
   dockerfile: Dockerfile.release
@@ -120,7 +120,7 @@ dockers:
   build_flag_templates:
   - "--platform=linux/arm64"
 docker_manifests:
-- name_template: minio/console:{{ .Version }}
+- name_template: minio/console:v{{ .Version }}
   image_templates:
   - minio/console:{{ .Version }}-amd64
   - minio/console:{{ .Version }}-arm64
