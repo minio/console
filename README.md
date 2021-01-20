@@ -8,6 +8,22 @@ A graphical user interface for [MinIO](https://github.com/minio/minio)
 | -------------                 | -------------                 |
 | ![Dashboard](images/pic1.png) | ![Dashboard](images/pic2.png) |
 
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
+**Table of Contents**
+
+- [MinIO Console](#minio-console)
+    - [-](#-)
+        - [1. Create a user `console` using `mc`](#1-create-a-user-console-using-mc)
+        - [2. Create a policy for `console` with admin access to all resources (for testing)](#2-create-a-policy-for-console-with-admin-access-to-all-resources-for-testing)
+        - [3. Set the policy for the new `console` user](#3-set-the-policy-for-the-new-console-user)
+    - [Start Console service:](#start-console-service)
+- [Salt to encrypt JWT payload](#salt-to-encrypt-jwt-payload)
+    - [Start Console service with TLS:](#start-console-service-with-tls)
+    - [Connect Console to a Minio using TLS and a self-signed certificate](#connect-console-to-a-minio-using-tls-and-a-self-signed-certificate)
+- [Contribute to console Project](#contribute-to-console-project)
+
+<!-- markdown-toc end -->
+
 ### Setup
 
 All `console` needs is a MinIO user with admin privileges and URL pointing to your MinIO deployment.
