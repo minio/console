@@ -1,14 +1,17 @@
 # MinIO Console
 
+![build](https://github.com/minio/console/workflows/Go/badge.svg) ![license](https://img.shields.io/badge/license-AGPL%20V3-blue)
+
 A graphical user interface for [MinIO](https://github.com/minio/minio)
 
-| Dashboard  | Creating a bucket |
-| ------------- | ------------- |
-| ![Dashboard](images/pic1.png)  | ![Dashboard](images/pic2.png) |
+| Dashboard                     | Creating a bucket             |
+| -------------                 | -------------                 |
+| ![Dashboard](images/pic1.png) | ![Dashboard](images/pic2.png) |
 
 ### Setup
 
 All `console` needs is a MinIO user with admin privileges and URL pointing to your MinIO deployment.
+
 > Note: We don't recommend using MinIO's Operator Credentials
 
 #### 1. Create a user `console` using `mc`
