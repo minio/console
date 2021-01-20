@@ -33,6 +33,7 @@ import {
   wsProtocol,
   WSCloseInternalServerErr,
   WSClosePolicyViolation,
+  WSCloseAbnormalClosure,
 } from "../../../utils/wsUtils";
 import {
   actionsTray,
@@ -41,6 +42,7 @@ import {
 import { Grid, Button } from "@material-ui/core";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import { setSnackBarMessage, setServerDiagStat } from "../../../actions";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -53,6 +55,14 @@ const styles = (theme: Theme) =>
       padding: "25px 45px",
       border: "1px solid #EAEDEE",
       borderRadius: 4,
+    },
+    loading: {
+      paddingTop: 8,
+      paddingLeft: 40,
+    },
+    buttons: {
+      justifyContent: "flex-start",
+      gap: 20,
     },
     ...actionsTray,
     ...containerForHeader(theme.spacing(4)),
@@ -95,7 +105,6 @@ const HealthInfo = ({
   setServerDiagStat,
   serverDiagnosticStatus,
 }: IHealthInfo) => {
-  // TODO: Diagnostic button states should be global so that they are not overwritten
   const [startDiagnostic, setStartDiagnostic] = useState(false);
   const [downloadDisabled, setDownloadDisabled] = useState(true);
 
@@ -107,14 +116,13 @@ const HealthInfo = ({
       // Allow download of diagnostics file only when
       // it succeded fetching all the results and info is not empty.
       setDownloadDisabled(false);
-      setStartDiagnostic(false);
     }
     if (serverDiagnosticStatus === DiagStatInProgress) {
       // Disable Start Diagnotic and Disable Download buttons
       // if a Diagnosis is in progress.
-      setStartDiagnostic(false);
       setDownloadDisabled(true);
     }
+    setStartDiagnostic(false);
   }, [serverDiagnosticStatus, message]);
 
   useEffect(() => {
@@ -149,7 +157,7 @@ const HealthInfo = ({
           healthInfoMessageReceived(m);
         };
         c.onerror = (error: Error) => {
-          console.log("error, closing websocket:", error.message);
+          console.log("error closing websocket:", error.message);
           c.close(1000);
           clearInterval(interval);
           setServerDiagStat(DiagStatError);
@@ -158,7 +166,8 @@ const HealthInfo = ({
           clearInterval(interval);
           if (
             event.code === WSCloseInternalServerErr ||
-            event.code === WSClosePolicyViolation
+            event.code === WSClosePolicyViolation ||
+            event.code === WSCloseAbnormalClosure
           ) {
             // handle close with error
             console.log("connection closed by server with code:", event.code);
@@ -185,20 +194,13 @@ const HealthInfo = ({
     setServerDiagStat,
   ]);
 
-  const renderResponse = (data: HealthInfoMessage) => {
-    // render response in json format
-    let str = JSON.stringify(data, null, 2);
-    if (str === "{}") {
-      str = "";
-    }
-    return <pre>{str}</pre>;
-  };
   return (
     <React.Fragment>
       <PageHeader label="Diagnostic" />
+
       <Grid container>
         <Grid item xs={12} className={classes.container}>
-          <Grid container justify="flex-end" spacing={2}>
+          <Grid container className={classes.buttons}>
             <Grid key="start-diag" item>
               <Button
                 type="submit"
@@ -211,26 +213,27 @@ const HealthInfo = ({
               </Button>
             </Grid>
             <Grid key="start-download" item>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                  download("diagnostic.json", JSON.stringify(message, null, 2));
-                }}
-                disabled={downloadDisabled}
-              >
-                Download
-              </Button>
+              {serverDiagnosticStatus === DiagStatInProgress ? (
+                <div className={classes.loading}>
+                  <CircularProgress size={25} />
+                </div>
+              ) : (
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    download(
+                      "diagnostic.json",
+                      JSON.stringify(message, null, 2)
+                    );
+                  }}
+                  disabled={downloadDisabled}
+                >
+                  Download
+                </Button>
+              )}
             </Grid>
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12}>
-            <div className={classes.logList}>
-              <pre>{renderResponse(message)}</pre>
-            </div>
           </Grid>
         </Grid>
       </Grid>
