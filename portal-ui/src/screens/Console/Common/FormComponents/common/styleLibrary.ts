@@ -309,7 +309,7 @@ export const settingsCommon = {
 export const logsCommon = {
   logsSubContainer: {
     height: "calc(100vh - 230px)",
-    padding: "15px 33px",
+    padding: "15px 0",
   },
 };
 
