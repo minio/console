@@ -48,7 +48,7 @@ const SingleRepWidget = ({
       <div className={classes.contentContainer}>
         <ResponsiveContainer>
           <AreaChart data={data}>
-            <YAxis domain={[0, (dataMax) => dataMax * 2]} hide={true} />
+            <YAxis domain={[0, (dataMax: number) => dataMax * 2]} hide={true} />
             <Area
               type="monotone"
               dataKey={"value"}

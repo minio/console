@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import debounce from "lodash/debounce";
 import get from "lodash/get";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
@@ -309,7 +309,7 @@ const AddTenant = ({
   /*Debounce functions*/
 
   // Storage Quotas
-  const getNamespaceInformation = () => {
+  const getNamespaceInformation = useCallback(() => {
     setSelectedStorageClass("");
     setStorageClassesList([]);
     api
@@ -338,7 +338,7 @@ const AddTenant = ({
       .catch((err: any) => {
         console.log(err);
       });
-  };
+  }, [namespace]);
 
   const validateMemorySize = useCallback(() => {
     const memSize = parseInt(memoryNode) || 0;
@@ -381,9 +381,9 @@ const AddTenant = ({
     validateMemorySize();
   }, [maxAllocableMemo, validateMemorySize]);
 
-  const debounceNamespace = useCallback(
-    debounce(getNamespaceInformation, 500),
-    [namespace]
+  const debounceNamespace = useMemo(
+    () => debounce(getNamespaceInformation, 500),
+    [getNamespaceInformation]
   );
 
   useEffect(() => {
