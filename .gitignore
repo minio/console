@@ -37,3 +37,4 @@ public.crt
 .vscode/
 *.code-workspace
 *~
+.eslintcache

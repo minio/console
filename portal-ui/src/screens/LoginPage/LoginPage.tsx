@@ -16,7 +16,7 @@
 
 import React, { useEffect, useState } from "react";
 import request from "superagent";
-import { connect, ConnectedProps } from "react-redux";
+import { connect } from "react-redux";
 import ErrorIcon from "@material-ui/icons/Error";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -171,8 +171,6 @@ const connector = connect(mapState, { userLoggedIn });
 
 // The inferred type will look like:
 // {isOn: boolean, toggleOn: () => void}
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type Props = PropsFromRedux & {};
 
 interface ILoginProps {
   userLoggedIn: typeof userLoggedIn;

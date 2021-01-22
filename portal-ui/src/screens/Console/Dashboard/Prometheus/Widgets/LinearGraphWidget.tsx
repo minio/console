@@ -96,15 +96,15 @@ const LinearGraphWidget = ({
               />
               <XAxis
                 dataKey="name"
-                tickFormatter={xAxisFormatter}
+                tickFormatter={(value: any) => xAxisFormatter(value)}
                 interval={5}
                 tick={{ fontSize: "70%" }}
                 tickCount={10}
               />
               <YAxis
-                domain={[0, (dataMax) => dataMax * 4]}
+                domain={[0, (dataMax: number) => dataMax * 4]}
                 hide={hideYAxis}
-                tickFormatter={yAxisFormatter}
+                tickFormatter={(value: any) => yAxisFormatter(value)}
                 tick={{ fontSize: "70%" }}
               />
               {linearConfiguration.map((section, index) => {
