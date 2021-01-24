@@ -58,6 +58,11 @@ var serverCmd = cli.Command{
 			Usage: "HTTPS server port",
 		},
 		cli.StringFlag{
+			Name:  "tls-redirect",
+			Value: restapi.GetTLSRedirect(),
+			Usage: "HTTPS redirect by default",
+		},
+		cli.StringFlag{
 			Name:  "certs-dir",
 			Value: certs.GlobalCertsCADir.Get(),
 			Usage: "path to certs directory",
@@ -125,7 +130,7 @@ func startServer(ctx *cli.Context) error {
 		// Need to store tls-port, tls-host un config variables so secure.middleware can read from there
 		restapi.TLSPort = fmt.Sprintf("%v", ctx.Int("tls-port"))
 		restapi.TLSHostname = ctx.String("tls-host")
-		restapi.TLSRedirect = "on"
+		restapi.TLSRedirect = ctx.String("tls-redirect")
 	}
 
 	server.ConfigureAPI()

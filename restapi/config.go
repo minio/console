@@ -29,29 +29,34 @@ import (
 	"github.com/minio/minio/pkg/env"
 )
 
-// Port console default port
-var Port = "9090"
+var (
+	// Port console default port
+	Port = "9090"
 
-// Hostname console hostname
-var Hostname = "0.0.0.0"
+	// Hostname console hostname
+	Hostname = "0.0.0.0"
 
-// TLSHostname console tls hostname
-var TLSHostname = "0.0.0.0"
+	// TLSHostname console tls hostname
+	TLSHostname = "0.0.0.0"
 
-// TLSPort console tls port
-var TLSPort = "9443"
+	// TLSPort console tls port
+	TLSPort = "9443"
 
-// TLSRedirect console tls redirect rule
-var TLSRedirect = "off"
+	// TLSRedirect console tls redirect rule
+	TLSRedirect = "on"
 
-var SessionDuration = 45 * time.Minute
+	// SessionDuration cookie validity duration
+	SessionDuration = 45 * time.Minute
+)
 
-var logSearchAPI string
-var logSearchURL string
-var prometheusURL string
-var consoleImage string
+var (
+	logSearchAPI  string
+	logSearchURL  string
+	prometheusURL string
+	consoleImage  string
 
-var once sync.Once
+	once sync.Once
+)
 
 func getMinIOServer() string {
 	return strings.TrimSpace(env.Get(ConsoleMinIOServer, "http://localhost:9000"))
@@ -121,6 +126,11 @@ func GetTLSPort() int {
 	return port
 }
 
+// If GetTLSRedirect is set to true, then only allow HTTPS requests. Default is true.
+func GetTLSRedirect() string {
+	return strings.ToLower(env.Get(ConsoleSecureTLSRedirect, TLSRedirect))
+}
+
 // Get secure middleware env variable configurations
 func getSecureAllowedHosts() []string {
 	allowedHosts := env.Get(ConsoleSecureAllowedHosts, "")
@@ -169,11 +179,6 @@ func getSecureHostsProxyHeaders() []string {
 		return strings.Split(allowedHosts, ",")
 	}
 	return []string{}
-}
-
-// If TLSRedirect is set to true, then only allow HTTPS requests. Default is true.
-func getTLSRedirect() bool {
-	return strings.ToLower(env.Get(ConsoleSecureTLSRedirect, TLSRedirect)) == "on"
 }
 
 // TLSHost is the host name that is used to redirect HTTP requests to HTTPS. Default is "", which indicates to use the same host.
