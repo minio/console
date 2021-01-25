@@ -27,27 +27,216 @@ import {
 const dLocalStorageV = "dashboardConfig";
 
 export const defaultWidgetsLayout: Layout[] = [
-  { w: 1, h: 2, x: 0, y: 0, i: "panel-0", moved: false, static: false },
-  { w: 1, h: 1, x: 1, y: 0, i: "panel-1", moved: false, static: false },
-  { w: 1, h: 1, x: 1, y: 1, i: "panel-2", moved: false, static: false },
-  { w: 1, h: 2, x: 2, y: 0, i: "panel-3", moved: false, static: false },
-  { w: 2, h: 2, x: 3, y: 0, i: "panel-4", moved: false, static: false },
-  { w: 3, h: 2, x: 5, y: 0, i: "panel-5", moved: false, static: false },
-  { w: 1, h: 1, x: 0, y: 2, i: "panel-6", moved: false, static: false },
-  { w: 1, h: 1, x: 0, y: 3, i: "panel-7", moved: false, static: false },
-  { w: 1, h: 1, x: 1, y: 2, i: "panel-8", moved: false, static: false },
-  { w: 1, h: 1, x: 1, y: 3, i: "panel-9", moved: false, static: false },
-  { w: 1, h: 1, x: 2, y: 2, i: "panel-10", moved: false, static: false },
-  { w: 1, h: 1, x: 2, y: 3, i: "panel-11", moved: false, static: false },
-  { w: 4, h: 2, x: 3, y: 2, i: "panel-12", moved: false, static: false },
-  { w: 1, h: 1, x: 7, y: 2, i: "panel-13", moved: false, static: false },
-  { w: 1, h: 1, x: 7, y: 3, i: "panel-14", moved: false, static: false },
-  { w: 8, h: 2, x: 0, y: 4, i: "panel-15", moved: false, static: false },
-  { w: 4, h: 2, x: 0, y: 5, i: "panel-16", moved: false, static: false },
-  { w: 4, h: 2, x: 5, y: 5, i: "panel-17", moved: false, static: false },
-  { w: 8, h: 2, x: 0, y: 7, i: "panel-18", moved: false, static: false },
-  { w: 4, h: 2, x: 0, y: 9, i: "panel-19", moved: false, static: false },
-  { w: 4, h: 2, x: 5, y: 9, i: "panel-20", moved: false, static: false },
+  {
+    w: 1,
+    h: 2,
+    x: 0,
+    y: 0,
+    minW: 1,
+    i: "panel-0",
+    moved: false,
+    static: false,
+  },
+  {
+    w: 1,
+    h: 1,
+    x: 1,
+    y: 0,
+    minW: 1,
+    i: "panel-1",
+    moved: false,
+    static: false,
+  },
+  {
+    w: 1,
+    h: 1,
+    x: 1,
+    y: 1,
+    minW: 1,
+    i: "panel-2",
+    moved: false,
+    static: false,
+  },
+  {
+    w: 1,
+    h: 2,
+    x: 2,
+    y: 0,
+    minW: 1,
+    i: "panel-3",
+    moved: false,
+    static: false,
+  },
+  {
+    w: 2,
+    h: 2,
+    x: 3,
+    y: 0,
+    minW: 2,
+    i: "panel-4",
+    moved: false,
+    static: false,
+  },
+  {
+    w: 3,
+    h: 2,
+    x: 5,
+    y: 0,
+    minW: 2,
+    i: "panel-5",
+    moved: false,
+    static: false,
+  },
+  {
+    w: 1,
+    h: 1,
+    x: 0,
+    y: 2,
+    minW: 1,
+    i: "panel-6",
+    moved: false,
+    static: false,
+  },
+  {
+    w: 1,
+    h: 1,
+    x: 0,
+    y: 3,
+    minW: 1,
+    i: "panel-7",
+    moved: false,
+    static: false,
+  },
+  {
+    w: 1,
+    h: 1,
+    x: 1,
+    y: 2,
+    minW: 1,
+    i: "panel-8",
+    moved: false,
+    static: false,
+  },
+  {
+    w: 1,
+    h: 1,
+    x: 1,
+    y: 3,
+    minW: 1,
+    i: "panel-9",
+    moved: false,
+    static: false,
+  },
+  {
+    w: 1,
+    h: 1,
+    x: 2,
+    y: 2,
+    minW: 1,
+    i: "panel-10",
+    moved: false,
+    static: false,
+  },
+  {
+    w: 1,
+    h: 1,
+    x: 2,
+    y: 3,
+    minW: 1,
+    i: "panel-11",
+    moved: false,
+    static: false,
+  },
+  {
+    w: 4,
+    h: 2,
+    x: 3,
+    y: 2,
+    minW: 2,
+    i: "panel-12",
+    moved: false,
+    static: false,
+  },
+  {
+    w: 1,
+    h: 1,
+    x: 7,
+    y: 2,
+    minW: 1,
+    i: "panel-13",
+    moved: false,
+    static: false,
+  },
+  {
+    w: 1,
+    h: 1,
+    x: 7,
+    y: 3,
+    minW: 1,
+    i: "panel-14",
+    moved: false,
+    static: false,
+  },
+  {
+    w: 8,
+    h: 2,
+    x: 0,
+    y: 4,
+    minW: 2,
+    i: "panel-15",
+    moved: false,
+    static: false,
+  },
+  {
+    w: 4,
+    h: 2,
+    x: 0,
+    y: 5,
+    minW: 2,
+    i: "panel-16",
+    moved: false,
+    static: false,
+  },
+  {
+    w: 4,
+    h: 2,
+    x: 5,
+    y: 5,
+    minW: 2,
+    i: "panel-17",
+    moved: false,
+    static: false,
+  },
+  {
+    w: 8,
+    h: 2,
+    x: 0,
+    y: 7,
+    minW: 2,
+    i: "panel-18",
+    moved: false,
+    static: false,
+  },
+  {
+    w: 4,
+    h: 2,
+    x: 0,
+    y: 9,
+    minW: 2,
+    i: "panel-19",
+    moved: false,
+    static: false,
+  },
+  {
+    w: 4,
+    h: 2,
+    x: 5,
+    y: 9,
+    minW: 2,
+    i: "panel-20",
+    moved: false,
+    static: false,
+  },
 ];
 
 const colorsMain = [
@@ -347,6 +536,10 @@ export const panelsConfiguration: IDashboardPanel[] = [
 ];
 
 const calculateMainValue = (elements: any[], metricCalc: string) => {
+  if (elements.length === 0) {
+    return ["", "0"];
+  }
+
   switch (metricCalc) {
     case "mean":
       const sumValues = elements.reduce((accumulator, currValue) => {
@@ -394,7 +587,12 @@ export const getWidgetsWithValue = (payload: any[]) => {
       case widgetType.singleValue:
         if (typeOfPayload === "stat" || typeOfPayload === "singlestat") {
           // We sort values & get the last value
-          const elements = get(payloadData, "targets[0].result[0].values", []);
+          let elements = get(payloadData, "targets[0].result[0].values", []);
+
+          if (elements === null) {
+            elements = [];
+          }
+
           const metricCalc = get(
             payloadData,
             "options.reduceOptions.calcs[0]",
@@ -415,17 +613,22 @@ export const getWidgetsWithValue = (payload: any[]) => {
         break;
       case widgetType.pieChart:
         if (typeOfPayload === "gauge") {
-          const chartSeries = get(payloadData, "targets[0].result", []);
+          let chartSeries = get(payloadData, "targets[0].result", []);
+
+          if (chartSeries === null) {
+            chartSeries = [];
+          }
+
           const metricCalc = get(
             payloadData,
             "options.reduceOptions.calcs[0]",
             "lastNotNull"
           );
 
-          const totalValues = calculateMainValue(
-            chartSeries[0].values,
-            metricCalc
-          );
+          const valuesArray =
+            chartSeries.length > 0 ? chartSeries[0].values : [];
+
+          const totalValues = calculateMainValue(valuesArray, metricCalc);
 
           const values = chartSeries.map((elementValue: any) => {
             const values = get(elementValue, "values", []);
@@ -549,7 +752,12 @@ export const getWidgetsWithValue = (payload: any[]) => {
         break;
       case widgetType.barChart:
         if (typeOfPayload === "bargauge") {
-          const chartBars = get(payloadData, "targets[0].result", []);
+          let chartBars = get(payloadData, "targets[0].result", []);
+
+          if (chartBars === null) {
+            chartBars = [];
+          }
+
           const sortFunction = (value1: any[], value2: any[]) =>
             value1[0] - value2[0];
 
@@ -567,7 +775,7 @@ export const getWidgetsWithValue = (payload: any[]) => {
               const elements = get(metricTake, "values", []);
 
               const sortResult = elements.sort(sortFunction);
-              const lastValue = sortResult[sortResult.length - 1];
+              const lastValue = sortResult[sortResult.length - 1] || ["", "0"];
 
               return {
                 name: structureItem.displayTag,
@@ -584,7 +792,7 @@ export const getWidgetsWithValue = (payload: any[]) => {
               const elements = get(elementValue, "values", []);
 
               const sortResult = elements.sort(sortFunction);
-              const lastValue = sortResult[sortResult.length - 1];
+              const lastValue = sortResult[sortResult.length - 1] || ["", "0"];
               return { name: metricName, a: parseInt(lastValue[1]) };
             });
           }
@@ -652,5 +860,14 @@ export const getDashboardDistribution = () => {
     return defaultWidgetsLayout;
   }
 
-  return JSON.parse(atob(storedConfiguration));
+  const parsedConfig = JSON.parse(atob(storedConfiguration));
+
+  if (
+    parsedConfig.length === 0 ||
+    (parsedConfig.length > 0 && !parsedConfig[0].minW)
+  ) {
+    return defaultWidgetsLayout;
+  }
+
+  return parsedConfig;
 };
