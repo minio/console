@@ -701,7 +701,29 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		minInst.Spec.KES.Annotations = tenantReq.Encryption.Annotations
 		minInst.Spec.KES.NodeSelector = tenantReq.Encryption.NodeSelector
 	}
-
+	// External TLS CA certificates for MinIO
+	if tenantReq.TLS != nil && len(tenantReq.TLS.CaCertificates) > 0 {
+		var caCertificates []tenantSecret
+		for i, caCertificate := range tenantReq.TLS.CaCertificates {
+			certificateContent, err := base64.StdEncoding.DecodeString(caCertificate)
+			if err != nil {
+				return nil, prepareError(errorGeneric, nil, err)
+			}
+			caCertificates = append(caCertificates, tenantSecret{
+				Name: fmt.Sprintf("ca-certificate-%d", i),
+				Content: map[string][]byte{
+					"public.crt": certificateContent,
+				},
+			})
+		}
+		if len(caCertificates) > 0 {
+			certificateSecrets, err := createOrReplaceSecrets(ctx, &k8sClient, ns, caCertificates, tenantName)
+			if err != nil {
+				return nil, prepareError(errorGeneric, nil, err)
+			}
+			minInst.Spec.ExternalCaCertSecret = certificateSecrets
+		}
+	}
 	// optionals are set below
 	var consoleAccess string
 	var consoleSecret string

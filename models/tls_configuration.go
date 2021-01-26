@@ -35,6 +35,9 @@ import (
 // swagger:model tlsConfiguration
 type TLSConfiguration struct {
 
+	// ca certificates
+	CaCertificates []string `json:"ca_certificates"`
+
 	// console
 	Console *KeyPairConfiguration `json:"console,omitempty"`
 
