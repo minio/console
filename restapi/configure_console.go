@@ -189,7 +189,7 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 		AllowedHosts:                    getSecureAllowedHosts(),
 		AllowedHostsAreRegex:            getSecureAllowedHostsAreRegex(),
 		HostsProxyHeaders:               getSecureHostsProxyHeaders(),
-		SSLRedirect:                     getTLSRedirect(),
+		SSLRedirect:                     GetTLSRedirect() == "on",
 		SSLHost:                         getSecureTLSHost(),
 		STSSeconds:                      getSecureSTSSeconds(),
 		STSIncludeSubdomains:            getSecureSTSIncludeSubdomains(),
