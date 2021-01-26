@@ -14,38 +14,40 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useMemo, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { connect } from "react-redux";
 import ReactGridLayout from "react-grid-layout";
 import Grid from "@material-ui/core/Grid";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Button } from "@material-ui/core";
 import {
   actionsTray,
   containerForHeader,
 } from "../../Common/FormComponents/common/styleLibrary";
-import SingleValueWidget from "./Widgets/SingleValueWidget";
+
 import { AutoSizer } from "react-virtualized";
-import LinearGraphWidget from "./Widgets/LinearGraphWidget";
 import {
   IBarChartConfiguration,
   IDataSRep,
   ILinearGraphConfiguration,
   IPieChartConfiguration,
 } from "./Widgets/types";
-import BarChartWidget from "./Widgets/BarChartWidget";
-import PieChartWidget from "./Widgets/PieChartWidget";
-import SingleRepWidget from "./Widgets/SingleRepWidget";
-import DateTimePickerWrapper from "../../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
 import { IDashboardPanel, widgetType } from "./types";
-import api from "../../../../common/api";
 import {
   getDashboardDistribution,
   getWidgetsWithValue,
   panelsConfiguration,
   saveDashboardDistribution,
 } from "./utils";
-import { Button } from "@material-ui/core";
-import { connect } from "react-redux";
+
 import { setErrorSnackMessage } from "../../../../actions";
+import SingleValueWidget from "./Widgets/SingleValueWidget";
+import LinearGraphWidget from "./Widgets/LinearGraphWidget";
+import BarChartWidget from "./Widgets/BarChartWidget";
+import PieChartWidget from "./Widgets/PieChartWidget";
+import SingleRepWidget from "./Widgets/SingleRepWidget";
+import DateTimePickerWrapper from "../../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
+import api from "../../../../common/api";
 
 interface IPrDashboard {
   classes: any;
@@ -56,6 +58,7 @@ const styles = (theme: Theme) =>
   createStyles({
     widgetsContainer: {
       height: "calc(100vh - 250px)",
+      paddingBottom: 235,
     },
     ...actionsTray,
     ...containerForHeader(theme.spacing(4)),
@@ -70,72 +73,91 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
   );
 
   const minHeight = 600;
+  const colsInGrid = 8;
+  const xSpacing = 10;
+  const ySpacing = 10;
 
-  const panels = useMemo(() => {
-    const componentToUse = (value: IDashboardPanel) => {
-      switch (value.type) {
-        case widgetType.singleValue:
-          return (
-            <SingleValueWidget
-              title={value.title}
-              data={value.data as string}
-            />
-          );
-        case widgetType.pieChart:
-          return (
-            <PieChartWidget
-              title={value.title}
-              dataInner={value.data as object[]}
-              dataOuter={(value.dataOuter as object[]) || null}
-              pieChartConfiguration={
-                value.widgetConfiguration as IPieChartConfiguration
-              }
-              middleLabel={value.innerLabel}
-            />
-          );
-        case widgetType.linearGraph:
-          return (
-            <LinearGraphWidget
-              title={value.title}
-              data={value.data as object[]}
-              linearConfiguration={
-                value.widgetConfiguration as ILinearGraphConfiguration[]
-              }
-              hideYAxis={value.disableYAxis}
-              xAxisFormatter={value.xAxisFormatter}
-              yAxisFormatter={value.yAxisFormatter}
-            />
-          );
-        case widgetType.barChart:
-          return (
-            <BarChartWidget
-              title={value.title}
-              data={value.data as object[]}
-              barChartConfiguration={
-                value.widgetConfiguration as IBarChartConfiguration[]
-              }
-            />
-          );
-        case widgetType.singleRep:
-          const fillColor = value.fillColor ? value.fillColor : value.color;
-          return (
-            <SingleRepWidget
-              title={value.title}
-              data={value.data as IDataSRep[]}
-              label={value.innerLabel as string}
-              color={value.color as string}
-              fillColor={fillColor as string}
-            />
-          );
-        default:
-          return null;
-      }
-    };
+  const dashboardDistr = getDashboardDistribution();
 
-    return panelInformation.map((val) => {
-      return <div key={val.layoutIdentifier}>{componentToUse(val)}</div>;
-    });
-  }, [panelInformation]);
+  const autoSizerStyleProp = {
+    width: "100%",
+    height: "auto",
+    paddingBottom: 45,
+  };
+
+  const panels = useCallback(
+    (width: number) => {
+      const singlePanelWidth = width / colsInGrid + xSpacing / 2;
+
+      const componentToUse = (value: IDashboardPanel, index: number) => {
+        switch (value.type) {
+          case widgetType.singleValue:
+            return (
+              <SingleValueWidget
+                title={value.title}
+                data={value.data as string}
+              />
+            );
+          case widgetType.pieChart:
+            return (
+              <PieChartWidget
+                title={value.title}
+                dataInner={value.data as object[]}
+                dataOuter={(value.dataOuter as object[]) || null}
+                pieChartConfiguration={
+                  value.widgetConfiguration as IPieChartConfiguration
+                }
+                middleLabel={value.innerLabel}
+              />
+            );
+          case widgetType.linearGraph:
+            return (
+              <LinearGraphWidget
+                title={value.title}
+                data={value.data as object[]}
+                linearConfiguration={
+                  value.widgetConfiguration as ILinearGraphConfiguration[]
+                }
+                hideYAxis={value.disableYAxis}
+                xAxisFormatter={value.xAxisFormatter}
+                yAxisFormatter={value.yAxisFormatter}
+                panelWidth={singlePanelWidth * dashboardDistr[index].w}
+              />
+            );
+          case widgetType.barChart:
+            return (
+              <BarChartWidget
+                title={value.title}
+                data={value.data as object[]}
+                barChartConfiguration={
+                  value.widgetConfiguration as IBarChartConfiguration[]
+                }
+              />
+            );
+          case widgetType.singleRep:
+            const fillColor = value.fillColor ? value.fillColor : value.color;
+            return (
+              <SingleRepWidget
+                title={value.title}
+                data={value.data as IDataSRep[]}
+                label={value.innerLabel as string}
+                color={value.color as string}
+                fillColor={fillColor as string}
+              />
+            );
+          default:
+            return null;
+        }
+      };
+
+      return panelInformation.map((val, index) => {
+        return (
+          <div key={val.layoutIdentifier}>{componentToUse(val, index)}</div>
+        );
+      });
+    },
+    [panelInformation, dashboardDistr]
+  );
 
   const fetchUsage = useCallback(() => {
     let stepCalc = 15;
@@ -184,8 +206,6 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
     }
   }, [loading, fetchUsage]);
 
-  const dashboardDistr = getDashboardDistribution();
-
   return (
     <Grid container className={classes.container}>
       <Grid
@@ -207,19 +227,19 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
         </Button>
       </Grid>
       <Grid item xs={12} className={classes.widgetsContainer}>
-        <AutoSizer>
+        <AutoSizer style={autoSizerStyleProp}>
           {({ width, height }: any) => {
             const hpanel = height < minHeight ? minHeight : height;
             return (
               <ReactGridLayout
                 width={width}
-                cols={8}
-                containerPadding={[10, 10]}
+                cols={colsInGrid}
+                containerPadding={[xSpacing, ySpacing]}
                 onLayoutChange={saveDashboardDistribution}
                 layout={dashboardDistr}
                 rowHeight={hpanel / 6}
               >
-                {panels}
+                {panels(width)}
               </ReactGridLayout>
             );
           }}

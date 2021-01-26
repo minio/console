@@ -37,6 +37,7 @@ interface ILinearGraphWidget {
   hideYAxis?: boolean;
   yAxisFormatter?: (item: string) => string;
   xAxisFormatter?: (item: string) => string;
+  panelWidth?: number;
 }
 
 const styles = (theme: Theme) =>
@@ -73,7 +74,23 @@ const LinearGraphWidget = ({
   hideYAxis = false,
   yAxisFormatter = (item: string) => item,
   xAxisFormatter = (item: string) => item,
+  panelWidth = 0,
 }: ILinearGraphWidget) => {
+  let intervalCount = 5;
+
+  if (panelWidth !== 0) {
+    if (panelWidth > 400) {
+      intervalCount = 5;
+    } else if (panelWidth > 350) {
+      intervalCount = 10;
+    } else if (panelWidth > 300) {
+      intervalCount = 15;
+    } else if (panelWidth > 250) {
+      intervalCount = 20;
+    } else {
+      intervalCount = 30;
+    }
+  }
   return (
     <div className={classes.singleValueContainer}>
       <div className={classes.titleContainer}>{title}</div>
@@ -97,7 +114,7 @@ const LinearGraphWidget = ({
               <XAxis
                 dataKey="name"
                 tickFormatter={(value: any) => xAxisFormatter(value)}
-                interval={5}
+                interval={intervalCount}
                 tick={{ fontSize: "70%" }}
                 tickCount={10}
               />
