@@ -43,7 +43,7 @@ var (
 	TLSPort = "9443"
 
 	// TLSRedirect console tls redirect rule
-	TLSRedirect = "on"
+	TLSRedirect = "off"
 
 	// SessionDuration cookie validity duration
 	SessionDuration = 45 * time.Minute
