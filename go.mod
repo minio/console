@@ -30,7 +30,9 @@ require (
 	golang.org/x/net v0.0.0-20201216054612-986b41b23924
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	gopkg.in/yaml.v2 v2.3.0
-	k8s.io/api v0.18.6
-	k8s.io/apimachinery v0.18.8
-	k8s.io/client-go v0.18.6
+	k8s.io/api v0.20.2
+	k8s.io/apimachinery v0.20.2
+	k8s.io/client-go v0.20.2
 )
+
+replace github.com/minio/operator v0.0.0-20210127071132-accfa4851396 => github.com/dvaldivia/operator v0.0.0-20210128022015-0ce833ee3034

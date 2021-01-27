@@ -31,7 +31,7 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/kes"
 	"github.com/minio/console/restapi/operations/admin_api"
-	operator "github.com/minio/operator/pkg/apis/minio.min.io/v1"
+	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 	"gopkg.in/yaml.v2"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -56,7 +56,7 @@ func tenantUpdateCertificates(ctx context.Context, operatorClient OperatorClient
 		}
 		// restart MinIO pods
 		err := clientSet.deletePodCollection(ctx, namespace, metav1.DeleteOptions{}, metav1.ListOptions{
-			LabelSelector: fmt.Sprintf("%s=%s", operator.TenantLabel, tenantName),
+			LabelSelector: fmt.Sprintf("%s=%s", miniov2.TenantLabel, tenantName),
 		})
 		if err != nil {
 			return err
@@ -72,7 +72,7 @@ func tenantUpdateCertificates(ctx context.Context, operatorClient OperatorClient
 		}
 		// restart Console pods
 		err := clientSet.deletePodCollection(ctx, namespace, metav1.DeleteOptions{}, metav1.ListOptions{
-			LabelSelector: fmt.Sprintf("%s=%s", operator.ConsoleTenantLabel, fmt.Sprintf("%s-console", tenantName)),
+			LabelSelector: fmt.Sprintf("%s=%s", miniov2.ConsoleTenantLabel, fmt.Sprintf("%s-console", tenantName)),
 		})
 		if err != nil {
 			return err
@@ -135,7 +135,7 @@ func tenantUpdateEncryption(ctx context.Context, operatorClient OperatorClientI,
 			}
 			// Restart MinIO pods to mount the new client secrets
 			err := clientSet.deletePodCollection(ctx, namespace, metav1.DeleteOptions{}, metav1.ListOptions{
-				LabelSelector: fmt.Sprintf("%s=%s", operator.TenantLabel, tenantName),
+				LabelSelector: fmt.Sprintf("%s=%s", miniov2.TenantLabel, tenantName),
 			})
 			if err != nil {
 				return err
@@ -150,7 +150,7 @@ func tenantUpdateEncryption(ctx context.Context, operatorClient OperatorClientI,
 		}
 		// Restart KES pods to mount the new configuration
 		err = clientSet.deletePodCollection(ctx, namespace, metav1.DeleteOptions{}, metav1.ListOptions{
-			LabelSelector: fmt.Sprintf("%s=%s", operator.KESInstanceLabel, fmt.Sprintf("%s-kes", tenantName)),
+			LabelSelector: fmt.Sprintf("%s=%s", miniov2.KESInstanceLabel, fmt.Sprintf("%s-kes", tenantName)),
 		})
 		if err != nil {
 			return err
@@ -185,7 +185,7 @@ func getTenantUpdateEncryptionResponse(session *models.Principal, params admin_a
 
 // getKESConfiguration will generate the KES server certificate secrets, the tenant client secrets for mTLS authentication between MinIO and KES and the
 // kes-configuration.yaml file used by the KES service (how to connect to the external KMS, eg: Vault, AWS, Gemalto, etc)
-func getKESConfiguration(ctx context.Context, clientSet K8sClientI, ns string, encryptionCfg *models.EncryptionConfiguration, secretName, tenantName string) (kesConfiguration *operator.KESConfig, err error) {
+func getKESConfiguration(ctx context.Context, clientSet K8sClientI, ns string, encryptionCfg *models.EncryptionConfiguration, secretName, tenantName string) (kesConfiguration *miniov2.KESConfig, err error) {
 	// Secrets used by the KES service
 	//
 	// kesExternalCertSecretName is the name of the secret that will store the certificates for TLS in the KES server, eg: server.key and server.crt
@@ -195,7 +195,7 @@ func getKESConfiguration(ctx context.Context, clientSet K8sClientI, ns string, e
 	// kesConfigurationSecretName is the name of the secret that will store the configuration file, eg: kes-configuration.yaml
 	kesConfigurationSecretName := fmt.Sprintf("%s-kes-configuration", secretName)
 
-	kesConfiguration = &operator.KESConfig{
+	kesConfiguration = &miniov2.KESConfig{
 		Image:    KESImageVersion,
 		Replicas: 1,
 	}
@@ -228,9 +228,9 @@ func getKESConfiguration(ctx context.Context, clientSet K8sClientI, ns string, e
 }
 
 // createOrReplaceExternalCertSecrets receives an array of KeyPairs (public and private key), encoded in base64, decode it and generate an equivalent number of kubernetes
-// secrets to be used by the operator for TLS encryption
-func createOrReplaceExternalCertSecrets(ctx context.Context, clientSet K8sClientI, ns string, keyPairs []*models.KeyPairConfiguration, secretName, tenantName string) ([]*operator.LocalCertificateReference, error) {
-	var keyPairSecrets []*operator.LocalCertificateReference
+// secrets to be used by the miniov2 for TLS encryption
+func createOrReplaceExternalCertSecrets(ctx context.Context, clientSet K8sClientI, ns string, keyPairs []*models.KeyPairConfiguration, secretName, tenantName string) ([]*miniov2.LocalCertificateReference, error) {
+	var keyPairSecrets []*miniov2.LocalCertificateReference
 	for i, keyPair := range keyPairs {
 		secretName := fmt.Sprintf("%s-%d", secretName, i)
 		if keyPair == nil || keyPair.Crt == nil || keyPair.Key == nil || *keyPair.Crt == "" || *keyPair.Key == "" {
@@ -255,7 +255,7 @@ func createOrReplaceExternalCertSecrets(ctx context.Context, clientSet K8sClient
 			ObjectMeta: metav1.ObjectMeta{
 				Name: secretName,
 				Labels: map[string]string{
-					operator.TenantLabel: tenantName,
+					miniov2.TenantLabel: tenantName,
 				},
 			},
 			Type:      corev1.SecretTypeTLS,
@@ -270,7 +270,7 @@ func createOrReplaceExternalCertSecrets(ctx context.Context, clientSet K8sClient
 			return nil, err
 		}
 		// Certificates used by the minio instance
-		keyPairSecrets = append(keyPairSecrets, &operator.LocalCertificateReference{
+		keyPairSecrets = append(keyPairSecrets, &miniov2.LocalCertificateReference{
 			Name: secretName,
 			Type: "kubernetes.io/tls",
 		})
@@ -278,7 +278,7 @@ func createOrReplaceExternalCertSecrets(ctx context.Context, clientSet K8sClient
 	return keyPairSecrets, nil
 }
 
-func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sClientI, ns string, encryptionCfg *models.EncryptionConfiguration, kesConfigurationSecretName, kesClientCertSecretName, tenantName string) (*corev1.LocalObjectReference, *operator.LocalCertificateReference, error) {
+func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sClientI, ns string, encryptionCfg *models.EncryptionConfiguration, kesConfigurationSecretName, kesClientCertSecretName, tenantName string) (*corev1.LocalObjectReference, *miniov2.LocalCertificateReference, error) {
 	// delete KES configuration secret if exists
 	if err := clientSet.deleteSecret(ctx, ns, kesConfigurationSecretName, metav1.DeleteOptions{}); err != nil {
 		// log the error if any and continue
@@ -340,7 +340,7 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 		},
 		Keys: kes.Keys{},
 	}
-	// operator will mount the mTLSCertificates in the following paths
+	// miniov2 will mount the mTLSCertificates in the following paths
 	// therefore we set these values in the KES yaml kesConfiguration
 	var mTLSClientCrtPath = "/tmp/kes/client.crt"
 	var mTLSClientKeyPath = "/tmp/kes/client.key"
@@ -451,14 +451,14 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 	}
 	imm := true
 	// if mTLSCertificates contains elements we create the kubernetes secret
-	var clientCertSecretReference *operator.LocalCertificateReference
+	var clientCertSecretReference *miniov2.LocalCertificateReference
 	if len(mTLSCertificates) > 0 {
 		// Secret to store KES mTLS kesConfiguration to authenticate against a KMS
 		kesClientCertSecret := corev1.Secret{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: kesClientCertSecretName,
 				Labels: map[string]string{
-					operator.TenantLabel: tenantName,
+					miniov2.TenantLabel: tenantName,
 				},
 			},
 			Immutable: &imm,
@@ -469,7 +469,7 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 			return nil, nil, err
 		}
 		// kubernetes generic secret
-		clientCertSecretReference = &operator.LocalCertificateReference{
+		clientCertSecretReference = &miniov2.LocalCertificateReference{
 			Name: kesClientCertSecretName,
 		}
 	}
@@ -483,7 +483,7 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 		ObjectMeta: metav1.ObjectMeta{
 			Name: kesConfigurationSecretName,
 			Labels: map[string]string{
-				operator.TenantLabel: tenantName,
+				miniov2.TenantLabel: tenantName,
 			},
 		},
 		Immutable: &imm,

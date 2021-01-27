@@ -19,7 +19,7 @@ package restapi
 import (
 	"context"
 
-	v1 "github.com/minio/operator/pkg/apis/minio.min.io/v1"
+	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 	operatorClientset "github.com/minio/operator/pkg/client/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -30,9 +30,9 @@ import (
 // that are used within this project.
 type OperatorClientI interface {
 	TenantDelete(ctx context.Context, namespace string, instanceName string, options metav1.DeleteOptions) error
-	TenantGet(ctx context.Context, namespace string, instanceName string, options metav1.GetOptions) (*v1.Tenant, error)
-	TenantPatch(ctx context.Context, namespace string, instanceName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error)
-	TenantList(ctx context.Context, namespace string, opts metav1.ListOptions) (*v1.TenantList, error)
+	TenantGet(ctx context.Context, namespace string, instanceName string, options metav1.GetOptions) (*miniov2.Tenant, error)
+	TenantPatch(ctx context.Context, namespace string, instanceName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error)
+	TenantList(ctx context.Context, namespace string, opts metav1.ListOptions) (*miniov2.TenantList, error)
 }
 
 // Interface implementation
@@ -45,20 +45,20 @@ type operatorClient struct {
 
 // TenantDelete implements the minio instance delete action from minio operator
 func (c *operatorClient) TenantDelete(ctx context.Context, namespace string, instanceName string, options metav1.DeleteOptions) error {
-	return c.client.MinioV1().Tenants(namespace).Delete(ctx, instanceName, options)
+	return c.client.MinioV2().Tenants(namespace).Delete(ctx, instanceName, options)
 }
 
 // TenantGet implements the minio instance get action from minio operator
-func (c *operatorClient) TenantGet(ctx context.Context, namespace string, instanceName string, options metav1.GetOptions) (*v1.Tenant, error) {
-	return c.client.MinioV1().Tenants(namespace).Get(ctx, instanceName, options)
+func (c *operatorClient) TenantGet(ctx context.Context, namespace string, instanceName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+	return c.client.MinioV2().Tenants(namespace).Get(ctx, instanceName, options)
 }
 
 // TenantPatch implements the minio instance patch action from minio operator
-func (c *operatorClient) TenantPatch(ctx context.Context, namespace string, instanceName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
-	return c.client.MinioV1().Tenants(namespace).Patch(ctx, instanceName, pt, data, options)
+func (c *operatorClient) TenantPatch(ctx context.Context, namespace string, instanceName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error) {
+	return c.client.MinioV2().Tenants(namespace).Patch(ctx, instanceName, pt, data, options)
 }
 
 // TenantList implements the minio instance list action from minio operator
-func (c *operatorClient) TenantList(ctx context.Context, namespace string, opts metav1.ListOptions) (*v1.TenantList, error) {
-	return c.client.MinioV1().Tenants(namespace).List(ctx, opts)
+func (c *operatorClient) TenantList(ctx context.Context, namespace string, opts metav1.ListOptions) (*miniov2.TenantList, error) {
+	return c.client.MinioV2().Tenants(namespace).List(ctx, opts)
 }

@@ -24,7 +24,7 @@ import (
 
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations/admin_api"
-	operator "github.com/minio/operator/pkg/apis/minio.min.io/v1"
+	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -58,7 +58,7 @@ func Test_tenantUpdateCertificates(t *testing.T) {
 		clientSet               K8sClientI
 		namespace               string
 		params                  admin_api.TenantUpdateCertificateParams
-		mockTenantGet           func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*operator.Tenant, error)
+		mockTenantGet           func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error)
 		mockDeleteSecret        func(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error
 		mockCreateSecret        func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error)
 		mockDeletePodCollection func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error
@@ -76,7 +76,7 @@ func Test_tenantUpdateCertificates(t *testing.T) {
 				clientSet: k8sClient,
 				namespace: "",
 				params:    admin_api.TenantUpdateCertificateParams{},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*operator.Tenant, error) {
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
 					return nil, errors.New("invalid tenant")
 				},
 			},
@@ -102,10 +102,10 @@ func Test_tenantUpdateCertificates(t *testing.T) {
 				mockDeletePodCollection: func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
 					return nil
 				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*operator.Tenant, error) {
-					return &operator.Tenant{
-						Spec: operator.TenantSpec{
-							ExternalCertSecret: []*operator.LocalCertificateReference{
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{
+						Spec: miniov2.TenantSpec{
+							ExternalCertSecret: []*miniov2.LocalCertificateReference{
 								{
 									Name: "secret",
 								},
@@ -133,10 +133,10 @@ func Test_tenantUpdateCertificates(t *testing.T) {
 						},
 					},
 				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*operator.Tenant, error) {
-					return &operator.Tenant{
-						Spec: operator.TenantSpec{
-							ExternalCertSecret: []*operator.LocalCertificateReference{
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{
+						Spec: miniov2.TenantSpec{
+							ExternalCertSecret: []*miniov2.LocalCertificateReference{
 								{
 									Name: "secret",
 								},
@@ -167,10 +167,10 @@ func Test_tenantUpdateCertificates(t *testing.T) {
 						},
 					},
 				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*operator.Tenant, error) {
-					return &operator.Tenant{
-						Spec: operator.TenantSpec{
-							ExternalCertSecret: []*operator.LocalCertificateReference{
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{
+						Spec: miniov2.TenantSpec{
+							ExternalCertSecret: []*miniov2.LocalCertificateReference{
 								{
 									Name: "secret",
 								},
@@ -204,10 +204,10 @@ func Test_tenantUpdateCertificates(t *testing.T) {
 						},
 					},
 				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*operator.Tenant, error) {
-					return &operator.Tenant{
-						Spec: operator.TenantSpec{
-							ExternalCertSecret: []*operator.LocalCertificateReference{
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{
+						Spec: miniov2.TenantSpec{
+							ExternalCertSecret: []*miniov2.LocalCertificateReference{
 								{
 									Name: "secret",
 								},
@@ -239,11 +239,11 @@ func Test_tenantUpdateCertificates(t *testing.T) {
 						Console: &models.KeyPairConfiguration{},
 					},
 				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*operator.Tenant, error) {
-					return &operator.Tenant{
-						Spec: operator.TenantSpec{
-							Console: &operator.ConsoleConfiguration{
-								ExternalCertSecret: &operator.LocalCertificateReference{
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{
+						Spec: miniov2.TenantSpec{
+							Console: &miniov2.ConsoleConfiguration{
+								ExternalCertSecret: &miniov2.LocalCertificateReference{
 									Name: "secret",
 								},
 							},
@@ -268,11 +268,11 @@ func Test_tenantUpdateCertificates(t *testing.T) {
 						},
 					},
 				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*operator.Tenant, error) {
-					return &operator.Tenant{
-						Spec: operator.TenantSpec{
-							Console: &operator.ConsoleConfiguration{
-								ExternalCertSecret: &operator.LocalCertificateReference{
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{
+						Spec: miniov2.TenantSpec{
+							Console: &miniov2.ConsoleConfiguration{
+								ExternalCertSecret: &miniov2.LocalCertificateReference{
 									Name: "secret",
 								},
 							},
@@ -314,7 +314,7 @@ func Test_tenantUpdateEncryption(t *testing.T) {
 		clientSet               K8sClientI
 		namespace               string
 		params                  admin_api.TenantUpdateEncryptionParams
-		mockTenantGet           func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*operator.Tenant, error)
+		mockTenantGet           func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error)
 		mockDeleteSecret        func(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error
 		mockCreateSecret        func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error)
 		mockDeletePodCollection func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error
@@ -332,7 +332,7 @@ func Test_tenantUpdateEncryption(t *testing.T) {
 				clientSet: k8sClient,
 				namespace: "",
 				params:    admin_api.TenantUpdateEncryptionParams{},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*operator.Tenant, error) {
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
 					return nil, errors.New("invalid tenant")
 				},
 			},
@@ -376,7 +376,7 @@ func Test_createOrReplaceKesConfigurationSecrets(t *testing.T) {
 		name    string
 		args    args
 		want    *v1.LocalObjectReference
-		want1   *operator.LocalCertificateReference
+		want1   *miniov2.LocalCertificateReference
 		wantErr bool
 	}{
 		{
@@ -468,7 +468,7 @@ func Test_createOrReplaceKesConfigurationSecrets(t *testing.T) {
 			want: &v1.LocalObjectReference{
 				Name: "test-secret",
 			},
-			want1: &operator.LocalCertificateReference{
+			want1: &miniov2.LocalCertificateReference{
 				Name: "test-client-secret",
 			},
 			wantErr: false,

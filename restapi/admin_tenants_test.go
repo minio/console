@@ -32,8 +32,7 @@ import (
 	"github.com/minio/console/cluster"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations/admin_api"
-	operator "github.com/minio/operator/pkg/apis/minio.min.io/v1"
-	v1 "github.com/minio/operator/pkg/apis/minio.min.io/v1"
+	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 	corev1 "k8s.io/api/core/v1"
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -45,9 +44,9 @@ import (
 )
 
 var opClientTenantDeleteMock func(ctx context.Context, namespace string, tenantName string, options metav1.DeleteOptions) error
-var opClientTenantGetMock func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error)
-var opClientTenantPatchMock func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error)
-var opClientTenantListMock func(ctx context.Context, namespace string, opts metav1.ListOptions) (*v1.TenantList, error)
+var opClientTenantGetMock func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error)
+var opClientTenantPatchMock func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error)
+var opClientTenantListMock func(ctx context.Context, namespace string, opts metav1.ListOptions) (*miniov2.TenantList, error)
 var httpClientGetMock func(url string) (resp *http.Response, err error)
 var httpClientPostMock func(url, contentType string, body io.Reader) (resp *http.Response, err error)
 var httpClientDoMock func(req *http.Request) (*http.Response, error)
@@ -60,17 +59,17 @@ func (ac opClientMock) TenantDelete(ctx context.Context, namespace string, tenan
 }
 
 // mock function of TenantGet()
-func (ac opClientMock) TenantGet(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
+func (ac opClientMock) TenantGet(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
 	return opClientTenantGetMock(ctx, namespace, tenantName, options)
 }
 
 // mock function of TenantPatch()
-func (ac opClientMock) TenantPatch(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
+func (ac opClientMock) TenantPatch(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error) {
 	return opClientTenantPatchMock(ctx, namespace, tenantName, pt, data, options)
 }
 
 // mock function of TenantList()
-func (ac opClientMock) TenantList(ctx context.Context, namespace string, opts metav1.ListOptions) (*v1.TenantList, error) {
+func (ac opClientMock) TenantList(ctx context.Context, namespace string, opts metav1.ListOptions) (*miniov2.TenantList, error) {
 	return opClientTenantListMock(ctx, namespace, opts)
 }
 
@@ -103,7 +102,7 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 	type args struct {
 		ctx        context.Context
 		client     K8sClientI
-		tenant     v1.Tenant
+		tenant     miniov2.Tenant
 		serviceURL string
 	}
 	tests := []struct {
@@ -118,12 +117,12 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 			args: args{
 				ctx:    ctx,
 				client: kClient,
-				tenant: v1.Tenant{
+				tenant: miniov2.Tenant{
 					ObjectMeta: metav1.ObjectMeta{
 						Namespace: "default",
 						Name:      "tenant-1",
 					},
-					Spec: v1.TenantSpec{CredsSecret: &corev1.LocalObjectReference{Name: "secret-name"}},
+					Spec: miniov2.TenantSpec{CredsSecret: &corev1.LocalObjectReference{Name: "secret-name"}},
 				},
 				serviceURL: "http://service-1.default.svc.cluster.local:80",
 			},
@@ -151,7 +150,7 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 			args: args{
 				ctx:    ctx,
 				client: kClient,
-				tenant: v1.Tenant{
+				tenant: miniov2.Tenant{
 					ObjectMeta: metav1.ObjectMeta{
 						Namespace: "default",
 						Name:      "tenant-1",
@@ -182,7 +181,7 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 			args: args{
 				ctx:    ctx,
 				client: kClient,
-				tenant: v1.Tenant{
+				tenant: miniov2.Tenant{
 					ObjectMeta: metav1.ObjectMeta{
 						Namespace: "default",
 						Name:      "tenant-1",
@@ -213,7 +212,7 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 			args: args{
 				ctx:    ctx,
 				client: kClient,
-				tenant: v1.Tenant{
+				tenant: miniov2.Tenant{
 					ObjectMeta: metav1.ObjectMeta{
 						Namespace: "default",
 						Name:      "tenant-1",
@@ -240,7 +239,7 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 			args: args{
 				ctx:    ctx,
 				client: kClient,
-				tenant: v1.Tenant{
+				tenant: miniov2.Tenant{
 					ObjectMeta: metav1.ObjectMeta{
 						Namespace: "default",
 						Name:      "tenant-1",
@@ -283,7 +282,7 @@ func Test_TenantInfoTenantAdminClient(t *testing.T) {
 func Test_TenantInfo(t *testing.T) {
 	testTimeStamp := metav1.Now()
 	type args struct {
-		minioTenant *operator.Tenant
+		minioTenant *miniov2.Tenant
 	}
 	tests := []struct {
 		name string
@@ -293,14 +292,14 @@ func Test_TenantInfo(t *testing.T) {
 		{
 			name: "Get tenant Info",
 			args: args{
-				minioTenant: &operator.Tenant{
+				minioTenant: &miniov2.Tenant{
 					ObjectMeta: metav1.ObjectMeta{
 						CreationTimestamp: testTimeStamp,
 						Name:              "tenant1",
 						Namespace:         "minio-ns",
 					},
-					Spec: operator.TenantSpec{
-						Pools: []operator.Pool{
+					Spec: miniov2.TenantSpec{
+						Pools: []miniov2.Pool{
 							{
 								Name:             "pool1",
 								Servers:          int32(2),
@@ -320,7 +319,7 @@ func Test_TenantInfo(t *testing.T) {
 
 						Image: "minio/minio:RELEASE.2020-06-14T18-32-17Z",
 					},
-					Status: operator.TenantStatus{
+					Status: miniov2.TenantStatus{
 						CurrentState: "ready",
 					},
 				},
@@ -352,7 +351,7 @@ func Test_TenantInfo(t *testing.T) {
 			// All three annotations should be defined to consider Prometheus enabled
 			name: "Get tenant Info w DeletionTimeStamp and Prometheus",
 			args: args{
-				minioTenant: &operator.Tenant{
+				minioTenant: &miniov2.Tenant{
 					ObjectMeta: metav1.ObjectMeta{
 						CreationTimestamp: testTimeStamp,
 						Name:              "tenant1",
@@ -364,8 +363,8 @@ func Test_TenantInfo(t *testing.T) {
 							prometheusScrape: "other/path",
 						},
 					},
-					Spec: operator.TenantSpec{
-						Pools: []operator.Pool{
+					Spec: miniov2.TenantSpec{
+						Pools: []miniov2.Pool{
 							{
 								Name:             "pool1",
 								Servers:          int32(2),
@@ -384,7 +383,7 @@ func Test_TenantInfo(t *testing.T) {
 						},
 						Image: "minio/minio:RELEASE.2020-06-14T18-32-17Z",
 					},
-					Status: operator.TenantStatus{
+					Status: miniov2.TenantStatus{
 						CurrentState: "ready",
 					},
 				},
@@ -416,7 +415,7 @@ func Test_TenantInfo(t *testing.T) {
 			// All three annotations should be defined to consider Prometheus enabled
 			name: "Get tenant Info, not all Prometheus annotations",
 			args: args{
-				minioTenant: &operator.Tenant{
+				minioTenant: &miniov2.Tenant{
 					ObjectMeta: metav1.ObjectMeta{
 						CreationTimestamp: testTimeStamp,
 						Name:              "tenant1",
@@ -426,11 +425,11 @@ func Test_TenantInfo(t *testing.T) {
 							prometheusScrape: "other/path",
 						},
 					},
-					Spec: operator.TenantSpec{
-						Pools: []operator.Pool{},
+					Spec: miniov2.TenantSpec{
+						Pools: []miniov2.Pool{},
 						Image: "minio/minio:RELEASE.2020-06-14T18-32-17Z",
 					},
-					Status: operator.TenantStatus{
+					Status: miniov2.TenantStatus{
 						CurrentState: "ready",
 					},
 				},
@@ -448,7 +447,7 @@ func Test_TenantInfo(t *testing.T) {
 			// If console image is set, it should be returned on tenant info
 			name: "Get tenant Info, Console image set",
 			args: args{
-				minioTenant: &operator.Tenant{
+				minioTenant: &miniov2.Tenant{
 					ObjectMeta: metav1.ObjectMeta{
 						CreationTimestamp: testTimeStamp,
 						Name:              "tenant1",
@@ -458,14 +457,14 @@ func Test_TenantInfo(t *testing.T) {
 							prometheusScrape: "other/path",
 						},
 					},
-					Spec: operator.TenantSpec{
-						Pools: []operator.Pool{},
+					Spec: miniov2.TenantSpec{
+						Pools: []miniov2.Pool{},
 						Image: "minio/minio:RELEASE.2020-06-14T18-32-17Z",
-						Console: &operator.ConsoleConfiguration{
+						Console: &miniov2.ConsoleConfiguration{
 							Image: "minio/console:master",
 						},
 					},
-					Status: operator.TenantStatus{
+					Status: miniov2.TenantStatus{
 						CurrentState: "ready",
 					},
 				},
@@ -552,8 +551,8 @@ func Test_deleteTenantAction(t *testing.T) {
 							Name:      "PVC1",
 							Namespace: "minio-tenant",
 							Labels: map[string]string{
-								operator.TenantLabel: "tenant1",
-								operator.PoolLabel:   "pool-1",
+								miniov2.TenantLabel: "tenant1",
+								miniov2.PoolLabel:   "pool-1",
 							},
 						},
 					},
@@ -579,8 +578,8 @@ func Test_deleteTenantAction(t *testing.T) {
 							Name:      "PVC1",
 							Namespace: "minio-tenant",
 							Labels: map[string]string{
-								operator.TenantLabel: "tenant1",
-								operator.PoolLabel:   "pool-1",
+								miniov2.TenantLabel: "tenant1",
+								miniov2.PoolLabel:   "pool-1",
 							},
 						},
 					},
@@ -606,8 +605,8 @@ func Test_deleteTenantAction(t *testing.T) {
 							Name:      "PVC1",
 							Namespace: "minio-tenant",
 							Labels: map[string]string{
-								operator.TenantLabel: "tenant1",
-								operator.PoolLabel:   "pool-1",
+								miniov2.TenantLabel: "tenant1",
+								miniov2.PoolLabel:   "pool-1",
 							},
 						},
 					},
@@ -633,8 +632,8 @@ func Test_deleteTenantAction(t *testing.T) {
 							Name:      "PVC1",
 							Namespace: "minio-tenant",
 							Labels: map[string]string{
-								operator.TenantLabel: "tenant1",
-								operator.PoolLabel:   "pool-1",
+								miniov2.TenantLabel: "tenant1",
+								miniov2.PoolLabel:   "pool-1",
 							},
 						},
 					},
@@ -661,8 +660,8 @@ func Test_deleteTenantAction(t *testing.T) {
 							Name:      "PVC1",
 							Namespace: "minio-tenant",
 							Labels: map[string]string{
-								operator.TenantLabel: "tenant1",
-								operator.PoolLabel:   "pool-1",
+								miniov2.TenantLabel: "tenant1",
+								miniov2.PoolLabel:   "pool-1",
 							},
 						},
 					},
@@ -692,8 +691,8 @@ func Test_TenantAddPool(t *testing.T) {
 		ctx             context.Context
 		operatorClient  OperatorClientI
 		nameSpace       string
-		mockTenantPatch func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error)
-		mockTenantGet   func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error)
+		mockTenantPatch func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error)
+		mockTenantGet   func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error)
 		params          admin_api.TenantAddPoolParams
 	}
 	tests := []struct {
@@ -707,11 +706,11 @@ func Test_TenantAddPool(t *testing.T) {
 				ctx:            context.Background(),
 				operatorClient: opClient,
 				nameSpace:      "default",
-				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
 				params: admin_api.TenantAddPoolParams{
 					Body: &models.Pool{
@@ -732,11 +731,11 @@ func Test_TenantAddPool(t *testing.T) {
 				ctx:            context.Background(),
 				operatorClient: opClient,
 				nameSpace:      "default",
-				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
 				params: admin_api.TenantAddPoolParams{
 					Body: &models.Pool{
@@ -758,11 +757,11 @@ func Test_TenantAddPool(t *testing.T) {
 				ctx:            context.Background(),
 				operatorClient: opClient,
 				nameSpace:      "default",
-				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
 				params: admin_api.TenantAddPoolParams{
 					Body: &models.Pool{
@@ -784,11 +783,11 @@ func Test_TenantAddPool(t *testing.T) {
 				ctx:            context.Background(),
 				operatorClient: opClient,
 				nameSpace:      "default",
-				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
 				params: admin_api.TenantAddPoolParams{
 					Body: &models.Pool{
@@ -810,11 +809,11 @@ func Test_TenantAddPool(t *testing.T) {
 				ctx:            context.Background(),
 				operatorClient: opClient,
 				nameSpace:      "default",
-				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
+				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error) {
 					return nil, errors.New("errors")
 				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
 				params: admin_api.TenantAddPoolParams{
 					Body: &models.Pool{
@@ -831,10 +830,10 @@ func Test_TenantAddPool(t *testing.T) {
 				ctx:            context.Background(),
 				operatorClient: opClient,
 				nameSpace:      "default",
-				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
+				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error) {
 					return nil, errors.New("errors")
 				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
 					return nil, errors.New("errors")
 				},
 				params: admin_api.TenantAddPoolParams{
@@ -868,8 +867,8 @@ func Test_UpdateTenantAction(t *testing.T) {
 		httpCl            cluster.HTTPClientI
 		nameSpace         string
 		tenantName        string
-		mockTenantPatch   func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error)
-		mockTenantGet     func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error)
+		mockTenantPatch   func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error)
+		mockTenantGet     func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error)
 		mockHTTPClientGet func(url string) (resp *http.Response, err error)
 		params            admin_api.UpdateTenantParams
 	}
@@ -887,11 +886,11 @@ func Test_UpdateTenantAction(t *testing.T) {
 				httpCl:         httpClientM,
 				nameSpace:      "default",
 				tenantName:     "minio-tenant",
-				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
 				mockHTTPClientGet: func(url string) (resp *http.Response, err error) {
 					return &http.Response{}, nil
@@ -912,10 +911,10 @@ func Test_UpdateTenantAction(t *testing.T) {
 				httpCl:         httpClientM,
 				nameSpace:      "default",
 				tenantName:     "minio-tenant",
-				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
 					return nil, errors.New("error-get")
 				},
 				mockHTTPClientGet: func(url string) (resp *http.Response, err error) {
@@ -937,11 +936,11 @@ func Test_UpdateTenantAction(t *testing.T) {
 				httpCl:         httpClientM,
 				nameSpace:      "default",
 				tenantName:     "minio-tenant",
-				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
+				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error) {
 					return nil, errors.New("error-get")
 				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
 				mockHTTPClientGet: func(url string) (resp *http.Response, err error) {
 					return &http.Response{}, nil
@@ -963,11 +962,11 @@ func Test_UpdateTenantAction(t *testing.T) {
 				httpCl:         httpClientM,
 				nameSpace:      "default",
 				tenantName:     "minio-tenant",
-				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
 				mockHTTPClientGet: func(url string) (resp *http.Response, err error) {
 					r := ioutil.NopCloser(bytes.NewReader([]byte(`./minio.RELEASE.2020-06-18T02-23-35Z"`)))
@@ -992,11 +991,11 @@ func Test_UpdateTenantAction(t *testing.T) {
 				httpCl:         httpClientM,
 				nameSpace:      "default",
 				tenantName:     "minio-tenant",
-				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
 				mockHTTPClientGet: func(url string) (resp *http.Response, err error) {
 					return nil, errors.New("error")
@@ -1018,11 +1017,11 @@ func Test_UpdateTenantAction(t *testing.T) {
 				httpCl:         httpClientM,
 				nameSpace:      "default",
 				tenantName:     "minio-tenant",
-				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
 				mockHTTPClientGet: func(url string) (resp *http.Response, err error) {
 					return nil, errors.New("use default minio")
@@ -1043,11 +1042,11 @@ func Test_UpdateTenantAction(t *testing.T) {
 				httpCl:         httpClientM,
 				nameSpace:      "default",
 				tenantName:     "minio-tenant",
-				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*v1.Tenant, error) {
-					return &v1.Tenant{}, nil
+				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
+					return &miniov2.Tenant{}, nil
 				},
 				mockHTTPClientGet: func(url string) (resp *http.Response, err error) {
 					return nil, errors.New("use default minio")
