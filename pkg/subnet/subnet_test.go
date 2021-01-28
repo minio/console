@@ -21,6 +21,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"testing"
 
 	"errors"
@@ -138,7 +139,7 @@ func Test_getLicenseFromCredentials(t *testing.T) {
 				username: "valid",
 				password: "valid",
 			},
-			want:    "eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsZW5pbitjMUBtaW5pby5pbyIsInRlYW1OYW1lIjoiY29uc29sZS1jdXN0b21lciIsImV4cCI6MS42Mzk5NTI2MTE2MDkxNDQ3MzJlOSwiaXNzIjoic3VibmV0QG1pbmlvLmlvIiwiY2FwYWNpdHkiOjI1LCJpYXQiOjEuNjA4NDE2NjExNjA5MTQ0NzMyZTksImFjY291bnRJZCI6MTc2LCJzZXJ2aWNlVHlwZSI6IlNUQU5EQVJEIn0.ndtf8V_FJTvhXeemVLlORyDev6RJaSPhZ2djkMVK9SvXD0srR_qlYJATPjC4NljkS71nXMGVDov5uCTuUL97x6FGQEKDruA-z24x_2Zr8kof4LfBb3HUHudCR8QvE--I",
+			want:    license,
 			wantErr: false,
 			mockFunc: func() {
 				HTTPPostMock = func(url, contentType string, body io.Reader) (resp *http.Response, err error) {
@@ -147,7 +148,7 @@ func Test_getLicenseFromCredentials(t *testing.T) {
 				}
 				HTTPDoMock = func(req *http.Request) (*http.Response, error) {
 					// returning test jwt license
-					return &http.Response{Body: ioutil.NopCloser(bytes.NewReader([]byte("{\"license\":\"eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsZW5pbitjMUBtaW5pby5pbyIsInRlYW1OYW1lIjoiY29uc29sZS1jdXN0b21lciIsImV4cCI6MS42Mzk5NTI2MTE2MDkxNDQ3MzJlOSwiaXNzIjoic3VibmV0QG1pbmlvLmlvIiwiY2FwYWNpdHkiOjI1LCJpYXQiOjEuNjA4NDE2NjExNjA5MTQ0NzMyZTksImFjY291bnRJZCI6MTc2LCJzZXJ2aWNlVHlwZSI6IlNUQU5EQVJEIn0.ndtf8V_FJTvhXeemVLlORyDev6RJaSPhZ2djkMVK9SvXD0srR_qlYJATPjC4NljkS71nXMGVDov5uCTuUL97x6FGQEKDruA-z24x_2Zr8kof4LfBb3HUHudCR8QvE--I\",\"metadata\":{\"email\":\"lenin+c1@minio.io\",\"issuer\":\"subnet@minio.io\",\"accountId\":176,\"teamName\":\"console-customer\",\"serviceType\":\"STANDARD\",\"capacity\":25,\"requestedAt\":\"2020-12-19T22:23:31.609144732Z\",\"expiresAt\":\"2021-12-19T22:23:31.609144732Z\"}}")))}, nil
+					return &http.Response{Body: ioutil.NopCloser(bytes.NewReader([]byte("{\"license\":\"" + license + "\",\"metadata\":{\"email\":\"lenin+c1@minio.io\",\"issuer\":\"subnet@minio.io\",\"accountId\":176,\"teamName\":\"console-customer\",\"serviceType\":\"STANDARD\",\"capacity\":25,\"requestedAt\":\"2020-12-19T22:23:31.609144732Z\",\"expiresAt\":\"2021-12-19T22:23:31.609144732Z\"}}")))}, nil
 				}
 			},
 		},
@@ -282,11 +283,7 @@ func TestValidateLicense(t *testing.T) {
 			wantErr: true,
 			mockFunc: func() {
 				HTTPGetMock = func(url string) (resp *http.Response, err error) {
-					return &http.Response{Body: ioutil.NopCloser(bytes.NewReader([]byte(`-----BEGIN PUBLIC KEY-----
-MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEbo+e1wpBY4tBq9AONKww3Kq7m6QP/TBQ
-mr/cKCUyBL7rcAvg0zNq1vcSrUSGlAmY3SEDCu3GOKnjG/U4E7+p957ocWSV+mQU
-9NKlTdQFGF3+aO6jbQ4hX/S5qPyF+a3z
------END PUBLIC KEY-----`)))}, nil
+					return &http.Response{Body: ioutil.NopCloser(strings.NewReader(publicKeys[0]))}, nil
 				}
 			},
 		},
@@ -294,21 +291,17 @@ mr/cKCUyBL7rcAvg0zNq1vcSrUSGlAmY3SEDCu3GOKnjG/U4E7+p957ocWSV+mQU
 			name: "license validated successfully",
 			args: args{
 				client:     clientMock,
-				licenseKey: "eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsZW5pbitjMUBtaW5pby5pbyIsInRlYW1OYW1lIjoiY29uc29sZS1jdXN0b21lciIsImV4cCI6MS42Mzk5NTI2MTE2MDkxNDQ3MzJlOSwiaXNzIjoic3VibmV0QG1pbmlvLmlvIiwiY2FwYWNpdHkiOjI1LCJpYXQiOjEuNjA4NDE2NjExNjA5MTQ0NzMyZTksImFjY291bnRJZCI6MTc2LCJzZXJ2aWNlVHlwZSI6IlNUQU5EQVJEIn0.ndtf8V_FJTvhXeemVLlORyDev6RJaSPhZ2djkMVK9SvXD0srR_qlYJATPjC4NljkS71nXMGVDov5uCTuUL97x6FGQEKDruA-z24x_2Zr8kof4LfBb3HUHudCR8QvE--I",
+				licenseKey: license,
 				email:      "",
 				password:   "",
 			},
 			wantErr: false,
 			mockFunc: func() {
 				HTTPGetMock = func(url string) (resp *http.Response, err error) {
-					return &http.Response{Body: ioutil.NopCloser(bytes.NewReader([]byte(`-----BEGIN PUBLIC KEY-----
-MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEbo+e1wpBY4tBq9AONKww3Kq7m6QP/TBQ
-mr/cKCUyBL7rcAvg0zNq1vcSrUSGlAmY3SEDCu3GOKnjG/U4E7+p957ocWSV+mQU
-9NKlTdQFGF3+aO6jbQ4hX/S5qPyF+a3z
------END PUBLIC KEY-----`)))}, nil
+					return &http.Response{Body: ioutil.NopCloser(strings.NewReader(publicKeys[0]))}, nil
 				}
 			},
-			wantLicense: "eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsZW5pbitjMUBtaW5pby5pbyIsInRlYW1OYW1lIjoiY29uc29sZS1jdXN0b21lciIsImV4cCI6MS42Mzk5NTI2MTE2MDkxNDQ3MzJlOSwiaXNzIjoic3VibmV0QG1pbmlvLmlvIiwiY2FwYWNpdHkiOjI1LCJpYXQiOjEuNjA4NDE2NjExNjA5MTQ0NzMyZTksImFjY291bnRJZCI6MTc2LCJzZXJ2aWNlVHlwZSI6IlNUQU5EQVJEIn0.ndtf8V_FJTvhXeemVLlORyDev6RJaSPhZ2djkMVK9SvXD0srR_qlYJATPjC4NljkS71nXMGVDov5uCTuUL97x6FGQEKDruA-z24x_2Zr8kof4LfBb3HUHudCR8QvE--I",
+			wantLicense: license,
 		},
 	}
 
