@@ -185,9 +185,9 @@ func subscriptionValidate(client cluster.HTTPClientI, license, email, password s
 		Email:           licenseInfo.Email,
 		AccountID:       licenseInfo.AccountID,
 		StorageCapacity: licenseInfo.StorageCapacity,
-		Plan:            licenseInfo.ServiceType,
+		Plan:            licenseInfo.Plan,
 		ExpiresAt:       licenseInfo.ExpiresAt.String(),
-		Organization:    licenseInfo.TeamName,
+		Organization:    licenseInfo.Organization,
 	}, rawLicense, nil
 }
 
