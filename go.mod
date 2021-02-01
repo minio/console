@@ -19,8 +19,8 @@ require (
 	github.com/minio/mc v0.0.0-20201220181029-41c804b179de
 	github.com/minio/minio v0.0.0-20210128013121-e79829b5b368
 	github.com/minio/minio-go/v7 v7.0.8-0.20210127003153-c40722862654
-	github.com/minio/operator v0.0.0-20210127071132-accfa4851396
-	github.com/minio/operator/logsearchapi v0.0.0-20201217190212-bf6546b09012
+	github.com/minio/operator v0.0.0-20210201110528-753019b838b4
+	github.com/minio/operator/logsearchapi v0.0.0-20210201110528-753019b838b4
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/secure-io/sio-go v0.3.1
@@ -30,7 +30,7 @@ require (
 	golang.org/x/net v0.0.0-20201216054612-986b41b23924
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	gopkg.in/yaml.v2 v2.3.0
-	k8s.io/api v0.18.6
-	k8s.io/apimachinery v0.18.8
-	k8s.io/client-go v0.18.6
+	k8s.io/api v0.20.2
+	k8s.io/apimachinery v0.20.2
+	k8s.io/client-go v0.20.2
 )
