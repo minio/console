@@ -44,7 +44,7 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/admin_api"
-	operator "github.com/minio/operator/pkg/apis/minio.min.io/v1"
+	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	v1 "k8s.io/client-go/kubernetes/typed/core/v1"
@@ -207,7 +207,7 @@ func deleteTenantAction(
 
 	if deletePvcs {
 		opts := metav1.ListOptions{
-			LabelSelector: fmt.Sprintf("%s=%s", operator.TenantLabel, tenantName),
+			LabelSelector: fmt.Sprintf("%s=%s", miniov2.TenantLabel, tenantName),
 		}
 		err = clientset.PersistentVolumeClaims(namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
 		if err != nil {
@@ -220,18 +220,18 @@ func deleteTenantAction(
 }
 
 // GetTenantServiceURL gets tenant's service url with the proper scheme and port
-func GetTenantServiceURL(mi *operator.Tenant) (svcURL string) {
+func GetTenantServiceURL(mi *miniov2.Tenant) (svcURL string) {
 	scheme := "http"
-	port := operator.MinIOPortLoadBalancerSVC
+	port := miniov2.MinIOPortLoadBalancerSVC
 	if mi.AutoCert() || mi.ExternalCert() {
 		scheme = "https"
-		port = operator.MinIOTLSPortLoadBalancerSVC
+		port = miniov2.MinIOTLSPortLoadBalancerSVC
 	}
 	svc := fmt.Sprintf("%s.%s.svc.cluster.local", mi.MinIOCIServiceName(), mi.Namespace)
 	return fmt.Sprintf("%s://%s", scheme, net.JoinHostPort(svc, strconv.Itoa(port)))
 }
 
-func getTenantAdminClient(ctx context.Context, client K8sClientI, tenant *operator.Tenant, svcURL string) (*madmin.AdminClient, error) {
+func getTenantAdminClient(ctx context.Context, client K8sClientI, tenant *miniov2.Tenant, svcURL string) (*madmin.AdminClient, error) {
 	tenantCreds, err := getTenantCreds(ctx, client, tenant)
 	if err != nil {
 		return nil, err
@@ -249,7 +249,7 @@ type tenantKeys struct {
 	secretKey string
 }
 
-func getTenantCreds(ctx context.Context, client K8sClientI, tenant *operator.Tenant) (*tenantKeys, error) {
+func getTenantCreds(ctx context.Context, client K8sClientI, tenant *miniov2.Tenant) (*tenantKeys, error) {
 	if tenant == nil || tenant.Spec.CredsSecret == nil {
 		return nil, errors.New("invalid arguments")
 	}
@@ -274,7 +274,7 @@ func getTenantCreds(ctx context.Context, client K8sClientI, tenant *operator.Ten
 	return &tenantKeys{accessKey: string(tenantAccessKey), secretKey: string(tenantSecretKey)}, nil
 }
 
-func getTenant(ctx context.Context, operatorClient OperatorClientI, namespace, tenantName string) (*operator.Tenant, error) {
+func getTenant(ctx context.Context, operatorClient OperatorClientI, namespace, tenantName string) (*miniov2.Tenant, error) {
 	minInst, err := operatorClient.TenantGet(ctx, namespace, tenantName, metav1.GetOptions{})
 	if err != nil {
 		return nil, err
@@ -300,7 +300,7 @@ func isPrometheusEnabled(annotations map[string]string) bool {
 	return true
 }
 
-func getTenantInfo(tenant *operator.Tenant) *models.Tenant {
+func getTenantInfo(tenant *miniov2.Tenant) *models.Tenant {
 	var pools []*models.Pool
 	consoleImage := ""
 	var totalSize int64
@@ -546,7 +546,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		ObjectMeta: metav1.ObjectMeta{
 			Name: secretName,
 			Labels: map[string]string{
-				operator.TenantLabel: tenantName,
+				miniov2.TenantLabel: tenantName,
 			},
 		},
 		Immutable: &imm,
@@ -565,7 +565,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		if mError != nil {
 			log.Printf("deleting secrets created for failed tenant: %s if any\n", tenantName)
 			opts := metav1.ListOptions{
-				LabelSelector: fmt.Sprintf("%s=%s", operator.TenantLabel, tenantName),
+				LabelSelector: fmt.Sprintf("%s=%s", miniov2.TenantLabel, tenantName),
 			}
 			err = clientSet.CoreV1().Secrets(ns).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
 			if err != nil {
@@ -587,12 +587,12 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 
 	//Construct a MinIO Instance with everything we are getting from parameters
-	minInst := operator.Tenant{
+	minInst := miniov2.Tenant{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:   tenantName,
 			Labels: tenantReq.Labels,
 		},
-		Spec: operator.TenantSpec{
+		Spec: miniov2.TenantSpec{
 			Image:     minioImage,
 			Mountpath: "/export",
 			CredsSecret: &corev1.LocalObjectReference{
@@ -734,14 +734,14 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			ObjectMeta: metav1.ObjectMeta{
 				Name: consoleSecretName,
 				Labels: map[string]string{
-					operator.TenantLabel: tenantName,
+					miniov2.TenantLabel: tenantName,
 				},
 			},
 			Immutable: &imm,
 			Data:      consoleSecretData,
 		}
 
-		minInst.Spec.Console = &operator.ConsoleConfiguration{
+		minInst.Spec.Console = &miniov2.ConsoleConfiguration{
 			Replicas:      1,
 			Image:         getConsoleImage(),
 			ConsoleSecret: &corev1.LocalObjectReference{Name: consoleSecretName},
@@ -841,7 +841,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	// prometheus annotations support
 	if tenantReq.EnablePrometheus != nil && *tenantReq.EnablePrometheus && minInst.Annotations != nil {
 		minInst.Annotations[prometheusPath] = "/minio/prometheus/metrics"
-		minInst.Annotations[prometheusPort] = fmt.Sprint(operator.MinIOPort)
+		minInst.Annotations[prometheusPort] = fmt.Sprint(miniov2.MinIOPort)
 		minInst.Annotations[prometheusScrape] = "true"
 	}
 
@@ -850,17 +850,17 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		minInst.Spec.Console.Image = tenantReq.ConsoleImage
 	}
 	// default activate lgo search and prometheus
-	minInst.Spec.Log = &operator.LogConfig{
+	minInst.Spec.Log = &miniov2.LogConfig{
 		Image: "miniodev/logsearch:v4.0.0",
-		Audit: &operator.AuditConfig{DiskCapacityGB: swag.Int(10)},
+		Audit: &miniov2.AuditConfig{DiskCapacityGB: swag.Int(10)},
 	}
-	minInst.Spec.Prometheus = &operator.PrometheusConfig{
+	minInst.Spec.Prometheus = &miniov2.PrometheusConfig{
 		DiskCapacityDB: swag.Int(5),
 	}
 
 	// expose services
 	if tenantReq.ExposeMinio || tenantReq.ExposeConsole {
-		minInst.Spec.ExposeServices = &operator.ExposeServices{
+		minInst.Spec.ExposeServices = &miniov2.ExposeServices{
 			MinIO:   tenantReq.ExposeMinio,
 			Console: tenantReq.ExposeConsole,
 		}
@@ -875,7 +875,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		return nil, prepareError(err)
 	}
 
-	_, err = opClient.MinioV1().Tenants(ns).Create(context.Background(), &minInst, metav1.CreateOptions{})
+	_, err = opClient.MinioV2().Tenants(ns).Create(context.Background(), &minInst, metav1.CreateOptions{})
 	if err != nil {
 		log.Println("Create", err)
 		return nil, prepareError(err)
@@ -936,7 +936,7 @@ func setImageRegistry(ctx context.Context, req *models.ImageRegistry, clientset 
 				ObjectMeta: metav1.ObjectMeta{
 					Name: pullSecretName,
 					Labels: map[string]string{
-						operator.TenantLabel: tenantName,
+						miniov2.TenantLabel: tenantName,
 					},
 				},
 				Data: secretCredentials,
@@ -998,7 +998,7 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClientI, cli
 	currentAnnotations := minInst.Annotations
 	prometheusAnnotations := map[string]string{
 		prometheusPath:   "/minio/prometheus/metrics",
-		prometheusPort:   fmt.Sprint(operator.MinIOPort),
+		prometheusPort:   fmt.Sprint(miniov2.MinIOPort),
 		prometheusScrape: "true",
 	}
 	if params.Body.EnablePrometheus && currentAnnotations != nil {
@@ -1173,8 +1173,8 @@ func getTenantUsageResponse(session *models.Principal, params admin_api.GetTenan
 }
 
 // parseTenantPoolRequest parse pool request and returns the equivalent
-// operator.Pool object
-func parseTenantPoolRequest(poolParams *models.Pool) (*operator.Pool, error) {
+// miniov2.Pool object
+func parseTenantPoolRequest(poolParams *models.Pool) (*miniov2.Pool, error) {
 	if poolParams.VolumeConfiguration == nil {
 		return nil, errors.New("a volume configuration must be specified")
 	}
@@ -1330,7 +1330,7 @@ func parseTenantPoolRequest(poolParams *models.Pool) (*operator.Pool, error) {
 		Spec: volTemp,
 	}
 
-	pool := &operator.Pool{
+	pool := &miniov2.Pool{
 		Name:                poolParams.Name,
 		Servers:             int32(*poolParams.Servers),
 		VolumesPerServer:    *poolParams.VolumesPerServer,
@@ -1389,9 +1389,9 @@ func parseModelsNodeSelectorTerm(elem *models.NodeSelectorTerm) corev1.NodeSelec
 	return term
 }
 
-// parseTenantPool operator pool object and returns the equivalent
+// parseTenantPool miniov2 pool object and returns the equivalent
 // models.Pool object
-func parseTenantPool(pool *operator.Pool) *models.Pool {
+func parseTenantPool(pool *miniov2.Pool) *models.Pool {
 	var size *int64
 	var storageClassName string
 	if pool.VolumeClaimTemplate != nil {
@@ -1615,7 +1615,7 @@ func updateTenantPools(
 	operatorClient OperatorClientI,
 	namespace string,
 	tenantName string,
-	poolsReq []*models.Pool) (*operator.Tenant, error) {
+	poolsReq []*models.Pool) (*miniov2.Tenant, error) {
 
 	minInst, err := operatorClient.TenantGet(ctx, namespace, tenantName, metav1.GetOptions{})
 	if err != nil {
@@ -1623,7 +1623,7 @@ func updateTenantPools(
 	}
 
 	// set the pools if they are provided
-	var newPoolArray []operator.Pool
+	var newPoolArray []miniov2.Pool
 	for _, pool := range poolsReq {
 		pool, err := parseTenantPoolRequest(pool)
 		if err != nil {

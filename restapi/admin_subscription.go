@@ -23,7 +23,7 @@ import (
 	"log"
 	"time"
 
-	operator "github.com/minio/operator/pkg/apis/minio.min.io/v1"
+	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 
 	"github.com/minio/console/pkg/acl"
 
@@ -87,7 +87,7 @@ func addSubscriptionLicenseToTenant(ctx context.Context, clientSet K8sClientI, l
 		ObjectMeta: metav1.ObjectMeta{
 			Name: secretName,
 			Labels: map[string]string{
-				operator.TenantLabel: tenantName,
+				miniov2.TenantLabel: tenantName,
 			},
 		},
 		Immutable: &imm,
@@ -101,7 +101,7 @@ func addSubscriptionLicenseToTenant(ctx context.Context, clientSet K8sClientI, l
 	// restart Console pods based on label:
 	//  v1.min.io/console: TENANT-console
 	err = clientSet.deletePodCollection(ctx, namespace, metav1.DeleteOptions{}, metav1.ListOptions{
-		LabelSelector: fmt.Sprintf("%s=%s%s", operator.ConsoleTenantLabel, tenantName, operator.ConsoleName),
+		LabelSelector: fmt.Sprintf("%s=%s%s", miniov2.ConsoleTenantLabel, tenantName, miniov2.ConsoleName),
 	})
 	if err != nil {
 		return err
