@@ -5267,6 +5267,12 @@ func init() {
     "tlsConfiguration": {
       "type": "object",
       "properties": {
+        "ca_certificates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "console": {
           "type": "object",
           "$ref": "#/definitions/keyPairConfiguration"
@@ -11159,6 +11165,12 @@ func init() {
     "tlsConfiguration": {
       "type": "object",
       "properties": {
+        "ca_certificates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "console": {
           "type": "object",
           "$ref": "#/definitions/keyPairConfiguration"

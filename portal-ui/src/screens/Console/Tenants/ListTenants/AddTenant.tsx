@@ -253,6 +253,15 @@ const AddTenant = ({
       encoded_cert: "",
     },
   ]);
+  const [caCertificates, setCaCertificates] = useState<KeyPair[]>([
+    {
+      id: Date.now().toString(),
+      key: "",
+      cert: "",
+      encoded_key: "",
+      encoded_cert: "",
+    },
+  ]);
   const [consoleKeyVal, setConsoleKeyVal] = useState<string>("");
   const [consoleCertVal, setConsoleCertVal] = useState<string>("");
   const [serverKeyVal, setServerKeyVal] = useState<string>("");
@@ -264,7 +273,49 @@ const AddTenant = ({
   const [vaultCAVal, setVaultCAVal] = useState<string>("");
   const [gemaltoCAVal, setGemaltoCAVal] = useState<string>("");
 
-  // Certificates functions
+  // CA Certificates functions
+  const addCaCertificate = () => {
+    setCaCertificates((currentCertificates) => [
+      ...currentCertificates,
+      {
+        id: Date.now().toString(),
+        key: "",
+        cert: "",
+        encoded_key: "",
+        encoded_cert: "",
+      },
+    ]);
+  };
+
+  const deleteCaCertificate = (id: string) => {
+    if (caCertificates.length > 1) {
+      setCaCertificates(
+        caCertificates.filter((item: KeyPair) => item.id !== id)
+      );
+    }
+  };
+
+  const addFileToCaCertificates = (
+    id: string,
+    key: string,
+    fileName: string,
+    value: string
+  ) => {
+    setCaCertificates(
+      caCertificates.map((item: KeyPair) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            [key]: fileName,
+            [`encoded_${key}`]: value,
+          };
+        }
+        return item;
+      })
+    );
+  };
+
+  // KeyPair Certificates functions
   const addKeyPair = () => {
     setMinioCertificates((currentCertificates) => [
       ...currentCertificates,
@@ -941,6 +992,16 @@ const AddTenant = ({
 
       let tenantCerts: any = null;
       let consoleCerts: any = null;
+      let caCerts: any = null;
+
+      if (caCertificates.length > 0) {
+        caCerts = {
+          ca_certificates: caCertificates
+            .map((keyPair: KeyPair) => keyPair.encoded_cert)
+            .filter((keyPair) => keyPair),
+        };
+      }
+
       if (minioCertificates.length > 0) {
         tenantCerts = {
           minio: minioCertificates
@@ -961,12 +1022,13 @@ const AddTenant = ({
         };
       }
 
-      if (tenantCerts || consoleCerts) {
+      if (tenantCerts || consoleCerts || caCerts) {
         dataSend = {
           ...dataSend,
           tls: {
             ...tenantCerts,
             ...consoleCerts,
+            ...caCerts,
           },
         };
       }
@@ -1764,6 +1826,60 @@ const AddTenant = ({
                     ))}
                     <Grid item xs={12}>
                       <Button onClick={addKeyPair} color="primary">
+                        Add More
+                      </Button>
+                    </Grid>
+                  </Grid>
+                  <Grid container>
+                    <Grid item xs={12}>
+                      <br />
+                      <Divider />
+                      <br />
+                    </Grid>
+                  </Grid>
+                  <Grid container>
+                    <Grid item xs={12}>
+                      <Typography
+                        variant="overline"
+                        display="block"
+                        gutterBottom
+                      >
+                        CA Certificates
+                      </Typography>
+                    </Grid>
+                    {caCertificates.map((keyPair: KeyPair) => (
+                      <React.Fragment key={keyPair.id}>
+                        <Grid item xs={10}>
+                          <FileSelector
+                            onChange={(encodedValue, fileName) => {
+                              addFileToCaCertificates(
+                                keyPair.id,
+                                "cert",
+                                fileName,
+                                encodedValue
+                              );
+                            }}
+                            accept=".cer,.crt,.cert,.pem"
+                            id="tlsCert"
+                            name="tlsCert"
+                            label="Cert"
+                            value={keyPair.cert}
+                          />
+                        </Grid>
+                        <Grid item xs={1}>
+                          <Button
+                            onClick={() => {
+                              deleteCaCertificate(keyPair.id);
+                            }}
+                            color="secondary"
+                          >
+                            Remove
+                          </Button>
+                        </Grid>
+                      </React.Fragment>
+                    ))}
+                    <Grid item xs={12}>
+                      <Button onClick={addCaCertificate} color="primary">
                         Add More
                       </Button>
                     </Grid>

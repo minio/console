@@ -3130,6 +3130,10 @@ definitions:
       console:
         type: object
         $ref: "#/definitions/keyPairConfiguration"
+      ca_certificates:
+        type: array
+        items:
+          type: string
 
   idpConfiguration:
     type: object

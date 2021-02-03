@@ -227,17 +227,58 @@ func getKESConfiguration(ctx context.Context, clientSet K8sClientI, ns string, e
 	return kesConfiguration, nil
 }
 
+type tenantSecret struct {
+	Name    string
+	Content map[string][]byte
+}
+
+// createOrReplaceSecrets receives an array of Tenant Secrets to be stored as k8s secrets
+func createOrReplaceSecrets(ctx context.Context, clientSet K8sClientI, ns string, secrets []tenantSecret, tenantName string) ([]*miniov2.LocalCertificateReference, error) {
+	var k8sSecrets []*miniov2.LocalCertificateReference
+	for _, secret := range secrets {
+		if len(secret.Content) > 0 && secret.Name != "" {
+			// delete secret with same name if exists
+			err := clientSet.deleteSecret(ctx, ns, secret.Name, metav1.DeleteOptions{})
+			if err != nil {
+				// log the error if any and continue
+				log.Println(err)
+			}
+			imm := true
+			k8sSecret := &corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: secret.Name,
+					Labels: map[string]string{
+						miniov2.TenantLabel: tenantName,
+					},
+				},
+				Type:      corev1.SecretTypeOpaque,
+				Immutable: &imm,
+				Data:      secret.Content,
+			}
+			_, err = clientSet.createSecret(ctx, ns, k8sSecret, metav1.CreateOptions{})
+			if err != nil {
+				return nil, err
+			}
+			k8sSecrets = append(k8sSecrets, &miniov2.LocalCertificateReference{
+				Name: secret.Name,
+				Type: "Opaque",
+			})
+		}
+	}
+	return k8sSecrets, nil
+}
+
 // createOrReplaceExternalCertSecrets receives an array of KeyPairs (public and private key), encoded in base64, decode it and generate an equivalent number of kubernetes
 // secrets to be used by the miniov2 for TLS encryption
 func createOrReplaceExternalCertSecrets(ctx context.Context, clientSet K8sClientI, ns string, keyPairs []*models.KeyPairConfiguration, secretName, tenantName string) ([]*miniov2.LocalCertificateReference, error) {
 	var keyPairSecrets []*miniov2.LocalCertificateReference
 	for i, keyPair := range keyPairs {
-		secretName := fmt.Sprintf("%s-%d", secretName, i)
+		keyPairSecretName := fmt.Sprintf("%s-%d", secretName, i)
 		if keyPair == nil || keyPair.Crt == nil || keyPair.Key == nil || *keyPair.Crt == "" || *keyPair.Key == "" {
 			return nil, errors.New("certificate files must not be empty")
 		}
 		// delete secret with same name if exists
-		err := clientSet.deleteSecret(ctx, ns, fmt.Sprintf("%s-%d", secretName, i), metav1.DeleteOptions{})
+		err := clientSet.deleteSecret(ctx, ns, keyPairSecretName, metav1.DeleteOptions{})
 		if err != nil {
 			// log the error if any and continue
 			log.Println(err)
@@ -253,7 +294,7 @@ func createOrReplaceExternalCertSecrets(ctx context.Context, clientSet K8sClient
 		}
 		externalTLSCertificateSecret := &corev1.Secret{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: secretName,
+				Name: keyPairSecretName,
 				Labels: map[string]string{
 					miniov2.TenantLabel: tenantName,
 				},
@@ -271,7 +312,7 @@ func createOrReplaceExternalCertSecrets(ctx context.Context, clientSet K8sClient
 		}
 		// Certificates used by the minio instance
 		keyPairSecrets = append(keyPairSecrets, &miniov2.LocalCertificateReference{
-			Name: secretName,
+			Name: keyPairSecretName,
 			Type: "kubernetes.io/tls",
 		})
 	}
