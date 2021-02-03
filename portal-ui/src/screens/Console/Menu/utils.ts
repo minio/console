@@ -19,6 +19,6 @@ export const menuGroups = [
   { label: "User", group: "User", collapsible: true },
   { label: "Admin", group: "Admin", collapsible: true },
   { label: "Tools", group: "Tools", collapsible: true },
-  { label: "Operator", group: "Operator", collapsible: true },
+  { label: "Operator", group: "Operator", collapsible: false },
   { label: "", group: "License", collapsible: false },
 ];

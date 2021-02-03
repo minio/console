@@ -15,12 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import storage from "local-storage-fallback";
-import {
-  ICapacity,
-  IErasureCodeCalc,
-  IPoolModel,
-  IStorageFactors,
-} from "./types";
+import { ICapacity, IErasureCodeCalc, IStorageFactors } from "./types";
+import { IPool } from "../screens/Console/Tenants/ListTenants/types";
 
 const minStReq = 1073741824; // Minimal Space required for MinIO
 const minMemReq = 2147483648; // Minimal Memory required for MinIO in bytes
@@ -419,7 +415,7 @@ export const erasureCodeCalc = (
 };
 
 // Pool Name Generator
-export const generatePoolName = (pools: IPoolModel[]) => {
+export const generatePoolName = (pools: IPool[]) => {
   const poolCounter = pools.length;
 
   return `pool-${poolCounter}`;

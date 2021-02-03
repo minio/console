@@ -257,6 +257,7 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
               itemActions={tableActions}
               columns={[
                 { label: "Name", elementKey: "name" },
+                { label: "Namespace", elementKey: "namespace" },
                 { label: "Capacity", elementKey: "capacity" },
                 { label: "# of Pools", elementKey: "pool_count" },
                 { label: "State", elementKey: "currentState" },

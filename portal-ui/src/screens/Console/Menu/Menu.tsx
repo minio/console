@@ -187,7 +187,7 @@ const Menu = ({ userLoggedIn, classes, pages, operatorMode }: IMenuProps) => {
       });
   };
 
-  const menuItems = [
+  let menuItems = [
     {
       group: "common",
       type: "item",
@@ -316,20 +316,33 @@ const Menu = ({ userLoggedIn, classes, pages, operatorMode }: IMenuProps) => {
       name: "Warp",
       icon: <WarpIcon />,
     },
-    {
-      group: "License",
-      type: "item",
-      component: NavLink,
-      to: "/license",
-      name: "License",
-      icon: <LicenseIcon />,
-    },
   ];
 
   const allowedPages = pages.reduce((result: any, item: any, index: any) => {
     result[item] = true;
     return result;
   }, {});
+
+  // Append the license page according to the allowedPages
+  if (allowedPages.hasOwnProperty("/tenants")) {
+    menuItems.push({
+      group: "Operator",
+      type: "item",
+      component: NavLink,
+      to: "/license",
+      name: "License",
+      icon: <LicenseIcon />,
+    });
+  } else {
+    menuItems.push({
+      group: "License",
+      type: "item",
+      component: NavLink,
+      to: "/license",
+      name: "License",
+      icon: <LicenseIcon />,
+    });
+  }
 
   const allowedItems = menuItems.filter(
     (item: any) =>

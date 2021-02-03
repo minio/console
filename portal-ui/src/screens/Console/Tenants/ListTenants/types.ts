@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { LicenseInfo } from "../../License/types";
+import { IAffinityModel } from "../../../../common/types";
 
 export interface IPool {
   name: string;
@@ -24,6 +25,7 @@ export interface IPool {
   // computed
   capacity: string;
   volumes: number;
+  label?: string;
 }
 
 export interface IAddPoolRequest {
@@ -31,6 +33,7 @@ export interface IAddPoolRequest {
   servers: number;
   volumes_per_server: number;
   volume_configuration: IVolumeConfiguration;
+  affinity?: IAffinityModel;
 }
 
 export interface IVolumeConfiguration {

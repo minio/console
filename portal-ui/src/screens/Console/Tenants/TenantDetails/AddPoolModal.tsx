@@ -4,10 +4,12 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import Grid from "@material-ui/core/Grid";
-import { niceBytes } from "../../../../common/utils";
+import { generatePoolName, niceBytes } from "../../../../common/utils";
 import { Button, LinearProgress } from "@material-ui/core";
 import api from "../../../../common/api";
 import { IAddPoolRequest, ITenant } from "../ListTenants/types";
+import { IAffinityModel } from "../../../../common/types";
+import { getHardcodedAffinity } from "./utils";
 
 interface IAddPoolProps {
   tenant: ITenant;
@@ -81,8 +83,16 @@ const AddPoolModal = ({
         onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
           e.preventDefault();
           setAddSending(true);
+
+          const poolName = generatePoolName(tenant.pools);
+
+          const hardCodedAffinity: IAffinityModel = getHardcodedAffinity(
+            tenant.name,
+            poolName
+          );
+
           const data: IAddPoolRequest = {
-            name: "",
+            name: poolName,
             servers: numberOfNodes,
             volumes_per_server: volumesPerServer,
             volume_configuration: {
@@ -90,7 +100,9 @@ const AddPoolModal = ({
               storage_class: "",
               labels: null,
             },
+            affinity: hardCodedAffinity,
           };
+
           api
             .invoke(
               "POST",

@@ -66,6 +66,7 @@ import { IMemorySize } from "./types";
 import Divider from "@material-ui/core/Divider";
 import { connect } from "react-redux";
 import { setModalErrorSnackMessage } from "../../../../actions";
+import { getHardcodedAffinity } from "../TenantDetails/utils";
 
 interface IAddTenantProps {
   open: boolean;
@@ -917,29 +918,10 @@ const AddTenant = ({
     if (addSending) {
       const poolName = generatePoolName([]);
 
-      const hardCodedAffinity: IAffinityModel = {
-        podAntiAffinity: {
-          requiredDuringSchedulingIgnoredDuringExecution: [
-            {
-              labelSelector: {
-                matchExpressions: [
-                  {
-                    key: "v1.min.io/tenant",
-                    operator: "In",
-                    values: [tenantName],
-                  },
-                  {
-                    key: "v1.min.io/pool",
-                    operator: "In",
-                    values: [poolName],
-                  },
-                ],
-              },
-              topologyKey: "kubernetes.io/hostname",
-            },
-          ],
-        },
-      };
+      const hardCodedAffinity: IAffinityModel = getHardcodedAffinity(
+        tenantName,
+        poolName
+      );
 
       const erasureCode = ecParity.split(":")[1];
 
