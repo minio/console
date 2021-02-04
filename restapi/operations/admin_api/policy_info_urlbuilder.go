@@ -26,7 +26,6 @@ import (
 	"errors"
 	"net/url"
 	golangswaggerpaths "path"
-	"strings"
 )
 
 // PolicyInfoURL generates an URL for the policy info operation
@@ -57,20 +56,22 @@ func (o *PolicyInfoURL) SetBasePath(bp string) {
 func (o *PolicyInfoURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/policies/{name}"
-
-	name := o.Name
-	if name != "" {
-		_path = strings.Replace(_path, "{name}", name, -1)
-	} else {
-		return nil, errors.New("name is required on PolicyInfoURL")
-	}
+	var _path = "/policy"
 
 	_basePath := o._basePath
 	if _basePath == "" {
 		_basePath = "/api/v1"
 	}
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
+
+	qs := make(url.Values)
+
+	nameQ := o.Name
+	if nameQ != "" {
+		qs.Set("name", nameQ)
+	}
+
+	_result.RawQuery = qs.Encode()
 
 	return &_result, nil
 }

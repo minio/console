@@ -2263,7 +2263,7 @@ func init() {
         }
       }
     },
-    "/policies/{name}": {
+    "/policy": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -2274,7 +2274,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "path",
+            "in": "query",
             "required": true
           }
         ],
@@ -2303,7 +2303,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "path",
+            "in": "query",
             "required": true
           }
         ],
@@ -7735,7 +7735,7 @@ func init() {
         }
       }
     },
-    "/policies/{name}": {
+    "/policy": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -7746,7 +7746,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "path",
+            "in": "query",
             "required": true
           }
         ],
@@ -7775,7 +7775,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "path",
+            "in": "query",
             "required": true
           }
         ],

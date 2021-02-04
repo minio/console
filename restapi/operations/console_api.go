@@ -1225,7 +1225,7 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/policies/{name}"] = admin_api.NewPolicyInfo(o.context, o.AdminAPIPolicyInfoHandler)
+	o.handlers["GET"]["/policy"] = admin_api.NewPolicyInfo(o.context, o.AdminAPIPolicyInfoHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
@@ -1261,7 +1261,7 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/policies/{name}"] = admin_api.NewRemovePolicy(o.context, o.AdminAPIRemovePolicyHandler)
+	o.handlers["DELETE"]["/policy"] = admin_api.NewRemovePolicy(o.context, o.AdminAPIRemovePolicyHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}

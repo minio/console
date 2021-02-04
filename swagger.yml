@@ -1234,30 +1234,13 @@ paths:
       tags:
         - AdminAPI
 
-  /policies/{name}:
-    delete:
-      summary: Remove policy
-      operationId: RemovePolicy
-      parameters:
-        - name: name
-          in: path
-          required: true
-          type: string
-      responses:
-        204:
-          description: A successful response.
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/error"
-      tags:
-        - AdminAPI
+  /policy:
     get:
       summary: Policy info
       operationId: PolicyInfo
       parameters:
         - name: name
-          in: path
+          in: query
           required: true
           type: string
       responses:
@@ -1265,6 +1248,23 @@ paths:
           description: A successful response.
           schema:
             $ref: "#/definitions/policy"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    delete:
+      summary: Remove policy
+      operationId: RemovePolicy
+      parameters:
+        - name: name
+          in: query
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
         default:
           description: Generic error response.
           schema:
