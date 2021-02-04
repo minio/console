@@ -49,7 +49,7 @@ const DeletePolicy = ({
     }
     setDeleteLoading(true);
     api
-      .invoke("DELETE", `/api/v1/policies/${selectedPolicy}`)
+      .invoke("DELETE", `/api/v1/policy?name=${selectedPolicy}`)
       .then((res: PolicyList) => {
         setDeleteLoading(false);
 
