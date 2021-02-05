@@ -171,6 +171,7 @@ const AddTenant = ({
   const [awsAccessKey, setAWSAccessKey] = useState<string>("");
   const [awsSecretKey, setAWSSecretKey] = useState<string>("");
   const [awsToken, setAWSToken] = useState<string>("");
+
   const [vaultEndpoint, setVaultEndpoint] = useState<string>("");
   const [vaultEngine, setVaultEngine] = useState<string>("");
   const [vaultNamespace, setVaultNamespace] = useState<string>("");
@@ -180,6 +181,12 @@ const AddTenant = ({
   const [vaultSecret, setVaultSecret] = useState<string>("");
   const [vaultRetry, setVaultRetry] = useState<string>("0");
   const [vaultPing, setVaultPing] = useState<string>("0");
+  const [gcpProjectID, setGcpProjectID] = useState<string>("");
+  const [gcpEndpoint, setGcpEndpoint] = useState<string>("");
+  const [gcpClientEmail, setGcpClientEmail] = useState<string>("");
+  const [gcpClientID, setGcpClientID] = useState<string>("");
+  const [gcpPrivateKeyID, setGcpPrivateKeyID] = useState<string>("");
+  const [gcpPrivateKey, setGcpPrivateKey] = useState<string>("");
   const [ecParityChoices, setECParityChoices] = useState<Opts[]>([]);
   const [cleanECChoices, setCleanECChoices] = useState<string[]>([]);
   const [nodes, setNodes] = useState<string>("4");
@@ -823,6 +830,17 @@ const AddTenant = ({
         ];
       }
 
+      if (encryptionType === "gcp") {
+        encryptionValidation = [
+          ...encryptionValidation,
+          {
+            fieldKey: "gcp_project_id",
+            required: true,
+            value: gcpProjectID,
+          },
+        ];
+      }
+
       if (encryptionType === "aws") {
         encryptionValidation = [
           ...encryptionValidation,
@@ -902,6 +920,7 @@ const AddTenant = ({
     gemaltoToken,
     gemaltoDomain,
     gemaltoRetry,
+    gcpProjectID,
   ]);
 
   const clearValidationError = (fieldKey: string) => {
@@ -1053,6 +1072,22 @@ const AddTenant = ({
                     accesskey: awsAccessKey,
                     secretkey: awsSecretKey,
                     token: awsToken,
+                  },
+                },
+              },
+            };
+            break;
+          case "GCP":
+            insertEncrypt = {
+              gcp: {
+                secretmanager: {
+                  project_id: gcpProjectID,
+                  endpoint: gcpEndpoint,
+                  credentials: {
+                    client_email: gcpClientEmail,
+                    client_id: gcpClientID,
+                    private_key_id: gcpPrivateKeyID,
+                    private_key: gcpPrivateKey,
                   },
                 },
               },
@@ -1964,6 +1999,7 @@ const AddTenant = ({
                     { label: "Vault", value: "vault" },
                     { label: "AWS", value: "aws" },
                     { label: "Gemalto", value: "gemalto" },
+                    { label: "GCP", value: "gcp" },
                   ]}
                 />
               </Grid>
@@ -2238,6 +2274,80 @@ const AddTenant = ({
                       label="Ping (Seconds)"
                       value={vaultPing}
                       error={validationErrors["vault_ping"] || ""}
+                    />
+                  </Grid>
+                </React.Fragment>
+              )}
+              {encryptionType === "gcp" && (
+                <React.Fragment>
+                  <Grid item xs={12}>
+                    <InputBoxWrapper
+                      id="gcp_project_id"
+                      name="gcp_project_id"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setGcpProjectID(e.target.value);
+                        clearValidationError("gcp_project_id");
+                      }}
+                      label="Project ID"
+                      value={gcpProjectID}
+                      error={validationErrors["gcp_project_id"] || ""}
+                      required
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <InputBoxWrapper
+                      id="gcp_endpoint"
+                      name="gcp_endpoint"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setGcpEndpoint(e.target.value);
+                      }}
+                      label="Endpoint"
+                      value={gcpEndpoint}
+                    />
+                  </Grid>
+                  <h5>Credentials</h5>
+                  <Grid item xs={12}>
+                    <InputBoxWrapper
+                      id="gcp_client_email"
+                      name="gcp_client_email"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setGcpClientEmail(e.target.value);
+                      }}
+                      label="Client Email"
+                      value={gcpClientEmail}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <InputBoxWrapper
+                      id="gcp_client_id"
+                      name="gcp_client_id"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setGcpClientID(e.target.value);
+                      }}
+                      label="Client ID"
+                      value={gcpClientID}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <InputBoxWrapper
+                      id="gcp_private_key_id"
+                      name="gcp_private_key_id"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setGcpPrivateKeyID(e.target.value);
+                      }}
+                      label="Private Key ID"
+                      value={gcpPrivateKeyID}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <InputBoxWrapper
+                      id="gcp_private_key"
+                      name="gcp_private_key"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setGcpPrivateKey(e.target.value);
+                      }}
+                      label="Private Key"
+                      value={gcpPrivateKey}
                     />
                   </Grid>
                 </React.Fragment>
