@@ -381,12 +381,14 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 	//minio service
 	minSvc, err := k8sClient.getService(ctx, minTenant.Namespace, minTenant.MinIOCIServiceName(), metav1.GetOptions{})
 	if err != nil {
-		return nil, prepareError(err)
+		// we can tolerate this error
+		log.Println(err)
 	}
 	//console service
 	conSvc, err := k8sClient.getService(ctx, minTenant.Namespace, minTenant.ConsoleCIServiceName(), metav1.GetOptions{})
 	if err != nil {
-		return nil, prepareError(err)
+		// we can tolerate this error
+		log.Println(err)
 	}
 
 	schema := "http"
@@ -401,10 +403,10 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 	}
 	var minioEndpoint string
 	var consoleEndpoint string
-	if len(minSvc.Status.LoadBalancer.Ingress) > 0 {
+	if minSvc != nil && len(minSvc.Status.LoadBalancer.Ingress) > 0 {
 		minioEndpoint = fmt.Sprintf("%s://%s", schema, minSvc.Status.LoadBalancer.Ingress[0].IP)
 	}
-	if len(conSvc.Status.LoadBalancer.Ingress) > 0 {
+	if conSvc != nil && len(conSvc.Status.LoadBalancer.Ingress) > 0 {
 		consoleEndpoint = fmt.Sprintf("%s://%s%s", consoleSchema, conSvc.Status.LoadBalancer.Ingress[0].IP, consolePort)
 	}
 	if minioEndpoint != "" || consoleEndpoint != "" {

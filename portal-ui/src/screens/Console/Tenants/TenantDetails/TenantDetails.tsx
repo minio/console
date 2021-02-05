@@ -115,6 +115,9 @@ const styles = (theme: Theme) =>
     noUnderLine: {
       textDecoration: "none",
     },
+    poolLabel: {
+      color: "#666666",
+    },
     ...modalBasic,
     ...containerForHeader(theme.spacing(4)),
   });
@@ -127,7 +130,7 @@ const TenantDetails = ({
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [capacity, setCapacity] = useState<number>(0);
   const [poolCount, setPoolCount] = useState<number>(0);
-  const [serverSets, setServerSets] = useState<IPool[]>([]);
+  const [pools, setPools] = useState<IPool[]>([]);
   const [instances, setInstances] = useState<number>(0);
   const [volumes, setVolumes] = useState<number>(0);
   const [addPoolOpen, setAddPool] = useState<boolean>(false);
@@ -199,25 +202,28 @@ const TenantDetails = ({
 
         let totalInstances = 0;
         let totalVolumes = 0;
-        let count = 1;
+        let poolNamedIndex = 0;
         for (let pool of resPools) {
           const cap =
             pool.volumes_per_server *
             pool.servers *
             pool.volume_configuration.size;
-          pool.name = `pool-${count}`;
+          pool.label = `pool-${poolNamedIndex}`;
+          if (pool.name === undefined || pool.name === "") {
+            pool.name = pool.label;
+          }
           pool.capacity = niceBytes(cap + "");
           pool.volumes = pool.servers * pool.volumes_per_server;
           totalInstances += pool.servers;
           totalVolumes += pool.volumes;
-          count += 1;
+          poolNamedIndex += 1;
         }
         setCapacity(res.total_size);
         setPoolCount(resPools.length);
         setVolumes(totalVolumes);
         setInstances(totalInstances);
 
-        setServerSets(resPools);
+        setPools(resPools);
 
         setTenant(res);
       })
@@ -415,7 +421,7 @@ const TenantDetails = ({
                 { label: "# of Drives", elementKey: "volumes" },
               ]}
               isLoading={false}
-              records={serverSets}
+              records={pools}
               entityName="Servers"
               idField="name"
             />
