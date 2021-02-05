@@ -17,10 +17,9 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { LinearProgress } from "@material-ui/core";
+import { LinearProgress, TextField } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import { SubscriptionActivateRequest } from "../Buckets/types";
@@ -28,6 +27,8 @@ import { setModalErrorSnackMessage } from "../../../actions";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import api from "../../../common/api";
+import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -37,15 +38,31 @@ const styles = (theme: Theme) =>
     subnetLicenseKey: {
       padding: "10px 10px 10px 0px",
       borderRight: "1px solid rgba(0, 0, 0, 0.12)",
+      opacity: 0.5,
+      "&:hover": { opacity: 1 },
     },
     subnetLoginForm: {
       padding: "10px 0px 10px 10px",
+      opacity: 0.5,
+      "&:hover": { opacity: 1 },
     },
-    licenseKeyField: {
-      marginBottom: 20,
-    },
+    licenseKeyField: {},
     pageTitle: {
       marginBottom: 20,
+    },
+    button: {
+      textTransform: "none",
+      fontSize: 15,
+      fontWeight: 700,
+      background:
+        "transparent linear-gradient(90deg, #073052 0%, #081c42 100%) 0% 0% no-repeat padding-box",
+      color: "#fff",
+    },
+    buttonSignup: {
+      textTransform: "none",
+      fontSize: 15,
+      fontWeight: 700,
+      marginLeft: 15,
     },
     ...containerForHeader(theme.spacing(4)),
   });
@@ -110,28 +127,32 @@ const ActivationModal = ({
       aria-describedby="alert-dialog-description"
     >
       <Grid container alignItems="center" item xs={12}>
+        <Grid item xs={12}>
+          <Typography component="h2" variant="h6" className={classes.pageTitle}>
+            Activate SUBNET License
+          </Typography>
+        </Grid>
         <Grid item className={classes.subnetLicenseKey} xs={6}>
           <Grid item xs={12}>
-            <Typography
-              component="h2"
-              variant="h6"
-              className={classes.pageTitle}
-            >
-              License Key
+            <Typography variant="caption" display="block" gutterBottom>
+              Enter your license key here
             </Typography>
           </Grid>
           <TextField
             id="license-key"
-            placeholder="Enter your license key here"
+            placeholder=""
             multiline
-            rows={6}
+            rows={3}
             value={license}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setLicense(event.target.value)
             }
             fullWidth
             className={classes.licenseKeyField}
+            variant="outlined"
           />
+          <br />
+          <br />
           <Button
             variant="contained"
             color="primary"
@@ -142,43 +163,38 @@ const ActivationModal = ({
           </Button>
         </Grid>
         <Grid item className={classes.subnetLoginForm} xs={6}>
-          <Grid item xs={12}>
-            <Typography
-              component="h2"
-              variant="h6"
-              className={classes.pageTitle}
-            >
-              Subscription Network (SUBNET)
-            </Typography>
-          </Grid>
           <Grid container>
             <Grid item xs={12}>
               <InputBoxWrapper
+                overlayIcon={<PersonOutlineOutlinedIcon />}
                 id="subnet-email"
                 name="subnet-email"
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setSubnetEmail(event.target.value);
                 }}
-                label="Email"
+                placeholder="email"
+                label=""
                 type="text"
                 value={subnetEmail}
               />
             </Grid>
             <Grid item xs={12}>
               <InputBoxWrapper
+                overlayIcon={<LockOutlinedIcon />}
                 id="subnet-password"
                 name="subnet-password"
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setSubnetPassword(event.target.value);
                 }}
-                label="Password"
+                placeholder="password"
+                label=""
                 type="password"
                 value={subnetPassword}
               />
             </Grid>
             <Grid item xs={12}>
               <Button
-                variant="contained"
+                className={classes.button}
                 color="primary"
                 onClick={() => activateProduct()}
                 disabled={
@@ -186,8 +202,23 @@ const ActivationModal = ({
                   subnetEmail.trim().length === 0 ||
                   subnetPassword.trim().length === 0
                 }
+                variant="contained"
               >
-                Login
+                Activate
+              </Button>
+              <Button
+                className={classes.buttonSignup}
+                color="primary"
+                target="_blank"
+                rel="noopener noreferrer"
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.open("https://min.io/pricing", "_blank");
+                }}
+                variant="outlined"
+              >
+                Sign Up
               </Button>
             </Grid>
           </Grid>

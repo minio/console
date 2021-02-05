@@ -119,17 +119,20 @@ export const planItems = [
 export const planButtons = [
   {
     id: 0,
-    text: "Slack Community",
+    text: "Join Slack",
     link: "https://slack.min.io",
+    plan: "community",
   },
   {
     id: 1,
     text: "Subscribe",
     link: "https://min.io/pricing",
+    plan: "standard",
   },
   {
     id: 2,
     text: "Subscribe",
     link: "https://min.io/pricing",
+    plan: "enterprise",
   },
 ];
