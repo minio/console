@@ -2263,7 +2263,7 @@ func init() {
         }
       }
     },
-    "/policies/{name}": {
+    "/policy": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -2274,7 +2274,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "path",
+            "in": "query",
             "required": true
           }
         ],
@@ -2303,7 +2303,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "path",
+            "in": "query",
             "required": true
           }
         ],
@@ -5267,6 +5267,12 @@ func init() {
     "tlsConfiguration": {
       "type": "object",
       "properties": {
+        "ca_certificates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "console": {
           "type": "object",
           "$ref": "#/definitions/keyPairConfiguration"
@@ -7729,7 +7735,7 @@ func init() {
         }
       }
     },
-    "/policies/{name}": {
+    "/policy": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -7740,7 +7746,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "path",
+            "in": "query",
             "required": true
           }
         ],
@@ -7769,7 +7775,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "path",
+            "in": "query",
             "required": true
           }
         ],
@@ -11159,6 +11165,12 @@ func init() {
     "tlsConfiguration": {
       "type": "object",
       "properties": {
+        "ca_certificates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "console": {
           "type": "object",
           "$ref": "#/definitions/keyPairConfiguration"
