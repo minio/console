@@ -93,7 +93,7 @@ const DeleteEvent = ({
       <DialogContent>
         {deleteLoading && <LinearProgress />}
         <DialogContentText id="alert-dialog-description">
-          Are you sure you want to delete the this event?
+          Are you sure you want to delete this event?
         </DialogContentText>
       </DialogContent>
       <DialogActions>

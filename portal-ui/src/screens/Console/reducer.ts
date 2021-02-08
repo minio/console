@@ -26,6 +26,7 @@ const initialState: ConsoleState = {
     operator: false,
     status: "",
     pages: [],
+    features: [],
   },
 };
 
