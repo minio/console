@@ -29,27 +29,7 @@ const TenantsMain = ({ classes }: IConfigurationMain) => {
       <PageHeader label="Tenants" />
       <Grid container>
         <Grid item xs={12} className={classes.container}>
-          <Grid item xs={12} className={classes.headerLabel}>
-            Tenants Management
-          </Grid>
-          <Tabs
-            value={selectedTab}
-            indicatorColor="primary"
-            textColor="primary"
-            onChange={(_, newValue: number) => {
-              setSelectedTab(newValue);
-            }}
-            aria-label="tenant-tabs"
-          >
-            <Tab label="Tenants" />
-          </Tabs>
-          <Grid item xs={12}>
-            {selectedTab === 0 && (
-              <Grid item xs={12}>
-                <ListTenants />
-              </Grid>
-            )}
-          </Grid>
+          <ListTenants />
         </Grid>
       </Grid>
     </Fragment>

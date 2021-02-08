@@ -38,6 +38,7 @@ import (
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/minio/minio-go/v7/pkg/lifecycle"
 	"github.com/minio/minio-go/v7/pkg/notification"
 	"github.com/minio/minio-go/v7/pkg/tags"
 )
@@ -71,6 +72,8 @@ type MinioClient interface {
 	getObjectTagging(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error)
 	setObjectLockConfig(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error
 	getBucketObjectLockConfig(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error)
+	getLifecycleRules(ctx context.Context, bucketName string) (lifecycle *lifecycle.Configuration, err error)
+	setBucketLifecycle(ctx context.Context, bucketName string, config *lifecycle.Configuration) error
 }
 
 // Interface implementation
@@ -178,6 +181,13 @@ func (c minioClient) setObjectLockConfig(ctx context.Context, bucketName string,
 
 func (c minioClient) getBucketObjectLockConfig(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
 	return c.client.GetBucketObjectLockConfig(ctx, bucketName)
+}
+
+func (c minioClient) getLifecycleRules(ctx context.Context, bucketName string) (lifecycle *lifecycle.Configuration, err error) {
+	return c.client.GetBucketLifecycle(ctx, bucketName)
+}
+func (c minioClient) setBucketLifecycle(ctx context.Context, bucketName string, config *lifecycle.Configuration) error {
+	return c.client.SetBucketLifecycle(ctx, bucketName, config)
 }
 
 // MCClient interface with all functions to be implemented

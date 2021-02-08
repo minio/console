@@ -67,6 +67,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIAccountChangePasswordHandler: user_api.AccountChangePasswordHandlerFunc(func(params user_api.AccountChangePasswordParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.AccountChangePassword has not yet been implemented")
 		}),
+		UserAPIAddBucketLifecycleHandler: user_api.AddBucketLifecycleHandlerFunc(func(params user_api.AddBucketLifecycleParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.AddBucketLifecycle has not yet been implemented")
+		}),
 		UserAPIAddBucketReplicationHandler: user_api.AddBucketReplicationHandlerFunc(func(params user_api.AddBucketReplicationParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.AddBucketReplication has not yet been implemented")
 		}),
@@ -81,6 +84,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		UserAPIAddRemoteBucketHandler: user_api.AddRemoteBucketHandlerFunc(func(params user_api.AddRemoteBucketParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.AddRemoteBucket has not yet been implemented")
+		}),
+		AdminAPIAddTierHandler: admin_api.AddTierHandlerFunc(func(params admin_api.AddTierParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.AddTier has not yet been implemented")
 		}),
 		AdminAPIAddUserHandler: admin_api.AddUserHandlerFunc(func(params admin_api.AddUserParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.AddUser has not yet been implemented")
@@ -139,11 +145,17 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIDownloadObjectHandler: user_api.DownloadObjectHandlerFunc(func(params user_api.DownloadObjectParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DownloadObject has not yet been implemented")
 		}),
+		AdminAPIEditTierCredentialsHandler: admin_api.EditTierCredentialsHandlerFunc(func(params admin_api.EditTierCredentialsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.EditTierCredentials has not yet been implemented")
+		}),
 		UserAPIEnableBucketEncryptionHandler: user_api.EnableBucketEncryptionHandlerFunc(func(params user_api.EnableBucketEncryptionParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.EnableBucketEncryption has not yet been implemented")
 		}),
 		UserAPIGetBucketEncryptionInfoHandler: user_api.GetBucketEncryptionInfoHandlerFunc(func(params user_api.GetBucketEncryptionInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetBucketEncryptionInfo has not yet been implemented")
+		}),
+		UserAPIGetBucketLifecycleHandler: user_api.GetBucketLifecycleHandlerFunc(func(params user_api.GetBucketLifecycleParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.GetBucketLifecycle has not yet been implemented")
 		}),
 		UserAPIGetBucketQuotaHandler: user_api.GetBucketQuotaHandlerFunc(func(params user_api.GetBucketQuotaParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetBucketQuota has not yet been implemented")
@@ -168,6 +180,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		AdminAPIGetTenantUsageHandler: admin_api.GetTenantUsageHandlerFunc(func(params admin_api.GetTenantUsageParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetTenantUsage has not yet been implemented")
+		}),
+		AdminAPIGetTierHandler: admin_api.GetTierHandlerFunc(func(params admin_api.GetTierParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.GetTier has not yet been implemented")
 		}),
 		AdminAPIGetUserInfoHandler: admin_api.GetUserInfoHandlerFunc(func(params admin_api.GetUserInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetUserInfo has not yet been implemented")
@@ -316,6 +331,12 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPITenantUpdatePoolsHandler: admin_api.TenantUpdatePoolsHandlerFunc(func(params admin_api.TenantUpdatePoolsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TenantUpdatePools has not yet been implemented")
 		}),
+		AdminAPITiersListHandler: admin_api.TiersListHandlerFunc(func(params admin_api.TiersListParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.TiersList has not yet been implemented")
+		}),
+		UserAPIUpdateBucketLifecycleHandler: user_api.UpdateBucketLifecycleHandlerFunc(func(params user_api.UpdateBucketLifecycleParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.UpdateBucketLifecycle has not yet been implemented")
+		}),
 		AdminAPIUpdateGroupHandler: admin_api.UpdateGroupHandlerFunc(func(params admin_api.UpdateGroupParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.UpdateGroup has not yet been implemented")
 		}),
@@ -382,6 +403,8 @@ type ConsoleAPI struct {
 
 	// UserAPIAccountChangePasswordHandler sets the operation handler for the account change password operation
 	UserAPIAccountChangePasswordHandler user_api.AccountChangePasswordHandler
+	// UserAPIAddBucketLifecycleHandler sets the operation handler for the add bucket lifecycle operation
+	UserAPIAddBucketLifecycleHandler user_api.AddBucketLifecycleHandler
 	// UserAPIAddBucketReplicationHandler sets the operation handler for the add bucket replication operation
 	UserAPIAddBucketReplicationHandler user_api.AddBucketReplicationHandler
 	// AdminAPIAddGroupHandler sets the operation handler for the add group operation
@@ -392,6 +415,8 @@ type ConsoleAPI struct {
 	AdminAPIAddPolicyHandler admin_api.AddPolicyHandler
 	// UserAPIAddRemoteBucketHandler sets the operation handler for the add remote bucket operation
 	UserAPIAddRemoteBucketHandler user_api.AddRemoteBucketHandler
+	// AdminAPIAddTierHandler sets the operation handler for the add tier operation
+	AdminAPIAddTierHandler admin_api.AddTierHandler
 	// AdminAPIAddUserHandler sets the operation handler for the add user operation
 	AdminAPIAddUserHandler admin_api.AddUserHandler
 	// AdminAPIAdminInfoHandler sets the operation handler for the admin info operation
@@ -430,10 +455,14 @@ type ConsoleAPI struct {
 	UserAPIDisableBucketEncryptionHandler user_api.DisableBucketEncryptionHandler
 	// UserAPIDownloadObjectHandler sets the operation handler for the download object operation
 	UserAPIDownloadObjectHandler user_api.DownloadObjectHandler
+	// AdminAPIEditTierCredentialsHandler sets the operation handler for the edit tier credentials operation
+	AdminAPIEditTierCredentialsHandler admin_api.EditTierCredentialsHandler
 	// UserAPIEnableBucketEncryptionHandler sets the operation handler for the enable bucket encryption operation
 	UserAPIEnableBucketEncryptionHandler user_api.EnableBucketEncryptionHandler
 	// UserAPIGetBucketEncryptionInfoHandler sets the operation handler for the get bucket encryption info operation
 	UserAPIGetBucketEncryptionInfoHandler user_api.GetBucketEncryptionInfoHandler
+	// UserAPIGetBucketLifecycleHandler sets the operation handler for the get bucket lifecycle operation
+	UserAPIGetBucketLifecycleHandler user_api.GetBucketLifecycleHandler
 	// UserAPIGetBucketQuotaHandler sets the operation handler for the get bucket quota operation
 	UserAPIGetBucketQuotaHandler user_api.GetBucketQuotaHandler
 	// UserAPIGetBucketReplicationHandler sets the operation handler for the get bucket replication operation
@@ -450,6 +479,8 @@ type ConsoleAPI struct {
 	AdminAPIGetResourceQuotaHandler admin_api.GetResourceQuotaHandler
 	// AdminAPIGetTenantUsageHandler sets the operation handler for the get tenant usage operation
 	AdminAPIGetTenantUsageHandler admin_api.GetTenantUsageHandler
+	// AdminAPIGetTierHandler sets the operation handler for the get tier operation
+	AdminAPIGetTierHandler admin_api.GetTierHandler
 	// AdminAPIGetUserInfoHandler sets the operation handler for the get user info operation
 	AdminAPIGetUserInfoHandler admin_api.GetUserInfoHandler
 	// AdminAPIGroupInfoHandler sets the operation handler for the group info operation
@@ -548,6 +579,10 @@ type ConsoleAPI struct {
 	AdminAPITenantUpdateEncryptionHandler admin_api.TenantUpdateEncryptionHandler
 	// AdminAPITenantUpdatePoolsHandler sets the operation handler for the tenant update pools operation
 	AdminAPITenantUpdatePoolsHandler admin_api.TenantUpdatePoolsHandler
+	// AdminAPITiersListHandler sets the operation handler for the tiers list operation
+	AdminAPITiersListHandler admin_api.TiersListHandler
+	// UserAPIUpdateBucketLifecycleHandler sets the operation handler for the update bucket lifecycle operation
+	UserAPIUpdateBucketLifecycleHandler user_api.UpdateBucketLifecycleHandler
 	// AdminAPIUpdateGroupHandler sets the operation handler for the update group operation
 	AdminAPIUpdateGroupHandler admin_api.UpdateGroupHandler
 	// AdminAPIUpdateTenantHandler sets the operation handler for the update tenant operation
@@ -635,6 +670,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.UserAPIAccountChangePasswordHandler == nil {
 		unregistered = append(unregistered, "user_api.AccountChangePasswordHandler")
 	}
+	if o.UserAPIAddBucketLifecycleHandler == nil {
+		unregistered = append(unregistered, "user_api.AddBucketLifecycleHandler")
+	}
 	if o.UserAPIAddBucketReplicationHandler == nil {
 		unregistered = append(unregistered, "user_api.AddBucketReplicationHandler")
 	}
@@ -649,6 +687,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIAddRemoteBucketHandler == nil {
 		unregistered = append(unregistered, "user_api.AddRemoteBucketHandler")
+	}
+	if o.AdminAPIAddTierHandler == nil {
+		unregistered = append(unregistered, "admin_api.AddTierHandler")
 	}
 	if o.AdminAPIAddUserHandler == nil {
 		unregistered = append(unregistered, "admin_api.AddUserHandler")
@@ -707,11 +748,17 @@ func (o *ConsoleAPI) Validate() error {
 	if o.UserAPIDownloadObjectHandler == nil {
 		unregistered = append(unregistered, "user_api.DownloadObjectHandler")
 	}
+	if o.AdminAPIEditTierCredentialsHandler == nil {
+		unregistered = append(unregistered, "admin_api.EditTierCredentialsHandler")
+	}
 	if o.UserAPIEnableBucketEncryptionHandler == nil {
 		unregistered = append(unregistered, "user_api.EnableBucketEncryptionHandler")
 	}
 	if o.UserAPIGetBucketEncryptionInfoHandler == nil {
 		unregistered = append(unregistered, "user_api.GetBucketEncryptionInfoHandler")
+	}
+	if o.UserAPIGetBucketLifecycleHandler == nil {
+		unregistered = append(unregistered, "user_api.GetBucketLifecycleHandler")
 	}
 	if o.UserAPIGetBucketQuotaHandler == nil {
 		unregistered = append(unregistered, "user_api.GetBucketQuotaHandler")
@@ -736,6 +783,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIGetTenantUsageHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetTenantUsageHandler")
+	}
+	if o.AdminAPIGetTierHandler == nil {
+		unregistered = append(unregistered, "admin_api.GetTierHandler")
 	}
 	if o.AdminAPIGetUserInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetUserInfoHandler")
@@ -884,6 +934,12 @@ func (o *ConsoleAPI) Validate() error {
 	if o.AdminAPITenantUpdatePoolsHandler == nil {
 		unregistered = append(unregistered, "admin_api.TenantUpdatePoolsHandler")
 	}
+	if o.AdminAPITiersListHandler == nil {
+		unregistered = append(unregistered, "admin_api.TiersListHandler")
+	}
+	if o.UserAPIUpdateBucketLifecycleHandler == nil {
+		unregistered = append(unregistered, "user_api.UpdateBucketLifecycleHandler")
+	}
 	if o.AdminAPIUpdateGroupHandler == nil {
 		unregistered = append(unregistered, "admin_api.UpdateGroupHandler")
 	}
@@ -1005,6 +1061,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
+	o.handlers["POST"]["/buckets/{bucket_name}/lifecycle"] = user_api.NewAddBucketLifecycle(o.context, o.UserAPIAddBucketLifecycleHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
 	o.handlers["POST"]["/buckets/{bucket_name}/replication"] = user_api.NewAddBucketReplication(o.context, o.UserAPIAddBucketReplicationHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
@@ -1022,6 +1082,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/remote-buckets"] = user_api.NewAddRemoteBucket(o.context, o.UserAPIAddRemoteBucketHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/admin/tiers"] = admin_api.NewAddTier(o.context, o.AdminAPIAddTierHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
@@ -1098,6 +1162,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/buckets/{bucket_name}/objects/download"] = user_api.NewDownloadObject(o.context, o.UserAPIDownloadObjectHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/admin/tiers/{type}/{name}/credentials"] = admin_api.NewEditTierCredentials(o.context, o.AdminAPIEditTierCredentialsHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
@@ -1106,6 +1174,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/buckets/{bucket_name}/encryption/info"] = user_api.NewGetBucketEncryptionInfo(o.context, o.UserAPIGetBucketEncryptionInfoHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/buckets/{bucket_name}/lifecycle"] = user_api.NewGetBucketLifecycle(o.context, o.UserAPIGetBucketLifecycleHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -1138,6 +1210,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/usage"] = admin_api.NewGetTenantUsage(o.context, o.AdminAPIGetTenantUsageHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/admin/tiers/{type}/{name}"] = admin_api.NewGetTier(o.context, o.AdminAPIGetTierHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -1334,6 +1410,14 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/namespaces/{namespace}/tenants/{tenant}/pools"] = admin_api.NewTenantUpdatePools(o.context, o.AdminAPITenantUpdatePoolsHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/admin/tiers"] = admin_api.NewTiersList(o.context, o.AdminAPITiersListHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/buckets/{bucket_name}/lifecycle/{lifecycle_id}"] = user_api.NewUpdateBucketLifecycle(o.context, o.UserAPIUpdateBucketLifecycleHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
