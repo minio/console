@@ -1,3 +1,19 @@
+// This file is part of MinIO Console Server
+// Copyright (c) 2021 MinIO, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import React, { Fragment, useState } from "react";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import { Grid } from "@material-ui/core";
@@ -7,6 +23,7 @@ import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import ConfigurationsList from "./ConfigurationPanels/ConfigurationsList";
 import ListNotificationEndpoints from "./NotificationEndpoints/ListNotificationEndpoints";
+import ListTiersConfiguration from "./TiersConfiguration/ListTiersConfiguration";
 
 interface IConfigurationMain {
   classes: any;
@@ -44,6 +61,7 @@ const ConfigurationMain = ({ classes }: IConfigurationMain) => {
           >
             <Tab label="Configurations" />
             <Tab label="Lambda Notifications" />
+            <Tab label="Tiers" />
           </Tabs>
           <Grid item xs={12}>
             {selectedTab === 0 && (
@@ -54,6 +72,11 @@ const ConfigurationMain = ({ classes }: IConfigurationMain) => {
             {selectedTab === 1 && (
               <Grid item xs={12}>
                 <ListNotificationEndpoints />
+              </Grid>
+            )}
+            {selectedTab === 2 && (
+              <Grid item xs={12}>
+                <ListTiersConfiguration />
               </Grid>
             )}
           </Grid>

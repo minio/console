@@ -859,6 +859,76 @@ paths:
       tags:
         - UserAPI
 
+  /buckets/{bucket_name}/lifecycle:
+    get:
+      summary: Bucket Lifecycle
+      operationId: GetBucketLifecycle
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucketLifecycleResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    post:
+      summary: Add Bucket Lifecycle
+      operationId: AddBucketLifecycle
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/addBucketLifecycle"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+  /buckets/{bucket_name}/lifecycle/{lifecycle_id}:
+    put:
+      summary: Update Lifecycle rule
+      operationId: UpdateBucketLifecycle
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: lifecycle_id
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/updateBucketLifecycle"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /service-accounts:
     get:
       summary: List User's Service Accounts
@@ -1579,6 +1649,101 @@ paths:
           description: A successful response.
           schema:
             $ref: "#/definitions/setNotificationEndpointResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /admin/tiers:
+    get:
+      summary: Returns a list of tiers for ilm
+      operationId: TiersList
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/tierListResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    post:
+      summary: Allows to configure a new tier
+      operationId: AddTier
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/tier"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /admin/tiers/{type}/{name}:
+    get:
+      summary: Get Tier
+      operationId: GetTier
+      parameters:
+        - name: type
+          in: path
+          required: true
+          type: string
+          enum:
+            - s3
+            - gcs
+            - azure
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/tier"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /admin/tiers/{type}/{name}/credentials:
+    put:
+      summary: Edit Tier Credentials
+      operationId: EditTierCredentials
+      parameters:
+        - name: type
+          in: path
+          required: true
+          type: string
+          enum:
+            - s3
+            - gcs
+            - azure
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/tierCredentialsRequest"
+      responses:
+        200:
+          description: A successful response.
         default:
           description: Generic error response.
           schema:
@@ -3919,6 +4084,119 @@ definitions:
       validity:
         type: integer
         format: int32
+  
+  bucketLifecycleResponse:
+    type: object
+    properties:
+      lifecycle:
+        type: array
+        items:
+          $ref: "#/definitions/objectBucketLifecycle"
+
+  expirationResponse:
+    type: object
+    properties:
+      date: 
+        type: string
+      days:
+        type: integer
+        format: int64
+      delete_marker:
+        type: boolean
+  
+  transitionResponse:
+    type: object
+    properties:
+      date:
+        type: string
+      storage_class:
+        type: string
+      days:
+        type: integer
+        format: int64
+  
+  lifecycleTag:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+
+  objectBucketLifecycle:
+    type: object
+    properties:
+      id:
+        type: string
+      prefix:
+        type: string
+      status:
+        type: string
+      expiration:
+        $ref: "#/definitions/expirationResponse"
+      transition:
+        $ref: "#/definitions/transitionResponse"
+      tags:
+        type: array
+        items:
+          $ref: "#/definitions/lifecycleTag"
+
+
+  addBucketLifecycle:
+    type: object
+    properties:
+      prefix:
+        description: Non required field, it matches a prefix to perform ILM operations on it
+        type: string
+      tags:
+        description: Non required field, tags to match ILM files
+        type: string
+      expiry_date:
+        description: Required in case of expiry_days or transition fields are not set. it defines an expiry date for ILM
+        type: string
+      expiry_days:
+        description: Required in case of expiry_date or transition fields are not set. it defines an expiry days for ILM
+        type: integer
+        format: int32
+        default: 0
+      transition_date:
+        description: Required in case of transition_days or expiry fields are not set. it defines a transition date for ILM
+        type: string
+      transition_days:
+        description: Required in case of transition_date or expiry fields are not set. it defines a transition days for ILM
+        type: integer
+        format: int32
+        default: 0
+      storage_class:
+        description: Required only in case of transition is set. it refers to a tier
+        type: string
+      disable:
+        description: Non required, toggle to disable or enable rule
+        type: boolean
+      expired_object_delete_marker:
+        description: Non required, toggle to disable or enable rule
+        type: boolean
+      noncurrentversion_expiration_days:
+        description: Non required, can be set in case of expiration is enabled
+        type: integer
+        format: int32
+        default: 0
+      noncurrentversion_transition_days:
+        description: Non required, can be set in case of transition is enabled
+        type: integer
+        format: int32
+        default: 0
+      noncurrentversion_transition_storage_class:
+        description: Non required, can be set in case of transition is enabled
+        type: string
+  
+  updateBucketLifecycle:
+    type: object
+    properties:
+      tags:
+        type: string
+      disable:
+        type: boolean
 
   setConfigResponse:
     type: object
@@ -3952,3 +4230,96 @@ definitions:
         type: string
       expires_at:
         type: string
+
+  tier_s3:
+    type: object
+    properties:
+      name:
+        type: string
+      endpoint:
+        type: string
+      accesskey:
+        type: string
+      secretkey:
+        type: string
+      bucket:
+        type: string
+      prefix:
+        type: string
+      region:
+        type: string
+      storageclass:
+        type: string
+
+  tier_azure:
+    type: object
+    properties:
+      name:
+        type: string
+      endpoint:
+        type: string
+      accountname:
+        type: string
+      accountkey:
+        type: string
+      bucket:
+        type: string
+      prefix:
+        type: string
+      region:
+        type: string
+
+  tier_gcs:
+    type: object
+    properties:
+      name:
+        type: string
+      endpoint:
+        type: string
+      creds:
+        type: string
+      bucket:
+        type: string
+      prefix:
+        type: string
+      region:
+        type: string
+
+  tier:
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - s3
+          - gcs
+          - azure
+          - unsupported
+      s3:
+        type: object
+        $ref: "#/definitions/tier_s3"
+      gcs:
+        type: object
+        $ref: "#/definitions/tier_gcs"
+      azure:
+        type: object
+        $ref: "#/definitions/tier_azure"
+
+  tierListResponse:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/tier"
+
+  tierCredentialsRequest:
+    type: object
+    properties:
+      access_key:
+        type: string
+      secret_key:
+        type: string
+      creds:
+        type: string
+        description: a base64 encoded value
