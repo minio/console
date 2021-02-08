@@ -118,7 +118,7 @@ func TestListBucket(t *testing.T) {
 	// Test-1 : getaAcountUsageInfo() Get response from minio client with two buckets
 	mockBucketList := madmin.AccountInfo{
 		AccountName: "test",
-		Buckets: []madmin.BucketUsageInfo{
+		Buckets: []madmin.BucketAccessInfo{
 			{Name: "bucket-1", Created: time.Now(), Size: 1024},
 			{Name: "bucket-2", Created: time.Now().Add(time.Hour * 1), Size: 0},
 		},

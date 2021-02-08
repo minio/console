@@ -18,6 +18,7 @@ import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, IconButton } from "@material-ui/core";
+import * as reactMoment from "react-moment";
 import get from "lodash/get";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
@@ -40,6 +41,7 @@ import {
   BucketReplicationRuleDeleteMarker,
   BucketVersioning,
   HasPermissionResponse,
+  LifeCycleItem,
 } from "../types";
 import { CreateIcon } from "../../../../icons";
 import { niceBytes } from "../../../../common/utils";
@@ -47,6 +49,9 @@ import { containerForHeader } from "../../Common/FormComponents/common/styleLibr
 import { setErrorSnackMessage } from "../../../../actions";
 import { Policy } from "../../Policies/types";
 import { User } from "../../Users/types";
+import { AppState } from "../../../../store";
+import { ISessionResponse } from "../../types";
+import SetAccessPolicy from "./SetAccessPolicy";
 import SetRetentionConfig from "./SetRetentionConfig";
 import AddEvent from "./AddEvent";
 import DeleteEvent from "./DeleteEvent";
@@ -58,8 +63,9 @@ import PencilIcon from "../../Common/TableWrapper/TableActionIcons/PencilIcon";
 import EnableVersioningModal from "./EnableVersioningModal";
 import UsageIcon from "../../../../icons/UsageIcon";
 import AddPolicy from "../../Policies/AddPolicy";
-import SetAccessPolicy from "./SetAccessPolicy";
 import DeleteReplicationRule from "../ViewBucket/DeleteReplicationRule";
+import EditLifecycleConfiguration from "./EditLifecycleConfiguration";
+import AddLifecycleModal from "./AddLifecycleModal";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -181,6 +187,7 @@ interface IViewBucketProps {
   classes: any;
   match: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  session: ISessionResponse;
 }
 
 interface TabPanelProps {
@@ -217,6 +224,7 @@ const ViewBucket = ({
   classes,
   match,
   setErrorSnackMessage,
+  session,
 }: IViewBucketProps) => {
   const [info, setInfo] = useState<BucketInfo | null>(null);
   const [records, setRecords] = useState<BucketEvent[]>([]);
@@ -245,6 +253,7 @@ const ViewBucket = ({
     setEnableEncryptionScreenOpen,
   ] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+  const [editLifecycleOpen, setEditLifecycleOpen] = useState<boolean>(false);
   const [selectedEvent, setSelectedEvent] = useState<BucketEvent | null>(null);
   const [bucketSize, setBucketSize] = useState<string>("0");
   const [openSetReplication, setOpenSetReplication] = useState<boolean>(false);
@@ -265,6 +274,9 @@ const ViewBucket = ({
     false
   );
   const [selectedRRule, setSelectedRRule] = useState<string>("");
+  const [loadingLifecycle, setLoadingLifecycle] = useState<boolean>(true);
+  const [lifecycleRecords, setLifecycleRecords] = useState<LifeCycleItem[]>([]);
+  const [addLifecycleOpen, setAddLifecycleOpen] = useState<boolean>(false);
 
   // check the permissions for creating bucket
   useEffect(() => {
@@ -320,6 +332,7 @@ const ViewBucket = ({
   }, [loadingPerms, setErrorSnackMessage]);
 
   const bucketName = match.params["bucketName"];
+  const ilmEnabled = session.features?.indexOf("ilm") > -1;
 
   useEffect(() => {
     if (loadingEvents) {
@@ -470,6 +483,22 @@ const ViewBucket = ({
   const setBucketVersioning = () => {
     setEnableVersioningOpen(true);
   };
+  useEffect(() => {
+    if (loadingLifecycle) {
+      api
+        .invoke("GET", `/api/v1/buckets/${bucketName}/lifecycle`)
+        .then((res: any) => {
+          const records = get(res, "lifecycle", []);
+
+          setLifecycleRecords(records || []);
+          setLoadingLifecycle(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          setLoadingLifecycle(false);
+        });
+    }
+  }, [loadingLifecycle, setLoadingLifecycle, bucketName]);
 
   const loadAllBucketData = () => {
     setLoadingBucket(true);
@@ -524,6 +553,13 @@ const ViewBucket = ({
     }
   };
 
+  const closeEditLCAndRefresh = (refresh: boolean) => {
+    setEditLifecycleOpen(false);
+    if (refresh) {
+      setLoadingLifecycle(true);
+    }
+  };
+
   const confirmDeleteEvent = (evnt: BucketEvent) => {
     setDeleteOpen(true);
     setSelectedEvent(evnt);
@@ -556,7 +592,7 @@ const ViewBucket = ({
   };
 
   const ruleDelDisplay = (events: BucketReplicationRuleDeleteMarker) => {
-    return <Fragment>{events.status}</Fragment>;
+    return null;
   };
 
   const setOpenReplicationOpen = (open = false) => {
@@ -568,6 +604,13 @@ const ViewBucket = ({
 
     if (refresh) {
       setLoadingReplication(true);
+    }
+  };
+
+  const closeAddLCAndRefresh = (refresh: boolean) => {
+    setAddLifecycleOpen(false);
+    if (refresh) {
+      setLoadingLifecycle(true);
     }
   };
 
@@ -600,6 +643,64 @@ const ViewBucket = ({
       type: "delete",
       onClick: confirmDeleteReplication,
       disableButtonFunction: () => replicationRules.length <= 1,
+    },
+  ];
+
+  const expirationRender = (expiration: any) => {
+    if (expiration.days) {
+      return `${expiration.days} day${expiration.days > 1 ? "s" : ""}`;
+    }
+
+    if (expiration.date === "0001-01-01T00:00:00Z") {
+      return "";
+    }
+
+    return <reactMoment.default>{expiration.date}</reactMoment.default>;
+  };
+
+  const transitionRender = (transition: any) => {
+    if (transition.days) {
+      return `${transition.days} day${transition.days > 1 ? "s" : ""}`;
+    }
+
+    if (transition.date === "0001-01-01T00:00:00Z") {
+      return "";
+    }
+
+    return <reactMoment.default>{transition.date}</reactMoment.default>;
+  };
+
+  const renderStorageClass = (objectST: any) => {
+    const stClass = get(objectST, "transition.storage_class", "");
+
+    return stClass;
+  };
+
+  const lifecycleColumns = [
+    { label: "ID", elementKey: "id" },
+    {
+      label: "Prefix",
+      elementKey: "prefix",
+    },
+    {
+      label: "Status",
+      elementKey: "status",
+    },
+    {
+      label: "Expiration",
+      elementKey: "expiration",
+      renderFunction: expirationRender,
+    },
+    {
+      label: "Transition",
+      elementKey: "transition",
+      renderFunction: transitionRender,
+    },
+    {
+      label: "Storage Class",
+      elementKey: "storage_class",
+      renderFunction: renderStorageClass,
+      renderFullObject: true,
     },
   ];
 
@@ -672,6 +773,24 @@ const ViewBucket = ({
           ruleToDelete={selectedRRule}
         />
       )}
+      {editLifecycleOpen && (
+        <EditLifecycleConfiguration
+          open={editLifecycleOpen}
+          closeModalAndRefresh={closeEditLCAndRefresh}
+          selectedBucket={bucketName}
+          lifecycle={{
+            id: "",
+          }}
+        />
+      )}
+      {addLifecycleOpen && (
+        <AddLifecycleModal
+          open={addLifecycleOpen}
+          bucketName={bucketName}
+          closeModalAndRefresh={closeAddLCAndRefresh}
+        />
+      )}
+
       <PageHeader label={`Bucket > ${match.params["bucketName"]}`} />
       <Grid container>
         <Grid item xs={12} className={classes.container}>
@@ -806,7 +925,7 @@ const ViewBucket = ({
             <br />
           </Grid>
           <Grid container item xs={12}>
-            <Grid item xs={6}>
+            <Grid item xs={8}>
               <Tabs
                 value={curTab}
                 onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
@@ -822,9 +941,10 @@ const ViewBucket = ({
                 )}
                 <Tab label="Policies" {...a11yProps(2)} />
                 <Tab label="Users" {...a11yProps(3)} />
+                {ilmEnabled && <Tab label="Lifecycle" {...a11yProps(4)} />}
               </Tabs>
             </Grid>
-            <Grid item xs={6} className={classes.actionsTray}>
+            <Grid item xs={4} className={classes.actionsTray}>
               {curTab === 0 && (
                 <Button
                   variant="contained"
@@ -854,6 +974,19 @@ const ViewBucket = ({
                     </Button>
                   )}
                 </Fragment>
+              )}
+              {curTab === 4 && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<CreateIcon />}
+                  size="medium"
+                  onClick={() => {
+                    setAddLifecycleOpen(true);
+                  }}
+                >
+                  Add Lifecycle Rule
+                </Button>
               )}
             </Grid>
           </Grid>
@@ -925,6 +1058,17 @@ const ViewBucket = ({
                 idField="accessKey"
               />
             </TabPanel>
+            <TabPanel index={4} value={curTab}>
+              <TableWrapper
+                itemActions={[]}
+                columns={lifecycleColumns}
+                isLoading={loadingLifecycle}
+                records={lifecycleRecords}
+                entityName="Lifecycle"
+                customEmptyMessage="There are no Lifecycle rules yet"
+                idField="id"
+              />
+            </TabPanel>
           </Grid>
         </Grid>
       </Grid>
@@ -932,7 +1076,11 @@ const ViewBucket = ({
   );
 };
 
-const connector = connect(null, {
+const mapState = (state: AppState) => ({
+  session: state.console.session,
+});
+
+const connector = connect(mapState, {
   setErrorSnackMessage,
 });
 

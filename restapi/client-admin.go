@@ -105,6 +105,12 @@ type MinioAdmin interface {
 	changePassword(ctx context.Context, accessKey, secretKey string) error
 
 	serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) <-chan madmin.HealthInfo
+	// List Tiers
+	listTiers(ctx context.Context) ([]*madmin.TierConfig, error)
+	// Add Tier
+	addTier(ctx context.Context, tier *madmin.TierConfig) error
+	// Edit Tier Credentials
+	editTierCreds(ctx context.Context, tierName string, creds madmin.TierCreds) error
 }
 
 // Interface implementation
@@ -226,7 +232,15 @@ func (ac adminClient) stopProfiling(ctx context.Context) (io.ReadCloser, error) 
 
 // implements madmin.ServiceTrace()
 func (ac adminClient) serviceTrace(ctx context.Context, allTrace, errTrace bool) <-chan madmin.ServiceTraceInfo {
-	return ac.client.ServiceTrace(ctx, allTrace, errTrace)
+	tracingOptions := madmin.ServiceTraceOpts{
+		S3:         true,
+		OnlyErrors: errTrace,
+		Internal:   allTrace,
+		Storage:    allTrace,
+		OS:         allTrace,
+	}
+
+	return ac.client.ServiceTrace(ctx, tracingOptions)
 }
 
 // implements madmin.GetLogs()
@@ -236,12 +250,19 @@ func (ac adminClient) getLogs(ctx context.Context, node string, lineCnt int, log
 
 // implements madmin.AddServiceAccount()
 func (ac adminClient) addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (mauth.Credentials, error) {
-	return ac.client.AddServiceAccount(ctx, policy)
+	// TODO: Fix this
+	return ac.client.AddServiceAccount(ctx, madmin.AddServiceAccountReq{
+		Policy:     policy,
+		TargetUser: "",
+		AccessKey:  "",
+		SecretKey:  "",
+	})
 }
 
 // implements madmin.ListServiceAccounts()
 func (ac adminClient) listServiceAccounts(ctx context.Context) (madmin.ListServiceAccountsResp, error) {
-	return ac.client.ListServiceAccounts(ctx)
+	// TODO: Fix this
+	return ac.client.ListServiceAccounts(ctx, "")
 }
 
 // implements madmin.DeleteServiceAccount()
@@ -293,6 +314,21 @@ func (ac adminClient) setBucketQuota(ctx context.Context, bucket string, quota *
 // serverHealthInfo implements mc.ServerHealthInfo - Connect to a minio server and call Health Info Management API
 func (ac adminClient) serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) <-chan madmin.HealthInfo {
 	return ac.client.ServerHealthInfo(ctx, healthDataTypes, deadline)
+}
+
+// implements madmin.listTiers()
+func (ac adminClient) listTiers(ctx context.Context) ([]*madmin.TierConfig, error) {
+	return ac.client.ListTiers(ctx)
+}
+
+// implements madmin.AddTier()
+func (ac adminClient) addTier(ctx context.Context, cfg *madmin.TierConfig) error {
+	return ac.client.AddTier(ctx, cfg)
+}
+
+// implements madmin.EditTier()
+func (ac adminClient) editTierCreds(ctx context.Context, tierName string, creds madmin.TierCreds) error {
+	return ac.client.EditTier(ctx, tierName, creds)
 }
 
 func newMAdminClient(sessionClaims *models.Principal) (*madmin.AdminClient, error) {
