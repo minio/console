@@ -60,17 +60,11 @@ const styles = (theme: Theme) =>
       padding: "0px 10px 0px 10px",
     },
     menuPaper: {
-      // margin: "10px 0px 10px 0px",
-      // padding: "10px 0px 10px 0px",
-      // maxWidth: "320px",
       padding: "20px",
     },
     paperContainer: {
       padding: "10px",
       maxWidth: "900px",
-    },
-    wizardContainer: {
-      // padding: "10px 0px 10px 0px",
     },
   });
 
@@ -159,12 +153,7 @@ const GenericWizard = ({ classes, wizardSteps }: IWizardMain) => {
         className={classes.paddedGridItem}
       >
         <Paper className={classes.paperContainer}>
-          <div className={classes.wizardContainer}>
-            <WizardPage
-              page={wizardSteps[currentStep]}
-              pageChange={pageChange}
-            />
-          </div>
+          <WizardPage page={wizardSteps[currentStep]} pageChange={pageChange} />
         </Paper>
       </Grid>
     </Grid>

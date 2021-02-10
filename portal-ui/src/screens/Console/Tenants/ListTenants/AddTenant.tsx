@@ -1190,7 +1190,6 @@ const AddTenant = ({ classes }: IAddTenantProps) => {
           };
 
           setAddSending(false);
-          // closeModalAndRefresh(true, newSrvAcc);
           history.push("/tenants");
         })
         .catch((err) => {
