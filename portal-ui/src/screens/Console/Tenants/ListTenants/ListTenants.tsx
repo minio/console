@@ -40,6 +40,7 @@ import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt"
 import history from "../../../../history";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import PageHeader from "../../Common/PageHeader/PageHeader";
+import { Link } from "react-router-dom";
 
 interface ITenantsList {
   classes: any;
@@ -242,9 +243,8 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
               variant="contained"
               color="primary"
               startIcon={<CreateIcon />}
-              onClick={() => {
-                setCreateTenantOpen(true);
-              }}
+              component={Link}
+              to="/add-tenant"
             >
               Create Tenant
             </Button>

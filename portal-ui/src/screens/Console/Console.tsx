@@ -55,6 +55,7 @@ import LogsMain from "./Logs/LogsMain";
 import Heal from "./Heal/Heal";
 import Watch from "./Watch/Watch";
 import HealthInfo from "./HealthInfo/HealthInfo";
+import AddTenant from "./Tenants/ListTenants/AddTenant";
 
 const drawerWidth = 245;
 
@@ -288,6 +289,10 @@ const Console = ({
     {
       component: WebhookPanel,
       path: "/webhook/audit",
+    },
+    {
+      component: AddTenant,
+      path: "/add-tenant",
     },
     {
       component: ListTenants,
