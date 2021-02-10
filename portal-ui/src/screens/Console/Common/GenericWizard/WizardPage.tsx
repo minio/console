@@ -26,7 +26,6 @@ const styles = (theme: Theme) =>
       flexDirection: "column",
     },
     wizardComponent: {
-      height: 375,
       overflowY: "auto",
       marginBottom: 10,
     },

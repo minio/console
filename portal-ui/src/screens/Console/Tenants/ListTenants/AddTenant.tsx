@@ -20,14 +20,17 @@ import get from "lodash/get";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import Grid from "@material-ui/core/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { Button, LinearProgress, Typography } from "@material-ui/core";
+import { Button, LinearProgress, Paper, Typography } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 import api from "../../../../common/api";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  containerForHeader,
+  modalBasic,
+} from "../../Common/FormComponents/common/styleLibrary";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import {
@@ -67,6 +70,8 @@ import Divider from "@material-ui/core/Divider";
 import { connect } from "react-redux";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import { getHardcodedAffinity } from "../TenantDetails/utils";
+import history from "../../../../history";
+import PageHeader from "../../Common/PageHeader/PageHeader";
 
 interface IAddTenantProps {
   open: boolean;
@@ -97,7 +102,6 @@ const styles = (theme: Theme) =>
       top: 0,
       paddingTop: 5,
       marginBottom: 10,
-      backgroundColor: "#fff",
       zIndex: 500,
     },
     tableTitle: {
@@ -121,14 +125,21 @@ const styles = (theme: Theme) =>
       color: "#777777",
     },
     ...modalBasic,
+    container: {
+      padding: "77px 0 0 0",
+      "& h6": {
+        color: "#777777",
+        fontSize: 14,
+      },
+      "& p": {
+        "& span:not(*[class*='smallUnit'])": {
+          fontSize: 16,
+        },
+      },
+    },
   });
 
-const AddTenant = ({
-  open,
-  closeModalAndRefresh,
-  setModalErrorSnackMessage,
-  classes,
-}: IAddTenantProps) => {
+const AddTenant = ({ classes }: IAddTenantProps) => {
   // Fields
   const [addSending, setAddSending] = useState<boolean>(false);
   const [tenantName, setTenantName] = useState<string>("");
@@ -1179,7 +1190,7 @@ const AddTenant = ({
           };
 
           setAddSending(false);
-          closeModalAndRefresh(true, newSrvAcc);
+          history.push("/tenants");
         })
         .catch((err) => {
           setAddSending(false);
@@ -1202,7 +1213,7 @@ const AddTenant = ({
     type: "other",
     enabled: true,
     action: () => {
-      closeModalAndRefresh(false, null);
+      history.push("/tenants");
     },
   };
 
@@ -2711,23 +2722,19 @@ const AddTenant = ({
   }
 
   return (
-    <ModalWrapper
-      title="Create Tenant"
-      modalOpen={open}
-      onClose={() => {
-        closeModalAndRefresh(false, null);
-      }}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-      wideLimit={false}
-    >
+    <React.Fragment>
       {addSending && (
         <Grid item xs={12}>
           <LinearProgress />
         </Grid>
       )}
-      <GenericWizard wizardSteps={filteredWizardSteps} />
-    </ModalWrapper>
+      <PageHeader label={"Add Tenant"} />
+      <Grid container>
+        <Grid item xs={12} className={classes.container}>
+          <GenericWizard wizardSteps={filteredWizardSteps} />
+        </Grid>
+      </Grid>
+    </React.Fragment>
   );
 };
 
