@@ -28,7 +28,7 @@ const styles = (theme: Theme) =>
       flexGrow: 1,
     },
     wizFromContainer: {
-      marginTop: "4px",
+      marginTop: "32px",
     },
     wizardSteps: {
       minWidth: 180,
