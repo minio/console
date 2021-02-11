@@ -291,12 +291,12 @@ const Console = ({
       path: "/webhook/audit",
     },
     {
-      component: AddTenant,
-      path: "/add-tenant",
-    },
-    {
       component: ListTenants,
       path: "/tenants",
+    },
+    {
+      component: AddTenant,
+      path: "/add-tenant",
     },
     {
       component: TenantDetails,

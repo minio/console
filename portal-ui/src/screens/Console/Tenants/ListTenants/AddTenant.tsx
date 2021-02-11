@@ -72,6 +72,7 @@ import { setModalErrorSnackMessage } from "../../../../actions";
 import { getHardcodedAffinity } from "../TenantDetails/utils";
 import history from "../../../../history";
 import PageHeader from "../../Common/PageHeader/PageHeader";
+import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 
 interface IAddTenantProps {
   open: boolean;
@@ -140,6 +141,13 @@ const styles = (theme: Theme) =>
   });
 
 const AddTenant = ({ classes }: IAddTenantProps) => {
+  // Modals
+  const [showNewCredentials, setShowNewCredentials] = useState<boolean>(false);
+  const [
+    createdAccount,
+    setCreatedAccount,
+  ] = useState<NewServiceAccount | null>(null);
+
   // Fields
   const [addSending, setAddSending] = useState<boolean>(false);
   const [tenantName, setTenantName] = useState<string>("");
@@ -291,6 +299,10 @@ const AddTenant = ({ classes }: IAddTenantProps) => {
   const [vaultCertVal, setVaultCertVal] = useState<string>("");
   const [vaultCAVal, setVaultCAVal] = useState<string>("");
   const [gemaltoCAVal, setGemaltoCAVal] = useState<string>("");
+
+  // Flow
+
+  const showCredentialsAndRedirect = () => {};
 
   // CA Certificates functions
   const addCaCertificate = () => {
@@ -1225,7 +1237,9 @@ const AddTenant = ({ classes }: IAddTenantProps) => {
           };
 
           setAddSending(false);
-          history.push("/tenants");
+
+          setShowNewCredentials(true);
+          setCreatedAccount(newSrvAcc);
         })
         .catch((err) => {
           setAddSending(false);
@@ -2831,12 +2845,26 @@ const AddTenant = ({ classes }: IAddTenantProps) => {
     filteredWizardSteps = wizardSteps.filter((step) => !step.advancedOnly);
   }
 
+  const closeCredentialsModal = () => {
+    history.push("/tenants");
+  };
+
   return (
     <React.Fragment>
       {addSending && (
         <Grid item xs={12}>
           <LinearProgress />
         </Grid>
+      )}
+      {showNewCredentials && (
+        <CredentialsPrompt
+          newServiceAccount={createdAccount}
+          open={showNewCredentials}
+          closeModal={() => {
+            closeCredentialsModal();
+          }}
+          entity="Tenant"
+        />
       )}
       <PageHeader label={"Add Tenant"} />
       <Grid container>
