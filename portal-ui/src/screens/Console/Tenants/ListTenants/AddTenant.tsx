@@ -1070,7 +1070,7 @@ const AddTenant = ({ classes }: IAddTenantProps) => {
               },
             };
             break;
-          case "AWS":
+          case "aws":
             insertEncrypt = {
               aws: {
                 secretsmanager: {
