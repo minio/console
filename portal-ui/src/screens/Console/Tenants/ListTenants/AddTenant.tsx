@@ -17,7 +17,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import debounce from "lodash/debounce";
 import get from "lodash/get";
-import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import Grid from "@material-ui/core/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { Button, LinearProgress, Paper, Typography } from "@material-ui/core";
@@ -27,10 +26,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 import api from "../../../../common/api";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import {
-  containerForHeader,
-  modalBasic,
-} from "../../Common/FormComponents/common/styleLibrary";
+import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import {
@@ -268,6 +264,7 @@ const AddTenant = ({ classes }: IAddTenantProps) => {
     vaultCert: "",
     vaultCA: "",
     gemaltoCA: "",
+    gcpPrivateKey: "",
   });
 
   // Files States
@@ -853,17 +850,6 @@ const AddTenant = ({ classes }: IAddTenantProps) => {
         ];
       }
 
-      if (encryptionType === "gcp") {
-        encryptionValidation = [
-          ...encryptionValidation,
-          {
-            fieldKey: "gcp_project_id",
-            required: true,
-            value: gcpProjectID,
-          },
-        ];
-      }
-
       if (encryptionType === "aws") {
         encryptionValidation = [
           ...encryptionValidation,
@@ -1100,7 +1086,7 @@ const AddTenant = ({ classes }: IAddTenantProps) => {
               },
             };
             break;
-          case "GCP":
+          case "gcp":
             insertEncrypt = {
               gcp: {
                 secretmanager: {
@@ -2311,12 +2297,9 @@ const AddTenant = ({ classes }: IAddTenantProps) => {
                       name="gcp_project_id"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setGcpProjectID(e.target.value);
-                        clearValidationError("gcp_project_id");
                       }}
                       label="Project ID"
                       value={gcpProjectID}
-                      error={validationErrors["gcp_project_id"] || ""}
-                      required
                     />
                   </Grid>
                   <Grid item xs={12}>
