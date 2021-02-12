@@ -15,11 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import HelpIcon from "@material-ui/icons/Help";
 import Grid from "@material-ui/core/Grid";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import { InputLabel, Tooltip } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import HelpIcon from "../../../../../icons/HelpIcon";
 import { fieldBasic } from "../common/styleLibrary";
 import "./ConsoleCodeMirror.css";
 
@@ -56,7 +56,9 @@ const CodeMirrorWrapper = ({
         {tooltip !== "" && (
           <div className={classes.tooltipContainer}>
             <Tooltip title={tooltip} placement="top-start">
-              <HelpIcon className={classes.tooltip} />
+              <div>
+                <HelpIcon className={classes.tooltip} />
+              </div>
             </Tooltip>
           </div>
         )}

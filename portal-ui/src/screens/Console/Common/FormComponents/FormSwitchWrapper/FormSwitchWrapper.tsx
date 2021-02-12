@@ -19,7 +19,7 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { InputLabel, Switch, Tooltip } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import { actionsTray, fieldBasic } from "../common/styleLibrary";
-import HelpIcon from "@material-ui/icons/Help";
+import HelpIcon from "../../../../../icons/HelpIcon";
 
 interface IFormSwitch {
   label?: string;
@@ -218,7 +218,9 @@ const FormSwitchWrapper = ({
             {tooltip !== "" && (
               <div className={classes.tooltipContainer}>
                 <Tooltip title={tooltip} placement="top-start">
-                  <HelpIcon className={classes.tooltip} />
+                  <div>
+                    <HelpIcon className={classes.tooltip} />
+                  </div>
                 </Tooltip>
               </div>
             )}

@@ -19,13 +19,13 @@ import Grid from "@material-ui/core/Grid";
 import get from "lodash/get";
 import { InputLabel, Tooltip } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
-import HelpIcon from "@material-ui/icons/Help";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import {
   fieldBasic,
   tooltipHelper,
 } from "../../Common/FormComponents/common/styleLibrary";
 import DeleteIcon from "../../../../icons/DeleteIcon";
+import HelpIcon from "../../../../icons/HelpIcon";
 import { IPool } from "./types";
 
 interface IPoolsMultiSelector {
@@ -219,7 +219,9 @@ const PoolsMultiSelector = ({
           {tooltip !== "" && (
             <div className={classes.tooltipContainer}>
               <Tooltip title={tooltip} placement="top-start">
-                <HelpIcon className={classes.tooltip} />
+                <div>
+                  <HelpIcon className={classes.tooltip} />
+                </div>
               </Tooltip>
             </div>
           )}

@@ -25,12 +25,12 @@ import Grid from "@material-ui/core/Grid";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
 import Tooltip from "@material-ui/core/Tooltip";
-import HelpIcon from "@material-ui/icons/Help";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputBase from "@material-ui/core/InputBase";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
+import HelpIcon from "../../../../../icons/HelpIcon";
 import FormSwitchWrapper from "../FormSwitchWrapper/FormSwitchWrapper";
 import { days, months, validDate, years } from "./utils";
 
@@ -178,7 +178,9 @@ const DateSelector = forwardRef(
               {tooltip !== "" && (
                 <div className={classes.tooltipContainer}>
                   <Tooltip title={tooltip} placement="top-start">
-                    <HelpIcon className={classes.tooltip} />
+                    <div>
+                      <HelpIcon className={classes.tooltip} />
+                    </div>
                   </Tooltip>
                 </div>
               )}
