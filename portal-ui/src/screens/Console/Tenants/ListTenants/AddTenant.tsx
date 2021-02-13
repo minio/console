@@ -19,7 +19,7 @@ import debounce from "lodash/debounce";
 import get from "lodash/get";
 import Grid from "@material-ui/core/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { Button, LinearProgress, Paper, Typography } from "@material-ui/core";
+import { Button, LinearProgress, Typography } from "@material-ui/core";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -296,10 +296,6 @@ const AddTenant = ({ classes }: IAddTenantProps) => {
   const [vaultCertVal, setVaultCertVal] = useState<string>("");
   const [vaultCAVal, setVaultCAVal] = useState<string>("");
   const [gemaltoCAVal, setGemaltoCAVal] = useState<string>("");
-
-  // Flow
-
-  const showCredentialsAndRedirect = () => {};
 
   // CA Certificates functions
   const addCaCertificate = () => {
