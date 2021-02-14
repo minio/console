@@ -29,6 +29,7 @@ import (
 	"errors"
 
 	"github.com/minio/console/models"
+	"github.com/minio/console/pkg"
 	"github.com/minio/console/pkg/acl"
 	"github.com/minio/console/pkg/auth"
 	"github.com/minio/console/pkg/auth/ldap"
@@ -399,9 +400,8 @@ func newS3Config(endpoint, accessKey, secretKey, sessionToken string, insecure b
 	// consoleCredentials from the match found in the config file.
 	s3Config := new(mc.Config)
 
-	s3Config.AppName = "console" // TODO: make this a constant
-	s3Config.AppVersion = ""     // TODO: get this from constant or build
-	s3Config.AppComments = []string{}
+	s3Config.AppName = globalAppName
+	s3Config.AppVersion = pkg.Version
 	s3Config.Debug = false
 	s3Config.Insecure = insecure
 
