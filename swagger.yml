@@ -3205,6 +3205,9 @@ definitions:
           vault:
             type: object
             $ref: "#/definitions/vaultConfiguration"
+          gcp:
+            type: object
+            $ref: "#/definitions/gcpConfiguration"
 
   vaultConfiguration:
     type: object
@@ -3314,6 +3317,32 @@ definitions:
               - ca
             properties:
               ca:
+                type: string
+
+  gcpConfiguration:
+    type: object
+    required:
+      - secretmanager
+    properties:
+      secretmanager:
+        type: object
+        required:
+          - project_id
+        properties:
+          project_id:
+            type: string
+          endpoint:
+            type: string
+          credentials:
+            type: object
+            properties:
+              client_email:
+                type: string
+              client_id:
+                type: string
+              private_key_id:
+                type: string
+              private_key:
                 type: string
 
   createTenantResponse:

@@ -40,6 +40,9 @@ type EncryptionConfiguration struct {
 	// client
 	Client *KeyPairConfiguration `json:"client,omitempty"`
 
+	// gcp
+	Gcp *GcpConfiguration `json:"gcp,omitempty"`
+
 	// gemalto
 	Gemalto *GemaltoConfiguration `json:"gemalto,omitempty"`
 
@@ -68,6 +71,8 @@ func (m *EncryptionConfiguration) UnmarshalJSON(raw []byte) error {
 
 		Client *KeyPairConfiguration `json:"client,omitempty"`
 
+		Gcp *GcpConfiguration `json:"gcp,omitempty"`
+
 		Gemalto *GemaltoConfiguration `json:"gemalto,omitempty"`
 
 		Image string `json:"image,omitempty"`
@@ -83,6 +88,8 @@ func (m *EncryptionConfiguration) UnmarshalJSON(raw []byte) error {
 	m.Aws = dataAO1.Aws
 
 	m.Client = dataAO1.Client
+
+	m.Gcp = dataAO1.Gcp
 
 	m.Gemalto = dataAO1.Gemalto
 
@@ -109,6 +116,8 @@ func (m EncryptionConfiguration) MarshalJSON() ([]byte, error) {
 
 		Client *KeyPairConfiguration `json:"client,omitempty"`
 
+		Gcp *GcpConfiguration `json:"gcp,omitempty"`
+
 		Gemalto *GemaltoConfiguration `json:"gemalto,omitempty"`
 
 		Image string `json:"image,omitempty"`
@@ -121,6 +130,8 @@ func (m EncryptionConfiguration) MarshalJSON() ([]byte, error) {
 	dataAO1.Aws = m.Aws
 
 	dataAO1.Client = m.Client
+
+	dataAO1.Gcp = m.Gcp
 
 	dataAO1.Gemalto = m.Gemalto
 
@@ -152,6 +163,10 @@ func (m *EncryptionConfiguration) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateClient(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateGcp(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -201,6 +216,24 @@ func (m *EncryptionConfiguration) validateClient(formats strfmt.Registry) error 
 		if err := m.Client.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("client")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EncryptionConfiguration) validateGcp(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Gcp) { // not required
+		return nil
+	}
+
+	if m.Gcp != nil {
+		if err := m.Gcp.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("gcp")
 			}
 			return err
 		}

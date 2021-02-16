@@ -17,7 +17,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import debounce from "lodash/debounce";
 import get from "lodash/get";
-import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import Grid from "@material-ui/core/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { Button, LinearProgress, Typography } from "@material-ui/core";
@@ -67,6 +66,9 @@ import Divider from "@material-ui/core/Divider";
 import { connect } from "react-redux";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import { getHardcodedAffinity } from "../TenantDetails/utils";
+import history from "../../../../history";
+import PageHeader from "../../Common/PageHeader/PageHeader";
+import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 
 interface IAddTenantProps {
   open: boolean;
@@ -97,7 +99,6 @@ const styles = (theme: Theme) =>
       top: 0,
       paddingTop: 5,
       marginBottom: 10,
-      backgroundColor: "#fff",
       zIndex: 500,
     },
     tableTitle: {
@@ -121,14 +122,28 @@ const styles = (theme: Theme) =>
       color: "#777777",
     },
     ...modalBasic,
+    container: {
+      padding: "77px 0 0 0",
+      "& h6": {
+        color: "#777777",
+        fontSize: 14,
+      },
+      "& p": {
+        "& span:not(*[class*='smallUnit'])": {
+          fontSize: 16,
+        },
+      },
+    },
   });
 
-const AddTenant = ({
-  open,
-  closeModalAndRefresh,
-  setModalErrorSnackMessage,
-  classes,
-}: IAddTenantProps) => {
+const AddTenant = ({ classes }: IAddTenantProps) => {
+  // Modals
+  const [showNewCredentials, setShowNewCredentials] = useState<boolean>(false);
+  const [
+    createdAccount,
+    setCreatedAccount,
+  ] = useState<NewServiceAccount | null>(null);
+
   // Fields
   const [addSending, setAddSending] = useState<boolean>(false);
   const [tenantName, setTenantName] = useState<string>("");
@@ -171,6 +186,7 @@ const AddTenant = ({
   const [awsAccessKey, setAWSAccessKey] = useState<string>("");
   const [awsSecretKey, setAWSSecretKey] = useState<string>("");
   const [awsToken, setAWSToken] = useState<string>("");
+
   const [vaultEndpoint, setVaultEndpoint] = useState<string>("");
   const [vaultEngine, setVaultEngine] = useState<string>("");
   const [vaultNamespace, setVaultNamespace] = useState<string>("");
@@ -180,6 +196,12 @@ const AddTenant = ({
   const [vaultSecret, setVaultSecret] = useState<string>("");
   const [vaultRetry, setVaultRetry] = useState<string>("0");
   const [vaultPing, setVaultPing] = useState<string>("0");
+  const [gcpProjectID, setGcpProjectID] = useState<string>("");
+  const [gcpEndpoint, setGcpEndpoint] = useState<string>("");
+  const [gcpClientEmail, setGcpClientEmail] = useState<string>("");
+  const [gcpClientID, setGcpClientID] = useState<string>("");
+  const [gcpPrivateKeyID, setGcpPrivateKeyID] = useState<string>("");
+  const [gcpPrivateKey, setGcpPrivateKey] = useState<string>("");
   const [ecParityChoices, setECParityChoices] = useState<Opts[]>([]);
   const [cleanECChoices, setCleanECChoices] = useState<string[]>([]);
   const [nodes, setNodes] = useState<string>("4");
@@ -242,6 +264,7 @@ const AddTenant = ({
     vaultCert: "",
     vaultCA: "",
     gemaltoCA: "",
+    gcpPrivateKey: "",
   });
 
   // Files States
@@ -902,6 +925,7 @@ const AddTenant = ({
     gemaltoToken,
     gemaltoDomain,
     gemaltoRetry,
+    gcpProjectID,
   ]);
 
   const clearValidationError = (fieldKey: string) => {
@@ -1042,7 +1066,7 @@ const AddTenant = ({
               },
             };
             break;
-          case "AWS":
+          case "aws":
             insertEncrypt = {
               aws: {
                 secretsmanager: {
@@ -1053,6 +1077,22 @@ const AddTenant = ({
                     accesskey: awsAccessKey,
                     secretkey: awsSecretKey,
                     token: awsToken,
+                  },
+                },
+              },
+            };
+            break;
+          case "gcp":
+            insertEncrypt = {
+              gcp: {
+                secretmanager: {
+                  project_id: gcpProjectID,
+                  endpoint: gcpEndpoint,
+                  credentials: {
+                    client_email: gcpClientEmail,
+                    client_id: gcpClientID,
+                    private_key_id: gcpPrivateKeyID,
+                    private_key: gcpPrivateKey,
                   },
                 },
               },
@@ -1179,7 +1219,9 @@ const AddTenant = ({
           };
 
           setAddSending(false);
-          closeModalAndRefresh(true, newSrvAcc);
+
+          setShowNewCredentials(true);
+          setCreatedAccount(newSrvAcc);
         })
         .catch((err) => {
           setAddSending(false);
@@ -1202,7 +1244,7 @@ const AddTenant = ({
     type: "other",
     enabled: true,
     action: () => {
-      closeModalAndRefresh(false, null);
+      history.push("/tenants");
     },
   };
 
@@ -1964,6 +2006,7 @@ const AddTenant = ({
                     { label: "Vault", value: "vault" },
                     { label: "AWS", value: "aws" },
                     { label: "Gemalto", value: "gemalto" },
+                    { label: "GCP", value: "gcp" },
                   ]}
                 />
               </Grid>
@@ -2238,6 +2281,77 @@ const AddTenant = ({
                       label="Ping (Seconds)"
                       value={vaultPing}
                       error={validationErrors["vault_ping"] || ""}
+                    />
+                  </Grid>
+                </React.Fragment>
+              )}
+              {encryptionType === "gcp" && (
+                <React.Fragment>
+                  <Grid item xs={12}>
+                    <InputBoxWrapper
+                      id="gcp_project_id"
+                      name="gcp_project_id"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setGcpProjectID(e.target.value);
+                      }}
+                      label="Project ID"
+                      value={gcpProjectID}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <InputBoxWrapper
+                      id="gcp_endpoint"
+                      name="gcp_endpoint"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setGcpEndpoint(e.target.value);
+                      }}
+                      label="Endpoint"
+                      value={gcpEndpoint}
+                    />
+                  </Grid>
+                  <h5>Credentials</h5>
+                  <Grid item xs={12}>
+                    <InputBoxWrapper
+                      id="gcp_client_email"
+                      name="gcp_client_email"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setGcpClientEmail(e.target.value);
+                      }}
+                      label="Client Email"
+                      value={gcpClientEmail}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <InputBoxWrapper
+                      id="gcp_client_id"
+                      name="gcp_client_id"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setGcpClientID(e.target.value);
+                      }}
+                      label="Client ID"
+                      value={gcpClientID}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <InputBoxWrapper
+                      id="gcp_private_key_id"
+                      name="gcp_private_key_id"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setGcpPrivateKeyID(e.target.value);
+                      }}
+                      label="Private Key ID"
+                      value={gcpPrivateKeyID}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <InputBoxWrapper
+                      id="gcp_private_key"
+                      name="gcp_private_key"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setGcpPrivateKey(e.target.value);
+                      }}
+                      label="Private Key"
+                      value={gcpPrivateKey}
                     />
                   </Grid>
                 </React.Fragment>
@@ -2710,24 +2824,34 @@ const AddTenant = ({
     filteredWizardSteps = wizardSteps.filter((step) => !step.advancedOnly);
   }
 
+  const closeCredentialsModal = () => {
+    history.push("/tenants");
+  };
+
   return (
-    <ModalWrapper
-      title="Create Tenant"
-      modalOpen={open}
-      onClose={() => {
-        closeModalAndRefresh(false, null);
-      }}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-      wideLimit={false}
-    >
+    <React.Fragment>
       {addSending && (
         <Grid item xs={12}>
           <LinearProgress />
         </Grid>
       )}
-      <GenericWizard wizardSteps={filteredWizardSteps} />
-    </ModalWrapper>
+      {showNewCredentials && (
+        <CredentialsPrompt
+          newServiceAccount={createdAccount}
+          open={showNewCredentials}
+          closeModal={() => {
+            closeCredentialsModal();
+          }}
+          entity="Tenant"
+        />
+      )}
+      <PageHeader label={"Add Tenant"} />
+      <Grid container>
+        <Grid item xs={12} className={classes.container}>
+          <GenericWizard wizardSteps={filteredWizardSteps} />
+        </Grid>
+      </Grid>
+    </React.Fragment>
   );
 };
 

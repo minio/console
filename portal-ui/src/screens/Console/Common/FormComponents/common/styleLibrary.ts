@@ -82,7 +82,7 @@ export const modalBasic = {
 
 export const tooltipHelper = {
   tooltip: {
-    fontSize: 18,
+    fontSize: 16,
   },
 };
 

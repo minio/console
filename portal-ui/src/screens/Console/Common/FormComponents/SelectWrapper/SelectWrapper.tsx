@@ -25,7 +25,7 @@ import {
 } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
-import HelpIcon from "@material-ui/icons/Help";
+import HelpIcon from "../../../../../icons/HelpIcon";
 
 interface selectorTypes {
   label: string;
@@ -99,7 +99,9 @@ const SelectWrapper = ({
             {tooltip !== "" && (
               <div className={classes.tooltipContainer}>
                 <Tooltip title={tooltip} placement="top-start">
-                  <HelpIcon className={classes.tooltip} />
+                  <div>
+                    <HelpIcon className={classes.tooltip} />
+                  </div>
                 </Tooltip>
               </div>
             )}

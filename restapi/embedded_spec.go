@@ -3688,6 +3688,10 @@ func init() {
               "type": "object",
               "$ref": "#/definitions/keyPairConfiguration"
             },
+            "gcp": {
+              "type": "object",
+              "$ref": "#/definitions/gcpConfiguration"
+            },
             "gemalto": {
               "type": "object",
               "$ref": "#/definitions/gemaltoConfiguration"
@@ -3719,6 +3723,45 @@ func init() {
         },
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "gcpConfiguration": {
+      "type": "object",
+      "required": [
+        "secretmanager"
+      ],
+      "properties": {
+        "secretmanager": {
+          "type": "object",
+          "required": [
+            "project_id"
+          ],
+          "properties": {
+            "credentials": {
+              "type": "object",
+              "properties": {
+                "client_email": {
+                  "type": "string"
+                },
+                "client_id": {
+                  "type": "string"
+                },
+                "private_key": {
+                  "type": "string"
+                },
+                "private_key_id": {
+                  "type": "string"
+                }
+              }
+            },
+            "endpoint": {
+              "type": "string"
+            },
+            "project_id": {
+              "type": "string"
+            }
+          }
         }
       }
     },
@@ -8640,6 +8683,54 @@ func init() {
         }
       }
     },
+    "GcpConfigurationSecretmanager": {
+      "type": "object",
+      "required": [
+        "project_id"
+      ],
+      "properties": {
+        "credentials": {
+          "type": "object",
+          "properties": {
+            "client_email": {
+              "type": "string"
+            },
+            "client_id": {
+              "type": "string"
+            },
+            "private_key": {
+              "type": "string"
+            },
+            "private_key_id": {
+              "type": "string"
+            }
+          }
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "project_id": {
+          "type": "string"
+        }
+      }
+    },
+    "GcpConfigurationSecretmanagerCredentials": {
+      "type": "object",
+      "properties": {
+        "client_email": {
+          "type": "string"
+        },
+        "client_id": {
+          "type": "string"
+        },
+        "private_key": {
+          "type": "string"
+        },
+        "private_key_id": {
+          "type": "string"
+        }
+      }
+    },
     "GemaltoConfigurationKeysecure": {
       "type": "object",
       "required": [
@@ -9721,6 +9812,10 @@ func init() {
               "type": "object",
               "$ref": "#/definitions/keyPairConfiguration"
             },
+            "gcp": {
+              "type": "object",
+              "$ref": "#/definitions/gcpConfiguration"
+            },
             "gemalto": {
               "type": "object",
               "$ref": "#/definitions/gemaltoConfiguration"
@@ -9752,6 +9847,45 @@ func init() {
         },
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "gcpConfiguration": {
+      "type": "object",
+      "required": [
+        "secretmanager"
+      ],
+      "properties": {
+        "secretmanager": {
+          "type": "object",
+          "required": [
+            "project_id"
+          ],
+          "properties": {
+            "credentials": {
+              "type": "object",
+              "properties": {
+                "client_email": {
+                  "type": "string"
+                },
+                "client_id": {
+                  "type": "string"
+                },
+                "private_key": {
+                  "type": "string"
+                },
+                "private_key_id": {
+                  "type": "string"
+                }
+              }
+            },
+            "endpoint": {
+              "type": "string"
+            },
+            "project_id": {
+              "type": "string"
+            }
+          }
         }
       }
     },

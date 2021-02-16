@@ -113,11 +113,29 @@ type Gemalto struct {
 	KeySecure *GemaltoKeySecure `yaml:"keysecure,omitempty"`
 }
 
+type GcpCredentials struct {
+	ClientEmail  string `yaml:"client_email"`
+	ClientID     string `yaml:"client_id"`
+	PrivateKeyID string `yaml:"private_key_id"`
+	PrivateKey   string `yaml:"private_key"`
+}
+
+type GcpSecretManager struct {
+	ProjectID   string          `yaml:"project_id"`
+	Endpoint    string          `yaml:"endpoint,omitempty"`
+	Credentials *GcpCredentials `yaml:"credentials,omitempty"`
+}
+
+type Gcp struct {
+	SecretManager *GcpSecretManager `yaml:"secretmanager,omitempty"`
+}
+
 type Keys struct {
 	Fs      *Fs      `yaml:"fs,omitempty"`
 	Vault   *Vault   `yaml:"vault,omitempty"`
 	Aws     *Aws     `yaml:"aws,omitempty"`
 	Gemalto *Gemalto `yaml:"gemalto,omitempty"`
+	Gcp     *Gcp     `yaml:"gcp,omitempty"`
 }
 
 type ServerConfig struct {

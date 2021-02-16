@@ -25,9 +25,9 @@ import get from "lodash/get";
 import debounce from "lodash/debounce";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import HelpIcon from "@material-ui/icons/Help";
 import { InputLabel, Tooltip } from "@material-ui/core";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
+import HelpIcon from "../../../../../icons/HelpIcon";
 import InputBoxWrapper from "../InputBoxWrapper/InputBoxWrapper";
 import AddIcon from "../../../../../icons/AddIcon";
 
@@ -165,7 +165,9 @@ const CSVMultiSelector = ({
           {tooltip !== "" && (
             <div className={classes.tooltipContainer}>
               <Tooltip title={tooltip} placement="top-start">
-                <HelpIcon className={classes.tooltip} />
+                <div>
+                  <HelpIcon className={classes.tooltip} />
+                </div>
               </Tooltip>
             </div>
           )}

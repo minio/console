@@ -20,10 +20,10 @@ import { Grid, InputLabel, Tooltip } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import AttachFileIcon from "@material-ui/icons/AttachFile";
 import CancelIcon from "@material-ui/icons/Cancel";
-import HelpIcon from "@material-ui/icons/Help";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 import { fileProcess } from "./utils";
+import HelpIcon from "../../../../../icons/HelpIcon";
 import ErrorBlock from "../../../../shared/ErrorBlock";
 
 interface InputBoxProps {
@@ -123,7 +123,9 @@ const FileSelector = ({
             {tooltip !== "" && (
               <div className={classes.tooltipContainer}>
                 <Tooltip title={tooltip} placement="top-start">
-                  <HelpIcon className={classes.tooltip} />
+                  <div>
+                    <HelpIcon className={classes.tooltip} />
+                  </div>
                 </Tooltip>
               </div>
             )}

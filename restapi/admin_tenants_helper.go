@@ -489,6 +489,25 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 				}
 			}
 		}
+	} else if encryptionCfg.Gcp != nil {
+		// Initialize GCP
+		kesConfig.Keys.Gcp = &kes.Gcp{
+			SecretManager: &kes.GcpSecretManager{},
+		}
+		// GCP basic kesConfiguration
+		if encryptionCfg.Gcp.Secretmanager != nil {
+			kesConfig.Keys.Gcp.SecretManager.ProjectID = *encryptionCfg.Gcp.Secretmanager.ProjectID
+			kesConfig.Keys.Gcp.SecretManager.Endpoint = encryptionCfg.Gcp.Secretmanager.Endpoint
+			// GCP credentials
+			if encryptionCfg.Gcp.Secretmanager.Credentials != nil {
+				kesConfig.Keys.Gcp.SecretManager.Credentials = &kes.GcpCredentials{
+					ClientEmail:  encryptionCfg.Gcp.Secretmanager.Credentials.ClientEmail,
+					ClientID:     encryptionCfg.Gcp.Secretmanager.Credentials.ClientID,
+					PrivateKeyID: encryptionCfg.Gcp.Secretmanager.Credentials.PrivateKeyID,
+					PrivateKey:   encryptionCfg.Gcp.Secretmanager.Credentials.PrivateKey,
+				}
+			}
+		}
 	}
 	imm := true
 	// if mTLSCertificates contains elements we create the kubernetes secret
