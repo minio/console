@@ -20,11 +20,10 @@ import (
 	"context"
 	"io"
 	"net/http"
-	"path/filepath"
-	"runtime"
 	"time"
 
 	"github.com/minio/console/models"
+	"github.com/minio/console/pkg"
 	mcCmd "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -33,7 +32,7 @@ import (
 	"github.com/minio/minio/pkg/madmin"
 )
 
-const globalAppName = "console"
+const globalAppName = "MinIO Console"
 
 // NewAdminClient gives a new madmin client interface
 func NewAdminClient(url, accessKey, secretKey, sessionToken string) (*madmin.AdminClient, *probe.Error) {
@@ -42,15 +41,13 @@ func NewAdminClient(url, accessKey, secretKey, sessionToken string) (*madmin.Adm
 
 // NewAdminClientWithInsecure gives a new madmin client interface either secure or insecure based on parameter
 func NewAdminClientWithInsecure(url, accessKey, secretKey, sessionToken string, insecure bool) (*madmin.AdminClient, *probe.Error) {
-	appName := filepath.Base(globalAppName)
 	s3Client, err := s3AdminNew(&mcCmd.Config{
 		HostURL:      url,
 		AccessKey:    accessKey,
 		SecretKey:    secretKey,
 		SessionToken: sessionToken,
-		AppName:      appName,
-		AppVersion:   ConsoleVersion,
-		AppComments:  []string{appName, runtime.GOOS, runtime.GOARCH},
+		AppName:      globalAppName,
+		AppVersion:   pkg.Version,
 		Insecure:     insecure,
 	})
 	if err != nil {

@@ -35,7 +35,6 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
-	"github.com/minio/console/pkg"
 	"github.com/minio/console/pkg/auth"
 	"github.com/minio/console/restapi/operations"
 	"github.com/unrolled/secure"
@@ -241,7 +240,7 @@ func AuthenticationMiddleware(next http.Handler) http.Handler {
 // FileServerMiddleware serves files from the static folder
 func FileServerMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Server", "console/"+pkg.Version) // add HTTP Server header
+		w.Header().Set("Server", globalAppName) // do not add version information
 		switch {
 		case strings.HasPrefix(r.URL.Path, "/ws"):
 			serveWS(w, r)
