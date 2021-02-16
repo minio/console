@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
@@ -27,28 +27,33 @@ import { niceBytes } from "../../../../common/utils";
 import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
 import {
   actionsTray,
-  containerForHeader,
   searchField,
+  settingsCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
 import { CreateIcon } from "../../../../icons";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import DeleteTenant from "./DeleteTenant";
-import AddTenant from "./AddTenant";
+import AddTenant from "../AddTenant/AddTenant";
 import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 import history from "../../../../history";
 import RefreshIcon from "@material-ui/icons/Refresh";
-import PageHeader from "../../Common/PageHeader/PageHeader";
-import { Link } from "react-router-dom";
+import SlideOptions from "../../Common/SlideOptions/SlideOptions";
+import BackSettingsIcon from "../../../../icons/BackSettingsIcon";
+import { resetAddTenantForm } from "../actions";
 
 interface ITenantsList {
   classes: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  resetAddTenantForm: typeof resetAddTenantForm;
 }
 
 const styles = (theme: Theme) =>
   createStyles({
+    ...actionsTray,
+    ...searchField,
+    ...settingsCommon,
     seeMore: {
       marginTop: theme.spacing(3),
     },
@@ -74,13 +79,28 @@ const styles = (theme: Theme) =>
         },
       },
     },
-    ...actionsTray,
-    ...searchField,
-    ...containerForHeader(theme.spacing(4)),
+    actionsTray: {
+      ...actionsTray.actionsTray,
+      padding: "0 38px",
+    },
+    tenantsContainer: {
+      padding: "15px 0",
+    },
+    customConfigurationPage: {
+      height: "calc(100vh - 440px)",
+      scrollbarWidth: "none" as const,
+      "&::-webkit-scrollbar": {
+        display: "none",
+      },
+    },
   });
 
-const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
-  const [createTenantOpen, setCreateTenantOpen] = useState<boolean>(false);
+const ListTenants = ({
+  classes,
+  setErrorSnackMessage,
+  resetAddTenantForm,
+}: ITenantsList) => {
+  const [currentPanel, setCurrentPanel] = useState<number>(0);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedTenant, setSelectedTenant] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -92,16 +112,9 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
     setCreatedAccount,
   ] = useState<NewServiceAccount | null>(null);
 
-  const closeAddModalAndRefresh = (
-    reloadData: boolean,
-    res: NewServiceAccount | null
-  ) => {
-    setCreateTenantOpen(false);
-
-    if (res !== null) {
-      setShowNewCredentials(true);
-      setCreatedAccount(res);
-    }
+  const closeAddModalAndRefresh = (reloadData: boolean) => {
+    setCurrentPanel(0);
+    resetAddTenantForm();
 
     if (reloadData) {
       setIsLoading(true);
@@ -129,6 +142,11 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
   const closeCredentialsModal = () => {
     setShowNewCredentials(false);
     setCreatedAccount(null);
+  };
+
+  const backClick = () => {
+    setCurrentPanel(currentPanel - 1);
+    resetAddTenantForm();
   };
 
   const tableActions = [
@@ -183,14 +201,12 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
     setIsLoading(true);
   }, []);
 
+  const createTenant = () => {
+    setCurrentPanel(1);
+  };
+
   return (
-    <React.Fragment>
-      {createTenantOpen && (
-        <AddTenant
-          open={createTenantOpen}
-          closeModalAndRefresh={closeAddModalAndRefresh}
-        />
-      )}
+    <Fragment>
       {deleteOpen && (
         <DeleteTenant
           deleteOpen={deleteOpen}
@@ -208,74 +224,105 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
           entity="Tenant"
         />
       )}
-      <PageHeader label={"Tenants"} />
       <Grid container>
-        <Grid item xs={12} className={classes.container}>
-          <Grid item xs={12} className={classes.actionsTray}>
-            <TextField
-              placeholder="Search Tenants"
-              className={classes.searchField}
-              id="search-resource"
-              label=""
-              onChange={(val) => {
-                setFilterTenants(val.target.value);
-              }}
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <IconButton
-              color="primary"
-              aria-label="Refresh Tenant List"
-              component="span"
-              onClick={() => {
-                setIsLoading(true);
-              }}
-            >
-              <RefreshIcon />
-            </IconButton>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<CreateIcon />}
-              component={Link}
-              to="/add-tenant"
-            >
-              Create Tenant
-            </Button>
-          </Grid>
+        <Grid item xs={12}>
           <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12}>
-            <TableWrapper
-              itemActions={tableActions}
-              columns={[
-                { label: "Name", elementKey: "name" },
-                { label: "Namespace", elementKey: "namespace" },
-                { label: "Capacity", elementKey: "capacity" },
-                { label: "# of Pools", elementKey: "pool_count" },
-                { label: "State", elementKey: "currentState" },
-              ]}
-              isLoading={isLoading}
-              records={filteredRecords}
-              entityName="Tenants"
-              idField="name"
-            />
+            <div className={classes.settingsOptionsContainer}>
+              <SlideOptions
+                slideOptions={[
+                  <Fragment>
+                    <Grid item xs={12} className={classes.customTitle}>
+                      Tenants List
+                    </Grid>
+
+                    <Grid item xs={12} className={classes.tenantsContainer}>
+                      <Grid item xs={12} className={classes.actionsTray}>
+                        <TextField
+                          placeholder="Search Tenants"
+                          className={classes.searchField}
+                          id="search-resource"
+                          label=""
+                          onChange={(val) => {
+                            setFilterTenants(val.target.value);
+                          }}
+                          InputProps={{
+                            disableUnderline: true,
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <SearchIcon />
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                        <IconButton
+                          color="primary"
+                          aria-label="Refresh Tenant List"
+                          component="span"
+                          onClick={() => {
+                            setIsLoading(true);
+                          }}
+                        >
+                          <RefreshIcon />
+                        </IconButton>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          startIcon={<CreateIcon />}
+                          onClick={createTenant}
+                        >
+                          Create Tenant
+                        </Button>
+                      </Grid>
+                      <Grid item xs={12} className={classes.tenantsContainer}>
+                        <TableWrapper
+                          itemActions={tableActions}
+                          columns={[
+                            { label: "Name", elementKey: "name" },
+                            { label: "Namespace", elementKey: "namespace" },
+                            { label: "Capacity", elementKey: "capacity" },
+                            { label: "# of Pools", elementKey: "pool_count" },
+                            { label: "State", elementKey: "currentState" },
+                          ]}
+                          isLoading={isLoading}
+                          records={filteredRecords}
+                          entityName="Tenants"
+                          idField="name"
+                          customPaperHeight={classes.customConfigurationPage}
+                          noBackground
+                        />
+                      </Grid>
+                    </Grid>
+                  </Fragment>,
+                  <Fragment>
+                    <Grid item xs={12} className={classes.backContainer}>
+                      <button
+                        onClick={backClick}
+                        className={classes.backButton}
+                      >
+                        <BackSettingsIcon />
+                        Back To Tenants List
+                      </button>
+                    </Grid>
+                    <Grid item xs={12}>
+                      {currentPanel === 1 && (
+                        <AddTenant closeAndRefresh={closeAddModalAndRefresh} />
+                      )}
+                    </Grid>
+                  </Fragment>,
+                ]}
+                currentSlide={currentPanel}
+              />
+            </div>
           </Grid>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
 };
 
 const connector = connect(null, {
   setErrorSnackMessage,
+  resetAddTenantForm,
 });
 
 export default withStyles(styles)(connector(ListTenants));

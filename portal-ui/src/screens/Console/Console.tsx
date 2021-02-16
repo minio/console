@@ -45,7 +45,7 @@ import Users from "./Users/Users";
 import Groups from "./Groups/Groups";
 import ConfigurationMain from "./Configurations/ConfigurationMain";
 import WebhookPanel from "./Configurations/ConfigurationPanels/WebhookPanel";
-import ListTenants from "./Tenants/ListTenants/ListTenants";
+import TenantsMain from "./Tenants/TenantsMain";
 import TenantDetails from "./Tenants/TenantDetails/TenantDetails";
 import ObjectBrowser from "./ObjectBrowser/ObjectBrowser";
 import ObjectRouting from "./Buckets/ListBuckets/Objects/ListObjects/ObjectRouting";
@@ -55,7 +55,6 @@ import LogsMain from "./Logs/LogsMain";
 import Heal from "./Heal/Heal";
 import Watch from "./Watch/Watch";
 import HealthInfo from "./HealthInfo/HealthInfo";
-import AddTenant from "./Tenants/ListTenants/AddTenant";
 
 const drawerWidth = 245;
 
@@ -291,12 +290,8 @@ const Console = ({
       path: "/webhook/audit",
     },
     {
-      component: ListTenants,
+      component: TenantsMain,
       path: "/tenants",
-    },
-    {
-      component: AddTenant,
-      path: "/add-tenant",
     },
     {
       component: TenantDetails,
