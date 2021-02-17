@@ -104,6 +104,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIBulkUpdateUsersGroupsHandler: admin_api.BulkUpdateUsersGroupsHandlerFunc(func(params admin_api.BulkUpdateUsersGroupsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.BulkUpdateUsersGroups has not yet been implemented")
 		}),
+		AdminAPIChangeUserPasswordHandler: admin_api.ChangeUserPasswordHandlerFunc(func(params admin_api.ChangeUserPasswordParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.ChangeUserPassword has not yet been implemented")
+		}),
 		AdminAPIConfigInfoHandler: admin_api.ConfigInfoHandlerFunc(func(params admin_api.ConfigInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ConfigInfo has not yet been implemented")
 		}),
@@ -482,6 +485,8 @@ type ConsoleAPI struct {
 	UserAPIBucketSetPolicyHandler user_api.BucketSetPolicyHandler
 	// AdminAPIBulkUpdateUsersGroupsHandler sets the operation handler for the bulk update users groups operation
 	AdminAPIBulkUpdateUsersGroupsHandler admin_api.BulkUpdateUsersGroupsHandler
+	// AdminAPIChangeUserPasswordHandler sets the operation handler for the change user password operation
+	AdminAPIChangeUserPasswordHandler admin_api.ChangeUserPasswordHandler
 	// AdminAPIConfigInfoHandler sets the operation handler for the config info operation
 	AdminAPIConfigInfoHandler admin_api.ConfigInfoHandler
 	// UserAPICreateBucketEventHandler sets the operation handler for the create bucket event operation
@@ -796,6 +801,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIBulkUpdateUsersGroupsHandler == nil {
 		unregistered = append(unregistered, "admin_api.BulkUpdateUsersGroupsHandler")
+	}
+	if o.AdminAPIChangeUserPasswordHandler == nil {
+		unregistered = append(unregistered, "admin_api.ChangeUserPasswordHandler")
 	}
 	if o.AdminAPIConfigInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.ConfigInfoHandler")
@@ -1251,6 +1259,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/users-groups-bulk"] = admin_api.NewBulkUpdateUsersGroups(o.context, o.AdminAPIBulkUpdateUsersGroupsHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/account/change-user-password"] = admin_api.NewChangeUserPassword(o.context, o.AdminAPIChangeUserPasswordHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
