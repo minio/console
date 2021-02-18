@@ -12,7 +12,7 @@ Run the `billy.ldif` file using `ldapadd` command to create a new user and assig
 
 ```
 $ docker cp console/docs/ldap/billy.ldif my-openldap-container:/container/service/slapd/assets/test/billy.ldif
-$ docker exec my-openldap-container ldapadd -x -D "cn=admin,dc=example,dc=org" -w admin -f /container/service/slapd/assets/test/billy.ldif -H ldap://localhost -ZZ
+$ docker exec my-openldap-container ldapadd -x -D "cn=admin,dc=example,dc=org" -w admin -f /container/service/slapd/assets/test/billy.ldif -H ldap://localhost
 ```
 
 Query the ldap server to check the user billy was created correctly and got assigned to the consoleAdmin group, you should get a list 
