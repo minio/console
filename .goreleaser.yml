@@ -3,7 +3,7 @@
 project_name: console
 
 release:
-   name_template: "Release version {{.Version}}"
+   name_template: "Release version {{.Tag}}"
    github:
     owner: minio
     name: console
@@ -27,8 +27,6 @@ builds:
       - s390x
       - arm64
     ignore:
-      - goos: darwin
-        goarch: arm64
       - goos: darwin
         goarch: arm
       - goos: windows
@@ -85,6 +83,7 @@ dockers:
 - image_templates:
   - "minio/console:{{ .Tag }}-amd64"
   use_buildx: true
+  goarch: amd64
   dockerfile: Dockerfile.release
   extra_files:
     - LICENSE
@@ -94,6 +93,7 @@ dockers:
 - image_templates:
   - "minio/console:{{ .Tag }}-ppc64le"
   use_buildx: true
+  goarch: ppc64le
   dockerfile: Dockerfile.release
   extra_files:
     - LICENSE
@@ -103,6 +103,7 @@ dockers:
 - image_templates:
   - "minio/console:{{ .Tag }}-s390x"
   use_buildx: true
+  goarch: s390x
   dockerfile: Dockerfile.release
   extra_files:
     - LICENSE
@@ -113,6 +114,7 @@ dockers:
   - "minio/console:{{ .Tag }}-arm64"
   use_buildx: true
   goarch: arm64
+  goos: linux
   dockerfile: Dockerfile.release
   extra_files:
     - LICENSE

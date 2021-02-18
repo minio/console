@@ -6,8 +6,8 @@ COPY LICENSE /licenses/LICENSE
 LABEL name="MinIO" \
       vendor="MinIO Inc <dev@min.io>" \
       maintainer="MinIO Inc <dev@min.io>" \
-      version="v0.5.2" \
-      release="v0.5.2" \
+      version="v0.6.0" \
+      release="v0.6.0" \
       summary="A graphical user interface for MinIO" \
       description="MinIO object storage is fundamentally different. Designed for performance and the S3 API, it is 100% open-source. MinIO is ideal for large, private cloud environments with stringent security requirements and delivers mission-critical availability across a diverse range of workloads."
 
