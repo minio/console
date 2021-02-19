@@ -113,11 +113,27 @@ func getAccountPolicy(ctx context.Context, client MinioAdmin) (*iampolicy.Policy
 }
 
 // getConsoleCredentials will return consoleCredentials interface including the associated policy of the current account
-func getConsoleCredentials(ctx context.Context, accessKey, secretKey, sessionToken string) (*consoleCredentials, error) {
+func getConsoleCredentials(ctx context.Context, accessKey, secretKey string) (*consoleCredentials, error) {
+	creds, err := newConsoleCredentials(accessKey, secretKey, MinioRegion)
+	if err != nil {
+		return nil, err
+	}
+	// cCredentials will be sts credentials, account credentials will be need it in the scenario the user wish
+	// to change its password
+	cCredentials := &consoleCredentials{
+		consoleCredentials: creds,
+		accountAccessKey:   accessKey,
+		accountSecretKey:   secretKey,
+	}
+	tokens, err := cCredentials.Get()
+	if err != nil {
+		return nil, err
+	}
+	// initialize admin client
 	mAdminClient, err := newMAdminClient(&models.Principal{
-		STSAccessKeyID:     accessKey,
-		STSSecretAccessKey: secretKey,
-		STSSessionToken:    sessionToken,
+		STSAccessKeyID:     tokens.AccessKeyID,
+		STSSecretAccessKey: tokens.SecretAccessKey,
+		STSSessionToken:    tokens.SessionToken,
 	})
 	if err != nil {
 		return nil, err
@@ -137,17 +153,8 @@ func getConsoleCredentials(ctx context.Context, accessKey, secretKey, sessionTok
 	if policy != nil {
 		actions = acl.GetActionsStringFromPolicy(policy)
 	}
-	credentials, err := newConsoleCredentials(accessKey, secretKey, MinioRegion)
-	if err != nil {
-		return nil, err
-	}
-	// consoleCredentials will be sts credentials, account credentials will be need it in the scenario the user wish
-	return &consoleCredentials{
-		consoleCredentials: credentials,
-		accountAccessKey:   accessKey,
-		accountSecretKey:   secretKey,
-		actions:            actions,
-	}, nil
+	cCredentials.actions = actions
+	return cCredentials, nil
 }
 
 // getLoginResponse performs login() and serializes it to the handler's output
@@ -155,7 +162,7 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.E
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	// prepare console credentials
-	consolCreds, err := getConsoleCredentials(ctx, *lr.AccessKey, *lr.SecretKey, "")
+	consolCreds, err := getConsoleCredentials(ctx, *lr.AccessKey, *lr.SecretKey)
 	if err != nil {
 		return nil, prepareError(errInvalidCredentials, nil, err)
 	}
