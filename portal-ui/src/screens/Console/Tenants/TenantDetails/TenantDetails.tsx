@@ -154,7 +154,8 @@ const TenantDetails = ({
     setAddPool(false);
 
     if (reload) {
-      console.log("reload");
+      loadInfo();
+      loadUsage();
     }
   };
 
@@ -166,7 +167,8 @@ const TenantDetails = ({
     setAddReplicationOpen(false);
 
     if (reload) {
-      console.log("reload");
+      loadInfo();
+      loadUsage();
     }
   };
 
