@@ -18,22 +18,22 @@ export const planDetails = [
   {
     id: 0,
     title: "Community",
-    price: "Free",
-    capacityMin: "(No minimum)",
+    price: "Open Source",
+    capacityMin: "",
   },
   {
     id: 1,
     title: "Standard",
     price: "$10/TB/month",
     capacityMax: "Up to 10PB. No additional charges for capacity over 10PB",
-    capacityMin: "(25TB minimum)",
+    capacityMin: "",
   },
   {
     id: 2,
     title: "Enterprise",
     price: "$20/TB/month",
     capacityMax: "Up to 5PB. No additional charges for capacity over 5PB",
-    capacityMin: "(100TB minimum)",
+    capacityMin: "",
   },
 ];
 
@@ -41,12 +41,12 @@ export const planItems = [
   {
     id: 0,
     field: "License",
-    community: "100% Open Source",
-    communityDetail: "Apache License v2, GNU AGPL v3",
-    standard: "Dual License",
-    standardDetail: "Commercial + Open Source",
-    enterprise: "Dual License",
-    enterpriseDetail: "Commercial + Open Source",
+    community: "GNU AGPL v3",
+    communityDetail: "",
+    standard: "Commercial License",
+    standardDetail: "",
+    enterprise: "Commercial License",
+    enterpriseDetail: "",
   },
   {
     id: 1,

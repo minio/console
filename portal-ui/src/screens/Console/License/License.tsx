@@ -49,23 +49,22 @@ const styles = (theme: Theme) =>
     },
     licenseContainer: {
       padding: "20px 52px 0px 28px",
-      background:
-        "transparent linear-gradient(180deg, #ffffff 0%, #d6e1e8 100%) 0% 0% no-repeat padding-box",
+      background: "#032F51",
       boxShadow: "0px 3px 7px #00000014",
       "& h2": {
-        color: "#000",
-        marginBottom: "50px",
+        color: "#FFF",
+        marginBottom: 67,
       },
       "& a": {
         textDecoration: "none",
       },
       "& h3": {
-        color: "#000",
+        color: "#FFFFFF",
         marginBottom: "30px",
         fontWeight: "bold",
       },
       "& h6": {
-        color: "#000 !important",
+        color: "#FFFFFF !important",
       },
     },
     tableContainer: {
@@ -81,26 +80,29 @@ const styles = (theme: Theme) =>
     detailsContainerBorder: {
       border: "1px solid #e2e2e2",
       borderBottom: 0,
+      borderRadius: "4px 4px 0px 0px",
     },
     detailsContainerBorderHighlighted: {
-      border: "1px solid #9a93ad",
+      border: "1px solid #B5B5B5",
       borderBottom: 0,
     },
     detailsTitle: {
-      fontSize: 17,
+      fontSize: 19,
       fontWeight: 700,
       marginBottom: 26,
       paddingTop: 18,
     },
     currentPlan: {
       fontWeight: 700,
-      background:
-        "transparent linear-gradient(90deg, #073052 0%, #081C42 100%) 0% 0% no-repeat padding-box",
-      boxShadow: "0px 3px 7px #00000014",
-      color: "#fff",
+      background: "#D5DDE5",
+      borderRadius: "3px 3px 0px 0px",
+      color: "#121212",
+      padding: 8,
+      borderTop: "1px solid #D5DDE5",
+      marginTop: -2,
     },
     detailsPrice: {
-      fontSize: 12,
+      fontSize: 13,
       fontWeight: 700,
       marginBottom: 8,
     },
@@ -110,18 +112,15 @@ const styles = (theme: Theme) =>
       fontWeight: 700,
       marginBottom: 12,
       padding: "0% 15%",
-      color: "#474747",
     },
     detailsCapacityMin: {
       fontSize: 10,
     },
     itemContainer: {
       height: 36,
-      borderTop: "1px solid #e5e5e5",
     },
     itemContainerDetail: {
       height: 48,
-      borderTop: "1px solid #e5e5e5",
     },
     item: {
       height: "100%",
@@ -135,18 +134,20 @@ const styles = (theme: Theme) =>
       alignContent: "center",
       marginLeft: 8,
       maxWidth: "calc(25% - 8px)",
+      borderTop: "1px solid #e5e5e5",
     },
     itemFirst: {
       borderLeft: 0,
       borderRight: 0,
     },
     itemHighlighted: {
-      borderLeft: "1px solid #9a93ad",
-      borderRight: "1px solid #9a93ad",
+      borderLeft: "1px solid #B5B5B5",
+      borderRight: "1px solid #B5B5B5",
     },
     field: {
       textAlign: "left",
       fontWeight: 400,
+      fontSize: 12,
     },
     checkIcon: {
       height: 12,
@@ -169,7 +170,7 @@ const styles = (theme: Theme) =>
       border: 0,
     },
     buttonContainerHighlighted: {
-      border: "1px solid #000",
+      border: "1px solid #B5B5B5",
       borderTop: 0,
     },
     button: {
@@ -210,20 +211,36 @@ const styles = (theme: Theme) =>
       height: "100%",
       borderRadius: "0px 3px 0px 0px !important",
     },
-    licenseInfo: { color: "#000" },
+    licenseInfo: { color: "#FFFFFF" },
     licenseInfoTitle: {
       textTransform: "none",
-      color: "#000",
+      color: "#FFFFFF",
     },
     licenseInfoValue: {
       textTransform: "none",
       fontSize: 17,
     },
     licenseDescription: {
-      background: "#fff",
+      background: "#032F51",
       padding: "30px 30px",
-      border: "1px solid #e2e5e4",
-      borderRadius: "5px 5px 0px 0px",
+      borderTop: "1px solid #e2e5e4",
+      borderLeft: "1px solid #e2e5e4",
+      borderRight: "1px solid #e2e5e4",
+    },
+    currentPlanBG: {
+      background: "#022A4A 0% 0% no-repeat padding-box",
+      color: "#FFFFFF",
+      borderTop: "1px solid #52687d",
+    },
+    currentPlanButton: {
+      background: "#FFFFFF",
+      color: "#022A4A",
+      "&:hover": {
+        background: "#FFFFFF",
+      },
+    },
+    planItemsPadding: {
+      padding: "23px 33px",
     },
     ...containerForHeader(theme.spacing(4)),
   });
@@ -269,6 +286,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
       </Grid>
     );
   }
+  let currentPlanID = 0;
   return (
     <React.Fragment>
       <React.Fragment>
@@ -387,7 +405,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                 </React.Fragment>
               ) : (
                 <React.Fragment>
-                  <img src="agpl.png" height={40} alt="agpl" />
+                  <img src="agpl.svg" height={40} alt="agpl" />
                   <Typography component="h2" variant="h6">
                     GNU Affero General Public License
                   </Typography>
@@ -422,9 +440,9 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                   If you are building proprietary applications, you may want to
                   choose the commercial license included as part of the Standard
                   and Enterprise subscription plans. Applications must otherwise
-                  comply with all GNU AGPLv3 obligations and requirements. Click
-                  the link below to learn more about Open Source license
-                  compliance.
+                  comply with all the GNU AGPLv3 License & Trademark
+                  obligations. Follow the links below to learn more about the
+                  compliance policy.
                 </Typography>
                 <br />
                 <a
@@ -435,14 +453,23 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                 >
                   Open Source Policy Compliance
                 </a>
+                <br />
+                <br />
+                <a
+                  href="https://min.io/logo"
+                  className={classes.openSourcePolicy}
+                  target="_blank"
+                  rel="nofollow noopener noreferrer"
+                >
+                  Trademark Policy
+                </a>
               </Paper>
             )}
           </Grid>
           <Grid
             item
             xs={12}
-            className={classes.container}
-            style={{ padding: "0px 33px" }}
+            className={clsx(classes.container, classes.planItemsPadding)}
           >
             <Paper
               className={classes.paper}
@@ -459,6 +486,11 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                   <Grid container item xs={12}>
                     <Grid item xs={3} className={classes.detailsContainer} />
                     {planDetails.map((details: any) => {
+                      let currentPlan =
+                        (!licenseInfo && details.title === "Community") ||
+                        (licenseInfo &&
+                          licenseInfo.plan.toLowerCase() ===
+                            details.title.toLowerCase());
                       return (
                         <Grid
                           key={details.id}
@@ -471,13 +503,11 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                             {
                               [classes.detailsContainerBorderHighlighted]:
                                 details.title !== "Community",
-                            }
+                            },
+                            currentPlan ? classes.currentPlanBG : ""
                           )}
                         >
-                          {(!licenseInfo && details.title === "Community") ||
-                          (licenseInfo &&
-                            licenseInfo.plan.toLowerCase() ===
-                              details.title.toLowerCase()) ? (
+                          {currentPlan ? (
                             <Grid item xs={12} className={classes.currentPlan}>
                               Current Plan
                             </Grid>
@@ -494,13 +524,6 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                             className={classes.detailsCapacityMax}
                           >
                             {details.capacityMax || ""}
-                          </Grid>
-                          <Grid
-                            item
-                            xs={12}
-                            className={classes.detailsCapacityMin}
-                          >
-                            {details.capacityMin}
                           </Grid>
                         </Grid>
                       );
@@ -529,7 +552,15 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                         >
                           {item.field}
                         </Grid>
-                        <Grid container item xs={3} className={classes.item}>
+                        <Grid
+                          container
+                          item
+                          xs={3}
+                          className={clsx(
+                            classes.item,
+                            currentPlanID === 0 ? classes.currentPlanBG : ""
+                          )}
+                        >
                           <Grid item xs={12}>
                             {item.community === "N/A" ? (
                               ""
@@ -551,7 +582,8 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                           xs={3}
                           className={clsx(
                             classes.item,
-                            classes.itemHighlighted
+                            classes.itemHighlighted,
+                            currentPlanID === 1 ? classes.currentPlanBG : ""
                           )}
                         >
                           <Grid item xs={12}>
@@ -563,11 +595,6 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                               item.standard
                             )}
                           </Grid>
-                          {item.standardDetail !== undefined && (
-                            <Grid item xs={12}>
-                              {item.standardDetail}
-                            </Grid>
-                          )}
                         </Grid>
                         <Grid
                           container
@@ -575,7 +602,8 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                           xs={3}
                           className={clsx(
                             classes.item,
-                            classes.itemHighlighted
+                            classes.itemHighlighted,
+                            currentPlanID === 2 ? classes.currentPlanBG : ""
                           )}
                         >
                           <Grid item xs={12}>
@@ -587,11 +615,6 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                               item.enterprise
                             )}
                           </Grid>
-                          {item.enterpriseDetail !== undefined && (
-                            <Grid item xs={12}>
-                              {item.enterpriseDetail}
-                            </Grid>
-                          )}
                         </Grid>
                       </Grid>
                     );
@@ -605,7 +628,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                         classes.buttonContainerBlank
                       )}
                     />
-                    {planButtons.map((button: any) => {
+                    {planButtons.map((button: any, index: any) => {
                       return (
                         <Grid
                           key={button.id}
@@ -613,16 +636,27 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                           item
                           xs={3}
                           style={{ textAlign: "center" }}
-                          className={clsx(classes.buttonContainer, {
-                            [classes.buttonContainerHighlighted]:
-                              button.text === "Subscribe",
-                          })}
+                          className={clsx(
+                            classes.buttonContainer,
+                            currentPlanID === index
+                              ? classes.currentPlanBG
+                              : "",
+                            {
+                              [classes.buttonContainerHighlighted]:
+                                button.text === "Subscribe",
+                            }
+                          )}
                         >
                           <Grid item xs={12}>
                             <Button
                               variant="contained"
                               color="primary"
-                              className={classes.button}
+                              className={clsx(
+                                classes.button,
+                                currentPlanID === index
+                                  ? classes.currentPlanButton
+                                  : ""
+                              )}
                               target="_blank"
                               rel="noopener noreferrer"
                               href="#"
