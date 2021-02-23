@@ -404,10 +404,22 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 	var minioEndpoint string
 	var consoleEndpoint string
 	if minSvc != nil && len(minSvc.Status.LoadBalancer.Ingress) > 0 {
-		minioEndpoint = fmt.Sprintf("%s://%s", schema, minSvc.Status.LoadBalancer.Ingress[0].IP)
+		if minSvc.Status.LoadBalancer.Ingress[0].IP != "" {
+			minioEndpoint = fmt.Sprintf("%s://%s", schema, minSvc.Status.LoadBalancer.Ingress[0].IP)
+		}
+
+		if minSvc.Status.LoadBalancer.Ingress[0].Hostname != "" {
+			minioEndpoint = fmt.Sprintf("%s://%s", schema, minSvc.Status.LoadBalancer.Ingress[0].Hostname)
+		}
+
 	}
 	if conSvc != nil && len(conSvc.Status.LoadBalancer.Ingress) > 0 {
-		consoleEndpoint = fmt.Sprintf("%s://%s%s", consoleSchema, conSvc.Status.LoadBalancer.Ingress[0].IP, consolePort)
+		if conSvc.Status.LoadBalancer.Ingress[0].IP != "" {
+			consoleEndpoint = fmt.Sprintf("%s://%s%s", consoleSchema, conSvc.Status.LoadBalancer.Ingress[0].IP, consolePort)
+		}
+		if conSvc.Status.LoadBalancer.Ingress[0].Hostname != "" {
+			consoleEndpoint = fmt.Sprintf("%s://%s%s", consoleSchema, conSvc.Status.LoadBalancer.Ingress[0].Hostname, consolePort)
+		}
 	}
 	if minioEndpoint != "" || consoleEndpoint != "" {
 		info.Endpoints = &models.TenantEndpoints{
