@@ -187,7 +187,7 @@ func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
 	if oauth2.IsIdpEnabled() {
 		loginStrategy = models.LoginDetailsLoginStrategyRedirect
 		// initialize new oauth2 client
-		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil)
+		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil, GetConsoleSTSClient())
 		if err != nil {
 			return nil, prepareError(err)
 		}
@@ -235,7 +235,7 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 		return loginResponse, nil
 	} else if oauth2.IsIdpEnabled() {
 		// initialize new oauth2 client
-		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil)
+		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil, GetConsoleSTSClient())
 		if err != nil {
 			return nil, prepareError(err)
 		}
