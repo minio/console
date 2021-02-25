@@ -243,6 +243,17 @@ var healthInfoActionSet = ConfigurationActionSet{
 	),
 }
 
+var displayRules = map[string]func() bool{
+	// disable users page if LDAP is enabled
+	users: func() bool {
+		return !GetLDAPEnabled()
+	},
+	// disable groups page if LDAP is enabled
+	groups: func() bool {
+		return !GetLDAPEnabled()
+	},
+}
+
 // endpointRules contains the mapping between endpoints and ActionSets, additional rules can be added here
 var endpointRules = map[string]ConfigurationActionSet{
 	configuration:       configurationActionSet,
@@ -337,6 +348,15 @@ func GetAuthorizedEndpoints(actions []string) []string {
 	userAllowedAction := actionsStringToActionSet(actions)
 	var allowedEndpoints []string
 	for endpoint, rules := range rangeTake {
+
+		// check if display rule exists for this endpoint, this will control
+		// what user sees on the console UI
+		if rule, ok := displayRules[endpoint]; ok {
+			if rule != nil && !rule() {
+				continue
+			}
+		}
+
 		// check if user policy matches s3:* or admin:* typesIntersection
 		endpointActionTypes := rules.actionTypes
 		typesIntersection := endpointActionTypes.Intersection(userAllowedAction)
