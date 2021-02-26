@@ -58,7 +58,9 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 
 // createServiceAccount adds a service account to the userClient and assigns a policy to him if defined.
 func createServiceAccount(ctx context.Context, userClient MinioAdmin, policy string) (*models.ServiceAccountCreds, error) {
-	iamPolicy := &iampolicy.Policy{}
+	// By default a nil policy will be used so the service account inherit the parent account policy, otherwise
+	// we override with the user provided iam policy
+	var iamPolicy *iampolicy.Policy
 	if strings.TrimSpace(policy) != "" {
 		iamp, err := iampolicy.ParseConfig(bytes.NewReader([]byte(policy)))
 		if err != nil {

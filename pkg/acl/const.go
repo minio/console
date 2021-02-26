@@ -18,4 +18,6 @@ package acl
 
 const (
 	consoleOperatorMode = "CONSOLE_OPERATOR_MODE"
+	// const for ldap configuration
+	ConsoleLDAPEnabled = "CONSOLE_LDAP_ENABLED"
 )

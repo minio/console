@@ -26,3 +26,7 @@ import (
 func GetOperatorMode() bool {
 	return strings.ToLower(env.Get(consoleOperatorMode, "off")) == "on"
 }
+
+func GetLDAPEnabled() bool {
+	return strings.ToLower(env.Get(ConsoleLDAPEnabled, "off")) == "on"
+}
