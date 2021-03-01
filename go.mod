@@ -3,6 +3,8 @@ module github.com/minio/console
 go 1.15
 
 require (
+	github.com/blang/semver/v4 v4.0.0
+	github.com/cheggaaa/pb/v3 v3.0.6
 	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/elazarl/go-bindata-assetfs v1.0.0
 	github.com/go-openapi/errors v0.19.6
@@ -16,11 +18,12 @@ require (
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/minio/cli v1.22.0
 	github.com/minio/kes v0.11.0
-	github.com/minio/mc v0.0.0-20210213084525-7672841f8c58
-	github.com/minio/minio v0.0.0-20210216195645-87cce344f6e4
-	github.com/minio/minio-go/v7 v7.0.9-0.20210210235136-83423dddb072
+	github.com/minio/mc v0.0.0-20210301162250-f9d36f9b5243
+	github.com/minio/minio v0.0.0-20210301203133-e8d8dfa3ae8f
+	github.com/minio/minio-go/v7 v7.0.10
 	github.com/minio/operator v0.0.0-20210201110528-753019b838b4
 	github.com/minio/operator/logsearchapi v0.0.0-20210201110528-753019b838b4
+	github.com/minio/selfupdate v0.3.1
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/secure-io/sio-go v0.3.1
