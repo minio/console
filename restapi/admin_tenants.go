@@ -887,7 +887,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 	// default activate lgo search and prometheus
 	minInst.Spec.Log = &miniov2.LogConfig{
-		Image: "miniodev/logsearch:v4.0.0",
+		Image: "minio/logsearch:v4.0.0",
 		Audit: &miniov2.AuditConfig{DiskCapacityGB: swag.Int(10)},
 	}
 	minInst.Spec.Prometheus = &miniov2.PrometheusConfig{
