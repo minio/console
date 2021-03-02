@@ -31,6 +31,8 @@ import { LicenseInfo } from "./types";
 import { LinearProgress } from "@material-ui/core";
 import { AppState } from "../../../store";
 import { connect } from "react-redux";
+import { niceBytes } from "../../../common/utils";
+import Moment from "react-moment";
 
 const mapState = (state: AppState) => ({
   operatorMode: state.system.operatorMode,
@@ -260,7 +262,16 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
     api
       .invoke("GET", `/api/v1/subscription/info`)
       .then((res: LicenseInfo) => {
-        setLicenseInfo(res);
+        if (res) {
+          if (res.plan === "STANDARD") {
+            setCurrentPlanID(1);
+          } else if (res.plan === "ENTERPRISE") {
+            setCurrentPlanID(2);
+          } else {
+            setCurrentPlanID(1);
+          }
+          setLicenseInfo(res);
+        }
         setLoadingLicenseInfo(false);
       })
       .catch((err: any) => {
@@ -273,6 +284,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
   );
 
   const [licenseInfo, setLicenseInfo] = useState<LicenseInfo>();
+  const [currentPlanID, setCurrentPlanID] = useState<number>(0);
   const [loadingLicenseInfo, setLoadingLicenseInfo] = useState<boolean>(true);
 
   useEffect(() => {
@@ -286,7 +298,6 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
       </Grid>
     );
   }
-  let currentPlanID = 0;
   return (
     <React.Fragment>
       <React.Fragment>
@@ -348,7 +359,10 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                         gutterBottom
                         className={classes.licenseInfoValue}
                       >
-                        {licenseInfo.storage_capacity}
+                        {niceBytes(
+                          (licenseInfo.storage_capacity * 1099511627776) // 1 Terabyte = 1099511627776 Bytes
+                            .toString(10)
+                        )}
                       </Typography>
                       <Typography
                         variant="button"
@@ -364,7 +378,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                         gutterBottom
                         className={classes.licenseInfoValue}
                       >
-                        {licenseInfo.expires_at}
+                        <Moment>{licenseInfo.expires_at}</Moment>
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
