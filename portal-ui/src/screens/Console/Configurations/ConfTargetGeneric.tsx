@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import { IElementValue, KVField } from "./types";
@@ -163,11 +163,11 @@ const ConfTargetGeneric = ({
     <Grid container>
       <Grid xs={12} item>
         {fieldsElements.map((field, item) => (
-          <React.Fragment key={field.name}>
+          <Fragment key={field.name}>
             <Grid item xs={12}>
               {fieldDefinition(field, item)}
             </Grid>
-          </React.Fragment>
+          </Fragment>
         ))}
       </Grid>
     </Grid>
