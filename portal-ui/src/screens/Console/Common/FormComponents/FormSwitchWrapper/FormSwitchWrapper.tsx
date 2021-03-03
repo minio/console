@@ -106,6 +106,8 @@ const styles = (theme: Theme) =>
       borderBottom: "#9c9c9c 1px solid",
       paddingBottom: 14,
       marginBottom: 20,
+      maxWidth: 840,
+      margin: "0px auto",
     },
     indicatorLabel: {
       fontSize: 12,

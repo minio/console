@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import Grid from "@material-ui/core/Grid";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { predefinedList } from "../common/styleLibrary";
@@ -22,24 +22,26 @@ const PredefinedList = ({
   multiLine = false,
 }: IPredefinedList) => {
   return (
-    <React.Fragment>
-      {label !== "" && (
-        <Grid item xs={12} className={classes.predefinedTitle}>
-          {label}
-        </Grid>
-      )}
-      <Grid item xs={12} className={classes.predefinedList}>
-        <Grid
-          item
-          xs={12}
-          className={
-            multiLine ? classes.innerContentMultiline : classes.innerContent
-          }
-        >
-          {content}
+    <Fragment>
+      <Grid className={classes.prefinedContainer}>
+        {label !== "" && (
+          <Grid item xs={12} className={classes.predefinedTitle}>
+            {label}
+          </Grid>
+        )}
+        <Grid item xs={12} className={classes.predefinedList}>
+          <Grid
+            item
+            xs={12}
+            className={
+              multiLine ? classes.innerContentMultiline : classes.innerContent
+            }
+          >
+            {content}
+          </Grid>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
 };
 
