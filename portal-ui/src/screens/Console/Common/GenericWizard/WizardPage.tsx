@@ -28,11 +28,14 @@ const styles = (theme: Theme) =>
     wizardComponent: {
       overflowY: "auto",
       marginBottom: 10,
+      height: "calc(100vh - 435px)",
     },
     buttonsContainer: {
       display: "flex",
       flexDirection: "row",
       justifyContent: "flex-end" as const,
+      padding: "10px 0",
+      borderTop: "#EAEAEA 1px solid",
       "& button": {
         marginLeft: 10,
       },

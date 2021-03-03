@@ -32,7 +32,6 @@ var (
 	bucketsDetail       = "/buckets/:bucketName"
 	serviceAccounts     = "/account"
 	tenants             = "/tenants"
-	addTenant           = "/add-tenant"
 	tenantsDetail       = "/namespaces/:tenantNamespace/tenants/:tenantName"
 	remoteBuckets       = "/remote-buckets"
 	replication         = "/replication"
@@ -282,7 +281,6 @@ var endpointRules = map[string]ConfigurationActionSet{
 var operatorRules = map[string]ConfigurationActionSet{
 	tenants:       tenantsActionSet,
 	tenantsDetail: tenantsActionSet,
-	addTenant:     tenantsActionSet,
 	license:       licenseActionSet,
 }
 

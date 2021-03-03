@@ -18,23 +18,31 @@ import React, { useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { IWizardMain } from "./types";
 import WizardPage from "./WizardPage";
-import { Grid, Paper } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 
 const styles = (theme: Theme) =>
   createStyles({
     wizardMain: {
       display: "flex",
       width: "100%",
+      height: "100%",
       flexGrow: 1,
     },
     wizFromContainer: {
-      marginTop: "32px",
+      height: "calc(100vh - 365px)",
+      minHeight: 450,
+      padding: "0 30px",
     },
     wizardSteps: {
       minWidth: 180,
       marginRight: 10,
+      borderRight: "#eaeaea 1px solid",
+      display: "flex",
+      flexGrow: 1,
+      flexDirection: "column",
+      height: "100%",
       "& ul": {
-        padding: "0px 15px 0 30px",
+        padding: "0 15px 0 40px",
         marginTop: "0px",
 
         "& li": {
@@ -56,15 +64,14 @@ const styles = (theme: Theme) =>
         boxShadow: "none",
       },
     },
-    paddedGridItem: {
-      padding: "0px 10px 0px 10px",
+    paddedContentGrid: {
+      padding: "0 10px",
     },
-    menuPaper: {
-      padding: "20px",
-    },
-    paperContainer: {
-      padding: "10px",
-      maxWidth: "900px",
+    stepsLabel: {
+      fontSize: 20,
+      color: "#393939",
+      fontWeight: 600,
+      margin: "15px 12px",
     },
   });
 
@@ -114,34 +121,25 @@ const GenericWizard = ({ classes, wizardSteps }: IWizardMain) => {
 
   return (
     <Grid container className={classes.wizFromContainer}>
-      <Grid
-        item
-        xs={12}
-        sm={3}
-        md={3}
-        lg={3}
-        xl={2}
-        className={classes.paddedGridItem}
-      >
-        <Paper className={classes.menuPaper}>
-          <div className={classes.wizardSteps}>
-            <ul>
-              {wizardSteps.map((step, index) => {
-                return (
-                  <li key={`wizard-${index.toString()}`}>
-                    <button
-                      onClick={() => pageChange(index)}
-                      disabled={index > currentStep}
-                      className={classes.buttonList}
-                    >
-                      {step.label}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </Paper>
+      <Grid item xs={12} sm={3} md={3} lg={3} xl={2}>
+        <div className={classes.wizardSteps}>
+          <span className={classes.stepsLabel}>Steps</span>
+          <ul>
+            {wizardSteps.map((step, index) => {
+              return (
+                <li key={`wizard-${index.toString()}`}>
+                  <button
+                    onClick={() => pageChange(index)}
+                    disabled={index > currentStep}
+                    className={classes.buttonList}
+                  >
+                    {step.label}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </Grid>
       <Grid
         item
@@ -150,11 +148,9 @@ const GenericWizard = ({ classes, wizardSteps }: IWizardMain) => {
         md={9}
         lg={9}
         xl={10}
-        className={classes.paddedGridItem}
+        className={classes.paddedContentGrid}
       >
-        <Paper className={classes.paperContainer}>
-          <WizardPage page={wizardSteps[currentStep]} pageChange={pageChange} />
-        </Paper>
+        <WizardPage page={wizardSteps[currentStep]} pageChange={pageChange} />
       </Grid>
     </Grid>
   );

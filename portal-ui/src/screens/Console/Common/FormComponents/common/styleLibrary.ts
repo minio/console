@@ -452,3 +452,55 @@ export const snackBarCommon = {
     maxWidth: "calc(100% - 140px)",
   },
 };
+
+export const wizardCommon = {
+  multiContainer: {
+    display: "flex" as const,
+    alignItems: "center" as const,
+    justifyContent: "flex-start" as const,
+  },
+  sizeFactorContainer: {
+    marginLeft: 8,
+    alignSelf: "flex-start" as const,
+  },
+  headerElement: {
+    position: "sticky" as const,
+    top: 0,
+    paddingTop: 5,
+    marginBottom: 10,
+    zIndex: 500,
+    backgroundColor: "#fff",
+  },
+  tableTitle: {
+    fontWeight: 700,
+    width: "30%",
+  },
+  poolError: {
+    color: "#dc1f2e",
+    fontSize: "0.75rem",
+    paddingLeft: 120,
+  },
+  error: {
+    color: "#dc1f2e",
+    fontSize: "0.75rem",
+  },
+  h3Section: {
+    marginTop: 0,
+  },
+  descriptionText: {
+    fontSize: 13,
+    color: "#777777",
+  },
+  container: {
+    padding: "77px 0 0 0",
+    "& h6": {
+      color: "#777777",
+      fontSize: 14,
+    },
+    "& p": {
+      "& span:not(*[class*='smallUnit'])": {
+        fontSize: 16,
+      },
+    },
+  },
+};
