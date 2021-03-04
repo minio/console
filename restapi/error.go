@@ -34,6 +34,7 @@ var (
 	errChangePassword                     = errors.New("unable to update password, please check your current password")
 	errInvalidLicense                     = errors.New("invalid license key")
 	errLicenseNotFound                    = errors.New("license not found")
+	errAvoidSelfAccountDelete             = errors.New("logged in user cannot be deleted by itself")
 )
 
 // prepareError receives an error object and parse it against k8sErrors, returns the right error code paired with a generic error message
@@ -104,6 +105,10 @@ func prepareError(err ...error) *models.Error {
 		if errors.Is(err[0], errInvalidLicense) {
 			errorCode = 404
 			errorMessage = errInvalidLicense.Error()
+		}
+		if errors.Is(err[0], errAvoidSelfAccountDelete) {
+			errorCode = 403
+			errorMessage = errAvoidSelfAccountDelete.Error()
 		}
 		if madmin.ToErrorResponse(err[0]).Code == "InvalidAccessKeyId" {
 			errorCode = 401

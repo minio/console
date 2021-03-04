@@ -174,6 +174,8 @@ const Menu = ({ userLoggedIn, classes, pages, operatorMode }: IMenuProps) => {
     const deleteSession = () => {
       clearSession();
       userLoggedIn(false);
+      localStorage.setItem("userLoggedIn", "");
+
       history.push("/login");
     };
     api

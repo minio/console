@@ -242,6 +242,10 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
       .then(() => {
         // We set the state in redux
         userLoggedIn(true);
+        if (loginStrategy.loginStrategy === loginStrategyType.form) {
+          localStorage.setItem("userLoggedIn", btoa(accessKey));
+        }
+
         history.push("/");
       })
       .catch((err) => {
