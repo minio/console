@@ -1,4 +1,4 @@
-FROM golang:1.15 as binlayer
+FROM golang:1.16 as binlayer
 
 RUN go get github.com/go-bindata/go-bindata/... && go get github.com/elazarl/go-bindata-assetfs/...
 

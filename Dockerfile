@@ -1,4 +1,4 @@
-FROM golang:1.15 as binlayer
+FROM golang:1.16 as binlayer
 
 RUN go get github.com/go-bindata/go-bindata/... && go get github.com/elazarl/go-bindata-assetfs/...
 
@@ -19,7 +19,7 @@ RUN yarn install && make build-static
 
 USER node
 
-FROM golang:1.15 as golayer
+FROM golang:1.16 as golayer
 
 RUN apt-get update -y && apt-get install -y ca-certificates
 
