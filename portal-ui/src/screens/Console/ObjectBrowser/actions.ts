@@ -23,6 +23,9 @@ export const OBJECT_BROWSER_SET_ALL_ROUTES = "OBJECT_BROWSER/SET_ALL_ROUTES";
 export const OBJECT_BROWSER_CREATE_FOLDER = "OBJECT_BROWSER/CREATE_FOLDER";
 export const OBJECT_BROWSER_SET_LAST_AS_FILE =
   "OBJECT_BROWSER/SET_LAST_AS_FILE";
+export const OBJECT_BROWSER_DOWNLOAD_FILE_LOADER =
+  "OBJECT_BROWSER/DOWNLOAD_FILE_LOADER";
+export const OBJECT_BROWSER_DOWNLOADED_FILE = "OBJECT_BROWSER/DOWNLOADED_FILE";
 
 interface AddRouteAction {
   type: typeof OBJECT_BROWSER_ADD_ROUTE;
@@ -55,13 +58,25 @@ interface SetLastAsFile {
   type: typeof OBJECT_BROWSER_SET_LAST_AS_FILE;
 }
 
+interface SetFileDownload {
+  type: typeof OBJECT_BROWSER_DOWNLOAD_FILE_LOADER;
+  path: string;
+}
+
+interface FileDownloaded {
+  type: typeof OBJECT_BROWSER_DOWNLOADED_FILE;
+  path: string;
+}
+
 export type ObjectBrowserActionTypes =
   | AddRouteAction
   | ResetRoutesList
   | RemoveRouteLevel
   | SetAllRoutes
   | CreateFolder
-  | SetLastAsFile;
+  | SetLastAsFile
+  | SetFileDownload
+  | FileDownloaded;
 
 export const addRoute = (route: string, label: string, routeType: string) => {
   return {
@@ -103,5 +118,19 @@ export const createFolder = (newRoute: string) => {
 export const setLastAsFile = () => {
   return {
     type: OBJECT_BROWSER_SET_LAST_AS_FILE,
+  };
+};
+
+export const fileIsBeingPrepared = (path: string) => {
+  return {
+    type: OBJECT_BROWSER_DOWNLOAD_FILE_LOADER,
+    path,
+  };
+};
+
+export const fileDownloadStarted = (path: string) => {
+  return {
+    type: OBJECT_BROWSER_DOWNLOADED_FILE,
+    path,
   };
 };

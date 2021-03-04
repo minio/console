@@ -19,7 +19,9 @@ import { isNullOrUndefined } from "util";
 export const download = (
   bucketName: string,
   objectPath: string,
-  versionID: any
+  versionID: any,
+  callBack?: (objIdentifier: string) => void,
+  includeVersionInCallback?: boolean
 ) => {
   const anchor = document.createElement("a");
   document.body.appendChild(anchor);
@@ -48,6 +50,14 @@ export const download = (
       anchor.click();
       window.URL.revokeObjectURL(blobUrl);
       anchor.remove();
+
+      if (callBack) {
+        callBack(
+          `${bucketName}/${objectPath}${
+            includeVersionInCallback ? `-${versionID}` : ""
+          }`
+        );
+      }
     }
   };
   xhr.send();
