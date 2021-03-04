@@ -91,12 +91,13 @@ const CSVMultiSelector = ({
 
   // Use effect to send new values to onChange
   useEffect(() => {
-    const refScroll = bottomList.current;
-    if (refScroll) {
-      refScroll.scrollIntoView(false);
+    if (currentElements.length > 1) {
+      const refScroll = bottomList.current;
+      if (refScroll) {
+        refScroll.scrollIntoView(false);
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentElements]);
+  }, [currentElements, bottomList]);
 
   // We avoid multiple re-renders / hang issue typing too fast
   const firstUpdate = useRef(true);
