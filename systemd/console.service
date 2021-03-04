@@ -1,0 +1,31 @@
+[Unit]
+Description=MinIO Console
+Documentation=https://docs.min.io
+Wants=network-online.target
+After=network-online.target
+AssertFileIsExecutable=/usr/local/bin/console
+
+[Service]
+WorkingDirectory=/usr/local/
+
+User=console-user
+Group=console-user
+
+EnvironmentFile=/etc/default/minio-console
+
+ExecStart=/usr/local/bin/console server $CONSOLE_OPTS
+
+# Let systemd restart this service always
+Restart=always
+StartLimitBurst=2
+StartLimitInterval=5
+
+# Specifies the maximum file descriptor number that can be opened by this process
+LimitNOFILE=65536
+
+# Disable timeout logic and wait until process is stopped
+TimeoutStopSec=infinity
+SendSIGKILL=no
+
+[Install]
+WantedBy=multi-user.target
