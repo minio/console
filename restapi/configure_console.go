@@ -22,14 +22,14 @@ import (
 	"bytes"
 	"crypto/tls"
 	"fmt"
+	"io"
+	"io/fs"
 	"log"
 	"net/http"
 	"strings"
 	"time"
 
-	assetFS "github.com/elazarl/go-bindata-assetfs"
-
-	portalUI "github.com/minio/console/portal-ui"
+	portal_ui "github.com/minio/console/portal-ui"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
@@ -247,12 +247,11 @@ func FileServerMiddleware(next http.Handler) http.Handler {
 		case strings.HasPrefix(r.URL.Path, "/api"):
 			next.ServeHTTP(w, r)
 		default:
-			assets := assetFS.AssetFS{
-				Asset:     portalUI.Asset,
-				AssetDir:  portalUI.AssetDir,
-				AssetInfo: portalUI.AssetInfo,
-				Prefix:    "build"}
-			wrapHandlerSinglePageApplication(http.FileServer(&assets)).ServeHTTP(w, r)
+			buildFs, err := fs.Sub(portal_ui.GetStaticAssets(), "build")
+			if err != nil {
+				panic(err)
+			}
+			wrapHandlerSinglePageApplication(http.FileServer(http.FS(buildFs))).ServeHTTP(w, r)
 
 		}
 	})
@@ -283,9 +282,10 @@ func wrapHandlerSinglePageApplication(h http.Handler) http.HandlerFunc {
 		nfrw := &notFoundRedirectRespWr{ResponseWriter: w}
 		h.ServeHTTP(nfrw, r)
 		if nfrw.status == 404 {
-			indexPage, _ := portalUI.Asset("build/index.html")
+			indexPage, _ := portal_ui.GetStaticAssets().Open("build/index.html")
+			indexPageBytes, _ := io.ReadAll(indexPage)
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			http.ServeContent(w, r, "index.html", time.Now(), bytes.NewReader(indexPage))
+			http.ServeContent(w, r, "index.html", time.Now(), bytes.NewReader(indexPageBytes))
 		}
 	}
 }

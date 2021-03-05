@@ -1,12 +1,11 @@
 module github.com/minio/console
 
-go 1.15
+go 1.16
 
 require (
 	github.com/blang/semver/v4 v4.0.0
 	github.com/cheggaaa/pb/v3 v3.0.6
 	github.com/coreos/go-oidc v2.2.1+incompatible
-	github.com/elazarl/go-bindata-assetfs v1.0.0
 	github.com/go-openapi/errors v0.19.6
 	github.com/go-openapi/loads v0.19.5
 	github.com/go-openapi/runtime v0.19.19
