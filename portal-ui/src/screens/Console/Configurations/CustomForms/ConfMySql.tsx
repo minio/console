@@ -159,68 +159,70 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
         </React.Fragment>
       ) : (
         <React.Fragment>
-          <Grid item xs={12} className={classes.configureString}>
-            <Grid item xs={12}>
-              <InputBoxWrapper
-                id="host"
-                name="host"
-                label=""
-                placeholder="Enter Host"
-                value={host}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setHostname(e.target.value);
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <InputBoxWrapper
-                id="db-name"
-                name="db-name"
-                label=""
-                placeholder="Enter DB Name"
-                value={dbName}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setDbName(e.target.value);
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <InputBoxWrapper
-                id="port"
-                name="port"
-                label=""
-                placeholder="Enter Port"
-                value={port}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setPort(e.target.value);
-                }}
-              />
-            </Grid>
+          <Grid item xs={12}>
+            <Grid item xs={12} className={classes.configureString}>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="host"
+                  name="host"
+                  label=""
+                  placeholder="Enter Host"
+                  value={host}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setHostname(e.target.value);
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="db-name"
+                  name="db-name"
+                  label=""
+                  placeholder="Enter DB Name"
+                  value={dbName}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setDbName(e.target.value);
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="port"
+                  name="port"
+                  label=""
+                  placeholder="Enter Port"
+                  value={port}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setPort(e.target.value);
+                  }}
+                />
+              </Grid>
 
-            <Grid item xs={12}>
-              <InputBoxWrapper
-                id="user"
-                name="user"
-                label=""
-                placeholder="Enter User"
-                value={user}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setUser(e.target.value);
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <InputBoxWrapper
-                id="password"
-                name="password"
-                label=""
-                placeholder="Enter Password"
-                type="password"
-                value={password}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setPassword(e.target.value);
-                }}
-              />
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="user"
+                  name="user"
+                  label=""
+                  placeholder="Enter User"
+                  value={user}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setUser(e.target.value);
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="password"
+                  name="password"
+                  label=""
+                  placeholder="Enter Password"
+                  type="password"
+                  value={password}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setPassword(e.target.value);
+                  }}
+                />
+              </Grid>
             </Grid>
           </Grid>
           <PredefinedList label={"Connection String"} content={dsnString} />
