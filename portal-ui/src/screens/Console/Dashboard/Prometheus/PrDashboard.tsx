@@ -229,15 +229,20 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
       <Grid item xs={12} className={classes.widgetsContainer}>
         <AutoSizer style={autoSizerStyleProp}>
           {({ width, height }: any) => {
-            const hpanel = height < minHeight ? minHeight : height;
+            let hpanel = height < minHeight ? minHeight : height;
+            if (hpanel > 380) {
+              hpanel = 480;
+            }
+            const totalWidth = width > 1920 ? 1920 : width;
             return (
               <ReactGridLayout
-                width={width}
+                width={totalWidth}
                 cols={colsInGrid}
                 containerPadding={[xSpacing, ySpacing]}
                 onLayoutChange={saveDashboardDistribution}
                 layout={dashboardDistr}
                 rowHeight={hpanel / 6}
+                style={{ margin: "0 auto", width: totalWidth }}
               >
                 {panels(width)}
               </ReactGridLayout>
