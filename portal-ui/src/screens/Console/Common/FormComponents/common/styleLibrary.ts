@@ -36,6 +36,8 @@ export const fieldBasic = {
   fieldContainer: {
     marginBottom: 20,
     position: "relative" as const,
+    maxWidth: 840,
+    margin: "0px auto",
   },
   tooltipContainer: {
     marginLeft: 5,
@@ -77,6 +79,8 @@ export const modalBasic = {
     padding: "24px 50px",
     overflowY: "auto" as const,
     height: 170,
+    maxWidth: 840,
+    margin: "0 auto",
   },
 };
 
@@ -184,6 +188,11 @@ export const searchField = {
 };
 
 export const predefinedList = {
+  prefinedContainer: {
+    maxWidth: 840,
+    width: "100%",
+    margin: "0 auto",
+  },
   predefinedTitle: {
     fontSize: 16,
     fontWeight: 600,

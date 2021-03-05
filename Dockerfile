@@ -1,13 +1,6 @@
-FROM golang:1.15 as binlayer
-
-RUN go get github.com/go-bindata/go-bindata/... && go get github.com/elazarl/go-bindata-assetfs/...
-
 FROM node:10 as uilayer
 
 WORKDIR /app
-
-COPY --from=binlayer /go/bin/go-bindata-assetfs /bin/
-COPY --from=binlayer /go/bin/go-bindata /bin/
 
 COPY ./portal-ui/package.json ./
 COPY ./portal-ui/yarn.lock ./
@@ -19,7 +12,7 @@ RUN yarn install && make build-static
 
 USER node
 
-FROM golang:1.15 as golayer
+FROM golang:1.16 as golayer
 
 RUN apt-get update -y && apt-get install -y ca-certificates
 
@@ -32,8 +25,6 @@ RUN go mod download
 
 ADD . /go/src/github.com/minio/console/
 WORKDIR /go/src/github.com/minio/console/
-
-COPY --from=uilayer /app/bindata_assetfs.go /go/src/github.com/minio/console/portal-ui/bindata_assetfs.go
 
 ENV CGO_ENABLED=0
 
