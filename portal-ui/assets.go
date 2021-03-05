@@ -1,4 +1,4 @@
-package portal_ui
+package portalui
 
 import "embed"
 
