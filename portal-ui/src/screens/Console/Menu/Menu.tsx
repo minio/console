@@ -40,11 +40,9 @@ import {
   DashboardIcon,
   GroupsIcon,
   IAMPoliciesIcon,
-  MirroringIcon,
   ServiceAccountsIcon,
   TraceIcon,
   UsersIcon,
-  WarpIcon,
 } from "../../../icons";
 import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
 import { clearSession } from "../../../common/utils";
@@ -54,6 +52,7 @@ import ConsoleIcon from "../../../icons/ConsoleIcon";
 import HealIcon from "../../../icons/HealIcon";
 import WatchIcon from "../../../icons/WatchIcon";
 import TrackChangesSharpIcon from "@material-ui/icons/TrackChangesSharp";
+import StorageIcon from "@material-ui/icons/Storage";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -307,17 +306,9 @@ const Menu = ({ userLoggedIn, classes, pages, operatorMode }: IMenuProps) => {
       group: "Operator",
       type: "item",
       component: NavLink,
-      to: "/mirroring",
-      name: "Mirroring",
-      icon: <MirroringIcon />,
-    },
-    {
-      group: "Operator",
-      type: "item",
-      component: NavLink,
-      to: "/warp",
-      name: "Warp",
-      icon: <WarpIcon />,
+      to: "/storage",
+      name: "Storage",
+      icon: <StorageIcon />,
     },
   ];
 

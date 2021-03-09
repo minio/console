@@ -121,7 +121,11 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
                 hideYAxis={value.disableYAxis}
                 xAxisFormatter={value.xAxisFormatter}
                 yAxisFormatter={value.yAxisFormatter}
-                panelWidth={dashboardDistr[index] ? singlePanelWidth * dashboardDistr[index].w : singlePanelWidth}
+                panelWidth={
+                  dashboardDistr[index]
+                    ? singlePanelWidth * dashboardDistr[index].w
+                    : singlePanelWidth
+                }
               />
             );
           case widgetType.barChart:
@@ -161,11 +165,11 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
 
   const fetchUsage = useCallback(() => {
     let stepCalc = 0;
-    
+
     if (timeStart !== null && timeEnd !== null) {
       const secondsInPeriod = timeEnd.unix() - timeStart.unix();
       const periods = Math.floor(secondsInPeriod / 60);
-    
+
       stepCalc = periods < 1 ? 15 : periods;
     }
 

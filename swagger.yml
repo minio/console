@@ -2562,6 +2562,23 @@ paths:
       tags:
         - AdminAPI
 
+  /list-pvcs:
+    get:
+      summary: List all PVCs from namespaces that the user has access to
+      operationId: ListPVCs
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listPVCsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+
 definitions:
   accountChangePasswordRequest:
     type: object
@@ -4911,3 +4928,30 @@ definitions:
     properties:
       yaml:
         type: string
+        
+  listPVCsResponse:
+    type: object
+    properties:
+      pvcs:
+        type: array
+        items:
+          $ref: "#/definitions/pvcsListResponse"
+
+  pvcsListResponse:
+    type: object
+    properties:
+      namespace:
+        type: string
+      name:
+        type: string
+      status:
+        type: string
+      volume:
+        type: string
+      capacity:
+        type: string
+      storageClass:
+        type: string
+      age:
+        type: string
+

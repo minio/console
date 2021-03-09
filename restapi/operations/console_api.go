@@ -232,6 +232,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIListObjectsHandler: user_api.ListObjectsHandlerFunc(func(params user_api.ListObjectsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.ListObjects has not yet been implemented")
 		}),
+		AdminAPIListPVCsHandler: admin_api.ListPVCsHandlerFunc(func(params admin_api.ListPVCsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.ListPVCs has not yet been implemented")
+		}),
 		AdminAPIListPoliciesHandler: admin_api.ListPoliciesHandlerFunc(func(params admin_api.ListPoliciesParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListPolicies has not yet been implemented")
 		}),
@@ -552,6 +555,8 @@ type ConsoleAPI struct {
 	AdminAPIListGroupsHandler admin_api.ListGroupsHandler
 	// UserAPIListObjectsHandler sets the operation handler for the list objects operation
 	UserAPIListObjectsHandler user_api.ListObjectsHandler
+	// AdminAPIListPVCsHandler sets the operation handler for the list p v cs operation
+	AdminAPIListPVCsHandler admin_api.ListPVCsHandler
 	// AdminAPIListPoliciesHandler sets the operation handler for the list policies operation
 	AdminAPIListPoliciesHandler admin_api.ListPoliciesHandler
 	// AdminAPIListPoliciesWithBucketHandler sets the operation handler for the list policies with bucket operation
@@ -899,6 +904,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIListObjectsHandler == nil {
 		unregistered = append(unregistered, "user_api.ListObjectsHandler")
+	}
+	if o.AdminAPIListPVCsHandler == nil {
+		unregistered = append(unregistered, "admin_api.ListPVCsHandler")
 	}
 	if o.AdminAPIListPoliciesHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListPoliciesHandler")
@@ -1382,6 +1390,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/buckets/{bucket_name}/objects"] = user_api.NewListObjects(o.context, o.UserAPIListObjectsHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/list-pvcs"] = admin_api.NewListPVCs(o.context, o.AdminAPIListPVCsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

@@ -35,6 +35,7 @@ var (
 	changePassword      = "/account/change-password"
 	tenants             = "/tenants"
 	tenantsDetail       = "/namespaces/:tenantNamespace/tenants/:tenantName"
+	storage             = "/storage"
 	remoteBuckets       = "/remote-buckets"
 	replication         = "/replication"
 	objectBrowser       = "/object-browser/:bucket/*"
@@ -174,6 +175,11 @@ var tenantsActionSet = ConfigurationActionSet{
 	actions:     iampolicy.NewActionSet(),
 }
 
+var storageActionSet = ConfigurationActionSet{
+	actionTypes: iampolicy.NewActionSet(),
+	actions:     iampolicy.NewActionSet(),
+}
+
 var remoteBucketsActionSet = ConfigurationActionSet{
 	actionTypes: iampolicy.NewActionSet(
 		iampolicy.AllAdminActions,
@@ -295,6 +301,7 @@ var endpointRules = map[string]ConfigurationActionSet{
 var operatorRules = map[string]ConfigurationActionSet{
 	tenants:       tenantsActionSet,
 	tenantsDetail: tenantsActionSet,
+	storage:       storageActionSet,
 	license:       licenseActionSet,
 }
 
