@@ -558,41 +558,46 @@ const ObjectDetails = ({
               }}
             />
           </Grid>
+
           <Grid item xs={12} className={classes.actionsTray}>
-            <TextField
-              placeholder={`Search ${objectName}`}
-              className={clsx(classes.search, classes.searchField)}
-              id="search-resource"
-              label=""
-              onChange={(val) => {
-                setFilterVersion(val.target.value);
-              }}
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
+            {actualInfo.version_id && actualInfo.version_id !== "null" && (
+              <TextField
+                placeholder={`Search ${objectName}`}
+                className={clsx(classes.search, classes.searchField)}
+                id="search-resource"
+                label=""
+                onChange={(val) => {
+                  setFilterVersion(val.target.value);
+                }}
+                InputProps={{
+                  disableUnderline: true,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
           </Grid>
           <Grid item xs={12}>
-            <TableWrapper
-              itemActions={tableActions}
-              columns={[
-                { label: "Version ID", elementKey: "version_id" },
-                {
-                  label: "Last Modified",
-                  elementKey: "last_modified",
-                  renderFunction: displayParsedDate,
-                },
-              ]}
-              isLoading={false}
-              entityName="Versions"
-              idField="version_id"
-              records={filteredRecords}
-            />
+            {actualInfo.version_id && actualInfo.version_id !== "null" && (
+              <TableWrapper
+                itemActions={tableActions}
+                columns={[
+                  { label: "Version ID", elementKey: "version_id" },
+                  {
+                    label: "Last Modified",
+                    elementKey: "last_modified",
+                    renderFunction: displayParsedDate,
+                  },
+                ]}
+                isLoading={false}
+                entityName="Versions"
+                idField="version_id"
+                records={filteredRecords}
+              />
+            )}
           </Grid>
         </Grid>
       </Grid>
