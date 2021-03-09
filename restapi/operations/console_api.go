@@ -139,6 +139,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIDeleteTenantHandler: admin_api.DeleteTenantHandlerFunc(func(params admin_api.DeleteTenantParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.DeleteTenant has not yet been implemented")
 		}),
+		AdminAPIDirectCSIFormatDriveHandler: admin_api.DirectCSIFormatDriveHandlerFunc(func(params admin_api.DirectCSIFormatDriveParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.DirectCSIFormatDrive has not yet been implemented")
+		}),
 		UserAPIDisableBucketEncryptionHandler: user_api.DisableBucketEncryptionHandlerFunc(func(params user_api.DisableBucketEncryptionParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DisableBucketEncryption has not yet been implemented")
 		}),
@@ -478,6 +481,8 @@ type ConsoleAPI struct {
 	UserAPIDeleteServiceAccountHandler user_api.DeleteServiceAccountHandler
 	// AdminAPIDeleteTenantHandler sets the operation handler for the delete tenant operation
 	AdminAPIDeleteTenantHandler admin_api.DeleteTenantHandler
+	// AdminAPIDirectCSIFormatDriveHandler sets the operation handler for the direct c s i format drive operation
+	AdminAPIDirectCSIFormatDriveHandler admin_api.DirectCSIFormatDriveHandler
 	// UserAPIDisableBucketEncryptionHandler sets the operation handler for the disable bucket encryption operation
 	UserAPIDisableBucketEncryptionHandler user_api.DisableBucketEncryptionHandler
 	// UserAPIDownloadObjectHandler sets the operation handler for the download object operation
@@ -786,6 +791,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIDeleteTenantHandler == nil {
 		unregistered = append(unregistered, "admin_api.DeleteTenantHandler")
+	}
+	if o.AdminAPIDirectCSIFormatDriveHandler == nil {
+		unregistered = append(unregistered, "admin_api.DirectCSIFormatDriveHandler")
 	}
 	if o.UserAPIDisableBucketEncryptionHandler == nil {
 		unregistered = append(unregistered, "user_api.DisableBucketEncryptionHandler")
@@ -1226,6 +1234,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/namespaces/{namespace}/tenants/{tenant}"] = admin_api.NewDeleteTenant(o.context, o.AdminAPIDeleteTenantHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/direct-csi/drives/format"] = admin_api.NewDirectCSIFormatDrive(o.context, o.AdminAPIDirectCSIFormatDriveHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

@@ -606,7 +606,7 @@ const TenantDetails = ({
                           <img
                             className={classes.verifiedIcon}
                             src={"/verified.svg"}
-                            alt="verified"
+                            alt="Verified"
                           />
                         </Grid>
                       </React.Fragment>

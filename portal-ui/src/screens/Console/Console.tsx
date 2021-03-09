@@ -55,6 +55,7 @@ import LogsMain from "./Logs/LogsMain";
 import Heal from "./Heal/Heal";
 import Watch from "./Watch/Watch";
 import HealthInfo from "./HealthInfo/HealthInfo";
+import DirectCSIMain from "./DirectCSI/DirectCSIMain";
 
 const drawerWidth = 245;
 
@@ -295,6 +296,10 @@ const Console = ({
     {
       component: TenantsMain,
       path: "/tenants",
+    },
+    {
+      component: DirectCSIMain,
+      path: "/direct-csi",
     },
     {
       component: TenantDetails,

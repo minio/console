@@ -15,6 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
 import isString from "lodash/isString";
+import { Link } from "react-router-dom";
+import { createStyles, withStyles } from "@material-ui/core/styles";
 import { IconButton } from "@material-ui/core";
 import ViewIcon from "./TableActionIcons/ViewIcon";
 import PencilIcon from "./TableActionIcons/PencilIcon";
@@ -25,8 +27,7 @@ import CloudIcon from "./TableActionIcons/CloudIcon";
 import ConsoleIcon from "./TableActionIcons/ConsoleIcon";
 import DownloadIcon from "./TableActionIcons/DownloadIcon";
 import DisableIcon from "./TableActionIcons/DisableIcon";
-import { Link } from "react-router-dom";
-import { createStyles, withStyles } from "@material-ui/core/styles";
+import FormatDriveIcon from "./TableActionIcons/FormatDriveIcon";
 
 const styles = () =>
   createStyles({
@@ -74,6 +75,8 @@ const defineIcon = (type: string, selected: boolean) => {
       return <DownloadIcon active={selected} />;
     case "disable":
       return <DisableIcon active={selected} />;
+    case "format":
+      return <FormatDriveIcon active={selected} />;
   }
 
   return null;

@@ -34,6 +34,7 @@ var (
 	changePassword      = "/account/change-password"
 	tenants             = "/tenants"
 	tenantsDetail       = "/namespaces/:tenantNamespace/tenants/:tenantName"
+	directCSIDrives     = "/direct-csi"
 	remoteBuckets       = "/remote-buckets"
 	replication         = "/replication"
 	objectBrowser       = "/object-browser/:bucket/*"
@@ -173,6 +174,11 @@ var tenantsActionSet = ConfigurationActionSet{
 	actions:     iampolicy.NewActionSet(),
 }
 
+var directCSIActionSet = ConfigurationActionSet{
+	actionTypes: iampolicy.NewActionSet(),
+	actions:     iampolicy.NewActionSet(),
+}
+
 var remoteBucketsActionSet = ConfigurationActionSet{
 	actionTypes: iampolicy.NewActionSet(
 		iampolicy.AllAdminActions,
@@ -291,9 +297,10 @@ var endpointRules = map[string]ConfigurationActionSet{
 
 // operatorRules contains the mapping between endpoints and ActionSets for operator only mode
 var operatorRules = map[string]ConfigurationActionSet{
-	tenants:       tenantsActionSet,
-	tenantsDetail: tenantsActionSet,
-	license:       licenseActionSet,
+	tenants:         tenantsActionSet,
+	tenantsDetail:   tenantsActionSet,
+	directCSIDrives: directCSIActionSet,
+	license:         licenseActionSet,
 }
 
 // operatorOnly ENV variable
