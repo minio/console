@@ -130,7 +130,7 @@ func getSubscriptionActivateResponse(session *models.Principal, namespace, tenan
 	}
 	// If console is not deployed for this tenant return an error
 	if minTenant.Spec.Console == nil {
-		return prepareError(errorGenericNotFound)
+		return prepareError(ErrorGenericNotFound)
 	}
 
 	// configure kubernetes client
