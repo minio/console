@@ -197,6 +197,10 @@ func getRemoveUserResponse(session *models.Principal, params admin_api.RemoveUse
 		return prepareError(err)
 	}
 
+	if session.AccountAccessKey == params.Name {
+		return prepareError(errAvoidSelfAccountDelete)
+	}
+
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}

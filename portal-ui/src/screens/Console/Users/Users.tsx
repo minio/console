@@ -168,10 +168,16 @@ const Users = ({ classes, setErrorSnackMessage }: IUsersProps) => {
     setSelectedUser(selectionElement);
   };
 
+  const userLoggedIn = atob(localStorage.getItem("userLoggedIn") || "");
+
   const tableActions = [
     { type: "view", onClick: viewAction },
     { type: "description", onClick: setPolicyAction },
-    { type: "delete", onClick: deleteAction },
+    {
+      type: "delete",
+      onClick: deleteAction,
+      hideButtonFunction: (topValue: any) => topValue === userLoggedIn,
+    },
   ];
 
   return (

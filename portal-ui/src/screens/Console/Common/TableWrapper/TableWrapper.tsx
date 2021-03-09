@@ -27,6 +27,7 @@ import {
 } from "@material-ui/core";
 import { Table, Column, AutoSizer, InfiniteLoader } from "react-virtualized";
 import { createStyles, withStyles } from "@material-ui/core/styles";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import ViewColumnIcon from "@material-ui/icons/ViewColumn";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
@@ -45,6 +46,8 @@ interface ItemActions {
   onClick?(valueToSend: any): any;
   to?: string;
   sendOnlyId?: boolean;
+  hideButtonFunction?: (itemValue: any) => boolean;
+  showLoaderFunction?: (itemValue: any) => boolean;
 }
 
 interface IColumns {
@@ -267,6 +270,19 @@ const styles = () =>
       ".text-right": {
         textAlign: "right",
       },
+      ".progress-enabled": {
+        paddingTop: 3,
+        display: "inline-block",
+        margin: "0 10px",
+        position: "relative",
+        width: 18,
+        height: 18,
+      },
+      ".progress-enabled > .MuiCircularProgress-root": {
+        position: "absolute",
+        left: 0,
+        top: 3,
+      },
     },
     ...checkboxIcons,
     ...radioIcons,
@@ -411,6 +427,30 @@ const elementActions = (
   return actions.map((action: ItemActions, index: number) => {
     if (action.type === "view") {
       return null;
+    }
+
+    const vlSend =
+      typeof valueToSend === "string" ? valueToSend : valueToSend[idField];
+
+    if (action.hideButtonFunction) {
+      if (action.hideButtonFunction(vlSend)) {
+        return null;
+      }
+    }
+
+    if (action.showLoaderFunction) {
+      if (action.showLoaderFunction(vlSend)) {
+        return (
+          <div className={"progress-enabled"}>
+            <CircularProgress
+              color="primary"
+              size={18}
+              variant="indeterminate"
+              key={`actions-loader-${action.type}-${index.toString()}`}
+            />
+          </div>
+        );
+      }
     }
 
     return (
