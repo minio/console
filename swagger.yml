@@ -2823,6 +2823,10 @@ definitions:
         type: array
         items:
           type: string
+      features:
+        type: array
+        items:
+          type: string
       status:
         type: string
         enum: [ok]
