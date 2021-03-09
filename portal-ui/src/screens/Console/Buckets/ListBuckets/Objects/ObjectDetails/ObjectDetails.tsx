@@ -35,8 +35,15 @@ import {
   searchField,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import { IFileInfo } from "./types";
-import { removeRouteLevel } from "../../../../ObjectBrowser/actions";
-import { Route } from "../../../../ObjectBrowser/reducers";
+import {
+  removeRouteLevel,
+  fileIsBeingPrepared,
+  fileDownloadStarted,
+} from "../../../../ObjectBrowser/actions";
+import {
+  ObjectBrowserReducer,
+  Route,
+} from "../../../../ObjectBrowser/reducers";
 import { download } from "../utils";
 import history from "../../../../../../history";
 import api from "../../../../../../common/api";
@@ -52,7 +59,11 @@ import DeleteObject from "../ListObjects/DeleteObject";
 import AddTagModal from "./AddTagModal";
 import DeleteTagModal from "./DeleteTagModal";
 import SetLegalHoldModal from "./SetLegalHoldModal";
-import { setErrorSnackMessage } from "../../../../../../actions";
+import {
+  setSnackBarMessage,
+  setErrorSnackMessage,
+} from "../../../../../../actions";
+import { CircularProgress } from "@material-ui/core";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -128,6 +139,20 @@ const styles = (theme: Theme) =>
         marginRight: 0,
       },
     },
+    "@global": {
+      ".progressDetails": {
+        paddingTop: 3,
+        display: "inline-block",
+        position: "relative",
+        width: 18,
+        height: 18,
+      },
+      ".progressDetails > .MuiCircularProgress-root": {
+        position: "absolute",
+        left: 0,
+        top: 3,
+      },
+    },
     ...actionsTray,
     ...searchField,
     ...containerForHeader(theme.spacing(4)),
@@ -136,8 +161,12 @@ const styles = (theme: Theme) =>
 interface IObjectDetailsProps {
   classes: any;
   routesList: Route[];
+  downloadingFiles: string[];
   removeRouteLevel: (newRoute: string) => any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  setSnackBarMessage: typeof setSnackBarMessage;
+  fileIsBeingPrepared: typeof fileIsBeingPrepared;
+  fileDownloadStarted: typeof fileDownloadStarted;
 }
 
 const emptyFile: IFileInfo = {
@@ -155,8 +184,12 @@ const emptyFile: IFileInfo = {
 const ObjectDetails = ({
   classes,
   routesList,
+  downloadingFiles,
   removeRouteLevel,
   setErrorSnackMessage,
+  setSnackBarMessage,
+  fileIsBeingPrepared,
+  fileDownloadStarted,
 }: IObjectDetailsProps) => {
   const [loadObjectData, setLoadObjectData] = useState<boolean>(true);
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
@@ -228,13 +261,44 @@ const ObjectDetails = ({
     setDeleteTagModalOpen(true);
   };
 
-  const downloadObject = (object: IFileInfo) => {
-    download(bucketName, pathInBucket, object.version_id);
+  const removeDownloadAnimation = (path: string) => {
+    fileDownloadStarted(path);
+  };
+
+  const downloadObject = (object: IFileInfo, includeVersion?: boolean) => {
+    fileIsBeingPrepared(
+      `${bucketName}/${object.name}${
+        includeVersion ? `-${object.version_id}` : ""
+      }`
+    );
+    if (object.size && parseInt(object.size) > 104857600) {
+      // If file is bigger than 100MB we show a notification
+      setSnackBarMessage(
+        "Download process started, it may take a few moments to complete"
+      );
+    }
+    download(
+      bucketName,
+      pathInBucket,
+      object.version_id,
+      removeDownloadAnimation,
+      includeVersion
+    );
   };
 
   const tableActions = [
     { type: "share", onClick: shareObject, sendOnlyId: true },
-    { type: "download", onClick: downloadObject },
+    {
+      type: "download",
+      onClick: (item: IFileInfo) => {
+        downloadObject(item, true);
+      },
+      showLoaderFunction: (version: string) => {
+        return downloadingFiles.includes(
+          `${bucketName}/${objectName}-${version}`
+        );
+      },
+    },
   ];
 
   const filteredRecords = versions.filter((version) => {
@@ -420,17 +484,29 @@ const ObjectDetails = ({
                 </IconButton>
               </div>
               <div className={classes.actionsIconContainer}>
-                <IconButton
-                  color="primary"
-                  aria-label="download"
-                  size="small"
-                  className={classes.actionsIcon}
-                  onClick={() => {
-                    downloadObject(actualInfo);
-                  }}
-                >
-                  <DownloadIcon />
-                </IconButton>
+                {downloadingFiles.includes(
+                  `${bucketName}/${actualInfo.name}`
+                ) ? (
+                  <div className="progressDetails">
+                    <CircularProgress
+                      color="primary"
+                      size={17}
+                      variant="indeterminate"
+                    />
+                  </div>
+                ) : (
+                  <IconButton
+                    color="primary"
+                    aria-label="download"
+                    size="small"
+                    className={classes.actionsIcon}
+                    onClick={() => {
+                      downloadObject(actualInfo);
+                    }}
+                  >
+                    <DownloadIcon />
+                  </IconButton>
+                )}
               </div>
               <div className={classes.actionsIconContainer}>
                 <IconButton
@@ -524,11 +600,18 @@ const ObjectDetails = ({
   );
 };
 
+const mapStateToProps = ({ objectBrowser }: ObjectBrowserReducer) => ({
+  downloadingFiles: get(objectBrowser, "downloadingFiles", []),
+});
+
 const mapDispatchToProps = {
   removeRouteLevel,
   setErrorSnackMessage,
+  fileIsBeingPrepared,
+  fileDownloadStarted,
+  setSnackBarMessage,
 };
 
-const connector = connect(null, mapDispatchToProps);
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
 export default connector(withStyles(styles)(ObjectDetails));

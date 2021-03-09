@@ -43,9 +43,14 @@ import {
   addRoute,
   setAllRoutes,
   setLastAsFile,
+  fileIsBeingPrepared,
+  fileDownloadStarted,
 } from "../../../../ObjectBrowser/actions";
 import { connect } from "react-redux";
-import { ObjectBrowserState, Route } from "../../../../ObjectBrowser/reducers";
+import {
+  ObjectBrowserReducer,
+  Route,
+} from "../../../../ObjectBrowser/reducers";
 import CreateFolderModal from "./CreateFolderModal";
 import UploadFile from "../../../../../../icons/UploadFile";
 import { download } from "../utils";
@@ -136,14 +141,13 @@ interface IListObjectsProps {
   addRoute: (param1: string, param2: string, param3: string) => any;
   setAllRoutes: (path: string) => any;
   routesList: Route[];
+  downloadingFiles: string[];
   setLastAsFile: () => any;
   setLoadingProgress: typeof setLoadingProgress;
   setSnackBarMessage: typeof setSnackBarMessage;
   setErrorSnackMessage: typeof setErrorSnackMessage;
-}
-
-interface ObjectBrowserReducer {
-  objectBrowser: ObjectBrowserState;
+  fileIsBeingPrepared: typeof fileIsBeingPrepared;
+  fileDownloadStarted: typeof fileDownloadStarted;
 }
 
 const ListObjects = ({
@@ -152,10 +156,13 @@ const ListObjects = ({
   addRoute,
   setAllRoutes,
   routesList,
+  downloadingFiles,
   setLastAsFile,
   setLoadingProgress,
   setSnackBarMessage,
   setErrorSnackMessage,
+  fileIsBeingPrepared,
+  fileDownloadStarted,
 }: IListObjectsProps) => {
   const [records, setRecords] = useState<BucketObject[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -347,8 +354,25 @@ const ListObjects = ({
     setSelectedObject(object);
   };
 
+  const removeDownloadAnimation = (path: string) => {
+    fileDownloadStarted(path);
+  };
+
   const downloadObject = (object: BucketObject) => {
-    download(selectedBucket, object.name, object.version_id);
+    fileIsBeingPrepared(`${selectedBucket}/${object.name}`);
+    if (object.size > 104857600) {
+      // If file is bigger than 100MB we show a notification
+      setSnackBarMessage(
+        "Download process started, it may take a few moments to complete"
+      );
+    }
+
+    download(
+      selectedBucket,
+      object.name,
+      object.version_id,
+      removeDownloadAnimation
+    );
   };
 
   const openPath = (idElement: string) => {
@@ -392,7 +416,12 @@ const ListObjects = ({
 
   const tableActions = [
     { type: "view", onClick: openPath, sendOnlyId: true },
-    { type: "download", onClick: downloadObject },
+    {
+      type: "download",
+      onClick: downloadObject,
+      showLoaderFunction: (item: string) =>
+        downloadingFiles.includes(`${match.params["bucket"]}/${item}`),
+    },
     { type: "delete", onClick: confirmDeleteObject, sendOnlyId: true },
   ];
 
@@ -543,6 +572,7 @@ const ListObjects = ({
 
 const mapStateToProps = ({ objectBrowser }: ObjectBrowserReducer) => ({
   routesList: get(objectBrowser, "routesList", []),
+  downloadingFiles: get(objectBrowser, "downloadingFiles", []),
 });
 
 const mapDispatchToProps = {
@@ -552,6 +582,8 @@ const mapDispatchToProps = {
   setLoadingProgress,
   setSnackBarMessage,
   setErrorSnackMessage,
+  fileIsBeingPrepared,
+  fileDownloadStarted,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

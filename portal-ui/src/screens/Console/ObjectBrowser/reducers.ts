@@ -22,6 +22,8 @@ import {
   OBJECT_BROWSER_RESET_ROUTES_LIST,
   OBJECT_BROWSER_SET_ALL_ROUTES,
   OBJECT_BROWSER_SET_LAST_AS_FILE,
+  OBJECT_BROWSER_DOWNLOAD_FILE_LOADER,
+  OBJECT_BROWSER_DOWNLOADED_FILE,
   ObjectBrowserActionTypes,
 } from "./actions";
 
@@ -33,6 +35,11 @@ export interface Route {
 
 export interface ObjectBrowserState {
   routesList: Route[];
+  downloadingFiles: string[];
+}
+
+export interface ObjectBrowserReducer {
+  objectBrowser: ObjectBrowserState;
 }
 
 const initialRoute = [
@@ -41,6 +48,7 @@ const initialRoute = [
 
 const initialState: ObjectBrowserState = {
   routesList: initialRoute,
+  downloadingFiles: [],
 };
 
 export function objectBrowserReducer(
@@ -130,6 +138,24 @@ export function objectBrowserReducer(
       return {
         ...state,
         routesList: newList,
+      };
+    case OBJECT_BROWSER_DOWNLOAD_FILE_LOADER:
+      const actualFiles = [...state.downloadingFiles];
+
+      actualFiles.push(action.path);
+
+      return {
+        ...state,
+        downloadingFiles: [...actualFiles],
+      };
+    case OBJECT_BROWSER_DOWNLOADED_FILE:
+      const downloadingFiles = state.downloadingFiles.filter(
+        (item) => item !== action.path
+      );
+
+      return {
+        ...state,
+        downloadingFiles: [...downloadingFiles],
       };
     default:
       return state;
