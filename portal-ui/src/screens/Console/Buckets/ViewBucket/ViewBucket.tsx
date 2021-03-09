@@ -54,6 +54,8 @@ import { connect } from "react-redux";
 import { setErrorSnackMessage } from "../../../../actions";
 import EditLifecycleConfiguration from "./EditLifecycleConfiguration";
 import AddLifecycleModal from "./AddLifecycleModal";
+import { AppState } from "../../../../store";
+import { ISessionResponse } from "../../types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -149,6 +151,7 @@ interface IViewBucketProps {
   classes: any;
   match: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  session: ISessionResponse;
 }
 
 interface TabPanelProps {
@@ -185,6 +188,7 @@ const ViewBucket = ({
   classes,
   match,
   setErrorSnackMessage,
+  session,
 }: IViewBucketProps) => {
   const [info, setInfo] = useState<BucketInfo | null>(null);
   const [records, setRecords] = useState<BucketEvent[]>([]);
@@ -221,6 +225,7 @@ const ViewBucket = ({
   const [addLifecycleOpen, setAddLifecycleOpen] = useState<boolean>(false);
 
   const bucketName = match.params["bucketName"];
+  const ilmEnabled = session.features?.indexOf("ilm") > -1;
 
   useEffect(() => {
     if (loadingEvents) {
@@ -661,7 +666,7 @@ const ViewBucket = ({
               >
                 <Tab label="Events" {...a11yProps(0)} />
                 <Tab label="Replication" {...a11yProps(1)} />
-                {/* Hidden on purpose until Tiers feature is complete. Don't want to let this PR stale <Tab label="Lifecycle" {...a11yProps(2)} /> */}
+                {ilmEnabled && <Tab label="Lifecycle" {...a11yProps(2)} />}
               </Tabs>
             </Grid>
             <Grid item xs={6} className={classes.actionsTray}>
@@ -771,7 +776,11 @@ const ViewBucket = ({
   );
 };
 
-const connector = connect(null, {
+const mapState = (state: AppState) => ({
+  session: state.console.session,
+});
+
+const connector = connect(mapState, {
   setErrorSnackMessage,
 });
 

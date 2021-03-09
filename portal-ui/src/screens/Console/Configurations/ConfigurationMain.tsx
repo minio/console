@@ -24,9 +24,13 @@ import Tabs from "@material-ui/core/Tabs";
 import ConfigurationsList from "./ConfigurationPanels/ConfigurationsList";
 import ListNotificationEndpoints from "./NotificationEndpoints/ListNotificationEndpoints";
 import ListTiersConfiguration from "./TiersConfiguration/ListTiersConfiguration";
+import { AppState } from "../../../store";
+import { connect } from "react-redux";
+import { ISessionResponse } from "../types";
 
 interface IConfigurationMain {
   classes: any;
+  session: ISessionResponse;
 }
 
 const styles = (theme: Theme) =>
@@ -40,8 +44,10 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const ConfigurationMain = ({ classes }: IConfigurationMain) => {
+const ConfigurationMain = ({ classes, session }: IConfigurationMain) => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
+  const ilmEnabled = session.features?.indexOf("ilm") > -1;
+
   return (
     <Fragment>
       <PageHeader label="Settings" />
@@ -61,7 +67,7 @@ const ConfigurationMain = ({ classes }: IConfigurationMain) => {
           >
             <Tab label="Configurations" />
             <Tab label="Lambda Notifications" />
-            {/* Hidden on purpose until Tiers feature is complete. Don't want to let this PR stale <Tab label="Tiers" />*/}
+            {ilmEnabled && <Tab label="Tiers" />}
           </Tabs>
           <Grid item xs={12}>
             {selectedTab === 0 && (
@@ -86,4 +92,10 @@ const ConfigurationMain = ({ classes }: IConfigurationMain) => {
   );
 };
 
-export default withStyles(styles)(ConfigurationMain);
+const mapState = (state: AppState) => ({
+  session: state.console.session,
+});
+
+const connector = connect(mapState, {});
+
+export default withStyles(styles)(connector(ConfigurationMain));

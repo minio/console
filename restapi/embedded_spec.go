@@ -5394,6 +5394,12 @@ func init() {
     "sessionResponse": {
       "type": "object",
       "properties": {
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "operator": {
           "type": "boolean"
         },
@@ -11910,6 +11916,12 @@ func init() {
     "sessionResponse": {
       "type": "object",
       "properties": {
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "operator": {
           "type": "boolean"
         },
