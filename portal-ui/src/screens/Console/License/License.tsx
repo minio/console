@@ -441,7 +441,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                 </React.Fragment>
               )}
             </Paper>
-            {operatorMode && !licenseInfo && (
+            {
               <Paper className={`${classes.paper} ${classes.smallWidth}`}>
                 <Typography
                   component="h2"
@@ -460,7 +460,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                 </Typography>
                 <br />
                 <a
-                  href="https://min.io/compliance"
+                  href="https://min.io/compliance?ref=op"
                   className={classes.openSourcePolicy}
                   target="_blank"
                   rel="nofollow noopener noreferrer"
@@ -470,7 +470,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                 <br />
                 <br />
                 <a
-                  href="https://min.io/logo"
+                  href="https://min.io/logo?ref=op"
                   className={classes.openSourcePolicy}
                   target="_blank"
                   rel="nofollow noopener noreferrer"
@@ -478,7 +478,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                   Trademark Policy
                 </a>
               </Paper>
-            )}
+            }
           </Grid>
           <Grid
             item
@@ -684,7 +684,9 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                                 window.open(button.link, "_blank");
                               }}
                             >
-                              {button.text}
+                              {currentPlanID !== index && index > 0
+                                ? button.text2
+                                : button.text}
                             </Button>
                           </Grid>
                           {operatorMode &&
