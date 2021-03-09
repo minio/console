@@ -22,7 +22,6 @@ import (
 	"github.com/minio/console/pkg/acl"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/user_api"
-	"github.com/minio/minio/pkg/env"
 )
 
 func registerSessionHandlers(api *operations.ConsoleAPI) {
@@ -44,19 +43,8 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 	}
 	sessionResp := &models.SessionResponse{
 		Pages:    acl.GetAuthorizedEndpoints(session.Actions),
-		Features: getListOfEnabledFeatures(),
 		Status:   models.SessionResponseStatusOk,
 		Operator: acl.GetOperatorMode(),
 	}
 	return sessionResp, nil
-}
-
-// getListOfEnabledFeatures returns a list of features
-func getListOfEnabledFeatures() []string {
-	var features []string
-	ilm := env.IsSet("_CONSOLE_ILM_SUPPORT")
-	if ilm {
-		features = append(features, "ilm")
-	}
-	return features
 }
