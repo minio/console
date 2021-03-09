@@ -36,9 +36,6 @@ import (
 // swagger:model sessionResponse
 type SessionResponse struct {
 
-	// features
-	Features []string `json:"features"`
-
 	// operator
 	Operator bool `json:"operator,omitempty"`
 

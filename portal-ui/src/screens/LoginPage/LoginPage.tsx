@@ -336,7 +336,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
             variant="h6"
             className={classes.headerTitle}
           >
-            Welcome
+            Login
           </Typography>
           <Button
             component={"a"}
@@ -349,7 +349,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
             color="primary"
             className={classes.submit}
           >
-            Login with SSO
+            Welcome
           </Button>
         </React.Fragment>
       );
