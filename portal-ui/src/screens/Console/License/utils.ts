@@ -120,19 +120,22 @@ export const planButtons = [
   {
     id: 0,
     text: "Join Slack",
+    text2: "",
     link: "https://slack.min.io",
     plan: "community",
   },
   {
     id: 1,
     text: "Subscribe",
-    link: "https://min.io/pricing",
+    text2: "Upgrade",
+    link: "https://subnet.min.io/subscription",
     plan: "standard",
   },
   {
     id: 2,
     text: "Subscribe",
-    link: "https://min.io/pricing",
+    text2: "Upgrade",
+    link: "https://subnet.min.io/subscription",
     plan: "enterprise",
   },
 ];
