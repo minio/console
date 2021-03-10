@@ -399,7 +399,9 @@ const Console = ({
                       key={route.path}
                       exact
                       path={route.path}
-                      children={<route.component {...route.props} />}
+                      children={(routerProps) => (
+                        <route.component {...routerProps} {...route.props} />
+                      )}
                     />
                   ))}
                   {allowedRoutes.length > 0 ? (
