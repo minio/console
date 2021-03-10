@@ -50,7 +50,7 @@ func NewSubscriptionValidate(ctx *middleware.Context, handler SubscriptionValida
 
 /*SubscriptionValidate swagger:route POST /subscription/validate AdminAPI subscriptionValidate
 
-Validate a provided subscription license
+Validates subscription license
 
 */
 type SubscriptionValidate struct {

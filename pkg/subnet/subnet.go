@@ -67,6 +67,41 @@ type subnetLicenseResponse struct {
 	Metadata LicenseMetadata `json:"metadata"`
 }
 
+// subnetLoginRequest body request for subnet login
+type subnetRefreshRequest struct {
+	License string `json:"license"`
+}
+
+// getNewLicenseFromExistingLicense will perform license refresh based on the provided license key
+func getNewLicenseFromExistingLicense(client cluster.HTTPClientI, licenseKey string) (string, error) {
+	request := subnetRefreshRequest{
+		License: licenseKey,
+	}
+	// http body for login request
+	payloadBytes, err := json.Marshal(request)
+	if err != nil {
+		return "", err
+	}
+	subnetURL := GetSubnetURL()
+	url := fmt.Sprintf("%s%s", subnetURL, refreshLicenseKeyEndpoint)
+	resp, err := client.Post(url, "application/json", bytes.NewReader(payloadBytes))
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	subnetLicense := &subnetLicenseResponse{}
+	// Parse subnet login response
+	err = json.Unmarshal(bodyBytes, subnetLicense)
+	if err != nil {
+		return "", err
+	}
+	return subnetLicense.License, nil
+}
+
 // getLicenseFromCredentials will perform authentication against subnet using
 // user provided credentials and return the current subnet license key
 func getLicenseFromCredentials(client cluster.HTTPClientI, username, password string) (string, error) {
@@ -170,4 +205,19 @@ func ValidateLicense(client cluster.HTTPClientI, licenseKey, email, password str
 		return nil, "", err
 	}
 	return licInfo, license, nil
+}
+
+func RefreshLicense(client cluster.HTTPClientI, licenseKey string) (licInfo *licverifier.LicenseInfo, license string, err error) {
+	if licenseKey != "" {
+		license, err = getNewLicenseFromExistingLicense(client, licenseKey)
+		if err != nil {
+			return nil, "", err
+		}
+		licenseInfo, rawLicense, err := ValidateLicense(client, license, "", "")
+		if err != nil {
+			return nil, "", err
+		}
+		return licenseInfo, rawLicense, nil
+	}
+	return nil, "", errors.New("invalid license")
 }

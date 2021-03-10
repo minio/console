@@ -21,6 +21,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
@@ -134,6 +135,28 @@ func startServer(ctx *cli.Context) error {
 	}
 
 	server.ConfigureAPI()
+
+	// subnet license refresh process
+	go func() {
+		failedAttempts := 0
+		for {
+			if err := restapi.RefreshLicense(); err != nil {
+				log.Println(err)
+				failedAttempts++
+				// end license refresh after 3 consecutive failed attempts
+				if failedAttempts >= 3 {
+					return
+				}
+				// wait 5 minutes and retry again
+				time.Sleep(time.Minute * 5)
+				continue
+			}
+			// if license refreshed successfully reset the counter
+			failedAttempts = 0
+			// try to refresh license every 24 hrs
+			time.Sleep(time.Hour * 24)
+		}
+	}()
 
 	if err := server.Serve(); err != nil {
 		log.Fatalln(err)

@@ -30,7 +30,8 @@ const (
 	// Constants for subnet configuration
 	ConsoleSubnetURL = "CONSOLE_SUBNET_URL"
 	// Subnet endpoints
-	publicKey          = "/downloads/license-pubkey.pem"
-	loginEndpoint      = "/api/auth/login"
-	licenseKeyEndpoint = "/api/auth/subscription/license-key"
+	publicKey                 = "/downloads/license-pubkey.pem"
+	loginEndpoint             = "/api/auth/login"
+	refreshLicenseKeyEndpoint = "/api/auth/subscription/renew-license"
+	licenseKeyEndpoint        = "/api/auth/subscription/license-key"
 )

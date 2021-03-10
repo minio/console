@@ -2833,12 +2833,35 @@ func init() {
         }
       }
     },
+    "/subscription/refresh": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Refresh existing subscription license",
+        "operationId": "SubscriptionRefresh",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/license"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/subscription/validate": {
       "post": {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Validate a provided subscription license",
+        "summary": "Validates subscription license",
         "operationId": "SubscriptionValidate",
         "parameters": [
           {
@@ -8484,12 +8507,35 @@ func init() {
         }
       }
     },
+    "/subscription/refresh": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Refresh existing subscription license",
+        "operationId": "SubscriptionRefresh",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/license"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/subscription/validate": {
       "post": {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Validate a provided subscription license",
+        "summary": "Validates subscription license",
         "operationId": "SubscriptionValidate",
         "parameters": [
           {

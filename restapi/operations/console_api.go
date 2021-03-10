@@ -304,6 +304,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPISubscriptionInfoHandler: admin_api.SubscriptionInfoHandlerFunc(func(params admin_api.SubscriptionInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.SubscriptionInfo has not yet been implemented")
 		}),
+		AdminAPISubscriptionRefreshHandler: admin_api.SubscriptionRefreshHandlerFunc(func(params admin_api.SubscriptionRefreshParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.SubscriptionRefresh has not yet been implemented")
+		}),
 		AdminAPISubscriptionValidateHandler: admin_api.SubscriptionValidateHandlerFunc(func(params admin_api.SubscriptionValidateParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.SubscriptionValidate has not yet been implemented")
 		}),
@@ -546,6 +549,8 @@ type ConsoleAPI struct {
 	AdminAPISubscriptionActivateHandler admin_api.SubscriptionActivateHandler
 	// AdminAPISubscriptionInfoHandler sets the operation handler for the subscription info operation
 	AdminAPISubscriptionInfoHandler admin_api.SubscriptionInfoHandler
+	// AdminAPISubscriptionRefreshHandler sets the operation handler for the subscription refresh operation
+	AdminAPISubscriptionRefreshHandler admin_api.SubscriptionRefreshHandler
 	// AdminAPISubscriptionValidateHandler sets the operation handler for the subscription validate operation
 	AdminAPISubscriptionValidateHandler admin_api.SubscriptionValidateHandler
 	// AdminAPITenantAddPoolHandler sets the operation handler for the tenant add pool operation
@@ -881,6 +886,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPISubscriptionInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.SubscriptionInfoHandler")
+	}
+	if o.AdminAPISubscriptionRefreshHandler == nil {
+		unregistered = append(unregistered, "admin_api.SubscriptionRefreshHandler")
 	}
 	if o.AdminAPISubscriptionValidateHandler == nil {
 		unregistered = append(unregistered, "admin_api.SubscriptionValidateHandler")
@@ -1334,6 +1342,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/subscription/info"] = admin_api.NewSubscriptionInfo(o.context, o.AdminAPISubscriptionInfoHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/subscription/refresh"] = admin_api.NewSubscriptionRefresh(o.context, o.AdminAPISubscriptionRefreshHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

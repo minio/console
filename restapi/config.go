@@ -47,6 +47,9 @@ var (
 
 	// SessionDuration cookie validity duration
 	SessionDuration = 45 * time.Minute
+
+	// LicenseKey in memory license key used by console ui
+	LicenseKey = ""
 )
 
 var (
@@ -257,7 +260,13 @@ func getPrometheusURL() string {
 
 // GetSubnetLicense returns the current subnet jwt license
 func GetSubnetLicense() string {
-	return env.Get(ConsoleSubnetLicense, "")
+	// if we have a license key in memory return that
+	if LicenseKey != "" {
+		return LicenseKey
+	}
+	// return license configured via environment variable
+	LicenseKey = env.Get(ConsoleSubnetLicense, "")
+	return LicenseKey
 }
 
 func initVars() {
