@@ -88,9 +88,14 @@ const styles = (theme: Theme) =>
 interface IServiceAccountsProps {
   classes: any;
   displayErrorMessage: typeof setErrorSnackMessage;
+  changePassword: boolean;
 }
 
-const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
+const Account = ({
+  classes,
+  displayErrorMessage,
+  changePassword,
+}: IServiceAccountsProps) => {
   const [records, setRecords] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>("");
@@ -208,33 +213,37 @@ const Account = ({ classes, displayErrorMessage }: IServiceAccountsProps) => {
       <PageHeader label="Account" />
       <Grid container>
         <Grid item xs={12} className={classes.container}>
-          <Grid item xs={12}>
-            <Typography variant="h5" component="h5">
-              Settings
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12}>
-            <ChangePasswordModal
-              open={changePasswordModalOpen}
-              closeModal={() => setChangePasswordModalOpen(false)}
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<LockIcon />}
-              onClick={() => setChangePasswordModalOpen(true)}
-            >
-              Change Password
-            </Button>
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-            <Divider />
-            <br />
-          </Grid>
+          {changePassword && (
+            <React.Fragment>
+              <Grid item xs={12}>
+                <Typography variant="h5" component="h5">
+                  Settings
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <br />
+              </Grid>
+              <Grid item xs={12}>
+                <ChangePasswordModal
+                  open={changePasswordModalOpen}
+                  closeModal={() => setChangePasswordModalOpen(false)}
+                />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<LockIcon />}
+                  onClick={() => setChangePasswordModalOpen(true)}
+                >
+                  Change Password
+                </Button>
+              </Grid>
+              <Grid item xs={12}>
+                <br />
+                <Divider />
+                <br />
+              </Grid>
+            </React.Fragment>
+          )}
           <Grid item xs={12}>
             <Typography variant="h5" component="h5">
               Service Accounts

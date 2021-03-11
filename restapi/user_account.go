@@ -76,7 +76,7 @@ func getChangePasswordResponse(session *models.Principal, params user_api.Accoun
 	newSecretKey := *params.Body.NewSecretKey
 	// currentSecretKey will compare currentSecretKey against the stored secret key inside the encrypted session
 	if err := changePassword(ctx, userClient, session, currentSecretKey, newSecretKey); err != nil {
-		return nil, prepareError(errChangePassword, nil, err)
+		return nil, prepareError(err)
 	}
 	// user credentials are updated at this point, we need to generate a new admin client and authenticate using
 	// the new credentials

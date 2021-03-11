@@ -280,6 +280,9 @@ const Console = ({
     {
       component: Account,
       path: "/account",
+      props: {
+        changePassword: session.pages.includes("/account/change-password"),
+      },
     },
     {
       component: WebhookPanel,
@@ -396,7 +399,9 @@ const Console = ({
                       key={route.path}
                       exact
                       path={route.path}
-                      component={route.component}
+                      children={(routerProps) => (
+                        <route.component {...routerProps} {...route.props} />
+                      )}
                     />
                   ))}
                   {allowedRoutes.length > 0 ? (

@@ -31,6 +31,7 @@ var (
 	buckets             = "/buckets"
 	bucketsDetail       = "/buckets/:bucketName"
 	serviceAccounts     = "/account"
+	changePassword      = "/account/change-password"
 	tenants             = "/tenants"
 	tenantsDetail       = "/namespaces/:tenantNamespace/tenants/:tenantName"
 	remoteBuckets       = "/remote-buckets"
@@ -156,6 +157,16 @@ var serviceAccountsActionSet = ConfigurationActionSet{
 	actions:     iampolicy.NewActionSet(),
 }
 
+// changePasswordActionSet requires admin:CreateUser policy permission
+var changePasswordActionSet = ConfigurationActionSet{
+	actionTypes: iampolicy.NewActionSet(
+		iampolicy.AllAdminActions,
+	),
+	actions: iampolicy.NewActionSet(
+		iampolicy.CreateUserAdminAction,
+	),
+}
+
 // tenantsActionSet temporally no actions needed for tenants sections to work
 var tenantsActionSet = ConfigurationActionSet{
 	actionTypes: iampolicy.NewActionSet(),
@@ -264,6 +275,7 @@ var endpointRules = map[string]ConfigurationActionSet{
 	buckets:             bucketsActionSet,
 	bucketsDetail:       bucketsActionSet,
 	serviceAccounts:     serviceAccountsActionSet,
+	changePassword:      changePasswordActionSet,
 	remoteBuckets:       remoteBucketsActionSet,
 	replication:         replicationActionSet,
 	objectBrowser:       objectBrowserActionSet,
