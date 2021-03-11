@@ -134,16 +134,15 @@ const AddPolicy = ({
               <br />
             </Grid>
             <CodeMirrorWrapper
-              label={`${policyEdit ? "" : "Write "}Policy`}
+              label={`${policyEdit ? "Edit" : "Write"} Policy`}
               value={policyDefinition}
               onBeforeChange={(editor, data, value) => {
                 setPolicyDefinition(value);
               }}
-              readOnly={!!policyEdit}
             />
           </Grid>
-          {!policyEdit && (
-            <Grid item xs={12} className={classes.buttonContainer}>
+          <Grid item xs={12} className={classes.buttonContainer}>
+            {!policyEdit && (
               <button
                 type="button"
                 color="primary"
@@ -154,16 +153,17 @@ const AddPolicy = ({
               >
                 Clear
               </button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={addLoading || !validSave}
-              >
-                Save
-              </Button>
-            </Grid>
-          )}
+            )}
+
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={addLoading || !validSave}
+            >
+              Save
+            </Button>
+          </Grid>
           {addLoading && (
             <Grid item xs={12}>
               <LinearProgress />
