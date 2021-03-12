@@ -89,7 +89,14 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewGetBucketVersioningOK().WithPayload(getBucketVersioning)
 	})
-
+	// update bucket versioning
+	api.UserAPISetBucketVersioningHandler = user_api.SetBucketVersioningHandlerFunc(func(params user_api.SetBucketVersioningParams, session *models.Principal) middleware.Responder {
+		err := setBucketVersioningResponse(session, params.BucketName, &params)
+		if err != nil {
+			return user_api.NewSetBucketVersioningDefault(500).WithPayload(err)
+		}
+		return user_api.NewSetBucketVersioningCreated()
+	})
 	// get bucket replication
 	api.UserAPIGetBucketReplicationHandler = user_api.GetBucketReplicationHandlerFunc(func(params user_api.GetBucketReplicationParams, session *models.Principal) middleware.Responder {
 		getBucketReplication, err := getBucketReplicationdResponse(session, params.BucketName)
@@ -196,6 +203,40 @@ func getAddBucketReplicationdResponse(session *models.Principal, bucketName stri
 	if err2 != nil {
 		log.Println("error creating replication for bucket:", err2.Cause)
 		return err2.Cause
+	}
+	return nil
+}
+
+// removeBucket deletes a bucket
+func doSetVersioning(client MCClient, state string) error {
+	err := client.setVersioning(context.Background(), state)
+	if err != nil {
+		log.Println("error setting versioning for bucket:", err.Cause)
+		return err.Cause
+	}
+
+	return nil
+}
+
+func setBucketVersioningResponse(session *models.Principal, bucketName string, params *user_api.SetBucketVersioningParams) *models.Error {
+	s3Client, err := newS3BucketClient(session, bucketName, "")
+	if err != nil {
+		return prepareError(err)
+	}
+	// create a mc S3Client interface implementation
+	// defining the client to be used
+	amcClient := mcClient{client: s3Client}
+
+	versioningState := "suspend"
+
+	if params.Body.Versioning == true {
+		versioningState = "enable"
+	}
+
+	err2 := doSetVersioning(amcClient, versioningState)
+
+	if err2 != nil {
+		return prepareError(err2)
 	}
 	return nil
 }
