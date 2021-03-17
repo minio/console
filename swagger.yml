@@ -1308,6 +1308,38 @@ paths:
       tags:
         - AdminAPI
 
+  /bucket-users/{bucket}:
+    get:
+      summary: List Users With Access to a Given Bucket
+      operationId: ListUsersWithAccessToBucket
+      parameters:
+        - name: bucket
+          in: path
+          required: true
+          type: string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: array
+            items:
+              type: string
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
 
   /policy:
     get:

@@ -58,6 +58,7 @@ import UsageIcon from "../../../../icons/UsageIcon";
 import AddPolicy from "../../Policies/AddPolicy";
 import SetAccessPolicy from "./SetAccessPolicy";
 import { Policy } from "../../Policies/types";
+import { User } from "../../Users/types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -222,6 +223,8 @@ const ViewBucket = ({
   >([]);
   const [bucketPolicy, setBucketPolicy] = useState<Policy[]>([]);
   const [loadingPolicy, setLoadingPolicy] = useState<boolean>(true);
+  const [bucketUsers, setBucketUsers] = useState<User[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState<boolean>(true);
   const [loadingBucket, setLoadingBucket] = useState<boolean>(true);
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
   const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
@@ -388,6 +391,21 @@ const ViewBucket = ({
         });
     }
   }, [loadingPolicy, setErrorSnackMessage, bucketName]);
+
+  useEffect(() => {
+    if (loadingUsers) {
+      api
+        .invoke("GET", `/api/v1/bucket-users/${bucketName}`)
+        .then((res: any) => {
+          setBucketUsers(res);
+          setLoadingUsers(false);
+        })
+        .catch((err: any) => {
+          setErrorSnackMessage(err);
+          setLoadingUsers(false);
+        });
+    }
+  }, [loadingUsers, setErrorSnackMessage, bucketName]);
 
   useEffect(() => {
     if (loadingSize) {
@@ -773,6 +791,7 @@ const ViewBucket = ({
                   <Tab label="Replication" {...a11yProps(1)} />
                 )}
                 <Tab label="Policies" {...a11yProps(2)} />
+                <Tab label="Users" {...a11yProps(3)} />
               </Tabs>
             </Grid>
             <Grid item xs={6} className={classes.actionsTray}>
@@ -865,6 +884,15 @@ const ViewBucket = ({
                 records={bucketPolicy}
                 entityName="Policies"
                 idField="name"
+              />
+            </TabPanel>
+            <TabPanel index={3} value={curTab}>
+              <TableWrapper
+                columns={[{ label: "User", elementKey: "accessKey" }]}
+                isLoading={loadingUsers}
+                records={bucketUsers}
+                entityName="Users"
+                idField="accessKey"
               />
             </TabPanel>
           </Grid>
