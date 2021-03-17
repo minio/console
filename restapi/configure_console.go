@@ -84,7 +84,6 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 			STSSecretAccessKey: claims.STSSecretAccessKey,
 			STSSessionToken:    claims.STSSessionToken,
 			AccountAccessKey:   claims.AccountAccessKey,
-			AccountSecretKey:   claims.AccountSecretKey,
 		}, nil
 	}
 

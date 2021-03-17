@@ -4815,9 +4815,6 @@ func init() {
         "accountAccessKey": {
           "type": "string"
         },
-        "accountSecretKey": {
-          "type": "string"
-        },
         "actions": {
           "type": "array",
           "items": {
@@ -10802,9 +10799,6 @@ func init() {
           "type": "string"
         },
         "accountAccessKey": {
-          "type": "string"
-        },
-        "accountSecretKey": {
           "type": "string"
         },
         "actions": {
