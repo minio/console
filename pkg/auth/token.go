@@ -21,8 +21,10 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/hmac"
+	"crypto/rand"
 	"crypto/sha1"
 	"crypto/sha256"
+	"crypto/subtle"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -32,6 +34,8 @@ import (
 	"log"
 	"net/http"
 	"strings"
+
+	"golang.org/x/crypto/argon2"
 
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
@@ -332,4 +336,56 @@ func GetClaimsFromTokenInRequest(req *http.Request) (*models.Principal, error) {
 		AccountAccessKey:   claims.AccountAccessKey,
 		AccountSecretKey:   claims.AccountSecretKey,
 	}, nil
+}
+
+type PasswordConfig struct {
+	time    uint32
+	memory  uint32
+	threads uint8
+	keyLen  uint32
+}
+
+// argon2Config configuration for the argon2 hashing function
+var argon2Config = &PasswordConfig{
+	time:    1,
+	memory:  64 * 1024,
+	threads: 4,
+	keyLen:  32,
+}
+
+// NewPasswordHash will receive a password and hash it using argon2
+func NewPasswordHash(password string) (string, error) {
+	// Generate a Salt
+	salt := make([]byte, 16)
+	if _, err := rand.Read(salt); err != nil {
+		return "", err
+	}
+	hash := argon2.IDKey([]byte(password), salt, argon2Config.time, argon2Config.memory, argon2Config.threads, argon2Config.keyLen)
+	// Base64 encode the salt and hashed password.
+	b64Salt := base64.RawStdEncoding.EncodeToString(salt)
+	b64Hash := base64.RawStdEncoding.EncodeToString(hash)
+	format := "$argon2id$v=%d$m=%d,t=%d,p=%d$%s$%s"
+	full := fmt.Sprintf(format, argon2.Version, argon2Config.memory, argon2Config.time, argon2Config.threads, b64Salt, b64Hash)
+	return full, nil
+}
+
+// ComparePassword is used to compare a user-inputted password to a hash to see if the password matches or not.
+func ComparePassword(password, hash string) (bool, error) {
+	parts := strings.Split(hash, "$")
+	c := &PasswordConfig{}
+	_, err := fmt.Sscanf(parts[3], "m=%d,t=%d,p=%d", &c.memory, &c.time, &c.threads)
+	if err != nil {
+		return false, err
+	}
+	salt, err := base64.RawStdEncoding.DecodeString(parts[4])
+	if err != nil {
+		return false, err
+	}
+	decodedHash, err := base64.RawStdEncoding.DecodeString(parts[5])
+	if err != nil {
+		return false, err
+	}
+	c.keyLen = uint32(len(decodedHash))
+	comparisonHash := argon2.IDKey([]byte(password), salt, c.time, c.memory, c.threads, c.keyLen)
+	return subtle.ConstantTimeCompare(decodedHash, comparisonHash) == 1, nil
 }

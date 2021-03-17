@@ -48,7 +48,7 @@ func Test_changePassword(t *testing.T) {
 				ctx:    context.Background(),
 				session: &models.Principal{
 					AccountAccessKey: "TESTTEST",
-					AccountSecretKey: "TESTTEST",
+					AccountSecretKey: "$argon2id$v=19$m=65536,t=1,p=4$EURl08Jh7TQCVP2SrvEJdQ$UPma6ZIozlvk+BG5Em1NDYV9GDu9Bsq3ocymUB1nRlg",
 				},
 				currentSecretKey: "TESTTEST",
 				newSecretKey:     "TESTTEST2",
@@ -66,7 +66,7 @@ func Test_changePassword(t *testing.T) {
 				ctx:    context.Background(),
 				session: &models.Principal{
 					AccountAccessKey: "TESTTEST",
-					AccountSecretKey: "TESTTEST",
+					AccountSecretKey: "$argon2id$v=19$m=65536,t=1,p=4$EURl08Jh7TQCVP2SrvEJdQ$UPma6ZIozlvk+BG5Em1NDYV9GDu9Bsq3ocymUB1nRlg",
 				},
 				currentSecretKey: "TESTTEST",
 				newSecretKey:     "TESTTEST2",
@@ -85,7 +85,7 @@ func Test_changePassword(t *testing.T) {
 				ctx:    context.Background(),
 				session: &models.Principal{
 					AccountAccessKey: "TESTTEST",
-					AccountSecretKey: "TESTTEST123",
+					AccountSecretKey: "$argon2id$v=19$m=65536,t=1,p=4$npAQ6LeqDsPMEQEIl7GnDA$cNasELqD07M78DWgmtVS2ilDu1GZioPkstpDdi0cFPA",
 				},
 				currentSecretKey: "TESTTEST",
 				newSecretKey:     "TESTTEST2",

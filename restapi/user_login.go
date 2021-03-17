@@ -118,12 +118,17 @@ func getConsoleCredentials(ctx context.Context, accessKey, secretKey string) (*c
 	if err != nil {
 		return nil, err
 	}
+	// hashing password using argon2
+	hashedPassword, err := auth.NewPasswordHash(secretKey)
+	if err != nil {
+		return nil, err
+	}
 	// cCredentials will be sts credentials, account credentials will be need it in the scenario the user wish
 	// to change its password
 	cCredentials := &consoleCredentials{
 		consoleCredentials: creds,
 		accountAccessKey:   accessKey,
-		accountSecretKey:   secretKey,
+		accountSecretKey:   hashedPassword,
 	}
 	tokens, err := cCredentials.Get()
 	if err != nil {
@@ -162,11 +167,11 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.E
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	// prepare console credentials
-	consolCreds, err := getConsoleCredentials(ctx, *lr.AccessKey, *lr.SecretKey)
+	consoleCreds, err := getConsoleCredentials(ctx, *lr.AccessKey, *lr.SecretKey)
 	if err != nil {
 		return nil, prepareError(errInvalidCredentials, nil, err)
 	}
-	sessionID, err := login(consolCreds)
+	sessionID, err := login(consoleCreds)
 	if err != nil {
 		return nil, prepareError(errInvalidCredentials, nil, err)
 	}

@@ -21,6 +21,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/minio/console/pkg/auth"
+
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -46,7 +48,8 @@ func registerAccountHandlers(api *operations.ConsoleAPI) {
 
 // changePassword validate current current user password and if it's correct set the new password
 func changePassword(ctx context.Context, client MinioAdmin, session *models.Principal, currentSecretKey, newSecretKey string) error {
-	if session.AccountSecretKey != currentSecretKey {
+	// session.AccountSecretKey is already hashed using argon2
+	if valid, err := auth.ComparePassword(currentSecretKey, session.AccountSecretKey); !valid || err != nil {
 		return errChangePassword
 	}
 	if err := client.changePassword(ctx, session.AccountAccessKey, newSecretKey); err != nil {
@@ -62,18 +65,18 @@ func getChangePasswordResponse(session *models.Principal, params user_api.Accoun
 	defer cancel()
 	// changePassword operations requires an AdminClient initialized with parent account credentials not
 	// STS credentials
+	accessKey := session.AccountAccessKey
+	currentSecretKey := *params.Body.CurrentSecretKey
+	newSecretKey := *params.Body.NewSecretKey
 	parentAccountClient, err := newMAdminClient(&models.Principal{
 		STSAccessKeyID:     session.AccountAccessKey,
-		STSSecretAccessKey: session.AccountSecretKey,
+		STSSecretAccessKey: currentSecretKey,
 	})
 	if err != nil {
 		return nil, prepareError(err)
 	}
 	// parentAccountClient will contain access and secret key credentials for the user
 	userClient := adminClient{client: parentAccountClient}
-	accessKey := session.AccountAccessKey
-	currentSecretKey := *params.Body.CurrentSecretKey
-	newSecretKey := *params.Body.NewSecretKey
 	// currentSecretKey will compare currentSecretKey against the stored secret key inside the encrypted session
 	if err := changePassword(ctx, userClient, session, currentSecretKey, newSecretKey); err != nil {
 		return nil, prepareError(err)
