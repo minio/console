@@ -55,8 +55,8 @@ const SetPolicy = ({
 }: ISetPolicyProps) => {
   //Local States
   const [loading, setLoading] = useState<boolean>(false);
-  const [actualPolicy, setActualPolicy] = useState<string>("");
-  const [selectedPolicy, setSelectedPolicy] = useState<string>("");
+  const [actualPolicy, setActualPolicy] = useState<string[]>([]);
+  const [selectedPolicy, setSelectedPolicy] = useState<string[]>([]);
 
   const setPolicyAction = () => {
     let entity = "user";
@@ -92,9 +92,9 @@ const SetPolicy = ({
       api
         .invoke("GET", `/api/v1/groups/${selectedGroup}`)
         .then((res: any) => {
-          const groupPolicy = get(res, "policy", "");
-          setActualPolicy(groupPolicy);
-          setSelectedPolicy(groupPolicy);
+          const groupPolicy: String = get(res, "policy", "");
+          setActualPolicy(groupPolicy.split(","));
+          setSelectedPolicy(groupPolicy.split(","));
         })
         .catch((err) => {
           setModalErrorSnackMessage(err);
@@ -114,9 +114,9 @@ const SetPolicy = ({
         return;
       }
 
-      const userPolicy = get(selectedUser, "policy", "");
-      setActualPolicy(userPolicy);
-      setSelectedPolicy(userPolicy);
+      const userPolicy: String = get(selectedUser, "policy", "");
+      setActualPolicy(userPolicy.split(","));
+      setSelectedPolicy(userPolicy.split(","));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, selectedGroup, selectedUser]);
@@ -138,7 +138,10 @@ const SetPolicy = ({
         />
       </Grid>
       <Grid item xs={12}>
-        <PredefinedList label={"Current Policy"} content={actualPolicy} />
+        <PredefinedList
+          label={"Current Policy"}
+          content={actualPolicy.join(", ")}
+        />
       </Grid>
       <PolicySelectors
         selectedPolicy={selectedPolicy}
