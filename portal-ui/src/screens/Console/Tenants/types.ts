@@ -110,6 +110,8 @@ export interface IConfigureFields {
 
 export interface IIdentityProviderFields {
   idpSelection: string;
+  accessKeys: string[];
+  secretKeys: string[];
   openIDURL: string;
   openIDClientID: string;
   openIDSecretID: string;

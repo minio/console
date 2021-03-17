@@ -70,10 +70,12 @@ const initialState: ITenantState = {
         prometheusVolumeSize: "5",
         prometheusSizeFactor: "Gi",
         logSearchSelectedStorageClass: "",
-         prometheusSelectedStorageClass: "",
+        prometheusSelectedStorageClass: "",
       },
       identityProvider: {
         idpSelection: "Built-in",
+        accessKeys: [""],
+        secretKeys: [""],
         openIDURL: "",
         openIDClientID: "",
         openIDSecretID: "",
@@ -459,6 +461,8 @@ export function tenantsReducer(
             },
             identityProvider: {
               idpSelection: "Built-in",
+              accessKeys: [""],
+              secretKeys: [""],
               openIDURL: "",
               openIDClientID: "",
               openIDSecretID: "",

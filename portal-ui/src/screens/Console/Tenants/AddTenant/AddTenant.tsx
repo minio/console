@@ -112,6 +112,8 @@ const AddTenant = ({
     const ADGroupBaseDN = fields.identityProvider.ADGroupBaseDN;
     const ADGroupSearchFilter = fields.identityProvider.ADGroupSearchFilter;
     const ADNameAttribute = fields.identityProvider.ADNameAttribute;
+    const accessKeys = fields.identityProvider.accessKeys;
+    const secretKeys = fields.identityProvider.secretKeys;
     const minioCertificates = certificates.minioCertificates;
     const caCertificates = certificates.caCertificates;
     const consoleCertificate = certificates.consoleCertificate;
@@ -155,10 +157,11 @@ const AddTenant = ({
     const logSearchCustom = fields.configure.logSearchCustom;
     const prometheusCustom = fields.configure.prometheusCustom;
     const logSearchVolumeSize = fields.configure.logSearchVolumeSize;
-    const logSearchSelectedStorageClass = fields.configure.logSearchSelectedStorageClass;
-    const prometheusSelectedStorageClass = fields.configure.prometheusSelectedStorageClass;
+    const logSearchSelectedStorageClass =
+      fields.configure.logSearchSelectedStorageClass;
+    const prometheusSelectedStorageClass =
+      fields.configure.prometheusSelectedStorageClass;
     const prometheusVolumeSize = fields.configure.prometheusVolumeSize;
-
 
     if (addSending) {
       const poolName = generatePoolName([]);
@@ -175,6 +178,8 @@ const AddTenant = ({
         namespace: namespace,
         access_key: "",
         secret_key: "",
+        access_keys: [],
+        secret_keys: [],
         enable_tls: enableTLS && enableAutoCert,
         enable_console: true,
         enable_prometheus: true,
@@ -217,23 +222,23 @@ const AddTenant = ({
         };
       }
 
-      if(logSearchCustom) {
+      if (logSearchCustom) {
         dataSend = {
           ...dataSend,
           logSearchConfiguration: {
             storageClass: logSearchSelectedStorageClass,
             storageSize: parseInt(logSearchVolumeSize),
-          }
+          },
         };
       }
 
-      if(prometheusCustom) {
+      if (prometheusCustom) {
         dataSend = {
           ...dataSend,
           prometheusConfiguration: {
             storageClass: prometheusSelectedStorageClass,
             storageSize: parseInt(prometheusVolumeSize),
-          }
+          },
         };
       }
 
@@ -428,40 +433,49 @@ const AddTenant = ({
         };
       }
 
-      if (idpSelection !== "Built-in") {
-        let dataIDP: any = {};
-
-        switch (idpSelection) {
-          case "OpenID":
-            dataIDP = {
-              oidc: {
-                url: openIDURL,
-                client_id: openIDClientID,
-                secret_id: openIDSecretID,
-              },
-            };
-            break;
-          case "AD":
-            dataIDP = {
-              active_directory: {
-                url: ADURL,
-                skip_tls_verification: ADSkipTLS,
-                server_insecure: ADServerInsecure,
-                username_format: "",
-                user_search_filter: ADUserNameFilter,
-                group_search_base_dn: ADGroupBaseDN,
-                group_search_filter: ADGroupSearchFilter,
-                group_name_attribute: ADNameAttribute,
-              },
-            };
-            break;
-        }
-
-        dataSend = {
-          ...dataSend,
-          idp: { ...dataIDP },
-        };
+      let dataIDP: any = {};
+      switch (idpSelection) {
+        case "Built-in":
+          let keyarray = [];
+          for (let i = 0; i < accessKeys.length; i++) {
+            keyarray.push({
+              access_key: accessKeys[i],
+              secret_key: secretKeys[i],
+            });
+          }
+          dataIDP = {
+            keys: keyarray,
+          };
+          break;
+        case "OpenID":
+          dataIDP = {
+            oidc: {
+              url: openIDURL,
+              client_id: openIDClientID,
+              secret_id: openIDSecretID,
+            },
+          };
+          break;
+        case "AD":
+          dataIDP = {
+            active_directory: {
+              url: ADURL,
+              skip_tls_verification: ADSkipTLS,
+              server_insecure: ADServerInsecure,
+              username_format: "",
+              user_search_filter: ADUserNameFilter,
+              group_search_base_dn: ADGroupBaseDN,
+              group_search_filter: ADGroupSearchFilter,
+              group_name_attribute: ADNameAttribute,
+            },
+          };
+          break;
       }
+
+      dataSend = {
+        ...dataSend,
+        idp: { ...dataIDP },
+      };
 
       api
         .invoke("POST", `/api/v1/tenants`, dataSend)

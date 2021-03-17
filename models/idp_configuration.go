@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"strconv"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -37,6 +39,9 @@ type IdpConfiguration struct {
 	// active directory
 	ActiveDirectory *IdpConfigurationActiveDirectory `json:"active_directory,omitempty"`
 
+	// keys
+	Keys []*IdpConfigurationKeysItems0 `json:"keys"`
+
 	// oidc
 	Oidc *IdpConfigurationOidc `json:"oidc,omitempty"`
 }
@@ -46,6 +51,10 @@ func (m *IdpConfiguration) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateActiveDirectory(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateKeys(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -72,6 +81,31 @@ func (m *IdpConfiguration) validateActiveDirectory(formats strfmt.Registry) erro
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *IdpConfiguration) validateKeys(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Keys) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Keys); i++ {
+		if swag.IsZero(m.Keys[i]) { // not required
+			continue
+		}
+
+		if m.Keys[i] != nil {
+			if err := m.Keys[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("keys" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil
@@ -206,6 +240,74 @@ func (m *IdpConfigurationActiveDirectory) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *IdpConfigurationActiveDirectory) UnmarshalBinary(b []byte) error {
 	var res IdpConfigurationActiveDirectory
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// IdpConfigurationKeysItems0 idp configuration keys items0
+//
+// swagger:model IdpConfigurationKeysItems0
+type IdpConfigurationKeysItems0 struct {
+
+	// access key
+	// Required: true
+	AccessKey *string `json:"access_key"`
+
+	// secret key
+	// Required: true
+	SecretKey *string `json:"secret_key"`
+}
+
+// Validate validates this idp configuration keys items0
+func (m *IdpConfigurationKeysItems0) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateAccessKey(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSecretKey(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *IdpConfigurationKeysItems0) validateAccessKey(formats strfmt.Registry) error {
+
+	if err := validate.Required("access_key", "body", m.AccessKey); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *IdpConfigurationKeysItems0) validateSecretKey(formats strfmt.Registry) error {
+
+	if err := validate.Required("secret_key", "body", m.SecretKey); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *IdpConfigurationKeysItems0) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *IdpConfigurationKeysItems0) UnmarshalBinary(b []byte) error {
+	var res IdpConfigurationKeysItems0
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

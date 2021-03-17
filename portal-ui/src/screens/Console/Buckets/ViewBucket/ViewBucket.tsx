@@ -59,7 +59,6 @@ import EnableVersioningModal from "./EnableVersioningModal";
 import UsageIcon from "../../../../icons/UsageIcon";
 import AddPolicy from "../../Policies/AddPolicy";
 import SetAccessPolicy from "./SetAccessPolicy";
-
 import DeleteReplicationRule from "../ViewBucket/DeleteReplicationRule";
 
 const styles = (theme: Theme) =>
