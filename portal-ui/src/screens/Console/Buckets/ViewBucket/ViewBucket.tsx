@@ -557,9 +557,7 @@ const ViewBucket = ({
     setPolicyEdit(row);
   };
 
-  const PolicyActions = [
-    { type: "view", onClick: viewAction },
-  ];
+  const PolicyActions = [{ type: "view", onClick: viewAction }];
 
   return (
     <Fragment>

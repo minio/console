@@ -223,6 +223,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIListUsersHandler: admin_api.ListUsersHandlerFunc(func(params admin_api.ListUsersParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListUsers has not yet been implemented")
 		}),
+		AdminAPIListUsersWithAccessToBucketHandler: admin_api.ListUsersWithAccessToBucketHandlerFunc(func(params admin_api.ListUsersWithAccessToBucketParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.ListUsersWithAccessToBucket has not yet been implemented")
+		}),
 		UserAPILogSearchHandler: user_api.LogSearchHandlerFunc(func(params user_api.LogSearchParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.LogSearch has not yet been implemented")
 		}),
@@ -504,6 +507,8 @@ type ConsoleAPI struct {
 	UserAPIListUserServiceAccountsHandler user_api.ListUserServiceAccountsHandler
 	// AdminAPIListUsersHandler sets the operation handler for the list users operation
 	AdminAPIListUsersHandler admin_api.ListUsersHandler
+	// AdminAPIListUsersWithAccessToBucketHandler sets the operation handler for the list users with access to bucket operation
+	AdminAPIListUsersWithAccessToBucketHandler admin_api.ListUsersWithAccessToBucketHandler
 	// UserAPILogSearchHandler sets the operation handler for the log search operation
 	UserAPILogSearchHandler user_api.LogSearchHandler
 	// UserAPILoginHandler sets the operation handler for the login operation
@@ -820,6 +825,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIListUsersHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListUsersHandler")
+	}
+	if o.AdminAPIListUsersWithAccessToBucketHandler == nil {
+		unregistered = append(unregistered, "admin_api.ListUsersWithAccessToBucketHandler")
 	}
 	if o.UserAPILogSearchHandler == nil {
 		unregistered = append(unregistered, "user_api.LogSearchHandler")
@@ -1258,6 +1266,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/users"] = admin_api.NewListUsers(o.context, o.AdminAPIListUsersHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/bucket-users/{bucket}"] = admin_api.NewListUsersWithAccessToBucket(o.context, o.AdminAPIListUsersWithAccessToBucketHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
