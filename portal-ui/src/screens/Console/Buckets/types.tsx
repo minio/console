@@ -47,6 +47,11 @@ export interface BucketEventList {
   total: number;
 }
 
+export interface BucketPolicy {
+  name: string;
+  body: string;
+}
+
 export interface ArnList {
   arns: string[];
 }
