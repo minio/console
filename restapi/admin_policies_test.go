@@ -363,7 +363,7 @@ func Test_policyMatchesBucket(t *testing.T) {
         }
     ]
 	}`}, bucket: "test1"},
-			want: true,
+			want: false,
 		},
 		{
 			name: "Test4",

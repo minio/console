@@ -48,7 +48,7 @@ func NewListPoliciesWithBucket(ctx *middleware.Context, handler ListPoliciesWith
 	return &ListPoliciesWithBucket{Context: ctx, Handler: handler}
 }
 
-/*ListPoliciesWithBucket swagger:route GET /policy/{bucket} AdminAPI listPoliciesWithBucket
+/*ListPoliciesWithBucket swagger:route GET /bucket-policy/{bucket} AdminAPI listPoliciesWithBucket
 
 List Policies With Given Bucket
 

@@ -1234,7 +1234,7 @@ paths:
       tags:
         - AdminAPI
 
-  /policy/{bucket}:
+  /bucket-policy/{bucket}:
     get:
       summary: List Policies With Given Bucket
       operationId: ListPoliciesWithBucket
