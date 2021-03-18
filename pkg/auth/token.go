@@ -65,7 +65,6 @@ type TokenClaims struct {
 	STSSecretAccessKey string   `json:"stsSecretAccessKey,omitempty"`
 	STSSessionToken    string   `json:"stsSessionToken,omitempty"`
 	AccountAccessKey   string   `json:"accountAccessKey,omitempty"`
-	AccountSecretKey   string   `json:"accountSecretKey,omitempty"`
 	Actions            []string `json:"actions,omitempty"`
 }
 
@@ -79,7 +78,6 @@ type TokenClaims struct {
 //		STSSecretAccessKey
 //		STSSessionToken
 //		AccountAccessKey
-//		AccountSecretKey
 //		Actions
 //	}
 func SessionTokenAuthenticate(token string) (*TokenClaims, error) {
@@ -100,14 +98,13 @@ func SessionTokenAuthenticate(token string) (*TokenClaims, error) {
 
 // NewEncryptedTokenForClient generates a new session token with claims based on the provided STS credentials, first
 // encrypts the claims and the sign them
-func NewEncryptedTokenForClient(credentials *credentials.Value, accountAccessKey, accountSecretKey string, actions []string) (string, error) {
+func NewEncryptedTokenForClient(credentials *credentials.Value, accountAccessKey string, actions []string) (string, error) {
 	if credentials != nil {
 		encryptedClaims, err := encryptClaims(&TokenClaims{
 			STSAccessKeyID:     credentials.AccessKeyID,
 			STSSecretAccessKey: credentials.SecretAccessKey,
 			STSSessionToken:    credentials.SessionToken,
 			AccountAccessKey:   accountAccessKey,
-			AccountSecretKey:   accountSecretKey,
 			Actions:            actions,
 		})
 		if err != nil {
@@ -330,6 +327,5 @@ func GetClaimsFromTokenInRequest(req *http.Request) (*models.Principal, error) {
 		STSSecretAccessKey: claims.STSSecretAccessKey,
 		STSSessionToken:    claims.STSSessionToken,
 		AccountAccessKey:   claims.AccountAccessKey,
-		AccountSecretKey:   claims.AccountSecretKey,
 	}, nil
 }

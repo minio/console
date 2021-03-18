@@ -84,7 +84,6 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 			STSSecretAccessKey: claims.STSSecretAccessKey,
 			STSSessionToken:    claims.STSSessionToken,
 			AccountAccessKey:   claims.AccountAccessKey,
-			AccountSecretKey:   claims.AccountSecretKey,
 		}, nil
 	}
 
@@ -140,6 +139,8 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerBucketQuotaHandlers(api)
 	// Register Account handlers
 	registerAccountHandlers(api)
+	// Direct CSI handlers
+	registerDirectCSIHandlers(api)
 
 	api.PreServerShutdown = func() {}
 

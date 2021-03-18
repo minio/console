@@ -23,38 +23,63 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"strconv"
+
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
-// Principal principal
+// GetDirectCSIVolumeListResponse get direct c s i volume list response
 //
-// swagger:model principal
-type Principal struct {
+// swagger:model getDirectCSIVolumeListResponse
+type GetDirectCSIVolumeListResponse struct {
 
-	// s t s access key ID
-	STSAccessKeyID string `json:"STSAccessKeyID,omitempty"`
-
-	// s t s secret access key
-	STSSecretAccessKey string `json:"STSSecretAccessKey,omitempty"`
-
-	// s t s session token
-	STSSessionToken string `json:"STSSessionToken,omitempty"`
-
-	// account access key
-	AccountAccessKey string `json:"accountAccessKey,omitempty"`
-
-	// actions
-	Actions []string `json:"actions"`
+	// volumes
+	Volumes []*DirectCSIVolumeInfo `json:"volumes"`
 }
 
-// Validate validates this principal
-func (m *Principal) Validate(formats strfmt.Registry) error {
+// Validate validates this get direct c s i volume list response
+func (m *GetDirectCSIVolumeListResponse) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateVolumes(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *GetDirectCSIVolumeListResponse) validateVolumes(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Volumes) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Volumes); i++ {
+		if swag.IsZero(m.Volumes[i]) { // not required
+			continue
+		}
+
+		if m.Volumes[i] != nil {
+			if err := m.Volumes[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("volumes" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *Principal) MarshalBinary() ([]byte, error) {
+func (m *GetDirectCSIVolumeListResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -62,8 +87,8 @@ func (m *Principal) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *Principal) UnmarshalBinary(b []byte) error {
-	var res Principal
+func (m *GetDirectCSIVolumeListResponse) UnmarshalBinary(b []byte) error {
+	var res GetDirectCSIVolumeListResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -157,6 +157,12 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIGetBucketVersioningHandler: user_api.GetBucketVersioningHandlerFunc(func(params user_api.GetBucketVersioningParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetBucketVersioning has not yet been implemented")
 		}),
+		AdminAPIGetDirectCSIDriveListHandler: admin_api.GetDirectCSIDriveListHandlerFunc(func(params admin_api.GetDirectCSIDriveListParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.GetDirectCSIDriveList has not yet been implemented")
+		}),
+		AdminAPIGetDirectCSIVolumeListHandler: admin_api.GetDirectCSIVolumeListHandlerFunc(func(params admin_api.GetDirectCSIVolumeListParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.GetDirectCSIVolumeList has not yet been implemented")
+		}),
 		AdminAPIGetMaxAllocatableMemHandler: admin_api.GetMaxAllocatableMemHandlerFunc(func(params admin_api.GetMaxAllocatableMemParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetMaxAllocatableMem has not yet been implemented")
 		}),
@@ -442,6 +448,10 @@ type ConsoleAPI struct {
 	UserAPIGetBucketRetentionConfigHandler user_api.GetBucketRetentionConfigHandler
 	// UserAPIGetBucketVersioningHandler sets the operation handler for the get bucket versioning operation
 	UserAPIGetBucketVersioningHandler user_api.GetBucketVersioningHandler
+	// AdminAPIGetDirectCSIDriveListHandler sets the operation handler for the get direct c s i drive list operation
+	AdminAPIGetDirectCSIDriveListHandler admin_api.GetDirectCSIDriveListHandler
+	// AdminAPIGetDirectCSIVolumeListHandler sets the operation handler for the get direct c s i volume list operation
+	AdminAPIGetDirectCSIVolumeListHandler admin_api.GetDirectCSIVolumeListHandler
 	// AdminAPIGetMaxAllocatableMemHandler sets the operation handler for the get max allocatable mem operation
 	AdminAPIGetMaxAllocatableMemHandler admin_api.GetMaxAllocatableMemHandler
 	// AdminAPIGetParityHandler sets the operation handler for the get parity operation
@@ -724,6 +734,12 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIGetBucketVersioningHandler == nil {
 		unregistered = append(unregistered, "user_api.GetBucketVersioningHandler")
+	}
+	if o.AdminAPIGetDirectCSIDriveListHandler == nil {
+		unregistered = append(unregistered, "admin_api.GetDirectCSIDriveListHandler")
+	}
+	if o.AdminAPIGetDirectCSIVolumeListHandler == nil {
+		unregistered = append(unregistered, "admin_api.GetDirectCSIVolumeListHandler")
 	}
 	if o.AdminAPIGetMaxAllocatableMemHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetMaxAllocatableMemHandler")
@@ -1122,6 +1138,14 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/buckets/{bucket_name}/versioning"] = user_api.NewGetBucketVersioning(o.context, o.UserAPIGetBucketVersioningHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/direct-csi/drives"] = admin_api.NewGetDirectCSIDriveList(o.context, o.AdminAPIGetDirectCSIDriveListHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/direct-csi/volumes"] = admin_api.NewGetDirectCSIVolumeList(o.context, o.AdminAPIGetDirectCSIVolumeListHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

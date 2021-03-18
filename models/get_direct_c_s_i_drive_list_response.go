@@ -23,38 +23,63 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"strconv"
+
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
-// Principal principal
+// GetDirectCSIDriveListResponse get direct c s i drive list response
 //
-// swagger:model principal
-type Principal struct {
+// swagger:model getDirectCSIDriveListResponse
+type GetDirectCSIDriveListResponse struct {
 
-	// s t s access key ID
-	STSAccessKeyID string `json:"STSAccessKeyID,omitempty"`
-
-	// s t s secret access key
-	STSSecretAccessKey string `json:"STSSecretAccessKey,omitempty"`
-
-	// s t s session token
-	STSSessionToken string `json:"STSSessionToken,omitempty"`
-
-	// account access key
-	AccountAccessKey string `json:"accountAccessKey,omitempty"`
-
-	// actions
-	Actions []string `json:"actions"`
+	// drives
+	Drives []*DirectCSIDriveInfo `json:"drives"`
 }
 
-// Validate validates this principal
-func (m *Principal) Validate(formats strfmt.Registry) error {
+// Validate validates this get direct c s i drive list response
+func (m *GetDirectCSIDriveListResponse) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateDrives(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *GetDirectCSIDriveListResponse) validateDrives(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Drives) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Drives); i++ {
+		if swag.IsZero(m.Drives[i]) { // not required
+			continue
+		}
+
+		if m.Drives[i] != nil {
+			if err := m.Drives[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("drives" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *Principal) MarshalBinary() ([]byte, error) {
+func (m *GetDirectCSIDriveListResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -62,8 +87,8 @@ func (m *Principal) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *Principal) UnmarshalBinary(b []byte) error {
-	var res Principal
+func (m *GetDirectCSIDriveListResponse) UnmarshalBinary(b []byte) error {
+	var res GetDirectCSIDriveListResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

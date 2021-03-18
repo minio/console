@@ -43,10 +43,6 @@ func (ac consoleCredentialsMock) GetAccountAccessKey() string {
 	return ""
 }
 
-func (ac consoleCredentialsMock) GetAccountSecretKey() string {
-	return ""
-}
-
 // Common mocks
 var consoleCredentialsGetMock func() (credentials.Value, error)
 
