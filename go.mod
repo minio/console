@@ -3,18 +3,20 @@ module github.com/minio/console
 go 1.16
 
 require (
+	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
 	github.com/blang/semver/v4 v4.0.0
 	github.com/cheggaaa/pb/v3 v3.0.6
 	github.com/coreos/go-oidc v2.2.1+incompatible
-	github.com/go-openapi/errors v0.19.6
+	github.com/go-openapi/errors v0.20.0
 	github.com/go-openapi/loads v0.19.5
-	github.com/go-openapi/runtime v0.19.19
+	github.com/go-openapi/runtime v0.19.26
 	github.com/go-openapi/spec v0.19.8
-	github.com/go-openapi/strfmt v0.19.5
-	github.com/go-openapi/swag v0.19.9
+	github.com/go-openapi/strfmt v0.20.0
+	github.com/go-openapi/swag v0.19.14
 	github.com/go-openapi/validate v0.19.10
 	github.com/gorilla/websocket v1.4.2
 	github.com/jessevdk/go-flags v1.4.0
+	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/minio/cli v1.22.0
 	github.com/minio/kes v0.11.0
 	github.com/minio/mc v0.0.0-20210301162250-f9d36f9b5243
@@ -24,14 +26,16 @@ require (
 	github.com/minio/operator/logsearchapi v0.0.0-20210201110528-753019b838b4
 	github.com/minio/selfupdate v0.3.1
 	github.com/mitchellh/go-homedir v1.1.0
+	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/secure-io/sio-go v0.3.1
 	github.com/stretchr/testify v1.6.1
 	github.com/unrolled/secure v1.0.7
+	go.mongodb.org/mongo-driver v1.5.0 // indirect
 	golang.org/x/crypto v0.0.0-20201124201722-c8d3bf9c5392
 	golang.org/x/net v0.0.0-20201216054612-986b41b23924
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
-	gopkg.in/yaml.v2 v2.3.0
+	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.20.2
 	k8s.io/apimachinery v0.20.2
 	k8s.io/client-go v0.20.2
