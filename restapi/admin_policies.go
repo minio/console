@@ -76,10 +76,11 @@ func registersPoliciesHandler(api *operations.ConsoleAPI) {
 		return admin_api.NewSetPolicyMultipleNoContent()
 	})
 	api.AdminAPIListPoliciesWithBucketHandler = admin_api.ListPoliciesWithBucketHandlerFunc(func(params admin_api.ListPoliciesWithBucketParams, session *models.Principal) middleware.Responder {
-		if _, err := getListPoliciesWithBucketResponse(session, params.Bucket); err != nil {
+		policyResponse, err := getListPoliciesWithBucketResponse(session, params.Bucket)
+		if err != nil {
 			return admin_api.NewListPoliciesWithBucketDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewListPoliciesWithBucketOK()
+		return admin_api.NewListPoliciesWithBucketOK().WithPayload(policyResponse)
 	})
 }
 
