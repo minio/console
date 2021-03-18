@@ -1382,6 +1382,76 @@ func init() {
         }
       }
     },
+    "/direct-csi/drives": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get direct-csi drives list",
+        "operationId": "GetDirectCSIDriveList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "nodes",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "drives",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/getDirectCSIDriveListResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/direct-csi/volumes": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get direct-csi volumes list",
+        "operationId": "GetDirectCSIVolumeList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "nodes",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "drives",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/getDirectCSIVolumeListResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/get-parity/{nodes}/{disksPerNode}": {
       "get": {
         "tags": [
@@ -3672,6 +3742,53 @@ func init() {
         }
       }
     },
+    "directCSIDriveInfo": {
+      "type": "object",
+      "properties": {
+        "allocated": {
+          "type": "number",
+          "format": "int64"
+        },
+        "capacity": {
+          "type": "number",
+          "format": "int64"
+        },
+        "drive": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "node": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "volumes": {
+          "type": "number",
+          "format": "int64"
+        }
+      }
+    },
+    "directCSIVolumeInfo": {
+      "type": "object",
+      "properties": {
+        "capacity": {
+          "type": "number",
+          "format": "int64"
+        },
+        "drive": {
+          "type": "string"
+        },
+        "node": {
+          "type": "string"
+        },
+        "volume": {
+          "type": "string"
+        }
+      }
+    },
     "encryptionConfiguration": {
       "allOf": [
         {
@@ -3827,6 +3944,28 @@ func init() {
         "validity": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "getDirectCSIDriveListResponse": {
+      "type": "object",
+      "properties": {
+        "drives": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/directCSIDriveInfo"
+          }
+        }
+      }
+    },
+    "getDirectCSIVolumeListResponse": {
+      "type": "object",
+      "properties": {
+        "volumes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/directCSIVolumeInfo"
+          }
         }
       }
     },
@@ -6894,6 +7033,76 @@ func init() {
         }
       }
     },
+    "/direct-csi/drives": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get direct-csi drives list",
+        "operationId": "GetDirectCSIDriveList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "nodes",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "drives",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/getDirectCSIDriveListResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/direct-csi/volumes": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get direct-csi volumes list",
+        "operationId": "GetDirectCSIVolumeList",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "nodes",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "drives",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/getDirectCSIVolumeListResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/get-parity/{nodes}/{disksPerNode}": {
       "get": {
         "tags": [
@@ -9793,6 +10002,53 @@ func init() {
         }
       }
     },
+    "directCSIDriveInfo": {
+      "type": "object",
+      "properties": {
+        "allocated": {
+          "type": "number",
+          "format": "int64"
+        },
+        "capacity": {
+          "type": "number",
+          "format": "int64"
+        },
+        "drive": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "node": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "volumes": {
+          "type": "number",
+          "format": "int64"
+        }
+      }
+    },
+    "directCSIVolumeInfo": {
+      "type": "object",
+      "properties": {
+        "capacity": {
+          "type": "number",
+          "format": "int64"
+        },
+        "drive": {
+          "type": "string"
+        },
+        "node": {
+          "type": "string"
+        },
+        "volume": {
+          "type": "string"
+        }
+      }
+    },
     "encryptionConfiguration": {
       "allOf": [
         {
@@ -9948,6 +10204,28 @@ func init() {
         "validity": {
           "type": "integer",
           "format": "int32"
+        }
+      }
+    },
+    "getDirectCSIDriveListResponse": {
+      "type": "object",
+      "properties": {
+        "drives": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/directCSIDriveInfo"
+          }
+        }
+      }
+    },
+    "getDirectCSIVolumeListResponse": {
+      "type": "object",
+      "properties": {
+        "volumes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/directCSIVolumeInfo"
+          }
         }
       }
     },

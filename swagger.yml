@@ -2077,6 +2077,56 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+  
+  /direct-csi/drives:
+    get:
+      summary: Get direct-csi drives list
+      operationId: GetDirectCSIDriveList
+      parameters:
+        - name: nodes
+          in: query
+          required: false
+          type: string
+        - name: drives
+          in: query
+          required: false
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/getDirectCSIDriveListResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+  
+  /direct-csi/volumes:
+    get:
+      summary: Get direct-csi volumes list
+      operationId: GetDirectCSIVolumeList
+      parameters:
+        - name: nodes
+          in: query
+          required: false
+          type: string
+        - name: drives
+          in: query
+          required: false
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/getDirectCSIVolumeListResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
 
 definitions:
   accountChangePasswordRequest:
@@ -2510,7 +2560,7 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/bucketReplicationRule"
-    # missimng
+    # missing
     #  "Filter": {
     #   "And": {},
     #   "Tag": {}
@@ -3949,4 +3999,54 @@ definitions:
       plan:
         type: string
       expires_at:
+        type: string
+
+  getDirectCSIDriveListResponse:
+    type: object
+    properties:
+      drives:
+        type: array
+        items:
+          $ref: "#/definitions/directCSIDriveInfo"
+
+  directCSIDriveInfo:
+    type: object
+    properties:
+      drive:
+        type: string
+      capacity:
+        type: number
+        format: int64
+      allocated:
+        type: number
+        format: int64
+      volumes:
+        type: number
+        format: int64
+      node:
+        type: string
+      status:
+        type: string
+      message:
+        type: string
+      
+  getDirectCSIVolumeListResponse:
+    type: object
+    properties:
+      volumes:
+        type: array
+        items:
+          $ref: "#/definitions/directCSIVolumeInfo"
+  
+  directCSIVolumeInfo:
+    type: object
+    properties:
+      volume:
+        type: string
+      capacity:
+        type: number
+        format: int64
+      node:
+        type: string
+      drive:
         type: string
