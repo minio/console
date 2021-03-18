@@ -2612,8 +2612,6 @@ definitions:
           type: string
       accountAccessKey:
         type: string
-      accountSecretKey:
-        type: string
   startProfilingItem:
     type: object
     properties:

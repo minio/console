@@ -44,9 +44,6 @@ type Principal struct {
 	// account access key
 	AccountAccessKey string `json:"accountAccessKey,omitempty"`
 
-	// account secret key
-	AccountSecretKey string `json:"accountSecretKey,omitempty"`
-
 	// actions
 	Actions []string `json:"actions"`
 }

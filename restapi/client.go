@@ -242,7 +242,6 @@ type ConsoleCredentialsI interface {
 	Get() (credentials.Value, error)
 	Expire()
 	GetAccountAccessKey() string
-	GetAccountSecretKey() string
 	GetActions() []string
 }
 
@@ -250,7 +249,6 @@ type ConsoleCredentialsI interface {
 type consoleCredentials struct {
 	consoleCredentials *credentials.Credentials
 	accountAccessKey   string
-	accountSecretKey   string
 	actions            []string
 }
 
@@ -260,10 +258,6 @@ func (c consoleCredentials) GetActions() []string {
 
 func (c consoleCredentials) GetAccountAccessKey() string {
 	return c.accountAccessKey
-}
-
-func (c consoleCredentials) GetAccountSecretKey() string {
-	return c.accountSecretKey
 }
 
 // implements *Login.Get()

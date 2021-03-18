@@ -48,7 +48,6 @@ func Test_changePassword(t *testing.T) {
 				ctx:    context.Background(),
 				session: &models.Principal{
 					AccountAccessKey: "TESTTEST",
-					AccountSecretKey: "TESTTEST",
 				},
 				currentSecretKey: "TESTTEST",
 				newSecretKey:     "TESTTEST2",
@@ -66,7 +65,6 @@ func Test_changePassword(t *testing.T) {
 				ctx:    context.Background(),
 				session: &models.Principal{
 					AccountAccessKey: "TESTTEST",
-					AccountSecretKey: "TESTTEST",
 				},
 				currentSecretKey: "TESTTEST",
 				newSecretKey:     "TESTTEST2",
@@ -85,7 +83,6 @@ func Test_changePassword(t *testing.T) {
 				ctx:    context.Background(),
 				session: &models.Principal{
 					AccountAccessKey: "TESTTEST",
-					AccountSecretKey: "TESTTEST123",
 				},
 				currentSecretKey: "TESTTEST",
 				newSecretKey:     "TESTTEST2",
@@ -103,7 +100,7 @@ func Test_changePassword(t *testing.T) {
 			if tt.mock != nil {
 				tt.mock()
 			}
-			if err := changePassword(tt.args.ctx, tt.args.client, tt.args.session, tt.args.currentSecretKey, tt.args.newSecretKey); (err != nil) != tt.wantErr {
+			if err := changePassword(tt.args.ctx, tt.args.client, tt.args.session, tt.args.newSecretKey); (err != nil) != tt.wantErr {
 				t.Errorf("changePassword() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
