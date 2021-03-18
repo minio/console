@@ -187,7 +187,7 @@ const ViewBucket = ({
   const [replicationRules, setReplicationRules] = useState<
     BucketReplicationRule[]
   >([]);
-  const [policy] = useState<
+  const [bucketPolicy, setBucketPolicy] = useState<
       BucketReplicationRule[]
       >([]);
   const [loadingBucket, setLoadingBucket] = useState<boolean>(true);
@@ -263,6 +263,22 @@ const ViewBucket = ({
         });
     }
   }, [loadingReplication, setErrorSnackMessage, bucketName]);
+
+  /*useEffect(() => {
+    if (loadingPolicies) {
+      api
+          .invoke("GET", `/api/v1/buckets/${bucketName}/policies`)
+          .then((res: BucketPolicy) => {
+            const r = res.rules ? res.rules : [];
+            setBucketPolicy(r);
+            setLoadingPolicy(false);
+          })
+          .catch((err: any) => {
+            setErrorSnackMessage(err);
+            setLoadingPolicy(false);
+          });
+    }
+  }, [loadingPolicy, setErrorSnackMessage, bucketName]);*/
 
   useEffect(() => {
     if (loadingSize) {

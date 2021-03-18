@@ -62,7 +62,7 @@ func (o *ListPoliciesWithBucketURL) SetBasePath(bp string) {
 func (o *ListPoliciesWithBucketURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/policy/{bucket}"
+	var _path = "/bucket-policy/{bucket}"
 
 	bucket := o.Bucket
 	if bucket != "" {

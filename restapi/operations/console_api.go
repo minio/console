@@ -1209,7 +1209,7 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/policy/{bucket}"] = admin_api.NewListPoliciesWithBucket(o.context, o.AdminAPIListPoliciesWithBucketHandler)
+	o.handlers["GET"]["/bucket-policy/{bucket}"] = admin_api.NewListPoliciesWithBucket(o.context, o.AdminAPIListPoliciesWithBucketHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
