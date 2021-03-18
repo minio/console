@@ -213,15 +213,6 @@ const ListObjects = ({
             This operation is taking longer than expected... (
             {Math.ceil(timeDelta / 1000)}s)
           </Typography>
-          <Button
-            onClick={() => {
-              if (loadingPromise != null) {
-                // loadingPromise.cancel();
-              }
-            }}
-          >
-            Cancel
-          </Button>
         </React.Fragment>
       );
     } else if (timeDelta / 1000 >= 3) {
