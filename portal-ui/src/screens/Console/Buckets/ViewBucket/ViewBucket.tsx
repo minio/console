@@ -187,9 +187,6 @@ const ViewBucket = ({
   const [replicationRules, setReplicationRules] = useState<
     BucketReplicationRule[]
   >([]);
-  const [bucketPolicy, setBucketPolicy] = useState<
-      BucketReplicationRule[]
-      >([]);
   const [loadingBucket, setLoadingBucket] = useState<boolean>(true);
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
   const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
@@ -263,22 +260,6 @@ const ViewBucket = ({
         });
     }
   }, [loadingReplication, setErrorSnackMessage, bucketName]);
-
-  /*useEffect(() => {
-    if (loadingPolicies) {
-      api
-          .invoke("GET", `/api/v1/buckets/${bucketName}/policies`)
-          .then((res: BucketPolicy) => {
-            const r = res.rules ? res.rules : [];
-            setBucketPolicy(r);
-            setLoadingPolicy(false);
-          })
-          .catch((err: any) => {
-            setErrorSnackMessage(err);
-            setLoadingPolicy(false);
-          });
-    }
-  }, [loadingPolicy, setErrorSnackMessage, bucketName]);*/
 
   useEffect(() => {
     if (loadingSize) {
@@ -569,7 +550,6 @@ const ViewBucket = ({
               >
                 <Tab label="Events" {...a11yProps(0)} />
                 <Tab label="Replication" {...a11yProps(1)} />
-                <Tab label="Policies" {...a11yProps(2)} />
               </Tabs>
             </Grid>
             <Grid item xs={6} className={classes.actionsTray}>
@@ -646,19 +626,6 @@ const ViewBucket = ({
                 records={replicationRules}
                 entityName="Replication Rules"
                 idField="id"
-              />
-            </TabPanel>
-            <TabPanel index={2} value={curTab}>
-              <TableWrapper
-                  itemActions={tableActions}
-                  columns={[
-                    { label: "Name", elementKey: "id" },
-                    { label: "Option", elementKey: "option"}
-                  ]}
-                  isLoading={loadingEvents}
-                  records={replicationRules}
-                  entityName="Policies"
-                  idField="id"
               />
             </TabPanel>
           </Grid>
