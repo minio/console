@@ -111,7 +111,6 @@ func getListPoliciesWithBucketResponse(session *models.Principal, bucket string)
 // to []*models.Policy by iterating over each key in policyRawMap and
 // then using Unmarshal on the raw bytes to create a *models.Policy
 func listPoliciesWithBucket(ctx context.Context, bucket string, client MinioAdmin) ([]*models.Policy, error) {
-	//policy := client.getBucketPolicy(ctx, bucket)
 	policyMap, err := client.listPolicies(ctx)
 	var policies []*models.Policy
 	if err != nil {
