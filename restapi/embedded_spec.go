@@ -203,6 +203,49 @@ func init() {
         }
       }
     },
+    "/bucket-policy/{bucket}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "List Policies With Given Bucket",
+        "operationId": "ListPoliciesWithBucket",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listPoliciesResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets": {
       "get": {
         "tags": [
@@ -5843,6 +5886,49 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/setNotificationEndpointResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/bucket-policy/{bucket}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "List Policies With Given Bucket",
+        "operationId": "ListPoliciesWithBucket",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listPoliciesResponse"
             }
           },
           "default": {

@@ -202,6 +202,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIListPoliciesHandler: admin_api.ListPoliciesHandlerFunc(func(params admin_api.ListPoliciesParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListPolicies has not yet been implemented")
 		}),
+		AdminAPIListPoliciesWithBucketHandler: admin_api.ListPoliciesWithBucketHandlerFunc(func(params admin_api.ListPoliciesWithBucketParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.ListPoliciesWithBucket has not yet been implemented")
+		}),
 		UserAPIListRemoteBucketsHandler: user_api.ListRemoteBucketsHandlerFunc(func(params user_api.ListRemoteBucketsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.ListRemoteBuckets has not yet been implemented")
 		}),
@@ -478,6 +481,8 @@ type ConsoleAPI struct {
 	UserAPIListObjectsHandler user_api.ListObjectsHandler
 	// AdminAPIListPoliciesHandler sets the operation handler for the list policies operation
 	AdminAPIListPoliciesHandler admin_api.ListPoliciesHandler
+	// AdminAPIListPoliciesWithBucketHandler sets the operation handler for the list policies with bucket operation
+	AdminAPIListPoliciesWithBucketHandler admin_api.ListPoliciesWithBucketHandler
 	// UserAPIListRemoteBucketsHandler sets the operation handler for the list remote buckets operation
 	UserAPIListRemoteBucketsHandler user_api.ListRemoteBucketsHandler
 	// AdminAPIListTenantsHandler sets the operation handler for the list tenants operation
@@ -779,6 +784,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIListPoliciesHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListPoliciesHandler")
+	}
+	if o.AdminAPIListPoliciesWithBucketHandler == nil {
+		unregistered = append(unregistered, "admin_api.ListPoliciesWithBucketHandler")
 	}
 	if o.UserAPIListRemoteBucketsHandler == nil {
 		unregistered = append(unregistered, "user_api.ListRemoteBucketsHandler")
@@ -1198,6 +1206,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/policies"] = admin_api.NewListPolicies(o.context, o.AdminAPIListPoliciesHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/bucket-policy/{bucket}"] = admin_api.NewListPoliciesWithBucket(o.context, o.AdminAPIListPoliciesWithBucketHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
