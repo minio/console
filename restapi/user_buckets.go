@@ -207,9 +207,16 @@ func getAddBucketReplicationdResponse(session *models.Principal, bucketName stri
 	return nil
 }
 
+type VersionState string
+
+const (
+	VersionEnable  VersionState = "enable"
+	VersionSuspend              = "suspend"
+)
+
 // removeBucket deletes a bucket
-func doSetVersioning(client MCClient, state string) error {
-	err := client.setVersioning(context.Background(), state)
+func doSetVersioning(client MCClient, state VersionState) error {
+	err := client.setVersioning(context.Background(), string(state))
 	if err != nil {
 		log.Println("error setting versioning for bucket:", err.Cause)
 		return err.Cause
@@ -227,10 +234,10 @@ func setBucketVersioningResponse(session *models.Principal, bucketName string, p
 	// defining the client to be used
 	amcClient := mcClient{client: s3Client}
 
-	versioningState := "suspend"
+	var versioningState VersionState = VersionSuspend
 
-	if params.Body.Versioning == true {
-		versioningState = "enable"
+	if params.Body.Versioning {
+		versioningState = VersionEnable
 	}
 
 	err2 := doSetVersioning(amcClient, versioningState)

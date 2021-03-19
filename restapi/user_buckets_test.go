@@ -27,7 +27,6 @@ import (
 
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
-	mc "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/sse"
@@ -47,7 +46,6 @@ var minioGetBucketEncryptionMock func(ctx context.Context, bucketName string) (*
 var minioSetObjectLockConfigMock func(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error
 var minioGetObjectLockConfigMock func(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error)
 var minioSetVersioningMock func(ctx context.Context, state string) *probe.Error
-var newS3BucketClientMock func(claims *models.Principal, bucketName string, prefix string) (*mc.S3Client, error)
 
 // Define a mock struct of minio Client interface implementation
 type minioClientMock struct {
@@ -100,10 +98,6 @@ func (mc minioClientMock) getBucketObjectLockConfig(ctx context.Context, bucketN
 
 func (c s3ClientMock) setVersioning(ctx context.Context, state string) *probe.Error {
 	return minioSetVersioningMock(ctx, state)
-}
-
-func (mc minioClientMock) newS3BucketClient(claims *models.Principal, bucketName string, prefix string) (*mc.S3Client, error) {
-	return newS3BucketClientMock(claims, bucketName, prefix)
 }
 
 var minioAccountInfoMock func(ctx context.Context) (madmin.AccountInfo, error)
@@ -785,7 +779,7 @@ func Test_SetBucketVersioning(t *testing.T) {
 	minClient := s3ClientMock{}
 	type args struct {
 		ctx               context.Context
-		state             string
+		state             VersionState
 		bucketName        string
 		client            s3ClientMock
 		setVersioningFunc func(ctx context.Context, state string) *probe.Error
@@ -799,7 +793,7 @@ func Test_SetBucketVersioning(t *testing.T) {
 			name: "Set Bucket Version Success",
 			args: args{
 				ctx:        ctx,
-				state:      "enable",
+				state:      VersionEnable,
 				bucketName: "test",
 				client:     minClient,
 				setVersioningFunc: func(ctx context.Context, state string) *probe.Error {
@@ -812,7 +806,7 @@ func Test_SetBucketVersioning(t *testing.T) {
 			name: "Set Bucket Version Error",
 			args: args{
 				ctx:        ctx,
-				state:      "enable",
+				state:      VersionEnable,
 				bucketName: "test",
 				client:     minClient,
 				setVersioningFunc: func(ctx context.Context, state string) *probe.Error {
