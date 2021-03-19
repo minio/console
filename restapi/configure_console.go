@@ -139,6 +139,8 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerBucketQuotaHandlers(api)
 	// Register Account handlers
 	registerAccountHandlers(api)
+	// Direct CSI handlers
+	registerDirectCSIHandlers(api)
 
 	api.PreServerShutdown = func() {}
 
