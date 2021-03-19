@@ -27,34 +27,31 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// Principal principal
+// DirectCSIVolumeInfo direct c s i volume info
 //
-// swagger:model principal
-type Principal struct {
+// swagger:model directCSIVolumeInfo
+type DirectCSIVolumeInfo struct {
 
-	// s t s access key ID
-	STSAccessKeyID string `json:"STSAccessKeyID,omitempty"`
+	// capacity
+	Capacity int64 `json:"capacity,omitempty"`
 
-	// s t s secret access key
-	STSSecretAccessKey string `json:"STSSecretAccessKey,omitempty"`
+	// drive
+	Drive string `json:"drive,omitempty"`
 
-	// s t s session token
-	STSSessionToken string `json:"STSSessionToken,omitempty"`
+	// node
+	Node string `json:"node,omitempty"`
 
-	// account access key
-	AccountAccessKey string `json:"accountAccessKey,omitempty"`
-
-	// actions
-	Actions []string `json:"actions"`
+	// volume
+	Volume string `json:"volume,omitempty"`
 }
 
-// Validate validates this principal
-func (m *Principal) Validate(formats strfmt.Registry) error {
+// Validate validates this direct c s i volume info
+func (m *DirectCSIVolumeInfo) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *Principal) MarshalBinary() ([]byte, error) {
+func (m *DirectCSIVolumeInfo) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -62,8 +59,8 @@ func (m *Principal) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *Principal) UnmarshalBinary(b []byte) error {
-	var res Principal
+func (m *DirectCSIVolumeInfo) UnmarshalBinary(b []byte) error {
+	var res DirectCSIVolumeInfo
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

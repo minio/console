@@ -93,7 +93,7 @@ func login(credentials ConsoleCredentialsI) (*string, error) {
 		return nil, err
 	}
 	// if we made it here, the consoleCredentials work, generate a jwt with claims
-	token, err := auth.NewEncryptedTokenForClient(&tokens, credentials.GetAccountAccessKey(), credentials.GetAccountSecretKey(), credentials.GetActions())
+	token, err := auth.NewEncryptedTokenForClient(&tokens, credentials.GetAccountAccessKey(), credentials.GetActions())
 	if err != nil {
 		log.Println("error authenticating user", err)
 		return nil, errInvalidCredentials
@@ -123,7 +123,6 @@ func getConsoleCredentials(ctx context.Context, accessKey, secretKey string) (*c
 	cCredentials := &consoleCredentials{
 		consoleCredentials: creds,
 		accountAccessKey:   accessKey,
-		accountSecretKey:   secretKey,
 	}
 	tokens, err := cCredentials.Get()
 	if err != nil {
@@ -278,7 +277,6 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 		token, err := login(&consoleCredentials{
 			consoleCredentials: userCredentials,
 			accountAccessKey:   "",
-			accountSecretKey:   "",
 			actions:            actions,
 		})
 		if err != nil {

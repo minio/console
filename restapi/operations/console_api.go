@@ -157,6 +157,12 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIGetBucketVersioningHandler: user_api.GetBucketVersioningHandlerFunc(func(params user_api.GetBucketVersioningParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetBucketVersioning has not yet been implemented")
 		}),
+		AdminAPIGetDirectCSIDriveListHandler: admin_api.GetDirectCSIDriveListHandlerFunc(func(params admin_api.GetDirectCSIDriveListParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.GetDirectCSIDriveList has not yet been implemented")
+		}),
+		AdminAPIGetDirectCSIVolumeListHandler: admin_api.GetDirectCSIVolumeListHandlerFunc(func(params admin_api.GetDirectCSIVolumeListParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.GetDirectCSIVolumeList has not yet been implemented")
+		}),
 		AdminAPIGetMaxAllocatableMemHandler: admin_api.GetMaxAllocatableMemHandlerFunc(func(params admin_api.GetMaxAllocatableMemParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetMaxAllocatableMem has not yet been implemented")
 		}),
@@ -195,6 +201,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		AdminAPIListPoliciesHandler: admin_api.ListPoliciesHandlerFunc(func(params admin_api.ListPoliciesParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListPolicies has not yet been implemented")
+		}),
+		AdminAPIListPoliciesWithBucketHandler: admin_api.ListPoliciesWithBucketHandlerFunc(func(params admin_api.ListPoliciesWithBucketParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.ListPoliciesWithBucket has not yet been implemented")
 		}),
 		UserAPIListRemoteBucketsHandler: user_api.ListRemoteBucketsHandlerFunc(func(params user_api.ListRemoteBucketsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.ListRemoteBuckets has not yet been implemented")
@@ -442,6 +451,10 @@ type ConsoleAPI struct {
 	UserAPIGetBucketRetentionConfigHandler user_api.GetBucketRetentionConfigHandler
 	// UserAPIGetBucketVersioningHandler sets the operation handler for the get bucket versioning operation
 	UserAPIGetBucketVersioningHandler user_api.GetBucketVersioningHandler
+	// AdminAPIGetDirectCSIDriveListHandler sets the operation handler for the get direct c s i drive list operation
+	AdminAPIGetDirectCSIDriveListHandler admin_api.GetDirectCSIDriveListHandler
+	// AdminAPIGetDirectCSIVolumeListHandler sets the operation handler for the get direct c s i volume list operation
+	AdminAPIGetDirectCSIVolumeListHandler admin_api.GetDirectCSIVolumeListHandler
 	// AdminAPIGetMaxAllocatableMemHandler sets the operation handler for the get max allocatable mem operation
 	AdminAPIGetMaxAllocatableMemHandler admin_api.GetMaxAllocatableMemHandler
 	// AdminAPIGetParityHandler sets the operation handler for the get parity operation
@@ -468,6 +481,8 @@ type ConsoleAPI struct {
 	UserAPIListObjectsHandler user_api.ListObjectsHandler
 	// AdminAPIListPoliciesHandler sets the operation handler for the list policies operation
 	AdminAPIListPoliciesHandler admin_api.ListPoliciesHandler
+	// AdminAPIListPoliciesWithBucketHandler sets the operation handler for the list policies with bucket operation
+	AdminAPIListPoliciesWithBucketHandler admin_api.ListPoliciesWithBucketHandler
 	// UserAPIListRemoteBucketsHandler sets the operation handler for the list remote buckets operation
 	UserAPIListRemoteBucketsHandler user_api.ListRemoteBucketsHandler
 	// AdminAPIListTenantsHandler sets the operation handler for the list tenants operation
@@ -725,6 +740,12 @@ func (o *ConsoleAPI) Validate() error {
 	if o.UserAPIGetBucketVersioningHandler == nil {
 		unregistered = append(unregistered, "user_api.GetBucketVersioningHandler")
 	}
+	if o.AdminAPIGetDirectCSIDriveListHandler == nil {
+		unregistered = append(unregistered, "admin_api.GetDirectCSIDriveListHandler")
+	}
+	if o.AdminAPIGetDirectCSIVolumeListHandler == nil {
+		unregistered = append(unregistered, "admin_api.GetDirectCSIVolumeListHandler")
+	}
 	if o.AdminAPIGetMaxAllocatableMemHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetMaxAllocatableMemHandler")
 	}
@@ -763,6 +784,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIListPoliciesHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListPoliciesHandler")
+	}
+	if o.AdminAPIListPoliciesWithBucketHandler == nil {
+		unregistered = append(unregistered, "admin_api.ListPoliciesWithBucketHandler")
 	}
 	if o.UserAPIListRemoteBucketsHandler == nil {
 		unregistered = append(unregistered, "user_api.ListRemoteBucketsHandler")
@@ -1125,6 +1149,14 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/direct-csi/drives"] = admin_api.NewGetDirectCSIDriveList(o.context, o.AdminAPIGetDirectCSIDriveListHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/direct-csi/volumes"] = admin_api.NewGetDirectCSIVolumeList(o.context, o.AdminAPIGetDirectCSIVolumeListHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/cluster/max-allocatable-memory"] = admin_api.NewGetMaxAllocatableMem(o.context, o.AdminAPIGetMaxAllocatableMemHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -1174,6 +1206,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/policies"] = admin_api.NewListPolicies(o.context, o.AdminAPIListPoliciesHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/bucket-policy/{bucket}"] = admin_api.NewListPoliciesWithBucket(o.context, o.AdminAPIListPoliciesWithBucketHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
