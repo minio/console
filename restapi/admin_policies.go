@@ -106,7 +106,6 @@ func getListPoliciesWithBucketResponse(session *models.Principal, bucket string)
 	return listPoliciesResponse, nil
 }
 
-
 // listPoliciesWithBucket calls MinIO server to list all policy names present on the server that apply to a particular bucket.
 // listPoliciesWithBucket() converts the map[string][]byte returned by client.listPolicies()
 // to []*models.Policy by iterating over each key in policyRawMap and
