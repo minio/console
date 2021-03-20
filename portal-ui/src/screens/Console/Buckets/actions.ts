@@ -17,6 +17,7 @@
 export const ADD_BUCKET_OPEN = "ADD_BUCKET_OPEN";
 export const ADD_BUCKET_NAME = "ADD_BUCKET_NAME";
 export const ADD_BUCKET_VERSIONED = "ADD_BUCKET_VERSIONED";
+export const ADD_BUCKET_LOCKING = "ADD_BUCKET_LOCKING";
 export const ADD_BUCKET_QUOTA = "ADD_BUCKET_QUOTA";
 export const ADD_BUCKET_QUOTA_TYPE = "ADD_BUCKET_QUOTA_TYPE";
 export const ADD_BUCKET_QUOTA_SIZE = "ADD_BUCKET_QUOTA_SIZE";
@@ -40,6 +41,11 @@ interface AddBucketNameAction {
 interface AddBucketVersionedAction {
   type: typeof ADD_BUCKET_VERSIONED;
   versioned: boolean;
+}
+
+interface AddBucketLockingAction {
+  type: typeof ADD_BUCKET_LOCKING;
+  locking: boolean;
 }
 
 interface AddBucketQuotaAction {
@@ -88,6 +94,7 @@ export type BucketActionTypes =
   | AddBucketOpenAction
   | AddBucketNameAction
   | AddBucketVersionedAction
+  | AddBucketLockingAction
   | AddBucketQuotaAction
   | AddBucketQuotaTypeAction
   | AddBucketQuotaSizeAction
@@ -111,10 +118,17 @@ export function addBucketName(name: string) {
   };
 }
 
-export function addBucketVersioned(versioned: boolean) {
+export function addBucketVersioning(versioned: boolean) {
   return {
     type: ADD_BUCKET_VERSIONED,
     versioned: versioned,
+  };
+}
+
+export function addBucketEnableObjectLocking(locking: boolean) {
+  return {
+    type: ADD_BUCKET_LOCKING,
+    locking: locking,
   };
 }
 

@@ -88,6 +88,7 @@ export interface RetentionRequest {
 export interface MakeBucketRequest {
   name: string;
   versioning: boolean;
+  locking: boolean;
   quota?: QuotaRequest;
   retention?: RetentionRequest;
 }

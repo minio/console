@@ -4400,6 +4400,9 @@ func init() {
         "name"
       ],
       "properties": {
+        "locking": {
+          "type": "boolean"
+        },
         "name": {
           "type": "string"
         },
@@ -10726,6 +10729,9 @@ func init() {
         "name"
       ],
       "properties": {
+        "locking": {
+          "type": "boolean"
+        },
         "name": {
           "type": "string"
         },

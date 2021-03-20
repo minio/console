@@ -240,10 +240,8 @@ func setBucketVersioningResponse(session *models.Principal, bucketName string, p
 		versioningState = VersionEnable
 	}
 
-	err2 := doSetVersioning(amcClient, versioningState)
-
-	if err2 != nil {
-		return prepareError(err2)
+	if err := doSetVersioning(amcClient, versioningState); err != nil {
+		return prepareError(err)
 	}
 	return nil
 }
@@ -376,7 +374,12 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 
-	if err := makeBucket(ctx, minioClient, *br.Name, br.Versioning); err != nil {
+	// if we need retention, then object locking needs to be enabled
+	if br.Retention != nil {
+		br.Locking = true
+	}
+
+	if err := makeBucket(ctx, minioClient, *br.Name, br.Locking); err != nil {
 		return prepareError(err)
 	}
 
@@ -389,6 +392,21 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 			}
 		}
 	}()
+
+	// enable versioning if indicated or retention enabled
+	if br.Versioning || br.Retention != nil {
+		s3Client, err := newS3BucketClient(session, *br.Name, "")
+		if err != nil {
+			return prepareError(err)
+		}
+		// create a mc S3Client interface implementation
+		// defining the client to be used
+		amcClient := mcClient{client: s3Client}
+
+		if err = doSetVersioning(amcClient, VersionEnable); err != nil {
+			return prepareError(err)
+		}
+	}
 
 	// if it has support for
 	if br.Quota != nil && br.Quota.Enabled != nil && *br.Quota.Enabled {

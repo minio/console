@@ -16,7 +16,7 @@
 
 import React from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { InputLabel, Switch, Tooltip } from "@material-ui/core";
+import { InputLabel, Switch, Tooltip, Typography } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import { actionsTray, fieldBasic } from "../common/styleLibrary";
 import HelpIcon from "../../../../../icons/HelpIcon";
@@ -30,6 +30,7 @@ interface IFormSwitch {
   name: string;
   disabled?: boolean;
   tooltip?: string;
+  description?: string;
   index?: number;
   indicatorLabels?: string[];
   checked: boolean;
@@ -99,13 +100,15 @@ const styles = (theme: Theme) =>
         },
       },
     },
+    divContainer: {
+      borderBottom: "#9c9c9c 1px solid",
+      paddingBottom: 14,
+      marginBottom: 20,
+    },
     wrapperContainer: {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      borderBottom: "#9c9c9c 1px solid",
-      paddingBottom: 14,
-      marginBottom: 20,
       maxWidth: 840,
       margin: "0px auto",
     },
@@ -117,6 +120,10 @@ const styles = (theme: Theme) =>
     },
     switchContainer: {
       display: "flex",
+    },
+    fieldDescription: {
+      marginTop: 4,
+      color: "#999999",
     },
     ...actionsTray,
     ...fieldBasic,
@@ -179,6 +186,7 @@ const FormSwitchWrapper = ({
   disabled = false,
   switchOnly = false,
   tooltip = "",
+  description = "",
   indicatorLabels = [],
   containerClass = "",
   classes,
@@ -212,8 +220,8 @@ const FormSwitchWrapper = ({
   }
 
   return (
-    <React.Fragment>
-      <Grid item xs={12} className={`${classes.wrapperContainer}`}>
+    <div className={classes.divContainer}>
+      <Grid item xs={12} className={classes.wrapperContainer}>
         {label !== "" && (
           <InputLabel htmlFor={id} className={classes.inputLabel}>
             <span>{label}</span>
@@ -230,7 +238,14 @@ const FormSwitchWrapper = ({
         )}
         {switchComponent}
       </Grid>
-    </React.Fragment>
+      {description !== "" && (
+        <Grid item xs={10}>
+          <Typography component="p" className={classes.fieldDescription}>
+            {description}
+          </Typography>
+        </Grid>
+      )}
+    </div>
   );
 };
 

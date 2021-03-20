@@ -1,4 +1,5 @@
 // This file is part of MinIO Console Server
+// This file is part of MinIO Console Server
 // Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -16,7 +17,7 @@
 
 import React, { useEffect, useState } from "react";
 import Grid from "@material-ui/core/Grid";
-import { Button, LinearProgress } from "@material-ui/core";
+import { Button, LinearProgress, Typography } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import api from "../../../../common/api";
@@ -28,16 +29,17 @@ import { factorForDropdown, getBytes } from "../../../../common/utils";
 import { AppState } from "../../../../store";
 import { connect } from "react-redux";
 import {
+  addBucketEnableObjectLocking,
   addBucketName,
   addBucketQuota,
   addBucketQuotaSize,
   addBucketQuotaType,
   addBucketQuotaUnit,
-  addBucketVersioned,
   addBucketRetention,
   addBucketRetentionMode,
   addBucketRetentionUnit,
   addBucketRetentionValidity,
+  addBucketVersioning,
 } from "../actions";
 import { useDebounce } from "use-debounce";
 import { MakeBucketRequest } from "../types";
@@ -71,7 +73,8 @@ interface IAddBucketProps {
   open: boolean;
   closeModalAndRefresh: (refresh: boolean) => void;
   addBucketName: typeof addBucketName;
-  addBucketVersioned: typeof addBucketVersioned;
+  addBucketVersioned: typeof addBucketVersioning;
+  enableObjectLocking: typeof addBucketEnableObjectLocking;
   addBucketQuota: typeof addBucketQuota;
   addBucketQuotaType: typeof addBucketQuotaType;
   addBucketQuotaSize: typeof addBucketQuotaSize;
@@ -82,12 +85,13 @@ interface IAddBucketProps {
   addBucketRetentionValidity: typeof addBucketRetentionValidity;
   setModalError: typeof setModalErrorSnackMessage;
   bucketName: string;
-  versioned: boolean;
-  enableQuota: boolean;
+  versioningEnabled: boolean;
+  lockingEnabled: boolean;
+  quotaEnabled: boolean;
   quotaType: string;
   quotaSize: string;
   quotaUnit: string;
-  enableRetention: boolean;
+  retentionEnabled: boolean;
   retentionMode: string;
   retentionUnit: string;
   retentionValidity: number;
@@ -99,6 +103,7 @@ const AddBucket = ({
   closeModalAndRefresh,
   addBucketName,
   addBucketVersioned,
+  enableObjectLocking,
   addBucketQuota,
   addBucketQuotaType,
   addBucketQuotaSize,
@@ -109,18 +114,22 @@ const AddBucket = ({
   addBucketRetentionValidity,
   setModalError,
   bucketName,
-  versioned,
-  enableQuota,
+  versioningEnabled,
+  lockingEnabled,
+  quotaEnabled,
   quotaType,
   quotaSize,
   quotaUnit,
-  enableRetention,
+  retentionEnabled,
   retentionMode,
   retentionUnit,
   retentionValidity,
 }: IAddBucketProps) => {
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [sendEnabled, setSendEnabled] = useState<boolean>(false);
+  const [lockingFieldDisabled, setLockingFieldDisabled] = useState<boolean>(
+    false
+  );
 
   const addRecord = (event: React.FormEvent) => {
     event.preventDefault();
@@ -131,10 +140,11 @@ const AddBucket = ({
 
     let request: MakeBucketRequest = {
       name: bucketName,
-      versioning: versioned,
+      versioning: versioningEnabled,
+      locking: lockingEnabled,
     };
 
-    if (enableQuota) {
+    if (quotaEnabled) {
       const amount = getBytes(quotaSize, quotaUnit, false);
       request.quota = {
         enabled: true,
@@ -143,7 +153,7 @@ const AddBucket = ({
       };
     }
 
-    if (enableRetention) {
+    if (retentionEnabled) {
       request.retention = {
         mode: retentionMode,
         unit: retentionUnit,
@@ -174,6 +184,7 @@ const AddBucket = ({
   const resetForm = () => {
     addBucketName("");
     addBucketVersioned(false);
+    enableObjectLocking(false);
     addBucketQuota(false);
     addBucketQuotaType("hard");
     addBucketQuotaSize("1");
@@ -191,21 +202,29 @@ const AddBucket = ({
       valid = true;
     }
 
-    if (enableQuota && valid) {
+    if (quotaEnabled && valid) {
       if (quotaSize.trim() === "" || parseInt(quotaSize) === 0) {
         valid = false;
       }
     }
 
-    if (!versioned || !enableRetention) {
+    if (!versioningEnabled || !retentionEnabled) {
       addBucketRetention(false);
       addBucketRetentionMode("compliance");
       addBucketRetentionUnit("days");
       addBucketRetentionValidity(1);
     }
 
+    if (retentionEnabled) {
+      // if retention is enabled, then objec locking should be enabled as well
+      enableObjectLocking(true);
+      setLockingFieldDisabled(true);
+    } else {
+      setLockingFieldDisabled(false);
+    }
+
     if (
-      enableRetention &&
+      retentionEnabled &&
       (Number.isNaN(retentionValidity) || retentionValidity < 1)
     ) {
       valid = false;
@@ -214,12 +233,13 @@ const AddBucket = ({
     setSendEnabled(valid);
   }, [
     bucketName,
-    versioned,
+    retentionEnabled,
+    lockingEnabled,
     quotaType,
     quotaSize,
     quotaUnit,
-    enableQuota,
-    enableRetention,
+    quotaEnabled,
+    retentionEnabled,
     addBucketRetention,
     addBucketRetentionMode,
     addBucketRetentionUnit,
@@ -258,15 +278,41 @@ const AddBucket = ({
               />
             </Grid>
             <Grid item xs={12}>
+              <Typography component="h6" variant="h6">
+                Features
+              </Typography>
+              <hr />
+            </Grid>
+            <Grid item xs={12}>
               <FormSwitchWrapper
                 value="versioned"
                 id="versioned"
                 name="versioned"
-                checked={versioned}
+                checked={versioningEnabled}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   addBucketVersioned(event.target.checked);
                 }}
+                description={
+                  "Allows to keep multiple versions of the same object under the same key."
+                }
                 label={"Versioning"}
+                indicatorLabels={["On", "Off"]}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormSwitchWrapper
+                value="locking"
+                id="locking"
+                name="locking"
+                disabled={lockingFieldDisabled}
+                checked={lockingEnabled}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  enableObjectLocking(event.target.checked);
+                }}
+                label={"Object Locking"}
+                description={
+                  "Required to support retention and legal hold. Can only be enabled at bucket creation."
+                }
                 indicatorLabels={["On", "Off"]}
               />
             </Grid>
@@ -275,15 +321,16 @@ const AddBucket = ({
                 value="bucket_quota"
                 id="bucket_quota"
                 name="bucket_quota"
-                checked={enableQuota}
+                checked={quotaEnabled}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   addBucketQuota(event.target.checked);
                 }}
-                label={"Enable Bucket Quota"}
+                label={"Quota"}
+                description={"Limit the amount of data in the bucket."}
                 indicatorLabels={["On", "Off"]}
               />
             </Grid>
-            {enableQuota && (
+            {quotaEnabled && (
               <React.Fragment>
                 <Grid item xs={12}>
                   <RadioGroupSelector
@@ -334,22 +381,25 @@ const AddBucket = ({
                 </Grid>
               </React.Fragment>
             )}
-            {versioned && (
+            {versioningEnabled && (
               <Grid item xs={12}>
                 <FormSwitchWrapper
                   value="bucket_retention"
                   id="bucket_retention"
                   name="bucket_retention"
-                  checked={enableRetention}
+                  checked={retentionEnabled}
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                     addBucketRetention(event.target.checked);
                   }}
-                  label={"Enable Bucket Retention"}
+                  label={"Retention"}
+                  description={
+                    "Impose rules to prevent object deletion for a period of time."
+                  }
                   indicatorLabels={["On", "Off"]}
                 />
               </Grid>
             )}
-            {enableRetention && (
+            {retentionEnabled && (
               <React.Fragment>
                 <Grid item xs={12}>
                   <RadioGroupSelector
@@ -430,12 +480,13 @@ const AddBucket = ({
 const mapState = (state: AppState) => ({
   addBucketModalOpen: state.buckets.open,
   bucketName: state.buckets.addBucketName,
-  versioned: state.buckets.addBucketVersioning,
-  enableQuota: state.buckets.addBucketQuotaEnabled,
+  versioningEnabled: state.buckets.addBucketVersioningEnabled,
+  lockingEnabled: state.buckets.addBucketLockingEnabled,
+  quotaEnabled: state.buckets.addBucketQuotaEnabled,
   quotaType: state.buckets.addBucketQuotaType,
   quotaSize: state.buckets.addBucketQuotaSize,
   quotaUnit: state.buckets.addBucketQuotaUnit,
-  enableRetention: state.buckets.addBucketRetentionEnabled,
+  retentionEnabled: state.buckets.addBucketRetentionEnabled,
   retentionMode: state.buckets.addBucketRetentionMode,
   retentionUnit: state.buckets.addBucketRetentionUnit,
   retentionValidity: state.buckets.addBucketRetentionValidity,
@@ -443,7 +494,8 @@ const mapState = (state: AppState) => ({
 
 const connector = connect(mapState, {
   addBucketName: addBucketName,
-  addBucketVersioned: addBucketVersioned,
+  addBucketVersioned: addBucketVersioning,
+  enableObjectLocking: addBucketEnableObjectLocking,
   addBucketQuota: addBucketQuota,
   addBucketQuotaType: addBucketQuotaType,
   addBucketQuotaSize: addBucketQuotaSize,
