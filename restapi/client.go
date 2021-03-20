@@ -191,6 +191,7 @@ type MCClient interface {
 	list(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent
 	get(ctx context.Context, opts mc.GetOptions) (io.ReadCloser, *probe.Error)
 	shareDownload(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error)
+	setVersioning(ctx context.Context, status string) *probe.Error
 }
 
 // Interface implementation
@@ -217,6 +218,10 @@ func (c mcClient) watch(ctx context.Context, options mc.WatchOptions) (*mc.Watch
 
 func (c mcClient) setReplication(ctx context.Context, cfg *replication.Config, opts replication.Options) *probe.Error {
 	return c.client.SetReplication(ctx, cfg, opts)
+}
+
+func (c mcClient) setVersioning(ctx context.Context, status string) *probe.Error {
+	return c.client.SetVersion(ctx, status)
 }
 
 func (c mcClient) remove(ctx context.Context, isIncomplete, isRemoveBucket, isBypass bool, contentCh <-chan *mc.ClientContent) <-chan *probe.Error {

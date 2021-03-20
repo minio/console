@@ -276,3 +276,119 @@ func Test_SetPolicyMultiple(t *testing.T) {
 		})
 	}
 }
+
+func Test_policyMatchesBucket(t *testing.T) {
+	type args struct {
+		policy *models.Policy
+		bucket string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "Test1",
+			args: args{policy: &models.Policy{Name: "consoleAdmin", Policy: `{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "admin:*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:*"
+            ],
+            "Resource": [
+                "arn:aws:s3:::*"
+            ]
+        }
+    ]
+}`}, bucket: "test1"},
+			want: true,
+		},
+		{
+			name: "Test2",
+			args: args{policy: &models.Policy{Name: "consoleAdmin", Policy: `{
+				"Version": "2012-10-17",
+				"Statement": [
+			{
+				"Effect": "Allow",
+				"Action": [
+				"s3:*"
+			],
+				"Resource": [
+				"arn:aws:s3:::bucket1"
+			]
+			}
+			]
+			}`}, bucket: "test1"},
+			want: false,
+		},
+		{
+			name: "Test3",
+			args: args{policy: &models.Policy{Name: "consoleAdmin", Policy: `{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListStorageLensConfigurations",
+                "s3:GetAccessPoint",
+                "s3:PutAccountPublicAccessBlock",
+                "s3:GetAccountPublicAccessBlock",
+                "s3:ListAllMyBuckets",
+                "s3:ListAccessPoints",
+                "s3:ListJobs",
+                "s3:PutStorageLensConfiguration",
+                "s3:CreateJob"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": "s3:*",
+            "Resource": [
+                "arn:aws:s3:::test",
+                "arn:aws:s3:::test/*",
+                "arn:aws:s3:::lkasdkljasd090901",
+                "arn:aws:s3:::lkasdkljasd090901/*"
+                ]
+        }
+    ]
+	}`}, bucket: "test1"},
+			want: false,
+		},
+		{
+			name: "Test4",
+			args: args{policy: &models.Policy{Name: "consoleAdmin", Policy: `{
+				"Version": "2012-10-17",
+				"Statement": [
+			{
+				"Effect": "Allow",
+				"Action": [
+				"s3:*"
+			],
+				"Resource": [
+				"arn:aws:s3:::bucket1"
+			]
+			}
+			]
+			}`}, bucket: "bucket1"},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := policyMatchesBucket(tt.args.policy, tt.args.bucket); got != tt.want {
+				t.Errorf("policyMatchesBucket() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
