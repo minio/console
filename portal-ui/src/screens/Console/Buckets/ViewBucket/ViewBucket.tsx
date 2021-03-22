@@ -153,7 +153,6 @@ const styles = (theme: Theme) =>
     fixedHeight: {
       height: 165,
       minWidth: 247,
-      marginRight: 20,
       padding: "25px 28px",
       "& svg": {
         maxHeight: 18,
