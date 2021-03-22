@@ -150,6 +150,14 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewGetBucketRetentionConfigOK().WithPayload(response)
 	})
+	// get bucket object locking status
+	api.UserAPIGetBucketObjectLockingStatusHandler = user_api.GetBucketObjectLockingStatusHandlerFunc(func(params user_api.GetBucketObjectLockingStatusParams, session *models.Principal) middleware.Responder {
+		getBucketObjectLockingStatus, err := getBucketObLockingResponse(session, params.BucketName)
+		if err != nil {
+			return user_api.NewGetBucketObjectLockingStatusDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
+		return user_api.NewGetBucketObjectLockingStatusOK().WithPayload(getBucketObjectLockingStatus)
+	})
 }
 
 func getAddBucketReplicationdResponse(session *models.Principal, bucketName string, params *user_api.AddBucketReplicationParams) error {
@@ -240,10 +248,8 @@ func setBucketVersioningResponse(session *models.Principal, bucketName string, p
 		versioningState = VersionEnable
 	}
 
-	err2 := doSetVersioning(amcClient, versioningState)
-
-	if err2 != nil {
-		return prepareError(err2)
+	if err := doSetVersioning(amcClient, versioningState); err != nil {
+		return prepareError(err)
 	}
 	return nil
 }
@@ -376,7 +382,12 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 
-	if err := makeBucket(ctx, minioClient, *br.Name, br.Versioning); err != nil {
+	// if we need retention, then object locking needs to be enabled
+	if br.Retention != nil {
+		br.Locking = true
+	}
+
+	if err := makeBucket(ctx, minioClient, *br.Name, br.Locking); err != nil {
 		return prepareError(err)
 	}
 
@@ -389,6 +400,21 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 			}
 		}
 	}()
+
+	// enable versioning if indicated or retention enabled
+	if br.Versioning || br.Retention != nil {
+		s3Client, err := newS3BucketClient(session, *br.Name, "")
+		if err != nil {
+			return prepareError(err)
+		}
+		// create a mc S3Client interface implementation
+		// defining the client to be used
+		amcClient := mcClient{client: s3Client}
+
+		if err = doSetVersioning(amcClient, VersionEnable); err != nil {
+			return prepareError(err)
+		}
+	}
 
 	// if it has support for
 	if br.Quota != nil && br.Quota.Enabled != nil && *br.Quota.Enabled {
@@ -747,4 +773,35 @@ func getBucketRetentionConfigResponse(session *models.Principal, bucketName stri
 		return nil, prepareError(err)
 	}
 	return config, nil
+}
+
+func getBucketObLockingResponse(session *models.Principal, bucketName string) (*models.BucketObLockingResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		log.Println("error creating MinIO Client:", err)
+		return nil, err
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+
+	// we will tolerate this call failing
+	_, _, _, _, err = minioClient.getObjectLockConfig(ctx, bucketName)
+	if err != nil {
+		if err.Error() == "Object Lock configuration does not exist for this bucket" {
+			return &models.BucketObLockingResponse{
+				ObjectLockingEnabled: false,
+			}, nil
+		}
+		log.Println("error object locking bucket:", err)
+	}
+
+	// serialize output
+	listBucketsResponse := &models.BucketObLockingResponse{
+		ObjectLockingEnabled: true,
+	}
+	return listBucketsResponse, nil
 }

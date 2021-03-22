@@ -28,12 +28,14 @@ import {
   ADD_BUCKET_RETENTION_UNIT,
   ADD_BUCKET_RETENTION_VALIDITY,
   BucketActionTypes,
+  ADD_BUCKET_LOCKING,
 } from "./actions";
 
 export interface BucketsState {
   open: boolean;
   addBucketName: string;
-  addBucketVersioning: boolean;
+  addBucketVersioningEnabled: boolean;
+  addBucketLockingEnabled: boolean;
   addBucketQuotaEnabled: boolean;
   addBucketQuotaType: string;
   addBucketQuotaSize: string;
@@ -47,7 +49,8 @@ export interface BucketsState {
 const initialState: BucketsState = {
   open: false,
   addBucketName: "",
-  addBucketVersioning: false,
+  addBucketVersioningEnabled: false,
+  addBucketLockingEnabled: false,
   addBucketQuotaEnabled: false,
   addBucketQuotaType: "hard",
   addBucketQuotaSize: "1",
@@ -76,7 +79,12 @@ export function bucketsReducer(
     case ADD_BUCKET_VERSIONED:
       return {
         ...state,
-        addBucketVersioning: action.versioned,
+        addBucketVersioningEnabled: action.versioned,
+      };
+    case ADD_BUCKET_LOCKING:
+      return {
+        ...state,
+        addBucketLockingEnabled: action.locking,
       };
     case ADD_BUCKET_QUOTA:
       return {
@@ -123,7 +131,8 @@ export function bucketsReducer(
       return {
         ...state,
         addBucketName: "",
-        addBucketVersioning: false,
+        addBucketVersioningEnabled: false,
+        addBucketLockingEnabled: false,
         addBucketQuotaEnabled: false,
         addBucketQuotaType: "hard",
         addBucketQuotaSize: "1",

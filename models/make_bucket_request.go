@@ -34,6 +34,9 @@ import (
 // swagger:model makeBucketRequest
 type MakeBucketRequest struct {
 
+	// locking
+	Locking bool `json:"locking,omitempty"`
+
 	// name
 	// Required: true
 	Name *string `json:"name"`

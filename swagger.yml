@@ -795,6 +795,27 @@ paths:
       tags:
         - UserAPI
 
+  /buckets/{bucket_name}/object-locking:
+    get:
+      summary: Returns the status of object locking support on the bucket
+      operationId: GetBucketObjectLockingStatus
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucketObLockingResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /buckets/{bucket_name}/encryption/enable:
     post:
       summary: Enable bucket encryption.
@@ -2304,6 +2325,8 @@ definitions:
     properties:
       name:
         type: string
+      locking:
+        type: boolean
       versioning:
         type: boolean
       quota:
@@ -3003,6 +3026,12 @@ definitions:
     properties:
       versioning:
         type: boolean
+  bucketObLockingResponse:
+    type: object
+    properties:
+      object_locking_enabled:
+        type: boolean
+
 
   tenant:
     type: object

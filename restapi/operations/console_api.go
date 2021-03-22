@@ -145,6 +145,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIGetBucketEncryptionInfoHandler: user_api.GetBucketEncryptionInfoHandlerFunc(func(params user_api.GetBucketEncryptionInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetBucketEncryptionInfo has not yet been implemented")
 		}),
+		UserAPIGetBucketObjectLockingStatusHandler: user_api.GetBucketObjectLockingStatusHandlerFunc(func(params user_api.GetBucketObjectLockingStatusParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.GetBucketObjectLockingStatus has not yet been implemented")
+		}),
 		UserAPIGetBucketQuotaHandler: user_api.GetBucketQuotaHandlerFunc(func(params user_api.GetBucketQuotaParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetBucketQuota has not yet been implemented")
 		}),
@@ -446,6 +449,8 @@ type ConsoleAPI struct {
 	UserAPIEnableBucketEncryptionHandler user_api.EnableBucketEncryptionHandler
 	// UserAPIGetBucketEncryptionInfoHandler sets the operation handler for the get bucket encryption info operation
 	UserAPIGetBucketEncryptionInfoHandler user_api.GetBucketEncryptionInfoHandler
+	// UserAPIGetBucketObjectLockingStatusHandler sets the operation handler for the get bucket object locking status operation
+	UserAPIGetBucketObjectLockingStatusHandler user_api.GetBucketObjectLockingStatusHandler
 	// UserAPIGetBucketQuotaHandler sets the operation handler for the get bucket quota operation
 	UserAPIGetBucketQuotaHandler user_api.GetBucketQuotaHandler
 	// UserAPIGetBucketReplicationHandler sets the operation handler for the get bucket replication operation
@@ -732,6 +737,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIGetBucketEncryptionInfoHandler == nil {
 		unregistered = append(unregistered, "user_api.GetBucketEncryptionInfoHandler")
+	}
+	if o.UserAPIGetBucketObjectLockingStatusHandler == nil {
+		unregistered = append(unregistered, "user_api.GetBucketObjectLockingStatusHandler")
 	}
 	if o.UserAPIGetBucketQuotaHandler == nil {
 		unregistered = append(unregistered, "user_api.GetBucketQuotaHandler")
@@ -1138,6 +1146,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/buckets/{bucket_name}/encryption/info"] = user_api.NewGetBucketEncryptionInfo(o.context, o.UserAPIGetBucketEncryptionInfoHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/buckets/{bucket_name}/object-locking"] = user_api.NewGetBucketObjectLockingStatus(o.context, o.UserAPIGetBucketObjectLockingStatusHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
