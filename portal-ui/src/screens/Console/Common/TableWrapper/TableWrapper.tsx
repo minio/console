@@ -13,19 +13,19 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React, { useState, Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import get from "lodash/get";
 import isString from "lodash/isString";
 import {
+  Checkbox,
+  Grid,
+  IconButton,
   LinearProgress,
   Paper,
-  Grid,
-  Checkbox,
-  Typography,
-  IconButton,
   Popover,
+  Typography,
 } from "@material-ui/core";
-import { Table, Column, AutoSizer, InfiniteLoader } from "react-virtualized";
+import { AutoSizer, Column, InfiniteLoader, Table } from "react-virtualized";
 import { createStyles, withStyles } from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import ViewColumnIcon from "@material-ui/icons/ViewColumn";
@@ -43,11 +43,12 @@ import CheckboxWrapper from "../FormComponents/CheckboxWrapper/CheckboxWrapper";
 
 interface ItemActions {
   type: string;
-  onClick?(valueToSend: any): any;
   to?: string;
   sendOnlyId?: boolean;
   hideButtonFunction?: (itemValue: any) => boolean;
   showLoaderFunction?: (itemValue: any) => boolean;
+
+  onClick?(valueToSend: any): any;
 }
 
 interface IColumns {
@@ -83,6 +84,7 @@ interface TableWrapperProps {
   onSelect?: (e: React.ChangeEvent<HTMLInputElement>) => any;
   idField: string;
   isLoading: boolean;
+  loadingMessage?: React.ReactNode;
   records: any[];
   classes: any;
   entityName: string;
@@ -491,6 +493,7 @@ const TableWrapper = ({
   onSelect,
   records,
   isLoading,
+  loadingMessage = <Typography component="h3">Loading...</Typography>,
   entityName,
   selectedItems,
   idField,
@@ -600,7 +603,7 @@ const TableWrapper = ({
         {isLoading && (
           <Grid container className={classes.loadingBox}>
             <Grid item xs={12} style={{ textAlign: "center" }}>
-              <Typography component="h3">Loading...</Typography>
+              {loadingMessage}
             </Grid>
             <Grid item xs={12}>
               <LinearProgress />

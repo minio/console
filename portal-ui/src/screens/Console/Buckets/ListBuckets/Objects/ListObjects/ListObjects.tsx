@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
@@ -33,7 +33,7 @@ import {
   searchField,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../../../../Common/PageHeader/PageHeader";
-import { Button, Input } from "@material-ui/core";
+import { Button, Input, Typography } from "@material-ui/core";
 import * as reactMoment from "react-moment";
 import { CreateIcon } from "../../../../../../icons";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
@@ -150,6 +150,30 @@ interface IListObjectsProps {
   fileDownloadStarted: typeof fileDownloadStarted;
 }
 
+function useInterval(callback: any, delay: number) {
+  const savedCallback = useRef<Function | null>(null);
+
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval.
+  useEffect(() => {
+    function tick() {
+      if (savedCallback !== undefined && savedCallback.current) {
+        savedCallback.current();
+      }
+    }
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+}
+
+const defLoading = <Typography component="h3">Loading...</Typography>;
+
 const ListObjects = ({
   classes,
   match,
@@ -171,6 +195,41 @@ const ListObjects = ({
   const [selectedObject, setSelectedObject] = useState<string>("");
   const [selectedBucket, setSelectedBucket] = useState<string>("");
   const [filterObjects, setFilterObjects] = useState<string>("");
+  const [loadingPromise, setLoadingPromise] = useState<Promise<any> | null>(
+    null
+  );
+  const [loadingStartTime, setLoadingStartTime] = useState<number>(0);
+  const [loadingMessage, setLoadingMessage] = useState<React.ReactNode>(
+    defLoading
+  );
+
+  const updateMessage = () => {
+    let timeDelta = Date.now() - loadingStartTime;
+
+    if (timeDelta / 1000 >= 6) {
+      setLoadingMessage(
+        <React.Fragment>
+          <Typography component="h3">
+            This operation is taking longer than expected... (
+            {Math.ceil(timeDelta / 1000)}s)
+          </Typography>
+        </React.Fragment>
+      );
+    } else if (timeDelta / 1000 >= 3) {
+      setLoadingMessage(
+        <Typography component="h3">
+          This operation is taking longer than expected...
+        </Typography>
+      );
+    }
+  };
+
+  useInterval(() => {
+    // Your custom logic here
+    if (loading) {
+      updateMessage();
+    }
+  }, 1000);
 
   useEffect(() => {
     const bucketName = match.params["bucket"];
@@ -206,7 +265,11 @@ const ListObjects = ({
         extraPath = `?prefix=${internalPaths}/`;
       }
 
-      api
+      let currentTimestamp = Date.now() + 0;
+      setLoadingStartTime(currentTimestamp);
+      setLoadingMessage(defLoading);
+
+      let p = api
         .invoke("GET", `/api/v1/buckets/${bucketName}/objects${extraPath}`)
         .then((res: BucketObjectsList) => {
           setSelectedBucket(bucketName);
@@ -239,6 +302,7 @@ const ListObjects = ({
           setLoading(false);
           setErrorSnackMessage(err);
         });
+      setLoadingPromise(p);
     }
   }, [loading, match, setLastAsFile, setErrorSnackMessage]);
 
@@ -558,6 +622,7 @@ const ListObjects = ({
                 },
               ]}
               isLoading={loading}
+              loadingMessage={loadingMessage}
               entityName="Objects"
               idField="name"
               records={filteredRecords}
