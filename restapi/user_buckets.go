@@ -150,6 +150,14 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewGetBucketRetentionConfigOK().WithPayload(response)
 	})
+	// get bucket object locking status
+	api.UserAPIGetBucketObjectLockingStatusHandler = user_api.GetBucketObjectLockingStatusHandlerFunc(func(params user_api.GetBucketObjectLockingStatusParams, session *models.Principal) middleware.Responder {
+		getBucketObjectLockingStatus, err := getBucketObLockingResponse(session, params.BucketName)
+		if err != nil {
+			return user_api.NewGetBucketObjectLockingStatusDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
+		}
+		return user_api.NewGetBucketObjectLockingStatusOK().WithPayload(getBucketObjectLockingStatus)
+	})
 }
 
 func getAddBucketReplicationdResponse(session *models.Principal, bucketName string, params *user_api.AddBucketReplicationParams) error {
@@ -765,4 +773,35 @@ func getBucketRetentionConfigResponse(session *models.Principal, bucketName stri
 		return nil, prepareError(err)
 	}
 	return config, nil
+}
+
+func getBucketObLockingResponse(session *models.Principal, bucketName string) (*models.BucketObLockingResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+
+	mClient, err := newMinioClient(session)
+	if err != nil {
+		log.Println("error creating MinIO Client:", err)
+		return nil, err
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	minioClient := minioClient{client: mClient}
+
+	// we will tolerate this call failing
+	_, _, _, _, err = minioClient.getObjectLockConfig(ctx, bucketName)
+	if err != nil {
+		if err.Error() == "Object Lock configuration does not exist for this bucket" {
+			return &models.BucketObLockingResponse{
+				ObjectLockingEnabled: false,
+			}, nil
+		}
+		log.Println("error object locking bucket:", err)
+	}
+
+	// serialize output
+	listBucketsResponse := &models.BucketObLockingResponse{
+		ObjectLockingEnabled: true,
+	}
+	return listBucketsResponse, nil
 }

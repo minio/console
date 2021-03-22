@@ -54,6 +54,9 @@ export interface ArnList {
 export interface BucketVersioning {
   is_versioned: boolean;
 }
+export interface BucketObjectLocking {
+  object_locking_enabled: boolean;
+}
 
 export interface BucketReplicationRuleDeleteMarker {
   status: string;

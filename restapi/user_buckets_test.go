@@ -44,7 +44,8 @@ var minioSetBucketEncryptionMock func(ctx context.Context, bucketName string, co
 var minioRemoveBucketEncryptionMock func(ctx context.Context, bucketName string) error
 var minioGetBucketEncryptionMock func(ctx context.Context, bucketName string) (*sse.Configuration, error)
 var minioSetObjectLockConfigMock func(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error
-var minioGetObjectLockConfigMock func(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error)
+var minioGetBucketObjectLockConfigMock func(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error)
+var minioGetObjectLockConfigMock func(ctx context.Context, bucketName string) (lock string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error)
 var minioSetVersioningMock func(ctx context.Context, state string) *probe.Error
 
 // Define a mock struct of minio Client interface implementation
@@ -93,6 +94,9 @@ func (mc minioClientMock) setObjectLockConfig(ctx context.Context, bucketName st
 }
 
 func (mc minioClientMock) getBucketObjectLockConfig(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
+	return minioGetBucketObjectLockConfigMock(ctx, bucketName)
+}
+func (mc minioClientMock) getObjectLockConfig(ctx context.Context, bucketName string) (lock string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
 	return minioGetObjectLockConfigMock(ctx, bucketName)
 }
 
@@ -755,7 +759,7 @@ func Test_GetBucketRetentionConfig(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			minioGetObjectLockConfigMock = tt.args.getRetentionFunc
+			minioGetBucketObjectLockConfigMock = tt.args.getRetentionFunc
 			resp, err := getBucketRetentionConfig(tt.args.ctx, tt.args.client, tt.args.bucketName)
 
 			if tt.expectedError != nil {

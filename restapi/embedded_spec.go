@@ -530,6 +530,37 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/object-locking": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Returns the status of object locking support on the bucket",
+        "operationId": "GetBucketObjectLockingStatus",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bucketObLockingResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/objects": {
       "get": {
         "tags": [
@@ -3470,6 +3501,14 @@ func init() {
         }
       }
     },
+    "bucketObLockingResponse": {
+      "type": "object",
+      "properties": {
+        "object_locking_enabled": {
+          "type": "boolean"
+        }
+      }
+    },
     "bucketObject": {
       "type": "object",
       "properties": {
@@ -6240,6 +6279,37 @@ func init() {
         "responses": {
           "204": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/object-locking": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Returns the status of object locking support on the bucket",
+        "operationId": "GetBucketObjectLockingStatus",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bucketObLockingResponse"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -9795,6 +9865,14 @@ func init() {
           "$ref": "#/definitions/notificationConfig"
         },
         "ignoreExisting": {
+          "type": "boolean"
+        }
+      }
+    },
+    "bucketObLockingResponse": {
+      "type": "object",
+      "properties": {
+        "object_locking_enabled": {
           "type": "boolean"
         }
       }

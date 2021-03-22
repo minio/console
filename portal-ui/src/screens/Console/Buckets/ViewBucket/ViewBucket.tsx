@@ -37,6 +37,7 @@ import {
   BucketReplicationRule,
   BucketReplicationRuleDeleteMarker,
   BucketVersioning,
+  BucketObjectLocking,
 } from "../types";
 import { CreateIcon } from "../../../../icons";
 import { niceBytes } from "../../../../common/utils";
@@ -192,6 +193,7 @@ const ViewBucket = ({
   const [loadingBucket, setLoadingBucket] = useState<boolean>(true);
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
   const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
+  const [loadingObjectLocking, setLoadingLocking] = useState<boolean>(true);
   const [loadingReplication, setLoadingReplication] = useState<boolean>(true);
   const [loadingSize, setLoadingSize] = useState<boolean>(true);
   const [loadingEncryption, setLoadingEncryption] = useState<boolean>(true);
@@ -209,6 +211,7 @@ const ViewBucket = ({
   const [bucketSize, setBucketSize] = useState<string>("0");
   const [openSetReplication, setOpenSetReplication] = useState<boolean>(false);
   const [isVersioned, setIsVersioned] = useState<boolean>(false);
+  const [hasObjectLocking, setHasObjectLocking] = useState<boolean>(false);
   const [encryptionEnabled, setEncryptionEnabled] = useState<boolean>(false);
   const [retentionConfigOpen, setRetentionConfigOpen] = useState<boolean>(
     false
@@ -249,6 +252,21 @@ const ViewBucket = ({
         });
     }
   }, [loadingVersioning, setErrorSnackMessage, bucketName]);
+
+  useEffect(() => {
+    if (loadingVersioning) {
+      api
+        .invoke("GET", `/api/v1/buckets/${bucketName}/object-locking`)
+        .then((res: BucketObjectLocking) => {
+          setHasObjectLocking(res.object_locking_enabled);
+          setLoadingLocking(false);
+        })
+        .catch((err: any) => {
+          setErrorSnackMessage(err);
+          setLoadingLocking(false);
+        });
+    }
+  }, [loadingObjectLocking, setErrorSnackMessage, bucketName]);
 
   useEffect(() => {
     if (loadingReplication) {
@@ -512,30 +530,40 @@ const ViewBucket = ({
                     <div className={classes.doubleElement}>
                       <span>{replicationRules.length ? "Yes" : "No"}</span>
                     </div>
-                    <div>Versioning:</div>
-                    <div>
-                      {loadingVersioning ? (
-                        <CircularProgress
-                          color="primary"
-                          size={16}
-                          variant="indeterminate"
-                        />
-                      ) : (
-                        <React.Fragment>
-                          {isVersioned && !loadingVersioning ? "Yes" : "No"}
-                          &nbsp;
-                          <IconButton
-                            color="primary"
-                            aria-label="retention"
-                            size="small"
-                            className={classes.propertiesIcon}
-                            onClick={setBucketVersioning}
-                          >
-                            <PencilIcon active={true} />
-                          </IconButton>
-                        </React.Fragment>
-                      )}
-                    </div>
+                    {hasObjectLocking && (
+                      <React.Fragment>
+                        <div>Versioning:</div>
+                        <div>
+                          {loadingVersioning ? (
+                            <CircularProgress
+                              color="primary"
+                              size={16}
+                              variant="indeterminate"
+                            />
+                          ) : (
+                            <React.Fragment>
+                              {isVersioned && !loadingVersioning ? "Yes" : "No"}
+                              &nbsp;
+                              <IconButton
+                                color="primary"
+                                aria-label="retention"
+                                size="small"
+                                className={classes.propertiesIcon}
+                                onClick={setBucketVersioning}
+                              >
+                                <PencilIcon active={true} />
+                              </IconButton>
+                            </React.Fragment>
+                          )}
+                        </div>
+                      </React.Fragment>
+                    )}
+                    {!hasObjectLocking && (
+                      <React.Fragment>
+                        <div>Object Locking:</div>
+                        <div>No</div>
+                      </React.Fragment>
+                    )}
                     <div>Encryption:</div>
                     <div>
                       <Checkbox
