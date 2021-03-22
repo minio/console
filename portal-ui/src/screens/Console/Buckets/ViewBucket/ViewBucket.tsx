@@ -27,17 +27,17 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Checkbox from "@material-ui/core/Checkbox";
 import api from "../../../../common/api";
 import {
+  BucketEncryptionInfo,
   BucketEvent,
   BucketEventList,
   BucketInfo,
-  BucketEncryptionInfo,
   BucketList,
+  BucketObjectLocking,
   BucketReplication,
   BucketReplicationDestination,
   BucketReplicationRule,
   BucketReplicationRuleDeleteMarker,
   BucketVersioning,
-  BucketObjectLocking,
 } from "../types";
 import { CreateIcon } from "../../../../icons";
 import { niceBytes } from "../../../../common/utils";
@@ -53,6 +53,8 @@ import PageHeader from "../../Common/PageHeader/PageHeader";
 import EnableBucketEncryption from "./EnableBucketEncryption";
 import PencilIcon from "../../Common/TableWrapper/TableActionIcons/PencilIcon";
 import EnableVersioningModal from "./EnableVersioningModal";
+import Typography from "@material-ui/core/Typography";
+import UsageIcon from "../../../../icons/UsageIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -98,6 +100,9 @@ const styles = (theme: Theme) =>
       textAlign: "center",
       padding: "20px",
     },
+    gridWrapper: {
+      width: 320,
+    },
     gridContainer: {
       display: "grid",
       gridTemplateColumns: "auto auto",
@@ -138,8 +143,32 @@ const styles = (theme: Theme) =>
       display: "flex",
       justifyContent: "space-between",
     },
+    encCheckbox: {
+      margin: 0,
+      padding: 0,
+    },
     tabPan: {
       marginTop: "5px",
+    },
+    fixedHeight: {
+      height: 165,
+      minWidth: 247,
+      marginRight: 20,
+      padding: "25px 28px",
+      "& svg": {
+        maxHeight: 18,
+      },
+    },
+    elementTitle: {
+      fontWeight: 500,
+      color: "#777777",
+      fontSize: 14,
+      marginTop: -9,
+    },
+    consumptionValue: {
+      color: "#000000",
+      fontSize: "60px",
+      fontWeight: "bold",
     },
     ...containerForHeader(theme.spacing(4)),
   });
@@ -498,8 +527,25 @@ const ViewBucket = ({
       <Grid container>
         <Grid item xs={12} className={classes.container}>
           <Grid item xs={12}>
-            <div className={classes.headerContainer}>
-              <div>
+            <Grid container spacing={2}>
+              <Grid item>
+                <Paper className={classes.fixedHeight}>
+                  <Grid container direction="row" alignItems="center">
+                    <Grid item className={classes.icon}>
+                      <UsageIcon />
+                    </Grid>
+                    <Grid item>
+                      <Typography className={classes.elementTitle}>
+                        Reported Usage
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                  <Typography className={classes.consumptionValue}>
+                    {niceBytes(bucketSize)}
+                  </Typography>
+                </Paper>
+              </Grid>
+              <Grid item>
                 <Paper className={classes.paperContainer}>
                   <div className={classes.gridContainer}>
                     <div>Access Policy:</div>
@@ -513,51 +559,20 @@ const ViewBucket = ({
                       ) : (
                         accessPolicy.toLowerCase()
                       )}
-                    </div>
-                    <div>Reported Usage:</div>
-                    <div>
-                      {loadingSize ? (
-                        <CircularProgress
-                          color="primary"
-                          size={16}
-                          variant="indeterminate"
-                        />
-                      ) : (
-                        niceBytes(bucketSize)
-                      )}
+                      <IconButton
+                        color="primary"
+                        aria-label="access"
+                        size="small"
+                        className={classes.propertiesIcon}
+                        onClick={setBucketVersioning}
+                      >
+                        <PencilIcon active={true} />
+                      </IconButton>
                     </div>
                     <div>Replication:</div>
                     <div className={classes.doubleElement}>
                       <span>{replicationRules.length ? "Yes" : "No"}</span>
                     </div>
-                    {hasObjectLocking && (
-                      <React.Fragment>
-                        <div>Versioning:</div>
-                        <div>
-                          {loadingVersioning ? (
-                            <CircularProgress
-                              color="primary"
-                              size={16}
-                              variant="indeterminate"
-                            />
-                          ) : (
-                            <React.Fragment>
-                              {isVersioned && !loadingVersioning ? "Yes" : "No"}
-                              &nbsp;
-                              <IconButton
-                                color="primary"
-                                aria-label="retention"
-                                size="small"
-                                className={classes.propertiesIcon}
-                                onClick={setBucketVersioning}
-                              >
-                                <PencilIcon active={true} />
-                              </IconButton>
-                            </React.Fragment>
-                          )}
-                        </div>
-                      </React.Fragment>
-                    )}
                     {!hasObjectLocking && (
                       <React.Fragment>
                         <div>Object Locking:</div>
@@ -568,6 +583,7 @@ const ViewBucket = ({
                     <div>
                       <Checkbox
                         color="primary"
+                        className={classes.encCheckbox}
                         inputProps={{
                           "aria-label": "secondary checkbox",
                         }}
@@ -577,36 +593,69 @@ const ViewBucket = ({
                     </div>
                   </div>
                 </Paper>
-              </div>
-              <div className={classes.masterActions}>
-                <div>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    size="medium"
-                    onClick={() => {
-                      setAccessPolicyScreenOpen(true);
-                    }}
-                  >
-                    Change Access Policy
-                  </Button>
-                </div>
-                <div>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    size="medium"
-                    onClick={() => {
-                      setRetentionConfigOpen(true);
-                    }}
-                  >
-                    Set Retention Configuration
-                  </Button>
-                </div>
-              </div>
-            </div>
+              </Grid>
+              {hasObjectLocking && (
+                <Grid item>
+                  <Paper className={classes.paperContainer}>
+                    <div className={classes.gridContainer}>
+                      <div>Object Locking</div>
+                      <div></div>
+                      <div>Versioning:</div>
+                      <div>
+                        {loadingVersioning ? (
+                          <CircularProgress
+                            color="primary"
+                            size={16}
+                            variant="indeterminate"
+                          />
+                        ) : (
+                          <React.Fragment>
+                            {isVersioned && !loadingVersioning ? "Yes" : "No"}
+                            &nbsp;
+                            <IconButton
+                              color="primary"
+                              aria-label="retention"
+                              size="small"
+                              className={classes.propertiesIcon}
+                              onClick={() => {
+                                setAccessPolicyScreenOpen(true);
+                              }}
+                            >
+                              <PencilIcon active={true} />
+                            </IconButton>
+                          </React.Fragment>
+                        )}
+                      </div>
+                      <div>Retention:</div>
+                      <div>
+                        {loadingVersioning ? (
+                          <CircularProgress
+                            color="primary"
+                            size={16}
+                            variant="indeterminate"
+                          />
+                        ) : (
+                          <React.Fragment>
+                            &nbsp;
+                            <IconButton
+                              color="primary"
+                              aria-label="retention"
+                              size="small"
+                              className={classes.propertiesIcon}
+                              onClick={() => {
+                                setRetentionConfigOpen(true);
+                              }}
+                            >
+                              <PencilIcon active={true} />
+                            </IconButton>
+                          </React.Fragment>
+                        )}
+                      </div>
+                    </div>
+                  </Paper>
+                </Grid>
+              )}
+            </Grid>
           </Grid>
           <Grid item xs={12}>
             <br />
