@@ -19,6 +19,7 @@ package restapi
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -63,6 +64,40 @@ func registerSubscriptionHandlers(api *operations.ConsoleAPI) {
 		}
 		return admin_api.NewSubscriptionInfoOK().WithPayload(license)
 	})
+	// Refresh license for k8s cluster
+	api.AdminAPISubscriptionRefreshHandler = admin_api.SubscriptionRefreshHandlerFunc(func(params admin_api.SubscriptionRefreshParams, session *models.Principal) middleware.Responder {
+		license, err := getSubscriptionRefreshResponse(session)
+		if err != nil {
+			return admin_api.NewSubscriptionRefreshDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewSubscriptionRefreshOK().WithPayload(license)
+	})
+}
+
+// retrieveLicense returns license from K8S secrets (If console is deployed in operator mode) or from
+// the configured CONSOLE_SUBNET_LICENSE environment variable
+func retrieveLicense(ctx context.Context, sessionToken string) (string, error) {
+	var license string
+	// If Console is running in operator mode retrieve License stored in K8s secrets
+	if acl.GetOperatorMode() {
+		// configure kubernetes client
+		clientSet, err := cluster.K8sClient(sessionToken)
+		if err != nil {
+			return "", err
+		}
+		k8sClient := k8sClient{
+			client: clientSet,
+		}
+		// Get cluster subscription license
+		license, err = getSubscriptionLicense(ctx, &k8sClient, cluster.Namespace, OperatorSubnetLicenseSecretName)
+		if err != nil {
+			return "", err
+		}
+	} else {
+		// If Console is running in Tenant Admin mode retrieve license from env variable
+		license = GetSubnetLicense()
+	}
+	return license, nil
 }
 
 // addSubscriptionLicenseToTenant replace existing console tenant secret and adds the subnet license key
@@ -175,6 +210,47 @@ func saveSubscriptionLicense(ctx context.Context, clientSet K8sClientI, license 
 	return nil
 }
 
+// updateTenantLicenseAndRestartConsole
+func updateTenantLicenseAndRestartConsole(ctx context.Context, clientSet K8sClientI, license, namespace, tenantName string) error {
+	consoleSelector := fmt.Sprintf("%s-console", tenantName)
+	consoleSecretName := fmt.Sprintf("%s-secret", consoleSelector)
+	// read current console configuration from k8s secrets
+	currentConsoleSecret, err := clientSet.getSecret(ctx, namespace, consoleSecretName, metav1.GetOptions{})
+	if err != nil || currentConsoleSecret == nil {
+		return err
+	}
+	secretData := currentConsoleSecret.Data
+	secretData[ConsoleSubnetLicense] = []byte(license)
+	// delete existing console configuration from k8s secrets
+	err = clientSet.deleteSecret(ctx, namespace, consoleSecretName, metav1.DeleteOptions{})
+	if err != nil {
+		// log the error if any and continue
+		log.Println(err)
+	}
+	// Save subnet license in k8s secrets
+	imm := true
+	consoleConfigSecret := &corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: consoleSecretName,
+		},
+		Immutable: &imm,
+		Data:      secretData,
+	}
+	_, err = clientSet.createSecret(ctx, namespace, consoleConfigSecret, metav1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+	// restart Console pods based on label:
+	//  v1.min.io/console: TENANT-console
+	err = clientSet.deletePodCollection(ctx, namespace, metav1.DeleteOptions{}, metav1.ListOptions{
+		LabelSelector: fmt.Sprintf("%s=%s%s", miniov2.ConsoleTenantLabel, tenantName, miniov2.ConsoleName),
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // subscriptionValidate will validate the provided jwt license against the subnet public key
 func subscriptionValidate(client cluster.HTTPClientI, license, email, password string) (*models.License, string, error) {
 	licenseInfo, rawLicense, err := subnet.ValidateLicense(client, license, email, password)
@@ -237,37 +313,123 @@ func getSubscriptionLicense(ctx context.Context, clientSet K8sClientI, namespace
 
 // getSubscriptionInfoResponse returns information about the current configured subnet license for Console
 func getSubscriptionInfoResponse(session *models.Principal) (*models.License, *models.Error) {
-	// 20 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-	defer cancel()
 	var licenseInfo *models.License
-	var license string
 	client := &cluster.HTTPClient{
 		Client: GetConsoleSTSClient(),
 	}
-	// If Console is running in operator mode retrieve License stored in K8s secrets
-	if acl.GetOperatorMode() {
-		// configure kubernetes client
-		clientSet, err := cluster.K8sClient(session.STSSessionToken)
-		if err != nil {
-			return nil, prepareError(errInvalidLicense, nil, err)
-		}
-		k8sClient := k8sClient{
-			client: clientSet,
-		}
-		// Get cluster subscription license
-		license, err = getSubscriptionLicense(ctx, &k8sClient, cluster.Namespace, OperatorSubnetLicenseSecretName)
-		if err != nil {
-			return nil, prepareError(errLicenseNotFound, nil, err)
-		}
-	} else {
-		// If Console is running in Tenant Admin mode retrieve license from env variable
-		license = GetSubnetLicense()
+	licenseKey, err := retrieveLicense(context.Background(), session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(errLicenseNotFound, nil, err)
 	}
 	// validate license key and obtain license info
-	licenseInfo, _, err := subscriptionValidate(client, license, "", "")
+	licenseInfo, _, err = subscriptionValidate(client, licenseKey, "", "")
 	if err != nil {
 		return nil, prepareError(errLicenseNotFound, nil, err)
 	}
 	return licenseInfo, nil
+}
+
+func subscriptionRefresh(httpClient *cluster.HTTPClient, license string) (*models.License, string, error) {
+	licenseInfo, rawLicense, err := subnet.RefreshLicense(httpClient, license)
+	if err != nil {
+		return nil, "", err
+	}
+	return &models.License{
+		Email:           licenseInfo.Email,
+		AccountID:       licenseInfo.AccountID,
+		StorageCapacity: licenseInfo.StorageCapacity,
+		Plan:            licenseInfo.Plan,
+		ExpiresAt:       licenseInfo.ExpiresAt.String(),
+		Organization:    licenseInfo.Organization,
+	}, rawLicense, nil
+}
+
+func getSubscriptionRefreshResponse(session *models.Principal) (*models.License, *models.Error) {
+	// 20 seconds timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	client := &cluster.HTTPClient{
+		Client: GetConsoleSTSClient(),
+	}
+	licenseKey, err := retrieveLicense(context.Background(), session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(errLicenseNotFound, nil, err)
+	}
+	newLicenseInfo, licenseRaw, err := subscriptionRefresh(client, licenseKey)
+	if err != nil {
+		return nil, prepareError(errLicenseNotFound, nil, err)
+	}
+	// configure kubernetes client
+	clientSet, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(errLicenseNotFound, nil, err)
+	}
+	k8sClient := k8sClient{
+		client: clientSet,
+	}
+	// save license key to k8s and restart all console pods
+	if err = saveSubscriptionLicense(ctx, &k8sClient, licenseRaw); err != nil {
+		return nil, prepareError(errorGeneric, nil, err)
+	}
+	// update license for all existing tenants
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+	tenants, err := listTenants(ctx, opClient, "", nil)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// iterate over all tenants, update console configuration and restart console pods
+	for _, tenant := range tenants.Tenants {
+		if err := updateTenantLicenseAndRestartConsole(ctx, &k8sClient, licenseRaw, tenant.Namespace, tenant.Name); err != nil {
+			log.Println(err)
+		}
+	}
+
+	return newLicenseInfo, nil
+}
+
+// RefreshLicense will check current subnet license and try to renew it
+func RefreshLicense() error {
+	// Get current license
+	saK8SToken := getK8sSAToken()
+	licenseKey, err := retrieveLicense(context.Background(), saK8SToken)
+	if licenseKey == "" {
+		return errors.New("no license present")
+	}
+	if err != nil {
+		return err
+	}
+	client := &cluster.HTTPClient{
+		Client: GetConsoleSTSClient(),
+	}
+	// Attempt to refresh license
+	_, refreshedLicenseKey, err := subscriptionRefresh(client, licenseKey)
+	if err != nil {
+		return err
+	}
+	// store new license in memory for console ui
+	LicenseKey = refreshedLicenseKey
+	// Update in memory license and update k8s secret
+	if refreshedLicenseKey != "" {
+		if acl.GetOperatorMode() {
+			ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+			defer cancel()
+			clientSet, err := cluster.K8sClient(saK8SToken)
+			if err != nil {
+				return err
+			}
+			k8sClient := k8sClient{
+				client: clientSet,
+			}
+			if err = saveSubscriptionLicense(ctx, &k8sClient, refreshedLicenseKey); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }

@@ -739,8 +739,8 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		}
 	}
 	// optionals are set below
-	var consoleAccess string
-	var consoleSecret string
+	var tenantUserAccessKey string
+	var tenantUserSecretKey string
 
 	enableConsole := true
 	if tenantReq.EnableConsole != nil && *tenantReq.EnableConsole {
@@ -748,16 +748,24 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 
 	if enableConsole {
+		// provision initial user for tenant
+		tenantUserAccessKey = RandomCharString(16)
+		tenantUserSecretKey = RandomCharString(32)
+		consoleUserSecretName := fmt.Sprintf("%s-user-secret", tenantName)
+		consoleUserSecretData := map[string][]byte{
+			"CONSOLE_ACCESS_KEY": []byte(tenantUserAccessKey),
+			"CONSOLE_SECRET_KEY": []byte(tenantUserSecretKey),
+		}
+		_, err := createOrReplaceSecrets(ctx, &k8sClient, ns, []tenantSecret{{Name: consoleUserSecretName, Content: consoleUserSecretData}}, tenantName)
+		if err != nil {
+			return nil, prepareError(errorGeneric, nil, err)
+		}
+		minInst.Spec.Users = []*corev1.LocalObjectReference{{Name: consoleUserSecretName}}
 		consoleSelector := fmt.Sprintf("%s-console", tenantName)
 		consoleSecretName := fmt.Sprintf("%s-secret", consoleSelector)
-		consoleAccess = RandomCharString(16)
-		consoleSecret = RandomCharString(32)
-
 		consoleSecretData := map[string][]byte{
 			"CONSOLE_PBKDF_PASSPHRASE": []byte(RandomCharString(16)),
 			"CONSOLE_PBKDF_SALT":       []byte(RandomCharString(8)),
-			"CONSOLE_ACCESS_KEY":       []byte(consoleAccess),
-			"CONSOLE_SECRET_KEY":       []byte(consoleSecret),
 		}
 		// If Subnet License is present in k8s secrets, copy that to the CONSOLE_SUBNET_LICENSE env variable
 		// of the console tenant
@@ -928,8 +936,8 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	// Attach Console Credentials
 	if enableConsole {
 		response.Console = &models.CreateTenantResponseConsole{
-			AccessKey: consoleAccess,
-			SecretKey: consoleSecret,
+			AccessKey: tenantUserAccessKey,
+			SecretKey: tenantUserSecretKey,
 		}
 	}
 	return response, nil

@@ -42,6 +42,7 @@ import PencilIcon from "../../Common/TableWrapper/TableActionIcons/PencilIcon";
 import { LicenseInfo } from "../../License/types";
 import { Link } from "react-router-dom";
 import { setErrorSnackMessage } from "../../../../actions";
+import Moment from "react-moment";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -117,6 +118,44 @@ const styles = (theme: Theme) =>
     },
     poolLabel: {
       color: "#666666",
+    },
+    licenseContainer: {
+      position: "relative",
+      padding: "20px 52px 0px 28px",
+      background: "#032F51",
+      boxShadow: "0px 3px 7px #00000014",
+      "& h2": {
+        color: "#FFF",
+        marginBottom: 67,
+      },
+      "& a": {
+        textDecoration: "none",
+      },
+      "& h3": {
+        color: "#FFFFFF",
+        marginBottom: "30px",
+        fontWeight: "bold",
+      },
+      "& h6": {
+        color: "#FFFFFF !important",
+      },
+    },
+    licenseInfo: { color: "#FFFFFF", position: "relative" },
+    licenseInfoTitle: {
+      textTransform: "none",
+      color: "#BFBFBF",
+      fontSize: 11,
+    },
+    licenseInfoValue: {
+      textTransform: "none",
+      fontSize: 14,
+      fontWeight: "bold",
+    },
+    verifiedIcon: {
+      width: 96,
+      position: "absolute",
+      right: 0,
+      bottom: 29,
     },
     ...modalBasic,
     ...containerForHeader(theme.spacing(4)),
@@ -432,34 +471,130 @@ const TenantDetails = ({
             <React.Fragment>
               <Grid container>
                 <Grid item xs={12}>
-                  <Paper className={classes.paper}>
+                  <Paper
+                    className={
+                      tenant && tenant.subnet_license
+                        ? classes.licenseContainer
+                        : ""
+                    }
+                  >
                     {tenant && tenant.subnet_license ? (
-                      <Grid className={classes.paperContainer}>
-                        <Typography
-                          component="h2"
-                          variant="h6"
-                          className={classes.pageTitle}
-                        >
-                          Subscription Information
-                        </Typography>
-                        Account ID: {tenant.subnet_license.account_id}
-                        <br />
-                        <br />
-                        Email: {tenant.subnet_license.email}
-                        <br />
-                        <br />
-                        Plan: {tenant.subnet_license.plan}
-                        <br />
-                        <br />
-                        Organization: {tenant.subnet_license.organization}
-                        <br />
-                        <br />
-                        Storage Capacity:{" "}
-                        {tenant.subnet_license.storage_capacity}
-                        <br />
-                        <br />
-                        Expiration: {tenant.subnet_license.expires_at}
-                      </Grid>
+                      <React.Fragment>
+                        <Grid container className={classes.licenseInfo}>
+                          <Grid item xs={6}>
+                            <Typography
+                              variant="button"
+                              display="block"
+                              gutterBottom
+                              className={classes.licenseInfoTitle}
+                            >
+                              License
+                            </Typography>
+                            <Typography
+                              variant="overline"
+                              display="block"
+                              gutterBottom
+                              className={classes.licenseInfoValue}
+                            >
+                              Commercial License
+                            </Typography>
+                            <Typography
+                              variant="button"
+                              display="block"
+                              gutterBottom
+                              className={classes.licenseInfoTitle}
+                            >
+                              Organization
+                            </Typography>
+                            <Typography
+                              variant="overline"
+                              display="block"
+                              gutterBottom
+                              className={classes.licenseInfoValue}
+                            >
+                              {tenant.subnet_license.organization}
+                            </Typography>
+                            <Typography
+                              variant="button"
+                              display="block"
+                              gutterBottom
+                              className={classes.licenseInfoTitle}
+                            >
+                              Registered Capacity
+                            </Typography>
+                            <Typography
+                              variant="overline"
+                              display="block"
+                              gutterBottom
+                              className={classes.licenseInfoValue}
+                            >
+                              {niceBytes(
+                                (
+                                  tenant.subnet_license.storage_capacity *
+                                  1099511627776
+                                ) // 1 Terabyte = 1099511627776 Bytes
+                                  .toString(10)
+                              )}
+                            </Typography>
+                            <Typography
+                              variant="button"
+                              display="block"
+                              gutterBottom
+                              className={classes.licenseInfoTitle}
+                            >
+                              Expiry Date
+                            </Typography>
+                            <Typography
+                              variant="overline"
+                              display="block"
+                              gutterBottom
+                              className={classes.licenseInfoValue}
+                            >
+                              <Moment format="YYYY-MM-DD">
+                                {tenant.subnet_license.expires_at}
+                              </Moment>
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Typography
+                              variant="button"
+                              display="block"
+                              gutterBottom
+                              className={classes.licenseInfoTitle}
+                            >
+                              Subscription Plan
+                            </Typography>
+                            <Typography
+                              variant="overline"
+                              display="block"
+                              gutterBottom
+                              className={classes.licenseInfoValue}
+                            >
+                              {tenant.subnet_license.plan}
+                            </Typography>
+                            <Typography
+                              variant="button"
+                              display="block"
+                              gutterBottom
+                              className={classes.licenseInfoTitle}
+                            >
+                              Requester
+                            </Typography>
+                            <Typography
+                              variant="overline"
+                              display="block"
+                              gutterBottom
+                              className={classes.licenseInfoValue}
+                            >
+                              {tenant.subnet_license.email}
+                            </Typography>
+                          </Grid>
+                          <img
+                            className={classes.verifiedIcon}
+                            src={"/verified.svg"}
+                          />
+                        </Grid>
+                      </React.Fragment>
                     ) : (
                       !loadingLicenseInfo && (
                         <Grid className={classes.paperContainer}>

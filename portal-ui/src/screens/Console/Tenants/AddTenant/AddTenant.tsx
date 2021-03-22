@@ -148,6 +148,7 @@ const AddTenant = ({
     const gcpPrivateKeyID = fields.encryption.gcpPrivateKeyID;
     const gcpPrivateKey = fields.encryption.gcpPrivateKey;
     const enableAutoCert = fields.security.enableAutoCert;
+    const enableTLS = fields.security.enableTLS;
     const ecParity = fields.tenantSize.ecParity;
     const distribution = fields.tenantSize.distribution;
     const memorySize = fields.tenantSize.memorySize;
@@ -167,7 +168,7 @@ const AddTenant = ({
         namespace: namespace,
         access_key: "",
         secret_key: "",
-        enable_tls: enableAutoCert,
+        enable_tls: enableTLS && enableAutoCert,
         enable_console: true,
         enable_prometheus: true,
         service_name: "",
@@ -221,7 +222,7 @@ const AddTenant = ({
         };
       }
 
-      if (minioCertificates.length > 0) {
+      if (enableTLS && minioCertificates.length > 0) {
         tenantCerts = {
           minio: minioCertificates
             .map((keyPair: KeyPair) => ({
@@ -233,6 +234,7 @@ const AddTenant = ({
       }
 
       if (
+        enableTLS &&
         consoleCertificate.encoded_cert !== "" &&
         consoleCertificate.encoded_key !== ""
       ) {
