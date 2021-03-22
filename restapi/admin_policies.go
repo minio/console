@@ -75,6 +75,70 @@ func registersPoliciesHandler(api *operations.ConsoleAPI) {
 		}
 		return admin_api.NewSetPolicyMultipleNoContent()
 	})
+	api.AdminAPIListPoliciesWithBucketHandler = admin_api.ListPoliciesWithBucketHandlerFunc(func(params admin_api.ListPoliciesWithBucketParams, session *models.Principal) middleware.Responder {
+		policyResponse, err := getListPoliciesWithBucketResponse(session, params.Bucket)
+		if err != nil {
+			return admin_api.NewListPoliciesWithBucketDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewListPoliciesWithBucketOK().WithPayload(policyResponse)
+	})
+}
+
+func getListPoliciesWithBucketResponse(session *models.Principal, bucket string) (*models.ListPoliciesResponse, *models.Error) {
+	ctx := context.Background()
+	mAdmin, err := newMAdminClient(session)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// create a MinIO Admin Client interface implementation
+	// defining the client to be used
+	adminClient := adminClient{client: mAdmin}
+
+	policies, err := listPoliciesWithBucket(ctx, bucket, adminClient)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// serialize output
+	listPoliciesResponse := &models.ListPoliciesResponse{
+		Policies: policies,
+		Total:    int64(len(policies)),
+	}
+	return listPoliciesResponse, nil
+}
+
+// listPoliciesWithBucket calls MinIO server to list all policy names present on the server that apply to a particular bucket.
+// listPoliciesWithBucket() converts the map[string][]byte returned by client.listPolicies()
+// to []*models.Policy by iterating over each key in policyRawMap and
+// then using Unmarshal on the raw bytes to create a *models.Policy
+func listPoliciesWithBucket(ctx context.Context, bucket string, client MinioAdmin) ([]*models.Policy, error) {
+	policyMap, err := client.listPolicies(ctx)
+	var policies []*models.Policy
+	if err != nil {
+		return nil, err
+	}
+	for name, policy := range policyMap {
+		policy, err := parsePolicy(name, policy)
+		if err != nil {
+			return nil, err
+		}
+		if policyMatchesBucket(policy, bucket) {
+			policies = append(policies, policy)
+		}
+	}
+	return policies, nil
+}
+
+func policyMatchesBucket(policy *models.Policy, bucket string) bool {
+	policyData := &iampolicy.Policy{}
+	json.Unmarshal([]byte(policy.Policy), policyData)
+	policyStatements := policyData.Statements
+	for i := 0; i < len(policyStatements); i++ {
+		resources := policyStatements[i].Resources
+		if resources.Match(bucket, map[string][]string{}) {
+			return true
+		}
+	}
+	return false
 }
 
 // listPolicies calls MinIO server to list all policy names present on the server.

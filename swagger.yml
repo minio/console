@@ -1234,6 +1234,38 @@ paths:
       tags:
         - AdminAPI
 
+  /bucket-policy/{bucket}:
+    get:
+      summary: List Policies With Given Bucket
+      operationId: ListPoliciesWithBucket
+      parameters:
+        - name: bucket
+          in: path
+          required: true
+          type: string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listPoliciesResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+
   /policy:
     get:
       summary: Policy info

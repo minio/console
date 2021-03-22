@@ -15,13 +15,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import get from "lodash/get";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Button, IconButton } from "@material-ui/core";
+import get from "lodash/get";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Checkbox from "@material-ui/core/Checkbox";
 import api from "../../../../common/api";
 import {
   BucketEvent,
@@ -35,21 +38,20 @@ import {
   BucketReplicationRuleDeleteMarker,
   BucketVersioning,
 } from "../types";
-import { Button } from "@material-ui/core";
+import { CreateIcon } from "../../../../icons";
+import { niceBytes } from "../../../../common/utils";
+import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
+import { setErrorSnackMessage } from "../../../../actions";
 import SetAccessPolicy from "./SetAccessPolicy";
 import SetRetentionConfig from "./SetRetentionConfig";
-import { CreateIcon } from "../../../../icons";
 import AddEvent from "./AddEvent";
 import DeleteEvent from "./DeleteEvent";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import { niceBytes } from "../../../../common/utils";
 import AddReplicationModal from "./AddReplicationModal";
-import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import Checkbox from "@material-ui/core/Checkbox";
 import EnableBucketEncryption from "./EnableBucketEncryption";
-import { connect } from "react-redux";
-import { setErrorSnackMessage } from "../../../../actions";
+import PencilIcon from "../../Common/TableWrapper/TableActionIcons/PencilIcon";
+import EnableVersioningModal from "./EnableVersioningModal";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -211,6 +213,9 @@ const ViewBucket = ({
   const [retentionConfigOpen, setRetentionConfigOpen] = useState<boolean>(
     false
   );
+  const [enableVersioningOpen, setEnableVersioningOpen] = useState<boolean>(
+    false
+  );
 
   const bucketName = match.params["bucketName"];
 
@@ -315,6 +320,10 @@ const ViewBucket = ({
     }
   }, [loadingEncryption, bucketName]);
 
+  const setBucketVersioning = () => {
+    setEnableVersioningOpen(true);
+  };
+
   const loadAllBucketData = () => {
     setLoadingBucket(true);
     setLoadingSize(true);
@@ -359,6 +368,13 @@ const ViewBucket = ({
   const confirmDeleteEvent = (evnt: BucketEvent) => {
     setDeleteOpen(true);
     setSelectedEvent(evnt);
+  };
+
+  const closeEnableVersioning = (refresh: boolean) => {
+    setEnableVersioningOpen(false);
+    if (refresh) {
+      loadAllBucketData();
+    }
   };
 
   let accessPolicy = "n/a";
@@ -452,6 +468,14 @@ const ViewBucket = ({
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
+      {enableVersioningOpen && (
+        <EnableVersioningModal
+          closeVersioningModalAndRefresh={closeEnableVersioning}
+          modalOpen={enableVersioningOpen}
+          selectedBucket={bucketName}
+          versioningCurrentState={isVersioned}
+        />
+      )}
       <PageHeader label={`Bucket > ${match.params["bucketName"]}`} />
       <Grid container>
         <Grid item xs={12} className={classes.container}>
@@ -489,7 +513,29 @@ const ViewBucket = ({
                       <span>{replicationRules.length ? "Yes" : "No"}</span>
                     </div>
                     <div>Versioning:</div>
-                    <div>{isVersioned ? "Yes" : "No"}&nbsp;</div>
+                    <div>
+                      {loadingVersioning ? (
+                        <CircularProgress
+                          color="primary"
+                          size={16}
+                          variant="indeterminate"
+                        />
+                      ) : (
+                        <React.Fragment>
+                          {isVersioned && !loadingVersioning ? "Yes" : "No"}
+                          &nbsp;
+                          <IconButton
+                            color="primary"
+                            aria-label="retention"
+                            size="small"
+                            className={classes.propertiesIcon}
+                            onClick={setBucketVersioning}
+                          >
+                            <PencilIcon active={true} />
+                          </IconButton>
+                        </React.Fragment>
+                      )}
+                    </div>
                     <div>Encryption:</div>
                     <div>
                       <Checkbox

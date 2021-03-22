@@ -27,6 +27,7 @@ import (
 
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
+	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/sse"
 	"github.com/minio/minio/pkg/madmin"
@@ -44,6 +45,7 @@ var minioRemoveBucketEncryptionMock func(ctx context.Context, bucketName string)
 var minioGetBucketEncryptionMock func(ctx context.Context, bucketName string) (*sse.Configuration, error)
 var minioSetObjectLockConfigMock func(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error
 var minioGetObjectLockConfigMock func(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error)
+var minioSetVersioningMock func(ctx context.Context, state string) *probe.Error
 
 // Define a mock struct of minio Client interface implementation
 type minioClientMock struct {
@@ -92,6 +94,10 @@ func (mc minioClientMock) setObjectLockConfig(ctx context.Context, bucketName st
 
 func (mc minioClientMock) getBucketObjectLockConfig(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
 	return minioGetObjectLockConfigMock(ctx, bucketName)
+}
+
+func (c s3ClientMock) setVersioning(ctx context.Context, state string) *probe.Error {
+	return minioSetVersioningMock(ctx, state)
 }
 
 var minioAccountInfoMock func(ctx context.Context) (madmin.AccountInfo, error)
@@ -761,6 +767,68 @@ func Test_GetBucketRetentionConfig(t *testing.T) {
 					t.Errorf("getBucketRetentionConfig() resp: %v, expectedResponse: %v", resp, tt.expectedResponse)
 					return
 				}
+			}
+		})
+	}
+}
+
+func Test_SetBucketVersioning(t *testing.T) {
+	assert := assert.New(t)
+	ctx := context.Background()
+	errorMsg := "Error Message"
+	minClient := s3ClientMock{}
+	type args struct {
+		ctx               context.Context
+		state             VersionState
+		bucketName        string
+		client            s3ClientMock
+		setVersioningFunc func(ctx context.Context, state string) *probe.Error
+	}
+	tests := []struct {
+		name          string
+		args          args
+		expectedError error
+	}{
+		{
+			name: "Set Bucket Version Success",
+			args: args{
+				ctx:        ctx,
+				state:      VersionEnable,
+				bucketName: "test",
+				client:     minClient,
+				setVersioningFunc: func(ctx context.Context, state string) *probe.Error {
+					return nil
+				},
+			},
+			expectedError: nil,
+		},
+		{
+			name: "Set Bucket Version Error",
+			args: args{
+				ctx:        ctx,
+				state:      VersionEnable,
+				bucketName: "test",
+				client:     minClient,
+				setVersioningFunc: func(ctx context.Context, state string) *probe.Error {
+					return probe.NewError(errors.New(errorMsg))
+				},
+			},
+			expectedError: errors.New(errorMsg),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			minioSetVersioningMock = tt.args.setVersioningFunc
+
+			err := doSetVersioning(tt.args.client, tt.args.state)
+
+			fmt.Println(t.Name())
+			fmt.Println("Expected:", tt.expectedError, "Error:", err)
+
+			if tt.expectedError != nil {
+				fmt.Println(t.Name())
+				assert.Equal(tt.expectedError.Error(), err.Error(), fmt.Sprintf("getBucketRetentionConfig() error: `%s`, wantErr: `%s`", err, tt.expectedError))
 			}
 		})
 	}
