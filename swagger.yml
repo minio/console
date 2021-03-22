@@ -1495,7 +1495,7 @@ paths:
 
   /subscription/validate:
     post:
-      summary: Validate a provided subscription license
+      summary: Validates subscription license
       operationId: SubscriptionValidate
       parameters:
         - name: body
@@ -1515,6 +1515,21 @@ paths:
       tags:
         - AdminAPI
 
+  /subscription/refresh:
+    post:
+      summary: Refresh existing subscription license
+      operationId: SubscriptionRefresh
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/license"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
 
   /subscription/namespaces/{namespace}/tenants/{tenant}/activate:
     post:

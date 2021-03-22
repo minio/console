@@ -28,7 +28,7 @@ import { planDetails, planItems, planButtons } from "./utils";
 import ActivationModal from "./ActivationModal";
 import api from "../../../common/api";
 import { LicenseInfo } from "./types";
-import { LinearProgress } from "@material-ui/core";
+import { CircularProgress, LinearProgress } from "@material-ui/core";
 import { AppState } from "../../../store";
 import { connect } from "react-redux";
 import { niceBytes } from "../../../common/utils";
@@ -50,6 +50,7 @@ const styles = (theme: Theme) =>
       padding: "20px 52px 20px 28px",
     },
     licenseContainer: {
+      position: "relative",
       padding: "20px 52px 0px 28px",
       background: "#032F51",
       boxShadow: "0px 3px 7px #00000014",
@@ -94,7 +95,7 @@ const styles = (theme: Theme) =>
       marginBottom: 26,
       paddingTop: 18,
     },
-    currentPlan: {
+    activePlanHeader: {
       fontWeight: 700,
       background: "#D5DDE5",
       borderRadius: "3px 3px 0px 0px",
@@ -102,6 +103,12 @@ const styles = (theme: Theme) =>
       padding: 8,
       borderTop: "1px solid #D5DDE5",
       marginTop: -2,
+    },
+    planHeader: {
+      background: "#FFFFFF",
+      borderRadius: "3px 3px 0px 0px",
+      padding: 8,
+      borderTop: "1px solid #D5DDE5",
     },
     detailsPrice: {
       fontSize: 13,
@@ -198,6 +205,16 @@ const styles = (theme: Theme) =>
       textDecoration: "underline",
       cursor: "pointer",
     },
+    subnetRefreshLicenseLink: {
+      color: "#1C5A8D",
+      fontWeight: "bold",
+      clear: "both",
+      background: "none",
+      border: "none",
+      textDecoration: "underline",
+      cursor: "pointer",
+      fontSize: 13,
+    },
     fullWidth: {
       width: "100%",
       height: "100%",
@@ -213,14 +230,16 @@ const styles = (theme: Theme) =>
       height: "100%",
       borderRadius: "0px 3px 0px 0px !important",
     },
-    licenseInfo: { color: "#FFFFFF" },
+    licenseInfo: { color: "#FFFFFF", position: "relative" },
     licenseInfoTitle: {
       textTransform: "none",
-      color: "#FFFFFF",
+      color: "#BFBFBF",
+      fontSize: 11,
     },
     licenseInfoValue: {
       textTransform: "none",
-      fontSize: 17,
+      fontSize: 14,
+      fontWeight: "bold",
     },
     licenseDescription: {
       background: "#032F51",
@@ -228,6 +247,10 @@ const styles = (theme: Theme) =>
       borderTop: "1px solid #e2e5e4",
       borderLeft: "1px solid #e2e5e4",
       borderRight: "1px solid #e2e5e4",
+      bottom: 0,
+      left: "5%",
+      right: "5%",
+      position: "absolute",
     },
     currentPlanBG: {
       background: "#022A4A 0% 0% no-repeat padding-box",
@@ -243,6 +266,18 @@ const styles = (theme: Theme) =>
     },
     planItemsPadding: {
       padding: "23px 33px",
+    },
+    subnetSubTitle: {
+      fontSize: 12,
+    },
+    verifiedIcon: {
+      width: 96,
+      position: "absolute",
+      right: 0,
+      bottom: 29,
+    },
+    loadingLoginStrategy: {
+      textAlign: "center",
     },
     ...containerForHeader(theme.spacing(4)),
   });
@@ -278,6 +313,27 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
         setLoadingLicenseInfo(false);
       });
   };
+  const refreshLicense = () => {
+    setLoadingRefreshLicense(true);
+    api
+      .invoke("POST", `/api/v1/subscription/refresh`, {})
+      .then((res: LicenseInfo) => {
+        if (res) {
+          if (res.plan === "STANDARD") {
+            setCurrentPlanID(1);
+          } else if (res.plan === "ENTERPRISE") {
+            setCurrentPlanID(2);
+          } else {
+            setCurrentPlanID(1);
+          }
+          setLicenseInfo(res);
+        }
+        setLoadingRefreshLicense(false);
+      })
+      .catch((err: any) => {
+        setLoadingRefreshLicense(false);
+      });
+  };
 
   const [activateProductModal, setActivateProductModal] = useState<boolean>(
     false
@@ -286,6 +342,9 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
   const [licenseInfo, setLicenseInfo] = useState<LicenseInfo>();
   const [currentPlanID, setCurrentPlanID] = useState<number>(0);
   const [loadingLicenseInfo, setLoadingLicenseInfo] = useState<boolean>(true);
+  const [loadingRefreshLicense, setLoadingRefreshLicense] = useState<boolean>(
+    false
+  );
 
   useEffect(() => {
     fetchLicenseInfo();
@@ -303,11 +362,9 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
       <React.Fragment>
         <PageHeader label="License" />
         <Grid container>
-          <Grid item xs={operatorMode ? 12 : 6} className={classes.container}>
+          <Grid item xs={12} className={classes.container}>
             <Paper
-              className={`${classes.licenseContainer} ${
-                operatorMode ? classes.midWidth : classes.fullWidth
-              }`}
+              className={`${classes.licenseContainer} ${classes.midWidth}`}
             >
               {licenseInfo ? (
                 <React.Fragment>
@@ -378,7 +435,9 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                         gutterBottom
                         className={classes.licenseInfoValue}
                       >
-                        <Moment>{licenseInfo.expires_at}</Moment>
+                        <Moment format="YYYY-MM-DD">
+                          {licenseInfo.expires_at}
+                        </Moment>
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -415,11 +474,15 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                         {licenseInfo.email}
                       </Typography>
                     </Grid>
+                    <img
+                      className={classes.verifiedIcon}
+                      src={"/verified.svg"}
+                    />
                   </Grid>
                 </React.Fragment>
               ) : (
                 <React.Fragment>
-                  <img src="agpl.svg" height={40} alt="agpl" />
+                  <img src="/agpl.svg" height={40} alt="agpl" />
                   <Typography component="h2" variant="h6">
                     GNU Affero General Public License
                   </Typography>
@@ -441,50 +504,96 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                 </React.Fragment>
               )}
             </Paper>
-            {
-              <Paper className={`${classes.paper} ${classes.smallWidth}`}>
-                <Typography
-                  component="h2"
-                  variant="h6"
-                  className={classes.pageTitle}
-                >
-                  Choosing between GNU AGPL v3 and Commercial License
-                </Typography>
-                <Typography component="h6">
-                  If you are building proprietary applications, you may want to
-                  choose the commercial license included as part of the Standard
-                  and Enterprise subscription plans. Applications must otherwise
-                  comply with all the GNU AGPLv3 License & Trademark
-                  obligations. Follow the links below to learn more about the
-                  compliance policy.
-                </Typography>
-                <br />
-                <a
-                  href="https://min.io/compliance?ref=op"
-                  className={classes.openSourcePolicy}
-                  target="_blank"
-                  rel="nofollow noopener noreferrer"
-                >
-                  Open Source Policy Compliance
-                </a>
-                <br />
-                <br />
-                <a
-                  href="https://min.io/logo?ref=op"
-                  className={classes.openSourcePolicy}
-                  target="_blank"
-                  rel="nofollow noopener noreferrer"
-                >
-                  Trademark Policy
-                </a>
-              </Paper>
-            }
+            <Paper className={`${classes.paper} ${classes.smallWidth}`}>
+              {licenseInfo ? (
+                <React.Fragment>
+                  {" "}
+                  <Typography
+                    component="h2"
+                    variant="h6"
+                    className={classes.pageTitle}
+                  >
+                    Login to MinIO SUBNET !
+                  </Typography>
+                  <Typography component="h6" className={classes.subnetSubTitle}>
+                    It combines a commercial license with a support experience
+                    unlike any other.
+                  </Typography>
+                  <br />
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.button}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="https://subnet.min.io/support/?ref=op"
+                  >
+                    Login to SUBNET
+                  </Button>
+                  {operatorMode && (
+                    <React.Fragment>
+                      {" "}
+                      <br />
+                      <br />
+                      <button
+                        className={classes.subnetRefreshLicenseLink}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          refreshLicense();
+                        }}
+                      >
+                        Refresh Licence
+                      </button>
+                      {loadingRefreshLicense && (
+                        <CircularProgress
+                          size={16}
+                          className={classes.loadingLoginStrategy}
+                        />
+                      )}
+                    </React.Fragment>
+                  )}
+                </React.Fragment>
+              ) : (
+                <React.Fragment>
+                  <Typography
+                    component="h2"
+                    variant="h6"
+                    className={classes.pageTitle}
+                  >
+                    Choosing between GNU AGPL v3 and Commercial License
+                  </Typography>
+                  <Typography component="h6">
+                    If you are building proprietary applications, you may want
+                    to choose the commercial license included as part of the
+                    Standard and Enterprise subscription plans. Applications
+                    must otherwise comply with all the GNU AGPLv3 License &
+                    Trademark obligations. Follow the links below to learn more
+                    about the compliance policy.
+                  </Typography>
+                  <br />
+                  <a
+                    href="https://min.io/compliance?ref=op"
+                    className={classes.openSourcePolicy}
+                    target="_blank"
+                    rel="nofollow noopener noreferrer"
+                  >
+                    Open Source Policy Compliance
+                  </a>
+                  <br />
+                  <br />
+                  <a
+                    href="https://min.io/logo?ref=op"
+                    className={classes.openSourcePolicy}
+                    target="_blank"
+                    rel="nofollow noopener noreferrer"
+                  >
+                    Trademark Policy
+                  </a>
+                </React.Fragment>
+              )}
+            </Paper>
           </Grid>
-          <Grid
-            item
-            xs={12}
-            className={clsx(classes.container, classes.planItemsPadding)}
-          >
+          <Grid item xs={12} className={clsx(classes.planItemsPadding)}>
             <Paper
               className={classes.paper}
               style={{ borderRadius: "0px 0px 3px 3px" }}
@@ -521,11 +630,17 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                             currentPlan ? classes.currentPlanBG : ""
                           )}
                         >
-                          {currentPlan ? (
-                            <Grid item xs={12} className={classes.currentPlan}>
-                              Current Plan
-                            </Grid>
-                          ) : null}
+                          <Grid
+                            item
+                            xs={12}
+                            className={
+                              currentPlan
+                                ? classes.activePlanHeader
+                                : classes.planHeader
+                            }
+                          >
+                            {currentPlan ? "Current Plan" : "\u00A0"}
+                          </Grid>
                           <Grid item xs={12} className={classes.detailsTitle}>
                             {details.title}
                           </Grid>
