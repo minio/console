@@ -17,7 +17,7 @@
 import React from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { IWizardButton, IWizardPage } from "./types";
-import { Button } from "@material-ui/core";
+import { Button, LinearProgress } from "@material-ui/core";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -33,6 +33,11 @@ const styles = (theme: Theme) =>
       margin: "0 auto",
       width: "100%",
     },
+    wizardModal: {
+      overflowY: "auto",
+      marginBottom: 10,
+      height: "calc(100vh - 515px)",
+    },
     buttonsContainer: {
       display: "flex",
       flexDirection: "row",
@@ -45,7 +50,13 @@ const styles = (theme: Theme) =>
     },
   });
 
-const WizardPage = ({ classes, page, pageChange }: IWizardPage) => {
+const WizardPage = ({
+  classes,
+  page,
+  pageChange,
+  loadingStep,
+  forModal,
+}: IWizardPage) => {
   const buttonAction = (btn: IWizardButton) => {
     switch (btn.type) {
       case "next":
@@ -57,17 +68,25 @@ const WizardPage = ({ classes, page, pageChange }: IWizardPage) => {
       case "to":
         pageChange(btn.toPage || 0);
         break;
+      case "custom":
       default:
     }
 
     if (btn.action) {
-      btn.action();
+      btn.action(pageChange);
     }
   };
 
   return (
     <div className={classes.wizardStepContainer}>
-      <div className={classes.wizardComponent}>{page.componentRender}</div>
+      <div className={forModal ? classes.wizardModal : classes.wizardComponent}>
+        {page.componentRender}
+      </div>
+      {loadingStep && (
+        <div>
+          <LinearProgress />
+        </div>
+      )}
       <div className={classes.buttonsContainer}>
         {page.buttons.map((btn) => {
           return (

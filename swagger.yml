@@ -709,6 +709,51 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
+  
+  /list-external-buckets:
+    post:
+      summary: Lists an External list of buckets using custom credentials
+      operationId: ListExternalBuckets
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/listExternalBucketsParams"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listBucketsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+
+  /buckets-replication:
+    post:
+      summary: Sets Multi Bucket Replication in multiple Buckets
+      operationId: SetMultiBucketReplication
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/multiBucketReplication"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/multiBucketResponseState"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
 
   /buckets/{bucket_name}/replication:
     get:
@@ -730,21 +775,22 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-    post:
-      summary: Add Bucket Replication
-      operationId: AddBucketReplication
+    
+  /buckets/{bucket_name}/replication/{rule_id}:
+    delete:
+      summary: Bucket Replication Rule Delete
+      operationId: DeleteBucketReplicationRule
       parameters:
         - name: bucket_name
           in: path
           required: true
           type: string
-        - name: body
-          in: body
+        - name: rule_id
+          in: path
           required: true
-          schema:
-            $ref: "#/definitions/addBucketReplication"
+          type: string
       responses:
-        201:
+        204:
           description: A successful response.
         default:
           description: Generic error response.
@@ -752,6 +798,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
+
   /buckets/{bucket_name}/versioning:
     get:
       summary: Bucket Versioning
@@ -2691,6 +2738,76 @@ definitions:
     #  }
     # }
     #}
+  
+  listExternalBucketsParams:
+    required:
+      - accessKey
+      - secretKey
+      - targetURL
+      - useTLS
+    properties:
+      accessKey:
+        type: string
+        minLength: 3
+      secretKey:
+        type: string
+        minLength: 8
+      targetURL:
+        type: string
+      useTLS:
+        type: boolean
+      region:
+        type: string
+  
+  multiBucketReplication:
+    required:
+      - accessKey
+      - secretKey
+      - targetURL
+      - bucketsRelation
+    properties:
+      accessKey:
+        type: string
+        minLength: 3
+      secretKey:
+        type: string
+        minLength: 8
+      targetURL:
+        type: string
+      region:
+        type: string
+      bucketsRelation:
+        type: array
+        minLength: 1
+        items:
+          $ref: "#/definitions/multiBucketsRelation"
+
+  multiBucketsRelation:
+    type: object
+    properties:
+      originBucket: 
+        type: string
+      destinationBucket:
+        type: string
+
+  multiBucketResponseItem:
+    type: object
+    properties:
+      originBucket:
+        type: string
+      targetBucket:
+        type: string
+      errorString:
+        type: string
+
+  multiBucketResponseState:
+    type: object
+    properties:
+      replicationState:
+        type: array
+        items:
+          $ref: "#/definitions/multiBucketResponseItem"
+          
   addBucketReplication:
     type: object
     properties:

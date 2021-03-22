@@ -32,6 +32,7 @@ interface IModalProps {
   children: any;
   wideLimit?: boolean;
   modalSnackMessage?: snackBarMessage;
+  noContentPadding?: boolean;
   setModalSnackMessage: typeof setModalSnackMessage;
 }
 
@@ -114,6 +115,7 @@ const ModalWrapper = ({
   classes,
   wideLimit = true,
   modalSnackMessage,
+  noContentPadding,
   setModalSnackMessage,
 }: IModalProps) => {
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
@@ -184,7 +186,7 @@ const ModalWrapper = ({
         <DialogTitle id="alert-dialog-title" className={classes.titleClass}>
           {title}
         </DialogTitle>
-        <DialogContent className={classes.modalContent}>
+        <DialogContent className={noContentPadding ? "" : classes.modalContent}>
           {children}
         </DialogContent>
       </div>

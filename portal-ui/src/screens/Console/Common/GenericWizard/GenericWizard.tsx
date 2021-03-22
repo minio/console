@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { IWizardMain } from "./types";
 import WizardPage from "./WizardPage";
@@ -43,11 +43,28 @@ const styles = (theme: Theme) =>
       height: "100%",
       "& ul": {
         padding: "0 15px 0 40px",
-        marginTop: "0px",
+        marginTop: 0,
 
         "& li": {
           listStyle: "lower-roman",
           marginBottom: 12,
+        },
+      },
+    },
+    modalWizardSteps: {
+      padding: 5,
+      borderBottom: "#eaeaea 1px solid",
+      "& ul": {
+        padding: 0,
+        marginTop: 0,
+        display: "flex",
+        justifyContent: "space-evenly",
+
+        "& li": {
+          listStyle: "lower-roman",
+          "&::marker": {
+            paddingLeft: 15,
+          },
         },
       },
     },
@@ -72,10 +89,28 @@ const styles = (theme: Theme) =>
       color: "#393939",
       fontWeight: 600,
       margin: "15px 12px",
+      "&.stepsModalTitle": {
+        textAlign: "center",
+        width: "100%",
+        marginTop: 0,
+        marginBottom: 10,
+      },
+    },
+    stepsMasterContainer: {
+      position: "sticky",
+      top: 0,
+      backgroundColor: "#FFFFFF",
+      width: "100%",
+      maxHeight: 90,
     },
   });
 
-const GenericWizard = ({ classes, wizardSteps }: IWizardMain) => {
+const GenericWizard = ({
+  classes,
+  wizardSteps,
+  loadingStep,
+  forModal,
+}: IWizardMain) => {
   const [currentStep, setCurrentStep] = useState<number>(0);
 
   const pageChange = (toElement: string | number) => {
@@ -119,38 +154,61 @@ const GenericWizard = ({ classes, wizardSteps }: IWizardMain) => {
     return null;
   }
 
+  const stepsList = () => {
+    return (
+      <ul>
+        {wizardSteps.map((step, index) => {
+          return (
+            <li key={`wizard-${index.toString()}`}>
+              <button
+                onClick={() => pageChange(index)}
+                disabled={index > currentStep}
+                className={classes.buttonList}
+              >
+                {step.label}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    );
+  };
+
   return (
     <Grid container className={classes.wizFromContainer}>
-      <Grid item xs={12} sm={3} md={3} lg={3} xl={2}>
-        <div className={classes.wizardSteps}>
-          <span className={classes.stepsLabel}>Steps</span>
-          <ul>
-            {wizardSteps.map((step, index) => {
-              return (
-                <li key={`wizard-${index.toString()}`}>
-                  <button
-                    onClick={() => pageChange(index)}
-                    disabled={index > currentStep}
-                    className={classes.buttonList}
-                  >
-                    {step.label}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      </Grid>
+      {forModal ? (
+        <Fragment>
+          <div className={classes.stepsMasterContainer}>
+            <div className={`${classes.stepsLabel} stepsModalTitle`}>Steps</div>
+            <div className={classes.modalWizardSteps}>{stepsList()}</div>
+          </div>
+        </Fragment>
+      ) : (
+        <Fragment>
+          <Grid item xs={12} sm={3} md={3} lg={3} xl={2}>
+            <div className={classes.wizardSteps}>
+              <span className={classes.stepsLabel}>Steps</span>
+              {stepsList()}
+            </div>
+          </Grid>
+        </Fragment>
+      )}
+
       <Grid
         item
         xs={12}
-        sm={9}
-        md={9}
-        lg={9}
-        xl={10}
+        sm={forModal ? 12 : 9}
+        md={forModal ? 12 : 9}
+        lg={forModal ? 12 : 9}
+        xl={forModal ? 12 : 10}
         className={classes.paddedContentGrid}
       >
-        <WizardPage page={wizardSteps[currentStep]} pageChange={pageChange} />
+        <WizardPage
+          page={wizardSteps[currentStep]}
+          pageChange={pageChange}
+          loadingStep={loadingStep}
+          forModal
+        />
       </Grid>
     </Grid>
   );

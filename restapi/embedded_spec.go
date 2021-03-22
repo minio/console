@@ -362,6 +362,39 @@ func init() {
         }
       }
     },
+    "/buckets-replication": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Sets Multi Bucket Replication in multiple Buckets",
+        "operationId": "SetMultiBucketReplication",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/multiBucketReplication"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/multiBucketResponseState"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/encryption/disable": {
       "post": {
         "tags": [
@@ -1034,13 +1067,15 @@ func init() {
             }
           }
         }
-      },
-      "post": {
+      }
+    },
+    "/buckets/{bucket_name}/replication/{rule_id}": {
+      "delete": {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Add Bucket Replication",
-        "operationId": "AddBucketReplication",
+        "summary": "Bucket Replication Rule Delete",
+        "operationId": "DeleteBucketReplicationRule",
         "parameters": [
           {
             "type": "string",
@@ -1049,16 +1084,14 @@ func init() {
             "required": true
           },
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/addBucketReplication"
-            }
+            "type": "string",
+            "name": "rule_id",
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
-          "201": {
+          "204": {
             "description": "A successful response."
           },
           "default": {
@@ -1792,6 +1825,39 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/hasPermissionResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/list-external-buckets": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Lists an External list of buckets using custom credentials",
+        "operationId": "ListExternalBuckets",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/listExternalBucketsParams"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listBucketsResponse"
             }
           },
           "default": {
@@ -4363,6 +4429,33 @@ func init() {
         }
       }
     },
+    "listExternalBucketsParams": {
+      "required": [
+        "accessKey",
+        "secretKey",
+        "targetURL",
+        "useTLS"
+      ],
+      "properties": {
+        "accessKey": {
+          "type": "string",
+          "minLength": 3
+        },
+        "region": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string",
+          "minLength": 8
+        },
+        "targetURL": {
+          "type": "string"
+        },
+        "useTLS": {
+          "type": "boolean"
+        }
+      }
+    },
     "listGroupsResponse": {
       "type": "object",
       "properties": {
@@ -4586,6 +4679,73 @@ func init() {
           "additionalProperties": {
             "type": "string"
           }
+        }
+      }
+    },
+    "multiBucketReplication": {
+      "required": [
+        "accessKey",
+        "secretKey",
+        "targetURL",
+        "bucketsRelation"
+      ],
+      "properties": {
+        "accessKey": {
+          "type": "string",
+          "minLength": 3
+        },
+        "bucketsRelation": {
+          "type": "array",
+          "minLength": 1,
+          "items": {
+            "$ref": "#/definitions/multiBucketsRelation"
+          }
+        },
+        "region": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string",
+          "minLength": 8
+        },
+        "targetURL": {
+          "type": "string"
+        }
+      }
+    },
+    "multiBucketResponseItem": {
+      "type": "object",
+      "properties": {
+        "errorString": {
+          "type": "string"
+        },
+        "originBucket": {
+          "type": "string"
+        },
+        "targetBucket": {
+          "type": "string"
+        }
+      }
+    },
+    "multiBucketResponseState": {
+      "type": "object",
+      "properties": {
+        "replicationState": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/multiBucketResponseItem"
+          }
+        }
+      }
+    },
+    "multiBucketsRelation": {
+      "type": "object",
+      "properties": {
+        "destinationBucket": {
+          "type": "string"
+        },
+        "originBucket": {
+          "type": "string"
         }
       }
     },
@@ -6253,6 +6413,39 @@ func init() {
         }
       }
     },
+    "/buckets-replication": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Sets Multi Bucket Replication in multiple Buckets",
+        "operationId": "SetMultiBucketReplication",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/multiBucketReplication"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/multiBucketResponseState"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/encryption/disable": {
       "post": {
         "tags": [
@@ -6925,13 +7118,15 @@ func init() {
             }
           }
         }
-      },
-      "post": {
+      }
+    },
+    "/buckets/{bucket_name}/replication/{rule_id}": {
+      "delete": {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Add Bucket Replication",
-        "operationId": "AddBucketReplication",
+        "summary": "Bucket Replication Rule Delete",
+        "operationId": "DeleteBucketReplicationRule",
         "parameters": [
           {
             "type": "string",
@@ -6940,16 +7135,14 @@ func init() {
             "required": true
           },
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/addBucketReplication"
-            }
+            "type": "string",
+            "name": "rule_id",
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
-          "201": {
+          "204": {
             "description": "A successful response."
           },
           "default": {
@@ -7683,6 +7876,39 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/hasPermissionResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/list-external-buckets": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Lists an External list of buckets using custom credentials",
+        "operationId": "ListExternalBuckets",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/listExternalBucketsParams"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listBucketsResponse"
             }
           },
           "default": {
@@ -10863,6 +11089,33 @@ func init() {
         }
       }
     },
+    "listExternalBucketsParams": {
+      "required": [
+        "accessKey",
+        "secretKey",
+        "targetURL",
+        "useTLS"
+      ],
+      "properties": {
+        "accessKey": {
+          "type": "string",
+          "minLength": 3
+        },
+        "region": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string",
+          "minLength": 8
+        },
+        "targetURL": {
+          "type": "string"
+        },
+        "useTLS": {
+          "type": "boolean"
+        }
+      }
+    },
     "listGroupsResponse": {
       "type": "object",
       "properties": {
@@ -11086,6 +11339,73 @@ func init() {
           "additionalProperties": {
             "type": "string"
           }
+        }
+      }
+    },
+    "multiBucketReplication": {
+      "required": [
+        "accessKey",
+        "secretKey",
+        "targetURL",
+        "bucketsRelation"
+      ],
+      "properties": {
+        "accessKey": {
+          "type": "string",
+          "minLength": 3
+        },
+        "bucketsRelation": {
+          "type": "array",
+          "minLength": 1,
+          "items": {
+            "$ref": "#/definitions/multiBucketsRelation"
+          }
+        },
+        "region": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string",
+          "minLength": 8
+        },
+        "targetURL": {
+          "type": "string"
+        }
+      }
+    },
+    "multiBucketResponseItem": {
+      "type": "object",
+      "properties": {
+        "errorString": {
+          "type": "string"
+        },
+        "originBucket": {
+          "type": "string"
+        },
+        "targetBucket": {
+          "type": "string"
+        }
+      }
+    },
+    "multiBucketResponseState": {
+      "type": "object",
+      "properties": {
+        "replicationState": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/multiBucketResponseItem"
+          }
+        }
+      }
+    },
+    "multiBucketsRelation": {
+      "type": "object",
+      "properties": {
+        "destinationBucket": {
+          "type": "string"
+        },
+        "originBucket": {
+          "type": "string"
         }
       }
     },

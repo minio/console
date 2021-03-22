@@ -67,9 +67,6 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIAccountChangePasswordHandler: user_api.AccountChangePasswordHandlerFunc(func(params user_api.AccountChangePasswordParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.AccountChangePassword has not yet been implemented")
 		}),
-		UserAPIAddBucketReplicationHandler: user_api.AddBucketReplicationHandlerFunc(func(params user_api.AddBucketReplicationParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user_api.AddBucketReplication has not yet been implemented")
-		}),
 		AdminAPIAddGroupHandler: admin_api.AddGroupHandlerFunc(func(params admin_api.AddGroupParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.AddGroup has not yet been implemented")
 		}),
@@ -117,6 +114,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		UserAPIDeleteBucketEventHandler: user_api.DeleteBucketEventHandlerFunc(func(params user_api.DeleteBucketEventParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteBucketEvent has not yet been implemented")
+		}),
+		UserAPIDeleteBucketReplicationRuleHandler: user_api.DeleteBucketReplicationRuleHandlerFunc(func(params user_api.DeleteBucketReplicationRuleParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.DeleteBucketReplicationRule has not yet been implemented")
 		}),
 		UserAPIDeleteObjectHandler: user_api.DeleteObjectHandlerFunc(func(params user_api.DeleteObjectParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteObject has not yet been implemented")
@@ -198,6 +198,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		AdminAPIListConfigHandler: admin_api.ListConfigHandlerFunc(func(params admin_api.ListConfigParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListConfig has not yet been implemented")
+		}),
+		UserAPIListExternalBucketsHandler: user_api.ListExternalBucketsHandlerFunc(func(params user_api.ListExternalBucketsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.ListExternalBuckets has not yet been implemented")
 		}),
 		AdminAPIListGroupsHandler: admin_api.ListGroupsHandlerFunc(func(params admin_api.ListGroupsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListGroups has not yet been implemented")
@@ -301,6 +304,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPISetConfigHandler: admin_api.SetConfigHandlerFunc(func(params admin_api.SetConfigParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.SetConfig has not yet been implemented")
 		}),
+		UserAPISetMultiBucketReplicationHandler: user_api.SetMultiBucketReplicationHandlerFunc(func(params user_api.SetMultiBucketReplicationParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.SetMultiBucketReplication has not yet been implemented")
+		}),
 		AdminAPISetPolicyHandler: admin_api.SetPolicyHandlerFunc(func(params admin_api.SetPolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.SetPolicy has not yet been implemented")
 		}),
@@ -403,8 +409,6 @@ type ConsoleAPI struct {
 
 	// UserAPIAccountChangePasswordHandler sets the operation handler for the account change password operation
 	UserAPIAccountChangePasswordHandler user_api.AccountChangePasswordHandler
-	// UserAPIAddBucketReplicationHandler sets the operation handler for the add bucket replication operation
-	UserAPIAddBucketReplicationHandler user_api.AddBucketReplicationHandler
 	// AdminAPIAddGroupHandler sets the operation handler for the add group operation
 	AdminAPIAddGroupHandler admin_api.AddGroupHandler
 	// AdminAPIAddNotificationEndpointHandler sets the operation handler for the add notification endpoint operation
@@ -437,6 +441,8 @@ type ConsoleAPI struct {
 	UserAPIDeleteBucketHandler user_api.DeleteBucketHandler
 	// UserAPIDeleteBucketEventHandler sets the operation handler for the delete bucket event operation
 	UserAPIDeleteBucketEventHandler user_api.DeleteBucketEventHandler
+	// UserAPIDeleteBucketReplicationRuleHandler sets the operation handler for the delete bucket replication rule operation
+	UserAPIDeleteBucketReplicationRuleHandler user_api.DeleteBucketReplicationRuleHandler
 	// UserAPIDeleteObjectHandler sets the operation handler for the delete object operation
 	UserAPIDeleteObjectHandler user_api.DeleteObjectHandler
 	// UserAPIDeleteObjectRetentionHandler sets the operation handler for the delete object retention operation
@@ -491,6 +497,8 @@ type ConsoleAPI struct {
 	UserAPIListBucketsHandler user_api.ListBucketsHandler
 	// AdminAPIListConfigHandler sets the operation handler for the list config operation
 	AdminAPIListConfigHandler admin_api.ListConfigHandler
+	// UserAPIListExternalBucketsHandler sets the operation handler for the list external buckets operation
+	UserAPIListExternalBucketsHandler user_api.ListExternalBucketsHandler
 	// AdminAPIListGroupsHandler sets the operation handler for the list groups operation
 	AdminAPIListGroupsHandler admin_api.ListGroupsHandler
 	// UserAPIListObjectsHandler sets the operation handler for the list objects operation
@@ -559,6 +567,8 @@ type ConsoleAPI struct {
 	UserAPISetBucketVersioningHandler user_api.SetBucketVersioningHandler
 	// AdminAPISetConfigHandler sets the operation handler for the set config operation
 	AdminAPISetConfigHandler admin_api.SetConfigHandler
+	// UserAPISetMultiBucketReplicationHandler sets the operation handler for the set multi bucket replication operation
+	UserAPISetMultiBucketReplicationHandler user_api.SetMultiBucketReplicationHandler
 	// AdminAPISetPolicyHandler sets the operation handler for the set policy operation
 	AdminAPISetPolicyHandler admin_api.SetPolicyHandler
 	// AdminAPISetPolicyMultipleHandler sets the operation handler for the set policy multiple operation
@@ -670,9 +680,6 @@ func (o *ConsoleAPI) Validate() error {
 	if o.UserAPIAccountChangePasswordHandler == nil {
 		unregistered = append(unregistered, "user_api.AccountChangePasswordHandler")
 	}
-	if o.UserAPIAddBucketReplicationHandler == nil {
-		unregistered = append(unregistered, "user_api.AddBucketReplicationHandler")
-	}
 	if o.AdminAPIAddGroupHandler == nil {
 		unregistered = append(unregistered, "admin_api.AddGroupHandler")
 	}
@@ -720,6 +727,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIDeleteBucketEventHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteBucketEventHandler")
+	}
+	if o.UserAPIDeleteBucketReplicationRuleHandler == nil {
+		unregistered = append(unregistered, "user_api.DeleteBucketReplicationRuleHandler")
 	}
 	if o.UserAPIDeleteObjectHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteObjectHandler")
@@ -801,6 +811,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIListConfigHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListConfigHandler")
+	}
+	if o.UserAPIListExternalBucketsHandler == nil {
+		unregistered = append(unregistered, "user_api.ListExternalBucketsHandler")
 	}
 	if o.AdminAPIListGroupsHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListGroupsHandler")
@@ -903,6 +916,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPISetConfigHandler == nil {
 		unregistered = append(unregistered, "admin_api.SetConfigHandler")
+	}
+	if o.UserAPISetMultiBucketReplicationHandler == nil {
+		unregistered = append(unregistered, "user_api.SetMultiBucketReplicationHandler")
 	}
 	if o.AdminAPISetPolicyHandler == nil {
 		unregistered = append(unregistered, "admin_api.SetPolicyHandler")
@@ -1061,10 +1077,6 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/buckets/{bucket_name}/replication"] = user_api.NewAddBucketReplication(o.context, o.UserAPIAddBucketReplicationHandler)
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
 	o.handlers["POST"]["/groups"] = admin_api.NewAddGroup(o.context, o.AdminAPIAddGroupHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
@@ -1126,6 +1138,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/buckets/{bucket_name}/events/{arn}"] = user_api.NewDeleteBucketEvent(o.context, o.UserAPIDeleteBucketEventHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/buckets/{bucket_name}/replication/{rule_id}"] = user_api.NewDeleteBucketReplicationRule(o.context, o.UserAPIDeleteBucketReplicationRuleHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
@@ -1234,6 +1250,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/configs"] = admin_api.NewListConfig(o.context, o.AdminAPIListConfigHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/list-external-buckets"] = user_api.NewListExternalBuckets(o.context, o.UserAPIListExternalBucketsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -1370,6 +1390,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/configs/{name}"] = admin_api.NewSetConfig(o.context, o.AdminAPISetConfigHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/buckets-replication"] = user_api.NewSetMultiBucketReplication(o.context, o.UserAPISetMultiBucketReplicationHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
