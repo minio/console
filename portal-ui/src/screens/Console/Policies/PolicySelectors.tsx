@@ -35,7 +35,7 @@ import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
 interface ISelectPolicyProps {
   classes: any;
-  selectedPolicy?: string;
+  selectedPolicy?: string[];
   setSelectedPolicy: any;
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
@@ -108,7 +108,7 @@ const styles = (theme: Theme) =>
 
 const PolicySelectors = ({
   classes,
-  selectedPolicy = "",
+  selectedPolicy = [],
   setSelectedPolicy,
   setModalErrorSnackMessage,
 }: ISelectPolicyProps) => {
@@ -147,8 +147,21 @@ const PolicySelectors = ({
   const selectionChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
     const targetD = e.target;
     const value = targetD.value;
+    const checked = targetD.checked;
 
-    setSelectedPolicy(value);
+    let elements: string[] = [...selectedPolicy]; // We clone the checkedUsers array
+
+    if (checked) {
+      // If the user has checked this field we need to push this to checkedUsersList
+      elements.push(value);
+    } else {
+      // User has unchecked this field, we need to remove it from the list
+      elements = elements.filter((element) => element !== value);
+    }
+    // remove empty values
+    elements = elements.filter((element) => element !== "");
+
+    setSelectedPolicy(elements);
   };
 
   const filteredRecords = records.filter((elementItem) =>
@@ -160,7 +173,7 @@ const PolicySelectors = ({
       <Grid item xs={12}>
         <Paper className={classes.paper}>
           {loading && <LinearProgress />}
-          {records != null && records.length > 0 ? (
+          {records.length > 0 ? (
             <React.Fragment>
               <Grid item xs={12} className={classes.actionsTray}>
                 <span className={classes.actionsTitle}>Assign Policies</span>
@@ -185,13 +198,12 @@ const PolicySelectors = ({
                 <TableWrapper
                   columns={[{ label: "Policy", elementKey: "name" }]}
                   onSelect={selectionChanged}
-                  selectedItems={[selectedPolicy]}
+                  selectedItems={selectedPolicy}
                   isLoading={loading}
                   records={filteredRecords}
                   entityName="Policies"
                   idField="name"
                   customPaperHeight={classes.multiSelectTable}
-                  radioSelection
                 />
               </Grid>
             </React.Fragment>
