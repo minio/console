@@ -23,7 +23,7 @@ import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import Moment from "react-moment";
-import { Bucket, BucketList } from "../types";
+import { Bucket, BucketList, HasPermissionResponse } from "../types";
 import { CreateIcon } from "../../../../icons";
 import { niceBytes } from "../../../../common/utils";
 import { AppState } from "../../../../store";
@@ -92,6 +92,47 @@ const ListBuckets = ({
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedBucket, setSelectedBucket] = useState<string>("");
   const [filterBuckets, setFilterBuckets] = useState<string>("");
+  const [loadingPerms, setLoadingPerms] = useState<boolean>(true);
+  const [canCreateBucket, setCanCreateBucket] = useState<boolean>(false);
+
+  // check the permissions for creating bucket
+  useEffect(() => {
+    if (loadingPerms) {
+      const fetchPerms = () => {
+        setLoadingPerms(true);
+        api
+          .invoke("POST", `/api/v1/has-permission`, {
+            actions: [
+              {
+                id: "createBucket",
+                action: "s3:CreateBucket",
+              },
+            ],
+          })
+          .then((res: HasPermissionResponse) => {
+            setLoadingPerms(false);
+            if (!res.permissions) {
+              return;
+            }
+            const actions = res.permissions ? res.permissions : [];
+
+            let canCreate = actions.find((s) => s.id == "createBucket");
+            if (canCreate && canCreate.can) {
+              setCanCreateBucket(true);
+            } else {
+              setCanCreateBucket(false);
+            }
+
+            setLoadingPerms(false);
+          })
+          .catch((err: any) => {
+            setLoadingPerms(false);
+            setErrorSnackMessage(err);
+          });
+      };
+      fetchPerms();
+    }
+  }, [loadingPerms, setErrorSnackMessage]);
 
   useEffect(() => {
     if (loading) {
@@ -192,16 +233,18 @@ const ListBuckets = ({
                 ),
               }}
             />
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<CreateIcon />}
-              onClick={() => {
-                addBucketOpen(true);
-              }}
-            >
-              Create Bucket
-            </Button>
+            {canCreateBucket && (
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<CreateIcon />}
+                onClick={() => {
+                  addBucketOpen(true);
+                }}
+              >
+                Create Bucket
+              </Button>
+            )}
           </Grid>
           <Grid item xs={12}>
             <br />

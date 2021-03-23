@@ -18,8 +18,11 @@ package restapi
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"testing"
+
+	iampolicy "github.com/minio/minio/pkg/iam/policy"
 
 	"github.com/minio/console/models"
 )
@@ -102,6 +105,155 @@ func Test_changePassword(t *testing.T) {
 			}
 			if err := changePassword(tt.args.ctx, tt.args.client, tt.args.session, tt.args.newSecretKey); (err != nil) != tt.wantErr {
 				t.Errorf("changePassword() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func Test_useCanDo(t *testing.T) {
+	type args struct {
+		arg        iampolicy.Args
+		userPolicy string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "Create Bucket",
+			args: args{
+				arg: iampolicy.Args{
+					Action: "s3:CreateBucket",
+				},
+				userPolicy: `{
+								"Version": "2012-10-17",
+								"Statement": [
+									{
+										"Effect": "Allow",
+										"Action": [
+											"admin:*"
+										]
+									},
+									{
+										"Effect": "Allow",
+										"Action": [
+											"s3:*"
+										],
+										"Resource": [
+											"arn:aws:s3:::*"
+										]
+									}
+								]
+							}`,
+			},
+			want: true,
+		},
+		{
+			name: "Create Bucket, No Admin",
+			args: args{
+				arg: iampolicy.Args{
+					Action: "s3:CreateBucket",
+				},
+				userPolicy: `{
+								"Version": "2012-10-17",
+								"Statement": [
+									{
+										"Effect": "Allow",
+										"Action": [
+											"s3:*"
+										],
+										"Resource": [
+											"arn:aws:s3:::*"
+										]
+									}
+								]
+							}`,
+			},
+			want: true,
+		},
+		{
+			name: "Create Bucket, By Prefix",
+			args: args{
+				arg: iampolicy.Args{
+					Action: "s3:CreateBucket",
+				},
+				userPolicy: `{
+							 "Version": "2012-10-17",
+							 "Statement": [
+							  {
+							   "Effect": "Allow",
+							   "Action": [
+								"s3:*"
+							   ],
+							   "Resource": [
+								"arn:aws:s3:::bucket1"
+							   ]
+							  }
+							 ]
+							}`,
+			},
+			want: false,
+		},
+		{
+			name: "Create Bucket, With Bucket Name",
+			args: args{
+				arg: iampolicy.Args{
+					Action:     "s3:CreateBucket",
+					BucketName: "bucket2",
+				},
+				userPolicy: `{
+							 "Version": "2012-10-17",
+							 "Statement": [
+							  {
+							   "Effect": "Allow",
+							   "Action": [
+								"s3:*"
+							   ],
+							   "Resource": [
+								"arn:aws:s3:::bucket1"
+							   ]
+							  }
+							 ]
+							}`,
+			},
+			want: false,
+		},
+		{
+			name: "Can't Create Bucket",
+			args: args{
+				arg: iampolicy.Args{
+					Action:     "s3:CreateBucket",
+					BucketName: "bucket2",
+				},
+				userPolicy: `{
+							"Version": "2012-10-17",
+							"Statement": [
+								{
+									"Sid": "VisualEditor1",
+									"Effect": "Allow",
+									"Action": "s3:ListBucket",
+									"Resource": [
+										"arn:aws:s3:::bucket1",
+										"arn:aws:s3:::bucket1/*",
+										"arn:aws:s3:::lkasdkljasd090901",
+										"arn:aws:s3:::lkasdkljasd090901/*"
+										]
+								}
+							]
+						}`,
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var pol iampolicy.Policy
+			if err := json.Unmarshal([]byte(tt.args.userPolicy), &pol); err != nil {
+				t.Errorf("Policy can't be parsed: %s", err)
+			}
+			if got := userCanDo(tt.args.arg, &pol); got != tt.want {
+				t.Errorf("userCanDo() = %v, want %v", got, tt.want)
 			}
 		})
 	}

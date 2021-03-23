@@ -1724,6 +1724,39 @@ func init() {
         }
       }
     },
+    "/has-permission": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Checks whether the user can perform a series of actions",
+        "operationId": "HasPermissionTo",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/hasPermissionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/hasPermissionResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/login": {
       "get": {
         "security": [],
@@ -4094,6 +4127,28 @@ func init() {
         }
       }
     },
+    "hasPermissionRequest": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/policyArgs"
+          }
+        }
+      }
+    },
+    "hasPermissionResponse": {
+      "type": "object",
+      "properties": {
+        "permissions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/permissionAction"
+          }
+        }
+      }
+    },
     "iamEntity": {
       "type": "string",
       "pattern": "^[\\w+=,.@-]{1,64}$"
@@ -4704,6 +4759,17 @@ func init() {
         "type": "string"
       }
     },
+    "permissionAction": {
+      "type": "object",
+      "properties": {
+        "can": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "string"
+        }
+      }
+    },
     "podAffinityTerm": {
       "description": "Required. A pod affinity term, associated with the corresponding weight.",
       "type": "object",
@@ -4773,6 +4839,20 @@ func init() {
           "type": "string"
         },
         "policy": {
+          "type": "string"
+        }
+      }
+    },
+    "policyArgs": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "bucket_name": {
+          "type": "string"
+        },
+        "id": {
           "type": "string"
         }
       }
@@ -7473,6 +7553,39 @@ func init() {
         "responses": {
           "204": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/has-permission": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Checks whether the user can perform a series of actions",
+        "operationId": "HasPermissionTo",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/hasPermissionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/hasPermissionResponse"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -10462,6 +10575,28 @@ func init() {
         }
       }
     },
+    "hasPermissionRequest": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/policyArgs"
+          }
+        }
+      }
+    },
+    "hasPermissionResponse": {
+      "type": "object",
+      "properties": {
+        "permissions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/permissionAction"
+          }
+        }
+      }
+    },
     "iamEntity": {
       "type": "string",
       "pattern": "^[\\w+=,.@-]{1,64}$"
@@ -11028,6 +11163,17 @@ func init() {
         "type": "string"
       }
     },
+    "permissionAction": {
+      "type": "object",
+      "properties": {
+        "can": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "string"
+        }
+      }
+    },
     "podAffinityTerm": {
       "description": "Required. A pod affinity term, associated with the corresponding weight.",
       "type": "object",
@@ -11075,6 +11221,20 @@ func init() {
           "type": "string"
         },
         "policy": {
+          "type": "string"
+        }
+      }
+    },
+    "policyArgs": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "bucket_name": {
+          "type": "string"
+        },
+        "id": {
           "type": "string"
         }
       }

@@ -26,7 +26,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import { Button } from "@material-ui/core";
 import { CreateIcon } from "../../../icons";
 import { niceBytes } from "../../../common/utils";
-import { Bucket, BucketList } from "../Buckets/types";
+import { Bucket, BucketList, HasPermissionResponse } from "../Buckets/types";
 import {
   actionsTray,
   objectBrowserCommon,
@@ -118,6 +118,46 @@ const BrowseBuckets = ({
   const [records, setRecords] = useState<Bucket[]>([]);
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
   const [filterBuckets, setFilterBuckets] = useState<string>("");
+  const [loadingPerms, setLoadingPerms] = useState<boolean>(true);
+  const [canCreateBucket, setCanCreateBucket] = useState<boolean>(false);
+
+  // check the permissions for creating bucket
+  useEffect(() => {
+    if (loadingPerms) {
+      const fetchRecords = () => {
+        setLoadingPerms(true);
+        api
+          .invoke("POST", `/api/v1/has-permission`, {
+            actions: [
+              {
+                id: "createBucket",
+                action: "s3:CreateBucket",
+              },
+            ],
+          })
+          .then((res: HasPermissionResponse) => {
+            console.log(res);
+
+            const canCreate = res.permissions
+              .filter((s) => s.id == "createBucket")
+              .pop();
+            if (canCreate && canCreate.can) {
+              setCanCreateBucket(true);
+            } else {
+              setCanCreateBucket(false);
+            }
+
+            setLoadingPerms(false);
+            // setRecords(res.buckets || []);
+          })
+          .catch((err: any) => {
+            setLoadingPerms(false);
+            setErrorSnackMessage(err);
+          });
+      };
+      fetchRecords();
+    }
+  }, [loadingPerms, setErrorSnackMessage]);
 
   useEffect(() => {
     resetRoutesList(true);
@@ -182,18 +222,20 @@ const BrowseBuckets = ({
           <div>
             <BrowserBreadcrumbs />
           </div>
-          <div>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<CreateIcon />}
-              onClick={() => {
-                setAddScreenOpen(true);
-              }}
-            >
-              Create Bucket
-            </Button>
-          </div>
+          {canCreateBucket && (
+            <div>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<CreateIcon />}
+                onClick={() => {
+                  setAddScreenOpen(true);
+                }}
+              >
+                Create Bucket
+              </Button>
+            </div>
+          )}
         </Grid>
         <Grid item xs={12} className={classes.actionsTray}>
           <TextField

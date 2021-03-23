@@ -38,6 +38,7 @@ import {
   BucketReplicationRule,
   BucketReplicationRuleDeleteMarker,
   BucketVersioning,
+  HasPermissionResponse,
 } from "../types";
 import { CreateIcon } from "../../../../icons";
 import { niceBytes } from "../../../../common/utils";
@@ -247,6 +248,66 @@ const ViewBucket = ({
   const [enableVersioningOpen, setEnableVersioningOpen] = useState<boolean>(
     false
   );
+  const [loadingPerms, setLoadingPerms] = useState<boolean>(true);
+  const [canPutReplication, setCanPutReplication] = useState<boolean>(false);
+  const [canGetReplication, setCanGetReplication] = useState<boolean>(false);
+
+  // check the permissions for creating bucket
+  useEffect(() => {
+    if (loadingPerms) {
+      const fetchPerms = () => {
+        setLoadingPerms(true);
+        api
+          .invoke("POST", `/api/v1/has-permission`, {
+            actions: [
+              {
+                id: "PutReplicationConfiguration",
+                action: "s3:PutReplicationConfiguration",
+                bucket_name: bucketName,
+              },
+              {
+                id: "GetReplicationConfiguration",
+                action: "s3:GetReplicationConfiguration",
+                bucket_name: bucketName,
+              },
+            ],
+          })
+          .then((res: HasPermissionResponse) => {
+            setLoadingPerms(false);
+            if (!res.permissions) {
+              return;
+            }
+            const actions = res.permissions ? res.permissions : [];
+
+            let canPutReplication = actions.find(
+              (s) => s.id == "PutReplicationConfiguration"
+            );
+
+            if (canPutReplication && canPutReplication.can) {
+              setCanPutReplication(true);
+            } else {
+              setCanPutReplication(false);
+            }
+            let canGetReplication = actions.find(
+              (s) => s.id == "GetReplicationConfiguration"
+            );
+
+            if (canGetReplication && canGetReplication.can) {
+              setCanGetReplication(true);
+            } else {
+              setCanGetReplication(false);
+            }
+
+            setLoadingPerms(false);
+          })
+          .catch((err: any) => {
+            setLoadingPerms(false);
+            setErrorSnackMessage(err);
+          });
+      };
+      fetchPerms();
+    }
+  }, [loadingPerms, setErrorSnackMessage]);
 
   const bucketName = match.params["bucketName"];
 
@@ -671,7 +732,9 @@ const ViewBucket = ({
                 aria-label="cluster-tabs"
               >
                 <Tab label="Events" {...a11yProps(0)} />
-                <Tab label="Replication" {...a11yProps(1)} />
+                {canGetReplication && (
+                  <Tab label="Replication" {...a11yProps(1)} />
+                )}
               </Tabs>
             </Grid>
             <Grid item xs={6} className={classes.actionsTray}>
@@ -689,17 +752,21 @@ const ViewBucket = ({
                 </Button>
               )}
               {curTab === 1 && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<CreateIcon />}
-                  size="medium"
-                  onClick={() => {
-                    setOpenReplicationOpen(true);
-                  }}
-                >
-                  Add Replication Rule
-                </Button>
+                <React.Fragment>
+                  {canPutReplication && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      startIcon={<CreateIcon />}
+                      size="medium"
+                      onClick={() => {
+                        setOpenReplicationOpen(true);
+                      }}
+                    >
+                      Add Replication Rule
+                    </Button>
+                  )}
+                </React.Fragment>
               )}
             </Grid>
           </Grid>
@@ -723,33 +790,35 @@ const ViewBucket = ({
                 idField="id"
               />
             </TabPanel>
-            <TabPanel index={1} value={curTab}>
-              <TableWrapper
-                itemActions={tableActions}
-                columns={[
-                  { label: "ID", elementKey: "id" },
-                  {
-                    label: "Priority",
-                    elementKey: "priority",
-                  },
-                  {
-                    label: "Destination",
-                    elementKey: "destination",
-                    renderFunction: ruleDestDisplay,
-                  },
-                  {
-                    label: "Delete Replication",
-                    elementKey: "delete_marker_replication",
-                    renderFunction: ruleDelDisplay,
-                  },
-                  { label: "Status", elementKey: "status" },
-                ]}
-                isLoading={loadingEvents}
-                records={replicationRules}
-                entityName="Replication Rules"
-                idField="id"
-              />
-            </TabPanel>
+            {canGetReplication && (
+              <TabPanel index={1} value={curTab}>
+                <TableWrapper
+                  itemActions={tableActions}
+                  columns={[
+                    { label: "ID", elementKey: "id" },
+                    {
+                      label: "Priority",
+                      elementKey: "priority",
+                    },
+                    {
+                      label: "Destination",
+                      elementKey: "destination",
+                      renderFunction: ruleDestDisplay,
+                    },
+                    {
+                      label: "Delete Replication",
+                      elementKey: "delete_marker_replication",
+                      renderFunction: ruleDelDisplay,
+                    },
+                    { label: "Status", elementKey: "status" },
+                  ]}
+                  isLoading={loadingEvents}
+                  records={replicationRules}
+                  entityName="Replication Rules"
+                  idField="id"
+                />
+              </TabPanel>
+            )}
           </Grid>
         </Grid>
       </Grid>

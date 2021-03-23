@@ -946,6 +946,28 @@ paths:
       tags:
         - UserAPI
 
+  /has-permission:
+    post:
+      summary: Checks whether the user can perform a series of actions
+      operationId: HasPermissionTo
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/hasPermissionRequest"
+      responses:
+        201:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/hasPermissionResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /users:
     get:
       summary: List Users
@@ -1557,14 +1579,14 @@ paths:
       summary: Activate a particular tenant using the existing subscription license
       operationId: SubscriptionActivate
       parameters:
-      - name: namespace
-        in: path
-        required: true
-        type: string
-      - name: tenant
-        in: path
-        required: true
-        type: string
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
       responses:
         204:
           description: A successful response.
@@ -2145,7 +2167,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-  
+
   /direct-csi/drives:
     get:
       summary: Get direct-csi drives list
@@ -2170,7 +2192,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-  
+
   /direct-csi/volumes:
     get:
       summary: Get direct-csi volumes list
@@ -2778,7 +2800,7 @@ definitions:
           type: string
       status:
         type: string
-        enum: [ok]
+        enum: [ ok ]
       operator:
         type: boolean
   widgetResult:
@@ -4050,7 +4072,7 @@ definitions:
       restart:
         description: Returns wheter server needs to restart to apply changes or not
         type: boolean
-        
+
 
   subscriptionValidateRequest:
     type: object
@@ -4105,7 +4127,7 @@ definitions:
         type: string
       message:
         type: string
-      
+
   getDirectCSIVolumeListResponse:
     type: object
     properties:
@@ -4113,7 +4135,7 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/directCSIVolumeInfo"
-  
+
   directCSIVolumeInfo:
     type: object
     properties:
@@ -4126,3 +4148,34 @@ definitions:
         type: string
       drive:
         type: string
+
+  policyArgs:
+    type: object
+    properties:
+      id:
+        type: string
+      action:
+        type: string
+      bucket_name:
+        type: string
+  hasPermissionRequest:
+    type: object
+    properties:
+      actions:
+        type: array
+        items:
+          $ref: "#/definitions/policyArgs"
+  permissionAction:
+    type: object
+    properties:
+      id:
+        type: string
+      can:
+        type: boolean
+  hasPermissionResponse:
+    type: object
+    properties:
+      permissions:
+        type: array
+        items:
+          $ref: "#/definitions/permissionAction"

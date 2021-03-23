@@ -184,6 +184,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIGroupInfoHandler: admin_api.GroupInfoHandlerFunc(func(params admin_api.GroupInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GroupInfo has not yet been implemented")
 		}),
+		UserAPIHasPermissionToHandler: user_api.HasPermissionToHandlerFunc(func(params user_api.HasPermissionToParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.HasPermissionTo has not yet been implemented")
+		}),
 		AdminAPIListAllTenantsHandler: admin_api.ListAllTenantsHandlerFunc(func(params admin_api.ListAllTenantsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListAllTenants has not yet been implemented")
 		}),
@@ -475,6 +478,8 @@ type ConsoleAPI struct {
 	AdminAPIGetUserInfoHandler admin_api.GetUserInfoHandler
 	// AdminAPIGroupInfoHandler sets the operation handler for the group info operation
 	AdminAPIGroupInfoHandler admin_api.GroupInfoHandler
+	// UserAPIHasPermissionToHandler sets the operation handler for the has permission to operation
+	UserAPIHasPermissionToHandler user_api.HasPermissionToHandler
 	// AdminAPIListAllTenantsHandler sets the operation handler for the list all tenants operation
 	AdminAPIListAllTenantsHandler admin_api.ListAllTenantsHandler
 	// UserAPIListBucketEventsHandler sets the operation handler for the list bucket events operation
@@ -776,6 +781,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIGroupInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.GroupInfoHandler")
+	}
+	if o.UserAPIHasPermissionToHandler == nil {
+		unregistered = append(unregistered, "user_api.HasPermissionToHandler")
 	}
 	if o.AdminAPIListAllTenantsHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListAllTenantsHandler")
@@ -1198,6 +1206,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/groups/{name}"] = admin_api.NewGroupInfo(o.context, o.AdminAPIGroupInfoHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/has-permission"] = user_api.NewHasPermissionTo(o.context, o.UserAPIHasPermissionToHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
