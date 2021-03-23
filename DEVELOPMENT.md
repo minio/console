@@ -67,7 +67,7 @@ $ cat > consoleAdmin.json << EOF
 }
 EOF
 $ mc admin policy add myminio consoleAdmin consoleAdmin.json
-$ mc admin policy set myminio consoleAdmin user=billy
+$ mc admin policy set myminio consoleAdmin user="uid=billy,dc=example,dc=org"
 ```
 
 ## Run MinIO
