@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
@@ -99,7 +99,6 @@ const ListBuckets = ({
   useEffect(() => {
     if (loadingPerms) {
       const fetchPerms = () => {
-        setLoadingPerms(true);
         api
           .invoke("POST", `/api/v1/has-permission`, {
             actions: [
@@ -196,7 +195,7 @@ const ListBuckets = ({
   });
 
   return (
-    <React.Fragment>
+    <Fragment>
       {addBucketModalOpen && (
         <AddBucket
           open={addBucketModalOpen}
@@ -275,7 +274,7 @@ const ListBuckets = ({
           </Grid>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

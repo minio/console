@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import get from "lodash/get";
@@ -125,7 +125,6 @@ const BrowseBuckets = ({
   useEffect(() => {
     if (loadingPerms) {
       const fetchRecords = () => {
-        setLoadingPerms(true);
         api
           .invoke("POST", `/api/v1/has-permission`, {
             actions: [
@@ -136,8 +135,6 @@ const BrowseBuckets = ({
             ],
           })
           .then((res: HasPermissionResponse) => {
-            console.log(res);
-
             const canCreate = res.permissions
               .filter((s) => s.id == "createBucket")
               .pop();
@@ -210,7 +207,7 @@ const BrowseBuckets = ({
   };
 
   return (
-    <React.Fragment>
+    <Fragment>
       {addScreenOpen && (
         <AddBucket
           open={addScreenOpen}
@@ -293,7 +290,7 @@ const BrowseBuckets = ({
           />
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

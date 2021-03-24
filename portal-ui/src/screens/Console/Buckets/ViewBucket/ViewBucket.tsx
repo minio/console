@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, IconButton } from "@material-ui/core";
@@ -197,7 +197,7 @@ function TabPanel(props: TabPanelProps) {
       style={{ marginTop: "5px" }}
       {...other}
     >
-      {value === index && <React.Fragment>{children}</React.Fragment>}
+      {value === index && <Fragment>{children}</Fragment>}
     </div>
   );
 }
@@ -256,7 +256,6 @@ const ViewBucket = ({
   useEffect(() => {
     if (loadingPerms) {
       const fetchPerms = () => {
-        setLoadingPerms(true);
         api
           .invoke("POST", `/api/v1/has-permission`, {
             actions: [
@@ -491,19 +490,15 @@ const ViewBucket = ({
   }
 
   const eventsDisplay = (events: string[]) => {
-    return <React.Fragment>{events.join(", ")}</React.Fragment>;
+    return <Fragment>{events.join(", ")}</Fragment>;
   };
 
   const ruleDestDisplay = (events: BucketReplicationDestination) => {
-    return (
-      <React.Fragment>
-        {events.bucket.replace("arn:aws:s3:::", "")}
-      </React.Fragment>
-    );
+    return <Fragment>{events.bucket.replace("arn:aws:s3:::", "")}</Fragment>;
   };
 
   const ruleDelDisplay = (events: BucketReplicationRuleDeleteMarker) => {
-    return <React.Fragment>{events.status}</React.Fragment>;
+    return <Fragment>{events.status}</Fragment>;
   };
 
   const setOpenReplicationOpen = (open = false) => {
@@ -530,7 +525,7 @@ const ViewBucket = ({
   const tableActions = [{ type: "delete", onClick: confirmDeleteEvent }];
 
   return (
-    <React.Fragment>
+    <Fragment>
       {addScreenOpen && (
         <AddEvent
           open={addScreenOpen}
@@ -634,10 +629,10 @@ const ViewBucket = ({
                       <span>{replicationRules.length ? "Yes" : "No"}</span>
                     </div>
                     {!hasObjectLocking && (
-                      <React.Fragment>
+                      <Fragment>
                         <div>Object Locking:</div>
                         <div>No</div>
-                      </React.Fragment>
+                      </Fragment>
                     )}
                     <div>Encryption:</div>
                     <div>
@@ -669,7 +664,7 @@ const ViewBucket = ({
                             variant="indeterminate"
                           />
                         ) : (
-                          <React.Fragment>
+                          <Fragment>
                             {isVersioned && !loadingVersioning ? "Yes" : "No"}
                             &nbsp;
                             <IconButton
@@ -683,7 +678,7 @@ const ViewBucket = ({
                             >
                               <PencilIcon active={true} />
                             </IconButton>
-                          </React.Fragment>
+                          </Fragment>
                         )}
                       </div>
                       <div>Retention:</div>
@@ -695,7 +690,7 @@ const ViewBucket = ({
                             variant="indeterminate"
                           />
                         ) : (
-                          <React.Fragment>
+                          <Fragment>
                             &nbsp;
                             <IconButton
                               color="primary"
@@ -708,7 +703,7 @@ const ViewBucket = ({
                             >
                               <PencilIcon active={true} />
                             </IconButton>
-                          </React.Fragment>
+                          </Fragment>
                         )}
                       </div>
                     </div>
@@ -752,7 +747,7 @@ const ViewBucket = ({
                 </Button>
               )}
               {curTab === 1 && (
-                <React.Fragment>
+                <Fragment>
                   {canPutReplication && (
                     <Button
                       variant="contained"
@@ -766,7 +761,7 @@ const ViewBucket = ({
                       Add Replication Rule
                     </Button>
                   )}
-                </React.Fragment>
+                </Fragment>
               )}
             </Grid>
           </Grid>
@@ -822,7 +817,7 @@ const ViewBucket = ({
           </Grid>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

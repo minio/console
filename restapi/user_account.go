@@ -104,14 +104,6 @@ func getChangePasswordResponse(session *models.Principal, params user_api.Accoun
 	return loginResponse, nil
 }
 
-func getUserPolicy(ctx context.Context, client MinioAdmin) (*iampolicy.Policy, error) {
-	info, err := client.accountInfo(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return &info.Policy, nil
-}
-
 func getUserHasPermissionsResponse(session *models.Principal, params user_api.HasPermissionToParams) (*models.HasPermissionResponse, *models.Error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
@@ -124,7 +116,7 @@ func getUserHasPermissionsResponse(session *models.Principal, params user_api.Ha
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
 
-	userPolicy, err := getUserPolicy(ctx, adminClient)
+	userPolicy, err := getAccountPolicy(ctx, adminClient)
 	if err != nil {
 		return nil, prepareError(err)
 	}
