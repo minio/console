@@ -33,7 +33,6 @@ import {
   BucketInfo,
   BucketList,
   BucketObjectLocking,
-  BucketPolicy,
   BucketReplication,
   BucketReplicationDestination,
   BucketReplicationRule,
@@ -58,6 +57,7 @@ import Typography from "@material-ui/core/Typography";
 import UsageIcon from "../../../../icons/UsageIcon";
 import AddPolicy from "../../Policies/AddPolicy";
 import SetAccessPolicy from "./SetAccessPolicy";
+import { Policy } from "../../Policies/types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -220,7 +220,7 @@ const ViewBucket = ({
   const [replicationRules, setReplicationRules] = useState<
     BucketReplicationRule[]
   >([]);
-  const [bucketPolicy, setBucketPolicy] = useState<BucketPolicy[]>([]);
+  const [bucketPolicy, setBucketPolicy] = useState<Policy[]>([]);
   const [loadingPolicy, setLoadingPolicy] = useState<boolean>(true);
   const [loadingBucket, setLoadingBucket] = useState<boolean>(true);
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);

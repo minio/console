@@ -1,0 +1,21 @@
+{
+	"Version": "2012-10-17",
+	"Statement": [{
+			"Action": [
+				"admin:*"
+			],
+			"Effect": "Allow",
+			"Sid": ""
+		},
+		{
+			"Action": [
+                "s3:*"
+			],
+			"Effect": "Allow",
+			"Resource": [
+				"arn:aws:s3:::*"
+			],
+			"Sid": ""
+		}
+	]
+}
