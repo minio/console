@@ -124,35 +124,32 @@ const BrowseBuckets = ({
   // check the permissions for creating bucket
   useEffect(() => {
     if (loadingPerms) {
-      const fetchRecords = () => {
-        api
-          .invoke("POST", `/api/v1/has-permission`, {
-            actions: [
-              {
-                id: "createBucket",
-                action: "s3:CreateBucket",
-              },
-            ],
-          })
-          .then((res: HasPermissionResponse) => {
-            const canCreate = res.permissions
-              .filter((s) => s.id == "createBucket")
-              .pop();
-            if (canCreate && canCreate.can) {
-              setCanCreateBucket(true);
-            } else {
-              setCanCreateBucket(false);
-            }
+      api
+        .invoke("POST", `/api/v1/has-permission`, {
+          actions: [
+            {
+              id: "createBucket",
+              action: "s3:CreateBucket",
+            },
+          ],
+        })
+        .then((res: HasPermissionResponse) => {
+          const canCreate = res.permissions
+            .filter((s) => s.id == "createBucket")
+            .pop();
+          if (canCreate && canCreate.can) {
+            setCanCreateBucket(true);
+          } else {
+            setCanCreateBucket(false);
+          }
 
-            setLoadingPerms(false);
-            // setRecords(res.buckets || []);
-          })
-          .catch((err: any) => {
-            setLoadingPerms(false);
-            setErrorSnackMessage(err);
-          });
-      };
-      fetchRecords();
+          setLoadingPerms(false);
+          // setRecords(res.buckets || []);
+        })
+        .catch((err: any) => {
+          setLoadingPerms(false);
+          setErrorSnackMessage(err);
+        });
     }
   }, [loadingPerms, setErrorSnackMessage]);
 

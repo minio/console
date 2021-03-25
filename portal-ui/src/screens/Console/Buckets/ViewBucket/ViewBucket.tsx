@@ -255,56 +255,53 @@ const ViewBucket = ({
   // check the permissions for creating bucket
   useEffect(() => {
     if (loadingPerms) {
-      const fetchPerms = () => {
-        api
-          .invoke("POST", `/api/v1/has-permission`, {
-            actions: [
-              {
-                id: "PutReplicationConfiguration",
-                action: "s3:PutReplicationConfiguration",
-                bucket_name: bucketName,
-              },
-              {
-                id: "GetReplicationConfiguration",
-                action: "s3:GetReplicationConfiguration",
-                bucket_name: bucketName,
-              },
-            ],
-          })
-          .then((res: HasPermissionResponse) => {
-            setLoadingPerms(false);
-            if (!res.permissions) {
-              return;
-            }
-            const actions = res.permissions ? res.permissions : [];
+      api
+        .invoke("POST", `/api/v1/has-permission`, {
+          actions: [
+            {
+              id: "PutReplicationConfiguration",
+              action: "s3:PutReplicationConfiguration",
+              bucket_name: bucketName,
+            },
+            {
+              id: "GetReplicationConfiguration",
+              action: "s3:GetReplicationConfiguration",
+              bucket_name: bucketName,
+            },
+          ],
+        })
+        .then((res: HasPermissionResponse) => {
+          setLoadingPerms(false);
+          if (!res.permissions) {
+            return;
+          }
+          const actions = res.permissions ? res.permissions : [];
 
-            let canPutReplication = actions.find(
-              (s) => s.id == "PutReplicationConfiguration"
-            );
+          let canPutReplication = actions.find(
+            (s) => s.id == "PutReplicationConfiguration"
+          );
 
-            if (canPutReplication && canPutReplication.can) {
-              setCanPutReplication(true);
-            } else {
-              setCanPutReplication(false);
-            }
-            let canGetReplication = actions.find(
-              (s) => s.id == "GetReplicationConfiguration"
-            );
+          if (canPutReplication && canPutReplication.can) {
+            setCanPutReplication(true);
+          } else {
+            setCanPutReplication(false);
+          }
+          let canGetReplication = actions.find(
+            (s) => s.id == "GetReplicationConfiguration"
+          );
 
-            if (canGetReplication && canGetReplication.can) {
-              setCanGetReplication(true);
-            } else {
-              setCanGetReplication(false);
-            }
+          if (canGetReplication && canGetReplication.can) {
+            setCanGetReplication(true);
+          } else {
+            setCanGetReplication(false);
+          }
 
-            setLoadingPerms(false);
-          })
-          .catch((err: any) => {
-            setLoadingPerms(false);
-            setErrorSnackMessage(err);
-          });
-      };
-      fetchPerms();
+          setLoadingPerms(false);
+        })
+        .catch((err: any) => {
+          setLoadingPerms(false);
+          setErrorSnackMessage(err);
+        });
     }
   }, [loadingPerms, setErrorSnackMessage]);
 
