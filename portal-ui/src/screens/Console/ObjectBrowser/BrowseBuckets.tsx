@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import get from "lodash/get";
@@ -26,7 +26,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import { Button } from "@material-ui/core";
 import { CreateIcon } from "../../../icons";
 import { niceBytes } from "../../../common/utils";
-import { Bucket, BucketList } from "../Buckets/types";
+import { Bucket, BucketList, HasPermissionResponse } from "../Buckets/types";
 import {
   actionsTray,
   objectBrowserCommon,
@@ -118,6 +118,40 @@ const BrowseBuckets = ({
   const [records, setRecords] = useState<Bucket[]>([]);
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
   const [filterBuckets, setFilterBuckets] = useState<string>("");
+  const [loadingPerms, setLoadingPerms] = useState<boolean>(true);
+  const [canCreateBucket, setCanCreateBucket] = useState<boolean>(false);
+
+  // check the permissions for creating bucket
+  useEffect(() => {
+    if (loadingPerms) {
+      api
+        .invoke("POST", `/api/v1/has-permission`, {
+          actions: [
+            {
+              id: "createBucket",
+              action: "s3:CreateBucket",
+            },
+          ],
+        })
+        .then((res: HasPermissionResponse) => {
+          const canCreate = res.permissions
+            .filter((s) => s.id == "createBucket")
+            .pop();
+          if (canCreate && canCreate.can) {
+            setCanCreateBucket(true);
+          } else {
+            setCanCreateBucket(false);
+          }
+
+          setLoadingPerms(false);
+          // setRecords(res.buckets || []);
+        })
+        .catch((err: any) => {
+          setLoadingPerms(false);
+          setErrorSnackMessage(err);
+        });
+    }
+  }, [loadingPerms, setErrorSnackMessage]);
 
   useEffect(() => {
     resetRoutesList(true);
@@ -170,7 +204,7 @@ const BrowseBuckets = ({
   };
 
   return (
-    <React.Fragment>
+    <Fragment>
       {addScreenOpen && (
         <AddBucket
           open={addScreenOpen}
@@ -182,18 +216,20 @@ const BrowseBuckets = ({
           <div>
             <BrowserBreadcrumbs />
           </div>
-          <div>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<CreateIcon />}
-              onClick={() => {
-                setAddScreenOpen(true);
-              }}
-            >
-              Create Bucket
-            </Button>
-          </div>
+          {canCreateBucket && (
+            <div>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<CreateIcon />}
+                onClick={() => {
+                  setAddScreenOpen(true);
+                }}
+              >
+                Create Bucket
+              </Button>
+            </div>
+          )}
         </Grid>
         <Grid item xs={12} className={classes.actionsTray}>
           <TextField
@@ -251,7 +287,7 @@ const BrowseBuckets = ({
           />
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

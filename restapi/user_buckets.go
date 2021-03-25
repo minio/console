@@ -324,6 +324,7 @@ func getAccountInfo(ctx context.Context, client MinioAdmin) ([]*models.Bucket, e
 	if err != nil {
 		return []*models.Bucket{}, err
 	}
+
 	var bucketInfos []*models.Bucket
 	for _, bucket := range info.Buckets {
 		bucketElem := &models.Bucket{Name: swag.String(bucket.Name), CreationDate: bucket.Created.Format(time.RFC3339), Size: int64(bucket.Size)}

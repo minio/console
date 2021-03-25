@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
@@ -23,7 +23,7 @@ import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import Moment from "react-moment";
-import { Bucket, BucketList } from "../types";
+import { Bucket, BucketList, HasPermissionResponse } from "../types";
 import { CreateIcon } from "../../../../icons";
 import { niceBytes } from "../../../../common/utils";
 import { AppState } from "../../../../store";
@@ -92,6 +92,43 @@ const ListBuckets = ({
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedBucket, setSelectedBucket] = useState<string>("");
   const [filterBuckets, setFilterBuckets] = useState<string>("");
+  const [loadingPerms, setLoadingPerms] = useState<boolean>(true);
+  const [canCreateBucket, setCanCreateBucket] = useState<boolean>(false);
+
+  // check the permissions for creating bucket
+  useEffect(() => {
+    if (loadingPerms) {
+      api
+        .invoke("POST", `/api/v1/has-permission`, {
+          actions: [
+            {
+              id: "createBucket",
+              action: "s3:CreateBucket",
+            },
+          ],
+        })
+        .then((res: HasPermissionResponse) => {
+          setLoadingPerms(false);
+          if (!res.permissions) {
+            return;
+          }
+          const actions = res.permissions ? res.permissions : [];
+
+          let canCreate = actions.find((s) => s.id == "createBucket");
+          if (canCreate && canCreate.can) {
+            setCanCreateBucket(true);
+          } else {
+            setCanCreateBucket(false);
+          }
+
+          setLoadingPerms(false);
+        })
+        .catch((err: any) => {
+          setLoadingPerms(false);
+          setErrorSnackMessage(err);
+        });
+    }
+  }, [loadingPerms, setErrorSnackMessage]);
 
   useEffect(() => {
     if (loading) {
@@ -155,7 +192,7 @@ const ListBuckets = ({
   });
 
   return (
-    <React.Fragment>
+    <Fragment>
       {addBucketModalOpen && (
         <AddBucket
           open={addBucketModalOpen}
@@ -192,16 +229,18 @@ const ListBuckets = ({
                 ),
               }}
             />
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<CreateIcon />}
-              onClick={() => {
-                addBucketOpen(true);
-              }}
-            >
-              Create Bucket
-            </Button>
+            {canCreateBucket && (
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<CreateIcon />}
+                onClick={() => {
+                  addBucketOpen(true);
+                }}
+              >
+                Create Bucket
+              </Button>
+            )}
           </Grid>
           <Grid item xs={12}>
             <br />
@@ -232,7 +271,7 @@ const ListBuckets = ({
           </Grid>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

@@ -118,3 +118,12 @@ export interface IRemoteBucket {
   status: string;
   service: string;
 }
+
+export interface PermissionAction {
+  id: string;
+  can: boolean;
+}
+
+export interface HasPermissionResponse {
+  permissions: PermissionAction[];
+}
