@@ -559,7 +559,6 @@ const ViewBucket = ({
 
   const PolicyActions = [
     { type: "view", onClick: viewAction },
-    { type: "delete", onClick: confirmDeleteEvent, sendOnlyId: true },
   ];
 
   return (
