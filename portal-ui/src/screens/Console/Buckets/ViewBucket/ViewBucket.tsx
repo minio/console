@@ -44,7 +44,6 @@ import { CreateIcon } from "../../../../icons";
 import { niceBytes } from "../../../../common/utils";
 import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
-import SetAccessPolicy from "./SetAccessPolicy";
 import SetRetentionConfig from "./SetRetentionConfig";
 import AddEvent from "./AddEvent";
 import DeleteEvent from "./DeleteEvent";
@@ -56,6 +55,9 @@ import PencilIcon from "../../Common/TableWrapper/TableActionIcons/PencilIcon";
 import EnableVersioningModal from "./EnableVersioningModal";
 import Typography from "@material-ui/core/Typography";
 import UsageIcon from "../../../../icons/UsageIcon";
+import AddPolicy from "../../Policies/AddPolicy";
+import SetAccessPolicy from "./SetAccessPolicy";
+import { Policy } from "../../Policies/types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -67,7 +69,6 @@ const styles = (theme: Theme) =>
       overflow: "auto",
       flexDirection: "column",
     },
-
     addSideBar: {
       width: "320px",
       padding: "20px",
@@ -219,6 +220,8 @@ const ViewBucket = ({
   const [replicationRules, setReplicationRules] = useState<
     BucketReplicationRule[]
   >([]);
+  const [bucketPolicy, setBucketPolicy] = useState<Policy[]>([]);
+  const [loadingPolicy, setLoadingPolicy] = useState<boolean>(true);
   const [loadingBucket, setLoadingBucket] = useState<boolean>(true);
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
   const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
@@ -231,6 +234,7 @@ const ViewBucket = ({
   );
   const [curTab, setCurTab] = useState<number>(0);
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
+  const [policyScreenOpen, setPolicyScreenOpen] = useState<boolean>(false);
   const [
     enableEncryptionScreenOpen,
     setEnableEncryptionScreenOpen,
@@ -245,6 +249,7 @@ const ViewBucket = ({
   const [retentionConfigOpen, setRetentionConfigOpen] = useState<boolean>(
     false
   );
+  const [policyEdit, setPolicyEdit] = useState<any>(null);
   const [enableVersioningOpen, setEnableVersioningOpen] = useState<boolean>(
     false
   );
@@ -370,6 +375,21 @@ const ViewBucket = ({
   }, [loadingReplication, setErrorSnackMessage, bucketName]);
 
   useEffect(() => {
+    if (loadingPolicy) {
+      api
+        .invoke("GET", `/api/v1/bucket-policy/${bucketName}`)
+        .then((res: any) => {
+          setBucketPolicy(res.policies);
+          setLoadingPolicy(false);
+        })
+        .catch((err: any) => {
+          setErrorSnackMessage(err);
+          setLoadingPolicy(false);
+        });
+    }
+  }, [loadingPolicy, setErrorSnackMessage, bucketName]);
+
+  useEffect(() => {
     if (loadingSize) {
       api
         .invoke("GET", `/api/v1/buckets`)
@@ -434,6 +454,18 @@ const ViewBucket = ({
     setLoadingVersioning(true);
     setLoadingEvents(true);
     setLoadingEncryption(true);
+  };
+
+  const closeAddModalAndRefresh = (refresh: boolean) => {
+    setPolicyScreenOpen(false);
+
+    if (refresh) {
+      fetchPolicies();
+    }
+  };
+
+  const fetchPolicies = () => {
+    setLoadingPolicy(true);
   };
 
   const closeAddEventAndRefresh = () => {
@@ -520,6 +552,14 @@ const ViewBucket = ({
   };
 
   const tableActions = [{ type: "delete", onClick: confirmDeleteEvent }];
+  const viewAction = (row: any) => {
+    setPolicyScreenOpen(true);
+    setPolicyEdit(row);
+  };
+
+  const PolicyActions = [
+    { type: "view", onClick: viewAction },
+  ];
 
   return (
     <Fragment>
@@ -543,6 +583,13 @@ const ViewBucket = ({
           open={accessPolicyScreenOpen}
           actualPolicy={accessPolicy}
           closeModalAndRefresh={closeSetAccessPolicy}
+        />
+      )}
+      {policyScreenOpen && (
+        <AddPolicy
+          open={policyScreenOpen}
+          closeModalAndRefresh={closeAddModalAndRefresh}
+          policyEdit={policyEdit}
         />
       )}
       {retentionConfigOpen && (
@@ -727,6 +774,7 @@ const ViewBucket = ({
                 {canGetReplication && (
                   <Tab label="Replication" {...a11yProps(1)} />
                 )}
+                <Tab label="Policies" {...a11yProps(2)} />
               </Tabs>
             </Grid>
             <Grid item xs={6} className={classes.actionsTray}>
@@ -811,6 +859,16 @@ const ViewBucket = ({
                 />
               </TabPanel>
             )}
+            <TabPanel index={2} value={curTab}>
+              <TableWrapper
+                itemActions={PolicyActions}
+                columns={[{ label: "Name", elementKey: "name" }]}
+                isLoading={loadingEvents}
+                records={bucketPolicy}
+                entityName="Policies"
+                idField="name"
+              />
+            </TabPanel>
           </Grid>
         </Grid>
       </Grid>
