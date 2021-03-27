@@ -228,3 +228,14 @@ func GetAllCertificatesAndCAs() (*x509.CertPool, []*x509.Certificate, *xcerts.Ma
 	logger.FatalIf(err, "Unable to load the TLS configuration")
 	return GlobalRootCAs, globalPublicCerts, globalTLSCertsManager
 }
+
+// AddCertificate check if Manager is initialized and then append a new certificate to it
+func AddCertificate(ctx context.Context, manager *xcerts.Manager, publicKey, privateKey string) (err error) {
+	// If Cert Manager is not nil add more certificates
+	if manager != nil {
+		return manager.AddCertificate(publicKey, privateKey)
+	}
+	// Initialize cert manager
+	manager, err = xcerts.NewManager(ctx, publicKey, privateKey, config.LoadX509KeyPair)
+	return err
+}
