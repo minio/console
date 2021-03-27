@@ -17,6 +17,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -146,14 +147,13 @@ func startServer(ctx *cli.Context) error {
 	SwaggerServerCACertificate := ctx.String("tls-ca")
 	// load tls cert and key from swagger server tls-certificate and tls-key flags
 	if swaggerServerCertificate != "" && swaggerServerCertificateKey != "" {
-		if errAddCert := restapi.GlobalTLSCertsManager.AddCertificate(swaggerServerCertificate, swaggerServerCertificateKey); errAddCert == nil {
-			if x509Certs, errParseCert := config.ParsePublicCertFile(swaggerServerCertificate); errParseCert == nil && len(x509Certs) > 0 {
-				restapi.GlobalPublicCerts = append(restapi.GlobalPublicCerts, x509Certs[0])
-			} else {
-				log.Println(errParseCert)
-			}
-		} else {
+		if errAddCert := certs.AddCertificate(context.Background(), restapi.GlobalTLSCertsManager, swaggerServerCertificate, swaggerServerCertificateKey); errAddCert != nil {
 			log.Println(errAddCert)
+		}
+		if x509Certs, errParseCert := config.ParsePublicCertFile(swaggerServerCertificate); errParseCert == nil {
+			if len(x509Certs) > 0 {
+				restapi.GlobalPublicCerts = append(restapi.GlobalPublicCerts, x509Certs[0])
+			}
 		}
 	}
 	// load ca cert from swagger server tls-ca flag
