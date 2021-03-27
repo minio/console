@@ -78,6 +78,10 @@ nfpms:
     formats:
       - deb
       - rpm
+    contents:
+      # Basic file that applies to all packagers
+      - src: systemd/console.service
+        dst: /etc/systemd/system/minio-console.service
 
 dockers:
 - image_templates:
