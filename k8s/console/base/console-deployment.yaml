@@ -15,7 +15,7 @@ spec:
       serviceAccountName: console-sa
       containers:
         - name: console
-          image: minio/console:v0.6.4
+          image: minio/console:v0.6.5
           imagePullPolicy: "IfNotPresent"
           args:
             - server
