@@ -18,10 +18,13 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/minio/minio/cmd/config"
 
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
@@ -67,6 +70,21 @@ var serverCmd = cli.Command{
 			Name:  "certs-dir",
 			Value: certs.GlobalCertsCADir.Get(),
 			Usage: "path to certs directory",
+		},
+		cli.StringFlag{
+			Name:  "tls-certificate",
+			Value: "",
+			Usage: "path tls certificate",
+		},
+		cli.StringFlag{
+			Name:  "tls-key",
+			Value: "",
+			Usage: "path tls key",
+		},
+		cli.StringFlag{
+			Name:  "tls-ca",
+			Value: "",
+			Usage: "path tls ca",
 		},
 	},
 }
@@ -121,6 +139,30 @@ func startServer(ctx *cli.Context) error {
 	}
 	// load the certificates and the CAs
 	restapi.GlobalRootCAs, restapi.GlobalPublicCerts, restapi.GlobalTLSCertsManager = certs.GetAllCertificatesAndCAs()
+
+	// TLS flags from swagger server, used to support older versions of minio-operator
+	swaggerServerCertificate := ctx.String("tls-certificate")
+	swaggerServerCertificateKey := ctx.String("tls-key")
+	SwaggerServerCACertificate := ctx.String("tls-ca")
+	// load tls cert and key from swagger server tls-certificate and tls-key flags
+	if swaggerServerCertificate != "" && swaggerServerCertificateKey != "" {
+		if errAddCert := restapi.GlobalTLSCertsManager.AddCertificate(swaggerServerCertificate, swaggerServerCertificateKey); errAddCert == nil {
+			if x509Certs, errParseCert := config.ParsePublicCertFile(swaggerServerCertificate); errParseCert == nil && len(x509Certs) > 0 {
+				restapi.GlobalPublicCerts = append(restapi.GlobalPublicCerts, x509Certs[0])
+			} else {
+				log.Println(errParseCert)
+			}
+		} else {
+			log.Println(errAddCert)
+		}
+	}
+	// load ca cert from swagger server tls-ca flag
+	if SwaggerServerCACertificate != "" {
+		caCert, caCertErr := ioutil.ReadFile(SwaggerServerCACertificate)
+		if caCertErr == nil {
+			restapi.GlobalRootCAs.AppendCertsFromPEM(caCert)
+		}
+	}
 
 	if len(restapi.GlobalPublicCerts) > 0 {
 		// If TLS certificates are provided enforce the HTTPS schema, meaning console will redirect
