@@ -1333,7 +1333,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/user"
+              type: string
         default:
           description: Generic error response.
           schema:

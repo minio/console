@@ -279,7 +279,7 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/user"
+                "type": "string"
               }
             }
           },
@@ -6164,7 +6164,7 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/user"
+                "type": "string"
               }
             }
           },

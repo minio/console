@@ -42,7 +42,7 @@ type ListUsersWithAccessToBucketOK struct {
 	/*
 	  In: Body
 	*/
-	Payload []*models.User `json:"body,omitempty"`
+	Payload []string `json:"body,omitempty"`
 }
 
 // NewListUsersWithAccessToBucketOK creates ListUsersWithAccessToBucketOK with default headers values
@@ -52,13 +52,13 @@ func NewListUsersWithAccessToBucketOK() *ListUsersWithAccessToBucketOK {
 }
 
 // WithPayload adds the payload to the list users with access to bucket o k response
-func (o *ListUsersWithAccessToBucketOK) WithPayload(payload []*models.User) *ListUsersWithAccessToBucketOK {
+func (o *ListUsersWithAccessToBucketOK) WithPayload(payload []string) *ListUsersWithAccessToBucketOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the list users with access to bucket o k response
-func (o *ListUsersWithAccessToBucketOK) SetPayload(payload []*models.User) {
+func (o *ListUsersWithAccessToBucketOK) SetPayload(payload []string) {
 	o.Payload = payload
 }
 
@@ -69,7 +69,7 @@ func (o *ListUsersWithAccessToBucketOK) WriteResponse(rw http.ResponseWriter, pr
 	payload := o.Payload
 	if payload == nil {
 		// return empty array
-		payload = make([]*models.User, 0, 50)
+		payload = make([]string, 0, 50)
 	}
 
 	if err := producer.Produce(rw, payload); err != nil {

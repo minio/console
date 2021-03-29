@@ -475,7 +475,7 @@ func getAddUsersListToGroupsResponse(session *models.Principal, params admin_api
 	return nil
 }
 
-func getListUsersWithAccessToBucketResponse(session *models.Principal, bucket string) ([]*models.User, *models.Error) {
+func getListUsersWithAccessToBucketResponse(session *models.Principal, bucket string) ([]string, *models.Error) {
 	ctx := context.Background()
 	mAdmin, err := newMAdminClient(session)
 	if err != nil {
@@ -489,13 +489,32 @@ func getListUsersWithAccessToBucketResponse(session *models.Principal, bucket st
 	if err != nil {
 		return nil, prepareError(err)
 	}
-	var retval []*models.User
+	var retval []string
+	seen := make(map[string]bool)
 	for i := 0; i < len(users); i++ {
 		policy, err := adminClient.getPolicy(ctx, users[i].Policy)
 		if err == nil {
 			parsedPolicy, err2 := parsePolicy(users[i].Policy, policy)
 			if err2 == nil && policyMatchesBucket(parsedPolicy, bucket) {
-				retval = append(retval, users[i])
+				retval = append(retval, users[i].AccessKey)
+				seen[users[i].AccessKey] = true
+			}
+		}
+	}
+
+	groups, err := listGroups(ctx, adminClient)
+	for i := 0; i < len(*groups); i++ {
+		info, err := groupInfo(ctx, adminClient, (*groups)[i])
+		if err == nil {
+			policy, err2 := adminClient.getPolicy(ctx, info.Policy)
+			if err2 == nil {
+				parsedPolicy, err3 := parsePolicy(info.Policy, policy)
+				for j := 0; j < len(info.Members); j++ {
+					if err3 == nil && !seen[info.Members[j]] && err3 == nil && policyMatchesBucket(parsedPolicy, bucket) {
+						retval = append(retval, info.Members[j])
+						seen[info.Members[j]] = true
+					}
+				}
 			}
 		}
 	}
