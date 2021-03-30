@@ -46,6 +46,7 @@ import {
   UsersIcon,
   WarpIcon,
 } from "../../../icons";
+import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
 import { clearSession } from "../../../common/utils";
 import LicenseIcon from "../../../icons/LicenseIcon";
 import LogoutIcon from "../../../icons/LogoutIcon";
@@ -444,6 +445,21 @@ const Menu = ({ userLoggedIn, classes, pages, operatorMode }: IMenuProps) => {
                       return null;
                   }
                 })}
+                <ListItem
+                  button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.open(
+                      `https://docs.min.io/?ref=${operatorMode ? "op" : "con"}`,
+                      "_blank"
+                    );
+                  }}
+                >
+                  <ListItemIcon>
+                    <LibraryBooksIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Documentation" />
+                </ListItem>
                 <Divider />
               </Collapse>
             </React.Fragment>
