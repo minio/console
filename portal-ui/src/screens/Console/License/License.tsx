@@ -526,7 +526,9 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                     className={classes.button}
                     target="_blank"
                     rel="noopener noreferrer"
-                    href="https://subnet.min.io/support/?ref=op"
+                    href={`https://subnet.min.io/support/?ref=${
+                      operatorMode ? "op" : "con"
+                    }`}
                   >
                     Login to SUBNET
                   </Button>
@@ -572,7 +574,9 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                   </Typography>
                   <br />
                   <a
-                    href="https://min.io/compliance?ref=op"
+                    href={`https://min.io/compliance?ref=${
+                      operatorMode ? "op" : "con"
+                    }`}
                     className={classes.openSourcePolicy}
                     target="_blank"
                     rel="nofollow noopener noreferrer"
@@ -582,7 +586,9 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                   <br />
                   <br />
                   <a
-                    href="https://min.io/logo?ref=op"
+                    href={`https://min.io/logo?ref=${
+                      operatorMode ? "op" : "con"
+                    }`}
                     className={classes.openSourcePolicy}
                     target="_blank"
                     rel="nofollow noopener noreferrer"
@@ -796,7 +802,12 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                               }
                               onClick={(e) => {
                                 e.preventDefault();
-                                window.open(button.link, "_blank");
+                                window.open(
+                                  `${button.link}/?ref=${
+                                    operatorMode ? "op" : "con"
+                                  }`,
+                                  "_blank"
+                                );
                               }}
                             >
                               {currentPlanID !== index && index > 0
