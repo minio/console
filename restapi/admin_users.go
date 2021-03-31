@@ -22,7 +22,6 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/admin_api"
-	"github.com/minio/minio/pkg/console"
 	"github.com/minio/minio/pkg/madmin"
 
 	"context"
@@ -501,16 +500,17 @@ func getListUsersWithAccessToBucketResponse(session *models.Principal, bucket st
 				seen[users[i].AccessKey] = true
 			}
 			if err2 != nil {
-				console.Println(err2)
+				log.Println(err2)
 			}
 		} else {
-			console.Println(err)
+			log.Println(err)
 		}
 	}
 
 	groups, err := listGroups(ctx, adminClient)
 	if err != nil {
-		console.Println(err)
+		log.Println(err)
+		return retval, nil
 	}
 	for i := 0; i < len(*groups); i++ {
 		info, err := groupInfo(ctx, adminClient, (*groups)[i])
@@ -524,14 +524,14 @@ func getListUsersWithAccessToBucketResponse(session *models.Principal, bucket st
 						seen[info.Members[j]] = true
 					}
 					if err3 != nil {
-						console.Println(err3)
+						log.Println(err3)
 					}
 				}
 			} else {
-				console.Println(err2)
+				log.Println(err2)
 			}
 		} else {
-			console.Println(err)
+			log.Println(err)
 		}
 	}
 	// serialize output
