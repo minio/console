@@ -4070,17 +4070,6 @@ definitions:
         type: integer
         format: int32
 
-  expirationResponse:
-    type: object
-    properties:
-      date: 
-        type: string
-      days:
-        type: integer
-        format: int64
-      delete_marker:
-        type: boolean
-
   setConfigResponse:
     type: object
     properties:
