@@ -3981,21 +3981,6 @@ func init() {
         }
       }
     },
-    "expirationResponse": {
-      "type": "object",
-      "properties": {
-        "date": {
-          "type": "string"
-        },
-        "days": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "delete_marker": {
-          "type": "boolean"
-        }
-      }
-    },
     "gcpConfiguration": {
       "type": "object",
       "required": [
@@ -10447,21 +10432,6 @@ func init() {
         },
         "message": {
           "type": "string"
-        }
-      }
-    },
-    "expirationResponse": {
-      "type": "object",
-      "properties": {
-        "date": {
-          "type": "string"
-        },
-        "days": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "delete_marker": {
-          "type": "boolean"
         }
       }
     },
