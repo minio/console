@@ -2798,6 +2798,10 @@ definitions:
         type: array
         items:
           type: string
+      features:
+        type: array
+        items:
+          type: string
       status:
         type: string
         enum: [ ok ]
@@ -4158,6 +4162,7 @@ definitions:
         type: string
       bucket_name:
         type: string
+        
   hasPermissionRequest:
     type: object
     properties:
@@ -4165,6 +4170,7 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/policyArgs"
+
   permissionAction:
     type: object
     properties:
@@ -4172,6 +4178,7 @@ definitions:
         type: string
       can:
         type: boolean
+
   hasPermissionResponse:
     type: object
     properties:

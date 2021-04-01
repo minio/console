@@ -283,6 +283,7 @@ const TenantSize = ({
     memorySize,
     limitSize,
     selectedStorageClass,
+    isPageValid,
   ]);
 
   /* End Validation of pages */
