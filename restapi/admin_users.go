@@ -91,6 +91,13 @@ func registerUsersHandlers(api *operations.ConsoleAPI) {
 
 		return admin_api.NewBulkUpdateUsersGroupsOK()
 	})
+	api.AdminAPIListUsersWithAccessToBucketHandler = admin_api.ListUsersWithAccessToBucketHandlerFunc(func(params admin_api.ListUsersWithAccessToBucketParams, session *models.Principal) middleware.Responder {
+		response, err := getListUsersWithAccessToBucketResponse(session, params.Bucket)
+		if err != nil {
+			return admin_api.NewListUsersWithAccessToBucketDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewListUsersWithAccessToBucketOK().WithPayload(response)
+	})
 }
 
 func listUsers(ctx context.Context, client MinioAdmin) ([]*models.User, error) {
@@ -466,4 +473,67 @@ func getAddUsersListToGroupsResponse(session *models.Principal, params admin_api
 	}
 
 	return nil
+}
+
+func getListUsersWithAccessToBucketResponse(session *models.Principal, bucket string) ([]string, *models.Error) {
+	ctx := context.Background()
+	mAdmin, err := newMAdminClient(session)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := adminClient{client: mAdmin}
+
+	users, err := listUsers(ctx, adminClient)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	var retval []string
+	seen := make(map[string]bool)
+	for i := 0; i < len(users); i++ {
+		policy, err := adminClient.getPolicy(ctx, users[i].Policy)
+		if err == nil {
+			parsedPolicy, err2 := parsePolicy(users[i].Policy, policy)
+			if err2 == nil && policyMatchesBucket(parsedPolicy, bucket) {
+				retval = append(retval, users[i].AccessKey)
+				seen[users[i].AccessKey] = true
+			}
+			if err2 != nil {
+				log.Println(err2)
+			}
+		} else {
+			log.Println(err)
+		}
+	}
+
+	groups, err := listGroups(ctx, adminClient)
+	if err != nil {
+		log.Println(err)
+		return retval, nil
+	}
+	for i := 0; i < len(*groups); i++ {
+		info, err := groupInfo(ctx, adminClient, (*groups)[i])
+		if err == nil {
+			policy, err2 := adminClient.getPolicy(ctx, info.Policy)
+			if err2 == nil {
+				parsedPolicy, err3 := parsePolicy(info.Policy, policy)
+				for j := 0; j < len(info.Members); j++ {
+					if err3 == nil && !seen[info.Members[j]] && policyMatchesBucket(parsedPolicy, bucket) {
+						retval = append(retval, info.Members[j])
+						seen[info.Members[j]] = true
+					}
+					if err3 != nil {
+						log.Println(err3)
+					}
+				}
+			} else {
+				log.Println(err2)
+			}
+		} else {
+			log.Println(err)
+		}
+	}
+	// serialize output
+	return retval, nil
 }

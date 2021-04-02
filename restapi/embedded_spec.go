@@ -246,6 +246,52 @@ func init() {
         }
       }
     },
+    "/bucket-users/{bucket}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "List Users With Access to a Given Bucket",
+        "operationId": "ListUsersWithAccessToBucket",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets": {
       "get": {
         "tags": [
@@ -6080,6 +6126,52 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/listPoliciesResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/bucket-users/{bucket}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "List Users With Access to a Given Bucket",
+        "operationId": "ListUsersWithAccessToBucket",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           "default": {
