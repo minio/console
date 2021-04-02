@@ -29,6 +29,9 @@ const styles = (theme: Theme) =>
       overflowY: "auto",
       marginBottom: 10,
       height: "calc(100vh - 435px)",
+      maxWidth: 840,
+      margin: "0 auto",
+      width: "100%",
     },
     buttonsContainer: {
       display: "flex",
