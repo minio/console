@@ -231,10 +231,6 @@ const ListTenants = ({
               <SlideOptions
                 slideOptions={[
                   <Fragment>
-                    <Grid item xs={12} className={classes.customTitle}>
-                      Tenants List
-                    </Grid>
-
                     <Grid item xs={12} className={classes.tenantsContainer}>
                       <Grid item xs={12} className={classes.actionsTray}>
                         <TextField

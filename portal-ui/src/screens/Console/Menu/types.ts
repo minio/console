@@ -22,3 +22,15 @@ export interface IMenuProps {
   pages: string[];
   operatorMode: boolean;
 }
+
+export interface IMenuItem {
+  group: string;
+  type: string;
+  component: any;
+  to: string;
+  name: string;
+  icon: any;
+  onClick?: any;
+  forceDisplay?: boolean;
+  extraMargin?: boolean;
+}

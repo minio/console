@@ -17,7 +17,7 @@ var (
 	errorGenericInvalidSession = errors.New("invalid session")
 	errorGenericUnauthorized   = errors.New("unauthorized")
 	errorGenericForbidden      = errors.New("forbidden")
-	errorGenericNotFound       = errors.New("not found")
+	ErrorGenericNotFound       = errors.New("not found")
 	// Explicit error messages
 	errorInvalidErasureCodingValue        = errors.New("invalid Erasure Coding Value")
 	errorUnableToGetTenantUsage           = errors.New("unable to get tenant usage")
@@ -54,7 +54,7 @@ func prepareError(err ...error) *models.Error {
 		}
 		if k8sErrors.IsNotFound(err[0]) {
 			errorCode = 404
-			errorMessage = errorGenericNotFound.Error()
+			errorMessage = ErrorGenericNotFound.Error()
 		}
 		if errors.Is(err[0], errInvalidCredentials) {
 			errorCode = 401

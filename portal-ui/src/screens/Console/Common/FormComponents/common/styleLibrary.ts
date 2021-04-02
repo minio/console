@@ -44,6 +44,10 @@ export const fieldBasic = {
     display: "flex",
     alignItems: "center",
   },
+  switchContainer: {
+    display: "flex",
+    maxWidth: 840,
+  },
 };
 
 export const modalBasic = {

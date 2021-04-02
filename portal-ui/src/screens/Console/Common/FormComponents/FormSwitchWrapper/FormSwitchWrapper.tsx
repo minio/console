@@ -104,6 +104,8 @@ const styles = (theme: Theme) =>
       borderBottom: "#9c9c9c 1px solid",
       paddingBottom: 14,
       marginBottom: 20,
+      maxWidth: 840,
+      margin: "0 auto",
     },
     wrapperContainer: {
       display: "flex",
@@ -117,9 +119,6 @@ const styles = (theme: Theme) =>
       fontWeight: 600,
       color: "#081C42",
       margin: "0 8px 0 10px",
-    },
-    switchContainer: {
-      display: "flex",
     },
     fieldDescription: {
       marginTop: 4,
