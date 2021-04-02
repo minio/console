@@ -32,7 +32,7 @@ import { AppState } from "../../../store";
 import { userLoggedIn } from "../../../actions";
 import api from "../../../common/api";
 import { menuGroups } from "./utils";
-import { IMenuProps } from "./types";
+import { IMenuProps, IMenuItem } from "./types";
 import {
   BucketsIcon,
   ClustersIcon,
@@ -190,7 +190,7 @@ const Menu = ({ userLoggedIn, classes, pages, operatorMode }: IMenuProps) => {
       });
   };
 
-  let menuItems = [
+  let menuItems: IMenuItem[] = [
     {
       group: "common",
       type: "item",
@@ -321,30 +321,76 @@ const Menu = ({ userLoggedIn, classes, pages, operatorMode }: IMenuProps) => {
     },
   ];
 
-  const allowedPages = pages.reduce((result: any, item: any, index: any) => {
+  const allowedPages = pages.reduce((result: any, item: any) => {
     result[item] = true;
     return result;
   }, {});
 
+  const documentation: IMenuItem = {
+    group: "License",
+    type: "item",
+    component: NavLink,
+    to: "/documentation",
+    name: "Documentation",
+    icon: <LibraryBooksIcon />,
+    forceDisplay: true,
+  };
+
   // Append the license page according to the allowedPages
   if (allowedPages.hasOwnProperty("/tenants")) {
-    menuItems.push({
-      group: "Operator",
-      type: "item",
-      component: NavLink,
-      to: "/license",
-      name: "License",
-      icon: <LicenseIcon />,
-    });
+    menuItems.push(
+      {
+        group: "Operator",
+        type: "item",
+        component: NavLink,
+        to: "/license",
+        name: "License",
+        icon: <LicenseIcon />,
+      },
+      {
+        ...documentation,
+        group: "Operator",
+        onClick: (
+          e:
+            | React.MouseEvent<HTMLLIElement>
+            | React.MouseEvent<HTMLAnchorElement>
+            | React.MouseEvent<HTMLDivElement>
+        ) => {
+          e.preventDefault();
+          window.open(
+            `https://docs.min.io/?ref=${operatorMode ? "op" : "con"}`,
+            "_blank"
+          );
+        },
+      }
+    );
   } else {
-    menuItems.push({
-      group: "License",
-      type: "item",
-      component: NavLink,
-      to: "/license",
-      name: "License",
-      icon: <LicenseIcon />,
-    });
+    menuItems.push(
+      {
+        group: "License",
+        type: "item",
+        component: NavLink,
+        to: "/license",
+        name: "License",
+        icon: <LicenseIcon />,
+      },
+      {
+        ...documentation,
+        group: "License",
+        onClick: (
+          e:
+            | React.MouseEvent<HTMLLIElement>
+            | React.MouseEvent<HTMLAnchorElement>
+            | React.MouseEvent<HTMLDivElement>
+        ) => {
+          e.preventDefault();
+          window.open(
+            `https://docs.min.io/?ref=${operatorMode ? "op" : "con"}`,
+            "_blank"
+          );
+        },
+      }
+    );
   }
 
   const allowedItems = menuItems.filter(
@@ -410,13 +456,14 @@ const Menu = ({ userLoggedIn, classes, pages, operatorMode }: IMenuProps) => {
                 unmountOnExit
                 key={`menuGroup-${groupMember.group}`}
               >
-                {filterByGroup.map((page: any) => {
+                {filterByGroup.map((page: IMenuItem) => {
                   switch (page.type) {
                     case "item": {
                       return (
                         <ListItem
                           key={page.to}
                           button
+                          onClick={page.onClick}
                           component={page.component}
                           to={page.to}
                           className={
@@ -445,21 +492,6 @@ const Menu = ({ userLoggedIn, classes, pages, operatorMode }: IMenuProps) => {
                       return null;
                   }
                 })}
-                <ListItem
-                  button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    window.open(
-                      `https://docs.min.io/?ref=${operatorMode ? "op" : "con"}`,
-                      "_blank"
-                    );
-                  }}
-                >
-                  <ListItemIcon>
-                    <LibraryBooksIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Documentation" />
-                </ListItem>
                 <Divider />
               </Collapse>
             </React.Fragment>
