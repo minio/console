@@ -43,6 +43,7 @@ import { LicenseInfo } from "../../License/types";
 import { Link } from "react-router-dom";
 import { setErrorSnackMessage } from "../../../../actions";
 import Moment from "react-moment";
+import { Fragment } from "react";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -156,6 +157,10 @@ const styles = (theme: Theme) =>
       position: "absolute",
       right: 0,
       bottom: 29,
+    },
+    breadcrumLink: {
+      textDecoration: "none",
+      color: "black",
     },
     ...modalBasic,
     ...containerForHeader(theme.spacing(4)),
@@ -343,7 +348,16 @@ const TenantDetails = ({
           namespace={tenantNamespace}
         />
       )}
-      <PageHeader label={`Tenant > ${match.params["tenantName"]}`} />
+      <PageHeader
+        label={
+          <Fragment>
+            <Link to={"/tenants"} className={classes.breadcrumLink}>
+              Tenant
+            </Link>
+            {` > ${match.params["tenantName"]}`}
+          </Fragment>
+        }
+      />
       <Grid item xs={12} className={classes.container} />
       <Grid container>
         <Grid item xs={12}>
