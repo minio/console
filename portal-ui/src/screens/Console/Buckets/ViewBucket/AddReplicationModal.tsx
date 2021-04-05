@@ -21,7 +21,7 @@ import { Button, LinearProgress } from "@material-ui/core";
 import get from "lodash/get";
 import Grid from "@material-ui/core/Grid";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
-import { IRemoteBucket } from "../types";
+import { BulkReplicationResponse } from "../types";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
@@ -66,52 +66,43 @@ const AddReplicationModal = ({
   const [region, setRegion] = useState("");
 
   const addRecord = () => {
-    const remoteBucketInfo = {
+    const replicate = [
+      {
+        originBucket: bucketName,
+        destinationBucket: targetBucket,
+      },
+    ];
+
+    const remoteBucketsInfo = {
       accessKey: accessKey,
       secretKey: secretKey,
-      sourceBucket: bucketName,
       targetURL: targetURL,
-      targetBucket: targetBucket,
       region: region,
+      bucketsRelation: replicate,
     };
 
     api
-      .invoke("POST", "/api/v1/remote-buckets", remoteBucketInfo)
-      .then(() => {
-        api
-          .invoke("GET", "/api/v1/remote-buckets")
-          .then((res: any) => {
-            const remoteBuckets = get(res, "buckets", []);
-            const remoteBucket = remoteBuckets.find(
-              (itemRemote: IRemoteBucket) => {
-                return itemRemote.sourceBucket === bucketName;
-              }
-            );
-            if (remoteBucket && remoteBucket.remoteARN) {
-              const remoteARN = remoteBucket.remoteARN;
-              const replicationInfo = {
-                destination_bucket: targetBucket,
-                arn: remoteARN,
-              };
-              api
-                .invoke(
-                  "POST",
-                  `/api/v1/buckets/${bucketName}/replication`,
-                  replicationInfo
-                )
-                .then(() => {
-                  setAddLoading(false);
-                  closeModalAndRefresh();
-                })
-                .catch((err) => {
-                  setAddLoading(false);
-                  setModalErrorSnackMessage(err);
-                });
-            }
-          })
-          .catch((err) => {
-            setModalErrorSnackMessage(err);
-          });
+      .invoke("POST", "/api/v1/buckets-replication", remoteBucketsInfo)
+      .then((response: BulkReplicationResponse) => {
+        setAddLoading(false);
+
+        const states = get(response, "replicationState", []);
+
+        if (states.length > 0) {
+          const itemVal = states[0];
+
+          setAddLoading(false);
+
+          if (itemVal.errorString && itemVal.errorString !== "") {
+            setModalErrorSnackMessage(itemVal.errorString);
+            return;
+          }
+
+          closeModalAndRefresh();
+
+          return;
+        }
+        setModalErrorSnackMessage("No changes applied");
       })
       .catch((err) => {
         setAddLoading(false);

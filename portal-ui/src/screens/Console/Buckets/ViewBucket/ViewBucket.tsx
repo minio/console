@@ -25,6 +25,7 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Checkbox from "@material-ui/core/Checkbox";
+import Typography from "@material-ui/core/Typography";
 import api from "../../../../common/api";
 import {
   BucketEncryptionInfo,
@@ -44,6 +45,8 @@ import { CreateIcon } from "../../../../icons";
 import { niceBytes } from "../../../../common/utils";
 import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
+import { Policy } from "../../Policies/types";
+import { User } from "../../Users/types";
 import SetRetentionConfig from "./SetRetentionConfig";
 import AddEvent from "./AddEvent";
 import DeleteEvent from "./DeleteEvent";
@@ -53,12 +56,11 @@ import PageHeader from "../../Common/PageHeader/PageHeader";
 import EnableBucketEncryption from "./EnableBucketEncryption";
 import PencilIcon from "../../Common/TableWrapper/TableActionIcons/PencilIcon";
 import EnableVersioningModal from "./EnableVersioningModal";
-import Typography from "@material-ui/core/Typography";
 import UsageIcon from "../../../../icons/UsageIcon";
 import AddPolicy from "../../Policies/AddPolicy";
 import SetAccessPolicy from "./SetAccessPolicy";
-import { Policy } from "../../Policies/types";
-import { User } from "../../Users/types";
+
+import DeleteReplicationRule from "../ViewBucket/DeleteReplicationRule";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -259,6 +261,10 @@ const ViewBucket = ({
   const [loadingPerms, setLoadingPerms] = useState<boolean>(true);
   const [canPutReplication, setCanPutReplication] = useState<boolean>(false);
   const [canGetReplication, setCanGetReplication] = useState<boolean>(false);
+  const [deleteReplicationModal, setDeleteReplicationModal] = useState<boolean>(
+    false
+  );
+  const [selectedRRule, setSelectedRRule] = useState<string>("");
 
   // check the permissions for creating bucket
   useEffect(() => {
@@ -286,7 +292,7 @@ const ViewBucket = ({
           const actions = res.permissions ? res.permissions : [];
 
           let canPutReplication = actions.find(
-            (s) => s.id == "PutReplicationConfiguration"
+            (s) => s.id === "PutReplicationConfiguration"
           );
 
           if (canPutReplication && canPutReplication.can) {
@@ -295,7 +301,7 @@ const ViewBucket = ({
             setCanPutReplication(false);
           }
           let canGetReplication = actions.find(
-            (s) => s.id == "GetReplicationConfiguration"
+            (s) => s.id === "GetReplicationConfiguration"
           );
 
           if (canGetReplication && canGetReplication.can) {
@@ -523,6 +529,11 @@ const ViewBucket = ({
     setSelectedEvent(evnt);
   };
 
+  const confirmDeleteReplication = (replication: BucketReplicationRule) => {
+    setSelectedRRule(replication.id);
+    setDeleteReplicationModal(true);
+  };
+
   const closeEnableVersioning = (refresh: boolean) => {
     setEnableVersioningOpen(false);
     if (refresh) {
@@ -552,6 +563,14 @@ const ViewBucket = ({
     setOpenSetReplication(open);
   };
 
+  const closeReplicationModalDelete = (refresh: boolean) => {
+    setDeleteReplicationModal(false);
+
+    if (refresh) {
+      setLoadingReplication(true);
+    }
+  };
+
   const handleEncryptionCheckbox = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -576,6 +595,13 @@ const ViewBucket = ({
   };
 
   const PolicyActions = [{ type: "view", onClick: viewAction }];
+  const replicationTableActions = [
+    {
+      type: "delete",
+      onClick: confirmDeleteReplication,
+      hideButtonFunction: () => replicationRules.length <= 1,
+    },
+  ];
 
   return (
     <Fragment>
@@ -636,6 +662,14 @@ const ViewBucket = ({
           modalOpen={enableVersioningOpen}
           selectedBucket={bucketName}
           versioningCurrentState={isVersioned}
+        />
+      )}
+      {deleteReplicationModal && (
+        <DeleteReplicationRule
+          deleteOpen={deleteReplicationModal}
+          selectedBucket={bucketName}
+          closeDeleteModalAndRefresh={closeReplicationModalDelete}
+          ruleToDelete={selectedRRule}
         />
       )}
       <PageHeader label={`Bucket > ${match.params["bucketName"]}`} />
@@ -850,7 +884,7 @@ const ViewBucket = ({
             {canGetReplication && (
               <TabPanel index={1} value={curTab}>
                 <TableWrapper
-                  itemActions={tableActions}
+                  itemActions={replicationTableActions}
                   columns={[
                     { label: "ID", elementKey: "id" },
                     {
@@ -863,7 +897,7 @@ const ViewBucket = ({
                       renderFunction: ruleDestDisplay,
                     },
                     {
-                      label: "Delete Replication",
+                      label: "Delete Marker Replication",
                       elementKey: "delete_marker_replication",
                       renderFunction: ruleDelDisplay,
                     },

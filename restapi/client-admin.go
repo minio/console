@@ -319,6 +319,20 @@ func newAdminFromClaims(claims *models.Principal) (*madmin.AdminClient, error) {
 	return adminClient, nil
 }
 
+// newAdminFromCreds Creates a minio client using custom credentials for connecting to a remote host
+func newAdminFromCreds(accessKey, secretKey, endpoint string, tlsEnabled bool) (*madmin.AdminClient, error) {
+	minioClient, err := madmin.NewWithOptions(endpoint, &madmin.Options{
+		Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
+		Secure: tlsEnabled,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return minioClient, nil
+}
+
 // stsClient is a custom http client, this client should not be called directly and instead be
 // called using GetConsoleSTSClient() to ensure is initialized and the certificates are loaded correctly
 var stsClient *http.Client

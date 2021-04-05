@@ -17,7 +17,7 @@
 export interface IWizardButton {
   label: string;
   type: string;
-  action?: () => void;
+  action?: (nextFunction: (to: string | number) => void) => void;
   enabled?: boolean;
   toPage?: number;
 }
@@ -27,15 +27,20 @@ export interface IWizardElement {
   componentRender: any;
   buttons: IWizardButton[];
   advancedOnly?: boolean;
+  loadingStep?: boolean;
 }
 
 export interface IWizardMain {
   classes: any;
+  loadingStep?: boolean;
   wizardSteps: IWizardElement[];
+  forModal?: boolean;
 }
 
 export interface IWizardPage {
   classes: any;
   page: IWizardElement;
   pageChange: (to: string | number) => void;
+  loadingStep?: boolean;
+  forModal?: boolean;
 }

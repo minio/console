@@ -132,3 +132,13 @@ export interface PermissionAction {
 export interface HasPermissionResponse {
   permissions: PermissionAction[];
 }
+
+export interface BulkReplicationResponse {
+  replicationState: BulkReplicationItem[];
+}
+
+export interface BulkReplicationItem {
+  errorString: string;
+  originBucket: string;
+  targetBucket: string;
+}

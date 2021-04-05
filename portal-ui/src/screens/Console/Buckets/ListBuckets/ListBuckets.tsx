@@ -22,6 +22,7 @@ import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
+import FileCopyIcon from "@material-ui/icons/FileCopy";
 import Moment from "react-moment";
 import { Bucket, BucketList, HasPermissionResponse } from "../types";
 import { CreateIcon } from "../../../../icons";
@@ -39,6 +40,7 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import AddBucket from "./AddBucket";
 import DeleteBucket from "./DeleteBucket";
 import PageHeader from "../../Common/PageHeader/PageHeader";
+import BulkReplicationModal from "./BulkReplicationModal";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -94,6 +96,10 @@ const ListBuckets = ({
   const [filterBuckets, setFilterBuckets] = useState<string>("");
   const [loadingPerms, setLoadingPerms] = useState<boolean>(true);
   const [canCreateBucket, setCanCreateBucket] = useState<boolean>(false);
+  const [selectedBuckets, setSelectedBuckets] = useState<string[]>([]);
+  const [replicationModalOpen, setReplicationModalOpen] = useState<boolean>(
+    false
+  );
 
   // check the permissions for creating bucket
   useEffect(() => {
@@ -114,7 +120,7 @@ const ListBuckets = ({
           }
           const actions = res.permissions ? res.permissions : [];
 
-          let canCreate = actions.find((s) => s.id == "createBucket");
+          let canCreate = actions.find((s) => s.id === "createBucket");
           if (canCreate && canCreate.can) {
             setCanCreateBucket(true);
           } else {
@@ -155,6 +161,7 @@ const ListBuckets = ({
 
     if (refresh) {
       setLoading(true);
+      setSelectedBuckets([]);
     }
   };
 
@@ -162,6 +169,7 @@ const ListBuckets = ({
     setDeleteOpen(false);
     if (refresh) {
       setLoading(true);
+      setSelectedBuckets([]);
     }
   };
 
@@ -191,6 +199,33 @@ const ListBuckets = ({
     }
   });
 
+  const selectListBuckets = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const targetD = e.target;
+    const value = targetD.value;
+    const checked = targetD.checked;
+
+    let elements: string[] = [...selectedBuckets]; // We clone the selectedBuckets array
+
+    if (checked) {
+      // If the user has checked this field we need to push this to selectedBucketsList
+      elements.push(value);
+    } else {
+      // User has unchecked this field, we need to remove it from the list
+      elements = elements.filter((element) => element !== value);
+    }
+    setSelectedBuckets(elements);
+
+    return elements;
+  };
+
+  const closeBulkReplicationModal = (unselectAll: boolean) => {
+    setReplicationModalOpen(false);
+
+    if (unselectAll) {
+      setSelectedBuckets([]);
+    }
+  };
+
   return (
     <Fragment>
       {addBucketModalOpen && (
@@ -206,6 +241,13 @@ const ListBuckets = ({
           closeDeleteModalAndRefresh={(refresh: boolean) => {
             closeDeleteModalAndRefresh(refresh);
           }}
+        />
+      )}
+      {replicationModalOpen && (
+        <BulkReplicationModal
+          open={replicationModalOpen}
+          buckets={selectedBuckets}
+          closeModalAndRefresh={closeBulkReplicationModal}
         />
       )}
       <PageHeader label={"Buckets"} />
@@ -229,6 +271,17 @@ const ListBuckets = ({
                 ),
               }}
             />
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<FileCopyIcon />}
+              onClick={() => {
+                setReplicationModalOpen(true);
+              }}
+              disabled={selectedBuckets.length === 0}
+            >
+              Set Replication
+            </Button>
             {canCreateBucket && (
               <Button
                 variant="contained"
@@ -267,6 +320,8 @@ const ListBuckets = ({
               records={filteredRecords}
               entityName="Buckets"
               idField="name"
+              selectedItems={selectedBuckets}
+              onSelect={selectListBuckets}
             />
           </Grid>
         </Grid>
