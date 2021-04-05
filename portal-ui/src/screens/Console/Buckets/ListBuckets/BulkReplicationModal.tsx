@@ -122,6 +122,7 @@ const AddBulkReplicationModal = ({
   }, [buckets, relationBuckets.length]);
 
   const addRecord = () => {
+    setAddLoading(true);
     const replicate = bucketsToAlter.map((bucketName, index) => {
       return {
         originBucket: bucketName,
@@ -259,6 +260,7 @@ const AddBulkReplicationModal = ({
               updateItem(indexItem, e.target.value as string);
             }}
             options={optionsForBucketsDrop}
+            disabled={addLoading}
           />
         </Fragment>
       );
@@ -273,6 +275,7 @@ const AddBulkReplicationModal = ({
             updateItem(indexItem, event.target.value);
           }}
           value={relationBuckets[indexItem]}
+          disabled={addLoading}
         />
       </Fragment>
     );
@@ -434,7 +437,7 @@ const AddBulkReplicationModal = ({
               {
                 type: "next",
                 label: "Create",
-                enabled: true,
+                enabled: !addLoading,
                 action: addRecord,
               },
             ],
