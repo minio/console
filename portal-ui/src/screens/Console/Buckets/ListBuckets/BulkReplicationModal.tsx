@@ -326,7 +326,9 @@ const AddBulkReplicationModal = ({
                 <h4>Remote Endpoint Configuration</h4>
                 <span className={classes.descriptionText}>
                   Please avoid the use of root credentials for this feature
-                </span><br /><br />
+                </span>
+                <br />
+                <br />
                 <Grid item xs={12}>
                   <InputBoxWrapper
                     id="accessKey"

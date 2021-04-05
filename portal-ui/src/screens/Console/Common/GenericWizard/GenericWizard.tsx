@@ -33,6 +33,9 @@ const styles = (theme: Theme) =>
       minHeight: 450,
       padding: "0 30px",
     },
+    wizFromModal: {
+      position: "relative",
+    },
     wizardSteps: {
       minWidth: 180,
       marginRight: 10,
@@ -175,7 +178,10 @@ const GenericWizard = ({
   };
 
   return (
-    <Grid container className={classes.wizFromContainer}>
+    <Grid
+      container
+      className={forModal ? classes.wizFromModal : classes.wizFromContainer}
+    >
       {forModal ? (
         <Fragment>
           <div className={classes.stepsMasterContainer}>
@@ -201,13 +207,13 @@ const GenericWizard = ({
         md={forModal ? 12 : 9}
         lg={forModal ? 12 : 9}
         xl={forModal ? 12 : 10}
-        className={classes.paddedContentGrid}
+        className={forModal ? "" : classes.paddedContentGrid}
       >
         <WizardPage
           page={wizardSteps[currentStep]}
           pageChange={pageChange}
           loadingStep={loadingStep}
-          forModal
+          forModal={forModal}
         />
       </Grid>
     </Grid>
