@@ -18,11 +18,13 @@ package oauth2
 
 const (
 	// const for idp configuration
-	ConsoleMinIOServer       = "CONSOLE_MINIO_SERVER"
-	ConsoleIdpURL            = "CONSOLE_IDP_URL"
-	ConsoleIdpClientID       = "CONSOLE_IDP_CLIENT_ID"
-	ConsoleIdpSecret         = "CONSOLE_IDP_SECRET"
-	ConsoleIdpCallbackURL    = "CONSOLE_IDP_CALLBACK"
-	ConsoleIdpHmacPassphrase = "CONSOLE_IDP_HMAC_PASSPHRASE"
-	ConsoleIdpHmacSalt       = "CONSOLE_IDP_HMAC_SALT"
+	ConsoleMinIOServer        = "CONSOLE_MINIO_SERVER"
+	ConsoleIdpURL             = "CONSOLE_IDP_URL"
+	ConsoleIdpClientID        = "CONSOLE_IDP_CLIENT_ID"
+	ConsoleIdpSecret          = "CONSOLE_IDP_SECRET"
+	ConsoleIdpCallbackURL     = "CONSOLE_IDP_CALLBACK"
+	ConsoleIdpHmacPassphrase  = "CONSOLE_IDP_HMAC_PASSPHRASE"
+	ConsoleIdpHmacSalt        = "CONSOLE_IDP_HMAC_SALT"
+	ConsoleIDPScopes          = "CONSOLE_IDP_SCOPES"
+	ConsoleIDPTokenExpiration = "CONSOLE_IDP_TOKEN_EXPIRATION"
 )
