@@ -47,6 +47,9 @@ const styles = (theme: Theme) =>
       "& button": {
         marginLeft: 10,
       },
+      "&.forModal": {
+        paddingBottom: 0,
+      },
     },
   });
 
@@ -87,7 +90,9 @@ const WizardPage = ({
           <LinearProgress />
         </div>
       )}
-      <div className={classes.buttonsContainer}>
+      <div
+        className={`${classes.buttonsContainer} ${forModal ? "forModal" : ""}`}
+      >
         {page.buttons.map((btn) => {
           return (
             <Button
