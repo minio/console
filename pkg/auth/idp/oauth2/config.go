@@ -66,3 +66,13 @@ var defaultSaltForIdpHmac = utils.RandomCharString(64)
 func getSaltForIdpHmac() string {
 	return env.Get(ConsoleIdpHmacSalt, defaultSaltForIdpHmac)
 }
+
+// getIdpScopes return default scopes during the IDP login request
+func getIdpScopes() string {
+	return env.Get(ConsoleIDPScopes, "openid,profile,app_metadata,user_metadata,email")
+}
+
+// getIdpTokenExpiration return default token expiration for access token (in seconds)
+func getIdpTokenExpiration() string {
+	return env.Get(ConsoleIDPTokenExpiration, "3600")
+}

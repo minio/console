@@ -25,6 +25,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -115,12 +116,14 @@ func NewOauth2ProviderClient(ctx context.Context, scopes []string, httpClient *h
 	if err != nil {
 		return nil, err
 	}
+	// below verification should not be necessary if the user configure exactly the
+	// scopes he need, will be removed on a future release
 	if u.Host == "google.com" {
 		scopes = []string{oidc.ScopeOpenID}
 	}
-	// If provided scopes are empty we use a default list
+	// If provided scopes are empty we use a default list or the user configured list
 	if len(scopes) == 0 {
-		scopes = []string{oidc.ScopeOpenID, "profile", "app_metadata", "user_metadata", "email"}
+		scopes = strings.Split(getIdpScopes(), ",")
 	}
 	client := new(Provider)
 	client.oauth2Config = &xoauth2.Config{
@@ -177,9 +180,22 @@ func (client *Provider) VerifyIdentity(ctx context.Context, code, state string) 
 			return nil, errors.New("invalid token")
 		}
 
+		// expiration configured in the token itself
+		expiration := int(oauth2Token.Expiry.Sub(time.Now().UTC()).Seconds())
+
+		// check if user configured a hardcoded expiration for console via env variables
+		// and override the incoming expiration
+		userConfiguredExpiration := getIdpTokenExpiration()
+		if userConfiguredExpiration != "" {
+			expiration, _ = strconv.Atoi(userConfiguredExpiration)
+		}
+		idToken := oauth2Token.Extra("id_token")
+		if idToken == nil {
+			return nil, errors.New("returned token is missing id_token claim")
+		}
 		return &credentials.WebIdentityToken{
-			Token:  oauth2Token.Extra("id_token").(string),
-			Expiry: int(oauth2Token.Expiry.Sub(time.Now().UTC()).Seconds()),
+			Token:  idToken.(string),
+			Expiry: expiration,
 		}, nil
 	}
 	stsEndpoint := GetSTSEndpoint()
