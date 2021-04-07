@@ -105,6 +105,7 @@ type MinioAdmin interface {
 	changePassword(ctx context.Context, accessKey, secretKey string) error
 
 	serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) <-chan madmin.HealthInfo
+	storageInfo(ctx context.Context) (madmin.StorageInfo, error)
 }
 
 // Interface implementation
@@ -226,7 +227,14 @@ func (ac adminClient) stopProfiling(ctx context.Context) (io.ReadCloser, error) 
 
 // implements madmin.ServiceTrace()
 func (ac adminClient) serviceTrace(ctx context.Context, allTrace, errTrace bool) <-chan madmin.ServiceTraceInfo {
-	return ac.client.ServiceTrace(ctx, allTrace, errTrace)
+	return ac.client.ServiceTrace(ctx, madmin.ServiceTraceOpts{
+		S3:         allTrace,
+		Internal:   allTrace,
+		Storage:    allTrace,
+		OS:         allTrace,
+		OnlyErrors: errTrace,
+		Threshold:  0,
+	})
 }
 
 // implements madmin.GetLogs()
@@ -293,6 +301,10 @@ func (ac adminClient) setBucketQuota(ctx context.Context, bucket string, quota *
 // serverHealthInfo implements mc.ServerHealthInfo - Connect to a minio server and call Health Info Management API
 func (ac adminClient) serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) <-chan madmin.HealthInfo {
 	return ac.client.ServerHealthInfo(ctx, healthDataTypes, deadline)
+}
+
+func (ac adminClient) storageInfo(ctx context.Context) (madmin.StorageInfo, error) {
+	return ac.client.StorageInfo(ctx)
 }
 
 func newMAdminClient(sessionClaims *models.Principal) (*madmin.AdminClient, error) {

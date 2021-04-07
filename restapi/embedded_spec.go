@@ -2995,6 +2995,29 @@ func init() {
         }
       }
     },
+    "/storage-info": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Get MinIO's Server Info",
+        "operationId": "GetServerInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serverInfoResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/subscription/info": {
       "get": {
         "tags": [
@@ -3571,6 +3594,42 @@ func init() {
         }
       }
     },
+    "backend": {
+      "type": "object",
+      "properties": {
+        "OfflineDisks": {
+          "type": "object",
+          "$ref": "#/definitions/backend_disks"
+        },
+        "OnlineDisks": {
+          "type": "object",
+          "$ref": "#/definitions/backend_disks"
+        },
+        "RRSCParity": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "StandardSCParity": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Type": {
+          "type": "integer",
+          "enum": [
+            0,
+            1,
+            2
+          ]
+        }
+      }
+    },
+    "backend_disks": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "format": "int32"
+      }
+    },
     "bucket": {
       "type": "object",
       "required": [
@@ -4036,6 +4095,64 @@ func init() {
         },
         "volume": {
           "type": "string"
+        }
+      }
+    },
+    "disk": {
+      "type": "object",
+      "properties": {
+        "availspace": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "healing": {
+          "type": "boolean"
+        },
+        "model": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "readlatency": {
+          "type": "number",
+          "format": "float"
+        },
+        "readthroughput": {
+          "type": "number",
+          "format": "float"
+        },
+        "rootDisk": {
+          "type": "boolean"
+        },
+        "state": {
+          "type": "string"
+        },
+        "totalspace": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "usedspace": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "utilization": {
+          "type": "number",
+          "format": "float"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "writelatency": {
+          "type": "number",
+          "format": "float"
+        },
+        "writethroughput": {
+          "type": "number",
+          "format": "float"
         }
       }
     },
@@ -5521,6 +5638,21 @@ func init() {
         },
         "resultType": {
           "type": "string"
+        }
+      }
+    },
+    "serverInfoResponse": {
+      "type": "object",
+      "properties": {
+        "Backend": {
+          "type": "object",
+          "$ref": "#/definitions/backend"
+        },
+        "Disks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/disk"
+          }
         }
       }
     },
@@ -9046,6 +9178,29 @@ func init() {
         }
       }
     },
+    "/storage-info": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Get MinIO's Server Info",
+        "operationId": "GetServerInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serverInfoResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/subscription/info": {
       "get": {
         "tags": [
@@ -10231,6 +10386,42 @@ func init() {
         }
       }
     },
+    "backend": {
+      "type": "object",
+      "properties": {
+        "OfflineDisks": {
+          "type": "object",
+          "$ref": "#/definitions/backend_disks"
+        },
+        "OnlineDisks": {
+          "type": "object",
+          "$ref": "#/definitions/backend_disks"
+        },
+        "RRSCParity": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "StandardSCParity": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Type": {
+          "type": "integer",
+          "enum": [
+            0,
+            1,
+            2
+          ]
+        }
+      }
+    },
+    "backend_disks": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "format": "int32"
+      }
+    },
     "bucket": {
       "type": "object",
       "required": [
@@ -10696,6 +10887,64 @@ func init() {
         },
         "volume": {
           "type": "string"
+        }
+      }
+    },
+    "disk": {
+      "type": "object",
+      "properties": {
+        "availspace": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "healing": {
+          "type": "boolean"
+        },
+        "model": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "readlatency": {
+          "type": "number",
+          "format": "float"
+        },
+        "readthroughput": {
+          "type": "number",
+          "format": "float"
+        },
+        "rootDisk": {
+          "type": "boolean"
+        },
+        "state": {
+          "type": "string"
+        },
+        "totalspace": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "usedspace": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "utilization": {
+          "type": "number",
+          "format": "float"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "writelatency": {
+          "type": "number",
+          "format": "float"
+        },
+        "writethroughput": {
+          "type": "number",
+          "format": "float"
         }
       }
     },
@@ -12046,6 +12295,21 @@ func init() {
         },
         "resultType": {
           "type": "string"
+        }
+      }
+    },
+    "serverInfoResponse": {
+      "type": "object",
+      "properties": {
+        "Backend": {
+          "type": "object",
+          "$ref": "#/definitions/backend"
+        },
+        "Disks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/disk"
+          }
         }
       }
     },

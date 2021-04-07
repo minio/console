@@ -1872,6 +1872,23 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
+
+  /storage-info:
+    get:
+      summary: Get MinIO's Server Info
+      operationId: GetServerInfo
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/serverInfoResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /tenants:
     get:
       summary: List Tenant of All Namespaces
@@ -3282,6 +3299,87 @@ definitions:
       results:
         type: object
         title: list of log search responses
+
+  disk:
+    type: object
+    properties:
+      endpoint:
+        type: string
+      rootDisk:
+        type: boolean
+      path:
+        type: string
+      healing:
+        type: boolean
+      state:
+        type: string
+      uuid:
+        type: string
+      model:
+        type: string
+      totalspace:
+        type: integer
+        format: int64
+      usedspace:
+        type: integer
+        format: int64
+      availspace:
+        type: integer
+        format: int64
+      readthroughput:
+        type: number
+        format: float
+      writethroughput:
+        type: number
+        format: float
+      readlatency:
+        type: number
+        format: float
+      writelatency:
+        type: number
+        format: float
+      utilization:
+        type: number
+        format: float
+
+  backend_disks:
+    type: object
+    additionalProperties:
+      type: integer
+      format: int32
+
+  backend:
+    type: object
+    properties:
+      Type:
+        type: integer
+        enum:
+          - 0
+          - 1
+          - 2
+      OnlineDisks:
+        type: object
+        $ref: "#/definitions/backend_disks"
+      OfflineDisks:
+        type: object
+        $ref: "#/definitions/backend_disks"
+      StandardSCParity:
+        type: integer
+        format: int32
+      RRSCParity:
+        type: integer
+        format: int32
+
+  serverInfoResponse:
+    type: object
+    properties:
+      Disks:
+        type: array
+        items:
+          $ref: "#/definitions/disk"
+      Backend:
+        type: object
+        $ref: "#/definitions/backend"
 
   listTenantsResponse:
     type: object

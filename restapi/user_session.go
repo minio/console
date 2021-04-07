@@ -17,6 +17,10 @@
 package restapi
 
 import (
+	"context"
+
+	"github.com/minio/minio/pkg/madmin"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/acl"
@@ -33,6 +37,14 @@ func registerSessionHandlers(api *operations.ConsoleAPI) {
 			return user_api.NewSessionCheckDefault(int(err.Code)).WithPayload(err)
 		}
 		return user_api.NewSessionCheckOK().WithPayload(sessionResp)
+	})
+
+	api.UserAPIGetServerInfoHandler = user_api.GetServerInfoHandlerFunc(func(params user_api.GetServerInfoParams, principal *models.Principal) middleware.Responder {
+		sessionResp, err := getStorageInfo(principal)
+		if err != nil {
+			return user_api.NewGetServerInfoDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewGetServerInfoOK().WithPayload(sessionResp)
 	})
 }
 
@@ -59,4 +71,66 @@ func getListOfEnabledFeatures() []string {
 		features = append(features, "ilm")
 	}
 	return features
+}
+
+func infoBackendToModelBackend(bd madmin.BackendDisks) map[string]int32 {
+	out := make(map[string]int32)
+	for k, v := range bd {
+		out[k] = int32(v)
+	}
+	return out
+}
+
+func infoDisksToModelDisks(disks []madmin.Disk) []*models.Disk {
+	out := []*models.Disk{}
+	for _, disk := range disks {
+		out = append(out, &models.Disk{
+			Availspace:      int64(disk.AvailableSpace),
+			Endpoint:        disk.Endpoint,
+			Healing:         disk.Healing,
+			Model:           disk.Model,
+			Path:            disk.DrivePath,
+			Readlatency:     float32(disk.AvailableSpace),
+			Readthroughput:  float32(disk.AvailableSpace),
+			RootDisk:        disk.RootDisk,
+			State:           disk.State,
+			Totalspace:      int64(disk.TotalSpace),
+			Usedspace:       int64(disk.UsedSpace),
+			Utilization:     float32(disk.AvailableSpace),
+			UUID:            disk.UUID,
+			Writelatency:    float32(disk.WriteLatency),
+			Writethroughput: float32(disk.WriteThroughPut),
+		})
+	}
+	return out
+}
+
+func getStorageInfo(session *models.Principal) (*models.ServerInfoResponse, *models.Error) {
+	mAdmin, err := newMAdminClient(session)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := adminClient{client: mAdmin}
+
+	info, err := adminClient.storageInfo(context.Background())
+
+	if err != nil {
+		return nil, prepareError(err)
+	}
+
+	resp := models.ServerInfoResponse{
+		Disks: infoDisksToModelDisks(info.Disks),
+		Backend: &models.Backend{
+			OfflineDisks:     infoBackendToModelBackend(info.Backend.OfflineDisks),
+			OnlineDisks:      infoBackendToModelBackend(info.Backend.OnlineDisks),
+			RRSCParity:       int32(info.Backend.RRSCParity),
+			StandardSCParity: int32(info.Backend.StandardSCParity),
+			Type:             int64(info.Backend.Type),
+		},
+	}
+
+	return &resp, nil
+
 }
