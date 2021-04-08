@@ -69,7 +69,7 @@ func getSaltForIdpHmac() string {
 
 // getIdpScopes return default scopes during the IDP login request
 func getIdpScopes() string {
-	return env.Get(ConsoleIDPScopes, "openid,profile,app_metadata,user_metadata,email")
+	return env.Get(ConsoleIDPScopes, "openid,profile,email")
 }
 
 // getIdpTokenExpiration return default token expiration for access token (in seconds)
