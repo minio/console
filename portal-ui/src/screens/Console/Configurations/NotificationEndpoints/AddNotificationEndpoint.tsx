@@ -161,14 +161,20 @@ const AddNotificationEndpoint = ({
               {srvComponent}
             </Grid>
             <Grid item xs={12} className={classes.settingsButtonContainer}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={saving}
+              <Grid
+                item
+                xs={12}
+                className={classes.innerSettingsButtonContainer}
               >
-                Save
-              </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={saving}
+                >
+                  Save
+                </Button>
+              </Grid>
             </Grid>
             <Grid item xs={9} />
           </form>

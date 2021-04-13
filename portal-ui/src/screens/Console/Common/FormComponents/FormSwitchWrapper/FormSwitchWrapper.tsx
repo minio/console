@@ -105,14 +105,12 @@ const styles = (theme: Theme) =>
       paddingBottom: 14,
       marginBottom: 20,
       maxWidth: 840,
-      margin: "0 auto",
     },
     wrapperContainer: {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
       maxWidth: 840,
-      margin: "0px auto",
     },
     indicatorLabel: {
       fontSize: 12,

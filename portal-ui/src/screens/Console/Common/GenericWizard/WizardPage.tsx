@@ -30,7 +30,6 @@ const styles = (theme: Theme) =>
       marginBottom: 10,
       height: "calc(100vh - 435px)",
       maxWidth: 840,
-      margin: "0 auto",
       width: "100%",
     },
     wizardModal: {
@@ -41,7 +40,7 @@ const styles = (theme: Theme) =>
     buttonsContainer: {
       display: "flex",
       flexDirection: "row",
-      justifyContent: "flex-end" as const,
+      justifyContent: "flex-start" as const,
       padding: "10px 0",
       borderTop: "#EAEAEA 1px solid",
       "& button": {
@@ -50,6 +49,11 @@ const styles = (theme: Theme) =>
       "&.forModal": {
         paddingBottom: 0,
       },
+    },
+    buttonInnerContainer: {
+      maxWidth: 840,
+      width: "100%",
+      textAlign: "right" as const,
     },
   });
 
@@ -93,22 +97,24 @@ const WizardPage = ({
       <div
         className={`${classes.buttonsContainer} ${forModal ? "forModal" : ""}`}
       >
-        {page.buttons.map((btn) => {
-          return (
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={() => {
-                buttonAction(btn);
-              }}
-              disabled={!btn.enabled}
-              key={`button-${page.label}-${btn.label}`}
-            >
-              {btn.label}
-            </Button>
-          );
-        })}
+        <div className={classes.buttonInnerContainer}>
+          {page.buttons.map((btn) => {
+            return (
+              <Button
+                variant="contained"
+                color="primary"
+                size="small"
+                onClick={() => {
+                  buttonAction(btn);
+                }}
+                disabled={!btn.enabled}
+                key={`button-${page.label}-${btn.label}`}
+              >
+                {btn.label}
+              </Button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
