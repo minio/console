@@ -25,6 +25,7 @@ import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import { setModalErrorSnackMessage } from "../../../actions";
 import { connect } from "react-redux";
+import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -39,6 +40,11 @@ const styles = (theme: Theme) =>
       color: "#393939",
       fontSize: 12,
       fontStyle: "italic",
+      marginBottom: "8px",
+    },
+    containerScrollable: {
+      maxHeight: "calc(100vh - 300px)" as const,
+      overflowY: "auto" as const,
     },
     ...modalBasic,
   });
@@ -56,8 +62,11 @@ const AddServiceAccount = ({
   closeModalAndRefresh,
   setModalErrorSnackMessage,
 }: IAddServiceAccountProps) => {
-  const [addSending, setAddSending] = useState(false);
-  const [policyDefinition, setPolicyDefinition] = useState("");
+  const [addSending, setAddSending] = useState<boolean>(false);
+  const [policyDefinition, setPolicyDefinition] = useState<string>("");
+  const [isRestrictedByPolicy, setIsRestrictedByPolicy] = useState<boolean>(
+    false
+  );
 
   useEffect(() => {
     if (addSending) {
@@ -106,8 +115,8 @@ const AddServiceAccount = ({
           addServiceAccount(e);
         }}
       >
-        <Grid container>
-          <Grid item xs={12} className={classes.formScrollable}>
+        <Grid container className={classes.containerScrollable}>
+          <Grid item xs={12}>
             <div className={classes.infoDetails}>
               Service Accounts inherit the policy explicitly attached to the
               parent user and the policy attached to each group in which the
@@ -117,13 +126,32 @@ const AddServiceAccount = ({
               parent user. You cannot modify the Service Account optional policy
               after saving.
             </div>
-            <CodeMirrorWrapper
-              value={policyDefinition}
-              onBeforeChange={(editor, data, value) => {
-                setPolicyDefinition(value);
+          </Grid>
+          <Grid item xs={12}>
+            <FormSwitchWrapper
+              value="locking"
+              id="locking"
+              name="locking"
+              checked={isRestrictedByPolicy}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setIsRestrictedByPolicy(event.target.checked);
               }}
+              label={"Restrict with policy"}
+              indicatorLabels={["On", "Off"]}
             />
           </Grid>
+          {isRestrictedByPolicy && (
+            <Grid item xs={12}>
+              <CodeMirrorWrapper
+                value={policyDefinition}
+                onBeforeChange={(editor, data, value) => {
+                  setPolicyDefinition(value);
+                }}
+              />
+            </Grid>
+          )}
+        </Grid>
+        <Grid container>
           <Grid item xs={12} className={classes.buttonContainer}>
             <button
               type="button"
