@@ -37,7 +37,6 @@ export const fieldBasic = {
     marginBottom: 20,
     position: "relative" as const,
     maxWidth: 840,
-    margin: "0px auto",
   },
   tooltipContainer: {
     marginLeft: 5,
@@ -84,7 +83,6 @@ export const modalBasic = {
     overflowY: "auto" as const,
     height: 170,
     maxWidth: 840,
-    margin: "0 auto",
   },
 };
 
@@ -195,7 +193,6 @@ export const predefinedList = {
   prefinedContainer: {
     maxWidth: 840,
     width: "100%",
-    margin: "0 auto",
   },
   predefinedTitle: {
     fontSize: 16,
@@ -287,6 +284,10 @@ export const settingsCommon = {
   settingsButtonContainer: {
     borderTop: "1px solid #EAEAEA",
     padding: "15px 38px",
+    textAlign: "right" as const,
+  },
+  innerSettingsButtonContainer: {
+    maxWidth: 840,
     textAlign: "right" as const,
   },
   settingsOptionsContainer: {
