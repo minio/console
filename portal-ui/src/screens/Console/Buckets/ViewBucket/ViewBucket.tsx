@@ -600,7 +600,7 @@ const ViewBucket = ({
     {
       type: "delete",
       onClick: confirmDeleteReplication,
-      hideButtonFunction: () => replicationRules.length <= 1,
+      disableButtonFunction: () => replicationRules.length <= 1,
     },
   ];
 
