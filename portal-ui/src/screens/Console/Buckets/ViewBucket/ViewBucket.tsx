@@ -135,7 +135,8 @@ const styles = (theme: Theme) =>
     },
     paperContainer: {
       padding: 15,
-      paddingLeft: 23,
+      paddingLeft: 50,
+      display: "flex",
     },
     headerContainer: {
       display: "flex",
@@ -741,11 +742,7 @@ const ViewBucket = ({
                       />
                     </div>
                   </div>
-                </Paper>
-              </Grid>
-              {hasObjectLocking && (
-                <Grid item>
-                  <Paper className={classes.paperContainer}>
+                  {hasObjectLocking && (
                     <div className={classes.gridContainer}>
                       <div>Object Locking</div>
                       <div></div>
@@ -801,9 +798,9 @@ const ViewBucket = ({
                         )}
                       </div>
                     </div>
-                  </Paper>
-                </Grid>
-              )}
+                  )}
+                </Paper>
+              </Grid>
             </Grid>
           </Grid>
           <Grid item xs={12}>
