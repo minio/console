@@ -3943,6 +3943,9 @@ func init() {
             "type": "string"
           }
         },
+        "logSearchConfiguration": {
+          "$ref": "#/definitions/logSearchConfiguration"
+        },
         "mounth_path": {
           "type": "string"
         },
@@ -3958,6 +3961,9 @@ func init() {
           "items": {
             "$ref": "#/definitions/pool"
           }
+        },
+        "prometheusConfiguration": {
+          "$ref": "#/definitions/prometheusConfiguration"
         },
         "secret_key": {
           "type": "string"
@@ -4550,6 +4556,19 @@ func init() {
           "items": {
             "$ref": "#/definitions/user"
           }
+        }
+      }
+    },
+    "logSearchConfiguration": {
+      "type": "object",
+      "properties": {
+        "storageClass": {
+          "type": "string",
+          "default": ""
+        },
+        "storageSize": {
+          "type": "number",
+          "default": 5
         }
       }
     },
@@ -5376,6 +5395,19 @@ func init() {
       "properties": {
         "type": {
           "$ref": "#/definitions/profilerType"
+        }
+      }
+    },
+    "prometheusConfiguration": {
+      "type": "object",
+      "properties": {
+        "storageClass": {
+          "type": "string",
+          "default": ""
+        },
+        "storageSize": {
+          "type": "number",
+          "default": 5
         }
       }
     },
@@ -10603,6 +10635,9 @@ func init() {
             "type": "string"
           }
         },
+        "logSearchConfiguration": {
+          "$ref": "#/definitions/logSearchConfiguration"
+        },
         "mounth_path": {
           "type": "string"
         },
@@ -10618,6 +10653,9 @@ func init() {
           "items": {
             "$ref": "#/definitions/pool"
           }
+        },
+        "prometheusConfiguration": {
+          "$ref": "#/definitions/prometheusConfiguration"
         },
         "secret_key": {
           "type": "string"
@@ -11210,6 +11248,19 @@ func init() {
           "items": {
             "$ref": "#/definitions/user"
           }
+        }
+      }
+    },
+    "logSearchConfiguration": {
+      "type": "object",
+      "properties": {
+        "storageClass": {
+          "type": "string",
+          "default": ""
+        },
+        "storageSize": {
+          "type": "number",
+          "default": 5
         }
       }
     },
@@ -11901,6 +11952,19 @@ func init() {
       "properties": {
         "type": {
           "$ref": "#/definitions/profilerType"
+        }
+      }
+    },
+    "prometheusConfiguration": {
+      "type": "object",
+      "properties": {
+        "storageClass": {
+          "type": "string",
+          "default": ""
+        },
+        "storageSize": {
+          "type": "number",
+          "default": 5
         }
       }
     },

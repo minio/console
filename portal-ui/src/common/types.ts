@@ -66,6 +66,8 @@ export interface ITenantCreator {
   idp?: IIDPConfiguration;
   annotations?: Object;
   image_registry?: ImageRegistry;
+  logSearchConfiguration?: LogSearchConfiguration,
+  prometheusConfiguration?: PrometheusConfiguration,
 }
 
 export interface ImageRegistry {
@@ -338,4 +340,14 @@ export interface IErasureCodeCalc {
   rawCapacity: string;
   defaultEC: string;
   storageFactors: IStorageFactors[];
+}
+
+export interface LogSearchConfiguration {
+  storageClass: string;
+  storageSize: number;
+}
+
+export interface PrometheusConfiguration {
+  storageClass: string;
+  storageSize: number;
 }

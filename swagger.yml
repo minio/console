@@ -709,7 +709,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-  
+
   /list-external-buckets:
     post:
       summary: Lists an External list of buckets using custom credentials
@@ -775,7 +775,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-    
+
   /buckets/{bucket_name}/replication/{rule_id}:
     delete:
       summary: Bucket Replication Rule Delete
@@ -2738,7 +2738,7 @@ definitions:
     #  }
     # }
     #}
-  
+
   listExternalBucketsParams:
     required:
       - accessKey
@@ -2758,7 +2758,7 @@ definitions:
         type: boolean
       region:
         type: string
-  
+
   multiBucketReplication:
     required:
       - accessKey
@@ -2785,7 +2785,7 @@ definitions:
   multiBucketsRelation:
     type: object
     properties:
-      originBucket: 
+      originBucket:
         type: string
       destinationBucket:
         type: string
@@ -2807,7 +2807,7 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/multiBucketResponseItem"
-          
+
   addBucketReplication:
     type: object
     properties:
@@ -3371,6 +3371,10 @@ definitions:
         type: object
         additionalProperties:
           type: string
+      logSearchConfiguration:
+        $ref: "#/definitions/logSearchConfiguration"
+      prometheusConfiguration:
+        $ref: "#/definitions/prometheusConfiguration"
       image_registry:
         $ref: "#/definitions/imageRegistry"
       image_pull_secret:
@@ -4311,7 +4315,7 @@ definitions:
         type: string
       bucket_name:
         type: string
-        
+
   hasPermissionRequest:
     type: object
     properties:
@@ -4335,3 +4339,23 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/permissionAction"
+
+  logSearchConfiguration:
+    type: object
+    properties:
+      storageClass:
+        type: string
+        default: ""
+      storageSize:
+        type: number
+        default: 5
+
+  prometheusConfiguration:
+    type: object
+    properties:
+      storageClass:
+        type: string
+        default: ""
+      storageSize:
+        type: number
+        default: 5
