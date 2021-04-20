@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import get from "lodash/get";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
@@ -10,6 +11,8 @@ import api from "../../../../common/api";
 import { IAddPoolRequest, ITenant } from "../ListTenants/types";
 import { IAffinityModel } from "../../../../common/types";
 import { getHardcodedAffinity } from "./utils";
+import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import { IQuotaElement, IQuotas, Opts } from "../ListTenants/utils";
 
 interface IAddPoolProps {
   tenant: ITenant;
@@ -67,9 +70,41 @@ const AddPoolModal = ({
   const [numberOfNodes, setNumberOfNodes] = useState<number>(0);
   const [volumeSize, setVolumeSize] = useState<number>(0);
   const [volumesPerServer, setVolumesPerSever] = useState<number>(0);
+  const [selectedStorageClass, setSelectedStorageClass] = useState<string>("");
+  const [storageClasses, setStorageClasses] = useState<Opts[]>([]);
 
   const instanceCapacity: number = volumeSize * 1073741824 * volumesPerServer;
   const totalCapacity: number = instanceCapacity * numberOfNodes;
+
+  useEffect(() => {
+    setSelectedStorageClass("");
+
+    setStorageClasses([]);
+    api
+      .invoke(
+        "GET",
+        `/api/v1/namespaces/${tenant.namespace}/resourcequotas/${tenant.namespace}-storagequota`
+      )
+      .then((res: IQuotas) => {
+        const elements: IQuotaElement[] = get(res, "elements", []);
+
+        const newStorage = elements.map((storageClass: any) => {
+          const name = get(storageClass, "name", "").split(
+            ".storageclass.storage.k8s.io/requests.storage"
+          )[0];
+
+          return { label: name, value: name };
+        });
+
+        setStorageClasses(newStorage);
+        if (newStorage.length > 0) {
+          setSelectedStorageClass(newStorage[0].value);
+        }
+      })
+      .catch((err: any) => {
+        console.error(err);
+      });
+  }, [tenant]);
 
   return (
     <ModalWrapper
@@ -97,7 +132,7 @@ const AddPoolModal = ({
             volumes_per_server: volumesPerServer,
             volume_configuration: {
               size: volumeSize * 1073741824,
-              storage_class: "",
+              storage_class_name: selectedStorageClass,
               labels: null,
             },
             affinity: hardCodedAffinity,
@@ -153,6 +188,19 @@ const AddPoolModal = ({
             }}
             label="Volumes per Server"
             value={volumesPerServer.toString(10)}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <SelectWrapper
+            id="storage_class"
+            name="storage_class"
+            onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+              setSelectedStorageClass(e.target.value as string);
+            }}
+            label="Storage Class"
+            value={selectedStorageClass}
+            options={storageClasses}
+            disabled={storageClasses.length < 1}
           />
         </Grid>
         <Grid item xs={12}>

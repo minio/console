@@ -38,7 +38,7 @@ export interface IAddPoolRequest {
 
 export interface IVolumeConfiguration {
   size: number;
-  storage_class: string;
+  storage_class_name: string;
   labels: { [key: string]: any } | null;
 }
 
