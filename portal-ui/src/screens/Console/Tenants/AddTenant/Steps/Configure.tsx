@@ -31,10 +31,13 @@ import {
 } from "../../../../../utils/validationFunctions";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import { k8sfactorForDropdown } from "../../../../../common/utils";
 
 interface IConfigureProps {
   updateAddField: typeof updateAddField;
   isPageValid: typeof isPageValid;
+  storageClasses: any;
   classes: any;
   customImage: boolean;
   imageName: string;
@@ -45,6 +48,14 @@ interface IConfigureProps {
   imageRegistryPassword: string;
   exposeMinIO: boolean;
   exposeConsole: boolean;
+  prometheusCustom: boolean;
+  logSearchCustom: boolean;
+  logSearchVolumeSize: string;
+  logSearchSizeFactor: string;
+  prometheusVolumeSize: string;
+  prometheusSizeFactor: string;
+  logSearchSelectedStorageClass: string;
+  prometheusSelectedStorageClass: string;
 }
 
 const styles = (theme: Theme) =>
@@ -58,6 +69,7 @@ const styles = (theme: Theme) =>
 
 const Configure = ({
   classes,
+  storageClasses,
   customImage,
   imageName,
   consoleImage,
@@ -67,6 +79,14 @@ const Configure = ({
   imageRegistryPassword,
   exposeMinIO,
   exposeConsole,
+  prometheusCustom,
+  logSearchCustom,
+  logSearchVolumeSize,
+  logSearchSizeFactor,
+  prometheusVolumeSize,
+  prometheusSizeFactor,
+  logSearchSelectedStorageClass,
+  prometheusSelectedStorageClass,
   updateAddField,
   isPageValid,
 }: IConfigureProps) => {
@@ -83,6 +103,47 @@ const Configure = ({
   // Validation
   useEffect(() => {
     let customAccountValidation: IValidation[] = [];
+
+    if (prometheusCustom) {
+      customAccountValidation = [
+        ...customAccountValidation,
+        {
+          fieldKey: "prometheus_storage_class",
+          required: true,
+          value: prometheusSelectedStorageClass,
+          customValidation: prometheusSelectedStorageClass === "",
+          customValidationMessage: "Field cannot be empty",
+        },
+        {
+          fieldKey: "prometheus_volume_size",
+          required: true,
+          value: prometheusVolumeSize,
+          customValidation:
+            prometheusVolumeSize === "" || parseInt(prometheusVolumeSize) <= 0,
+          customValidationMessage: `Volume size must be present and be greatter than 0`,
+        },
+      ];
+    }
+    if (logSearchCustom) {
+      customAccountValidation = [
+        ...customAccountValidation,
+        {
+          fieldKey: "log_search_storage_class",
+          required: true,
+          value: logSearchSelectedStorageClass,
+          customValidation: logSearchSelectedStorageClass === "",
+          customValidationMessage: "Field cannot be empty",
+        },
+        {
+          fieldKey: "log_search_volume_size",
+          required: true,
+          value: logSearchVolumeSize,
+          customValidation:
+            logSearchVolumeSize === "" || parseInt(logSearchVolumeSize) <= 0,
+          customValidationMessage: `Volume size must be present and be greatter than 0`,
+        },
+      ];
+    }
 
     if (customImage) {
       customAccountValidation = [
@@ -139,6 +200,36 @@ const Configure = ({
     imageRegistryUsername,
     imageRegistryPassword,
     isPageValid,
+    prometheusCustom,
+    logSearchCustom,
+    prometheusSelectedStorageClass,
+    prometheusVolumeSize,
+    logSearchSelectedStorageClass,
+    logSearchVolumeSize,
+  ]);
+
+  useEffect(() => {
+    // New default values is current selection is invalid
+    if (storageClasses.length > 0) {
+      const filterPrometheus = storageClasses.filter(
+        (item: any) => item.value === prometheusSelectedStorageClass
+      );
+      if (filterPrometheus.length === 0) {
+        updateField("prometheusSelectedStorageClass", storageClasses[0].value);
+      }
+
+      const filterLogSearch = storageClasses.filter(
+        (item: any) => item.value === logSearchSelectedStorageClass
+      );
+      if (filterLogSearch.length === 0) {
+        updateField("logSearchSelectedStorageClass", storageClasses[0].value);
+      }
+    }
+  }, [
+    logSearchSelectedStorageClass,
+    prometheusSelectedStorageClass,
+    storageClasses,
+    updateField,
   ]);
 
   const cleanValidation = (fieldName: string) => {
@@ -302,11 +393,132 @@ const Configure = ({
           label={"Expose Console Service"}
         />
       </Grid>
+
+      <div className={classes.headerElement}>
+        <h3 className={classes.h3Section}>Additional Configurations</h3>
+        <span className={classes.descriptionText}>
+          Configure Storage Classes & Storage size for Log Search and Prometheus
+          add-ons
+        </span>
+      </div>
+      <Grid item xs={12}>
+        <FormSwitchWrapper
+          value="logSearchConfig"
+          id="log_search_configuration"
+          name="log_search_configuration"
+          checked={logSearchCustom}
+          onChange={(e) => {
+            const targetD = e.target;
+            const checked = targetD.checked;
+
+            updateField("logSearchCustom", checked);
+          }}
+          label={"Override Log Search defaults"}
+        />
+      </Grid>
+      {logSearchCustom && (
+        <Fragment>
+          <Grid item xs={12}>
+            <SelectWrapper
+              id="log_search_storage_class"
+              name="log_search_storage_class"
+              onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                updateField(
+                  "logSearchSelectedStorageClass",
+                  e.target.value as string
+                );
+              }}
+              label="Log Search Storage Class"
+              value={logSearchSelectedStorageClass}
+              options={storageClasses}
+              disabled={storageClasses.length < 1}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <div className={classes.multiContainer}>
+              <div>
+                <InputBoxWrapper
+                  type="number"
+                  id="log_search_volume_size"
+                  name="log_search_volume_size"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    updateField("logSearchVolumeSize", e.target.value);
+                    cleanValidation("log_search_volume_size");
+                  }}
+                  label="Storage Size [Gi]"
+                  value={logSearchVolumeSize}
+                  required
+                  error={validationErrors["log_search_volume_size"] || ""}
+                  min="0"
+                />
+              </div>
+            </div>
+          </Grid>
+          <br />
+        </Fragment>
+      )}
+      <Grid item xs={12}>
+        <FormSwitchWrapper
+          value="prometheusConfig"
+          id="prometheus_configuration"
+          name="prometheus_configuration"
+          checked={prometheusCustom}
+          onChange={(e) => {
+            const targetD = e.target;
+            const checked = targetD.checked;
+
+            updateField("prometheusCustom", checked);
+          }}
+          label={"Override Prometheus defaults"}
+        />
+      </Grid>
+      {prometheusCustom && (
+        <Fragment>
+          <Grid item xs={12}>
+            <SelectWrapper
+              id="prometheus_storage_class"
+              name="prometheus_storage_class"
+              onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                updateField(
+                  "prometheusSelectedStorageClass",
+                  e.target.value as string
+                );
+              }}
+              label="Prometheus Storage Class"
+              value={prometheusSelectedStorageClass}
+              options={storageClasses}
+              disabled={storageClasses.length < 1}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <div className={classes.multiContainer}>
+              <div>
+                <InputBoxWrapper
+                  type="number"
+                  id="prometheus_volume_size"
+                  name="prometheus_volume_size"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    updateField("prometheusVolumeSize", e.target.value);
+                    cleanValidation("prometheus_volume_size");
+                  }}
+                  label="Storage Size [Gi]"
+                  value={prometheusVolumeSize}
+                  required
+                  error={validationErrors["prometheus_volume_size"] || ""}
+                  min="0"
+                />
+              </div>
+            </div>
+          </Grid>
+          <br />
+        </Fragment>
+      )}
     </Fragment>
   );
 };
 
 const mapState = (state: AppState) => ({
+  storageClasses: state.tenants.createTenant.storageClasses,
   customImage: state.tenants.createTenant.fields.configure.customImage,
   imageName: state.tenants.createTenant.fields.configure.imageName,
   consoleImage: state.tenants.createTenant.fields.configure.consoleImage,
@@ -318,6 +530,21 @@ const mapState = (state: AppState) => ({
     state.tenants.createTenant.fields.configure.imageRegistryPassword,
   exposeMinIO: state.tenants.createTenant.fields.configure.exposeMinIO,
   exposeConsole: state.tenants.createTenant.fields.configure.exposeConsole,
+  prometheusCustom:
+    state.tenants.createTenant.fields.configure.prometheusCustom,
+  logSearchCustom: state.tenants.createTenant.fields.configure.logSearchCustom,
+  logSearchVolumeSize:
+    state.tenants.createTenant.fields.configure.logSearchVolumeSize,
+  logSearchSizeFactor:
+    state.tenants.createTenant.fields.configure.logSearchSizeFactor,
+  prometheusVolumeSize:
+    state.tenants.createTenant.fields.configure.prometheusVolumeSize,
+  prometheusSizeFactor:
+    state.tenants.createTenant.fields.configure.prometheusSizeFactor,
+  logSearchSelectedStorageClass:
+    state.tenants.createTenant.fields.configure.logSearchSelectedStorageClass,
+  prometheusSelectedStorageClass:
+    state.tenants.createTenant.fields.configure.prometheusSelectedStorageClass,
 });
 
 const connector = connect(mapState, {

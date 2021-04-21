@@ -152,6 +152,13 @@ const AddTenant = ({
     const ecParity = fields.tenantSize.ecParity;
     const distribution = fields.tenantSize.distribution;
     const memorySize = fields.tenantSize.memorySize;
+    const logSearchCustom = fields.configure.logSearchCustom;
+    const prometheusCustom = fields.configure.prometheusCustom;
+    const logSearchVolumeSize = fields.configure.logSearchVolumeSize;
+    const logSearchSelectedStorageClass = fields.configure.logSearchSelectedStorageClass;
+    const prometheusSelectedStorageClass = fields.configure.prometheusSelectedStorageClass;
+    const prometheusVolumeSize = fields.configure.prometheusVolumeSize;
+
 
     if (addSending) {
       const poolName = generatePoolName([]);
@@ -207,6 +214,26 @@ const AddTenant = ({
             username: imageRegistryUsername,
             password: imageRegistryPassword,
           },
+        };
+      }
+
+      if(logSearchCustom) {
+        dataSend = {
+          ...dataSend,
+          logSearchConfiguration: {
+            storageClass: logSearchSelectedStorageClass,
+            storageSize: parseInt(logSearchVolumeSize),
+          }
+        };
+      }
+
+      if(prometheusCustom) {
+        dataSend = {
+          ...dataSend,
+          prometheusConfiguration: {
+            storageClass: prometheusSelectedStorageClass,
+            storageSize: parseInt(prometheusVolumeSize),
+          }
         };
       }
 

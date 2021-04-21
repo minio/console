@@ -84,6 +84,9 @@ type CreateTenantRequest struct {
 	// labels
 	Labels map[string]string `json:"labels,omitempty"`
 
+	// log search configuration
+	LogSearchConfiguration *LogSearchConfiguration `json:"logSearchConfiguration,omitempty"`
+
 	// mounth path
 	MounthPath string `json:"mounth_path,omitempty"`
 
@@ -99,6 +102,9 @@ type CreateTenantRequest struct {
 	// pools
 	// Required: true
 	Pools []*Pool `json:"pools"`
+
+	// prometheus configuration
+	PrometheusConfiguration *PrometheusConfiguration `json:"prometheusConfiguration,omitempty"`
 
 	// secret key
 	SecretKey string `json:"secret_key,omitempty"`
@@ -127,6 +133,10 @@ func (m *CreateTenantRequest) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateLogSearchConfiguration(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
@@ -136,6 +146,10 @@ func (m *CreateTenantRequest) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validatePools(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePrometheusConfiguration(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -221,6 +235,24 @@ func (m *CreateTenantRequest) validateImageRegistry(formats strfmt.Registry) err
 	return nil
 }
 
+func (m *CreateTenantRequest) validateLogSearchConfiguration(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.LogSearchConfiguration) { // not required
+		return nil
+	}
+
+	if m.LogSearchConfiguration != nil {
+		if err := m.LogSearchConfiguration.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("logSearchConfiguration")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *CreateTenantRequest) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
@@ -263,6 +295,24 @@ func (m *CreateTenantRequest) validatePools(formats strfmt.Registry) error {
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *CreateTenantRequest) validatePrometheusConfiguration(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.PrometheusConfiguration) { // not required
+		return nil
+	}
+
+	if m.PrometheusConfiguration != nil {
+		if err := m.PrometheusConfiguration.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("prometheusConfiguration")
+			}
+			return err
+		}
 	}
 
 	return nil

@@ -893,13 +893,50 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	if tenantReq.ConsoleImage != "" {
 		minInst.Spec.Console.Image = tenantReq.ConsoleImage
 	}
+
+	//Default class name for Log search
+	diskSpaceFromAPI := int64(*tenantReq.LogSearchConfiguration.StorageSize) // Default is 5 by API
+	logSearchDiskSpace := resource.NewQuantity(diskSpaceFromAPI, resource.DecimalExponent)
+	logSearchStorageClass := tenantReq.LogSearchConfiguration.StorageClass // Default is ""
+
+	if tenantReq.LogSearchConfiguration.StorageClass == "" && len(tenantReq.Pools) > 0 {
+		logSearchStorageClass = tenantReq.Pools[0].VolumeConfiguration.StorageClassName
+	}
 	// default activate lgo search and prometheus
 	minInst.Spec.Log = &miniov2.LogConfig{
 		Image: "minio/logsearchapi:v4.0.0",
 		Audit: &miniov2.AuditConfig{DiskCapacityGB: swag.Int(10)},
+		Db: &miniov2.LogDbConfig{
+			VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: tenantName + "-log",
+				},
+				Spec: corev1.PersistentVolumeClaimSpec{
+					AccessModes: []corev1.PersistentVolumeAccessMode{
+						corev1.ReadWriteOnce,
+					},
+					Resources: corev1.ResourceRequirements{
+						Requests: corev1.ResourceList{
+							corev1.ResourceStorage: *logSearchDiskSpace,
+						},
+					},
+					StorageClassName: &logSearchStorageClass,
+				},
+			},
+		},
 	}
+
+	prometheusDiskSpace := int(*tenantReq.PrometheusConfiguration.StorageSize) // Default is 5 by API
+	prometheusStorageClass := tenantReq.PrometheusConfiguration.StorageClass   // Default is ""
+
+	// Default class name for prometheus
+	if tenantReq.PrometheusConfiguration.StorageClass == "" && len(tenantReq.Pools) > 0 {
+		prometheusStorageClass = tenantReq.Pools[0].VolumeConfiguration.StorageClassName
+	}
+
 	minInst.Spec.Prometheus = &miniov2.PrometheusConfig{
-		DiskCapacityDB: swag.Int(5),
+		DiskCapacityDB:   swag.Int(prometheusDiskSpace),
+		StorageClassName: &prometheusStorageClass,
 	}
 
 	// expose services
