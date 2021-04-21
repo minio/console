@@ -58,6 +58,7 @@ const styles = (theme: Theme) =>
 interface INameTenantScreen {
   classes: any;
   storageClasses: Opts[];
+  setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
   setAdvancedMode: typeof setAdvancedMode;
   updateAddField: typeof updateAddField;
   isPageValid: typeof isPageValid;
@@ -81,8 +82,13 @@ const NameTenant = ({
   setStorageClassesList,
   setLimitSize,
   isPageValid,
+  setModalErrorSnackMessage,
 }: INameTenantScreen) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
+  const [emptyNamespace, setEmptyNamespace] = useState<boolean>(true);
+  const [loadingNamespaceInfo, setLoadingNamespaceInfo] = useState<boolean>(
+    false
+  );
 
   // Common
   const updateField = useCallback(
@@ -97,32 +103,61 @@ const NameTenant = ({
     updateField("selectedStorageClass", "");
 
     setStorageClassesList([]);
+
+    // Empty tenantValidation
     api
-      .invoke(
-        "GET",
-        `/api/v1/namespaces/${namespace}/resourcequotas/${namespace}-storagequota`
-      )
-      .then((res: IQuotas) => {
-        const elements: IQuotaElement[] = get(res, "elements", []);
-        setLimitSize(getLimitSizes(res));
+      .invoke("GET", `/api/v1/namespaces/${namespace}/tenants`)
+      .then((res: any[]) => {
+        const tenantsList = get(res, "tenants", []);
 
-        const newStorage = elements.map((storageClass: any) => {
-          const name = get(storageClass, "name", "").split(
-            ".storageclass.storage.k8s.io/requests.storage"
-          )[0];
-
-          return { label: name, value: name };
-        });
-
-        setStorageClassesList(newStorage);
-        if (newStorage.length > 0) {
-          updateField("selectedStorageClass", newStorage[0].value);
+        if (tenantsList && tenantsList.length > 0) {
+          setEmptyNamespace(false);
+          setLoadingNamespaceInfo(false);
+          return;
         }
+        setEmptyNamespace(true);
+
+        // Storagequotas retrieval
+        api
+          .invoke(
+            "GET",
+            `/api/v1/namespaces/${namespace}/resourcequotas/${namespace}-storagequota`
+          )
+          .then((res: IQuotas) => {
+            const elements: IQuotaElement[] = get(res, "elements", []);
+            setLimitSize(getLimitSizes(res));
+
+            const newStorage = elements.map((storageClass: any) => {
+              const name = get(storageClass, "name", "").split(
+                ".storageclass.storage.k8s.io/requests.storage"
+              )[0];
+
+              return { label: name, value: name };
+            });
+
+            setStorageClassesList(newStorage);
+            if (newStorage.length > 0) {
+              updateField("selectedStorageClass", newStorage[0].value);
+            }
+            setLoadingNamespaceInfo(false);
+          })
+          .catch((err: any) => {
+            console.error(err);
+          });
       })
       .catch((err: any) => {
         console.error(err);
+        setModalErrorSnackMessage(
+          "Error validating if namespace already has tenants"
+        );
       });
-  }, [namespace, setLimitSize, setStorageClassesList, updateField]);
+  }, [
+    namespace,
+    setLimitSize,
+    setModalErrorSnackMessage,
+    setStorageClassesList,
+    updateField,
+  ]);
 
   const debounceNamespace = useMemo(
     () => debounce(getNamespaceInformation, 500),
@@ -132,6 +167,7 @@ const NameTenant = ({
   useEffect(() => {
     if (namespace !== "") {
       debounceNamespace();
+      setLoadingNamespaceInfo(true);
 
       // Cancel previous debounce calls during useEffect cleanup.
       return debounceNamespace.cancel;
@@ -140,6 +176,21 @@ const NameTenant = ({
 
   // Validation
   useEffect(() => {
+    let customNamespaceError = false;
+    let errorMessage = "";
+
+    if (!emptyNamespace && !loadingNamespaceInfo) {
+      customNamespaceError = true;
+      errorMessage = "You can only create one tenant per namespace";
+    } else if (
+      storageClasses.length < 1 &&
+      emptyNamespace &&
+      !loadingNamespaceInfo
+    ) {
+      customNamespaceError = true;
+      errorMessage = "Please enter a valid namespace";
+    }
+
     const commonValidation = commonFormValidation([
       {
         fieldKey: "tenant-name",
@@ -153,8 +204,8 @@ const NameTenant = ({
         fieldKey: "namespace",
         required: true,
         value: namespace,
-        customValidation: storageClasses.length < 1,
-        customValidationMessage: "Please enter a valid namespace",
+        customValidation: customNamespaceError,
+        customValidationMessage: errorMessage,
       },
     ]);
 
@@ -166,7 +217,14 @@ const NameTenant = ({
     isPageValid("nameTenant", isValid);
 
     setValidationErrors(commonValidation);
-  }, [storageClasses, namespace, tenantName, isPageValid]);
+  }, [
+    storageClasses,
+    namespace,
+    tenantName,
+    isPageValid,
+    emptyNamespace,
+    loadingNamespaceInfo,
+  ]);
 
   const frmValidationCleanup = (fieldName: string) => {
     setValidationErrors(clearValidationError(validationErrors, fieldName));
