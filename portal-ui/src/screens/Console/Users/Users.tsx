@@ -176,7 +176,7 @@ const Users = ({ classes, setErrorSnackMessage }: IUsersProps) => {
     {
       type: "delete",
       onClick: deleteAction,
-      hideButtonFunction: (topValue: any) => topValue === userLoggedIn,
+      disableButtonFunction: (topValue: any) => topValue === userLoggedIn,
     },
   ];
 

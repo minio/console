@@ -45,7 +45,7 @@ interface ItemActions {
   type: string;
   to?: string;
   sendOnlyId?: boolean;
-  hideButtonFunction?: (itemValue: any) => boolean;
+  disableButtonFunction?: (itemValue: any) => boolean;
   showLoaderFunction?: (itemValue: any) => boolean;
 
   onClick?(valueToSend: any): any;
@@ -434,9 +434,11 @@ const elementActions = (
     const vlSend =
       typeof valueToSend === "string" ? valueToSend : valueToSend[idField];
 
-    if (action.hideButtonFunction) {
-      if (action.hideButtonFunction(vlSend)) {
-        return null;
+    let disabled = false;
+
+    if (action.disableButtonFunction) {
+      if (action.disableButtonFunction(vlSend)) {
+        disabled = true;
       }
     }
 
@@ -465,6 +467,7 @@ const elementActions = (
         key={`actions-${action.type}-${index.toString()}`}
         idField={idField}
         sendOnlyId={!!action.sendOnlyId}
+        disabled={disabled}
       />
     );
   });

@@ -158,14 +158,16 @@ const EditConfiguration = ({
             />
           </Grid>
           <Grid item xs={12} className={classes.settingsButtonContainer}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={saving}
-            >
-              Save
-            </Button>
+            <Grid item xs={12} className={classes.innerSettingsButtonContainer}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={saving}
+              >
+                Save
+              </Button>
+            </Grid>
           </Grid>
         </form>
       </Fragment>

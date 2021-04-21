@@ -32,6 +32,13 @@ const styles = () =>
     spacing: {
       margin: "0 8px",
     },
+    buttonDisabled: {
+      "&.MuiButtonBase-root.Mui-disabled": {
+        cursor: "not-allowed",
+        filter: "grayscale(100%)",
+        opacity: "30%",
+      },
+    },
   });
 
 interface IActionButton {
@@ -42,6 +49,7 @@ interface IActionButton {
   selected: boolean;
   sendOnlyId?: boolean;
   idField: string;
+  disabled: boolean;
   classes: any;
 }
 
@@ -76,6 +84,7 @@ const TableActionButton = ({
   selected,
   to,
   sendOnlyId = false,
+  disabled = false,
   classes,
 }: IActionButton) => {
   const valueClick = sendOnlyId ? valueToSend[idField] : valueToSend;
@@ -88,11 +97,16 @@ const TableActionButton = ({
         onClick
           ? (e) => {
               e.stopPropagation();
-              onClick(valueClick);
+              if (!disabled) {
+                onClick(valueClick);
+              } else {
+                e.preventDefault();
+              }
             }
           : () => null
       }
-      className={classes.spacing}
+      className={`${classes.spacing} ${disabled ? classes.buttonDisabled : ""}`}
+      disabled={disabled}
     >
       {defineIcon(type, selected)}
     </IconButton>
@@ -103,16 +117,20 @@ const TableActionButton = ({
   }
 
   if (isString(to)) {
-    return (
-      <Link
-        to={`${to}/${valueClick}`}
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-      >
-        {buttonElement}
-      </Link>
-    );
+    if (!disabled) {
+      return (
+        <Link
+          to={`${to}/${valueClick}`}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          {buttonElement}
+        </Link>
+      );
+    }
+
+    return buttonElement;
   }
 
   return null;
