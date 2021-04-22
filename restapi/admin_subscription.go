@@ -112,7 +112,7 @@ func addSubscriptionLicenseToTenant(ctx context.Context, clientSet K8sClientI, l
 	// Add subnet license to the new console secret
 	dataNewSecret[ConsoleSubnetLicense] = []byte(license)
 	// Delete existing console secret
-	err = clientSet.deleteSecret(ctx, cluster.Namespace, secretName, metav1.DeleteOptions{})
+	err = clientSet.deleteSecret(ctx, namespace, secretName, metav1.DeleteOptions{})
 	if err != nil {
 		return err
 	}
@@ -129,7 +129,7 @@ func addSubscriptionLicenseToTenant(ctx context.Context, clientSet K8sClientI, l
 		Data:      dataNewSecret,
 	}
 	// Create new Console secret with the subnet License
-	_, err = clientSet.createSecret(ctx, cluster.Namespace, newConsoleSecret, metav1.CreateOptions{})
+	_, err = clientSet.createSecret(ctx, namespace, newConsoleSecret, metav1.CreateOptions{})
 	if err != nil {
 		return err
 	}
