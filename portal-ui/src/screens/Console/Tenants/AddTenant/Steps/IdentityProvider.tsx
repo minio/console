@@ -17,7 +17,8 @@
 import React, { useEffect, useState, useCallback, Fragment } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Grid, Typography } from "@material-ui/core";
+import { Grid, Typography, Button, IconButton, Icon } from "@material-ui/core";
+import CasinoIcon from "@material-ui/icons/Casino";
 import {
   modalBasic,
   wizardCommon,
@@ -32,10 +33,15 @@ import { clearValidationError } from "../../utils";
 import RadioGroupSelector from "../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import AddIcon from "../../../../../icons/AddIcon";
+import { CreateIcon } from "../../../../../icons";
+import { Casino } from "@material-ui/icons";
 
 interface IIdentityProviderProps {
   classes: any;
   idpSelection: string;
+  accessKeys: string[];
+  secretKeys: string[];
   openIDURL: string;
   openIDClientID: string;
   openIDSecretID: string;
@@ -55,6 +61,11 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
+    shortened: {
+      gridTemplateColumns: "auto auto 30px",
+      display: "grid",
+      gridGap: 20,
+    },
     ...modalBasic,
     ...wizardCommon,
   });
@@ -62,6 +73,8 @@ const styles = (theme: Theme) =>
 const IdentityProvider = ({
   classes,
   idpSelection,
+  accessKeys,
+  secretKeys,
   openIDURL,
   openIDClientID,
   openIDSecretID,
@@ -78,12 +91,32 @@ const IdentityProvider = ({
   const [validationErrors, setValidationErrors] = useState<any>({});
 
   // Common
+  let randomKey = function (): string {
+    let retval = "";
+    let legalcharacters =
+      "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for (let i = 0; i < 16; i++) {
+      retval +=
+        legalcharacters[Math.floor(Math.random() * legalcharacters.length)];
+    }
+    return retval;
+  };
   const updateField = useCallback(
     (field: string, value: any) => {
       updateAddField("identityProvider", field, value);
     },
     [updateAddField]
   );
+  const updateUserField = (index: number, value: string) => {
+    const newUserField = [...accessKeys];
+    newUserField[index] = value;
+    updateField("accessKeys", newUserField);
+  };
+  const updatePwordField = (index: number, value: string) => {
+    const newUserField = [...secretKeys];
+    newUserField[index] = value;
+    updateField("secretKeys", newUserField);
+  };
 
   const cleanValidation = (fieldName: string) => {
     setValidationErrors(clearValidationError(validationErrors, fieldName));
@@ -95,10 +128,23 @@ const IdentityProvider = ({
     let customIDPValidation: IValidation[] = [];
 
     if (idpSelection === "Built-in") {
-      isPageValid("identityProvider", true);
-      setValidationErrors({});
-
-      return;
+      customIDPValidation = [...customIDPValidation];
+      for (var i = 0; i < accessKeys.length; i++) {
+        customIDPValidation.push({
+          fieldKey: `accesskey-${i.toString()}`,
+          required: true,
+          value: accessKeys[i],
+          pattern: /^[a-zA-Z0-9-]{8,63}$/,
+          customPatternMessage: "Keys must be at least length 8",
+        });
+        customIDPValidation.push({
+          fieldKey: `secretkey-${i.toString()}`,
+          required: true,
+          value: secretKeys[i],
+          pattern: /^[a-zA-Z0-9-]{8,63}$/,
+          customPatternMessage: "Keys must be at least length 8",
+        });
+      }
     }
 
     if (idpSelection === "OpenID") {
@@ -160,6 +206,8 @@ const IdentityProvider = ({
     setValidationErrors(commonVal);
   }, [
     idpSelection,
+    accessKeys,
+    secretKeys,
     openIDURL,
     openIDClientID,
     openIDSecretID,
@@ -170,7 +218,52 @@ const IdentityProvider = ({
     ADNameAttribute,
     isPageValid,
   ]);
-
+  let inputs = null;
+  if (idpSelection === "Built-in") {
+    inputs = accessKeys.map((element, index) => {
+      return (
+        <Fragment>
+          <div className={classes.shortened}>
+            <InputBoxWrapper
+              id={`accesskey-${index.toString()}`}
+              label={"Access Key"}
+              name={`accesskey-${index.toString()}`}
+              value={accessKeys[index]}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateUserField(index, e.target.value);
+                cleanValidation(`accesskey-${index.toString()}`);
+              }}
+              index={index}
+              key={`csv-accesskey-${index.toString()}`}
+              error={validationErrors[`accesskey-${index.toString()}`] || ""}
+            />
+            <InputBoxWrapper
+              id={`secretkey-${index.toString()}`}
+              label={"Secret Key"}
+              name={`secretkey-${index.toString()}`}
+              value={secretKeys[index]}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updatePwordField(index, e.target.value);
+                cleanValidation(`secretkey-${index.toString()}`);
+              }}
+              index={index}
+              key={`csv-secretkey-${index.toString()}`}
+              error={validationErrors[`secretkey-${index.toString()}`] || ""}
+            />
+            <IconButton
+              onClick={() => {
+                updateUserField(index, randomKey());
+                updatePwordField(index, randomKey());
+              }}
+            >
+              <CasinoIcon />
+            </IconButton>
+          </div>
+          <br />
+        </Fragment>
+      );
+    });
+  }
   return (
     <Fragment>
       <div className={classes.headerElement}>
@@ -196,8 +289,22 @@ const IdentityProvider = ({
           ]}
         />
         MinIO supports both OpenID and Active Directory
-      </Grid>
-
+        <Button
+          onClick={() => {
+            accessKeys.push("");
+            secretKeys.push("");
+            updateUserField(accessKeys.length - 1, "");
+            updatePwordField(secretKeys.length - 1, "");
+          }}
+          startIcon={<CreateIcon />}
+          className={classes.buttonList}
+          color="primary"
+          variant="contained"
+        >
+          Add accesskey/secretkey pair
+        </Button>
+      </Grid>{" "}
+      {idpSelection === "Built-in" && <Fragment>{inputs}</Fragment>}
       {idpSelection === "OpenID" && (
         <Fragment>
           <Grid item xs={12}>
@@ -367,6 +474,8 @@ const IdentityProvider = ({
 
 const mapState = (state: AppState) => ({
   idpSelection: state.tenants.createTenant.fields.identityProvider.idpSelection,
+  accessKeys: state.tenants.createTenant.fields.identityProvider.accessKeys,
+  secretKeys: state.tenants.createTenant.fields.identityProvider.secretKeys,
   openIDURL: state.tenants.createTenant.fields.identityProvider.openIDURL,
   openIDClientID:
     state.tenants.createTenant.fields.identityProvider.openIDClientID,

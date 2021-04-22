@@ -54,6 +54,8 @@ export interface ITenantCreator {
   enable_tls: boolean;
   access_key: string;
   secret_key: string;
+  access_keys: string[];
+  secret_keys: string[];
   image: string;
   console_image: string;
   expose_minio: boolean;
@@ -66,8 +68,8 @@ export interface ITenantCreator {
   idp?: IIDPConfiguration;
   annotations?: Object;
   image_registry?: ImageRegistry;
-  logSearchConfiguration?: LogSearchConfiguration,
-  prometheusConfiguration?: PrometheusConfiguration,
+  logSearchConfiguration?: LogSearchConfiguration;
+  prometheusConfiguration?: PrometheusConfiguration;
 }
 
 export interface ImageRegistry {

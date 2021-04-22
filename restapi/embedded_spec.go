@@ -4308,6 +4308,24 @@ func init() {
             }
           }
         },
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "access_key",
+              "secret_key"
+            ],
+            "properties": {
+              "access_key": {
+                "type": "string"
+              },
+              "secret_key": {
+                "type": "string"
+              }
+            }
+          }
+        },
         "oidc": {
           "type": "object",
           "required": [
@@ -9717,6 +9735,21 @@ func init() {
         }
       }
     },
+    "IdpConfigurationKeysItems0": {
+      "type": "object",
+      "required": [
+        "access_key",
+        "secret_key"
+      ],
+      "properties": {
+        "access_key": {
+          "type": "string"
+        },
+        "secret_key": {
+          "type": "string"
+        }
+      }
+    },
     "IdpConfigurationOidc": {
       "type": "object",
       "required": [
@@ -10998,6 +11031,12 @@ func init() {
             "username_format": {
               "type": "string"
             }
+          }
+        },
+        "keys": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/IdpConfigurationKeysItems0"
           }
         },
         "oidc": {
