@@ -34,11 +34,11 @@ import { IAffinityModel, ITenantCreator } from "../../../../common/types";
 import { KeyPair } from "../ListTenants/utils";
 
 import { setModalErrorSnackMessage } from "../../../../actions";
-import { getHardcodedAffinity } from "../TenantDetails/utils";
+import { getDefaultAffinity, getNodeSelector } from "../TenantDetails/utils";
 import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 import NameTenant from "./Steps/NameTenant";
 import { AppState } from "../../../../store";
-import { ICertificatesItems, IFieldStore } from "../types";
+import { ICertificatesItems, IFieldStore, ILabelKeyPair } from "../types";
 import { updateAddField } from "../actions";
 import Configure from "./Steps/Configure";
 import IdentityProvider from "./Steps/IdentityProvider";
@@ -46,6 +46,7 @@ import Security from "./Steps/Security";
 import Encryption from "./Steps/Encryption";
 import TenantSize from "./Steps/TenantSize";
 import Preview from "./Steps/Preview";
+import Affinity from "./Steps/Affinity";
 
 interface IAddTenantProps {
   closeAndRefresh: (reloadData: boolean) => any;
@@ -162,14 +163,24 @@ const AddTenant = ({
     const prometheusSelectedStorageClass =
       fields.configure.prometheusSelectedStorageClass;
     const prometheusVolumeSize = fields.configure.prometheusVolumeSize;
+    const affinityType = fields.affinity.podAffinity;
+    const affinityLabels = fields.affinity.affinityLabels;
 
     if (addSending) {
       const poolName = generatePoolName([]);
 
-      const hardCodedAffinity: IAffinityModel = getHardcodedAffinity(
-        tenantName,
-        poolName
-      );
+      let affinityObject = {};
+
+      switch (affinityType) {
+        case "default":
+          affinityObject = {
+            affinity: getDefaultAffinity(tenantName, poolName),
+          };
+          break;
+        case "nodeSelector":
+          affinityObject = { affinity: getNodeSelector(affinityLabels) };
+          break;
+      }
 
       const erasureCode = ecParity.split(":")[1];
 
@@ -205,7 +216,7 @@ const AddTenant = ({
                 memory: memorySize.limit,
               },
             },
-            affinity: hardCodedAffinity,
+            ...affinityObject,
           },
         ],
         erasureCodingParity: parseInt(erasureCode, 10),
@@ -533,6 +544,20 @@ const AddTenant = ({
           label: "Next",
           type: "next",
           enabled: validPages.includes("configure"),
+        },
+      ],
+    },
+    {
+      label: "Pod Affinity",
+      advancedOnly: true,
+      componentRender: <Affinity />,
+      buttons: [
+        cancelButton,
+        { label: "Back", type: "back", enabled: true },
+        {
+          label: "Next",
+          type: "next",
+          enabled: validPages.includes("affinity"),
         },
       ],
     },

@@ -10,7 +10,8 @@ import { Button, LinearProgress } from "@material-ui/core";
 import api from "../../../../common/api";
 import { IAddPoolRequest, ITenant } from "../ListTenants/types";
 import { IAffinityModel } from "../../../../common/types";
-import { getHardcodedAffinity } from "./utils";
+import { getDefaultAffinity } from "./utils";
+
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { IQuotaElement, IQuotas, Opts } from "../ListTenants/utils";
 
@@ -121,7 +122,7 @@ const AddPoolModal = ({
 
           const poolName = generatePoolName(tenant.pools);
 
-          const hardCodedAffinity: IAffinityModel = getHardcodedAffinity(
+          const defaultAffinity: IAffinityModel = getDefaultAffinity(
             tenant.name,
             poolName
           );
@@ -135,7 +136,7 @@ const AddPoolModal = ({
               storage_class_name: selectedStorageClass,
               labels: null,
             },
-            affinity: hardCodedAffinity,
+            affinity: defaultAffinity,
           };
 
           api

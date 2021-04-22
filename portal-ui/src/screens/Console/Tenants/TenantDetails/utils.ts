@@ -14,9 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { IAffinityModel } from "../../../../common/types";
+import { ILabelKeyPair } from "../types";
 
-export const getHardcodedAffinity = (tenantName: string, poolName: string) => {
-  const hardCodedAffinity: IAffinityModel = {
+export const getDefaultAffinity = (tenantName: string, poolName: string) => {
+  const defaultAffinity: IAffinityModel = {
     podAntiAffinity: {
       requiredDuringSchedulingIgnoredDuringExecution: [
         {
@@ -39,5 +40,35 @@ export const getHardcodedAffinity = (tenantName: string, poolName: string) => {
       ],
     },
   };
-  return hardCodedAffinity;
+  return defaultAffinity;
+};
+
+export const getNodeSelector = (labels: string) => {
+  // Labels in the form of key1=value1&key2=value2&key3=value3...
+  const splittedLabels = labels.split("&");
+  let labelItems: any = {};
+
+  splittedLabels.forEach((label: string) => {
+    const splitKeyValue = label.split("=");
+    if (splitKeyValue.length === 2) {
+      labelItems = {
+        ...labelItems,
+        [`${splitKeyValue[0]}`]: splitKeyValue[1],
+      };
+    }
+  });
+
+  const nodeSelector: IAffinityModel = {
+    podAffinity: {
+      requiredDuringSchedulingIgnoredDuringExecution: [
+        {
+          labelSelector: {
+            matchLabels: { ...labelItems },
+          },
+          topologyKey: "kubernetes.io/hostname",
+        },
+      ],
+    },
+  };
+  return nodeSelector;
 };
