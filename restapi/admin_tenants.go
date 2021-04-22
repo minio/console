@@ -940,13 +940,20 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 
 	//Default class name for Log search
-	diskSpaceFromAPI := int64(*tenantReq.LogSearchConfiguration.StorageSize) // Default is 5 by API
-	logSearchDiskSpace := resource.NewQuantity(diskSpaceFromAPI, resource.DecimalExponent)
-	logSearchStorageClass := tenantReq.LogSearchConfiguration.StorageClass // Default is ""
+	diskSpaceFromAPI := int64(5) // Default is 5
+	logSearchStorageClass := ""  // Default is ""
 
-	if tenantReq.LogSearchConfiguration.StorageClass == "" && len(tenantReq.Pools) > 0 {
-		logSearchStorageClass = tenantReq.Pools[0].VolumeConfiguration.StorageClassName
+	if tenantReq.LogSearchConfiguration != nil {
+		diskSpaceFromAPI = int64(*tenantReq.LogSearchConfiguration.StorageSize)
+		logSearchStorageClass = tenantReq.LogSearchConfiguration.StorageClass
+
+		if tenantReq.LogSearchConfiguration.StorageClass == "" && len(tenantReq.Pools) > 0 {
+			logSearchStorageClass = tenantReq.Pools[0].VolumeConfiguration.StorageClassName
+		}
 	}
+
+	logSearchDiskSpace := resource.NewQuantity(diskSpaceFromAPI, resource.DecimalExponent)
+
 	// default activate lgo search and prometheus
 	minInst.Spec.Log = &miniov2.LogConfig{
 		Image: "minio/logsearchapi:v4.0.0",
@@ -971,12 +978,17 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		},
 	}
 
-	prometheusDiskSpace := int(*tenantReq.PrometheusConfiguration.StorageSize) // Default is 5 by API
-	prometheusStorageClass := tenantReq.PrometheusConfiguration.StorageClass   // Default is ""
+	prometheusDiskSpace := int(5) // Default is 5 by API
+	prometheusStorageClass := ""  // Default is ""
 
-	// Default class name for prometheus
-	if tenantReq.PrometheusConfiguration.StorageClass == "" && len(tenantReq.Pools) > 0 {
-		prometheusStorageClass = tenantReq.Pools[0].VolumeConfiguration.StorageClassName
+	if tenantReq.PrometheusConfiguration != nil {
+		prometheusDiskSpace = int(*tenantReq.PrometheusConfiguration.StorageSize)
+		prometheusStorageClass = tenantReq.PrometheusConfiguration.StorageClass
+
+		// Default class name for prometheus
+		if tenantReq.PrometheusConfiguration.StorageClass == "" && len(tenantReq.Pools) > 0 {
+			prometheusStorageClass = tenantReq.Pools[0].VolumeConfiguration.StorageClassName
+		}
 	}
 
 	minInst.Spec.Prometheus = &miniov2.PrometheusConfig{
