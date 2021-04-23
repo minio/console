@@ -30,7 +30,6 @@ import (
 	"strings"
 	"time"
 
-	"gopkg.in/yaml.v2"
 	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/types"
 
@@ -1004,9 +1003,6 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		}
 		log.Println("happened")
 	}
-
-	yo, _ := yaml.Marshal(minInst)
-	log.Println(string(yo))
 
 	opClient, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
