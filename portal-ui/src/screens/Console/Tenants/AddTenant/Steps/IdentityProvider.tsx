@@ -19,6 +19,7 @@ import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Grid, Typography, Button, IconButton, Icon } from "@material-ui/core";
 import CasinoIcon from "@material-ui/icons/Casino";
+import DeleteIcon from "@material-ui/icons/Delete";
 import {
   modalBasic,
   wizardCommon,
@@ -62,7 +63,7 @@ const styles = (theme: Theme) =>
       textAlign: "right",
     },
     shortened: {
-      gridTemplateColumns: "auto auto 30px",
+      gridTemplateColumns: "auto auto 30px 30px",
       display: "grid",
       gridGap: 20,
     },
@@ -257,6 +258,20 @@ const IdentityProvider = ({
               }}
             >
               <CasinoIcon />
+            </IconButton>
+            <IconButton
+              onClick={() => {
+                if (accessKeys.length > 1) {
+                  accessKeys.splice(index, 1);
+                  secretKeys.splice(index, 1);
+                  updateUserField(
+                    accessKeys.length - 1,
+                    accessKeys[accessKeys.length - 1]
+                  );
+                }
+              }}
+            >
+              <DeleteIcon />
             </IconButton>
           </div>
           <br />
