@@ -32,7 +32,6 @@ import {
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { k8sfactorForDropdown } from "../../../../../common/utils";
 
 interface IConfigureProps {
   updateAddField: typeof updateAddField;

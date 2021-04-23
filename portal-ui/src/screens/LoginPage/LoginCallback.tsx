@@ -29,7 +29,7 @@ const LoginCallback: FC<RouteComponentProps> = ({ location }) => {
     const errorDescription = (location.search.match(
       /error_description=([^&]+)/
     ) || [])[1];
-    if (error != undefined || errorDescription != undefined) {
+    if (error !== undefined || errorDescription !== undefined) {
       setError(error);
       setErrorDescription(errorDescription);
     } else {
@@ -49,7 +49,7 @@ const LoginCallback: FC<RouteComponentProps> = ({ location }) => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }
   }, []);
-  return error != "" || errorDescription != "" ? (
+  return error !== "" || errorDescription !== "" ? (
     <div>
       <h2>IDP Error:</h2>
       <p>{error}</p>

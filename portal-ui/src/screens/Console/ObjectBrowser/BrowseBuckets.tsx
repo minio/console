@@ -135,7 +135,7 @@ const BrowseBuckets = ({
         })
         .then((res: HasPermissionResponse) => {
           const canCreate = res.permissions
-            .filter((s) => s.id == "createBucket")
+            .filter((s) => s.id === "createBucket")
             .pop();
           if (canCreate && canCreate.can) {
             setCanCreateBucket(true);

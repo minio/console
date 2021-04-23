@@ -477,6 +477,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                     <img
                       className={classes.verifiedIcon}
                       src={"/verified.svg"}
+                      alt="verified"
                     />
                   </Grid>
                 </React.Fragment>
