@@ -19,7 +19,10 @@ import Grid from "@material-ui/core/Grid";
 import { Button } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { servicesList } from "./utils";
-import { settingsCommon } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  settingsCommon,
+  typesSelection,
+} from "../../Common/FormComponents/common/styleLibrary";
 
 interface INotificationTypeSelector {
   classes: any;
@@ -32,56 +35,11 @@ const withLogos = servicesList.filter((elService) => elService.logo !== "");
 const styles = (theme: Theme) =>
   createStyles({
     ...settingsCommon,
-    logoButton: {
-      height: "80px",
-    },
-    lambdaNotif: {
-      backgroundColor: "#fff",
-      border: "#393939 1px solid",
-      borderRadius: 5,
-      width: 101,
-      height: 91,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      marginBottom: 16,
-      cursor: "pointer",
-      "& img": {
-        maxWidth: 71,
-        maxHeight: 71,
-      },
-    },
-    iconContainer: {
-      display: "flex",
-      flexDirection: "row",
-      maxWidth: 455,
-      justifyContent: "space-between",
-      flexWrap: "wrap",
-    },
-    nonIconContainer: {
-      marginBottom: 16,
-      width: 455,
-      marginTop: 15,
-      "& button": {
-        marginRight: 16,
-      },
-    },
-    pickTitle: {
-      fontWeight: 600,
-      color: "#393939",
-      fontSize: 14,
-      marginBottom: 16,
-    },
-    centerElements: {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-    },
     customTitle: {
       ...settingsCommon.customTitle,
       marginTop: 0,
     },
+    ...typesSelection,
   });
 
 const NotificationTypeSelector = ({
