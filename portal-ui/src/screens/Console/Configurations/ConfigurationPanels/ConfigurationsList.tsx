@@ -66,8 +66,9 @@ const initialConfiguration = {
 };
 
 const ConfigurationsList = ({ classes }: IListConfiguration) => {
-  const [selectedConfiguration, setSelectedConfiguration] =
-    useState(initialConfiguration);
+  const [selectedConfiguration, setSelectedConfiguration] = useState(
+    initialConfiguration
+  );
   const [currentConfiguration, setCurrentConfiguration] = useState<number>(0);
 
   const tableActions = [

@@ -165,8 +165,9 @@ const TenantDetails = ({
   const [yamlScreenOpen, setYamlScreenOpen] = useState<boolean>(false);
   const [licenseInfo, setLicenseInfo] = useState<LicenseInfo>();
   const [loadingLicenseInfo, setLoadingLicenseInfo] = useState<boolean>(true);
-  const [loadingActivateProduct, setLoadingActivateProduct] =
-    useState<boolean>(false);
+  const [loadingActivateProduct, setLoadingActivateProduct] = useState<boolean>(
+    false
+  );
   const [logEnabled, setLogEnabled] = useState<boolean>(false);
   const [monitoringEnabled, setMonitoringEnabled] = useState<boolean>(false);
   const [encryptionEnabled, setEncryptionEnabled] = useState<boolean>(false);

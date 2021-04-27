@@ -78,8 +78,9 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
   const [timeStart, setTimeStart] = useState<any>(null);
   const [timeEnd, setTimeEnd] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [panelInformation, setPanelInformation] =
-    useState<IDashboardPanel[]>(panelsConfiguration);
+  const [panelInformation, setPanelInformation] = useState<IDashboardPanel[]>(
+    panelsConfiguration
+  );
 
   const minHeight = 600;
   const colsInGrid = 8;

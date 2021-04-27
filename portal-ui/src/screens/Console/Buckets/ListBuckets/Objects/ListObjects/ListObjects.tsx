@@ -200,8 +200,9 @@ const ListObjects = ({
   const [selectedBucket, setSelectedBucket] = useState<string>("");
   const [filterObjects, setFilterObjects] = useState<string>("");
   const [loadingStartTime, setLoadingStartTime] = useState<number>(0);
-  const [loadingMessage, setLoadingMessage] =
-    useState<React.ReactNode>(defLoading);
+  const [loadingMessage, setLoadingMessage] = useState<React.ReactNode>(
+    defLoading
+  );
 
   const updateMessage = () => {
     let timeDelta = Date.now() - loadingStartTime;

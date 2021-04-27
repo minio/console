@@ -260,6 +260,10 @@ const Console = ({
     },
     {
       component: Policies,
+      path: "/policies/:policyName",
+    },
+    {
+      component: Policies,
       path: "/policies",
     },
     {
