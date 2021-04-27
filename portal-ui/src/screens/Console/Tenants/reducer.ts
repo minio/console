@@ -154,6 +154,10 @@ const initialState: ITenantState = {
         },
         limitSize: {},
       },
+      affinity: {
+        affinityLabels: "",
+        podAffinity: "default",
+      },
     },
     certificates: {
       minioCertificates: [
@@ -540,6 +544,10 @@ export function tenantsReducer(
                 storageFactors: [],
               },
               limitSize: {},
+            },
+            affinity: {
+              affinityLabels: "",
+              podAffinity: "default",
             },
           },
           certificates: {

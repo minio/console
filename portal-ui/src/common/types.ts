@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { ILabelKeyPair } from "../screens/Console/Tenants/types";
+
 export interface ITenantsObject {
   tenants: ITenant[];
 }
@@ -70,6 +72,7 @@ export interface ITenantCreator {
   image_registry?: ImageRegistry;
   logSearchConfiguration?: LogSearchConfiguration;
   prometheusConfiguration?: PrometheusConfiguration;
+  affinity?: AffinityConfiguration;
 }
 
 export interface ImageRegistry {
@@ -95,7 +98,8 @@ export interface ITenantUsage {
 }
 
 export interface IAffinityModel {
-  podAntiAffinity: IPodAntiAffinityModel;
+  podAntiAffinity?: IPodAntiAffinityModel;
+  podAffinity?: IPodAffinityModel;
 }
 
 export interface IPodAntiAffinityModel {
@@ -109,6 +113,19 @@ export interface IPodAffinityTerm {
 
 export interface IPodAffinityTermLabelSelector {
   matchExpressions: IMatchExpressionItem[];
+}
+
+export interface IPodAffinityModel {
+  requiredDuringSchedulingIgnoredDuringExecution: IPodAffinityTerms[];
+}
+
+export interface IPodAffinityTerms {
+  labelSelector: IPodAffinityLabelsSelector;
+  topologyKey: string;
+}
+
+export interface IPodAffinityLabelsSelector {
+  matchLabels: object;
 }
 
 export interface IMatchExpressionItem {
@@ -352,4 +369,9 @@ export interface LogSearchConfiguration {
 export interface PrometheusConfiguration {
   storageClass: string;
   storageSize: number;
+}
+
+export interface AffinityConfiguration {
+  affinityType: "default" | "nodeSelector" | "none";
+  nodeSelectorLabels?: ILabelKeyPair[];
 }
