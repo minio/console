@@ -226,9 +226,9 @@ const IdentityProvider = ({
   ]);
   let inputs = null;
   if (idpSelection === "Built-in") {
-    inputs = accessKeys.map((element, index) => {
+    inputs = accessKeys.map((_, index) => {
       return (
-        <Fragment>
+        <Fragment key={`identityField-${index.toString()}`}>
           <div className={classes.shortened}>
             <InputBoxWrapper
               id={`accesskey-${index.toString()}`}

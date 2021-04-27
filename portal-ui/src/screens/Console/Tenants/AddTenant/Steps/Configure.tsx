@@ -229,6 +229,7 @@ const Configure = ({
   }, [
     logSearchSelectedStorageClass,
     prometheusSelectedStorageClass,
+    selectedStorageClass,
     storageClasses,
     updateField,
   ]);

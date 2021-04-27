@@ -278,6 +278,9 @@ const ViewBucket = ({
   const [lifecycleRecords, setLifecycleRecords] = useState<LifeCycleItem[]>([]);
   const [addLifecycleOpen, setAddLifecycleOpen] = useState<boolean>(false);
 
+  const bucketName = match.params["bucketName"];
+  const ilmEnabled = session.features?.indexOf("ilm") > -1;
+
   // check the permissions for creating bucket
   useEffect(() => {
     if (loadingPerms) {
@@ -329,10 +332,7 @@ const ViewBucket = ({
           setErrorSnackMessage(err);
         });
     }
-  }, [loadingPerms, setErrorSnackMessage]);
-
-  const bucketName = match.params["bucketName"];
-  const ilmEnabled = session.features?.indexOf("ilm") > -1;
+  }, [bucketName, loadingPerms, setErrorSnackMessage]);
 
   useEffect(() => {
     if (loadingEvents) {
@@ -378,7 +378,12 @@ const ViewBucket = ({
           setLoadingLocking(false);
         });
     }
-  }, [loadingObjectLocking, setErrorSnackMessage, bucketName]);
+  }, [
+    loadingObjectLocking,
+    setErrorSnackMessage,
+    bucketName,
+    loadingVersioning,
+  ]);
 
   useEffect(() => {
     if (loadingReplication) {
@@ -832,7 +837,9 @@ const ViewBucket = ({
                         aria-label="access"
                         size="small"
                         className={classes.propertiesIcon}
-                        onClick={setBucketVersioning}
+                        onClick={() => {
+                          setAccessPolicyScreenOpen(true);
+                        }}
                       >
                         <PencilIcon active={true} />
                       </IconButton>
@@ -881,9 +888,7 @@ const ViewBucket = ({
                               aria-label="retention"
                               size="small"
                               className={classes.propertiesIcon}
-                              onClick={() => {
-                                setAccessPolicyScreenOpen(true);
-                              }}
+                              onClick={setBucketVersioning}
                             >
                               <PencilIcon active={true} />
                             </IconButton>

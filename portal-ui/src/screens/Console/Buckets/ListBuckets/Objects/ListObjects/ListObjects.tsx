@@ -195,9 +195,6 @@ const ListObjects = ({
   const [selectedObject, setSelectedObject] = useState<string>("");
   const [selectedBucket, setSelectedBucket] = useState<string>("");
   const [filterObjects, setFilterObjects] = useState<string>("");
-  const [loadingPromise, setLoadingPromise] = useState<Promise<any> | null>(
-    null
-  );
   const [loadingStartTime, setLoadingStartTime] = useState<number>(0);
   const [loadingMessage, setLoadingMessage] = useState<React.ReactNode>(
     defLoading
@@ -269,7 +266,7 @@ const ListObjects = ({
       setLoadingStartTime(currentTimestamp);
       setLoadingMessage(defLoading);
 
-      let p = api
+      api
         .invoke("GET", `/api/v1/buckets/${bucketName}/objects${extraPath}`)
         .then((res: BucketObjectsList) => {
           setSelectedBucket(bucketName);
@@ -302,7 +299,6 @@ const ListObjects = ({
           setLoading(false);
           setErrorSnackMessage(err);
         });
-      setLoadingPromise(p);
     }
   }, [loading, match, setLastAsFile, setErrorSnackMessage]);
 

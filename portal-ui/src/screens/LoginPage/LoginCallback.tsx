@@ -48,7 +48,7 @@ const LoginCallback: FC<RouteComponentProps> = ({ location }) => {
         });
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }
-  }, []);
+  }, [location.search]);
   return error !== "" || errorDescription !== "" ? (
     <div>
       <h2>IDP Error:</h2>
