@@ -18,6 +18,7 @@ package restapi
 
 import (
 	"context"
+	"errors"
 	"sort"
 	"strings"
 
@@ -33,6 +34,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+const XFS = "xfs"
+
 func registerDirectCSIHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPIGetDirectCSIDriveListHandler = admin_api.GetDirectCSIDriveListHandlerFunc(func(params admin_api.GetDirectCSIDriveListParams, session *models.Principal) middleware.Responder {
 		resp, err := getDirectCSIDrivesListResponse(session)
@@ -47,6 +50,13 @@ func registerDirectCSIHandlers(api *operations.ConsoleAPI) {
 			return admin_api.NewGetDirectCSIVolumeListDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewGetDirectCSIVolumeListOK().WithPayload(resp)
+	})
+	api.AdminAPIDirectCSIFormatDriveHandler = admin_api.DirectCSIFormatDriveHandlerFunc(func(params admin_api.DirectCSIFormatDriveParams, session *models.Principal) middleware.Responder {
+		resp, err := formatVolumesResponse(session, params)
+		if err != nil {
+			return admin_api.NewDirectCSIFormatDriveDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewDirectCSIFormatDriveOK().WithPayload(resp)
 	})
 }
 
@@ -202,4 +212,105 @@ func getDirectCSIVolumesListResponse(session *models.Principal) (*models.GetDire
 		return nil, prepareError(err)
 	}
 	return volumes, nil
+}
+
+func formatDrives(ctx context.Context, clientset directv1alpha1.DirectV1alpha1Interface, drives []string, force bool) (*models.FormatDirectCSIDrivesResponse, error) {
+	if len(drives) == 0 {
+		return nil, errors.New("at least one drive needs to be set")
+	}
+
+	driveList, err := clientset.DirectCSIDrives().List(ctx, metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	driveName := func(val string) string {
+		dr := strings.ReplaceAll(val, sys.DirectCSIDevRoot+"/", "")
+		dr = strings.ReplaceAll(dr, sys.HostDevRoot+"/", "")
+		return strings.ReplaceAll(dr, "-part-", "")
+	}
+
+	drivesArray := map[string]string{}
+
+	for _, driveFromAPI := range drives {
+		drivesArray[driveFromAPI] = driveFromAPI
+	}
+
+	if len(driveList.Items) == 0 {
+		return nil, errors.New("no resources found globally")
+	}
+
+	var errors []*models.CsiFormatErrorResponse
+
+	for _, driveItem := range driveList.Items {
+		drName := "/dev/" + driveName(driveItem.Status.Path)
+		driveName := driveItem.Status.NodeName + ":" + drName
+
+		base := &models.CsiFormatErrorResponse{
+			Node:  driveItem.Status.NodeName,
+			Drive: drName,
+			Error: "",
+		}
+
+		// Element is requested to be formatted
+		if _, ok := drivesArray[driveName]; ok {
+			if driveItem.Status.DriveStatus == directv1alpha1apis.DriveStatusUnavailable {
+				base.Error = "Status is unavailable"
+				errors = append(errors, base)
+				continue
+			}
+
+			if driveItem.Status.DriveStatus == directv1alpha1apis.DriveStatusInUse {
+				base.Error = "Drive in use. Cannot be formatted"
+				errors = append(errors, base)
+				continue
+			}
+
+			if !force {
+				if driveItem.Status.DriveStatus == directv1alpha1apis.DriveStatusReady {
+					base.Error = "Drive already owned and managed. Use force to overwrite"
+					errors = append(errors, base)
+					continue
+				}
+				if driveItem.Status.Filesystem != "" && !force {
+					base.Error = "Drive already has a fs. Use force to overwrite"
+					errors = append(errors, base)
+					continue
+				}
+			}
+
+			// Validation passes, we request format
+			driveItem.Spec.DirectCSIOwned = true
+			driveItem.Spec.RequestedFormat = &directv1alpha1apis.RequestedFormat{
+				Filesystem: XFS,
+				Force:      force,
+			}
+
+			_, err := clientset.DirectCSIDrives().Update(ctx, &driveItem, metav1.UpdateOptions{})
+			if err != nil {
+				base.Error = err.Error()
+				errors = append(errors, base)
+			}
+		}
+	}
+
+	returnErrors := &models.FormatDirectCSIDrivesResponse{
+		FormatIssuesList: errors,
+	}
+
+	return returnErrors, nil
+}
+
+func formatVolumesResponse(session *models.Principal, params admin_api.DirectCSIFormatDriveParams) (*models.FormatDirectCSIDrivesResponse, *models.Error) {
+	ctx := context.Background()
+	client, err := cluster.DirectCSIClient(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+
+	formatResult, errFormat := formatDrives(ctx, client.DirectV1alpha1(), params.Body.Drives, *params.Body.Force)
+	if errFormat != nil {
+		return nil, prepareError(errFormat)
+	}
+	return formatResult, nil
 }
