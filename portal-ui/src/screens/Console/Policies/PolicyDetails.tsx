@@ -258,7 +258,6 @@ const PolicyDetails = ({
           </Fragment>
         }
       />
-
       <Grid container>
         <Grid item xs={12} className={classes.container}>
           <Grid item xs={12}>
