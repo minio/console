@@ -55,6 +55,7 @@ interface IConfigureProps {
   prometheusSizeFactor: string;
   logSearchSelectedStorageClass: string;
   prometheusSelectedStorageClass: string;
+  selectedStorageClass: string;
 }
 
 const styles = (theme: Theme) =>
@@ -88,6 +89,7 @@ const Configure = ({
   prometheusSelectedStorageClass,
   updateAddField,
   isPageValid,
+  selectedStorageClass,
 }: IConfigureProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
 
@@ -214,14 +216,14 @@ const Configure = ({
         (item: any) => item.value === prometheusSelectedStorageClass
       );
       if (filterPrometheus.length === 0) {
-        updateField("prometheusSelectedStorageClass", storageClasses[0].value);
+        updateField("prometheusSelectedStorageClass", selectedStorageClass);
       }
 
       const filterLogSearch = storageClasses.filter(
         (item: any) => item.value === logSearchSelectedStorageClass
       );
       if (filterLogSearch.length === 0) {
-        updateField("logSearchSelectedStorageClass", storageClasses[0].value);
+        updateField("logSearchSelectedStorageClass", selectedStorageClass);
       }
     }
   }, [
@@ -544,6 +546,8 @@ const mapState = (state: AppState) => ({
     state.tenants.createTenant.fields.configure.logSearchSelectedStorageClass,
   prometheusSelectedStorageClass:
     state.tenants.createTenant.fields.configure.prometheusSelectedStorageClass,
+  selectedStorageClass:
+    state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
 });
 
 const connector = connect(mapState, {

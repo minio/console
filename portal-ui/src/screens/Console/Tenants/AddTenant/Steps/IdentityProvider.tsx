@@ -14,17 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, useCallback, Fragment } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Grid, Typography, Button, IconButton, Icon } from "@material-ui/core";
+import { Grid, IconButton, Tooltip, Typography } from "@material-ui/core";
 import CasinoIcon from "@material-ui/icons/Casino";
 import DeleteIcon from "@material-ui/icons/Delete";
 import {
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
-import { updateAddField, isPageValid } from "../../actions";
+import { isPageValid, updateAddField } from "../../actions";
 import {
   commonFormValidation,
   IValidation,
@@ -34,9 +34,7 @@ import { clearValidationError } from "../../utils";
 import RadioGroupSelector from "../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import AddIcon from "../../../../../icons/AddIcon";
-import { CreateIcon } from "../../../../../icons";
-import { Casino } from "@material-ui/icons";
+import AddIcon from "@material-ui/icons/Add";
 
 interface IIdentityProviderProps {
   classes: any;
@@ -63,9 +61,16 @@ const styles = (theme: Theme) =>
       textAlign: "right",
     },
     shortened: {
-      gridTemplateColumns: "auto auto 30px 30px",
+      gridTemplateColumns: "auto auto 50px 50px",
       display: "grid",
       gridGap: 20,
+    },
+    buttonTray: {
+      gridTemplateColumns: "auto auto 10px 10px",
+      display: "grid",
+      gridGap: 0,
+      height: 16,
+      marginTop: 12,
     },
     ...modalBasic,
     ...wizardCommon,
@@ -92,11 +97,11 @@ const IdentityProvider = ({
   const [validationErrors, setValidationErrors] = useState<any>({});
 
   // Common
-  let randomKey = function (): string {
+  let randomKey = function (length = 16): string {
     let retval = "";
     let legalcharacters =
       "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < length; i++) {
       retval +=
         legalcharacters[Math.floor(Math.random() * legalcharacters.length)];
     }
@@ -227,7 +232,8 @@ const IdentityProvider = ({
           <div className={classes.shortened}>
             <InputBoxWrapper
               id={`accesskey-${index.toString()}`}
-              label={"Access Key"}
+              label={""}
+              placeholder={"Access Key"}
               name={`accesskey-${index.toString()}`}
               value={accessKeys[index]}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -240,7 +246,8 @@ const IdentityProvider = ({
             />
             <InputBoxWrapper
               id={`secretkey-${index.toString()}`}
-              label={"Secret Key"}
+              label={""}
+              placeholder={"Secret Key"}
               name={`secretkey-${index.toString()}`}
               value={secretKeys[index]}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -251,30 +258,51 @@ const IdentityProvider = ({
               key={`csv-secretkey-${index.toString()}`}
               error={validationErrors[`secretkey-${index.toString()}`] || ""}
             />
-            <IconButton
-              onClick={() => {
-                updateUserField(index, randomKey());
-                updatePwordField(index, randomKey());
-              }}
-            >
-              <CasinoIcon />
-            </IconButton>
-            <IconButton
-              onClick={() => {
-                if (accessKeys.length > 1) {
-                  accessKeys.splice(index, 1);
-                  secretKeys.splice(index, 1);
-                  updateUserField(
-                    accessKeys.length - 1,
-                    accessKeys[accessKeys.length - 1]
-                  );
-                }
-              }}
-            >
-              <DeleteIcon />
-            </IconButton>
+            <div className={classes.buttonTray}>
+              <Tooltip title="Add User" aria-label="add">
+                <IconButton
+                  size={"small"}
+                  onClick={() => {
+                    accessKeys.push("");
+                    secretKeys.push("");
+                    updateUserField(accessKeys.length - 1, "");
+                    updatePwordField(secretKeys.length - 1, "");
+                  }}
+                >
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Randomize Credentials" aria-label="add">
+                <IconButton
+                  onClick={() => {
+                    updateUserField(index, randomKey(16));
+                    updatePwordField(index, randomKey(32));
+                  }}
+                  size={"small"}
+                >
+                  <CasinoIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Remove" aria-label="add">
+                <IconButton
+                  size={"small"}
+                  style={{ marginLeft: 16 }}
+                  onClick={() => {
+                    if (accessKeys.length > 1) {
+                      accessKeys.splice(index, 1);
+                      secretKeys.splice(index, 1);
+                      updateUserField(
+                        accessKeys.length - 1,
+                        accessKeys[accessKeys.length - 1]
+                      );
+                    }
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            </div>
           </div>
-          <br />
         </Fragment>
       );
     });
@@ -303,21 +331,7 @@ const IdentityProvider = ({
             { label: "Active Directory", value: "AD" },
           ]}
         />
-        MinIO supports both OpenID and Active Directory
-        <Button
-          onClick={() => {
-            accessKeys.push("");
-            secretKeys.push("");
-            updateUserField(accessKeys.length - 1, "");
-            updatePwordField(secretKeys.length - 1, "");
-          }}
-          startIcon={<CreateIcon />}
-          className={classes.buttonList}
-          color="primary"
-          variant="contained"
-        >
-          Add accesskey/secretkey pair
-        </Button>
+        Add additional users
       </Grid>{" "}
       {idpSelection === "Built-in" && <Fragment>{inputs}</Fragment>}
       {idpSelection === "OpenID" && (
