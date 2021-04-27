@@ -17,7 +17,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Grid, IconButton, Typography } from "@material-ui/core";
+import { Grid, IconButton, Tooltip, Typography } from "@material-ui/core";
 import CasinoIcon from "@material-ui/icons/Casino";
 import DeleteIcon from "@material-ui/icons/Delete";
 import {
@@ -259,42 +259,48 @@ const IdentityProvider = ({
               error={validationErrors[`secretkey-${index.toString()}`] || ""}
             />
             <div className={classes.buttonTray}>
-              <IconButton
-                size={"small"}
-                onClick={() => {
-                  accessKeys.push("");
-                  secretKeys.push("");
-                  updateUserField(accessKeys.length - 1, "");
-                  updatePwordField(secretKeys.length - 1, "");
-                }}
-              >
-                <AddIcon />
-              </IconButton>
-              <IconButton
-                onClick={() => {
-                  updateUserField(index, randomKey(16));
-                  updatePwordField(index, randomKey(32));
-                }}
-                size={"small"}
-              >
-                <CasinoIcon />
-              </IconButton>
-              <IconButton
-                size={"small"}
-                style={{ marginLeft: 16 }}
-                onClick={() => {
-                  if (accessKeys.length > 1) {
-                    accessKeys.splice(index, 1);
-                    secretKeys.splice(index, 1);
-                    updateUserField(
-                      accessKeys.length - 1,
-                      accessKeys[accessKeys.length - 1]
-                    );
-                  }
-                }}
-              >
-                <DeleteIcon />
-              </IconButton>
+              <Tooltip title="Add User" aria-label="add">
+                <IconButton
+                  size={"small"}
+                  onClick={() => {
+                    accessKeys.push("");
+                    secretKeys.push("");
+                    updateUserField(accessKeys.length - 1, "");
+                    updatePwordField(secretKeys.length - 1, "");
+                  }}
+                >
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Randomize Credentials" aria-label="add">
+                <IconButton
+                  onClick={() => {
+                    updateUserField(index, randomKey(16));
+                    updatePwordField(index, randomKey(32));
+                  }}
+                  size={"small"}
+                >
+                  <CasinoIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Remove" aria-label="add">
+                <IconButton
+                  size={"small"}
+                  style={{ marginLeft: 16 }}
+                  onClick={() => {
+                    if (accessKeys.length > 1) {
+                      accessKeys.splice(index, 1);
+                      secretKeys.splice(index, 1);
+                      updateUserField(
+                        accessKeys.length - 1,
+                        accessKeys[accessKeys.length - 1]
+                      );
+                    }
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
             </div>
           </div>
         </Fragment>
