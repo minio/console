@@ -440,6 +440,7 @@ const TenantDetails = ({
           >
             <Tab label="Clusters" />
             <Tab label="License" />
+            <Tab label="Pods" />
           </Tabs>
         </Grid>
         <Grid item xs={6} className={classes.actionsTray}>
@@ -650,6 +651,29 @@ const TenantDetails = ({
                 </Grid>
               </Grid>
             </React.Fragment>
+          )}
+          {selectedTab === 2 && (
+            <TableWrapper
+              itemActions={[
+                {
+                  type: "delete",
+                  onClick: (element) => {
+                    console.log(element);
+                  },
+                  sendOnlyId: true,
+                },
+              ]}
+              columns={[
+                { label: "Name", elementKey: "name" },
+                { label: "Capacity", elementKey: "capacity" },
+                { label: "# of Instances", elementKey: "servers" },
+                { label: "# of Drives", elementKey: "volumes" },
+              ]}
+              isLoading={false}
+              records={pools}
+              entityName="Servers"
+              idField="name"
+            />
           )}
         </Grid>
       </Grid>
