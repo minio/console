@@ -25,7 +25,6 @@ import {
   modalBasic,
   settingsCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
-import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
 

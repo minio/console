@@ -238,12 +238,13 @@ const AddBucket = ({
     quotaSize,
     quotaUnit,
     quotaEnabled,
-    retentionEnabled,
     addBucketRetention,
     addBucketRetentionMode,
     addBucketRetentionUnit,
     addBucketRetentionValidity,
     retentionValidity,
+    versioningEnabled,
+    enableObjectLocking,
   ]);
 
   return (

@@ -115,7 +115,7 @@ const DeleteTenant = ({
           onClick={removeRecord}
           color="secondary"
           autoFocus
-          disabled={retypeTenant === ""}
+          disabled={retypeTenant !== selectedTenant.name}
         >
           Delete
         </Button>

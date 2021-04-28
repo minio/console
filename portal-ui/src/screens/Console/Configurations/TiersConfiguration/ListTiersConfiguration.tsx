@@ -39,8 +39,6 @@ import SlideOptions from "../../Common/SlideOptions/SlideOptions";
 import BackSettingsIcon from "../../../../icons/BackSettingsIcon";
 import AddTierConfiguration from "./AddTierConfiguration";
 import UpdateTierCredentiasModal from "./UpdateTierCredentiasModal";
-import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import ClockType from "@material-ui/pickers/constants/ClockType";
 
 interface IListTiersConfig {
   classes: any;

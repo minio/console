@@ -30,7 +30,7 @@ import { generatePoolName } from "../../../../common/utils";
 import GenericWizard from "../../Common/GenericWizard/GenericWizard";
 import { IWizardElement } from "../../Common/GenericWizard/types";
 import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
-import { IAffinityModel, ITenantCreator } from "../../../../common/types";
+import { ITenantCreator } from "../../../../common/types";
 import { KeyPair } from "../ListTenants/utils";
 
 import { setModalErrorSnackMessage } from "../../../../actions";
@@ -38,7 +38,7 @@ import { getDefaultAffinity, getNodeSelector } from "../TenantDetails/utils";
 import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 import NameTenant from "./Steps/NameTenant";
 import { AppState } from "../../../../store";
-import { ICertificatesItems, IFieldStore, ILabelKeyPair } from "../types";
+import { ICertificatesItems, IFieldStore } from "../types";
 import { updateAddField } from "../actions";
 import Configure from "./Steps/Configure";
 import IdentityProvider from "./Steps/IdentityProvider";
