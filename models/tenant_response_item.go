@@ -23,63 +23,29 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"strconv"
-
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
-// CreateTenantResponse create tenant response
+// TenantResponseItem tenant response item
 //
-// swagger:model createTenantResponse
-type CreateTenantResponse struct {
+// swagger:model tenantResponseItem
+type TenantResponseItem struct {
 
-	// console
-	Console []*TenantResponseItem `json:"console"`
+	// access key
+	AccessKey string `json:"access_key,omitempty"`
+
+	// secret key
+	SecretKey string `json:"secret_key,omitempty"`
 }
 
-// Validate validates this create tenant response
-func (m *CreateTenantResponse) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateConsole(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *CreateTenantResponse) validateConsole(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Console) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.Console); i++ {
-		if swag.IsZero(m.Console[i]) { // not required
-			continue
-		}
-
-		if m.Console[i] != nil {
-			if err := m.Console[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("console" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
+// Validate validates this tenant response item
+func (m *TenantResponseItem) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *CreateTenantResponse) MarshalBinary() ([]byte, error) {
+func (m *TenantResponseItem) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -87,8 +53,8 @@ func (m *CreateTenantResponse) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *CreateTenantResponse) UnmarshalBinary(b []byte) error {
-	var res CreateTenantResponse
+func (m *TenantResponseItem) UnmarshalBinary(b []byte) error {
+	var res TenantResponseItem
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

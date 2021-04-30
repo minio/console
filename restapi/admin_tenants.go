@@ -767,6 +767,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	// optionals are set below
 	var tenantUserAccessKey string
 	var tenantUserSecretKey string
+	keyElementEmpty := len(tenantReq.Idp.Keys) == 1 && (*tenantReq.Idp.Keys[0].AccessKey == "" && *tenantReq.Idp.Keys[0].SecretKey == "")
 
 	enableConsole := true
 	if tenantReq.EnableConsole != nil && *tenantReq.EnableConsole {
@@ -775,7 +776,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 
 	if enableConsole {
 		// provision initial user for tenant
-		if !(len(tenantReq.Idp.Keys) > 0) {
+		if len(tenantReq.Idp.Keys) == 0 || keyElementEmpty {
 			tenantUserAccessKey = RandomCharString(16)
 			tenantUserSecretKey = RandomCharString(32)
 			consoleUserSecretName := fmt.Sprintf("%s-user-secret", tenantName)
@@ -1055,10 +1056,17 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	response = &models.CreateTenantResponse{}
 	// Attach Console Credentials
 	if enableConsole {
-		response.Console = &models.CreateTenantResponseConsole{
-			AccessKey: tenantUserAccessKey,
-			SecretKey: tenantUserSecretKey,
+		var itemsToReturn []*models.TenantResponseItem
+
+		if len(tenantReq.Idp.Keys) == 0 || keyElementEmpty {
+			itemsToReturn = append(itemsToReturn, &models.TenantResponseItem{AccessKey: tenantUserAccessKey, SecretKey: tenantUserSecretKey})
+		} else { // IDP Keys
+			for _, item := range tenantReq.Idp.Keys {
+				itemsToReturn = append(itemsToReturn, &models.TenantResponseItem{AccessKey: *item.AccessKey, SecretKey: *item.SecretKey})
+			}
 		}
+
+		response.Console = itemsToReturn
 	}
 	return response, nil
 }

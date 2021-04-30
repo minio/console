@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
+import get from "lodash/get";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import { LinearProgress } from "@material-ui/core";
@@ -512,12 +513,29 @@ const AddTenant = ({
       api
         .invoke("POST", `/api/v1/tenants`, dataSend)
         .then((res) => {
-          const newSrvAcc: NewServiceAccount = {
-            console: {
-              accessKey: res.console.access_key,
-              secretKey: res.console.secret_key,
-            },
+          const consoleSAList = get(res, "console", []);
+
+          let newSrvAcc: NewServiceAccount = {
+            console: [],
           };
+
+          if (consoleSAList && Array.isArray(consoleSAList)) {
+            const consoleItem = consoleSAList.map((consoleKey) => {
+              return {
+                accessKey: consoleKey.access_key,
+                secretKey: consoleKey.secret_key,
+              };
+            });
+
+            newSrvAcc.console = consoleItem;
+          } else {
+            newSrvAcc = {
+              console: {
+                accessKey: res.console.access_key,
+                secretKey: res.console.secret_key,
+              },
+            };
+          }
 
           setAddSending(false);
 
