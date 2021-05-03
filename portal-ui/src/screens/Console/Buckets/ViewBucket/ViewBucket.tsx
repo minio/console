@@ -930,7 +930,7 @@ const ViewBucket = ({
             <br />
           </Grid>
           <Grid container item xs={12}>
-            <Grid item xs={8}>
+            <Grid item xs={9}>
               <Tabs
                 value={curTab}
                 onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
@@ -939,6 +939,8 @@ const ViewBucket = ({
                 indicatorColor="primary"
                 textColor="primary"
                 aria-label="cluster-tabs"
+                variant="scrollable"
+                scrollButtons="auto"
               >
                 <Tab label="Events" {...a11yProps(0)} />
                 {canGetReplication && (
@@ -949,7 +951,7 @@ const ViewBucket = ({
                 {ilmEnabled && <Tab label="Lifecycle" {...a11yProps(4)} />}
               </Tabs>
             </Grid>
-            <Grid item xs={4} className={classes.actionsTray}>
+            <Grid item xs={3} className={classes.actionsTray}>
               {curTab === 0 && (
                 <Button
                   variant="contained"

@@ -107,6 +107,8 @@ const ReplicationSetup = ({
               setSelectedTab(newValue);
             }}
             aria-label="cluster-tabs"
+            variant="scrollable"
+            scrollButtons="auto"
           >
             <Tab label="Local Cluster" />
             <Tab label="Remote Cluster" />

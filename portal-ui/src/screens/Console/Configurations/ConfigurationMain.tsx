@@ -64,6 +64,8 @@ const ConfigurationMain = ({ classes, session }: IConfigurationMain) => {
               setSelectedTab(newValue);
             }}
             aria-label="tenant-tabs"
+            variant="scrollable"
+            scrollButtons="auto"
           >
             <Tab label="Configurations" />
             <Tab label="Lambda Notifications" />
