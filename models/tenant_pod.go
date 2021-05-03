@@ -37,6 +37,21 @@ type TenantPod struct {
 	// name
 	// Required: true
 	Name *string `json:"name"`
+
+	// node
+	Node string `json:"node,omitempty"`
+
+	// podip
+	Podip string `json:"podip,omitempty"`
+
+	// restarts
+	Restarts int64 `json:"restarts,omitempty"`
+
+	// status
+	Status string `json:"status,omitempty"`
+
+	// timecreated
+	Timecreated int64 `json:"timecreated,omitempty"`
 }
 
 // Validate validates this tenant pod

@@ -29,12 +29,16 @@ import Tab from "@material-ui/core/Tab";
 import { CreateIcon } from "../../../../icons";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import Paper from "@material-ui/core/Paper";
-import { niceBytes } from "../../../../common/utils";
+import {
+  getTimeFromTimestamp,
+  niceBytes,
+  niceDays,
+} from "../../../../common/utils";
 import AddPoolModal from "./AddPoolModal";
 import AddBucket from "../../Buckets/ListBuckets/AddBucket";
 import ReplicationSetup from "./ReplicationSetup";
 import api from "../../../../common/api";
-import { IPool, ITenant } from "../ListTenants/types";
+import { IPool, ITenant, IPod } from "../ListTenants/types";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import UsageBarWrapper from "../../Common/UsageBarWrapper/UsageBarWrapper";
 import UpdateTenantModal from "./UpdateTenantModal";
@@ -175,6 +179,7 @@ const TenantDetails = ({
   const [capacity, setCapacity] = useState<number>(0);
   const [poolCount, setPoolCount] = useState<number>(0);
   const [pools, setPools] = useState<IPool[]>([]);
+  const [pods, setPods] = useState<IPod[]>([]);
   const [instances, setInstances] = useState<number>(0);
   const [volumes, setVolumes] = useState<number>(0);
   const [addPoolOpen, setAddPool] = useState<boolean>(false);
@@ -297,6 +302,28 @@ const TenantDetails = ({
       });
   };
 
+  const loadPods = () => {
+    api
+      .invoke(
+        "GET",
+        `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/pods`
+      )
+      .then((result: IPod[]) => {
+        for (let i = 0; i < result.length; i++) {
+          let currentTime = new Date().getSeconds();
+          console.log(currentTime);
+          result[i].time = niceDays(
+            (currentTime - parseInt(result[i].timecreated)).toString()
+          );
+          console.log(result[i]);
+        }
+        setPods(result);
+      })
+      .catch((err) => {
+        console.log("Error in loading pods");
+      });
+  };
+
   const fetchLicenseInfo = () => {
     setLoadingLicenseInfo(true);
     api
@@ -314,6 +341,7 @@ const TenantDetails = ({
     loadInfo();
     loadUsage();
     fetchLicenseInfo();
+    loadPods();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -652,7 +680,7 @@ const TenantDetails = ({
               </Grid>
             </React.Fragment>
           )}
-          {selectedTab === 2 && (
+          {selectedTab === 2 && pods[0].time && (
             <TableWrapper
               itemActions={[
                 {
@@ -665,12 +693,20 @@ const TenantDetails = ({
               ]}
               columns={[
                 { label: "Name", elementKey: "name" },
-                { label: "Capacity", elementKey: "capacity" },
-                { label: "# of Instances", elementKey: "servers" },
-                { label: "# of Drives", elementKey: "volumes" },
+                { label: "Status", elementKey: "status" },
+                { label: "Age", elementKey: "time" },
+                { label: "Pod IP", elementKey: "podip" },
+                {
+                  label: "Restarts",
+                  elementKey: "restarts",
+                  renderFunction: (input) => {
+                    return input != null ? input : 0;
+                  },
+                },
+                { label: "Node", elementKey: "node" },
               ]}
               isLoading={false}
-              records={pools}
+              records={pods}
               entityName="Servers"
               idField="name"
             />

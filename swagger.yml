@@ -2116,6 +2116,33 @@ paths:
       tags:
         - AdminAPI
 
+  /namespaces/{namespace}/tenants/{tenant}/pods:
+    get:
+      summary: Get Pods For The Tenant
+      operationId: GetTenantPods
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/tenantPod"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
   /namespaces/{namespace}/tenants/{tenant}/certificates:
     put:
       summary: Tenant Update Certificates
@@ -3670,6 +3697,29 @@ definitions:
             type: string
           secret_key:
             type: string
+
+  tenantPod:
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        type:
+          string
+      status:
+        type:
+          string
+      timecreated:
+        type: integer
+      podip:
+        type: string
+      restarts:
+        type: integer
+      node:
+        type: string
+
+
+
   pool:
     type: object
     required:

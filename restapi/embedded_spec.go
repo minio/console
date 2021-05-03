@@ -2362,6 +2362,46 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/pods": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get Pods For The Tenant",
+        "operationId": "GetTenantPods",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/tenantPod"
+              }
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/pools": {
       "put": {
         "tags": [
@@ -5880,6 +5920,32 @@ func init() {
         }
       }
     },
+    "tenantPod": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "node": {
+          "type": "string"
+        },
+        "podip": {
+          "type": "string"
+        },
+        "restarts": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "timecreated": {
+          "type": "integer"
+        }
+      }
+    },
     "tenantUsage": {
       "type": "object",
       "properties": {
@@ -8453,6 +8519,46 @@ func init() {
         "responses": {
           "201": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/pods": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get Pods For The Tenant",
+        "operationId": "GetTenantPods",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/tenantPod"
+              }
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -12454,6 +12560,32 @@ func init() {
           "type": "integer"
         },
         "volume_count": {
+          "type": "integer"
+        }
+      }
+    },
+    "tenantPod": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "node": {
+          "type": "string"
+        },
+        "podip": {
+          "type": "string"
+        },
+        "restarts": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "timecreated": {
           "type": "integer"
         }
       }
