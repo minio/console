@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import { LinearProgress } from "@material-ui/core";
@@ -30,11 +30,11 @@ import { generatePoolName } from "../../../../common/utils";
 import GenericWizard from "../../Common/GenericWizard/GenericWizard";
 import { IWizardElement } from "../../Common/GenericWizard/types";
 import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
-import { IAffinityModel, ITenantCreator } from "../../../../common/types";
+import { ITenantCreator } from "../../../../common/types";
 import { KeyPair } from "../ListTenants/utils";
 
 import { setModalErrorSnackMessage } from "../../../../actions";
-import { getHardcodedAffinity } from "../TenantDetails/utils";
+import { getDefaultAffinity, getNodeSelector } from "../TenantDetails/utils";
 import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 import NameTenant from "./Steps/NameTenant";
 import { AppState } from "../../../../store";
@@ -46,6 +46,7 @@ import Security from "./Steps/Security";
 import Encryption from "./Steps/Encryption";
 import TenantSize from "./Steps/TenantSize";
 import Preview from "./Steps/Preview";
+import Affinity from "./Steps/Affinity";
 
 interface IAddTenantProps {
   closeAndRefresh: (reloadData: boolean) => any;
@@ -159,17 +160,30 @@ const AddTenant = ({
     const logSearchVolumeSize = fields.configure.logSearchVolumeSize;
     const logSearchSelectedStorageClass =
       fields.configure.logSearchSelectedStorageClass;
+    const logSearchImage = fields.configure.logSearchImage;
+    const logSearchPostgresImage = fields.configure.logSearchPostgresImage;
+    const prometheusImage = fields.configure.prometheusImage;
     const prometheusSelectedStorageClass =
       fields.configure.prometheusSelectedStorageClass;
     const prometheusVolumeSize = fields.configure.prometheusVolumeSize;
+    const affinityType = fields.affinity.podAffinity;
+    const affinityLabels = fields.affinity.affinityLabels;
 
     if (addSending) {
       const poolName = generatePoolName([]);
 
-      const hardCodedAffinity: IAffinityModel = getHardcodedAffinity(
-        tenantName,
-        poolName
-      );
+      let affinityObject = {};
+
+      switch (affinityType) {
+        case "default":
+          affinityObject = {
+            affinity: getDefaultAffinity(tenantName, poolName),
+          };
+          break;
+        case "nodeSelector":
+          affinityObject = { affinity: getNodeSelector(affinityLabels) };
+          break;
+      }
 
       const erasureCode = ecParity.split(":")[1];
 
@@ -205,7 +219,7 @@ const AddTenant = ({
                 memory: memorySize.limit,
               },
             },
-            affinity: hardCodedAffinity,
+            ...affinityObject,
           },
         ],
         erasureCodingParity: parseInt(erasureCode, 10),
@@ -228,6 +242,16 @@ const AddTenant = ({
           logSearchConfiguration: {
             storageClass: logSearchSelectedStorageClass,
             storageSize: parseInt(logSearchVolumeSize),
+            image: logSearchImage,
+            postgres_image: logSearchPostgresImage,
+          },
+        };
+      } else {
+        dataSend = {
+          ...dataSend,
+          logSearchConfiguration: {
+            image: logSearchImage,
+            postgres_image: logSearchPostgresImage,
           },
         };
       }
@@ -238,6 +262,14 @@ const AddTenant = ({
           prometheusConfiguration: {
             storageClass: prometheusSelectedStorageClass,
             storageSize: parseInt(prometheusVolumeSize),
+            image: prometheusImage,
+          },
+        };
+      } else {
+        dataSend = {
+          ...dataSend,
+          prometheusConfiguration: {
+            image: prometheusImage,
           },
         };
       }
@@ -533,6 +565,20 @@ const AddTenant = ({
           label: "Next",
           type: "next",
           enabled: validPages.includes("configure"),
+        },
+      ],
+    },
+    {
+      label: "Pod Affinity",
+      advancedOnly: true,
+      componentRender: <Affinity />,
+      buttons: [
+        cancelButton,
+        { label: "Back", type: "back", enabled: true },
+        {
+          label: "Next",
+          type: "next",
+          enabled: validPages.includes("affinity"),
         },
       ],
     },

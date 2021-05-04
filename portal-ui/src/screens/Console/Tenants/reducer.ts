@@ -39,6 +39,7 @@ import {
   ADD_TENANT_RESET_FORM,
 } from "./types";
 import { KeyPair } from "./ListTenants/utils";
+import { getRandomString } from "./utils";
 
 const initialState: ITenantState = {
   createTenant: {
@@ -67,10 +68,13 @@ const initialState: ITenantState = {
         prometheusCustom: false,
         logSearchVolumeSize: "5",
         logSearchSizeFactor: "Gi",
+        logSearchImage: "",
+        logSearchPostgresImage: "",
         prometheusVolumeSize: "5",
         prometheusSizeFactor: "Gi",
         logSearchSelectedStorageClass: "",
         prometheusSelectedStorageClass: "",
+        prometheusImage: "",
       },
       identityProvider: {
         idpSelection: "Built-in",
@@ -153,6 +157,10 @@ const initialState: ITenantState = {
           storageFactors: [],
         },
         limitSize: {},
+      },
+      affinity: {
+        affinityLabels: "",
+        podAffinity: "default",
       },
     },
     certificates: {
@@ -455,14 +463,17 @@ export function tenantsReducer(
               logSearchVolumeSize: "5",
               logSearchSizeFactor: "Gi",
               logSearchSelectedStorageClass: "",
+              logSearchImage: "",
+              logSearchPostgresImage: "",
               prometheusVolumeSize: "5",
               prometheusSizeFactor: "Gi",
               prometheusSelectedStorageClass: "",
+              prometheusImage: "",
             },
             identityProvider: {
               idpSelection: "Built-in",
-              accessKeys: [""],
-              secretKeys: [""],
+              accessKeys: [getRandomString(16)],
+              secretKeys: [getRandomString(32)],
               openIDURL: "",
               openIDClientID: "",
               openIDSecretID: "",
@@ -540,6 +551,10 @@ export function tenantsReducer(
                 storageFactors: [],
               },
               limitSize: {},
+            },
+            affinity: {
+              affinityLabels: "",
+              podAffinity: "default",
             },
           },
           certificates: {

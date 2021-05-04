@@ -142,7 +142,8 @@ const NameTenant = ({
             setLoadingNamespaceInfo(false);
           })
           .catch((err: any) => {
-            console.error(err);
+            setLoadingNamespaceInfo(false);
+            console.error("Namespace error: ", err);
           });
       })
       .catch((err: any) => {

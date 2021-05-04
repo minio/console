@@ -151,7 +151,7 @@ const BrowseBuckets = ({
           setErrorSnackMessage(err);
         });
     }
-  }, [loadingPerms, setErrorSnackMessage]);
+  }, [loadingPerms]);
 
   useEffect(() => {
     resetRoutesList(true);

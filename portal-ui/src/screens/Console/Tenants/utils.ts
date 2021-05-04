@@ -23,3 +23,15 @@ export const clearValidationError = (
 
   return newValidationElement;
 };
+
+// Generates a valid access/secret key string
+export const getRandomString = function (length = 16): string {
+  let retval = "";
+  let legalcharacters =
+    "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  for (let i = 0; i < length; i++) {
+    retval +=
+      legalcharacters[Math.floor(Math.random() * legalcharacters.length)];
+  }
+  return retval;
+};

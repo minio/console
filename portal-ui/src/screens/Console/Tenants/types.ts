@@ -80,6 +80,7 @@ export interface IFieldStore {
   security: ISecurityFields;
   encryption: IEncryptionFields;
   tenantSize: ITenantSizeFields;
+  affinity: ITenantAffinity;
 }
 
 export interface INameTenantFields {
@@ -103,9 +104,12 @@ export interface IConfigureFields {
   logSearchVolumeSize: string;
   logSearchSizeFactor: string;
   logSearchSelectedStorageClass: string;
+  logSearchImage: string;
+  logSearchPostgresImage: string;
   prometheusVolumeSize: string;
   prometheusSizeFactor: string;
   prometheusSelectedStorageClass: string;
+  prometheusImage: string;
 }
 
 export interface IIdentityProviderFields {
@@ -177,8 +181,18 @@ export interface ITenantSizeFields {
   limitSize: any;
 }
 
+export interface ITenantAffinity {
+  podAffinity: "default" | "nodeSelector" | "none";
+  affinityLabels: string;
+}
+
 export interface ITenantState {
   createTenant: ICreateTenant;
+}
+
+export interface ILabelKeyPair {
+  labelKey: string;
+  labelValue: string;
 }
 
 interface SetTenantWizardPage {

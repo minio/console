@@ -320,6 +320,56 @@ export const settingsCommon = {
   },
 };
 
+export const typesSelection = {
+  iconContainer: {
+    display: "flex" as const,
+    flexDirection: "row" as const,
+    maxWidth: 455,
+    justifyContent: "space-between" as const,
+    flexWrap: "wrap" as const,
+    width: "100%",
+  },
+  nonIconContainer: {
+    marginBottom: 16,
+    width: 455,
+    marginTop: 15,
+    "& button": {
+      marginRight: 16,
+    },
+  },
+  pickTitle: {
+    fontWeight: 600,
+    color: "#393939",
+    fontSize: 14,
+    marginBottom: 16,
+  },
+  centerElements: {
+    display: "flex" as const,
+    flexDirection: "column" as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+  },
+  logoButton: {
+    height: "80px",
+  },
+  lambdaNotif: {
+    backgroundColor: "#fff",
+    border: "#393939 1px solid",
+    borderRadius: 5,
+    width: 101,
+    height: 91,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
+    cursor: "pointer",
+    "& img": {
+      maxWidth: 71,
+      maxHeight: 71,
+    },
+  },
+};
+
 export const logsCommon = {
   logsSubContainer: {
     height: "calc(100vh - 230px)",

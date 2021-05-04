@@ -32,6 +32,10 @@ export const commonFormValidation = (fieldsValidate: IValidation[]) => {
       returnErrors[field.fieldKey] = "Field cannot be empty";
       return;
     }
+    // if it's not required and the value is empty, we are done here
+    if (!field.required && field.value.trim() === "") {
+      return;
+    }
 
     if (field.customValidation && field.customValidationMessage) {
       returnErrors[field.fieldKey] = field.customValidationMessage;

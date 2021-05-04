@@ -17,7 +17,8 @@ var (
 	errorGenericInvalidSession = errors.New("invalid session")
 	errorGenericUnauthorized   = errors.New("unauthorized")
 	errorGenericForbidden      = errors.New("forbidden")
-	ErrorGenericNotFound       = errors.New("not found")
+	// ErrorGenericNotFound Generic error for not found
+	ErrorGenericNotFound = errors.New("not found")
 	// Explicit error messages
 	errorInvalidErasureCodingValue        = errors.New("invalid Erasure Coding Value")
 	errorUnableToGetTenantUsage           = errors.New("unable to get tenant usage")
@@ -53,6 +54,10 @@ func prepareError(err ...error) *models.Error {
 			errorMessage = errorGenericForbidden.Error()
 		}
 		if k8sErrors.IsNotFound(err[0]) {
+			errorCode = 404
+			errorMessage = ErrorGenericNotFound.Error()
+		}
+		if err[0] == ErrorGenericNotFound {
 			errorCode = 404
 			errorMessage = ErrorGenericNotFound.Error()
 		}
@@ -132,6 +137,11 @@ func prepareError(err ...error) *models.Error {
 		// if we receive third error we just print that as debugging
 		if len(err) > 2 && err[2] != nil {
 			log.Print("debugging error: ", err[2].Error())
+		}
+
+		errRemoteTierExists := errors.New("Specified remote tier already exists") //nolint
+		if errors.Is(err[0], errRemoteTierExists) {
+			errorMessage = err[0].Error()
 		}
 	}
 	return &models.Error{Code: errorCode, Message: swag.String(errorMessage)}
