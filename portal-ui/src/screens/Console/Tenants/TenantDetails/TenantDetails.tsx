@@ -682,15 +682,6 @@ const TenantDetails = ({
           )}
           {selectedTab === 2 && pods[0].time && (
             <TableWrapper
-              itemActions={[
-                {
-                  type: "delete",
-                  onClick: (element) => {
-                    console.log(element);
-                  },
-                  sendOnlyId: true,
-                },
-              ]}
               columns={[
                 { label: "Name", elementKey: "name" },
                 { label: "Status", elementKey: "status" },
