@@ -1325,16 +1325,7 @@ func getTenantPodsResponse(session *models.Principal, params admin_api.GetTenant
 		return nil, prepareError(err)
 	}
 	listOpts := metav1.ListOptions{
-		TypeMeta:             metav1.TypeMeta{},
-		LabelSelector:        "",
-		FieldSelector:        "",
-		Watch:                false,
-		AllowWatchBookmarks:  false,
-		ResourceVersion:      "",
-		ResourceVersionMatch: "",
-		TimeoutSeconds:       nil,
-		Limit:                0,
-		Continue:             "",
+		LabelSelector: fmt.Sprintf("%s=%s", miniov2.TenantLabel, params.Tenant),
 	}
 	pods, err := clientset.CoreV1().Pods(params.Namespace).List(ctx, listOpts)
 	if err != nil {
@@ -1342,15 +1333,13 @@ func getTenantPodsResponse(session *models.Principal, params admin_api.GetTenant
 	}
 	retval := []*models.TenantPod{}
 	for i := range pods.Items {
-		if pods.Items[i].Name[0:len(params.Tenant)] == params.Tenant {
-			restarts := int64(pods.Items[i].Status.ContainerStatuses[0].RestartCount)
-			retval = append(retval, &models.TenantPod{Name: &pods.Items[i].ObjectMeta.Name,
-				Status:      string(pods.Items[i].Status.Phase),
-				TimeCreated: pods.Items[i].CreationTimestamp.Unix(),
-				PodIP:       pods.Items[i].Status.PodIP,
-				Restarts:    restarts,
-				Node:        pods.Items[i].Spec.NodeName})
-		}
+		restarts := int64(pods.Items[i].Status.ContainerStatuses[0].RestartCount)
+		retval = append(retval, &models.TenantPod{Name: &pods.Items[i].ObjectMeta.Name,
+			Status:      string(pods.Items[i].Status.Phase),
+			TimeCreated: pods.Items[i].CreationTimestamp.Unix(),
+			PodIP:       pods.Items[i].Status.PodIP,
+			Restarts:    restarts,
+			Node:        pods.Items[i].Spec.NodeName})
 	}
 	return retval, nil
 }
