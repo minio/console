@@ -362,13 +362,16 @@ export interface IErasureCodeCalc {
 }
 
 export interface LogSearchConfiguration {
-  storageClass: string;
-  storageSize: number;
+  storageClass?: string;
+  storageSize?: number;
+  image: string;
+  postgres_image: string;
 }
 
 export interface PrometheusConfiguration {
-  storageClass: string;
-  storageSize: number;
+  storageClass?: string;
+  storageSize?: number;
+  image: string;
 }
 
 export interface AffinityConfiguration {

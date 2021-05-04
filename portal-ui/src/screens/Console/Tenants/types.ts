@@ -104,9 +104,12 @@ export interface IConfigureFields {
   logSearchVolumeSize: string;
   logSearchSizeFactor: string;
   logSearchSelectedStorageClass: string;
+  logSearchImage: string;
+  logSearchPostgresImage: string;
   prometheusVolumeSize: string;
   prometheusSizeFactor: string;
   prometheusSelectedStorageClass: string;
+  prometheusImage: string;
 }
 
 export interface IIdentityProviderFields {

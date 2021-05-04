@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, useCallback, Fragment } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Grid } from "@material-ui/core";
@@ -22,7 +22,7 @@ import {
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
-import { updateAddField, isPageValid } from "../../actions";
+import { isPageValid, updateAddField } from "../../actions";
 import { AppState } from "../../../../../store";
 import { clearValidationError } from "../../utils";
 import {
@@ -54,7 +54,10 @@ interface IConfigureProps {
   prometheusVolumeSize: string;
   prometheusSizeFactor: string;
   logSearchSelectedStorageClass: string;
+  logSearchImage: string;
+  logSearchPostgresImage: string;
   prometheusSelectedStorageClass: string;
+  prometheusImage: string;
   selectedStorageClass: string;
 }
 
@@ -83,10 +86,13 @@ const Configure = ({
   logSearchCustom,
   logSearchVolumeSize,
   logSearchSizeFactor,
+  logSearchImage,
+  logSearchPostgresImage,
   prometheusVolumeSize,
   prometheusSizeFactor,
   logSearchSelectedStorageClass,
   prometheusSelectedStorageClass,
+  prometheusImage,
   updateAddField,
   isPageValid,
   selectedStorageClass,
@@ -151,18 +157,42 @@ const Configure = ({
         ...customAccountValidation,
         {
           fieldKey: "image",
-          required: true,
+          required: false,
           value: imageName,
           pattern: /^((.*?)\/(.*?):(.+))$/,
           customPatternMessage: "Format must be of form: 'minio/minio:VERSION'",
         },
         {
           fieldKey: "consoleImage",
-          required: true,
+          required: false,
           value: consoleImage,
           pattern: /^((.*?)\/(.*?):(.+))$/,
           customPatternMessage:
             "Format must be of form: 'minio/console:VERSION'",
+        },
+        {
+          fieldKey: "logSearchImage",
+          required: false,
+          value: logSearchImage,
+          pattern: /^((.*?)\/(.*?):(.+))$/,
+          customPatternMessage:
+            "Format must be of form: 'minio/logsearchapi:VERSION'",
+        },
+        {
+          fieldKey: "logSearchPostgresImage",
+          required: false,
+          value: logSearchPostgresImage,
+          pattern: /^((.*?)\/(.*?):(.+))$/,
+          customPatternMessage:
+            "Format must be of form: 'library/postgres:VERSION'",
+        },
+        {
+          fieldKey: "prometheusImage",
+          required: false,
+          value: prometheusImage,
+          pattern: /^((.*?)\/(.*?):(.+))$/,
+          customPatternMessage:
+            "Format must be of form: 'minio/prometheus:VERSION'",
         },
       ];
       if (customDockerhub) {
@@ -196,6 +226,9 @@ const Configure = ({
     customImage,
     imageName,
     consoleImage,
+    logSearchImage,
+    logSearchPostgresImage,
+    prometheusImage,
     customDockerhub,
     imageRegistry,
     imageRegistryUsername,
@@ -263,7 +296,7 @@ const Configure = ({
       </Grid>
       {customImage && (
         <Fragment>
-          Please enter the MinIO image from dockerhub to use
+          Please enter the MinIO docker image to use
           <Grid item xs={12}>
             <InputBoxWrapper
               id="image"
@@ -275,8 +308,7 @@ const Configure = ({
               label="MinIO's Image"
               value={imageName}
               error={validationErrors["image"] || ""}
-              placeholder="E.g. minio/minio:RELEASE.2020-05-08T02-40-49Z"
-              required
+              placeholder="E.g. minio/minio:RELEASE.2021-04-22T15-44-28Z"
             />
           </Grid>
           <Grid item xs={12}>
@@ -290,8 +322,49 @@ const Configure = ({
               label="Console's Image"
               value={consoleImage}
               error={validationErrors["consoleImage"] || ""}
-              placeholder="E.g. minio/console:v0.3.13"
-              required
+              placeholder="E.g. minio/console:v0.6.8"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="logSearchImage"
+              name="logSearchImage"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("logSearchImage", e.target.value);
+                cleanValidation("logSearchImage");
+              }}
+              label="Log Search API's Image"
+              value={logSearchImage}
+              error={validationErrors["logSearchImage"] || ""}
+              placeholder="E.g. minio/logsearchapi:v4.0.9"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="logSearchPostgresImage"
+              name="logSearchPostgresImage"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("logSearchPostgresImage", e.target.value);
+                cleanValidation("logSearchPostgresImage");
+              }}
+              label="Log Search Postgres's Image"
+              value={logSearchPostgresImage}
+              error={validationErrors["logSearchPostgresImage"] || ""}
+              placeholder="E.g. library/postgres:13"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="prometheusImage"
+              name="prometheusImage"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("prometheusImage", e.target.value);
+                cleanValidation("prometheusImage");
+              }}
+              label="Prometheus Image"
+              value={prometheusImage}
+              error={validationErrors["prometheusImage"] || ""}
+              placeholder="E.g. quay.io/prometheus/prometheus:latest"
             />
           </Grid>
         </Fragment>
@@ -545,8 +618,12 @@ const mapState = (state: AppState) => ({
     state.tenants.createTenant.fields.configure.prometheusSizeFactor,
   logSearchSelectedStorageClass:
     state.tenants.createTenant.fields.configure.logSearchSelectedStorageClass,
+  logSearchImage: state.tenants.createTenant.fields.configure.logSearchImage,
+  logSearchPostgresImage:
+    state.tenants.createTenant.fields.configure.logSearchPostgresImage,
   prometheusSelectedStorageClass:
     state.tenants.createTenant.fields.configure.prometheusSelectedStorageClass,
+  prometheusImage: state.tenants.createTenant.fields.configure.prometheusImage,
   selectedStorageClass:
     state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
 });
