@@ -76,6 +76,8 @@ const LogsMain = ({ classes }: ILogsMainProps) => {
                 indicatorColor="primary"
                 textColor="primary"
                 aria-label="cluster-tabs"
+                variant="scrollable"
+                scrollButtons="auto"
               >
                 <Tab label="Error Logs" />
                 {showLogSearch && <Tab label="Logs Search" />}

@@ -437,6 +437,8 @@ const TenantDetails = ({
               setSelectedTab(newValue);
             }}
             aria-label="tenant-tabs"
+            variant="scrollable"
+            scrollButtons="auto"
           >
             <Tab label="Clusters" />
             <Tab label="License" />
