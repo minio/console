@@ -31,7 +31,8 @@ var (
 	errPolicyNameNotInRequest             = errors.New("error policy name not in request")
 	errPolicyBodyNotInRequest             = errors.New("error policy body not in request")
 	errInvalidEncryptionAlgorithm         = errors.New("error invalid encryption algorithm")
-	errSSENotConfigured                   = errors.New("error server side encryption configuration was not found")
+	errSSENotConfigured                   = errors.New("error server side encryption configuration not found")
+	errBucketLifeCycleNotConfigured       = errors.New("error bucket life cycle configuration not found")
 	errChangePassword                     = errors.New("error please check your current password")
 	errInvalidLicense                     = errors.New("invalid license key")
 	errLicenseNotFound                    = errors.New("license not found")
@@ -98,6 +99,16 @@ func prepareError(err ...error) *models.Error {
 		if errors.Is(err[0], errorGenericInvalidSession) {
 			errorCode = 401
 			errorMessage = errorGenericInvalidSession.Error()
+		}
+		// Bucket life cycle not configured
+		if errors.Is(err[0], errBucketLifeCycleNotConfigured) {
+			errorCode = 404
+			errorMessage = errBucketLifeCycleNotConfigured.Error()
+		}
+		// Encryption not configured
+		if errors.Is(err[0], errSSENotConfigured) {
+			errorCode = 404
+			errorMessage = errSSENotConfigured.Error()
 		}
 		// account change password
 		if madmin.ToErrorResponse(err[0]).Code == "SignatureDoesNotMatch" {

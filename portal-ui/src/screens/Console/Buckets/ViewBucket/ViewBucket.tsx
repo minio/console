@@ -280,6 +280,7 @@ const ViewBucket = ({
 
   const bucketName = match.params["bucketName"];
   const ilmEnabled = session.features?.indexOf("ilm") > -1;
+  const usersEnabled = session.pages?.indexOf("/users") > -1;
 
   // check the permissions for creating bucket
   useEffect(() => {
@@ -417,7 +418,7 @@ const ViewBucket = ({
   }, [loadingPolicy, setErrorSnackMessage, bucketName]);
 
   useEffect(() => {
-    if (loadingUsers) {
+    if (loadingUsers && usersEnabled) {
       api
         .invoke("GET", `/api/v1/bucket-users/${bucketName}`)
         .then((res: any) => {
@@ -429,7 +430,7 @@ const ViewBucket = ({
           setLoadingUsers(false);
         });
     }
-  }, [loadingUsers, setErrorSnackMessage, bucketName]);
+  }, [loadingUsers, setErrorSnackMessage, bucketName, usersEnabled]);
 
   useEffect(() => {
     if (loadingSize) {
@@ -947,7 +948,7 @@ const ViewBucket = ({
                   <Tab label="Replication" {...a11yProps(1)} />
                 )}
                 <Tab label="Policies" {...a11yProps(2)} />
-                <Tab label="Users" {...a11yProps(3)} />
+                {usersEnabled && <Tab label="Users" {...a11yProps(3)} />}
                 {ilmEnabled && <Tab label="Lifecycle" {...a11yProps(4)} />}
               </Tabs>
             </Grid>
@@ -1056,15 +1057,18 @@ const ViewBucket = ({
                 idField="name"
               />
             </TabPanel>
-            <TabPanel index={3} value={curTab}>
-              <TableWrapper
-                columns={[{ label: "User", elementKey: "accessKey" }]}
-                isLoading={loadingUsers}
-                records={bucketUsers}
-                entityName="Users"
-                idField="accessKey"
-              />
-            </TabPanel>
+
+            {usersEnabled && (
+              <TabPanel index={3} value={curTab}>
+                <TableWrapper
+                  columns={[{ label: "User", elementKey: "accessKey" }]}
+                  isLoading={loadingUsers}
+                  records={bucketUsers}
+                  entityName="Users"
+                  idField="accessKey"
+                />
+              </TabPanel>
+            )}
             <TabPanel index={4} value={curTab}>
               <TableWrapper
                 itemActions={[]}
