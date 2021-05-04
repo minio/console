@@ -38,7 +38,7 @@ import AddPoolModal from "./AddPoolModal";
 import AddBucket from "../../Buckets/ListBuckets/AddBucket";
 import ReplicationSetup from "./ReplicationSetup";
 import api from "../../../../common/api";
-import { IPool, ITenant, IPod } from "../ListTenants/types";
+import { IPool, ITenant, IPodListElement } from "../ListTenants/types";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import UsageBarWrapper from "../../Common/UsageBarWrapper/UsageBarWrapper";
 import UpdateTenantModal from "./UpdateTenantModal";
@@ -179,7 +179,7 @@ const TenantDetails = ({
   const [capacity, setCapacity] = useState<number>(0);
   const [poolCount, setPoolCount] = useState<number>(0);
   const [pools, setPools] = useState<IPool[]>([]);
-  const [pods, setPods] = useState<IPod[]>([]);
+  const [pods, setPods] = useState<IPodListElement[]>([]);
   const [instances, setInstances] = useState<number>(0);
   const [volumes, setVolumes] = useState<number>(0);
   const [addPoolOpen, setAddPool] = useState<boolean>(false);
@@ -308,14 +308,12 @@ const TenantDetails = ({
         "GET",
         `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/pods`
       )
-      .then((result: IPod[]) => {
+      .then((result: IPodListElement[]) => {
         for (let i = 0; i < result.length; i++) {
           let currentTime = new Date().getSeconds();
-          console.log(currentTime);
           result[i].time = niceDays(
-            (currentTime - parseInt(result[i].timecreated)).toString()
+            (currentTime - parseInt(result[i].timeCreated)).toString()
           );
-          console.log(result[i]);
         }
         setPods(result);
       })
@@ -686,7 +684,7 @@ const TenantDetails = ({
                 { label: "Name", elementKey: "name" },
                 { label: "Status", elementKey: "status" },
                 { label: "Age", elementKey: "time" },
-                { label: "Pod IP", elementKey: "podip" },
+                { label: "Pod IP", elementKey: "podIP" },
                 {
                   label: "Restarts",
                   elementKey: "restarts",

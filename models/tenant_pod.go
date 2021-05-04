@@ -41,8 +41,8 @@ type TenantPod struct {
 	// node
 	Node string `json:"node,omitempty"`
 
-	// podip
-	Podip string `json:"podip,omitempty"`
+	// pod IP
+	PodIP string `json:"podIP,omitempty"`
 
 	// restarts
 	Restarts int64 `json:"restarts,omitempty"`
@@ -50,8 +50,8 @@ type TenantPod struct {
 	// status
 	Status string `json:"status,omitempty"`
 
-	// timecreated
-	Timecreated int64 `json:"timecreated,omitempty"`
+	// time created
+	TimeCreated int64 `json:"timeCreated,omitempty"`
 }
 
 // Validate validates this tenant pod

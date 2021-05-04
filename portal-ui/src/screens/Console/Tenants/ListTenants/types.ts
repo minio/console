@@ -28,11 +28,11 @@ export interface IPool {
   label?: string;
 }
 
-export interface IPod {
+export interface IPodListElement {
   name: string;
   status: string;
-  timecreated: string;
-  podip: string;
+  timeCreated: string;
+  podIP: string;
   restarts: number;
   node: string;
   time: string;

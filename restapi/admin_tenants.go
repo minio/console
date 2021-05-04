@@ -1335,8 +1335,8 @@ func getTenantPodsResponse(session *models.Principal, params admin_api.GetTenant
 			restarts := int64(pods.Items[i].Status.ContainerStatuses[0].RestartCount)
 			retval = append(retval, &models.TenantPod{Name: &pods.Items[i].ObjectMeta.Name,
 				Status:      string(pods.Items[i].Status.Phase),
-				Timecreated: pods.Items[i].CreationTimestamp.Unix(),
-				Podip:       pods.Items[i].Status.PodIP,
+				TimeCreated: pods.Items[i].CreationTimestamp.Unix(),
+				PodIP:       pods.Items[i].Status.PodIP,
 				Restarts:    restarts,
 				Node:        pods.Items[i].Spec.NodeName})
 		}

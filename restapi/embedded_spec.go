@@ -5932,7 +5932,7 @@ func init() {
         "node": {
           "type": "string"
         },
-        "podip": {
+        "podIP": {
           "type": "string"
         },
         "restarts": {
@@ -5941,7 +5941,7 @@ func init() {
         "status": {
           "type": "string"
         },
-        "timecreated": {
+        "timeCreated": {
           "type": "integer"
         }
       }
@@ -12576,7 +12576,7 @@ func init() {
         "node": {
           "type": "string"
         },
-        "podip": {
+        "podIP": {
           "type": "string"
         },
         "restarts": {
@@ -12585,7 +12585,7 @@ func init() {
         "status": {
           "type": "string"
         },
-        "timecreated": {
+        "timeCreated": {
           "type": "integer"
         }
       }

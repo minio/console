@@ -3709,9 +3709,9 @@ definitions:
       status:
         type:
           string
-      timecreated:
+      timeCreated:
         type: integer
-      podip:
+      podIP:
         type: string
       restarts:
         type: integer
