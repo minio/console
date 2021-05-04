@@ -1324,7 +1324,18 @@ func getTenantPodsResponse(session *models.Principal, params admin_api.GetTenant
 	if err != nil {
 		return nil, prepareError(err)
 	}
-	listOpts := metav1.ListOptions{}
+	listOpts := metav1.ListOptions{
+		TypeMeta:             metav1.TypeMeta{},
+		LabelSelector:        "",
+		FieldSelector:        "",
+		Watch:                false,
+		AllowWatchBookmarks:  false,
+		ResourceVersion:      "",
+		ResourceVersionMatch: "",
+		TimeoutSeconds:       nil,
+		Limit:                0,
+		Continue:             "",
+	}
 	pods, err := clientset.CoreV1().Pods(params.Namespace).List(ctx, listOpts)
 	if err != nil {
 		return nil, prepareError(err)
