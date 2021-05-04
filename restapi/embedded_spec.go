@@ -1817,6 +1817,39 @@ func init() {
         }
       }
     },
+    "/direct-csi/drives/format": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Format direct-csi drives from a list",
+        "operationId": "DirectCSIFormatDrive",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/formatConfiguration"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/formatDirectCSIDrivesResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/direct-csi/volumes": {
       "get": {
         "tags": [
@@ -4309,6 +4342,20 @@ func init() {
         }
       }
     },
+    "csiFormatErrorResponse": {
+      "type": "object",
+      "properties": {
+        "drive": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "node": {
+          "type": "string"
+        }
+      }
+    },
     "deleteTenantRequest": {
       "type": "object",
       "properties": {
@@ -4430,6 +4477,36 @@ func init() {
         },
         "delete_marker": {
           "type": "boolean"
+        }
+      }
+    },
+    "formatConfiguration": {
+      "type": "object",
+      "required": [
+        "drives",
+        "force"
+      ],
+      "properties": {
+        "drives": {
+          "type": "array",
+          "minLength": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "force": {
+          "type": "boolean"
+        }
+      }
+    },
+    "formatDirectCSIDrivesResponse": {
+      "type": "object",
+      "properties": {
+        "formatIssuesList": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/csiFormatErrorResponse"
+          }
         }
       }
     },
@@ -8445,6 +8522,39 @@ func init() {
         }
       }
     },
+    "/direct-csi/drives/format": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Format direct-csi drives from a list",
+        "operationId": "DirectCSIFormatDrive",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/formatConfiguration"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/formatDirectCSIDrivesResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/direct-csi/volumes": {
       "get": {
         "tags": [
@@ -11561,6 +11671,20 @@ func init() {
         }
       }
     },
+    "csiFormatErrorResponse": {
+      "type": "object",
+      "properties": {
+        "drive": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "node": {
+          "type": "string"
+        }
+      }
+    },
     "deleteTenantRequest": {
       "type": "object",
       "properties": {
@@ -11682,6 +11806,36 @@ func init() {
         },
         "delete_marker": {
           "type": "boolean"
+        }
+      }
+    },
+    "formatConfiguration": {
+      "type": "object",
+      "required": [
+        "drives",
+        "force"
+      ],
+      "properties": {
+        "drives": {
+          "type": "array",
+          "minLength": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "force": {
+          "type": "boolean"
+        }
+      }
+    },
+    "formatDirectCSIDrivesResponse": {
+      "type": "object",
+      "properties": {
+        "formatIssuesList": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/csiFormatErrorResponse"
+          }
         }
       }
     },

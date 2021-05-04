@@ -2461,6 +2461,28 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+  
+  /direct-csi/drives/format:
+    post:
+      summary: Format direct-csi drives from a list
+      operationId: DirectCSIFormatDrive
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/formatConfiguration"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/formatDirectCSIDrivesResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
 
 definitions:
   accountChangePasswordRequest:
@@ -4741,3 +4763,35 @@ definitions:
       creds:
         type: string
         description: a base64 encoded value
+  formatConfiguration:
+    type: object
+    required:
+      - drives
+      - force
+    properties:
+      drives:
+        type: array
+        minLength: 1
+        items:
+          type: string
+      force:
+        type: boolean
+
+  csiFormatErrorResponse:
+    type: object
+    properties:
+      node:
+        type: string
+      drive:
+        type: string
+      error:
+        type: string
+
+  formatDirectCSIDrivesResponse:
+    type: object
+    properties:
+      formatIssuesList:
+        type: array
+        items:
+          $ref: "#/definitions/csiFormatErrorResponse"
+
