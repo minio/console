@@ -30,7 +30,7 @@ import {
   IValidation,
 } from "../../../../../utils/validationFunctions";
 import { AppState } from "../../../../../store";
-import { clearValidationError } from "../../utils";
+import { clearValidationError, getRandomString } from "../../utils";
 import RadioGroupSelector from "../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
@@ -96,17 +96,6 @@ const IdentityProvider = ({
 }: IIdentityProviderProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
 
-  // Common
-  let randomKey = function (length = 16): string {
-    let retval = "";
-    let legalcharacters =
-      "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    for (let i = 0; i < length; i++) {
-      retval +=
-        legalcharacters[Math.floor(Math.random() * legalcharacters.length)];
-    }
-    return retval;
-  };
   const updateField = useCallback(
     (field: string, value: any) => {
       updateAddField("identityProvider", field, value);
@@ -275,8 +264,8 @@ const IdentityProvider = ({
               <Tooltip title="Randomize Credentials" aria-label="add">
                 <IconButton
                   onClick={() => {
-                    updateUserField(index, randomKey(16));
-                    updatePwordField(index, randomKey(32));
+                    updateUserField(index, getRandomString(16));
+                    updatePwordField(index, getRandomString(32));
                   }}
                   size={"small"}
                 >

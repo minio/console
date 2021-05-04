@@ -5002,6 +5002,12 @@ func init() {
     "logSearchConfiguration": {
       "type": "object",
       "properties": {
+        "image": {
+          "type": "string"
+        },
+        "postgres_image": {
+          "type": "string"
+        },
         "storageClass": {
           "type": "string",
           "default": ""
@@ -5867,6 +5873,9 @@ func init() {
     "prometheusConfiguration": {
       "type": "object",
       "properties": {
+        "image": {
+          "type": "string"
+        },
         "storageClass": {
           "type": "string",
           "default": ""
@@ -12319,6 +12328,12 @@ func init() {
     "logSearchConfiguration": {
       "type": "object",
       "properties": {
+        "image": {
+          "type": "string"
+        },
+        "postgres_image": {
+          "type": "string"
+        },
         "storageClass": {
           "type": "string",
           "default": ""
@@ -13049,6 +13064,9 @@ func init() {
     "prometheusConfiguration": {
       "type": "object",
       "properties": {
+        "image": {
+          "type": "string"
+        },
         "storageClass": {
           "type": "string",
           "default": ""

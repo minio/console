@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import { LinearProgress } from "@material-ui/core";
@@ -160,6 +160,9 @@ const AddTenant = ({
     const logSearchVolumeSize = fields.configure.logSearchVolumeSize;
     const logSearchSelectedStorageClass =
       fields.configure.logSearchSelectedStorageClass;
+    const logSearchImage = fields.configure.logSearchImage;
+    const logSearchPostgresImage = fields.configure.logSearchPostgresImage;
+    const prometheusImage = fields.configure.prometheusImage;
     const prometheusSelectedStorageClass =
       fields.configure.prometheusSelectedStorageClass;
     const prometheusVolumeSize = fields.configure.prometheusVolumeSize;
@@ -239,6 +242,16 @@ const AddTenant = ({
           logSearchConfiguration: {
             storageClass: logSearchSelectedStorageClass,
             storageSize: parseInt(logSearchVolumeSize),
+            image: logSearchImage,
+            postgres_image: logSearchPostgresImage,
+          },
+        };
+      } else {
+        dataSend = {
+          ...dataSend,
+          logSearchConfiguration: {
+            image: logSearchImage,
+            postgres_image: logSearchPostgresImage,
           },
         };
       }
@@ -249,6 +262,14 @@ const AddTenant = ({
           prometheusConfiguration: {
             storageClass: prometheusSelectedStorageClass,
             storageSize: parseInt(prometheusVolumeSize),
+            image: prometheusImage,
+          },
+        };
+      } else {
+        dataSend = {
+          ...dataSend,
+          prometheusConfiguration: {
+            image: prometheusImage,
           },
         };
       }

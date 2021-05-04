@@ -4661,6 +4661,10 @@ definitions:
       storageSize:
         type: number
         default: 5
+      image:
+        type: string
+      postgres_image:
+        type: string
 
   prometheusConfiguration:
     type: object
@@ -4671,6 +4675,8 @@ definitions:
       storageSize:
         type: number
         default: 5
+      image:
+        type: string
   tier_s3:
     type: object
     properties:

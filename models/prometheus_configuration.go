@@ -32,6 +32,9 @@ import (
 // swagger:model prometheusConfiguration
 type PrometheusConfiguration struct {
 
+	// image
+	Image string `json:"image,omitempty"`
+
 	// storage class
 	StorageClass string `json:"storageClass,omitempty"`
 
