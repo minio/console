@@ -322,7 +322,7 @@ const Configure = ({
               label="Console's Image"
               value={consoleImage}
               error={validationErrors["consoleImage"] || ""}
-              placeholder="E.g. minio/console:v0.6.8"
+              placeholder="E.g. minio/console:v0.7.0"
             />
           </Grid>
           <Grid item xs={12}>

@@ -4370,14 +4370,9 @@ func init() {
       "type": "object",
       "properties": {
         "console": {
-          "type": "object",
-          "properties": {
-            "access_key": {
-              "type": "string"
-            },
-            "secret_key": {
-              "type": "string"
-            }
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tenantResponseItem"
           }
         }
       }
@@ -10569,17 +10564,6 @@ func init() {
         }
       }
     },
-    "CreateTenantResponseConsole": {
-      "type": "object",
-      "properties": {
-        "access_key": {
-          "type": "string"
-        },
-        "secret_key": {
-          "type": "string"
-        }
-      }
-    },
     "GcpConfigurationSecretmanager": {
       "type": "object",
       "required": [
@@ -11774,14 +11758,9 @@ func init() {
       "type": "object",
       "properties": {
         "console": {
-          "type": "object",
-          "properties": {
-            "access_key": {
-              "type": "string"
-            },
-            "secret_key": {
-              "type": "string"
-            }
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tenantResponseItem"
           }
         }
       }

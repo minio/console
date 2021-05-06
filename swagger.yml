@@ -3904,9 +3904,6 @@ definitions:
         type: integer
       node:
         type: string
-
-
-
   pool:
     type: object
     required:

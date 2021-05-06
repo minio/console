@@ -31,6 +31,10 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
+    credentialsPanel: {
+      overflowY: "auto",
+      maxHeight: 350,
+    }
   });
 
 interface ICredentialsPromptProps {
@@ -84,16 +88,31 @@ const CredentialsPrompt = ({
             A new {entity} has been created with the following details:
             {consoleCreds && (
               <React.Fragment>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.credentialsPanel}>
                   <strong>Console Credentials</strong>
-                  <ul>
-                    <li>
-                      <b>Access Key:</b> {consoleCreds.accessKey}
-                    </li>
-                    <li>
-                      <b>Secret Key:</b> {consoleCreds.secretKey}
-                    </li>
-                  </ul>
+                  {Array.isArray(consoleCreds) &&
+                    consoleCreds.map((credentialsPair, index) => {
+                      return (
+                        <ul key={`creds-item-${index.toString()}`}>
+                          <li>
+                            <b>Access Key:</b> {credentialsPair.accessKey}
+                          </li>
+                          <li>
+                            <b>Secret Key:</b> {credentialsPair.secretKey}
+                          </li>
+                        </ul>
+                      );
+                    })}
+                  {!Array.isArray(consoleCreds) && (
+                    <ul>
+                      <li>
+                        <b>Access Key:</b> {consoleCreds.accessKey}
+                      </li>
+                      <li>
+                        <b>Secret Key:</b> {consoleCreds.secretKey}
+                      </li>
+                    </ul>
+                  )}
                 </Grid>
               </React.Fragment>
             )}
@@ -112,12 +131,27 @@ const CredentialsPrompt = ({
                 let consoleExtras = {};
 
                 if (consoleCreds) {
-                  consoleExtras = {
-                    console: {
-                      access_key: consoleCreds.accessKey,
-                      secret_key: consoleCreds.secretKey,
-                    },
-                  };
+                  if (!Array.isArray(consoleCreds)) {
+                    consoleExtras = {
+                      console: [
+                        {
+                          access_key: consoleCreds.accessKey,
+                          secret_key: consoleCreds.secretKey,
+                        },
+                      ],
+                    };
+                  } else {
+                    const cCreds = consoleCreds.map((itemMap) => {
+                      return {
+                        access_key: itemMap.accessKey,
+                          secret_key: itemMap.secretKey,
+                      }
+                    });
+
+                    consoleExtras = {
+                      console: [...cCreds],
+                    };
+                  }
                 }
 
                 download(
