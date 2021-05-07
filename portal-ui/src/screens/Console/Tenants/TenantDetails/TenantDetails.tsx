@@ -680,7 +680,7 @@ const TenantDetails = ({
               </Grid>
             </React.Fragment>
           )}
-          {selectedTab === 2 && pods[0].time && (
+          {selectedTab === 2 && pods.length > 1 && (
             <TableWrapper
               columns={[
                 { label: "Name", elementKey: "name" },
