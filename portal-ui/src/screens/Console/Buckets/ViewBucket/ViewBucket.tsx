@@ -66,6 +66,7 @@ import AddPolicy from "../../Policies/AddPolicy";
 import DeleteReplicationRule from "../ViewBucket/DeleteReplicationRule";
 import EditLifecycleConfiguration from "./EditLifecycleConfiguration";
 import AddLifecycleModal from "./AddLifecycleModal";
+import history from "../../../../history";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -710,6 +711,12 @@ const ViewBucket = ({
     },
   ];
 
+  const userViewAction = (user: any) => {
+    history.push(`/users/${user}`);
+  };
+
+  const userTableActions = [{ type: "view", onClick: userViewAction }];
+
   return (
     <Fragment>
       {addScreenOpen && (
@@ -1061,6 +1068,7 @@ const ViewBucket = ({
             {usersEnabled && (
               <TabPanel index={3} value={curTab}>
                 <TableWrapper
+                  itemActions={userTableActions}
                   columns={[{ label: "User", elementKey: "accessKey" }]}
                   isLoading={loadingUsers}
                   records={bucketUsers}

@@ -22,10 +22,14 @@ export interface User {
   enabled: boolean;
   accessKey: string;
   secretKey: string;
-  policy?: string;
+  policy?: string[];
 }
 
 export interface UsersList {
   users: User[];
   total_users: number;
+}
+
+export interface IPolicyItem {
+  policy: string;
 }

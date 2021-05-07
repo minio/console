@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
@@ -29,16 +29,12 @@ import Tab from "@material-ui/core/Tab";
 import { CreateIcon } from "../../../../icons";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import Paper from "@material-ui/core/Paper";
-import {
-  getTimeFromTimestamp,
-  niceBytes,
-  niceDays,
-} from "../../../../common/utils";
+import { niceBytes, niceDays } from "../../../../common/utils";
 import AddPoolModal from "./AddPoolModal";
 import AddBucket from "../../Buckets/ListBuckets/AddBucket";
 import ReplicationSetup from "./ReplicationSetup";
 import api from "../../../../common/api";
-import { IPool, ITenant, IPodListElement } from "../ListTenants/types";
+import { IPodListElement, IPool, ITenant } from "../ListTenants/types";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import UsageBarWrapper from "../../Common/UsageBarWrapper/UsageBarWrapper";
 import UpdateTenantModal from "./UpdateTenantModal";
@@ -47,7 +43,6 @@ import { LicenseInfo } from "../../License/types";
 import { Link } from "react-router-dom";
 import { setErrorSnackMessage } from "../../../../actions";
 import Moment from "react-moment";
-import { Fragment } from "react";
 
 interface ITenantDetailsProps {
   classes: any;

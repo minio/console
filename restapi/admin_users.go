@@ -115,7 +115,7 @@ func listUsers(ctx context.Context, client MinioAdmin) ([]*models.User, error) {
 		userElem := &models.User{
 			AccessKey: accessKey,
 			Status:    string(user.Status),
-			Policy:    user.PolicyName,
+			Policy:    strings.Split(user.PolicyName, ","),
 			MemberOf:  user.MemberOf,
 		}
 		users = append(users, userElem)
@@ -165,7 +165,7 @@ func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *strin
 	userRet := &models.User{
 		AccessKey: *accessKey,
 		MemberOf:  nil,
-		Policy:    "",
+		Policy:    []string{},
 		Status:    "",
 	}
 	return userRet, nil
@@ -250,7 +250,7 @@ func getUserInfoResponse(session *models.Principal, params admin_api.GetUserInfo
 	userInformation := &models.User{
 		AccessKey: params.Name,
 		MemberOf:  user.MemberOf,
-		Policy:    user.PolicyName,
+		Policy:    strings.Split(user.PolicyName, ","),
 		Status:    string(user.Status),
 	}
 
@@ -333,10 +333,12 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 		return nil, err
 	}
 
+	policies := strings.Split(userInfo.PolicyName, ",")
+
 	userReturn := &models.User{
 		AccessKey: user,
 		MemberOf:  userInfo.MemberOf,
-		Policy:    userInfo.PolicyName,
+		Policy:    policies,
 		Status:    string(userInfo.Status),
 	}
 
@@ -492,18 +494,20 @@ func getListUsersWithAccessToBucketResponse(session *models.Principal, bucket st
 	var retval []string
 	seen := make(map[string]bool)
 	for i := 0; i < len(users); i++ {
-		policy, err := adminClient.getPolicy(ctx, users[i].Policy)
-		if err == nil {
-			parsedPolicy, err2 := parsePolicy(users[i].Policy, policy)
-			if err2 == nil && policyMatchesBucket(parsedPolicy, bucket) {
-				retval = append(retval, users[i].AccessKey)
-				seen[users[i].AccessKey] = true
+		for _, policyName := range users[i].Policy {
+			policy, err := adminClient.getPolicy(ctx, policyName)
+			if err == nil {
+				parsedPolicy, err2 := parsePolicy(policyName, policy)
+				if err2 == nil && policyMatchesBucket(parsedPolicy, bucket) {
+					retval = append(retval, users[i].AccessKey)
+					seen[users[i].AccessKey] = true
+				}
+				if err2 != nil {
+					log.Println(err2)
+				}
+			} else {
+				log.Println(err)
 			}
-			if err2 != nil {
-				log.Println(err2)
-			}
-		} else {
-			log.Println(err)
 		}
 	}
 
