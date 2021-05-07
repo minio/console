@@ -133,6 +133,14 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 		return admin_api.NewGetTenantUsageOK().WithPayload(payload)
 	})
 
+	api.AdminAPIGetTenantPodsHandler = admin_api.GetTenantPodsHandlerFunc(func(params admin_api.GetTenantPodsParams, session *models.Principal) middleware.Responder {
+		payload, err := getTenantPodsResponse(session, params)
+		if err != nil {
+			return admin_api.NewGetTenantPodsDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewGetTenantPodsOK().WithPayload(payload)
+	})
+
 	// Update Tenant Pools
 	api.AdminAPITenantUpdatePoolsHandler = admin_api.TenantUpdatePoolsHandlerFunc(func(params admin_api.TenantUpdatePoolsParams, session *models.Principal) middleware.Responder {
 		resp, err := getTenantUpdatePoolResponse(session, params)
@@ -1342,6 +1350,32 @@ func getTenantUsageResponse(session *models.Principal, params admin_api.GetTenan
 	}
 	info := &models.TenantUsage{Used: adminInfo.Usage, DiskUsed: adminInfo.DisksUsage}
 	return info, nil
+}
+
+func getTenantPodsResponse(session *models.Principal, params admin_api.GetTenantPodsParams) ([]*models.TenantPod, *models.Error) {
+	ctx := context.Background()
+	clientset, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	listOpts := metav1.ListOptions{
+		LabelSelector: fmt.Sprintf("%s=%s", miniov2.TenantLabel, params.Tenant),
+	}
+	pods, err := clientset.CoreV1().Pods(params.Namespace).List(ctx, listOpts)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	retval := []*models.TenantPod{}
+	for i := range pods.Items {
+		restarts := int64(pods.Items[i].Status.ContainerStatuses[0].RestartCount)
+		retval = append(retval, &models.TenantPod{Name: &pods.Items[i].ObjectMeta.Name,
+			Status:      string(pods.Items[i].Status.Phase),
+			TimeCreated: pods.Items[i].CreationTimestamp.Unix(),
+			PodIP:       pods.Items[i].Status.PodIP,
+			Restarts:    restarts,
+			Node:        pods.Items[i].Spec.NodeName})
+	}
+	return retval, nil
 }
 
 // parseTenantPoolRequest parse pool request and returns the equivalent

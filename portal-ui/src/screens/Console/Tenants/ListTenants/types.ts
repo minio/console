@@ -28,6 +28,16 @@ export interface IPool {
   label?: string;
 }
 
+export interface IPodListElement {
+  name: string;
+  status: string;
+  timeCreated: string;
+  podIP: string;
+  restarts: number;
+  node: string;
+  time: string;
+}
+
 export interface IAddPoolRequest {
   name: string;
   servers: number;
