@@ -6398,6 +6398,17 @@ func init() {
         }
       }
     },
+    "tenantResponseItem": {
+      "type": "object",
+      "properties": {
+        "access_key": {
+          "type": "string"
+        },
+        "secret_key": {
+          "type": "string"
+        }
+      }
+    },
     "tenantUsage": {
       "type": "object",
       "properties": {
@@ -13636,6 +13647,17 @@ func init() {
         },
         "timeCreated": {
           "type": "integer"
+        }
+      }
+    },
+    "tenantResponseItem": {
+      "type": "object",
+      "properties": {
+        "access_key": {
+          "type": "string"
+        },
+        "secret_key": {
+          "type": "string"
         }
       }
     },
