@@ -34,7 +34,7 @@ const styles = (theme: Theme) =>
     credentialsPanel: {
       overflowY: "auto",
       maxHeight: 350,
-    }
+    },
   });
 
 interface ICredentialsPromptProps {
@@ -144,8 +144,8 @@ const CredentialsPrompt = ({
                     const cCreds = consoleCreds.map((itemMap) => {
                       return {
                         access_key: itemMap.accessKey,
-                          secret_key: itemMap.secretKey,
-                      }
+                        secret_key: itemMap.secretKey,
+                      };
                     });
 
                     consoleExtras = {

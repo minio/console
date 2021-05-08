@@ -318,7 +318,7 @@ const TenantDetails = ({
         setPods(result);
       })
       .catch((err) => {
-        setErrorSnackMessage("Error loading pods")
+        setErrorSnackMessage("Error loading pods");
       });
   };
 
