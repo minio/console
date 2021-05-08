@@ -196,6 +196,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIGetTenantUsageHandler: admin_api.GetTenantUsageHandlerFunc(func(params admin_api.GetTenantUsageParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetTenantUsage has not yet been implemented")
 		}),
+		AdminAPIGetTenantYAMLHandler: admin_api.GetTenantYAMLHandlerFunc(func(params admin_api.GetTenantYAMLParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.GetTenantYAML has not yet been implemented")
+		}),
 		AdminAPIGetTierHandler: admin_api.GetTierHandlerFunc(func(params admin_api.GetTierParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetTier has not yet been implemented")
 		}),
@@ -294,6 +297,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		UserAPIPutObjectTagsHandler: user_api.PutObjectTagsHandlerFunc(func(params user_api.PutObjectTagsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.PutObjectTags has not yet been implemented")
+		}),
+		AdminAPIPutTenantYAMLHandler: admin_api.PutTenantYAMLHandlerFunc(func(params admin_api.PutTenantYAMLParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.PutTenantYAML has not yet been implemented")
 		}),
 		UserAPIRemoteBucketDetailsHandler: user_api.RemoteBucketDetailsHandlerFunc(func(params user_api.RemoteBucketDetailsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.RemoteBucketDetails has not yet been implemented")
@@ -522,6 +528,8 @@ type ConsoleAPI struct {
 	AdminAPIGetTenantPodsHandler admin_api.GetTenantPodsHandler
 	// AdminAPIGetTenantUsageHandler sets the operation handler for the get tenant usage operation
 	AdminAPIGetTenantUsageHandler admin_api.GetTenantUsageHandler
+	// AdminAPIGetTenantYAMLHandler sets the operation handler for the get tenant y a m l operation
+	AdminAPIGetTenantYAMLHandler admin_api.GetTenantYAMLHandler
 	// AdminAPIGetTierHandler sets the operation handler for the get tier operation
 	AdminAPIGetTierHandler admin_api.GetTierHandler
 	// AdminAPIGetUserInfoHandler sets the operation handler for the get user info operation
@@ -588,6 +596,8 @@ type ConsoleAPI struct {
 	UserAPIPutObjectRetentionHandler user_api.PutObjectRetentionHandler
 	// UserAPIPutObjectTagsHandler sets the operation handler for the put object tags operation
 	UserAPIPutObjectTagsHandler user_api.PutObjectTagsHandler
+	// AdminAPIPutTenantYAMLHandler sets the operation handler for the put tenant y a m l operation
+	AdminAPIPutTenantYAMLHandler admin_api.PutTenantYAMLHandler
 	// UserAPIRemoteBucketDetailsHandler sets the operation handler for the remote bucket details operation
 	UserAPIRemoteBucketDetailsHandler user_api.RemoteBucketDetailsHandler
 	// AdminAPIRemoveGroupHandler sets the operation handler for the remove group operation
@@ -854,6 +864,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.AdminAPIGetTenantUsageHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetTenantUsageHandler")
 	}
+	if o.AdminAPIGetTenantYAMLHandler == nil {
+		unregistered = append(unregistered, "admin_api.GetTenantYAMLHandler")
+	}
 	if o.AdminAPIGetTierHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetTierHandler")
 	}
@@ -952,6 +965,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIPutObjectTagsHandler == nil {
 		unregistered = append(unregistered, "user_api.PutObjectTagsHandler")
+	}
+	if o.AdminAPIPutTenantYAMLHandler == nil {
+		unregistered = append(unregistered, "admin_api.PutTenantYAMLHandler")
 	}
 	if o.UserAPIRemoteBucketDetailsHandler == nil {
 		unregistered = append(unregistered, "user_api.RemoteBucketDetailsHandler")
@@ -1321,6 +1337,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/yaml"] = admin_api.NewGetTenantYAML(o.context, o.AdminAPIGetTenantYAMLHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/admin/tiers/{type}/{name}"] = admin_api.NewGetTier(o.context, o.AdminAPIGetTierHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -1450,6 +1470,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/buckets/{bucket_name}/objects/tags"] = user_api.NewPutObjectTags(o.context, o.UserAPIPutObjectTagsHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/namespaces/{namespace}/tenants/{tenant}/yaml"] = admin_api.NewPutTenantYAML(o.context, o.AdminAPIPutTenantYAMLHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

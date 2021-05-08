@@ -17,6 +17,7 @@
 package restapi
 
 import (
+	"bytes"
 	"context"
 	"encoding/base64"
 	"encoding/json"
@@ -29,6 +30,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/serializer"
 
 	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/types"
@@ -46,6 +50,7 @@ import (
 	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	k8sJson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 	v1 "k8s.io/client-go/kubernetes/typed/core/v1"
 )
 
@@ -166,6 +171,23 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 			return admin_api.NewTenantUpdateEncryptionDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewTenantUpdateEncryptionCreated()
+	})
+
+	// Get Tenant YAML
+	api.AdminAPIGetTenantYAMLHandler = admin_api.GetTenantYAMLHandlerFunc(func(params admin_api.GetTenantYAMLParams, principal *models.Principal) middleware.Responder {
+		payload, err := getTenantYAML(principal, params)
+		if err != nil {
+			return admin_api.NewGetTenantYAMLDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewGetTenantYAMLOK().WithPayload(payload)
+	})
+	// Update Tenant YAML
+	api.AdminAPIPutTenantYAMLHandler = admin_api.PutTenantYAMLHandlerFunc(func(params admin_api.PutTenantYAMLParams, principal *models.Principal) middleware.Responder {
+		err := getUpdateTenantYAML(principal, params)
+		if err != nil {
+			return admin_api.NewPutTenantYAMLDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewPutTenantYAMLCreated()
 	})
 }
 
@@ -1826,4 +1848,85 @@ func updateTenantPools(
 		return nil, err
 	}
 	return tenantUpdated, nil
+}
+
+func getTenantYAML(session *models.Principal, params admin_api.GetTenantYAMLParams) (*models.TenantYAML, *models.Error) {
+	// get Kubernetes Client
+
+	opClient, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+
+	tenant, err := opClient.MinioV2().Tenants(params.Namespace).Get(params.HTTPRequest.Context(), params.Tenant, metav1.GetOptions{})
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// remove managed fields
+	tenant.ManagedFields = []metav1.ManagedFieldsEntry{}
+
+	//yb, err := yaml.Marshal(tenant)
+	serializer := k8sJson.NewSerializerWithOptions(
+		k8sJson.DefaultMetaFactory, nil, nil,
+		k8sJson.SerializerOptions{
+			Yaml:   true,
+			Pretty: true,
+			Strict: true,
+		},
+	)
+	buf := new(bytes.Buffer)
+
+	err = serializer.Encode(tenant, buf)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+
+	yb := buf.String()
+
+	return &models.TenantYAML{Yaml: yb}, nil
+}
+
+func getUpdateTenantYAML(session *models.Principal, params admin_api.PutTenantYAMLParams) *models.Error {
+
+	// can we parse the inbound?
+	//var inTenant miniov2.Tenant
+	//err := yaml.Unmarshal([]byte(params.Body.Yaml), &inTenant)
+	//if err != nil {
+	//	return prepareError(err)
+	//}
+
+	// https://godoc.org/k8s.io/apimachinery/pkg/runtime#Scheme
+	scheme := runtime.NewScheme()
+
+	// https://godoc.org/k8s.io/apimachinery/pkg/runtime/serializer#CodecFactory
+	codecFactory := serializer.NewCodecFactory(scheme)
+
+	// https://godoc.org/k8s.io/apimachinery/pkg/runtime#Decoder
+	deserializer := codecFactory.UniversalDeserializer()
+
+	tenantObject, _, err := deserializer.Decode([]byte(params.Body.Yaml), nil, &miniov2.Tenant{})
+	if err != nil {
+		panic(err)
+	}
+	inTenant := tenantObject.(*miniov2.Tenant)
+	// get Kubernetes Client
+	opClient, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return prepareError(err)
+	}
+
+	tenant, err := opClient.MinioV2().Tenants(params.Namespace).Get(params.HTTPRequest.Context(), params.Tenant, metav1.GetOptions{})
+	if err != nil {
+		return prepareError(err)
+	}
+	upTenant := tenant.DeepCopy()
+	// only replace the spec field
+	upTenant.Spec = inTenant.Spec
+
+	_, err = opClient.MinioV2().Tenants(params.Namespace).Update(params.HTTPRequest.Context(), upTenant, metav1.UpdateOptions{})
+	if err != nil {
+		return prepareError(err)
+	}
+
+	return nil
 }

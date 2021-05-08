@@ -2804,6 +2804,83 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/yaml": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get the Tenant YAML",
+        "operationId": "GetTenantYAML",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/tenantYAML"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Put the Tenant YAML",
+        "operationId": "PutTenantYAML",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/tenantYAML"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/policies": {
       "get": {
         "tags": [
@@ -6422,6 +6499,14 @@ func init() {
         }
       }
     },
+    "tenantYAML": {
+      "type": "object",
+      "properties": {
+        "yaml": {
+          "type": "string"
+        }
+      }
+    },
     "tier": {
       "type": "object",
       "properties": {
@@ -9583,6 +9668,83 @@ func init() {
             "schema": {
               "$ref": "#/definitions/tenantUsage"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/yaml": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get the Tenant YAML",
+        "operationId": "GetTenantYAML",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/tenantYAML"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Put the Tenant YAML",
+        "operationId": "PutTenantYAML",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/tenantYAML"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
@@ -13674,6 +13836,14 @@ func init() {
         "used": {
           "type": "integer",
           "format": "int64"
+        }
+      }
+    },
+    "tenantYAML": {
+      "type": "object",
+      "properties": {
+        "yaml": {
+          "type": "string"
         }
       }
     },
