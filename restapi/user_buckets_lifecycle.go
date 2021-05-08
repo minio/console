@@ -106,7 +106,7 @@ func getBucketLifecycleResponse(session *models.Principal, params user_api.GetBu
 
 	bucketEvents, err := getBucketLifecycle(ctx, minioClient, params.BucketName)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, prepareError(errBucketLifeCycleNotConfigured, err)
 	}
 	return bucketEvents, nil
 }
