@@ -39,7 +39,7 @@ type User struct {
 	MemberOf []string `json:"memberOf"`
 
 	// policy
-	Policy string `json:"policy,omitempty"`
+	Policy []string `json:"policy"`
 
 	// status
 	Status string `json:"status,omitempty"`

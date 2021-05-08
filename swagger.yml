@@ -2665,7 +2665,9 @@ definitions:
       accessKey:
         type: string
       policy:
-        type: string
+        type: array
+        items:
+          type: string
       memberOf:
         type: array
         items:

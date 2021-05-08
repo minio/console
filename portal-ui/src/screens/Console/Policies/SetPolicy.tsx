@@ -114,9 +114,9 @@ const SetPolicy = ({
         return;
       }
 
-      const userPolicy: String = get(selectedUser, "policy", "");
-      setActualPolicy(userPolicy.split(","));
-      setSelectedPolicy(userPolicy.split(","));
+      const userPolicy: string[] = get(selectedUser, "policy", []);
+      setActualPolicy(userPolicy);
+      setSelectedPolicy(userPolicy);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, selectedGroup, selectedUser]);

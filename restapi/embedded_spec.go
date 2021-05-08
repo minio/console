@@ -6684,7 +6684,10 @@ func init() {
           }
         },
         "policy": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "status": {
           "type": "string"
@@ -13936,7 +13939,10 @@ func init() {
           }
         },
         "policy": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "status": {
           "type": "string"

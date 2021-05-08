@@ -24,6 +24,7 @@ import (
 var (
 	configuration       = "/settings"
 	users               = "/users"
+	usersDetail         = "/users/:userName"
 	groups              = "/groups"
 	iamPolicies         = "/policies"
 	dashboard           = "/dashboard"
@@ -268,6 +269,7 @@ var displayRules = map[string]func() bool{
 var endpointRules = map[string]ConfigurationActionSet{
 	configuration:       configurationActionSet,
 	users:               usersActionSet,
+	usersDetail:         usersActionSet,
 	groups:              groupsActionSet,
 	iamPolicies:         iamPoliciesActionSet,
 	dashboard:           dashboardActionSet,

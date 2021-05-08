@@ -19,6 +19,7 @@ package restapi
 import (
 	"context"
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/minio/minio/pkg/madmin"
@@ -99,7 +100,7 @@ func TestListUsers(t *testing.T) {
 	for _, b := range userMap {
 		assert.Contains(mockUserMap, b.AccessKey)
 		assert.Equal(string(mockUserMap[b.AccessKey].Status), b.Status)
-		assert.Equal(mockUserMap[b.AccessKey].PolicyName, b.Policy)
+		assert.Equal(mockUserMap[b.AccessKey].PolicyName, strings.Join(b.Policy, ","))
 		assert.ElementsMatch(mockUserMap[b.AccessKey].MemberOf, []string{"group1", "group2"})
 	}
 
