@@ -560,33 +560,35 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 
 	tenantName := *tenantReq.Name
-	secretName := fmt.Sprintf("%s-secret", tenantName)
+
 	imm := true
 	var instanceSecret corev1.Secret
 	var users []*corev1.LocalObjectReference
-	if !(len(tenantReq.Idp.Keys) > 0) {
-		instanceSecret = corev1.Secret{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: secretName,
-				Labels: map[string]string{
-					miniov2.TenantLabel: tenantName,
-				},
+
+	// Create the secret for the root credentials
+	secretName := fmt.Sprintf("%s-secret", tenantName)
+	instanceSecret = corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: secretName,
+			Labels: map[string]string{
+				miniov2.TenantLabel: tenantName,
 			},
-			Immutable: &imm,
-			Data: map[string][]byte{
-				"accesskey": []byte(accessKey),
-				"secretkey": []byte(secretKey),
-			},
-		}
-		_, err = clientSet.CoreV1().Secrets(ns).Create(ctx, &instanceSecret, metav1.CreateOptions{})
-		if err != nil {
-			return nil, prepareError(err)
-		}
-	} else {
-		users = append(users, &corev1.LocalObjectReference{Name: secretName})
+		},
+		Immutable: &imm,
+		Data: map[string][]byte{
+			"accesskey": []byte(accessKey),
+			"secretkey": []byte(secretKey),
+		},
+	}
+	_, err = clientSet.CoreV1().Secrets(ns).Create(ctx, &instanceSecret, metav1.CreateOptions{})
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// Create the secret any built-in user passed
+	if len(tenantReq.Idp.Keys) > 0 {
 		for i := 0; i < len(tenantReq.Idp.Keys); i++ {
-			users = append(users, &corev1.LocalObjectReference{Name: fmt.Sprintf("%s%d", secretName, i)})
-			instanceSecret = corev1.Secret{
+			users = append(users, &corev1.LocalObjectReference{Name: fmt.Sprintf("%s-user-%d", tenantName, i)})
+			userSecret := corev1.Secret{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: fmt.Sprintf("%s%d", secretName, i),
 					Labels: map[string]string{
@@ -599,7 +601,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 					"CONSOLE_SECRET_KEY": []byte(*tenantReq.Idp.Keys[i].SecretKey),
 				},
 			}
-			_, err := clientSet.CoreV1().Secrets(ns).Create(ctx, &instanceSecret, metav1.CreateOptions{})
+			_, err := clientSet.CoreV1().Secrets(ns).Create(ctx, &userSecret, metav1.CreateOptions{})
 			if err != nil {
 				return nil, prepareError(err)
 			}
