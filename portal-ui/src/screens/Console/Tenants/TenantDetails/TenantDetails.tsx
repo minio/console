@@ -23,7 +23,13 @@ import {
   modalBasic,
 } from "../../Common/FormComponents/common/styleLibrary";
 import Grid from "@material-ui/core/Grid";
-import { Button, Typography } from "@material-ui/core";
+import {
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+} from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import { CreateIcon } from "../../../../icons";
@@ -43,6 +49,8 @@ import { LicenseInfo } from "../../License/types";
 import { Link } from "react-router-dom";
 import { setErrorSnackMessage } from "../../../../actions";
 import Moment from "react-moment";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import TenantYAML from "./TenantYAML";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -185,6 +193,7 @@ const TenantDetails = ({
   const [usageError, setUsageError] = useState<string>("");
   const [usage, setUsage] = useState<number>(0);
   const [updateMinioVersion, setUpdateMinioVersion] = useState<boolean>(false);
+  const [yamlScreenOpen, setYamlScreenOpen] = useState<boolean>(false);
   const [licenseInfo, setLicenseInfo] = useState<LicenseInfo>();
   const [loadingLicenseInfo, setLoadingLicenseInfo] = useState<boolean>(true);
   const [loadingActivateProduct, setLoadingActivateProduct] = useState<boolean>(
@@ -264,7 +273,7 @@ const TenantDetails = ({
           totalVolumes += pool.volumes;
           poolNamedIndex += 1;
         }
-        setCapacity(res.total_size);
+        setCapacity(res.total_size || 0);
         setPoolCount(resPools.length);
         setVolumes(totalVolumes);
         setInstances(totalInstances);
@@ -338,6 +347,22 @@ const TenantDetails = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleTenantMenu = (event: any) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const editYaml = () => {
+    setAnchorEl(null);
+    setYamlScreenOpen(true);
+  };
+
+  const closeYAMLModalAndRefresh = () => {
+    setYamlScreenOpen(false);
+    loadInfo();
+  };
+
   return (
     <React.Fragment>
       {addPoolOpen && tenant !== null && (
@@ -369,6 +394,14 @@ const TenantDetails = ({
           namespace={tenantNamespace}
         />
       )}
+      {yamlScreenOpen && (
+        <TenantYAML
+          open={yamlScreenOpen}
+          closeModalAndRefresh={closeYAMLModalAndRefresh}
+          tenant={tenantName}
+          namespace={tenantNamespace}
+        />
+      )}
       <PageHeader
         label={
           <Fragment>
@@ -376,6 +409,25 @@ const TenantDetails = ({
               Tenant
             </Link>
             {` > ${match.params["tenantName"]}`}
+            <IconButton
+              aria-label="more"
+              aria-controls="long-menu"
+              aria-haspopup="true"
+              onClick={handleTenantMenu}
+            >
+              <MoreVertIcon />
+            </IconButton>
+            <Menu
+              id="long-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={editYaml}
+            >
+              <MenuItem key="yaml" onClick={editYaml}>
+                Edit YAML
+              </MenuItem>
+            </Menu>
           </Fragment>
         }
       />

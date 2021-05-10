@@ -28,6 +28,7 @@ require("codemirror/mode/javascript/javascript");
 interface ICodeWrapper {
   value: string;
   label?: string;
+  mode?: string;
   tooltip?: string;
   classes: any;
   onChange?: (editor: any, data: any, value: string) => any;
@@ -44,6 +45,7 @@ const CodeMirrorWrapper = ({
   value,
   label = "",
   tooltip = "",
+  mode = "javascript",
   classes,
   onChange = () => {},
   onBeforeChange,
@@ -70,7 +72,7 @@ const CodeMirrorWrapper = ({
         <CodeMirror
           value={value}
           options={{
-            mode: "javascript",
+            mode: mode,
             lineNumbers: true,
             readOnly,
           }}
