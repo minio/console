@@ -29,9 +29,7 @@ import {
   modalBasic,
 } from "../../Common/FormComponents/common/styleLibrary";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import CodeMirrorWrapper from "../../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
-import { HasPermissionResponse } from "../../Buckets/types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -102,22 +100,9 @@ const TenantYAML = ({
         setLoading(false);
         setErrorSnackMessage(err);
       });
-  }, []);
-
-  // useEffect(() => {
-  //   if (policyEdit) {
-  //     setPolicyName(policyEdit.name);
-  //     setPolicyDefinition(
-  //       policyEdit ? JSON.stringify(JSON.parse(policyEdit.policy), null, 4) : ""
-  //     );
-  //   }
-  // }, [policyEdit]);
+  }, [tenant, namespace]);
 
   useEffect(() => {}, []);
-
-  const resetForm = () => {
-    setTenantYaml("");
-  };
 
   const validSave = tenantYaml.trim() !== "";
 
@@ -129,6 +114,7 @@ const TenantYAML = ({
       }}
       title={`YAML`}
     >
+      {loading && <LinearProgress />}
       <form
         noValidate
         autoComplete="off"

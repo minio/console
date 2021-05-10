@@ -49,9 +49,7 @@ import { LicenseInfo } from "../../License/types";
 import { Link } from "react-router-dom";
 import { setErrorSnackMessage } from "../../../../actions";
 import Moment from "react-moment";
-import { Fragment } from "react";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
-import AddPolicy from "../../Policies/AddPolicy";
 import TenantYAML from "./TenantYAML";
 
 interface ITenantDetailsProps {
