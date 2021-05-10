@@ -560,51 +560,31 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 
 	tenantName := *tenantReq.Name
-	secretName := fmt.Sprintf("%s-secret", tenantName)
+
 	imm := true
 	var instanceSecret corev1.Secret
 	var users []*corev1.LocalObjectReference
-	if !(len(tenantReq.Idp.Keys) > 0) {
-		instanceSecret = corev1.Secret{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: secretName,
-				Labels: map[string]string{
-					miniov2.TenantLabel: tenantName,
-				},
+
+	// Create the secret for the root credentials
+	secretName := fmt.Sprintf("%s-secret", tenantName)
+	instanceSecret = corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: secretName,
+			Labels: map[string]string{
+				miniov2.TenantLabel: tenantName,
 			},
-			Immutable: &imm,
-			Data: map[string][]byte{
-				"accesskey": []byte(accessKey),
-				"secretkey": []byte(secretKey),
-			},
-		}
-		_, err = clientSet.CoreV1().Secrets(ns).Create(ctx, &instanceSecret, metav1.CreateOptions{})
-		if err != nil {
-			return nil, prepareError(err)
-		}
-	} else {
-		users = append(users, &corev1.LocalObjectReference{Name: secretName})
-		for i := 0; i < len(tenantReq.Idp.Keys); i++ {
-			users = append(users, &corev1.LocalObjectReference{Name: fmt.Sprintf("%s%d", secretName, i)})
-			instanceSecret = corev1.Secret{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: fmt.Sprintf("%s%d", secretName, i),
-					Labels: map[string]string{
-						miniov2.TenantLabel: tenantName,
-					},
-				},
-				Immutable: &imm,
-				Data: map[string][]byte{
-					"CONSOLE_ACCESS_KEY": []byte(*tenantReq.Idp.Keys[i].AccessKey),
-					"CONSOLE_SECRET_KEY": []byte(*tenantReq.Idp.Keys[i].SecretKey),
-				},
-			}
-			_, err := clientSet.CoreV1().Secrets(ns).Create(ctx, &instanceSecret, metav1.CreateOptions{})
-			if err != nil {
-				return nil, prepareError(err)
-			}
-		}
+		},
+		Immutable: &imm,
+		Data: map[string][]byte{
+			"accesskey": []byte(accessKey),
+			"secretkey": []byte(secretKey),
+		},
 	}
+	_, err = clientSet.CoreV1().Secrets(ns).Create(ctx, &instanceSecret, metav1.CreateOptions{})
+	if err != nil {
+		return nil, prepareError(err)
+	}
+
 	// delete secrets created if an error occurred during tenant creation,
 	defer func() {
 		if mError != nil {
@@ -647,9 +627,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 		},
 	}
 	idpEnabled := false
-	if len(tenantReq.Idp.Keys) > 0 {
-		minInst.Spec.Users = users
-	}
+
 	// Enable IDP (Active Directory) for MinIO
 	if tenantReq.Idp != nil && tenantReq.Idp.ActiveDirectory != nil {
 		url := *tenantReq.Idp.ActiveDirectory.URL
@@ -699,6 +677,32 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 				})
 			}
 		}
+	}
+
+	// Create the secret any built-in user passed if no external IDP was configured
+	if tenantReq.Idp != nil && len(tenantReq.Idp.Keys) > 0 && tenantReq.Idp.ActiveDirectory == nil && tenantReq.Idp.Oidc == nil {
+		for i := 0; i < len(tenantReq.Idp.Keys); i++ {
+			users = append(users, &corev1.LocalObjectReference{Name: fmt.Sprintf("%s-user-%d", tenantName, i)})
+			userSecret := corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: fmt.Sprintf("%s%d", secretName, i),
+					Labels: map[string]string{
+						miniov2.TenantLabel: tenantName,
+					},
+				},
+				Immutable: &imm,
+				Data: map[string][]byte{
+					"CONSOLE_ACCESS_KEY": []byte(*tenantReq.Idp.Keys[i].AccessKey),
+					"CONSOLE_SECRET_KEY": []byte(*tenantReq.Idp.Keys[i].SecretKey),
+				},
+			}
+			_, err := clientSet.CoreV1().Secrets(ns).Create(ctx, &userSecret, metav1.CreateOptions{})
+			if err != nil {
+				return nil, prepareError(err)
+			}
+		}
+		// attach the users to the tenant
+		minInst.Spec.Users = users
 	}
 
 	isEncryptionEnabled := false
@@ -783,37 +787,6 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	}
 
 	if enableConsole {
-		// provision initial user for tenant
-		if len(tenantReq.Idp.Keys) == 0 || keyElementEmpty {
-			tenantUserAccessKey = RandomCharString(16)
-			tenantUserSecretKey = RandomCharString(32)
-			consoleUserSecretName := fmt.Sprintf("%s-user-secret", tenantName)
-			consoleUserSecretData := map[string][]byte{
-				"CONSOLE_ACCESS_KEY": []byte(tenantUserAccessKey),
-				"CONSOLE_SECRET_KEY": []byte(tenantUserSecretKey),
-			}
-			_, err := createOrReplaceSecrets(ctx, &k8sClient, ns, []tenantSecret{{Name: consoleUserSecretName, Content: consoleUserSecretData}}, tenantName)
-			if err != nil {
-				return nil, prepareError(errorGeneric, nil, err)
-			}
-			minInst.Spec.Users = []*corev1.LocalObjectReference{{Name: consoleUserSecretName}}
-		} else {
-			tenantUserAccessKey = *tenantReq.Idp.Keys[0].AccessKey
-			tenantUserSecretKey = *tenantReq.Idp.Keys[0].SecretKey
-			for i := 0; i < len(tenantReq.Idp.Keys); i++ {
-				userSecretName := fmt.Sprintf("%s-%d-user-secret", tenantName, i)
-				userSecretData := map[string][]byte{
-					"CONSOLE_ACCESS_KEY": []byte(*tenantReq.Idp.Keys[i].AccessKey),
-					"CONSOLE_SECRET_KEY": []byte(*tenantReq.Idp.Keys[i].SecretKey),
-				}
-				_, err := createOrReplaceSecrets(ctx, &k8sClient, ns, []tenantSecret{{Name: userSecretName, Content: userSecretData}}, tenantName)
-				if err != nil {
-					return nil, prepareError(errorGeneric, nil, err)
-				}
-				minInst.Spec.Users = append(minInst.Spec.Users, &corev1.LocalObjectReference{Name: userSecretName})
-			}
-
-		}
 		consoleSelector := fmt.Sprintf("%s-console", tenantName)
 		consoleSecretName := fmt.Sprintf("%s-secret", consoleSelector)
 		consoleSecretData := map[string][]byte{
