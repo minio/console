@@ -1913,7 +1913,10 @@ func getUpdateTenantYAML(session *models.Principal, params admin_api.PutTenantYA
 		return prepareError(err)
 	}
 	upTenant := tenant.DeepCopy()
-	// only replace the spec field
+	// only update safe fields: spec, metadata.finalizers, metadata.labels and metadata.annotations
+	upTenant.Labels = inTenant.Labels
+	upTenant.Annotations = inTenant.Annotations
+	upTenant.Finalizers = inTenant.Finalizers
 	upTenant.Spec = inTenant.Spec
 
 	_, err = opClient.MinioV2().Tenants(params.Namespace).Update(params.HTTPRequest.Context(), upTenant, metav1.UpdateOptions{})
