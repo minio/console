@@ -40,6 +40,11 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
+    errorState: {
+      color: "#b53b4b",
+      fontSize: 14,
+      fontWeight: "bold",
+    },
     ...modalBasic,
     ...fieldBasic,
   });
@@ -63,10 +68,12 @@ const TenantYAML = ({
   closeModalAndRefresh,
   tenant,
   namespace,
+  setModalErrorSnackMessage,
 }: ITenantYAMLProps) => {
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [tenantYaml, setTenantYaml] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const updateTenant = (event: React.FormEvent) => {
     event.preventDefault();
@@ -74,6 +81,7 @@ const TenantYAML = ({
       return;
     }
     setAddLoading(true);
+    setErrorMessage("");
     api
       .invoke("PUT", `/api/v1/namespaces/${namespace}/tenants/${tenant}/yaml`, {
         yaml: tenantYaml,
@@ -81,10 +89,12 @@ const TenantYAML = ({
       .then((res) => {
         setAddLoading(false);
         closeModalAndRefresh(true);
+        setErrorMessage("");
       })
       .catch((err) => {
         setAddLoading(false);
-        setModalErrorSnackMessage(err);
+        console.log(err);
+        setErrorMessage(err);
       });
   };
 
@@ -98,7 +108,7 @@ const TenantYAML = ({
       })
       .catch((err: any) => {
         setLoading(false);
-        setErrorSnackMessage(err);
+        setModalErrorSnackMessage(err);
       });
   }, [tenant, namespace]);
 
@@ -115,6 +125,9 @@ const TenantYAML = ({
       title={`YAML`}
     >
       {loading && <LinearProgress />}
+      {errorMessage !== "" && (
+        <div className={classes.errorState}>{errorMessage}</div>
+      )}
       {!loading && (
         <form
           noValidate

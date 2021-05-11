@@ -1888,14 +1888,6 @@ func getTenantYAML(session *models.Principal, params admin_api.GetTenantYAMLPara
 }
 
 func getUpdateTenantYAML(session *models.Principal, params admin_api.PutTenantYAMLParams) *models.Error {
-
-	// can we parse the inbound?
-	//var inTenant miniov2.Tenant
-	//err := yaml.Unmarshal([]byte(params.Body.Yaml), &inTenant)
-	//if err != nil {
-	//	return prepareError(err)
-	//}
-
 	// https://godoc.org/k8s.io/apimachinery/pkg/runtime#Scheme
 	scheme := runtime.NewScheme()
 
@@ -1907,7 +1899,7 @@ func getUpdateTenantYAML(session *models.Principal, params admin_api.PutTenantYA
 
 	tenantObject, _, err := deserializer.Decode([]byte(params.Body.Yaml), nil, &miniov2.Tenant{})
 	if err != nil {
-		panic(err)
+		return &models.Error{Code: 400, Message: swag.String(err.Error())}
 	}
 	inTenant := tenantObject.(*miniov2.Tenant)
 	// get Kubernetes Client
@@ -1921,12 +1913,15 @@ func getUpdateTenantYAML(session *models.Principal, params admin_api.PutTenantYA
 		return prepareError(err)
 	}
 	upTenant := tenant.DeepCopy()
-	// only replace the spec field
+	// only update safe fields: spec, metadata.finalizers, metadata.labels and metadata.annotations
+	upTenant.Labels = inTenant.Labels
+	upTenant.Annotations = inTenant.Annotations
+	upTenant.Finalizers = inTenant.Finalizers
 	upTenant.Spec = inTenant.Spec
 
 	_, err = opClient.MinioV2().Tenants(params.Namespace).Update(params.HTTPRequest.Context(), upTenant, metav1.UpdateOptions{})
 	if err != nil {
-		return prepareError(err)
+		return &models.Error{Code: 400, Message: swag.String(err.Error())}
 	}
 
 	return nil
