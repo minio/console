@@ -77,7 +77,7 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
   const xSpacing = 10;
   const ySpacing = 10;
 
-  const dashboardDistr = getDashboardDistribution();
+  const dashboardDistr = getDashboardDistribution(panelInformation.length);
 
   const autoSizerStyleProp = {
     width: "100%",
@@ -121,7 +121,7 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
                 hideYAxis={value.disableYAxis}
                 xAxisFormatter={value.xAxisFormatter}
                 yAxisFormatter={value.yAxisFormatter}
-                panelWidth={singlePanelWidth * dashboardDistr[index].w}
+                panelWidth={dashboardDistr[index] ? singlePanelWidth * dashboardDistr[index].w : singlePanelWidth}
               />
             );
           case widgetType.barChart:
