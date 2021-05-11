@@ -99,7 +99,7 @@ export interface ITenantUsage {
 
 export interface IAffinityModel {
   podAntiAffinity?: IPodAntiAffinityModel;
-  podAffinity?: IPodAffinityModel;
+  nodeAffinity?: INodeAffinityModel;
 }
 
 export interface IPodAntiAffinityModel {
@@ -115,17 +115,16 @@ export interface IPodAffinityTermLabelSelector {
   matchExpressions: IMatchExpressionItem[];
 }
 
-export interface IPodAffinityModel {
-  requiredDuringSchedulingIgnoredDuringExecution: IPodAffinityTerms[];
+export interface INodeAffinityModel {
+  requiredDuringSchedulingIgnoredDuringExecution: INodeAffinityTerms;
 }
 
-export interface IPodAffinityTerms {
-  labelSelector: IPodAffinityLabelsSelector;
-  topologyKey: string;
+export interface INodeAffinityTerms {
+  nodeSelectorTerms: INodeAffinityLabelsSelector[];
 }
 
-export interface IPodAffinityLabelsSelector {
-  matchLabels: object;
+export interface INodeAffinityLabelsSelector {
+  matchExpressions: object[];
 }
 
 export interface IMatchExpressionItem {
@@ -377,4 +376,5 @@ export interface PrometheusConfiguration {
 export interface AffinityConfiguration {
   affinityType: "default" | "nodeSelector" | "none";
   nodeSelectorLabels?: ILabelKeyPair[];
+  withPodAntiAffinity?: boolean;
 }

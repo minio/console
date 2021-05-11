@@ -31,11 +31,13 @@ import {
 } from "../../../../../utils/validationFunctions";
 import RadioGroupSelector from "../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import QueryMultiSelector from "../../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
+import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
 interface IAffinityProps {
   classes: any;
   podAffinity: string;
-  affinityLabels: string;
+  nodeSelectorLabels: string;
+  withPodAntiAffinity: boolean;
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
   updateAddField: typeof updateAddField;
   isPageValid: typeof isPageValid;
@@ -53,7 +55,8 @@ const styles = (theme: Theme) =>
 const Affinity = ({
   classes,
   podAffinity,
-  affinityLabels,
+  nodeSelectorLabels,
+  withPodAntiAffinity,
   setModalErrorSnackMessage,
   updateAddField,
   isPageValid,
@@ -75,7 +78,7 @@ const Affinity = ({
     if (podAffinity === "nodeSelector") {
       let valid = true;
 
-      const splittedLabels = affinityLabels.split("&");
+      const splittedLabels = nodeSelectorLabels.split("&");
 
       if (splittedLabels.length === 1 && splittedLabels[0] === "") {
         valid = false;
@@ -100,7 +103,7 @@ const Affinity = ({
         {
           fieldKey: "labels",
           required: true,
-          value: affinityLabels,
+          value: nodeSelectorLabels,
           customValidation: !valid,
           customValidationMessage:
             "You need to add at least one label key-pair",
@@ -113,7 +116,7 @@ const Affinity = ({
     isPageValid("affinity", Object.keys(commonVal).length === 0);
 
     setValidationErrors(commonVal);
-  }, [isPageValid, podAffinity, affinityLabels]);
+  }, [isPageValid, podAffinity, nodeSelectorLabels]);
 
   return (
     <Fragment>
@@ -144,12 +147,27 @@ const Affinity = ({
         <Fragment>
           <br />
           <Grid item xs={12}>
+            <FormSwitchWrapper
+              value="with_pod_anti_affinity"
+              id="with_pod_anti_affinity"
+              name="with_pod_anti_affinity"
+              checked={withPodAntiAffinity}
+              onChange={(e) => {
+                const targetD = e.target;
+                const checked = targetD.checked;
+
+                updateField("withPodAntiAffinity", checked);
+              }}
+              label={"With Pod Anti-Affinity"}
+            />
+          </Grid>
+          <Grid item xs={12}>
             <QueryMultiSelector
               name="labels"
               label="Labels"
-              elements={affinityLabels}
+              elements={nodeSelectorLabels}
               onChange={(vl: string) => {
-                updateField("affinityLabels", vl);
+                updateField("nodeSelectorLabels", vl);
               }}
               keyPlaceholder="Label Key"
               valuePlaceholder="Label Value"
@@ -166,7 +184,10 @@ const Affinity = ({
 
 const mapState = (state: AppState) => ({
   podAffinity: state.tenants.createTenant.fields.affinity.podAffinity,
-  affinityLabels: state.tenants.createTenant.fields.affinity.affinityLabels,
+  nodeSelectorLabels:
+    state.tenants.createTenant.fields.affinity.nodeSelectorLabels,
+  withPodAntiAffinity:
+    state.tenants.createTenant.fields.affinity.withPodAntiAffinity,
 });
 
 const connector = connect(mapState, {

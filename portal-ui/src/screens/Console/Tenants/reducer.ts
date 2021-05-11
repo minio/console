@@ -78,8 +78,8 @@ const initialState: ITenantState = {
       },
       identityProvider: {
         idpSelection: "Built-in",
-        accessKeys: [""],
-        secretKeys: [""],
+        accessKeys: [getRandomString(16)],
+        secretKeys: [getRandomString(32)],
         openIDURL: "",
         openIDClientID: "",
         openIDSecretID: "",
@@ -159,8 +159,9 @@ const initialState: ITenantState = {
         limitSize: {},
       },
       affinity: {
-        affinityLabels: "",
+        nodeSelectorLabels: "",
         podAffinity: "default",
+        withPodAntiAffinity: true,
       },
     },
     certificates: {
@@ -553,8 +554,9 @@ export function tenantsReducer(
               limitSize: {},
             },
             affinity: {
-              affinityLabels: "",
+              nodeSelectorLabels: "",
               podAffinity: "default",
+              withPodAntiAffinity: true,
             },
           },
           certificates: {
