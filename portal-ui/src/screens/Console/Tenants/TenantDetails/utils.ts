@@ -42,32 +42,42 @@ export const getDefaultAffinity = (tenantName: string, poolName: string) => {
   return defaultAffinity;
 };
 
-export const getNodeSelector = (labels: string) => {
+export const getNodeSelector = (
+  labels: string,
+  withPodAntiAffinity: boolean,
+  tenantName: string,
+  poolName: string
+) => {
   // Labels in the form of key1=value1&key2=value2&key3=value3...
   const splittedLabels = labels.split("&");
-  let labelItems: any = {};
+  let matchExpressions: any = [];
 
   splittedLabels.forEach((label: string) => {
     const splitKeyValue = label.split("=");
     if (splitKeyValue.length === 2) {
-      labelItems = {
-        ...labelItems,
-        [`${splitKeyValue[0]}`]: splitKeyValue[1],
-      };
+      matchExpressions.push({
+        key: splitKeyValue[0],
+        operator: "In",
+        values: [splitKeyValue[1]],
+      });
     }
   });
 
   const nodeSelector: IAffinityModel = {
-    podAffinity: {
-      requiredDuringSchedulingIgnoredDuringExecution: [
-        {
-          labelSelector: {
-            matchLabels: { ...labelItems },
+    nodeAffinity: {
+      requiredDuringSchedulingIgnoredDuringExecution: {
+        nodeSelectorTerms: [
+          {
+            matchExpressions: matchExpressions,
           },
-          topologyKey: "kubernetes.io/hostname",
-        },
-      ],
+        ],
+      },
     },
   };
+  if (withPodAntiAffinity) {
+    const def = getDefaultAffinity(tenantName, poolName);
+    nodeSelector.podAntiAffinity = def.podAntiAffinity;
+  }
+  console.log(nodeSelector);
   return nodeSelector;
 };

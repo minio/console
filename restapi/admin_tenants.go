@@ -704,10 +704,11 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	// Create the secret any built-in user passed if no external IDP was configured
 	if tenantReq.Idp != nil && len(tenantReq.Idp.Keys) > 0 && tenantReq.Idp.ActiveDirectory == nil && tenantReq.Idp.Oidc == nil {
 		for i := 0; i < len(tenantReq.Idp.Keys); i++ {
-			users = append(users, &corev1.LocalObjectReference{Name: fmt.Sprintf("%s-user-%d", tenantName, i)})
+			userSecretName := fmt.Sprintf("%s-user-%d", tenantName, i)
+			users = append(users, &corev1.LocalObjectReference{Name: userSecretName})
 			userSecret := corev1.Secret{
 				ObjectMeta: metav1.ObjectMeta{
-					Name: fmt.Sprintf("%s%d", secretName, i),
+					Name: userSecretName,
 					Labels: map[string]string{
 						miniov2.TenantLabel: tenantName,
 					},

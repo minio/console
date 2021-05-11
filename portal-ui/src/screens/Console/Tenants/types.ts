@@ -183,7 +183,8 @@ export interface ITenantSizeFields {
 
 export interface ITenantAffinity {
   podAffinity: "default" | "nodeSelector" | "none";
-  affinityLabels: string;
+  nodeSelectorLabels: string;
+  withPodAntiAffinity: boolean;
 }
 
 export interface ITenantState {

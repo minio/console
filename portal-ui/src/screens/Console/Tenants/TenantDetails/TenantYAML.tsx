@@ -115,44 +115,46 @@ const TenantYAML = ({
       title={`YAML`}
     >
       {loading && <LinearProgress />}
-      <form
-        noValidate
-        autoComplete="off"
-        onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-          updateTenant(e);
-        }}
-      >
-        <Grid container>
-          <Grid item xs={12} className={classes.formScrollable}>
-            <Grid item xs={12}>
-              <br />
+      {!loading && (
+        <form
+          noValidate
+          autoComplete="off"
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+            updateTenant(e);
+          }}
+        >
+          <Grid container>
+            <Grid item xs={12} className={classes.formScrollable}>
+              <Grid item xs={12}>
+                <br />
+              </Grid>
+              <CodeMirrorWrapper
+                label={`Tenant Specification`}
+                value={tenantYaml}
+                mode={"yaml"}
+                onBeforeChange={(editor, data, value) => {
+                  setTenantYaml(value);
+                }}
+              />
             </Grid>
-            <CodeMirrorWrapper
-              label={`Tenant Specification`}
-              value={tenantYaml}
-              mode={"yaml"}
-              onBeforeChange={(editor, data, value) => {
-                setTenantYaml(value);
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.buttonContainer}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={addLoading || !validSave}
-            >
-              Save
-            </Button>
-          </Grid>
-          {addLoading && (
-            <Grid item xs={12}>
-              <LinearProgress />
+            <Grid item xs={12} className={classes.buttonContainer}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={addLoading || !validSave}
+              >
+                Save
+              </Button>
             </Grid>
-          )}
-        </Grid>
-      </form>
+            {addLoading && (
+              <Grid item xs={12}>
+                <LinearProgress />
+              </Grid>
+            )}
+          </Grid>
+        </form>
+      )}
     </ModalWrapper>
   );
 };

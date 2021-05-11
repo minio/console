@@ -168,7 +168,8 @@ const AddTenant = ({
       fields.configure.prometheusSelectedStorageClass;
     const prometheusVolumeSize = fields.configure.prometheusVolumeSize;
     const affinityType = fields.affinity.podAffinity;
-    const affinityLabels = fields.affinity.affinityLabels;
+    const nodeSelectorLabels = fields.affinity.nodeSelectorLabels;
+    const withPodAntiAffinity = fields.affinity.withPodAntiAffinity;
 
     if (addSending) {
       const poolName = generatePoolName([]);
@@ -182,7 +183,14 @@ const AddTenant = ({
           };
           break;
         case "nodeSelector":
-          affinityObject = { affinity: getNodeSelector(affinityLabels) };
+          affinityObject = {
+            affinity: getNodeSelector(
+              nodeSelectorLabels,
+              withPodAntiAffinity,
+              tenantName,
+              poolName
+            ),
+          };
           break;
       }
 
