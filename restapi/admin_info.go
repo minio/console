@@ -81,6 +81,7 @@ type Target struct {
 	Expr         string
 	Interval     string
 	LegendFormat string
+	Step         int32
 }
 
 type ReduceOptions struct {
@@ -92,6 +93,7 @@ type MetricOptions struct {
 }
 
 type Metric struct {
+	ID      int32
 	Title   string
 	Type    string
 	Options MetricOptions
@@ -109,6 +111,7 @@ var labels = []WidgetLabel{
 
 var widgets = []Metric{
 	{
+		ID:    1,
 		Title: "Uptime",
 		Type:  "stat",
 
@@ -121,33 +124,39 @@ var widgets = []Metric{
 		},
 
 		Targets: []Target{
+
 			{
-				Expr:         "time() - max(process_start_time_seconds)",
+				Expr:         "time() - max(minio_node_process_starttime_seconds)",
 				LegendFormat: "{{instance}}",
+				Step:         60,
 			},
 		},
 	},
 	{
-		Title: "Total Online disks",
+		ID:    65,
+		Title: "Total S3 Traffic Inbound",
 		Type:  "stat",
 
 		Options: MetricOptions{
 			ReduceOptions: ReduceOptions{
 				Calcs: []string{
-					"mean",
+					"last",
 				},
 			},
 		},
 
 		Targets: []Target{
+
 			{
-				Expr:         "sum(minio_disks_total)",
-				LegendFormat: "Total online disks in MinIO Cluster",
+				Expr:         "sum by (instance) (minio_s3_traffic_received_bytes{job=\"minio-job\"})",
+				LegendFormat: "{{instance}}",
+				Step:         60,
 			},
 		},
 	},
 	{
-		Title: "Total Data",
+		ID:    50,
+		Title: "Current Usable Capacity",
 		Type:  "gauge",
 
 		Options: MetricOptions{
@@ -159,23 +168,29 @@ var widgets = []Metric{
 		},
 
 		Targets: []Target{
+
 			{
-				Expr:         "topk(1, sum(bucket_usage_size) by (instance))",
+				Expr:         "topk(1, sum(minio_cluster_capacity_usable_free_bytes) by (instance))",
 				LegendFormat: "",
+				Step:         300,
 			},
 		},
 	},
 	{
-		Title: "Data Growth",
+		ID:    68,
+		Title: "Data Usage Growth",
 		Type:  "graph",
+
 		Targets: []Target{
+
 			{
-				Expr:         "topk(1, sum(bucket_usage_size) by (instance))",
-				LegendFormat: "Total Storage Used",
+				Expr:         "sum(minio_bucket_usage_total_bytes) by (instance)",
+				LegendFormat: "Used Capacity",
 			},
 		},
 	},
 	{
+		ID:    52,
 		Title: "Object size distribution",
 		Type:  "bargauge",
 
@@ -188,23 +203,82 @@ var widgets = []Metric{
 		},
 
 		Targets: []Target{
+
 			{
-				Expr:         "max by (object_size) (bucket_objects_histogram)",
-				LegendFormat: "{{object_size}}",
+				Expr:         "max by (range) (minio_bucket_objects_size_distribution)",
+				LegendFormat: "{{range}}",
+				Step:         300,
 			},
 		},
 	},
 	{
-		Title: "Total Offline disks",
-		Type:  "singlestat",
+		ID:    61,
+		Title: "Total Open FDs",
+		Type:  "stat",
+
+		Options: MetricOptions{
+			ReduceOptions: ReduceOptions{
+				Calcs: []string{
+					"last",
+				},
+			},
+		},
+
 		Targets: []Target{
+
 			{
-				Expr:         "sum(minio_disks_offline)",
-				LegendFormat: "Total offline disks in MinIO Cluster",
+				Expr:         "sum (minio_node_file_descriptor_open_total)",
+				LegendFormat: "",
+				Step:         60,
 			},
 		},
 	},
 	{
+		ID:    64,
+		Title: "Total S3 Traffic Outbound",
+		Type:  "stat",
+
+		Options: MetricOptions{
+			ReduceOptions: ReduceOptions{
+				Calcs: []string{
+					"last",
+				},
+			},
+		},
+
+		Targets: []Target{
+
+			{
+				Expr:         "sum by (instance) (minio_s3_traffic_sent_bytes{job=\"minio-job\"})",
+				LegendFormat: "",
+				Step:         60,
+			},
+		},
+	},
+	{
+		ID:    62,
+		Title: "Total Goroutines",
+		Type:  "stat",
+
+		Options: MetricOptions{
+			ReduceOptions: ReduceOptions{
+				Calcs: []string{
+					"last",
+				},
+			},
+		},
+
+		Targets: []Target{
+
+			{
+				Expr:         "sum without (server,instance) (minio_node_go_routine_total)",
+				LegendFormat: "",
+				Step:         60,
+			},
+		},
+	},
+	{
+		ID:    53,
 		Title: "Total Online Servers",
 		Type:  "stat",
 
@@ -217,14 +291,17 @@ var widgets = []Metric{
 		},
 
 		Targets: []Target{
+
 			{
-				Expr:         "count by (instances) (minio_version_info)",
+				Expr:         "minio_cluster_nodes_online_total",
 				LegendFormat: "",
+				Step:         60,
 			},
 		},
 	},
 	{
-		Title: "Total S3 Traffic Inbound",
+		ID:    9,
+		Title: "Total Online Disks",
 		Type:  "stat",
 
 		Options: MetricOptions{
@@ -236,13 +313,16 @@ var widgets = []Metric{
 		},
 
 		Targets: []Target{
+
 			{
-				Expr:         "sum without (instance) (s3_rx_bytes_total)",
-				LegendFormat: "",
+				Expr:         "minio_cluster_disk_online_total",
+				LegendFormat: "Total online disks in MinIO Cluster",
+				Step:         60,
 			},
 		},
 	},
 	{
+		ID:    66,
 		Title: "Number of Buckets",
 		Type:  "stat",
 
@@ -255,28 +335,42 @@ var widgets = []Metric{
 		},
 
 		Targets: []Target{
+
 			{
-				Expr:         "count(count by (bucket) (bucket_objects_count))",
+				Expr:         "count(count by (bucket) (minio_bucket_usage_total_bytes))",
 				LegendFormat: "",
 			},
 		},
 	},
 	{
-		Title: "S3 API Request & Error Rate",
+		ID:    63,
+		Title: "S3 API Data Received Rate ",
 		Type:  "graph",
+
 		Targets: []Target{
+
 			{
-				Expr:         "sum without (instance,api)(rate(s3_requests_total[10m]))",
-				LegendFormat: "S3 Requests",
-			},
-			{
-				Expr:         "sum without (instance,api)(rate(s3_errors_total[10m]))",
-				LegendFormat: "S3 Errors",
+				Expr:         "sum by (server) (rate(minio_s3_traffic_received_bytes[$__interval]))",
+				LegendFormat: "Data Received [{{server}}]",
 			},
 		},
 	},
 	{
-		Title: "Total Open FDs",
+		ID:    70,
+		Title: "S3 API Data Sent Rate ",
+		Type:  "graph",
+
+		Targets: []Target{
+
+			{
+				Expr:         "sum by (server) (rate(minio_s3_traffic_sent_bytes[$__interval]))",
+				LegendFormat: "Data Sent [{{server}}]",
+			},
+		},
+	},
+	{
+		ID:    69,
+		Title: "Total Offline Servers",
 		Type:  "stat",
 
 		Options: MetricOptions{
@@ -288,14 +382,17 @@ var widgets = []Metric{
 		},
 
 		Targets: []Target{
+
 			{
-				Expr:         "sum without (instance)(process_open_fds)",
+				Expr:         "minio_cluster_nodes_offline_total",
 				LegendFormat: "",
+				Step:         60,
 			},
 		},
 	},
 	{
-		Title: "Total S3 Traffic Outbound",
+		ID:    78,
+		Title: "Total Offline Disks",
 		Type:  "stat",
 
 		Options: MetricOptions{
@@ -307,13 +404,16 @@ var widgets = []Metric{
 		},
 
 		Targets: []Target{
+
 			{
-				Expr:         "sum without (instance)(s3_tx_bytes_total)",
+				Expr:         "minio_cluster_disk_offline_total",
 				LegendFormat: "",
+				Step:         60,
 			},
 		},
 	},
 	{
+		ID:    44,
 		Title: "Number of Objects",
 		Type:  "stat",
 
@@ -326,100 +426,203 @@ var widgets = []Metric{
 		},
 
 		Targets: []Target{
+
 			{
-				Expr:         "topk(1, sum(bucket_objects_count) by (instance))",
+				Expr:         "topk(1, sum(minio_bucket_usage_object_total) by (instance))",
 				LegendFormat: "",
 			},
 		},
 	},
 	{
-		Title: "Total Goroutines",
+		ID:    80,
+		Title: "Time Since Last Heal Activity",
 		Type:  "stat",
 
 		Options: MetricOptions{
 			ReduceOptions: ReduceOptions{
 				Calcs: []string{
-					"mean",
+					"last",
 				},
 			},
 		},
 
 		Targets: []Target{
+
 			{
-				Expr:         "sum without (instance) (go_goroutines)",
-				LegendFormat: "",
+				Expr:         "minio_heal_time_last_activity_nano_seconds",
+				LegendFormat: "{{server}}",
+				Step:         60,
 			},
 		},
 	},
 	{
-		Title: "S3 API Data Transfer",
-		Type:  "graph",
+		ID:    81,
+		Title: "Time Since Last Scan Activity",
+		Type:  "stat",
+
+		Options: MetricOptions{
+			ReduceOptions: ReduceOptions{
+				Calcs: []string{
+					"last",
+				},
+			},
+		},
+
 		Targets: []Target{
+
 			{
-				Expr:         "sum without (instance,api)(rate(s3_tx_bytes_total[5m]))",
-				LegendFormat: "S3 Data Sent",
-			},
-			{
-				Expr:         "sum without (instance,api)(rate(s3_rx_bytes_total[5m]))",
-				LegendFormat: "S3 Data Received",
+				Expr:         "minio_usage_last_activity_nano_seconds",
+				LegendFormat: "{{server}}",
+				Step:         60,
 			},
 		},
 	},
 	{
-		Title: "Total S3 API Data Transfer",
+		ID:    60,
+		Title: "S3 API Request Rate",
 		Type:  "graph",
+
 		Targets: []Target{
+
 			{
-				Expr:         "sum without (instance) (s3_rx_bytes_total)",
-				LegendFormat: "S3 Bytes Received {{instance}}",
-			},
-			{
-				Expr:         "sum without (instance) (s3_tx_bytes_total)",
-				LegendFormat: "S3 Bytes Sent {{instance}}",
+				Expr:         "sum by (server,api) (rate(minio_s3_requests_total[$__interval]))",
+				LegendFormat: "{{server,api}}",
 			},
 		},
 	},
 	{
-		Title: "Active S3 Requests",
+		ID:    71,
+		Title: "S3 API Request Error Rate",
 		Type:  "graph",
+
 		Targets: []Target{
+
 			{
-				Expr:         "s3_requests_current{instance=~\"$instance\"}",
-				LegendFormat: "Instance {{instance}} function {{api}}",
+				Expr:         "rate(minio_s3_requests_errors_total[$__interval])",
+				LegendFormat: "{{server,api}}",
 			},
 		},
 	},
 	{
+		ID:    17,
 		Title: "Internode Data Transfer",
 		Type:  "graph",
+
 		Targets: []Target{
+
 			{
-				Expr:         "internode_rx_bytes_total{instance=~\"$instance\"}",
-				LegendFormat: "Internode Bytes Received {{instance}}",
+				Expr:         "rate(minio_inter_node_traffic_sent_bytes{job=\"minio-job\"}[$__interval])",
+				LegendFormat: "Internode Bytes Received [{{server}}]",
+				Step:         4,
 			},
+
 			{
-				Expr:         "internode_tx_bytes_total{instance=~\"$instance\"}",
-				LegendFormat: "Internode Bytes Sent {{instance}}",
-			},
-		},
-	},
-	{
-		Title: "Online Disks",
-		Type:  "graph",
-		Targets: []Target{
-			{
-				Expr:         "minio_disks_total{instance=~\"$instance\"} - minio_disks_offline{instance=~\"$instance\"}",
-				LegendFormat: "Online Disks {{instance}}",
+				Expr:         "rate(minio_inter_node_traffic_sent_bytes{job=\"minio-job\"}[$__interval])",
+				LegendFormat: "Internode Bytes Received [{{server}}]",
+				Step:         4,
 			},
 		},
 	},
 	{
-		Title: "Disk Usage",
+		ID:    77,
+		Title: "Node CPU Usage",
 		Type:  "graph",
+
 		Targets: []Target{
+
 			{
-				Expr:         "disk_storage_used{disk=~\"$disk\",instance=~\"$instance\"}",
-				LegendFormat: "Used Capacity {{instance}} {{disk}}",
+				Expr:         "rate(minio_node_process_cpu_total_seconds[$__interval])",
+				LegendFormat: "CPU Usage Rate [{{server}}]",
+			},
+		},
+	},
+	{
+		ID:    76,
+		Title: "Node Memory Usage",
+		Type:  "graph",
+
+		Targets: []Target{
+
+			{
+				Expr:         "minio_node_process_resident_memory_bytes",
+				LegendFormat: "Memory Used [{{server}}]",
+			},
+		},
+	},
+	{
+		ID:    74,
+		Title: "Drive Used Capacity",
+		Type:  "graph",
+
+		Targets: []Target{
+
+			{
+				Expr:         "minio_node_disk_used_bytes",
+				LegendFormat: "Used Capacity [{{server}}:{{disk}}]",
+			},
+		},
+	},
+	{
+		ID:    82,
+		Title: "Drives Free Inodes",
+		Type:  "graph",
+
+		Targets: []Target{
+
+			{
+				Expr:         "minio_cluster_disk_free_inodes",
+				LegendFormat: "Free Inodes [{{server}}:{{disk}}]",
+			},
+		},
+	},
+	{
+		ID:    11,
+		Title: "Node Syscalls",
+		Type:  "graph",
+
+		Targets: []Target{
+
+			{
+				Expr:         "rate(minio_node_syscall_read_total[$__interval])",
+				LegendFormat: "Read Syscalls [{{server}}]",
+				Step:         60,
+			},
+
+			{
+				Expr:         "rate(minio_node_syscall_read_total[$__interval])",
+				LegendFormat: "Read Syscalls [{{server}}]",
+				Step:         60,
+			},
+		},
+	},
+	{
+		ID:    8,
+		Title: "Node File Descriptors",
+		Type:  "graph",
+
+		Targets: []Target{
+
+			{
+				Expr:         "minio_node_file_descriptor_open_total",
+				LegendFormat: "Open FDs [{{server}}]",
+			},
+		},
+	},
+	{
+		ID:    73,
+		Title: "Node IO",
+		Type:  "graph",
+
+		Targets: []Target{
+
+			{
+				Expr:         "rate(minio_node_io_rchar_bytes[$__interval])",
+				LegendFormat: "Node RChar [{{server}}]",
+			},
+
+			{
+				Expr:         "rate(minio_node_io_rchar_bytes[$__interval])",
+				LegendFormat: "Node RChar [{{server}}]",
 			},
 		},
 	},
@@ -549,14 +752,21 @@ LabelsWaitLoop:
 				go func(target Target, params admin_api.AdminInfoParams) {
 					apiType := "query_range"
 					now := time.Now()
-					extraParamters := fmt.Sprintf("&start=%d&end=%d&step=%d", now.Add(-15*time.Minute).Unix(), now.Unix(), *params.Step)
+
+					extraParamters := fmt.Sprintf("&start=%d&end=%d", now.Add(-15*time.Minute).Unix(), now.Unix())
+
+					if target.Step > 0 {
+						extraParamters = fmt.Sprintf("%s&step=%d", extraParamters, target.Step)
+					} else {
+						extraParamters = fmt.Sprintf("%s&step=%d", extraParamters, *params.Step)
+					}
 
 					if params.Start != nil && params.End != nil {
 						extraParamters = fmt.Sprintf("&start=%d&end=%d&step=%d", *params.Start, *params.End, *params.Step)
 					}
 
-					queryExpr := target.Expr
-
+					// replace the `$__interval` global for step with unit (s for seconds)
+					queryExpr := strings.ReplaceAll(target.Expr, "$__interval", fmt.Sprintf("%ds", *params.Step))
 					if strings.Contains(queryExpr, "$") {
 						var re = regexp.MustCompile(`\$([a-z]+)`)
 
