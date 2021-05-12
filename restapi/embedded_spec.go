@@ -128,7 +128,7 @@ func init() {
           },
           {
             "type": "integer",
-            "default": 15,
+            "format": "int32",
             "name": "step",
             "in": "query"
           }
@@ -7002,7 +7002,7 @@ func init() {
           },
           {
             "type": "integer",
-            "default": 15,
+            "format": "int32",
             "name": "step",
             "in": "query"
           }
