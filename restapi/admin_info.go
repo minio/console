@@ -93,11 +93,20 @@ type MetricOptions struct {
 }
 
 type Metric struct {
-	ID      int32
-	Title   string
-	Type    string
-	Options MetricOptions
-	Targets []Target
+	ID            int32
+	Title         string
+	Type          string
+	Options       MetricOptions
+	Targets       []Target
+	GridPos       GridPos
+	MaxDataPoints int32
+}
+
+type GridPos struct {
+	H int32
+	W int32
+	X int32
+	Y int32
 }
 
 type WidgetLabel struct {
@@ -111,10 +120,16 @@ var labels = []WidgetLabel{
 
 var widgets = []Metric{
 	{
-		ID:    1,
-		Title: "Uptime",
-		Type:  "stat",
-
+		ID:            1,
+		Title:         "Uptime",
+		Type:          "stat",
+		MaxDataPoints: 100,
+		GridPos: GridPos{
+			H: 6,
+			W: 3,
+			X: 0,
+			Y: 0,
+		},
 		Options: MetricOptions{
 			ReduceOptions: ReduceOptions{
 				Calcs: []string{
@@ -122,9 +137,7 @@ var widgets = []Metric{
 				},
 			},
 		},
-
 		Targets: []Target{
-
 			{
 				Expr:         "time() - max(minio_node_process_starttime_seconds)",
 				LegendFormat: "{{instance}}",
@@ -133,10 +146,16 @@ var widgets = []Metric{
 		},
 	},
 	{
-		ID:    65,
-		Title: "Total S3 Traffic Inbound",
-		Type:  "stat",
-
+		ID:            65,
+		Title:         "Total S3 Traffic Inbound",
+		Type:          "stat",
+		MaxDataPoints: 100,
+		GridPos: GridPos{
+			H: 3,
+			W: 3,
+			X: 3,
+			Y: 0,
+		},
 		Options: MetricOptions{
 			ReduceOptions: ReduceOptions{
 				Calcs: []string{
@@ -144,9 +163,7 @@ var widgets = []Metric{
 				},
 			},
 		},
-
 		Targets: []Target{
-
 			{
 				Expr:         "sum by (instance) (minio_s3_traffic_received_bytes{job=\"minio-job\"})",
 				LegendFormat: "{{instance}}",
@@ -155,10 +172,16 @@ var widgets = []Metric{
 		},
 	},
 	{
-		ID:    50,
-		Title: "Current Usable Capacity",
-		Type:  "gauge",
-
+		ID:            50,
+		Title:         "Current Usable Capacity",
+		Type:          "gauge",
+		MaxDataPoints: 100,
+		GridPos: GridPos{
+			H: 6,
+			W: 3,
+			X: 6,
+			Y: 0,
+		},
 		Options: MetricOptions{
 			ReduceOptions: ReduceOptions{
 				Calcs: []string{
@@ -166,9 +189,7 @@ var widgets = []Metric{
 				},
 			},
 		},
-
 		Targets: []Target{
-
 			{
 				Expr:         "topk(1, sum(minio_cluster_capacity_usable_free_bytes) by (instance))",
 				LegendFormat: "",
@@ -180,9 +201,13 @@ var widgets = []Metric{
 		ID:    68,
 		Title: "Data Usage Growth",
 		Type:  "graph",
-
+		GridPos: GridPos{
+			H: 6,
+			W: 7,
+			X: 9,
+			Y: 0,
+		},
 		Targets: []Target{
-
 			{
 				Expr:         "sum(minio_bucket_usage_total_bytes) by (instance)",
 				LegendFormat: "Used Capacity",
@@ -193,7 +218,12 @@ var widgets = []Metric{
 		ID:    52,
 		Title: "Object size distribution",
 		Type:  "bargauge",
-
+		GridPos: GridPos{
+			H: 6,
+			W: 5,
+			X: 16,
+			Y: 0,
+		},
 		Options: MetricOptions{
 			ReduceOptions: ReduceOptions{
 				Calcs: []string{
@@ -201,9 +231,7 @@ var widgets = []Metric{
 				},
 			},
 		},
-
 		Targets: []Target{
-
 			{
 				Expr:         "max by (range) (minio_bucket_objects_size_distribution)",
 				LegendFormat: "{{range}}",
@@ -212,10 +240,16 @@ var widgets = []Metric{
 		},
 	},
 	{
-		ID:    61,
-		Title: "Total Open FDs",
-		Type:  "stat",
-
+		ID:            61,
+		Title:         "Total Open FDs",
+		Type:          "stat",
+		MaxDataPoints: 100,
+		GridPos: GridPos{
+			H: 3,
+			W: 3,
+			X: 21,
+			Y: 0,
+		},
 		Options: MetricOptions{
 			ReduceOptions: ReduceOptions{
 				Calcs: []string{
@@ -223,9 +257,7 @@ var widgets = []Metric{
 				},
 			},
 		},
-
 		Targets: []Target{
-
 			{
 				Expr:         "sum (minio_node_file_descriptor_open_total)",
 				LegendFormat: "",
@@ -234,10 +266,16 @@ var widgets = []Metric{
 		},
 	},
 	{
-		ID:    64,
-		Title: "Total S3 Traffic Outbound",
-		Type:  "stat",
-
+		ID:            64,
+		Title:         "Total S3 Traffic Outbound",
+		Type:          "stat",
+		MaxDataPoints: 100,
+		GridPos: GridPos{
+			H: 3,
+			W: 3,
+			X: 3,
+			Y: 3,
+		},
 		Options: MetricOptions{
 			ReduceOptions: ReduceOptions{
 				Calcs: []string{
@@ -245,9 +283,7 @@ var widgets = []Metric{
 				},
 			},
 		},
-
 		Targets: []Target{
-
 			{
 				Expr:         "sum by (instance) (minio_s3_traffic_sent_bytes{job=\"minio-job\"})",
 				LegendFormat: "",
@@ -256,10 +292,16 @@ var widgets = []Metric{
 		},
 	},
 	{
-		ID:    62,
-		Title: "Total Goroutines",
-		Type:  "stat",
-
+		ID:            62,
+		Title:         "Total Goroutines",
+		Type:          "stat",
+		MaxDataPoints: 100,
+		GridPos: GridPos{
+			H: 3,
+			W: 3,
+			X: 21,
+			Y: 3,
+		},
 		Options: MetricOptions{
 			ReduceOptions: ReduceOptions{
 				Calcs: []string{
@@ -267,9 +309,7 @@ var widgets = []Metric{
 				},
 			},
 		},
-
 		Targets: []Target{
-
 			{
 				Expr:         "sum without (server,instance) (minio_node_go_routine_total)",
 				LegendFormat: "",
@@ -278,10 +318,16 @@ var widgets = []Metric{
 		},
 	},
 	{
-		ID:    53,
-		Title: "Total Online Servers",
-		Type:  "stat",
-
+		ID:            53,
+		Title:         "Total Online Servers",
+		Type:          "stat",
+		MaxDataPoints: 100,
+		GridPos: GridPos{
+			H: 2,
+			W: 3,
+			X: 0,
+			Y: 6,
+		},
 		Options: MetricOptions{
 			ReduceOptions: ReduceOptions{
 				Calcs: []string{
@@ -289,9 +335,7 @@ var widgets = []Metric{
 				},
 			},
 		},
-
 		Targets: []Target{
-
 			{
 				Expr:         "minio_cluster_nodes_online_total",
 				LegendFormat: "",
@@ -300,10 +344,16 @@ var widgets = []Metric{
 		},
 	},
 	{
-		ID:    9,
-		Title: "Total Online Disks",
-		Type:  "stat",
-
+		ID:            9,
+		Title:         "Total Online Disks",
+		Type:          "stat",
+		MaxDataPoints: 100,
+		GridPos: GridPos{
+			H: 2,
+			W: 3,
+			X: 3,
+			Y: 6,
+		},
 		Options: MetricOptions{
 			ReduceOptions: ReduceOptions{
 				Calcs: []string{
@@ -311,9 +361,7 @@ var widgets = []Metric{
 				},
 			},
 		},
-
 		Targets: []Target{
-
 			{
 				Expr:         "minio_cluster_disk_online_total",
 				LegendFormat: "Total online disks in MinIO Cluster",
@@ -322,10 +370,16 @@ var widgets = []Metric{
 		},
 	},
 	{
-		ID:    66,
-		Title: "Number of Buckets",
-		Type:  "stat",
-
+		ID:            66,
+		Title:         "Number of Buckets",
+		Type:          "stat",
+		MaxDataPoints: 100,
+		GridPos: GridPos{
+			H: 3,
+			W: 3,
+			X: 6,
+			Y: 6,
+		},
 		Options: MetricOptions{
 			ReduceOptions: ReduceOptions{
 				Calcs: []string{
@@ -333,9 +387,7 @@ var widgets = []Metric{
 				},
 			},
 		},
-
 		Targets: []Target{
-
 			{
 				Expr:         "count(count by (bucket) (minio_bucket_usage_total_bytes))",
 				LegendFormat: "",
@@ -346,9 +398,13 @@ var widgets = []Metric{
 		ID:    63,
 		Title: "S3 API Data Received Rate ",
 		Type:  "graph",
-
+		GridPos: GridPos{
+			H: 6,
+			W: 7,
+			X: 9,
+			Y: 6,
+		},
 		Targets: []Target{
-
 			{
 				Expr:         "sum by (server) (rate(minio_s3_traffic_received_bytes[$__interval]))",
 				LegendFormat: "Data Received [{{server}}]",
@@ -359,9 +415,13 @@ var widgets = []Metric{
 		ID:    70,
 		Title: "S3 API Data Sent Rate ",
 		Type:  "graph",
-
+		GridPos: GridPos{
+			H: 6,
+			W: 8,
+			X: 16,
+			Y: 6,
+		},
 		Targets: []Target{
-
 			{
 				Expr:         "sum by (server) (rate(minio_s3_traffic_sent_bytes[$__interval]))",
 				LegendFormat: "Data Sent [{{server}}]",
@@ -369,10 +429,16 @@ var widgets = []Metric{
 		},
 	},
 	{
-		ID:    69,
-		Title: "Total Offline Servers",
-		Type:  "stat",
-
+		ID:            69,
+		Title:         "Total Offline Servers",
+		Type:          "stat",
+		MaxDataPoints: 100,
+		GridPos: GridPos{
+			H: 2,
+			W: 3,
+			X: 0,
+			Y: 8,
+		},
 		Options: MetricOptions{
 			ReduceOptions: ReduceOptions{
 				Calcs: []string{
@@ -380,9 +446,7 @@ var widgets = []Metric{
 				},
 			},
 		},
-
 		Targets: []Target{
-
 			{
 				Expr:         "minio_cluster_nodes_offline_total",
 				LegendFormat: "",
@@ -391,10 +455,16 @@ var widgets = []Metric{
 		},
 	},
 	{
-		ID:    78,
-		Title: "Total Offline Disks",
-		Type:  "stat",
-
+		ID:            78,
+		Title:         "Total Offline Disks",
+		Type:          "stat",
+		MaxDataPoints: 100,
+		GridPos: GridPos{
+			H: 2,
+			W: 3,
+			X: 3,
+			Y: 8,
+		},
 		Options: MetricOptions{
 			ReduceOptions: ReduceOptions{
 				Calcs: []string{
@@ -402,9 +472,7 @@ var widgets = []Metric{
 				},
 			},
 		},
-
 		Targets: []Target{
-
 			{
 				Expr:         "minio_cluster_disk_offline_total",
 				LegendFormat: "",
@@ -413,10 +481,16 @@ var widgets = []Metric{
 		},
 	},
 	{
-		ID:    44,
-		Title: "Number of Objects",
-		Type:  "stat",
-
+		ID:            44,
+		Title:         "Number of Objects",
+		Type:          "stat",
+		MaxDataPoints: 100,
+		GridPos: GridPos{
+			H: 3,
+			W: 3,
+			X: 6,
+			Y: 9,
+		},
 		Options: MetricOptions{
 			ReduceOptions: ReduceOptions{
 				Calcs: []string{
@@ -424,9 +498,7 @@ var widgets = []Metric{
 				},
 			},
 		},
-
 		Targets: []Target{
-
 			{
 				Expr:         "topk(1, sum(minio_bucket_usage_object_total) by (instance))",
 				LegendFormat: "",
@@ -434,10 +506,16 @@ var widgets = []Metric{
 		},
 	},
 	{
-		ID:    80,
-		Title: "Time Since Last Heal Activity",
-		Type:  "stat",
-
+		ID:            80,
+		Title:         "Time Since Last Heal Activity",
+		Type:          "stat",
+		MaxDataPoints: 100,
+		GridPos: GridPos{
+			H: 2,
+			W: 3,
+			X: 0,
+			Y: 10,
+		},
 		Options: MetricOptions{
 			ReduceOptions: ReduceOptions{
 				Calcs: []string{
@@ -445,9 +523,7 @@ var widgets = []Metric{
 				},
 			},
 		},
-
 		Targets: []Target{
-
 			{
 				Expr:         "minio_heal_time_last_activity_nano_seconds",
 				LegendFormat: "{{server}}",
@@ -456,10 +532,16 @@ var widgets = []Metric{
 		},
 	},
 	{
-		ID:    81,
-		Title: "Time Since Last Scan Activity",
-		Type:  "stat",
-
+		ID:            81,
+		Title:         "Time Since Last Scan Activity",
+		Type:          "stat",
+		MaxDataPoints: 100,
+		GridPos: GridPos{
+			H: 2,
+			W: 3,
+			X: 3,
+			Y: 10,
+		},
 		Options: MetricOptions{
 			ReduceOptions: ReduceOptions{
 				Calcs: []string{
@@ -467,9 +549,7 @@ var widgets = []Metric{
 				},
 			},
 		},
-
 		Targets: []Target{
-
 			{
 				Expr:         "minio_usage_last_activity_nano_seconds",
 				LegendFormat: "{{server}}",
@@ -481,9 +561,13 @@ var widgets = []Metric{
 		ID:    60,
 		Title: "S3 API Request Rate",
 		Type:  "graph",
-
+		GridPos: GridPos{
+			H: 10,
+			W: 12,
+			X: 0,
+			Y: 12,
+		},
 		Targets: []Target{
-
 			{
 				Expr:         "sum by (server,api) (rate(minio_s3_requests_total[$__interval]))",
 				LegendFormat: "{{server,api}}",
@@ -494,9 +578,13 @@ var widgets = []Metric{
 		ID:    71,
 		Title: "S3 API Request Error Rate",
 		Type:  "graph",
-
+		GridPos: GridPos{
+			H: 10,
+			W: 12,
+			X: 12,
+			Y: 12,
+		},
 		Targets: []Target{
-
 			{
 				Expr:         "rate(minio_s3_requests_errors_total[$__interval])",
 				LegendFormat: "{{server,api}}",
@@ -507,9 +595,13 @@ var widgets = []Metric{
 		ID:    17,
 		Title: "Internode Data Transfer",
 		Type:  "graph",
-
+		GridPos: GridPos{
+			H: 8,
+			W: 24,
+			X: 0,
+			Y: 22,
+		},
 		Targets: []Target{
-
 			{
 				Expr:         "rate(minio_inter_node_traffic_sent_bytes{job=\"minio-job\"}[$__interval])",
 				LegendFormat: "Internode Bytes Received [{{server}}]",
@@ -519,7 +611,6 @@ var widgets = []Metric{
 			{
 				Expr:         "rate(minio_inter_node_traffic_sent_bytes{job=\"minio-job\"}[$__interval])",
 				LegendFormat: "Internode Bytes Received [{{server}}]",
-				Step:         4,
 			},
 		},
 	},
@@ -527,9 +618,13 @@ var widgets = []Metric{
 		ID:    77,
 		Title: "Node CPU Usage",
 		Type:  "graph",
-
+		GridPos: GridPos{
+			H: 9,
+			W: 12,
+			X: 0,
+			Y: 30,
+		},
 		Targets: []Target{
-
 			{
 				Expr:         "rate(minio_node_process_cpu_total_seconds[$__interval])",
 				LegendFormat: "CPU Usage Rate [{{server}}]",
@@ -540,9 +635,13 @@ var widgets = []Metric{
 		ID:    76,
 		Title: "Node Memory Usage",
 		Type:  "graph",
-
+		GridPos: GridPos{
+			H: 9,
+			W: 12,
+			X: 12,
+			Y: 30,
+		},
 		Targets: []Target{
-
 			{
 				Expr:         "minio_node_process_resident_memory_bytes",
 				LegendFormat: "Memory Used [{{server}}]",
@@ -553,9 +652,13 @@ var widgets = []Metric{
 		ID:    74,
 		Title: "Drive Used Capacity",
 		Type:  "graph",
-
+		GridPos: GridPos{
+			H: 8,
+			W: 12,
+			X: 0,
+			Y: 39,
+		},
 		Targets: []Target{
-
 			{
 				Expr:         "minio_node_disk_used_bytes",
 				LegendFormat: "Used Capacity [{{server}}:{{disk}}]",
@@ -566,9 +669,13 @@ var widgets = []Metric{
 		ID:    82,
 		Title: "Drives Free Inodes",
 		Type:  "graph",
-
+		GridPos: GridPos{
+			H: 8,
+			W: 12,
+			X: 12,
+			Y: 39,
+		},
 		Targets: []Target{
-
 			{
 				Expr:         "minio_cluster_disk_free_inodes",
 				LegendFormat: "Free Inodes [{{server}}:{{disk}}]",
@@ -579,9 +686,13 @@ var widgets = []Metric{
 		ID:    11,
 		Title: "Node Syscalls",
 		Type:  "graph",
-
+		GridPos: GridPos{
+			H: 9,
+			W: 12,
+			X: 0,
+			Y: 47,
+		},
 		Targets: []Target{
-
 			{
 				Expr:         "rate(minio_node_syscall_read_total[$__interval])",
 				LegendFormat: "Read Syscalls [{{server}}]",
@@ -591,7 +702,6 @@ var widgets = []Metric{
 			{
 				Expr:         "rate(minio_node_syscall_read_total[$__interval])",
 				LegendFormat: "Read Syscalls [{{server}}]",
-				Step:         60,
 			},
 		},
 	},
@@ -599,9 +709,13 @@ var widgets = []Metric{
 		ID:    8,
 		Title: "Node File Descriptors",
 		Type:  "graph",
-
+		GridPos: GridPos{
+			H: 9,
+			W: 12,
+			X: 12,
+			Y: 47,
+		},
 		Targets: []Target{
-
 			{
 				Expr:         "minio_node_file_descriptor_open_total",
 				LegendFormat: "Open FDs [{{server}}]",
@@ -612,9 +726,13 @@ var widgets = []Metric{
 		ID:    73,
 		Title: "Node IO",
 		Type:  "graph",
-
+		GridPos: GridPos{
+			H: 8,
+			W: 24,
+			X: 0,
+			Y: 56,
+		},
 		Targets: []Target{
-
 			{
 				Expr:         "rate(minio_node_io_rchar_bytes[$__interval])",
 				LegendFormat: "Node RChar [{{server}}]",
@@ -655,6 +773,8 @@ type LabelResults struct {
 	Label    string
 	Response LabelResponse
 }
+
+var jobRegex = regexp.MustCompile(`(?m)\{[a-z]+\=\".*?\"\}`)
 
 // getAdminInfoResponse returns the response containing total buckets, objects and usage.
 func getAdminInfoResponse(session *models.Principal, params admin_api.AdminInfoParams) (*models.AdminInfoResponse, *models.Error) {
@@ -755,10 +875,15 @@ LabelsWaitLoop:
 
 					extraParamters := fmt.Sprintf("&start=%d&end=%d", now.Add(-15*time.Minute).Unix(), now.Unix())
 
+					var step int32 = 60
 					if target.Step > 0 {
-						extraParamters = fmt.Sprintf("%s&step=%d", extraParamters, target.Step)
-					} else {
-						extraParamters = fmt.Sprintf("%s&step=%d", extraParamters, *params.Step)
+						step = target.Step
+					}
+					if params.Step != nil && *params.Step > 0 {
+						step = *params.Step
+					}
+					if step > 0 {
+						extraParamters = fmt.Sprintf("%s&step=%d", extraParamters, step)
 					}
 
 					if params.Start != nil && params.End != nil {
@@ -766,7 +891,7 @@ LabelsWaitLoop:
 					}
 
 					// replace the `$__interval` global for step with unit (s for seconds)
-					queryExpr := strings.ReplaceAll(target.Expr, "$__interval", fmt.Sprintf("%ds", *params.Step))
+					queryExpr := strings.ReplaceAll(target.Expr, "$__interval", fmt.Sprintf("%ds", 120))
 					if strings.Contains(queryExpr, "$") {
 						var re = regexp.MustCompile(`\$([a-z]+)`)
 
@@ -777,7 +902,14 @@ LabelsWaitLoop:
 						}
 					}
 
+					// replace the weird {job="asd"} in the exp
+					if strings.Contains(queryExpr, "job=") {
+						queryExpr = jobRegex.ReplaceAllString(queryExpr, "")
+					}
+
 					endpoint := fmt.Sprintf("%s/api/v1/%s?query=%s%s", getPrometheusURL(), apiType, url.QueryEscape(queryExpr), extraParamters)
+
+					log.Printf("%s \t  - %d [%d] - %s\n\n", m.Title, target.Step, params.Step, endpoint)
 					resp, err := http.Get(endpoint)
 					if err != nil {
 						log.Println(err)

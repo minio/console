@@ -422,8 +422,18 @@ export const generatePoolName = (pools: IPool[]) => {
 };
 
 // seconds / minutes /hours / Days / Years calculator
-export const niceDays = (secondsValue: string) => {
+export const niceDays = (secondsValue: string, timeVariant: string = "s") => {
   let seconds = parseFloat(secondsValue);
+
+  switch (timeVariant) {
+    case "ns":
+      seconds = Math.floor(seconds * 0.000000001);
+      break;
+    case "ms":
+      seconds = Math.floor(seconds * 0.001);
+      break;
+    default:
+  }
 
   const days = Math.floor(seconds / (3600 * 24));
 

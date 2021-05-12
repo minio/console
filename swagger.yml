@@ -1758,9 +1758,9 @@ paths:
           in: query
           type: integer
         - name: step
-          default: 15
           in: query
           type: integer
+          format: int32
       responses:
         200:
           description: A successful response.
