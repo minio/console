@@ -738,7 +738,7 @@ const constructLabelNames = (metrics: any, legendFormat: string) => {
 export const getWidgetsWithValue = (payload: any[]) => {
   return panelsConfiguration.map((panelItem) => {
     const payloadData = payload.find(
-      (panelT) => panelT.title === panelItem.title
+      (panelT) => panelT.title.toLowerCase().trim() === panelItem.title.toLowerCase().trim()
     );
 
     if (!payloadData) {
