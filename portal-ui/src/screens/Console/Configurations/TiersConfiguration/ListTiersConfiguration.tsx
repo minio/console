@@ -213,10 +213,6 @@ const ListTiersConfiguration = ({
               <SlideOptions
                 slideOptions={[
                   <Fragment>
-                    <Grid item xs={12} className={classes.customTitle}>
-                      Tiers
-                    </Grid>
-
                     <Grid item xs={12} className={classes.lambdaContainer}>
                       <Grid item xs={12} className={classes.actionsTray}>
                         <TextField

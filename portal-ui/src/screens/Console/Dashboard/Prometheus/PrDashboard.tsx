@@ -66,12 +66,11 @@ const styles = (theme: Theme) =>
     syncButton: {
       "&.MuiButton-root .MuiButton-iconSizeMedium > *:first-child": {
         fontSize: 18,
-
-      }
+      },
     },
     actionsTray: {
       ...actionsTray.actionsTray,
-      padding: "0 10px"
+      padding: "0 10px",
     },
   });
 

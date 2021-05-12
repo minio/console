@@ -72,6 +72,11 @@ export interface ITenant {
   volumes_per_server: number;
   pools: IPool[];
   endpoints: IEndpoints;
+  logEnabled: boolean;
+  monitoringEnabled: boolean;
+  encryptionEnabled: boolean;
+  idpAdEnabled: boolean;
+  idpOicEnabled: boolean;
   // computed
   capacity: string;
   subnet_license: LicenseInfo;

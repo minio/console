@@ -1,7 +1,6 @@
 import React from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { LinearProgress } from "@material-ui/core";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import ErrorBlock from "../../../shared/ErrorBlock";
@@ -47,6 +46,9 @@ const BorderLinearProgress = withStyles((theme) => ({
     borderRadius: 5,
     backgroundColor: "#081C42",
   },
+  padChart: {
+    padding: "5px",
+  },
 }))(LinearProgress);
 
 const UsageBarWrapper = ({
@@ -84,20 +86,18 @@ const UsageBarWrapper = ({
 
   return (
     <React.Fragment>
-      <Paper className={classes.paperContainer}>
-        {loading && (
-          <React.Fragment>
-            <Grid item xs={12} className={classes.centerItem}>
-              <CircularProgress
-                color="primary"
-                size={40}
-                variant="indeterminate"
-              />
-            </Grid>
-          </React.Fragment>
-        )}
-        {renderComponent()}
-      </Paper>
+      {loading && (
+        <div className={classes.padChart}>
+          <Grid item xs={12} className={classes.centerItem}>
+            <CircularProgress
+              color="primary"
+              size={40}
+              variant="indeterminate"
+            />
+          </Grid>
+        </div>
+      )}
+      {renderComponent()}
     </React.Fragment>
   );
 };

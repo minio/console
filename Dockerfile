@@ -28,11 +28,13 @@ WORKDIR /go/src/github.com/minio/console/
 
 ENV CGO_ENABLED=0
 
+COPY --from=uilayer /app/build /go/src/github.com/minio/console/portal-ui/build
 RUN go build -ldflags "-w -s" -a -o console ./cmd/console
 
 FROM scratch
 MAINTAINER MinIO Development "dev@min.io"
 EXPOSE 9090
+
 
 COPY --from=golayer /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=golayer /go/src/github.com/minio/console/console .

@@ -381,6 +381,15 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 
 	info := getTenantInfo(minTenant)
 
+	// detect if AD is enabled
+	adEnabled := false
+	for _, env := range minTenant.Spec.Env {
+		if env.Name == "MINIO_IDENTITY_LDAP_SERVER_ADDR" && env.Value != "" {
+			adEnabled = true
+		}
+	}
+
+	// get Kubernetes Client
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
@@ -389,6 +398,26 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 	k8sClient := k8sClient{
 		client: clientSet,
 	}
+
+	// detect if OpenID is enabled
+
+	oicEnabled := false
+	consoleSecret, err := clientSet.CoreV1().Secrets(minTenant.Namespace).Get(ctx, minTenant.Name, metav1.GetOptions{})
+	// we can tolerate not getting this secret
+	if err != nil {
+		log.Println(err)
+	}
+	if consoleSecret != nil {
+		if _, ok := consoleSecret.Data["CONSOLE_IDP_URL"]; ok {
+			oicEnabled = true
+		}
+	}
+
+	info.LogEnabled = minTenant.HasLogEnabled()
+	info.MonitoringEnabled = minTenant.HasPrometheusEnabled()
+	info.EncryptionEnabled = minTenant.HasKESEnabled()
+	info.IdpAdEnabled = adEnabled
+	info.IdpOicEnabled = oicEnabled
 
 	if minTenant.Spec.Console != nil {
 		// obtain current subnet license for tenant (if exists)

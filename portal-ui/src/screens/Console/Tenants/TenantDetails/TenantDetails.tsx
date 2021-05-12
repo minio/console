@@ -19,8 +19,11 @@ import { connect } from "react-redux";
 import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import {
+  actionsTray,
+  buttonsStyles,
   containerForHeader,
   modalBasic,
+  searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import Grid from "@material-ui/core/Grid";
 import {
@@ -28,6 +31,7 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  TextField,
   Typography,
 } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
@@ -51,6 +55,10 @@ import { setErrorSnackMessage } from "../../../../actions";
 import Moment from "react-moment";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import TenantYAML from "./TenantYAML";
+import Checkbox from "@material-ui/core/Checkbox";
+import SubnetLicenseTenant from "./SubnetLicenseTenant";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import SearchIcon from "@material-ui/icons/Search";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -106,9 +114,6 @@ const styles = (theme: Theme) =>
         margin: "5px 0px",
       },
     },
-    actionsTray: {
-      textAlign: "right",
-    },
     updateButton: {
       backgroundColor: "transparent",
       border: 0,
@@ -121,55 +126,28 @@ const styles = (theme: Theme) =>
         height: 12,
       },
     },
-    noUnderLine: {
-      textDecoration: "none",
-    },
     poolLabel: {
       color: "#666666",
-    },
-    licenseContainer: {
-      position: "relative",
-      padding: "20px 52px 0px 28px",
-      background: "#032F51",
-      boxShadow: "0px 3px 7px #00000014",
-      "& h2": {
-        color: "#FFF",
-        marginBottom: 67,
-      },
-      "& a": {
-        textDecoration: "none",
-      },
-      "& h3": {
-        color: "#FFFFFF",
-        marginBottom: "30px",
-        fontWeight: "bold",
-      },
-      "& h6": {
-        color: "#FFFFFF !important",
-      },
-    },
-    licenseInfo: { color: "#FFFFFF", position: "relative" },
-    licenseInfoTitle: {
-      textTransform: "none",
-      color: "#BFBFBF",
-      fontSize: 11,
-    },
-    licenseInfoValue: {
-      textTransform: "none",
-      fontSize: 14,
-      fontWeight: "bold",
-    },
-    verifiedIcon: {
-      width: 96,
-      position: "absolute",
-      right: 0,
-      bottom: 29,
     },
     breadcrumLink: {
       textDecoration: "none",
       color: "black",
     },
+    hrClass: {
+      borderTop: 0,
+      borderLeft: 0,
+      borderRight: 0,
+      borderColor: "#999999",
+      backgroundColor: "transparent",
+    },
     ...modalBasic,
+    ...actionsTray,
+    ...buttonsStyles,
+    ...searchField,
+    actionsTray: {
+      ...actionsTray.actionsTray,
+      padding: "15px 0 0",
+    },
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -199,6 +177,11 @@ const TenantDetails = ({
   const [loadingActivateProduct, setLoadingActivateProduct] = useState<boolean>(
     false
   );
+  const [logEnabled, setLogEnabled] = useState<boolean>(false);
+  const [monitoringEnabled, setMonitoringEnabled] = useState<boolean>(false);
+  const [encryptionEnabled, setEncryptionEnabled] = useState<boolean>(false);
+  const [adEnabled, setAdEnabled] = useState<boolean>(false);
+  const [oicEnabled, setOicEnabled] = useState<boolean>(false);
 
   const tenantName = match.params["tenantName"];
   const tenantNamespace = match.params["tenantNamespace"];
@@ -279,6 +262,12 @@ const TenantDetails = ({
         setInstances(totalInstances);
 
         setPools(resPools);
+
+        setLogEnabled(res.logEnabled);
+        setMonitoringEnabled(res.monitoringEnabled);
+        setEncryptionEnabled(res.encryptionEnabled);
+        setAdEnabled(res.idpAdEnabled);
+        setOicEnabled(res.idpOicEnabled);
 
         setTenant(res);
       })
@@ -434,74 +423,6 @@ const TenantDetails = ({
       <Grid item xs={12} className={classes.container} />
       <Grid container>
         <Grid item xs={12}>
-          <br />
-        </Grid>
-        <Grid item xs={9} className={classes.containerHeader}>
-          <Paper className={classes.paperContainer}>
-            <div className={classes.infoGrid}>
-              <div>Capacity:</div>
-              <div>{niceBytes(capacity.toString(10))}</div>
-              <div>Minio:</div>
-              <div>
-                {tenant ? tenant.image : ""}{" "}
-                <button
-                  className={classes.updateButton}
-                  onClick={() => {
-                    setUpdateMinioVersion(true);
-                  }}
-                >
-                  <PencilIcon active={false} />
-                </button>
-              </div>
-              <div>Clusters:</div>
-              <div>{poolCount}</div>
-              <div>Console:</div>
-              <div>{tenant ? tenant.console_image : ""}</div>
-              <div>Instances:</div>
-              <div>{instances}</div>
-              <div>Volumes:</div>
-              <div>{volumes}</div>
-              {tenant?.endpoints && (
-                <React.Fragment>
-                  <div>Endpoint:</div>
-                  <div>
-                    <a
-                      href={tenant?.endpoints.minio}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {tenant?.endpoints.minio}
-                    </a>
-                  </div>
-                  <div>Console:</div>
-                  <div>
-                    <a
-                      href={tenant?.endpoints.console}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {tenant?.endpoints.console}
-                    </a>
-                  </div>
-                </React.Fragment>
-              )}
-            </div>
-          </Paper>
-        </Grid>
-        <Grid item xs={3}>
-          <UsageBarWrapper
-            currValue={usage}
-            maxValue={tenant ? tenant.total_size : 0}
-            label={"Storage"}
-            renderFunction={niceBytes}
-            error={usageError}
-            loading={loadingUsage}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
-        <Grid item xs={6}>
           <Tabs
             value={selectedTab}
             indicatorColor="primary"
@@ -513,241 +434,283 @@ const TenantDetails = ({
             variant="scrollable"
             scrollButtons="auto"
           >
-            <Tab label="Clusters" />
-            <Tab label="License" />
+            <Tab label="Summary" />
+            <Tab label="Pools" />
             <Tab label="Pods" />
+            <Tab label="License" />
           </Tabs>
-        </Grid>
-        <Grid item xs={6} className={classes.actionsTray}>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<CreateIcon />}
-            onClick={() => {
-              setAddPool(true);
-            }}
-          >
-            Expand Tenant
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <br />
         </Grid>
         <Grid item xs={12}>
           {selectedTab === 0 && (
-            <TableWrapper
-              itemActions={[
-                {
-                  type: "delete",
-                  onClick: (element) => {
-                    console.log(element);
-                  },
-                  sendOnlyId: true,
-                },
-              ]}
-              columns={[
-                { label: "Name", elementKey: "name" },
-                { label: "Capacity", elementKey: "capacity" },
-                { label: "# of Instances", elementKey: "servers" },
-                { label: "# of Drives", elementKey: "volumes" },
-              ]}
-              isLoading={false}
-              records={pools}
-              entityName="Servers"
-              idField="name"
-            />
+            <React.Fragment>
+              <br />
+              <Paper className={classes.paperContainer}>
+                <Grid container>
+                  <Grid item xs={8}>
+                    <table width={"100%"}>
+                      <tr>
+                        <td colSpan={4}>
+                          <h2>Details</h2>
+                          <hr className={classes.hrClass} />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Capacity:</td>
+                        <td>{niceBytes(capacity.toString(10))}</td>
+                        <td>MinIO:</td>
+                        <td>
+                          <Button
+                            color="primary"
+                            className={classes.anchorButton}
+                            onClick={() => {
+                              setUpdateMinioVersion(true);
+                            }}
+                          >
+                            {tenant ? tenant.image : ""}
+                          </Button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Clusters:</td>
+                        <td>{poolCount}</td>
+                        <td>Console:</td>
+                        <td>
+                          <Button
+                            color="primary"
+                            className={classes.anchorButton}
+                            onClick={() => {
+                              setUpdateMinioVersion(true);
+                            }}
+                          >
+                            {tenant ? tenant.console_image : ""}
+                          </Button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Instances:</td>
+                        <td>{instances}</td>
+                        <td>Volumes:</td>
+                        <td>{volumes}</td>
+                        {tenant?.endpoints && (
+                          <React.Fragment>
+                            <td>Endpoint:</td>
+                            <td>
+                              <a
+                                href={tenant?.endpoints.minio}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {tenant?.endpoints.minio}
+                              </a>
+                            </td>
+                            <td>Console:</td>
+                            <td>
+                              <a
+                                href={tenant?.endpoints.console}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {tenant?.endpoints.console}
+                              </a>
+                            </td>
+                          </React.Fragment>
+                        )}
+                      </tr>
+                    </table>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <UsageBarWrapper
+                      currValue={usage}
+                      maxValue={tenant ? tenant.total_size : 0}
+                      label={"Storage"}
+                      renderFunction={niceBytes}
+                      error={usageError}
+                      loading={loadingUsage}
+                    />
+                  </Grid>
+                </Grid>
+              </Paper>
+              <br />
+              <br />
+              <Paper className={classes.paperContainer}>
+                <Grid container>
+                  <Grid item xs={12}>
+                    <table width={"100%"}>
+                      <tr>
+                        <td colSpan={4}>
+                          <h2>Features</h2>
+                          <hr className={classes.hrClass} />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Logs:</td>
+                        <td>
+                          <Button
+                            color="primary"
+                            className={classes.anchorButton}
+                          >
+                            {logEnabled ? "Enabled" : "Disabled"}
+                          </Button>
+                        </td>
+                        <td>Monitoring:</td>
+                        <td>
+                          <Button
+                            color="primary"
+                            className={classes.anchorButton}
+                          >
+                            {monitoringEnabled ? "Enabled" : "Disabled"}
+                          </Button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Encryption:</td>
+                        <td>
+                          <Button
+                            color="primary"
+                            className={classes.anchorButton}
+                          >
+                            {encryptionEnabled ? "Enabled" : "Disabled"}
+                          </Button>
+                        </td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        {adEnabled ||
+                          (!adEnabled && !oicEnabled && (
+                            <React.Fragment>
+                              <td>Active Directory:</td>
+                              <td>
+                                <Button
+                                  color="primary"
+                                  className={classes.anchorButton}
+                                >
+                                  {adEnabled ? "Enabled" : "Disabled"}
+                                </Button>
+                              </td>
+                            </React.Fragment>
+                          ))}
+                        {oicEnabled ||
+                          (!oicEnabled && !adEnabled && (
+                            <React.Fragment>
+                              <td>OpenID:</td>
+                              <td>
+                                <Button
+                                  color="primary"
+                                  className={classes.anchorButton}
+                                >
+                                  {oicEnabled ? "Enabled" : "Disabled"}
+                                </Button>
+                              </td>
+                            </React.Fragment>
+                          ))}
+                      </tr>
+                    </table>
+                  </Grid>
+                </Grid>
+              </Paper>
+            </React.Fragment>
           )}
           {selectedTab === 1 && (
+            <Grid container>
+              <Grid item xs={12} className={classes.actionsTray}>
+                <TextField
+                  placeholder="Filter"
+                  className={classes.searchField}
+                  id="search-resource"
+                  label=""
+                  onChange={(event) => {
+                    // setFilter(event.target.value);
+                  }}
+                  InputProps={{
+                    disableUnderline: true,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<CreateIcon />}
+                  onClick={() => {
+                    setAddPool(true);
+                  }}
+                >
+                  Expand Tenant
+                </Button>
+              </Grid>
+              <Grid item xs={12}>
+                <br />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TableWrapper
+                  itemActions={[
+                    {
+                      type: "delete",
+                      onClick: (element) => {
+                        console.log(element);
+                      },
+                      sendOnlyId: true,
+                    },
+                  ]}
+                  columns={[
+                    { label: "Name", elementKey: "name" },
+                    { label: "Capacity", elementKey: "capacity" },
+                    { label: "# of Instances", elementKey: "servers" },
+                    { label: "# of Drives", elementKey: "volumes" },
+                  ]}
+                  isLoading={false}
+                  records={pools}
+                  entityName="Servers"
+                  idField="name"
+                />
+              </Grid>
+            </Grid>
+          )}
+          {selectedTab === 2 && (
             <React.Fragment>
+              <br />
+              <TableWrapper
+                columns={[
+                  { label: "Name", elementKey: "name" },
+                  { label: "Status", elementKey: "status" },
+                  { label: "Age", elementKey: "time" },
+                  { label: "Pod IP", elementKey: "podIP" },
+                  {
+                    label: "Restarts",
+                    elementKey: "restarts",
+                    renderFunction: (input) => {
+                      return input != null ? input : 0;
+                    },
+                  },
+                  { label: "Node", elementKey: "node" },
+                ]}
+                isLoading={false}
+                records={pods}
+                entityName="Servers"
+                idField="name"
+              />
+            </React.Fragment>
+          )}
+          {selectedTab === 3 && (
+            <React.Fragment>
+              <br />
               <Grid container>
                 <Grid item xs={12}>
-                  <Paper
-                    className={
-                      tenant && tenant.subnet_license
-                        ? classes.licenseContainer
-                        : ""
-                    }
-                  >
-                    {tenant && tenant.subnet_license ? (
-                      <React.Fragment>
-                        <Grid container className={classes.licenseInfo}>
-                          <Grid item xs={6}>
-                            <Typography
-                              variant="button"
-                              display="block"
-                              gutterBottom
-                              className={classes.licenseInfoTitle}
-                            >
-                              License
-                            </Typography>
-                            <Typography
-                              variant="overline"
-                              display="block"
-                              gutterBottom
-                              className={classes.licenseInfoValue}
-                            >
-                              Commercial License
-                            </Typography>
-                            <Typography
-                              variant="button"
-                              display="block"
-                              gutterBottom
-                              className={classes.licenseInfoTitle}
-                            >
-                              Organization
-                            </Typography>
-                            <Typography
-                              variant="overline"
-                              display="block"
-                              gutterBottom
-                              className={classes.licenseInfoValue}
-                            >
-                              {tenant.subnet_license.organization}
-                            </Typography>
-                            <Typography
-                              variant="button"
-                              display="block"
-                              gutterBottom
-                              className={classes.licenseInfoTitle}
-                            >
-                              Registered Capacity
-                            </Typography>
-                            <Typography
-                              variant="overline"
-                              display="block"
-                              gutterBottom
-                              className={classes.licenseInfoValue}
-                            >
-                              {niceBytes(
-                                (
-                                  tenant.subnet_license.storage_capacity *
-                                  1099511627776
-                                ) // 1 Terabyte = 1099511627776 Bytes
-                                  .toString(10)
-                              )}
-                            </Typography>
-                            <Typography
-                              variant="button"
-                              display="block"
-                              gutterBottom
-                              className={classes.licenseInfoTitle}
-                            >
-                              Expiry Date
-                            </Typography>
-                            <Typography
-                              variant="overline"
-                              display="block"
-                              gutterBottom
-                              className={classes.licenseInfoValue}
-                            >
-                              <Moment format="YYYY-MM-DD">
-                                {tenant.subnet_license.expires_at}
-                              </Moment>
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={6}>
-                            <Typography
-                              variant="button"
-                              display="block"
-                              gutterBottom
-                              className={classes.licenseInfoTitle}
-                            >
-                              Subscription Plan
-                            </Typography>
-                            <Typography
-                              variant="overline"
-                              display="block"
-                              gutterBottom
-                              className={classes.licenseInfoValue}
-                            >
-                              {tenant.subnet_license.plan}
-                            </Typography>
-                            <Typography
-                              variant="button"
-                              display="block"
-                              gutterBottom
-                              className={classes.licenseInfoTitle}
-                            >
-                              Requester
-                            </Typography>
-                            <Typography
-                              variant="overline"
-                              display="block"
-                              gutterBottom
-                              className={classes.licenseInfoValue}
-                            >
-                              {tenant.subnet_license.email}
-                            </Typography>
-                          </Grid>
-                          <img
-                            className={classes.verifiedIcon}
-                            src={"/verified.svg"}
-                            alt="Verified"
-                          />
-                        </Grid>
-                      </React.Fragment>
-                    ) : (
-                      !loadingLicenseInfo && (
-                        <Grid className={classes.paperContainer}>
-                          {!licenseInfo && (
-                            <Link
-                              to={"/license"}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                              }}
-                              className={classes.noUnderLine}
-                            >
-                              <Button
-                                className={classes.licenseButton}
-                                variant="contained"
-                                color="primary"
-                              >
-                                Activate Product
-                              </Button>
-                            </Link>
-                          )}
-                          {licenseInfo && tenant && (
-                            <Button
-                              disabled={loadingActivateProduct}
-                              className={classes.licenseButton}
-                              variant="contained"
-                              color="primary"
-                              onClick={() =>
-                                activateProduct(tenant.namespace, tenant.name)
-                              }
-                            >
-                              Attach License
-                            </Button>
-                          )}
-                        </Grid>
-                      )
-                    )}
-                  </Paper>
+                  <SubnetLicenseTenant
+                    tenant={tenant}
+                    loadingLicenseInfo={loadingLicenseInfo}
+                    loadingActivateProduct={loadingActivateProduct}
+                    licenseInfo={licenseInfo}
+                    activateProduct={activateProduct}
+                  />
                 </Grid>
               </Grid>
             </React.Fragment>
-          )}
-          {selectedTab === 2 && pods.length > 1 && (
-            <TableWrapper
-              columns={[
-                { label: "Name", elementKey: "name" },
-                { label: "Status", elementKey: "status" },
-                { label: "Age", elementKey: "time" },
-                { label: "Pod IP", elementKey: "podIP" },
-                {
-                  label: "Restarts",
-                  elementKey: "restarts",
-                  renderFunction: (input) => {
-                    return input != null ? input : 0;
-                  },
-                },
-                { label: "Node", elementKey: "node" },
-              ]}
-              isLoading={false}
-              records={pods}
-              entityName="Servers"
-              idField="name"
-            />
           )}
         </Grid>
       </Grid>
