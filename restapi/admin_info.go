@@ -891,7 +891,7 @@ LabelsWaitLoop:
 					}
 
 					// replace the `$__interval` global for step with unit (s for seconds)
-					queryExpr := strings.ReplaceAll(target.Expr, "$__interval", fmt.Sprintf("%ds", step))
+					queryExpr := strings.ReplaceAll(target.Expr, "$__interval", fmt.Sprintf("%ds", 120))
 					if strings.Contains(queryExpr, "$") {
 						var re = regexp.MustCompile(`\$([a-z]+)`)
 
