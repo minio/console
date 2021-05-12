@@ -141,7 +141,6 @@ var widgets = []Metric{
 			{
 				Expr:         "time() - max(minio_node_process_starttime_seconds)",
 				LegendFormat: "{{instance}}",
-				Step:         60,
 			},
 		},
 	},
@@ -167,7 +166,6 @@ var widgets = []Metric{
 			{
 				Expr:         "sum by (instance) (minio_s3_traffic_received_bytes{job=\"minio-job\"})",
 				LegendFormat: "{{instance}}",
-				Step:         60,
 			},
 		},
 	},
@@ -193,7 +191,6 @@ var widgets = []Metric{
 			{
 				Expr:         "topk(1, sum(minio_cluster_capacity_usable_free_bytes) by (instance))",
 				LegendFormat: "",
-				Step:         300,
 			},
 		},
 	},
@@ -235,7 +232,6 @@ var widgets = []Metric{
 			{
 				Expr:         "max by (range) (minio_bucket_objects_size_distribution)",
 				LegendFormat: "{{range}}",
-				Step:         300,
 			},
 		},
 	},
@@ -261,7 +257,6 @@ var widgets = []Metric{
 			{
 				Expr:         "sum (minio_node_file_descriptor_open_total)",
 				LegendFormat: "",
-				Step:         60,
 			},
 		},
 	},
@@ -287,7 +282,6 @@ var widgets = []Metric{
 			{
 				Expr:         "sum by (instance) (minio_s3_traffic_sent_bytes{job=\"minio-job\"})",
 				LegendFormat: "",
-				Step:         60,
 			},
 		},
 	},
@@ -313,7 +307,6 @@ var widgets = []Metric{
 			{
 				Expr:         "sum without (server,instance) (minio_node_go_routine_total)",
 				LegendFormat: "",
-				Step:         60,
 			},
 		},
 	},
@@ -339,7 +332,6 @@ var widgets = []Metric{
 			{
 				Expr:         "minio_cluster_nodes_online_total",
 				LegendFormat: "",
-				Step:         60,
 			},
 		},
 	},
@@ -365,7 +357,6 @@ var widgets = []Metric{
 			{
 				Expr:         "minio_cluster_disk_online_total",
 				LegendFormat: "Total online disks in MinIO Cluster",
-				Step:         60,
 			},
 		},
 	},
@@ -450,7 +441,6 @@ var widgets = []Metric{
 			{
 				Expr:         "minio_cluster_nodes_offline_total",
 				LegendFormat: "",
-				Step:         60,
 			},
 		},
 	},
@@ -476,7 +466,6 @@ var widgets = []Metric{
 			{
 				Expr:         "minio_cluster_disk_offline_total",
 				LegendFormat: "",
-				Step:         60,
 			},
 		},
 	},
@@ -527,7 +516,6 @@ var widgets = []Metric{
 			{
 				Expr:         "minio_heal_time_last_activity_nano_seconds",
 				LegendFormat: "{{server}}",
-				Step:         60,
 			},
 		},
 	},
@@ -553,7 +541,6 @@ var widgets = []Metric{
 			{
 				Expr:         "minio_usage_last_activity_nano_seconds",
 				LegendFormat: "{{server}}",
-				Step:         60,
 			},
 		},
 	},
@@ -605,7 +592,6 @@ var widgets = []Metric{
 			{
 				Expr:         "rate(minio_inter_node_traffic_sent_bytes{job=\"minio-job\"}[$__interval])",
 				LegendFormat: "Internode Bytes Received [{{server}}]",
-				Step:         4,
 			},
 
 			{
@@ -696,7 +682,6 @@ var widgets = []Metric{
 			{
 				Expr:         "rate(minio_node_syscall_read_total[$__interval])",
 				LegendFormat: "Read Syscalls [{{server}}]",
-				Step:         60,
 			},
 
 			{
