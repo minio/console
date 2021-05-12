@@ -160,14 +160,15 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
   );
 
   const fetchUsage = useCallback(() => {
-    let stepCalc = 15;
-
-    if (timeStart !== null && timeEnd !== null) {
-      const secondsInPeriod = timeEnd.unix() - timeStart.unix();
-      const periods = secondsInPeriod / 60;
-
-      stepCalc = periods < 1 ? 15 : periods;
-    }
+    // let stepCalc = 15;
+    //
+    // if (timeStart !== null && timeEnd !== null) {
+    //   const secondsInPeriod = timeEnd.unix() - timeStart.unix();
+    //   const periods = secondsInPeriod / 60;
+    //
+    //   stepCalc = periods < 1 ? 15 : periods;
+    // }
+    let stepCalc = 0;
 
     api
       .invoke(

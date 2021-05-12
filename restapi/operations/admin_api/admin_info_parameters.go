@@ -33,18 +33,10 @@ import (
 )
 
 // NewAdminInfoParams creates a new AdminInfoParams object
-// with the default values initialized.
+// no default values defined in spec.
 func NewAdminInfoParams() AdminInfoParams {
 
-	var (
-		// initialize parameters with default values
-
-		stepDefault = int64(15)
-	)
-
-	return AdminInfoParams{
-		Step: &stepDefault,
-	}
+	return AdminInfoParams{}
 }
 
 // AdminInfoParams contains all the bound params for the admin info operation
@@ -66,9 +58,8 @@ type AdminInfoParams struct {
 	Start *int64
 	/*
 	  In: query
-	  Default: 15
 	*/
-	Step *int64
+	Step *int32
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -157,13 +148,12 @@ func (o *AdminInfoParams) bindStep(rawData []string, hasKey bool, formats strfmt
 	// Required: false
 	// AllowEmptyValue: false
 	if raw == "" { // empty values pass all other validations
-		// Default values have been previously initialized by NewAdminInfoParams()
 		return nil
 	}
 
-	value, err := swag.ConvertInt64(raw)
+	value, err := swag.ConvertInt32(raw)
 	if err != nil {
-		return errors.InvalidType("step", "query", "int64", raw)
+		return errors.InvalidType("step", "query", "int32", raw)
 	}
 	o.Step = &value
 

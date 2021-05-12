@@ -34,7 +34,7 @@ import (
 type AdminInfoURL struct {
 	End   *int64
 	Start *int64
-	Step  *int64
+	Step  *int32
 
 	_basePath string
 	// avoid unkeyed usage
@@ -88,7 +88,7 @@ func (o *AdminInfoURL) Build() (*url.URL, error) {
 
 	var stepQ string
 	if o.Step != nil {
-		stepQ = swag.FormatInt64(*o.Step)
+		stepQ = swag.FormatInt32(*o.Step)
 	}
 	if stepQ != "" {
 		qs.Set("step", stepQ)
