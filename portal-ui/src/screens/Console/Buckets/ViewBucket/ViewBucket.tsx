@@ -280,7 +280,6 @@ const ViewBucket = ({
   const [addLifecycleOpen, setAddLifecycleOpen] = useState<boolean>(false);
 
   const bucketName = match.params["bucketName"];
-  const ilmEnabled = session.features?.indexOf("ilm") > -1;
   const usersEnabled = session.pages?.indexOf("/users") > -1;
 
   // check the permissions for creating bucket
@@ -956,7 +955,7 @@ const ViewBucket = ({
                 )}
                 <Tab label="Policies" {...a11yProps(2)} />
                 {usersEnabled && <Tab label="Users" {...a11yProps(3)} />}
-                {ilmEnabled && <Tab label="Lifecycle" {...a11yProps(4)} />}
+                <Tab label="Lifecycle" {...a11yProps(4)} />
               </Tabs>
             </Grid>
             <Grid item xs={3} className={classes.actionsTray}>

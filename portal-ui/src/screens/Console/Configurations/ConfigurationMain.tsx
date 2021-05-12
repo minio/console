@@ -46,7 +46,6 @@ const styles = (theme: Theme) =>
 
 const ConfigurationMain = ({ classes, session }: IConfigurationMain) => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
-  const ilmEnabled = session.features?.indexOf("ilm") > -1;
 
   return (
     <Fragment>
@@ -69,7 +68,7 @@ const ConfigurationMain = ({ classes, session }: IConfigurationMain) => {
           >
             <Tab label="Configurations" />
             <Tab label="Lambda Notifications" />
-            {ilmEnabled && <Tab label="Tiers" />}
+            <Tab label="Tiers" />
           </Tabs>
           <Grid item xs={12}>
             {selectedTab === 0 && (
