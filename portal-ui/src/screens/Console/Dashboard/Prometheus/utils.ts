@@ -325,6 +325,8 @@ const niceDaysFromNS = (seconds: string) => {
   return niceDays(seconds, 'ns');
 }
 
+const roundNumber = (value: string) => {return parseInt(value).toString(10)};
+
 export const panelsConfiguration: IDashboardPanel[] = [
   {
     title: "Uptime",
@@ -471,8 +473,8 @@ export const panelsConfiguration: IDashboardPanel[] = [
     ],
     type: widgetType.linearGraph,
     layoutIdentifier: "panel-10",
-    disableYAxis: true,
     xAxisFormatter: getTimeFromTimestamp,
+    yAxisFormatter: niceBytes,
   },
   {
     title: "Total Open FDs",
@@ -505,7 +507,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     ],
     type: widgetType.linearGraph,
     layoutIdentifier: "panel-13",
-    disableYAxis: true,
+    yAxisFormatter: roundNumber,
     xAxisFormatter: getTimeFromTimestamp,
   },
   {
@@ -521,7 +523,6 @@ export const panelsConfiguration: IDashboardPanel[] = [
     ],
     type: widgetType.linearGraph,
     layoutIdentifier: "panel-14",
-    yAxisFormatter: niceBytes,
     xAxisFormatter: getTimeFromTimestamp,
   },
   {
@@ -538,6 +539,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     type: widgetType.linearGraph,
     layoutIdentifier: "panel-15",
     xAxisFormatter: getTimeFromTimestamp,
+    yAxisFormatter: niceBytes,
   },
   {
     title: "Internode Data Transfer",
@@ -598,7 +600,6 @@ export const panelsConfiguration: IDashboardPanel[] = [
     ],
     type: widgetType.linearGraph,
     layoutIdentifier: "panel-22",
-    disableYAxis: true,
     xAxisFormatter: getTimeFromTimestamp,
   },
   {
@@ -614,7 +615,6 @@ export const panelsConfiguration: IDashboardPanel[] = [
     ],
     type: widgetType.linearGraph,
     layoutIdentifier: "panel-23",
-    disableYAxis: true,
     xAxisFormatter: getTimeFromTimestamp,
     yAxisFormatter: niceBytes,
   },
@@ -631,7 +631,6 @@ export const panelsConfiguration: IDashboardPanel[] = [
     ],
     type: widgetType.linearGraph,
     layoutIdentifier: "panel-24",
-    disableYAxis: true,
     xAxisFormatter: getTimeFromTimestamp,
     yAxisFormatter: niceBytes,
   },
@@ -664,7 +663,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     ],
     type: widgetType.linearGraph,
     layoutIdentifier: "panel-26",
-    disableYAxis: true,
+    yAxisFormatter: roundNumber,
     xAxisFormatter: getTimeFromTimestamp,
   },
   {
@@ -680,7 +679,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     ],
     type: widgetType.linearGraph,
     layoutIdentifier: "panel-27",
-    disableYAxis: true,
+    yAxisFormatter: roundNumber,
     xAxisFormatter: getTimeFromTimestamp,
   },
   {
