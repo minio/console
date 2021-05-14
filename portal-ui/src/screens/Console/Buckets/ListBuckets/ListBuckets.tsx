@@ -289,7 +289,7 @@ const ListBuckets = ({
                 startIcon={<CreateIcon />}
                 onClick={() => {
                   addBucketOpen(true);
-                }}
+                }} 
               >
                 Create Bucket
               </Button>
