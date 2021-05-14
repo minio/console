@@ -50,11 +50,26 @@ type Tenant struct {
 	// enable prometheus
 	EnablePrometheus bool `json:"enable_prometheus,omitempty"`
 
+	// encryption enabled
+	EncryptionEnabled bool `json:"encryptionEnabled,omitempty"`
+
 	// endpoints
 	Endpoints *TenantEndpoints `json:"endpoints,omitempty"`
 
+	// idp ad enabled
+	IdpAdEnabled bool `json:"idpAdEnabled,omitempty"`
+
+	// idp oic enabled
+	IdpOicEnabled bool `json:"idpOicEnabled,omitempty"`
+
 	// image
 	Image string `json:"image,omitempty"`
+
+	// log enabled
+	LogEnabled bool `json:"logEnabled,omitempty"`
+
+	// monitoring enabled
+	MonitoringEnabled bool `json:"monitoringEnabled,omitempty"`
 
 	// name
 	Name string `json:"name,omitempty"`

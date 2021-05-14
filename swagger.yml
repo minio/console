@@ -3527,6 +3527,17 @@ definitions:
             type: string
           console:
             type: string
+      logEnabled:
+        type: boolean
+      monitoringEnabled:
+        type: boolean
+      idpAdEnabled:
+        type: boolean
+      idpOicEnabled:
+        type: boolean
+      encryptionEnabled:
+        type: boolean
+
 
   tenantUsage:
     type: object

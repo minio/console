@@ -6442,6 +6442,9 @@ func init() {
         "enable_prometheus": {
           "type": "boolean"
         },
+        "encryptionEnabled": {
+          "type": "boolean"
+        },
         "endpoints": {
           "type": "object",
           "properties": {
@@ -6453,8 +6456,20 @@ func init() {
             }
           }
         },
+        "idpAdEnabled": {
+          "type": "boolean"
+        },
+        "idpOicEnabled": {
+          "type": "boolean"
+        },
         "image": {
           "type": "string"
+        },
+        "logEnabled": {
+          "type": "boolean"
+        },
+        "monitoringEnabled": {
+          "type": "boolean"
         },
         "name": {
           "type": "string"
@@ -13842,6 +13857,9 @@ func init() {
         "enable_prometheus": {
           "type": "boolean"
         },
+        "encryptionEnabled": {
+          "type": "boolean"
+        },
         "endpoints": {
           "type": "object",
           "properties": {
@@ -13853,8 +13871,20 @@ func init() {
             }
           }
         },
+        "idpAdEnabled": {
+          "type": "boolean"
+        },
+        "idpOicEnabled": {
+          "type": "boolean"
+        },
         "image": {
           "type": "string"
+        },
+        "logEnabled": {
+          "type": "boolean"
+        },
+        "monitoringEnabled": {
+          "type": "boolean"
         },
         "name": {
           "type": "string"

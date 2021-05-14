@@ -568,3 +568,14 @@ export const wizardCommon = {
     },
   },
 };
+
+export const buttonsStyles = {
+  anchorButton: {
+    textDecoration: "underline" as const,
+    textTransform: "unset" as const,
+    fontWeight: "normal" as const,
+    padding: 0,
+    lineHeight: "unset" as const,
+    height: "unset" as const,
+  },
+};
