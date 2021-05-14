@@ -2149,6 +2149,29 @@ func init() {
         }
       }
     },
+    "/list-pvcs": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "List all PVCs from namespaces that the user has access to",
+        "operationId": "ListPVCs",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listPVCsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/login": {
       "get": {
         "security": [],
@@ -5048,6 +5071,17 @@ func init() {
         }
       }
     },
+    "listPVCsResponse": {
+      "type": "object",
+      "properties": {
+        "pvcs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pvcsListResponse"
+          }
+        }
+      }
+    },
     "listPoliciesResponse": {
       "type": "object",
       "properties": {
@@ -6054,6 +6088,32 @@ func init() {
           "additionalProperties": {
             "type": "string"
           }
+        }
+      }
+    },
+    "pvcsListResponse": {
+      "type": "object",
+      "properties": {
+        "age": {
+          "type": "string"
+        },
+        "capacity": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "storageClass": {
+          "type": "string"
+        },
+        "volume": {
+          "type": "string"
         }
       }
     },
@@ -9012,6 +9072,29 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/listBucketsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/list-pvcs": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "List all PVCs from namespaces that the user has access to",
+        "operationId": "ListPVCs",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listPVCsResponse"
             }
           },
           "default": {
@@ -12523,6 +12606,17 @@ func init() {
         }
       }
     },
+    "listPVCsResponse": {
+      "type": "object",
+      "properties": {
+        "pvcs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pvcsListResponse"
+          }
+        }
+      }
+    },
     "listPoliciesResponse": {
       "type": "object",
       "properties": {
@@ -13394,6 +13488,32 @@ func init() {
           "additionalProperties": {
             "type": "string"
           }
+        }
+      }
+    },
+    "pvcsListResponse": {
+      "type": "object",
+      "properties": {
+        "age": {
+          "type": "string"
+        },
+        "capacity": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "storageClass": {
+          "type": "string"
+        },
+        "volume": {
+          "type": "string"
         }
       }
     },

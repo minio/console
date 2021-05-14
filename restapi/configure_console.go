@@ -145,6 +145,8 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerAccountHandlers(api)
 	// Direct CSI handlers
 	registerDirectCSIHandlers(api)
+	// Volumes handlers
+	registerVolumesHandlers(api)
 
 	api.PreServerShutdown = func() {}
 

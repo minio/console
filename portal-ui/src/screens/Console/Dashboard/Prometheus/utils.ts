@@ -322,10 +322,12 @@ const colorsMain = [
 ];
 
 const niceDaysFromNS = (seconds: string) => {
-  return niceDays(seconds, 'ns');
-}
+  return niceDays(seconds, "ns");
+};
 
-const roundNumber = (value: string) => {return parseInt(value).toString(10)};
+const roundNumber = (value: string) => {
+  return parseInt(value).toString(10);
+};
 
 export const panelsConfiguration: IDashboardPanel[] = [
   {
@@ -737,7 +739,9 @@ const constructLabelNames = (metrics: any, legendFormat: string) => {
 export const getWidgetsWithValue = (payload: any[]) => {
   return panelsConfiguration.map((panelItem) => {
     const payloadData = payload.find(
-      (panelT) => panelT.title.toLowerCase().trim() === panelItem.title.toLowerCase().trim()
+      (panelT) =>
+        panelT.title.toLowerCase().trim() ===
+        panelItem.title.toLowerCase().trim()
     );
 
     if (!payloadData) {
