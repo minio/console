@@ -48,6 +48,7 @@ import PieChartWidget from "./Widgets/PieChartWidget";
 import SingleRepWidget from "./Widgets/SingleRepWidget";
 import DateTimePickerWrapper from "../../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
 import api from "../../../../common/api";
+import SyncIcon from "../../../../icons/SyncIcon";
 
 interface IPrDashboard {
   classes: any;
@@ -56,12 +57,22 @@ interface IPrDashboard {
 
 const styles = (theme: Theme) =>
   createStyles({
+    ...actionsTray,
+    ...containerForHeader(theme.spacing(4)),
     widgetsContainer: {
       height: "calc(100vh - 250px)",
       paddingBottom: 235,
     },
-    ...actionsTray,
-    ...containerForHeader(theme.spacing(4)),
+    syncButton: {
+      "&.MuiButton-root .MuiButton-iconSizeMedium > *:first-child": {
+        fontSize: 18,
+
+      }
+    },
+    actionsTray: {
+      ...actionsTray.actionsTray,
+      padding: "0 10px"
+    },
   });
 
 const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
@@ -222,8 +233,10 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
           variant="contained"
           color="primary"
           onClick={triggerLoad}
+          startIcon={<SyncIcon />}
+          className={classes.syncButton}
         >
-          Get Information
+          Sync
         </Button>
       </Grid>
       <Grid item xs={12} className={classes.widgetsContainer}>
