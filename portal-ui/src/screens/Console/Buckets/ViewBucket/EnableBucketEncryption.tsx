@@ -45,6 +45,7 @@ const styles = (theme: Theme) =>
 interface IEnableBucketEncryptionProps {
   classes: any;
   open: boolean;
+  encryptionEnabled: boolean;
   selectedBucket: string;
   closeModalAndRefresh: () => void;
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
@@ -53,32 +54,48 @@ interface IEnableBucketEncryptionProps {
 const EnableBucketEncryption = ({
   classes,
   open,
+  encryptionEnabled,
   selectedBucket,
   closeModalAndRefresh,
   setModalErrorSnackMessage,
 }: IEnableBucketEncryptionProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [kmsKeyID, setKmsKeyID] = useState<string>("");
-  const [encryptionType, setEncryptionType] = useState<string>("sse-s3");
+  const [encryptionType, setEncryptionType] = useState<string>(
+    encryptionEnabled ? "sse-s3" : "disabled"
+  );
 
   const enableBucketEncryption = (event: React.FormEvent) => {
     event.preventDefault();
     if (loading) {
       return;
     }
-    api
-      .invoke("POST", `/api/v1/buckets/${selectedBucket}/encryption/enable`, {
-        encType: encryptionType,
-        kmsKeyID: kmsKeyID,
-      })
-      .then(() => {
-        setLoading(false);
-        closeModalAndRefresh();
-      })
-      .catch((err: any) => {
-        setLoading(false);
-        setModalErrorSnackMessage(err);
-      });
+    if (encryptionType === "disabled") {
+      api
+        .invoke("POST", `/api/v1/buckets/${selectedBucket}/encryption/disable`)
+        .then(() => {
+          setLoading(false);
+          closeModalAndRefresh();
+        })
+        .catch((err: any) => {
+          setLoading(false);
+          setModalErrorSnackMessage(err);
+        });
+    } else {
+      api
+        .invoke("POST", `/api/v1/buckets/${selectedBucket}/encryption/enable`, {
+          encType: encryptionType,
+          kmsKeyID: kmsKeyID,
+        })
+        .then(() => {
+          setLoading(false);
+          closeModalAndRefresh();
+        })
+        .catch((err: any) => {
+          setLoading(false);
+          setModalErrorSnackMessage(err);
+        });
+    }
   };
 
   return (
@@ -108,6 +125,10 @@ const EnableBucketEncryption = ({
                 label={"Encryption Type"}
                 value={encryptionType}
                 options={[
+                  {
+                    label: "Disabled",
+                    value: "disabled",
+                  },
                   {
                     label: "SSE-S3",
                     value: "sse-s3",
