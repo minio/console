@@ -33,7 +33,7 @@ import {
   searchField,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../../../../Common/PageHeader/PageHeader";
-import { Button, Input, Typography } from "@material-ui/core";
+import { Button, IconButton, Input, Typography } from "@material-ui/core";
 import * as reactMoment from "react-moment";
 import { CreateIcon } from "../../../../../../icons";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
@@ -59,6 +59,7 @@ import {
   setSnackBarMessage,
   setErrorSnackMessage,
 } from "../../../../../../actions";
+import RefreshIcon from "@material-ui/icons/Refresh";
 
 const commonIcon = {
   backgroundRepeat: "no-repeat",
@@ -129,6 +130,9 @@ const styles = (theme: Theme) =>
         backgroundImage: "url(/images/ob_folder_filled.svg)",
       },
     },
+    listButton: {
+      marginLeft: "10px",
+    },
     ...actionsTray,
     ...searchField,
     ...objectBrowserCommon,
@@ -196,9 +200,8 @@ const ListObjects = ({
   const [selectedBucket, setSelectedBucket] = useState<string>("");
   const [filterObjects, setFilterObjects] = useState<string>("");
   const [loadingStartTime, setLoadingStartTime] = useState<number>(0);
-  const [loadingMessage, setLoadingMessage] = useState<React.ReactNode>(
-    defLoading
-  );
+  const [loadingMessage, setLoadingMessage] =
+    useState<React.ReactNode>(defLoading);
 
   const updateMessage = () => {
     let timeDelta = Date.now() - loadingStartTime;
@@ -542,34 +545,6 @@ const ListObjects = ({
             <div>
               <BrowserBreadcrumbs />
             </div>
-            <div className={classes.buttonsContainer}>
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<CreateIcon />}
-                component="label"
-                onClick={() => {
-                  setCreateFolderOpen(true);
-                }}
-              >
-                Create Folder
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<UploadFile />}
-                component="label"
-              >
-                File
-                <Input
-                  type="file"
-                  inputProps={{ multiple: true }}
-                  onChange={(e) => uploadObject(e)}
-                  id="file-input"
-                  style={{ display: "none" }}
-                />
-              </Button>
-            </div>
           </Grid>
           <Grid item xs={12} className={classes.actionsTray}>
             <TextField
@@ -589,6 +564,44 @@ const ListObjects = ({
                 ),
               }}
             />
+            <IconButton
+              color="primary"
+              aria-label="Refresh List"
+              component="span"
+              onClick={() => {
+                setLoading(true);
+              }}
+            >
+              <RefreshIcon />
+            </IconButton>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<CreateIcon />}
+              component="label"
+              onClick={() => {
+                setCreateFolderOpen(true);
+              }}
+              className={classes.listButton}
+            >
+              Create Folder
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<UploadFile />}
+              component="label"
+              className={classes.listButton}
+            >
+              File
+              <Input
+                type="file"
+                inputProps={{ multiple: true }}
+                onChange={(e) => uploadObject(e)}
+                id="file-input"
+                style={{ display: "none" }}
+              />
+            </Button>
           </Grid>
           <Grid item xs={12}>
             <br />

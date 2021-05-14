@@ -23,7 +23,7 @@ import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
-import { Button } from "@material-ui/core";
+import { Button, IconButton } from "@material-ui/core";
 import { CreateIcon } from "../../../icons";
 import { niceBytes } from "../../../common/utils";
 import { Bucket, BucketList, HasPermissionResponse } from "../Buckets/types";
@@ -38,6 +38,7 @@ import BrowserBreadcrumbs from "./BrowserBreadcrumbs";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import AddBucket from "../Buckets/ListBuckets/AddBucket";
 import api from "../../../common/api";
+import RefreshIcon from "@material-ui/icons/Refresh";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -216,20 +217,6 @@ const BrowseBuckets = ({
           <div>
             <BrowserBreadcrumbs />
           </div>
-          {canCreateBucket && (
-            <div>
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<CreateIcon />}
-                onClick={() => {
-                  setAddScreenOpen(true);
-                }}
-              >
-                Create Bucket
-              </Button>
-            </div>
-          )}
         </Grid>
         <Grid item xs={12} className={classes.actionsTray}>
           <TextField
@@ -249,6 +236,30 @@ const BrowseBuckets = ({
               ),
             }}
           />
+          <IconButton
+            color="primary"
+            aria-label="Refresh List"
+            component="span"
+            onClick={() => {
+              setLoading(true);
+            }}
+          >
+            <RefreshIcon />
+          </IconButton>
+          {canCreateBucket && (
+            <div>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<CreateIcon />}
+                onClick={() => {
+                  setAddScreenOpen(true);
+                }}
+              >
+                Create Bucket
+              </Button>
+            </div>
+          )}
         </Grid>
         <Grid item xs={12}>
           <br />

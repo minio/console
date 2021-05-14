@@ -100,11 +100,12 @@ const styles = (theme: Theme) =>
         marginLeft: 30,
         width: "calc(100% - 30px)",
       },
-      "& .MuiCollapse-container .MuiCollapse-wrapper .MuiCollapse-wrapperInner .MuiDivider-root": {
-        backgroundColor: "rgba(112,112,112,0.5)",
-        marginBottom: 12,
-        height: 1,
-      },
+      "& .MuiCollapse-container .MuiCollapse-wrapper .MuiCollapse-wrapperInner .MuiDivider-root":
+        {
+          backgroundColor: "rgba(112,112,112,0.5)",
+          marginBottom: 12,
+          height: 1,
+        },
     },
     extraMargin: {
       "&.MuiListItem-gutters": {

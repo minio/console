@@ -577,5 +577,19 @@ export const buttonsStyles = {
     padding: 0,
     lineHeight: "unset" as const,
     height: "unset" as const,
+    width: "unset" as const,
+    textAlign: "left" as const,
+    border: 0,
+    minWidth: "unset" as const,
+  },
+};
+
+export const hrClass = {
+  hrClass: {
+    borderTop: 0,
+    borderLeft: 0,
+    borderRight: 0,
+    borderColor: "#999999",
+    backgroundColor: "transparent" as const,
   },
 };

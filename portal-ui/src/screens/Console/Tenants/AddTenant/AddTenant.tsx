@@ -83,10 +83,8 @@ const AddTenant = ({
 }: IAddTenantProps) => {
   // Modals
   const [showNewCredentials, setShowNewCredentials] = useState<boolean>(false);
-  const [
-    createdAccount,
-    setCreatedAccount,
-  ] = useState<NewServiceAccount | null>(null);
+  const [createdAccount, setCreatedAccount] =
+    useState<NewServiceAccount | null>(null);
 
   // Fields
   const [addSending, setAddSending] = useState<boolean>(false);

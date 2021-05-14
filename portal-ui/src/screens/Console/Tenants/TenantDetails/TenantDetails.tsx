@@ -22,6 +22,7 @@ import {
   actionsTray,
   buttonsStyles,
   containerForHeader,
+  hrClass,
   modalBasic,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
@@ -133,17 +134,11 @@ const styles = (theme: Theme) =>
       textDecoration: "none",
       color: "black",
     },
-    hrClass: {
-      borderTop: 0,
-      borderLeft: 0,
-      borderRight: 0,
-      borderColor: "#999999",
-      backgroundColor: "transparent",
-    },
     ...modalBasic,
     ...actionsTray,
     ...buttonsStyles,
     ...searchField,
+    ...hrClass,
     actionsTray: {
       ...actionsTray.actionsTray,
       padding: "15px 0 0",
@@ -174,9 +169,8 @@ const TenantDetails = ({
   const [yamlScreenOpen, setYamlScreenOpen] = useState<boolean>(false);
   const [licenseInfo, setLicenseInfo] = useState<LicenseInfo>();
   const [loadingLicenseInfo, setLoadingLicenseInfo] = useState<boolean>(true);
-  const [loadingActivateProduct, setLoadingActivateProduct] = useState<boolean>(
-    false
-  );
+  const [loadingActivateProduct, setLoadingActivateProduct] =
+    useState<boolean>(false);
   const [logEnabled, setLogEnabled] = useState<boolean>(false);
   const [monitoringEnabled, setMonitoringEnabled] = useState<boolean>(false);
   const [encryptionEnabled, setEncryptionEnabled] = useState<boolean>(false);
