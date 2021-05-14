@@ -243,16 +243,13 @@ const ViewBucket = ({
   const [loadingReplication, setLoadingReplication] = useState<boolean>(true);
   const [loadingSize, setLoadingSize] = useState<boolean>(true);
   const [loadingEncryption, setLoadingEncryption] = useState<boolean>(true);
-  const [accessPolicyScreenOpen, setAccessPolicyScreenOpen] = useState<boolean>(
-    false
-  );
+  const [accessPolicyScreenOpen, setAccessPolicyScreenOpen] =
+    useState<boolean>(false);
   const [curTab, setCurTab] = useState<number>(0);
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
   const [policyScreenOpen, setPolicyScreenOpen] = useState<boolean>(false);
-  const [
-    enableEncryptionScreenOpen,
-    setEnableEncryptionScreenOpen,
-  ] = useState<boolean>(false);
+  const [enableEncryptionScreenOpen, setEnableEncryptionScreenOpen] =
+    useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [editLifecycleOpen, setEditLifecycleOpen] = useState<boolean>(false);
   const [selectedEvent, setSelectedEvent] = useState<BucketEvent | null>(null);
@@ -261,19 +258,16 @@ const ViewBucket = ({
   const [isVersioned, setIsVersioned] = useState<boolean>(false);
   const [hasObjectLocking, setHasObjectLocking] = useState<boolean>(false);
   const [encryptionEnabled, setEncryptionEnabled] = useState<boolean>(false);
-  const [retentionConfigOpen, setRetentionConfigOpen] = useState<boolean>(
-    false
-  );
+  const [retentionConfigOpen, setRetentionConfigOpen] =
+    useState<boolean>(false);
   const [policyEdit, setPolicyEdit] = useState<any>(null);
-  const [enableVersioningOpen, setEnableVersioningOpen] = useState<boolean>(
-    false
-  );
+  const [enableVersioningOpen, setEnableVersioningOpen] =
+    useState<boolean>(false);
   const [loadingPerms, setLoadingPerms] = useState<boolean>(true);
   const [canPutReplication, setCanPutReplication] = useState<boolean>(false);
   const [canGetReplication, setCanGetReplication] = useState<boolean>(false);
-  const [deleteReplicationModal, setDeleteReplicationModal] = useState<boolean>(
-    false
-  );
+  const [deleteReplicationModal, setDeleteReplicationModal] =
+    useState<boolean>(false);
   const [selectedRRule, setSelectedRRule] = useState<string>("");
   const [loadingLifecycle, setLoadingLifecycle] = useState<boolean>(true);
   const [lifecycleRecords, setLifecycleRecords] = useState<LifeCycleItem[]>([]);
@@ -480,7 +474,11 @@ const ViewBucket = ({
           setLoadingEncryption(false);
         })
         .catch((err) => {
-          console.error(err);
+          if (
+            err === "The server side encryption configuration was not found"
+          ) {
+            setEncryptionEnabled(false);
+          }
           setLoadingEncryption(false);
         });
     }
@@ -620,23 +618,6 @@ const ViewBucket = ({
     }
   };
 
-  const handleEncryptionCheckbox = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    if (event.target.checked) {
-      setEnableEncryptionScreenOpen(true);
-    } else {
-      api
-        .invoke("POST", `/api/v1/buckets/${bucketName}/encryption/disable`)
-        .then(() => {
-          setEncryptionEnabled(false);
-        })
-        .catch((err: any) => {
-          setErrorSnackMessage(err);
-        });
-    }
-  };
-
   const tableActions = [{ type: "delete", onClick: confirmDeleteEvent }];
   const viewAction = (row: any) => {
     setPolicyScreenOpen(true);
@@ -729,6 +710,7 @@ const ViewBucket = ({
         <EnableBucketEncryption
           open={enableEncryptionScreenOpen}
           selectedBucket={bucketName}
+          encryptionEnabled={encryptionEnabled}
           closeModalAndRefresh={closeEnableBucketEncryption}
         />
       )}
@@ -863,15 +845,29 @@ const ViewBucket = ({
                     )}
                     <div>Encryption:</div>
                     <div>
-                      <Checkbox
+                      {loadingEncryption ? (
+                        <CircularProgress
+                          color="primary"
+                          size={16}
+                          variant="indeterminate"
+                        />
+                      ) : encryptionEnabled ? (
+                        "Enabled"
+                      ) : (
+                        "Disabled"
+                      )}
+
+                      <IconButton
                         color="primary"
-                        className={classes.encCheckbox}
-                        inputProps={{
-                          "aria-label": "secondary checkbox",
+                        aria-label="access"
+                        size="small"
+                        className={classes.propertiesIcon}
+                        onClick={() => {
+                          setEnableEncryptionScreenOpen(true);
                         }}
-                        onChange={(event) => handleEncryptionCheckbox(event)}
-                        checked={encryptionEnabled}
-                      />
+                      >
+                        <PencilIcon active={true} />
+                      </IconButton>
                     </div>
                   </div>
                   {hasObjectLocking && (
