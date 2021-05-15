@@ -17,7 +17,7 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, IconButton } from "@material-ui/core";
+import { Button, IconButton, TextField } from "@material-ui/core";
 import * as reactMoment from "react-moment";
 import get from "lodash/get";
 import Paper from "@material-ui/core/Paper";
@@ -45,7 +45,13 @@ import {
 } from "../types";
 import { CreateIcon } from "../../../../icons";
 import { niceBytes } from "../../../../common/utils";
-import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  actionsTray,
+  buttonsStyles,
+  containerForHeader,
+  hrClass,
+  searchField,
+} from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
 import { Policy } from "../../Policies/types";
 import { User } from "../../Users/types";
@@ -67,6 +73,8 @@ import DeleteReplicationRule from "../ViewBucket/DeleteReplicationRule";
 import EditLifecycleConfiguration from "./EditLifecycleConfiguration";
 import AddLifecycleModal from "./AddLifecycleModal";
 import history from "../../../../history";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import SearchIcon from "@material-ui/icons/Search";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -93,18 +101,6 @@ const styles = (theme: Theme) =>
           fontWeight: "bold",
         },
       },
-    },
-    actionsTray: {
-      textAlign: "right",
-      "& button": {
-        marginLeft: 10,
-      },
-    },
-    searchField: {
-      background: "#FFFFFF",
-      padding: 12,
-      borderRadius: 5,
-      boxShadow: "0px 3px 6px #00000012",
     },
     noRecords: {
       lineHeight: "24px",
@@ -178,9 +174,20 @@ const styles = (theme: Theme) =>
     },
     consumptionValue: {
       color: "#000000",
-      fontSize: "60px",
+      fontSize: "48px",
       fontWeight: "bold",
     },
+    reportedUsage: {
+      padding: "15px",
+    },
+    ...searchField,
+    ...actionsTray,
+    actionsTray: {
+      ...actionsTray.actionsTray,
+      padding: "15px 0 0",
+    },
+    ...hrClass,
+    ...buttonsStyles,
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -786,12 +793,92 @@ const ViewBucket = ({
       )}
 
       <PageHeader label={`Bucket > ${match.params["bucketName"]}`} />
-      <Grid container>
-        <Grid item xs={12} className={classes.container}>
-          <Grid item xs={12}>
-            <Grid container spacing={2}>
-              <Grid item>
-                <Paper className={classes.fixedHeight}>
+      <Grid container className={classes.container}>
+        <Grid item xs={12}>
+          <Tabs
+            value={curTab}
+            onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
+              setCurTab(newValue);
+            }}
+            indicatorColor="primary"
+            textColor="primary"
+            aria-label="cluster-tabs"
+            variant="scrollable"
+            scrollButtons="auto"
+          >
+            <Tab label="Summary" {...a11yProps(0)} />
+            <Tab label="Events" {...a11yProps(1)} />
+            {canGetReplication && <Tab label="Replication" {...a11yProps(2)} />}
+            <Tab label="Lifecycle" {...a11yProps(3)} />
+            <Tab label="Policies" {...a11yProps(4)} />
+            {usersEnabled && <Tab label="Users" {...a11yProps(5)} />}
+          </Tabs>
+        </Grid>
+        <Grid item xs={12}>
+          <TabPanel index={0} value={curTab}>
+            <br />
+            <Paper className={classes.paperContainer}>
+              <Grid container>
+                <Grid xs={9}>
+                  <h2>Details</h2>
+                  <hr className={classes.hrClass} />
+                  <table width={"100%"}>
+                    <tr>
+                      <td>Access Policy:</td>
+                      <td className={classes.capitalizeFirst}>
+                        <Button
+                          color="primary"
+                          className={classes.anchorButton}
+                          onClick={() => {
+                            setAccessPolicyScreenOpen(true);
+                          }}
+                        >
+                          {loadingBucket ? (
+                            <CircularProgress
+                              color="primary"
+                              size={16}
+                              variant="indeterminate"
+                            />
+                          ) : (
+                            accessPolicy.toLowerCase()
+                          )}
+                        </Button>
+                      </td>
+                      <td>Encryption:</td>
+                      <td>
+                        <Checkbox
+                          color="primary"
+                          className={classes.encCheckbox}
+                          inputProps={{
+                            "aria-label": "secondary checkbox",
+                          }}
+                          onChange={(event) => handleEncryptionCheckbox(event)}
+                          checked={encryptionEnabled}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Replication:</td>
+                      <td className={classes.doubleElement}>
+                        <span>
+                          {replicationRules.length ? "Enabled" : "Disabled"}
+                        </span>
+                      </td>
+                      {!hasObjectLocking ? (
+                        <React.Fragment>
+                          <td>Object Locking:</td>
+                          <td>Disabled</td>
+                        </React.Fragment>
+                      ) : (
+                        <React.Fragment>
+                          <td></td>
+                          <td></td>
+                        </React.Fragment>
+                      )}
+                    </tr>
+                  </table>
+                </Grid>
+                <Grid xs={3} className={classes.reportedUsage}>
                   <Grid container direction="row" alignItems="center">
                     <Grid item className={classes.icon}>
                       <UsageIcon />
@@ -805,77 +892,20 @@ const ViewBucket = ({
                   <Typography className={classes.consumptionValue}>
                     {niceBytes(bucketSize)}
                   </Typography>
-                </Paper>
+                </Grid>
               </Grid>
-              <Grid item>
-                <Paper className={classes.paperContainer}>
-                  <div className={classes.gridContainer}>
-                    <div>Access Policy:</div>
-                    <div className={classes.capitalizeFirst}>
-                      {loadingBucket ? (
-                        <CircularProgress
-                          color="primary"
-                          size={16}
-                          variant="indeterminate"
-                        />
-                      ) : (
-                        accessPolicy.toLowerCase()
-                      )}
-                      <IconButton
-                        color="primary"
-                        aria-label="access"
-                        size="small"
-                        className={classes.propertiesIcon}
-                        onClick={() => {
-                          setAccessPolicyScreenOpen(true);
-                        }}
-                      >
-                        <PencilIcon active={true} />
-                      </IconButton>
-                    </div>
-                    <div>Replication:</div>
-                    <div className={classes.doubleElement}>
-                      <span>{replicationRules.length ? "Yes" : "No"}</span>
-                    </div>
-                    {!hasObjectLocking && (
-                      <Fragment>
-                        <div>Object Locking:</div>
-                        <div>No</div>
-                      </Fragment>
-                    )}
-                    <div>Encryption:</div>
-                    <div>
-                      {loadingEncryption ? (
-                        <CircularProgress
-                          color="primary"
-                          size={16}
-                          variant="indeterminate"
-                        />
-                      ) : encryptionEnabled ? (
-                        "Enabled"
-                      ) : (
-                        "Disabled"
-                      )}
-
-                      <IconButton
-                        color="primary"
-                        aria-label="access"
-                        size="small"
-                        className={classes.propertiesIcon}
-                        onClick={() => {
-                          setEnableEncryptionScreenOpen(true);
-                        }}
-                      >
-                        <PencilIcon active={true} />
-                      </IconButton>
-                    </div>
-                  </div>
-                  {hasObjectLocking && (
-                    <div className={classes.gridContainer}>
-                      <div>Object Locking</div>
-                      <div></div>
-                      <div>Versioning:</div>
-                      <div>
+            </Paper>
+            <br />
+            <br />
+            <Paper className={classes.paperContainer}>
+              <Grid container>
+                <Grid xs={12}>
+                  <h2>Versioning</h2>
+                  <hr className={classes.hrClass} />
+                  <table>
+                    <tr>
+                      <td>Versioning:</td>
+                      <td>
                         {loadingVersioning ? (
                           <CircularProgress
                             color="primary"
@@ -897,65 +927,76 @@ const ViewBucket = ({
                             </IconButton>
                           </Fragment>
                         )}
-                      </div>
-                      <div>Retention:</div>
-                      <div>
-                        {loadingVersioning ? (
-                          <CircularProgress
-                            color="primary"
-                            size={16}
-                            variant="indeterminate"
-                          />
-                        ) : (
-                          <Fragment>
-                            &nbsp;
-                            <IconButton
-                              color="primary"
-                              aria-label="retention"
-                              size="small"
-                              className={classes.propertiesIcon}
-                              onClick={() => {
-                                setRetentionConfigOpen(true);
-                              }}
-                            >
-                              <PencilIcon active={true} />
-                            </IconButton>
-                          </Fragment>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </Paper>
+                      </td>
+                    </tr>
+                  </table>
+                </Grid>
               </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={12}>
+            </Paper>
             <br />
-          </Grid>
-          <Grid container item xs={12}>
-            <Grid item xs={9}>
-              <Tabs
-                value={curTab}
-                onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
-                  setCurTab(newValue);
-                }}
-                indicatorColor="primary"
-                textColor="primary"
-                aria-label="cluster-tabs"
-                variant="scrollable"
-                scrollButtons="auto"
-              >
-                <Tab label="Events" {...a11yProps(0)} />
-                {canGetReplication && (
-                  <Tab label="Replication" {...a11yProps(1)} />
-                )}
-                <Tab label="Policies" {...a11yProps(2)} />
-                {usersEnabled && <Tab label="Users" {...a11yProps(3)} />}
-                <Tab label="Lifecycle" {...a11yProps(4)} />
-              </Tabs>
-            </Grid>
-            <Grid item xs={3} className={classes.actionsTray}>
-              {curTab === 0 && (
+            <br />
+            {hasObjectLocking && (
+              <Paper className={classes.paperContainer}>
+                <Grid container>
+                  <Grid xs={12}>
+                    <h2>Object Locking</h2>
+                    <hr className={classes.hrClass} />
+                    <table>
+                      <tr>
+                        <td className={classes.gridContainer}>
+                          <td>Retention:</td>
+                          <td>
+                            {loadingVersioning ? (
+                              <CircularProgress
+                                color="primary"
+                                size={16}
+                                variant="indeterminate"
+                              />
+                            ) : (
+                              <Fragment>
+                                &nbsp;
+                                <IconButton
+                                  color="primary"
+                                  aria-label="retention"
+                                  size="small"
+                                  className={classes.propertiesIcon}
+                                  onClick={() => {
+                                    setRetentionConfigOpen(true);
+                                  }}
+                                >
+                                  <PencilIcon active={true} />
+                                </IconButton>
+                              </Fragment>
+                            )}
+                          </td>
+                        </td>
+                      </tr>
+                    </table>
+                  </Grid>
+                </Grid>
+              </Paper>
+            )}
+          </TabPanel>
+          <TabPanel index={1} value={curTab}>
+            <Grid container>
+              <Grid item xs={12} className={classes.actionsTray}>
+                <TextField
+                  placeholder="Filter"
+                  className={classes.searchField}
+                  id="search-resource"
+                  label=""
+                  onChange={(event) => {
+                    // setFilter(event.target.value);
+                  }}
+                  InputProps={{
+                    disableUnderline: true,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
                 <Button
                   variant="contained"
                   color="primary"
@@ -967,25 +1008,117 @@ const ViewBucket = ({
                 >
                   Subscribe to Event
                 </Button>
-              )}
-              {curTab === 1 && (
-                <Fragment>
-                  {canPutReplication && (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      startIcon={<CreateIcon />}
-                      size="medium"
-                      onClick={() => {
-                        setOpenReplicationOpen(true);
-                      }}
-                    >
-                      Add Replication Rule
-                    </Button>
-                  )}
-                </Fragment>
-              )}
-              {curTab === 4 && (
+              </Grid>
+              <Grid item xs={12}>
+                <br />
+              </Grid>
+              <Grid item xs={12}>
+                <TableWrapper
+                  itemActions={tableActions}
+                  columns={[
+                    { label: "SQS", elementKey: "arn" },
+                    {
+                      label: "Events",
+                      elementKey: "events",
+                      renderFunction: eventsDisplay,
+                    },
+                    { label: "Prefix", elementKey: "prefix" },
+                    { label: "Suffix", elementKey: "suffix" },
+                  ]}
+                  isLoading={loadingEvents}
+                  records={records}
+                  entityName="Events"
+                  idField="id"
+                />
+              </Grid>
+            </Grid>
+          </TabPanel>
+          {canGetReplication && (
+            <TabPanel index={2} value={curTab}>
+              <Grid container>
+                <Grid item xs={12} className={classes.actionsTray}>
+                  <TextField
+                    placeholder="Filter"
+                    className={classes.searchField}
+                    id="search-resource"
+                    label=""
+                    onChange={(event) => {
+                      // setFilter(event.target.value);
+                    }}
+                    InputProps={{
+                      disableUnderline: true,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<CreateIcon />}
+                    size="medium"
+                    onClick={() => {
+                      setOpenReplicationOpen(true);
+                    }}
+                  >
+                    Add Replication Rule
+                  </Button>
+                </Grid>
+                <Grid item xs={12}>
+                  <br />
+                </Grid>
+                <Grid item xs={12}>
+                  <TableWrapper
+                    itemActions={replicationTableActions}
+                    columns={[
+                      { label: "ID", elementKey: "id" },
+                      {
+                        label: "Priority",
+                        elementKey: "priority",
+                      },
+                      {
+                        label: "Destination",
+                        elementKey: "destination",
+                        renderFunction: ruleDestDisplay,
+                      },
+                      {
+                        label: "Delete Marker Replication",
+                        elementKey: "delete_marker_replication",
+                        renderFunction: ruleDelDisplay,
+                      },
+                      { label: "Status", elementKey: "status" },
+                    ]}
+                    isLoading={loadingEvents}
+                    records={replicationRules}
+                    entityName="Replication Rules"
+                    idField="id"
+                  />
+                </Grid>
+              </Grid>
+            </TabPanel>
+          )}
+          <TabPanel index={3} value={curTab}>
+            <Grid container>
+              <Grid item xs={12} className={classes.actionsTray}>
+                <TextField
+                  placeholder="Filter"
+                  className={classes.searchField}
+                  id="search-resource"
+                  label=""
+                  onChange={(event) => {
+                    // setFilter(event.target.value);
+                  }}
+                  InputProps={{
+                    disableUnderline: true,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
                 <Button
                   variant="contained"
                   color="primary"
@@ -997,93 +1130,47 @@ const ViewBucket = ({
                 >
                   Add Lifecycle Rule
                 </Button>
-              )}
-            </Grid>
-          </Grid>
-          <Grid item xs={12}>
-            <TabPanel index={0} value={curTab}>
-              <TableWrapper
-                itemActions={tableActions}
-                columns={[
-                  { label: "SQS", elementKey: "arn" },
-                  {
-                    label: "Events",
-                    elementKey: "events",
-                    renderFunction: eventsDisplay,
-                  },
-                  { label: "Prefix", elementKey: "prefix" },
-                  { label: "Suffix", elementKey: "suffix" },
-                ]}
-                isLoading={loadingEvents}
-                records={records}
-                entityName="Events"
-                idField="id"
-              />
-            </TabPanel>
-            {canGetReplication && (
-              <TabPanel index={1} value={curTab}>
+              </Grid>
+              <Grid item xs={12}>
+                <br />
+              </Grid>
+              <Grid item xs={12}>
                 <TableWrapper
-                  itemActions={replicationTableActions}
-                  columns={[
-                    { label: "ID", elementKey: "id" },
-                    {
-                      label: "Priority",
-                      elementKey: "priority",
-                    },
-                    {
-                      label: "Destination",
-                      elementKey: "destination",
-                      renderFunction: ruleDestDisplay,
-                    },
-                    {
-                      label: "Delete Marker Replication",
-                      elementKey: "delete_marker_replication",
-                      renderFunction: ruleDelDisplay,
-                    },
-                    { label: "Status", elementKey: "status" },
-                  ]}
-                  isLoading={loadingEvents}
-                  records={replicationRules}
-                  entityName="Replication Rules"
+                  itemActions={[]}
+                  columns={lifecycleColumns}
+                  isLoading={loadingLifecycle}
+                  records={lifecycleRecords}
+                  entityName="Lifecycle"
+                  customEmptyMessage="There are no Lifecycle rules yet"
                   idField="id"
                 />
-              </TabPanel>
-            )}
-            <TabPanel index={2} value={curTab}>
+              </Grid>
+            </Grid>
+          </TabPanel>
+          <TabPanel index={4} value={curTab}>
+            <br />
+            <TableWrapper
+              itemActions={PolicyActions}
+              columns={[{ label: "Name", elementKey: "name" }]}
+              isLoading={loadingEvents}
+              records={bucketPolicy}
+              entityName="Policies"
+              idField="name"
+            />
+          </TabPanel>
+          {usersEnabled && (
+            <TabPanel index={5} value={curTab}>
+              <br />
               <TableWrapper
-                itemActions={PolicyActions}
-                columns={[{ label: "Name", elementKey: "name" }]}
-                isLoading={loadingEvents}
-                records={bucketPolicy}
-                entityName="Policies"
-                idField="name"
+                itemActions={userTableActions}
+                columns={[{ label: "User", elementKey: "accessKey" }]}
+                isLoading={loadingUsers}
+                records={bucketUsers}
+                entityName="Users"
+                idField="accessKey"
               />
             </TabPanel>
-
-            {usersEnabled && (
-              <TabPanel index={3} value={curTab}>
-                <TableWrapper
-                  itemActions={userTableActions}
-                  columns={[{ label: "User", elementKey: "accessKey" }]}
-                  isLoading={loadingUsers}
-                  records={bucketUsers}
-                  entityName="Users"
-                  idField="accessKey"
-                />
-              </TabPanel>
-            )}
-            <TabPanel index={4} value={curTab}>
-              <TableWrapper
-                itemActions={[]}
-                columns={lifecycleColumns}
-                isLoading={loadingLifecycle}
-                records={lifecycleRecords}
-                entityName="Lifecycle"
-                customEmptyMessage="There are no Lifecycle rules yet"
-                idField="id"
-              />
-            </TabPanel>
-          </Grid>
+          )}
         </Grid>
       </Grid>
     </Fragment>

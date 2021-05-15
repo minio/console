@@ -66,9 +66,8 @@ const initialConfiguration = {
 };
 
 const ConfigurationsList = ({ classes }: IListConfiguration) => {
-  const [selectedConfiguration, setSelectedConfiguration] = useState(
-    initialConfiguration
-  );
+  const [selectedConfiguration, setSelectedConfiguration] =
+    useState(initialConfiguration);
   const [currentConfiguration, setCurrentConfiguration] = useState<number>(0);
 
   const tableActions = [
@@ -101,9 +100,6 @@ const ConfigurationsList = ({ classes }: IListConfiguration) => {
               <SlideOptions
                 slideOptions={[
                   <Fragment>
-                    <Grid item xs={12} className={classes.customTitle}>
-                      Configuration Types
-                    </Grid>
                     <TableWrapper
                       itemActions={tableActions}
                       columns={[

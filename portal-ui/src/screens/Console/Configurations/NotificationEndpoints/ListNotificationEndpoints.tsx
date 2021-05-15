@@ -17,7 +17,7 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { TextField } from "@material-ui/core";
+import { IconButton, TextField } from "@material-ui/core";
 import { red } from "@material-ui/core/colors";
 import Grid from "@material-ui/core/Grid";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
@@ -44,6 +44,7 @@ import api from "../../../../common/api";
 import SlideOptions from "../../Common/SlideOptions/SlideOptions";
 import BackSettingsIcon from "../../../../icons/BackSettingsIcon";
 import NotificationTypeSelector from "./NotificationTypeSelector";
+import RefreshIcon from "@material-ui/icons/Refresh";
 
 interface IListNotificationEndpoints {
   classes: any;
@@ -167,10 +168,6 @@ const ListNotificationEndpoints = ({
               <SlideOptions
                 slideOptions={[
                   <Fragment>
-                    <Grid item xs={12} className={classes.customTitle}>
-                      Lambda Notification Targets
-                    </Grid>
-
                     <Grid item xs={12} className={classes.lambdaContainer}>
                       <Grid item xs={12} className={classes.actionsTray}>
                         <TextField
@@ -190,6 +187,16 @@ const ListNotificationEndpoints = ({
                             ),
                           }}
                         />
+                        <IconButton
+                          color="primary"
+                          aria-label="Refresh List"
+                          component="span"
+                          onClick={() => {
+                            setIsLoading(true);
+                          }}
+                        >
+                          <RefreshIcon />
+                        </IconButton>
                         <Button
                           variant="contained"
                           color="primary"
@@ -216,7 +223,7 @@ const ListNotificationEndpoints = ({
                           ]}
                           isLoading={isLoading}
                           records={filteredRecords}
-                          entityName="Notification Endpoints"
+                          entityName="Lambda Notification Targets"
                           idField="service_name"
                           customPaperHeight={classes.customConfigurationPage}
                           noBackground

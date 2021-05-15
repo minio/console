@@ -18,7 +18,7 @@ import React, { useEffect, useState, Fragment } from "react";
 import get from "lodash/get";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { TextField } from "@material-ui/core";
+import { IconButton, TextField } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -39,6 +39,7 @@ import SlideOptions from "../../Common/SlideOptions/SlideOptions";
 import BackSettingsIcon from "../../../../icons/BackSettingsIcon";
 import AddTierConfiguration from "./AddTierConfiguration";
 import UpdateTierCredentiasModal from "./UpdateTierCredentiasModal";
+import RefreshIcon from "@material-ui/icons/Refresh";
 
 interface IListTiersConfig {
   classes: any;
@@ -89,9 +90,8 @@ const ListTiersConfiguration = ({
   const [filter, setFilter] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [currentPanel, setCurrentPanel] = useState<number>(0);
-  const [updateCredentialsOpen, setUpdateCredentialsOpen] = useState<boolean>(
-    false
-  );
+  const [updateCredentialsOpen, setUpdateCredentialsOpen] =
+    useState<boolean>(false);
   const [selectedTier, setSelectedTier] = useState<ITierElement>({
     type: "unsupported",
   });
@@ -232,6 +232,16 @@ const ListTiersConfiguration = ({
                             ),
                           }}
                         />
+                        <IconButton
+                          color="primary"
+                          aria-label="Refresh List"
+                          component="span"
+                          onClick={() => {
+                            setIsLoading(true);
+                          }}
+                        >
+                          <RefreshIcon />
+                        </IconButton>
                         <Button
                           variant="contained"
                           color="primary"

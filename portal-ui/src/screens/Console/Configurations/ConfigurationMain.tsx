@@ -52,9 +52,6 @@ const ConfigurationMain = ({ classes, session }: IConfigurationMain) => {
       <PageHeader label="Settings" />
       <Grid container>
         <Grid item xs={12} className={classes.container}>
-          <Grid item xs={12} className={classes.headerLabel}>
-            All Settings
-          </Grid>
           <Tabs
             value={selectedTab}
             indicatorColor="primary"
