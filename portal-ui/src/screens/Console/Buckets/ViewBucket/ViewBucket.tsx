@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, IconButton, TextField } from "@material-ui/core";
+import { Button, TextField } from "@material-ui/core";
 import * as reactMoment from "react-moment";
 import get from "lodash/get";
 import Paper from "@material-ui/core/Paper";
@@ -25,7 +25,6 @@ import Grid from "@material-ui/core/Grid";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import Checkbox from "@material-ui/core/Checkbox";
 import Typography from "@material-ui/core/Typography";
 import api from "../../../../common/api";
 import {
@@ -65,7 +64,6 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import AddReplicationModal from "./AddReplicationModal";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import EnableBucketEncryption from "./EnableBucketEncryption";
-import PencilIcon from "../../Common/TableWrapper/TableActionIcons/PencilIcon";
 import EnableVersioningModal from "./EnableVersioningModal";
 import UsageIcon from "../../../../icons/UsageIcon";
 import AddPolicy from "../../Policies/AddPolicy";
@@ -265,6 +263,8 @@ const ViewBucket = ({
   const [isVersioned, setIsVersioned] = useState<boolean>(false);
   const [hasObjectLocking, setHasObjectLocking] = useState<boolean>(false);
   const [encryptionEnabled, setEncryptionEnabled] = useState<boolean>(false);
+  const [encryptionCfg, setEncryptionCfg] =
+    useState<BucketEncryptionInfo | null>(null);
   const [retentionConfigOpen, setRetentionConfigOpen] =
     useState<boolean>(false);
   const [policyEdit, setPolicyEdit] = useState<any>(null);
@@ -477,6 +477,7 @@ const ViewBucket = ({
         .then((res: BucketEncryptionInfo) => {
           if (res.algorithm) {
             setEncryptionEnabled(true);
+            setEncryptionCfg(res);
           }
           setLoadingEncryption(false);
         })
@@ -485,6 +486,7 @@ const ViewBucket = ({
             err === "The server side encryption configuration was not found"
           ) {
             setEncryptionEnabled(false);
+            setEncryptionCfg(null);
           }
           setLoadingEncryption(false);
         });
@@ -718,6 +720,7 @@ const ViewBucket = ({
           open={enableEncryptionScreenOpen}
           selectedBucket={bucketName}
           encryptionEnabled={encryptionEnabled}
+          encryptionCfg={encryptionCfg}
           closeModalAndRefresh={closeEnableBucketEncryption}
         />
       )}
@@ -846,15 +849,23 @@ const ViewBucket = ({
                       </td>
                       <td>Encryption:</td>
                       <td>
-                        <Checkbox
-                          color="primary"
-                          className={classes.encCheckbox}
-                          inputProps={{
-                            "aria-label": "secondary checkbox",
-                          }}
-                          onChange={(event) => handleEncryptionCheckbox(event)}
-                          checked={encryptionEnabled}
-                        />
+                        {loadingEncryption ? (
+                          <CircularProgress
+                            color="primary"
+                            size={16}
+                            variant="indeterminate"
+                          />
+                        ) : (
+                          <Button
+                            color="primary"
+                            className={classes.anchorButton}
+                            onClick={() => {
+                              setEnableEncryptionScreenOpen(true);
+                            }}
+                          >
+                            {encryptionEnabled ? "Enabled" : "Disabled"}
+                          </Button>
+                        )}
                       </td>
                     </tr>
                     <tr>
@@ -880,10 +891,10 @@ const ViewBucket = ({
                 </Grid>
                 <Grid xs={3} className={classes.reportedUsage}>
                   <Grid container direction="row" alignItems="center">
-                    <Grid item className={classes.icon}>
+                    <Grid item className={classes.icon} xs={2}>
                       <UsageIcon />
                     </Grid>
-                    <Grid item>
+                    <Grid item xs={10}>
                       <Typography className={classes.elementTitle}>
                         Reported Usage
                       </Typography>
@@ -914,17 +925,13 @@ const ViewBucket = ({
                           />
                         ) : (
                           <Fragment>
-                            {isVersioned && !loadingVersioning ? "Yes" : "No"}
-                            &nbsp;
-                            <IconButton
+                            <Button
                               color="primary"
-                              aria-label="retention"
-                              size="small"
-                              className={classes.propertiesIcon}
+                              className={classes.anchorButton}
                               onClick={setBucketVersioning}
                             >
-                              <PencilIcon active={true} />
-                            </IconButton>
+                              {isVersioned ? "Enabled" : "Disabled"}
+                            </Button>
                           </Fragment>
                         )}
                       </td>
@@ -954,18 +961,15 @@ const ViewBucket = ({
                               />
                             ) : (
                               <Fragment>
-                                &nbsp;
-                                <IconButton
+                                <Button
                                   color="primary"
-                                  aria-label="retention"
-                                  size="small"
-                                  className={classes.propertiesIcon}
+                                  className={classes.anchorButton}
                                   onClick={() => {
                                     setRetentionConfigOpen(true);
                                   }}
                                 >
-                                  <PencilIcon active={true} />
-                                </IconButton>
+                                  Configure
+                                </Button>
                               </Fragment>
                             )}
                           </td>
