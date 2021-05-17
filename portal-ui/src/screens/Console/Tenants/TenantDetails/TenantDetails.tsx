@@ -33,7 +33,6 @@ import {
   Menu,
   MenuItem,
   TextField,
-  Typography,
 } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -49,14 +48,11 @@ import { IPodListElement, IPool, ITenant } from "../ListTenants/types";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import UsageBarWrapper from "../../Common/UsageBarWrapper/UsageBarWrapper";
 import UpdateTenantModal from "./UpdateTenantModal";
-import PencilIcon from "../../Common/TableWrapper/TableActionIcons/PencilIcon";
 import { LicenseInfo } from "../../License/types";
 import { Link } from "react-router-dom";
 import { setErrorSnackMessage } from "../../../../actions";
-import Moment from "react-moment";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import TenantYAML from "./TenantYAML";
-import Checkbox from "@material-ui/core/Checkbox";
 import SubnetLicenseTenant from "./SubnetLicenseTenant";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
@@ -509,6 +505,10 @@ const TenantDetails = ({
                             </td>
                           </React.Fragment>
                         )}
+                      </tr>
+                      <tr>
+                        <td>State:</td>
+                        <td colSpan={3}>{tenant?.currentState}</td>
                       </tr>
                     </table>
                   </Grid>

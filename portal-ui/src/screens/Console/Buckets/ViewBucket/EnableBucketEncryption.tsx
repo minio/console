@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import { Button, LinearProgress } from "@material-ui/core";
@@ -25,6 +25,7 @@ import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import { BucketEncryptionInfo } from "../types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -46,6 +47,7 @@ interface IEnableBucketEncryptionProps {
   classes: any;
   open: boolean;
   encryptionEnabled: boolean;
+  encryptionCfg: BucketEncryptionInfo | null;
   selectedBucket: string;
   closeModalAndRefresh: () => void;
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
@@ -55,15 +57,25 @@ const EnableBucketEncryption = ({
   classes,
   open,
   encryptionEnabled,
+  encryptionCfg,
   selectedBucket,
   closeModalAndRefresh,
   setModalErrorSnackMessage,
 }: IEnableBucketEncryptionProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [kmsKeyID, setKmsKeyID] = useState<string>("");
-  const [encryptionType, setEncryptionType] = useState<string>(
-    encryptionEnabled ? "sse-s3" : "disabled"
-  );
+  const [encryptionType, setEncryptionType] = useState<string>("disabled");
+
+  useEffect(() => {
+    if (encryptionCfg) {
+      if (encryptionCfg.algorithm === "AES256") {
+        setEncryptionType("sse-s3");
+      } else {
+        setEncryptionType("sse-kms");
+        setKmsKeyID(encryptionCfg.kmsMasterKeyID);
+      }
+    }
+  }, []);
 
   const enableBucketEncryption = (event: React.FormEvent) => {
     event.preventDefault();
