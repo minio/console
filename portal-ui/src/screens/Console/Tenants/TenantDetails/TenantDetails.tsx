@@ -481,31 +481,31 @@ const TenantDetails = ({
                         <td>{instances}</td>
                         <td>Volumes:</td>
                         <td>{volumes}</td>
-                        {tenant?.endpoints && (
-                          <React.Fragment>
-                            <td>Endpoint:</td>
-                            <td>
-                              <a
-                                href={tenant?.endpoints.minio}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                {tenant?.endpoints.minio}
-                              </a>
-                            </td>
-                            <td>Console:</td>
-                            <td>
-                              <a
-                                href={tenant?.endpoints.console}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                {tenant?.endpoints.console}
-                              </a>
-                            </td>
-                          </React.Fragment>
-                        )}
                       </tr>
+                      {tenant?.endpoints && (
+                        <tr>
+                          <td>Endpoint:</td>
+                          <td>
+                            <a
+                              href={tenant?.endpoints.minio}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {tenant?.endpoints.minio}
+                            </a>
+                          </td>
+                          <td>Console:</td>
+                          <td>
+                            <a
+                              href={tenant?.endpoints.console}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {tenant?.endpoints.console}
+                            </a>
+                          </td>
+                        </tr>
+                      )}
                       <tr>
                         <td>State:</td>
                         <td colSpan={3}>{tenant?.currentState}</td>
