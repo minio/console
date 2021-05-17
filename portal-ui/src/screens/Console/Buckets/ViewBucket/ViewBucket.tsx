@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, IconButton, TextField } from "@material-ui/core";
+import { Button, TextField } from "@material-ui/core";
 import * as reactMoment from "react-moment";
 import get from "lodash/get";
 import Paper from "@material-ui/core/Paper";
@@ -25,7 +25,6 @@ import Grid from "@material-ui/core/Grid";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import Checkbox from "@material-ui/core/Checkbox";
 import Typography from "@material-ui/core/Typography";
 import api from "../../../../common/api";
 import {
@@ -65,7 +64,6 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import AddReplicationModal from "./AddReplicationModal";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import EnableBucketEncryption from "./EnableBucketEncryption";
-import PencilIcon from "../../Common/TableWrapper/TableActionIcons/PencilIcon";
 import EnableVersioningModal from "./EnableVersioningModal";
 import UsageIcon from "../../../../icons/UsageIcon";
 import AddPolicy from "../../Policies/AddPolicy";
