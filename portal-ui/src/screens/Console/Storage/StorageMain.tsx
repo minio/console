@@ -67,8 +67,8 @@ const StorageMain = ({ classes, setErrorSnackMessage }: IStorageMain) => {
               textColor="primary"
               aria-label="cluster-tabs"
             >
-              <Tab label="PVCs" />
-              <Tab label="Direct CSI Drives" />
+              <Tab label="Volumes" />
+              <Tab label="Drives" />
             </Tabs>
           </Grid>
           {selectedTab === 0 && <StoragePVCs />}
