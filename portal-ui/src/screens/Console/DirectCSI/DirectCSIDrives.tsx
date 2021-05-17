@@ -304,9 +304,9 @@ const DirectCSIMain = ({
       <Grid item xs={12}>
         {notAvailable ? (
           <div className={classes.notAvailableNotice}>
-            Direct CSI seems not to be installed, for more information
+            To manage locally attached drives you need to install direct-csi, for more information
             <br />
-            please go to this
+            please follow this
             <a
               href="https://github.com/minio/direct-csi"
               rel="noreferrer"
