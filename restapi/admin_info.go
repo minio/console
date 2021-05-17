@@ -116,6 +116,8 @@ type WidgetLabel struct {
 var labels = []WidgetLabel{
 	{Name: "instance"},
 	{Name: "disk"},
+	{Name: "server"},
+	{Name: "api"},
 }
 
 var widgets = []Metric{
@@ -909,7 +911,6 @@ LabelsWaitLoop:
 
 					endpoint := fmt.Sprintf("%s/api/v1/%s?query=%s%s", getPrometheusURL(), apiType, url.QueryEscape(queryExpr), extraParamters)
 
-					log.Printf("%s \t  - %d [%d] - %s\n\n", m.Title, target.Step, params.Step, endpoint)
 					resp, err := http.Get(endpoint)
 					if err != nil {
 						log.Println(err)
