@@ -510,6 +510,10 @@ const TenantDetails = ({
                           </React.Fragment>
                         )}
                       </tr>
+                      <tr>
+                        <td>State:</td>
+                        <td colSpan={3}>{tenant?.currentState}</td>
+                      </tr>
                     </table>
                   </Grid>
                   <Grid item xs={4}>
