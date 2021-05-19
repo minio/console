@@ -253,6 +253,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIListUsersHandler: admin_api.ListUsersHandlerFunc(func(params admin_api.ListUsersParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListUsers has not yet been implemented")
 		}),
+		AdminAPIListUsersForPolicyHandler: admin_api.ListUsersForPolicyHandlerFunc(func(params admin_api.ListUsersForPolicyParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.ListUsersForPolicy has not yet been implemented")
+		}),
 		AdminAPIListUsersWithAccessToBucketHandler: admin_api.ListUsersWithAccessToBucketHandlerFunc(func(params admin_api.ListUsersWithAccessToBucketParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListUsersWithAccessToBucket has not yet been implemented")
 		}),
@@ -569,6 +572,8 @@ type ConsoleAPI struct {
 	UserAPIListUserServiceAccountsHandler user_api.ListUserServiceAccountsHandler
 	// AdminAPIListUsersHandler sets the operation handler for the list users operation
 	AdminAPIListUsersHandler admin_api.ListUsersHandler
+	// AdminAPIListUsersForPolicyHandler sets the operation handler for the list users for policy operation
+	AdminAPIListUsersForPolicyHandler admin_api.ListUsersForPolicyHandler
 	// AdminAPIListUsersWithAccessToBucketHandler sets the operation handler for the list users with access to bucket operation
 	AdminAPIListUsersWithAccessToBucketHandler admin_api.ListUsersWithAccessToBucketHandler
 	// UserAPILogSearchHandler sets the operation handler for the log search operation
@@ -925,6 +930,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIListUsersHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListUsersHandler")
+	}
+	if o.AdminAPIListUsersForPolicyHandler == nil {
+		unregistered = append(unregistered, "admin_api.ListUsersForPolicyHandler")
 	}
 	if o.AdminAPIListUsersWithAccessToBucketHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListUsersWithAccessToBucketHandler")
@@ -1418,6 +1426,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/users"] = admin_api.NewListUsers(o.context, o.AdminAPIListUsersHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/policies/{policy}/users"] = admin_api.NewListUsersForPolicy(o.context, o.AdminAPIListUsersForPolicyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

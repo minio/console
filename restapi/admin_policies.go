@@ -82,6 +82,13 @@ func registersPoliciesHandler(api *operations.ConsoleAPI) {
 		}
 		return admin_api.NewListPoliciesWithBucketOK().WithPayload(policyResponse)
 	})
+	api.AdminAPIListUsersForPolicyHandler = admin_api.ListUsersForPolicyHandlerFunc(func(params admin_api.ListUsersForPolicyParams, session *models.Principal) middleware.Responder {
+		policyUsersResponse, err := getListUsersForPolicyResponse(session, params.Policy)
+		if err != nil {
+			return admin_api.NewListUsersForPolicyDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewListUsersForPolicyOK().WithPayload(policyUsersResponse)
+	})
 }
 
 func getListPoliciesWithBucketResponse(session *models.Principal, bucket string) (*models.ListPoliciesResponse, *models.Error) {
@@ -182,6 +189,37 @@ func getListPoliciesResponse(session *models.Principal) (*models.ListPoliciesRes
 		Total:    int64(len(policies)),
 	}
 	return listPoliciesResponse, nil
+}
+
+// getListUsersForPoliciesResponse performs lists users affected by a given policy.
+func getListUsersForPolicyResponse(session *models.Principal, policy string) ([]string, *models.Error) {
+	ctx := context.Background()
+	mAdmin, err := newMAdminClient(session)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := adminClient{client: mAdmin}
+
+	users, err := listUsers(ctx, adminClient)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	userArray := []string{}
+	for i := 0; i < len(users); i++ {
+		if err == nil {
+			for j := 0; j < len(users[i].Policy); j++ {
+				if users[i].Policy[j] == policy {
+					userArray = append(userArray, users[i].AccessKey)
+					break
+				}
+			}
+		} else {
+			log.Println(err)
+		}
+	}
+	return userArray, nil
 }
 
 // removePolicy() calls MinIO server to remove a policy based on name.
