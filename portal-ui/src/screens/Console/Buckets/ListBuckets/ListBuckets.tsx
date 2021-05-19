@@ -97,9 +97,8 @@ const ListBuckets = ({
   const [loadingPerms, setLoadingPerms] = useState<boolean>(true);
   const [canCreateBucket, setCanCreateBucket] = useState<boolean>(false);
   const [selectedBuckets, setSelectedBuckets] = useState<string[]>([]);
-  const [replicationModalOpen, setReplicationModalOpen] = useState<boolean>(
-    false
-  );
+  const [replicationModalOpen, setReplicationModalOpen] =
+    useState<boolean>(false);
 
   // check the permissions for creating bucket
   useEffect(() => {

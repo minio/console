@@ -16,7 +16,6 @@
 import React, { useEffect, useState } from "react";
 import { Policy } from "./types";
 import { connect } from "react-redux";
-import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import {
   containerForHeader,
@@ -24,7 +23,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import { Button, LinearProgress, Typography } from "@material-ui/core";
+import { Button, LinearProgress } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
@@ -37,7 +36,6 @@ import {
   setModalErrorSnackMessage,
 } from "../../../actions";
 import { Fragment } from "react";
-import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import history from "../../../history";
 
@@ -260,84 +258,86 @@ const PolicyDetails = ({
           </Fragment>
         }
       />
-      <Grid item xs={12} className={classes.container} />
-      <Grid container>
-        <Grid item xs={6}>
-          <Tabs
-            value={selectedTab}
-            indicatorColor="primary"
-            textColor="primary"
-            onChange={(_, newValue: number) => {
-              setSelectedTab(newValue);
-            }}
-            aria-label="policy-tabs"
-          >
-            <Tab label="Details" />
-            <Tab label="Users" />
-          </Tabs>
-        </Grid>
-        <Grid item xs={12}>
-          {selectedTab === 0 && (
-            <Paper className={classes.paperContainer}>
-              <form
-                noValidate
-                autoComplete="off"
-                onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                  addRecord(e);
-                }}
-              >
-                <Grid container>
-                  <Grid item xs={12} className={classes.formScrollable}>
-                    <CodeMirrorWrapper
-                      label={`${policy ? "Edit" : "Write"} Policy`}
-                      value={policyDefinition}
-                      onBeforeChange={(editor, data, value) => {
-                        setPolicyDefinition(value);
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={12} className={classes.buttonContainer}>
-                    {!policy && (
-                      <button
-                        type="button"
-                        color="primary"
-                        className={classes.clearButton}
-                        onClick={() => {
-                          resetForm();
-                        }}
-                      >
-                        Clear
-                      </button>
-                    )}
 
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      disabled={addLoading || !validSave}
-                    >
-                      Save
-                    </Button>
-                  </Grid>
-                  {addLoading && (
-                    <Grid item xs={12}>
-                      <LinearProgress />
+      <Grid container>
+        <Grid item xs={12} className={classes.container}>
+          <Grid item xs={12}>
+            <Tabs
+              value={selectedTab}
+              indicatorColor="primary"
+              textColor="primary"
+              onChange={(_, newValue: number) => {
+                setSelectedTab(newValue);
+              }}
+              aria-label="policy-tabs"
+            >
+              <Tab label="Details" />
+              <Tab label="Users" />
+            </Tabs>
+          </Grid>
+          <Grid item xs={12}>
+            {selectedTab === 0 && (
+              <Paper className={classes.paperContainer}>
+                <form
+                  noValidate
+                  autoComplete="off"
+                  onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                    addRecord(e);
+                  }}
+                >
+                  <Grid container>
+                    <Grid item xs={12} className={classes.formScrollable}>
+                      <CodeMirrorWrapper
+                        label={`${policy ? "Edit" : "Write"} Policy`}
+                        value={policyDefinition}
+                        onBeforeChange={(editor, data, value) => {
+                          setPolicyDefinition(value);
+                        }}
+                      />
                     </Grid>
-                  )}
-                </Grid>
-              </form>
-            </Paper>
-          )}
-          {selectedTab === 1 && (
-            <TableWrapper
-              itemActions={userTableActions}
-              columns={[{ label: "Name", elementKey: "name" }]}
-              isLoading={false}
-              records={userList}
-              entityName="Servers"
-              idField="name"
-            />
-          )}
+                    <Grid item xs={12} className={classes.buttonContainer}>
+                      {!policy && (
+                        <button
+                          type="button"
+                          color="primary"
+                          className={classes.clearButton}
+                          onClick={() => {
+                            resetForm();
+                          }}
+                        >
+                          Clear
+                        </button>
+                      )}
+
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        disabled={addLoading || !validSave}
+                      >
+                        Save
+                      </Button>
+                    </Grid>
+                    {addLoading && (
+                      <Grid item xs={12}>
+                        <LinearProgress />
+                      </Grid>
+                    )}
+                  </Grid>
+                </form>
+              </Paper>
+            )}
+            {selectedTab === 1 && (
+              <TableWrapper
+                itemActions={userTableActions}
+                columns={[{ label: "Name", elementKey: "name" }]}
+                isLoading={false}
+                records={userList}
+                entityName="Servers"
+                idField="name"
+              />
+            )}
+          </Grid>
         </Grid>
       </Grid>
     </React.Fragment>

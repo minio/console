@@ -90,9 +90,8 @@ const ListTiersConfiguration = ({
   const [filter, setFilter] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [currentPanel, setCurrentPanel] = useState<number>(0);
-  const [updateCredentialsOpen, setUpdateCredentialsOpen] = useState<boolean>(
-    false
-  );
+  const [updateCredentialsOpen, setUpdateCredentialsOpen] =
+    useState<boolean>(false);
   const [selectedTier, setSelectedTier] = useState<ITierElement>({
     type: "unsupported",
   });
