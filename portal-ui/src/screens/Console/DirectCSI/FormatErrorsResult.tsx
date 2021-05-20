@@ -21,7 +21,7 @@ import {
   Theme,
   withStyles,
 } from "@material-ui/core";
-import React, { Fragment, useState } from "react";
+import React from "react";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { IDirectCSIFormatResItem } from "./types";

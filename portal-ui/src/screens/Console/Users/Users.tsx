@@ -23,7 +23,7 @@ import { setMenuOpen } from "../../../actions";
 import NotFoundPage from "../../NotFoundPage";
 
 import ListUsers from "./ListUsers";
-import ViewUser from "./ViewUser";
+import UserDetails from "./UserDetails";
 
 const mapState = (state: AppState) => ({
   open: state.system.sidebarOpen,
@@ -35,7 +35,7 @@ const Users = () => {
   return (
     <Router history={history}>
       <Switch>
-        <Route path="/users/:userName" component={ViewUser} />
+        <Route path="/users/:userName" component={UserDetails} />
         <Route path="/" component={ListUsers} />
         <Route component={NotFoundPage} />
       </Switch>

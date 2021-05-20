@@ -75,7 +75,7 @@ const EnableBucketEncryption = ({
         setKmsKeyID(encryptionCfg.kmsMasterKeyID);
       }
     }
-  }, []);
+  }, [encryptionCfg]);
 
   const enableBucketEncryption = (event: React.FormEvent) => {
     event.preventDefault();

@@ -20,10 +20,7 @@ import Grid from "@material-ui/core/Grid";
 import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../../common/api";
-import {
-  setErrorSnackMessage,
-  setModalErrorSnackMessage,
-} from "../../../../actions";
+import { setModalErrorSnackMessage } from "../../../../actions";
 import {
   fieldBasic,
   modalBasic,
@@ -110,7 +107,7 @@ const TenantYAML = ({
         setLoading(false);
         setModalErrorSnackMessage(err);
       });
-  }, [tenant, namespace]);
+  }, [tenant, namespace, setModalErrorSnackMessage]);
 
   useEffect(() => {}, []);
 

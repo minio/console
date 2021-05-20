@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
@@ -25,7 +25,6 @@ import { Link } from "react-router-dom";
 import Paper from "@material-ui/core/Paper";
 import { ITenant } from "../ListTenants/types";
 import { LicenseInfo } from "../../License/types";
-import api from "../../../../common/api";
 
 interface ISubnetLicenseTenant {
   classes: any;
