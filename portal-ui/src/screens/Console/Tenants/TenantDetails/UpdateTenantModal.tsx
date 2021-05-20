@@ -54,15 +54,12 @@ const UpdateTenantModal = ({
   const [minioImage, setMinioImage] = useState<string>("");
   const [consoleImage, setConsoleImage] = useState<string>("");
   const [imageRegistry, setImageRegistry] = useState<boolean>(false);
-  const [imageRegistryEndpoint, setImageRegistryEndpoint] = useState<string>(
-    ""
-  );
-  const [imageRegistryUsername, setImageRegistryUsername] = useState<string>(
-    ""
-  );
-  const [imageRegistryPassword, setImageRegistryPassword] = useState<string>(
-    ""
-  );
+  const [imageRegistryEndpoint, setImageRegistryEndpoint] =
+    useState<string>("");
+  const [imageRegistryUsername, setImageRegistryUsername] =
+    useState<string>("");
+  const [imageRegistryPassword, setImageRegistryPassword] =
+    useState<string>("");
   const [validMinioImage, setValidMinioImage] = useState<boolean>(true);
   const [validConsoleImage, setValidConsoleImage] = useState<boolean>(true);
 

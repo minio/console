@@ -335,16 +335,14 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
       });
   };
 
-  const [activateProductModal, setActivateProductModal] = useState<boolean>(
-    false
-  );
+  const [activateProductModal, setActivateProductModal] =
+    useState<boolean>(false);
 
   const [licenseInfo, setLicenseInfo] = useState<LicenseInfo>();
   const [currentPlanID, setCurrentPlanID] = useState<number>(0);
   const [loadingLicenseInfo, setLoadingLicenseInfo] = useState<boolean>(true);
-  const [loadingRefreshLicense, setLoadingRefreshLicense] = useState<boolean>(
-    false
-  );
+  const [loadingRefreshLicense, setLoadingRefreshLicense] =
+    useState<boolean>(false);
 
   useEffect(() => {
     fetchLicenseInfo();

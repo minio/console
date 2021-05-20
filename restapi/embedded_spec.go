@@ -4607,6 +4607,9 @@ func init() {
             "image": {
               "type": "string"
             },
+            "replicas": {
+              "type": "string"
+            },
             "server": {
               "type": "object",
               "$ref": "#/definitions/keyPairConfiguration"
@@ -12201,6 +12204,9 @@ func init() {
               "$ref": "#/definitions/gemaltoConfiguration"
             },
             "image": {
+              "type": "string"
+            },
+            "replicas": {
               "type": "string"
             },
             "server": {

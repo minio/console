@@ -64,9 +64,8 @@ const AddServiceAccount = ({
 }: IAddServiceAccountProps) => {
   const [addSending, setAddSending] = useState<boolean>(false);
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
-  const [isRestrictedByPolicy, setIsRestrictedByPolicy] = useState<boolean>(
-    false
-  );
+  const [isRestrictedByPolicy, setIsRestrictedByPolicy] =
+    useState<boolean>(false);
 
   useEffect(() => {
     if (addSending) {

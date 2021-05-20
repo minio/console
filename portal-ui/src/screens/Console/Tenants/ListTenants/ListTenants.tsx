@@ -107,10 +107,8 @@ const ListTenants = ({
   const [filterTenants, setFilterTenants] = useState<string>("");
   const [records, setRecords] = useState<any[]>([]);
   const [showNewCredentials, setShowNewCredentials] = useState<boolean>(false);
-  const [
-    createdAccount,
-    setCreatedAccount,
-  ] = useState<NewServiceAccount | null>(null);
+  const [createdAccount, setCreatedAccount] =
+    useState<NewServiceAccount | null>(null);
 
   const closeAddModalAndRefresh = (reloadData: boolean) => {
     setCurrentPanel(0);

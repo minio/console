@@ -23,6 +23,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+	"strconv"
 	"time"
 
 	"errors"
@@ -202,6 +203,13 @@ func getKESConfiguration(ctx context.Context, clientSet K8sClientI, ns string, e
 	// Using custom image for KES
 	if encryptionCfg.Image != "" {
 		kesConfiguration.Image = encryptionCfg.Image
+	}
+	// Using custom replicas for KES
+	if encryptionCfg.Replicas != "" {
+		replicas, errReplicas := strconv.Atoi(encryptionCfg.Replicas)
+		if errReplicas != nil {
+			kesConfiguration.Replicas = int32(replicas)
+		}
 	}
 	// Generate server certificates for KES
 	if encryptionCfg.Server != nil {

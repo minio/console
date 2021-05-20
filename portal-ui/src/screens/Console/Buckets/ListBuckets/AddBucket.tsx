@@ -126,9 +126,8 @@ const AddBucket = ({
 }: IAddBucketProps) => {
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [sendEnabled, setSendEnabled] = useState<boolean>(false);
-  const [lockingFieldDisabled, setLockingFieldDisabled] = useState<boolean>(
-    false
-  );
+  const [lockingFieldDisabled, setLockingFieldDisabled] =
+    useState<boolean>(false);
 
   const addRecord = (event: React.FormEvent) => {
     event.preventDefault();
