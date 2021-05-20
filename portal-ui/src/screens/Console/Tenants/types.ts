@@ -105,6 +105,7 @@ export interface IConfigureFields {
   logSearchSizeFactor: string;
   logSearchSelectedStorageClass: string;
   logSearchImage: string;
+  kesImage: string;
   logSearchPostgresImage: string;
   prometheusVolumeSize: string;
   prometheusSizeFactor: string;

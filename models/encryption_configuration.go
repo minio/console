@@ -49,6 +49,9 @@ type EncryptionConfiguration struct {
 	// image
 	Image string `json:"image,omitempty"`
 
+	// replicas
+	Replicas string `json:"replicas,omitempty"`
+
 	// server
 	Server *KeyPairConfiguration `json:"server,omitempty"`
 
@@ -77,6 +80,8 @@ func (m *EncryptionConfiguration) UnmarshalJSON(raw []byte) error {
 
 		Image string `json:"image,omitempty"`
 
+		Replicas string `json:"replicas,omitempty"`
+
 		Server *KeyPairConfiguration `json:"server,omitempty"`
 
 		Vault *VaultConfiguration `json:"vault,omitempty"`
@@ -94,6 +99,8 @@ func (m *EncryptionConfiguration) UnmarshalJSON(raw []byte) error {
 	m.Gemalto = dataAO1.Gemalto
 
 	m.Image = dataAO1.Image
+
+	m.Replicas = dataAO1.Replicas
 
 	m.Server = dataAO1.Server
 
@@ -122,6 +129,8 @@ func (m EncryptionConfiguration) MarshalJSON() ([]byte, error) {
 
 		Image string `json:"image,omitempty"`
 
+		Replicas string `json:"replicas,omitempty"`
+
 		Server *KeyPairConfiguration `json:"server,omitempty"`
 
 		Vault *VaultConfiguration `json:"vault,omitempty"`
@@ -136,6 +145,8 @@ func (m EncryptionConfiguration) MarshalJSON() ([]byte, error) {
 	dataAO1.Gemalto = m.Gemalto
 
 	dataAO1.Image = m.Image
+
+	dataAO1.Replicas = m.Replicas
 
 	dataAO1.Server = m.Server
 

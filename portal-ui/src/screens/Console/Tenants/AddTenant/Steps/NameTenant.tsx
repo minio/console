@@ -86,9 +86,8 @@ const NameTenant = ({
 }: INameTenantScreen) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [emptyNamespace, setEmptyNamespace] = useState<boolean>(true);
-  const [loadingNamespaceInfo, setLoadingNamespaceInfo] = useState<boolean>(
-    false
-  );
+  const [loadingNamespaceInfo, setLoadingNamespaceInfo] =
+    useState<boolean>(false);
 
   // Common
   const updateField = useCallback(

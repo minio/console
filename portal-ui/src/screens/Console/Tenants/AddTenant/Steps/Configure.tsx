@@ -55,6 +55,7 @@ interface IConfigureProps {
   prometheusSizeFactor: string;
   logSearchSelectedStorageClass: string;
   logSearchImage: string;
+  kesImage: string;
   logSearchPostgresImage: string;
   prometheusSelectedStorageClass: string;
   prometheusImage: string;
@@ -87,6 +88,7 @@ const Configure = ({
   logSearchVolumeSize,
   logSearchSizeFactor,
   logSearchImage,
+  kesImage,
   logSearchPostgresImage,
   prometheusVolumeSize,
   prometheusSizeFactor,
@@ -179,6 +181,13 @@ const Configure = ({
             "Format must be of form: 'minio/logsearchapi:VERSION'",
         },
         {
+          fieldKey: "kesImage",
+          required: false,
+          value: kesImage,
+          pattern: /^((.*?)\/(.*?):(.+))$/,
+          customPatternMessage: "Format must be of form: 'minio/kes:VERSION'",
+        },
+        {
           fieldKey: "logSearchPostgresImage",
           required: false,
           value: logSearchPostgresImage,
@@ -227,6 +236,7 @@ const Configure = ({
     imageName,
     consoleImage,
     logSearchImage,
+    kesImage,
     logSearchPostgresImage,
     prometheusImage,
     customDockerhub,
@@ -337,6 +347,20 @@ const Configure = ({
               value={logSearchImage}
               error={validationErrors["logSearchImage"] || ""}
               placeholder="E.g. minio/logsearchapi:v4.0.9"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="kesImage"
+              name="kesImage"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("kesImage", e.target.value);
+                cleanValidation("kesImage");
+              }}
+              label="KES Image"
+              value={kesImage}
+              error={validationErrors["kesImage"] || ""}
+              placeholder="E.g. minio/kes:v0.14.0"
             />
           </Grid>
           <Grid item xs={12}>
@@ -619,6 +643,7 @@ const mapState = (state: AppState) => ({
   logSearchSelectedStorageClass:
     state.tenants.createTenant.fields.configure.logSearchSelectedStorageClass,
   logSearchImage: state.tenants.createTenant.fields.configure.logSearchImage,
+  kesImage: state.tenants.createTenant.fields.configure.kesImage,
   logSearchPostgresImage:
     state.tenants.createTenant.fields.configure.logSearchPostgresImage,
   prometheusSelectedStorageClass:

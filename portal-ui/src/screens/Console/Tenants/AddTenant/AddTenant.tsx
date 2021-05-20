@@ -160,6 +160,7 @@ const AddTenant = ({
     const logSearchSelectedStorageClass =
       fields.configure.logSearchSelectedStorageClass;
     const logSearchImage = fields.configure.logSearchImage;
+    const kesImage = fields.configure.kesImage;
     const logSearchPostgresImage = fields.configure.logSearchPostgresImage;
     const prometheusImage = fields.configure.prometheusImage;
     const prometheusSelectedStorageClass =
@@ -465,6 +466,7 @@ const AddTenant = ({
         dataSend = {
           ...dataSend,
           encryption: {
+            image: kesImage,
             ...encryptionClientKeyPair,
             ...encryptionServerKeyPair,
             ...insertEncrypt,

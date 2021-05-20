@@ -3822,6 +3822,8 @@ definitions:
         properties:
           image:
             type: string
+          replicas:
+            type: string
           server:
             type: object
             $ref: "#/definitions/keyPairConfiguration"

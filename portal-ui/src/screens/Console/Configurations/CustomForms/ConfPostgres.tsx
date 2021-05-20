@@ -38,9 +38,8 @@ const styles = (theme: Theme) =>
 
 const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
   //Local States
-  const [useConnectionString, setUseConnectionString] = useState<boolean>(
-    false
-  );
+  const [useConnectionString, setUseConnectionString] =
+    useState<boolean>(false);
   const [connectionString, setConnectionString] = useState<string>("");
   const [host, setHostname] = useState<string>("");
   const [dbName, setDbName] = useState<string>("");
