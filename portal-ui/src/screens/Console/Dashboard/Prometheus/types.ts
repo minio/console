@@ -31,6 +31,7 @@ export enum widgetType {
 }
 
 export interface IDashboardPanel {
+  id: number;
   title: string;
   data: string | object[] | IDataSRep[];
   dataOuter?: string | object[];

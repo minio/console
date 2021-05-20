@@ -30,16 +30,16 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// Widget widget
+// WidgetDetails widget details
 //
-// swagger:model widget
-type Widget struct {
+// swagger:model widgetDetails
+type WidgetDetails struct {
 
 	// id
 	ID int32 `json:"id,omitempty"`
 
 	// options
-	Options *WidgetOptions `json:"options,omitempty"`
+	Options *WidgetDetailsOptions `json:"options,omitempty"`
 
 	// targets
 	Targets []*ResultTarget `json:"targets"`
@@ -51,8 +51,8 @@ type Widget struct {
 	Type string `json:"type,omitempty"`
 }
 
-// Validate validates this widget
-func (m *Widget) Validate(formats strfmt.Registry) error {
+// Validate validates this widget details
+func (m *WidgetDetails) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateOptions(formats); err != nil {
@@ -69,7 +69,7 @@ func (m *Widget) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Widget) validateOptions(formats strfmt.Registry) error {
+func (m *WidgetDetails) validateOptions(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Options) { // not required
 		return nil
@@ -87,7 +87,7 @@ func (m *Widget) validateOptions(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Widget) validateTargets(formats strfmt.Registry) error {
+func (m *WidgetDetails) validateTargets(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Targets) { // not required
 		return nil
@@ -113,7 +113,7 @@ func (m *Widget) validateTargets(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *Widget) MarshalBinary() ([]byte, error) {
+func (m *WidgetDetails) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -121,8 +121,8 @@ func (m *Widget) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *Widget) UnmarshalBinary(b []byte) error {
-	var res Widget
+func (m *WidgetDetails) UnmarshalBinary(b []byte) error {
+	var res WidgetDetails
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
@@ -130,17 +130,17 @@ func (m *Widget) UnmarshalBinary(b []byte) error {
 	return nil
 }
 
-// WidgetOptions widget options
+// WidgetDetailsOptions widget details options
 //
-// swagger:model WidgetOptions
-type WidgetOptions struct {
+// swagger:model WidgetDetailsOptions
+type WidgetDetailsOptions struct {
 
 	// reduce options
-	ReduceOptions *WidgetOptionsReduceOptions `json:"reduceOptions,omitempty"`
+	ReduceOptions *WidgetDetailsOptionsReduceOptions `json:"reduceOptions,omitempty"`
 }
 
-// Validate validates this widget options
-func (m *WidgetOptions) Validate(formats strfmt.Registry) error {
+// Validate validates this widget details options
+func (m *WidgetDetailsOptions) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateReduceOptions(formats); err != nil {
@@ -153,7 +153,7 @@ func (m *WidgetOptions) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *WidgetOptions) validateReduceOptions(formats strfmt.Registry) error {
+func (m *WidgetDetailsOptions) validateReduceOptions(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.ReduceOptions) { // not required
 		return nil
@@ -172,7 +172,7 @@ func (m *WidgetOptions) validateReduceOptions(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *WidgetOptions) MarshalBinary() ([]byte, error) {
+func (m *WidgetDetailsOptions) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -180,8 +180,8 @@ func (m *WidgetOptions) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *WidgetOptions) UnmarshalBinary(b []byte) error {
-	var res WidgetOptions
+func (m *WidgetDetailsOptions) UnmarshalBinary(b []byte) error {
+	var res WidgetDetailsOptions
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
@@ -189,22 +189,22 @@ func (m *WidgetOptions) UnmarshalBinary(b []byte) error {
 	return nil
 }
 
-// WidgetOptionsReduceOptions widget options reduce options
+// WidgetDetailsOptionsReduceOptions widget details options reduce options
 //
-// swagger:model WidgetOptionsReduceOptions
-type WidgetOptionsReduceOptions struct {
+// swagger:model WidgetDetailsOptionsReduceOptions
+type WidgetDetailsOptionsReduceOptions struct {
 
 	// calcs
 	Calcs []string `json:"calcs"`
 }
 
-// Validate validates this widget options reduce options
-func (m *WidgetOptionsReduceOptions) Validate(formats strfmt.Registry) error {
+// Validate validates this widget details options reduce options
+func (m *WidgetDetailsOptionsReduceOptions) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *WidgetOptionsReduceOptions) MarshalBinary() ([]byte, error) {
+func (m *WidgetDetailsOptionsReduceOptions) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -212,8 +212,8 @@ func (m *WidgetOptionsReduceOptions) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *WidgetOptionsReduceOptions) UnmarshalBinary(b []byte) error {
-	var res WidgetOptionsReduceOptions
+func (m *WidgetDetailsOptionsReduceOptions) UnmarshalBinary(b []byte) error {
+	var res WidgetDetailsOptionsReduceOptions
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

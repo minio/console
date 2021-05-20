@@ -115,7 +115,37 @@ func init() {
         ],
         "summary": "Returns information about the deployment",
         "operationId": "AdminInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/adminInfoResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/info/widgets/{widgetId}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Returns information about the deployment",
+        "operationId": "DashboardWidgetDetails",
         "parameters": [
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "widgetId",
+            "in": "path",
+            "required": true
+          },
           {
             "type": "integer",
             "name": "start",
@@ -137,7 +167,7 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/adminInfoResponse"
+              "$ref": "#/definitions/widgetDetails"
             }
           },
           "default": {
@@ -6960,6 +6990,47 @@ func init() {
     "widget": {
       "type": "object",
       "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "reduceOptions": {
+              "type": "object",
+              "properties": {
+                "calcs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/resultTarget"
+          }
+        },
+        "title": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "widgetDetails": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
         "options": {
           "type": "object",
           "properties": {
@@ -7101,7 +7172,37 @@ func init() {
         ],
         "summary": "Returns information about the deployment",
         "operationId": "AdminInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/adminInfoResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/info/widgets/{widgetId}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Returns information about the deployment",
+        "operationId": "DashboardWidgetDetails",
         "parameters": [
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "widgetId",
+            "in": "path",
+            "required": true
+          },
           {
             "type": "integer",
             "name": "start",
@@ -7123,7 +7224,7 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/adminInfoResponse"
+              "$ref": "#/definitions/widgetDetails"
             }
           },
           "default": {
@@ -11440,6 +11541,33 @@ func init() {
         }
       }
     },
+    "WidgetDetailsOptions": {
+      "type": "object",
+      "properties": {
+        "reduceOptions": {
+          "type": "object",
+          "properties": {
+            "calcs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "WidgetDetailsOptionsReduceOptions": {
+      "type": "object",
+      "properties": {
+        "calcs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "WidgetOptions": {
       "type": "object",
       "properties": {
@@ -14412,6 +14540,47 @@ func init() {
     "widget": {
       "type": "object",
       "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "reduceOptions": {
+              "type": "object",
+              "properties": {
+                "calcs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/resultTarget"
+          }
+        },
+        "title": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "widgetDetails": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
         "options": {
           "type": "object",
           "properties": {

@@ -115,6 +115,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPICreateTenantHandler: admin_api.CreateTenantHandlerFunc(func(params admin_api.CreateTenantParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.CreateTenant has not yet been implemented")
 		}),
+		AdminAPIDashboardWidgetDetailsHandler: admin_api.DashboardWidgetDetailsHandlerFunc(func(params admin_api.DashboardWidgetDetailsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.DashboardWidgetDetails has not yet been implemented")
+		}),
 		UserAPIDeleteBucketHandler: user_api.DeleteBucketHandlerFunc(func(params user_api.DeleteBucketParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteBucket has not yet been implemented")
 		}),
@@ -480,6 +483,8 @@ type ConsoleAPI struct {
 	UserAPICreateServiceAccountHandler user_api.CreateServiceAccountHandler
 	// AdminAPICreateTenantHandler sets the operation handler for the create tenant operation
 	AdminAPICreateTenantHandler admin_api.CreateTenantHandler
+	// AdminAPIDashboardWidgetDetailsHandler sets the operation handler for the dashboard widget details operation
+	AdminAPIDashboardWidgetDetailsHandler admin_api.DashboardWidgetDetailsHandler
 	// UserAPIDeleteBucketHandler sets the operation handler for the delete bucket operation
 	UserAPIDeleteBucketHandler user_api.DeleteBucketHandler
 	// UserAPIDeleteBucketEventHandler sets the operation handler for the delete bucket event operation
@@ -792,6 +797,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPICreateTenantHandler == nil {
 		unregistered = append(unregistered, "admin_api.CreateTenantHandler")
+	}
+	if o.AdminAPIDashboardWidgetDetailsHandler == nil {
+		unregistered = append(unregistered, "admin_api.DashboardWidgetDetailsHandler")
 	}
 	if o.UserAPIDeleteBucketHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteBucketHandler")
@@ -1242,6 +1250,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/tenants"] = admin_api.NewCreateTenant(o.context, o.AdminAPICreateTenantHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/admin/info/widgets/{widgetId}"] = admin_api.NewDashboardWidgetDetails(o.context, o.AdminAPIDashboardWidgetDetailsHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}

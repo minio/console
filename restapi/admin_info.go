@@ -28,6 +28,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-openapi/swag"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
@@ -37,11 +39,19 @@ import (
 func registerAdminInfoHandlers(api *operations.ConsoleAPI) {
 	// return usage stats
 	api.AdminAPIAdminInfoHandler = admin_api.AdminInfoHandlerFunc(func(params admin_api.AdminInfoParams, session *models.Principal) middleware.Responder {
-		infoResp, err := getAdminInfoResponse(session, params)
+		infoResp, err := getAdminInfoResponse(session)
 		if err != nil {
 			return admin_api.NewAdminInfoDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewAdminInfoOK().WithPayload(infoResp)
+	})
+	// return single widget results
+	api.AdminAPIDashboardWidgetDetailsHandler = admin_api.DashboardWidgetDetailsHandlerFunc(func(params admin_api.DashboardWidgetDetailsParams, session *models.Principal) middleware.Responder {
+		infoResp, err := getAdminInfoWidgetResponse(params)
+		if err != nil {
+			return admin_api.NewDashboardWidgetDetailsDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewDashboardWidgetDetailsOK().WithPayload(infoResp)
 	})
 
 }
@@ -779,7 +789,7 @@ type LabelResults struct {
 var jobRegex = regexp.MustCompile(`(?m)\{[a-z]+\=\".*?\"\}`)
 
 // getAdminInfoResponse returns the response containing total buckets, objects and usage.
-func getAdminInfoResponse(session *models.Principal, params admin_api.AdminInfoParams) (*models.AdminInfoResponse, *models.Error) {
+func getAdminInfoResponse(session *models.Principal) (*models.AdminInfoResponse, *models.Error) {
 	prometheusURL := getPrometheusURL()
 
 	if prometheusURL == "" {
@@ -805,6 +815,37 @@ func getAdminInfoResponse(session *models.Principal, params admin_api.AdminInfoP
 		}
 		return sessionResp, nil
 	}
+
+	var wdgts []*models.Widget
+
+	for _, m := range widgets {
+		// for each target we will launch another goroutine to fetch the values
+		wdgtResult := models.Widget{
+			ID:    m.ID,
+			Title: m.Title,
+			Type:  m.Type,
+		}
+		if len(m.Options.ReduceOptions.Calcs) > 0 {
+			wdgtResult.Options = &models.WidgetOptions{
+				ReduceOptions: &models.WidgetOptionsReduceOptions{
+					Calcs: m.Options.ReduceOptions.Calcs,
+				},
+			}
+		}
+
+		wdgts = append(wdgts, &wdgtResult)
+	}
+
+	// count the number of widgets that have completed calculating
+	sessionResp := &models.AdminInfoResponse{}
+
+	sessionResp.Widgets = wdgts
+
+	return sessionResp, nil
+}
+
+func getAdminInfoWidgetResponse(params admin_api.DashboardWidgetDetailsParams) (*models.WidgetDetails, *models.Error) {
+	prometheusURL := getPrometheusURL()
 
 	labelResultsCh := make(chan LabelResults)
 
@@ -865,160 +906,139 @@ LabelsWaitLoop:
 
 	// launch a goroutines per widget
 
-	results := make(chan models.Widget)
 	for _, m := range widgets {
-		go func(m Metric, params admin_api.AdminInfoParams) {
-			targetResults := make(chan *models.ResultTarget)
-			// for each target we will launch another goroutine to fetch the values
-			for _, target := range m.Targets {
-				go func(target Target, params admin_api.AdminInfoParams) {
-					apiType := "query_range"
-					now := time.Now()
+		if m.ID != params.WidgetID {
+			continue
+		}
 
-					extraParamters := fmt.Sprintf("&start=%d&end=%d", now.Add(-15*time.Minute).Unix(), now.Unix())
+		targetResults := make(chan *models.ResultTarget)
+		// for each target we will launch another goroutine to fetch the values
+		for _, target := range m.Targets {
+			go func(target Target, params admin_api.DashboardWidgetDetailsParams) {
+				apiType := "query_range"
+				now := time.Now()
 
-					var step int32 = 60
-					if target.Step > 0 {
-						step = target.Step
-					}
-					if params.Step != nil && *params.Step > 0 {
-						step = *params.Step
-					}
-					if step > 0 {
-						extraParamters = fmt.Sprintf("%s&step=%d", extraParamters, step)
-					}
+				extraParamters := fmt.Sprintf("&start=%d&end=%d", now.Add(-15*time.Minute).Unix(), now.Unix())
 
-					if params.Start != nil && params.End != nil {
-						extraParamters = fmt.Sprintf("&start=%d&end=%d&step=%d", *params.Start, *params.End, *params.Step)
-					}
+				var step int32 = 60
+				if target.Step > 0 {
+					step = target.Step
+				}
+				if params.Step != nil && *params.Step > 0 {
+					step = *params.Step
+				}
+				if step > 0 {
+					extraParamters = fmt.Sprintf("%s&step=%d", extraParamters, step)
+				}
 
-					// replace the `$__interval` global for step with unit (s for seconds)
-					queryExpr := strings.ReplaceAll(target.Expr, "$__interval", fmt.Sprintf("%ds", 120))
-					if strings.Contains(queryExpr, "$") {
-						var re = regexp.MustCompile(`\$([a-z]+)`)
+				if params.Start != nil && params.End != nil {
+					extraParamters = fmt.Sprintf("&start=%d&end=%d&step=%d", *params.Start, *params.End, *params.Step)
+				}
 
-						for _, match := range re.FindAllStringSubmatch(queryExpr, -1) {
-							if val, ok := labelMap[match[1]]; ok {
-								queryExpr = strings.ReplaceAll(queryExpr, "$"+match[1], fmt.Sprintf("(%s)", strings.Join(val, "|")))
-							}
+				// replace the `$__interval` global for step with unit (s for seconds)
+				queryExpr := strings.ReplaceAll(target.Expr, "$__interval", fmt.Sprintf("%ds", 120))
+				if strings.Contains(queryExpr, "$") {
+					var re = regexp.MustCompile(`\$([a-z]+)`)
+
+					for _, match := range re.FindAllStringSubmatch(queryExpr, -1) {
+						if val, ok := labelMap[match[1]]; ok {
+							queryExpr = strings.ReplaceAll(queryExpr, "$"+match[1], fmt.Sprintf("(%s)", strings.Join(val, "|")))
 						}
 					}
+				}
 
-					// replace the weird {job="asd"} in the exp
-					if strings.Contains(queryExpr, "job=") {
-						queryExpr = jobRegex.ReplaceAllString(queryExpr, "")
+				// replace the weird {job="asd"} in the exp
+				if strings.Contains(queryExpr, "job=") {
+					queryExpr = jobRegex.ReplaceAllString(queryExpr, "")
+				}
+
+				endpoint := fmt.Sprintf("%s/api/v1/%s?query=%s%s", getPrometheusURL(), apiType, url.QueryEscape(queryExpr), extraParamters)
+
+				resp, err := http.Get(endpoint)
+				if err != nil {
+					log.Println(err)
+					return
+				}
+				defer func() {
+					if err := resp.Body.Close(); err != nil {
+						log.Println(err)
 					}
+				}()
 
-					endpoint := fmt.Sprintf("%s/api/v1/%s?query=%s%s", getPrometheusURL(), apiType, url.QueryEscape(queryExpr), extraParamters)
-
-					resp, err := http.Get(endpoint)
+				if resp.StatusCode != 200 {
+					body, err := ioutil.ReadAll(resp.Body)
 					if err != nil {
 						log.Println(err)
 						return
 					}
-					defer func() {
-						if err := resp.Body.Close(); err != nil {
-							log.Println(err)
-						}
-					}()
-
-					if resp.StatusCode != 200 {
-						body, err := ioutil.ReadAll(resp.Body)
-						if err != nil {
-							log.Println(err)
-							return
-						}
-						log.Println(endpoint)
-						log.Println(resp.StatusCode)
-						log.Println(string(body))
-						return
-					}
-
-					var response PromResp
-					jd := json.NewDecoder(resp.Body)
-					if err = jd.Decode(&response); err != nil {
-						log.Println(err)
-						return
-					}
-					//body, _ := ioutil.ReadAll(resp.Body)
-					//err = json.Unmarshal(body, &response)
-					//if err != nil {
-					//	log.Println(err)
-					//}
-
-					targetResult := models.ResultTarget{
-						LegendFormat: target.LegendFormat,
-						ResultType:   response.Data.ResultType,
-					}
-					for _, r := range response.Data.Result {
-						targetResult.Result = append(targetResult.Result, &models.WidgetResult{
-							Metric: r.Metric,
-							Values: r.Values,
-						})
-					}
-
-					//xx, err := json.Marshal(response)
-					//if err != nil {
-					//	log.Println(err)
-					//}
-					//log.Println("----", m.Title)
-					//log.Println(string(body))
-					//log.Println(string(xx))
-					//log.Println("=====")
-
-					targetResults <- &targetResult
-
-				}(target, params)
-			}
-
-			wdgtResult := models.Widget{
-				Title: m.Title,
-				Type:  m.Type,
-			}
-			if len(m.Options.ReduceOptions.Calcs) > 0 {
-				wdgtResult.Options = &models.WidgetOptions{
-					ReduceOptions: &models.WidgetOptionsReduceOptions{
-						Calcs: m.Options.ReduceOptions.Calcs,
-					},
+					log.Println(endpoint)
+					log.Println(resp.StatusCode)
+					log.Println(string(body))
+					return
 				}
-			}
-			// count how many targets we have received
-			targetsReceived := 0
 
-			for res := range targetResults {
-				wdgtResult.Targets = append(wdgtResult.Targets, res)
-				targetsReceived++
-				// upon receiving the total number of targets needed, we can close the channel to not lock the goroutine
-				if targetsReceived >= len(m.Targets) {
-					close(targetResults)
+				var response PromResp
+				jd := json.NewDecoder(resp.Body)
+				if err = jd.Decode(&response); err != nil {
+					log.Println(err)
+					return
 				}
-			}
+				//body, _ := ioutil.ReadAll(resp.Body)
+				//err = json.Unmarshal(body, &response)
+				//if err != nil {
+				//	log.Println(err)
+				//}
 
-			results <- wdgtResult
-		}(m, params)
-	}
+				targetResult := models.ResultTarget{
+					LegendFormat: target.LegendFormat,
+					ResultType:   response.Data.ResultType,
+				}
+				for _, r := range response.Data.Result {
+					targetResult.Result = append(targetResult.Result, &models.WidgetResult{
+						Metric: r.Metric,
+						Values: r.Values,
+					})
+				}
 
-	// count the number of widgets that have completed calculating
-	totalWidgets := 0
-	sessionResp := &models.AdminInfoResponse{}
+				//xx, err := json.Marshal(response)
+				//if err != nil {
+				//	log.Println(err)
+				//}
+				//log.Println("----", m.Title)
+				//log.Println(string(body))
+				//log.Println(string(xx))
+				//log.Println("=====")
 
-	var wdgts []*models.Widget
-	// wait for as many goroutines that come back in less than 1 second
-WaitLoop:
-	for {
-		select {
-		case <-time.After(1 * time.Second):
-			break WaitLoop
-		case res := <-results:
-			wdgts = append(wdgts, &res)
-			totalWidgets++
-			if totalWidgets >= len(widgets) {
-				break WaitLoop
+				targetResults <- &targetResult
+
+			}(target, params)
+		}
+
+		wdgtResult := models.WidgetDetails{
+			ID:    m.ID,
+			Title: m.Title,
+			Type:  m.Type,
+		}
+		if len(m.Options.ReduceOptions.Calcs) > 0 {
+			wdgtResult.Options = &models.WidgetDetailsOptions{
+				ReduceOptions: &models.WidgetDetailsOptionsReduceOptions{
+					Calcs: m.Options.ReduceOptions.Calcs,
+				},
 			}
 		}
+		// count how many targets we have received
+		targetsReceived := 0
+
+		for res := range targetResults {
+			wdgtResult.Targets = append(wdgtResult.Targets, res)
+			targetsReceived++
+			// upon receiving the total number of targets needed, we can close the channel to not lock the goroutine
+			if targetsReceived >= len(m.Targets) {
+				close(targetResults)
+			}
+		}
+		return &wdgtResult, nil
 	}
 
-	sessionResp.Widgets = wdgts
-
-	return sessionResp, nil
+	return nil, &models.Error{Code: 404, Message: swag.String("Widget not found")}
 }

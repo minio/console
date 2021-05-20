@@ -14,20 +14,26 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import get from "lodash/get";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 import { IPieChartConfiguration } from "./types";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
+import { connect } from "react-redux";
+import { setErrorSnackMessage } from "../../../../../actions";
+import { IDashboardPanel } from "../types";
+import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
+import api from "../../../../../common/api";
+import { widgetDetailsToPanel } from "../utils";
 
 interface IPieChartWidget {
   classes: any;
   title: string;
-  pieChartConfiguration: IPieChartConfiguration;
-  dataInner: object[];
-  dataOuter?: object[];
-  middleLabel?: string;
+  panelItem: IDashboardPanel;
+  timeStart: MaterialUiPickersDate;
+  timeEnd: MaterialUiPickersDate;
+  displayErrorMessage: any;
 }
 
 const styles = (theme: Theme) =>
@@ -38,11 +44,54 @@ const styles = (theme: Theme) =>
 const PieChartWidget = ({
   classes,
   title,
-  pieChartConfiguration,
-  dataInner,
-  dataOuter,
-  middleLabel = "",
+  panelItem,
+  timeStart,
+  timeEnd,
+  displayErrorMessage,
 }: IPieChartWidget) => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [dataInner, setDataInner] = useState<object[]>([]);
+  const [dataOuter, setDataOuter] = useState<object[]>([]);
+  const [result, setResult] = useState<IDashboardPanel | null>(null);
+
+  useEffect(() => {
+    if (loading) {
+      let stepCalc = 0;
+      if (timeStart !== null && timeEnd !== null) {
+        const secondsInPeriod = timeEnd.unix() - timeStart.unix();
+        const periods = Math.floor(secondsInPeriod / 60);
+
+        stepCalc = periods < 1 ? 15 : periods;
+      }
+
+      api
+        .invoke(
+          "GET",
+          `/api/v1/admin/info/widgets/${panelItem.id}/?step=${stepCalc}&${
+            timeStart !== null ? `&start=${timeStart.unix()}` : ""
+          }${timeStart !== null && timeEnd !== null ? "&" : ""}${
+            timeEnd !== null ? `end=${timeEnd.unix()}` : ""
+          }`
+        )
+        .then((res: any) => {
+          const widgetsWithValue = widgetDetailsToPanel(res, panelItem);
+          setDataInner(widgetsWithValue.data);
+          setDataOuter(widgetsWithValue.dataOuter as object[]);
+          setResult(widgetsWithValue);
+          setLoading(false);
+        })
+        .catch((err) => {
+          displayErrorMessage(err);
+          setLoading(false);
+        });
+    }
+  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage]);
+
+  const pieChartConfiguration = result
+    ? (result.widgetConfiguration as IPieChartConfiguration)
+    : [];
+  const middleLabel = result?.innerLabel;
+
   const innerColors = get(pieChartConfiguration, "innerChart.colorList", []);
   const outerColors = get(pieChartConfiguration, "outerChart.colorList", []);
 
@@ -54,7 +103,7 @@ const PieChartWidget = ({
           <PieChart margin={{ top: 5, bottom: 5 }}>
             {dataOuter && (
               <Pie
-                data={dataOuter}
+                data={dataOuter as object[]}
                 cx={"50%"}
                 cy={"50%"}
                 dataKey="value"
@@ -94,7 +143,7 @@ const PieChartWidget = ({
             )}
             {dataInner && (
               <Pie
-                data={dataInner}
+                data={dataInner as object[]}
                 dataKey="value"
                 cx={"50%"}
                 cy={"50%"}
@@ -153,4 +202,8 @@ const PieChartWidget = ({
   );
 };
 
-export default withStyles(styles)(PieChartWidget);
+const connector = connect(null, {
+  displayErrorMessage: setErrorSnackMessage,
+});
+
+export default withStyles(styles)(connector(PieChartWidget));
