@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import get from "lodash/get";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
@@ -27,7 +27,6 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { IPVCsResponse, IStoragePVCs } from "./types";
 import { setErrorSnackMessage } from "../../../actions";
-import { niceBytes } from "../../../common/utils";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 

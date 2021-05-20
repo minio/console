@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Policy } from "./types";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
@@ -31,11 +31,7 @@ import { User } from "../Users/types";
 import api from "../../../common/api";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import { Link } from "react-router-dom";
-import {
-  setErrorSnackMessage,
-  setModalErrorSnackMessage,
-} from "../../../actions";
-import { Fragment } from "react";
+import { setErrorSnackMessage } from "../../../actions";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import history from "../../../history";
 
@@ -171,36 +167,8 @@ const PolicyDetails = ({
   );
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
   const [loadingPolicy, setLoadingPolicy] = useState<boolean>(true);
-  const [loadingUsers, setLoadingUsers] = useState<boolean>(true);
 
-  const loadUsersForPolicy = () => {
-    if (loadingUsers) {
-      api
-        .invoke("GET", `/api/v1/policies/${policyName}/users`)
-        .then((result: any) => {
-          setUserList(result);
-          setLoadingUsers(false);
-        })
-        .catch((err) => {
-          console.log("Error in loading users");
-        });
-    }
-  };
-  const loadPolicyDetails = () => {
-    if (loadingPolicy) {
-      api
-        .invoke("GET", `/api/v1/policy?name=${policyName}`)
-        .then((result: any) => {
-          setPolicy(result);
-          setLoadingPolicy(false);
-        })
-        .catch((err) => {
-          console.log("Error in loading policy");
-        });
-    }
-  };
-
-  const addRecord = (event: React.FormEvent) => {
+  const saveRecord = (event: React.FormEvent) => {
     event.preventDefault();
     if (addLoading) {
       return;
@@ -217,22 +185,45 @@ const PolicyDetails = ({
       })
       .catch((err) => {
         setAddLoading(false);
-        setModalErrorSnackMessage(err);
+        setErrorSnackMessage(err);
       });
   };
 
   useEffect(() => {
-    if (loadingPolicy) {
-      loadUsersForPolicy();
-      loadPolicyDetails();
-      if (policy) {
-        setPolicyName(policy.name);
-        setPolicyDefinition(
-          policy ? JSON.stringify(JSON.parse(policy.policy), null, 4) : ""
-        );
+    const loadUsersForPolicy = () => {
+      api
+        .invoke("GET", `/api/v1/policies/${policyName}/users`)
+        .then((result: any) => {
+          setUserList(result);
+        })
+        .catch((err) => {
+          console.log("Error in loading users");
+        });
+    };
+    const loadPolicyDetails = () => {
+      if (loadingPolicy) {
+        api
+          .invoke("GET", `/api/v1/policy?name=${policyName}`)
+          .then((result: any) => {
+            if (result) {
+              setPolicy(result);
+              setPolicyDefinition(
+                result ? JSON.stringify(JSON.parse(result.policy), null, 4) : ""
+              );
+            }
+            setLoadingPolicy(false);
+          })
+          .catch((err) => {
+            console.log("Error in loading policy");
+          });
       }
+    };
+
+    if (loadingPolicy) {
+      loadPolicyDetails();
+      loadUsersForPolicy();
     }
-  }, [policy, loadingPolicy]);
+  }, [policyName, loadingPolicy]);
 
   const resetForm = () => {
     setPolicyName("");
@@ -282,7 +273,7 @@ const PolicyDetails = ({
                   noValidate
                   autoComplete="off"
                   onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                    addRecord(e);
+                    saveRecord(e);
                   }}
                 >
                   <Grid container>

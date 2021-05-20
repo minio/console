@@ -308,11 +308,11 @@ const ViewBucket = ({
           }
           const actions = res.permissions ? res.permissions : [];
 
-          let canPutReplication = actions.find(
+          let userCanPutReplication = actions.find(
             (s) => s.id === "PutReplicationConfiguration"
           );
 
-          if (canPutReplication && canPutReplication.can) {
+          if (userCanPutReplication && userCanPutReplication.can) {
             setCanPutReplication(true);
           } else {
             setCanPutReplication(false);
@@ -1058,17 +1058,19 @@ const ViewBucket = ({
                       ),
                     }}
                   />
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<CreateIcon />}
-                    size="medium"
-                    onClick={() => {
-                      setOpenReplicationOpen(true);
-                    }}
-                  >
-                    Add Replication Rule
-                  </Button>
+                  {canPutReplication && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      startIcon={<CreateIcon />}
+                      size="medium"
+                      onClick={() => {
+                        setOpenReplicationOpen(true);
+                      }}
+                    >
+                      Add Replication Rule
+                    </Button>
+                  )}
                 </Grid>
                 <Grid item xs={12}>
                   <br />
