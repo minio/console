@@ -498,7 +498,7 @@ func getListUsersWithAccessToBucketResponse(session *models.Principal, bucket st
 			policy, err := adminClient.getPolicy(ctx, policyName)
 			if err == nil {
 				parsedPolicy, err2 := parsePolicy(policyName, policy)
-				if err2 == nil && policyMatchesBucket(parsedPolicy, bucket) {
+				if err2 == nil && policyMatchesBucket(parsedPolicy, bucket) && !seen[users[i].AccessKey] {
 					retval = append(retval, users[i].AccessKey)
 					seen[users[i].AccessKey] = true
 				}
@@ -538,6 +538,5 @@ func getListUsersWithAccessToBucketResponse(session *models.Principal, bucket st
 			log.Println(err)
 		}
 	}
-	// serialize output
 	return retval, nil
 }
