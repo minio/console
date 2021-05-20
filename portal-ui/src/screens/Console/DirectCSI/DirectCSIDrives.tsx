@@ -113,7 +113,7 @@ const DirectCSIMain = ({
   >([]);
   const [formatErrorsOpen, setFormatErrorsOpen] = useState<boolean>(false);
   const [drivesToFormat, setDrivesToFormat] = useState<string[]>([]);
-  const [notAvailable, setNotAvailable] = useState<boolean>(false);
+  const [notAvailable, setNotAvailable] = useState<boolean>(true);
 
   useEffect(() => {
     if (loading && !notAvailable) {
@@ -147,6 +147,7 @@ const DirectCSIMain = ({
 
           setRecords(drives);
           setLoading(false);
+          setNotAvailable(false);
         })
         .catch((err) => {
           setLoading(false);

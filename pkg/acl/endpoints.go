@@ -37,6 +37,8 @@ var (
 	tenants             = "/tenants"
 	tenantsDetail       = "/namespaces/:tenantNamespace/tenants/:tenantName"
 	storage             = "/storage"
+	storageVolumes      = "/storage/volumes"
+	storageDrives       = "/storage/drives"
 	remoteBuckets       = "/remote-buckets"
 	replication         = "/replication"
 	objectBrowser       = "/object-browser/:bucket/*"
@@ -301,10 +303,12 @@ var endpointRules = map[string]ConfigurationActionSet{
 
 // operatorRules contains the mapping between endpoints and ActionSets for operator only mode
 var operatorRules = map[string]ConfigurationActionSet{
-	tenants:       tenantsActionSet,
-	tenantsDetail: tenantsActionSet,
-	storage:       storageActionSet,
-	license:       licenseActionSet,
+	tenants:        tenantsActionSet,
+	tenantsDetail:  tenantsActionSet,
+	storage:        storageActionSet,
+	storageDrives:  storageActionSet,
+	storageVolumes: storageActionSet,
+	license:        licenseActionSet,
 }
 
 // operatorOnly ENV variable
