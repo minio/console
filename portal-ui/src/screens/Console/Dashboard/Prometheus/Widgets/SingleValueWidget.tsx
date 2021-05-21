@@ -23,6 +23,7 @@ import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
 import { IDashboardPanel } from "../types";
 import { connect } from "react-redux";
 import { setErrorSnackMessage } from "../../../../../actions";
+import { CircularProgress } from "@material-ui/core";
 
 interface ISingleValueWidget {
   title: string;
@@ -42,6 +43,12 @@ const styles = (theme: Theme) =>
       color: "#072045",
       fontSize: 18,
       textAlign: "center" as const,
+    },
+    loadingAlign: {
+      width: "100%",
+      paddingTop: "15px",
+      textAlign: "center",
+      margin: "auto",
     },
   });
 
@@ -88,7 +95,12 @@ const SingleValueWidget = ({
   return (
     <div className={classes.singleValueContainer}>
       <div className={classes.titleContainer}>{title}</div>
-      <div className={classes.contentContainer}>{data}</div>
+      {loading && (
+        <div className={classes.loadingAlign}>
+          <CircularProgress />
+        </div>
+      )}
+      {!loading && <div className={classes.contentContainer}>{data}</div>}
     </div>
   );
 };

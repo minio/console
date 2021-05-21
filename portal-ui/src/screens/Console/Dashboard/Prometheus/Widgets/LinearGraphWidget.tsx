@@ -73,6 +73,9 @@ const styles = (theme: Theme) =>
       position: "relative",
       textAlign: "center",
     },
+    loadingAlign: {
+      margin: "auto",
+    },
   });
 
 const LinearGraphWidget = ({
@@ -146,7 +149,7 @@ const LinearGraphWidget = ({
     <div className={classes.singleValueContainer}>
       <div className={classes.titleContainer}>{title}</div>
       <div className={classes.containerElements}>
-        {loading && <CircularProgress />}
+        {loading && <CircularProgress className={classes.loadingAlign} />}
         {!loading && (
           <React.Fragment>
             <div className={classes.chartCont}>

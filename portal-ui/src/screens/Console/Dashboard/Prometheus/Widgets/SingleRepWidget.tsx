@@ -25,6 +25,7 @@ import { IDashboardPanel } from "../types";
 import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
 import api from "../../../../../common/api";
 import { widgetDetailsToPanel } from "../utils";
+import { CircularProgress } from "@material-ui/core";
 
 interface ISingleRepWidget {
   classes: any;
@@ -40,6 +41,12 @@ interface ISingleRepWidget {
 const styles = (theme: Theme) =>
   createStyles({
     ...widgetCommon,
+    loadingAlign: {
+      width: "100%",
+      paddingTop: "5px",
+      textAlign: "center",
+      margin: "auto",
+    },
   });
 
 const SingleRepWidget = ({
@@ -89,31 +96,41 @@ const SingleRepWidget = ({
   return (
     <div className={classes.singleValueContainer}>
       <div className={classes.titleContainer}>{title}</div>
-      <div className={classes.contentContainer}>
-        <ResponsiveContainer>
-          <AreaChart data={data}>
-            <YAxis domain={[0, (dataMax: number) => dataMax * 2]} hide={true} />
-            <Area
-              type="monotone"
-              dataKey={"value"}
-              stroke={color}
-              fill={fillColor}
-              fillOpacity={1}
-            />
-            <text
-              x={"50%"}
-              y={"50%"}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fontWeight={600}
-              fontSize={18}
-              fill={color}
-            >
-              {result ? result.innerLabel : ""}
-            </text>
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
+      {loading && (
+        <div className={classes.loadingAlign}>
+          <CircularProgress />
+        </div>
+      )}
+      {!loading && (
+        <div className={classes.contentContainer}>
+          <ResponsiveContainer>
+            <AreaChart data={data}>
+              <YAxis
+                domain={[0, (dataMax: number) => dataMax * 2]}
+                hide={true}
+              />
+              <Area
+                type="monotone"
+                dataKey={"value"}
+                stroke={color}
+                fill={fillColor}
+                fillOpacity={1}
+              />
+              <text
+                x={"50%"}
+                y={"50%"}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fontWeight={600}
+                fontSize={18}
+                fill={color}
+              >
+                {result ? result.innerLabel : ""}
+              </text>
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      )}
     </div>
   );
 };

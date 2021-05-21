@@ -33,6 +33,7 @@ import { IDashboardPanel } from "../types";
 import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
 import api from "../../../../../common/api";
 import { widgetDetailsToPanel } from "../utils";
+import { CircularProgress } from "@material-ui/core";
 
 interface IBarChartWidget {
   classes: any;
@@ -46,6 +47,12 @@ interface IBarChartWidget {
 const styles = (theme: Theme) =>
   createStyles({
     ...widgetCommon,
+    loadingAlign: {
+      width: "100%",
+      paddingTop: "15px",
+      textAlign: "center",
+      margin: "auto",
+    },
   });
 
 const CustomizedAxisTick = ({ x, y, payload }: any) => {
@@ -113,42 +120,49 @@ const BarChartWidget = ({
   return (
     <div className={classes.singleValueContainer}>
       <div className={classes.titleContainer}>{title}</div>
-      <div className={classes.contentContainer}>
-        <ResponsiveContainer>
-          <BarChart
-            data={data as object[]}
-            layout={"vertical"}
-            barCategoryGap={1}
-          >
-            <XAxis type="number" hide />
-            <YAxis
-              dataKey="name"
-              type="category"
-              interval={0}
-              tick={<CustomizedAxisTick />}
-              tickLine={false}
-              axisLine={false}
-              width={150}
-            />
-            {barChartConfiguration.map((bar) => (
-              <Bar
-                key={`bar-${bar.dataKey}`}
-                dataKey={bar.dataKey}
-                fill={bar.color}
-                background={bar.background}
+      {loading && (
+        <div className={classes.loadingAlign}>
+          <CircularProgress />
+        </div>
+      )}
+      {!loading && (
+        <div className={classes.contentContainer}>
+          <ResponsiveContainer>
+            <BarChart
+              data={data as object[]}
+              layout={"vertical"}
+              barCategoryGap={1}
+            >
+              <XAxis type="number" hide />
+              <YAxis
+                dataKey="name"
+                type="category"
+                interval={0}
+                tick={<CustomizedAxisTick />}
+                tickLine={false}
+                axisLine={false}
+                width={150}
               />
-            ))}
-            <Tooltip
-              cursor={{ fill: "rgba(255, 255, 255, 0.3)" }}
-              content={
-                <BarChartTooltip
-                  barChartConfiguration={barChartConfiguration}
+              {barChartConfiguration.map((bar) => (
+                <Bar
+                  key={`bar-${bar.dataKey}`}
+                  dataKey={bar.dataKey}
+                  fill={bar.color}
+                  background={bar.background}
                 />
-              }
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+              ))}
+              <Tooltip
+                cursor={{ fill: "rgba(255, 255, 255, 0.3)" }}
+                content={
+                  <BarChartTooltip
+                    barChartConfiguration={barChartConfiguration}
+                  />
+                }
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
     </div>
   );
 };

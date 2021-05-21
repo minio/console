@@ -26,6 +26,7 @@ import { IDashboardPanel } from "../types";
 import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
 import api from "../../../../../common/api";
 import { widgetDetailsToPanel } from "../utils";
+import { CircularProgress } from "@material-ui/core";
 
 interface IPieChartWidget {
   classes: any;
@@ -39,6 +40,12 @@ interface IPieChartWidget {
 const styles = (theme: Theme) =>
   createStyles({
     ...widgetCommon,
+    loadingAlign: {
+      width: "100%",
+      paddingTop: "15px",
+      textAlign: "center",
+      margin: "auto",
+    },
   });
 
 const PieChartWidget = ({
@@ -98,106 +105,113 @@ const PieChartWidget = ({
   return (
     <div className={classes.singleValueContainer}>
       <div className={classes.titleContainer}>{title}</div>
-      <div className={classes.contentContainer}>
-        <ResponsiveContainer>
-          <PieChart margin={{ top: 5, bottom: 5 }}>
-            {dataOuter && (
-              <Pie
-                data={dataOuter as object[]}
-                cx={"50%"}
-                cy={"50%"}
-                dataKey="value"
-                innerRadius={get(
-                  pieChartConfiguration,
-                  "outerChart.innerRadius",
-                  0
-                )}
-                outerRadius={get(
-                  pieChartConfiguration,
-                  "outerChart.outerRadius",
-                  "80%"
-                )}
-                startAngle={get(
-                  pieChartConfiguration,
-                  "outerChart.startAngle",
-                  0
-                )}
-                endAngle={get(
-                  pieChartConfiguration,
-                  "outerChart.endAngle",
-                  360
-                )}
-                fill="#201763"
-              >
-                {dataOuter.map((entry, index) => (
-                  <Cell
-                    key={`cellOuter-${index}`}
-                    fill={
-                      typeof outerColors[index] == "undefined"
-                        ? "#393939"
-                        : outerColors[index]
-                    }
-                  />
-                ))}
-              </Pie>
-            )}
-            {dataInner && (
-              <Pie
-                data={dataInner as object[]}
-                dataKey="value"
-                cx={"50%"}
-                cy={"50%"}
-                innerRadius={get(
-                  pieChartConfiguration,
-                  "innerChart.innerRadius",
-                  0
-                )}
-                outerRadius={get(
-                  pieChartConfiguration,
-                  "innerChart.outerRadius",
-                  "80%"
-                )}
-                startAngle={get(
-                  pieChartConfiguration,
-                  "innerChart.startAngle",
-                  0
-                )}
-                endAngle={get(
-                  pieChartConfiguration,
-                  "innerChart.endAngle",
-                  360
-                )}
-                fill="#201763"
-              >
-                {dataInner.map((entry, index) => {
-                  return (
+      {loading && (
+        <div className={classes.loadingAlign}>
+          <CircularProgress />
+        </div>
+      )}
+      {!loading && (
+        <div className={classes.contentContainer}>
+          <ResponsiveContainer>
+            <PieChart margin={{ top: 5, bottom: 5 }}>
+              {dataOuter && (
+                <Pie
+                  data={dataOuter as object[]}
+                  cx={"50%"}
+                  cy={"50%"}
+                  dataKey="value"
+                  innerRadius={get(
+                    pieChartConfiguration,
+                    "outerChart.innerRadius",
+                    0
+                  )}
+                  outerRadius={get(
+                    pieChartConfiguration,
+                    "outerChart.outerRadius",
+                    "80%"
+                  )}
+                  startAngle={get(
+                    pieChartConfiguration,
+                    "outerChart.startAngle",
+                    0
+                  )}
+                  endAngle={get(
+                    pieChartConfiguration,
+                    "outerChart.endAngle",
+                    360
+                  )}
+                  fill="#201763"
+                >
+                  {dataOuter.map((entry, index) => (
                     <Cell
-                      key={`cell-${index}`}
+                      key={`cellOuter-${index}`}
                       fill={
-                        typeof innerColors[index] == "undefined"
+                        typeof outerColors[index] == "undefined"
                           ? "#393939"
-                          : innerColors[index]
+                          : outerColors[index]
                       }
                     />
-                  );
-                })}
-              </Pie>
-            )}
-            {middleLabel && (
-              <text
-                x={"50%"}
-                y={"50%"}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fontWeight={600}
-                fontSize={14}
-              >
-                {middleLabel}
-              </text>
-            )}
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
+                  ))}
+                </Pie>
+              )}
+              {dataInner && (
+                <Pie
+                  data={dataInner as object[]}
+                  dataKey="value"
+                  cx={"50%"}
+                  cy={"50%"}
+                  innerRadius={get(
+                    pieChartConfiguration,
+                    "innerChart.innerRadius",
+                    0
+                  )}
+                  outerRadius={get(
+                    pieChartConfiguration,
+                    "innerChart.outerRadius",
+                    "80%"
+                  )}
+                  startAngle={get(
+                    pieChartConfiguration,
+                    "innerChart.startAngle",
+                    0
+                  )}
+                  endAngle={get(
+                    pieChartConfiguration,
+                    "innerChart.endAngle",
+                    360
+                  )}
+                  fill="#201763"
+                >
+                  {dataInner.map((entry, index) => {
+                    return (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={
+                          typeof innerColors[index] == "undefined"
+                            ? "#393939"
+                            : innerColors[index]
+                        }
+                      />
+                    );
+                  })}
+                </Pie>
+              )}
+              {middleLabel && (
+                <text
+                  x={"50%"}
+                  y={"50%"}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  fontWeight={600}
+                  fontSize={14}
+                >
+                  {middleLabel}
+                </text>
+              )}
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      )}
     </div>
   );
 };

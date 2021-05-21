@@ -765,15 +765,18 @@ const constructLabelNames = (metrics: any, legendFormat: string) => {
 
   let cleanLegend = replacedLegend.replace(/{{(.*?)}}/g, "");
 
-  if (countVarsOpen === countVarsClose && countVarsOpen !== 0 && countVarsClose !== 0) {
-
+  if (
+    countVarsOpen === countVarsClose &&
+    countVarsOpen !== 0 &&
+    countVarsClose !== 0
+  ) {
     keysToReplace.forEach((element) => {
       replacedLegend = replacedLegend.replace(element, metrics[element]);
-    })
+    });
 
     cleanLegend = replacedLegend;
   }
-  
+
   // In case not all the legends were replaced, we remove the placeholders.
   return cleanLegend;
 };
