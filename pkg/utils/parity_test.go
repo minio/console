@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/minio/minio/pkg/ellipses"
+	"github.com/minio/pkg/ellipses"
 )
 
 func TestGetDivisibleSize(t *testing.T) {

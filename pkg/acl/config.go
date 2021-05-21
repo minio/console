@@ -19,7 +19,7 @@ package acl
 import (
 	"strings"
 
-	"github.com/minio/minio/pkg/env"
+	"github.com/minio/pkg/env"
 )
 
 // GetOperatorMode gets Console Operator mode status set on env variable or default one

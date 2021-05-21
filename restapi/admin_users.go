@@ -17,26 +17,27 @@
 package restapi
 
 import (
+	"context"
+	"fmt"
+	"log"
 	"sort"
-
-	iampolicy "github.com/minio/minio/pkg/iam/policy"
+	"strings"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/admin_api"
-	"github.com/minio/minio/pkg/madmin"
-
-	"context"
-	"fmt"
-	"log"
-	"strings"
+	"github.com/minio/madmin-go"
+	iampolicy "github.com/minio/pkg/iam/policy"
 )
 
-const Allow = 1
-const Deny = -1
-const Unknown = 0
+// Policy evaluated constants
+const (
+	Unknown = 0
+	Allow   = 1
+	Deny    = -1
+)
 
 func registerUsersHandlers(api *operations.ConsoleAPI) {
 	// List Users

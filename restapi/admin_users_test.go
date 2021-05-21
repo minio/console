@@ -19,16 +19,13 @@ package restapi
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"testing"
 
-	iampolicy "github.com/minio/minio/pkg/iam/policy"
-
-	"github.com/minio/minio/pkg/madmin"
-
-	"errors"
-
+	"github.com/minio/madmin-go"
+	iampolicy "github.com/minio/pkg/iam/policy"
 	asrt "github.com/stretchr/testify/assert"
 )
 

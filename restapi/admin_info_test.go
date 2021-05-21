@@ -21,7 +21,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/minio/minio/pkg/madmin"
+	"github.com/minio/madmin-go"
 	asrt "github.com/stretchr/testify/assert"
 )
 

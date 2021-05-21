@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
-	"github.com/minio/minio/pkg/madmin"
+	"github.com/minio/madmin-go"
 	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 )
 

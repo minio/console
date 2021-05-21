@@ -17,19 +17,21 @@
 package restapi
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"time"
 
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg"
+	"github.com/minio/madmin-go"
 	mcCmd "github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	mauth "github.com/minio/minio/pkg/auth"
-	iampolicy "github.com/minio/minio/pkg/iam/policy"
-	"github.com/minio/minio/pkg/madmin"
+	iampolicy "github.com/minio/pkg/iam/policy"
 )
 
 const globalAppName = "MinIO Console"
@@ -93,7 +95,7 @@ type MinioAdmin interface {
 	heal(ctx context.Context, bucket, prefix string, healOpts madmin.HealOpts, clientToken string,
 		forceStart, forceStop bool) (healStart madmin.HealStartSuccess, healTaskStatus madmin.HealTaskStatus, err error)
 	// Service Accounts
-	addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (mauth.Credentials, error)
+	addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (madmin.Credentials, error)
 	listServiceAccounts(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error)
 	deleteServiceAccount(ctx context.Context, serviceAccount string) error
 	// Remote Buckets
@@ -104,7 +106,7 @@ type MinioAdmin interface {
 	// Account password management
 	changePassword(ctx context.Context, accessKey, secretKey string) error
 
-	serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) <-chan madmin.HealthInfo
+	serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) (interface{}, string, error)
 	// List Tiers
 	listTiers(ctx context.Context) ([]*madmin.TierConfig, error)
 	// Add Tier
@@ -172,12 +174,28 @@ func (ac adminClient) setGroupStatus(ctx context.Context, group string, status m
 
 // implements madmin.ListCannedPolicies()
 func (ac adminClient) listPolicies(ctx context.Context) (map[string]*iampolicy.Policy, error) {
-	return ac.client.ListCannedPolicies(ctx)
+	policyMap, err := ac.client.ListCannedPolicies(ctx)
+	if err != nil {
+		return nil, err
+	}
+	policies := make(map[string]*iampolicy.Policy, len(policyMap))
+	for k, v := range policyMap {
+		p, err := iampolicy.ParseConfig(bytes.NewReader(v))
+		if err != nil {
+			return nil, err
+		}
+		policies[k] = p
+	}
+	return policies, nil
 }
 
 // implements madmin.ListCannedPolicies()
 func (ac adminClient) getPolicy(ctx context.Context, name string) (*iampolicy.Policy, error) {
-	return ac.client.InfoCannedPolicy(ctx, name)
+	praw, err := ac.client.InfoCannedPolicy(ctx, name)
+	if err != nil {
+		return nil, err
+	}
+	return iampolicy.ParseConfig(bytes.NewReader(praw))
 }
 
 // implements madmin.RemoveCannedPolicy()
@@ -187,7 +205,11 @@ func (ac adminClient) removePolicy(ctx context.Context, name string) error {
 
 // implements madmin.AddCannedPolicy()
 func (ac adminClient) addPolicy(ctx context.Context, name string, policy *iampolicy.Policy) error {
-	return ac.client.AddCannedPolicy(ctx, name, policy)
+	buf, err := json.Marshal(policy)
+	if err != nil {
+		return err
+	}
+	return ac.client.AddCannedPolicy(ctx, name, buf)
 }
 
 // implements madmin.SetPolicy()
@@ -249,10 +271,13 @@ func (ac adminClient) getLogs(ctx context.Context, node string, lineCnt int, log
 }
 
 // implements madmin.AddServiceAccount()
-func (ac adminClient) addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (mauth.Credentials, error) {
-	// TODO: Fix this
+func (ac adminClient) addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (madmin.Credentials, error) {
+	buf, err := json.Marshal(policy)
+	if err != nil {
+		return madmin.Credentials{}, err
+	}
 	return ac.client.AddServiceAccount(ctx, madmin.AddServiceAccountReq{
-		Policy:     policy,
+		Policy:     buf,
 		TargetUser: "",
 		AccessKey:  "",
 		SecretKey:  "",
@@ -316,8 +341,37 @@ func (ac adminClient) getBucketQuota(ctx context.Context, bucket string) (madmin
 }
 
 // serverHealthInfo implements mc.ServerHealthInfo - Connect to a minio server and call Health Info Management API
-func (ac adminClient) serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) <-chan madmin.HealthInfo {
-	return ac.client.ServerHealthInfo(ctx, healthDataTypes, deadline)
+func (ac adminClient) serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) (interface{}, string, error) {
+	resp, version, err := ac.client.ServerHealthInfo(ctx, healthDataTypes, deadline)
+	if err != nil {
+		return nil, version, err
+	}
+
+	var healthInfo interface{}
+
+	decoder := json.NewDecoder(resp.Body)
+	switch version {
+	case madmin.HealthInfoVersion0:
+		for {
+			var info madmin.HealthInfoV0
+			err = decoder.Decode(&info)
+			if err != nil && !errors.Is(err, io.EOF) {
+				return nil, version, err
+			}
+
+			healthInfo = mcCmd.MapHealthInfoToV1(info, nil)
+		}
+	case madmin.HealthInfoVersion:
+		for {
+			var info madmin.HealthInfo
+			if err != nil && !errors.Is(err, io.EOF) {
+				return nil, version, err
+			}
+
+			healthInfo = info
+		}
+	}
+	return healthInfo, version, nil
 }
 
 // implements madmin.listTiers()

@@ -25,8 +25,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/minio/minio/pkg/certs"
-	"github.com/minio/minio/pkg/env"
+	"github.com/minio/pkg/certs"
+	"github.com/minio/pkg/env"
 )
 
 var (

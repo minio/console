@@ -27,10 +27,10 @@ import (
 
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
+	"github.com/minio/madmin-go"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/sse"
-	"github.com/minio/minio/pkg/madmin"
 	"github.com/stretchr/testify/assert"
 )
 

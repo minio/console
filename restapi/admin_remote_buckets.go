@@ -30,9 +30,8 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/user_api"
+	"github.com/minio/madmin-go"
 	"github.com/minio/minio-go/v7/pkg/replication"
-	"github.com/minio/minio/pkg/auth"
-	"github.com/minio/minio/pkg/madmin"
 )
 
 type RemoteBucketResult struct {
@@ -248,7 +247,7 @@ func addRemoteBucket(ctx context.Context, client MinioAdmin, params models.Creat
 		}
 		host = host + ":" + strconv.Itoa(port)
 	}
-	creds := &auth.Credentials{AccessKey: accessKey, SecretKey: secretKey}
+	creds := &madmin.Credentials{AccessKey: accessKey, SecretKey: secretKey}
 	remoteBucket := &madmin.BucketTarget{
 		TargetBucket:    *params.TargetBucket,
 		Secure:          secure,

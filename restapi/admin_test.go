@@ -19,7 +19,7 @@ package restapi
 import (
 	"context"
 
-	"github.com/minio/minio/pkg/madmin"
+	"github.com/minio/madmin-go"
 )
 
 // Define a mock struct of Admin Client interface implementation

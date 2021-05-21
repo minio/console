@@ -130,13 +130,13 @@ func Test_listObjects(t *testing.T) {
 					go func(objectStatCh chan<- minio.ObjectInfo) {
 						defer close(objectStatCh)
 						for _, bucket := range []minio.ObjectInfo{
-							minio.ObjectInfo{
+							{
 								Key:          "obj1",
 								LastModified: t1,
 								Size:         int64(1024),
 								ContentType:  "content",
 							},
-							minio.ObjectInfo{
+							{
 								Key:          "obj2",
 								LastModified: t1,
 								Size:         int64(512),
@@ -168,7 +168,7 @@ func Test_listObjects(t *testing.T) {
 				},
 			},
 			expectedResp: []*models.BucketObject{
-				&models.BucketObject{
+				{
 					Name:               "obj1",
 					LastModified:       t1.Format(time.RFC3339),
 					Size:               int64(1024),
@@ -179,7 +179,7 @@ func Test_listObjects(t *testing.T) {
 					Tags: map[string]string{
 						"tag1": "value1",
 					},
-				}, &models.BucketObject{
+				}, {
 					Name:               "obj2",
 					LastModified:       t1.Format(time.RFC3339),
 					Size:               int64(512),
@@ -240,13 +240,13 @@ func Test_listObjects(t *testing.T) {
 					go func(objectStatCh chan<- minio.ObjectInfo) {
 						defer close(objectStatCh)
 						for _, bucket := range []minio.ObjectInfo{
-							minio.ObjectInfo{
+							{
 								Key:          "obj2",
 								LastModified: t1,
 								Size:         int64(512),
 								ContentType:  "content",
 							},
-							minio.ObjectInfo{
+							{
 								Err: errors.New("error here"),
 							},
 						} {
@@ -291,14 +291,14 @@ func Test_listObjects(t *testing.T) {
 					go func(objectStatCh chan<- minio.ObjectInfo) {
 						defer close(objectStatCh)
 						for _, bucket := range []minio.ObjectInfo{
-							minio.ObjectInfo{
+							{
 								Key:            "obj1",
 								LastModified:   t1,
 								Size:           int64(1024),
 								ContentType:    "content",
 								IsDeleteMarker: true,
 							},
-							minio.ObjectInfo{
+							{
 								Key:          "obj2",
 								LastModified: t1,
 								Size:         int64(512),
@@ -330,13 +330,13 @@ func Test_listObjects(t *testing.T) {
 				},
 			},
 			expectedResp: []*models.BucketObject{
-				&models.BucketObject{
+				{
 					Name:           "obj1",
 					LastModified:   t1.Format(time.RFC3339),
 					Size:           int64(1024),
 					ContentType:    "content",
 					IsDeleteMarker: true,
-				}, &models.BucketObject{
+				}, {
 					Name:               "obj2",
 					LastModified:       t1.Format(time.RFC3339),
 					Size:               int64(512),
@@ -366,7 +366,7 @@ func Test_listObjects(t *testing.T) {
 					go func(objectStatCh chan<- minio.ObjectInfo) {
 						defer close(objectStatCh)
 						for _, bucket := range []minio.ObjectInfo{
-							minio.ObjectInfo{
+							{
 								Key:          "obj1",
 								LastModified: t1,
 								Size:         int64(1024),
@@ -389,7 +389,7 @@ func Test_listObjects(t *testing.T) {
 				},
 			},
 			expectedResp: []*models.BucketObject{
-				&models.BucketObject{
+				{
 					Name:         "obj1",
 					LastModified: t1.Format(time.RFC3339),
 					Size:         int64(1024),
@@ -413,13 +413,13 @@ func Test_listObjects(t *testing.T) {
 					go func(objectStatCh chan<- minio.ObjectInfo) {
 						defer close(objectStatCh)
 						for _, bucket := range []minio.ObjectInfo{
-							minio.ObjectInfo{
+							{
 								Key:          "obj1",
 								LastModified: t1,
 								Size:         int64(1024),
 								ContentType:  "content",
 							},
-							minio.ObjectInfo{
+							{
 								Key:          "obj2",
 								LastModified: t1,
 								Size:         int64(512),
@@ -451,12 +451,12 @@ func Test_listObjects(t *testing.T) {
 				},
 			},
 			expectedResp: []*models.BucketObject{
-				&models.BucketObject{
+				{
 					Name:         "obj1",
 					LastModified: t1.Format(time.RFC3339),
 					Size:         int64(1024),
 					ContentType:  "content",
-				}, &models.BucketObject{
+				}, {
 					Name:         "obj2",
 					LastModified: t1.Format(time.RFC3339),
 					Size:         int64(512),
@@ -480,13 +480,13 @@ func Test_listObjects(t *testing.T) {
 					go func(objectStatCh chan<- minio.ObjectInfo) {
 						defer close(objectStatCh)
 						for _, bucket := range []minio.ObjectInfo{
-							minio.ObjectInfo{
+							{
 								Key:          "obj1",
 								LastModified: t1,
 								Size:         int64(1024),
 								ContentType:  "content",
 							},
-							minio.ObjectInfo{
+							{
 								Key:          "obj2",
 								LastModified: t1,
 								Size:         int64(512),
@@ -518,12 +518,12 @@ func Test_listObjects(t *testing.T) {
 				},
 			},
 			expectedResp: []*models.BucketObject{
-				&models.BucketObject{
+				{
 					Name:         "obj1",
 					LastModified: t1.Format(time.RFC3339),
 					Size:         int64(1024),
 					ContentType:  "content",
-				}, &models.BucketObject{
+				}, {
 					Name:         "obj2",
 					LastModified: t1.Format(time.RFC3339),
 					Size:         int64(512),

@@ -27,7 +27,7 @@ import (
 	"net/http"
 
 	"github.com/minio/console/cluster"
-	"github.com/minio/minio/pkg/licverifier"
+	"github.com/minio/pkg/licverifier"
 )
 
 // subnetLoginRequest body request for subnet login
