@@ -52,7 +52,7 @@ func getPVCsResponse(session *models.Principal) (*models.ListPVCsResponse, *mode
 
 	// Filter Tenant PVCs. They keep their v1 tenant annotation
 	listOpts := metav1.ListOptions{
-		LabelSelector: fmt.Sprintf("%s", miniov1.TenantLabel),
+		LabelSelector: miniov1.TenantLabel,
 	}
 
 	// List all PVCs
