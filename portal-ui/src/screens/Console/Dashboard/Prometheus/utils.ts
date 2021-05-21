@@ -727,13 +727,27 @@ const constructLabelNames = (metrics: any, legendFormat: string) => {
   const keysToReplace = Object.keys(metrics);
   const expToReplace = new RegExp(`{{(${keysToReplace.join("|")})}}`, "g");
 
-  const replacedLegend = legendFormat.replace(expToReplace, (matchItem) => {
+  let replacedLegend = legendFormat.replace(expToReplace, (matchItem) => {
     const nwMatchItem = matchItem.replace(/({{|}})/g, "");
     return metrics[nwMatchItem];
   });
 
+  const countVarsOpen = (replacedLegend.match(/{{/g) || []).length;
+  const countVarsClose = (replacedLegend.match(/}}/g) || []).length;
+
+  let cleanLegend = replacedLegend.replace(/{{(.*?)}}/g, "");
+
+  if (countVarsOpen === countVarsClose && countVarsOpen !== 0 && countVarsClose !== 0) {
+
+    keysToReplace.forEach((element) => {
+      replacedLegend = replacedLegend.replace(element, metrics[element]);
+    })
+
+    cleanLegend = replacedLegend;
+  }
+  
   // In case not all the legends were replaced, we remove the placeholders.
-  return replacedLegend.replace(/{{(.*?)}}/g, "");
+  return cleanLegend;
 };
 
 export const getWidgetsWithValue = (payload: any[]) => {
