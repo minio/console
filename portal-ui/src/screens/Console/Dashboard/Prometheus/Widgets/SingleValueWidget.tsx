@@ -14,13 +14,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
+import api from "../../../../../common/api";
+import { widgetDetailsToPanel } from "../utils";
+import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
+import { IDashboardPanel } from "../types";
+import { connect } from "react-redux";
+import { setErrorSnackMessage } from "../../../../../actions";
+import { CircularProgress } from "@material-ui/core";
 
 interface ISingleValueWidget {
   title: string;
-  data: string;
+  panelItem: IDashboardPanel;
+  timeStart: MaterialUiPickersDate;
+  timeEnd: MaterialUiPickersDate;
+  displayErrorMessage: any;
   classes: any;
 }
 
@@ -34,15 +44,69 @@ const styles = (theme: Theme) =>
       fontSize: 18,
       textAlign: "center" as const,
     },
+    loadingAlign: {
+      width: "100%",
+      paddingTop: "15px",
+      textAlign: "center",
+      margin: "auto",
+    },
   });
 
-const SingleValueWidget = ({ title, data, classes }: ISingleValueWidget) => {
+const SingleValueWidget = ({
+  title,
+  panelItem,
+  timeStart,
+  timeEnd,
+  displayErrorMessage,
+  classes,
+}: ISingleValueWidget) => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [data, setData] = useState<string>("");
+  useEffect(() => {
+    if (loading) {
+      let stepCalc = 0;
+      if (timeStart !== null && timeEnd !== null) {
+        const secondsInPeriod = timeEnd.unix() - timeStart.unix();
+        const periods = Math.floor(secondsInPeriod / 60);
+
+        stepCalc = periods < 1 ? 15 : periods;
+      }
+
+      api
+        .invoke(
+          "GET",
+          `/api/v1/admin/info/widgets/${panelItem.id}/?step=${stepCalc}&${
+            timeStart !== null ? `&start=${timeStart.unix()}` : ""
+          }${timeStart !== null && timeEnd !== null ? "&" : ""}${
+            timeEnd !== null ? `end=${timeEnd.unix()}` : ""
+          }`
+        )
+        .then((res: any) => {
+          const widgetsWithValue = widgetDetailsToPanel(res, panelItem);
+          setData(widgetsWithValue.data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          displayErrorMessage(err);
+          setLoading(false);
+        });
+    }
+  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage]);
   return (
     <div className={classes.singleValueContainer}>
       <div className={classes.titleContainer}>{title}</div>
-      <div className={classes.contentContainer}>{data}</div>
+      {loading && (
+        <div className={classes.loadingAlign}>
+          <CircularProgress />
+        </div>
+      )}
+      {!loading && <div className={classes.contentContainer}>{data}</div>}
     </div>
   );
 };
 
-export default withStyles(styles)(SingleValueWidget);
+const connector = connect(null, {
+  displayErrorMessage: setErrorSnackMessage,
+});
+
+export default withStyles(styles)(connector(SingleValueWidget));

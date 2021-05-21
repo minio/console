@@ -1773,7 +1773,28 @@ paths:
     get:
       summary: Returns information about the deployment
       operationId: AdminInfo
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/adminInfoResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /admin/info/widgets/{widgetId}:
+    get:
+      summary: Returns information about the deployment
+      operationId: DashboardWidgetDetails
       parameters:
+        - name: widgetId
+          in: path
+          type: integer
+          format: int32
+          required: true
         - name: start
           in: query
           type: integer
@@ -1788,7 +1809,7 @@ paths:
         200:
           description: A successful response.
           schema:
-            $ref: "#/definitions/adminInfoResponse"
+            $ref: "#/definitions/widgetDetails"
         default:
           description: Generic error response.
           schema:
@@ -3290,6 +3311,33 @@ definitions:
         type: string
       type:
         type: string
+      id:
+        type: integer
+        format: int32
+      options:
+        type: object
+        properties:
+          reduceOptions:
+            type: object
+            properties:
+              calcs:
+                type: array
+                items:
+                  type: string
+      targets:
+        type: array
+        items:
+          $ref: "#/definitions/resultTarget"
+  widgetDetails:
+    type: object
+    properties:
+      title:
+        type: string
+      type:
+        type: string
+      id:
+        type: integer
+        format: int32
       options:
         type: object
         properties:

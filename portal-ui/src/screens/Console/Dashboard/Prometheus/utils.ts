@@ -331,6 +331,7 @@ const roundNumber = (value: string) => {
 
 export const panelsConfiguration: IDashboardPanel[] = [
   {
+    id: 1,
     title: "Uptime",
     data: "N/A",
     type: widgetType.singleValue,
@@ -338,18 +339,21 @@ export const panelsConfiguration: IDashboardPanel[] = [
     labelDisplayFunction: niceDays,
   },
   {
+    id: 9,
     title: "Total Online Disks",
     data: "N/A",
     type: widgetType.singleValue,
     layoutIdentifier: "panel-1",
   },
   {
+    id: 78,
     title: "Total Offline Disks",
     data: "N/A",
     type: widgetType.singleValue,
     layoutIdentifier: "panel-2",
   },
   {
+    id: 50,
     title: "Current Usable Capacity",
     data: [],
     dataOuter: [{ name: "outer", value: 100 }],
@@ -375,6 +379,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     labelDisplayFunction: niceBytes,
   },
   {
+    id: 68,
     title: "Data Usage Growth",
     data: [],
     widgetConfiguration: [
@@ -391,6 +396,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     xAxisFormatter: getTimeFromTimestamp,
   },
   {
+    id: 52,
     title: "Object size distribution",
     data: [],
     widgetConfiguration: [
@@ -433,18 +439,21 @@ export const panelsConfiguration: IDashboardPanel[] = [
     layoutIdentifier: "panel-5",
   },
   {
+    id: 53,
     title: "Total Online Servers",
     data: "N/A",
     type: widgetType.singleValue,
     layoutIdentifier: "panel-6",
   },
   {
+    id: 69,
     title: "Total Offline Servers",
     data: "N/A",
     type: widgetType.singleValue,
     layoutIdentifier: "panel-7",
   },
   {
+    id: 66,
     title: "Number of Buckets",
     data: [],
     innerLabel: "N/A",
@@ -454,6 +463,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     layoutIdentifier: "panel-8",
   },
   {
+    id: 44,
     title: "Number of Objects",
     data: [],
     innerLabel: "N/A",
@@ -463,6 +473,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     layoutIdentifier: "panel-9",
   },
   {
+    id: 63,
     title: "S3 API Data Received Rate",
     data: [],
     widgetConfiguration: [
@@ -479,6 +490,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     yAxisFormatter: niceBytes,
   },
   {
+    id: 61,
     title: "Total Open FDs",
     data: [],
     innerLabel: "N/A",
@@ -488,6 +500,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     fillColor: "#A6E8C4",
   },
   {
+    id: 62,
     title: "Total Goroutines",
     data: [],
     innerLabel: "N/A",
@@ -497,6 +510,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     fillColor: "#F4CECE",
   },
   {
+    id: 77,
     title: "Node CPU Usage",
     data: [],
     widgetConfiguration: [
@@ -513,6 +527,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     xAxisFormatter: getTimeFromTimestamp,
   },
   {
+    id: 60,
     title: "S3 API Request Rate",
     data: [],
     widgetConfiguration: [
@@ -528,6 +543,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     xAxisFormatter: getTimeFromTimestamp,
   },
   {
+    id: 70,
     title: "S3 API Data Sent Rate",
     data: [],
     widgetConfiguration: [
@@ -544,6 +560,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     yAxisFormatter: niceBytes,
   },
   {
+    id: 17,
     title: "Internode Data Transfer",
     data: [],
     widgetConfiguration: [
@@ -560,6 +577,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     xAxisFormatter: getTimeFromTimestamp,
   },
   {
+    id: 73,
     title: "Node IO",
     data: [],
     widgetConfiguration: [
@@ -576,6 +594,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     xAxisFormatter: getTimeFromTimestamp,
   },
   {
+    id: 80,
     title: "Time Since Last Heal Activity",
     data: "N/A",
     type: widgetType.singleValue,
@@ -583,6 +602,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     labelDisplayFunction: niceDaysFromNS,
   },
   {
+    id: 81,
     title: "Time Since Last Scan Activity",
     data: "N/A",
     type: widgetType.singleValue,
@@ -590,6 +610,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     labelDisplayFunction: niceDaysFromNS,
   },
   {
+    id: 71,
     title: "S3 API Request Error Rate",
     data: [],
     widgetConfiguration: [
@@ -605,6 +626,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     xAxisFormatter: getTimeFromTimestamp,
   },
   {
+    id: 76,
     title: "Node Memory Usage",
     data: [],
     widgetConfiguration: [
@@ -621,6 +643,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     yAxisFormatter: niceBytes,
   },
   {
+    id: 74,
     title: "Drive Used Capacity",
     data: [],
     widgetConfiguration: [
@@ -637,6 +660,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     yAxisFormatter: niceBytes,
   },
   {
+    id: 82,
     title: "Drives Free Inodes",
     data: [],
     widgetConfiguration: [
@@ -653,6 +677,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     xAxisFormatter: getTimeFromTimestamp,
   },
   {
+    id: 11,
     title: "Node Syscalls",
     data: [],
     widgetConfiguration: [
@@ -669,6 +694,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     xAxisFormatter: getTimeFromTimestamp,
   },
   {
+    id: 8,
     title: "Node File Descriptors",
     data: [],
     widgetConfiguration: [
@@ -685,6 +711,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     xAxisFormatter: getTimeFromTimestamp,
   },
   {
+    id: 65,
     title: "Total S3 Traffic Inbound",
     data: "N/A",
     type: widgetType.singleValue,
@@ -692,6 +719,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     labelDisplayFunction: niceBytes,
   },
   {
+    id: 64,
     title: "Total S3 Traffic Outbound",
     data: "N/A",
     type: widgetType.singleValue,
@@ -737,297 +765,303 @@ const constructLabelNames = (metrics: any, legendFormat: string) => {
 
   let cleanLegend = replacedLegend.replace(/{{(.*?)}}/g, "");
 
-  if (countVarsOpen === countVarsClose && countVarsOpen !== 0 && countVarsClose !== 0) {
-
+  if (
+    countVarsOpen === countVarsClose &&
+    countVarsOpen !== 0 &&
+    countVarsClose !== 0
+  ) {
     keysToReplace.forEach((element) => {
       replacedLegend = replacedLegend.replace(element, metrics[element]);
-    })
+    });
 
     cleanLegend = replacedLegend;
   }
-  
+
   // In case not all the legends were replaced, we remove the placeholders.
   return cleanLegend;
 };
 
-export const getWidgetsWithValue = (payload: any[]) => {
-  return panelsConfiguration.map((panelItem) => {
+export const getWidgetsWithValue = (payload: any[]): IDashboardPanel[] => {
+  return panelsConfiguration.map((panelItem: IDashboardPanel) => {
     const payloadData = payload.find(
       (panelT) =>
         panelT.title.toLowerCase().trim() ===
         panelItem.title.toLowerCase().trim()
     );
+    return widgetDetailsToPanel(payloadData, panelItem);
+  });
+};
 
-    if (!payloadData) {
-      return panelItem;
-    }
+export const widgetDetailsToPanel = (
+  payloadData: any,
+  panelItem: IDashboardPanel
+) => {
+  if (!payloadData) {
+    return panelItem;
+  }
 
-    const typeOfPayload = payloadData.type;
+  const typeOfPayload = payloadData.type;
 
-    switch (panelItem.type) {
-      case widgetType.singleValue:
-        if (typeOfPayload === "stat" || typeOfPayload === "singlestat") {
-          // We sort values & get the last value
-          let elements = get(payloadData, "targets[0].result[0].values", []);
+  switch (panelItem.type) {
+    case widgetType.singleValue:
+      if (typeOfPayload === "stat" || typeOfPayload === "singlestat") {
+        // We sort values & get the last value
+        let elements = get(payloadData, "targets[0].result[0].values", []);
 
-          if (elements === null) {
-            elements = [];
-          }
-
-          const metricCalc = get(
-            payloadData,
-            "options.reduceOptions.calcs[0]",
-            "lastNotNull"
-          );
-
-          const valueDisplay = calculateMainValue(elements, metricCalc);
-
-          const data = panelItem.labelDisplayFunction
-            ? panelItem.labelDisplayFunction(valueDisplay[1])
-            : valueDisplay[1];
-
-          return {
-            ...panelItem,
-            data,
-          };
+        if (elements === null) {
+          elements = [];
         }
-        break;
-      case widgetType.pieChart:
-        if (typeOfPayload === "gauge") {
-          let chartSeries = get(payloadData, "targets[0].result", []);
 
-          if (chartSeries === null) {
-            chartSeries = [];
-          }
+        const metricCalc = get(
+          payloadData,
+          "options.reduceOptions.calcs[0]",
+          "lastNotNull"
+        );
 
-          const metricCalc = get(
-            payloadData,
-            "options.reduceOptions.calcs[0]",
-            "lastNotNull"
-          );
+        const valueDisplay = calculateMainValue(elements, metricCalc);
 
-          const valuesArray =
-            chartSeries.length > 0 ? chartSeries[0].values : [];
+        const data = panelItem.labelDisplayFunction
+          ? panelItem.labelDisplayFunction(valueDisplay[1])
+          : valueDisplay[1];
 
-          const totalValues = calculateMainValue(valuesArray, metricCalc);
+        return {
+          ...panelItem,
+          data,
+        };
+      }
+      break;
+    case widgetType.pieChart:
+      if (typeOfPayload === "gauge") {
+        let chartSeries = get(payloadData, "targets[0].result", []);
 
-          const values = chartSeries.map((elementValue: any) => {
-            const values = get(elementValue, "values", []);
-            const metricKeyItem = Object.keys(elementValue.metric);
-
-            const sortResult = values.sort(
-              (value1: any[], value2: any[]) => value1[0] - value2[0]
-            );
-
-            const metricName = elementValue.metric[metricKeyItem[0]];
-            const value = sortResult[sortResult.length - 1];
-            return { name: metricName, value: parseInt(value) };
-          });
-
-          const innerLabel = panelItem.labelDisplayFunction
-            ? panelItem.labelDisplayFunction(totalValues[1])
-            : totalValues[1];
-
-          return {
-            ...panelItem,
-            data: values,
-            innerLabel,
-          };
+        if (chartSeries === null) {
+          chartSeries = [];
         }
-        break;
-      case widgetType.linearGraph:
-        if (typeOfPayload === "graph") {
-          let targets = get(payloadData, "targets", []);
-          if (targets === null) {
-            targets = [];
-          }
 
-          const series: any[] = [];
-          const plotValues: any[] = [];
+        const metricCalc = get(
+          payloadData,
+          "options.reduceOptions.calcs[0]",
+          "lastNotNull"
+        );
 
-          targets.forEach(
-            (
-              targetMaster: { legendFormat: string; result: any[] },
-              index: number
-            ) => {
-              // Add a new serie to plot variables in case it is not from multiple values
-              let results = get(targetMaster, "result", []);
-              const legendFormat = targetMaster.legendFormat;
-              if (results === null) {
-                results = [];
-              }
+        const valuesArray = chartSeries.length > 0 ? chartSeries[0].values : [];
 
-              results.forEach((itemVals: { metric: object; values: any[] }) => {
-                // Label Creation
-                const labelName = constructLabelNames(
-                  itemVals.metric,
-                  legendFormat
-                );
-                const keyName = `key_${index}${labelName}`;
+        const totalValues = calculateMainValue(valuesArray, metricCalc);
 
-                // series creation with recently created label
-                series.push({
-                  dataKey: keyName,
-                  keyLabel: labelName,
-                  lineColor: "",
-                  fillColor: "",
-                });
+        const values = chartSeries.map((elementValue: any) => {
+          const values = get(elementValue, "values", []);
+          const metricKeyItem = Object.keys(elementValue.metric);
 
-                // we iterate over values and create elements
-                let values = get(itemVals, "values", []);
-                if (values === null) {
-                  values = [];
-                }
-
-                values.forEach((valInfo: any[]) => {
-                  const itemIndex = plotValues.findIndex(
-                    (element) => element.name === valInfo[0]
-                  );
-
-                  // Element not exists yet
-                  if (itemIndex === -1) {
-                    let itemToPush: any = { name: valInfo[0] };
-                    itemToPush[keyName] = valInfo[1];
-
-                    plotValues.push(itemToPush);
-                  } else {
-                    plotValues[itemIndex][keyName] = valInfo[1];
-                  }
-                });
-              });
-            }
-          );
-
-          const sortedSeries = series.sort((series1: any, series2: any) => {
-            if (series1.keyLabel < series2.keyLabel) {
-              return -1;
-            }
-            if (series1.keyLabel > series2.keyLabel) {
-              return 1;
-            }
-            return 0;
-          });
-
-          const seriesWithColors = sortedSeries.map(
-            (serialC: any, index: number) => {
-              return {
-                ...serialC,
-                lineColor:
-                  colorsMain[index] || textToRGBColor(serialC.keyLabel),
-                fillColor:
-                  colorsMain[index] || textToRGBColor(serialC.keyLabel),
-              };
-            }
-          );
-
-          const sortedVals = plotValues.sort(
-            (value1: any, value2: any) => value1.name - value2.name
-          );
-
-          return {
-            ...panelItem,
-            widgetConfiguration: seriesWithColors,
-            data: sortedVals,
-          };
-        }
-        break;
-      case widgetType.barChart:
-        if (typeOfPayload === "bargauge") {
-          let chartBars = get(payloadData, "targets[0].result", []);
-
-          if (chartBars === null) {
-            chartBars = [];
-          }
-
-          const sortFunction = (value1: any[], value2: any[]) =>
-            value1[0] - value2[0];
-
-          let values = [];
-          if (panelItem.customStructure) {
-            values = panelItem.customStructure.map((structureItem) => {
-              const metricTake = chartBars.find((element: any) => {
-                const metricKeyItem = Object.keys(element.metric);
-
-                const metricName = element.metric[metricKeyItem[0]];
-
-                return metricName === structureItem.originTag;
-              });
-
-              const elements = get(metricTake, "values", []);
-
-              const sortResult = elements.sort(sortFunction);
-              const lastValue = sortResult[sortResult.length - 1] || ["", "0"];
-
-              return {
-                name: structureItem.displayTag,
-                a: parseInt(lastValue[1]),
-              };
-            });
-          } else {
-            // If no configuration is set, we construct the series for bar chart and return the element
-            values = chartBars.map((elementValue: any) => {
-              const metricKeyItem = Object.keys(elementValue.metric);
-
-              const metricName = elementValue.metric[metricKeyItem[0]];
-
-              const elements = get(elementValue, "values", []);
-
-              const sortResult = elements.sort(sortFunction);
-              const lastValue = sortResult[sortResult.length - 1] || ["", "0"];
-              return { name: metricName, a: parseInt(lastValue[1]) };
-            });
-          }
-
-          return {
-            ...panelItem,
-            data: values,
-          };
-        }
-        break;
-      case widgetType.singleRep:
-        if (typeOfPayload === "stat") {
-          // We sort values & get the last value
-          let elements = get(payloadData, "targets[0].result[0].values", []);
-          if (elements === null) {
-            elements = [];
-          }
-          const metricCalc = get(
-            payloadData,
-            "options.reduceOptions.calcs[0]",
-            "lastNotNull"
-          );
-
-          const valueDisplay = calculateMainValue(elements, metricCalc);
-
-          const sortResult = elements.sort(
+          const sortResult = values.sort(
             (value1: any[], value2: any[]) => value1[0] - value2[0]
           );
 
-          let valuesForBackground = [];
+          const metricName = elementValue.metric[metricKeyItem[0]];
+          const value = sortResult[sortResult.length - 1];
+          return { name: metricName, value: parseInt(value) };
+        });
 
-          if (sortResult.length === 1) {
-            valuesForBackground.push({ value: 0 });
-          }
+        const innerLabel = panelItem.labelDisplayFunction
+          ? panelItem.labelDisplayFunction(totalValues[1])
+          : totalValues[1];
 
-          sortResult.forEach((eachVal: any) => {
-            valuesForBackground.push({ value: parseInt(eachVal[1]) });
-          });
-
-          const innerLabel = panelItem.labelDisplayFunction
-            ? panelItem.labelDisplayFunction(valueDisplay[1])
-            : valueDisplay[1];
-
-          return {
-            ...panelItem,
-            data: valuesForBackground,
-            innerLabel,
-          };
+        return {
+          ...panelItem,
+          data: values,
+          innerLabel,
+        };
+      }
+      break;
+    case widgetType.linearGraph:
+      if (typeOfPayload === "graph") {
+        let targets = get(payloadData, "targets", []);
+        if (targets === null) {
+          targets = [];
         }
-        break;
-    }
 
-    return panelItem;
-  });
+        const series: any[] = [];
+        const plotValues: any[] = [];
+
+        targets.forEach(
+          (
+            targetMaster: { legendFormat: string; result: any[] },
+            index: number
+          ) => {
+            // Add a new serie to plot variables in case it is not from multiple values
+            let results = get(targetMaster, "result", []);
+            const legendFormat = targetMaster.legendFormat;
+            if (results === null) {
+              results = [];
+            }
+
+            results.forEach((itemVals: { metric: object; values: any[] }) => {
+              // Label Creation
+              const labelName = constructLabelNames(
+                itemVals.metric,
+                legendFormat
+              );
+              const keyName = `key_${index}${labelName}`;
+
+              // series creation with recently created label
+              series.push({
+                dataKey: keyName,
+                keyLabel: labelName,
+                lineColor: "",
+                fillColor: "",
+              });
+
+              // we iterate over values and create elements
+              let values = get(itemVals, "values", []);
+              if (values === null) {
+                values = [];
+              }
+
+              values.forEach((valInfo: any[]) => {
+                const itemIndex = plotValues.findIndex(
+                  (element) => element.name === valInfo[0]
+                );
+
+                // Element not exists yet
+                if (itemIndex === -1) {
+                  let itemToPush: any = { name: valInfo[0] };
+                  itemToPush[keyName] = valInfo[1];
+
+                  plotValues.push(itemToPush);
+                } else {
+                  plotValues[itemIndex][keyName] = valInfo[1];
+                }
+              });
+            });
+          }
+        );
+
+        const sortedSeries = series.sort((series1: any, series2: any) => {
+          if (series1.keyLabel < series2.keyLabel) {
+            return -1;
+          }
+          if (series1.keyLabel > series2.keyLabel) {
+            return 1;
+          }
+          return 0;
+        });
+
+        const seriesWithColors = sortedSeries.map(
+          (serialC: any, index: number) => {
+            return {
+              ...serialC,
+              lineColor: colorsMain[index] || textToRGBColor(serialC.keyLabel),
+              fillColor: colorsMain[index] || textToRGBColor(serialC.keyLabel),
+            };
+          }
+        );
+
+        const sortedVals = plotValues.sort(
+          (value1: any, value2: any) => value1.name - value2.name
+        );
+
+        return {
+          ...panelItem,
+          widgetConfiguration: seriesWithColors,
+          data: sortedVals,
+        };
+      }
+      break;
+    case widgetType.barChart:
+      if (typeOfPayload === "bargauge") {
+        let chartBars = get(payloadData, "targets[0].result", []);
+
+        if (chartBars === null) {
+          chartBars = [];
+        }
+
+        const sortFunction = (value1: any[], value2: any[]) =>
+          value1[0] - value2[0];
+
+        let values = [];
+        if (panelItem.customStructure) {
+          values = panelItem.customStructure.map((structureItem) => {
+            const metricTake = chartBars.find((element: any) => {
+              const metricKeyItem = Object.keys(element.metric);
+
+              const metricName = element.metric[metricKeyItem[0]];
+
+              return metricName === structureItem.originTag;
+            });
+
+            const elements = get(metricTake, "values", []);
+
+            const sortResult = elements.sort(sortFunction);
+            const lastValue = sortResult[sortResult.length - 1] || ["", "0"];
+
+            return {
+              name: structureItem.displayTag,
+              a: parseInt(lastValue[1]),
+            };
+          });
+        } else {
+          // If no configuration is set, we construct the series for bar chart and return the element
+          values = chartBars.map((elementValue: any) => {
+            const metricKeyItem = Object.keys(elementValue.metric);
+
+            const metricName = elementValue.metric[metricKeyItem[0]];
+
+            const elements = get(elementValue, "values", []);
+
+            const sortResult = elements.sort(sortFunction);
+            const lastValue = sortResult[sortResult.length - 1] || ["", "0"];
+            return { name: metricName, a: parseInt(lastValue[1]) };
+          });
+        }
+
+        return {
+          ...panelItem,
+          data: values,
+        };
+      }
+      break;
+    case widgetType.singleRep:
+      if (typeOfPayload === "stat") {
+        // We sort values & get the last value
+        let elements = get(payloadData, "targets[0].result[0].values", []);
+        if (elements === null) {
+          elements = [];
+        }
+        const metricCalc = get(
+          payloadData,
+          "options.reduceOptions.calcs[0]",
+          "lastNotNull"
+        );
+
+        const valueDisplay = calculateMainValue(elements, metricCalc);
+
+        const sortResult = elements.sort(
+          (value1: any[], value2: any[]) => value1[0] - value2[0]
+        );
+
+        let valuesForBackground = [];
+
+        if (sortResult.length === 1) {
+          valuesForBackground.push({ value: 0 });
+        }
+
+        sortResult.forEach((eachVal: any) => {
+          valuesForBackground.push({ value: parseInt(eachVal[1]) });
+        });
+
+        const innerLabel = panelItem.labelDisplayFunction
+          ? panelItem.labelDisplayFunction(valueDisplay[1])
+          : valueDisplay[1];
+
+        return {
+          ...panelItem,
+          data: valuesForBackground,
+          innerLabel,
+        };
+      }
+      break;
+  }
+
+  return panelItem;
 };
 
 export const saveDashboardDistribution = (configuration: Layout[]) => {

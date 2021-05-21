@@ -14,64 +14,129 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Area, AreaChart, ResponsiveContainer, YAxis } from "recharts";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import { IDataSRep } from "./types";
+import { connect } from "react-redux";
+import { setErrorSnackMessage } from "../../../../../actions";
+import { IDashboardPanel } from "../types";
+import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
+import api from "../../../../../common/api";
+import { widgetDetailsToPanel } from "../utils";
+import { CircularProgress } from "@material-ui/core";
 
 interface ISingleRepWidget {
   classes: any;
   title: string;
-  data: IDataSRep[];
+  panelItem: IDashboardPanel;
+  timeStart: MaterialUiPickersDate;
+  timeEnd: MaterialUiPickersDate;
+  displayErrorMessage: any;
   color: string;
   fillColor: string;
-  label: string;
 }
 
 const styles = (theme: Theme) =>
   createStyles({
     ...widgetCommon,
+    loadingAlign: {
+      width: "100%",
+      paddingTop: "5px",
+      textAlign: "center",
+      margin: "auto",
+    },
   });
 
 const SingleRepWidget = ({
   classes,
   title,
-  data,
+  panelItem,
+  timeStart,
+  timeEnd,
+  displayErrorMessage,
   color,
   fillColor,
-  label,
 }: ISingleRepWidget) => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [data, setData] = useState<IDataSRep[]>([]);
+  const [result, setResult] = useState<IDashboardPanel | null>(null);
+  useEffect(() => {
+    if (loading) {
+      let stepCalc = 0;
+      if (timeStart !== null && timeEnd !== null) {
+        const secondsInPeriod = timeEnd.unix() - timeStart.unix();
+        const periods = Math.floor(secondsInPeriod / 60);
+
+        stepCalc = periods < 1 ? 15 : periods;
+      }
+
+      api
+        .invoke(
+          "GET",
+          `/api/v1/admin/info/widgets/${panelItem.id}/?step=${stepCalc}&${
+            timeStart !== null ? `&start=${timeStart.unix()}` : ""
+          }${timeStart !== null && timeEnd !== null ? "&" : ""}${
+            timeEnd !== null ? `end=${timeEnd.unix()}` : ""
+          }`
+        )
+        .then((res: any) => {
+          const widgetsWithValue = widgetDetailsToPanel(res, panelItem);
+          setResult(widgetsWithValue);
+          setData(widgetsWithValue.data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          displayErrorMessage(err);
+          setLoading(false);
+        });
+    }
+  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage]);
   return (
     <div className={classes.singleValueContainer}>
       <div className={classes.titleContainer}>{title}</div>
-      <div className={classes.contentContainer}>
-        <ResponsiveContainer>
-          <AreaChart data={data}>
-            <YAxis domain={[0, (dataMax: number) => dataMax * 2]} hide={true} />
-            <Area
-              type="monotone"
-              dataKey={"value"}
-              stroke={color}
-              fill={fillColor}
-              fillOpacity={1}
-            />
-            <text
-              x={"50%"}
-              y={"50%"}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fontWeight={600}
-              fontSize={18}
-              fill={color}
-            >
-              {label}
-            </text>
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
+      {loading && (
+        <div className={classes.loadingAlign}>
+          <CircularProgress />
+        </div>
+      )}
+      {!loading && (
+        <div className={classes.contentContainer}>
+          <ResponsiveContainer>
+            <AreaChart data={data}>
+              <YAxis
+                domain={[0, (dataMax: number) => dataMax * 2]}
+                hide={true}
+              />
+              <Area
+                type="monotone"
+                dataKey={"value"}
+                stroke={color}
+                fill={fillColor}
+                fillOpacity={1}
+              />
+              <text
+                x={"50%"}
+                y={"50%"}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fontWeight={600}
+                fontSize={18}
+                fill={color}
+              >
+                {result ? result.innerLabel : ""}
+              </text>
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      )}
     </div>
   );
 };
 
-export default withStyles(styles)(SingleRepWidget);
+const connector = connect(null, {
+  displayErrorMessage: setErrorSnackMessage,
+});
+
+export default withStyles(styles)(connector(SingleRepWidget));

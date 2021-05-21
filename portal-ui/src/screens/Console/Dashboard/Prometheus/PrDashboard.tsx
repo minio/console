@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import ReactGridLayout from "react-grid-layout";
 import Grid from "@material-ui/core/Grid";
@@ -26,12 +26,6 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 
 import { AutoSizer } from "react-virtualized";
-import {
-  IBarChartConfiguration,
-  IDataSRep,
-  ILinearGraphConfiguration,
-  IPieChartConfiguration,
-} from "./Widgets/types";
 import { IDashboardPanel, widgetType } from "./types";
 import {
   getDashboardDistribution,
@@ -104,29 +98,27 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
             return (
               <SingleValueWidget
                 title={value.title}
-                data={value.data as string}
+                panelItem={value}
+                timeStart={timeStart}
+                timeEnd={timeEnd}
               />
             );
           case widgetType.pieChart:
             return (
               <PieChartWidget
                 title={value.title}
-                dataInner={value.data as object[]}
-                dataOuter={(value.dataOuter as object[]) || null}
-                pieChartConfiguration={
-                  value.widgetConfiguration as IPieChartConfiguration
-                }
-                middleLabel={value.innerLabel}
+                panelItem={value}
+                timeStart={timeStart}
+                timeEnd={timeEnd}
               />
             );
           case widgetType.linearGraph:
             return (
               <LinearGraphWidget
                 title={value.title}
-                data={value.data as object[]}
-                linearConfiguration={
-                  value.widgetConfiguration as ILinearGraphConfiguration[]
-                }
+                panelItem={value}
+                timeStart={timeStart}
+                timeEnd={timeEnd}
                 hideYAxis={value.disableYAxis}
                 xAxisFormatter={value.xAxisFormatter}
                 yAxisFormatter={value.yAxisFormatter}
@@ -141,10 +133,9 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
             return (
               <BarChartWidget
                 title={value.title}
-                data={value.data as object[]}
-                barChartConfiguration={
-                  value.widgetConfiguration as IBarChartConfiguration[]
-                }
+                panelItem={value}
+                timeStart={timeStart}
+                timeEnd={timeEnd}
               />
             );
           case widgetType.singleRep:
@@ -152,8 +143,9 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
             return (
               <SingleRepWidget
                 title={value.title}
-                data={value.data as IDataSRep[]}
-                label={value.innerLabel as string}
+                panelItem={value}
+                timeStart={timeStart}
+                timeEnd={timeEnd}
                 color={value.color as string}
                 fillColor={fillColor as string}
               />
@@ -169,7 +161,7 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
         );
       });
     },
-    [panelInformation, dashboardDistr]
+    [panelInformation, dashboardDistr, timeEnd, timeStart]
   );
 
   const fetchUsage = useCallback(() => {
