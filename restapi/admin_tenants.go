@@ -1391,14 +1391,17 @@ func getTenantPodsResponse(session *models.Principal, params admin_api.GetTenant
 		return nil, prepareError(err)
 	}
 	retval := []*models.TenantPod{}
-	for i := range pods.Items {
-		restarts := int64(pods.Items[i].Status.ContainerStatuses[0].RestartCount)
-		retval = append(retval, &models.TenantPod{Name: &pods.Items[i].ObjectMeta.Name,
-			Status:      string(pods.Items[i].Status.Phase),
-			TimeCreated: pods.Items[i].CreationTimestamp.Unix(),
-			PodIP:       pods.Items[i].Status.PodIP,
+	for _, pod := range pods.Items {
+		var restarts int64 = 0
+		if len(pod.Status.ContainerStatuses) > 0 {
+			restarts = int64(pod.Status.ContainerStatuses[0].RestartCount)
+		}
+		retval = append(retval, &models.TenantPod{Name: &pod.ObjectMeta.Name,
+			Status:      string(pod.Status.Phase),
+			TimeCreated: pod.CreationTimestamp.Unix(),
+			PodIP:       pod.Status.PodIP,
 			Restarts:    restarts,
-			Node:        pods.Items[i].Spec.NodeName})
+			Node:        pod.Spec.NodeName})
 	}
 	return retval, nil
 }

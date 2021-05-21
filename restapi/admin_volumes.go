@@ -19,6 +19,8 @@ package restapi
 import (
 	"context"
 
+	miniov1 "github.com/minio/operator/pkg/apis/minio.min.io/v1"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/cluster"
 	"github.com/minio/console/models"
@@ -47,7 +49,10 @@ func getPVCsResponse(session *models.Principal) (*models.ListPVCsResponse, *mode
 		return nil, prepareError(err)
 	}
 
-	listOpts := metav1.ListOptions{}
+	// Filter Tenant PVCs. They keep their v1 tenant annotation
+	listOpts := metav1.ListOptions{
+		LabelSelector: miniov1.TenantLabel,
+	}
 
 	// List all PVCs
 	listAllPvcs, err2 := clientset.CoreV1().PersistentVolumeClaims("").List(ctx, listOpts)

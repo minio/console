@@ -69,7 +69,7 @@ const StorageVolumes = ({
         .invoke("GET", `/api/v1/list-pvcs`)
         .then((res: IPVCsResponse) => {
           let volumes = get(res, "pvcs", []);
-          setRecords(volumes);
+          setRecords(volumes ? volumes : []);
           setLoading(false);
         })
         .catch((err) => {
