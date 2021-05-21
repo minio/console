@@ -18,7 +18,6 @@ package restapi
 
 import (
 	"context"
-	"fmt"
 
 	miniov1 "github.com/minio/operator/pkg/apis/minio.min.io/v1"
 
