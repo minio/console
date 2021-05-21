@@ -55,7 +55,7 @@ import LogsMain from "./Logs/LogsMain";
 import Heal from "./Heal/Heal";
 import Watch from "./Watch/Watch";
 import HealthInfo from "./HealthInfo/HealthInfo";
-import StorageMain from "./Storage/StorageMain";
+import Storage from "./Storage/Storage";
 
 const drawerWidth = 245;
 
@@ -306,8 +306,16 @@ const Console = ({
       path: "/tenants",
     },
     {
-      component: StorageMain,
+      component: Storage,
       path: "/storage",
+    },
+    {
+      component: Storage,
+      path: "/storage/volumes",
+    },
+    {
+      component: Storage,
+      path: "/storage/drives",
     },
     {
       component: TenantDetails,
