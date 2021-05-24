@@ -126,6 +126,9 @@ const styles = (theme: Theme) =>
     poolLabel: {
       color: "#666666",
     },
+    titleCol: {
+      fontWeight: "bold",
+    },
     breadcrumLink: {
       textDecoration: "none",
       color: "black",
@@ -445,9 +448,9 @@ const TenantDetails = ({
                         </td>
                       </tr>
                       <tr>
-                        <td>Capacity:</td>
+                        <td className={classes.titleCol}>Capacity:</td>
                         <td>{niceBytes(capacity.toString(10))}</td>
-                        <td>MinIO:</td>
+                        <td className={classes.titleCol}>MinIO:</td>
                         <td>
                           <Button
                             color="primary"
@@ -461,9 +464,9 @@ const TenantDetails = ({
                         </td>
                       </tr>
                       <tr>
-                        <td>Clusters:</td>
+                        <td className={classes.titleCol}>Clusters:</td>
                         <td>{poolCount}</td>
-                        <td>Console:</td>
+                        <td className={classes.titleCol}>Console:</td>
                         <td>
                           <Button
                             color="primary"
@@ -477,14 +480,14 @@ const TenantDetails = ({
                         </td>
                       </tr>
                       <tr>
-                        <td>Instances:</td>
+                        <td className={classes.titleCol}>Instances:</td>
                         <td>{instances}</td>
-                        <td>Volumes:</td>
+                        <td className={classes.titleCol}>Volumes:</td>
                         <td>{volumes}</td>
                       </tr>
                       {tenant?.endpoints && (
                         <tr>
-                          <td>Endpoint:</td>
+                          <td className={classes.titleCol}>Endpoint:</td>
                           <td>
                             <a
                               href={tenant?.endpoints.minio}
@@ -494,7 +497,7 @@ const TenantDetails = ({
                               {tenant?.endpoints.minio}
                             </a>
                           </td>
-                          <td>Console:</td>
+                          <td className={classes.titleCol}>Console:</td>
                           <td>
                             <a
                               href={tenant?.endpoints.console}
@@ -507,7 +510,7 @@ const TenantDetails = ({
                         </tr>
                       )}
                       <tr>
-                        <td>State:</td>
+                        <td className={classes.titleCol}>State:</td>
                         <td colSpan={3}>{tenant?.currentState}</td>
                       </tr>
                     </table>
@@ -537,7 +540,7 @@ const TenantDetails = ({
                         </td>
                       </tr>
                       <tr>
-                        <td>Logs:</td>
+                        <td className={classes.titleCol}>Logs:</td>
                         <td>
                           <Button
                             color="primary"
@@ -546,7 +549,7 @@ const TenantDetails = ({
                             {logEnabled ? "Enabled" : "Disabled"}
                           </Button>
                         </td>
-                        <td>Monitoring:</td>
+                        <td className={classes.titleCol}>Monitoring:</td>
                         <td>
                           <Button
                             color="primary"
@@ -557,7 +560,7 @@ const TenantDetails = ({
                         </td>
                       </tr>
                       <tr>
-                        <td>Encryption:</td>
+                        <td className={classes.titleCol}>Encryption:</td>
                         <td>
                           <Button
                             color="primary"
@@ -573,7 +576,9 @@ const TenantDetails = ({
                         {adEnabled ||
                           (!adEnabled && !oicEnabled && (
                             <React.Fragment>
-                              <td>Active Directory:</td>
+                              <td className={classes.titleCol}>
+                                Active Directory:
+                              </td>
                               <td>
                                 <Button
                                   color="primary"
@@ -587,7 +592,7 @@ const TenantDetails = ({
                         {oicEnabled ||
                           (!oicEnabled && !adEnabled && (
                             <React.Fragment>
-                              <td>OpenID:</td>
+                              <td className={classes.titleCol}>OpenID:</td>
                               <td>
                                 <Button
                                   color="primary"

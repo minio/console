@@ -22,7 +22,7 @@ import { AppState } from "../../../store";
 import { setMenuOpen } from "../../../actions";
 import NotFoundPage from "../../NotFoundPage";
 import ListBuckets from "./ListBuckets/ListBuckets";
-import ViewBucket from "./ViewBucket/ViewBucket";
+import BucketDetails from "./BucketDetails/BucketDetails";
 
 const mapState = (state: AppState) => ({
   open: state.system.sidebarOpen,
@@ -34,7 +34,7 @@ const Buckets = () => {
   return (
     <Router history={history}>
       <Switch>
-        <Route path="/buckets/:bucketName" component={ViewBucket} />
+        <Route path="/buckets/:bucketName" component={BucketDetails} />
         <Route path="/" component={ListBuckets} />
         <Route component={NotFoundPage} />
       </Switch>
