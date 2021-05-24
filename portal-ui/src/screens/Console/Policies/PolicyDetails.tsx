@@ -323,7 +323,7 @@ const PolicyDetails = ({
                 columns={[{ label: "Name", elementKey: "name" }]}
                 isLoading={false}
                 records={userList}
-                entityName="Servers"
+                entityName="Users"
                 idField="name"
               />
             )}

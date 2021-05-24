@@ -52,8 +52,6 @@ import {
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
-import { Policy } from "../../Policies/types";
-import { User } from "../../Users/types";
 import { AppState } from "../../../../store";
 import { ISessionResponse } from "../../types";
 import SetAccessPolicy from "./SetAccessPolicy";
@@ -66,13 +64,12 @@ import PageHeader from "../../Common/PageHeader/PageHeader";
 import EnableBucketEncryption from "./EnableBucketEncryption";
 import EnableVersioningModal from "./EnableVersioningModal";
 import UsageIcon from "../../../../icons/UsageIcon";
-import AddPolicy from "../../Policies/AddPolicy";
-import DeleteReplicationRule from "../ViewBucket/DeleteReplicationRule";
+import DeleteReplicationRule from ".//DeleteReplicationRule";
 import EditLifecycleConfiguration from "./EditLifecycleConfiguration";
 import AddLifecycleModal from "./AddLifecycleModal";
-import history from "../../../../history";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
+import AccessDetails from "./AccessDetails";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -178,6 +175,9 @@ const styles = (theme: Theme) =>
     reportedUsage: {
       padding: "15px",
     },
+    titleCol: {
+      fontWeight: "bold",
+    },
     ...searchField,
     ...actionsTray,
     actionsTray: {
@@ -189,7 +189,7 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-interface IViewBucketProps {
+interface IBucketDetailsProps {
   classes: any;
   match: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
@@ -226,21 +226,18 @@ function a11yProps(index: any) {
   };
 }
 
-const ViewBucket = ({
+const BucketDetails = ({
   classes,
   match,
   setErrorSnackMessage,
   session,
-}: IViewBucketProps) => {
+}: IBucketDetailsProps) => {
   const [info, setInfo] = useState<BucketInfo | null>(null);
   const [records, setRecords] = useState<BucketEvent[]>([]);
   const [replicationRules, setReplicationRules] = useState<
     BucketReplicationRule[]
   >([]);
-  const [bucketPolicy, setBucketPolicy] = useState<Policy[]>([]);
-  const [loadingPolicy, setLoadingPolicy] = useState<boolean>(true);
-  const [bucketUsers, setBucketUsers] = useState<User[]>([]);
-  const [loadingUsers, setLoadingUsers] = useState<boolean>(true);
+
   const [loadingBucket, setLoadingBucket] = useState<boolean>(true);
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
   const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
@@ -252,7 +249,6 @@ const ViewBucket = ({
     useState<boolean>(false);
   const [curTab, setCurTab] = useState<number>(0);
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
-  const [policyScreenOpen, setPolicyScreenOpen] = useState<boolean>(false);
   const [enableEncryptionScreenOpen, setEnableEncryptionScreenOpen] =
     useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
@@ -267,7 +263,6 @@ const ViewBucket = ({
     useState<BucketEncryptionInfo | null>(null);
   const [retentionConfigOpen, setRetentionConfigOpen] =
     useState<boolean>(false);
-  const [policyEdit, setPolicyEdit] = useState<any>(null);
   const [enableVersioningOpen, setEnableVersioningOpen] =
     useState<boolean>(false);
   const [loadingPerms, setLoadingPerms] = useState<boolean>(true);
@@ -281,7 +276,6 @@ const ViewBucket = ({
   const [addLifecycleOpen, setAddLifecycleOpen] = useState<boolean>(false);
 
   const bucketName = match.params["bucketName"];
-  const usersEnabled = session.pages?.indexOf("/users") > -1;
 
   // check the permissions for creating bucket
   useEffect(() => {
@@ -404,36 +398,6 @@ const ViewBucket = ({
   }, [loadingReplication, setErrorSnackMessage, bucketName]);
 
   useEffect(() => {
-    if (loadingPolicy) {
-      api
-        .invoke("GET", `/api/v1/bucket-policy/${bucketName}`)
-        .then((res: any) => {
-          setBucketPolicy(res.policies);
-          setLoadingPolicy(false);
-        })
-        .catch((err: any) => {
-          setErrorSnackMessage(err);
-          setLoadingPolicy(false);
-        });
-    }
-  }, [loadingPolicy, setErrorSnackMessage, bucketName]);
-
-  useEffect(() => {
-    if (loadingUsers && usersEnabled) {
-      api
-        .invoke("GET", `/api/v1/bucket-users/${bucketName}`)
-        .then((res: any) => {
-          setBucketUsers(res);
-          setLoadingUsers(false);
-        })
-        .catch((err: any) => {
-          setErrorSnackMessage(err);
-          setLoadingUsers(false);
-        });
-    }
-  }, [loadingUsers, setErrorSnackMessage, bucketName, usersEnabled]);
-
-  useEffect(() => {
     if (loadingSize) {
       api
         .invoke("GET", `/api/v1/buckets`)
@@ -520,18 +484,6 @@ const ViewBucket = ({
     setLoadingVersioning(true);
     setLoadingEvents(true);
     setLoadingEncryption(true);
-  };
-
-  const closeAddModalAndRefresh = (refresh: boolean) => {
-    setPolicyScreenOpen(false);
-
-    if (refresh) {
-      fetchPolicies();
-    }
-  };
-
-  const fetchPolicies = () => {
-    setLoadingPolicy(true);
   };
 
   const closeAddEventAndRefresh = () => {
@@ -628,12 +580,7 @@ const ViewBucket = ({
   };
 
   const tableActions = [{ type: "delete", onClick: confirmDeleteEvent }];
-  const viewAction = (row: any) => {
-    setPolicyScreenOpen(true);
-    setPolicyEdit(row);
-  };
 
-  const PolicyActions = [{ type: "view", onClick: viewAction }];
   const replicationTableActions = [
     {
       type: "delete",
@@ -700,12 +647,6 @@ const ViewBucket = ({
     },
   ];
 
-  const userViewAction = (user: any) => {
-    history.push(`/users/${user}`);
-  };
-
-  const userTableActions = [{ type: "view", onClick: userViewAction }];
-
   return (
     <Fragment>
       {addScreenOpen && (
@@ -730,13 +671,6 @@ const ViewBucket = ({
           open={accessPolicyScreenOpen}
           actualPolicy={accessPolicy}
           closeModalAndRefresh={closeSetAccessPolicy}
-        />
-      )}
-      {policyScreenOpen && (
-        <AddPolicy
-          open={policyScreenOpen}
-          closeModalAndRefresh={closeAddModalAndRefresh}
-          policyEdit={policyEdit}
         />
       )}
       {retentionConfigOpen && (
@@ -813,8 +747,7 @@ const ViewBucket = ({
             <Tab label="Events" {...a11yProps(1)} />
             {canGetReplication && <Tab label="Replication" {...a11yProps(2)} />}
             <Tab label="Lifecycle" {...a11yProps(3)} />
-            <Tab label="Policies" {...a11yProps(4)} />
-            {usersEnabled && <Tab label="Users" {...a11yProps(5)} />}
+            <Tab label="Access" {...a11yProps(4)} />
           </Tabs>
         </Grid>
         <Grid item xs={12}>
@@ -827,7 +760,7 @@ const ViewBucket = ({
                   <hr className={classes.hrClass} />
                   <table width={"100%"}>
                     <tr>
-                      <td>Access Policy:</td>
+                      <td className={classes.titleCol}>Access Policy:</td>
                       <td className={classes.capitalizeFirst}>
                         <Button
                           color="primary"
@@ -847,7 +780,7 @@ const ViewBucket = ({
                           )}
                         </Button>
                       </td>
-                      <td>Encryption:</td>
+                      <td className={classes.titleCol}>Encryption:</td>
                       <td>
                         {loadingEncryption ? (
                           <CircularProgress
@@ -869,7 +802,7 @@ const ViewBucket = ({
                       </td>
                     </tr>
                     <tr>
-                      <td>Replication:</td>
+                      <td className={classes.titleCol}>Replication:</td>
                       <td className={classes.doubleElement}>
                         <span>
                           {replicationRules.length ? "Enabled" : "Disabled"}
@@ -877,7 +810,7 @@ const ViewBucket = ({
                       </td>
                       {!hasObjectLocking ? (
                         <React.Fragment>
-                          <td>Object Locking:</td>
+                          <td className={classes.titleCol}>Object Locking:</td>
                           <td>Disabled</td>
                         </React.Fragment>
                       ) : (
@@ -915,7 +848,7 @@ const ViewBucket = ({
                   <hr className={classes.hrClass} />
                   <table>
                     <tr>
-                      <td>Versioning:</td>
+                      <td className={classes.titleCol}>Versioning:</td>
                       <td>
                         {loadingVersioning ? (
                           <CircularProgress
@@ -951,7 +884,7 @@ const ViewBucket = ({
                     <table>
                       <tr>
                         <td className={classes.gridContainer}>
-                          <td>Retention:</td>
+                          <td className={classes.titleCol}>Retention:</td>
                           <td>
                             {loadingVersioning ? (
                               <CircularProgress
@@ -1155,28 +1088,8 @@ const ViewBucket = ({
           </TabPanel>
           <TabPanel index={4} value={curTab}>
             <br />
-            <TableWrapper
-              itemActions={PolicyActions}
-              columns={[{ label: "Name", elementKey: "name" }]}
-              isLoading={loadingEvents}
-              records={bucketPolicy}
-              entityName="Policies"
-              idField="name"
-            />
+            <AccessDetails bucketName={bucketName} />
           </TabPanel>
-          {usersEnabled && (
-            <TabPanel index={5} value={curTab}>
-              <br />
-              <TableWrapper
-                itemActions={userTableActions}
-                columns={[{ label: "User", elementKey: "accessKey" }]}
-                isLoading={loadingUsers}
-                records={bucketUsers}
-                entityName="Users"
-                idField="accessKey"
-              />
-            </TabPanel>
-          )}
         </Grid>
       </Grid>
     </Fragment>
@@ -1191,4 +1104,4 @@ const connector = connect(mapState, {
   setErrorSnackMessage,
 });
 
-export default withStyles(styles)(connector(ViewBucket));
+export default withStyles(styles)(connector(BucketDetails));
