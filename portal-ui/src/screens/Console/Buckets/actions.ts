@@ -27,6 +27,7 @@ export const ADD_BUCKET_RETENTION = "ADD_BUCKET_RETENTION";
 export const ADD_BUCKET_RETENTION_MODE = "ADD_BUCKET_RETENTION_MODE";
 export const ADD_BUCKET_RETENTION_UNIT = "ADD_BUCKET_RETENTION_UNIT";
 export const ADD_BUCKET_RETENTION_VALIDITY = "ADD_BUCKET_RETENTION_VALIDITY";
+export const BUCKET_DETAILS_SET_TAB = "BUCKET_DETAILS/SET_TAB";
 
 interface AddBucketOpenAction {
   type: typeof ADD_BUCKET_OPEN;
@@ -90,6 +91,11 @@ interface AddBucketRetentionValidityAction {
   retentionValidity: number;
 }
 
+interface SetBucketDetailsTab {
+  type: typeof BUCKET_DETAILS_SET_TAB;
+  tab: string;
+}
+
 export type BucketActionTypes =
   | AddBucketOpenAction
   | AddBucketNameAction
@@ -103,7 +109,8 @@ export type BucketActionTypes =
   | AddBucketRetentionAction
   | AddBucketRetentionModeAction
   | AddBucketRetentionUnitAction
-  | AddBucketRetentionValidityAction;
+  | AddBucketRetentionValidityAction
+  | SetBucketDetailsTab;
 
 export function addBucketOpen(open: boolean) {
   return {
@@ -191,5 +198,12 @@ export function addBucketRetentionValidity(validity: number) {
   return {
     type: ADD_BUCKET_RETENTION_VALIDITY,
     retentionValidity: validity,
+  };
+}
+
+export function setBucketDetailsTab(tab: string) {
+  return {
+    type: BUCKET_DETAILS_SET_TAB,
+    tab,
   };
 }

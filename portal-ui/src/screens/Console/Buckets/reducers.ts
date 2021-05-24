@@ -29,6 +29,7 @@ import {
   ADD_BUCKET_RETENTION_VALIDITY,
   BucketActionTypes,
   ADD_BUCKET_LOCKING,
+  BUCKET_DETAILS_SET_TAB,
 } from "./actions";
 
 export interface BucketsState {
@@ -44,6 +45,11 @@ export interface BucketsState {
   addBucketRetentionMode: string;
   addBucketRetentionUnit: string;
   addBucketRetentionValidity: number;
+  bucketDetails: BucketDetailsState;
+}
+
+export interface BucketDetailsState {
+  selectedTab: string;
 }
 
 const initialState: BucketsState = {
@@ -59,6 +65,9 @@ const initialState: BucketsState = {
   addBucketRetentionMode: "compliance",
   addBucketRetentionUnit: "days",
   addBucketRetentionValidity: 1,
+  bucketDetails: {
+    selectedTab: "summary",
+  },
 };
 
 export function bucketsReducer(
@@ -126,7 +135,14 @@ export function bucketsReducer(
         ...state,
         addBucketRetentionValidity: action.retentionValidity,
       };
-
+    case BUCKET_DETAILS_SET_TAB:
+      return {
+        ...state,
+        bucketDetails: {
+          ...state.bucketDetails,
+          selectedTab: action.tab,
+        },
+      };
     case ADD_BUCKET_RESET:
       return {
         ...state,

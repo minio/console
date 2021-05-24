@@ -231,6 +231,38 @@ const Console = ({
       path: "/buckets/:bucketName",
     },
     {
+      component: Buckets,
+      path: "/buckets/:bucketName/summary",
+    },
+    {
+      component: Buckets,
+      path: "/buckets/:bucketName/events",
+    },
+    {
+      component: Buckets,
+      path: "/buckets/:bucketName/replication",
+    },
+    {
+      component: Buckets,
+      path: "/buckets/:bucketName/lifecycle",
+    },
+    {
+      component: Buckets,
+      path: "/buckets/:bucketName/access",
+    },
+    {
+      component: Buckets,
+      path: "/buckets/:bucketName/access",
+    },
+    {
+      component: Buckets,
+      path: "/buckets/:bucketName/access/policies",
+    },
+    {
+      component: Buckets,
+      path: "/buckets/:bucketName/access/users",
+    },
+    {
       component: ObjectBrowser,
       path: "/object-browser",
     },
