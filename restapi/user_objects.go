@@ -125,8 +125,6 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 
 // getListObjectsResponse returns a list of objects
 func getListObjectsResponse(session *models.Principal, params user_api.ListObjectsParams) (*models.ListObjectsResponse, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
-	defer cancel()
 	var prefix string
 	var recursive bool
 	var withVersions bool
@@ -151,7 +149,7 @@ func getListObjectsResponse(session *models.Principal, params user_api.ListObjec
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 
-	objs, err := listBucketObjects(ctx, minioClient, params.BucketName, prefix, recursive, withVersions)
+	objs, err := listBucketObjects(params.HTTPRequest.Context(), minioClient, params.BucketName, prefix, recursive, withVersions)
 	if err != nil {
 		return nil, prepareError(err)
 	}
