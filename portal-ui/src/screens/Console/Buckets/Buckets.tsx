@@ -34,6 +34,7 @@ const Buckets = () => {
   return (
     <Router history={history}>
       <Switch>
+        <Route path="/buckets/:bucketName/*" component={BucketDetails} />
         <Route path="/buckets/:bucketName" component={BucketDetails} />
         <Route path="/" component={ListBuckets} />
         <Route component={NotFoundPage} />

@@ -15,35 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
+import { Redirect, Route, Router, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, TextField } from "@material-ui/core";
-import * as reactMoment from "react-moment";
-import get from "lodash/get";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Typography from "@material-ui/core/Typography";
 import api from "../../../../common/api";
-import {
-  BucketEncryptionInfo,
-  BucketEvent,
-  BucketEventList,
-  BucketInfo,
-  BucketList,
-  BucketObjectLocking,
-  BucketReplication,
-  BucketReplicationDestination,
-  BucketReplicationRule,
-  BucketReplicationRuleDeleteMarker,
-  BucketVersioning,
-  HasPermissionResponse,
-  LifeCycleItem,
-} from "../types";
-import { CreateIcon } from "../../../../icons";
-import { niceBytes } from "../../../../common/utils";
+import { HasPermissionResponse } from "../types";
 import {
   actionsTray,
   buttonsStyles,
@@ -52,24 +31,15 @@ import {
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
+import { setBucketDetailsTab } from "../actions";
 import { AppState } from "../../../../store";
 import { ISessionResponse } from "../../types";
-import SetAccessPolicy from "./SetAccessPolicy";
-import SetRetentionConfig from "./SetRetentionConfig";
-import AddEvent from "./AddEvent";
-import DeleteEvent from "./DeleteEvent";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import AddReplicationModal from "./AddReplicationModal";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import EnableBucketEncryption from "./EnableBucketEncryption";
-import EnableVersioningModal from "./EnableVersioningModal";
-import UsageIcon from "../../../../icons/UsageIcon";
-import DeleteReplicationRule from ".//DeleteReplicationRule";
-import EditLifecycleConfiguration from "./EditLifecycleConfiguration";
-import AddLifecycleModal from "./AddLifecycleModal";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
-import AccessDetails from "./AccessDetails";
+import AccessDetailsPanel from "./AccessDetailsPanel";
+import BucketSummaryPanel from "./BucketSummaryPanel";
+import BucketEventsPanel from "./BucketEventsPanel";
+import BucketReplicationPanel from "./BucketReplicationPanel";
+import BucketLifecyclePanel from "./BucketLifecyclePanel";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -130,11 +100,7 @@ const styles = (theme: Theme) =>
         margin: "5px 0px",
       },
     },
-    paperContainer: {
-      padding: 15,
-      paddingLeft: 50,
-      display: "flex",
-    },
+
     headerContainer: {
       display: "flex",
       justifyContent: "space-between",
@@ -161,19 +127,8 @@ const styles = (theme: Theme) =>
         maxHeight: 18,
       },
     },
-    elementTitle: {
-      fontWeight: 500,
-      color: "#777777",
-      fontSize: 14,
-      marginTop: -9,
-    },
-    consumptionValue: {
-      color: "#000000",
-      fontSize: "48px",
-      fontWeight: "bold",
-    },
-    reportedUsage: {
-      padding: "15px",
+    routerContainer: {
+      marginTop: 5,
     },
     titleCol: {
       fontWeight: "bold",
@@ -192,31 +147,11 @@ const styles = (theme: Theme) =>
 interface IBucketDetailsProps {
   classes: any;
   match: any;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
+  history: any;
   session: ISessionResponse;
-}
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: any;
-  value: any;
-}
-
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      style={{ marginTop: "5px" }}
-      {...other}
-    >
-      {value === index && <Fragment>{children}</Fragment>}
-    </div>
-  );
+  selectedTab: string;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
+  setBucketDetailsTab: typeof setBucketDetailsTab;
 }
 
 function a11yProps(index: any) {
@@ -229,53 +164,29 @@ function a11yProps(index: any) {
 const BucketDetails = ({
   classes,
   match,
-  setErrorSnackMessage,
+  history,
   session,
+  selectedTab,
+  setErrorSnackMessage,
+  setBucketDetailsTab,
 }: IBucketDetailsProps) => {
-  const [info, setInfo] = useState<BucketInfo | null>(null);
-  const [records, setRecords] = useState<BucketEvent[]>([]);
-  const [replicationRules, setReplicationRules] = useState<
-    BucketReplicationRule[]
-  >([]);
-
-  const [loadingBucket, setLoadingBucket] = useState<boolean>(true);
-  const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
-  const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
-  const [loadingObjectLocking, setLoadingLocking] = useState<boolean>(true);
-  const [loadingReplication, setLoadingReplication] = useState<boolean>(true);
-  const [loadingSize, setLoadingSize] = useState<boolean>(true);
-  const [loadingEncryption, setLoadingEncryption] = useState<boolean>(true);
-  const [accessPolicyScreenOpen, setAccessPolicyScreenOpen] =
-    useState<boolean>(false);
-  const [curTab, setCurTab] = useState<number>(0);
-  const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
-  const [enableEncryptionScreenOpen, setEnableEncryptionScreenOpen] =
-    useState<boolean>(false);
-  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
-  const [editLifecycleOpen, setEditLifecycleOpen] = useState<boolean>(false);
-  const [selectedEvent, setSelectedEvent] = useState<BucketEvent | null>(null);
-  const [bucketSize, setBucketSize] = useState<string>("0");
-  const [openSetReplication, setOpenSetReplication] = useState<boolean>(false);
-  const [isVersioned, setIsVersioned] = useState<boolean>(false);
-  const [hasObjectLocking, setHasObjectLocking] = useState<boolean>(false);
-  const [encryptionEnabled, setEncryptionEnabled] = useState<boolean>(false);
-  const [encryptionCfg, setEncryptionCfg] =
-    useState<BucketEncryptionInfo | null>(null);
-  const [retentionConfigOpen, setRetentionConfigOpen] =
-    useState<boolean>(false);
-  const [enableVersioningOpen, setEnableVersioningOpen] =
-    useState<boolean>(false);
   const [loadingPerms, setLoadingPerms] = useState<boolean>(true);
-  const [canPutReplication, setCanPutReplication] = useState<boolean>(false);
   const [canGetReplication, setCanGetReplication] = useState<boolean>(false);
-  const [deleteReplicationModal, setDeleteReplicationModal] =
-    useState<boolean>(false);
-  const [selectedRRule, setSelectedRRule] = useState<string>("");
-  const [loadingLifecycle, setLoadingLifecycle] = useState<boolean>(true);
-  const [lifecycleRecords, setLifecycleRecords] = useState<LifeCycleItem[]>([]);
-  const [addLifecycleOpen, setAddLifecycleOpen] = useState<boolean>(false);
-
   const bucketName = match.params["bucketName"];
+
+  useEffect(() => {
+    let matchURL = match.params ? match.params["0"] : "summary";
+
+    if (!matchURL) {
+      matchURL = "";
+    }
+
+    const splitMatch = matchURL.split("/");
+
+    if (selectedTab !== splitMatch[0]) {
+      setBucketDetailsTab(splitMatch[0]);
+    }
+  }, [match, bucketName, setBucketDetailsTab, selectedTab]);
 
   // check the permissions for creating bucket
   useEffect(() => {
@@ -283,11 +194,6 @@ const BucketDetails = ({
       api
         .invoke("POST", `/api/v1/has-permission`, {
           actions: [
-            {
-              id: "PutReplicationConfiguration",
-              action: "s3:PutReplicationConfiguration",
-              bucket_name: bucketName,
-            },
             {
               id: "GetReplicationConfiguration",
               action: "s3:GetReplicationConfiguration",
@@ -302,15 +208,6 @@ const BucketDetails = ({
           }
           const actions = res.permissions ? res.permissions : [];
 
-          let userCanPutReplication = actions.find(
-            (s) => s.id === "PutReplicationConfiguration"
-          );
-
-          if (userCanPutReplication && userCanPutReplication.can) {
-            setCanPutReplication(true);
-          } else {
-            setCanPutReplication(false);
-          }
           let canGetReplication = actions.find(
             (s) => s.id === "GetReplicationConfiguration"
           );
@@ -330,412 +227,39 @@ const BucketDetails = ({
     }
   }, [bucketName, loadingPerms, setErrorSnackMessage]);
 
-  useEffect(() => {
-    if (loadingEvents) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/events`)
-        .then((res: BucketEventList) => {
-          const events = get(res, "events", []);
-          setLoadingEvents(false);
-          setRecords(events || []);
-        })
-        .catch((err: any) => {
-          setLoadingEvents(false);
-          setErrorSnackMessage(err);
-        });
-    }
-  }, [loadingEvents, setErrorSnackMessage, bucketName]);
+  const changeRoute = (newTab: string) => {
+    let mainRoute = `/buckets/${bucketName}`;
 
-  useEffect(() => {
-    if (loadingVersioning) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/versioning`)
-        .then((res: BucketVersioning) => {
-          setIsVersioned(res.is_versioned);
-          setLoadingVersioning(false);
-        })
-        .catch((err: any) => {
-          setErrorSnackMessage(err);
-          setLoadingVersioning(false);
-        });
-    }
-  }, [loadingVersioning, setErrorSnackMessage, bucketName]);
-
-  useEffect(() => {
-    if (loadingVersioning) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/object-locking`)
-        .then((res: BucketObjectLocking) => {
-          setHasObjectLocking(res.object_locking_enabled);
-          setLoadingLocking(false);
-        })
-        .catch((err: any) => {
-          setErrorSnackMessage(err);
-          setLoadingLocking(false);
-        });
-    }
-  }, [
-    loadingObjectLocking,
-    setErrorSnackMessage,
-    bucketName,
-    loadingVersioning,
-  ]);
-
-  useEffect(() => {
-    if (loadingReplication) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/replication`)
-        .then((res: BucketReplication) => {
-          const r = res.rules ? res.rules : [];
-          setReplicationRules(r);
-          setLoadingReplication(false);
-        })
-        .catch((err: any) => {
-          setErrorSnackMessage(err);
-          setLoadingReplication(false);
-        });
-    }
-  }, [loadingReplication, setErrorSnackMessage, bucketName]);
-
-  useEffect(() => {
-    if (loadingSize) {
-      api
-        .invoke("GET", `/api/v1/buckets`)
-        .then((res: BucketList) => {
-          const resBuckets = get(res, "buckets", []);
-
-          const bucketInfo = resBuckets.find(
-            (bucket) => bucket.name === bucketName
-          );
-          const size = get(bucketInfo, "size", "0");
-
-          setLoadingSize(false);
-          setBucketSize(size);
-        })
-        .catch((err: any) => {
-          setLoadingSize(false);
-          setErrorSnackMessage(err);
-        });
-    }
-  }, [loadingSize, setErrorSnackMessage, bucketName]);
-
-  useEffect(() => {
-    if (loadingBucket) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}`)
-        .then((res: BucketInfo) => {
-          setLoadingBucket(false);
-          setInfo(res);
-        })
-        .catch((err) => {
-          setLoadingBucket(false);
-          setErrorSnackMessage(err);
-        });
-    }
-  }, [loadingBucket, setErrorSnackMessage, bucketName]);
-
-  useEffect(() => {
-    if (loadingEncryption) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/encryption/info`)
-        .then((res: BucketEncryptionInfo) => {
-          if (res.algorithm) {
-            setEncryptionEnabled(true);
-            setEncryptionCfg(res);
-          }
-          setLoadingEncryption(false);
-        })
-        .catch((err) => {
-          if (
-            err === "The server side encryption configuration was not found"
-          ) {
-            setEncryptionEnabled(false);
-            setEncryptionCfg(null);
-          }
-          setLoadingEncryption(false);
-        });
-    }
-  }, [loadingEncryption, bucketName]);
-
-  const setBucketVersioning = () => {
-    setEnableVersioningOpen(true);
-  };
-  useEffect(() => {
-    if (loadingLifecycle) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/lifecycle`)
-        .then((res: any) => {
-          const records = get(res, "lifecycle", []);
-
-          setLifecycleRecords(records || []);
-          setLoadingLifecycle(false);
-        })
-        .catch((err) => {
-          console.error(err);
-          setLoadingLifecycle(false);
-        });
-    }
-  }, [loadingLifecycle, setLoadingLifecycle, bucketName]);
-
-  const loadAllBucketData = () => {
-    setLoadingBucket(true);
-    setLoadingSize(true);
-    setLoadingReplication(true);
-    setLoadingVersioning(true);
-    setLoadingEvents(true);
-    setLoadingEncryption(true);
-  };
-
-  const closeAddEventAndRefresh = () => {
-    setAddScreenOpen(false);
-    loadAllBucketData();
-  };
-
-  const closeEnableBucketEncryption = () => {
-    setEnableEncryptionScreenOpen(false);
-    loadAllBucketData();
-  };
-
-  const closeSetAccessPolicy = () => {
-    setAccessPolicyScreenOpen(false);
-    loadAllBucketData();
-  };
-
-  const closeRetentionConfig = () => {
-    setRetentionConfigOpen(false);
-    loadAllBucketData();
-  };
-
-  const closeAddReplication = () => {
-    setOpenReplicationOpen(false);
-    loadAllBucketData();
-  };
-
-  const closeDeleteModalAndRefresh = (refresh: boolean) => {
-    setDeleteOpen(false);
-    if (refresh) {
-      loadAllBucketData();
-    }
-  };
-
-  const closeEditLCAndRefresh = (refresh: boolean) => {
-    setEditLifecycleOpen(false);
-    if (refresh) {
-      setLoadingLifecycle(true);
-    }
-  };
-
-  const confirmDeleteEvent = (evnt: BucketEvent) => {
-    setDeleteOpen(true);
-    setSelectedEvent(evnt);
-  };
-
-  const confirmDeleteReplication = (replication: BucketReplicationRule) => {
-    setSelectedRRule(replication.id);
-    setDeleteReplicationModal(true);
-  };
-
-  const closeEnableVersioning = (refresh: boolean) => {
-    setEnableVersioningOpen(false);
-    if (refresh) {
-      loadAllBucketData();
-    }
-  };
-
-  let accessPolicy = "n/a";
-
-  if (info !== null) {
-    accessPolicy = info.access;
-  }
-
-  const eventsDisplay = (events: string[]) => {
-    return <Fragment>{events.join(", ")}</Fragment>;
-  };
-
-  const ruleDestDisplay = (events: BucketReplicationDestination) => {
-    return <Fragment>{events.bucket.replace("arn:aws:s3:::", "")}</Fragment>;
-  };
-
-  const ruleDelDisplay = (events: BucketReplicationRuleDeleteMarker) => {
-    return null;
-  };
-
-  const setOpenReplicationOpen = (open = false) => {
-    setOpenSetReplication(open);
-  };
-
-  const closeReplicationModalDelete = (refresh: boolean) => {
-    setDeleteReplicationModal(false);
-
-    if (refresh) {
-      setLoadingReplication(true);
-    }
-  };
-
-  const closeAddLCAndRefresh = (refresh: boolean) => {
-    setAddLifecycleOpen(false);
-    if (refresh) {
-      setLoadingLifecycle(true);
-    }
-  };
-
-  const tableActions = [{ type: "delete", onClick: confirmDeleteEvent }];
-
-  const replicationTableActions = [
-    {
-      type: "delete",
-      onClick: confirmDeleteReplication,
-      disableButtonFunction: () => replicationRules.length <= 1,
-    },
-  ];
-
-  const expirationRender = (expiration: any) => {
-    if (expiration.days) {
-      return `${expiration.days} day${expiration.days > 1 ? "s" : ""}`;
+    switch (newTab) {
+      case "events":
+        mainRoute += "/events";
+        break;
+      case "replication":
+        mainRoute += "/replication";
+        break;
+      case "lifecycle":
+        mainRoute += "/lifecycle";
+        break;
+      case "access":
+        mainRoute += "/access";
+        break;
+      default:
+        mainRoute += "/summary";
     }
 
-    if (expiration.date === "0001-01-01T00:00:00Z") {
-      return "";
-    }
-
-    return <reactMoment.default>{expiration.date}</reactMoment.default>;
+    setBucketDetailsTab(newTab);
+    history.push(mainRoute);
   };
-
-  const transitionRender = (transition: any) => {
-    if (transition.days) {
-      return `${transition.days} day${transition.days > 1 ? "s" : ""}`;
-    }
-
-    if (transition.date === "0001-01-01T00:00:00Z") {
-      return "";
-    }
-
-    return <reactMoment.default>{transition.date}</reactMoment.default>;
-  };
-
-  const renderStorageClass = (objectST: any) => {
-    const stClass = get(objectST, "transition.storage_class", "");
-
-    return stClass;
-  };
-
-  const lifecycleColumns = [
-    { label: "ID", elementKey: "id" },
-    {
-      label: "Prefix",
-      elementKey: "prefix",
-    },
-    {
-      label: "Status",
-      elementKey: "status",
-    },
-    {
-      label: "Expiration",
-      elementKey: "expiration",
-      renderFunction: expirationRender,
-    },
-    {
-      label: "Transition",
-      elementKey: "transition",
-      renderFunction: transitionRender,
-    },
-    {
-      label: "Storage Class",
-      elementKey: "storage_class",
-      renderFunction: renderStorageClass,
-      renderFullObject: true,
-    },
-  ];
 
   return (
     <Fragment>
-      {addScreenOpen && (
-        <AddEvent
-          open={addScreenOpen}
-          selectedBucket={bucketName}
-          closeModalAndRefresh={closeAddEventAndRefresh}
-        />
-      )}
-      {enableEncryptionScreenOpen && (
-        <EnableBucketEncryption
-          open={enableEncryptionScreenOpen}
-          selectedBucket={bucketName}
-          encryptionEnabled={encryptionEnabled}
-          encryptionCfg={encryptionCfg}
-          closeModalAndRefresh={closeEnableBucketEncryption}
-        />
-      )}
-      {accessPolicyScreenOpen && (
-        <SetAccessPolicy
-          bucketName={bucketName}
-          open={accessPolicyScreenOpen}
-          actualPolicy={accessPolicy}
-          closeModalAndRefresh={closeSetAccessPolicy}
-        />
-      )}
-      {retentionConfigOpen && (
-        <SetRetentionConfig
-          bucketName={bucketName}
-          open={retentionConfigOpen}
-          closeModalAndRefresh={closeRetentionConfig}
-        />
-      )}
-      {openSetReplication && (
-        <AddReplicationModal
-          closeModalAndRefresh={closeAddReplication}
-          open={openSetReplication}
-          bucketName={bucketName}
-        />
-      )}
-      {deleteOpen && (
-        <DeleteEvent
-          deleteOpen={deleteOpen}
-          selectedBucket={bucketName}
-          bucketEvent={selectedEvent}
-          closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
-        />
-      )}
-      {enableVersioningOpen && (
-        <EnableVersioningModal
-          closeVersioningModalAndRefresh={closeEnableVersioning}
-          modalOpen={enableVersioningOpen}
-          selectedBucket={bucketName}
-          versioningCurrentState={isVersioned}
-        />
-      )}
-      {deleteReplicationModal && (
-        <DeleteReplicationRule
-          deleteOpen={deleteReplicationModal}
-          selectedBucket={bucketName}
-          closeDeleteModalAndRefresh={closeReplicationModalDelete}
-          ruleToDelete={selectedRRule}
-        />
-      )}
-      {editLifecycleOpen && (
-        <EditLifecycleConfiguration
-          open={editLifecycleOpen}
-          closeModalAndRefresh={closeEditLCAndRefresh}
-          selectedBucket={bucketName}
-          lifecycle={{
-            id: "",
-          }}
-        />
-      )}
-      {addLifecycleOpen && (
-        <AddLifecycleModal
-          open={addLifecycleOpen}
-          bucketName={bucketName}
-          closeModalAndRefresh={closeAddLCAndRefresh}
-        />
-      )}
-
       <PageHeader label={`Bucket > ${match.params["bucketName"]}`} />
       <Grid container className={classes.container}>
         <Grid item xs={12}>
           <Tabs
-            value={curTab}
-            onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
-              setCurTab(newValue);
+            value={selectedTab !== "" ? selectedTab : "summary"}
+            onChange={(e: React.ChangeEvent<{}>, newValue: string) => {
+              changeRoute(newValue);
             }}
             indicatorColor="primary"
             textColor="primary"
@@ -743,353 +267,55 @@ const BucketDetails = ({
             variant="scrollable"
             scrollButtons="auto"
           >
-            <Tab label="Summary" {...a11yProps(0)} />
-            <Tab label="Events" {...a11yProps(1)} />
-            {canGetReplication && <Tab label="Replication" {...a11yProps(2)} />}
-            <Tab label="Lifecycle" {...a11yProps(3)} />
-            <Tab label="Access" {...a11yProps(4)} />
+            <Tab value="summary" label="Summary" {...a11yProps(0)} />
+            <Tab value="events" label="Events" {...a11yProps(1)} />
+            <Tab
+              value="replication"
+              label="Replication"
+              {...a11yProps(2)}
+              disabled={!canGetReplication}
+            />
+            <Tab value="lifecycle" label="Lifecycle" {...a11yProps(3)} />
+            <Tab value="access" label="Access" {...a11yProps(4)} />
           </Tabs>
         </Grid>
         <Grid item xs={12}>
-          <TabPanel index={0} value={curTab}>
-            <br />
-            <Paper className={classes.paperContainer}>
-              <Grid container>
-                <Grid xs={9}>
-                  <h2>Details</h2>
-                  <hr className={classes.hrClass} />
-                  <table width={"100%"}>
-                    <tr>
-                      <td className={classes.titleCol}>Access Policy:</td>
-                      <td className={classes.capitalizeFirst}>
-                        <Button
-                          color="primary"
-                          className={classes.anchorButton}
-                          onClick={() => {
-                            setAccessPolicyScreenOpen(true);
-                          }}
-                        >
-                          {loadingBucket ? (
-                            <CircularProgress
-                              color="primary"
-                              size={16}
-                              variant="indeterminate"
-                            />
-                          ) : (
-                            accessPolicy.toLowerCase()
-                          )}
-                        </Button>
-                      </td>
-                      <td className={classes.titleCol}>Encryption:</td>
-                      <td>
-                        {loadingEncryption ? (
-                          <CircularProgress
-                            color="primary"
-                            size={16}
-                            variant="indeterminate"
-                          />
-                        ) : (
-                          <Button
-                            color="primary"
-                            className={classes.anchorButton}
-                            onClick={() => {
-                              setEnableEncryptionScreenOpen(true);
-                            }}
-                          >
-                            {encryptionEnabled ? "Enabled" : "Disabled"}
-                          </Button>
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className={classes.titleCol}>Replication:</td>
-                      <td className={classes.doubleElement}>
-                        <span>
-                          {replicationRules.length ? "Enabled" : "Disabled"}
-                        </span>
-                      </td>
-                      {!hasObjectLocking ? (
-                        <React.Fragment>
-                          <td className={classes.titleCol}>Object Locking:</td>
-                          <td>Disabled</td>
-                        </React.Fragment>
-                      ) : (
-                        <React.Fragment>
-                          <td></td>
-                          <td></td>
-                        </React.Fragment>
-                      )}
-                    </tr>
-                  </table>
-                </Grid>
-                <Grid xs={3} className={classes.reportedUsage}>
-                  <Grid container direction="row" alignItems="center">
-                    <Grid item className={classes.icon} xs={2}>
-                      <UsageIcon />
-                    </Grid>
-                    <Grid item xs={10}>
-                      <Typography className={classes.elementTitle}>
-                        Reported Usage
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                  <Typography className={classes.consumptionValue}>
-                    {niceBytes(bucketSize)}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Paper>
-            <br />
-            <br />
-            <Paper className={classes.paperContainer}>
-              <Grid container>
-                <Grid xs={12}>
-                  <h2>Versioning</h2>
-                  <hr className={classes.hrClass} />
-                  <table>
-                    <tr>
-                      <td className={classes.titleCol}>Versioning:</td>
-                      <td>
-                        {loadingVersioning ? (
-                          <CircularProgress
-                            color="primary"
-                            size={16}
-                            variant="indeterminate"
-                          />
-                        ) : (
-                          <Fragment>
-                            <Button
-                              color="primary"
-                              className={classes.anchorButton}
-                              onClick={setBucketVersioning}
-                            >
-                              {isVersioned ? "Enabled" : "Disabled"}
-                            </Button>
-                          </Fragment>
-                        )}
-                      </td>
-                    </tr>
-                  </table>
-                </Grid>
-              </Grid>
-            </Paper>
-            <br />
-            <br />
-            {hasObjectLocking && (
-              <Paper className={classes.paperContainer}>
-                <Grid container>
-                  <Grid xs={12}>
-                    <h2>Object Locking</h2>
-                    <hr className={classes.hrClass} />
-                    <table>
-                      <tr>
-                        <td className={classes.gridContainer}>
-                          <td className={classes.titleCol}>Retention:</td>
-                          <td>
-                            {loadingVersioning ? (
-                              <CircularProgress
-                                color="primary"
-                                size={16}
-                                variant="indeterminate"
-                              />
-                            ) : (
-                              <Fragment>
-                                <Button
-                                  color="primary"
-                                  className={classes.anchorButton}
-                                  onClick={() => {
-                                    setRetentionConfigOpen(true);
-                                  }}
-                                >
-                                  Configure
-                                </Button>
-                              </Fragment>
-                            )}
-                          </td>
-                        </td>
-                      </tr>
-                    </table>
-                  </Grid>
-                </Grid>
-              </Paper>
-            )}
-          </TabPanel>
-          <TabPanel index={1} value={curTab}>
-            <Grid container>
-              <Grid item xs={12} className={classes.actionsTray}>
-                <TextField
-                  placeholder="Filter"
-                  className={classes.searchField}
-                  id="search-resource"
-                  label=""
-                  onChange={(event) => {
-                    // setFilter(event.target.value);
-                  }}
-                  InputProps={{
-                    disableUnderline: true,
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                  }}
+          <Grid item xs={12} className={classes.routerContainer}>
+            <Router history={history}>
+              <Switch>
+                <Route
+                  path="/buckets/:bucketName/summary"
+                  component={BucketSummaryPanel}
                 />
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<CreateIcon />}
-                  size="medium"
-                  onClick={() => {
-                    setAddScreenOpen(true);
-                  }}
-                >
-                  Subscribe to Event
-                </Button>
-              </Grid>
-              <Grid item xs={12}>
-                <br />
-              </Grid>
-              <Grid item xs={12}>
-                <TableWrapper
-                  itemActions={tableActions}
-                  columns={[
-                    { label: "SQS", elementKey: "arn" },
-                    {
-                      label: "Events",
-                      elementKey: "events",
-                      renderFunction: eventsDisplay,
-                    },
-                    { label: "Prefix", elementKey: "prefix" },
-                    { label: "Suffix", elementKey: "suffix" },
-                  ]}
-                  isLoading={loadingEvents}
-                  records={records}
-                  entityName="Events"
-                  idField="id"
+                <Route
+                  path="/buckets/:bucketName/events"
+                  component={BucketEventsPanel}
                 />
-              </Grid>
-            </Grid>
-          </TabPanel>
-          {canGetReplication && (
-            <TabPanel index={2} value={curTab}>
-              <Grid container>
-                <Grid item xs={12} className={classes.actionsTray}>
-                  <TextField
-                    placeholder="Filter"
-                    className={classes.searchField}
-                    id="search-resource"
-                    label=""
-                    onChange={(event) => {
-                      // setFilter(event.target.value);
-                    }}
-                    InputProps={{
-                      disableUnderline: true,
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <SearchIcon />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                  {canPutReplication && (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      startIcon={<CreateIcon />}
-                      size="medium"
-                      onClick={() => {
-                        setOpenReplicationOpen(true);
-                      }}
-                    >
-                      Add Replication Rule
-                    </Button>
+                <Route
+                  path="/buckets/:bucketName/replication"
+                  component={BucketReplicationPanel}
+                />
+                <Route
+                  path="/buckets/:bucketName/lifecycle"
+                  component={BucketLifecyclePanel}
+                />
+                <Route
+                  path="/buckets/:bucketName/access"
+                  component={AccessDetailsPanel}
+                />
+                <Route
+                  path="/buckets/:bucketName/access"
+                  component={AccessDetailsPanel}
+                />
+                <Route
+                  path="/buckets/:bucketName"
+                  component={() => (
+                    <Redirect to={`/buckets/${bucketName}/summary`} />
                   )}
-                </Grid>
-                <Grid item xs={12}>
-                  <br />
-                </Grid>
-                <Grid item xs={12}>
-                  <TableWrapper
-                    itemActions={replicationTableActions}
-                    columns={[
-                      { label: "ID", elementKey: "id" },
-                      {
-                        label: "Priority",
-                        elementKey: "priority",
-                      },
-                      {
-                        label: "Destination",
-                        elementKey: "destination",
-                        renderFunction: ruleDestDisplay,
-                      },
-                      {
-                        label: "Delete Marker Replication",
-                        elementKey: "delete_marker_replication",
-                        renderFunction: ruleDelDisplay,
-                      },
-                      { label: "Status", elementKey: "status" },
-                    ]}
-                    isLoading={loadingEvents}
-                    records={replicationRules}
-                    entityName="Replication Rules"
-                    idField="id"
-                  />
-                </Grid>
-              </Grid>
-            </TabPanel>
-          )}
-          <TabPanel index={3} value={curTab}>
-            <Grid container>
-              <Grid item xs={12} className={classes.actionsTray}>
-                <TextField
-                  placeholder="Filter"
-                  className={classes.searchField}
-                  id="search-resource"
-                  label=""
-                  onChange={(event) => {
-                    // setFilter(event.target.value);
-                  }}
-                  InputProps={{
-                    disableUnderline: true,
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                  }}
                 />
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<CreateIcon />}
-                  size="medium"
-                  onClick={() => {
-                    setAddLifecycleOpen(true);
-                  }}
-                >
-                  Add Lifecycle Rule
-                </Button>
-              </Grid>
-              <Grid item xs={12}>
-                <br />
-              </Grid>
-              <Grid item xs={12}>
-                <TableWrapper
-                  itemActions={[]}
-                  columns={lifecycleColumns}
-                  isLoading={loadingLifecycle}
-                  records={lifecycleRecords}
-                  entityName="Lifecycle"
-                  customEmptyMessage="There are no Lifecycle rules yet"
-                  idField="id"
-                />
-              </Grid>
-            </Grid>
-          </TabPanel>
-          <TabPanel index={4} value={curTab}>
-            <br />
-            <AccessDetails bucketName={bucketName} />
-          </TabPanel>
+              </Switch>
+            </Router>
+          </Grid>
         </Grid>
       </Grid>
     </Fragment>
@@ -1098,10 +324,12 @@ const BucketDetails = ({
 
 const mapState = (state: AppState) => ({
   session: state.console.session,
+  selectedTab: state.buckets.bucketDetails.selectedTab,
 });
 
 const connector = connect(mapState, {
   setErrorSnackMessage,
+  setBucketDetailsTab,
 });
 
 export default withStyles(styles)(connector(BucketDetails));
