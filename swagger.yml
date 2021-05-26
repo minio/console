@@ -3020,14 +3020,6 @@ definitions:
         $ref: "#/definitions/notificationConfig"
       ignoreExisting:
         type: boolean
-  bucketReplicationRuleMarker:
-    type: object
-    properties:
-      status:
-        type: string
-        enum:
-          - Enabled
-          - Disabled
   bucketReplicationDestination:
     type: object
     properties:
@@ -3057,7 +3049,15 @@ definitions:
       healthCheckPeriod:
         type: integer
       delete_marker_replication:
-        $ref: "#/definitions/bucketReplicationRuleMarker"
+        type: boolean
+      deletes_replication:
+        type: boolean
+      metadata_replication:
+        type: boolean
+      prefix:
+        type: string
+      tags:
+        type: string
       destination:
         $ref: "#/definitions/bucketReplicationDestination"
 

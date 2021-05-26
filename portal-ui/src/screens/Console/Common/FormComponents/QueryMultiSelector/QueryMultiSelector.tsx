@@ -116,7 +116,7 @@ const QueryMultiSelector = ({
   // Use effect to send new values to onChange
   useEffect(() => {
     const refScroll = bottomList.current;
-    if (refScroll) {
+    if (refScroll && currentKeys.length > 1) {
       refScroll.scrollIntoView(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

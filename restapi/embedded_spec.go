@@ -4290,7 +4290,10 @@ func init() {
           "type": "string"
         },
         "delete_marker_replication": {
-          "$ref": "#/definitions/bucketReplicationRuleMarker"
+          "type": "boolean"
+        },
+        "deletes_replication": {
+          "type": "boolean"
         },
         "destination": {
           "$ref": "#/definitions/bucketReplicationDestination"
@@ -4299,6 +4302,12 @@ func init() {
           "type": "integer"
         },
         "id": {
+          "type": "string"
+        },
+        "metadata_replication": {
+          "type": "boolean"
+        },
+        "prefix": {
           "type": "string"
         },
         "priority": {
@@ -4319,18 +4328,9 @@ func init() {
             "async",
             "sync"
           ]
-        }
-      }
-    },
-    "bucketReplicationRuleMarker": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string",
-          "enum": [
-            "Enabled",
-            "Disabled"
-          ]
+        },
+        "tags": {
+          "type": "string"
         }
       }
     },
@@ -12058,7 +12058,10 @@ func init() {
           "type": "string"
         },
         "delete_marker_replication": {
-          "$ref": "#/definitions/bucketReplicationRuleMarker"
+          "type": "boolean"
+        },
+        "deletes_replication": {
+          "type": "boolean"
         },
         "destination": {
           "$ref": "#/definitions/bucketReplicationDestination"
@@ -12067,6 +12070,12 @@ func init() {
           "type": "integer"
         },
         "id": {
+          "type": "string"
+        },
+        "metadata_replication": {
+          "type": "boolean"
+        },
+        "prefix": {
           "type": "string"
         },
         "priority": {
@@ -12087,18 +12096,9 @@ func init() {
             "async",
             "sync"
           ]
-        }
-      }
-    },
-    "bucketReplicationRuleMarker": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string",
-          "enum": [
-            "Enabled",
-            "Disabled"
-          ]
+        },
+        "tags": {
+          "type": "string"
         }
       }
     },

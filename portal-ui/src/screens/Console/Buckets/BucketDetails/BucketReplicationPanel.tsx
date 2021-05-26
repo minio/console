@@ -63,7 +63,9 @@ const BucketReplicationPanel = ({
 }: IBucketReplicationProps) => {
   const [canPutReplication, setCanPutReplication] = useState<boolean>(false);
   const [loadingReplication, setLoadingReplication] = useState<boolean>(true);
-  const [replicationRules, setReplicationRules] = useState<any[]>([]);
+  const [replicationRules, setReplicationRules] = useState<
+    BucketReplicationRule[]
+  >([]);
   const [loadingPerms, setLoadingPerms] = useState<boolean>(true);
   const [canGetReplication, setCanGetReplication] = useState<boolean>(false);
   const [deleteReplicationModal, setDeleteReplicationModal] =
@@ -171,6 +173,10 @@ const BucketReplicationPanel = ({
     return <Fragment>{events.bucket.replace("arn:aws:s3:::", "")}</Fragment>;
   };
 
+  const tagDisplay = (events: BucketReplicationRule) => {
+    return <Fragment>{events && events.tags !== "" ? "Yes" : "No"}</Fragment>;
+  };
+
   const replicationTableActions: any = [
     {
       type: "delete",
@@ -247,7 +253,6 @@ const BucketReplicationPanel = ({
           <TableWrapper
             itemActions={replicationTableActions}
             columns={[
-              { label: "ID", elementKey: "id" },
               {
                 label: "Priority",
                 elementKey: "priority",
@@ -256,6 +261,15 @@ const BucketReplicationPanel = ({
                 label: "Destination",
                 elementKey: "destination",
                 renderFunction: ruleDestDisplay,
+              },
+              {
+                label: "Prefix",
+                elementKey: "prefix",
+              },
+              {
+                label: "Tags",
+                elementKey: "tags",
+                renderFunction: tagDisplay,
               },
               { label: "Status", elementKey: "status" },
             ]}

@@ -40,7 +40,10 @@ type BucketReplicationRule struct {
 	Bandwidth string `json:"bandwidth,omitempty"`
 
 	// delete marker replication
-	DeleteMarkerReplication *BucketReplicationRuleMarker `json:"delete_marker_replication,omitempty"`
+	DeleteMarkerReplication bool `json:"delete_marker_replication,omitempty"`
+
+	// deletes replication
+	DeletesReplication bool `json:"deletes_replication,omitempty"`
 
 	// destination
 	Destination *BucketReplicationDestination `json:"destination,omitempty"`
@@ -50,6 +53,12 @@ type BucketReplicationRule struct {
 
 	// id
 	ID string `json:"id,omitempty"`
+
+	// metadata replication
+	MetadataReplication bool `json:"metadata_replication,omitempty"`
+
+	// prefix
+	Prefix string `json:"prefix,omitempty"`
 
 	// priority
 	Priority int32 `json:"priority,omitempty"`
@@ -61,15 +70,14 @@ type BucketReplicationRule struct {
 	// sync mode
 	// Enum: [async sync]
 	SyncMode *string `json:"syncMode,omitempty"`
+
+	// tags
+	Tags string `json:"tags,omitempty"`
 }
 
 // Validate validates this bucket replication rule
 func (m *BucketReplicationRule) Validate(formats strfmt.Registry) error {
 	var res []error
-
-	if err := m.validateDeleteMarkerReplication(formats); err != nil {
-		res = append(res, err)
-	}
 
 	if err := m.validateDestination(formats); err != nil {
 		res = append(res, err)
@@ -86,24 +94,6 @@ func (m *BucketReplicationRule) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *BucketReplicationRule) validateDeleteMarkerReplication(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.DeleteMarkerReplication) { // not required
-		return nil
-	}
-
-	if m.DeleteMarkerReplication != nil {
-		if err := m.DeleteMarkerReplication.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("delete_marker_replication")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 
