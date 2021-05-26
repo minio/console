@@ -26,6 +26,9 @@ import { setModalErrorSnackMessage } from "../../../../actions";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import api from "../../../../common/api";
+import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import { getBytes, k8sfactorForDropdown } from "../../../../common/utils";
 
 interface IReplicationModal {
   open: boolean;
@@ -48,6 +51,11 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
+    multiContainer: {
+      display: "flex",
+      alignItems: "center" as const,
+      justifyContent: "flex-start" as const,
+    },
     ...modalBasic,
   });
 
@@ -58,12 +66,17 @@ const AddReplicationModal = ({
   bucketName,
   setModalErrorSnackMessage,
 }: IReplicationModal) => {
-  const [addLoading, setAddLoading] = useState(false);
-  const [accessKey, setAccessKey] = useState("");
-  const [secretKey, setSecretKey] = useState("");
-  const [targetURL, setTargetURL] = useState("");
-  const [targetBucket, setTargetBucket] = useState("");
-  const [region, setRegion] = useState("");
+  const [addLoading, setAddLoading] = useState<boolean>(false);
+  const [accessKey, setAccessKey] = useState<string>("");
+  const [secretKey, setSecretKey] = useState<string>("");
+  const [targetURL, setTargetURL] = useState<string>("");
+  const [targetBucket, setTargetBucket] = useState<string>("");
+  const [region, setRegion] = useState<string>("");
+  const [useTLS, setUseTLS] = useState<boolean>(true);
+  const [replicationMode, setReplicationMode] = useState<string>("async");
+  const [bandwidthScalar, setBandwidthScalar] = useState<string>("100");
+  const [bandwidthUnit, setBandwidthUnit] = useState<string>("Gi");
+  const [healthCheck, setHealthCheck] = useState<string>("60");
 
   const addRecord = () => {
     const replicate = [
@@ -73,12 +86,22 @@ const AddReplicationModal = ({
       },
     ];
 
+    const hc = parseInt(healthCheck);
+
+    const endURL = `${useTLS ? "https://" : "http://"}${targetURL}`;
+
     const remoteBucketsInfo = {
       accessKey: accessKey,
       secretKey: secretKey,
-      targetURL: targetURL,
+      targetURL: endURL,
       region: region,
       bucketsRelation: replicate,
+      syncMode: replicationMode,
+      bandwidth:
+        replicationMode === "async"
+          ? parseInt(getBytes(bandwidthScalar, bandwidthUnit, true))
+          : 0,
+      healthCheckPeriod: hc,
     };
 
     api
@@ -158,9 +181,21 @@ const AddReplicationModal = ({
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setTargetURL(e.target.value);
                 }}
-                placeholder="https://play.min.io:9000"
+                placeholder="play.min.io"
                 label="Target URL"
                 value={targetURL}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormSwitchWrapper
+                checked={useTLS}
+                id="useTLS"
+                name="useTLS"
+                label="Use TLS"
+                onChange={(e) => {
+                  setUseTLS(e.target.checked);
+                }}
+                value="yes"
               />
             </Grid>
             <Grid item xs={12}>
@@ -183,6 +218,64 @@ const AddReplicationModal = ({
                 }}
                 label="Region"
                 value={region}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <SelectWrapper
+                id="replication_mode"
+                name="replication_mode"
+                onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                  setReplicationMode(e.target.value as string);
+                }}
+                label="ReplicationMode"
+                value={replicationMode}
+                options={[
+                  { label: "Asynchronous", value: "async" },
+                  { label: "Synchronous", value: "sync" },
+                ]}
+              />
+            </Grid>
+
+            {replicationMode === "async" && (
+              <Grid item xs={12}>
+                <div className={classes.multiContainer}>
+                  <div>
+                    <InputBoxWrapper
+                      type="number"
+                      id="bandwidth_scalar"
+                      name="bandwidth_scalar"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setBandwidthScalar(e.target.value as string);
+                      }}
+                      label="Bandwidth"
+                      value={bandwidthScalar}
+                      min="0"
+                    />
+                  </div>
+                  <div className={classes.sizeFactorContainer}>
+                    <SelectWrapper
+                      label={"Unit"}
+                      id="bandwidth_unit"
+                      name="bandwidth_unit"
+                      value={bandwidthUnit}
+                      onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                        setBandwidthUnit(e.target.value as string);
+                      }}
+                      options={k8sfactorForDropdown()}
+                    />
+                  </div>
+                </div>
+              </Grid>
+            )}
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="healthCheck"
+                name="healthCheck"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setHealthCheck(e.target.value as string);
+                }}
+                label="Health Check Duration"
+                value={healthCheck}
               />
             </Grid>
           </Grid>

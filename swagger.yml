@@ -3103,6 +3103,18 @@ definitions:
         type: string
       region:
         type: string
+      syncMode:
+        type: string
+        enum:
+          - async
+          - sync
+        default: async
+      bandwidth:
+        type: integer
+        format: int64
+      healthCheckPeriod:
+        type: integer
+        format: int32
       bucketsRelation:
         type: array
         minLength: 1
@@ -3533,6 +3545,18 @@ definitions:
         type: string
       region:
         type: string
+      syncMode:
+        type: string
+        enum:
+          - async
+          - sync
+        default: async
+      bandwidth:
+        type: integer
+        format: int64
+      healthCheckPeriod:
+        type: integer
+        format: int32
   listRemoteBucketsResponse:
     type: object
     properties:

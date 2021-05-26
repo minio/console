@@ -33,7 +33,10 @@ import {
 } from "../types";
 import { niceBytes } from "../../../../common/utils";
 import { BucketList } from "../../Watch/types";
-import { hrClass } from "../../Common/FormComponents/common/styleLibrary";
+import {
+  buttonsStyles,
+  hrClass,
+} from "../../Common/FormComponents/common/styleLibrary";
 import api from "../../../../common/api";
 import SetAccessPolicy from "./SetAccessPolicy";
 import SetRetentionConfig from "./SetRetentionConfig";
@@ -69,6 +72,7 @@ const styles = (theme: Theme) =>
       padding: "15px",
     },
     ...hrClass,
+    ...buttonsStyles,
   });
 
 const BucketSummary = ({

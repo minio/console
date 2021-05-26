@@ -244,14 +244,21 @@ func addRemoteBucket(ctx context.Context, client MinioAdmin, params models.Creat
 	}
 	creds := &auth.Credentials{AccessKey: accessKey, SecretKey: secretKey}
 	remoteBucket := &madmin.BucketTarget{
-		TargetBucket: *params.TargetBucket,
-		Secure:       secure,
-		Credentials:  creds,
-		Endpoint:     host,
-		Path:         "",
-		API:          "s3v4",
-		Type:         "replication",
-		Region:       params.Region,
+		TargetBucket:    *params.TargetBucket,
+		Secure:          secure,
+		Credentials:     creds,
+		Endpoint:        host,
+		Path:            "",
+		API:             "s3v4",
+		Type:            "replication",
+		Region:          params.Region,
+		ReplicationSync: *params.SyncMode == "sync",
+	}
+	if *params.SyncMode == "async" {
+		remoteBucket.BandwidthLimit = params.Bandwidth
+	}
+	if params.HealthCheckPeriod > 0 {
+		remoteBucket.HealthCheckDuration = time.Duration(params.HealthCheckPeriod) * time.Second
 	}
 	bucketARN, err := client.addRemoteBucket(ctx, *params.SourceBucket, remoteBucket)
 
@@ -318,6 +325,8 @@ func setMultiBucketReplication(ctx context.Context, session *models.Principal, c
 				TargetBucket: &targetBucket,
 				Region:       params.Body.Region,
 				TargetURL:    params.Body.TargetURL,
+				SyncMode:     params.Body.SyncMode,
+				Bandwidth:    params.Body.Bandwidth,
 			}
 
 			// We add the remote bucket reference & store the arn or errors returned

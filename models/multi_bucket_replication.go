@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -41,10 +42,16 @@ type MultiBucketReplication struct {
 	// Min Length: 3
 	AccessKey *string `json:"accessKey"`
 
+	// bandwidth
+	Bandwidth int64 `json:"bandwidth,omitempty"`
+
 	// buckets relation
 	// Required: true
 	// Min Length: 1
 	BucketsRelation []*MultiBucketsRelation `json:"bucketsRelation"`
+
+	// health check period
+	HealthCheckPeriod int32 `json:"healthCheckPeriod,omitempty"`
 
 	// region
 	Region string `json:"region,omitempty"`
@@ -53,6 +60,10 @@ type MultiBucketReplication struct {
 	// Required: true
 	// Min Length: 8
 	SecretKey *string `json:"secretKey"`
+
+	// sync mode
+	// Enum: [async sync]
+	SyncMode *string `json:"syncMode,omitempty"`
 
 	// target URL
 	// Required: true
@@ -72,6 +83,10 @@ func (m *MultiBucketReplication) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateSecretKey(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSyncMode(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -130,6 +145,49 @@ func (m *MultiBucketReplication) validateSecretKey(formats strfmt.Registry) erro
 	}
 
 	if err := validate.MinLength("secretKey", "body", string(*m.SecretKey), 8); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var multiBucketReplicationTypeSyncModePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["async","sync"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		multiBucketReplicationTypeSyncModePropEnum = append(multiBucketReplicationTypeSyncModePropEnum, v)
+	}
+}
+
+const (
+
+	// MultiBucketReplicationSyncModeAsync captures enum value "async"
+	MultiBucketReplicationSyncModeAsync string = "async"
+
+	// MultiBucketReplicationSyncModeSync captures enum value "sync"
+	MultiBucketReplicationSyncModeSync string = "sync"
+)
+
+// prop value enum
+func (m *MultiBucketReplication) validateSyncModeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, multiBucketReplicationTypeSyncModePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MultiBucketReplication) validateSyncMode(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.SyncMode) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateSyncModeEnum("syncMode", "body", *m.SyncMode); err != nil {
 		return err
 	}
 

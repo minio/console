@@ -4413,6 +4413,14 @@ func init() {
           "type": "string",
           "minLength": 3
         },
+        "bandwidth": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "healthCheckPeriod": {
+          "type": "integer",
+          "format": "int32"
+        },
         "region": {
           "type": "string"
         },
@@ -4422,6 +4430,14 @@ func init() {
         },
         "sourceBucket": {
           "type": "string"
+        },
+        "syncMode": {
+          "type": "string",
+          "default": "async",
+          "enum": [
+            "async",
+            "sync"
+          ]
         },
         "targetBucket": {
           "type": "string"
@@ -5372,6 +5388,10 @@ func init() {
           "type": "string",
           "minLength": 3
         },
+        "bandwidth": {
+          "type": "integer",
+          "format": "int64"
+        },
         "bucketsRelation": {
           "type": "array",
           "minLength": 1,
@@ -5379,12 +5399,24 @@ func init() {
             "$ref": "#/definitions/multiBucketsRelation"
           }
         },
+        "healthCheckPeriod": {
+          "type": "integer",
+          "format": "int32"
+        },
         "region": {
           "type": "string"
         },
         "secretKey": {
           "type": "string",
           "minLength": 8
+        },
+        "syncMode": {
+          "type": "string",
+          "default": "async",
+          "enum": [
+            "async",
+            "sync"
+          ]
         },
         "targetURL": {
           "type": "string"
@@ -12110,6 +12142,14 @@ func init() {
           "type": "string",
           "minLength": 3
         },
+        "bandwidth": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "healthCheckPeriod": {
+          "type": "integer",
+          "format": "int32"
+        },
         "region": {
           "type": "string"
         },
@@ -12119,6 +12159,14 @@ func init() {
         },
         "sourceBucket": {
           "type": "string"
+        },
+        "syncMode": {
+          "type": "string",
+          "default": "async",
+          "enum": [
+            "async",
+            "sync"
+          ]
         },
         "targetBucket": {
           "type": "string"
@@ -13057,6 +13105,10 @@ func init() {
           "type": "string",
           "minLength": 3
         },
+        "bandwidth": {
+          "type": "integer",
+          "format": "int64"
+        },
         "bucketsRelation": {
           "type": "array",
           "minLength": 1,
@@ -13064,12 +13116,24 @@ func init() {
             "$ref": "#/definitions/multiBucketsRelation"
           }
         },
+        "healthCheckPeriod": {
+          "type": "integer",
+          "format": "int32"
+        },
         "region": {
           "type": "string"
         },
         "secretKey": {
           "type": "string",
           "minLength": 8
+        },
+        "syncMode": {
+          "type": "string",
+          "default": "async",
+          "enum": [
+            "async",
+            "sync"
+          ]
         },
         "targetURL": {
           "type": "string"

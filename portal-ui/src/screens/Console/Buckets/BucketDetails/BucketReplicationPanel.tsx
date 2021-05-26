@@ -147,7 +147,7 @@ const BucketReplicationPanel = ({
 
   const closeAddReplication = () => {
     setOpenReplicationOpen(false);
-    //loadAllBucketData();
+    setLoadingReplication(true);
   };
 
   const setOpenReplicationOpen = (open = false) => {
@@ -179,7 +179,7 @@ const BucketReplicationPanel = ({
     {
       type: "delete",
       onClick: confirmDeleteReplication,
-      disableButtonFunction: () => replicationRules.length <= 1,
+      disableButtonFunction: () => replicationRules.length > 1,
     },
   ];
 
