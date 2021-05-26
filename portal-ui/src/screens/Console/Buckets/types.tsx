@@ -75,6 +75,7 @@ export interface BucketReplicationRule {
   priority: number;
   delete_marker_replication: BucketReplicationRuleDeleteMarker;
   Destination: BucketReplicationDestination;
+  syncMode: string;
 }
 
 export interface BucketReplication {

@@ -4286,11 +4286,17 @@ func init() {
     "bucketReplicationRule": {
       "type": "object",
       "properties": {
+        "bandwidth": {
+          "type": "string"
+        },
         "delete_marker_replication": {
           "$ref": "#/definitions/bucketReplicationRuleMarker"
         },
         "destination": {
           "$ref": "#/definitions/bucketReplicationDestination"
+        },
+        "healthCheckPeriod": {
+          "type": "integer"
         },
         "id": {
           "type": "string"
@@ -4304,6 +4310,14 @@ func init() {
           "enum": [
             "Enabled",
             "Disabled"
+          ]
+        },
+        "syncMode": {
+          "type": "string",
+          "default": "async",
+          "enum": [
+            "async",
+            "sync"
           ]
         }
       }
@@ -6228,6 +6242,13 @@ func init() {
           "type": "string",
           "minLength": 3
         },
+        "bandwidth": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "healthCheckPeriod": {
+          "type": "integer"
+        },
         "remoteARN": {
           "type": "string"
         },
@@ -6245,6 +6266,9 @@ func init() {
           "type": "string"
         },
         "status": {
+          "type": "string"
+        },
+        "syncMode": {
           "type": "string"
         },
         "targetBucket": {
@@ -12015,11 +12039,17 @@ func init() {
     "bucketReplicationRule": {
       "type": "object",
       "properties": {
+        "bandwidth": {
+          "type": "string"
+        },
         "delete_marker_replication": {
           "$ref": "#/definitions/bucketReplicationRuleMarker"
         },
         "destination": {
           "$ref": "#/definitions/bucketReplicationDestination"
+        },
+        "healthCheckPeriod": {
+          "type": "integer"
         },
         "id": {
           "type": "string"
@@ -12033,6 +12063,14 @@ func init() {
           "enum": [
             "Enabled",
             "Disabled"
+          ]
+        },
+        "syncMode": {
+          "type": "string",
+          "default": "async",
+          "enum": [
+            "async",
+            "sync"
           ]
         }
       }
@@ -13810,6 +13848,13 @@ func init() {
           "type": "string",
           "minLength": 3
         },
+        "bandwidth": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "healthCheckPeriod": {
+          "type": "integer"
+        },
         "remoteARN": {
           "type": "string"
         },
@@ -13827,6 +13872,9 @@ func init() {
           "type": "string"
         },
         "status": {
+          "type": "string"
+        },
+        "syncMode": {
           "type": "string"
         },
         "targetBucket": {

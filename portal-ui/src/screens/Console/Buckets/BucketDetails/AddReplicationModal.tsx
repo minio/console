@@ -227,7 +227,7 @@ const AddReplicationModal = ({
                 onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
                   setReplicationMode(e.target.value as string);
                 }}
-                label="ReplicationMode"
+                label="Replication Mode"
                 value={replicationMode}
                 options={[
                   { label: "Asynchronous", value: "async" },

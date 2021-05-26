@@ -41,6 +41,12 @@ type RemoteBucket struct {
 	// Min Length: 3
 	AccessKey *string `json:"accessKey"`
 
+	// bandwidth
+	Bandwidth int64 `json:"bandwidth,omitempty"`
+
+	// health check period
+	HealthCheckPeriod int64 `json:"healthCheckPeriod,omitempty"`
+
 	// remote a r n
 	// Required: true
 	RemoteARN *string `json:"remoteARN"`
@@ -59,6 +65,9 @@ type RemoteBucket struct {
 
 	// status
 	Status string `json:"status,omitempty"`
+
+	// sync mode
+	SyncMode string `json:"syncMode,omitempty"`
 
 	// target bucket
 	TargetBucket string `json:"targetBucket,omitempty"`

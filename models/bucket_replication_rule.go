@@ -36,11 +36,17 @@ import (
 // swagger:model bucketReplicationRule
 type BucketReplicationRule struct {
 
+	// bandwidth
+	Bandwidth string `json:"bandwidth,omitempty"`
+
 	// delete marker replication
 	DeleteMarkerReplication *BucketReplicationRuleMarker `json:"delete_marker_replication,omitempty"`
 
 	// destination
 	Destination *BucketReplicationDestination `json:"destination,omitempty"`
+
+	// health check period
+	HealthCheckPeriod int64 `json:"healthCheckPeriod,omitempty"`
 
 	// id
 	ID string `json:"id,omitempty"`
@@ -51,6 +57,10 @@ type BucketReplicationRule struct {
 	// status
 	// Enum: [Enabled Disabled]
 	Status string `json:"status,omitempty"`
+
+	// sync mode
+	// Enum: [async sync]
+	SyncMode *string `json:"syncMode,omitempty"`
 }
 
 // Validate validates this bucket replication rule
@@ -66,6 +76,10 @@ func (m *BucketReplicationRule) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateStatus(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSyncMode(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -148,6 +162,49 @@ func (m *BucketReplicationRule) validateStatus(formats strfmt.Registry) error {
 
 	// value enum
 	if err := m.validateStatusEnum("status", "body", m.Status); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var bucketReplicationRuleTypeSyncModePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["async","sync"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		bucketReplicationRuleTypeSyncModePropEnum = append(bucketReplicationRuleTypeSyncModePropEnum, v)
+	}
+}
+
+const (
+
+	// BucketReplicationRuleSyncModeAsync captures enum value "async"
+	BucketReplicationRuleSyncModeAsync string = "async"
+
+	// BucketReplicationRuleSyncModeSync captures enum value "sync"
+	BucketReplicationRuleSyncModeSync string = "sync"
+)
+
+// prop value enum
+func (m *BucketReplicationRule) validateSyncModeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, bucketReplicationRuleTypeSyncModePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *BucketReplicationRule) validateSyncMode(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.SyncMode) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateSyncModeEnum("syncMode", "body", *m.SyncMode); err != nil {
 		return err
 	}
 

@@ -17,7 +17,7 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, TextField } from "@material-ui/core";
+import { Button, IconButton, TextField } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
@@ -31,7 +31,6 @@ import {
   BucketReplication,
   BucketReplicationDestination,
   BucketReplicationRule,
-  BucketReplicationRuleDeleteMarker,
   HasPermissionResponse,
 } from "../types";
 import api from "../../../../common/api";
@@ -39,6 +38,7 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import AddReplicationModal from "./AddReplicationModal";
 import DeleteReplicationRule from "./DeleteReplicationRule";
 import { AppState } from "../../../../store";
+import RefreshIcon from "@material-ui/icons/Refresh";
 
 interface IBucketReplicationProps {
   classes: any;
@@ -171,10 +171,6 @@ const BucketReplicationPanel = ({
     return <Fragment>{events.bucket.replace("arn:aws:s3:::", "")}</Fragment>;
   };
 
-  const ruleDelDisplay = (events: BucketReplicationRuleDeleteMarker) => {
-    return null;
-  };
-
   const replicationTableActions: any = [
     {
       type: "delete",
@@ -220,6 +216,16 @@ const BucketReplicationPanel = ({
               ),
             }}
           />
+          <IconButton
+            color="primary"
+            aria-label="Refresh Replication Rules"
+            component="span"
+            onClick={() => {
+              setLoadingReplication(true);
+            }}
+          >
+            <RefreshIcon />
+          </IconButton>
           {canPutReplication && (
             <Button
               variant="contained"
@@ -250,11 +256,6 @@ const BucketReplicationPanel = ({
                 label: "Destination",
                 elementKey: "destination",
                 renderFunction: ruleDestDisplay,
-              },
-              {
-                label: "Delete Marker Replication",
-                elementKey: "delete_marker_replication",
-                renderFunction: ruleDelDisplay,
               },
               { label: "Status", elementKey: "status" },
             ]}

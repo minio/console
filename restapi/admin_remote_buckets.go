@@ -187,14 +187,20 @@ func listRemoteBuckets(ctx context.Context, client MinioAdmin) ([]*models.Remote
 	}
 	for _, bucket := range buckets {
 		remoteBucket := &models.RemoteBucket{
-			AccessKey:    swag.String(bucket.Credentials.AccessKey),
-			RemoteARN:    swag.String(bucket.Arn),
-			SecretKey:    bucket.Credentials.SecretKey,
-			Service:      "replication",
-			SourceBucket: swag.String(bucket.SourceBucket),
-			Status:       "",
-			TargetBucket: bucket.TargetBucket,
-			TargetURL:    bucket.Endpoint,
+			AccessKey:         swag.String(bucket.Credentials.AccessKey),
+			RemoteARN:         swag.String(bucket.Arn),
+			SecretKey:         bucket.Credentials.SecretKey,
+			Service:           "replication",
+			SourceBucket:      swag.String(bucket.SourceBucket),
+			Status:            "",
+			TargetBucket:      bucket.TargetBucket,
+			TargetURL:         bucket.Endpoint,
+			SyncMode:          "async",
+			Bandwidth:         bucket.BandwidthLimit,
+			HealthCheckPeriod: int64(bucket.HealthCheckDuration.Seconds()),
+		}
+		if bucket.ReplicationSync {
+			remoteBucket.SyncMode = "sync"
 		}
 		remoteBuckets = append(remoteBuckets, remoteBucket)
 	}

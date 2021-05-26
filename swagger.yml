@@ -3046,6 +3046,16 @@ definitions:
       priority:
         type: integer
         format: int32
+      syncMode:
+        type: string
+        enum:
+          - async
+          - sync
+        default: async
+      bandwidth:
+        type: string
+      healthCheckPeriod:
+        type: integer
       delete_marker_replication:
         $ref: "#/definitions/bucketReplicationRuleMarker"
       destination:
@@ -3523,6 +3533,13 @@ definitions:
       service:
         type: string
         enum: [ replication ]
+      syncMode:
+        type: string
+      bandwidth:
+        type: integer
+        format: int64
+      healthCheckPeriod:
+        type: integer
   createRemoteBucket:
     required:
       - accessKey
