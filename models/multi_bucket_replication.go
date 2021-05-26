@@ -53,8 +53,20 @@ type MultiBucketReplication struct {
 	// health check period
 	HealthCheckPeriod int32 `json:"healthCheckPeriod,omitempty"`
 
+	// prefix
+	Prefix string `json:"prefix,omitempty"`
+
 	// region
 	Region string `json:"region,omitempty"`
+
+	// replicate delete markers
+	ReplicateDeleteMarkers bool `json:"replicateDeleteMarkers,omitempty"`
+
+	// replicate deletes
+	ReplicateDeletes bool `json:"replicateDeletes,omitempty"`
+
+	// replicate metadata
+	ReplicateMetadata bool `json:"replicateMetadata,omitempty"`
 
 	// secret key
 	// Required: true
@@ -64,6 +76,9 @@ type MultiBucketReplication struct {
 	// sync mode
 	// Enum: [async sync]
 	SyncMode *string `json:"syncMode,omitempty"`
+
+	// tags
+	Tags string `json:"tags,omitempty"`
 
 	// target URL
 	// Required: true

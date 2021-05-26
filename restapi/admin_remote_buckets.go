@@ -271,7 +271,7 @@ func addRemoteBucket(ctx context.Context, client MinioAdmin, params models.Creat
 	return bucketARN, err
 }
 
-func addBucketReplicationItem(ctx context.Context, session *models.Principal, minClient minioClient, bucketName, arn, destinationBucket string) error {
+func addBucketReplicationItem(ctx context.Context, session *models.Principal, minClient minioClient, bucketName, prefix, arn, destinationBucket string, repDelMark, repDels, repMeta bool, tags string) error {
 	// we will tolerate this call failing
 	cfg, err := minClient.getBucketReplication(ctx, bucketName)
 	if err != nil {
@@ -287,7 +287,7 @@ func addBucketReplicationItem(ctx context.Context, session *models.Principal, mi
 	}
 	maxPrio++
 
-	s3Client, err := newS3BucketClient(session, bucketName, "")
+	s3Client, err := newS3BucketClient(session, bucketName, prefix)
 	if err != nil {
 		log.Println("error creating S3Client:", err)
 		return err
@@ -296,12 +296,32 @@ func addBucketReplicationItem(ctx context.Context, session *models.Principal, mi
 	// defining the client to be used
 	mcClient := mcClient{client: s3Client}
 
+	repDelMarkStatus := "disable"
+	if repDelMark {
+		repDelMarkStatus = "enable"
+	}
+
+	repDelsStatus := "disable"
+	if repDels {
+		repDelsStatus = "enable"
+	}
+
+	repMetaStatus := "disable"
+	if repMeta {
+		repMetaStatus = "enable"
+	}
+	log.Println("repMetaStatus is not yet implemented", repMetaStatus)
+
 	opts := replication.Options{
-		RoleArn:    arn,
-		Priority:   fmt.Sprintf("%d", maxPrio),
-		RuleStatus: "enable",
-		DestBucket: destinationBucket,
-		Op:         replication.AddOption,
+		RoleArn:                arn,
+		Priority:               fmt.Sprintf("%d", maxPrio),
+		RuleStatus:             "enable",
+		DestBucket:             destinationBucket,
+		Op:                     replication.AddOption,
+		TagString:              tags,
+		ReplicateDeleteMarkers: repDelMarkStatus,
+		ReplicateDeletes:       repDelsStatus,
+		//ReplicaSync:            repMetaStatus,
 	}
 
 	err2 := mcClient.setReplication(ctx, &cfg, opts)
@@ -339,7 +359,18 @@ func setMultiBucketReplication(ctx context.Context, session *models.Principal, c
 			arn, err := addRemoteBucket(ctx, client, createRemoteBucketParams)
 
 			if err == nil {
-				err = addBucketReplicationItem(ctx, session, minClient, sourceBucket, arn, targetBucket)
+				err = addBucketReplicationItem(
+					ctx,
+					session,
+					minClient,
+					sourceBucket,
+					params.Body.Prefix,
+					arn,
+					targetBucket,
+					params.Body.ReplicateDeleteMarkers,
+					params.Body.ReplicateDeletes,
+					params.Body.ReplicateMetadata,
+					params.Body.Tags)
 			}
 
 			var errorReturn = ""

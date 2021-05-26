@@ -5417,8 +5417,20 @@ func init() {
           "type": "integer",
           "format": "int32"
         },
+        "prefix": {
+          "type": "string"
+        },
         "region": {
           "type": "string"
+        },
+        "replicateDeleteMarkers": {
+          "type": "boolean"
+        },
+        "replicateDeletes": {
+          "type": "boolean"
+        },
+        "replicateMetadata": {
+          "type": "boolean"
         },
         "secretKey": {
           "type": "string",
@@ -5431,6 +5443,9 @@ func init() {
             "async",
             "sync"
           ]
+        },
+        "tags": {
+          "type": "string"
         },
         "targetURL": {
           "type": "string"
@@ -13158,8 +13173,20 @@ func init() {
           "type": "integer",
           "format": "int32"
         },
+        "prefix": {
+          "type": "string"
+        },
         "region": {
           "type": "string"
+        },
+        "replicateDeleteMarkers": {
+          "type": "boolean"
+        },
+        "replicateDeletes": {
+          "type": "boolean"
+        },
+        "replicateMetadata": {
+          "type": "boolean"
         },
         "secretKey": {
           "type": "string",
@@ -13172,6 +13199,9 @@ func init() {
             "async",
             "sync"
           ]
+        },
+        "tags": {
+          "type": "string"
         },
         "targetURL": {
           "type": "string"

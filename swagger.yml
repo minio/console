@@ -3125,6 +3125,16 @@ definitions:
       healthCheckPeriod:
         type: integer
         format: int32
+      prefix:
+        type: string
+      tags:
+        type: string
+      replicateDeleteMarkers:
+        type: boolean
+      replicateDeletes:
+        type: boolean
+      replicateMetadata:
+        type: boolean
       bucketsRelation:
         type: array
         minLength: 1

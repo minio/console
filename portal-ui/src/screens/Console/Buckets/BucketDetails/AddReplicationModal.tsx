@@ -29,6 +29,7 @@ import api from "../../../../common/api";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { getBytes, k8sfactorForDropdown } from "../../../../common/utils";
+import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
 
 interface IReplicationModal {
   open: boolean;
@@ -70,9 +71,15 @@ const AddReplicationModal = ({
   const [accessKey, setAccessKey] = useState<string>("");
   const [secretKey, setSecretKey] = useState<string>("");
   const [targetURL, setTargetURL] = useState<string>("");
+  const [targetStorageClass, setTargetStorageClass] = useState<string>("");
+  const [prefix, setPrefix] = useState<string>("");
   const [targetBucket, setTargetBucket] = useState<string>("");
   const [region, setRegion] = useState<string>("");
   const [useTLS, setUseTLS] = useState<boolean>(true);
+  const [repDeleteMarker, setRepDeleteMarker] = useState<boolean>(true);
+  const [repDelete, setRepDelete] = useState<boolean>(true);
+  const [repMetadata, setRepMetadata] = useState<boolean>(true);
+  const [tags, setTags] = useState<string>("");
   const [replicationMode, setReplicationMode] = useState<string>("async");
   const [bandwidthScalar, setBandwidthScalar] = useState<string>("100");
   const [bandwidthUnit, setBandwidthUnit] = useState<string>("Gi");
@@ -102,6 +109,11 @@ const AddReplicationModal = ({
           ? parseInt(getBytes(bandwidthScalar, bandwidthUnit, true))
           : 0,
       healthCheckPeriod: hc,
+      prefix: prefix,
+      tags: tags,
+      replicateDeleteMarkers: repDeleteMarker,
+      replicateDeletes: repDelete,
+      replicateMetadata: repMetadata,
     };
 
     api
@@ -154,28 +166,6 @@ const AddReplicationModal = ({
           <Grid item xs={12} className={classes.formScrollable}>
             <Grid item xs={12}>
               <InputBoxWrapper
-                id="accessKey"
-                name="accessKey"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setAccessKey(e.target.value);
-                }}
-                label="Access Key"
-                value={accessKey}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <InputBoxWrapper
-                id="secretKey"
-                name="secretKey"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setSecretKey(e.target.value);
-                }}
-                label="Secret Key"
-                value={secretKey}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <InputBoxWrapper
                 id="targetURL"
                 name="targetURL"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -196,6 +186,28 @@ const AddReplicationModal = ({
                   setUseTLS(e.target.checked);
                 }}
                 value="yes"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="accessKey"
+                name="accessKey"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setAccessKey(e.target.value);
+                }}
+                label="Access Key"
+                value={accessKey}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="secretKey"
+                name="secretKey"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setSecretKey(e.target.value);
+                }}
+                label="Secret Key"
+                value={secretKey}
               />
             </Grid>
             <Grid item xs={12}>
@@ -278,6 +290,88 @@ const AddReplicationModal = ({
                 value={healthCheck}
               />
             </Grid>
+            <h3>Object Filters</h3>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="prefix"
+                name="prefix"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setPrefix(e.target.value);
+                }}
+                placeholder="prefix"
+                label="Prefix"
+                value={prefix}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <QueryMultiSelector
+                name="tags"
+                label="Tags"
+                elements={""}
+                onChange={(vl: string) => {
+                  setTags(vl);
+                }}
+                keyPlaceholder="Tag Key"
+                valuePlaceholder="Tag Value"
+                withBorder
+              />
+            </Grid>
+            <h3>Storage Configuration</h3>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="storageClass"
+                name="storageClass"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setTargetStorageClass(e.target.value);
+                }}
+                placeholder="STANDARD_IA,REDUCED_REDUNDANCY etc"
+                label="Storage Class"
+                value={targetStorageClass}
+              />
+            </Grid>
+            <h3>Replication Options</h3>
+            <Grid item xs={12}>
+              <FormSwitchWrapper
+                checked={repDeleteMarker}
+                id="deleteMarker"
+                name="deleteMarker"
+                label="Delete Marker"
+                onChange={(e) => {
+                  console.log(e);
+                  console.log(e.target.checked);
+                  setRepDeleteMarker(e.target.checked);
+                }}
+                value={repDeleteMarker}
+                description={"Replicate soft deletes"}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormSwitchWrapper
+                checked={repDelete}
+                id="repDelete"
+                name="repDelete"
+                label="Deletes"
+                onChange={(e) => {
+                  setRepDelete(e.target.checked);
+                }}
+                value={repDelete}
+                description={"Replicate versioned deletes"}
+              />
+            </Grid>
+            {/*TODO: This will be enabled later on when we update the dependency on mc*/}
+            {/*<Grid item xs={12}>*/}
+            {/*  <FormSwitchWrapper*/}
+            {/*    checked={repMetadata}*/}
+            {/*    id="repMetadata"*/}
+            {/*    name="repMeta"*/}
+            {/*    label="Replicate Metadata"*/}
+            {/*    onChange={(e) => {*/}
+            {/*      setRepMetadata(e.target.checked);*/}
+            {/*    }}*/}
+            {/*    value={repMetadata}*/}
+            {/*    description={"Replicate object metadata"}*/}
+            {/*  />*/}
+            {/*</Grid>*/}
           </Grid>
           <Grid item xs={12} className={classes.buttonContainer}>
             <Button
