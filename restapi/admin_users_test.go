@@ -17,10 +17,13 @@
 package restapi
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"strings"
 	"testing"
+
+	iampolicy "github.com/minio/minio/pkg/iam/policy"
 
 	"github.com/minio/minio/pkg/madmin"
 
@@ -399,4 +402,159 @@ func TestUserGroupsBulk(t *testing.T) {
 	if err := addUsersListToGroups(ctx, adminClient, mockUsers, mockUserGroups); assert.Error(err) {
 		assert.Equal("error in users-groups assignation: \"error,error,error\"", err.Error())
 	}
+}
+
+func TestListUsersWithAccessToBucket(t *testing.T) {
+	assert := asrt.New(t)
+	ctx := context.Background()
+	adminClient := adminClientMock{}
+	user1 := madmin.UserInfo{SecretKey: "testtest",
+		PolicyName: "consoleAdmin,testPolicy,redundantPolicy",
+		Status:     "enabled",
+		MemberOf:   []string{"group1"},
+	}
+	user2 := madmin.UserInfo{SecretKey: "testtest",
+		PolicyName: "testPolicy, otherPolicy",
+		Status:     "enabled",
+		MemberOf:   []string{"group1"},
+	}
+	mockUsers := map[string]madmin.UserInfo{"testuser1": user1, "testuser2": user2}
+	minioListUsersMock = func() (map[string]madmin.UserInfo, error) {
+		return mockUsers, nil
+	}
+	policyMap := map[string]string{
+		"consoleAdmin": `{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "admin:*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:*"
+            ],
+            "Resource": [
+                "arn:aws:s3:::*"
+            ]
+        }
+    ]
+}`,
+		"testPolicy": `{
+				"Version": "2012-10-17",
+				"Statement": [
+			{
+				"Effect": "Deny",
+				"Action": [
+				"s3:*"
+			],
+				"Resource": [
+				"arn:aws:s3:::bucket1"
+			]
+			}
+			]
+			}`,
+		"otherPolicy": `{
+				"Version": "2012-10-17",
+				"Statement": [
+			{
+				"Effect": "Allow",
+				"Action": [
+				"s3:*"
+			],
+				"Resource": [
+				"arn:aws:s3:::bucket2"
+			]
+			}
+			]
+			}`,
+		"thirdPolicy": `{
+				"Version": "2012-10-17",
+				"Statement": [
+			{
+				"Effect": "Allow",
+				"Action": [
+				"s3:*"
+			],
+				"Resource": [
+				"arn:aws:s3:::bucket3"
+			]
+			}
+			]
+			}`, "RedundantPolicy": `{
+				"Version": "2012-10-17",
+				"Statement": [
+			{
+				"Effect": "Allow",
+				"Action": [
+				"s3:*"
+			],
+				"Resource": [
+				"arn:aws:s3:::bucket1"
+			]
+			}
+			]
+			}`,
+	}
+	minioGetPolicyMock = func(name string) (*iampolicy.Policy, error) {
+		iamp, err := iampolicy.ParseConfig(bytes.NewReader([]byte(policyMap[name])))
+		if err != nil {
+			return nil, err
+		}
+		return iamp, nil
+	}
+	minioListGroupsMock = func() ([]string, error) {
+		return []string{"group1"}, nil
+	}
+	minioGetGroupDescriptionMock = func(name string) (*madmin.GroupDesc, error) {
+		if name == "group1" {
+			mockResponse := &madmin.GroupDesc{
+				Name:    "group1",
+				Policy:  "thirdPolicy",
+				Members: []string{"testuser1", "testuser2"},
+				Status:  "enabled",
+			}
+			return mockResponse, nil
+		}
+		return nil, errorGeneric
+	}
+	type args struct {
+		bucket string
+	}
+	tests := []struct {
+		name string
+		args args
+		want []string
+	}{
+		{
+			name: "Test1",
+			args: args{bucket: "bucket0"},
+			want: []string{"testuser1"},
+		},
+		{
+			name: "Test2",
+			args: args{bucket: "bucket1"},
+			want: []string(nil),
+		},
+		{
+			name: "Test3",
+			args: args{bucket: "bucket2"},
+			want: []string{"testuser1", "testuser2"},
+		},
+		{
+			name: "Test4",
+			args: args{bucket: "bucket3"},
+			want: []string{"testuser1", "testuser2"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, _ := listUsersWithAccessToBucket(ctx, adminClient, tt.args.bucket)
+			assert.Equal(got, tt.want)
+		})
+	}
+
 }
