@@ -187,14 +187,20 @@ func listRemoteBuckets(ctx context.Context, client MinioAdmin) ([]*models.Remote
 	}
 	for _, bucket := range buckets {
 		remoteBucket := &models.RemoteBucket{
-			AccessKey:    swag.String(bucket.Credentials.AccessKey),
-			RemoteARN:    swag.String(bucket.Arn),
-			SecretKey:    bucket.Credentials.SecretKey,
-			Service:      "replication",
-			SourceBucket: swag.String(bucket.SourceBucket),
-			Status:       "",
-			TargetBucket: bucket.TargetBucket,
-			TargetURL:    bucket.Endpoint,
+			AccessKey:         swag.String(bucket.Credentials.AccessKey),
+			RemoteARN:         swag.String(bucket.Arn),
+			SecretKey:         bucket.Credentials.SecretKey,
+			Service:           "replication",
+			SourceBucket:      swag.String(bucket.SourceBucket),
+			Status:            "",
+			TargetBucket:      bucket.TargetBucket,
+			TargetURL:         bucket.Endpoint,
+			SyncMode:          "async",
+			Bandwidth:         bucket.BandwidthLimit,
+			HealthCheckPeriod: int64(bucket.HealthCheckDuration.Seconds()),
+		}
+		if bucket.ReplicationSync {
+			remoteBucket.SyncMode = "sync"
 		}
 		remoteBuckets = append(remoteBuckets, remoteBucket)
 	}
@@ -244,21 +250,28 @@ func addRemoteBucket(ctx context.Context, client MinioAdmin, params models.Creat
 	}
 	creds := &auth.Credentials{AccessKey: accessKey, SecretKey: secretKey}
 	remoteBucket := &madmin.BucketTarget{
-		TargetBucket: *params.TargetBucket,
-		Secure:       secure,
-		Credentials:  creds,
-		Endpoint:     host,
-		Path:         "",
-		API:          "s3v4",
-		Type:         "replication",
-		Region:       params.Region,
+		TargetBucket:    *params.TargetBucket,
+		Secure:          secure,
+		Credentials:     creds,
+		Endpoint:        host,
+		Path:            "",
+		API:             "s3v4",
+		Type:            "replication",
+		Region:          params.Region,
+		ReplicationSync: *params.SyncMode == "sync",
+	}
+	if *params.SyncMode == "async" {
+		remoteBucket.BandwidthLimit = params.Bandwidth
+	}
+	if params.HealthCheckPeriod > 0 {
+		remoteBucket.HealthCheckDuration = time.Duration(params.HealthCheckPeriod) * time.Second
 	}
 	bucketARN, err := client.addRemoteBucket(ctx, *params.SourceBucket, remoteBucket)
 
 	return bucketARN, err
 }
 
-func addBucketReplicationItem(ctx context.Context, session *models.Principal, minClient minioClient, bucketName, arn, destinationBucket string) error {
+func addBucketReplicationItem(ctx context.Context, session *models.Principal, minClient minioClient, bucketName, prefix, arn, destinationBucket string, repDelMark, repDels, repMeta bool, tags string) error {
 	// we will tolerate this call failing
 	cfg, err := minClient.getBucketReplication(ctx, bucketName)
 	if err != nil {
@@ -274,7 +287,7 @@ func addBucketReplicationItem(ctx context.Context, session *models.Principal, mi
 	}
 	maxPrio++
 
-	s3Client, err := newS3BucketClient(session, bucketName, "")
+	s3Client, err := newS3BucketClient(session, bucketName, prefix)
 	if err != nil {
 		log.Println("error creating S3Client:", err)
 		return err
@@ -283,12 +296,32 @@ func addBucketReplicationItem(ctx context.Context, session *models.Principal, mi
 	// defining the client to be used
 	mcClient := mcClient{client: s3Client}
 
+	repDelMarkStatus := "disable"
+	if repDelMark {
+		repDelMarkStatus = "enable"
+	}
+
+	repDelsStatus := "disable"
+	if repDels {
+		repDelsStatus = "enable"
+	}
+
+	repMetaStatus := "disable"
+	if repMeta {
+		repMetaStatus = "enable"
+	}
+	log.Println("repMetaStatus is not yet implemented", repMetaStatus)
+
 	opts := replication.Options{
-		RoleArn:    arn,
-		Priority:   fmt.Sprintf("%d", maxPrio),
-		RuleStatus: "enable",
-		DestBucket: destinationBucket,
-		Op:         replication.AddOption,
+		RoleArn:                arn,
+		Priority:               fmt.Sprintf("%d", maxPrio),
+		RuleStatus:             "enable",
+		DestBucket:             destinationBucket,
+		Op:                     replication.AddOption,
+		TagString:              tags,
+		ReplicateDeleteMarkers: repDelMarkStatus,
+		ReplicateDeletes:       repDelsStatus,
+		//ReplicaSync:            repMetaStatus,
 	}
 
 	err2 := mcClient.setReplication(ctx, &cfg, opts)
@@ -318,13 +351,26 @@ func setMultiBucketReplication(ctx context.Context, session *models.Principal, c
 				TargetBucket: &targetBucket,
 				Region:       params.Body.Region,
 				TargetURL:    params.Body.TargetURL,
+				SyncMode:     params.Body.SyncMode,
+				Bandwidth:    params.Body.Bandwidth,
 			}
 
 			// We add the remote bucket reference & store the arn or errors returned
 			arn, err := addRemoteBucket(ctx, client, createRemoteBucketParams)
 
 			if err == nil {
-				err = addBucketReplicationItem(ctx, session, minClient, sourceBucket, arn, targetBucket)
+				err = addBucketReplicationItem(
+					ctx,
+					session,
+					minClient,
+					sourceBucket,
+					params.Body.Prefix,
+					arn,
+					targetBucket,
+					params.Body.ReplicateDeleteMarkers,
+					params.Body.ReplicateDeletes,
+					params.Body.ReplicateMetadata,
+					params.Body.Tags)
 			}
 
 			var errorReturn = ""

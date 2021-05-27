@@ -36,6 +36,7 @@ import GenericWizard from "../../Common/GenericWizard/GenericWizard";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { SelectorTypes } from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
+import { getBytes, k8sfactorForDropdown } from "../../../../common/utils";
 
 interface IBulkReplicationModal {
   open: boolean;
@@ -93,6 +94,10 @@ const AddBulkReplicationModal = ({
   const [targetURL, setTargetURL] = useState<string>("");
   const [region, setRegion] = useState<string>("");
   const [useTLS, setUseTLS] = useState<boolean>(true);
+  const [replicationMode, setReplicationMode] = useState<string>("async");
+  const [bandwidthScalar, setBandwidthScalar] = useState<string>("100");
+  const [bandwidthUnit, setBandwidthUnit] = useState<string>("Gi");
+  const [healthCheck, setHealthCheck] = useState<string>("60");
   const [relationBuckets, setRelationBuckets] = useState<string[]>([]);
   const [remoteBucketsOpts, setRemoteBucketOpts] = useState<string[]>([]);
   const [responseItem, setResponseItem] = useState<BulkReplicationItem[]>([]);
@@ -131,12 +136,20 @@ const AddBulkReplicationModal = ({
     });
 
     const endURL = `${useTLS ? "https://" : "http://"}${targetURL}`;
+    const hc = parseInt(healthCheck);
+
     const remoteBucketsInfo = {
       accessKey: accessKey,
       secretKey: secretKey,
       targetURL: endURL,
       region: region,
       bucketsRelation: replicate,
+      syncMode: replicationMode,
+      bandwidth:
+        replicationMode === "async"
+          ? parseInt(getBytes(bandwidthScalar, bandwidthUnit, true))
+          : 0,
+      healthCheckPeriod: hc,
     };
 
     api
@@ -384,6 +397,67 @@ const AddBulkReplicationModal = ({
                     }}
                     label="Region"
                     value={region}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <SelectWrapper
+                    id="replication_mode"
+                    name="replication_mode"
+                    onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                      setReplicationMode(e.target.value as string);
+                    }}
+                    label="Replication Mode"
+                    value={replicationMode}
+                    options={[
+                      { label: "Asynchronous", value: "async" },
+                      { label: "Synchronous", value: "sync" },
+                    ]}
+                  />
+                </Grid>
+                {replicationMode === "async" && (
+                  <Grid item xs={12}>
+                    <div className={classes.multiContainer}>
+                      <div>
+                        <InputBoxWrapper
+                          type="number"
+                          id="bandwidth_scalar"
+                          name="bandwidth_scalar"
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            setBandwidthScalar(e.target.value as string);
+                          }}
+                          label="Bandwidth"
+                          value={bandwidthScalar}
+                          min="0"
+                        />
+                      </div>
+                      <div className={classes.sizeFactorContainer}>
+                        <SelectWrapper
+                          label={"Unit"}
+                          id="bandwidth_unit"
+                          name="bandwidth_unit"
+                          value={bandwidthUnit}
+                          onChange={(
+                            e: React.ChangeEvent<{ value: unknown }>
+                          ) => {
+                            setBandwidthUnit(e.target.value as string);
+                          }}
+                          options={k8sfactorForDropdown()}
+                        />
+                      </div>
+                    </div>
+                  </Grid>
+                )}
+                <Grid item xs={12}>
+                  <InputBoxWrapper
+                    id="healthCheck"
+                    name="healthCheck"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setHealthCheck(e.target.value as string);
+                    }}
+                    label="Health Check Duration"
+                    value={healthCheck}
                   />
                 </Grid>
               </Fragment>
