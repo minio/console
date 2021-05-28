@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -39,6 +41,12 @@ type CreateRemoteBucket struct {
 	// Min Length: 3
 	AccessKey *string `json:"accessKey"`
 
+	// bandwidth
+	Bandwidth int64 `json:"bandwidth,omitempty"`
+
+	// health check period
+	HealthCheckPeriod int32 `json:"healthCheckPeriod,omitempty"`
+
 	// region
 	Region string `json:"region,omitempty"`
 
@@ -50,6 +58,10 @@ type CreateRemoteBucket struct {
 	// source bucket
 	// Required: true
 	SourceBucket *string `json:"sourceBucket"`
+
+	// sync mode
+	// Enum: [async sync]
+	SyncMode *string `json:"syncMode,omitempty"`
 
 	// target bucket
 	// Required: true
@@ -73,6 +85,10 @@ func (m *CreateRemoteBucket) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateSourceBucket(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSyncMode(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -119,6 +135,49 @@ func (m *CreateRemoteBucket) validateSecretKey(formats strfmt.Registry) error {
 func (m *CreateRemoteBucket) validateSourceBucket(formats strfmt.Registry) error {
 
 	if err := validate.Required("sourceBucket", "body", m.SourceBucket); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var createRemoteBucketTypeSyncModePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["async","sync"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		createRemoteBucketTypeSyncModePropEnum = append(createRemoteBucketTypeSyncModePropEnum, v)
+	}
+}
+
+const (
+
+	// CreateRemoteBucketSyncModeAsync captures enum value "async"
+	CreateRemoteBucketSyncModeAsync string = "async"
+
+	// CreateRemoteBucketSyncModeSync captures enum value "sync"
+	CreateRemoteBucketSyncModeSync string = "sync"
+)
+
+// prop value enum
+func (m *CreateRemoteBucket) validateSyncModeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, createRemoteBucketTypeSyncModePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *CreateRemoteBucket) validateSyncMode(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.SyncMode) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateSyncModeEnum("syncMode", "body", *m.SyncMode); err != nil {
 		return err
 	}
 

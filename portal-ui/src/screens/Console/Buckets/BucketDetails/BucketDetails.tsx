@@ -208,11 +208,11 @@ const BucketDetails = ({
           }
           const actions = res.permissions ? res.permissions : [];
 
-          let canGetReplication = actions.find(
+          let canGetReplicationVal = actions.find(
             (s) => s.id === "GetReplicationConfiguration"
           );
 
-          if (canGetReplication && canGetReplication.can) {
+          if (canGetReplicationVal && canGetReplicationVal.can) {
             setCanGetReplication(true);
           } else {
             setCanGetReplication(false);

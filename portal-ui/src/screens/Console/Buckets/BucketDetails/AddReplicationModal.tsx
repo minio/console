@@ -26,6 +26,10 @@ import { setModalErrorSnackMessage } from "../../../../actions";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import api from "../../../../common/api";
+import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import { getBytes, k8sfactorForDropdown } from "../../../../common/utils";
+import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
 
 interface IReplicationModal {
   open: boolean;
@@ -48,6 +52,11 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
+    multiContainer: {
+      display: "flex",
+      alignItems: "center" as const,
+      justifyContent: "flex-start" as const,
+    },
     ...modalBasic,
   });
 
@@ -58,12 +67,23 @@ const AddReplicationModal = ({
   bucketName,
   setModalErrorSnackMessage,
 }: IReplicationModal) => {
-  const [addLoading, setAddLoading] = useState(false);
-  const [accessKey, setAccessKey] = useState("");
-  const [secretKey, setSecretKey] = useState("");
-  const [targetURL, setTargetURL] = useState("");
-  const [targetBucket, setTargetBucket] = useState("");
-  const [region, setRegion] = useState("");
+  const [addLoading, setAddLoading] = useState<boolean>(false);
+  const [accessKey, setAccessKey] = useState<string>("");
+  const [secretKey, setSecretKey] = useState<string>("");
+  const [targetURL, setTargetURL] = useState<string>("");
+  const [targetStorageClass, setTargetStorageClass] = useState<string>("");
+  const [prefix, setPrefix] = useState<string>("");
+  const [targetBucket, setTargetBucket] = useState<string>("");
+  const [region, setRegion] = useState<string>("");
+  const [useTLS, setUseTLS] = useState<boolean>(true);
+  const [repDeleteMarker, setRepDeleteMarker] = useState<boolean>(true);
+  const [repDelete, setRepDelete] = useState<boolean>(true);
+  const [repMetadata, setRepMetadata] = useState<boolean>(true);
+  const [tags, setTags] = useState<string>("");
+  const [replicationMode, setReplicationMode] = useState<string>("async");
+  const [bandwidthScalar, setBandwidthScalar] = useState<string>("100");
+  const [bandwidthUnit, setBandwidthUnit] = useState<string>("Gi");
+  const [healthCheck, setHealthCheck] = useState<string>("60");
 
   const addRecord = () => {
     const replicate = [
@@ -73,12 +93,27 @@ const AddReplicationModal = ({
       },
     ];
 
+    const hc = parseInt(healthCheck);
+
+    const endURL = `${useTLS ? "https://" : "http://"}${targetURL}`;
+
     const remoteBucketsInfo = {
       accessKey: accessKey,
       secretKey: secretKey,
-      targetURL: targetURL,
+      targetURL: endURL,
       region: region,
       bucketsRelation: replicate,
+      syncMode: replicationMode,
+      bandwidth:
+        replicationMode === "async"
+          ? parseInt(getBytes(bandwidthScalar, bandwidthUnit, true))
+          : 0,
+      healthCheckPeriod: hc,
+      prefix: prefix,
+      tags: tags,
+      replicateDeleteMarkers: repDeleteMarker,
+      replicateDeletes: repDelete,
+      replicateMetadata: repMetadata,
     };
 
     api
@@ -131,6 +166,30 @@ const AddReplicationModal = ({
           <Grid item xs={12} className={classes.formScrollable}>
             <Grid item xs={12}>
               <InputBoxWrapper
+                id="targetURL"
+                name="targetURL"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setTargetURL(e.target.value);
+                }}
+                placeholder="play.min.io"
+                label="Target URL"
+                value={targetURL}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormSwitchWrapper
+                checked={useTLS}
+                id="useTLS"
+                name="useTLS"
+                label="Use TLS"
+                onChange={(e) => {
+                  setUseTLS(e.target.checked);
+                }}
+                value="yes"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <InputBoxWrapper
                 id="accessKey"
                 name="accessKey"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,18 +208,6 @@ const AddReplicationModal = ({
                 }}
                 label="Secret Key"
                 value={secretKey}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <InputBoxWrapper
-                id="targetURL"
-                name="targetURL"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setTargetURL(e.target.value);
-                }}
-                placeholder="https://play.min.io:9000"
-                label="Target URL"
-                value={targetURL}
               />
             </Grid>
             <Grid item xs={12}>
@@ -185,6 +232,146 @@ const AddReplicationModal = ({
                 value={region}
               />
             </Grid>
+            <Grid item xs={12}>
+              <SelectWrapper
+                id="replication_mode"
+                name="replication_mode"
+                onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                  setReplicationMode(e.target.value as string);
+                }}
+                label="Replication Mode"
+                value={replicationMode}
+                options={[
+                  { label: "Asynchronous", value: "async" },
+                  { label: "Synchronous", value: "sync" },
+                ]}
+              />
+            </Grid>
+
+            {replicationMode === "async" && (
+              <Grid item xs={12}>
+                <div className={classes.multiContainer}>
+                  <div>
+                    <InputBoxWrapper
+                      type="number"
+                      id="bandwidth_scalar"
+                      name="bandwidth_scalar"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setBandwidthScalar(e.target.value as string);
+                      }}
+                      label="Bandwidth"
+                      value={bandwidthScalar}
+                      min="0"
+                    />
+                  </div>
+                  <div className={classes.sizeFactorContainer}>
+                    <SelectWrapper
+                      label={"Unit"}
+                      id="bandwidth_unit"
+                      name="bandwidth_unit"
+                      value={bandwidthUnit}
+                      onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                        setBandwidthUnit(e.target.value as string);
+                      }}
+                      options={k8sfactorForDropdown()}
+                    />
+                  </div>
+                </div>
+              </Grid>
+            )}
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="healthCheck"
+                name="healthCheck"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setHealthCheck(e.target.value as string);
+                }}
+                label="Health Check Duration"
+                value={healthCheck}
+              />
+            </Grid>
+            <h3>Object Filters</h3>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="prefix"
+                name="prefix"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setPrefix(e.target.value);
+                }}
+                placeholder="prefix"
+                label="Prefix"
+                value={prefix}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <QueryMultiSelector
+                name="tags"
+                label="Tags"
+                elements={""}
+                onChange={(vl: string) => {
+                  setTags(vl);
+                }}
+                keyPlaceholder="Tag Key"
+                valuePlaceholder="Tag Value"
+                withBorder
+              />
+            </Grid>
+            <h3>Storage Configuration</h3>
+            <Grid item xs={12}>
+              <InputBoxWrapper
+                id="storageClass"
+                name="storageClass"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setTargetStorageClass(e.target.value);
+                }}
+                placeholder="STANDARD_IA,REDUCED_REDUNDANCY etc"
+                label="Storage Class"
+                value={targetStorageClass}
+              />
+            </Grid>
+            <h3>Replication Options</h3>
+            <Grid item xs={12}>
+              <FormSwitchWrapper
+                checked={repDeleteMarker}
+                id="deleteMarker"
+                name="deleteMarker"
+                label="Delete Marker"
+                onChange={(e) => {
+                  console.log(e);
+                  console.log(e.target.checked);
+                  setRepDeleteMarker(e.target.checked);
+                }}
+                value={repDeleteMarker}
+                description={"Replicate soft deletes"}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormSwitchWrapper
+                checked={repDelete}
+                id="repDelete"
+                name="repDelete"
+                label="Deletes"
+                onChange={(e) => {
+                  setRepDelete(e.target.checked);
+                }}
+                value={repDelete}
+                description={"Replicate versioned deletes"}
+              />
+            </Grid>
+            {/*TODO: This will be enabled later on when we update the dependency on mc*/}
+            {/*<Grid item xs={12}>*/}
+            {/*  <FormSwitchWrapper*/}
+            {/*    checked={repMetadata}*/}
+            {/*    id="repMetadata"*/}
+            {/*    name="repMeta"*/}
+            {/*    label="Replicate Metadata"*/}
+            {/*    onChange={(e) => {*/}
+            {/*      setRepMetadata(e.target.checked);*/}
+            {/*    }}*/}
+            {/*    value={repMetadata}*/}
+            {/*    description={"Replicate object metadata"}*/}
+            {/*  />*/}
+            {/*</Grid>*/}
           </Grid>
           <Grid item xs={12} className={classes.buttonContainer}>
             <Button

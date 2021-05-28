@@ -17,7 +17,7 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, TextField } from "@material-ui/core";
+import { Button, IconButton, TextField } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
@@ -31,7 +31,6 @@ import {
   BucketReplication,
   BucketReplicationDestination,
   BucketReplicationRule,
-  BucketReplicationRuleDeleteMarker,
   HasPermissionResponse,
 } from "../types";
 import api from "../../../../common/api";
@@ -39,6 +38,7 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import AddReplicationModal from "./AddReplicationModal";
 import DeleteReplicationRule from "./DeleteReplicationRule";
 import { AppState } from "../../../../store";
+import RefreshIcon from "@material-ui/icons/Refresh";
 
 interface IBucketReplicationProps {
   classes: any;
@@ -63,7 +63,9 @@ const BucketReplicationPanel = ({
 }: IBucketReplicationProps) => {
   const [canPutReplication, setCanPutReplication] = useState<boolean>(false);
   const [loadingReplication, setLoadingReplication] = useState<boolean>(true);
-  const [replicationRules, setReplicationRules] = useState<any[]>([]);
+  const [replicationRules, setReplicationRules] = useState<
+    BucketReplicationRule[]
+  >([]);
   const [loadingPerms, setLoadingPerms] = useState<boolean>(true);
   const [canGetReplication, setCanGetReplication] = useState<boolean>(false);
   const [deleteReplicationModal, setDeleteReplicationModal] =
@@ -147,7 +149,7 @@ const BucketReplicationPanel = ({
 
   const closeAddReplication = () => {
     setOpenReplicationOpen(false);
-    //loadAllBucketData();
+    setLoadingReplication(true);
   };
 
   const setOpenReplicationOpen = (open = false) => {
@@ -171,15 +173,15 @@ const BucketReplicationPanel = ({
     return <Fragment>{events.bucket.replace("arn:aws:s3:::", "")}</Fragment>;
   };
 
-  const ruleDelDisplay = (events: BucketReplicationRuleDeleteMarker) => {
-    return null;
+  const tagDisplay = (events: BucketReplicationRule) => {
+    return <Fragment>{events && events.tags !== "" ? "Yes" : "No"}</Fragment>;
   };
 
   const replicationTableActions: any = [
     {
       type: "delete",
       onClick: confirmDeleteReplication,
-      disableButtonFunction: () => replicationRules.length <= 1,
+      disableButtonFunction: () => replicationRules.length > 1,
     },
   ];
 
@@ -220,6 +222,16 @@ const BucketReplicationPanel = ({
               ),
             }}
           />
+          <IconButton
+            color="primary"
+            aria-label="Refresh Replication Rules"
+            component="span"
+            onClick={() => {
+              setLoadingReplication(true);
+            }}
+          >
+            <RefreshIcon />
+          </IconButton>
           {canPutReplication && (
             <Button
               variant="contained"
@@ -241,7 +253,6 @@ const BucketReplicationPanel = ({
           <TableWrapper
             itemActions={replicationTableActions}
             columns={[
-              { label: "ID", elementKey: "id" },
               {
                 label: "Priority",
                 elementKey: "priority",
@@ -252,9 +263,13 @@ const BucketReplicationPanel = ({
                 renderFunction: ruleDestDisplay,
               },
               {
-                label: "Delete Marker Replication",
-                elementKey: "delete_marker_replication",
-                renderFunction: ruleDelDisplay,
+                label: "Prefix",
+                elementKey: "prefix",
+              },
+              {
+                label: "Tags",
+                elementKey: "tags",
+                renderFunction: tagDisplay,
               },
               { label: "Status", elementKey: "status" },
             ]}

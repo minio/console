@@ -73,8 +73,13 @@ export interface BucketReplicationRule {
   id: string;
   status: string;
   priority: number;
-  delete_marker_replication: BucketReplicationRuleDeleteMarker;
+  delete_marker_replication: boolean;
+  deletes_replication: boolean;
+  metadata_replication: boolean;
+  prefix?: string;
+  tags?: string;
   Destination: BucketReplicationDestination;
+  syncMode: string;
 }
 
 export interface BucketReplication {

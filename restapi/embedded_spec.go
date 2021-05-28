@@ -4286,13 +4286,28 @@ func init() {
     "bucketReplicationRule": {
       "type": "object",
       "properties": {
+        "bandwidth": {
+          "type": "string"
+        },
         "delete_marker_replication": {
-          "$ref": "#/definitions/bucketReplicationRuleMarker"
+          "type": "boolean"
+        },
+        "deletes_replication": {
+          "type": "boolean"
         },
         "destination": {
           "$ref": "#/definitions/bucketReplicationDestination"
         },
+        "healthCheckPeriod": {
+          "type": "integer"
+        },
         "id": {
+          "type": "string"
+        },
+        "metadata_replication": {
+          "type": "boolean"
+        },
+        "prefix": {
           "type": "string"
         },
         "priority": {
@@ -4305,18 +4320,17 @@ func init() {
             "Enabled",
             "Disabled"
           ]
-        }
-      }
-    },
-    "bucketReplicationRuleMarker": {
-      "type": "object",
-      "properties": {
-        "status": {
+        },
+        "syncMode": {
           "type": "string",
+          "default": "async",
           "enum": [
-            "Enabled",
-            "Disabled"
+            "async",
+            "sync"
           ]
+        },
+        "tags": {
+          "type": "string"
         }
       }
     },
@@ -4413,6 +4427,14 @@ func init() {
           "type": "string",
           "minLength": 3
         },
+        "bandwidth": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "healthCheckPeriod": {
+          "type": "integer",
+          "format": "int32"
+        },
         "region": {
           "type": "string"
         },
@@ -4422,6 +4444,14 @@ func init() {
         },
         "sourceBucket": {
           "type": "string"
+        },
+        "syncMode": {
+          "type": "string",
+          "default": "async",
+          "enum": [
+            "async",
+            "sync"
+          ]
         },
         "targetBucket": {
           "type": "string"
@@ -5372,6 +5402,10 @@ func init() {
           "type": "string",
           "minLength": 3
         },
+        "bandwidth": {
+          "type": "integer",
+          "format": "int64"
+        },
         "bucketsRelation": {
           "type": "array",
           "minLength": 1,
@@ -5379,12 +5413,39 @@ func init() {
             "$ref": "#/definitions/multiBucketsRelation"
           }
         },
+        "healthCheckPeriod": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "prefix": {
+          "type": "string"
+        },
         "region": {
           "type": "string"
+        },
+        "replicateDeleteMarkers": {
+          "type": "boolean"
+        },
+        "replicateDeletes": {
+          "type": "boolean"
+        },
+        "replicateMetadata": {
+          "type": "boolean"
         },
         "secretKey": {
           "type": "string",
           "minLength": 8
+        },
+        "syncMode": {
+          "type": "string",
+          "default": "async",
+          "enum": [
+            "async",
+            "sync"
+          ]
+        },
+        "tags": {
+          "type": "string"
         },
         "targetURL": {
           "type": "string"
@@ -6196,6 +6257,13 @@ func init() {
           "type": "string",
           "minLength": 3
         },
+        "bandwidth": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "healthCheckPeriod": {
+          "type": "integer"
+        },
         "remoteARN": {
           "type": "string"
         },
@@ -6213,6 +6281,9 @@ func init() {
           "type": "string"
         },
         "status": {
+          "type": "string"
+        },
+        "syncMode": {
           "type": "string"
         },
         "targetBucket": {
@@ -11983,13 +12054,28 @@ func init() {
     "bucketReplicationRule": {
       "type": "object",
       "properties": {
+        "bandwidth": {
+          "type": "string"
+        },
         "delete_marker_replication": {
-          "$ref": "#/definitions/bucketReplicationRuleMarker"
+          "type": "boolean"
+        },
+        "deletes_replication": {
+          "type": "boolean"
         },
         "destination": {
           "$ref": "#/definitions/bucketReplicationDestination"
         },
+        "healthCheckPeriod": {
+          "type": "integer"
+        },
         "id": {
+          "type": "string"
+        },
+        "metadata_replication": {
+          "type": "boolean"
+        },
+        "prefix": {
           "type": "string"
         },
         "priority": {
@@ -12002,18 +12088,17 @@ func init() {
             "Enabled",
             "Disabled"
           ]
-        }
-      }
-    },
-    "bucketReplicationRuleMarker": {
-      "type": "object",
-      "properties": {
-        "status": {
+        },
+        "syncMode": {
           "type": "string",
+          "default": "async",
           "enum": [
-            "Enabled",
-            "Disabled"
+            "async",
+            "sync"
           ]
+        },
+        "tags": {
+          "type": "string"
         }
       }
     },
@@ -12110,6 +12195,14 @@ func init() {
           "type": "string",
           "minLength": 3
         },
+        "bandwidth": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "healthCheckPeriod": {
+          "type": "integer",
+          "format": "int32"
+        },
         "region": {
           "type": "string"
         },
@@ -12119,6 +12212,14 @@ func init() {
         },
         "sourceBucket": {
           "type": "string"
+        },
+        "syncMode": {
+          "type": "string",
+          "default": "async",
+          "enum": [
+            "async",
+            "sync"
+          ]
         },
         "targetBucket": {
           "type": "string"
@@ -13057,6 +13158,10 @@ func init() {
           "type": "string",
           "minLength": 3
         },
+        "bandwidth": {
+          "type": "integer",
+          "format": "int64"
+        },
         "bucketsRelation": {
           "type": "array",
           "minLength": 1,
@@ -13064,12 +13169,39 @@ func init() {
             "$ref": "#/definitions/multiBucketsRelation"
           }
         },
+        "healthCheckPeriod": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "prefix": {
+          "type": "string"
+        },
         "region": {
           "type": "string"
+        },
+        "replicateDeleteMarkers": {
+          "type": "boolean"
+        },
+        "replicateDeletes": {
+          "type": "boolean"
+        },
+        "replicateMetadata": {
+          "type": "boolean"
         },
         "secretKey": {
           "type": "string",
           "minLength": 8
+        },
+        "syncMode": {
+          "type": "string",
+          "default": "async",
+          "enum": [
+            "async",
+            "sync"
+          ]
+        },
+        "tags": {
+          "type": "string"
         },
         "targetURL": {
           "type": "string"
@@ -13746,6 +13878,13 @@ func init() {
           "type": "string",
           "minLength": 3
         },
+        "bandwidth": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "healthCheckPeriod": {
+          "type": "integer"
+        },
         "remoteARN": {
           "type": "string"
         },
@@ -13763,6 +13902,9 @@ func init() {
           "type": "string"
         },
         "status": {
+          "type": "string"
+        },
+        "syncMode": {
           "type": "string"
         },
         "targetBucket": {

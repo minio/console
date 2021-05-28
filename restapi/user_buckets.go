@@ -212,9 +212,22 @@ func getBucketReplicationdResponse(session *models.Principal, bucketName string)
 	var rules []*models.BucketReplicationRule
 
 	for _, rule := range res.Rules {
+
+		repDelMarkerStatus := false
+		if rule.DeleteMarkerReplication.Status == "enable" {
+			repDelMarkerStatus = true
+		}
+		repDelStatus := false
+		if rule.DeleteReplication.Status == "enable" {
+			repDelMarkerStatus = true
+		}
+
 		rules = append(rules, &models.BucketReplicationRule{
-			DeleteMarkerReplication: &models.BucketReplicationRuleMarker{Status: string(rule.DeleteMarkerReplication.Status)},
+			DeleteMarkerReplication: repDelMarkerStatus,
+			DeletesReplication:      repDelStatus,
 			Destination:             &models.BucketReplicationDestination{Bucket: rule.Destination.Bucket},
+			Tags:                    rule.Tags(),
+			Prefix:                  rule.Prefix(),
 			ID:                      rule.ID,
 			Priority:                int32(rule.Priority),
 			Status:                  string(rule.Status),

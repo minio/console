@@ -3020,14 +3020,6 @@ definitions:
         $ref: "#/definitions/notificationConfig"
       ignoreExisting:
         type: boolean
-  bucketReplicationRuleMarker:
-    type: object
-    properties:
-      status:
-        type: string
-        enum:
-          - Enabled
-          - Disabled
   bucketReplicationDestination:
     type: object
     properties:
@@ -3046,8 +3038,26 @@ definitions:
       priority:
         type: integer
         format: int32
+      syncMode:
+        type: string
+        enum:
+          - async
+          - sync
+        default: async
+      bandwidth:
+        type: string
+      healthCheckPeriod:
+        type: integer
       delete_marker_replication:
-        $ref: "#/definitions/bucketReplicationRuleMarker"
+        type: boolean
+      deletes_replication:
+        type: boolean
+      metadata_replication:
+        type: boolean
+      prefix:
+        type: string
+      tags:
+        type: string
       destination:
         $ref: "#/definitions/bucketReplicationDestination"
 
@@ -3103,6 +3113,28 @@ definitions:
         type: string
       region:
         type: string
+      syncMode:
+        type: string
+        enum:
+          - async
+          - sync
+        default: async
+      bandwidth:
+        type: integer
+        format: int64
+      healthCheckPeriod:
+        type: integer
+        format: int32
+      prefix:
+        type: string
+      tags:
+        type: string
+      replicateDeleteMarkers:
+        type: boolean
+      replicateDeletes:
+        type: boolean
+      replicateMetadata:
+        type: boolean
       bucketsRelation:
         type: array
         minLength: 1
@@ -3511,6 +3543,13 @@ definitions:
       service:
         type: string
         enum: [ replication ]
+      syncMode:
+        type: string
+      bandwidth:
+        type: integer
+        format: int64
+      healthCheckPeriod:
+        type: integer
   createRemoteBucket:
     required:
       - accessKey
@@ -3533,6 +3572,18 @@ definitions:
         type: string
       region:
         type: string
+      syncMode:
+        type: string
+        enum:
+          - async
+          - sync
+        default: async
+      bandwidth:
+        type: integer
+        format: int64
+      healthCheckPeriod:
+        type: integer
+        format: int32
   listRemoteBucketsResponse:
     type: object
     properties:
