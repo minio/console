@@ -41,6 +41,7 @@ import ChangeUserGroups from "./ChangeUserGroups";
 import SetUserPolicies from "./SetUserPolicies";
 import { Bookmark } from "@material-ui/icons";
 import history from "../../../history";
+import UserServiceAccountsPanel from "./UserServiceAccountsPanel";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -269,7 +270,8 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                 scrollButtons="auto"
               >
                 <Tab label="Groups" {...a11yProps(0)} />
-                <Tab label="Policies" {...a11yProps(0)} />
+                <Tab label="Service Accounts" {...a11yProps(2)} />
+                <Tab label="Policies" {...a11yProps(1)} />
               </Tabs>
             </Grid>
             <Grid item xs={3} className={classes.actionsTray}>
@@ -286,7 +288,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                   Add to Groups
                 </Button>
               )}
-              {curTab === 1 && (
+              {curTab === 2 && (
                 <Fragment>
                   <Button
                     variant="contained"
@@ -314,8 +316,10 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                 idField="group"
               />
             </TabPanel>
-
             <TabPanel index={1} value={curTab}>
+              <UserServiceAccountsPanel user={userName} />
+            </TabPanel>
+            <TabPanel index={2} value={curTab}>
               <TableWrapper
                 itemActions={[
                   {

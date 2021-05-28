@@ -1220,6 +1220,27 @@ paths:
       tags:
         - AdminAPI
 
+  /users/{name}/service-accounts:
+    get:
+      summary: returns a list of service accounts for a user
+      operationId: ListAUserServiceAccounts
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/serviceAccounts"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
   /users-groups-bulk:
     put:
       summary: Bulk functionality to Add Users to Groups
