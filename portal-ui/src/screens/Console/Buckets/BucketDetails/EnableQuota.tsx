@@ -23,7 +23,6 @@ import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/For
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import { factorForDropdown, getBytes, units } from "../../../../common/utils";
 import { BucketQuota } from "../types";
-import { addBucketQuota, setBucketDetailsTab } from "../actions";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
@@ -89,7 +88,7 @@ const EnableQuota = ({
         let maxQuota = cfg.quota;
 
         for (let i = 0; i < units.length; i++) {
-          if (cfg.quota % Math.pow(1024, i) == 0) {
+          if (cfg.quota % Math.pow(1024, i) === 0) {
             maxQuota = cfg.quota / Math.pow(1024, i);
             maxUnit = units[i];
           } else {
@@ -100,7 +99,7 @@ const EnableQuota = ({
         setQuotaUnit(maxUnit);
       }
     }
-  }, [enabled]);
+  }, [enabled, cfg]);
 
   const enableBucketEncryption = (event: React.FormEvent) => {
     event.preventDefault();
