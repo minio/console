@@ -40,6 +40,15 @@ func registerBucketQuotaHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewSetBucketQuotaOK()
 	})
+
+	// get bucket quota
+	api.UserAPIGetBucketQuotaHandler = user_api.GetBucketQuotaHandlerFunc(func(params user_api.GetBucketQuotaParams, session *models.Principal) middleware.Responder {
+		resp, err := getBucketQuotaResponse(session, params)
+		if err != nil {
+			return user_api.NewGetBucketQuotaDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewGetBucketQuotaOK().WithPayload(resp)
+	})
 }
 
 func setBucketQuotaResponse(session *models.Principal, params user_api.SetBucketQuotaParams) *models.Error {
@@ -84,4 +93,35 @@ func setBucketQuota(ctx context.Context, ac *adminClient, bucket *string, bucket
 		}
 	}
 	return nil
+}
+
+func getBucketQuotaResponse(session *models.Principal, params user_api.GetBucketQuotaParams) (*models.BucketQuota, *models.Error) {
+	mAdmin, err := newMAdminClient(session)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := adminClient{client: mAdmin}
+	quota, err := getBucketQuota(params.HTTPRequest.Context(), &adminClient, &params.Name)
+	if err != nil {
+		return nil, &models.Error{
+			Code:    500,
+			Message: swag.String(err.Error()),
+		}
+	}
+	return quota, nil
+}
+
+func getBucketQuota(ctx context.Context, ac *adminClient, bucket *string) (*models.BucketQuota, error) {
+
+	quota, err := ac.getBucketQuota(ctx, *bucket)
+	if err != nil {
+		return nil, err
+	}
+
+	return &models.BucketQuota{
+		Quota: int64(quota.Quota),
+		Type:  string(quota.Type),
+	}, nil
 }

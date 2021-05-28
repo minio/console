@@ -28,6 +28,7 @@ import {
   BucketEncryptionInfo,
   BucketInfo,
   BucketObjectLocking,
+  BucketQuota,
   BucketReplication,
   BucketVersioning,
 } from "../types";
@@ -43,6 +44,8 @@ import SetRetentionConfig from "./SetRetentionConfig";
 import EnableBucketEncryption from "./EnableBucketEncryption";
 import EnableVersioningModal from "./EnableVersioningModal";
 import UsageIcon from "../../../../icons/UsageIcon";
+import GavelIcon from "@material-ui/icons/Gavel";
+import EnableQuota from "./EnableQuota";
 
 interface IBucketSummaryProps {
   classes: any;
@@ -71,6 +74,12 @@ const styles = (theme: Theme) =>
     reportedUsage: {
       padding: "15px",
     },
+    dualCardLeft: {
+      paddingRight: "5px",
+    },
+    dualCardRight: {
+      paddingLeft: "5px",
+    },
     ...hrClass,
     ...buttonsStyles,
   });
@@ -93,12 +102,17 @@ const BucketSummary = ({
   const [loadingBucket, setLoadingBucket] = useState<boolean>(true);
   const [loadingEncryption, setLoadingEncryption] = useState<boolean>(true);
   const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
+  const [loadingQuota, setLoadingQuota] = useState<boolean>(true);
   const [loadingReplication, setLoadingReplication] = useState<boolean>(true);
   const [isVersioned, setIsVersioned] = useState<boolean>(false);
+  const [quotaEnabled, setQuotaEnabled] = useState<boolean>(false);
+  const [quota, setQuota] = useState<BucketQuota | null>(null);
   const [encryptionEnabled, setEncryptionEnabled] = useState<boolean>(false);
   const [retentionConfigOpen, setRetentionConfigOpen] =
     useState<boolean>(false);
   const [enableEncryptionScreenOpen, setEnableEncryptionScreenOpen] =
+    useState<boolean>(false);
+  const [enableQuotaScreenOpen, setEnableQuotaScreenOpen] =
     useState<boolean>(false);
   const [enableVersioningOpen, setEnableVersioningOpen] =
     useState<boolean>(false);
@@ -165,6 +179,27 @@ const BucketSummary = ({
         });
     }
   }, [loadingVersioning, setErrorSnackMessage, bucketName]);
+
+  useEffect(() => {
+    if (loadingQuota) {
+      api
+        .invoke("GET", `/api/v1/buckets/${bucketName}/quota`)
+        .then((res: BucketQuota) => {
+          setQuota(res);
+          if (res.quota) {
+            setQuotaEnabled(true);
+          } else {
+            setQuotaEnabled(false);
+          }
+          setLoadingQuota(false);
+        })
+        .catch((err: any) => {
+          setErrorSnackMessage(err);
+          setQuotaEnabled(false);
+          setLoadingVersioning(false);
+        });
+    }
+  }, [loadingQuota, setLoadingVersioning, setErrorSnackMessage, bucketName]);
 
   useEffect(() => {
     if (loadingVersioning) {
@@ -234,10 +269,17 @@ const BucketSummary = ({
   const setBucketVersioning = () => {
     setEnableVersioningOpen(true);
   };
+  const setBucketQuota = () => {
+    setEnableQuotaScreenOpen(true);
+  };
 
   const closeEnableBucketEncryption = () => {
     setEnableEncryptionScreenOpen(false);
-    loadAllBucketData();
+    setLoadingEncryption(true);
+  };
+  const closeEnableBucketQuota = () => {
+    setEnableQuotaScreenOpen(false);
+    setLoadingQuota(true);
   };
 
   const closeSetAccessPolicy = () => {
@@ -257,6 +299,13 @@ const BucketSummary = ({
     }
   };
 
+  const cap = (str: string) => {
+    if (!str) {
+      return null;
+    }
+    return str[0].toUpperCase() + str.slice(1);
+  };
+
   return (
     <Fragment>
       {enableEncryptionScreenOpen && (
@@ -266,6 +315,15 @@ const BucketSummary = ({
           encryptionEnabled={encryptionEnabled}
           encryptionCfg={encryptionCfg}
           closeModalAndRefresh={closeEnableBucketEncryption}
+        />
+      )}
+      {enableQuotaScreenOpen && (
+        <EnableQuota
+          open={enableQuotaScreenOpen}
+          selectedBucket={bucketName}
+          enabled={quotaEnabled}
+          cfg={quota}
+          closeModalAndRefresh={closeEnableBucketQuota}
         />
       )}
       {accessPolicyScreenOpen && (
@@ -381,10 +439,10 @@ const BucketSummary = ({
       <br />
       <Paper className={classes.paperContainer}>
         <Grid container>
-          <Grid item xs={12}>
+          <Grid item xs={quotaEnabled ? 9 : 12}>
             <h2>Versioning</h2>
             <hr className={classes.hrClass} />
-            <table>
+            <table width={"100%"}>
               <tbody>
                 <tr>
                   <td className={classes.titleCol}>Versioning:</td>
@@ -407,10 +465,47 @@ const BucketSummary = ({
                       </Fragment>
                     )}
                   </td>
+                  <td className={classes.titleCol}>Quota:</td>
+                  <td>
+                    {loadingQuota ? (
+                      <CircularProgress
+                        color="primary"
+                        size={16}
+                        variant="indeterminate"
+                      />
+                    ) : (
+                      <Fragment>
+                        <Button
+                          color="primary"
+                          className={classes.anchorButton}
+                          onClick={setBucketQuota}
+                        >
+                          {quotaEnabled ? "Enabled" : "Disabled"}
+                        </Button>
+                      </Fragment>
+                    )}
+                  </td>
                 </tr>
               </tbody>
             </table>
           </Grid>
+          {quotaEnabled && quota && (
+            <Grid item xs={3} className={classes.reportedUsage}>
+              <Grid container direction="row" alignItems="center">
+                <Grid item className={classes.icon} xs={2}>
+                  <GavelIcon />
+                </Grid>
+                <Grid item xs={10}>
+                  <Typography className={classes.elementTitle}>
+                    {cap(quota?.type)} Quota
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Typography className={classes.consumptionValue}>
+                {niceBytes(`${quota?.quota}`)}
+              </Typography>
+            </Grid>
+          )}
         </Grid>
       </Paper>
       <br />
