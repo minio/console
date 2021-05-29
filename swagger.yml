@@ -597,7 +597,7 @@ paths:
         200:
           description: A successful response.
           schema:
-            $ref: "#/definitions/listObjectsResponse"
+            $ref: "#/definitions/bucketQuota"
         default:
           description: Generic error response.
           schema:
@@ -3192,6 +3192,16 @@ definitions:
     properties:
       access:
         $ref: "#/definitions/bucketAccess"
+  bucketQuota:
+    type: object
+    properties:
+      quota:
+        type: integer
+      type:
+        type: string
+        enum:
+          - hard
+          - fifo
   setBucketQuota:
     type: object
     required:
