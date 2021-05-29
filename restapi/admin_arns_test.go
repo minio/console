@@ -49,6 +49,6 @@ func TestArnsList(t *testing.T) {
 
 	arnsList, err = getArns(ctx, adminClient)
 	assert.Nil(arnsList, "arn list was not returned nil")
-	assert.NotNil(err, "An error should have ben returned")
+	assert.NotNil(err, "An error should have been returned")
 
 }

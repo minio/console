@@ -17,6 +17,10 @@
 package restapi
 
 import (
+	"sort"
+
+	iampolicy "github.com/minio/minio/pkg/iam/policy"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -29,6 +33,10 @@ import (
 	"log"
 	"strings"
 )
+
+const Allow = 1
+const Deny = -1
+const Unknown = 0
 
 func registerUsersHandlers(api *operations.ConsoleAPI) {
 	// List Users
@@ -487,23 +495,49 @@ func getListUsersWithAccessToBucketResponse(session *models.Principal, bucket st
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
 
-	users, err := listUsers(ctx, adminClient)
+	return listUsersWithAccessToBucket(ctx, adminClient, bucket)
+}
+
+func policyAllowsAndMatchesBucket(policy *iampolicy.Policy, bucket string) int {
+	policyStatements := policy.Statements
+	for i := 0; i < len(policyStatements); i++ {
+		resources := policyStatements[i].Resources
+		effect := policyStatements[i].Effect
+		if resources.Match(bucket, map[string][]string{}) {
+			if effect.IsValid() {
+				if effect.IsAllowed(true) {
+					return Allow
+				}
+				return Deny
+			}
+		}
+	}
+	return Unknown
+}
+
+func listUsersWithAccessToBucket(ctx context.Context, adminClient MinioAdmin, bucket string) ([]string, *models.Error) {
+	users, err := adminClient.listUsers(ctx)
 	if err != nil {
 		return nil, prepareError(err)
 	}
 	var retval []string
-	seen := make(map[string]bool)
-	for i := 0; i < len(users); i++ {
-		for _, policyName := range users[i].Policy {
+	akHasAccess := make(map[string]bool)
+	akIsDenied := make(map[string]bool)
+	for k, v := range users {
+		for _, policyName := range strings.Split(v.PolicyName, ",") {
+			policyName = strings.TrimSpace(policyName)
 			policy, err := adminClient.getPolicy(ctx, policyName)
 			if err == nil {
-				parsedPolicy, err2 := parsePolicy(policyName, policy)
-				if err2 == nil && policyMatchesBucket(parsedPolicy, bucket) && !seen[users[i].AccessKey] {
-					retval = append(retval, users[i].AccessKey)
-					seen[users[i].AccessKey] = true
-				}
-				if err2 != nil {
-					log.Println(err2)
+				if !akIsDenied[k] {
+					switch policyAllowsAndMatchesBucket(policy, bucket) {
+					case Allow:
+						if !akHasAccess[k] {
+							akHasAccess[k] = true
+						}
+					case Deny:
+						akIsDenied[k] = true
+						akHasAccess[k] = false
+					}
 				}
 			} else {
 				log.Println(err)
@@ -521,14 +555,17 @@ func getListUsersWithAccessToBucketResponse(session *models.Principal, bucket st
 		if err == nil {
 			policy, err2 := adminClient.getPolicy(ctx, info.Policy)
 			if err2 == nil {
-				parsedPolicy, err3 := parsePolicy(info.Policy, policy)
 				for j := 0; j < len(info.Members); j++ {
-					if err3 == nil && !seen[info.Members[j]] && policyMatchesBucket(parsedPolicy, bucket) {
-						retval = append(retval, info.Members[j])
-						seen[info.Members[j]] = true
-					}
-					if err3 != nil {
-						log.Println(err3)
+					if !akIsDenied[info.Members[j]] {
+						switch policyAllowsAndMatchesBucket(policy, bucket) {
+						case Allow:
+							if !akHasAccess[info.Members[j]] {
+								akHasAccess[info.Members[j]] = true
+							}
+						case Deny:
+							akIsDenied[info.Members[j]] = true
+							akHasAccess[info.Members[j]] = false
+						}
 					}
 				}
 			} else {
@@ -538,5 +575,11 @@ func getListUsersWithAccessToBucketResponse(session *models.Principal, bucket st
 			log.Println(err)
 		}
 	}
+	for k, v := range akHasAccess {
+		if v {
+			retval = append(retval, k)
+		}
+	}
+	sort.Strings(retval)
 	return retval, nil
 }

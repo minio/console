@@ -1586,7 +1586,7 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/listObjectsResponse"
+              "$ref": "#/definitions/bucketQuota"
             }
           },
           "default": {
@@ -3895,6 +3895,37 @@ func init() {
           }
         }
       }
+    },
+    "/users/{name}/service-accounts": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "returns a list of service accounts for a user",
+        "operationId": "ListAUserServiceAccounts",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceAccounts"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -4261,6 +4292,21 @@ func init() {
         },
         "version_id": {
           "type": "string"
+        }
+      }
+    },
+    "bucketQuota": {
+      "type": "object",
+      "properties": {
+        "quota": {
+          "type": "integer"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "hard",
+            "fifo"
+          ]
         }
       }
     },
@@ -8714,7 +8760,7 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/listObjectsResponse"
+              "$ref": "#/definitions/bucketQuota"
             }
           },
           "default": {
@@ -11023,6 +11069,37 @@ func init() {
           }
         }
       }
+    },
+    "/users/{name}/service-accounts": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "returns a list of service accounts for a user",
+        "operationId": "ListAUserServiceAccounts",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceAccounts"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -12029,6 +12106,21 @@ func init() {
         },
         "version_id": {
           "type": "string"
+        }
+      }
+    },
+    "bucketQuota": {
+      "type": "object",
+      "properties": {
+        "quota": {
+          "type": "integer"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "hard",
+            "fifo"
+          ]
         }
       }
     },

@@ -42,7 +42,7 @@ type GetBucketQuotaOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.ListObjectsResponse `json:"body,omitempty"`
+	Payload *models.BucketQuota `json:"body,omitempty"`
 }
 
 // NewGetBucketQuotaOK creates GetBucketQuotaOK with default headers values
@@ -52,13 +52,13 @@ func NewGetBucketQuotaOK() *GetBucketQuotaOK {
 }
 
 // WithPayload adds the payload to the get bucket quota o k response
-func (o *GetBucketQuotaOK) WithPayload(payload *models.ListObjectsResponse) *GetBucketQuotaOK {
+func (o *GetBucketQuotaOK) WithPayload(payload *models.BucketQuota) *GetBucketQuotaOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get bucket quota o k response
-func (o *GetBucketQuotaOK) SetPayload(payload *models.ListObjectsResponse) {
+func (o *GetBucketQuotaOK) SetPayload(payload *models.BucketQuota) {
 	o.Payload = payload
 }
 
