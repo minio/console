@@ -3895,6 +3895,37 @@ func init() {
           }
         }
       }
+    },
+    "/users/{name}/service-accounts": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "returns a list of service accounts for a user",
+        "operationId": "ListAUserServiceAccounts",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceAccounts"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -11028,6 +11059,37 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/user"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/users/{name}/service-accounts": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "returns a list of service accounts for a user",
+        "operationId": "ListAUserServiceAccounts",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceAccounts"
             }
           },
           "default": {

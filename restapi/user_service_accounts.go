@@ -22,6 +22,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/minio/console/restapi/operations/admin_api"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
@@ -40,7 +42,7 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 	})
 	// List Service Accounts for User
 	api.UserAPIListUserServiceAccountsHandler = user_api.ListUserServiceAccountsHandlerFunc(func(params user_api.ListUserServiceAccountsParams, session *models.Principal) middleware.Responder {
-		serviceAccounts, err := getUserServiceAccountsResponse(session)
+		serviceAccounts, err := getUserServiceAccountsResponse(session, "")
 		if err != nil {
 			return user_api.NewListUserServiceAccountsDefault(int(err.Code)).WithPayload(err)
 		}
@@ -54,6 +56,16 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewDeleteServiceAccountNoContent()
 	})
+
+	// List Service Accounts for User
+	api.AdminAPIListAUserServiceAccountsHandler = admin_api.ListAUserServiceAccountsHandlerFunc(func(params admin_api.ListAUserServiceAccountsParams, session *models.Principal) middleware.Responder {
+		serviceAccounts, err := getUserServiceAccountsResponse(session, params.Name)
+		if err != nil {
+			return user_api.NewListUserServiceAccountsDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewListUserServiceAccountsOK().WithPayload(serviceAccounts)
+	})
+
 }
 
 // createServiceAccount adds a service account to the userClient and assigns a policy to him if defined.
@@ -99,8 +111,8 @@ func getCreateServiceAccountResponse(session *models.Principal, serviceAccount *
 }
 
 // getUserServiceAccount gets list of the user's service accounts
-func getUserServiceAccounts(ctx context.Context, userClient MinioAdmin) (models.ServiceAccounts, error) {
-	listServAccs, err := userClient.listServiceAccounts(ctx)
+func getUserServiceAccounts(ctx context.Context, userClient MinioAdmin, user string) (models.ServiceAccounts, error) {
+	listServAccs, err := userClient.listServiceAccounts(ctx, user)
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +125,7 @@ func getUserServiceAccounts(ctx context.Context, userClient MinioAdmin) (models.
 
 // getUserServiceAccountsResponse authenticates the user and calls
 // getUserServiceAccounts to list the user's service accounts
-func getUserServiceAccountsResponse(session *models.Principal) (models.ServiceAccounts, *models.Error) {
+func getUserServiceAccountsResponse(session *models.Principal, user string) (models.ServiceAccounts, *models.Error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
@@ -125,7 +137,7 @@ func getUserServiceAccountsResponse(session *models.Principal) (models.ServiceAc
 	// defining the client to be used
 	userAdminClient := adminClient{client: userAdmin}
 
-	serviceAccounts, err := getUserServiceAccounts(ctx, userAdminClient)
+	serviceAccounts, err := getUserServiceAccounts(ctx, userAdminClient, user)
 	if err != nil {
 		return nil, prepareError(err)
 	}

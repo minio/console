@@ -31,7 +31,7 @@ import (
 
 // assigning mock at runtime instead of compile time
 var minioAddServiceAccountMock func(ctx context.Context, policy *iampolicy.Policy) (auth.Credentials, error)
-var minioListServiceAccountsMock func(ctx context.Context) (madmin.ListServiceAccountsResp, error)
+var minioListServiceAccountsMock func(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error)
 var minioDeleteServiceAccountMock func(ctx context.Context, serviceAccount string) error
 
 // mock function of AddServiceAccount()
@@ -40,8 +40,8 @@ func (ac adminClientMock) addServiceAccount(ctx context.Context, policy *iampoli
 }
 
 // mock function of ListServiceAccounts()
-func (ac adminClientMock) listServiceAccounts(ctx context.Context) (madmin.ListServiceAccountsResp, error) {
-	return minioListServiceAccountsMock(ctx)
+func (ac adminClientMock) listServiceAccounts(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error) {
+	return minioListServiceAccountsMock(ctx, user)
 }
 
 // mock function of DeleteServiceAccount()
@@ -109,10 +109,10 @@ func TestListServiceAccounts(t *testing.T) {
 	mockResponse := madmin.ListServiceAccountsResp{
 		Accounts: []string{"accesskey1", "accesskey2"},
 	}
-	minioListServiceAccountsMock = func(ctx context.Context) (madmin.ListServiceAccountsResp, error) {
+	minioListServiceAccountsMock = func(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error) {
 		return mockResponse, nil
 	}
-	serviceAccounts, err := getUserServiceAccounts(ctx, client)
+	serviceAccounts, err := getUserServiceAccounts(ctx, client, "")
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -121,10 +121,10 @@ func TestListServiceAccounts(t *testing.T) {
 	}
 
 	// Test-2: getUserServiceAccounts returns an error, handle it properly
-	minioListServiceAccountsMock = func(ctx context.Context) (madmin.ListServiceAccountsResp, error) {
+	minioListServiceAccountsMock = func(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error) {
 		return madmin.ListServiceAccountsResp{}, errors.New("error")
 	}
-	_, err = getUserServiceAccounts(ctx, client)
+	_, err = getUserServiceAccounts(ctx, client, "")
 	if assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}

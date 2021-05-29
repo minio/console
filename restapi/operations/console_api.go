@@ -214,6 +214,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIHasPermissionToHandler: user_api.HasPermissionToHandlerFunc(func(params user_api.HasPermissionToParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.HasPermissionTo has not yet been implemented")
 		}),
+		AdminAPIListAUserServiceAccountsHandler: admin_api.ListAUserServiceAccountsHandlerFunc(func(params admin_api.ListAUserServiceAccountsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.ListAUserServiceAccounts has not yet been implemented")
+		}),
 		AdminAPIListAllTenantsHandler: admin_api.ListAllTenantsHandlerFunc(func(params admin_api.ListAllTenantsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListAllTenants has not yet been implemented")
 		}),
@@ -549,6 +552,8 @@ type ConsoleAPI struct {
 	AdminAPIGroupInfoHandler admin_api.GroupInfoHandler
 	// UserAPIHasPermissionToHandler sets the operation handler for the has permission to operation
 	UserAPIHasPermissionToHandler user_api.HasPermissionToHandler
+	// AdminAPIListAUserServiceAccountsHandler sets the operation handler for the list a user service accounts operation
+	AdminAPIListAUserServiceAccountsHandler admin_api.ListAUserServiceAccountsHandler
 	// AdminAPIListAllTenantsHandler sets the operation handler for the list all tenants operation
 	AdminAPIListAllTenantsHandler admin_api.ListAllTenantsHandler
 	// UserAPIListBucketEventsHandler sets the operation handler for the list bucket events operation
@@ -896,6 +901,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIHasPermissionToHandler == nil {
 		unregistered = append(unregistered, "user_api.HasPermissionToHandler")
+	}
+	if o.AdminAPIListAUserServiceAccountsHandler == nil {
+		unregistered = append(unregistered, "admin_api.ListAUserServiceAccountsHandler")
 	}
 	if o.AdminAPIListAllTenantsHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListAllTenantsHandler")
@@ -1382,6 +1390,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/has-permission"] = user_api.NewHasPermissionTo(o.context, o.UserAPIHasPermissionToHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/users/{name}/service-accounts"] = admin_api.NewListAUserServiceAccounts(o.context, o.AdminAPIListAUserServiceAccountsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
