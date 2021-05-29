@@ -207,9 +207,6 @@ const ListNotificationEndpoints = ({
                         </Button>
                       </Grid>
                       <Grid item xs={12}>
-                        <br />
-                      </Grid>
-                      <Grid item xs={12}>
                         <TableWrapper
                           itemActions={[]}
                           columns={[
