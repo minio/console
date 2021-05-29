@@ -91,7 +91,7 @@ const ChangePassword = ({
 
   return open ? (
     <ModalWrapper
-      title="Change Password for user FIX THIS" //title should show selectedUser.accessKey
+      title="Change User Password" //title should show selectedUser.accessKey
       modalOpen={open}
       onClose={() => {
         setNewPassword("");
@@ -110,6 +110,7 @@ const ChangePassword = ({
       >
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
+            <h3>Change password for {selectedUser?.accessKey}</h3>
             <Grid item xs={12}>
               <InputBoxWrapper
                 id="new-password"
@@ -134,7 +135,6 @@ const ChangePassword = ({
                 value={reNewPassword}
               />
             </Grid>
-            <div>{selectedUser?.accessKey}</div>
           </Grid>
           <Grid item xs={12} className={classes.buttonContainer}>
             <Button
