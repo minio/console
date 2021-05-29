@@ -189,7 +189,7 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
         <Grid item xs={12} className={classes.container}>
           <Grid item xs={12} className={classes.actionsTray}>
             <TextField
-              placeholder="Search "
+              placeholder="Search Groups"
               className={classes.searchField}
               id="search-resource"
               label=""
