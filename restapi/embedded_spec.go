@@ -1586,7 +1586,7 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/listObjectsResponse"
+              "$ref": "#/definitions/bucketQuota"
             }
           },
           "default": {
@@ -4292,6 +4292,21 @@ func init() {
         },
         "version_id": {
           "type": "string"
+        }
+      }
+    },
+    "bucketQuota": {
+      "type": "object",
+      "properties": {
+        "quota": {
+          "type": "integer"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "hard",
+            "fifo"
+          ]
         }
       }
     },
@@ -8745,7 +8760,7 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/listObjectsResponse"
+              "$ref": "#/definitions/bucketQuota"
             }
           },
           "default": {
@@ -12091,6 +12106,21 @@ func init() {
         },
         "version_id": {
           "type": "string"
+        }
+      }
+    },
+    "bucketQuota": {
+      "type": "object",
+      "properties": {
+        "quota": {
+          "type": "integer"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "hard",
+            "fifo"
+          ]
         }
       }
     },

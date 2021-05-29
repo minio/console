@@ -311,6 +311,10 @@ func (ac adminClient) setBucketQuota(ctx context.Context, bucket string, quota *
 	return ac.client.SetBucketQuota(ctx, bucket, quota)
 }
 
+func (ac adminClient) getBucketQuota(ctx context.Context, bucket string) (madmin.BucketQuota, error) {
+	return ac.client.GetBucketQuota(ctx, bucket)
+}
+
 // serverHealthInfo implements mc.ServerHealthInfo - Connect to a minio server and call Health Info Management API
 func (ac adminClient) serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) <-chan madmin.HealthInfo {
 	return ac.client.ServerHealthInfo(ctx, healthDataTypes, deadline)
