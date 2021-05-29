@@ -94,7 +94,7 @@ type MinioAdmin interface {
 		forceStart, forceStop bool) (healStart madmin.HealStartSuccess, healTaskStatus madmin.HealTaskStatus, err error)
 	// Service Accounts
 	addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (mauth.Credentials, error)
-	listServiceAccounts(ctx context.Context) (madmin.ListServiceAccountsResp, error)
+	listServiceAccounts(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error)
 	deleteServiceAccount(ctx context.Context, serviceAccount string) error
 	// Remote Buckets
 	listRemoteBuckets(ctx context.Context, bucket, arnType string) (targets []madmin.BucketTarget, err error)
@@ -260,9 +260,9 @@ func (ac adminClient) addServiceAccount(ctx context.Context, policy *iampolicy.P
 }
 
 // implements madmin.ListServiceAccounts()
-func (ac adminClient) listServiceAccounts(ctx context.Context) (madmin.ListServiceAccountsResp, error) {
+func (ac adminClient) listServiceAccounts(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error) {
 	// TODO: Fix this
-	return ac.client.ListServiceAccounts(ctx, "")
+	return ac.client.ListServiceAccounts(ctx, user)
 }
 
 // implements madmin.DeleteServiceAccount()
