@@ -26,7 +26,7 @@ import (
 	"errors"
 
 	"github.com/gorilla/websocket"
-	madmin "github.com/minio/minio/pkg/madmin"
+	madmin "github.com/minio/madmin-go"
 )
 
 // startHealthInfo starts fetching mc.ServerHealthInfo and
@@ -43,7 +43,7 @@ func startHealthInfo(ctx context.Context, conn WSConn, client MinioAdmin, deadli
 		madmin.HealthDataTypeMinioInfo,
 		madmin.HealthDataTypeMinioConfig,
 		madmin.HealthDataTypeSysCPU,
-		madmin.HealthDataTypeSysDiskHw,
+		madmin.HealthDataTypeSysDriveHw,
 		madmin.HealthDataTypeSysDocker,
 		madmin.HealthDataTypeSysOsInfo,
 		madmin.HealthDataTypeSysLoad,
@@ -52,35 +52,20 @@ func startHealthInfo(ctx context.Context, conn WSConn, client MinioAdmin, deadli
 		madmin.HealthDataTypeSysProcess,
 	}
 
-	healthChan := client.serverHealthInfo(ctx, healthDataTypes, *deadline)
-	// wait for events to occur
-	for {
-		select {
-		// return if context ends
-		case <-ctx.Done():
-			return nil
-		case adminHealthInfo, ok := <-healthChan:
-			// zero value returned because the channel is closed and empty
-			if !ok {
-				return nil
-			}
-			if adminHealthInfo.Error != "" {
-				return errors.New(adminHealthInfo.Error)
-			}
-			// Serialize message to be sent
-			bytes, err := json.Marshal(adminHealthInfo)
-			if err != nil {
-				log.Println("error on json.Marshal:", err)
-				return err
-			}
-			// Send Message through websocket connection
-			err = conn.writeMessage(websocket.TextMessage, bytes)
-			if err != nil {
-				log.Println("error writeMessage:", err)
-				return err
-			}
-		}
+	healthInfo, _, err := client.serverHealthInfo(ctx, healthDataTypes, *deadline)
+	if err != nil {
+		return err
 	}
+
+	// Serialize message to be sent
+	bytes, err := json.Marshal(healthInfo)
+	if err != nil {
+		log.Println("error on json.Marshal:", err)
+		return err
+	}
+
+	// Send Message through websocket connection
+	return conn.writeMessage(websocket.TextMessage, bytes)
 }
 
 // getHealthInfoOptionsFromReq gets duration for startHealthInfo request

@@ -20,8 +20,8 @@ import (
 	"errors"
 	"log"
 
-	"github.com/minio/minio/pkg/env"
-	"github.com/minio/minio/pkg/licverifier"
+	"github.com/minio/pkg/env"
+	"github.com/minio/pkg/licverifier"
 )
 
 // GetSubnetURL

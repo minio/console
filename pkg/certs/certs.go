@@ -17,18 +17,24 @@
 package certs
 
 import (
+	"bytes"
 	"context"
+	"crypto"
+	"crypto/ecdsa"
+	"crypto/tls"
 	"crypto/x509"
+	"encoding/pem"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/minio/cli"
-	"github.com/minio/minio/cmd/config"
-	"github.com/minio/minio/cmd/logger"
-	xcerts "github.com/minio/minio/pkg/certs"
+	xcerts "github.com/minio/pkg/certs"
+	"github.com/minio/pkg/env"
 	"github.com/mitchellh/go-homedir"
 )
 
@@ -78,6 +84,40 @@ var (
 	GlobalCertsCADir = DefaultCertsCADir
 )
 
+// ParsePublicCertFile - parses public cert into its *x509.Certificate equivalent.
+func ParsePublicCertFile(certFile string) (x509Certs []*x509.Certificate, err error) {
+	// Read certificate file.
+	var data []byte
+	if data, err = ioutil.ReadFile(certFile); err != nil {
+		return nil, err
+	}
+
+	// Trimming leading and tailing white spaces.
+	data = bytes.TrimSpace(data)
+
+	// Parse all certs in the chain.
+	current := data
+	for len(current) > 0 {
+		var pemBlock *pem.Block
+		if pemBlock, current = pem.Decode(current); pemBlock == nil {
+			return nil, fmt.Errorf("could not read PEM block from file %s", certFile)
+		}
+
+		var x509Cert *x509.Certificate
+		if x509Cert, err = x509.ParseCertificate(pemBlock.Bytes); err != nil {
+			return nil, err
+		}
+
+		x509Certs = append(x509Certs, x509Cert)
+	}
+
+	if len(x509Certs) == 0 {
+		return nil, fmt.Errorf("empty public certificate file %s", certFile)
+	}
+
+	return x509Certs, nil
+}
+
 // MkdirAllIgnorePerm attempts to create all directories, ignores any permission denied errors.
 func MkdirAllIgnorePerm(path string) error {
 	err := os.MkdirAll(path, 0700)
@@ -115,19 +155,22 @@ func NewConfigDirFromCtx(ctx *cli.Context, option string, getDefaultDir func() s
 		// default directory.
 		dir = getDefaultDir()
 		if dir == "" {
-			logger.FatalIf(errors.New("invalid arguments specified"), "%s option must be provided", option)
+			log.Fatalln(fmt.Sprintf("invalid arguments specified, %s option must be provided", option))
 		}
 	}
 
 	if dir == "" {
-		logger.FatalIf(errors.New("empty directory"), "%s directory cannot be empty", option)
+		log.Fatalln(fmt.Sprintf("empty directory, %s directory cannot be empty", option))
 	}
 
 	// Disallow relative paths, figure out absolute paths.
 	dirAbs, err := filepath.Abs(dir)
-	logger.FatalIf(err, "Unable to fetch absolute path for %s=%s", option, dir)
-	logger.FatalIf(MkdirAllIgnorePerm(dirAbs), "Unable to create directory specified %s=%s", option, dir)
-
+	if err != nil {
+		log.Fatalf("%s: Unable to fetch absolute path for %s=%s", err, option, dir)
+	}
+	if err = MkdirAllIgnorePerm(dirAbs); err != nil {
+		log.Fatalf("%s: Unable to create directory specified %s=%s", err, option, dir)
+	}
 	return &ConfigDir{Path: dirAbs}, dirSet
 }
 
@@ -139,6 +182,58 @@ func getPrivateKeyFile() string {
 	return filepath.Join(GlobalCertsDir.Get(), PrivateKeyFile)
 }
 
+// EnvCertPassword is the environment variable which contains the password used
+// to decrypt the TLS private key. It must be set if the TLS private key is
+// password protected.
+const EnvCertPassword = "CONSOLE_CERT_PASSWD"
+
+// LoadX509KeyPair - load an X509 key pair (private key , certificate)
+// from the provided paths. The private key may be encrypted and is
+// decrypted using the ENV_VAR: MINIO_CERT_PASSWD.
+func LoadX509KeyPair(certFile, keyFile string) (tls.Certificate, error) {
+	certPEMBlock, err := ioutil.ReadFile(certFile)
+	if err != nil {
+		return tls.Certificate{}, err
+	}
+	keyPEMBlock, err := ioutil.ReadFile(keyFile)
+	if err != nil {
+		return tls.Certificate{}, err
+	}
+	key, rest := pem.Decode(keyPEMBlock)
+	if len(rest) > 0 {
+		return tls.Certificate{}, errors.New("the private key contains additional data")
+	}
+	if x509.IsEncryptedPEMBlock(key) {
+		password := env.Get(EnvCertPassword, "")
+		if len(password) == 0 {
+			return tls.Certificate{}, errors.New("no password")
+		}
+		decryptedKey, decErr := x509.DecryptPEMBlock(key, []byte(password))
+		if decErr != nil {
+			return tls.Certificate{}, decErr
+		}
+		keyPEMBlock = pem.EncodeToMemory(&pem.Block{Type: key.Type, Bytes: decryptedKey})
+	}
+	cert, err := tls.X509KeyPair(certPEMBlock, keyPEMBlock)
+	if err != nil {
+		return tls.Certificate{}, err
+	}
+	// Ensure that the private key is not a P-384 or P-521 EC key.
+	// The Go TLS stack does not provide constant-time implementations of P-384 and P-521.
+	if priv, ok := cert.PrivateKey.(crypto.Signer); ok {
+		if pub, ok := priv.Public().(*ecdsa.PublicKey); ok {
+			switch pub.Params().Name {
+			case "P-384":
+				fallthrough
+			case "P-521":
+				// unfortunately there is no cleaner way to check
+				return tls.Certificate{}, fmt.Errorf("tls: the ECDSA curve '%s' is not supported", pub.Params().Name)
+			}
+		}
+	}
+	return cert, nil
+}
+
 func GetTLSConfig() (x509Certs []*x509.Certificate, manager *xcerts.Manager, err error) {
 
 	ctx := context.Background()
@@ -147,11 +242,11 @@ func GetTLSConfig() (x509Certs []*x509.Certificate, manager *xcerts.Manager, err
 		return nil, nil, nil
 	}
 
-	if x509Certs, err = config.ParsePublicCertFile(getPublicCertFile()); err != nil {
+	if x509Certs, err = ParsePublicCertFile(getPublicCertFile()); err != nil {
 		return nil, nil, err
 	}
 
-	manager, err = xcerts.NewManager(ctx, getPublicCertFile(), getPrivateKeyFile(), config.LoadX509KeyPair)
+	manager, err = xcerts.NewManager(ctx, getPublicCertFile(), getPrivateKeyFile(), LoadX509KeyPair)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -212,8 +307,7 @@ func GetTLSConfig() (x509Certs []*x509.Certificate, manager *xcerts.Manager, err
 			continue
 		}
 		if err = manager.AddCertificate(certFile, keyFile); err != nil {
-			err = fmt.Errorf("unable to load TLS certificate '%s,%s': %w", certFile, keyFile, err)
-			logger.LogIf(ctx, err, logger.Application)
+			log.Fatalln(fmt.Errorf("unable to load TLS certificate '%s,%s': %w", certFile, keyFile, err))
 		}
 	}
 	return x509Certs, manager, nil
@@ -222,10 +316,14 @@ func GetTLSConfig() (x509Certs []*x509.Certificate, manager *xcerts.Manager, err
 func GetAllCertificatesAndCAs() (*x509.CertPool, []*x509.Certificate, *xcerts.Manager) {
 	// load all CAs from ~/.console/certs/CAs
 	GlobalRootCAs, err := xcerts.GetRootCAs(GlobalCertsCADir.Get())
-	logger.FatalIf(err, "Failed to read root CAs (%v)", err)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	// load all certs from ~/.console/certs
 	globalPublicCerts, globalTLSCertsManager, err := GetTLSConfig()
-	logger.FatalIf(err, "Unable to load the TLS configuration")
+	if err != nil {
+		log.Fatalln(err)
+	}
 	return GlobalRootCAs, globalPublicCerts, globalTLSCertsManager
 }
 
@@ -236,6 +334,6 @@ func AddCertificate(ctx context.Context, manager *xcerts.Manager, publicKey, pri
 		return manager.AddCertificate(publicKey, privateKey)
 	}
 	// Initialize cert manager
-	manager, err = xcerts.NewManager(ctx, publicKey, privateKey, config.LoadX509KeyPair)
+	manager, err = xcerts.NewManager(ctx, publicKey, privateKey, LoadX509KeyPair)
 	return err
 }

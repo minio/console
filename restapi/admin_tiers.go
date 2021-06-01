@@ -21,7 +21,7 @@ import (
 	"encoding/base64"
 	"time"
 
-	"github.com/minio/minio/pkg/madmin"
+	"github.com/minio/madmin-go"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"

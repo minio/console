@@ -22,7 +22,7 @@ import (
 	"errors"
 	"testing"
 
-	iampolicy "github.com/minio/minio/pkg/iam/policy"
+	iampolicy "github.com/minio/pkg/iam/policy"
 
 	"github.com/minio/console/models"
 )

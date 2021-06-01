@@ -22,7 +22,7 @@ import (
 	"strings"
 
 	"github.com/minio/console/pkg/auth/utils"
-	"github.com/minio/minio/pkg/env"
+	"github.com/minio/pkg/env"
 )
 
 func GetSTSEndpoint() string {

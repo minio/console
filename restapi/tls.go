@@ -24,7 +24,7 @@ import (
 )
 
 func prepareSTSClientTransport(insecure bool) *http.Transport {
-	// This takes github.com/minio/minio/pkg/madmin/transport.go as an example
+	// This takes github.com/minio/madmin-go/transport.go as an example
 	//
 	// DefaultTransport - this default transport is similar to
 	// http.DefaultTransport but with additional param  DisableCompression

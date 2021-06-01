@@ -17,6 +17,7 @@
 package restapi
 
 import (
+	"bytes"
 	"context"
 	"log"
 	"net/http"
@@ -24,7 +25,7 @@ import (
 
 	"github.com/minio/minio-go/v7/pkg/credentials"
 
-	iampolicy "github.com/minio/minio/pkg/iam/policy"
+	iampolicy "github.com/minio/pkg/iam/policy"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
@@ -109,7 +110,7 @@ func getAccountPolicy(ctx context.Context, client MinioAdmin) (*iampolicy.Policy
 	if err != nil {
 		return nil, err
 	}
-	return &accountInfo.Policy, err
+	return iampolicy.ParseConfig(bytes.NewReader(accountInfo.Policy))
 }
 
 // getConsoleCredentials will return consoleCredentials interface including the associated policy of the current account

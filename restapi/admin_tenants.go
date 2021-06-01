@@ -40,7 +40,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 
 	"github.com/minio/console/cluster"
-	"github.com/minio/minio/pkg/madmin"
+	"github.com/minio/madmin-go"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"

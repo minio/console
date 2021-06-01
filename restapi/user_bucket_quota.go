@@ -26,7 +26,7 @@ import (
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/user_api"
 
-	"github.com/minio/minio/pkg/madmin"
+	"github.com/minio/madmin-go"
 
 	"github.com/minio/console/models"
 )

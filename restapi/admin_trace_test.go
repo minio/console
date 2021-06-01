@@ -22,8 +22,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/minio/minio/pkg/madmin"
-	trace "github.com/minio/minio/pkg/trace"
+	"github.com/minio/madmin-go"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -57,7 +56,7 @@ func TestAdminTrace(t *testing.T) {
 			lines := make([]int, testStreamSize)
 			// mocking sending 5 lines of info
 			for range lines {
-				info := trace.Info{
+				info := madmin.TraceInfo{
 					FuncName: textToReceive,
 				}
 				ch <- madmin.ServiceTraceInfo{Trace: info}
@@ -109,7 +108,7 @@ func TestAdminTrace(t *testing.T) {
 			lines := make([]int, 2)
 			// mocking sending 5 lines of info
 			for range lines {
-				info := trace.Info{
+				info := madmin.TraceInfo{
 					NodeName: "test",
 				}
 				ch <- madmin.ServiceTraceInfo{Trace: info}

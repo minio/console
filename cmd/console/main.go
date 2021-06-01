@@ -23,13 +23,11 @@ import (
 	"sort"
 	"time"
 
-	"github.com/minio/console/pkg"
-
-	"github.com/minio/minio/pkg/console"
-	"github.com/minio/minio/pkg/trie"
-	"github.com/minio/minio/pkg/words"
-
 	"github.com/minio/cli"
+	"github.com/minio/console/pkg"
+	"github.com/minio/pkg/console"
+	"github.com/minio/pkg/trie"
+	"github.com/minio/pkg/words"
 )
 
 // Help template for Console.

@@ -17,7 +17,7 @@
 package acl
 
 import (
-	iampolicy "github.com/minio/minio/pkg/iam/policy"
+	iampolicy "github.com/minio/pkg/iam/policy"
 )
 
 // endpoints definition

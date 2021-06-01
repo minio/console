@@ -25,7 +25,7 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
-	madmin "github.com/minio/minio/pkg/madmin"
+	madmin "github.com/minio/madmin-go"
 
 	"github.com/minio/console/restapi/operations/admin_api"
 )

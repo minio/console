@@ -26,7 +26,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/minio/minio/pkg/env"
+	"github.com/minio/pkg/env"
 )
 
 var (

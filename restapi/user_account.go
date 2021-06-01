@@ -21,7 +21,7 @@ import (
 	"net/http"
 	"time"
 
-	iampolicy "github.com/minio/minio/pkg/iam/policy"
+	iampolicy "github.com/minio/pkg/iam/policy"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"

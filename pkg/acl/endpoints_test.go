@@ -20,7 +20,7 @@ import (
 	"reflect"
 	"testing"
 
-	iampolicy "github.com/minio/minio/pkg/iam/policy"
+	iampolicy "github.com/minio/pkg/iam/policy"
 )
 
 type args struct {

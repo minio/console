@@ -25,8 +25,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/minio/minio/cmd/config"
-
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
 	"github.com/minio/cli"
@@ -150,7 +148,7 @@ func startServer(ctx *cli.Context) error {
 		if errAddCert := certs.AddCertificate(context.Background(), restapi.GlobalTLSCertsManager, swaggerServerCertificate, swaggerServerCertificateKey); errAddCert != nil {
 			log.Println(errAddCert)
 		}
-		if x509Certs, errParseCert := config.ParsePublicCertFile(swaggerServerCertificate); errParseCert == nil {
+		if x509Certs, errParseCert := certs.ParsePublicCertFile(swaggerServerCertificate); errParseCert == nil {
 			if len(x509Certs) > 0 {
 				restapi.GlobalPublicCerts = append(restapi.GlobalPublicCerts, x509Certs[0])
 			}
