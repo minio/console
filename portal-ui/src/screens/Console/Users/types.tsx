@@ -15,13 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 export interface User {
-  name: string;
-  id: string;
-  email: string;
-  is_me: boolean;
-  enabled: boolean;
+  name?: string;
+  id?: string;
+  email?: string;
+  is_me?: boolean;
+  enabled?: boolean;
   accessKey: string;
-  secretKey: string;
+  secretKey?: string;
   policy?: string[];
 }
 
