@@ -620,20 +620,5 @@ func getChangeUserPasswordResponse(session *models.Principal, params admin_api.C
 	if err := changeUserPassword(ctx, adminClient, user, newSecretKey); err != nil {
 		return prepareError(err)
 	}
-	// user credentials are updated at this point, we need to generate a new admin client and authenticate using
-	// the new credentials
-	//credentials, err := getConsoleCredentials(ctx, accessKey, newSecretKey)
-	//if err != nil {
-	//	return nil, prepareError(errInvalidCredentials, nil, err)
-	//}
-	// authenticate user and generate new session token
-	//sessionID, err := login(credentials)
-	//if err != nil {
-	//	return nil, prepareError(errInvalidCredentials, nil, err)
-	//}
-	// serialize output
-	//loginResponse := &models.LoginResponse{
-	//	SessionID: *sessionID,
-	//}
 	return nil
 }

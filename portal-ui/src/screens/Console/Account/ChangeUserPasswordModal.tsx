@@ -41,7 +41,7 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-interface IChangePasswordProps {
+interface IChangeUserPasswordProps {
   classes: any;
   open: boolean;
   selectedUser: User | null;
@@ -49,18 +49,18 @@ interface IChangePasswordProps {
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
 
-const ChangePassword = ({
+const ChangeUserPassword = ({
   classes,
   open,
   selectedUser,
   closeModal,
   setModalErrorSnackMessage,
-}: IChangePasswordProps) => {
+}: IChangeUserPasswordProps) => {
   const [newPassword, setNewPassword] = useState<string>("");
   const [reNewPassword, setReNewPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const changePassword = (event: React.FormEvent) => {
+  const changeUserPassword = (event: React.FormEvent) => {
     event.preventDefault();
 
     if (loading) {
@@ -69,7 +69,7 @@ const ChangePassword = ({
     setLoading(true);
 
     let request: ChangeUserPasswordRequest = {
-      selectedUser: String(selectedUser?.id),
+      selectedUser: String(selectedUser?.accessKey),
       new_secret_key: newPassword,
     };
 
@@ -91,7 +91,7 @@ const ChangePassword = ({
 
   return open ? (
     <ModalWrapper
-      title="Change User Password" //title should show selectedUser.accessKey
+      title="Change User Password"
       modalOpen={open}
       onClose={() => {
         setNewPassword("");
@@ -105,7 +105,7 @@ const ChangePassword = ({
         noValidate
         autoComplete="off"
         onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-          changePassword(e);
+          changeUserPassword(e);
         }}
       >
         <Grid container>
@@ -142,7 +142,8 @@ const ChangePassword = ({
               variant="contained"
               color="primary"
               disabled={
-                loading || !(newPassword.length > 0 && reNewPassword.length > 0)
+                loading ||
+                !(reNewPassword.length > 0 && newPassword == reNewPassword)
               }
             >
               Save
@@ -163,4 +164,4 @@ const connector = connect(null, {
   setModalErrorSnackMessage,
 });
 
-export default withStyles(styles)(connector(ChangePassword));
+export default withStyles(styles)(connector(ChangeUserPassword));
