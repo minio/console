@@ -24,12 +24,13 @@ import {
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
-import { Grid, IconButton } from "@material-ui/core";
+import { Button, Grid, IconButton } from "@material-ui/core";
 import {
   commonFormValidation,
   IValidation,
 } from "../../../../../utils/validationFunctions";
 import RadioGroupSelector from "../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
+import QueryMultiSelector from "../../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import api from "../../../../../common/api";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -68,7 +69,6 @@ interface LabelKeyPair {
   key: string;
   value: string;
 }
-
 interface OptionPair {
   label: string;
   value: string;
@@ -125,7 +125,7 @@ const Affinity = ({
           setKeyValueMap({});
         });
     }
-  }, [setModalErrorSnackMessage, loading]);
+  }, []);
 
   useEffect(() => {
     if (keyValuePairs) {
@@ -139,7 +139,7 @@ const Affinity = ({
 
       updateField("nodeSelectorLabels", vl);
     }
-  }, [keyValuePairs, updateField]);
+  }, [keyValuePairs]);
 
   // Validation
   useEffect(() => {
@@ -233,7 +233,6 @@ const Affinity = ({
           </Grid>
           <Grid item xs={12}>
             <h3>Labels</h3>
-            <span className={classes.error}>{validationErrors["labels"]}</span>
             <Grid container>
               {keyValuePairs &&
                 keyValuePairs.map((kvp, i) => {
@@ -251,6 +250,10 @@ const Affinity = ({
                                 keyValuePairs
                               );
 
+                              const valOps = keyValueMap[newKey].map((v) => {
+                                return { label: v, value: v };
+                              });
+
                               arrCp[i].key = e.target.value as string;
                               arrCp[i].value = keyValueMap[newKey][0];
                               setKeyValuePairs(arrCp);
@@ -262,7 +265,7 @@ const Affinity = ({
                             options={keyOptions}
                           />
                         )}
-                        {keyOptions.length === 0 && (
+                        {keyOptions.length == 0 && (
                           <InputBoxWrapper
                             id={`nodeselector-key-${i.toString()}`}
                             label={""}
@@ -353,7 +356,7 @@ const Affinity = ({
                               size={"small"}
                               onClick={() => {
                                 const arrCp = keyValuePairs.filter(
-                                  (item, index) => index !== i
+                                  (item, index) => index != i
                                 );
                                 setKeyValuePairs(arrCp);
                               }}
