@@ -2643,6 +2643,22 @@ paths:
       tags:
         - AdminAPI
 
+  /nodes/labels:
+    get:
+      summary: List node labels
+      operationId: ListNodeLabels
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/nodeLabels"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
 definitions:
   accountChangePasswordRequest:
     type: object
@@ -5120,4 +5136,12 @@ definitions:
         type: string
       age:
         type: string
+
+  nodeLabels:
+    type: object
+    additionalProperties:
+      type: array
+      items:
+        type: string
+
 
