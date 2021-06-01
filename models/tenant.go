@@ -80,6 +80,9 @@ type Tenant struct {
 	// pools
 	Pools []*Pool `json:"pools"`
 
+	// status
+	Status *TenantStatus `json:"status,omitempty"`
+
 	// subnet license
 	SubnetLicense *License `json:"subnet_license,omitempty"`
 
@@ -96,6 +99,10 @@ func (m *Tenant) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validatePools(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -147,6 +154,24 @@ func (m *Tenant) validatePools(formats strfmt.Registry) error {
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *Tenant) validateStatus(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Status) { // not required
+		return nil
+	}
+
+	if m.Status != nil {
+		if err := m.Status.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("status")
+			}
+			return err
+		}
 	}
 
 	return nil

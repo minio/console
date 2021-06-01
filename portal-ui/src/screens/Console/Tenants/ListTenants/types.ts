@@ -57,6 +57,14 @@ export interface IEndpoints {
   console: string;
 }
 
+export interface ITenantStatus {
+  write_quorum: string;
+  drives_online: string;
+  drives_offline: string;
+  drives_healing: string;
+  health_status: string;
+}
+
 export interface ITenant {
   total_size: number;
   name: string;
@@ -77,6 +85,8 @@ export interface ITenant {
   encryptionEnabled: boolean;
   idpAdEnabled: boolean;
   idpOicEnabled: boolean;
+  health_status: string;
+  status?: ITenantStatus;
   // computed
   capacity: string;
   subnet_license: LicenseInfo;

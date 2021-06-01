@@ -434,6 +434,15 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 		}
 	}
 
+	// attach status information
+	info.Status = &models.TenantStatus{
+		HealthStatus:  string(minTenant.Status.HealthStatus),
+		DrivesHealing: minTenant.Status.DrivesHealing,
+		DrivesOffline: minTenant.Status.DrivesOffline,
+		DrivesOnline:  minTenant.Status.DrivesOnline,
+		WriteQuorum:   minTenant.Status.WriteQuorum,
+	}
+
 	// get tenant service
 	minTenant.EnsureDefaults()
 	//minio service
@@ -533,6 +542,7 @@ func listTenants(ctx context.Context, operatorClient OperatorClientI, namespace 
 			CurrentState:  tenant.Status.CurrentState,
 			Namespace:     tenant.ObjectMeta.Namespace,
 			TotalSize:     totalSize,
+			HealthStatus:  string(tenant.Status.HealthStatus),
 		})
 	}
 

@@ -3643,6 +3643,23 @@ definitions:
       object_locking_enabled:
         type: boolean
 
+  tenantStatus:
+    type: object
+    properties:
+      write_quorum:
+        type: integer
+        format: int32
+      drives_online:
+        type: integer
+        format: int32
+      drives_offline:
+        type: integer
+        format: int32
+      drives_healing:
+        type: integer
+        format: int32
+      health_status:
+        type: string
 
   tenant:
     type: object
@@ -3689,6 +3706,8 @@ definitions:
         type: boolean
       encryptionEnabled:
         type: boolean
+      status:
+        $ref: "#/definitions/tenantStatus"
 
 
   tenantUsage:
@@ -3721,6 +3740,8 @@ definitions:
       currentState:
         type: string
       namespace:
+        type: string
+      health_status:
         type: string
 
   logSearchResponse:
