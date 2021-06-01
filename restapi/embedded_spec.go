@@ -2530,8 +2530,8 @@ func init() {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Tenant Details",
-        "operationId": "TenantDetails",
+        "summary": "Tenant Info",
+        "operationId": "TenantInfo",
         "parameters": [
           {
             "type": "string",
@@ -2715,103 +2715,6 @@ func init() {
         "responses": {
           "201": {
             "description": "A successful response."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/namespaces/{namespace}/tenants/{tenant}/info": {
-      "get": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Tenant Info",
-        "operationId": "TenantInfo",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "namespace",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "tenant",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/adminInfoResponse"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/namespaces/{namespace}/tenants/{tenant}/info/widgets/{widgetId}": {
-      "get": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Returns information about a tenant deployment",
-        "operationId": "TenantWidgetDetails",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "namespace",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "tenant",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "format": "int32",
-            "name": "widgetId",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "name": "start",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "name": "end",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "format": "int32",
-            "name": "step",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/widgetDetails"
-            }
           },
           "default": {
             "description": "Generic error response.",
@@ -3022,83 +2925,6 @@ func init() {
         ],
         "responses": {
           "201": {
-            "description": "A successful response."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/namespaces/{namespace}/tenants/{tenant}/security": {
-      "get": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Tenant Security",
-        "operationId": "TenantSecurity",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "namespace",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "tenant",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/tenantSecurityResponse"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Update Tenant Security",
-        "operationId": "UpdateTenantSecurity",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "namespace",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "tenant",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/updateTenantSecurityRequest"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
             "description": "A successful response."
           },
           "default": {
@@ -4719,26 +4545,6 @@ func init() {
           "items": {
             "type": "string"
           }
-        }
-      }
-    },
-    "certificateInfo": {
-      "type": "object",
-      "properties": {
-        "domains": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "expiry": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "serialNumber": {
-          "type": "string"
         }
       }
     },
@@ -6998,12 +6804,6 @@ func init() {
     "tenant": {
       "type": "object",
       "properties": {
-        "consoleEnabled": {
-          "type": "boolean"
-        },
-        "consoleTLS": {
-          "type": "boolean"
-        },
         "console_image": {
           "type": "string"
         },
@@ -7043,9 +6843,6 @@ func init() {
           "type": "string"
         },
         "logEnabled": {
-          "type": "boolean"
-        },
-        "minioTLS": {
           "type": "boolean"
         },
         "monitoringEnabled": {
@@ -7144,43 +6941,6 @@ func init() {
         },
         "secret_key": {
           "type": "string"
-        }
-      }
-    },
-    "tenantSecurityResponse": {
-      "type": "object",
-      "properties": {
-        "autoCert": {
-          "type": "boolean"
-        },
-        "customCertificates": {
-          "type": "object",
-          "properties": {
-            "console": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/certificateInfo"
-              }
-            },
-            "consoleCAs": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/certificateInfo"
-              }
-            },
-            "minio": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/certificateInfo"
-              }
-            },
-            "minioCAs": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/certificateInfo"
-              }
-            }
-          }
         }
       }
     },
@@ -7443,49 +7203,6 @@ func init() {
         },
         "image_registry": {
           "$ref": "#/definitions/imageRegistry"
-        }
-      }
-    },
-    "updateTenantSecurityRequest": {
-      "type": "object",
-      "properties": {
-        "autoCert": {
-          "type": "boolean"
-        },
-        "customCertificates": {
-          "type": "object",
-          "properties": {
-            "console": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/keyPairConfiguration"
-              }
-            },
-            "consoleCAs": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "minio": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/keyPairConfiguration"
-              }
-            },
-            "minioCAs": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "secretsToBeDeleted": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
         }
       }
     },
@@ -10210,8 +9927,8 @@ func init() {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Tenant Details",
-        "operationId": "TenantDetails",
+        "summary": "Tenant Info",
+        "operationId": "TenantInfo",
         "parameters": [
           {
             "type": "string",
@@ -10395,103 +10112,6 @@ func init() {
         "responses": {
           "201": {
             "description": "A successful response."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/namespaces/{namespace}/tenants/{tenant}/info": {
-      "get": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Tenant Info",
-        "operationId": "TenantInfo",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "namespace",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "tenant",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/adminInfoResponse"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/namespaces/{namespace}/tenants/{tenant}/info/widgets/{widgetId}": {
-      "get": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Returns information about a tenant deployment",
-        "operationId": "TenantWidgetDetails",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "namespace",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "tenant",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "format": "int32",
-            "name": "widgetId",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "integer",
-            "name": "start",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "name": "end",
-            "in": "query"
-          },
-          {
-            "type": "integer",
-            "format": "int32",
-            "name": "step",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/widgetDetails"
-            }
           },
           "default": {
             "description": "Generic error response.",
@@ -10702,83 +10322,6 @@ func init() {
         ],
         "responses": {
           "201": {
-            "description": "A successful response."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/namespaces/{namespace}/tenants/{tenant}/security": {
-      "get": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Tenant Security",
-        "operationId": "TenantSecurity",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "namespace",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "tenant",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/tenantSecurityResponse"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Update Tenant Security",
-        "operationId": "UpdateTenantSecurity",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "namespace",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "tenant",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/updateTenantSecurityRequest"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
             "description": "A successful response."
           },
           "default": {
@@ -12463,70 +12006,6 @@ func init() {
         }
       }
     },
-    "TenantSecurityResponseCustomCertificates": {
-      "type": "object",
-      "properties": {
-        "console": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/certificateInfo"
-          }
-        },
-        "consoleCAs": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/certificateInfo"
-          }
-        },
-        "minio": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/certificateInfo"
-          }
-        },
-        "minioCAs": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/certificateInfo"
-          }
-        }
-      }
-    },
-    "UpdateTenantSecurityRequestCustomCertificates": {
-      "type": "object",
-      "properties": {
-        "console": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/keyPairConfiguration"
-          }
-        },
-        "consoleCAs": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "minio": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/keyPairConfiguration"
-          }
-        },
-        "minioCAs": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "secretsToBeDeleted": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
     "VaultConfigurationApprole": {
       "type": "object",
       "required": [
@@ -13103,26 +12582,6 @@ func init() {
           "items": {
             "type": "string"
           }
-        }
-      }
-    },
-    "certificateInfo": {
-      "type": "object",
-      "properties": {
-        "domains": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "expiry": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "serialNumber": {
-          "type": "string"
         }
       }
     },
@@ -15235,12 +14694,6 @@ func init() {
     "tenant": {
       "type": "object",
       "properties": {
-        "consoleEnabled": {
-          "type": "boolean"
-        },
-        "consoleTLS": {
-          "type": "boolean"
-        },
         "console_image": {
           "type": "string"
         },
@@ -15280,9 +14733,6 @@ func init() {
           "type": "string"
         },
         "logEnabled": {
-          "type": "boolean"
-        },
-        "minioTLS": {
           "type": "boolean"
         },
         "monitoringEnabled": {
@@ -15381,43 +14831,6 @@ func init() {
         },
         "secret_key": {
           "type": "string"
-        }
-      }
-    },
-    "tenantSecurityResponse": {
-      "type": "object",
-      "properties": {
-        "autoCert": {
-          "type": "boolean"
-        },
-        "customCertificates": {
-          "type": "object",
-          "properties": {
-            "console": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/certificateInfo"
-              }
-            },
-            "consoleCAs": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/certificateInfo"
-              }
-            },
-            "minio": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/certificateInfo"
-              }
-            },
-            "minioCAs": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/certificateInfo"
-              }
-            }
-          }
         }
       }
     },
@@ -15680,49 +15093,6 @@ func init() {
         },
         "image_registry": {
           "$ref": "#/definitions/imageRegistry"
-        }
-      }
-    },
-    "updateTenantSecurityRequest": {
-      "type": "object",
-      "properties": {
-        "autoCert": {
-          "type": "boolean"
-        },
-        "customCertificates": {
-          "type": "object",
-          "properties": {
-            "console": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/keyPairConfiguration"
-              }
-            },
-            "consoleCAs": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "minio": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/keyPairConfiguration"
-              }
-            },
-            "minioCAs": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "secretsToBeDeleted": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
         }
       }
     },

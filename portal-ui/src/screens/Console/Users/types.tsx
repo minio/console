@@ -25,6 +25,9 @@ export interface User {
   policy?: string[];
 }
 
+export interface UserName {
+  name: string;
+}
 export interface UsersList {
   users: User[];
   total_users: number;
