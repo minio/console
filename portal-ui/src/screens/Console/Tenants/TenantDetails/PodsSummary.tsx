@@ -62,7 +62,7 @@ const PodsSummary = ({ match, history }: IPodsSummary) => {
         )
         .then((result: IPodListElement[]) => {
           for (let i = 0; i < result.length; i++) {
-            let currentTime = new Date().getSeconds();
+            let currentTime = (Date.now() / 1000) | 0;
             result[i].time = niceDays(
               (currentTime - parseInt(result[i].timeCreated)).toString()
             );

@@ -2440,36 +2440,6 @@ func init() {
         }
       }
     },
-    "/namespace": {
-      "post": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Creates a new Namespace with given information",
-        "operationId": "CreateNamespace",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/namespace"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "A successful response."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
     "/namespaces/{namespace}/resourcequotas/{resource-quota-name}": {
       "get": {
         "tags": [
@@ -2924,6 +2894,49 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "type": "string"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/pods/{podName}/events": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get Events for Pod",
+        "operationId": "GetPodEvents",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "podName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/eventListWrapper"
             }
           },
           "default": {
@@ -4981,6 +4994,36 @@ func init() {
         }
       }
     },
+    "eventListElement": {
+      "type": "object",
+      "properties": {
+        "event_type": {
+          "type": "string"
+        },
+        "last_seen": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "message": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "object": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "eventListWrapper": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/eventListElement"
+      }
+    },
     "expirationResponse": {
       "type": "object",
       "properties": {
@@ -5768,17 +5811,6 @@ func init() {
           "type": "string"
         },
         "originBucket": {
-          "type": "string"
-        }
-      }
-    },
-    "namespace": {
-      "type": "object",
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "name": {
           "type": "string"
         }
       }
@@ -9902,36 +9934,6 @@ func init() {
         }
       }
     },
-    "/namespace": {
-      "post": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Creates a new Namespace with given information",
-        "operationId": "CreateNamespace",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/namespace"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "A successful response."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
     "/namespaces/{namespace}/resourcequotas/{resource-quota-name}": {
       "get": {
         "tags": [
@@ -10386,6 +10388,49 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "type": "string"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/pods/{podName}/events": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get Events for Pod",
+        "operationId": "GetPodEvents",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "podName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/eventListWrapper"
             }
           },
           "default": {
@@ -13083,6 +13128,36 @@ func init() {
         }
       }
     },
+    "eventListElement": {
+      "type": "object",
+      "properties": {
+        "event_type": {
+          "type": "string"
+        },
+        "last_seen": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "message": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "object": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "eventListWrapper": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/eventListElement"
+      }
+    },
     "expirationResponse": {
       "type": "object",
       "properties": {
@@ -13858,17 +13933,6 @@ func init() {
           "type": "string"
         },
         "originBucket": {
-          "type": "string"
-        }
-      }
-    },
-    "namespace": {
-      "type": "object",
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "name": {
           "type": "string"
         }
       }
