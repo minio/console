@@ -70,7 +70,7 @@ const ChangeUserPassword = ({
 
     let request: ChangeUserPasswordRequest = {
       selectedUser: String(selectedUser?.accessKey),
-      new_secret_key: newPassword,
+      newSecretKey: newPassword,
     };
 
     api

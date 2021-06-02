@@ -36,11 +36,11 @@ type ChangeUserPasswordRequest struct {
 
 	// new secret key
 	// Required: true
-	NewSecretKey *string `json:"new_secret_key"`
+	NewSecretKey *string `json:"newSecretKey"`
 
 	// selected user
 	// Required: true
-	SelectedUser *string `json:"selected_user"`
+	SelectedUser *string `json:"selectedUser"`
 }
 
 // Validate validates this change user password request
@@ -63,7 +63,7 @@ func (m *ChangeUserPasswordRequest) Validate(formats strfmt.Registry) error {
 
 func (m *ChangeUserPasswordRequest) validateNewSecretKey(formats strfmt.Registry) error {
 
-	if err := validate.Required("new_secret_key", "body", m.NewSecretKey); err != nil {
+	if err := validate.Required("newSecretKey", "body", m.NewSecretKey); err != nil {
 		return err
 	}
 
@@ -72,7 +72,7 @@ func (m *ChangeUserPasswordRequest) validateNewSecretKey(formats strfmt.Registry
 
 func (m *ChangeUserPasswordRequest) validateSelectedUser(formats strfmt.Registry) error {
 
-	if err := validate.Required("selected_user", "body", m.SelectedUser); err != nil {
+	if err := validate.Required("selectedUser", "body", m.SelectedUser); err != nil {
 		return err
 	}
 

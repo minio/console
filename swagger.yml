@@ -2693,12 +2693,12 @@ definitions:
   changeUserPasswordRequest:
     type: object
     required:
-      - selected_user
-      - new_secret_key
+      - selectedUser
+      - newSecretKey
     properties:
-      selected_user:
+      selectedUser:
         type: string
-      new_secret_key:
+      newSecretKey:
         type: string
 
   bucketEncryptionType:
@@ -3619,7 +3619,7 @@ definitions:
         type: string
       service:
         type: string
-        enum: [ replication ]
+        enum: [replication]
       syncMode:
         type: string
       bandwidth:

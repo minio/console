@@ -4465,14 +4465,14 @@ func init() {
     "changeUserPasswordRequest": {
       "type": "object",
       "required": [
-        "selected_user",
-        "new_secret_key"
+        "selectedUser",
+        "newSecretKey"
       ],
       "properties": {
-        "new_secret_key": {
+        "newSecretKey": {
           "type": "string"
         },
-        "selected_user": {
+        "selectedUser": {
           "type": "string"
         }
       }
@@ -12386,14 +12386,14 @@ func init() {
     "changeUserPasswordRequest": {
       "type": "object",
       "required": [
-        "selected_user",
-        "new_secret_key"
+        "selectedUser",
+        "newSecretKey"
       ],
       "properties": {
-        "new_secret_key": {
+        "newSecretKey": {
           "type": "string"
         },
-        "selected_user": {
+        "selectedUser": {
           "type": "string"
         }
       }
