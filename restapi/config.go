@@ -18,8 +18,8 @@ package restapi
 
 import (
 	"crypto/x509"
-	"fmt"
 	"io/ioutil"
+	"net"
 	"strconv"
 	"strings"
 	"sync"
@@ -34,10 +34,10 @@ var (
 	Port = "9090"
 
 	// Hostname console hostname
-	Hostname = "0.0.0.0"
-
-	// TLSHostname console tls hostname
-	TLSHostname = "0.0.0.0"
+	// avoid listening on 0.0.0.0 by default
+	// instead listen on all IPv4 and IPv6
+	// - Hostname should be empty.
+	Hostname = ""
 
 	// TLSPort console tls port
 	TLSPort = "9443"
@@ -116,7 +116,7 @@ func GetPort() int {
 // GetTLSHostname gets console tls hostname set on env variable
 // or default one
 func GetTLSHostname() string {
-	return strings.ToLower(env.Get(ConsoleTLSHostname, TLSHostname))
+	return strings.ToLower(env.Get(ConsoleTLSHostname, Hostname))
 }
 
 // GetTLSPort gets console tls port set on env variable
@@ -186,7 +186,7 @@ func getSecureHostsProxyHeaders() []string {
 
 // TLSHost is the host name that is used to redirect HTTP requests to HTTPS. Default is "", which indicates to use the same host.
 func getSecureTLSHost() string {
-	return env.Get(ConsoleSecureTLSHost, fmt.Sprintf("%s:%s", TLSHostname, TLSPort))
+	return env.Get(ConsoleSecureTLSHost, net.JoinHostPort(Hostname, TLSPort))
 }
 
 // STSSeconds is the max-age of the Strict-Transport-Security header. Default is 0, which would NOT include the header.
