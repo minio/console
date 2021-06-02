@@ -94,13 +94,13 @@ const styles = (theme: Theme) =>
       },
     },
     redState: {
-      color: "red",
+      color: theme.palette.error.main,
     },
     yellowState: {
-      color: "yellow",
+      color: theme.palette.warning.main,
     },
     greenState: {
-      color: "green",
+      color: theme.palette.success.main,
     },
     greyState: {
       color: "grey",
