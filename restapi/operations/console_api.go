@@ -38,6 +38,7 @@ import (
 
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations/admin_api"
+	"github.com/minio/console/restapi/operations/operator_api"
 	"github.com/minio/console/restapi/operations/user_api"
 )
 
@@ -234,6 +235,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		AdminAPIListGroupsHandler: admin_api.ListGroupsHandlerFunc(func(params admin_api.ListGroupsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListGroups has not yet been implemented")
+		}),
+		OperatorAPIListNodeLabelsHandler: operator_api.ListNodeLabelsHandlerFunc(func(params operator_api.ListNodeLabelsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.ListNodeLabels has not yet been implemented")
 		}),
 		UserAPIListObjectsHandler: user_api.ListObjectsHandlerFunc(func(params user_api.ListObjectsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.ListObjects has not yet been implemented")
@@ -566,6 +570,8 @@ type ConsoleAPI struct {
 	UserAPIListExternalBucketsHandler user_api.ListExternalBucketsHandler
 	// AdminAPIListGroupsHandler sets the operation handler for the list groups operation
 	AdminAPIListGroupsHandler admin_api.ListGroupsHandler
+	// OperatorAPIListNodeLabelsHandler sets the operation handler for the list node labels operation
+	OperatorAPIListNodeLabelsHandler operator_api.ListNodeLabelsHandler
 	// UserAPIListObjectsHandler sets the operation handler for the list objects operation
 	UserAPIListObjectsHandler user_api.ListObjectsHandler
 	// AdminAPIListPVCsHandler sets the operation handler for the list p v cs operation
@@ -922,6 +928,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIListGroupsHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListGroupsHandler")
+	}
+	if o.OperatorAPIListNodeLabelsHandler == nil {
+		unregistered = append(unregistered, "operator_api.ListNodeLabelsHandler")
 	}
 	if o.UserAPIListObjectsHandler == nil {
 		unregistered = append(unregistered, "user_api.ListObjectsHandler")
@@ -1418,6 +1427,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/groups"] = admin_api.NewListGroups(o.context, o.AdminAPIListGroupsHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/nodes/labels"] = operator_api.NewListNodeLabels(o.context, o.OperatorAPIListNodeLabelsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

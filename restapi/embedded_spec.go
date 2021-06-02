@@ -2934,6 +2934,29 @@ func init() {
         }
       }
     },
+    "/nodes/labels": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "List node labels",
+        "operationId": "ListNodeLabels",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/nodeLabels"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/policies": {
       "get": {
         "tags": [
@@ -5530,6 +5553,15 @@ func init() {
           "type": "string"
         },
         "originBucket": {
+          "type": "string"
+        }
+      }
+    },
+    "nodeLabels": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
           "type": "string"
         }
       }
@@ -10108,6 +10140,29 @@ func init() {
         }
       }
     },
+    "/nodes/labels": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "List node labels",
+        "operationId": "ListNodeLabels",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/nodeLabels"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/policies": {
       "get": {
         "tags": [
@@ -13332,6 +13387,15 @@ func init() {
           "type": "string"
         },
         "originBucket": {
+          "type": "string"
+        }
+      }
+    },
+    "nodeLabels": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
           "type": "string"
         }
       }
