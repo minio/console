@@ -27,49 +27,34 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// TenantList tenant list
+// TenantStatus tenant status
 //
-// swagger:model tenantList
-type TenantList struct {
+// swagger:model tenantStatus
+type TenantStatus struct {
 
-	// creation date
-	CreationDate string `json:"creation_date,omitempty"`
+	// drives healing
+	DrivesHealing int32 `json:"drives_healing,omitempty"`
 
-	// current state
-	CurrentState string `json:"currentState,omitempty"`
+	// drives offline
+	DrivesOffline int32 `json:"drives_offline,omitempty"`
 
-	// deletion date
-	DeletionDate string `json:"deletion_date,omitempty"`
+	// drives online
+	DrivesOnline int32 `json:"drives_online,omitempty"`
 
 	// health status
 	HealthStatus string `json:"health_status,omitempty"`
 
-	// instance count
-	InstanceCount int64 `json:"instance_count,omitempty"`
-
-	// name
-	Name string `json:"name,omitempty"`
-
-	// namespace
-	Namespace string `json:"namespace,omitempty"`
-
-	// pool count
-	PoolCount int64 `json:"pool_count,omitempty"`
-
-	// total size
-	TotalSize int64 `json:"total_size,omitempty"`
-
-	// volume count
-	VolumeCount int64 `json:"volume_count,omitempty"`
+	// write quorum
+	WriteQuorum int32 `json:"write_quorum,omitempty"`
 }
 
-// Validate validates this tenant list
-func (m *TenantList) Validate(formats strfmt.Registry) error {
+// Validate validates this tenant status
+func (m *TenantStatus) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *TenantList) MarshalBinary() ([]byte, error) {
+func (m *TenantStatus) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -77,8 +62,8 @@ func (m *TenantList) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *TenantList) UnmarshalBinary(b []byte) error {
-	var res TenantList
+func (m *TenantStatus) UnmarshalBinary(b []byte) error {
+	var res TenantStatus
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

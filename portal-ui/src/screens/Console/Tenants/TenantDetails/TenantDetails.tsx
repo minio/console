@@ -133,6 +133,22 @@ const styles = (theme: Theme) =>
       textDecoration: "none",
       color: "black",
     },
+    redState: {
+      color: theme.palette.error.main,
+    },
+    yellowState: {
+      color: theme.palette.warning.main,
+    },
+    greenState: {
+      color: theme.palette.success.main,
+    },
+    greyState: {
+      color: "grey",
+    },
+    healthCol: {
+      fontWeight: "bold",
+      paddingRight: "10px",
+    },
     ...modalBasic,
     ...actionsTray,
     ...buttonsStyles,
@@ -345,6 +361,16 @@ const TenantDetails = ({
     loadInfo();
   };
 
+  const healthStatusToClass = (health_status: string) => {
+    return health_status == "red"
+      ? classes.redState
+      : health_status == "yellow"
+      ? classes.yellowState
+      : health_status == "green"
+      ? classes.greenState
+      : classes.greyState;
+  };
+
   return (
     <React.Fragment>
       {addPoolOpen && tenant !== null && (
@@ -524,6 +550,44 @@ const TenantDetails = ({
                       error={usageError}
                       loading={loadingUsage}
                     />
+                    <h4>
+                      {tenant && tenant.status && (
+                        <span
+                          className={healthStatusToClass(
+                            tenant.status.health_status
+                          )}
+                        >
+                          ⬤&nbsp;
+                        </span>
+                      )}
+                      Health
+                    </h4>
+                    <table>
+                      <tr>
+                        <td className={classes.healthCol}>Drives Online</td>
+                        <td>
+                          {tenant?.status?.drives_online
+                            ? tenant?.status?.drives_online
+                            : 0}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className={classes.healthCol}>Drives Offline</td>
+                        <td>
+                          {tenant?.status?.drives_offline
+                            ? tenant?.status?.drives_offline
+                            : 0}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className={classes.healthCol}>Write Quorum</td>
+                        <td>
+                          {tenant?.status?.write_quorum
+                            ? tenant?.status?.write_quorum
+                            : 0}
+                        </td>
+                      </tr>
+                    </table>
                   </Grid>
                 </Grid>
               </Paper>

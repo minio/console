@@ -6699,6 +6699,9 @@ func init() {
             "$ref": "#/definitions/pool"
           }
         },
+        "status": {
+          "$ref": "#/definitions/tenantStatus"
+        },
         "subnet_license": {
           "$ref": "#/definitions/license"
         },
@@ -6718,6 +6721,9 @@ func init() {
           "type": "string"
         },
         "deletion_date": {
+          "type": "string"
+        },
+        "health_status": {
           "type": "string"
         },
         "instance_count": {
@@ -6774,6 +6780,30 @@ func init() {
         },
         "secret_key": {
           "type": "string"
+        }
+      }
+    },
+    "tenantStatus": {
+      "type": "object",
+      "properties": {
+        "drives_healing": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "drives_offline": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "drives_online": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "health_status": {
+          "type": "string"
+        },
+        "write_quorum": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -14398,6 +14428,9 @@ func init() {
             "$ref": "#/definitions/pool"
           }
         },
+        "status": {
+          "$ref": "#/definitions/tenantStatus"
+        },
         "subnet_license": {
           "$ref": "#/definitions/license"
         },
@@ -14417,6 +14450,9 @@ func init() {
           "type": "string"
         },
         "deletion_date": {
+          "type": "string"
+        },
+        "health_status": {
           "type": "string"
         },
         "instance_count": {
@@ -14473,6 +14509,30 @@ func init() {
         },
         "secret_key": {
           "type": "string"
+        }
+      }
+    },
+    "tenantStatus": {
+      "type": "object",
+      "properties": {
+        "drives_healing": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "drives_offline": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "drives_online": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "health_status": {
+          "type": "string"
+        },
+        "write_quorum": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

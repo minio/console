@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
@@ -92,6 +92,18 @@ const styles = (theme: Theme) =>
       "&::-webkit-scrollbar": {
         display: "none",
       },
+    },
+    redState: {
+      color: theme.palette.error.main,
+    },
+    yellowState: {
+      color: theme.palette.warning.main,
+    },
+    greenState: {
+      color: theme.palette.success.main,
+    },
+    greyState: {
+      color: "grey",
     },
   });
 
@@ -203,6 +215,16 @@ const ListTenants = ({
     setCurrentPanel(1);
   };
 
+  const healthStatusToClass = (health_status: string) => {
+    return health_status == "red"
+      ? classes.redState
+      : health_status == "yellow"
+      ? classes.yellowState
+      : health_status == "green"
+      ? classes.greenState
+      : classes.greyState;
+  };
+
   return (
     <Fragment>
       {deleteOpen && (
@@ -271,7 +293,25 @@ const ListTenants = ({
                         <TableWrapper
                           itemActions={tableActions}
                           columns={[
-                            { label: "Name", elementKey: "name" },
+                            {
+                              label: "Name",
+                              elementKey: "name",
+                              renderFullObject: true,
+                              renderFunction: (t) => {
+                                return (
+                                  <React.Fragment>
+                                    <span
+                                      className={healthStatusToClass(
+                                        t.health_status
+                                      )}
+                                    >
+                                      ⬤
+                                    </span>{" "}
+                                    {t.name}
+                                  </React.Fragment>
+                                );
+                              },
+                            },
                             { label: "Namespace", elementKey: "namespace" },
                             { label: "Capacity", elementKey: "capacity" },
                             { label: "# of Pools", elementKey: "pool_count" },

@@ -14,11 +14,6 @@ const newTheme = createMuiTheme({
       dark: "#01262E",
       contrastText: "#000",
     },
-    error: {
-      light: "#e03a48",
-      main: "#dc1f2e",
-      contrastText: "#ffffff",
-    },
     grey: {
       100: "#F7F7F7",
       200: "#D8DDDE",
@@ -32,6 +27,17 @@ const newTheme = createMuiTheme({
     },
     background: {
       default: "#F4F4F4",
+    },
+    success: {
+      main: "#32c787",
+    },
+    warning: {
+      main: "#ffb300",
+    },
+    error: {
+      light: "#e03a48",
+      main: "#dc1f2e",
+      contrastText: "#ffffff",
     },
   },
   typography: {
