@@ -20,6 +20,10 @@ import (
 	"context"
 	"sort"
 
+	"github.com/minio/minio-go/v7/pkg/set"
+
+	"github.com/minio/console/restapi/operations/operator_api"
+
 	"github.com/minio/console/cluster"
 
 	"errors"
@@ -35,11 +39,19 @@ import (
 
 func registerNodesHandlers(api *operations.ConsoleAPI) {
 	api.AdminAPIGetMaxAllocatableMemHandler = admin_api.GetMaxAllocatableMemHandlerFunc(func(params admin_api.GetMaxAllocatableMemParams, principal *models.Principal) middleware.Responder {
-		resp, err := getMaxAllocatableMemoryResponse(principal, params.NumNodes)
+		resp, err := getMaxAllocatableMemoryResponse(params.HTTPRequest.Context(), principal, params.NumNodes)
 		if err != nil {
 			return admin_api.NewGetMaxAllocatableMemDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewGetMaxAllocatableMemOK().WithPayload(resp)
+	})
+
+	api.OperatorAPIListNodeLabelsHandler = operator_api.ListNodeLabelsHandlerFunc(func(params operator_api.ListNodeLabelsParams, principal *models.Principal) middleware.Responder {
+		resp, err := getNodeLabelsResponse(params.HTTPRequest.Context(), principal)
+		if err != nil {
+			return operator_api.NewListNodeLabelsDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewListNodeLabelsOK().WithPayload(*resp)
 	})
 }
 
@@ -121,14 +133,53 @@ func min(x, y int64) int64 {
 	return x
 }
 
-func getMaxAllocatableMemoryResponse(session *models.Principal, numNodes int32) (*models.MaxAllocatableMemResponse, *models.Error) {
-	ctx := context.Background()
+func getMaxAllocatableMemoryResponse(ctx context.Context, session *models.Principal, numNodes int32) (*models.MaxAllocatableMemResponse, *models.Error) {
 	client, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
 	}
 
 	clusterResources, err := getMaxAllocatableMemory(ctx, client.CoreV1(), numNodes)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	return clusterResources, nil
+}
+
+func getNodeLabels(ctx context.Context, clientset v1.CoreV1Interface) (*models.NodeLabels, error) {
+	// get all nodes from cluster
+	nodes, err := clientset.Nodes().List(ctx, metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+	// make a map[string]set to avoid duplicate values
+	keyValueSet := map[string]set.StringSet{}
+
+	for _, node := range nodes.Items {
+		for k, v := range node.Labels {
+			if _, ok := keyValueSet[k]; !ok {
+				keyValueSet[k] = set.NewStringSet()
+			}
+			keyValueSet[k].Add(v)
+		}
+	}
+
+	// convert to output
+	res := models.NodeLabels{}
+	for k, valSet := range keyValueSet {
+		res[k] = valSet.ToSlice()
+	}
+
+	return &res, nil
+}
+
+func getNodeLabelsResponse(ctx context.Context, session *models.Principal) (*models.NodeLabels, *models.Error) {
+	client, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+
+	clusterResources, err := getNodeLabels(ctx, client.CoreV1())
 	if err != nil {
 		return nil, prepareError(err)
 	}
