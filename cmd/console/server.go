@@ -130,9 +130,8 @@ func StartServer(ctx *cli.Context) error {
 
 	server.Host = ctx.String("host")
 	server.Port = ctx.Int("port")
-
-	restapi.Hostname = ctx.String("host")
-	restapi.Port = strconv.Itoa(ctx.Int("port"))
+	restapi.Hostname = server.Host
+	restapi.Port = strconv.Itoa(server.Port)
 
 	// Set all certs and CAs directories path
 	certs.GlobalCertsDir, _ = certs.NewConfigDirFromCtx(ctx, "certs-dir", certs.DefaultCertsDir.Get)
@@ -149,21 +148,21 @@ func StartServer(ctx *cli.Context) error {
 		// TLS flags from swagger server, used to support VMware vsphere operator version.
 		swaggerServerCertificate := ctx.String("tls-certificate")
 		swaggerServerCertificateKey := ctx.String("tls-key")
-		SwaggerServerCACertificate := ctx.String("tls-ca")
+		swaggerServerCACertificate := ctx.String("tls-ca")
 		// load tls cert and key from swagger server tls-certificate and tls-key flags
 		if swaggerServerCertificate != "" && swaggerServerCertificateKey != "" {
-			if errAddCert := certs.AddCertificate(context.Background(),
-				restapi.GlobalTLSCertsManager, swaggerServerCertificate, swaggerServerCertificateKey); errAddCert != nil {
-				log.Println(errAddCert)
+			if err = certs.AddCertificate(context.Background(),
+				restapi.GlobalTLSCertsManager, swaggerServerCertificate, swaggerServerCertificateKey); err != nil {
+				log.Fatalln(err)
 			}
-			if x509Certs, errParseCert := certs.ParsePublicCertFile(swaggerServerCertificate); errParseCert == nil {
+			if x509Certs, err := certs.ParsePublicCertFile(swaggerServerCertificate); err == nil {
 				restapi.GlobalPublicCerts = append(restapi.GlobalPublicCerts, x509Certs...)
 			}
 		}
 
 		// load ca cert from swagger server tls-ca flag
-		if SwaggerServerCACertificate != "" {
-			caCert, caCertErr := ioutil.ReadFile(SwaggerServerCACertificate)
+		if swaggerServerCACertificate != "" {
+			caCert, caCertErr := ioutil.ReadFile(swaggerServerCACertificate)
 			if caCertErr == nil {
 				restapi.GlobalRootCAs.AppendCertsFromPEM(caCert)
 			}
@@ -175,9 +174,8 @@ func StartServer(ctx *cli.Context) error {
 		// plain HTTP connections to HTTPS server
 		server.EnabledListeners = []string{"http", "https"}
 		server.TLSPort = ctx.Int("tls-port")
-		server.TLSHost = ctx.String("tls-host")
 		// Need to store tls-port, tls-host un config variables so secure.middleware can read from there
-		restapi.TLSPort = fmt.Sprintf("%v", ctx.Int("tls-port"))
+		restapi.TLSPort = strconv.Itoa(server.TLSPort)
 		restapi.Hostname = ctx.String("host")
 		restapi.TLSRedirect = ctx.String("tls-redirect")
 	}

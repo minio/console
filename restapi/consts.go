@@ -52,6 +52,7 @@ const (
 	ConsoleOperatorConsoleImage                  = "CONSOLE_OPERATOR_CONSOLE_IMAGE"
 	LogSearchURL                                 = "CONSOLE_LOG_QUERY_URL"
 	PrometheusURL                                = "CONSOLE_PROMETHEUS_URL"
+	PrometheusJobID                              = "CONSOLE_PROMETHEUS_JOB_ID"
 	LogSearchQueryAuthToken                      = "LOGSEARCH_QUERY_AUTH_TOKEN"
 
 	// Constants for prometheus annotations
