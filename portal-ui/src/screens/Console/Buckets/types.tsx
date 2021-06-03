@@ -116,6 +116,11 @@ export interface ChangePasswordRequest {
   new_secret_key: string;
 }
 
+export interface ChangeUserPasswordRequest {
+  selectedUser: string;
+  newSecretKey: string;
+}
+
 export interface SubscriptionActivateRequest {
   license: string;
   email: string;

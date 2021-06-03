@@ -19,7 +19,7 @@ securityDefinitions:
     tokenUrl: http://min.io
 # Apply the key security definition to all APIs
 security:
-  - key: [ ]
+  - key: []
 paths:
   /login:
     get:
@@ -35,7 +35,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       # Exclude this API from the authentication requirement
-      security: [ ]
+      security: []
       tags:
         - UserAPI
     post:
@@ -57,7 +57,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       # Exclude this API from the authentication requirement
-      security: [ ]
+      security: []
       tags:
         - UserAPI
   /login/operator:
@@ -79,7 +79,7 @@ paths:
           description: Generic error response.
           schema:
             $ref: "#/definitions/error"
-      security: [ ]
+      security: []
       tags:
         - UserAPI
 
@@ -102,7 +102,7 @@ paths:
           description: Generic error response.
           schema:
             $ref: "#/definitions/error"
-      security: [ ]
+      security: []
       tags:
         - UserAPI
 
@@ -157,6 +157,26 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
+
+  /account/change-user-password:
+    post:
+      summary: Change password of currently logged in user.
+      operationId: ChangeUserPassword
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/changeUserPasswordRequest"
+      responses:
+        201:
+          description: Password successfully changed.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
 
   /buckets:
     get:
@@ -731,7 +751,6 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-
 
   /buckets-replication:
     post:
@@ -2086,7 +2105,7 @@ paths:
         - name: order
           in: query
           type: string
-          enum: [ timeDesc, timeAsc ]
+          enum: [timeDesc, timeAsc]
           default: timeDesc
         - name: timeStart
           in: query
@@ -2604,7 +2623,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-  
+
   /direct-csi/drives/format:
     post:
       summary: Format direct-csi drives from a list
@@ -2669,6 +2688,17 @@ definitions:
       current_secret_key:
         type: string
       new_secret_key:
+        type: string
+
+  changeUserPasswordRequest:
+    type: object
+    required:
+      - selectedUser
+      - newSecretKey
+    properties:
+      selectedUser:
+        type: string
+      newSecretKey:
         type: string
 
   bucketEncryptionType:
@@ -3258,7 +3288,7 @@ definitions:
     properties:
       loginStrategy:
         type: string
-        enum: [ form, redirect, service-account ]
+        enum: [form, redirect, service-account]
       redirect:
         type: string
   loginOauth2AuthRequest:
@@ -3359,7 +3389,7 @@ definitions:
           type: string
       status:
         type: string
-        enum: [ ok ]
+        enum: [ok]
       operator:
         type: boolean
   widgetResult:
@@ -3371,7 +3401,7 @@ definitions:
           type: string
       values:
         type: array
-        items: { }
+        items: {}
   resultTarget:
     type: object
     properties:
@@ -3589,7 +3619,7 @@ definitions:
         type: string
       service:
         type: string
-        enum: [ replication ]
+        enum: [replication]
       syncMode:
         type: string
       bandwidth:
@@ -3724,7 +3754,6 @@ definitions:
         type: boolean
       status:
         $ref: "#/definitions/tenantStatus"
-
 
   tenantUsage:
     type: object
@@ -4153,7 +4182,7 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/tenantResponseItem"
-          
+
   tenantResponseItem:
     type: object
     properties:
@@ -4168,11 +4197,9 @@ definitions:
       - name
     properties:
       name:
-        type:
-          string
+        type: string
       status:
-        type:
-          string
+        type: string
       timeCreated:
         type: integer
       podIP:
@@ -4746,7 +4773,7 @@ definitions:
       validity:
         type: integer
         format: int32
-  
+
   bucketLifecycleResponse:
     type: object
     properties:
@@ -4758,14 +4785,14 @@ definitions:
   expirationResponse:
     type: object
     properties:
-      date: 
+      date:
         type: string
       days:
         type: integer
         format: int64
       delete_marker:
         type: boolean
-  
+
   transitionResponse:
     type: object
     properties:
@@ -4776,7 +4803,7 @@ definitions:
       days:
         type: integer
         format: int64
-  
+
   lifecycleTag:
     type: object
     properties:
@@ -4802,7 +4829,6 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/lifecycleTag"
-
 
   addBucketLifecycle:
     type: object
@@ -4851,7 +4877,7 @@ definitions:
       noncurrentversion_transition_storage_class:
         description: Non required, can be set in case of transition is enabled
         type: string
-  
+
   updateBucketLifecycle:
     type: object
     properties:
@@ -4866,7 +4892,6 @@ definitions:
       restart:
         description: Returns wheter server needs to restart to apply changes or not
         type: boolean
-
 
   subscriptionValidateRequest:
     type: object
@@ -5131,7 +5156,7 @@ definitions:
     properties:
       yaml:
         type: string
-        
+
   listPVCsResponse:
     type: object
     properties:
