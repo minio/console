@@ -33,6 +33,7 @@ interface ISingleRepWidget {
   panelItem: IDashboardPanel;
   timeStart: MaterialUiPickersDate;
   timeEnd: MaterialUiPickersDate;
+  propLoading: boolean;
   displayErrorMessage: any;
   color: string;
   fillColor: string;
@@ -55,6 +56,7 @@ const SingleRepWidget = ({
   panelItem,
   timeStart,
   timeEnd,
+  propLoading,
   displayErrorMessage,
   color,
   fillColor,
@@ -62,6 +64,13 @@ const SingleRepWidget = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<IDataSRep[]>([]);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
+
+  useEffect(() => {
+    if (propLoading) {
+      setLoading(true);
+    }
+  }, [propLoading]);
+
   useEffect(() => {
     if (loading) {
       let stepCalc = 0;
