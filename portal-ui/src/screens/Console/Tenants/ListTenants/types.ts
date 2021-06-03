@@ -92,6 +92,9 @@ export interface ITenant {
   logEnabled: boolean;
   monitoringEnabled: boolean;
   encryptionEnabled: boolean;
+  minioTLS: boolean;
+  consoleTLS: boolean;
+  consoleEnabled: boolean;
   idpAdEnabled: boolean;
   idpOicEnabled: boolean;
   health_status: string;

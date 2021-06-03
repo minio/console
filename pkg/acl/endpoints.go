@@ -49,6 +49,7 @@ var (
 	tenantsDetailPods           = "/namespaces/:tenantNamespace/tenants/:tenantName/pods"
 	tenantsDetailPools          = "/namespaces/:tenantNamespace/tenants/:tenantName/pools"
 	tenantsDetailLicense        = "/namespaces/:tenantNamespace/tenants/:tenantName/license"
+	tenantsDetailSecurity       = "/namespaces/:tenantNamespace/tenants/:tenantName/security"
 	storage                     = "/storage"
 	storageVolumes              = "/storage/volumes"
 	storageDrives               = "/storage/drives"
@@ -323,18 +324,19 @@ var endpointRules = map[string]ConfigurationActionSet{
 
 // operatorRules contains the mapping between endpoints and ActionSets for operator only mode
 var operatorRules = map[string]ConfigurationActionSet{
-	tenants:              tenantsActionSet,
-	tenantsDetail:        tenantsActionSet,
-	tenantsDetailSummary: tenantsActionSet,
-	tenantsDetailMetrics: tenantsActionSet,
-	tenantsDetailPods:    tenantsActionSet,
-	tenantsDetailPools:   tenantsActionSet,
-	tenantsDetailLicense: tenantsActionSet,
-	podsDetail:           tenantsActionSet,
-	storage:              storageActionSet,
-	storageDrives:        storageActionSet,
-	storageVolumes:       storageActionSet,
-	license:              licenseActionSet,
+	tenants:               tenantsActionSet,
+	tenantsDetail:         tenantsActionSet,
+	tenantsDetailSummary:  tenantsActionSet,
+	tenantsDetailMetrics:  tenantsActionSet,
+	tenantsDetailPods:     tenantsActionSet,
+	tenantsDetailPools:    tenantsActionSet,
+	tenantsDetailLicense:  tenantsActionSet,
+	tenantsDetailSecurity: tenantsActionSet,
+	podsDetail:            tenantsActionSet,
+	storage:               storageActionSet,
+	storageDrives:         storageActionSet,
+	storageVolumes:        storageActionSet,
+	license:               licenseActionSet,
 }
 
 // operatorOnly ENV variable

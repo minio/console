@@ -36,6 +36,12 @@ import (
 // swagger:model tenant
 type Tenant struct {
 
+	// console enabled
+	ConsoleEnabled bool `json:"consoleEnabled,omitempty"`
+
+	// console TLS
+	ConsoleTLS bool `json:"consoleTLS,omitempty"`
+
 	// console image
 	ConsoleImage string `json:"console_image,omitempty"`
 
@@ -68,6 +74,9 @@ type Tenant struct {
 
 	// log enabled
 	LogEnabled bool `json:"logEnabled,omitempty"`
+
+	// minio TLS
+	MinioTLS bool `json:"minioTLS,omitempty"`
 
 	// monitoring enabled
 	MonitoringEnabled bool `json:"monitoringEnabled,omitempty"`
