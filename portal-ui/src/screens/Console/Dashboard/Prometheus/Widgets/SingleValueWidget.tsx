@@ -30,6 +30,7 @@ interface ISingleValueWidget {
   panelItem: IDashboardPanel;
   timeStart: MaterialUiPickersDate;
   timeEnd: MaterialUiPickersDate;
+  propLoading: boolean;
   displayErrorMessage: any;
   classes: any;
 }
@@ -57,11 +58,19 @@ const SingleValueWidget = ({
   panelItem,
   timeStart,
   timeEnd,
+  propLoading,
   displayErrorMessage,
   classes,
 }: ISingleValueWidget) => {
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<string>("");
+
+  useEffect(() => {
+    if (propLoading) {
+      setLoading(true);
+    }
+  }, [propLoading]);
+
   useEffect(() => {
     if (loading) {
       let stepCalc = 0;

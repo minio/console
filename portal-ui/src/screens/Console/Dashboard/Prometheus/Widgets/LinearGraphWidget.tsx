@@ -42,6 +42,7 @@ interface ILinearGraphWidget {
   panelItem: IDashboardPanel;
   timeStart: MaterialUiPickersDate;
   timeEnd: MaterialUiPickersDate;
+  propLoading: boolean;
   displayErrorMessage: any;
   hideYAxis?: boolean;
   yAxisFormatter?: (item: string) => string;
@@ -84,6 +85,7 @@ const LinearGraphWidget = ({
   displayErrorMessage,
   timeStart,
   timeEnd,
+  propLoading,
   panelItem,
   hideYAxis = false,
   yAxisFormatter = (item: string) => item,
@@ -93,6 +95,13 @@ const LinearGraphWidget = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<object[]>([]);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
+
+  useEffect(() => {
+    if (propLoading) {
+      setLoading(true);
+    }
+  }, [propLoading]);
+
   useEffect(() => {
     if (loading) {
       let stepCalc = 0;
