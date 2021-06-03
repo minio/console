@@ -34,6 +34,7 @@ interface IPieChartWidget {
   panelItem: IDashboardPanel;
   timeStart: MaterialUiPickersDate;
   timeEnd: MaterialUiPickersDate;
+  propLoading: boolean;
   displayErrorMessage: any;
 }
 
@@ -54,12 +55,19 @@ const PieChartWidget = ({
   panelItem,
   timeStart,
   timeEnd,
+  propLoading,
   displayErrorMessage,
 }: IPieChartWidget) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [dataInner, setDataInner] = useState<object[]>([]);
   const [dataOuter, setDataOuter] = useState<object[]>([]);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
+
+  useEffect(() => {
+    if (propLoading) {
+      setLoading(true);
+    }
+  }, [propLoading]);
 
   useEffect(() => {
     if (loading) {
