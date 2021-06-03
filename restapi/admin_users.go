@@ -107,6 +107,14 @@ func registerUsersHandlers(api *operations.ConsoleAPI) {
 		}
 		return admin_api.NewListUsersWithAccessToBucketOK().WithPayload(response)
 	})
+	// Change User Password
+	api.AdminAPIChangeUserPasswordHandler = admin_api.ChangeUserPasswordHandlerFunc(func(params admin_api.ChangeUserPasswordParams, session *models.Principal) middleware.Responder {
+		err := getChangeUserPasswordResponse(session, params)
+		if err != nil {
+			return admin_api.NewChangeUserPasswordDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewChangeUserPasswordCreated()
+	})
 }
 
 func listUsers(ctx context.Context, client MinioAdmin) ([]*models.User, error) {
@@ -583,4 +591,34 @@ func listUsersWithAccessToBucket(ctx context.Context, adminClient MinioAdmin, bu
 	}
 	sort.Strings(retval)
 	return retval, nil
+}
+
+// changeUserPassword changes password of selectedUser to newSecretKey
+func changeUserPassword(ctx context.Context, client MinioAdmin, selectedUser string, newSecretKey string) error {
+	if err := client.changePassword(ctx, selectedUser, newSecretKey); err != nil {
+		return err
+	}
+	return nil
+}
+
+// getChangeUserPasswordResponse will change the password of selctedUser to newSecretKey
+func getChangeUserPasswordResponse(session *models.Principal, params admin_api.ChangeUserPasswordParams) *models.Error {
+	ctx := context.Background()
+	mAdmin, err := newMAdminClient(session)
+	if err != nil {
+		return prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := adminClient{client: mAdmin}
+
+	// params will contain selectedUser and newSecretKey credentials for the user
+	user := *params.Body.SelectedUser
+	newSecretKey := *params.Body.NewSecretKey
+
+	// changes password of user to newSecretKey
+	if err := changeUserPassword(ctx, adminClient, user, newSecretKey); err != nil {
+		return prepareError(err)
+	}
+	return nil
 }

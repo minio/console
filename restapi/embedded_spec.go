@@ -85,6 +85,36 @@ func init() {
         }
       }
     },
+    "/account/change-user-password": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Change password of currently logged in user.",
+        "operationId": "ChangeUserPassword",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/changeUserPasswordRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Password successfully changed."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/admin/arns": {
       "get": {
         "tags": [
@@ -4432,6 +4462,21 @@ func init() {
         }
       }
     },
+    "changeUserPasswordRequest": {
+      "type": "object",
+      "required": [
+        "selectedUser",
+        "newSecretKey"
+      ],
+      "properties": {
+        "newSecretKey": {
+          "type": "string"
+        },
+        "selectedUser": {
+          "type": "string"
+        }
+      }
+    },
     "configDescription": {
       "type": "object",
       "properties": {
@@ -7311,6 +7356,36 @@ func init() {
             "schema": {
               "$ref": "#/definitions/loginResponse"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/account/change-user-password": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Change password of currently logged in user.",
+        "operationId": "ChangeUserPassword",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/changeUserPasswordRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Password successfully changed."
           },
           "default": {
             "description": "Generic error response.",
@@ -12305,6 +12380,21 @@ func init() {
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "changeUserPasswordRequest": {
+      "type": "object",
+      "required": [
+        "selectedUser",
+        "newSecretKey"
+      ],
+      "properties": {
+        "newSecretKey": {
+          "type": "string"
+        },
+        "selectedUser": {
+          "type": "string"
         }
       }
     },
