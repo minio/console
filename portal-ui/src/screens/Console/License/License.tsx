@@ -26,6 +26,7 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import { planDetails, planItems, planButtons } from "./utils";
 import ActivationModal from "./ActivationModal";
+import LicenseModal from "./LicenseModal";
 import api from "../../../common/api";
 import { LicenseInfo } from "./types";
 import { CircularProgress, LinearProgress } from "@material-ui/core";
@@ -338,6 +339,8 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
   const [activateProductModal, setActivateProductModal] =
     useState<boolean>(false);
 
+  const [licenseModal, setLicenseModal] = useState<boolean>(false);
+
   const [licenseInfo, setLicenseInfo] = useState<LicenseInfo>();
   const [currentPlanID, setCurrentPlanID] = useState<number>(0);
   const [loadingLicenseInfo, setLoadingLicenseInfo] = useState<boolean>(true);
@@ -481,15 +484,15 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                 </React.Fragment>
               ) : (
                 <React.Fragment>
+                  <LicenseModal
+                    open={licenseModal}
+                    closeModal={() => setLicenseModal(false)}
+                  />
                   <img src="/agpl.svg" height={40} alt="agpl" />
                   <Typography component="h2" variant="h6">
                     GNU Affero General Public License
                   </Typography>
-                  <a
-                    href={"https://www.gnu.org/licenses/agpl-3.0.html"}
-                    target="_blank"
-                    rel="nofollow noopener noreferrer"
-                  >
+                  <a onClick={() => setLicenseModal(true)} href="#">
                     <div className={classes.licenseDescription}>
                       <Typography component="h3">Version 3</Typography>
                       <Typography component="h6">
