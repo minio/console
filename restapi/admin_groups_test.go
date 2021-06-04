@@ -70,14 +70,14 @@ func TestListGroups(t *testing.T) {
 	// get list Groups response this response should have Name, CreationDate, Size and Access
 	// as part of of each Groups
 	function := "listGroups()"
-	groupsList, err := listGroups(ctx, adminClient)
+	groupsList, err := adminClient.listGroups(ctx)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	// verify length of Groupss is correct
-	assert.Equal(len(mockGroupsList), len(*groupsList), fmt.Sprintf("Failed on %s: length of Groups's lists is not the same", function))
+	assert.Equal(len(mockGroupsList), len(groupsList), fmt.Sprintf("Failed on %s: length of Groups's lists is not the same", function))
 
-	for i, g := range *groupsList {
+	for i, g := range groupsList {
 		assert.Equal(mockGroupsList[i], g)
 	}
 
@@ -85,7 +85,7 @@ func TestListGroups(t *testing.T) {
 	minioListGroupsMock = func() ([]string, error) {
 		return nil, errors.New("error")
 	}
-	_, err = listGroups(ctx, adminClient)
+	_, err = adminClient.listGroups(ctx)
 	if assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}

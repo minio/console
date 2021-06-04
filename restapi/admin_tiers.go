@@ -131,7 +131,7 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 
 // getTiersResponse returns a response with a list of tiers
 func getTiersResponse(session *models.Principal) (*models.TierListResponse, *models.Error) {
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -221,7 +221,7 @@ func addTier(ctx context.Context, client MinioAdmin, params *admin_api.AddTierPa
 
 // getAddTierResponse returns the response of admin tier
 func getAddTierResponse(session *models.Principal, params *admin_api.AddTierParams) *models.Error {
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return prepareError(err)
 	}
@@ -304,7 +304,7 @@ func getTier(ctx context.Context, client MinioAdmin, params *admin_api.GetTierPa
 
 // getGetTierResponse returns a tier
 func getGetTierResponse(session *models.Principal, params *admin_api.GetTierParams) (*models.Tier, *models.Error) {
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -340,7 +340,7 @@ func editTierCredentials(ctx context.Context, client MinioAdmin, params *admin_a
 
 // getEditTierCredentialsResponse returns the result of editing credentials for a tier
 func getEditTierCredentialsResponse(session *models.Principal, params *admin_api.EditTierCredentialsParams) *models.Error {
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return prepareError(err)
 	}

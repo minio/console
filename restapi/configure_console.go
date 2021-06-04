@@ -23,7 +23,6 @@ import (
 	"crypto/tls"
 	"io"
 	"io/fs"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -31,7 +30,6 @@ import (
 	portal_ui "github.com/minio/console/portal-ui"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/auth"
@@ -55,26 +53,13 @@ func configureFlags(api *operations.ConsoleAPI) {
 }
 
 func configureAPI(api *operations.ConsoleAPI) http.Handler {
-	// configure the api here
-	api.ServeError = errors.ServeError
-
-	// Set your custom logger if needed. Default one is log.Printf
-	// Expected interface func(string, ...interface{})
-	//
-	// Example:
-	// api.Logger = log.Printf
-
-	api.JSONConsumer = runtime.JSONConsumer()
-
-	api.JSONProducer = runtime.JSONProducer()
 	// Applies when the "x-token" header is set
-
 	api.KeyAuth = func(token string, scopes []string) (*models.Principal, error) {
 		// we are validating the session token by decrypting the claims inside, if the operation succeed that means the jwt
 		// was generated and signed by us in the first place
 		claims, err := auth.SessionTokenAuthenticate(token)
 		if err != nil {
-			log.Println(err)
+			api.Logger("Unable to validate the session token %s: %v", token, err)
 			return nil, errors.New(401, "incorrect api key auth")
 		}
 		return &models.Principal{

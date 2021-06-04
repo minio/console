@@ -49,7 +49,7 @@ func prepareError(err ...error) *models.Error {
 	if len(err) > 0 {
 		frame := getFrame(2)
 		fileParts := strings.Split(frame.File, "/")
-		log.Printf("%s:%d: original error: %s", fileParts[len(fileParts)-1], frame.Line, err[0].Error())
+		LogError("original error -> (%s:%d: %v)", fileParts[len(fileParts)-1], frame.Line, err[0])
 		if k8sErrors.IsUnauthorized(err[0]) {
 			errorCode = 401
 			errorMessage = errorGenericUnauthorized.Error()

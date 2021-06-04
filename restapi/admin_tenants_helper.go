@@ -22,7 +22,6 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
-	"log"
 	"strconv"
 	"time"
 
@@ -249,7 +248,7 @@ func createOrReplaceSecrets(ctx context.Context, clientSet K8sClientI, ns string
 			err := clientSet.deleteSecret(ctx, ns, secret.Name, metav1.DeleteOptions{})
 			if err != nil {
 				// log the error if any and continue
-				log.Println(err)
+				LogError("deleting secret name %s failed: %v, continuing..", secret.Name, err)
 			}
 			imm := true
 			k8sSecret := &corev1.Secret{
@@ -289,7 +288,7 @@ func createOrReplaceExternalCertSecrets(ctx context.Context, clientSet K8sClient
 		err := clientSet.deleteSecret(ctx, ns, keyPairSecretName, metav1.DeleteOptions{})
 		if err != nil {
 			// log the error if any and continue
-			log.Println(err)
+			LogError("deleting secret name %s failed: %v, continuing..", keyPairSecretName, err)
 		}
 		imm := true
 		tlsCrt, err := base64.StdEncoding.DecodeString(*keyPair.Crt)
@@ -331,12 +330,12 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 	// delete KES configuration secret if exists
 	if err := clientSet.deleteSecret(ctx, ns, kesConfigurationSecretName, metav1.DeleteOptions{}); err != nil {
 		// log the error if any and continue
-		log.Println(err)
+		LogError("deleting secret name %s failed: %v, continuing..", kesConfigurationSecretName, err)
 	}
 	// delete KES client cert secret if exists
 	if err := clientSet.deleteSecret(ctx, ns, kesClientCertSecretName, metav1.DeleteOptions{}); err != nil {
 		// log the error if any and continue
-		log.Println(err)
+		LogError("deleting secret name %s failed: %v, continuing..", kesClientCertSecretName, err)
 	}
 	// if autoCert is enabled then Operator will generate the client certificates, calculate the client cert identity
 	// and pass it to KES via the ${MINIO_KES_IDENTITY} variable

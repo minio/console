@@ -389,7 +389,7 @@ func (ac adminClient) editTierCreds(ctx context.Context, tierName string, creds 
 	return ac.client.EditTier(ctx, tierName, creds)
 }
 
-func newMAdminClient(sessionClaims *models.Principal) (*madmin.AdminClient, error) {
+func newAdminClient(sessionClaims *models.Principal) (*madmin.AdminClient, error) {
 	adminClient, err := newAdminFromClaims(sessionClaims)
 	if err != nil {
 		return nil, err

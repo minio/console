@@ -131,7 +131,7 @@ func MkdirAllIgnorePerm(path string) error {
 	return err
 }
 
-func NewConfigDirFromCtx(ctx *cli.Context, option string, getDefaultDir func() string) (*ConfigDir, bool) {
+func NewConfigDirFromCtx(ctx *cli.Context, option string, getDefaultDir func() string) (*ConfigDir, bool, error) {
 	var dir string
 	var dirSet bool
 
@@ -155,23 +155,23 @@ func NewConfigDirFromCtx(ctx *cli.Context, option string, getDefaultDir func() s
 		// default directory.
 		dir = getDefaultDir()
 		if dir == "" {
-			log.Fatalln(fmt.Sprintf("invalid arguments specified, %s option must be provided", option))
+			return nil, false, fmt.Errorf("invalid arguments specified, %s option must be provided", option)
 		}
 	}
 
 	if dir == "" {
-		log.Fatalln(fmt.Sprintf("empty directory, %s directory cannot be empty", option))
+		return nil, false, fmt.Errorf("empty directory, %s directory cannot be empty", option)
 	}
 
 	// Disallow relative paths, figure out absolute paths.
 	dirAbs, err := filepath.Abs(dir)
 	if err != nil {
-		log.Fatalf("%s: Unable to fetch absolute path for %s=%s", err, option, dir)
+		return nil, false, fmt.Errorf("%w: Unable to fetch absolute path for %s=%s", err, option, dir)
 	}
 	if err = MkdirAllIgnorePerm(dirAbs); err != nil {
-		log.Fatalf("%s: Unable to create directory specified %s=%s", err, option, dir)
+		return nil, false, fmt.Errorf("%w: Unable to create directory specified %s=%s", err, option, dir)
 	}
-	return &ConfigDir{Path: dirAbs}, dirSet
+	return &ConfigDir{Path: dirAbs}, dirSet, nil
 }
 
 func getPublicCertFile() string {
@@ -307,7 +307,7 @@ func GetTLSConfig() (x509Certs []*x509.Certificate, manager *xcerts.Manager, err
 			continue
 		}
 		if err = manager.AddCertificate(certFile, keyFile); err != nil {
-			log.Fatalln(fmt.Errorf("unable to load TLS certificate '%s,%s': %w", certFile, keyFile, err))
+			return nil, nil, fmt.Errorf("unable to load TLS certificate '%s,%s': %w", certFile, keyFile, err)
 		}
 	}
 	return x509Certs, manager, nil

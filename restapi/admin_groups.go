@@ -18,7 +18,6 @@ package restapi
 
 import (
 	"context"
-	"log"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
@@ -71,19 +70,10 @@ func registerGroupsHandlers(api *operations.ConsoleAPI) {
 	})
 }
 
-// listGroups calls MinIO server to list all groups names present on the server.
-func listGroups(ctx context.Context, client MinioAdmin) (*[]string, error) {
-	groupList, err := client.listGroups(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return &groupList, nil
-}
-
 // getListGroupsResponse performs listGroups() and serializes it to the handler's output
 func getListGroupsResponse(session *models.Principal) (*models.ListGroupsResponse, *models.Error) {
 	ctx := context.Background()
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -91,15 +81,17 @@ func getListGroupsResponse(session *models.Principal) (*models.ListGroupsRespons
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
 
-	groups, err := listGroups(ctx, adminClient)
+	groups, err := adminClient.listGroups(ctx)
 	if err != nil {
 		return nil, prepareError(err)
 	}
+
 	// serialize output
 	listGroupsResponse := &models.ListGroupsResponse{
-		Groups: *groups,
-		Total:  int64(len(*groups)),
+		Groups: groups,
+		Total:  int64(len(groups)),
 	}
+
 	return listGroupsResponse, nil
 }
 
@@ -115,7 +107,7 @@ func groupInfo(ctx context.Context, client MinioAdmin, group string) (*madmin.Gr
 // getGroupInfoResponse performs groupInfo() and serializes it to the handler's output
 func getGroupInfoResponse(session *models.Principal, params admin_api.GroupInfoParams) (*models.Group, *models.Error) {
 	ctx := context.Background()
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -159,7 +151,7 @@ func getAddGroupResponse(session *models.Principal, params *models.AddGroupReque
 		return prepareError(errGroupBodyNotInRequest)
 	}
 
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return prepareError(err)
 	}
@@ -194,11 +186,11 @@ func getRemoveGroupResponse(session *models.Principal, params admin_api.RemoveGr
 	if params.Name == "" {
 		return prepareError(errGroupNameNotInRequest)
 	}
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return prepareError(err)
 	}
-	// create a MinIO Admin Client interface implementation
+	// createad a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
 
@@ -277,7 +269,7 @@ func getUpdateGroupResponse(session *models.Principal, params admin_api.UpdateGr
 	expectedGroupUpdate := params.Body
 	groupName := params.Name
 
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -307,27 +299,27 @@ func groupUpdate(ctx context.Context, client MinioAdmin, groupName string, expec
 	// get current members and status
 	groupDescription, err := groupInfo(ctx, client, groupName)
 	if err != nil {
-		log.Println("error getting  group info:", err)
+		LogInfo("error getting group info: %v", err)
 		return nil, err
 	}
 	// update group members
 	err = addOrDeleteMembers(ctx, client, groupDescription, expectedMembers)
 	if err != nil {
-		log.Println("error updating group:", err)
+		LogInfo("error updating group: %v", err)
 		return nil, err
 	}
 	// update group status only if different from current status
 	if expectedStatus != groupDescription.Status {
 		err = setGroupStatus(ctx, client, groupDescription.Name, expectedStatus)
 		if err != nil {
-			log.Println("error updating group's status:", err)
+			LogInfo("error updating group's status: %v", err)
 			return nil, err
 		}
 	}
 	// return latest group info to verify that changes were applied correctly
 	groupDescription, err = groupInfo(ctx, client, groupName)
 	if err != nil {
-		log.Println("error getting  group info:", err)
+		LogInfo("error getting group info: %v", err)
 		return nil, err
 	}
 	return groupDescription, nil

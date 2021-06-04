@@ -21,7 +21,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -791,7 +790,7 @@ func getAdminInfoResponse(session *models.Principal) (*models.AdminInfoResponse,
 	prometheusURL := getPrometheusURL()
 
 	if prometheusURL == "" {
-		mAdmin, err := newMAdminClient(session)
+		mAdmin, err := newAdminClient(session)
 		if err != nil {
 			return nil, prepareError(err)
 		}
@@ -842,6 +841,33 @@ func getAdminInfoResponse(session *models.Principal) (*models.AdminInfoResponse,
 	return sessionResp, nil
 }
 
+func unmarshalPrometheus(endpoint string, data interface{}) bool {
+	resp, err := http.Get(endpoint)
+	if err != nil {
+		LogError("Unable to fetch labels from prometheus %s, %v", endpoint, err)
+		return true
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	if err != nil {
+		LogError("Unexpected error reading response from prometheus %s, %v", endpoint, err)
+		return true
+	}
+
+	if resp.StatusCode != 200 {
+		LogError("Unexpected error from prometheus %s, %s (%s)", endpoint, string(body), resp.Status)
+		return true
+	}
+
+	if err = json.Unmarshal(body, data); err != nil {
+		LogError("Unexpected error reading response from prometheus %s, %v", endpoint, err)
+		return true
+	}
+
+	return false
+}
+
 func getAdminInfoWidgetResponse(params admin_api.DashboardWidgetDetailsParams) (*models.WidgetDetails, *models.Error) {
 	prometheusURL := getPrometheusURL()
 	prometheusJobID := getPrometheusJobID()
@@ -852,30 +878,8 @@ func getAdminInfoWidgetResponse(params admin_api.DashboardWidgetDetailsParams) (
 		go func(lbl WidgetLabel) {
 			endpoint := fmt.Sprintf("%s/api/v1/label/%s/values", prometheusURL, lbl.Name)
 
-			resp, err := http.Get(endpoint)
-			if err != nil {
-				log.Println(err)
-				return
-			}
-			if resp.StatusCode != 200 {
-				body, err := ioutil.ReadAll(resp.Body)
-				resp.Body.Close()
-				if err != nil {
-					log.Println(err)
-					return
-				}
-				log.Println(endpoint)
-				log.Println(resp.StatusCode)
-				log.Println(string(body))
-				return
-			}
-
 			var response LabelResponse
-			jd := json.NewDecoder(resp.Body)
-			err = jd.Decode(&response)
-			resp.Body.Close()
-			if err != nil {
-				log.Println(err)
+			if unmarshalPrometheus(endpoint, &response) {
 				return
 			}
 
@@ -945,33 +949,9 @@ LabelsWaitLoop:
 
 				queryExpr = strings.Replace(queryExpr, "${jobid}", prometheusJobID, -1)
 				endpoint := fmt.Sprintf("%s/api/v1/%s?query=%s%s", prometheusURL, apiType, url.QueryEscape(queryExpr), extraParamters)
-				resp, err := http.Get(endpoint)
-				if err != nil {
-					log.Println(err)
-					return
-				}
-				defer func() {
-					if err := resp.Body.Close(); err != nil {
-						log.Println(err)
-					}
-				}()
-
-				if resp.StatusCode != 200 {
-					body, err := ioutil.ReadAll(resp.Body)
-					if err != nil {
-						log.Println(err)
-						return
-					}
-					log.Println(endpoint)
-					log.Println(resp.StatusCode)
-					log.Println(string(body))
-					return
-				}
 
 				var response PromResp
-				jd := json.NewDecoder(resp.Body)
-				if err = jd.Decode(&response); err != nil {
-					log.Println(err)
+				if unmarshalPrometheus(endpoint, &response) {
 					return
 				}
 
@@ -979,6 +959,7 @@ LabelsWaitLoop:
 					LegendFormat: target.LegendFormat,
 					ResultType:   response.Data.ResultType,
 				}
+
 				for _, r := range response.Data.Result {
 					targetResult.Result = append(targetResult.Result, &models.WidgetResult{
 						Metric: r.Metric,

@@ -19,8 +19,6 @@ package restapi
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -68,19 +66,19 @@ func startTraceInfo(ctx context.Context, conn WSConn, client MinioAdmin, opts se
 				return nil
 			}
 			if traceInfo.Err != nil {
-				log.Println("error on serviceTrace:", traceInfo.Err)
+				LogError("error on serviceTrace: %v", traceInfo.Err)
 				return traceInfo.Err
 			}
 			// Serialize message to be sent
 			traceInfoBytes, err := json.Marshal(shortTrace(&traceInfo))
 			if err != nil {
-				fmt.Println("error on json.Marshal:", err)
+				LogError("error on json.Marshal: %v", err)
 				return err
 			}
 			// Send Message through websocket connection
 			err = conn.writeMessage(websocket.TextMessage, traceInfoBytes)
 			if err != nil {
-				log.Println("error writeMessage:", err)
+				LogError("error writeMessage: %v", err)
 				return err
 			}
 		}

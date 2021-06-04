@@ -19,8 +19,6 @@ package restapi
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"log"
 	"strings"
 	"time"
 
@@ -52,21 +50,21 @@ func startConsoleLog(ctx context.Context, conn WSConn, client MinioAdmin) error 
 				return nil
 			}
 			if logInfo.Err != nil {
-				log.Println("error on console logs:", logInfo.Err)
+				LogError("error on console logs: %v", logInfo.Err)
 				return logInfo.Err
 			}
 
 			// Serialize message to be sent
 			bytes, err := json.Marshal(serializeConsoleLogInfo(&logInfo))
 			if err != nil {
-				fmt.Println("error on json.Marshal:", err)
+				LogError("error on json.Marshal: %v", err)
 				return err
 			}
 
 			// Send Message through websocket connection
 			err = conn.writeMessage(websocket.TextMessage, bytes)
 			if err != nil {
-				log.Println("error writeMessage:", err)
+				LogError("error writeMessage: %v", err)
 				return err
 			}
 		}

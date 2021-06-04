@@ -20,7 +20,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"path/filepath"
 	"regexp"
@@ -69,13 +68,8 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 			return user_api.NewDownloadObjectDefault(int(err.Code)).WithPayload(err)
 		}
 		return middleware.ResponderFunc(func(rw http.ResponseWriter, _ runtime.Producer) {
-			if _, err := io.Copy(rw, resp); err != nil {
-				log.Println(err)
-			} else {
-				if err := resp.Close(); err != nil {
-					log.Println(err)
-				}
-			}
+			io.Copy(rw, resp)
+			resp.Close()
 		})
 	})
 	// upload object
@@ -185,7 +179,7 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 			if err != nil {
 				errResp := minio.ToErrorResponse(probe.NewError(err).ToGoError())
 				if errResp.Code != "InvalidRequest" && errResp.Code != "NoSuchObjectLockConfiguration" {
-					log.Printf("error getting legal hold status for %s : %s", lsObj.VersionID, err)
+					LogError("error getting legal hold status for %s : %v", lsObj.VersionID, err)
 				}
 			} else {
 				if legalHoldStatus != nil {
@@ -197,7 +191,7 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 			if err != nil {
 				errResp := minio.ToErrorResponse(probe.NewError(err).ToGoError())
 				if errResp.Code != "NoSuchObjectLockConfiguration" {
-					log.Printf("error getting retention status for %s : %s", lsObj.VersionID, err)
+					LogError("error getting retention status for %s : %v", lsObj.VersionID, err)
 				}
 			} else {
 				if retention != nil && retUntilDate != nil {
@@ -208,7 +202,7 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 			}
 			tags, err := client.getObjectTagging(ctx, bucketName, lsObj.Key, minio.GetObjectTaggingOptions{VersionID: lsObj.VersionID})
 			if err != nil {
-				log.Printf("error getting object tags for %s : %s", lsObj.VersionID, err)
+				LogError("error getting object tags for %s : %v", lsObj.VersionID, err)
 			} else {
 				obj.Tags = tags.ToMap()
 			}

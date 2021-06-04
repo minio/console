@@ -19,7 +19,6 @@ package restapi
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
@@ -65,9 +64,8 @@ func gkeIntegration(clientset *kubernetes.Clientset, tenantName string, namespac
 	})
 
 	go podInformer.Run(doneCh)
-	//block until the informer exits
+	// block until the informer exits
 	<-doneCh
-	log.Println("informer closed")
 
 	tenantDomain := fmt.Sprintf("%s.cloud.min.dev", tenantName)
 	tenantConsoleDomain := fmt.Sprintf("console.%s.cloud.min.dev", tenantName)

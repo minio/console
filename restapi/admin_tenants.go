@@ -23,7 +23,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net"
 	"net/http"
 	"os"
@@ -256,8 +255,7 @@ func GetTenantServiceURL(mi *miniov2.Tenant) (svcURL string) {
 		scheme = "https"
 		port = miniov2.MinIOTLSPortLoadBalancerSVC
 	}
-	svc := fmt.Sprintf("%s.%s.svc.cluster.local", mi.MinIOCIServiceName(), mi.Namespace)
-	return fmt.Sprintf("%s://%s", scheme, net.JoinHostPort(svc, strconv.Itoa(port)))
+	return fmt.Sprintf("%s://%s", scheme, net.JoinHostPort(mi.MinIOFQDNServiceName(), strconv.Itoa(port)))
 }
 
 func getTenantAdminClient(ctx context.Context, client K8sClientI, tenant *miniov2.Tenant, svcURL string) (*madmin.AdminClient, error) {
@@ -289,12 +287,12 @@ func getTenantCreds(ctx context.Context, client K8sClientI, tenant *miniov2.Tena
 	}
 	tenantAccessKey, ok := creds.Data["accesskey"]
 	if !ok {
-		log.Println("tenant's secret doesn't contain accesskey")
+		LogError("tenant's secret doesn't contain accesskey")
 		return nil, errorGeneric
 	}
 	tenantSecretKey, ok := creds.Data["secretkey"]
 	if !ok {
-		log.Println("tenant's secret doesn't contain secretkey")
+		LogError("tenant's secret doesn't contain secretkey")
 		return nil, errorGeneric
 	}
 	// TODO:
@@ -405,7 +403,7 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 	consoleSecret, err := clientSet.CoreV1().Secrets(minTenant.Namespace).Get(ctx, minTenant.Name, metav1.GetOptions{})
 	// we can tolerate not getting this secret
 	if err != nil {
-		log.Println(err)
+		LogError("unable to fetch existing secrets for %s: %v", minTenant.Name, err)
 	}
 	if consoleSecret != nil {
 		if _, ok := consoleSecret.Data["CONSOLE_IDP_URL"]; ok {
@@ -449,13 +447,13 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 	minSvc, err := k8sClient.getService(ctx, minTenant.Namespace, minTenant.MinIOCIServiceName(), metav1.GetOptions{})
 	if err != nil {
 		// we can tolerate this error
-		log.Println(err)
+		LogError("Unable to get MinIO service name: %v, continuing", err)
 	}
 	//console service
 	conSvc, err := k8sClient.getService(ctx, minTenant.Namespace, minTenant.ConsoleCIServiceName(), metav1.GetOptions{})
 	if err != nil {
 		// we can tolerate this error
-		log.Println(err)
+		LogError("Unable to get MinIO console service name: %v, continuing", err)
 	}
 
 	schema := "http"
@@ -649,13 +647,13 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	// delete secrets created if an error occurred during tenant creation,
 	defer func() {
 		if mError != nil {
-			log.Printf("deleting secrets created for failed tenant: %s if any\n", tenantName)
+			LogError("deleting secrets created for failed tenant: %s if any: %v", tenantName, mError)
 			opts := metav1.ListOptions{
 				LabelSelector: fmt.Sprintf("%s=%s", miniov2.TenantLabel, tenantName),
 			}
 			err = clientSet.CoreV1().Secrets(ns).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
 			if err != nil {
-				log.Println("error deleting tenant's secrets:", err)
+				LogError("error deleting tenant's secrets: %v", err)
 			}
 		}
 	}()
@@ -944,7 +942,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	for _, pool := range tenantReq.Pools {
 		pool, err := parseTenantPoolRequest(pool)
 		if err != nil {
-			log.Println("parseTenantPoolRequest", err)
+			LogError("parseTenantPoolRequest failed: %v", err)
 			return nil, prepareError(err)
 		}
 		minInst.Spec.Pools = append(minInst.Spec.Pools, *pool)
@@ -1085,7 +1083,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 
 	_, err = opClient.MinioV2().Tenants(ns).Create(context.Background(), &minInst, metav1.CreateOptions{})
 	if err != nil {
-		log.Println("Create", err)
+		LogError("Creating new tenant failed with: %v", err)
 		return nil, prepareError(err)
 	}
 
@@ -1188,7 +1186,7 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClientI, cli
 	} else {
 		// update the image pull secret content
 		if _, err := setImageRegistry(ctx, imageRegistryReq, clientset, namespace, params.Tenant); err != nil {
-			log.Println("error setting image registry secret:", err)
+			LogError("error setting image registry secret: %v", err)
 			return err
 		}
 	}
@@ -1842,7 +1840,7 @@ func getTenantUpdatePoolResponse(session *models.Principal, params admin_api.Ten
 
 	t, err := updateTenantPools(ctx, opClient, params.Namespace, params.Tenant, params.Body.Pools)
 	if err != nil {
-		log.Println("error updating Tenant's pools:", err)
+		LogError("error updating Tenant's pools: %v", err)
 		return nil, prepareError(err)
 	}
 

@@ -22,7 +22,6 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -35,10 +34,6 @@ import (
 	"github.com/minio/console/pkg/auth/utils"
 	"golang.org/x/crypto/pbkdf2"
 	xoauth2 "golang.org/x/oauth2"
-)
-
-var (
-	errGeneric = errors.New("an error occurred, please try again")
 )
 
 type Configuration interface {
@@ -168,8 +163,8 @@ type User struct {
 // VerifyIdentity will contact the configured IDP and validate the user identity based on the authorization code
 func (client *Provider) VerifyIdentity(ctx context.Context, code, state string) (*credentials.Credentials, error) {
 	// verify the provided state is valid (prevents CSRF attacks)
-	if !validateOauth2State(state) {
-		return nil, errGeneric
+	if err := validateOauth2State(state); err != nil {
+		return nil, err
 	}
 	getWebTokenExpiry := func() (*credentials.WebIdentityToken, error) {
 		oauth2Token, err := client.oauth2Config.Exchange(ctx, code)
@@ -210,29 +205,30 @@ func (client *Provider) VerifyIdentity(ctx context.Context, code, state string) 
 // validateOauth2State validates the provided state was originated using the same
 // instance (or one configured using the same secrets) of Console, this is basically used to prevent CSRF attacks
 // https://security.stackexchange.com/questions/20187/oauth2-cross-site-request-forgery-and-state-parameter
-func validateOauth2State(state string) bool {
+func validateOauth2State(state string) error {
 	// state contains a base64 encoded string that may ends with "==", the browser encodes that to "%3D%3D"
 	// query unescape is need it before trying to decode the base64 string
 	encodedMessage, err := url.QueryUnescape(state)
 	if err != nil {
-		log.Println(err)
-		return false
+		return err
 	}
 	// decode the state parameter value
 	message, err := base64.StdEncoding.DecodeString(encodedMessage)
 	if err != nil {
-		log.Println(err)
-		return false
+		return err
 	}
 	s := strings.Split(string(message), ":")
 	// Validate that the decoded message has the right format "message:hmac"
 	if len(s) != 2 {
-		return false
+		return fmt.Errorf("invalid number of tokens, expected only 2, got %d instead", len(s))
 	}
 	// extract the state and hmac
 	incomingState, incomingHmac := s[0], s[1]
 	// validate that hmac(incomingState + pbkdf2(secret, salt)) == incomingHmac
-	return utils.ComputeHmac256(incomingState, derivedKey) == incomingHmac
+	if calculatedHmac := utils.ComputeHmac256(incomingState, derivedKey); calculatedHmac != incomingHmac {
+		return fmt.Errorf("oauth2 state is invalid, expected %s, got %s", calculatedHmac, incomingHmac)
+	}
+	return nil
 }
 
 // GetRandomStateWithHMAC computes message + hmac(message, pbkdf2(key, salt)) to be used as state during the oauth authorization

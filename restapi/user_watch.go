@@ -20,7 +20,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"regexp"
 	"strings"
@@ -37,7 +36,7 @@ type watchOptions struct {
 func startWatch(ctx context.Context, conn WSConn, wsc MCClient, options *watchOptions) error {
 	wo, pErr := wsc.watch(ctx, options.WatchOptions)
 	if pErr != nil {
-		fmt.Println("error initializing watch:", pErr.Cause)
+		LogError("error initializing watch: %v", pErr.Cause)
 		return pErr.Cause
 	}
 	for {
@@ -54,13 +53,13 @@ func startWatch(ctx context.Context, conn WSConn, wsc MCClient, options *watchOp
 				// Serialize message to be sent
 				bytes, err := json.Marshal(event)
 				if err != nil {
-					log.Println("error on json.Marshal:", err)
+					LogError("error on json.Marshal: %v", err)
 					return err
 				}
 				// Send Message through websocket connection
 				err = conn.writeMessage(websocket.TextMessage, bytes)
 				if err != nil {
-					log.Println("error writeMessage:", err)
+					LogError("error writeMessage: %v", err)
 					return err
 				}
 			}
@@ -70,7 +69,7 @@ func startWatch(ctx context.Context, conn WSConn, wsc MCClient, options *watchOp
 				return nil
 			}
 			if pErr != nil {
-				log.Println("error on watch:", pErr.Cause)
+				LogError("error on watch: %v", pErr.Cause)
 				return pErr.Cause
 
 			}

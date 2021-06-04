@@ -19,7 +19,6 @@ package restapi
 import (
 	"bytes"
 	"context"
-	"log"
 	"net/http"
 	"time"
 
@@ -96,7 +95,7 @@ func login(credentials ConsoleCredentialsI) (*string, error) {
 	// if we made it here, the consoleCredentials work, generate a jwt with claims
 	token, err := auth.NewEncryptedTokenForClient(&tokens, credentials.GetAccountAccessKey(), credentials.GetActions())
 	if err != nil {
-		log.Println("error authenticating user", err)
+		LogError("error authenticating user: %v", err)
 		return nil, errInvalidCredentials
 	}
 	return &token, nil
@@ -130,7 +129,7 @@ func getConsoleCredentials(ctx context.Context, accessKey, secretKey string) (*c
 		return nil, err
 	}
 	// initialize admin client
-	mAdminClient, err := newMAdminClient(&models.Principal{
+	mAdminClient, err := newAdminClient(&models.Principal{
 		STSAccessKeyID:     tokens.AccessKeyID,
 		STSSecretAccessKey: tokens.SecretAccessKey,
 		STSSessionToken:    tokens.SessionToken,
@@ -209,7 +208,7 @@ func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
 func verifyUserAgainstIDP(ctx context.Context, provider auth.IdentityProviderI, code, state string) (*credentials.Credentials, error) {
 	userCredentials, err := provider.VerifyIdentity(ctx, code, state)
 	if err != nil {
-		log.Println("error validating user identity against idp:", err)
+		LogError("error validating user identity against idp: %v", err)
 		return nil, errInvalidCredentials
 	}
 	return userCredentials, nil
@@ -251,7 +250,7 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 			return nil, prepareError(errInvalidCredentials, nil, err)
 		}
 		// initialize admin client
-		mAdminClient, err := newMAdminClient(&models.Principal{
+		mAdminClient, err := newAdminClient(&models.Principal{
 			STSAccessKeyID:     creds.AccessKeyID,
 			STSSecretAccessKey: creds.SecretAccessKey,
 			STSSessionToken:    creds.SessionToken,

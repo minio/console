@@ -52,7 +52,7 @@ func getArns(ctx context.Context, client MinioAdmin) (*models.ArnsResponse, erro
 
 // getArnsResponse returns a list of active arns in the instance
 func getArnsResponse(session *models.Principal) (*models.ArnsResponse, *models.Error) {
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}

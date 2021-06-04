@@ -20,7 +20,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -115,11 +114,10 @@ func startHeal(ctx context.Context, conn WSConn, client MinioAdmin, hOpts *healO
 	// Initialize heal
 	healStart, _, err := client.heal(ctx, hOpts.BucketName, hOpts.Prefix, hOpts.HealOpts, "", hOpts.ForceStart, hOpts.ForceStop)
 	if err != nil {
-		log.Println("error initializing healing:", err)
+		LogError("error initializing healing: %v", err)
 		return err
 	}
 	if hOpts.ForceStop {
-		log.Println("heal stopped successfully")
 		return nil
 	}
 	clientToken := healStart.ClientToken
@@ -134,21 +132,20 @@ func startHeal(ctx context.Context, conn WSConn, client MinioAdmin, hOpts *healO
 		default:
 			_, res, err := client.heal(ctx, hOpts.BucketName, hOpts.Prefix, hOpts.HealOpts, clientToken, hOpts.ForceStart, hOpts.ForceStop)
 			if err != nil {
-				log.Println("error on heal:", err)
+				LogError("error on heal: %v", err)
 				return err
 			}
 
 			hs.writeStatus(&res, conn)
 
 			if res.Summary == "finished" {
-				log.Println("heal finished")
 				return nil
 			}
 
 			if res.Summary == "stopped" {
-				log.Println("heal stopped")
 				return fmt.Errorf("heal had an error - %s", res.FailureDetail)
 			}
+
 			time.Sleep(time.Second)
 		}
 	}
@@ -160,7 +157,7 @@ func (h *healStatus) writeStatus(s *madmin.HealTaskStatus, conn WSConn) error {
 	for _, item := range s.Items {
 		err := h.updateStats(item)
 		if err != nil {
-			fmt.Println("error on updateStats:", err)
+			LogError("error on updateStats: %v", err)
 			return err
 		}
 	}
@@ -168,13 +165,13 @@ func (h *healStatus) writeStatus(s *madmin.HealTaskStatus, conn WSConn) error {
 	// Serialize message to be sent
 	infoBytes, err := json.Marshal(h)
 	if err != nil {
-		fmt.Println("error on json.Marshal:", err)
+		LogError("error on json.Marshal: %v", err)
 		return err
 	}
 	// Send Message through websocket connection
 	err = conn.writeMessage(websocket.TextMessage, infoBytes)
 	if err != nil {
-		log.Println("error writeMessage:", err)
+		LogError("error writeMessage: %v", err)
 		return err
 	}
 	return nil

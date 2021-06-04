@@ -29,7 +29,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -48,8 +47,6 @@ var (
 	ErrNoAuthToken  = errors.New("session token missing")
 	errTokenExpired = errors.New("session token has expired")
 	errReadingToken = errors.New("session token internal data is malformed")
-	errClaimsFormat = errors.New("encrypted session token claims not in the right format")
-	errorGeneric    = errors.New("an error has occurred")
 )
 
 // derivedKey is the key used to encrypt the session token claims, its derived using pbkdf on CONSOLE_PBKDF_PASSPHRASE with CONSOLE_PBKDF_SALT
@@ -90,7 +87,6 @@ func SessionTokenAuthenticate(token string) (*TokenClaims, error) {
 	claimTokens, err := decryptClaims(token)
 	if err != nil {
 		// we print decryption token error information for debugging purposes
-		log.Println(err)
 		// we return a generic error that doesn't give any information to attackers
 		return nil, errReadingToken
 	}
@@ -126,8 +122,7 @@ func encryptClaims(credentials *TokenClaims) (string, error) {
 	}
 	ciphertext, err := encrypt(payload, []byte{})
 	if err != nil {
-		log.Println(err)
-		return "", errorGeneric
+		return "", err
 	}
 	return base64.StdEncoding.EncodeToString(ciphertext), nil
 }
@@ -136,19 +131,15 @@ func encryptClaims(credentials *TokenClaims) (string, error) {
 func decryptClaims(ciphertext string) (*TokenClaims, error) {
 	decoded, err := base64.StdEncoding.DecodeString(ciphertext)
 	if err != nil {
-		log.Println(err)
-		return nil, errClaimsFormat
+		return nil, err
 	}
 	plaintext, err := decrypt(decoded, []byte{})
 	if err != nil {
-		log.Println(err)
-		return nil, errClaimsFormat
+		return nil, err
 	}
 	tokenClaims := &TokenClaims{}
-	err = json.Unmarshal(plaintext, tokenClaims)
-	if err != nil {
-		log.Println(err)
-		return nil, errClaimsFormat
+	if err = json.Unmarshal(plaintext, tokenClaims); err != nil {
+		return nil, err
 	}
 	return tokenClaims, nil
 }

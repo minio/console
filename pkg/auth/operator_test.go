@@ -20,8 +20,7 @@ func (c *operatorClientTest) Authenticate(ctx context.Context) ([]byte, error) {
 	return operatorAuthenticateMock(ctx)
 }
 
-func Test_isServiceAccountTokenValid(t *testing.T) {
-
+func Test_checkServiceAccountTokenValid(t *testing.T) {
 	successResponse := func() {
 		operatorAuthenticateMock = func(ctx context.Context) ([]byte, error) {
 			return nil, nil
@@ -70,12 +69,17 @@ func Test_isServiceAccountTokenValid(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.args.mockFunction != nil {
 				tt.args.mockFunction()
 			}
-			if got := isServiceAccountTokenValid(tt.args.ctx, tt.args.operatorClient); got != tt.want {
-				t.Errorf("isServiceAccountTokenValid() = %v, want %v", got, tt.want)
+			got := checkServiceAccountTokenValid(tt.args.ctx, tt.args.operatorClient)
+			if got != nil && tt.want {
+				t.Errorf("checkServiceAccountTokenValid() = expected success but got %s", got)
+			}
+			if got == nil && !tt.want {
+				t.Error("checkServiceAccountTokenValid() = expected failure but got success")
 			}
 		})
 	}

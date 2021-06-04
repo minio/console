@@ -71,7 +71,7 @@ func getChangePasswordResponse(session *models.Principal, params user_api.Accoun
 
 	// changePassword operations requires an AdminClient initialized with parent account credentials not
 	// STS credentials
-	parentAccountClient, err := newMAdminClient(&models.Principal{
+	parentAccountClient, err := newAdminClient(&models.Principal{
 		STSAccessKeyID:     session.AccountAccessKey,
 		STSSecretAccessKey: *params.Body.CurrentSecretKey,
 	})
@@ -109,7 +109,7 @@ func getUserHasPermissionsResponse(session *models.Principal, params user_api.Ha
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}

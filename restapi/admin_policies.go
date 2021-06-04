@@ -20,7 +20,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"log"
+	"sort"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -93,7 +93,7 @@ func registersPoliciesHandler(api *operations.ConsoleAPI) {
 
 func getListPoliciesWithBucketResponse(session *models.Principal, bucket string) (*models.ListPoliciesResponse, *models.Error) {
 	ctx := context.Background()
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -171,7 +171,7 @@ func listPolicies(ctx context.Context, client MinioAdmin) ([]*models.Policy, err
 // getListPoliciesResponse performs listPolicies() and serializes it to the handler's output
 func getListPoliciesResponse(session *models.Principal) (*models.ListPoliciesResponse, *models.Error) {
 	ctx := context.Background()
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -194,7 +194,7 @@ func getListPoliciesResponse(session *models.Principal) (*models.ListPoliciesRes
 // getListUsersForPoliciesResponse performs lists users affected by a given policy.
 func getListUsersForPolicyResponse(session *models.Principal, policy string) ([]string, *models.Error) {
 	ctx := context.Background()
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -206,20 +206,18 @@ func getListUsersForPolicyResponse(session *models.Principal, policy string) ([]
 	if err != nil {
 		return nil, prepareError(err)
 	}
-	userArray := []string{}
-	for i := 0; i < len(users); i++ {
-		if err == nil {
-			for j := 0; j < len(users[i].Policy); j++ {
-				if users[i].Policy[j] == policy {
-					userArray = append(userArray, users[i].AccessKey)
-					break
-				}
+
+	var filteredUsers []string
+	for _, user := range users {
+		for _, upolicy := range user.Policy {
+			if upolicy == policy {
+				filteredUsers = append(filteredUsers, user.AccessKey)
+				break
 			}
-		} else {
-			log.Println(err)
 		}
 	}
-	return userArray, nil
+	sort.Strings(filteredUsers)
+	return filteredUsers, nil
 }
 
 // removePolicy() calls MinIO server to remove a policy based on name.
@@ -237,7 +235,7 @@ func getRemovePolicyResponse(session *models.Principal, params admin_api.RemoveP
 	if params.Name == "" {
 		return prepareError(errPolicyNameNotInRequest)
 	}
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return prepareError(err)
 	}
@@ -274,11 +272,10 @@ func addPolicy(ctx context.Context, client MinioAdmin, name, policy string) (*mo
 func getAddPolicyResponse(session *models.Principal, params *models.AddPolicyRequest) (*models.Policy, *models.Error) {
 	ctx := context.Background()
 	if params == nil {
-		log.Println("error AddPolicy body not in request")
 		return nil, prepareError(errPolicyBodyNotInRequest)
 	}
 
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -311,7 +308,7 @@ func policyInfo(ctx context.Context, client MinioAdmin, name string) (*models.Po
 // getPolicyInfoResponse performs policyInfo() and serializes it to the handler's output
 func getPolicyInfoResponse(session *models.Principal, params admin_api.PolicyInfoParams) (*models.Policy, *models.Error) {
 	ctx := context.Background()
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -343,7 +340,7 @@ func getSetPolicyResponse(session *models.Principal, name string, params *models
 	if name == "" {
 		return prepareError(errPolicyNameNotInRequest)
 	}
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return prepareError(err)
 	}
@@ -359,7 +356,7 @@ func getSetPolicyResponse(session *models.Principal, name string, params *models
 
 func getSetPolicyMultipleResponse(session *models.Principal, name string, params *models.SetPolicyMultipleRequest) *models.Error {
 	ctx := context.Background()
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return prepareError(err)
 	}
