@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
+	"strconv"
 	"time"
 
 	"github.com/go-openapi/loads"
@@ -100,6 +101,7 @@ func buildServer() (*restapi.Server, error) {
 	}
 
 	api := operations.NewConsoleAPI(swaggerSpec)
+	api.Logger = restapi.LogInfo
 	server := restapi.NewServer(api)
 
 	parser := flags.NewParser(server, flags.Default)
@@ -186,8 +188,23 @@ func StartServer(ctx *cli.Context) error {
 		return err
 	}
 
-	s := server.Configure(rctx)
-	defer s.Shutdown()
+	server.Host = rctx.Host
+	server.Port = rctx.HTTPPort
+	restapi.Port = strconv.Itoa(server.Port)
+	restapi.Hostname = server.Host
+
+	if len(restapi.GlobalPublicCerts) > 0 {
+		// If TLS certificates are provided enforce the HTTPS schema, meaning console will redirect
+		// plain HTTP connections to HTTPS server
+		server.EnabledListeners = []string{"http", "https"}
+		server.TLSPort = rctx.HTTPSPort
+		// Need to store tls-port, tls-host un config variables so secure.middleware can read from there
+		restapi.TLSPort = strconv.Itoa(server.TLSPort)
+		restapi.Hostname = rctx.Host
+		restapi.TLSRedirect = rctx.TLSRedirect
+	}
+
+	defer server.Shutdown()
 
 	// subnet license refresh process
 	go func() {
@@ -214,5 +231,5 @@ func StartServer(ctx *cli.Context) error {
 		}
 	}()
 
-	return s.Serve()
+	return server.Serve()
 }
