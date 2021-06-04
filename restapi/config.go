@@ -22,7 +22,6 @@ import (
 	"net"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/minio/pkg/certs"
@@ -53,13 +52,20 @@ var (
 )
 
 var (
-	logSearchAPI  string
-	logSearchURL  string
-	prometheusURL string
-	consoleImage  string
-
-	once sync.Once
+	logSearchAPI    string
+	logSearchURL    string
+	prometheusURL   string
+	prometheusJobID string
+	consoleImage    string
 )
+
+func init() {
+	logSearchAPI = env.Get(LogSearchQueryAuthToken, "")
+	logSearchURL = env.Get(LogSearchURL, "http://localhost:8080")
+	prometheusURL = env.Get(PrometheusURL, "")
+	prometheusJobID = env.Get(PrometheusJobID, "minio-job")
+	consoleImage = env.Get(ConsoleOperatorConsoleImage, ConsoleImageDefaultVersion)
+}
 
 func getMinIOServer() string {
 	return strings.TrimSpace(env.Get(ConsoleMinIOServer, "http://localhost:9000"))
@@ -238,24 +244,19 @@ func getSecureExpectCTHeader() string {
 }
 
 func getLogSearchAPIToken() string {
-	once.Do(func() {
-		initVars()
-	})
 	return logSearchAPI
 }
 
 func getLogSearchURL() string {
-	once.Do(func() {
-		initVars()
-	})
 	return logSearchURL
 }
 
 func getPrometheusURL() string {
-	once.Do(func() {
-		initVars()
-	})
 	return prometheusURL
+}
+
+func getPrometheusJobID() string {
+	return prometheusJobID
 }
 
 // GetSubnetLicense returns the current subnet jwt license
@@ -267,13 +268,6 @@ func GetSubnetLicense() string {
 	// return license configured via environment variable
 	LicenseKey = env.Get(ConsoleSubnetLicense, "")
 	return LicenseKey
-}
-
-func initVars() {
-	logSearchAPI = env.Get(LogSearchQueryAuthToken, "")
-	logSearchURL = env.Get(LogSearchURL, "http://localhost:8080")
-	prometheusURL = env.Get(PrometheusURL, "")
-	consoleImage = env.Get(ConsoleOperatorConsoleImage, ConsoleImageDefaultVersion)
 }
 
 var (
@@ -296,8 +290,5 @@ func getK8sSAToken() string {
 }
 
 func getConsoleImage() string {
-	once.Do(func() {
-		initVars()
-	})
 	return consoleImage
 }

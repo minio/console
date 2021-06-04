@@ -412,24 +412,22 @@ func RefreshLicense() error {
 	if err != nil {
 		return err
 	}
+	if refreshedLicenseKey == "" {
+		return errors.New("license expired, please open a support ticket at https://subnet.min.io/")
+	}
 	// store new license in memory for console ui
 	LicenseKey = refreshedLicenseKey
-	// Update in memory license and update k8s secret
-	if refreshedLicenseKey != "" {
-		if acl.GetOperatorMode() {
-			ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-			defer cancel()
-			clientSet, err := cluster.K8sClient(saK8SToken)
-			if err != nil {
-				return err
-			}
-			k8sClient := k8sClient{
-				client: clientSet,
-			}
-			if err = saveSubscriptionLicense(ctx, &k8sClient, refreshedLicenseKey); err != nil {
-				return err
-			}
+	if acl.GetOperatorMode() {
+		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+		defer cancel()
+		clientSet, err := cluster.K8sClient(saK8SToken)
+		if err != nil {
+			return err
 		}
+		k8sClient := k8sClient{
+			client: clientSet,
+		}
+		return saveSubscriptionLicense(ctx, &k8sClient, refreshedLicenseKey)
 	}
 	return nil
 }

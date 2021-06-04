@@ -21,7 +21,6 @@ package restapi
 import (
 	"bytes"
 	"crypto/tls"
-	"fmt"
 	"io"
 	"io/fs"
 	"log"
@@ -169,13 +168,6 @@ func configureTLS(tlsConfig *tls.Config) {
 	}
 }
 
-// As soon as server is initialized but not run yet, this function will be called.
-// If you need to modify a config, store server instance to stop it individually later, this is the place.
-// This function can be called multiple times, depending on the number of serving schemes.
-// scheme value will be set accordingly: "http", "https" or "unix"
-func configureServer(s *http.Server, scheme, addr string) {
-}
-
 // The middleware configuration is for the handler executors. These do not apply to the swagger.json document.
 // The middleware executes after routing but before authentication, binding and validation
 func setupMiddlewares(handler http.Handler) http.Handler {
@@ -215,30 +207,22 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 		IsDevelopment:                   !getProductionMode(),
 	}
 	secureMiddleware := secure.New(secureOptions)
-	app := secureMiddleware.Handler(next)
-	return app
+	return secureMiddleware.Handler(next)
 }
 
 func AuthenticationMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// prioritize authorization header and skip
-		if r.Header.Get("Authorization") != "" {
-			next.ServeHTTP(w, r)
+		token, err := auth.GetTokenFromRequest(r)
+		if err != nil && err != auth.ErrNoAuthToken {
+			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
-		tokenCookie, err := r.Cookie("token")
-		if err != nil {
-			next.ServeHTTP(w, r)
-			return
-		}
-		currentTime := time.Now()
-		if tokenCookie.Expires.After(currentTime) {
-			next.ServeHTTP(w, r)
-			return
-		}
-		token := tokenCookie.Value
+		// All handlers handle appropriately to return errors
+		// based on their swagger rules, we do not need to
+		// additionally return error here, let the next ServeHTTPs
+		// handle it appropriately.
 		if token != "" {
-			r.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
+			r.Header.Add("Authorization", "Bearer "+token)
 		}
 		next.ServeHTTP(w, r)
 	})
@@ -259,7 +243,6 @@ func FileServerMiddleware(next http.Handler) http.Handler {
 				panic(err)
 			}
 			wrapHandlerSinglePageApplication(http.FileServer(http.FS(buildFs))).ServeHTTP(w, r)
-
 		}
 	})
 }
