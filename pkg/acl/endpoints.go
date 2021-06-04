@@ -43,6 +43,7 @@ var (
 	changePassword              = "/account/change-password"
 	tenants                     = "/tenants"
 	tenantsDetail               = "/namespaces/:tenantNamespace/tenants/:tenantName"
+	podsDetail                  = "/namespaces/:tenantNamespace/tenants/:tenantName/pods/:podName"
 	storage                     = "/storage"
 	storageVolumes              = "/storage/volumes"
 	storageDrives               = "/storage/drives"
@@ -319,6 +320,7 @@ var endpointRules = map[string]ConfigurationActionSet{
 var operatorRules = map[string]ConfigurationActionSet{
 	tenants:        tenantsActionSet,
 	tenantsDetail:  tenantsActionSet,
+	podsDetail:     tenantsActionSet,
 	storage:        storageActionSet,
 	storageDrives:  storageActionSet,
 	storageVolumes: storageActionSet,
