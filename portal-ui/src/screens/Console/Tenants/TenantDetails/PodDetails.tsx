@@ -171,9 +171,11 @@ const TenantDetails = ({
       />
       <Grid item xs={12} className={classes.container} />
       <Grid container>
-        <Grid item xs={12}>
-          <Fragment>{`${log}`}</Fragment>
-        </Grid>
+        <Paper>
+          <Grid item xs={12}>
+            <Fragment>{`${log}`}</Fragment>
+          </Grid>
+        </Paper>
       </Grid>
     </React.Fragment>
   );
