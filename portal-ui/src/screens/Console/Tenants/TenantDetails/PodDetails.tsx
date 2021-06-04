@@ -50,6 +50,7 @@ import SubnetLicenseTenant from "./SubnetLicenseTenant";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
 import history from "../../../../history";
+import { LogMessage } from "../../Logs/types";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -59,6 +60,16 @@ interface ITenantDetailsProps {
 
 const styles = (theme: Theme) =>
   createStyles({
+    logList: {
+      background: "#fff",
+      minHeight: 400,
+      height: "calc(100vh - 304px)",
+      overflow: "auto",
+      fontSize: 13,
+      padding: "25px 45px 0",
+      border: "1px solid #EAEDEE",
+      borderRadius: 4,
+    },
     buttonContainer: {
       textAlign: "right",
     },
@@ -131,6 +142,21 @@ const styles = (theme: Theme) =>
       ...actionsTray.actionsTray,
       padding: "15px 0 0",
     },
+    logerror: {
+      color: "#A52A2A",
+    },
+    logerror_tab: {
+      color: "#A52A2A",
+      paddingLeft: 25,
+    },
+    ansidefault: {
+      color: "#000",
+    },
+    highlight: {
+      "& span": {
+        backgroundColor: "#082F5238",
+      },
+    },
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -141,6 +167,8 @@ const TenantDetails = ({
 }: ITenantDetailsProps) => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [log, setLog] = useState<string>("");
+  const [highlight, setHighlight] = useState<string>("");
+  const [logLines, setLogLines] = useState<string[]>([]);
   const tenantNamespace = match.params["tenantNamespace"];
   const tenantName = match.params["tenantName"];
   const podName = match.params["podName"];
@@ -153,11 +181,57 @@ const TenantDetails = ({
       )
       .then((res: string) => {
         setLog(res);
+        setLogLines(res.split("\n"));
       })
       .catch((err) => {
         setErrorSnackMessage(err);
       });
   };
+
+  const renderLog = (logMessage: string, index: number) => {
+    // remove any non ascii characters, exclude any control codes
+    logMessage = logMessage.replace(/([^\x20-\x7F])/g, "");
+
+    // regex for terminal colors like e.g. `[31;4m `
+    const tColorRegex = /((\[[0-9;]+m))/g;
+
+    // get substring if there was a match for to split what
+    // is going to be colored and what not, here we add color
+    // only to the first match.
+    let substr = logMessage.replace(tColorRegex, "");
+
+    // in case highlight is set, we select the line that contains the requested string
+    let highlightedLine =
+      highlight !== ""
+        ? logMessage.toLowerCase().includes(highlight.toLowerCase())
+        : false;
+
+    // if starts with multiple spaces add padding
+    if (substr.startsWith("   ")) {
+      return (
+        <div
+          key={index}
+          className={`${highlightedLine ? classes.highlight : ""}`}
+        >
+          <span className={classes.tab}>{substr}</span>
+        </div>
+      );
+    } else {
+      // for all remaining set default class
+      return (
+        <div
+          key={index}
+          className={`${highlightedLine ? classes.highlight : ""}`}
+        >
+          <span className={classes.ansidefault}>{substr}</span>
+        </div>
+      );
+    }
+  };
+
+  const renderLines = logLines.map((m, i) => {
+    return renderLog(m, i);
+  });
 
   useEffect(() => {
     loadInfo();
@@ -167,15 +241,51 @@ const TenantDetails = ({
   return (
     <React.Fragment>
       <PageHeader
-        label={<Fragment>{` > ${match.params["podName"]}`}</Fragment>}
+        label={
+          <Fragment>
+            <Link to={"/tenants"} className={classes.breadcrumLink}>
+              Tenants
+            </Link>
+            {" > "}
+            <Link
+              to={`/namespaces/${match.params["tenantNamespace"]}/tenants/${match.params["tenantName"]}`}
+              className={classes.breadcrumLink}
+            >
+              {match.params["tenantName"]}
+            </Link>
+            {` > Pods > ${match.params["podName"]}`}
+          </Fragment>
+        }
       />
       <Grid item xs={12} className={classes.container} />
       <Grid container>
-        <Paper>
-          <Grid item xs={12}>
-            <Fragment>{`${log}`}</Fragment>
-          </Grid>
-        </Paper>
+        <Grid item xs={12} className={classes.actionsTray}>
+          <TextField
+            placeholder="Highlight Line"
+            className={classes.searchField}
+            id="search-resource"
+            label=""
+            onChange={(val) => {
+              setHighlight(val.target.value);
+            }}
+            InputProps={{
+              disableUnderline: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <br />
+        </Grid>
+        <Grid item xs={12}>
+          <Paper>
+            <div className={classes.logList}>{renderLines}</div>
+          </Paper>
+        </Grid>
       </Grid>
     </React.Fragment>
   );

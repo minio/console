@@ -1412,7 +1412,8 @@ func getTenantPodsResponse(session *models.Principal, params admin_api.GetTenant
 		if len(pod.Status.ContainerStatuses) > 0 {
 			restarts = int64(pod.Status.ContainerStatuses[0].RestartCount)
 		}
-		retval = append(retval, &models.TenantPod{Name: &pod.ObjectMeta.Name,
+		retval = append(retval, &models.TenantPod{
+			Name:        swag.String(fmt.Sprintf("%s", pod.Name)),
 			Status:      string(pod.Status.Phase),
 			TimeCreated: pod.CreationTimestamp.Unix(),
 			PodIP:       pod.Status.PodIP,
