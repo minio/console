@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-// This package imports things required by build scripts, to force `go mod` to see them as dependencies
+// Package k8s - this package imports things required by build scripts, to force `go mod` to see them as dependencies
 package k8s
 
-//import _ "k8s.io/code-generator"
+// import _ "k8s.io/code-generator"
