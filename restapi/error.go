@@ -2,7 +2,6 @@ package restapi
 
 import (
 	"errors"
-	"log"
 	"runtime"
 	"strings"
 
@@ -146,12 +145,12 @@ func prepareError(err ...error) *models.Error {
 		}
 		// if we received a second error take that as friendly message but dont override the code
 		if len(err) > 1 && err[1] != nil {
-			log.Print("friendly error: ", err[1].Error())
+			LogError("friendly error: %v", err[1].Error())
 			errorMessage = err[1].Error()
 		}
 		// if we receive third error we just print that as debugging
 		if len(err) > 2 && err[2] != nil {
-			log.Print("debugging error: ", err[2].Error())
+			LogError("debugging error: %v", err[2].Error())
 		}
 
 		errRemoteTierExists := errors.New("Specified remote tier already exists") //nolint
