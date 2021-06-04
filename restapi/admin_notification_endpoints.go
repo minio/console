@@ -77,7 +77,7 @@ func getNotificationEndpoints(ctx context.Context, client MinioAdmin) (*models.N
 
 // getNotificationEndpointsResponse returns a list of notification endpoints in the instance
 func getNotificationEndpointsResponse(session *models.Principal) (*models.NotifEndpointResponse, *models.Error) {
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -148,7 +148,7 @@ func addNotificationEndpoint(ctx context.Context, client MinioAdmin, params *adm
 
 // getNotificationEndpointsResponse returns a list of notification endpoints in the instance
 func getAddNotificationEndpointResponse(session *models.Principal, params *admin_api.AddNotificationEndpointParams) (*models.SetNotificationEndpointResponse, *models.Error) {
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}

@@ -40,6 +40,7 @@ import (
 	"github.com/go-openapi/runtime/flagext"
 	flags "github.com/jessevdk/go-flags"
 
+	"github.com/minio/cli"
 	"github.com/minio/console/restapi/operations"
 )
 
@@ -48,29 +49,59 @@ const (
 	schemeHTTPS = "https"
 )
 
-var defaultSchemes []string
-
-func init() {
-	defaultSchemes = []string{
-		schemeHTTP,
-	}
+var defaultSchemes = []string{
+	schemeHTTP,
 }
+
+var infoLog = log.New(os.Stdout, "I: ", log.LstdFlags|log.Lshortfile)
+var errorLog = log.New(os.Stdout, "E: ", log.LstdFlags|log.Lshortfile)
+
+func logInfo(msg string, data ...interface{}) {
+	infoLog.Printf(msg+"\n", data...)
+}
+
+func logError(msg string, data ...interface{}) {
+	errorLog.Printf(msg+"\n", data...)
+}
+
+var (
+	LogInfo  = logInfo
+	LogError = logError
+)
 
 // NewServer creates a new api console server but does not configure it
 func NewServer(api *operations.ConsoleAPI) *Server {
 	s := new(Server)
 
-	s.shutdown = make(chan struct{})
 	s.api = api
+	s.shutdown = make(chan struct{})
 	s.interrupt = make(chan os.Signal, 1)
 	return s
 }
 
-// ConfigureAPI configures the API and handlers.
-func (s *Server) ConfigureAPI() {
+func (s *Server) Configure(ctx Context) *Server {
+	s.Host = ctx.Host
+	s.Port = ctx.HTTPPort
+	Port = strconv.Itoa(s.Port)
+	Hostname = s.Host
+
+	if len(GlobalPublicCerts) > 0 {
+		// If TLS certificates are provided enforce the HTTPS schema, meaning console will redirect
+		// plain HTTP connections to HTTPS server
+		s.EnabledListeners = []string{"http", "https"}
+		s.TLSPort = ctx.HTTPSPort
+		// Need to store tls-port, tls-host un config variables so secure.middleware can read from there
+		TLSPort = strconv.Itoa(s.TLSPort)
+		Hostname = ctx.Host
+		TLSRedirect = ctx.TLSRedirect
+	}
+
+	// configure the API handlers..
 	if s.api != nil {
 		s.handler = configureAPI(s.api)
 	}
+
+	return s
 }
 
 // ConfigureFlags configures the additional flags defined by the handlers. Needs to be called before the parser.Parse
@@ -78,6 +109,38 @@ func (s *Server) ConfigureFlags() {
 	if s.api != nil {
 		configureFlags(s.api)
 	}
+}
+
+// Context captures all command line flags values
+type Context struct {
+	Host                string
+	HTTPPort, HTTPSPort int
+	TLSRedirect         string
+	// Legacy options, TODO: remove in future
+	TLSCertificate, TLSKey, TLSca string
+}
+
+func (c *Context) Load(ctx *cli.Context) error {
+	*c = Context{
+		Host:        ctx.String("host"),
+		HTTPPort:    ctx.Int("port"),
+		HTTPSPort:   ctx.Int("tls-port"),
+		TLSRedirect: ctx.String("tls-redirect"),
+		// Legacy options to be removed.
+		TLSCertificate: ctx.String("tls-certificate"),
+		TLSKey:         ctx.String("tls-key"),
+		TLSca:          ctx.String("tls-ca"),
+	}
+	if c.HTTPPort > 65535 {
+		return errors.New("invalid argument --port out of range - ports can range from 1-65535")
+	}
+	if c.HTTPSPort > 65535 {
+		return errors.New("invalid argument --tls-port out of range - ports can range from 1-65535")
+	}
+	if c.TLSRedirect != "on" && c.TLSRedirect != "off" {
+		return errors.New("invalid argument --tls-redirect only accepts either 'on' or 'off'")
+	}
+	return nil
 }
 
 // Server for the console API
@@ -107,36 +170,16 @@ type Server struct {
 	interrupt    chan os.Signal
 }
 
-// Logf logs message either via defined user logger or via system one if no user logger is defined.
-func (s *Server) Logf(f string, args ...interface{}) {
-	if s.api != nil && s.api.Logger != nil {
-		s.api.Logger(f, args...)
-	} else {
-		log.Printf(f, args...)
-	}
+// Log logs message either via defined user logger or via system one if no user logger is defined.
+func (s *Server) Log(f string, args ...interface{}) {
+	logInfo(f, args...)
 }
 
-// Fatalf logs message either via defined user logger or via system one if no user logger is defined.
+// Fatal logs message either via defined user logger or via system one if no user logger is defined.
 // Exits with non-zero status after printing
-func (s *Server) Fatalf(f string, args ...interface{}) {
-	if s.api != nil && s.api.Logger != nil {
-		s.api.Logger(f, args...)
-		os.Exit(1)
-	} else {
-		log.Fatalf(f, args...)
-	}
-}
-
-// SetAPI configures the server with the specified API. Needs to be called before Serve
-func (s *Server) SetAPI(api *operations.ConsoleAPI) {
-	if api == nil {
-		s.api = nil
-		s.handler = nil
-		return
-	}
-
-	s.api = api
-	s.handler = configureAPI(api)
+func (s *Server) Fatal(f string, args ...interface{}) {
+	logError(f, args)
+	os.Exit(1)
 }
 
 func (s *Server) hasScheme(scheme string) bool {
@@ -175,7 +218,7 @@ func (s *Server) Serve() (err error) {
 	signalNotify(s.interrupt)
 	go handleInterrupt(once, s)
 
-	servers := []*http.Server{}
+	var servers []*http.Server
 
 	if s.hasScheme(schemeHTTP) {
 		httpServer := new(http.Server)
@@ -186,13 +229,11 @@ func (s *Server) Serve() (err error) {
 
 		servers = append(servers, httpServer)
 		wg.Add(1)
-		s.Logf("Serving console at http://%s", s.httpServerL.Addr())
+		s.Log("Serving console at http://%s", s.httpServerL.Addr())
 		go func(l net.Listener) {
 			defer wg.Done()
-			if err := httpServer.Serve(l); err != nil && err != http.ErrServerClosed {
-				s.Fatalf("%v", err)
-			}
-			s.Logf("Stopped serving console at http://%s", l.Addr())
+			httpServer.Serve(l)
+			s.Log("Stopped serving console at http://%s", l.Addr())
 		}(s.httpServerL)
 	}
 
@@ -257,15 +298,15 @@ func (s *Server) Serve() (err error) {
 			// after standard and custom config are passed, this ends up with no certificate
 			if s.TLSCertificate == "" {
 				if s.TLSCertificateKey == "" {
-					s.Fatalf("the required flags `--tls-certificate` and `--tls-key` were not specified")
+					s.Fatal("the required flags `--tls-certificate` and `--tls-key` were not specified")
 				}
-				s.Fatalf("the required flag `--tls-certificate` was not specified")
+				s.Fatal("the required flag `--tls-certificate` was not specified")
 			}
 			if s.TLSCertificateKey == "" {
-				s.Fatalf("the required flag `--tls-key` was not specified")
+				s.Fatal("the required flag `--tls-key` was not specified")
 			}
 			// this happens with a wrong custom TLS configurator
-			s.Fatalf("no certificate was configured for TLS")
+			s.Fatal("no certificate was configured for TLS")
 		}
 
 		// must have at least one certificate or panics
@@ -273,13 +314,11 @@ func (s *Server) Serve() (err error) {
 
 		servers = append(servers, httpsServer)
 		wg.Add(1)
-		s.Logf("Serving console at https://%s", s.httpsServerL.Addr())
+		s.Log("Serving console at https://%s", s.httpsServerL.Addr())
 		go func(l net.Listener) {
 			defer wg.Done()
-			if err := httpsServer.Serve(l); err != nil && err != http.ErrServerClosed {
-				s.Fatalf("%v", err)
-			}
-			s.Logf("Stopped serving console at https://%s", l.Addr())
+			httpsServer.Serve(l)
+			s.Log("Stopped serving console at https://%s", l.Addr())
 		}(tls.NewListener(s.httpsServerL, httpsServer.TLSConfig))
 	}
 
@@ -346,7 +385,7 @@ func (s *Server) handleShutdown(wg *sync.WaitGroup, servers []*http.Server) {
 			}()
 			if err := server.Shutdown(ctx); err != nil {
 				// Error from closing listeners, or context timeout:
-				s.Logf("HTTP server Shutdown: %v", err)
+				s.Log("HTTP server Shutdown: %v", err)
 			} else {
 				success = true
 			}
@@ -397,13 +436,13 @@ func handleInterrupt(once *sync.Once, s *Server) {
 	once.Do(func() {
 		for range s.interrupt {
 			if s.interrupted {
-				s.Logf("Server already shutting down")
+				s.Log("Server already shutting down")
 				continue
 			}
 			s.interrupted = true
-			s.Logf("Shutting down... ")
+			s.Log("Shutting down... ")
 			if err := s.Shutdown(); err != nil {
-				s.Logf("HTTP server Shutdown: %v", err)
+				s.Log("HTTP server Shutdown: %v", err)
 			}
 		}
 	})

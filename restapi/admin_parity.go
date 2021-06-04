@@ -18,7 +18,6 @@ package restapi
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/minio/console/pkg/utils"
 
@@ -53,9 +52,8 @@ func getParityResponse(params admin_api.GetParityParams) (models.ParityResponse,
 	disksPerNode := params.DisksPerNode
 
 	parityValues, err := GetParityInfo(nodes, disksPerNode)
-
 	if err != nil {
-		log.Println("error getting parity info:", err)
+		LogError("error getting parity info: %v", err)
 		return nil, prepareError(err)
 	}
 

@@ -18,7 +18,6 @@ package auth
 
 import (
 	"context"
-	"log"
 
 	"github.com/minio/console/cluster"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -64,16 +63,12 @@ func (c *operatorClient) Authenticate(ctx context.Context) ([]byte, error) {
 	return c.client.RESTClient().Verb("GET").RequestURI("/api").DoRaw(ctx)
 }
 
-// isServiceAccountTokenValid will make an authenticated request against kubernetes api, if the
+// checkServiceAccountTokenValid will make an authenticated request against kubernetes api, if the
 // request success means the provided jwt its a valid service account token and the console user can use it for future
 // requests until it expires
-func isServiceAccountTokenValid(ctx context.Context, operatorClient OperatorClient) bool {
+func checkServiceAccountTokenValid(ctx context.Context, operatorClient OperatorClient) error {
 	_, err := operatorClient.Authenticate(ctx)
-	if err != nil {
-		log.Println(err)
-		return false
-	}
-	return true
+	return err
 }
 
 // GetConsoleCredentialsForOperator will validate the provided JWT (service account token) and return it in the form of credentials.Login
@@ -86,8 +81,8 @@ func GetConsoleCredentialsForOperator(jwt string) (*credentials.Credentials, err
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
-	if isServiceAccountTokenValid(ctx, opClient) {
-		return credentials.New(operatorCredentialsProvider{serviceAccountJWT: jwt}), nil
+	if err = checkServiceAccountTokenValid(ctx, opClient); err != nil {
+		return nil, errInvalidCredentials
 	}
-	return nil, errInvalidCredentials
+	return credentials.New(operatorCredentialsProvider{serviceAccountJWT: jwt}), nil
 }

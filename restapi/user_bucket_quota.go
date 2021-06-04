@@ -52,7 +52,7 @@ func registerBucketQuotaHandlers(api *operations.ConsoleAPI) {
 }
 
 func setBucketQuotaResponse(session *models.Principal, params user_api.SetBucketQuotaParams) *models.Error {
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return prepareError(err)
 	}
@@ -96,7 +96,7 @@ func setBucketQuota(ctx context.Context, ac *adminClient, bucket *string, bucket
 }
 
 func getBucketQuotaResponse(session *models.Principal, params user_api.GetBucketQuotaParams) (*models.BucketQuota, *models.Error) {
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}

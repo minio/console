@@ -19,7 +19,6 @@ package restapi
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"net/http"
 	"time"
 
@@ -60,7 +59,6 @@ func startHealthInfo(ctx context.Context, conn WSConn, client MinioAdmin, deadli
 	// Serialize message to be sent
 	bytes, err := json.Marshal(healthInfo)
 	if err != nil {
-		log.Println("error on json.Marshal:", err)
 		return err
 	}
 

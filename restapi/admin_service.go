@@ -61,7 +61,7 @@ func serviceRestart(ctx context.Context, client MinioAdmin) error {
 // getRestartServiceResponse performs serviceRestart()
 func getRestartServiceResponse(session *models.Principal) *models.Error {
 	ctx := context.Background()
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return prepareError(err)
 	}

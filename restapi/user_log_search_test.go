@@ -98,12 +98,13 @@ func TestLogSearch(t *testing.T) {
 			expectedResponse: nil,
 			expectedError: &models.Error{
 				Code:    500,
-				Message: swag.String("Error retrieving logs"),
+				Message: swag.String(fmt.Sprintf("error retrieving logs: %s", http.StatusText(500))),
 			},
 		},
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			testRequest := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(tt.args.apiResponseCode)

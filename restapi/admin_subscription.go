@@ -21,7 +21,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
@@ -190,7 +189,7 @@ func saveSubscriptionLicense(ctx context.Context, clientSet K8sClientI, license 
 	err := clientSet.deleteSecret(ctx, cluster.Namespace, OperatorSubnetLicenseSecretName, metav1.DeleteOptions{})
 	if err != nil {
 		// log the error if any and continue
-		log.Println(err)
+		LogError("unable to delete secret %s: %v", OperatorSubnetLicenseSecretName, err)
 	}
 	// Save subnet license in k8s secrets
 	imm := true
@@ -225,7 +224,7 @@ func updateTenantLicenseAndRestartConsole(ctx context.Context, clientSet K8sClie
 	err = clientSet.deleteSecret(ctx, namespace, consoleSecretName, metav1.DeleteOptions{})
 	if err != nil {
 		// log the error if any and continue
-		log.Println(err)
+		LogError("unable to delete secret %s: %v", consoleSecretName, err)
 	}
 	// Save subnet license in k8s secrets
 	imm := true
@@ -305,7 +304,7 @@ func getSubscriptionLicense(ctx context.Context, clientSet K8sClientI, namespace
 	}
 	license, ok := licenseSecret.Data[ConsoleSubnetLicense]
 	if !ok {
-		log.Println("subnet secret doesn't contain jwt license")
+		LogError("subnet secret does not contain a valid subnet license")
 		return "", errorGeneric
 	}
 	return string(license), nil
@@ -386,7 +385,7 @@ func getSubscriptionRefreshResponse(session *models.Principal) (*models.License,
 	// iterate over all tenants, update console configuration and restart console pods
 	for _, tenant := range tenants.Tenants {
 		if err := updateTenantLicenseAndRestartConsole(ctx, &k8sClient, licenseRaw, tenant.Namespace, tenant.Name); err != nil {
-			log.Println(err)
+			LogError("unable to updateTenantLicenseAndRestartConsole: %v", err)
 		}
 	}
 

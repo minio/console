@@ -20,7 +20,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
@@ -162,7 +161,7 @@ const (
 func doSetVersioning(client MCClient, state VersionState) error {
 	err := client.setVersioning(context.Background(), string(state))
 	if err != nil {
-		log.Println("error setting versioning for bucket:", err.Cause)
+		LogError("error setting versioning for bucket: %s", err.Cause)
 		return err.Cause
 	}
 
@@ -196,7 +195,7 @@ func getBucketReplicationdResponse(session *models.Principal, bucketName string)
 
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		log.Println("error creating MinIO Client:", err)
+		LogError("error creating MinIO Client: %v", err)
 		return nil, err
 	}
 	// create a minioClient interface implementation
@@ -206,13 +205,12 @@ func getBucketReplicationdResponse(session *models.Principal, bucketName string)
 	// we will tolerate this call failing
 	res, err := minioClient.getBucketReplication(ctx, bucketName)
 	if err != nil {
-		log.Println("error versioning bucket:", err)
+		LogError("error versioning bucket: %v", err)
 	}
 
 	var rules []*models.BucketReplicationRule
 
 	for _, rule := range res.Rules {
-
 		repDelMarkerStatus := false
 		if rule.DeleteMarkerReplication.Status == "enable" {
 			repDelMarkerStatus = true
@@ -247,7 +245,7 @@ func getBucketVersionedResponse(session *models.Principal, bucketName string) (*
 
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		log.Println("error creating MinIO Client:", err)
+		LogError("error creating MinIO Client: %v", err)
 		return nil, err
 	}
 	// create a minioClient interface implementation
@@ -257,7 +255,7 @@ func getBucketVersionedResponse(session *models.Principal, bucketName string) (*
 	// we will tolerate this call failing
 	res, err := minioClient.getBucketVersioning(ctx, bucketName)
 	if err != nil {
-		log.Println("error versioning bucket:", err)
+		LogError("error versioning bucket: %v", err)
 	}
 
 	// serialize output
@@ -287,7 +285,7 @@ func getListBucketsResponse(session *models.Principal) (*models.ListBucketsRespo
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -344,9 +342,9 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 	// make sure to delete bucket if an error occurs after bucket was created
 	defer func() {
 		if err != nil {
-			log.Println("error creating bucket:", err)
+			LogError("error creating bucket: %v", err)
 			if err := removeBucket(minioClient, *br.Name); err != nil {
-				log.Println("error removing bucket:", err)
+				LogError("error removing bucket: %v", err)
 			}
 		}
 	}()
@@ -368,7 +366,7 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 
 	// if it has support for
 	if br.Quota != nil && br.Quota.Enabled != nil && *br.Quota.Enabled {
-		mAdmin, err := newMAdminClient(session)
+		mAdmin, err := newAdminClient(session)
 		if err != nil {
 			return prepareError(err)
 		}
@@ -377,7 +375,7 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 		adminClient := adminClient{client: mAdmin}
 		// we will tolerate this call failing
 		if err := setBucketQuota(ctx, &adminClient, br.Name, br.Quota); err != nil {
-			log.Println("error versioning bucket:", err)
+			LogError("error versioning bucket:", err)
 		}
 	}
 
@@ -731,7 +729,7 @@ func getBucketObLockingResponse(session *models.Principal, bucketName string) (*
 
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		log.Println("error creating MinIO Client:", err)
+		LogError("error creating MinIO Client: %v", err)
 		return nil, err
 	}
 	// create a minioClient interface implementation
@@ -746,7 +744,7 @@ func getBucketObLockingResponse(session *models.Principal, bucketName string) (*
 				ObjectLockingEnabled: false,
 			}, nil
 		}
-		log.Println("error object locking bucket:", err)
+		LogError("error object locking bucket: %v", err)
 	}
 
 	// serialize output

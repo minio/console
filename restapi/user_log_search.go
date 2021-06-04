@@ -72,26 +72,25 @@ func logSearch(endpoint string) (*models.LogSearchResponse, *models.Error) {
 	if err != nil {
 		return nil, prepareError(err)
 	}
-	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	if err != nil {
+		return nil, prepareError(err)
+	}
 
 	if resp.StatusCode != 200 {
-		log.Println("Error Status Code", resp.StatusCode)
-		_, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return nil, prepareError(err)
-		}
-
 		return nil, &models.Error{
-			Code:    500,
-			Message: swag.String("Error retrieving logs"),
+			Code:    int32(resp.StatusCode),
+			Message: swag.String(fmt.Sprintf("error retrieving logs: %s", http.StatusText(resp.StatusCode))),
 		}
 	}
 
 	var results []logsearchServer.ReqInfoRow
-
-	if err := json.NewDecoder(resp.Body).Decode(&results); err != nil {
+	if err = json.Unmarshal(body, &results); err != nil {
 		return nil, prepareError(err)
 	}
+
 	response := models.LogSearchResponse{
 		Results: results,
 	}
