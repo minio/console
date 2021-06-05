@@ -110,6 +110,9 @@ func buildServer() (*restapi.Server, error) {
 
 	server.ConfigureFlags()
 
+	// register all APIs
+	server.ConfigureAPI()
+
 	for _, optsGroup := range api.CommandLineOptionsGroups {
 		_, err := parser.AddGroup(optsGroup.ShortDescription, optsGroup.LongDescription, optsGroup.Options)
 		if err != nil {
