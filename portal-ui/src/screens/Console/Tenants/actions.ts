@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { ITenant } from "./ListTenants/types";
 import { Opts } from "./ListTenants/utils";
 import {
   ADD_TENANT_SET_ADVANCED_MODE,
@@ -35,6 +36,10 @@ import {
   ADD_TENANT_ENCRYPTION_VAULT_CA,
   ADD_TENANT_ENCRYPTION_GEMALTO_CA,
   ADD_TENANT_RESET_FORM,
+  TENANT_DETAILS_SET_LOADING,
+  TENANT_DETAILS_SET_TENANT,
+  TENANT_DETAILS_SET_CURRENT_TENANT,
+  TENANT_DETAILS_SET_TAB,
 } from "./types";
 
 // Basic actions
@@ -219,4 +224,33 @@ export const resetAddTenantForm = () => {
   return {
     type: ADD_TENANT_RESET_FORM,
   };
+};
+
+export const setTenantDetailsLoad = (loading: boolean) => {
+  return {
+    type: TENANT_DETAILS_SET_LOADING,
+    state: loading,
+  }
+};
+
+export const setTenantName = (tenantName: string, tenantNamespace: string) => {
+  return {
+    type: TENANT_DETAILS_SET_CURRENT_TENANT,
+    name: tenantName,
+    namespace: tenantNamespace,
+  }
+};
+
+export const setTenantInfo = (tenant: ITenant | null) => {
+  return {
+    type: TENANT_DETAILS_SET_TENANT,
+    tenant
+  }
+};
+
+export const setTenantTab = (tab: string) => {
+  return {
+    type: TENANT_DETAILS_SET_TAB,
+    tab,
+  }
 };

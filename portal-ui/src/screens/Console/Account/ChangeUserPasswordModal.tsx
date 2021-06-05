@@ -29,7 +29,7 @@ import {
 import { ChangeUserPasswordRequest } from "../Buckets/types";
 import api from "../../../common/api";
 import { setModalErrorSnackMessage } from "../../../actions";
-import { User, UsersList } from "../Users/types";
+import { User } from "../Users/types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -143,7 +143,7 @@ const ChangeUserPassword = ({
               color="primary"
               disabled={
                 loading ||
-                !(reNewPassword.length > 0 && newPassword == reNewPassword)
+                !(reNewPassword.length > 0 && newPassword === reNewPassword)
               }
             >
               Save

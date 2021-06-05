@@ -36,6 +36,10 @@ import {
   ADD_TENANT_ENCRYPTION_VAULT_CA,
   ADD_TENANT_ENCRYPTION_GEMALTO_CA,
   ADD_TENANT_RESET_FORM,
+  TENANT_DETAILS_SET_LOADING,
+  TENANT_DETAILS_SET_CURRENT_TENANT,
+  TENANT_DETAILS_SET_TENANT,
+  TENANT_DETAILS_SET_TAB,
 } from "./types";
 import { KeyPair } from "./ListTenants/utils";
 import { getRandomString } from "./utils";
@@ -226,6 +230,13 @@ const initialState: ITenantState = {
         encoded_cert: "",
       },
     },
+  },
+  tenantDetails: {
+    currentTenant: "",
+    currentNamespace: "",
+    loadingTenant: false,
+    tenantInfo: null,
+    currentTab: "summary",
   },
 };
 
@@ -622,6 +633,49 @@ export function tenantsReducer(
               encoded_cert: "",
             },
           },
+        },
+      };
+    case TENANT_DETAILS_SET_LOADING:
+      const tenantDetails = {
+        ...state.tenantDetails,
+        loadingTenant: action.state,
+      };
+      return {
+        ...state,
+        tenantDetails: {
+          ...tenantDetails,
+        },
+      };
+    case TENANT_DETAILS_SET_CURRENT_TENANT:
+      const currentTenant = {
+        ...state.tenantDetails,
+        currentTenant: action.name,
+        currentNamespace: action.namespace,
+      };
+      return {
+        ...state,
+        tenantDetails: {
+          ...currentTenant,
+        },
+      };
+    case TENANT_DETAILS_SET_TENANT:
+      let tenantData = null;
+      if (action.tenant) {
+        tenantData = { tenantInfo: { ...action.tenant } };
+      }
+      const setTenant = { ...state.tenantDetails, ...tenantData };
+      return {
+        ...state,
+        tenantDetails: {
+          ...setTenant,
+        },
+      };
+    case TENANT_DETAILS_SET_TAB:
+      const newTab = { ...state.tenantDetails, currentTab: action.tab };
+      return {
+        ...state,
+        tenantDetails: {
+          ...newTab,
         },
       };
     default:

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { IErasureCodeCalc } from "../../../common/types";
-import { IMemorySize } from "./ListTenants/types";
+import { IMemorySize, ITenant } from "./ListTenants/types";
 import { KeyPair, Opts } from "./ListTenants/utils";
 
 export const ADD_TENANT_SET_CURRENT_PAGE = "ADD_TENANT/SET_CURRENT_PAGE";
@@ -51,6 +51,13 @@ export const ADD_TENANT_ENCRYPTION_VAULT_CERT =
 export const ADD_TENANT_ENCRYPTION_VAULT_CA = "ADD_TENANT/ENCRYPTION_VAULT_CA";
 export const ADD_TENANT_ENCRYPTION_GEMALTO_CA =
   "ADD_TENANT/ENCRYPTION_GEMALTO_CA";
+
+// Tenant Details
+export const TENANT_DETAILS_SET_LOADING = "TENANT_DETAILS/SET_LOADING";
+export const TENANT_DETAILS_SET_CURRENT_TENANT =
+  "TENANT_DETAILS/SET_CURRENT_TENANT";
+export const TENANT_DETAILS_SET_TENANT = "TENANT_DETAILS/SET_TENANT";
+export const TENANT_DETAILS_SET_TAB = "TENANT_DETAILS/SET_TAB";
 
 export interface ICreateTenant {
   page: number;
@@ -188,8 +195,17 @@ export interface ITenantAffinity {
   withPodAntiAffinity: boolean;
 }
 
+export interface ITenantDetails {
+  currentTenant: string;
+  currentNamespace: string;
+  loadingTenant: boolean;
+  tenantInfo: ITenant | null;
+  currentTab: string;
+}
+
 export interface ITenantState {
   createTenant: ICreateTenant;
+  tenantDetails: ITenantDetails;
 }
 
 export interface ILabelKeyPair {
@@ -308,6 +324,27 @@ interface ResetForm {
   type: typeof ADD_TENANT_RESET_FORM;
 }
 
+interface SetLoadingTenant {
+  type: typeof TENANT_DETAILS_SET_LOADING;
+  state: boolean;
+}
+
+interface SetTenantName {
+  type: typeof TENANT_DETAILS_SET_CURRENT_TENANT;
+  name: string;
+  namespace: string;
+}
+
+interface SetTenantDetails {
+  type: typeof TENANT_DETAILS_SET_TENANT;
+  tenant: ITenant | null;
+}
+
+interface SetTenantTab {
+  type: typeof TENANT_DETAILS_SET_TAB;
+  tab: string;
+}
+
 export type FieldsToHandle = INameTenantFields;
 
 export type TenantsManagementTypes =
@@ -329,4 +366,8 @@ export type TenantsManagementTypes =
   | AddFileVaultCert
   | AddFileVaultCa
   | AddFileGemaltoCa
-  | ResetForm;
+  | ResetForm
+  | SetLoadingTenant
+  | SetTenantName
+  | SetTenantDetails
+  | SetTenantTab;
