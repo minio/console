@@ -231,7 +231,7 @@ const TenantDetails = ({
       .catch((err) => {
         setErrorSnackMessage(err);
       });
-  }, []);
+  }, [tenantNamespace, tenantName, podName]);
 
   return (
     <React.Fragment>
@@ -243,12 +243,12 @@ const TenantDetails = ({
             </Link>
             {" > "}
             <Link
-              to={`/namespaces/${match.params["tenantNamespace"]}/tenants/${match.params["tenantName"]}`}
+              to={`/namespaces/${tenantNamespace}/tenants/${tenantName}`}
               className={classes.breadcrumLink}
             >
-              {match.params["tenantName"]}
+              {tenantName}
             </Link>
-            {` > Pods > ${match.params["podName"]}`}
+            {` > Pods > ${podName}`}
           </Fragment>
         }
       />
