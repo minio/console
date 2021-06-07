@@ -24,7 +24,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/minio/pkg/certs"
+	"github.com/minio/console/pkg/certs"
 	"github.com/minio/pkg/env"
 )
 
@@ -276,7 +276,7 @@ var (
 	// GlobalPublicCerts has certificates Console will use to serve clients
 	GlobalPublicCerts []*x509.Certificate
 	// GlobalTLSCertsManager custom TLS Manager for SNI support
-	GlobalTLSCertsManager *certs.Manager
+	GlobalTLSCertsManager *certs.TLSCertsManager
 )
 
 // getK8sSAToken assumes the plugin is running inside a k8s pod and extract the current service account from the
