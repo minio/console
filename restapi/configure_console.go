@@ -21,6 +21,7 @@ package restapi
 import (
 	"bytes"
 	"crypto/tls"
+	"crypto/x509"
 	"io"
 	"io/fs"
 	"net/http"
@@ -141,13 +142,21 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 
 // The TLS configuration before HTTPS server starts.
 func configureTLS(tlsConfig *tls.Config) {
-	if GlobalRootCAs != nil {
-		// Add the global public crts as part of global root CAs
-		for _, publicCrt := range GlobalPublicCerts {
-			GlobalRootCAs.AddCert(publicCrt)
-		}
-		tlsConfig.RootCAs = GlobalRootCAs
+	if GlobalRootCAs == nil {
+		GlobalRootCAs = &x509.CertPool{}
 	}
+	// Add the global public crts as part of global root CAs
+	for _, publicCrt := range GlobalPublicCerts {
+		// Add certificates to swagger TLS configuration
+		tlsConfig.Certificates = append(tlsConfig.Certificates, tls.Certificate{
+			Certificate: [][]byte{publicCrt.Raw},
+			Leaf:        publicCrt,
+		})
+		GlobalRootCAs.AddCert(publicCrt)
+	}
+
+	tlsConfig.RootCAs = GlobalRootCAs
+
 	if GlobalTLSCertsManager != nil {
 		tlsConfig.GetCertificate = GlobalTLSCertsManager.GetCertificate
 	}
