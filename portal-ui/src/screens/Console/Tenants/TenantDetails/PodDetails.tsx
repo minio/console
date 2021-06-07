@@ -173,21 +173,6 @@ const TenantDetails = ({
   const tenantName = match.params["tenantName"];
   const podName = match.params["podName"];
 
-  const loadInfo = () => {
-    api
-      .invoke(
-        "GET",
-        `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/pods/${podName}`
-      )
-      .then((res: string) => {
-        setLog(res);
-        setLogLines(res.split("\n"));
-      })
-      .catch((err) => {
-        setErrorSnackMessage(err);
-      });
-  };
-
   const renderLog = (logMessage: string, index: number) => {
     // remove any non ascii characters, exclude any control codes
     logMessage = logMessage.replace(/([^\x20-\x7F])/g, "");
@@ -234,8 +219,18 @@ const TenantDetails = ({
   });
 
   useEffect(() => {
-    loadInfo();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    api
+      .invoke(
+        "GET",
+        `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/pods/${podName}`
+      )
+      .then((res: string) => {
+        setLog(res);
+        setLogLines(res.split("\n"));
+      })
+      .catch((err) => {
+        setErrorSnackMessage(err);
+      });
   }, []);
 
   return (
