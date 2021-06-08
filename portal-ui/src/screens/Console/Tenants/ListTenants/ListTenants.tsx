@@ -216,13 +216,16 @@ const ListTenants = ({
   };
 
   const healthStatusToClass = (health_status: string) => {
-    return health_status == "red"
-      ? classes.redState
-      : health_status == "yellow"
-      ? classes.yellowState
-      : health_status == "green"
-      ? classes.greenState
-      : classes.greyState;
+    switch(health_status) {
+      case "red":
+        return classes.redState;
+      case "yellow":
+        return classes.yellowState;
+      case "green":
+        return classes.greenState;
+      default:
+        return classes.greyState;
+    }
   };
 
   return (
