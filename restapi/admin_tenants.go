@@ -1427,6 +1427,7 @@ func getPodLogsResponse(session *models.Principal, params admin_api.GetPodLogsPa
 	ctx := context.Background()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
+		LogError("%v", err)
 		return "", prepareError(err)
 	}
 	listOpts := &corev1.PodLogOptions{}

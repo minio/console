@@ -216,6 +216,7 @@ rules:
     - ""
     resources:
     - pod
+    - pods/log
     verbs:
     - get
     - list
