@@ -328,10 +328,7 @@ func setPolicy(ctx context.Context, client MinioAdmin, name, entityName string, 
 	if entityType == models.PolicyEntityGroup {
 		isGroup = true
 	}
-	if err := client.setPolicy(ctx, name, entityName, isGroup); err != nil {
-		return err
-	}
-	return nil
+	return client.setPolicy(ctx, name, entityName, isGroup)
 }
 
 // getSetPolicyResponse() performs setPolicy() and serializes it to the handler's output
