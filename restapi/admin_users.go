@@ -206,10 +206,7 @@ func getUserAddResponse(session *models.Principal, params admin_api.AddUserParam
 
 //removeUser invokes removing an user on `MinioAdmin`, then we return the response from API
 func removeUser(ctx context.Context, client MinioAdmin, accessKey string) error {
-	if err := client.removeUser(ctx, accessKey); err != nil {
-		return err
-	}
-	return nil
+	return client.removeUser(ctx, accessKey)
 }
 
 func getRemoveUserResponse(session *models.Principal, params admin_api.RemoveUserParams) *models.Error {
@@ -393,10 +390,7 @@ func setUserStatus(ctx context.Context, client MinioAdmin, user string, status s
 		return errors.New(500, "status not valid")
 	}
 
-	if err := client.setUserStatus(ctx, user, setStatus); err != nil {
-		return err
-	}
-	return nil
+	return client.setUserStatus(ctx, user, setStatus)
 }
 
 func getUpdateUserResponse(session *models.Principal, params admin_api.UpdateUserInfoParams) (*models.User, *models.Error) {
@@ -595,10 +589,7 @@ func listUsersWithAccessToBucket(ctx context.Context, adminClient MinioAdmin, bu
 
 // changeUserPassword changes password of selectedUser to newSecretKey
 func changeUserPassword(ctx context.Context, client MinioAdmin, selectedUser string, newSecretKey string) error {
-	if err := client.changePassword(ctx, selectedUser, newSecretKey); err != nil {
-		return err
-	}
-	return nil
+	return client.changePassword(ctx, selectedUser, newSecretKey)
 }
 
 // getChangeUserPasswordResponse will change the password of selctedUser to newSecretKey

@@ -1408,7 +1408,7 @@ func getTenantPodsResponse(session *models.Principal, params admin_api.GetTenant
 	}
 	retval := []*models.TenantPod{}
 	for _, pod := range pods.Items {
-		var restarts int64 = 0
+		var restarts int64
 		if len(pod.Status.ContainerStatuses) > 0 {
 			restarts = int64(pod.Status.ContainerStatuses[0].RestartCount)
 		}
@@ -1427,6 +1427,7 @@ func getPodLogsResponse(session *models.Principal, params admin_api.GetPodLogsPa
 	ctx := context.Background()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
+		LogError("%v", err)
 		return "", prepareError(err)
 	}
 	listOpts := &corev1.PodLogOptions{}

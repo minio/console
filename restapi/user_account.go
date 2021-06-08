@@ -57,10 +57,7 @@ func registerAccountHandlers(api *operations.ConsoleAPI) {
 
 // changePassword validate current current user password and if it's correct set the new password
 func changePassword(ctx context.Context, client MinioAdmin, session *models.Principal, newSecretKey string) error {
-	if err := client.changePassword(ctx, session.AccountAccessKey, newSecretKey); err != nil {
-		return err
-	}
-	return nil
+	return client.changePassword(ctx, session.AccountAccessKey, newSecretKey)
 }
 
 // getChangePasswordResponse will validate user knows what is the current password (avoid account hijacking), update user account password

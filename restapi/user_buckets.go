@@ -308,10 +308,7 @@ func getListBucketsResponse(session *models.Principal) (*models.ListBucketsRespo
 // makeBucket creates a bucket for an specific minio client
 func makeBucket(ctx context.Context, client MinioClient, bucketName string, objectLocking bool) error {
 	// creates a new bucket with bucketName with a context to control cancellations and timeouts.
-	if err := client.makeBucketWithContext(ctx, bucketName, "us-east-1", objectLocking); err != nil {
-		return err
-	}
-	return nil
+	return client.makeBucketWithContext(ctx, bucketName, "", objectLocking)
 }
 
 // getMakeBucketResponse performs makeBucket() to create a bucket with its access policy

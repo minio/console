@@ -12,7 +12,7 @@ linters:
     - goimports
     - misspell
     - govet
-    - golint
+    - revive
     - ineffassign
     - gosimple
     - deadcode
@@ -23,6 +23,16 @@ linters:
 service:
   golangci-lint-version: 1.27.0 # use the fixed version to not introduce new linters unexpectedly
 
+issues:
+  exclude-use-default: false
+  exclude:
+      - should have a package comment
+      # TODO(y4m4): Remove once all exported ident. have comments!      
+      - comment on exported function
+      - comment on exported type
+      - should have comment
+      - use leading k in Go names
+      - comment on exported const
 run:
   skip-dirs:
     - pkg/clientgen
