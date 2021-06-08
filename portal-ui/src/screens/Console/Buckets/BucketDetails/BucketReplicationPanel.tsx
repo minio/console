@@ -72,6 +72,7 @@ const BucketReplicationPanel = ({
     useState<boolean>(false);
   const [openSetReplication, setOpenSetReplication] = useState<boolean>(false);
   const [selectedRRule, setSelectedRRule] = useState<string>("");
+  const [filter, setFilter] = useState<string>("");
 
   const bucketName = match.params["bucketName"];
 
@@ -185,6 +186,19 @@ const BucketReplicationPanel = ({
     },
   ];
 
+  const filteredRecords = replicationRules.filter(
+    (item: BucketReplicationRule) => {
+      if (
+        (item.prefix &&
+          item.prefix.toLowerCase().includes(filter.toLowerCase())) ||
+        (item.tags && item.tags.toLowerCase().includes(filter.toLowerCase()))
+      ) {
+        return true;
+      }
+      return false;
+    }
+  );
+
   return (
     <Fragment>
       {openSetReplication && (
@@ -211,7 +225,7 @@ const BucketReplicationPanel = ({
             id="search-resource"
             label=""
             onChange={(event) => {
-              // setFilter(event.target.value);
+              setFilter(event.target.value);
             }}
             InputProps={{
               disableUnderline: true,
@@ -274,7 +288,7 @@ const BucketReplicationPanel = ({
               { label: "Status", elementKey: "status" },
             ]}
             isLoading={loadingReplication}
-            records={replicationRules}
+            records={filteredRecords}
             entityName="Replication Rules"
             idField="id"
           />

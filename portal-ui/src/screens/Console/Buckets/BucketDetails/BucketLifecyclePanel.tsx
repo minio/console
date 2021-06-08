@@ -61,6 +61,7 @@ const BucketLifecyclePanel = ({
   const [lifecycleRecords, setLifecycleRecords] = useState<LifeCycleItem[]>([]);
   const [addLifecycleOpen, setAddLifecycleOpen] = useState<boolean>(false);
   const [editLifecycleOpen, setEditLifecycleOpen] = useState<boolean>(false);
+  const [filter, setFilter] = useState<string>("");
 
   const bucketName = match.params["bucketName"];
 
@@ -153,6 +154,16 @@ const BucketLifecyclePanel = ({
     },
   ];
 
+  const filteredRecords = lifecycleRecords.filter(
+    (item: LifeCycleItem) => {
+      if (item.id.toLocaleLowerCase().includes(filter.toLowerCase()))
+      {
+        return true;
+      }
+      return false;
+    }
+  );
+
   return (
     <Fragment>
       {editLifecycleOpen && (
@@ -180,7 +191,7 @@ const BucketLifecyclePanel = ({
             id="search-resource"
             label=""
             onChange={(event) => {
-              // setFilter(event.target.value);
+              setFilter(event.target.value);
             }}
             InputProps={{
               disableUnderline: true,
@@ -211,7 +222,7 @@ const BucketLifecyclePanel = ({
             itemActions={[]}
             columns={lifecycleColumns}
             isLoading={loadingLifecycle}
-            records={lifecycleRecords}
+            records={filteredRecords}
             entityName="Lifecycle"
             customEmptyMessage="There are no Lifecycle rules yet"
             idField="id"

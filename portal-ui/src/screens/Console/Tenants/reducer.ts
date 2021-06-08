@@ -265,7 +265,7 @@ export function tenantsReducer(
           {}
         );
 
-        let newValue: typeof originPageNameItems = {};
+        let newValue: any = {};
         newValue[action.field] = action.value;
 
         const joinValue = { ...originPageNameItems, ...newValue };
