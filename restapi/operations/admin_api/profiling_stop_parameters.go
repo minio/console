@@ -30,7 +30,8 @@ import (
 )
 
 // NewProfilingStopParams creates a new ProfilingStopParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewProfilingStopParams() ProfilingStopParams {
 
 	return ProfilingStopParams{}

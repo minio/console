@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -41,6 +43,11 @@ type PoolResources struct {
 
 // Validate validates this pool resources
 func (m *PoolResources) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this pool resources based on context it is used
+func (m *PoolResources) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

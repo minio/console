@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -78,8 +79,8 @@ const (
 	// LoginDetailsLoginStrategyRedirect captures enum value "redirect"
 	LoginDetailsLoginStrategyRedirect string = "redirect"
 
-	// LoginDetailsLoginStrategyServiceAccount captures enum value "service-account"
-	LoginDetailsLoginStrategyServiceAccount string = "service-account"
+	// LoginDetailsLoginStrategyServiceDashAccount captures enum value "service-account"
+	LoginDetailsLoginStrategyServiceDashAccount string = "service-account"
 )
 
 // prop value enum
@@ -91,7 +92,6 @@ func (m *LoginDetails) validateLoginStrategyEnum(path, location string, value st
 }
 
 func (m *LoginDetails) validateLoginStrategy(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.LoginStrategy) { // not required
 		return nil
 	}
@@ -101,6 +101,11 @@ func (m *LoginDetails) validateLoginStrategy(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this login details based on context it is used
+func (m *LoginDetails) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

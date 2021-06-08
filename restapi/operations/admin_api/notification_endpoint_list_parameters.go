@@ -30,7 +30,8 @@ import (
 )
 
 // NewNotificationEndpointListParams creates a new NotificationEndpointListParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewNotificationEndpointListParams() NotificationEndpointListParams {
 
 	return NotificationEndpointListParams{}

@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -164,7 +165,6 @@ func (m *CreateTenantRequest) Validate(formats strfmt.Registry) error {
 }
 
 func (m *CreateTenantRequest) validateConsole(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Console) { // not required
 		return nil
 	}
@@ -182,7 +182,6 @@ func (m *CreateTenantRequest) validateConsole(formats strfmt.Registry) error {
 }
 
 func (m *CreateTenantRequest) validateEncryption(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Encryption) { // not required
 		return nil
 	}
@@ -200,7 +199,6 @@ func (m *CreateTenantRequest) validateEncryption(formats strfmt.Registry) error 
 }
 
 func (m *CreateTenantRequest) validateIdp(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Idp) { // not required
 		return nil
 	}
@@ -218,7 +216,6 @@ func (m *CreateTenantRequest) validateIdp(formats strfmt.Registry) error {
 }
 
 func (m *CreateTenantRequest) validateImageRegistry(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ImageRegistry) { // not required
 		return nil
 	}
@@ -236,7 +233,6 @@ func (m *CreateTenantRequest) validateImageRegistry(formats strfmt.Registry) err
 }
 
 func (m *CreateTenantRequest) validateLogSearchConfiguration(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.LogSearchConfiguration) { // not required
 		return nil
 	}
@@ -259,7 +255,7 @@ func (m *CreateTenantRequest) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("name", "body", string(*m.Name), `^[a-z0-9-]{3,63}$`); err != nil {
+	if err := validate.Pattern("name", "body", *m.Name, `^[a-z0-9-]{3,63}$`); err != nil {
 		return err
 	}
 
@@ -301,7 +297,6 @@ func (m *CreateTenantRequest) validatePools(formats strfmt.Registry) error {
 }
 
 func (m *CreateTenantRequest) validatePrometheusConfiguration(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.PrometheusConfiguration) { // not required
 		return nil
 	}
@@ -319,13 +314,170 @@ func (m *CreateTenantRequest) validatePrometheusConfiguration(formats strfmt.Reg
 }
 
 func (m *CreateTenantRequest) validateTLS(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.TLS) { // not required
 		return nil
 	}
 
 	if m.TLS != nil {
 		if err := m.TLS.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("tls")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create tenant request based on the context it is used
+func (m *CreateTenantRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateConsole(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateEncryption(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateIdp(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateImageRegistry(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateLogSearchConfiguration(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePools(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePrometheusConfiguration(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTLS(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *CreateTenantRequest) contextValidateConsole(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Console != nil {
+		if err := m.Console.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("console")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *CreateTenantRequest) contextValidateEncryption(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Encryption != nil {
+		if err := m.Encryption.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("encryption")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *CreateTenantRequest) contextValidateIdp(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Idp != nil {
+		if err := m.Idp.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("idp")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *CreateTenantRequest) contextValidateImageRegistry(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.ImageRegistry != nil {
+		if err := m.ImageRegistry.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("image_registry")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *CreateTenantRequest) contextValidateLogSearchConfiguration(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.LogSearchConfiguration != nil {
+		if err := m.LogSearchConfiguration.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("logSearchConfiguration")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *CreateTenantRequest) contextValidatePools(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Pools); i++ {
+
+		if m.Pools[i] != nil {
+			if err := m.Pools[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("pools" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *CreateTenantRequest) contextValidatePrometheusConfiguration(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.PrometheusConfiguration != nil {
+		if err := m.PrometheusConfiguration.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("prometheusConfiguration")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *CreateTenantRequest) contextValidateTLS(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.TLS != nil {
+		if err := m.TLS.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("tls")
 			}

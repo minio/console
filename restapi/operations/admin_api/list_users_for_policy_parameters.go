@@ -31,7 +31,8 @@ import (
 )
 
 // NewListUsersForPolicyParams creates a new ListUsersForPolicyParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewListUsersForPolicyParams() ListUsersForPolicyParams {
 
 	return ListUsersForPolicyParams{}
@@ -66,7 +67,6 @@ func (o *ListUsersForPolicyParams) BindRequest(r *http.Request, route *middlewar
 	if err := o.bindPolicy(rPolicy, rhkPolicy, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -82,7 +82,6 @@ func (o *ListUsersForPolicyParams) bindPolicy(rawData []string, hasKey bool, for
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Policy = raw
 
 	return nil

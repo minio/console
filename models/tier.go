@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -77,7 +78,6 @@ func (m *Tier) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Tier) validateAzure(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Azure) { // not required
 		return nil
 	}
@@ -95,7 +95,6 @@ func (m *Tier) validateAzure(formats strfmt.Registry) error {
 }
 
 func (m *Tier) validateGcs(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Gcs) { // not required
 		return nil
 	}
@@ -113,7 +112,6 @@ func (m *Tier) validateGcs(formats strfmt.Registry) error {
 }
 
 func (m *Tier) validateS3(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.S3) { // not required
 		return nil
 	}
@@ -166,7 +164,6 @@ func (m *Tier) validateTypeEnum(path, location string, value string) error {
 }
 
 func (m *Tier) validateType(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Type) { // not required
 		return nil
 	}
@@ -174,6 +171,70 @@ func (m *Tier) validateType(formats strfmt.Registry) error {
 	// value enum
 	if err := m.validateTypeEnum("type", "body", m.Type); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this tier based on the context it is used
+func (m *Tier) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateAzure(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateGcs(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateS3(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Tier) contextValidateAzure(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Azure != nil {
+		if err := m.Azure.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("azure")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Tier) contextValidateGcs(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Gcs != nil {
+		if err := m.Gcs.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("gcs")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Tier) contextValidateS3(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.S3 != nil {
+		if err := m.S3.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("s3")
+			}
+			return err
+		}
 	}
 
 	return nil

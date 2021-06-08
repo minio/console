@@ -23,18 +23,21 @@ package admin_api
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/validate"
 
 	"github.com/minio/console/models"
 )
 
 // NewDeleteTenantParams creates a new DeleteTenantParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewDeleteTenantParams() DeleteTenantParams {
 
 	return DeleteTenantParams{}
@@ -85,11 +88,17 @@ func (o *DeleteTenantParams) BindRequest(r *http.Request, route *middleware.Matc
 				res = append(res, err)
 			}
 
+			ctx := validate.WithOperationRequest(context.Background())
+			if err := body.ContextValidate(ctx, route.Formats); err != nil {
+				res = append(res, err)
+			}
+
 			if len(res) == 0 {
 				o.Body = &body
 			}
 		}
 	}
+
 	rNamespace, rhkNamespace, _ := route.Params.GetOK("namespace")
 	if err := o.bindNamespace(rNamespace, rhkNamespace, route.Formats); err != nil {
 		res = append(res, err)
@@ -99,7 +108,6 @@ func (o *DeleteTenantParams) BindRequest(r *http.Request, route *middleware.Matc
 	if err := o.bindTenant(rTenant, rhkTenant, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -115,7 +123,6 @@ func (o *DeleteTenantParams) bindNamespace(rawData []string, hasKey bool, format
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Namespace = raw
 
 	return nil
@@ -130,7 +137,6 @@ func (o *DeleteTenantParams) bindTenant(rawData []string, hasKey bool, formats s
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Tenant = raw
 
 	return nil

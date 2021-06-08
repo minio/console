@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -75,12 +77,11 @@ func (m *UpdateTenantRequest) Validate(formats strfmt.Registry) error {
 }
 
 func (m *UpdateTenantRequest) validateConsoleImage(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ConsoleImage) { // not required
 		return nil
 	}
 
-	if err := validate.Pattern("console_image", "body", string(m.ConsoleImage), `^((.*?)/(.*?):(.+))$`); err != nil {
+	if err := validate.Pattern("console_image", "body", m.ConsoleImage, `^((.*?)/(.*?):(.+))$`); err != nil {
 		return err
 	}
 
@@ -88,12 +89,11 @@ func (m *UpdateTenantRequest) validateConsoleImage(formats strfmt.Registry) erro
 }
 
 func (m *UpdateTenantRequest) validateImage(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Image) { // not required
 		return nil
 	}
 
-	if err := validate.Pattern("image", "body", string(m.Image), `^((.*?)/(.*?):(.+))$`); err != nil {
+	if err := validate.Pattern("image", "body", m.Image, `^((.*?)/(.*?):(.+))$`); err != nil {
 		return err
 	}
 
@@ -101,13 +101,40 @@ func (m *UpdateTenantRequest) validateImage(formats strfmt.Registry) error {
 }
 
 func (m *UpdateTenantRequest) validateImageRegistry(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ImageRegistry) { // not required
 		return nil
 	}
 
 	if m.ImageRegistry != nil {
 		if err := m.ImageRegistry.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("image_registry")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this update tenant request based on the context it is used
+func (m *UpdateTenantRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateImageRegistry(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *UpdateTenantRequest) contextValidateImageRegistry(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.ImageRegistry != nil {
+		if err := m.ImageRegistry.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("image_registry")
 			}

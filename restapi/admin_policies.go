@@ -345,7 +345,7 @@ func getSetPolicyResponse(session *models.Principal, name string, params *models
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
 
-	if err := setPolicy(ctx, adminClient, name, *params.EntityName, params.EntityType); err != nil {
+	if err := setPolicy(ctx, adminClient, name, *params.EntityName, *params.EntityType); err != nil {
 		return prepareError(err)
 	}
 	return nil

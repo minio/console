@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -83,7 +85,6 @@ func (m *MakeBucketRequest) validateName(formats strfmt.Registry) error {
 }
 
 func (m *MakeBucketRequest) validateQuota(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Quota) { // not required
 		return nil
 	}
@@ -101,13 +102,58 @@ func (m *MakeBucketRequest) validateQuota(formats strfmt.Registry) error {
 }
 
 func (m *MakeBucketRequest) validateRetention(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Retention) { // not required
 		return nil
 	}
 
 	if m.Retention != nil {
 		if err := m.Retention.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("retention")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this make bucket request based on the context it is used
+func (m *MakeBucketRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateQuota(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRetention(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MakeBucketRequest) contextValidateQuota(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Quota != nil {
+		if err := m.Quota.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("quota")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *MakeBucketRequest) contextValidateRetention(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Retention != nil {
+		if err := m.Retention.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("retention")
 			}

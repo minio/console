@@ -33,7 +33,8 @@ import (
 )
 
 // NewDownloadObjectParams creates a new DownloadObjectParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewDownloadObjectParams() DownloadObjectParams {
 
 	return DownloadObjectParams{}
@@ -89,7 +90,6 @@ func (o *DownloadObjectParams) BindRequest(r *http.Request, route *middleware.Ma
 	if err := o.bindVersionID(qVersionID, qhkVersionID, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -105,7 +105,6 @@ func (o *DownloadObjectParams) bindBucketName(rawData []string, hasKey bool, for
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.BucketName = raw
 
 	return nil
@@ -123,10 +122,10 @@ func (o *DownloadObjectParams) bindPrefix(rawData []string, hasKey bool, formats
 
 	// Required: true
 	// AllowEmptyValue: false
+
 	if err := validate.RequiredString("prefix", "query", raw); err != nil {
 		return err
 	}
-
 	o.Prefix = raw
 
 	return nil
@@ -141,10 +140,10 @@ func (o *DownloadObjectParams) bindVersionID(rawData []string, hasKey bool, form
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
-
 	o.VersionID = &raw
 
 	return nil

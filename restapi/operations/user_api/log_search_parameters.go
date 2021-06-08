@@ -124,7 +124,6 @@ func (o *LogSearchParams) BindRequest(r *http.Request, route *middleware.Matched
 	if err := o.bindTimeStart(qTimeStart, qhkTimeStart, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -135,10 +134,8 @@ func (o *LogSearchParams) BindRequest(r *http.Request, route *middleware.Matched
 //
 // Arrays are parsed according to CollectionFormat: "multi" (defaults to "csv" when empty).
 func (o *LogSearchParams) bindFp(rawData []string, hasKey bool, formats strfmt.Registry) error {
-
 	// CollectionFormat: multi
 	fpIC := rawData
-
 	if len(fpIC) == 0 {
 		return nil
 	}
@@ -164,11 +161,11 @@ func (o *LogSearchParams) bindOrder(rawData []string, hasKey bool, formats strfm
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		// Default values have been previously initialized by NewLogSearchParams()
 		return nil
 	}
-
 	o.Order = &raw
 
 	if err := o.validateOrder(formats); err != nil {
@@ -197,6 +194,7 @@ func (o *LogSearchParams) bindPageNo(rawData []string, hasKey bool, formats strf
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		// Default values have been previously initialized by NewLogSearchParams()
 		return nil
@@ -220,6 +218,7 @@ func (o *LogSearchParams) bindPageSize(rawData []string, hasKey bool, formats st
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		// Default values have been previously initialized by NewLogSearchParams()
 		return nil
@@ -243,10 +242,10 @@ func (o *LogSearchParams) bindTimeStart(rawData []string, hasKey bool, formats s
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
-
 	o.TimeStart = &raw
 
 	return nil

@@ -95,7 +95,7 @@ func getProfilingStartResponse(session *models.Principal, params *models.Profili
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
-	profilingItems, err := startProfiling(ctx, adminClient, params.Type)
+	profilingItems, err := startProfiling(ctx, adminClient, *params.Type)
 	if err != nil {
 		return nil, prepareError(err)
 	}

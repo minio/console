@@ -30,7 +30,8 @@ import (
 )
 
 // NewListPVCsParams creates a new ListPVCsParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewListPVCsParams() ListPVCsParams {
 
 	return ListPVCsParams{}

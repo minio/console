@@ -31,7 +31,8 @@ import (
 )
 
 // NewGetBucketObjectLockingStatusParams creates a new GetBucketObjectLockingStatusParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewGetBucketObjectLockingStatusParams() GetBucketObjectLockingStatusParams {
 
 	return GetBucketObjectLockingStatusParams{}
@@ -66,7 +67,6 @@ func (o *GetBucketObjectLockingStatusParams) BindRequest(r *http.Request, route 
 	if err := o.bindBucketName(rBucketName, rhkBucketName, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -82,7 +82,6 @@ func (o *GetBucketObjectLockingStatusParams) bindBucketName(rawData []string, ha
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.BucketName = raw
 
 	return nil

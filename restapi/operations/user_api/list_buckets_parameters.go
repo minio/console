@@ -33,7 +33,8 @@ import (
 )
 
 // NewListBucketsParams creates a new ListBucketsParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewListBucketsParams() ListBucketsParams {
 
 	return ListBucketsParams{}
@@ -87,7 +88,6 @@ func (o *ListBucketsParams) BindRequest(r *http.Request, route *middleware.Match
 	if err := o.bindSortBy(qSortBy, qhkSortBy, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -103,6 +103,7 @@ func (o *ListBucketsParams) bindLimit(rawData []string, hasKey bool, formats str
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
@@ -125,6 +126,7 @@ func (o *ListBucketsParams) bindOffset(rawData []string, hasKey bool, formats st
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
@@ -147,10 +149,10 @@ func (o *ListBucketsParams) bindSortBy(rawData []string, hasKey bool, formats st
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
-
 	o.SortBy = &raw
 
 	return nil

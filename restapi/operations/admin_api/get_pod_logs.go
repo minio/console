@@ -48,7 +48,7 @@ func NewGetPodLogs(ctx *middleware.Context, handler GetPodLogsHandler) *GetPodLo
 	return &GetPodLogs{Context: ctx, Handler: handler}
 }
 
-/*GetPodLogs swagger:route GET /namespaces/{namespace}/tenants/{tenant}/pods/{podName} AdminAPI getPodLogs
+/* GetPodLogs swagger:route GET /namespaces/{namespace}/tenants/{tenant}/pods/{podName} AdminAPI getPodLogs
 
 Get Logs for Pod
 
@@ -61,17 +61,16 @@ type GetPodLogs struct {
 func (o *GetPodLogs) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewGetPodLogsParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *GetPodLogs) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

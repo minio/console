@@ -31,7 +31,8 @@ import (
 )
 
 // NewDeleteRemoteBucketParams creates a new DeleteRemoteBucketParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewDeleteRemoteBucketParams() DeleteRemoteBucketParams {
 
 	return DeleteRemoteBucketParams{}
@@ -76,7 +77,6 @@ func (o *DeleteRemoteBucketParams) BindRequest(r *http.Request, route *middlewar
 	if err := o.bindSourceBucketName(rSourceBucketName, rhkSourceBucketName, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -92,7 +92,6 @@ func (o *DeleteRemoteBucketParams) bindArn(rawData []string, hasKey bool, format
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Arn = raw
 
 	return nil
@@ -107,7 +106,6 @@ func (o *DeleteRemoteBucketParams) bindSourceBucketName(rawData []string, hasKey
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.SourceBucketName = raw
 
 	return nil

@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -35,7 +37,7 @@ import (
 type Bucket struct {
 
 	// access
-	Access BucketAccess `json:"access,omitempty"`
+	Access *BucketAccess `json:"access,omitempty"`
 
 	// creation date
 	CreationDate string `json:"creation_date,omitempty"`
@@ -68,16 +70,17 @@ func (m *Bucket) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Bucket) validateAccess(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Access) { // not required
 		return nil
 	}
 
-	if err := m.Access.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("access")
+	if m.Access != nil {
+		if err := m.Access.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("access")
+			}
+			return err
 		}
-		return err
 	}
 
 	return nil
@@ -89,8 +92,36 @@ func (m *Bucket) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", string(*m.Name), 3); err != nil {
+	if err := validate.MinLength("name", "body", *m.Name, 3); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this bucket based on the context it is used
+func (m *Bucket) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateAccess(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Bucket) contextValidateAccess(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Access != nil {
+		if err := m.Access.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("access")
+			}
+			return err
+		}
 	}
 
 	return nil

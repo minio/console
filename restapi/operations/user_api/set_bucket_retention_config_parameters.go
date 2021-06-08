@@ -23,6 +23,7 @@ package user_api
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"io"
 	"net/http"
 
@@ -30,12 +31,14 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/validate"
 
 	"github.com/minio/console/models"
 )
 
 // NewSetBucketRetentionConfigParams creates a new SetBucketRetentionConfigParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewSetBucketRetentionConfigParams() SetBucketRetentionConfigParams {
 
 	return SetBucketRetentionConfigParams{}
@@ -86,6 +89,11 @@ func (o *SetBucketRetentionConfigParams) BindRequest(r *http.Request, route *mid
 				res = append(res, err)
 			}
 
+			ctx := validate.WithOperationRequest(context.Background())
+			if err := body.ContextValidate(ctx, route.Formats); err != nil {
+				res = append(res, err)
+			}
+
 			if len(res) == 0 {
 				o.Body = &body
 			}
@@ -93,11 +101,11 @@ func (o *SetBucketRetentionConfigParams) BindRequest(r *http.Request, route *mid
 	} else {
 		res = append(res, errors.Required("body", "body", ""))
 	}
+
 	rBucketName, rhkBucketName, _ := route.Params.GetOK("bucket_name")
 	if err := o.bindBucketName(rBucketName, rhkBucketName, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -113,7 +121,6 @@ func (o *SetBucketRetentionConfigParams) bindBucketName(rawData []string, hasKey
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.BucketName = raw
 
 	return nil

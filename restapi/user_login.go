@@ -194,7 +194,7 @@ func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
 		identityProvider := &auth.IdentityProvider{Client: oauth2Client}
 		redirectURL = identityProvider.GenerateLoginURL()
 	} else if acl.GetOperatorMode() {
-		loginStrategy = models.LoginDetailsLoginStrategyServiceAccount
+		loginStrategy = models.LoginDetailsLoginStrategyServiceDashAccount
 	}
 
 	loginDetails := &models.LoginDetails{

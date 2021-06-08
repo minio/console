@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -88,7 +90,7 @@ func (m *ListExternalBucketsParams) validateAccessKey(formats strfmt.Registry) e
 		return err
 	}
 
-	if err := validate.MinLength("accessKey", "body", string(*m.AccessKey), 3); err != nil {
+	if err := validate.MinLength("accessKey", "body", *m.AccessKey, 3); err != nil {
 		return err
 	}
 
@@ -101,7 +103,7 @@ func (m *ListExternalBucketsParams) validateSecretKey(formats strfmt.Registry) e
 		return err
 	}
 
-	if err := validate.MinLength("secretKey", "body", string(*m.SecretKey), 8); err != nil {
+	if err := validate.MinLength("secretKey", "body", *m.SecretKey, 8); err != nil {
 		return err
 	}
 
@@ -123,6 +125,11 @@ func (m *ListExternalBucketsParams) validateUseTLS(formats strfmt.Registry) erro
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this list external buckets params based on context it is used
+func (m *ListExternalBucketsParams) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

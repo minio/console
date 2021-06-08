@@ -30,7 +30,8 @@ import (
 )
 
 // NewTiersListParams creates a new TiersListParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewTiersListParams() TiersListParams {
 
 	return TiersListParams{}

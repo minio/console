@@ -48,7 +48,7 @@ func NewNotificationEndpointList(ctx *middleware.Context, handler NotificationEn
 	return &NotificationEndpointList{Context: ctx, Handler: handler}
 }
 
-/*NotificationEndpointList swagger:route GET /admin/notification_endpoints AdminAPI notificationEndpointList
+/* NotificationEndpointList swagger:route GET /admin/notification_endpoints AdminAPI notificationEndpointList
 
 Returns a list of active notification endpoints
 
@@ -61,17 +61,16 @@ type NotificationEndpointList struct {
 func (o *NotificationEndpointList) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewNotificationEndpointListParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *NotificationEndpointList) ServeHTTP(rw http.ResponseWriter, r *http.Req
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

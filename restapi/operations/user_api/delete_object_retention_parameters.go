@@ -33,7 +33,8 @@ import (
 )
 
 // NewDeleteObjectRetentionParams creates a new DeleteObjectRetentionParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewDeleteObjectRetentionParams() DeleteObjectRetentionParams {
 
 	return DeleteObjectRetentionParams{}
@@ -90,7 +91,6 @@ func (o *DeleteObjectRetentionParams) BindRequest(r *http.Request, route *middle
 	if err := o.bindVersionID(qVersionID, qhkVersionID, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -106,7 +106,6 @@ func (o *DeleteObjectRetentionParams) bindBucketName(rawData []string, hasKey bo
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.BucketName = raw
 
 	return nil
@@ -124,10 +123,10 @@ func (o *DeleteObjectRetentionParams) bindPrefix(rawData []string, hasKey bool, 
 
 	// Required: true
 	// AllowEmptyValue: false
+
 	if err := validate.RequiredString("prefix", "query", raw); err != nil {
 		return err
 	}
-
 	o.Prefix = raw
 
 	return nil
@@ -145,10 +144,10 @@ func (o *DeleteObjectRetentionParams) bindVersionID(rawData []string, hasKey boo
 
 	// Required: true
 	// AllowEmptyValue: false
+
 	if err := validate.RequiredString("version_id", "query", raw); err != nil {
 		return err
 	}
-
 	o.VersionID = raw
 
 	return nil

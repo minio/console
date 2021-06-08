@@ -33,7 +33,8 @@ import (
 )
 
 // NewGetParityParams creates a new GetParityParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewGetParityParams() GetParityParams {
 
 	return GetParityParams{}
@@ -80,7 +81,6 @@ func (o *GetParityParams) BindRequest(r *http.Request, route *middleware.Matched
 	if err := o.bindNodes(rNodes, rhkNodes, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -113,7 +113,7 @@ func (o *GetParityParams) bindDisksPerNode(rawData []string, hasKey bool, format
 // validateDisksPerNode carries on validations for parameter DisksPerNode
 func (o *GetParityParams) validateDisksPerNode(formats strfmt.Registry) error {
 
-	if err := validate.MinimumInt("disksPerNode", "path", int64(o.DisksPerNode), 1, false); err != nil {
+	if err := validate.MinimumInt("disksPerNode", "path", o.DisksPerNode, 1, false); err != nil {
 		return err
 	}
 
@@ -146,7 +146,7 @@ func (o *GetParityParams) bindNodes(rawData []string, hasKey bool, formats strfm
 // validateNodes carries on validations for parameter Nodes
 func (o *GetParityParams) validateNodes(formats strfmt.Registry) error {
 
-	if err := validate.MinimumInt("nodes", "path", int64(o.Nodes), 2, false); err != nil {
+	if err := validate.MinimumInt("nodes", "path", o.Nodes, 2, false); err != nil {
 		return err
 	}
 

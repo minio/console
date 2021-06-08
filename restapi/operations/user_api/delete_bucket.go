@@ -48,7 +48,7 @@ func NewDeleteBucket(ctx *middleware.Context, handler DeleteBucketHandler) *Dele
 	return &DeleteBucket{Context: ctx, Handler: handler}
 }
 
-/*DeleteBucket swagger:route DELETE /buckets/{name} UserAPI deleteBucket
+/* DeleteBucket swagger:route DELETE /buckets/{name} UserAPI deleteBucket
 
 Delete Bucket
 
@@ -61,17 +61,16 @@ type DeleteBucket struct {
 func (o *DeleteBucket) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewDeleteBucketParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *DeleteBucket) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

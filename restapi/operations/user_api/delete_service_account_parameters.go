@@ -31,7 +31,8 @@ import (
 )
 
 // NewDeleteServiceAccountParams creates a new DeleteServiceAccountParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewDeleteServiceAccountParams() DeleteServiceAccountParams {
 
 	return DeleteServiceAccountParams{}
@@ -66,7 +67,6 @@ func (o *DeleteServiceAccountParams) BindRequest(r *http.Request, route *middlew
 	if err := o.bindAccessKey(rAccessKey, rhkAccessKey, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -82,7 +82,6 @@ func (o *DeleteServiceAccountParams) bindAccessKey(rawData []string, hasKey bool
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.AccessKey = raw
 
 	return nil

@@ -48,7 +48,7 @@ func NewUpdateUserGroups(ctx *middleware.Context, handler UpdateUserGroupsHandle
 	return &UpdateUserGroups{Context: ctx, Handler: handler}
 }
 
-/*UpdateUserGroups swagger:route PUT /users/{name}/groups AdminAPI updateUserGroups
+/* UpdateUserGroups swagger:route PUT /users/{name}/groups AdminAPI updateUserGroups
 
 Update Groups for a user
 
@@ -61,17 +61,16 @@ type UpdateUserGroups struct {
 func (o *UpdateUserGroups) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewUpdateUserGroupsParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *UpdateUserGroups) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

@@ -508,7 +508,7 @@ func getSetObjectLegalHoldResponse(session *models.Principal, params user_api.Pu
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
-	err = setObjectLegalHold(ctx, minioClient, params.BucketName, params.Prefix, params.VersionID, params.Body.Status)
+	err = setObjectLegalHold(ctx, minioClient, params.BucketName, params.Prefix, params.VersionID, *params.Body.Status)
 	if err != nil {
 		return prepareError(err)
 	}
@@ -551,7 +551,7 @@ func setObjectRetention(ctx context.Context, client MinioClient, bucketName, ver
 	}
 
 	var mode minio.RetentionMode
-	if retentionOps.Mode == models.ObjectRetentionModeGovernance {
+	if *retentionOps.Mode == models.ObjectRetentionModeGovernance {
 		mode = minio.Governance
 	} else {
 		mode = minio.Compliance

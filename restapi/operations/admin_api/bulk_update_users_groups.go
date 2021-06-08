@@ -48,7 +48,7 @@ func NewBulkUpdateUsersGroups(ctx *middleware.Context, handler BulkUpdateUsersGr
 	return &BulkUpdateUsersGroups{Context: ctx, Handler: handler}
 }
 
-/*BulkUpdateUsersGroups swagger:route PUT /users-groups-bulk AdminAPI bulkUpdateUsersGroups
+/* BulkUpdateUsersGroups swagger:route PUT /users-groups-bulk AdminAPI bulkUpdateUsersGroups
 
 Bulk functionality to Add Users to Groups
 
@@ -61,17 +61,16 @@ type BulkUpdateUsersGroups struct {
 func (o *BulkUpdateUsersGroups) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewBulkUpdateUsersGroupsParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *BulkUpdateUsersGroups) ServeHTTP(rw http.ResponseWriter, r *http.Reques
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

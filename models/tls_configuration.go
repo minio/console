@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -64,7 +65,6 @@ func (m *TLSConfiguration) Validate(formats strfmt.Registry) error {
 }
 
 func (m *TLSConfiguration) validateConsole(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Console) { // not required
 		return nil
 	}
@@ -82,7 +82,6 @@ func (m *TLSConfiguration) validateConsole(formats strfmt.Registry) error {
 }
 
 func (m *TLSConfiguration) validateMinio(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Minio) { // not required
 		return nil
 	}
@@ -94,6 +93,56 @@ func (m *TLSConfiguration) validateMinio(formats strfmt.Registry) error {
 
 		if m.Minio[i] != nil {
 			if err := m.Minio[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("minio" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this tls configuration based on the context it is used
+func (m *TLSConfiguration) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateConsole(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateMinio(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *TLSConfiguration) contextValidateConsole(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Console != nil {
+		if err := m.Console.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("console")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *TLSConfiguration) contextValidateMinio(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Minio); i++ {
+
+		if m.Minio[i] != nil {
+			if err := m.Minio[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("minio" + "." + strconv.Itoa(i))
 				}

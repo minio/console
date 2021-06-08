@@ -48,7 +48,7 @@ func NewListUsers(ctx *middleware.Context, handler ListUsersHandler) *ListUsers 
 	return &ListUsers{Context: ctx, Handler: handler}
 }
 
-/*ListUsers swagger:route GET /users AdminAPI listUsers
+/* ListUsers swagger:route GET /users AdminAPI listUsers
 
 List Users
 
@@ -61,17 +61,16 @@ type ListUsers struct {
 func (o *ListUsers) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewListUsersParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *ListUsers) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

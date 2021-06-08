@@ -30,7 +30,8 @@ import (
 )
 
 // NewListNodeLabelsParams creates a new ListNodeLabelsParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewListNodeLabelsParams() ListNodeLabelsParams {
 
 	return ListNodeLabelsParams{}
