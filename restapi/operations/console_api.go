@@ -194,6 +194,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIGetParityHandler: admin_api.GetParityHandlerFunc(func(params admin_api.GetParityParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetParity has not yet been implemented")
 		}),
+		AdminAPIGetPodLogsHandler: admin_api.GetPodLogsHandlerFunc(func(params admin_api.GetPodLogsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.GetPodLogs has not yet been implemented")
+		}),
 		AdminAPIGetResourceQuotaHandler: admin_api.GetResourceQuotaHandlerFunc(func(params admin_api.GetResourceQuotaParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetResourceQuota has not yet been implemented")
 		}),
@@ -545,6 +548,8 @@ type ConsoleAPI struct {
 	AdminAPIGetMaxAllocatableMemHandler admin_api.GetMaxAllocatableMemHandler
 	// AdminAPIGetParityHandler sets the operation handler for the get parity operation
 	AdminAPIGetParityHandler admin_api.GetParityHandler
+	// AdminAPIGetPodLogsHandler sets the operation handler for the get pod logs operation
+	AdminAPIGetPodLogsHandler admin_api.GetPodLogsHandler
 	// AdminAPIGetResourceQuotaHandler sets the operation handler for the get resource quota operation
 	AdminAPIGetResourceQuotaHandler admin_api.GetResourceQuotaHandler
 	// AdminAPIGetTenantPodsHandler sets the operation handler for the get tenant pods operation
@@ -891,6 +896,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIGetParityHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetParityHandler")
+	}
+	if o.AdminAPIGetPodLogsHandler == nil {
+		unregistered = append(unregistered, "admin_api.GetPodLogsHandler")
 	}
 	if o.AdminAPIGetResourceQuotaHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetResourceQuotaHandler")
@@ -1379,6 +1387,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/get-parity/{nodes}/{disksPerNode}"] = admin_api.NewGetParity(o.context, o.AdminAPIGetParityHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/pods/{podName}"] = admin_api.NewGetPodLogs(o.context, o.AdminAPIGetPodLogsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

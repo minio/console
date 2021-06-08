@@ -38,70 +38,42 @@ import (
 	"time"
 
 	"github.com/go-openapi/runtime/flagext"
+	"github.com/go-openapi/swag"
 	flags "github.com/jessevdk/go-flags"
+	"golang.org/x/net/netutil"
 
-	"github.com/minio/cli"
 	"github.com/minio/console/restapi/operations"
 )
 
 const (
 	schemeHTTP  = "http"
 	schemeHTTPS = "https"
+	schemeUnix  = "unix"
 )
 
-var defaultSchemes = []string{
-	schemeHTTP,
+var defaultSchemes []string
+
+func init() {
+	defaultSchemes = []string{
+		schemeHTTP,
+	}
 }
-
-var infoLog = log.New(os.Stdout, "I: ", log.LstdFlags|log.Lshortfile)
-var errorLog = log.New(os.Stdout, "E: ", log.LstdFlags|log.Lshortfile)
-
-func logInfo(msg string, data ...interface{}) {
-	infoLog.Printf(msg+"\n", data...)
-}
-
-func logError(msg string, data ...interface{}) {
-	errorLog.Printf(msg+"\n", data...)
-}
-
-var (
-	LogInfo  = logInfo
-	LogError = logError
-)
 
 // NewServer creates a new api console server but does not configure it
 func NewServer(api *operations.ConsoleAPI) *Server {
 	s := new(Server)
 
-	s.api = api
 	s.shutdown = make(chan struct{})
+	s.api = api
 	s.interrupt = make(chan os.Signal, 1)
 	return s
 }
 
-func (s *Server) Configure(ctx Context) *Server {
-	s.Host = ctx.Host
-	s.Port = ctx.HTTPPort
-	Port = strconv.Itoa(s.Port)
-	Hostname = s.Host
-
-	if len(GlobalPublicCerts) > 0 {
-		// If TLS certificates are provided enforce the HTTPS schema, meaning console will redirect
-		// plain HTTP connections to HTTPS server
-		s.EnabledListeners = []string{"http", "https"}
-		s.TLSPort = ctx.HTTPSPort
-		// Need to store tls-port, tls-host un config variables so secure.middleware can read from there
-		TLSPort = strconv.Itoa(s.TLSPort)
-		Hostname = ctx.Host
-		TLSRedirect = ctx.TLSRedirect
-	}
-
-	// configure the API handlers..
+// ConfigureAPI configures the API and handlers.
+func (s *Server) ConfigureAPI() {
 	if s.api != nil {
 		s.handler = configureAPI(s.api)
 	}
-
-	return s
 }
 
 // ConfigureFlags configures the additional flags defined by the handlers. Needs to be called before the parser.Parse
@@ -111,54 +83,33 @@ func (s *Server) ConfigureFlags() {
 	}
 }
 
-// Context captures all command line flags values
-type Context struct {
-	Host                string
-	HTTPPort, HTTPSPort int
-	TLSRedirect         string
-	// Legacy options, TODO: remove in future
-	TLSCertificate, TLSKey, TLSca string
-}
-
-func (c *Context) Load(ctx *cli.Context) error {
-	*c = Context{
-		Host:        ctx.String("host"),
-		HTTPPort:    ctx.Int("port"),
-		HTTPSPort:   ctx.Int("tls-port"),
-		TLSRedirect: ctx.String("tls-redirect"),
-		// Legacy options to be removed.
-		TLSCertificate: ctx.String("tls-certificate"),
-		TLSKey:         ctx.String("tls-key"),
-		TLSca:          ctx.String("tls-ca"),
-	}
-	if c.HTTPPort > 65535 {
-		return errors.New("invalid argument --port out of range - ports can range from 1-65535")
-	}
-	if c.HTTPSPort > 65535 {
-		return errors.New("invalid argument --tls-port out of range - ports can range from 1-65535")
-	}
-	if c.TLSRedirect != "on" && c.TLSRedirect != "off" {
-		return errors.New("invalid argument --tls-redirect only accepts either 'on' or 'off'")
-	}
-	return nil
-}
-
 // Server for the console API
 type Server struct {
 	EnabledListeners []string         `long:"scheme" description:"the listeners to enable, this can be repeated and defaults to the schemes in the swagger spec"`
+	CleanupTimeout   time.Duration    `long:"cleanup-timeout" description:"grace period for which to wait before killing idle connections" default:"10s"`
 	GracefulTimeout  time.Duration    `long:"graceful-timeout" description:"grace period for which to wait before shutting down the server" default:"15s"`
 	MaxHeaderSize    flagext.ByteSize `long:"max-header-size" description:"controls the maximum number of bytes the server will read parsing the request header's keys and values, including the request line. It does not limit the size of the request body." default:"1MiB"`
 
-	Host         string        `long:"host" description:"the IP to listen on"`
-	Port         int           `long:"port" description:"the port to listen on for insecure connections, defaults to 9090"`
+	SocketPath    flags.Filename `long:"socket-path" description:"the unix socket to listen on" default:"/var/run/console.sock"`
+	domainSocketL net.Listener
+
+	Host         string        `long:"host" description:"the IP to listen on" default:"localhost" env:"HOST"`
+	Port         int           `long:"port" description:"the port to listen on for insecure connections, defaults to a random value" env:"PORT"`
+	ListenLimit  int           `long:"listen-limit" description:"limit the number of outstanding requests"`
+	KeepAlive    time.Duration `long:"keep-alive" description:"sets the TCP keep-alive timeouts on accepted connections. It prunes dead TCP connections ( e.g. closing laptop mid-download)" default:"3m"`
 	ReadTimeout  time.Duration `long:"read-timeout" description:"maximum duration before timing out read of the request" default:"30s"`
 	WriteTimeout time.Duration `long:"write-timeout" description:"maximum duration before timing out write of the response" default:"60s"`
 	httpServerL  net.Listener
 
-	TLSPort           int            `long:"tls-port" description:"the port to listen on for secure connections, defaults to 9443"`
-	TLSCertificate    flags.Filename `long:"tls-certificate" description:"the certificate to use for secure connections"`
-	TLSCertificateKey flags.Filename `long:"tls-key" description:"the private key to use for secure connections"`
-	TLSCACertificate  flags.Filename `long:"tls-ca" description:"the certificate authority file to be used to trust MinIO server"`
+	TLSHost           string         `long:"tls-host" description:"the IP to listen on for tls, when not specified it's the same as --host" env:"TLS_HOST"`
+	TLSPort           int            `long:"tls-port" description:"the port to listen on for secure connections, defaults to a random value" env:"TLS_PORT"`
+	TLSCertificate    flags.Filename `long:"tls-certificate" description:"the certificate to use for secure connections" env:"TLS_CERTIFICATE"`
+	TLSCertificateKey flags.Filename `long:"tls-key" description:"the private key to use for secure connections" env:"TLS_PRIVATE_KEY"`
+	TLSCACertificate  flags.Filename `long:"tls-ca" description:"the certificate authority file to be used with mutual tls auth" env:"TLS_CA_CERTIFICATE"`
+	TLSListenLimit    int            `long:"tls-listen-limit" description:"limit the number of outstanding requests"`
+	TLSKeepAlive      time.Duration  `long:"tls-keep-alive" description:"sets the TCP keep-alive timeouts on accepted connections. It prunes dead TCP connections ( e.g. closing laptop mid-download)"`
+	TLSReadTimeout    time.Duration  `long:"tls-read-timeout" description:"maximum duration before timing out read of the request"`
+	TLSWriteTimeout   time.Duration  `long:"tls-write-timeout" description:"maximum duration before timing out write of the response"`
 	httpsServerL      net.Listener
 
 	api          *operations.ConsoleAPI
@@ -170,16 +121,36 @@ type Server struct {
 	interrupt    chan os.Signal
 }
 
-// Log logs message either via defined user logger or via system one if no user logger is defined.
-func (s *Server) Log(f string, args ...interface{}) {
-	logInfo(f, args...)
+// Logf logs message either via defined user logger or via system one if no user logger is defined.
+func (s *Server) Logf(f string, args ...interface{}) {
+	if s.api != nil && s.api.Logger != nil {
+		s.api.Logger(f, args...)
+	} else {
+		log.Printf(f, args...)
+	}
 }
 
-// Fatal logs message either via defined user logger or via system one if no user logger is defined.
+// Fatalf logs message either via defined user logger or via system one if no user logger is defined.
 // Exits with non-zero status after printing
-func (s *Server) Fatal(f string, args ...interface{}) {
-	logError(f, args)
-	os.Exit(1)
+func (s *Server) Fatalf(f string, args ...interface{}) {
+	if s.api != nil && s.api.Logger != nil {
+		s.api.Logger(f, args...)
+		os.Exit(1)
+	} else {
+		log.Fatalf(f, args...)
+	}
+}
+
+// SetAPI configures the server with the specified API. Needs to be called before Serve
+func (s *Server) SetAPI(api *operations.ConsoleAPI) {
+	if api == nil {
+		s.api = nil
+		s.handler = nil
+		return
+	}
+
+	s.api = api
+	s.handler = configureAPI(api)
 }
 
 func (s *Server) hasScheme(scheme string) bool {
@@ -218,30 +189,72 @@ func (s *Server) Serve() (err error) {
 	signalNotify(s.interrupt)
 	go handleInterrupt(once, s)
 
-	var servers []*http.Server
+	servers := []*http.Server{}
+
+	if s.hasScheme(schemeUnix) {
+		domainSocket := new(http.Server)
+		domainSocket.MaxHeaderBytes = int(s.MaxHeaderSize)
+		domainSocket.Handler = s.handler
+		if int64(s.CleanupTimeout) > 0 {
+			domainSocket.IdleTimeout = s.CleanupTimeout
+		}
+
+		configureServer(domainSocket, "unix", string(s.SocketPath))
+
+		servers = append(servers, domainSocket)
+		wg.Add(1)
+		s.Logf("Serving console at unix://%s", s.SocketPath)
+		go func(l net.Listener) {
+			defer wg.Done()
+			if err := domainSocket.Serve(l); err != nil && err != http.ErrServerClosed {
+				s.Fatalf("%v", err)
+			}
+			s.Logf("Stopped serving console at unix://%s", s.SocketPath)
+		}(s.domainSocketL)
+	}
 
 	if s.hasScheme(schemeHTTP) {
 		httpServer := new(http.Server)
 		httpServer.MaxHeaderBytes = int(s.MaxHeaderSize)
 		httpServer.ReadTimeout = s.ReadTimeout
 		httpServer.WriteTimeout = s.WriteTimeout
+		httpServer.SetKeepAlivesEnabled(int64(s.KeepAlive) > 0)
+		if s.ListenLimit > 0 {
+			s.httpServerL = netutil.LimitListener(s.httpServerL, s.ListenLimit)
+		}
+
+		if int64(s.CleanupTimeout) > 0 {
+			httpServer.IdleTimeout = s.CleanupTimeout
+		}
+
 		httpServer.Handler = s.handler
+
+		configureServer(httpServer, "http", s.httpServerL.Addr().String())
 
 		servers = append(servers, httpServer)
 		wg.Add(1)
-		s.Log("Serving console at http://%s", s.httpServerL.Addr())
+		s.Logf("Serving console at http://%s", s.httpServerL.Addr())
 		go func(l net.Listener) {
 			defer wg.Done()
-			httpServer.Serve(l)
-			s.Log("Stopped serving console at http://%s", l.Addr())
+			if err := httpServer.Serve(l); err != nil && err != http.ErrServerClosed {
+				s.Fatalf("%v", err)
+			}
+			s.Logf("Stopped serving console at http://%s", l.Addr())
 		}(s.httpServerL)
 	}
 
 	if s.hasScheme(schemeHTTPS) {
 		httpsServer := new(http.Server)
 		httpsServer.MaxHeaderBytes = int(s.MaxHeaderSize)
-		httpsServer.ReadTimeout = s.ReadTimeout
-		httpsServer.WriteTimeout = s.WriteTimeout
+		httpsServer.ReadTimeout = s.TLSReadTimeout
+		httpsServer.WriteTimeout = s.TLSWriteTimeout
+		httpsServer.SetKeepAlivesEnabled(int64(s.TLSKeepAlive) > 0)
+		if s.TLSListenLimit > 0 {
+			s.httpsServerL = netutil.LimitListener(s.httpsServerL, s.TLSListenLimit)
+		}
+		if int64(s.CleanupTimeout) > 0 {
+			httpsServer.IdleTimeout = s.CleanupTimeout
+		}
 		httpsServer.Handler = s.handler
 
 		// Inspired by https://blog.bracebin.com/achieving-perfect-ssl-labs-score-with-go
@@ -294,36 +307,40 @@ func (s *Server) Serve() (err error) {
 		// call custom TLS configurator
 		configureTLS(httpsServer.TLSConfig)
 
-		if len(httpsServer.TLSConfig.Certificates) == 0 || httpsServer.TLSConfig.GetCertificate == nil {
+		if len(httpsServer.TLSConfig.Certificates) == 0 && httpsServer.TLSConfig.GetCertificate == nil {
 			// after standard and custom config are passed, this ends up with no certificate
 			if s.TLSCertificate == "" {
 				if s.TLSCertificateKey == "" {
-					s.Fatal("the required flags `--tls-certificate` and `--tls-key` were not specified")
+					s.Fatalf("the required flags `--tls-certificate` and `--tls-key` were not specified")
 				}
-				s.Fatal("the required flag `--tls-certificate` was not specified")
+				s.Fatalf("the required flag `--tls-certificate` was not specified")
 			}
 			if s.TLSCertificateKey == "" {
-				s.Fatal("the required flag `--tls-key` was not specified")
+				s.Fatalf("the required flag `--tls-key` was not specified")
 			}
 			// this happens with a wrong custom TLS configurator
-			s.Fatal("no certificate was configured for TLS")
+			s.Fatalf("no certificate was configured for TLS")
 		}
 
 		// must have at least one certificate or panics
 		httpsServer.TLSConfig.BuildNameToCertificate()
 
+		configureServer(httpsServer, "https", s.httpsServerL.Addr().String())
+
 		servers = append(servers, httpsServer)
 		wg.Add(1)
-		s.Log("Serving console at https://%s", s.httpsServerL.Addr())
+		s.Logf("Serving console at https://%s", s.httpsServerL.Addr())
 		go func(l net.Listener) {
 			defer wg.Done()
-			httpsServer.Serve(l)
-			s.Log("Stopped serving console at https://%s", l.Addr())
+			if err := httpsServer.Serve(l); err != nil && err != http.ErrServerClosed {
+				s.Fatalf("%v", err)
+			}
+			s.Logf("Stopped serving console at https://%s", l.Addr())
 		}(tls.NewListener(s.httpsServerL, httpsServer.TLSConfig))
 	}
 
 	wg.Add(1)
-	go s.handleShutdown(wg, servers)
+	go s.handleShutdown(wg, &servers)
 
 	wg.Wait()
 	return nil
@@ -335,19 +352,65 @@ func (s *Server) Listen() error {
 		return nil
 	}
 
-	var err error
-	if s.hasScheme(schemeHTTP) {
-		s.httpServerL, err = net.Listen("tcp", net.JoinHostPort(s.Host, strconv.Itoa(s.Port)))
-		if err != nil {
-			return err
+	if s.hasScheme(schemeHTTPS) {
+		// Use http host if https host wasn't defined
+		if s.TLSHost == "" {
+			s.TLSHost = s.Host
+		}
+		// Use http listen limit if https listen limit wasn't defined
+		if s.TLSListenLimit == 0 {
+			s.TLSListenLimit = s.ListenLimit
+		}
+		// Use http tcp keep alive if https tcp keep alive wasn't defined
+		if int64(s.TLSKeepAlive) == 0 {
+			s.TLSKeepAlive = s.KeepAlive
+		}
+		// Use http read timeout if https read timeout wasn't defined
+		if int64(s.TLSReadTimeout) == 0 {
+			s.TLSReadTimeout = s.ReadTimeout
+		}
+		// Use http write timeout if https write timeout wasn't defined
+		if int64(s.TLSWriteTimeout) == 0 {
+			s.TLSWriteTimeout = s.WriteTimeout
 		}
 	}
 
-	if s.hasScheme(schemeHTTPS) {
-		s.httpsServerL, err = net.Listen("tcp", net.JoinHostPort(s.Host, strconv.Itoa(s.TLSPort)))
+	if s.hasScheme(schemeUnix) {
+		domSockListener, err := net.Listen("unix", string(s.SocketPath))
 		if err != nil {
 			return err
 		}
+		s.domainSocketL = domSockListener
+	}
+
+	if s.hasScheme(schemeHTTP) {
+		listener, err := net.Listen("tcp", net.JoinHostPort(s.Host, strconv.Itoa(s.Port)))
+		if err != nil {
+			return err
+		}
+
+		h, p, err := swag.SplitHostPort(listener.Addr().String())
+		if err != nil {
+			return err
+		}
+		s.Host = h
+		s.Port = p
+		s.httpServerL = listener
+	}
+
+	if s.hasScheme(schemeHTTPS) {
+		tlsListener, err := net.Listen("tcp", net.JoinHostPort(s.TLSHost, strconv.Itoa(s.TLSPort)))
+		if err != nil {
+			return err
+		}
+
+		sh, sp, err := swag.SplitHostPort(tlsListener.Addr().String())
+		if err != nil {
+			return err
+		}
+		s.TLSHost = sh
+		s.TLSPort = sp
+		s.httpsServerL = tlsListener
 	}
 
 	s.hasListeners = true
@@ -362,14 +425,16 @@ func (s *Server) Shutdown() error {
 	return nil
 }
 
-func (s *Server) handleShutdown(wg *sync.WaitGroup, servers []*http.Server) {
+func (s *Server) handleShutdown(wg *sync.WaitGroup, serversPtr *[]*http.Server) {
 	// wg.Done must occur last, after s.api.ServerShutdown()
 	// (to preserve old behaviour)
 	defer wg.Done()
 
 	<-s.shutdown
 
-	ctx, cancel := context.WithTimeout(context.Background(), s.GracefulTimeout)
+	servers := *serversPtr
+
+	ctx, cancel := context.WithTimeout(context.TODO(), s.GracefulTimeout)
 	defer cancel()
 
 	// first execute the pre-shutdown hook
@@ -385,7 +450,7 @@ func (s *Server) handleShutdown(wg *sync.WaitGroup, servers []*http.Server) {
 			}()
 			if err := server.Shutdown(ctx); err != nil {
 				// Error from closing listeners, or context timeout:
-				s.Log("HTTP server Shutdown: %v", err)
+				s.Logf("HTTP server Shutdown: %v", err)
 			} else {
 				success = true
 			}
@@ -412,6 +477,16 @@ func (s *Server) SetHandler(handler http.Handler) {
 	s.handler = handler
 }
 
+// UnixListener returns the domain socket listener
+func (s *Server) UnixListener() (net.Listener, error) {
+	if !s.hasListeners {
+		if err := s.Listen(); err != nil {
+			return nil, err
+		}
+	}
+	return s.domainSocketL, nil
+}
+
 // HTTPListener returns the http listener
 func (s *Server) HTTPListener() (net.Listener, error) {
 	if !s.hasListeners {
@@ -436,13 +511,13 @@ func handleInterrupt(once *sync.Once, s *Server) {
 	once.Do(func() {
 		for range s.interrupt {
 			if s.interrupted {
-				s.Log("Server already shutting down")
+				s.Logf("Server already shutting down")
 				continue
 			}
 			s.interrupted = true
-			s.Log("Shutting down... ")
+			s.Logf("Shutting down... ")
 			if err := s.Shutdown(); err != nil {
-				s.Log("HTTP server Shutdown: %v", err)
+				s.Logf("HTTP server Shutdown: %v", err)
 			}
 		}
 	})
