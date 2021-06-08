@@ -25,8 +25,8 @@ import (
 	"github.com/minio/cli"
 )
 
-var infoLog = log.New(os.Stdout, "I: ", log.LstdFlags|log.Lshortfile)
-var errorLog = log.New(os.Stdout, "E: ", log.LstdFlags|log.Lshortfile)
+var infoLog = log.New(os.Stdout, "I: ", log.LstdFlags)
+var errorLog = log.New(os.Stdout, "E: ", log.LstdFlags)
 
 func logInfo(msg string, data ...interface{}) {
 	infoLog.Printf(msg+"\n", data...)
@@ -36,6 +36,7 @@ func logError(msg string, data ...interface{}) {
 	errorLog.Printf(msg+"\n", data...)
 }
 
+// globally changeable logger styles
 var (
 	LogInfo  = logInfo
 	LogError = logError
@@ -50,6 +51,7 @@ type Context struct {
 	TLSCertificate, TLSKey, TLSca string
 }
 
+// Load loads restapi Context from command line context.
 func (c *Context) Load(ctx *cli.Context) error {
 	*c = Context{
 		Host:        ctx.String("host"),
