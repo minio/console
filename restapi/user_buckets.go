@@ -540,9 +540,9 @@ func consoleAccess2policyAccess(bucketAccess models.BucketAccess) (bucketPolicy 
 func enableBucketEncryption(ctx context.Context, client MinioClient, bucketName string, encryptionType models.BucketEncryptionType, kmsKeyID string) error {
 	var config *sse.Configuration
 	switch encryptionType {
-	case models.BucketEncryptionTypeSseKms:
+	case models.BucketEncryptionTypeSseDashKms:
 		config = sse.NewConfigurationSSEKMS(kmsKeyID)
-	case models.BucketEncryptionTypeSseS3:
+	case models.BucketEncryptionTypeSseDashS3:
 		config = sse.NewConfigurationSSES3()
 	default:
 		return errInvalidEncryptionAlgorithm
