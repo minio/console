@@ -248,10 +248,7 @@ func setGroupStatus(ctx context.Context, client MinioAdmin, group, status string
 	default:
 		return errors.New(500, "status not valid")
 	}
-	if err := client.setGroupStatus(ctx, group, setStatus); err != nil {
-		return err
-	}
-	return nil
+	return client.setGroupStatus(ctx, group, setStatus)
 }
 
 // getUpdateGroupResponse updates a group by adding or removing it's members depending on the request,
