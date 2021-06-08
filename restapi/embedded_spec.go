@@ -2765,6 +2765,49 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/pods/{podName}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get Logs for Pod",
+        "operationId": "GetPodLogs",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "podName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/pools": {
       "put": {
         "tags": [
@@ -10035,6 +10078,49 @@ func init() {
               "items": {
                 "$ref": "#/definitions/tenantPod"
               }
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/pods/{podName}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get Logs for Pod",
+        "operationId": "GetPodLogs",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "podName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "string"
             }
           },
           "default": {
