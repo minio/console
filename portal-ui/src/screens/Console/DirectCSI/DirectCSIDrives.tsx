@@ -116,7 +116,7 @@ const DirectCSIMain = ({
   const [notAvailable, setNotAvailable] = useState<boolean>(true);
 
   useEffect(() => {
-    if (loading && !notAvailable) {
+    if (loading) {
       api
         .invoke("GET", "/api/v1/direct-csi/drives")
         .then((res: IDrivesResponse) => {
@@ -303,7 +303,7 @@ const DirectCSIMain = ({
         <br />
       </Grid>
       <Grid item xs={12}>
-        {notAvailable ? (
+        {(notAvailable && !loading) ? (
           <div className={classes.notAvailableNotice}>
             To manage locally attached drives you need to install direct-csi,
             for more information
