@@ -145,6 +145,14 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 		return admin_api.NewGetTenantPodsOK().WithPayload(payload)
 	})
 
+	api.AdminAPIGetPodLogsHandler = admin_api.GetPodLogsHandlerFunc(func(params admin_api.GetPodLogsParams, session *models.Principal) middleware.Responder {
+		payload, err := getPodLogsResponse(session, params)
+		if err != nil {
+			return admin_api.NewGetPodLogsDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewGetPodLogsOK().WithPayload(payload)
+	})
+
 	// Update Tenant Pools
 	api.AdminAPITenantUpdatePoolsHandler = admin_api.TenantUpdatePoolsHandlerFunc(func(params admin_api.TenantUpdatePoolsParams, session *models.Principal) middleware.Responder {
 		resp, err := getTenantUpdatePoolResponse(session, params)
@@ -1404,7 +1412,8 @@ func getTenantPodsResponse(session *models.Principal, params admin_api.GetTenant
 		if len(pod.Status.ContainerStatuses) > 0 {
 			restarts = int64(pod.Status.ContainerStatuses[0].RestartCount)
 		}
-		retval = append(retval, &models.TenantPod{Name: &pod.ObjectMeta.Name,
+		retval = append(retval, &models.TenantPod{
+			Name:        swag.String(pod.Name),
 			Status:      string(pod.Status.Phase),
 			TimeCreated: pod.CreationTimestamp.Unix(),
 			PodIP:       pod.Status.PodIP,
@@ -1412,6 +1421,21 @@ func getTenantPodsResponse(session *models.Principal, params admin_api.GetTenant
 			Node:        pod.Spec.NodeName})
 	}
 	return retval, nil
+}
+
+func getPodLogsResponse(session *models.Principal, params admin_api.GetPodLogsParams) (string, *models.Error) {
+	ctx := context.Background()
+	clientset, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return "", prepareError(err)
+	}
+	listOpts := &corev1.PodLogOptions{}
+	logs := clientset.CoreV1().Pods(params.Namespace).GetLogs(params.PodName, listOpts)
+	buff, err := logs.DoRaw(ctx)
+	if err != nil {
+		return "", prepareError(err)
+	}
+	return string(buff), nil
 }
 
 // parseTenantPoolRequest parse pool request and returns the equivalent

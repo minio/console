@@ -2392,6 +2392,35 @@ paths:
       tags:
         - AdminAPI
 
+  /namespaces/{namespace}/tenants/{tenant}/pods/{podName}:
+    get:
+      summary: Get Logs for Pod
+      operationId: GetPodLogs
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: podName
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: string
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
   /namespaces/{namespace}/tenants/{tenant}/certificates:
     put:
       summary: Tenant Update Certificates

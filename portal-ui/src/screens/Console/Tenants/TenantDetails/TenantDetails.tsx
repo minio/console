@@ -56,6 +56,7 @@ import TenantYAML from "./TenantYAML";
 import SubnetLicenseTenant from "./SubnetLicenseTenant";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
+import history from "../../../../history";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -346,6 +347,14 @@ const TenantDetails = ({
   }, []);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const podViewAction = (pod: IPodListElement) => {
+    history.push(
+      `/namespaces/${tenantNamespace}/tenants/${tenantName}/pods/${pod.name}`
+    );
+    return;
+  };
+  const podTableActions = [{ type: "view", onClick: podViewAction }];
 
   const handleTenantMenu = (event: any) => {
     setAnchorEl(event.currentTarget);
@@ -738,6 +747,7 @@ const TenantDetails = ({
             <React.Fragment>
               <br />
               <TableWrapper
+                itemActions={podTableActions}
                 columns={[
                   { label: "Name", elementKey: "name" },
                   { label: "Status", elementKey: "status" },

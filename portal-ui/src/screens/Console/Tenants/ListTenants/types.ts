@@ -17,6 +17,10 @@
 import { LicenseInfo } from "../../License/types";
 import { IAffinityModel } from "../../../../common/types";
 
+export interface ILog {
+  log: string
+}
+
 export interface IPool {
   name: string;
   servers: number;
