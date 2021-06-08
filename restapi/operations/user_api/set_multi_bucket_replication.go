@@ -48,7 +48,7 @@ func NewSetMultiBucketReplication(ctx *middleware.Context, handler SetMultiBucke
 	return &SetMultiBucketReplication{Context: ctx, Handler: handler}
 }
 
-/*SetMultiBucketReplication swagger:route POST /buckets-replication UserAPI setMultiBucketReplication
+/* SetMultiBucketReplication swagger:route POST /buckets-replication UserAPI setMultiBucketReplication
 
 Sets Multi Bucket Replication in multiple Buckets
 
@@ -61,17 +61,16 @@ type SetMultiBucketReplication struct {
 func (o *SetMultiBucketReplication) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewSetMultiBucketReplicationParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *SetMultiBucketReplication) ServeHTTP(rw http.ResponseWriter, r *http.Re
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

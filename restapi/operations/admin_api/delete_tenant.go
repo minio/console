@@ -48,7 +48,7 @@ func NewDeleteTenant(ctx *middleware.Context, handler DeleteTenantHandler) *Dele
 	return &DeleteTenant{Context: ctx, Handler: handler}
 }
 
-/*DeleteTenant swagger:route DELETE /namespaces/{namespace}/tenants/{tenant} AdminAPI deleteTenant
+/* DeleteTenant swagger:route DELETE /namespaces/{namespace}/tenants/{tenant} AdminAPI deleteTenant
 
 Delete tenant and underlying pvcs
 
@@ -61,17 +61,16 @@ type DeleteTenant struct {
 func (o *DeleteTenant) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewDeleteTenantParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *DeleteTenant) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

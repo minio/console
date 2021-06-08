@@ -48,7 +48,7 @@ func NewTenantUpdatePools(ctx *middleware.Context, handler TenantUpdatePoolsHand
 	return &TenantUpdatePools{Context: ctx, Handler: handler}
 }
 
-/*TenantUpdatePools swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/pools AdminAPI tenantUpdatePools
+/* TenantUpdatePools swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/pools AdminAPI tenantUpdatePools
 
 Tenant Update Pools
 
@@ -61,17 +61,16 @@ type TenantUpdatePools struct {
 func (o *TenantUpdatePools) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewTenantUpdatePoolsParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *TenantUpdatePools) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

@@ -33,7 +33,8 @@ import (
 )
 
 // NewPolicyInfoParams creates a new PolicyInfoParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewPolicyInfoParams() PolicyInfoParams {
 
 	return PolicyInfoParams{}
@@ -70,7 +71,6 @@ func (o *PolicyInfoParams) BindRequest(r *http.Request, route *middleware.Matche
 	if err := o.bindName(qName, qhkName, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -89,10 +89,10 @@ func (o *PolicyInfoParams) bindName(rawData []string, hasKey bool, formats strfm
 
 	// Required: true
 	// AllowEmptyValue: false
+
 	if err := validate.RequiredString("name", "query", raw); err != nil {
 		return err
 	}
-
 	o.Name = raw
 
 	return nil

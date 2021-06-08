@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -105,7 +106,6 @@ func (m *SetBucketQuota) validateQuotaTypeEnum(path, location string, value stri
 }
 
 func (m *SetBucketQuota) validateQuotaType(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.QuotaType) { // not required
 		return nil
 	}
@@ -115,6 +115,11 @@ func (m *SetBucketQuota) validateQuotaType(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this set bucket quota based on context it is used
+func (m *SetBucketQuota) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

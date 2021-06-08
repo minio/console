@@ -31,7 +31,8 @@ import (
 )
 
 // NewGetBucketVersioningParams creates a new GetBucketVersioningParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewGetBucketVersioningParams() GetBucketVersioningParams {
 
 	return GetBucketVersioningParams{}
@@ -66,7 +67,6 @@ func (o *GetBucketVersioningParams) BindRequest(r *http.Request, route *middlewa
 	if err := o.bindBucketName(rBucketName, rhkBucketName, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -82,7 +82,6 @@ func (o *GetBucketVersioningParams) bindBucketName(rawData []string, hasKey bool
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.BucketName = raw
 
 	return nil

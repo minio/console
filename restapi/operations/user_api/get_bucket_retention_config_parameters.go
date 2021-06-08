@@ -31,7 +31,8 @@ import (
 )
 
 // NewGetBucketRetentionConfigParams creates a new GetBucketRetentionConfigParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewGetBucketRetentionConfigParams() GetBucketRetentionConfigParams {
 
 	return GetBucketRetentionConfigParams{}
@@ -66,7 +67,6 @@ func (o *GetBucketRetentionConfigParams) BindRequest(r *http.Request, route *mid
 	if err := o.bindBucketName(rBucketName, rhkBucketName, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -82,7 +82,6 @@ func (o *GetBucketRetentionConfigParams) bindBucketName(rawData []string, hasKey
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.BucketName = raw
 
 	return nil

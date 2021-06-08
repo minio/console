@@ -30,7 +30,8 @@ import (
 )
 
 // NewArnListParams creates a new ArnListParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewArnListParams() ArnListParams {
 
 	return ArnListParams{}

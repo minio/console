@@ -31,7 +31,8 @@ import (
 )
 
 // NewGroupInfoParams creates a new GroupInfoParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewGroupInfoParams() GroupInfoParams {
 
 	return GroupInfoParams{}
@@ -66,7 +67,6 @@ func (o *GroupInfoParams) BindRequest(r *http.Request, route *middleware.Matched
 	if err := o.bindName(rName, rhkName, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -82,7 +82,6 @@ func (o *GroupInfoParams) bindName(rawData []string, hasKey bool, formats strfmt
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Name = raw
 
 	return nil

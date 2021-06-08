@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -61,6 +63,34 @@ func (m *AwsConfiguration) validateSecretsmanager(formats strfmt.Registry) error
 
 	if m.Secretsmanager != nil {
 		if err := m.Secretsmanager.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("secretsmanager")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this aws configuration based on the context it is used
+func (m *AwsConfiguration) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateSecretsmanager(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *AwsConfiguration) contextValidateSecretsmanager(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Secretsmanager != nil {
+		if err := m.Secretsmanager.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("secretsmanager")
 			}
@@ -168,6 +198,34 @@ func (m *AwsConfigurationSecretsmanager) validateRegion(formats strfmt.Registry)
 	return nil
 }
 
+// ContextValidate validate this aws configuration secretsmanager based on the context it is used
+func (m *AwsConfigurationSecretsmanager) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateCredentials(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *AwsConfigurationSecretsmanager) contextValidateCredentials(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Credentials != nil {
+		if err := m.Credentials.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("secretsmanager" + "." + "credentials")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 // MarshalBinary interface implementation
 func (m *AwsConfigurationSecretsmanager) MarshalBinary() ([]byte, error) {
 	if m == nil {
@@ -236,6 +294,11 @@ func (m *AwsConfigurationSecretsmanagerCredentials) validateSecretkey(formats st
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this aws configuration secretsmanager credentials based on context it is used
+func (m *AwsConfigurationSecretsmanagerCredentials) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

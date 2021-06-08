@@ -31,7 +31,8 @@ import (
 )
 
 // NewSubscriptionActivateParams creates a new SubscriptionActivateParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewSubscriptionActivateParams() SubscriptionActivateParams {
 
 	return SubscriptionActivateParams{}
@@ -76,7 +77,6 @@ func (o *SubscriptionActivateParams) BindRequest(r *http.Request, route *middlew
 	if err := o.bindTenant(rTenant, rhkTenant, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -92,7 +92,6 @@ func (o *SubscriptionActivateParams) bindNamespace(rawData []string, hasKey bool
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Namespace = raw
 
 	return nil
@@ -107,7 +106,6 @@ func (o *SubscriptionActivateParams) bindTenant(rawData []string, hasKey bool, f
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Tenant = raw
 
 	return nil

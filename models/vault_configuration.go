@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -112,7 +114,6 @@ func (m *VaultConfiguration) validateEndpoint(formats strfmt.Registry) error {
 }
 
 func (m *VaultConfiguration) validateStatus(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Status) { // not required
 		return nil
 	}
@@ -130,13 +131,76 @@ func (m *VaultConfiguration) validateStatus(formats strfmt.Registry) error {
 }
 
 func (m *VaultConfiguration) validateTLS(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.TLS) { // not required
 		return nil
 	}
 
 	if m.TLS != nil {
 		if err := m.TLS.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("tls")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this vault configuration based on the context it is used
+func (m *VaultConfiguration) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateApprole(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTLS(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *VaultConfiguration) contextValidateApprole(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Approle != nil {
+		if err := m.Approle.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("approle")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *VaultConfiguration) contextValidateStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Status != nil {
+		if err := m.Status.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("status")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *VaultConfiguration) contextValidateTLS(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.TLS != nil {
+		if err := m.TLS.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("tls")
 			}
@@ -221,6 +285,11 @@ func (m *VaultConfigurationApprole) validateSecret(formats strfmt.Registry) erro
 	return nil
 }
 
+// ContextValidate validates this vault configuration approle based on context it is used
+func (m *VaultConfigurationApprole) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
 // MarshalBinary interface implementation
 func (m *VaultConfigurationApprole) MarshalBinary() ([]byte, error) {
 	if m == nil {
@@ -250,6 +319,11 @@ type VaultConfigurationStatus struct {
 
 // Validate validates this vault configuration status
 func (m *VaultConfigurationStatus) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this vault configuration status based on context it is used
+func (m *VaultConfigurationStatus) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 
@@ -288,6 +362,11 @@ type VaultConfigurationTLS struct {
 
 // Validate validates this vault configuration TLS
 func (m *VaultConfigurationTLS) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this vault configuration TLS based on context it is used
+func (m *VaultConfigurationTLS) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

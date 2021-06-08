@@ -33,7 +33,8 @@ import (
 )
 
 // NewListGroupsParams creates a new ListGroupsParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewListGroupsParams() ListGroupsParams {
 
 	return ListGroupsParams{}
@@ -78,7 +79,6 @@ func (o *ListGroupsParams) BindRequest(r *http.Request, route *middleware.Matche
 	if err := o.bindOffset(qOffset, qhkOffset, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -94,6 +94,7 @@ func (o *ListGroupsParams) bindLimit(rawData []string, hasKey bool, formats strf
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
@@ -116,6 +117,7 @@ func (o *ListGroupsParams) bindOffset(rawData []string, hasKey bool, formats str
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}

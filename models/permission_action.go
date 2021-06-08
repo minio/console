@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -41,6 +43,11 @@ type PermissionAction struct {
 
 // Validate validates this permission action
 func (m *PermissionAction) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this permission action based on context it is used
+func (m *PermissionAction) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

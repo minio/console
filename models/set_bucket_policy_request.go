@@ -23,9 +23,12 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // SetBucketPolicyRequest set bucket policy request
@@ -35,7 +38,7 @@ type SetBucketPolicyRequest struct {
 
 	// access
 	// Required: true
-	Access BucketAccess `json:"access"`
+	Access *BucketAccess `json:"access"`
 }
 
 // Validate validates this set bucket policy request
@@ -54,11 +57,49 @@ func (m *SetBucketPolicyRequest) Validate(formats strfmt.Registry) error {
 
 func (m *SetBucketPolicyRequest) validateAccess(formats strfmt.Registry) error {
 
-	if err := m.Access.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("access")
-		}
+	if err := validate.Required("access", "body", m.Access); err != nil {
 		return err
+	}
+
+	if err := validate.Required("access", "body", m.Access); err != nil {
+		return err
+	}
+
+	if m.Access != nil {
+		if err := m.Access.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("access")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this set bucket policy request based on the context it is used
+func (m *SetBucketPolicyRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateAccess(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *SetBucketPolicyRequest) contextValidateAccess(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Access != nil {
+		if err := m.Access.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("access")
+			}
+			return err
+		}
 	}
 
 	return nil

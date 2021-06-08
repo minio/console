@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -34,6 +35,11 @@ import (
 //
 // swagger:model objectRetentionMode
 type ObjectRetentionMode string
+
+func NewObjectRetentionMode(value ObjectRetentionMode) *ObjectRetentionMode {
+	v := value
+	return &v
+}
 
 const (
 
@@ -76,5 +82,10 @@ func (m ObjectRetentionMode) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this object retention mode based on context it is used
+func (m ObjectRetentionMode) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

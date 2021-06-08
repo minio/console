@@ -48,7 +48,7 @@ func NewGetBucketReplication(ctx *middleware.Context, handler GetBucketReplicati
 	return &GetBucketReplication{Context: ctx, Handler: handler}
 }
 
-/*GetBucketReplication swagger:route GET /buckets/{bucket_name}/replication UserAPI getBucketReplication
+/* GetBucketReplication swagger:route GET /buckets/{bucket_name}/replication UserAPI getBucketReplication
 
 Bucket Replication
 
@@ -61,17 +61,16 @@ type GetBucketReplication struct {
 func (o *GetBucketReplication) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewGetBucketReplicationParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *GetBucketReplication) ServeHTTP(rw http.ResponseWriter, r *http.Request
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

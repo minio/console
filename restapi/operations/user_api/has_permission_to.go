@@ -48,7 +48,7 @@ func NewHasPermissionTo(ctx *middleware.Context, handler HasPermissionToHandler)
 	return &HasPermissionTo{Context: ctx, Handler: handler}
 }
 
-/*HasPermissionTo swagger:route POST /has-permission UserAPI hasPermissionTo
+/* HasPermissionTo swagger:route POST /has-permission UserAPI hasPermissionTo
 
 Checks whether the user can perform a series of actions
 
@@ -61,17 +61,16 @@ type HasPermissionTo struct {
 func (o *HasPermissionTo) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewHasPermissionToParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *HasPermissionTo) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

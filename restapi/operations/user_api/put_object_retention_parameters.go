@@ -23,6 +23,7 @@ package user_api
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"io"
 	"net/http"
 
@@ -36,7 +37,8 @@ import (
 )
 
 // NewPutObjectRetentionParams creates a new PutObjectRetentionParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewPutObjectRetentionParams() PutObjectRetentionParams {
 
 	return PutObjectRetentionParams{}
@@ -99,6 +101,11 @@ func (o *PutObjectRetentionParams) BindRequest(r *http.Request, route *middlewar
 				res = append(res, err)
 			}
 
+			ctx := validate.WithOperationRequest(context.Background())
+			if err := body.ContextValidate(ctx, route.Formats); err != nil {
+				res = append(res, err)
+			}
+
 			if len(res) == 0 {
 				o.Body = &body
 			}
@@ -106,6 +113,7 @@ func (o *PutObjectRetentionParams) BindRequest(r *http.Request, route *middlewar
 	} else {
 		res = append(res, errors.Required("body", "body", ""))
 	}
+
 	rBucketName, rhkBucketName, _ := route.Params.GetOK("bucket_name")
 	if err := o.bindBucketName(rBucketName, rhkBucketName, route.Formats); err != nil {
 		res = append(res, err)
@@ -120,7 +128,6 @@ func (o *PutObjectRetentionParams) BindRequest(r *http.Request, route *middlewar
 	if err := o.bindVersionID(qVersionID, qhkVersionID, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -136,7 +143,6 @@ func (o *PutObjectRetentionParams) bindBucketName(rawData []string, hasKey bool,
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.BucketName = raw
 
 	return nil
@@ -154,10 +160,10 @@ func (o *PutObjectRetentionParams) bindPrefix(rawData []string, hasKey bool, for
 
 	// Required: true
 	// AllowEmptyValue: false
+
 	if err := validate.RequiredString("prefix", "query", raw); err != nil {
 		return err
 	}
-
 	o.Prefix = raw
 
 	return nil
@@ -175,10 +181,10 @@ func (o *PutObjectRetentionParams) bindVersionID(rawData []string, hasKey bool, 
 
 	// Required: true
 	// AllowEmptyValue: false
+
 	if err := validate.RequiredString("version_id", "query", raw); err != nil {
 		return err
 	}
-
 	o.VersionID = raw
 
 	return nil

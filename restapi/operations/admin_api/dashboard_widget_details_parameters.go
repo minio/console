@@ -33,7 +33,8 @@ import (
 )
 
 // NewDashboardWidgetDetailsParams creates a new DashboardWidgetDetailsParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewDashboardWidgetDetailsParams() DashboardWidgetDetailsParams {
 
 	return DashboardWidgetDetailsParams{}
@@ -97,7 +98,6 @@ func (o *DashboardWidgetDetailsParams) BindRequest(r *http.Request, route *middl
 	if err := o.bindWidgetID(rWidgetID, rhkWidgetID, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -113,6 +113,7 @@ func (o *DashboardWidgetDetailsParams) bindEnd(rawData []string, hasKey bool, fo
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
@@ -135,6 +136,7 @@ func (o *DashboardWidgetDetailsParams) bindStart(rawData []string, hasKey bool, 
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
@@ -157,6 +159,7 @@ func (o *DashboardWidgetDetailsParams) bindStep(rawData []string, hasKey bool, f
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}

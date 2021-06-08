@@ -33,7 +33,8 @@ import (
 )
 
 // NewListPoliciesParams creates a new ListPoliciesParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewListPoliciesParams() ListPoliciesParams {
 
 	return ListPoliciesParams{}
@@ -78,7 +79,6 @@ func (o *ListPoliciesParams) BindRequest(r *http.Request, route *middleware.Matc
 	if err := o.bindOffset(qOffset, qhkOffset, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -94,6 +94,7 @@ func (o *ListPoliciesParams) bindLimit(rawData []string, hasKey bool, formats st
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
@@ -116,6 +117,7 @@ func (o *ListPoliciesParams) bindOffset(rawData []string, hasKey bool, formats s
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}

@@ -48,7 +48,7 @@ func NewLogout(ctx *middleware.Context, handler LogoutHandler) *Logout {
 	return &Logout{Context: ctx, Handler: handler}
 }
 
-/*Logout swagger:route POST /logout UserAPI logout
+/* Logout swagger:route POST /logout UserAPI logout
 
 Logout from Console.
 
@@ -61,17 +61,16 @@ type Logout struct {
 func (o *Logout) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewLogoutParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *Logout) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

@@ -48,7 +48,7 @@ func NewBucketInfo(ctx *middleware.Context, handler BucketInfoHandler) *BucketIn
 	return &BucketInfo{Context: ctx, Handler: handler}
 }
 
-/*BucketInfo swagger:route GET /buckets/{name} UserAPI bucketInfo
+/* BucketInfo swagger:route GET /buckets/{name} UserAPI bucketInfo
 
 Bucket Info
 
@@ -61,17 +61,16 @@ type BucketInfo struct {
 func (o *BucketInfo) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewBucketInfoParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *BucketInfo) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

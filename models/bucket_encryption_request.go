@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -34,7 +36,7 @@ import (
 type BucketEncryptionRequest struct {
 
 	// enc type
-	EncType BucketEncryptionType `json:"encType,omitempty"`
+	EncType *BucketEncryptionType `json:"encType,omitempty"`
 
 	// kms key ID
 	KmsKeyID string `json:"kmsKeyID,omitempty"`
@@ -55,16 +57,45 @@ func (m *BucketEncryptionRequest) Validate(formats strfmt.Registry) error {
 }
 
 func (m *BucketEncryptionRequest) validateEncType(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.EncType) { // not required
 		return nil
 	}
 
-	if err := m.EncType.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("encType")
+	if m.EncType != nil {
+		if err := m.EncType.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("encType")
+			}
+			return err
 		}
-		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this bucket encryption request based on the context it is used
+func (m *BucketEncryptionRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateEncType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *BucketEncryptionRequest) contextValidateEncType(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.EncType != nil {
+		if err := m.EncType.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("encType")
+			}
+			return err
+		}
 	}
 
 	return nil

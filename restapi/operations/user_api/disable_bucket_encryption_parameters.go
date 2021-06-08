@@ -31,7 +31,8 @@ import (
 )
 
 // NewDisableBucketEncryptionParams creates a new DisableBucketEncryptionParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewDisableBucketEncryptionParams() DisableBucketEncryptionParams {
 
 	return DisableBucketEncryptionParams{}
@@ -66,7 +67,6 @@ func (o *DisableBucketEncryptionParams) BindRequest(r *http.Request, route *midd
 	if err := o.bindBucketName(rBucketName, rhkBucketName, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -82,7 +82,6 @@ func (o *DisableBucketEncryptionParams) bindBucketName(rawData []string, hasKey 
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.BucketName = raw
 
 	return nil

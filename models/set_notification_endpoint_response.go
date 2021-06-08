@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -47,7 +49,7 @@ type SetNotificationEndpointResponse struct {
 
 	// service
 	// Required: true
-	Service NofiticationService `json:"service"`
+	Service *NofiticationService `json:"service"`
 }
 
 // Validate validates this set notification endpoint response
@@ -83,16 +85,58 @@ func (m *SetNotificationEndpointResponse) validateAccountID(formats strfmt.Regis
 
 func (m *SetNotificationEndpointResponse) validateProperties(formats strfmt.Registry) error {
 
+	if err := validate.Required("properties", "body", m.Properties); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (m *SetNotificationEndpointResponse) validateService(formats strfmt.Registry) error {
 
-	if err := m.Service.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("service")
-		}
+	if err := validate.Required("service", "body", m.Service); err != nil {
 		return err
+	}
+
+	if err := validate.Required("service", "body", m.Service); err != nil {
+		return err
+	}
+
+	if m.Service != nil {
+		if err := m.Service.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("service")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this set notification endpoint response based on the context it is used
+func (m *SetNotificationEndpointResponse) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateService(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *SetNotificationEndpointResponse) contextValidateService(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Service != nil {
+		if err := m.Service.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("service")
+			}
+			return err
+		}
 	}
 
 	return nil

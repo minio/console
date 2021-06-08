@@ -31,7 +31,8 @@ import (
 )
 
 // NewBucketInfoParams creates a new BucketInfoParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewBucketInfoParams() BucketInfoParams {
 
 	return BucketInfoParams{}
@@ -66,7 +67,6 @@ func (o *BucketInfoParams) BindRequest(r *http.Request, route *middleware.Matche
 	if err := o.bindName(rName, rhkName, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -82,7 +82,6 @@ func (o *BucketInfoParams) bindName(rawData []string, hasKey bool, formats strfm
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Name = raw
 
 	return nil

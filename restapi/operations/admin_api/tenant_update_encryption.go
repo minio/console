@@ -48,7 +48,7 @@ func NewTenantUpdateEncryption(ctx *middleware.Context, handler TenantUpdateEncr
 	return &TenantUpdateEncryption{Context: ctx, Handler: handler}
 }
 
-/*TenantUpdateEncryption swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/encryption AdminAPI tenantUpdateEncryption
+/* TenantUpdateEncryption swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/encryption AdminAPI tenantUpdateEncryption
 
 Tenant Update Encryption
 
@@ -61,17 +61,16 @@ type TenantUpdateEncryption struct {
 func (o *TenantUpdateEncryption) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewTenantUpdateEncryptionParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *TenantUpdateEncryption) ServeHTTP(rw http.ResponseWriter, r *http.Reque
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

@@ -48,7 +48,7 @@ func NewChangeUserPassword(ctx *middleware.Context, handler ChangeUserPasswordHa
 	return &ChangeUserPassword{Context: ctx, Handler: handler}
 }
 
-/*ChangeUserPassword swagger:route POST /account/change-user-password AdminAPI changeUserPassword
+/* ChangeUserPassword swagger:route POST /account/change-user-password AdminAPI changeUserPassword
 
 Change password of currently logged in user.
 
@@ -61,17 +61,16 @@ type ChangeUserPassword struct {
 func (o *ChangeUserPassword) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewChangeUserPasswordParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *ChangeUserPassword) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

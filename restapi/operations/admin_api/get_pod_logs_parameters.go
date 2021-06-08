@@ -31,7 +31,8 @@ import (
 )
 
 // NewGetPodLogsParams creates a new GetPodLogsParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewGetPodLogsParams() GetPodLogsParams {
 
 	return GetPodLogsParams{}
@@ -86,7 +87,6 @@ func (o *GetPodLogsParams) BindRequest(r *http.Request, route *middleware.Matche
 	if err := o.bindTenant(rTenant, rhkTenant, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -102,7 +102,6 @@ func (o *GetPodLogsParams) bindNamespace(rawData []string, hasKey bool, formats 
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Namespace = raw
 
 	return nil
@@ -117,7 +116,6 @@ func (o *GetPodLogsParams) bindPodName(rawData []string, hasKey bool, formats st
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.PodName = raw
 
 	return nil
@@ -132,7 +130,6 @@ func (o *GetPodLogsParams) bindTenant(rawData []string, hasKey bool, formats str
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Tenant = raw
 
 	return nil

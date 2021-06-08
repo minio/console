@@ -30,7 +30,8 @@ import (
 )
 
 // NewRestartServiceParams creates a new RestartServiceParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewRestartServiceParams() RestartServiceParams {
 
 	return RestartServiceParams{}

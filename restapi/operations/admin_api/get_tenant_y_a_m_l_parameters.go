@@ -31,7 +31,8 @@ import (
 )
 
 // NewGetTenantYAMLParams creates a new GetTenantYAMLParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewGetTenantYAMLParams() GetTenantYAMLParams {
 
 	return GetTenantYAMLParams{}
@@ -76,7 +77,6 @@ func (o *GetTenantYAMLParams) BindRequest(r *http.Request, route *middleware.Mat
 	if err := o.bindTenant(rTenant, rhkTenant, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -92,7 +92,6 @@ func (o *GetTenantYAMLParams) bindNamespace(rawData []string, hasKey bool, forma
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Namespace = raw
 
 	return nil
@@ -107,7 +106,6 @@ func (o *GetTenantYAMLParams) bindTenant(rawData []string, hasKey bool, formats 
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Tenant = raw
 
 	return nil

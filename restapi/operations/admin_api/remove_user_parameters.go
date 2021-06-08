@@ -31,7 +31,8 @@ import (
 )
 
 // NewRemoveUserParams creates a new RemoveUserParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewRemoveUserParams() RemoveUserParams {
 
 	return RemoveUserParams{}
@@ -66,7 +67,6 @@ func (o *RemoveUserParams) BindRequest(r *http.Request, route *middleware.Matche
 	if err := o.bindName(rName, rhkName, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -82,7 +82,6 @@ func (o *RemoveUserParams) bindName(rawData []string, hasKey bool, formats strfm
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Name = raw
 
 	return nil

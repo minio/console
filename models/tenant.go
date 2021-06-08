@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -117,7 +118,6 @@ func (m *Tenant) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Tenant) validateEndpoints(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Endpoints) { // not required
 		return nil
 	}
@@ -135,7 +135,6 @@ func (m *Tenant) validateEndpoints(formats strfmt.Registry) error {
 }
 
 func (m *Tenant) validatePools(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Pools) { // not required
 		return nil
 	}
@@ -160,7 +159,6 @@ func (m *Tenant) validatePools(formats strfmt.Registry) error {
 }
 
 func (m *Tenant) validateStatus(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Status) { // not required
 		return nil
 	}
@@ -178,13 +176,98 @@ func (m *Tenant) validateStatus(formats strfmt.Registry) error {
 }
 
 func (m *Tenant) validateSubnetLicense(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.SubnetLicense) { // not required
 		return nil
 	}
 
 	if m.SubnetLicense != nil {
 		if err := m.SubnetLicense.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("subnet_license")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this tenant based on the context it is used
+func (m *Tenant) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateEndpoints(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePools(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSubnetLicense(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Tenant) contextValidateEndpoints(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Endpoints != nil {
+		if err := m.Endpoints.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("endpoints")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Tenant) contextValidatePools(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Pools); i++ {
+
+		if m.Pools[i] != nil {
+			if err := m.Pools[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("pools" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *Tenant) contextValidateStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Status != nil {
+		if err := m.Status.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("status")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Tenant) contextValidateSubnetLicense(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.SubnetLicense != nil {
+		if err := m.SubnetLicense.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("subnet_license")
 			}
@@ -227,6 +310,11 @@ type TenantEndpoints struct {
 
 // Validate validates this tenant endpoints
 func (m *TenantEndpoints) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this tenant endpoints based on context it is used
+func (m *TenantEndpoints) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

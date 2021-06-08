@@ -48,7 +48,7 @@ func NewGetResourceQuota(ctx *middleware.Context, handler GetResourceQuotaHandle
 	return &GetResourceQuota{Context: ctx, Handler: handler}
 }
 
-/*GetResourceQuota swagger:route GET /namespaces/{namespace}/resourcequotas/{resource-quota-name} AdminAPI getResourceQuota
+/* GetResourceQuota swagger:route GET /namespaces/{namespace}/resourcequotas/{resource-quota-name} AdminAPI getResourceQuota
 
 Get Resource Quota
 
@@ -61,17 +61,16 @@ type GetResourceQuota struct {
 func (o *GetResourceQuota) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewGetResourceQuotaParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *GetResourceQuota) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

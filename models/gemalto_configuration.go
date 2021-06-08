@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -61,6 +63,34 @@ func (m *GemaltoConfiguration) validateKeysecure(formats strfmt.Registry) error 
 
 	if m.Keysecure != nil {
 		if err := m.Keysecure.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("keysecure")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this gemalto configuration based on the context it is used
+func (m *GemaltoConfiguration) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateKeysecure(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *GemaltoConfiguration) contextValidateKeysecure(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Keysecure != nil {
+		if err := m.Keysecure.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("keysecure")
 			}
@@ -156,13 +186,58 @@ func (m *GemaltoConfigurationKeysecure) validateEndpoint(formats strfmt.Registry
 }
 
 func (m *GemaltoConfigurationKeysecure) validateTLS(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.TLS) { // not required
 		return nil
 	}
 
 	if m.TLS != nil {
 		if err := m.TLS.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("keysecure" + "." + "tls")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this gemalto configuration keysecure based on the context it is used
+func (m *GemaltoConfigurationKeysecure) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateCredentials(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTLS(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *GemaltoConfigurationKeysecure) contextValidateCredentials(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Credentials != nil {
+		if err := m.Credentials.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("keysecure" + "." + "credentials")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *GemaltoConfigurationKeysecure) contextValidateTLS(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.TLS != nil {
+		if err := m.TLS.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("keysecure" + "." + "tls")
 			}
@@ -244,6 +319,11 @@ func (m *GemaltoConfigurationKeysecureCredentials) validateToken(formats strfmt.
 	return nil
 }
 
+// ContextValidate validates this gemalto configuration keysecure credentials based on context it is used
+func (m *GemaltoConfigurationKeysecureCredentials) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
 // MarshalBinary interface implementation
 func (m *GemaltoConfigurationKeysecureCredentials) MarshalBinary() ([]byte, error) {
 	if m == nil {
@@ -292,6 +372,11 @@ func (m *GemaltoConfigurationKeysecureTLS) validateCa(formats strfmt.Registry) e
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this gemalto configuration keysecure TLS based on context it is used
+func (m *GemaltoConfigurationKeysecureTLS) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

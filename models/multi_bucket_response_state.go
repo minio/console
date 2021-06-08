@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -54,7 +55,6 @@ func (m *MultiBucketResponseState) Validate(formats strfmt.Registry) error {
 }
 
 func (m *MultiBucketResponseState) validateReplicationState(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ReplicationState) { // not required
 		return nil
 	}
@@ -66,6 +66,38 @@ func (m *MultiBucketResponseState) validateReplicationState(formats strfmt.Regis
 
 		if m.ReplicationState[i] != nil {
 			if err := m.ReplicationState[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("replicationState" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this multi bucket response state based on the context it is used
+func (m *MultiBucketResponseState) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateReplicationState(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MultiBucketResponseState) contextValidateReplicationState(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.ReplicationState); i++ {
+
+		if m.ReplicationState[i] != nil {
+			if err := m.ReplicationState[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("replicationState" + "." + strconv.Itoa(i))
 				}

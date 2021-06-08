@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -54,7 +55,6 @@ func (m *FormatDirectCSIDrivesResponse) Validate(formats strfmt.Registry) error 
 }
 
 func (m *FormatDirectCSIDrivesResponse) validateFormatIssuesList(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.FormatIssuesList) { // not required
 		return nil
 	}
@@ -66,6 +66,38 @@ func (m *FormatDirectCSIDrivesResponse) validateFormatIssuesList(formats strfmt.
 
 		if m.FormatIssuesList[i] != nil {
 			if err := m.FormatIssuesList[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("formatIssuesList" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this format direct c s i drives response based on the context it is used
+func (m *FormatDirectCSIDrivesResponse) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateFormatIssuesList(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *FormatDirectCSIDrivesResponse) contextValidateFormatIssuesList(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.FormatIssuesList); i++ {
+
+		if m.FormatIssuesList[i] != nil {
+			if err := m.FormatIssuesList[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("formatIssuesList" + "." + strconv.Itoa(i))
 				}
