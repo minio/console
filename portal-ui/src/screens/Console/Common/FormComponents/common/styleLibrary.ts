@@ -593,3 +593,82 @@ export const hrClass = {
     backgroundColor: "transparent" as const,
   },
 };
+
+export const tenantDetailsStyles = {
+  buttonContainer: {
+    textAlign: "right" as const,
+  },
+  multiContainer: {
+    display: "flex" as const,
+    alignItems: "center" as const,
+    justifyContent: "flex-start" as const,
+  },
+  sizeFactorContainer: {
+    marginLeft: 8,
+  },
+  containerHeader: {
+    display: "flex" as const,
+    justifyContent: "space-between" as const,
+  },
+  paperContainer: {
+    padding: "15px 15px 15px 50px",
+  },
+  infoGrid: {
+    display: "grid" as const,
+    gridTemplateColumns: "auto auto auto auto",
+    gridGap: 8,
+    "& div": {
+      display: "flex" as const,
+      alignItems: "center" as const,
+    },
+    "& div:nth-child(odd)": {
+      justifyContent: "flex-end" as const,
+      fontWeight: 700,
+    },
+    "& div:nth-child(2n)": {
+      paddingRight: 35,
+    },
+  },
+  masterActions: {
+    width: "25%",
+    minWidth: "120px",
+    "& div": {
+      margin: "5px 0px",
+    },
+  },
+  updateButton: {
+    backgroundColor: "transparent" as const,
+    border: 0,
+    padding: "0 6px",
+    cursor: "pointer" as const,
+    "&:focus, &:active": {
+      outline: "none",
+    },
+    "& svg": {
+      height: 12,
+    },
+  },
+  poolLabel: {
+    color: "#666666",
+  },
+  titleCol: {
+    fontWeight: 700,
+  },
+  breadcrumLink: {
+    textDecoration: "none",
+    color: "black",
+  },
+  healthCol: {
+    fontWeight: 700,
+    paddingRight: "10px",
+  },
+  ...modalBasic,
+  ...actionsTray,
+  ...buttonsStyles,
+  ...searchField,
+  ...hrClass,
+  actionsTray: {
+    ...actionsTray.actionsTray,
+    padding: "15px 0 0",
+  },
+};

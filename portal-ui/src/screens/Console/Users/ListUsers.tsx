@@ -91,7 +91,6 @@ const ListUsers = ({ classes, setErrorSnackMessage }: IUsersProps) => {
   const [filter, setFilter] = useState<string>("");
   const [checkedUsers, setCheckedUsers] = useState<string[]>([]);
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
-  const [resetPWOpen, setResetPWOpen] = useState<boolean>(false);
   const [ChangeUserPasswordModalOpen, setChangeUserPasswordModalOpen] =
     useState<boolean>(false);
 

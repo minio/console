@@ -66,8 +66,6 @@ const UserServiceAccountsPanel = ({
   const [showNewCredentials, setShowNewCredentials] = useState<boolean>(false);
   const [newServiceAccount, setNewServiceAccount] =
     useState<NewServiceAccount | null>(null);
-  const [changePasswordModalOpen, setChangePasswordModalOpen] =
-    useState<boolean>(false);
 
   useEffect(() => {
     fetchRecords();
@@ -88,7 +86,7 @@ const UserServiceAccountsPanel = ({
           setLoading(false);
         });
     }
-  }, [loading, setLoading, setRecords, setErrorSnackMessage]);
+  }, [loading, setLoading, setRecords, setErrorSnackMessage, user]);
 
   const fetchRecords = () => {
     setLoading(true);
