@@ -54,6 +54,7 @@ func configureFlags(api *operations.ConsoleAPI) {
 }
 
 func configureAPI(api *operations.ConsoleAPI) http.Handler {
+
 	// Applies when the "x-token" header is set
 	api.KeyAuth = func(token string, scopes []string) (*models.Principal, error) {
 		// we are validating the session token by decrypting the claims inside, if the operation succeed that means the jwt
@@ -272,4 +273,11 @@ func wrapHandlerSinglePageApplication(h http.Handler) http.HandlerFunc {
 			http.ServeContent(w, r, "index.html", time.Now(), bytes.NewReader(indexPageBytes))
 		}
 	}
+}
+
+// As soon as server is initialized but not run yet, this function will be called.
+// If you need to modify a config, store server instance to stop it individually later, this is the place.
+// This function can be called multiple times, depending on the number of serving schemes.
+// scheme value will be set accordingly: "http", "https" or "unix"
+func configureServer(s *http.Server, scheme, addr string) {
 }
