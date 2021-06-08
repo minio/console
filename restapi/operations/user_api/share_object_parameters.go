@@ -33,7 +33,8 @@ import (
 )
 
 // NewShareObjectParams creates a new ShareObjectParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewShareObjectParams() ShareObjectParams {
 
 	return ShareObjectParams{}
@@ -99,7 +100,6 @@ func (o *ShareObjectParams) BindRequest(r *http.Request, route *middleware.Match
 	if err := o.bindVersionID(qVersionID, qhkVersionID, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -115,7 +115,6 @@ func (o *ShareObjectParams) bindBucketName(rawData []string, hasKey bool, format
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.BucketName = raw
 
 	return nil
@@ -130,10 +129,10 @@ func (o *ShareObjectParams) bindExpires(rawData []string, hasKey bool, formats s
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
-
 	o.Expires = &raw
 
 	return nil
@@ -151,10 +150,10 @@ func (o *ShareObjectParams) bindPrefix(rawData []string, hasKey bool, formats st
 
 	// Required: true
 	// AllowEmptyValue: false
+
 	if err := validate.RequiredString("prefix", "query", raw); err != nil {
 		return err
 	}
-
 	o.Prefix = raw
 
 	return nil
@@ -172,10 +171,10 @@ func (o *ShareObjectParams) bindVersionID(rawData []string, hasKey bool, formats
 
 	// Required: true
 	// AllowEmptyValue: false
+
 	if err := validate.RequiredString("version_id", "query", raw); err != nil {
 		return err
 	}
-
 	o.VersionID = raw
 
 	return nil

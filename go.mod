@@ -6,13 +6,13 @@ require (
 	github.com/blang/semver/v4 v4.0.0
 	github.com/cheggaaa/pb/v3 v3.0.6
 	github.com/coreos/go-oidc v2.2.1+incompatible
-	github.com/go-openapi/errors v0.19.6
-	github.com/go-openapi/loads v0.19.5
-	github.com/go-openapi/runtime v0.19.19
-	github.com/go-openapi/spec v0.19.8
-	github.com/go-openapi/strfmt v0.19.5
-	github.com/go-openapi/swag v0.19.9
-	github.com/go-openapi/validate v0.19.10
+	github.com/go-openapi/errors v0.19.9
+	github.com/go-openapi/loads v0.20.2
+	github.com/go-openapi/runtime v0.19.24
+	github.com/go-openapi/spec v0.20.3
+	github.com/go-openapi/strfmt v0.20.0
+	github.com/go-openapi/swag v0.19.14
+	github.com/go-openapi/validate v0.20.2
 	github.com/gorilla/websocket v1.4.2
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/minio/cli v1.22.0

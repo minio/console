@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -98,7 +99,6 @@ func (m *BucketReplicationRule) Validate(formats strfmt.Registry) error {
 }
 
 func (m *BucketReplicationRule) validateDestination(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Destination) { // not required
 		return nil
 	}
@@ -145,7 +145,6 @@ func (m *BucketReplicationRule) validateStatusEnum(path, location string, value 
 }
 
 func (m *BucketReplicationRule) validateStatus(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Status) { // not required
 		return nil
 	}
@@ -188,7 +187,6 @@ func (m *BucketReplicationRule) validateSyncModeEnum(path, location string, valu
 }
 
 func (m *BucketReplicationRule) validateSyncMode(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.SyncMode) { // not required
 		return nil
 	}
@@ -196,6 +194,34 @@ func (m *BucketReplicationRule) validateSyncMode(formats strfmt.Registry) error 
 	// value enum
 	if err := m.validateSyncModeEnum("syncMode", "body", *m.SyncMode); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this bucket replication rule based on the context it is used
+func (m *BucketReplicationRule) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateDestination(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *BucketReplicationRule) contextValidateDestination(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Destination != nil {
+		if err := m.Destination.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("destination")
+			}
+			return err
+		}
 	}
 
 	return nil

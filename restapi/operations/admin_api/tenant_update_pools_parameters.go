@@ -23,6 +23,7 @@ package admin_api
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"io"
 	"net/http"
 
@@ -30,12 +31,14 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/validate"
 
 	"github.com/minio/console/models"
 )
 
 // NewTenantUpdatePoolsParams creates a new TenantUpdatePoolsParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewTenantUpdatePoolsParams() TenantUpdatePoolsParams {
 
 	return TenantUpdatePoolsParams{}
@@ -91,6 +94,11 @@ func (o *TenantUpdatePoolsParams) BindRequest(r *http.Request, route *middleware
 				res = append(res, err)
 			}
 
+			ctx := validate.WithOperationRequest(context.Background())
+			if err := body.ContextValidate(ctx, route.Formats); err != nil {
+				res = append(res, err)
+			}
+
 			if len(res) == 0 {
 				o.Body = &body
 			}
@@ -98,6 +106,7 @@ func (o *TenantUpdatePoolsParams) BindRequest(r *http.Request, route *middleware
 	} else {
 		res = append(res, errors.Required("body", "body", ""))
 	}
+
 	rNamespace, rhkNamespace, _ := route.Params.GetOK("namespace")
 	if err := o.bindNamespace(rNamespace, rhkNamespace, route.Formats); err != nil {
 		res = append(res, err)
@@ -107,7 +116,6 @@ func (o *TenantUpdatePoolsParams) BindRequest(r *http.Request, route *middleware
 	if err := o.bindTenant(rTenant, rhkTenant, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -123,7 +131,6 @@ func (o *TenantUpdatePoolsParams) bindNamespace(rawData []string, hasKey bool, f
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Namespace = raw
 
 	return nil
@@ -138,7 +145,6 @@ func (o *TenantUpdatePoolsParams) bindTenant(rawData []string, hasKey bool, form
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Tenant = raw
 
 	return nil

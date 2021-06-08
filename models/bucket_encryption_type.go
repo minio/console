@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -35,13 +36,18 @@ import (
 // swagger:model bucketEncryptionType
 type BucketEncryptionType string
 
+func NewBucketEncryptionType(value BucketEncryptionType) *BucketEncryptionType {
+	v := value
+	return &v
+}
+
 const (
 
-	// BucketEncryptionTypeSseS3 captures enum value "sse-s3"
-	BucketEncryptionTypeSseS3 BucketEncryptionType = "sse-s3"
+	// BucketEncryptionTypeSseDashS3 captures enum value "sse-s3"
+	BucketEncryptionTypeSseDashS3 BucketEncryptionType = "sse-s3"
 
-	// BucketEncryptionTypeSseKms captures enum value "sse-kms"
-	BucketEncryptionTypeSseKms BucketEncryptionType = "sse-kms"
+	// BucketEncryptionTypeSseDashKms captures enum value "sse-kms"
+	BucketEncryptionTypeSseDashKms BucketEncryptionType = "sse-kms"
 )
 
 // for schema
@@ -76,5 +82,10 @@ func (m BucketEncryptionType) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this bucket encryption type based on context it is used
+func (m BucketEncryptionType) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

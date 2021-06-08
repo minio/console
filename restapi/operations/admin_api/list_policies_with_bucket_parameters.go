@@ -33,7 +33,8 @@ import (
 )
 
 // NewListPoliciesWithBucketParams creates a new ListPoliciesWithBucketParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewListPoliciesWithBucketParams() ListPoliciesWithBucketParams {
 
 	return ListPoliciesWithBucketParams{}
@@ -88,7 +89,6 @@ func (o *ListPoliciesWithBucketParams) BindRequest(r *http.Request, route *middl
 	if err := o.bindOffset(qOffset, qhkOffset, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -104,7 +104,6 @@ func (o *ListPoliciesWithBucketParams) bindBucket(rawData []string, hasKey bool,
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Bucket = raw
 
 	return nil
@@ -119,6 +118,7 @@ func (o *ListPoliciesWithBucketParams) bindLimit(rawData []string, hasKey bool, 
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
@@ -141,6 +141,7 @@ func (o *ListPoliciesWithBucketParams) bindOffset(rawData []string, hasKey bool,
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}

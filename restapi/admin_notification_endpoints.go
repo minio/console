@@ -100,7 +100,7 @@ func addNotificationEndpoint(ctx context.Context, client MinioAdmin, params *adm
 	var configName string
 
 	// we have different add validations for each service
-	switch params.Body.Service {
+	switch *params.Body.Service {
 	case models.NofiticationServiceAmqp:
 		configName = "notify_amqp"
 	case models.NofiticationServiceMqtt:

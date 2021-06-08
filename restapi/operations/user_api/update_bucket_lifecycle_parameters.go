@@ -23,6 +23,7 @@ package user_api
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"io"
 	"net/http"
 
@@ -30,12 +31,14 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/validate"
 
 	"github.com/minio/console/models"
 )
 
 // NewUpdateBucketLifecycleParams creates a new UpdateBucketLifecycleParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewUpdateBucketLifecycleParams() UpdateBucketLifecycleParams {
 
 	return UpdateBucketLifecycleParams{}
@@ -91,6 +94,11 @@ func (o *UpdateBucketLifecycleParams) BindRequest(r *http.Request, route *middle
 				res = append(res, err)
 			}
 
+			ctx := validate.WithOperationRequest(context.Background())
+			if err := body.ContextValidate(ctx, route.Formats); err != nil {
+				res = append(res, err)
+			}
+
 			if len(res) == 0 {
 				o.Body = &body
 			}
@@ -98,6 +106,7 @@ func (o *UpdateBucketLifecycleParams) BindRequest(r *http.Request, route *middle
 	} else {
 		res = append(res, errors.Required("body", "body", ""))
 	}
+
 	rBucketName, rhkBucketName, _ := route.Params.GetOK("bucket_name")
 	if err := o.bindBucketName(rBucketName, rhkBucketName, route.Formats); err != nil {
 		res = append(res, err)
@@ -107,7 +116,6 @@ func (o *UpdateBucketLifecycleParams) BindRequest(r *http.Request, route *middle
 	if err := o.bindLifecycleID(rLifecycleID, rhkLifecycleID, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -123,7 +131,6 @@ func (o *UpdateBucketLifecycleParams) bindBucketName(rawData []string, hasKey bo
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.BucketName = raw
 
 	return nil
@@ -138,7 +145,6 @@ func (o *UpdateBucketLifecycleParams) bindLifecycleID(rawData []string, hasKey b
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.LifecycleID = raw
 
 	return nil

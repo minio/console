@@ -48,7 +48,7 @@ func NewGetMaxAllocatableMem(ctx *middleware.Context, handler GetMaxAllocatableM
 	return &GetMaxAllocatableMem{Context: ctx, Handler: handler}
 }
 
-/*GetMaxAllocatableMem swagger:route GET /cluster/max-allocatable-memory AdminAPI getMaxAllocatableMem
+/* GetMaxAllocatableMem swagger:route GET /cluster/max-allocatable-memory AdminAPI getMaxAllocatableMem
 
 Get maximum allocatable memory for given number of nodes
 
@@ -61,17 +61,16 @@ type GetMaxAllocatableMem struct {
 func (o *GetMaxAllocatableMem) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewGetMaxAllocatableMemParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *GetMaxAllocatableMem) ServeHTTP(rw http.ResponseWriter, r *http.Request
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

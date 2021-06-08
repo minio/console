@@ -48,7 +48,7 @@ func NewAddGroup(ctx *middleware.Context, handler AddGroupHandler) *AddGroup {
 	return &AddGroup{Context: ctx, Handler: handler}
 }
 
-/*AddGroup swagger:route POST /groups AdminAPI addGroup
+/* AddGroup swagger:route POST /groups AdminAPI addGroup
 
 Add Group
 
@@ -61,17 +61,16 @@ type AddGroup struct {
 func (o *AddGroup) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewAddGroupParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *AddGroup) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

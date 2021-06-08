@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -70,7 +71,6 @@ func (m *Widget) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Widget) validateOptions(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Options) { // not required
 		return nil
 	}
@@ -88,7 +88,6 @@ func (m *Widget) validateOptions(formats strfmt.Registry) error {
 }
 
 func (m *Widget) validateTargets(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Targets) { // not required
 		return nil
 	}
@@ -100,6 +99,56 @@ func (m *Widget) validateTargets(formats strfmt.Registry) error {
 
 		if m.Targets[i] != nil {
 			if err := m.Targets[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("targets" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this widget based on the context it is used
+func (m *Widget) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateOptions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTargets(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Widget) contextValidateOptions(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Options != nil {
+		if err := m.Options.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("options")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Widget) contextValidateTargets(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Targets); i++ {
+
+		if m.Targets[i] != nil {
+			if err := m.Targets[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("targets" + "." + strconv.Itoa(i))
 				}
@@ -154,13 +203,40 @@ func (m *WidgetOptions) Validate(formats strfmt.Registry) error {
 }
 
 func (m *WidgetOptions) validateReduceOptions(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ReduceOptions) { // not required
 		return nil
 	}
 
 	if m.ReduceOptions != nil {
 		if err := m.ReduceOptions.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("options" + "." + "reduceOptions")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this widget options based on the context it is used
+func (m *WidgetOptions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateReduceOptions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *WidgetOptions) contextValidateReduceOptions(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.ReduceOptions != nil {
+		if err := m.ReduceOptions.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("options" + "." + "reduceOptions")
 			}
@@ -200,6 +276,11 @@ type WidgetOptionsReduceOptions struct {
 
 // Validate validates this widget options reduce options
 func (m *WidgetOptionsReduceOptions) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this widget options reduce options based on context it is used
+func (m *WidgetOptionsReduceOptions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -44,6 +46,11 @@ type SubscriptionValidateRequest struct {
 
 // Validate validates this subscription validate request
 func (m *SubscriptionValidateRequest) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this subscription validate request based on context it is used
+func (m *SubscriptionValidateRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

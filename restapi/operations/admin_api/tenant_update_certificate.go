@@ -48,7 +48,7 @@ func NewTenantUpdateCertificate(ctx *middleware.Context, handler TenantUpdateCer
 	return &TenantUpdateCertificate{Context: ctx, Handler: handler}
 }
 
-/*TenantUpdateCertificate swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/certificates AdminAPI tenantUpdateCertificate
+/* TenantUpdateCertificate swagger:route PUT /namespaces/{namespace}/tenants/{tenant}/certificates AdminAPI tenantUpdateCertificate
 
 Tenant Update Certificates
 
@@ -61,17 +61,16 @@ type TenantUpdateCertificate struct {
 func (o *TenantUpdateCertificate) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewTenantUpdateCertificateParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *TenantUpdateCertificate) ServeHTTP(rw http.ResponseWriter, r *http.Requ
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

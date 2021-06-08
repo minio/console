@@ -33,7 +33,8 @@ import (
 )
 
 // NewListObjectsParams creates a new ListObjectsParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewListObjectsParams() ListObjectsParams {
 
 	return ListObjectsParams{}
@@ -97,7 +98,6 @@ func (o *ListObjectsParams) BindRequest(r *http.Request, route *middleware.Match
 	if err := o.bindWithVersions(qWithVersions, qhkWithVersions, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -113,7 +113,6 @@ func (o *ListObjectsParams) bindBucketName(rawData []string, hasKey bool, format
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.BucketName = raw
 
 	return nil
@@ -128,10 +127,10 @@ func (o *ListObjectsParams) bindPrefix(rawData []string, hasKey bool, formats st
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
-
 	o.Prefix = &raw
 
 	return nil
@@ -146,6 +145,7 @@ func (o *ListObjectsParams) bindRecursive(rawData []string, hasKey bool, formats
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
@@ -168,6 +168,7 @@ func (o *ListObjectsParams) bindWithVersions(rawData []string, hasKey bool, form
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}

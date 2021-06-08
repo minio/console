@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -112,7 +113,7 @@ func (m *CreateRemoteBucket) validateAccessKey(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("accessKey", "body", string(*m.AccessKey), 3); err != nil {
+	if err := validate.MinLength("accessKey", "body", *m.AccessKey, 3); err != nil {
 		return err
 	}
 
@@ -125,7 +126,7 @@ func (m *CreateRemoteBucket) validateSecretKey(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("secretKey", "body", string(*m.SecretKey), 8); err != nil {
+	if err := validate.MinLength("secretKey", "body", *m.SecretKey, 8); err != nil {
 		return err
 	}
 
@@ -171,7 +172,6 @@ func (m *CreateRemoteBucket) validateSyncModeEnum(path, location string, value s
 }
 
 func (m *CreateRemoteBucket) validateSyncMode(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.SyncMode) { // not required
 		return nil
 	}
@@ -199,6 +199,11 @@ func (m *CreateRemoteBucket) validateTargetURL(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this create remote bucket based on context it is used
+func (m *CreateRemoteBucket) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

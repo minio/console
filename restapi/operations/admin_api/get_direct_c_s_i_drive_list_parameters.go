@@ -32,7 +32,8 @@ import (
 )
 
 // NewGetDirectCSIDriveListParams creates a new GetDirectCSIDriveListParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewGetDirectCSIDriveListParams() GetDirectCSIDriveListParams {
 
 	return GetDirectCSIDriveListParams{}
@@ -77,7 +78,6 @@ func (o *GetDirectCSIDriveListParams) BindRequest(r *http.Request, route *middle
 	if err := o.bindNodes(qNodes, qhkNodes, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -93,10 +93,10 @@ func (o *GetDirectCSIDriveListParams) bindDrives(rawData []string, hasKey bool, 
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
-
 	o.Drives = &raw
 
 	return nil
@@ -111,10 +111,10 @@ func (o *GetDirectCSIDriveListParams) bindNodes(rawData []string, hasKey bool, f
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
-
 	o.Nodes = &raw
 
 	return nil

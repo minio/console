@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -34,6 +35,11 @@ import (
 //
 // swagger:model profilerType
 type ProfilerType string
+
+func NewProfilerType(value ProfilerType) *ProfilerType {
+	v := value
+	return &v
+}
 
 const (
 
@@ -91,5 +97,10 @@ func (m ProfilerType) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this profiler type based on context it is used
+func (m ProfilerType) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

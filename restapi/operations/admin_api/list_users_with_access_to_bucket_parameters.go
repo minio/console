@@ -33,7 +33,8 @@ import (
 )
 
 // NewListUsersWithAccessToBucketParams creates a new ListUsersWithAccessToBucketParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewListUsersWithAccessToBucketParams() ListUsersWithAccessToBucketParams {
 
 	return ListUsersWithAccessToBucketParams{}
@@ -88,7 +89,6 @@ func (o *ListUsersWithAccessToBucketParams) BindRequest(r *http.Request, route *
 	if err := o.bindOffset(qOffset, qhkOffset, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -104,7 +104,6 @@ func (o *ListUsersWithAccessToBucketParams) bindBucket(rawData []string, hasKey 
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Bucket = raw
 
 	return nil
@@ -119,6 +118,7 @@ func (o *ListUsersWithAccessToBucketParams) bindLimit(rawData []string, hasKey b
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
@@ -141,6 +141,7 @@ func (o *ListUsersWithAccessToBucketParams) bindOffset(rawData []string, hasKey 
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}

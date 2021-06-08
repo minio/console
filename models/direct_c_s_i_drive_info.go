@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -56,6 +58,11 @@ type DirectCSIDriveInfo struct {
 
 // Validate validates this direct c s i drive info
 func (m *DirectCSIDriveInfo) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this direct c s i drive info based on context it is used
+func (m *DirectCSIDriveInfo) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -62,7 +63,6 @@ func (m *NodeSelectorTerm) Validate(formats strfmt.Registry) error {
 }
 
 func (m *NodeSelectorTerm) validateMatchExpressions(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.MatchExpressions) { // not required
 		return nil
 	}
@@ -87,7 +87,6 @@ func (m *NodeSelectorTerm) validateMatchExpressions(formats strfmt.Registry) err
 }
 
 func (m *NodeSelectorTerm) validateMatchFields(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.MatchFields) { // not required
 		return nil
 	}
@@ -99,6 +98,60 @@ func (m *NodeSelectorTerm) validateMatchFields(formats strfmt.Registry) error {
 
 		if m.MatchFields[i] != nil {
 			if err := m.MatchFields[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("matchFields" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this node selector term based on the context it is used
+func (m *NodeSelectorTerm) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateMatchExpressions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateMatchFields(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *NodeSelectorTerm) contextValidateMatchExpressions(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.MatchExpressions); i++ {
+
+		if m.MatchExpressions[i] != nil {
+			if err := m.MatchExpressions[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("matchExpressions" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *NodeSelectorTerm) contextValidateMatchFields(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.MatchFields); i++ {
+
+		if m.MatchFields[i] != nil {
+			if err := m.MatchFields[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("matchFields" + "." + strconv.Itoa(i))
 				}
@@ -182,6 +235,11 @@ func (m *NodeSelectorTermMatchExpressionsItems0) validateOperator(formats strfmt
 	return nil
 }
 
+// ContextValidate validates this node selector term match expressions items0 based on context it is used
+func (m *NodeSelectorTermMatchExpressionsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
 // MarshalBinary interface implementation
 func (m *NodeSelectorTermMatchExpressionsItems0) MarshalBinary() ([]byte, error) {
 	if m == nil {
@@ -250,6 +308,11 @@ func (m *NodeSelectorTermMatchFieldsItems0) validateOperator(formats strfmt.Regi
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this node selector term match fields items0 based on context it is used
+func (m *NodeSelectorTermMatchFieldsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

@@ -48,7 +48,7 @@ func NewGetTenantPods(ctx *middleware.Context, handler GetTenantPodsHandler) *Ge
 	return &GetTenantPods{Context: ctx, Handler: handler}
 }
 
-/*GetTenantPods swagger:route GET /namespaces/{namespace}/tenants/{tenant}/pods AdminAPI getTenantPods
+/* GetTenantPods swagger:route GET /namespaces/{namespace}/tenants/{tenant}/pods AdminAPI getTenantPods
 
 Get Pods For The Tenant
 
@@ -61,17 +61,16 @@ type GetTenantPods struct {
 func (o *GetTenantPods) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewGetTenantPodsParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *GetTenantPods) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

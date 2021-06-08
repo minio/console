@@ -30,7 +30,8 @@ import (
 )
 
 // NewLoginDetailParams creates a new LoginDetailParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewLoginDetailParams() LoginDetailParams {
 
 	return LoginDetailParams{}

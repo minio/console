@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -66,7 +67,6 @@ func (m *PodAffinityTerm) Validate(formats strfmt.Registry) error {
 }
 
 func (m *PodAffinityTerm) validateLabelSelector(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.LabelSelector) { // not required
 		return nil
 	}
@@ -87,6 +87,34 @@ func (m *PodAffinityTerm) validateTopologyKey(formats strfmt.Registry) error {
 
 	if err := validate.Required("topologyKey", "body", m.TopologyKey); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this pod affinity term based on the context it is used
+func (m *PodAffinityTerm) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateLabelSelector(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PodAffinityTerm) contextValidateLabelSelector(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.LabelSelector != nil {
+		if err := m.LabelSelector.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("labelSelector")
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -137,7 +165,6 @@ func (m *PodAffinityTermLabelSelector) Validate(formats strfmt.Registry) error {
 }
 
 func (m *PodAffinityTermLabelSelector) validateMatchExpressions(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.MatchExpressions) { // not required
 		return nil
 	}
@@ -149,6 +176,38 @@ func (m *PodAffinityTermLabelSelector) validateMatchExpressions(formats strfmt.R
 
 		if m.MatchExpressions[i] != nil {
 			if err := m.MatchExpressions[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("labelSelector" + "." + "matchExpressions" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this pod affinity term label selector based on the context it is used
+func (m *PodAffinityTermLabelSelector) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateMatchExpressions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PodAffinityTermLabelSelector) contextValidateMatchExpressions(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.MatchExpressions); i++ {
+
+		if m.MatchExpressions[i] != nil {
+			if err := m.MatchExpressions[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("labelSelector" + "." + "matchExpressions" + "." + strconv.Itoa(i))
 				}
@@ -229,6 +288,11 @@ func (m *PodAffinityTermLabelSelectorMatchExpressionsItems0) validateOperator(fo
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this pod affinity term label selector match expressions items0 based on context it is used
+func (m *PodAffinityTermLabelSelectorMatchExpressionsItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -38,6 +40,11 @@ type PutObjectTagsRequest struct {
 
 // Validate validates this put object tags request
 func (m *PutObjectTagsRequest) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this put object tags request based on context it is used
+func (m *PutObjectTagsRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

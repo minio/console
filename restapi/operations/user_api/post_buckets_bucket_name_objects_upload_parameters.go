@@ -32,7 +32,8 @@ import (
 )
 
 // NewPostBucketsBucketNameObjectsUploadParams creates a new PostBucketsBucketNameObjectsUploadParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewPostBucketsBucketNameObjectsUploadParams() PostBucketsBucketNameObjectsUploadParams {
 
 	return PostBucketsBucketNameObjectsUploadParams{}
@@ -78,7 +79,6 @@ func (o *PostBucketsBucketNameObjectsUploadParams) BindRequest(r *http.Request, 
 	if err := o.bindPrefix(qPrefix, qhkPrefix, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -94,7 +94,6 @@ func (o *PostBucketsBucketNameObjectsUploadParams) bindBucketName(rawData []stri
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.BucketName = raw
 
 	return nil
@@ -109,10 +108,10 @@ func (o *PostBucketsBucketNameObjectsUploadParams) bindPrefix(rawData []string, 
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
-
 	o.Prefix = &raw
 
 	return nil

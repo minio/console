@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -297,6 +299,129 @@ func (m *EncryptionConfiguration) validateVault(formats strfmt.Registry) error {
 
 	if m.Vault != nil {
 		if err := m.Vault.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("vault")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this encryption configuration based on the context it is used
+func (m *EncryptionConfiguration) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	// validation for a type composition with MetadataFields
+	if err := m.MetadataFields.ContextValidate(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateAws(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateClient(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateGcp(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateGemalto(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateServer(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateVault(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *EncryptionConfiguration) contextValidateAws(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Aws != nil {
+		if err := m.Aws.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("aws")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EncryptionConfiguration) contextValidateClient(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Client != nil {
+		if err := m.Client.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("client")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EncryptionConfiguration) contextValidateGcp(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Gcp != nil {
+		if err := m.Gcp.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("gcp")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EncryptionConfiguration) contextValidateGemalto(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Gemalto != nil {
+		if err := m.Gemalto.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("gemalto")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EncryptionConfiguration) contextValidateServer(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Server != nil {
+		if err := m.Server.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("server")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EncryptionConfiguration) contextValidateVault(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Vault != nil {
+		if err := m.Vault.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("vault")
 			}

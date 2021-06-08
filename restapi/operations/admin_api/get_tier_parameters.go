@@ -32,7 +32,8 @@ import (
 )
 
 // NewGetTierParams creates a new GetTierParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewGetTierParams() GetTierParams {
 
 	return GetTierParams{}
@@ -77,7 +78,6 @@ func (o *GetTierParams) BindRequest(r *http.Request, route *middleware.MatchedRo
 	if err := o.bindType(rType, rhkType, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -93,7 +93,6 @@ func (o *GetTierParams) bindName(rawData []string, hasKey bool, formats strfmt.R
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Name = raw
 
 	return nil
@@ -108,7 +107,6 @@ func (o *GetTierParams) bindType(rawData []string, hasKey bool, formats strfmt.R
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Type = raw
 
 	if err := o.validateType(formats); err != nil {

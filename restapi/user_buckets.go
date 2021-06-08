@@ -378,7 +378,7 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 
 	// Set Bucket Retention Configuration if defined
 	if br.Retention != nil {
-		err = setBucketRetentionConfig(ctx, minioClient, *br.Name, br.Retention.Mode, br.Retention.Unit, br.Retention.Validity)
+		err = setBucketRetentionConfig(ctx, minioClient, *br.Name, *br.Retention.Mode, *br.Retention.Unit, br.Retention.Validity)
 		if err != nil {
 			return prepareError(err)
 		}
@@ -429,7 +429,7 @@ func getBucketSetPolicyResponse(session *models.Principal, bucketName string, re
 	minioClient := minioClient{client: mClient}
 
 	// set bucket access policy
-	if err := setBucketAccessPolicy(ctx, minioClient, bucketName, req.Access); err != nil {
+	if err := setBucketAccessPolicy(ctx, minioClient, bucketName, *req.Access); err != nil {
 		return nil, prepareError(err)
 	}
 	// get updated bucket details and return it
@@ -487,7 +487,7 @@ func getBucketInfo(client MinioClient, bucketName string) (*models.Bucket, error
 	}
 	bucket := &models.Bucket{
 		Name:         &bucketName,
-		Access:       bucketAccess,
+		Access:       &bucketAccess,
 		CreationDate: "", // to be implemented
 		Size:         0,  // to be implemented
 	}
@@ -540,9 +540,9 @@ func consoleAccess2policyAccess(bucketAccess models.BucketAccess) (bucketPolicy 
 func enableBucketEncryption(ctx context.Context, client MinioClient, bucketName string, encryptionType models.BucketEncryptionType, kmsKeyID string) error {
 	var config *sse.Configuration
 	switch encryptionType {
-	case models.BucketEncryptionTypeSseKms:
+	case models.BucketEncryptionTypeSseDashKms:
 		config = sse.NewConfigurationSSEKMS(kmsKeyID)
-	case models.BucketEncryptionTypeSseS3:
+	case models.BucketEncryptionTypeSseDashS3:
 		config = sse.NewConfigurationSSES3()
 	default:
 		return errInvalidEncryptionAlgorithm
@@ -561,7 +561,7 @@ func enableBucketEncryptionResponse(session *models.Principal, params user_api.E
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
-	if err := enableBucketEncryption(ctx, minioClient, params.BucketName, params.Body.EncType, params.Body.KmsKeyID); err != nil {
+	if err := enableBucketEncryption(ctx, minioClient, params.BucketName, *params.Body.EncType, params.Body.KmsKeyID); err != nil {
 		return prepareError(err)
 	}
 	return nil
@@ -657,8 +657,7 @@ func getSetBucketRetentionConfigResponse(session *models.Principal, params user_
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
-
-	err = setBucketRetentionConfig(ctx, minioClient, params.BucketName, params.Body.Mode, params.Body.Unit, params.Body.Validity)
+	err = setBucketRetentionConfig(ctx, minioClient, params.BucketName, *params.Body.Mode, *params.Body.Unit, params.Body.Validity)
 	if err != nil {
 		return prepareError(err)
 	}

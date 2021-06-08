@@ -33,7 +33,8 @@ import (
 )
 
 // NewRemovePolicyParams creates a new RemovePolicyParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewRemovePolicyParams() RemovePolicyParams {
 
 	return RemovePolicyParams{}
@@ -70,7 +71,6 @@ func (o *RemovePolicyParams) BindRequest(r *http.Request, route *middleware.Matc
 	if err := o.bindName(qName, qhkName, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -89,10 +89,10 @@ func (o *RemovePolicyParams) bindName(rawData []string, hasKey bool, formats str
 
 	// Required: true
 	// AllowEmptyValue: false
+
 	if err := validate.RequiredString("name", "query", raw); err != nil {
 		return err
 	}
-
 	o.Name = raw
 
 	return nil

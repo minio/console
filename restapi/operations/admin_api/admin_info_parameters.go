@@ -30,7 +30,8 @@ import (
 )
 
 // NewAdminInfoParams creates a new AdminInfoParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewAdminInfoParams() AdminInfoParams {
 
 	return AdminInfoParams{}

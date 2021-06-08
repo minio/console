@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -69,7 +70,6 @@ func (m *PoolAffinity) Validate(formats strfmt.Registry) error {
 }
 
 func (m *PoolAffinity) validateNodeAffinity(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.NodeAffinity) { // not required
 		return nil
 	}
@@ -87,7 +87,6 @@ func (m *PoolAffinity) validateNodeAffinity(formats strfmt.Registry) error {
 }
 
 func (m *PoolAffinity) validatePodAffinity(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.PodAffinity) { // not required
 		return nil
 	}
@@ -105,13 +104,76 @@ func (m *PoolAffinity) validatePodAffinity(formats strfmt.Registry) error {
 }
 
 func (m *PoolAffinity) validatePodAntiAffinity(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.PodAntiAffinity) { // not required
 		return nil
 	}
 
 	if m.PodAntiAffinity != nil {
 		if err := m.PodAntiAffinity.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("podAntiAffinity")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this pool affinity based on the context it is used
+func (m *PoolAffinity) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateNodeAffinity(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePodAffinity(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePodAntiAffinity(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PoolAffinity) contextValidateNodeAffinity(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.NodeAffinity != nil {
+		if err := m.NodeAffinity.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("nodeAffinity")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *PoolAffinity) contextValidatePodAffinity(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.PodAffinity != nil {
+		if err := m.PodAffinity.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("podAffinity")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *PoolAffinity) contextValidatePodAntiAffinity(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.PodAntiAffinity != nil {
+		if err := m.PodAntiAffinity.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("podAntiAffinity")
 			}
@@ -171,7 +233,6 @@ func (m *PoolAffinityNodeAffinity) Validate(formats strfmt.Registry) error {
 }
 
 func (m *PoolAffinityNodeAffinity) validatePreferredDuringSchedulingIgnoredDuringExecution(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.PreferredDuringSchedulingIgnoredDuringExecution) { // not required
 		return nil
 	}
@@ -196,13 +257,62 @@ func (m *PoolAffinityNodeAffinity) validatePreferredDuringSchedulingIgnoredDurin
 }
 
 func (m *PoolAffinityNodeAffinity) validateRequiredDuringSchedulingIgnoredDuringExecution(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.RequiredDuringSchedulingIgnoredDuringExecution) { // not required
 		return nil
 	}
 
 	if m.RequiredDuringSchedulingIgnoredDuringExecution != nil {
 		if err := m.RequiredDuringSchedulingIgnoredDuringExecution.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("nodeAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this pool affinity node affinity based on the context it is used
+func (m *PoolAffinityNodeAffinity) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidatePreferredDuringSchedulingIgnoredDuringExecution(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRequiredDuringSchedulingIgnoredDuringExecution(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PoolAffinityNodeAffinity) contextValidatePreferredDuringSchedulingIgnoredDuringExecution(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.PreferredDuringSchedulingIgnoredDuringExecution); i++ {
+
+		if m.PreferredDuringSchedulingIgnoredDuringExecution[i] != nil {
+			if err := m.PreferredDuringSchedulingIgnoredDuringExecution[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("nodeAffinity" + "." + "preferredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *PoolAffinityNodeAffinity) contextValidateRequiredDuringSchedulingIgnoredDuringExecution(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.RequiredDuringSchedulingIgnoredDuringExecution != nil {
+		if err := m.RequiredDuringSchedulingIgnoredDuringExecution.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("nodeAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution")
 			}
@@ -290,6 +400,34 @@ func (m *PoolAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecution
 	return nil
 }
 
+// ContextValidate validate this pool affinity node affinity preferred during scheduling ignored during execution items0 based on the context it is used
+func (m *PoolAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidatePreference(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PoolAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) contextValidatePreference(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Preference != nil {
+		if err := m.Preference.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("preference")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 // MarshalBinary interface implementation
 func (m *PoolAffinityNodeAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) MarshalBinary() ([]byte, error) {
 	if m == nil {
@@ -357,6 +495,38 @@ func (m *PoolAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution)
 	return nil
 }
 
+// ContextValidate validate this pool affinity node affinity required during scheduling ignored during execution based on the context it is used
+func (m *PoolAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateNodeSelectorTerms(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PoolAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution) contextValidateNodeSelectorTerms(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.NodeSelectorTerms); i++ {
+
+		if m.NodeSelectorTerms[i] != nil {
+			if err := m.NodeSelectorTerms[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("nodeAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution" + "." + "nodeSelectorTerms" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 // MarshalBinary interface implementation
 func (m *PoolAffinityNodeAffinityRequiredDuringSchedulingIgnoredDuringExecution) MarshalBinary() ([]byte, error) {
 	if m == nil {
@@ -406,7 +576,6 @@ func (m *PoolAffinityPodAffinity) Validate(formats strfmt.Registry) error {
 }
 
 func (m *PoolAffinityPodAffinity) validatePreferredDuringSchedulingIgnoredDuringExecution(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.PreferredDuringSchedulingIgnoredDuringExecution) { // not required
 		return nil
 	}
@@ -431,7 +600,6 @@ func (m *PoolAffinityPodAffinity) validatePreferredDuringSchedulingIgnoredDuring
 }
 
 func (m *PoolAffinityPodAffinity) validateRequiredDuringSchedulingIgnoredDuringExecution(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.RequiredDuringSchedulingIgnoredDuringExecution) { // not required
 		return nil
 	}
@@ -443,6 +611,60 @@ func (m *PoolAffinityPodAffinity) validateRequiredDuringSchedulingIgnoredDuringE
 
 		if m.RequiredDuringSchedulingIgnoredDuringExecution[i] != nil {
 			if err := m.RequiredDuringSchedulingIgnoredDuringExecution[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("podAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this pool affinity pod affinity based on the context it is used
+func (m *PoolAffinityPodAffinity) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidatePreferredDuringSchedulingIgnoredDuringExecution(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRequiredDuringSchedulingIgnoredDuringExecution(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PoolAffinityPodAffinity) contextValidatePreferredDuringSchedulingIgnoredDuringExecution(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.PreferredDuringSchedulingIgnoredDuringExecution); i++ {
+
+		if m.PreferredDuringSchedulingIgnoredDuringExecution[i] != nil {
+			if err := m.PreferredDuringSchedulingIgnoredDuringExecution[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("podAffinity" + "." + "preferredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *PoolAffinityPodAffinity) contextValidateRequiredDuringSchedulingIgnoredDuringExecution(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.RequiredDuringSchedulingIgnoredDuringExecution); i++ {
+
+		if m.RequiredDuringSchedulingIgnoredDuringExecution[i] != nil {
+			if err := m.RequiredDuringSchedulingIgnoredDuringExecution[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("podAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
 				}
@@ -532,6 +754,34 @@ func (m *PoolAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionI
 	return nil
 }
 
+// ContextValidate validate this pool affinity pod affinity preferred during scheduling ignored during execution items0 based on the context it is used
+func (m *PoolAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidatePodAffinityTerm(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PoolAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) contextValidatePodAffinityTerm(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.PodAffinityTerm != nil {
+		if err := m.PodAffinityTerm.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("podAffinityTerm")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 // MarshalBinary interface implementation
 func (m *PoolAffinityPodAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) MarshalBinary() ([]byte, error) {
 	if m == nil {
@@ -581,7 +831,6 @@ func (m *PoolAffinityPodAntiAffinity) Validate(formats strfmt.Registry) error {
 }
 
 func (m *PoolAffinityPodAntiAffinity) validatePreferredDuringSchedulingIgnoredDuringExecution(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.PreferredDuringSchedulingIgnoredDuringExecution) { // not required
 		return nil
 	}
@@ -606,7 +855,6 @@ func (m *PoolAffinityPodAntiAffinity) validatePreferredDuringSchedulingIgnoredDu
 }
 
 func (m *PoolAffinityPodAntiAffinity) validateRequiredDuringSchedulingIgnoredDuringExecution(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.RequiredDuringSchedulingIgnoredDuringExecution) { // not required
 		return nil
 	}
@@ -618,6 +866,60 @@ func (m *PoolAffinityPodAntiAffinity) validateRequiredDuringSchedulingIgnoredDur
 
 		if m.RequiredDuringSchedulingIgnoredDuringExecution[i] != nil {
 			if err := m.RequiredDuringSchedulingIgnoredDuringExecution[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("podAntiAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this pool affinity pod anti affinity based on the context it is used
+func (m *PoolAffinityPodAntiAffinity) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidatePreferredDuringSchedulingIgnoredDuringExecution(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRequiredDuringSchedulingIgnoredDuringExecution(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PoolAffinityPodAntiAffinity) contextValidatePreferredDuringSchedulingIgnoredDuringExecution(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.PreferredDuringSchedulingIgnoredDuringExecution); i++ {
+
+		if m.PreferredDuringSchedulingIgnoredDuringExecution[i] != nil {
+			if err := m.PreferredDuringSchedulingIgnoredDuringExecution[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("podAntiAffinity" + "." + "preferredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *PoolAffinityPodAntiAffinity) contextValidateRequiredDuringSchedulingIgnoredDuringExecution(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.RequiredDuringSchedulingIgnoredDuringExecution); i++ {
+
+		if m.RequiredDuringSchedulingIgnoredDuringExecution[i] != nil {
+			if err := m.RequiredDuringSchedulingIgnoredDuringExecution[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("podAntiAffinity" + "." + "requiredDuringSchedulingIgnoredDuringExecution" + "." + strconv.Itoa(i))
 				}
@@ -702,6 +1004,34 @@ func (m *PoolAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecut
 
 	if err := validate.Required("weight", "body", m.Weight); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this pool affinity pod anti affinity preferred during scheduling ignored during execution items0 based on the context it is used
+func (m *PoolAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidatePodAffinityTerm(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PoolAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecutionItems0) contextValidatePodAffinityTerm(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.PodAffinityTerm != nil {
+		if err := m.PodAffinityTerm.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("podAffinityTerm")
+			}
+			return err
+		}
 	}
 
 	return nil

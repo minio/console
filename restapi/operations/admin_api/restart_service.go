@@ -48,7 +48,7 @@ func NewRestartService(ctx *middleware.Context, handler RestartServiceHandler) *
 	return &RestartService{Context: ctx, Handler: handler}
 }
 
-/*RestartService swagger:route POST /service/restart AdminAPI restartService
+/* RestartService swagger:route POST /service/restart AdminAPI restartService
 
 Restart Service
 
@@ -61,17 +61,16 @@ type RestartService struct {
 func (o *RestartService) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewRestartServiceParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *RestartService) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

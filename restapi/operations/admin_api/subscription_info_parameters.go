@@ -30,7 +30,8 @@ import (
 )
 
 // NewSubscriptionInfoParams creates a new SubscriptionInfoParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewSubscriptionInfoParams() SubscriptionInfoParams {
 
 	return SubscriptionInfoParams{}

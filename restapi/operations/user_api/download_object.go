@@ -48,7 +48,7 @@ func NewDownloadObject(ctx *middleware.Context, handler DownloadObjectHandler) *
 	return &DownloadObject{Context: ctx, Handler: handler}
 }
 
-/*DownloadObject swagger:route GET /buckets/{bucket_name}/objects/download UserAPI downloadObject
+/* DownloadObject swagger:route GET /buckets/{bucket_name}/objects/download UserAPI downloadObject
 
 Download Object
 
@@ -61,17 +61,16 @@ type DownloadObject struct {
 func (o *DownloadObject) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewDownloadObjectParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *DownloadObject) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

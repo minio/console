@@ -892,7 +892,7 @@ func Test_putObjectRetention(t *testing.T) {
 				opts: &models.PutObjectRetentionRequest{
 					Expires:          swag.String("2006-01-02T15:04:05Z"),
 					GovernanceBypass: false,
-					Mode:             models.ObjectRetentionModeGovernance,
+					Mode:             models.NewObjectRetentionMode(models.ObjectRetentionModeGovernance),
 				},
 				retentionFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
 					return nil
@@ -909,7 +909,7 @@ func Test_putObjectRetention(t *testing.T) {
 				opts: &models.PutObjectRetentionRequest{
 					Expires:          swag.String("2006-01-02T15:04:05Z"),
 					GovernanceBypass: false,
-					Mode:             models.ObjectRetentionModeCompliance,
+					Mode:             models.NewObjectRetentionMode(models.ObjectRetentionModeCompliance),
 				},
 				retentionFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
 					return nil
@@ -939,7 +939,7 @@ func Test_putObjectRetention(t *testing.T) {
 				opts: &models.PutObjectRetentionRequest{
 					Expires:          nil,
 					GovernanceBypass: false,
-					Mode:             models.ObjectRetentionModeCompliance,
+					Mode:             models.NewObjectRetentionMode(models.ObjectRetentionModeCompliance),
 				},
 				retentionFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
 					return nil
@@ -956,7 +956,7 @@ func Test_putObjectRetention(t *testing.T) {
 				opts: &models.PutObjectRetentionRequest{
 					Expires:          swag.String("invalidtime"),
 					GovernanceBypass: false,
-					Mode:             models.ObjectRetentionModeCompliance,
+					Mode:             models.NewObjectRetentionMode(models.ObjectRetentionModeCompliance),
 				},
 				retentionFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
 					return nil
@@ -973,7 +973,7 @@ func Test_putObjectRetention(t *testing.T) {
 				opts: &models.PutObjectRetentionRequest{
 					Expires:          swag.String("2006-01-02T15:04:05Z"),
 					GovernanceBypass: false,
-					Mode:             models.ObjectRetentionModeCompliance,
+					Mode:             models.NewObjectRetentionMode(models.ObjectRetentionModeCompliance),
 				},
 				retentionFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
 					return errors.New("new Error")

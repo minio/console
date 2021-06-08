@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -97,7 +99,6 @@ func (m *Pool) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Pool) validateAffinity(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Affinity) { // not required
 		return nil
 	}
@@ -115,7 +116,6 @@ func (m *Pool) validateAffinity(formats strfmt.Registry) error {
 }
 
 func (m *Pool) validateResources(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Resources) { // not required
 		return nil
 	}
@@ -142,7 +142,6 @@ func (m *Pool) validateServers(formats strfmt.Registry) error {
 }
 
 func (m *Pool) validateTolerations(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Tolerations) { // not required
 		return nil
 	}
@@ -179,6 +178,86 @@ func (m *Pool) validateVolumesPerServer(formats strfmt.Registry) error {
 
 	if err := validate.Required("volumes_per_server", "body", m.VolumesPerServer); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this pool based on the context it is used
+func (m *Pool) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateAffinity(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateResources(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTolerations(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateVolumeConfiguration(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Pool) contextValidateAffinity(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Affinity != nil {
+		if err := m.Affinity.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("affinity")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Pool) contextValidateResources(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Resources != nil {
+		if err := m.Resources.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("resources")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Pool) contextValidateTolerations(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := m.Tolerations.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("tolerations")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *Pool) contextValidateVolumeConfiguration(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.VolumeConfiguration != nil {
+		if err := m.VolumeConfiguration.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("volume_configuration")
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -241,6 +320,11 @@ func (m *PoolVolumeConfiguration) validateSize(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this pool volume configuration based on context it is used
+func (m *PoolVolumeConfiguration) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

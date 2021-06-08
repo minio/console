@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -69,7 +70,6 @@ func (m *IdpConfiguration) Validate(formats strfmt.Registry) error {
 }
 
 func (m *IdpConfiguration) validateActiveDirectory(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ActiveDirectory) { // not required
 		return nil
 	}
@@ -87,7 +87,6 @@ func (m *IdpConfiguration) validateActiveDirectory(formats strfmt.Registry) erro
 }
 
 func (m *IdpConfiguration) validateKeys(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Keys) { // not required
 		return nil
 	}
@@ -112,13 +111,80 @@ func (m *IdpConfiguration) validateKeys(formats strfmt.Registry) error {
 }
 
 func (m *IdpConfiguration) validateOidc(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Oidc) { // not required
 		return nil
 	}
 
 	if m.Oidc != nil {
 		if err := m.Oidc.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("oidc")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this idp configuration based on the context it is used
+func (m *IdpConfiguration) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateActiveDirectory(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateKeys(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOidc(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *IdpConfiguration) contextValidateActiveDirectory(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.ActiveDirectory != nil {
+		if err := m.ActiveDirectory.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("active_directory")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *IdpConfiguration) contextValidateKeys(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Keys); i++ {
+
+		if m.Keys[i] != nil {
+			if err := m.Keys[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("keys" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *IdpConfiguration) contextValidateOidc(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Oidc != nil {
+		if err := m.Oidc.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("oidc")
 			}
@@ -229,6 +295,11 @@ func (m *IdpConfigurationActiveDirectory) validateUsernameFormat(formats strfmt.
 	return nil
 }
 
+// ContextValidate validates this idp configuration active directory based on context it is used
+func (m *IdpConfigurationActiveDirectory) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
 // MarshalBinary interface implementation
 func (m *IdpConfigurationActiveDirectory) MarshalBinary() ([]byte, error) {
 	if m == nil {
@@ -294,6 +365,11 @@ func (m *IdpConfigurationKeysItems0) validateSecretKey(formats strfmt.Registry) 
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this idp configuration keys items0 based on context it is used
+func (m *IdpConfigurationKeysItems0) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 
@@ -379,6 +455,11 @@ func (m *IdpConfigurationOidc) validateURL(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this idp configuration oidc based on context it is used
+func (m *IdpConfigurationOidc) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

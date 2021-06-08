@@ -48,7 +48,7 @@ func NewRemovePolicy(ctx *middleware.Context, handler RemovePolicyHandler) *Remo
 	return &RemovePolicy{Context: ctx, Handler: handler}
 }
 
-/*RemovePolicy swagger:route DELETE /policy AdminAPI removePolicy
+/* RemovePolicy swagger:route DELETE /policy AdminAPI removePolicy
 
 Remove policy
 
@@ -61,17 +61,16 @@ type RemovePolicy struct {
 func (o *RemovePolicy) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewRemovePolicyParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *RemovePolicy) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

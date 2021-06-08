@@ -34,7 +34,8 @@ import (
 )
 
 // NewGetMaxAllocatableMemParams creates a new GetMaxAllocatableMemParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewGetMaxAllocatableMemParams() GetMaxAllocatableMemParams {
 
 	return GetMaxAllocatableMemParams{}
@@ -72,7 +73,6 @@ func (o *GetMaxAllocatableMemParams) BindRequest(r *http.Request, route *middlew
 	if err := o.bindNumNodes(qNumNodes, qhkNumNodes, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -91,6 +91,7 @@ func (o *GetMaxAllocatableMemParams) bindNumNodes(rawData []string, hasKey bool,
 
 	// Required: true
 	// AllowEmptyValue: false
+
 	if err := validate.RequiredString("num_nodes", "query", raw); err != nil {
 		return err
 	}
