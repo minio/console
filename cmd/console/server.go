@@ -23,6 +23,8 @@ import (
 	"path/filepath"
 	"time"
 
+	xcerts "github.com/minio/pkg/certs"
+
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
 	"github.com/minio/cli"
@@ -135,9 +137,12 @@ func loadAllCerts(ctx *cli.Context) error {
 	if err = certs.MkdirAllIgnorePerm(certs.GlobalCertsCADir.Get()); err != nil {
 		return fmt.Errorf("unable to create certs CA directory at %s: with %w", certs.GlobalCertsCADir.Get(), err)
 	}
-
+	var manager *xcerts.Manager
 	// load the certificates and the CAs
-	restapi.GlobalRootCAs, restapi.GlobalPublicCerts, restapi.GlobalTLSCertsManager = certs.GetAllCertificatesAndCAs()
+	restapi.GlobalRootCAs, restapi.GlobalPublicCerts, manager = certs.GetAllCertificatesAndCAs()
+	restapi.GlobalTLSCertsManager = &certs.TLSCertsManager{
+		Manager: manager,
+	}
 
 	{
 		// TLS flags from swagger server, used to support VMware vsphere operator version.
@@ -146,8 +151,7 @@ func loadAllCerts(ctx *cli.Context) error {
 		swaggerServerCACertificate := ctx.String("tls-ca")
 		// load tls cert and key from swagger server tls-certificate and tls-key flags
 		if swaggerServerCertificate != "" && swaggerServerCertificateKey != "" {
-			if err = certs.AddCertificate(context.Background(),
-				restapi.GlobalTLSCertsManager, swaggerServerCertificate, swaggerServerCertificateKey); err != nil {
+			if err = restapi.GlobalTLSCertsManager.AddCertificate(context.Background(), swaggerServerCertificate, swaggerServerCertificateKey); err != nil {
 				return err
 			}
 			if x509Certs, err := certs.ParsePublicCertFile(swaggerServerCertificate); err == nil {
@@ -170,8 +174,8 @@ func loadAllCerts(ctx *cli.Context) error {
 // StartServer starts the console service
 func StartServer(ctx *cli.Context) error {
 	if err := loadAllCerts(ctx); err != nil {
+		// Log this as a warning and continue running console without TLS certificates
 		restapi.LogError("Unable to load certs: %v", err)
-		return err
 	}
 
 	var rctx restapi.Context
