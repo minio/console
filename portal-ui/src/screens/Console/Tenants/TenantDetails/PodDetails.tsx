@@ -16,7 +16,6 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import {
   actionsTray,
@@ -28,29 +27,15 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import Grid from "@material-ui/core/Grid";
 import {
-  Button,
-  IconButton,
-  Menu,
-  MenuItem,
   TextField,
 } from "@material-ui/core";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import Paper from "@material-ui/core/Paper";
 import api from "../../../../common/api";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import { ILog, ITenant } from "../ListTenants/types";
-import { LicenseInfo } from "../../License/types";
 import { Link } from "react-router-dom";
 import { setErrorSnackMessage } from "../../../../actions";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import TenantYAML from "./TenantYAML";
-import SubnetLicenseTenant from "./SubnetLicenseTenant";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
-import history from "../../../../history";
-import { LogMessage } from "../../Logs/types";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -165,8 +150,6 @@ const TenantDetails = ({
   match,
   setErrorSnackMessage,
 }: ITenantDetailsProps) => {
-  const [selectedTab, setSelectedTab] = useState<number>(0);
-  const [log, setLog] = useState<string>("");
   const [highlight, setHighlight] = useState<string>("");
   const [logLines, setLogLines] = useState<string[]>([]);
   const tenantNamespace = match.params["tenantNamespace"];
@@ -225,13 +208,12 @@ const TenantDetails = ({
         `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/pods/${podName}`
       )
       .then((res: string) => {
-        setLog(res);
         setLogLines(res.split("\n"));
       })
       .catch((err) => {
         setErrorSnackMessage(err);
       });
-  }, [tenantNamespace, tenantName, podName]);
+  }, [tenantNamespace, tenantName, podName, setErrorSnackMessage]);
 
   return (
     <React.Fragment>
