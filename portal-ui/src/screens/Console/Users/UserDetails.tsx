@@ -44,7 +44,7 @@ import history from "../../../history";
 import UserServiceAccountsPanel from "./UserServiceAccountsPanel";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import ChangeUserPasswordModal from "../Account/ChangeUserPasswordModal";
-import DeleteUser from "./DeleteUser";
+import DeleteUserString from "./DeleteUserString";
 import { usersSort } from "../../../utils/sortFunctions";
 
 const styles = (theme: Theme) =>
@@ -147,8 +147,11 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
   const [changeUserPasswordModalOpen, setChangeUserPasswordModalOpen] =
     useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  
 
   const userName = match.params["userName"];
+
 
   const changeUserPassword = () => {
     setAnchorEl(null);
@@ -157,7 +160,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
 
   const deleteUser = () => {
     setAnchorEl(null);
-    setDeleteOpen(true);
+    setDeleteOpen(true);                                             
   };
 
   const getUserInformation = useCallback(() => {
@@ -186,6 +189,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
         }
         setCurrentPolicies(currentPolicies);
         setEnabled(res.status === "enabled");
+        setSelectedUser(res.user)
         setLoading(false);
       })
       .catch((err) => {
@@ -232,7 +236,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const handleTenantMenu = (event: any) => {
+  const handleUserMenu = (event: any) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -274,9 +278,9 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
         />
       )}
       {deleteOpen && (
-        <DeleteUser
+        <DeleteUserString
           deleteOpen={deleteOpen}
-          selectedUser={userName}
+          userName={userName}
           closeDeleteModalAndRefresh={(refresh: boolean) => {
             closeDeleteModalAndRefresh(refresh);
           }}
@@ -318,7 +322,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                       aria-label="more"
                       aria-controls="long-menu"
                       aria-haspopup="true"
-                      onClick={handleTenantMenu}
+                      onClick={handleUserMenu}
                     >
                       <MoreVertIcon />
                     </IconButton>
@@ -343,6 +347,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
               </Grid>
             </Grid>
           </Grid>
+          <h1>{selectedUser != null && selectedUser.id}</h1>
           <Grid item xs={12}>
             <br />
           </Grid>

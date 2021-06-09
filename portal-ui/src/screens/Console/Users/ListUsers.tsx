@@ -37,7 +37,6 @@ import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import SetPolicy from "../Policies/SetPolicy";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import history from "../../../history";
-import ChangeUserPasswordModal from "../Account/ChangeUserPasswordModal";
 
 const styles = (theme: Theme) =>
   createStyles({
