@@ -63,14 +63,14 @@ const PoolsSummary = ({
   classes,
   tenant,
   loadingTenant,
-  setTenantDetailsLoad
+  setTenantDetailsLoad,
 }: IPoolsSummary) => {
   const [pools, setPools] = useState<IPool[]>([]);
   const [addPoolOpen, setAddPool] = useState<boolean>(false);
   const [filter, setFilter] = useState<string>("");
 
   useEffect(() => {
-    if(tenant) {
+    if (tenant) {
       const resPools = !tenant.pools ? [] : tenant.pools;
       setPools(resPools);
     }

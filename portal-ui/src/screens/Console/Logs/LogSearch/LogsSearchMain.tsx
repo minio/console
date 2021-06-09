@@ -130,8 +130,9 @@ const LogsSearchMain = ({ classes, setErrorSnackMessage }: ILogSearchProps) => {
   const [object, setObject] = useState<string>("");
   const [requestID, setRequestID] = useState<string>("");
   const [responseStatus, setResponseStatus] = useState<string>("");
-  const [sortOrder, setSortOrder] =
-    useState<"ASC" | "DESC" | undefined>("DESC");
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC" | undefined>(
+    "DESC"
+  );
   const [columnsShown, setColumnsShown] = useState<string[]>([
     "time",
     "api_name",
