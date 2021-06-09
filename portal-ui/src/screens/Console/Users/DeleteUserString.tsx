@@ -26,9 +26,9 @@ import {
   LinearProgress,
 } from "@material-ui/core";
 import api from "../../../common/api";
-import { UsersList } from "./types";
 import { setErrorSnackMessage } from "../../../actions";
 import history from "../../../history";
+import { User, UsersList } from "./types";
 
 interface IDeleteUserProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
