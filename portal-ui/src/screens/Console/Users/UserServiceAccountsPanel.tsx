@@ -61,8 +61,9 @@ const UserServiceAccountsPanel = ({
   const [filter, setFilter] = useState<string>("");
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
-  const [selectedServiceAccount, setSelectedServiceAccount] =
-    useState<string | null>(null);
+  const [selectedServiceAccount, setSelectedServiceAccount] = useState<
+    string | null
+  >(null);
   const [showNewCredentials, setShowNewCredentials] = useState<boolean>(false);
   const [newServiceAccount, setNewServiceAccount] =
     useState<NewServiceAccount | null>(null);

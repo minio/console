@@ -91,8 +91,6 @@ const ListUsers = ({ classes, setErrorSnackMessage }: IUsersProps) => {
   const [filter, setFilter] = useState<string>("");
   const [checkedUsers, setCheckedUsers] = useState<string[]>([]);
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
-  const [ChangeUserPasswordModalOpen, setChangeUserPasswordModalOpen] =
-    useState<boolean>(false);
 
   const fetchRecords = useCallback(() => {
     setLoading(true);
@@ -168,14 +166,8 @@ const ListUsers = ({ classes, setErrorSnackMessage }: IUsersProps) => {
 
   const userLoggedIn = atob(localStorage.getItem("userLoggedIn") || "");
 
-  const setNewPW = (selectionElement: any): void => {
-    setChangeUserPasswordModalOpen(true);
-    setSelectedUser(selectionElement);
-  };
-
   const tableActions = [
     { type: "view", onClick: viewAction },
-    { type: "edit", onClick: setNewPW },
     {
       type: "delete",
       onClick: deleteAction,
@@ -221,13 +213,6 @@ const ListUsers = ({ classes, setErrorSnackMessage }: IUsersProps) => {
           closeModalAndRefresh={(close: boolean) => {
             closeAddGroupBulk(close);
           }}
-        />
-      )}
-      {ChangeUserPasswordModalOpen && (
-        <ChangeUserPasswordModal
-          open={ChangeUserPasswordModalOpen}
-          closeModal={() => setChangeUserPasswordModalOpen(false)}
-          selectedUser={selectedUser}
         />
       )}
       <PageHeader label={"Users"} />
