@@ -67,6 +67,11 @@ const ChangeUserPassword = ({
       return;
     }
     setLoading(true);
+ 
+    if (newPassword.length < 8) {
+      setModalErrorSnackMessage("Passwords must be at least 8 characters long");
+      return;
+    }
 
     let request: ChangeUserPasswordRequest = {
       selectedUser: userName,
