@@ -148,10 +148,8 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
     useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  
 
   const userName = match.params["userName"];
-
 
   const changeUserPassword = () => {
     setAnchorEl(null);
@@ -160,7 +158,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
 
   const deleteUser = () => {
     setAnchorEl(null);
-    setDeleteOpen(true);                                             
+    setDeleteOpen(true);
   };
 
   const getUserInformation = useCallback(() => {
@@ -189,7 +187,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
         }
         setCurrentPolicies(currentPolicies);
         setEnabled(res.status === "enabled");
-        setSelectedUser(res.user)
+        setSelectedUser(res.user);
         setLoading(false);
       })
       .catch((err) => {
@@ -289,7 +287,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
       {changeUserPasswordModalOpen && (
         <ChangeUserPasswordModal
           open={changeUserPasswordModalOpen}
-          selectedUser={userName}
+          userName={userName}
           closeModal={() => setChangeUserPasswordModalOpen(false)}
         />
       )}
