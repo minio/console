@@ -28,6 +28,7 @@ import {
 import api from "../../../common/api";
 import { User, UsersList } from "./types";
 import { setErrorSnackMessage } from "../../../actions";
+import history from "../../../history";
 
 interface IDeleteUserProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -100,6 +101,7 @@ const DeleteUserString = ({
           onClick={() => {
             removeRecord();
             closeDeleteModalAndRefresh(true);
+            history.push(`/users/`);
           }}
           color="secondary"
           autoFocus
