@@ -2171,6 +2171,26 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+  
+  /namespace:
+    post:
+      summary: Creates a new Namespace with given information
+      operationId: CreateNamespace
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/namespace"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
 
   /namespaces/{namespace}/tenants:
     get:
@@ -5218,5 +5238,12 @@ definitions:
       type: array
       items:
         type: string
-
+  
+  namespace:
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        type: string
 

@@ -114,6 +114,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPICreateBucketEventHandler: user_api.CreateBucketEventHandlerFunc(func(params user_api.CreateBucketEventParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.CreateBucketEvent has not yet been implemented")
 		}),
+		AdminAPICreateNamespaceHandler: admin_api.CreateNamespaceHandlerFunc(func(params admin_api.CreateNamespaceParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.CreateNamespace has not yet been implemented")
+		}),
 		UserAPICreateServiceAccountHandler: user_api.CreateServiceAccountHandlerFunc(func(params user_api.CreateServiceAccountParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.CreateServiceAccount has not yet been implemented")
 		}),
@@ -498,6 +501,8 @@ type ConsoleAPI struct {
 	AdminAPIConfigInfoHandler admin_api.ConfigInfoHandler
 	// UserAPICreateBucketEventHandler sets the operation handler for the create bucket event operation
 	UserAPICreateBucketEventHandler user_api.CreateBucketEventHandler
+	// AdminAPICreateNamespaceHandler sets the operation handler for the create namespace operation
+	AdminAPICreateNamespaceHandler admin_api.CreateNamespaceHandler
 	// UserAPICreateServiceAccountHandler sets the operation handler for the create service account operation
 	UserAPICreateServiceAccountHandler user_api.CreateServiceAccountHandler
 	// AdminAPICreateTenantHandler sets the operation handler for the create tenant operation
@@ -830,6 +835,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPICreateBucketEventHandler == nil {
 		unregistered = append(unregistered, "user_api.CreateBucketEventHandler")
+	}
+	if o.AdminAPICreateNamespaceHandler == nil {
+		unregistered = append(unregistered, "admin_api.CreateNamespaceHandler")
 	}
 	if o.UserAPICreateServiceAccountHandler == nil {
 		unregistered = append(unregistered, "user_api.CreateServiceAccountHandler")
@@ -1294,6 +1302,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/buckets/{bucket_name}/events"] = user_api.NewCreateBucketEvent(o.context, o.UserAPICreateBucketEventHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/namespace"] = admin_api.NewCreateNamespace(o.context, o.AdminAPICreateNamespaceHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
