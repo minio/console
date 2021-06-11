@@ -70,6 +70,7 @@ const ChangeUserPassword = ({
  
     if (newPassword.length < 8) {
       setModalErrorSnackMessage("Passwords must be at least 8 characters long");
+      setLoading(false);
       return;
     }
 
