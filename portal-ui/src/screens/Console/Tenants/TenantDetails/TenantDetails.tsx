@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 import { Link, Redirect, Route, Router, Switch } from "react-router-dom";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { IconButton, Menu, MenuItem } from "@material-ui/core";
-import get from 'lodash/get';
+import get from "lodash/get";
 import Grid from "@material-ui/core/Grid";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -146,18 +146,18 @@ const TenantDetails = ({
   ]);
 
   useEffect(() => {
-    const path = get(match, 'path', '/');
-    const splitSections = path.split('/');
-    const section=splitSections[splitSections.length - 1];
+    const path = get(match, "path", "/");
+    const splitSections = path.split("/");
+    const section = splitSections[splitSections.length - 1];
 
-    switch(section) {
+    switch (section) {
       case "pools":
       case "pods":
       case "license":
         setTenantTab(section);
         break;
       default:
-        setTenantTab('summary');
+        setTenantTab("summary");
     }
   }, [match, setTenantTab]);
 
