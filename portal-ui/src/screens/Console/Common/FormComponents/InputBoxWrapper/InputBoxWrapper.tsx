@@ -84,6 +84,9 @@ const styles = (theme: Theme) =>
         maxWidth: 15,
         maxHeight: 15,
       },
+      "&.withLabel": {
+        top: 27,
+      },
     },
   });
 
@@ -181,7 +184,11 @@ const InputBoxWrapper = ({
           />
         </div>
         {overlayIcon && (
-          <div className={classes.overlayAction}>
+          <div
+            className={`${classes.overlayAction} ${
+              label !== "" ? "withLabel" : ""
+            }`}
+          >
             <IconButton
               onClick={
                 overlayAction

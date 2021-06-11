@@ -45,6 +45,8 @@ import api from "../../../../../common/api";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import AddIcon from "../../../../../icons/AddIcon";
+import AddNamespaceModal from "./helpers/AddNamespaceModal";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -88,6 +90,8 @@ const NameTenant = ({
   const [emptyNamespace, setEmptyNamespace] = useState<boolean>(true);
   const [loadingNamespaceInfo, setLoadingNamespaceInfo] =
     useState<boolean>(false);
+  const [showCreateButton, setShowCreateButton] = useState<boolean>(false);
+  const [openAddNSConfirm, setOpenAddNSConfirm] = useState<boolean>(false);
 
   // Common
   const updateField = useCallback(
@@ -99,6 +103,7 @@ const NameTenant = ({
 
   // Storage classes retrieval
   const getNamespaceInformation = useCallback(() => {
+    setShowCreateButton(false);
     updateField("selectedStorageClass", "");
 
     setStorageClassesList([]);
@@ -142,6 +147,7 @@ const NameTenant = ({
           })
           .catch((err: any) => {
             setLoadingNamespaceInfo(false);
+            setShowCreateButton(true);
             console.error("Namespace error: ", err);
           });
       })
@@ -230,8 +236,27 @@ const NameTenant = ({
     setValidationErrors(clearValidationError(validationErrors, fieldName));
   };
 
+  const addNamespace = () => {
+    setOpenAddNSConfirm(true);
+  };
+
+  const closeAddNamespace = (refresh: boolean) => {
+    setOpenAddNSConfirm(false);
+
+    if (refresh) {
+      debounceNamespace();
+    }
+  };
+
   return (
     <React.Fragment>
+      {openAddNSConfirm && (
+        <AddNamespaceModal
+          addNamespaceOpen={openAddNSConfirm}
+          closeAddNamespaceModalAndRefresh={closeAddNamespace}
+          namespace={namespace}
+        />
+      )}
       <div className={classes.headerElement}>
         <h3 className={classes.h3Section}>Name Tenant</h3>
         <span className={classes.descriptionText}>
@@ -263,6 +288,8 @@ const NameTenant = ({
           label="Namespace"
           value={namespace}
           error={validationErrors["namespace"] || ""}
+          overlayIcon={showCreateButton ? <AddIcon /> : null}
+          overlayAction={addNamespace}
           required
         />
       </Grid>
