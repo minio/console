@@ -32,6 +32,7 @@ import { setModalErrorSnackMessage } from "../../../../actions";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import AutocompleteWrapper from "../../Common/FormComponents/AutocompleteWrapper/AutocompleteWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -170,9 +171,9 @@ const AddEvent = ({
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
             <Grid item xs={12}>
-              <SelectWrapper
-                onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                  setArn(e.target.value as string);
+              <AutocompleteWrapper
+                onChange={(value: string) => {
+                  setArn(value);
                 }}
                 id="select-access-policy"
                 name="select-access-policy"
