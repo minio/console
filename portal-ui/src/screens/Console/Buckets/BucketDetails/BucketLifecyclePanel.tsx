@@ -154,15 +154,12 @@ const BucketLifecyclePanel = ({
     },
   ];
 
-  const filteredRecords = lifecycleRecords.filter(
-    (item: LifeCycleItem) => {
-      if (item.id.toLocaleLowerCase().includes(filter.toLowerCase()))
-      {
-        return true;
-      }
-      return false;
+  const filteredRecords = lifecycleRecords.filter((item: LifeCycleItem) => {
+    if (item.id.toLocaleLowerCase().includes(filter.toLowerCase())) {
+      return true;
     }
-  );
+    return false;
+  });
 
   return (
     <Fragment>

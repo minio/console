@@ -263,7 +263,9 @@ const TenantSummary = ({
           </Grid>
           <Grid item xs={4}>
             {loadingTenant ? (
-              <div className={classes.centerAlign}><CircularProgress /></div>
+              <div className={classes.centerAlign}>
+                <CircularProgress />
+              </div>
             ) : (
               <Fragment>
                 <UsageBarWrapper

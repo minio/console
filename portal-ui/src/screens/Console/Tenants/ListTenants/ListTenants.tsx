@@ -216,7 +216,7 @@ const ListTenants = ({
   };
 
   const healthStatusToClass = (health_status: string) => {
-    switch(health_status) {
+    switch (health_status) {
       case "red":
         return classes.redState;
       case "yellow":

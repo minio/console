@@ -904,7 +904,11 @@ const LicenseModal = ({ classes, open, closeModal }: ILicenseModalProps) => {
             school, if any, to sign a &quot;copyright disclaimer&quot; for the
             program, if necessary. For more information on this, and how to
             apply and follow the GNU AGPL, see &lt;
-            <a target="_blank" href="https://www.gnu.org/licenses/" rel="noreferrer">
+            <a
+              target="_blank"
+              href="https://www.gnu.org/licenses/"
+              rel="noreferrer"
+            >
               https://www.gnu.org/licenses/
             </a>
             &gt;.
