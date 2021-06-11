@@ -44,7 +44,7 @@ const styles = (theme: Theme) =>
 interface IChangeUserPasswordProps {
   classes: any;
   open: boolean;
-  selectedUser: User | null;
+  userName: string;
   closeModal: () => void;
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
 }
@@ -52,7 +52,7 @@ interface IChangeUserPasswordProps {
 const ChangeUserPassword = ({
   classes,
   open,
-  selectedUser,
+  userName,
   closeModal,
   setModalErrorSnackMessage,
 }: IChangeUserPasswordProps) => {
@@ -67,9 +67,15 @@ const ChangeUserPassword = ({
       return;
     }
     setLoading(true);
+ 
+    if (newPassword.length < 8) {
+      setModalErrorSnackMessage("Passwords must be at least 8 characters long");
+      setLoading(false);
+      return;
+    }
 
     let request: ChangeUserPasswordRequest = {
-      selectedUser: String(selectedUser?.accessKey),
+      selectedUser: userName,
       newSecretKey: newPassword,
     };
 
@@ -110,7 +116,7 @@ const ChangeUserPassword = ({
       >
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
-            <h3>Change password for {selectedUser?.accessKey}</h3>
+            <h3>Change password for {userName}</h3>
             <Grid item xs={12}>
               <InputBoxWrapper
                 id="new-password"
