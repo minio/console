@@ -29,7 +29,11 @@ import {
   Theme,
   withStyles,
 } from "@material-ui/core/styles";
-import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
+import {
+  fieldBasic,
+  inputFieldStyles,
+  tooltipHelper,
+} from "../common/styleLibrary";
 import HelpIcon from "../../../../../icons/HelpIcon";
 
 interface InputBoxProps {
@@ -85,31 +89,7 @@ const styles = (theme: Theme) =>
 
 const inputStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      borderRadius: 0,
-      "&::before": {
-        borderColor: "#9c9c9c",
-      },
-    },
-    disabled: {
-      "&.MuiInput-underline::before": {
-        borderColor: "#eaeaea",
-        borderBottomStyle: "solid",
-      },
-    },
-    input: {
-      padding: "15px 30px 10px 5px",
-      color: "#393939",
-      fontSize: 13,
-      fontWeight: 600,
-      "&:placeholder": {
-        color: "#393939",
-        opacity: 1,
-      },
-    },
-    error: {
-      color: "#b53b4b",
-    },
+    ...inputFieldStyles,
   })
 );
 

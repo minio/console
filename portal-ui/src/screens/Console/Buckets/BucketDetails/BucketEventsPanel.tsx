@@ -105,7 +105,7 @@ const BucketEventsPanel = ({
   const tableActions = [{ type: "delete", onClick: confirmDeleteEvent }];
 
   const filteredRecords = records.filter((item: BucketEvent) => {
-    if(item.arn.toLowerCase().includes(filter.toLowerCase())) {
+    if (item.arn.toLowerCase().includes(filter.toLowerCase())) {
       return true;
     }
     return false;

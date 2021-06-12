@@ -230,7 +230,7 @@ export const setTenantDetailsLoad = (loading: boolean) => {
   return {
     type: TENANT_DETAILS_SET_LOADING,
     state: loading,
-  }
+  };
 };
 
 export const setTenantName = (tenantName: string, tenantNamespace: string) => {
@@ -238,19 +238,19 @@ export const setTenantName = (tenantName: string, tenantNamespace: string) => {
     type: TENANT_DETAILS_SET_CURRENT_TENANT,
     name: tenantName,
     namespace: tenantNamespace,
-  }
+  };
 };
 
 export const setTenantInfo = (tenant: ITenant | null) => {
   return {
     type: TENANT_DETAILS_SET_TENANT,
-    tenant
-  }
+    tenant,
+  };
 };
 
 export const setTenantTab = (tab: string) => {
   return {
     type: TENANT_DETAILS_SET_TAB,
     tab,
-  }
+  };
 };
