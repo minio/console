@@ -23,7 +23,7 @@ require (
 	github.com/minio/minio-go/v7 v7.0.11-0.20210517200026-f0518ca447d6
 	github.com/minio/operator v0.0.0-20210604224119-7e256f98cf90
 	github.com/minio/operator/logsearchapi v0.0.0-20210604224119-7e256f98cf90
-	github.com/minio/pkg v1.0.4
+	github.com/minio/pkg v1.0.6
 	github.com/minio/selfupdate v0.3.1
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect

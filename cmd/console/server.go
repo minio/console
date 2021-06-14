@@ -140,13 +140,17 @@ func loadAllCerts(ctx *cli.Context) error {
 	certs.GlobalCertsCADir = &certs.ConfigDir{Path: filepath.Join(certs.GlobalCertsDir.Get(), certs.CertsCADir)}
 	// check if certs and CAs directories exists or can be created
 	if err = certs.MkdirAllIgnorePerm(certs.GlobalCertsCADir.Get()); err != nil {
-		return fmt.Errorf("unable to create certs CA directory at %s: with %w", certs.GlobalCertsCADir.Get(), err)
+		return fmt.Errorf("unable to create certs CA directory at %s: failed with %w", certs.GlobalCertsCADir.Get(), err)
 	}
+
 	var manager *xcerts.Manager
 	// load the certificates and the CAs
-	restapi.GlobalRootCAs, restapi.GlobalPublicCerts, manager = certs.GetAllCertificatesAndCAs()
+	restapi.GlobalRootCAs, restapi.GlobalPublicCerts, manager, err = certs.GetAllCertificatesAndCAs()
 	restapi.GlobalTLSCertsManager = &certs.TLSCertsManager{
 		Manager: manager,
+	}
+	if err != nil {
+		return fmt.Errorf("unable to load certificates at %s: failed with %w", certs.GlobalCertsDir.Get(), err)
 	}
 
 	{
