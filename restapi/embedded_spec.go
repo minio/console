@@ -2440,6 +2440,36 @@ func init() {
         }
       }
     },
+    "/namespace": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Creates a new Namespace with given information",
+        "operationId": "CreateNamespace",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/namespace"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/resourcequotas/{resource-quota-name}": {
       "get": {
         "tags": [
@@ -5641,6 +5671,17 @@ func init() {
           "type": "string"
         },
         "originBucket": {
+          "type": "string"
+        }
+      }
+    },
+    "namespace": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
           "type": "string"
         }
       }
@@ -9764,6 +9805,36 @@ func init() {
         }
       }
     },
+    "/namespace": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Creates a new Namespace with given information",
+        "operationId": "CreateNamespace",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/namespace"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/resourcequotas/{resource-quota-name}": {
       "get": {
         "tags": [
@@ -13593,6 +13664,17 @@ func init() {
           "type": "string"
         },
         "originBucket": {
+          "type": "string"
+        }
+      }
+    },
+    "namespace": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
           "type": "string"
         }
       }
