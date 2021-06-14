@@ -110,7 +110,12 @@ const DeleteServiceAccount = ({
         >
           Cancel
         </Button>
-        <Button onClick={removeRecord} color="secondary" autoFocus>
+        <Button
+          onClick={removeRecord}
+          color="secondary"
+          autoFocus
+          disabled={deleteLoading}
+        >
           Delete
         </Button>
       </DialogActions>
