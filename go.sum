@@ -891,8 +891,9 @@ github.com/minio/operator v0.0.0-20210604224119-7e256f98cf90/go.mod h1:8/mIXK+CF
 github.com/minio/operator/logsearchapi v0.0.0-20210604224119-7e256f98cf90 h1:Qu6j6oE7+QNuq7Kr2DLyVYq3fqMdqFd/T8NAeNp47og=
 github.com/minio/operator/logsearchapi v0.0.0-20210604224119-7e256f98cf90/go.mod h1:R+38Pf3wfm+JMiyLPb/r8OMrBm0vK2hZgUT4y4aYoSY=
 github.com/minio/pkg v1.0.3/go.mod h1:obU54TZ9QlMv0TRaDgQ/JTzf11ZSXxnSfLrm4tMtBP8=
-github.com/minio/pkg v1.0.4 h1:+BmaCENP6BaMm9PsGK6L1L5MKulWDxl4qobvJYf6m/E=
 github.com/minio/pkg v1.0.4/go.mod h1:obU54TZ9QlMv0TRaDgQ/JTzf11ZSXxnSfLrm4tMtBP8=
+github.com/minio/pkg v1.0.6 h1:82cyFqL69nSPjprO0+P2T/Rj0AAEljmpUdFjJhpvzvI=
+github.com/minio/pkg v1.0.6/go.mod h1:obU54TZ9QlMv0TRaDgQ/JTzf11ZSXxnSfLrm4tMtBP8=
 github.com/minio/selfupdate v0.3.1 h1:BWEFSNnrZVMUWXbXIgLDNDjbejkmpAmZvy/nCz1HlEs=
 github.com/minio/selfupdate v0.3.1/go.mod h1:b8ThJzzH7u2MkF6PcIra7KaXO9Khf6alWPvMSyTDCFM=
 github.com/minio/sha256-simd v0.1.1/go.mod h1:B5e1o+1/KgNmWrSQK08Y6Z1Vb5pwIktudl0J58iy0KM=

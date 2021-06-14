@@ -27,7 +27,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -313,18 +312,18 @@ func GetTLSConfig() (x509Certs []*x509.Certificate, manager *xcerts.Manager, err
 	return x509Certs, manager, nil
 }
 
-func GetAllCertificatesAndCAs() (*x509.CertPool, []*x509.Certificate, *xcerts.Manager) {
+func GetAllCertificatesAndCAs() (*x509.CertPool, []*x509.Certificate, *xcerts.Manager, error) {
 	// load all CAs from ~/.console/certs/CAs
 	GlobalRootCAs, err := xcerts.GetRootCAs(GlobalCertsCADir.Get())
 	if err != nil {
-		log.Fatalln(err)
+		return nil, nil, nil, err
 	}
 	// load all certs from ~/.console/certs
 	globalPublicCerts, globalTLSCertsManager, err := GetTLSConfig()
 	if err != nil {
-		log.Fatalln(err)
+		return nil, nil, nil, err
 	}
-	return GlobalRootCAs, globalPublicCerts, globalTLSCertsManager
+	return GlobalRootCAs, globalPublicCerts, globalTLSCertsManager, nil
 }
 
 // TLSCertsManager custom TLS Manager for SNI support
