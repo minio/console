@@ -27,11 +27,11 @@ import (
 )
 
 // assigning mock at runtime instead of compile time
-var minioServiceTraceMock func(ctx context.Context, allTrace, errTrace bool) <-chan madmin.ServiceTraceInfo
+var minioServiceTraceMock func(ctx context.Context, threshold int64, s3, internal, storage, os, errTrace bool) <-chan madmin.ServiceTraceInfo
 
 // mock function of listPolicies()
-func (ac adminClientMock) serviceTrace(ctx context.Context, allTrace, errTrace bool) <-chan madmin.ServiceTraceInfo {
-	return minioServiceTraceMock(ctx, allTrace, errTrace)
+func (ac adminClientMock) serviceTrace(ctx context.Context, threshold int64, s3, internal, storage, os, errTrace bool) <-chan madmin.ServiceTraceInfo {
+	return minioServiceTraceMock(ctx, threshold, s3, internal, storage, os, errTrace)
 }
 
 func TestAdminTrace(t *testing.T) {
@@ -48,7 +48,7 @@ func TestAdminTrace(t *testing.T) {
 
 	// Test-1: Serve Trace with no errors until trace finishes sending
 	// define mock function behavior for minio server Trace
-	minioServiceTraceMock = func(ctx context.Context, allTrace, errTrace bool) <-chan madmin.ServiceTraceInfo {
+	minioServiceTraceMock = func(ctx context.Context, threshold int64, s3, internal, storage, os, errTrace bool) <-chan madmin.ServiceTraceInfo {
 		ch := make(chan madmin.ServiceTraceInfo)
 		// Only success, start a routine to start reading line by line.
 		go func(ch chan<- madmin.ServiceTraceInfo) {
@@ -82,7 +82,7 @@ func TestAdminTrace(t *testing.T) {
 		writesCount++
 		return nil
 	}
-	if err := startTraceInfo(ctx, mockWSConn, adminClient, serviceTraceOpts{AllTraffic: true, ErrOnly: false}); err != nil {
+	if err := startTraceInfo(ctx, mockWSConn, adminClient, TraceRequest{s3: true, internal: true, storage: true, os: true, onlyErrors: false}); err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	// check that the TestReceiver got the same number of data from trace.
@@ -94,13 +94,13 @@ func TestAdminTrace(t *testing.T) {
 	connWriteMessageMock = func(messageType int, data []byte) error {
 		return fmt.Errorf("error on write")
 	}
-	if err := startTraceInfo(ctx, mockWSConn, adminClient, serviceTraceOpts{}); assert.Error(err) {
+	if err := startTraceInfo(ctx, mockWSConn, adminClient, TraceRequest{}); assert.Error(err) {
 		assert.Equal("error on write", err.Error())
 	}
 
 	// Test-3: error happens on serviceTrace Minio, trace should stop
 	// and error shall be returned.
-	minioServiceTraceMock = func(ctx context.Context, allTrace, errTrace bool) <-chan madmin.ServiceTraceInfo {
+	minioServiceTraceMock = func(ctx context.Context, threshold int64, s3, internal, storage, os, errTrace bool) <-chan madmin.ServiceTraceInfo {
 		ch := make(chan madmin.ServiceTraceInfo)
 		// Only success, start a routine to start reading line by line.
 		go func(ch chan<- madmin.ServiceTraceInfo) {
@@ -120,7 +120,7 @@ func TestAdminTrace(t *testing.T) {
 	connWriteMessageMock = func(messageType int, data []byte) error {
 		return nil
 	}
-	if err := startTraceInfo(ctx, mockWSConn, adminClient, serviceTraceOpts{}); assert.Error(err) {
+	if err := startTraceInfo(ctx, mockWSConn, adminClient, TraceRequest{}); assert.Error(err) {
 		assert.Equal("error on trace", err.Error())
 	}
 }

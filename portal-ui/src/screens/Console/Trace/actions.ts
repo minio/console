@@ -16,8 +16,9 @@
 
 import { TraceMessage } from "./types";
 
-export const TRACE_MESSAGE_RECEIVED = "TRACE_MESSAGE_RECEIVED";
-export const TRACE_RESET_MESSAGES = "TRACE_RESET_MESSAGES";
+export const TRACE_MESSAGE_RECEIVED = "TRACE/MESSAGE_RECEIVED";
+export const TRACE_RESET_MESSAGES = "TRACE/RESET_MESSAGES";
+export const TRACE_SET_STARTED = "TRACE/SET_STARTED";
 
 interface TraceMessageReceivedAction {
   type: typeof TRACE_MESSAGE_RECEIVED;
@@ -28,9 +29,15 @@ interface TraceResetMessagesAction {
   type: typeof TRACE_RESET_MESSAGES;
 }
 
+interface TraceSetStarted {
+  type: typeof TRACE_SET_STARTED;
+  status: boolean;
+}
+
 export type TraceActionTypes =
   | TraceMessageReceivedAction
-  | TraceResetMessagesAction;
+  | TraceResetMessagesAction
+  | TraceSetStarted;
 
 export function traceMessageReceived(message: TraceMessage) {
   return {
@@ -42,5 +49,12 @@ export function traceMessageReceived(message: TraceMessage) {
 export function traceResetMessages() {
   return {
     type: TRACE_RESET_MESSAGES,
+  };
+}
+
+export function setTraceStarted(status: boolean) {
+  return {
+    type: TRACE_SET_STARTED,
+    status
   };
 }

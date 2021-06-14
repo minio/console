@@ -29,6 +29,7 @@ import {
   actionsTray,
   containerForHeader,
   searchField,
+  inlineCheckboxes
 } from "../Common/FormComponents/common/styleLibrary";
 import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -65,10 +66,7 @@ const styles = (theme: Theme) =>
     scanData: {
       fontSize: 13,
     },
-    inlineCheckboxes: {
-      display: "flex",
-      justifyContent: "flex-start",
-    },
+    ...inlineCheckboxes,
     ...actionsTray,
     ...searchField,
     ...containerForHeader(theme.spacing(4)),
