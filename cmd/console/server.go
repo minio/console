@@ -17,14 +17,11 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"strconv"
 	"time"
-
-	xcerts "github.com/minio/pkg/certs"
 
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
@@ -143,12 +140,8 @@ func loadAllCerts(ctx *cli.Context) error {
 		return fmt.Errorf("unable to create certs CA directory at %s: failed with %w", certs.GlobalCertsCADir.Get(), err)
 	}
 
-	var manager *xcerts.Manager
 	// load the certificates and the CAs
-	restapi.GlobalRootCAs, restapi.GlobalPublicCerts, manager, err = certs.GetAllCertificatesAndCAs()
-	restapi.GlobalTLSCertsManager = &certs.TLSCertsManager{
-		Manager: manager,
-	}
+	restapi.GlobalRootCAs, restapi.GlobalPublicCerts, restapi.GlobalTLSCertsManager, err = certs.GetAllCertificatesAndCAs()
 	if err != nil {
 		return fmt.Errorf("unable to load certificates at %s: failed with %w", certs.GlobalCertsDir.Get(), err)
 	}
@@ -160,7 +153,7 @@ func loadAllCerts(ctx *cli.Context) error {
 		swaggerServerCACertificate := ctx.String("tls-ca")
 		// load tls cert and key from swagger server tls-certificate and tls-key flags
 		if swaggerServerCertificate != "" && swaggerServerCertificateKey != "" {
-			if err = restapi.GlobalTLSCertsManager.AddCertificate(context.Background(), swaggerServerCertificate, swaggerServerCertificateKey); err != nil {
+			if err = restapi.GlobalTLSCertsManager.AddCertificate(swaggerServerCertificate, swaggerServerCertificateKey); err != nil {
 				return err
 			}
 			if x509Certs, err := certs.ParsePublicCertFile(swaggerServerCertificate); err == nil {
