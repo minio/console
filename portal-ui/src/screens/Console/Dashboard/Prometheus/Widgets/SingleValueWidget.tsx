@@ -33,6 +33,7 @@ interface ISingleValueWidget {
   propLoading: boolean;
   displayErrorMessage: any;
   classes: any;
+  apiPrefix: string;
 }
 
 const styles = (theme: Theme) =>
@@ -61,6 +62,7 @@ const SingleValueWidget = ({
   propLoading,
   displayErrorMessage,
   classes,
+  apiPrefix,
 }: ISingleValueWidget) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<string>("");
@@ -84,7 +86,9 @@ const SingleValueWidget = ({
       api
         .invoke(
           "GET",
-          `/api/v1/admin/info/widgets/${panelItem.id}/?step=${stepCalc}&${
+          `/api/v1/${apiPrefix}/info/widgets/${
+            panelItem.id
+          }/?step=${stepCalc}&${
             timeStart !== null ? `&start=${timeStart.unix()}` : ""
           }${timeStart !== null && timeEnd !== null ? "&" : ""}${
             timeEnd !== null ? `end=${timeEnd.unix()}` : ""
@@ -100,7 +104,7 @@ const SingleValueWidget = ({
           setLoading(false);
         });
     }
-  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage]);
+  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
   return (
     <div className={classes.singleValueContainer}>
       <div className={classes.titleContainer}>{title}</div>

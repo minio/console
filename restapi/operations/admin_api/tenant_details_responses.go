@@ -30,40 +30,40 @@ import (
 	"github.com/minio/console/models"
 )
 
-// TenantInfoOKCode is the HTTP code returned for type TenantInfoOK
-const TenantInfoOKCode int = 200
+// TenantDetailsOKCode is the HTTP code returned for type TenantDetailsOK
+const TenantDetailsOKCode int = 200
 
-/*TenantInfoOK A successful response.
+/*TenantDetailsOK A successful response.
 
-swagger:response tenantInfoOK
+swagger:response tenantDetailsOK
 */
-type TenantInfoOK struct {
+type TenantDetailsOK struct {
 
 	/*
 	  In: Body
 	*/
-	Payload *models.AdminInfoResponse `json:"body,omitempty"`
+	Payload *models.Tenant `json:"body,omitempty"`
 }
 
-// NewTenantInfoOK creates TenantInfoOK with default headers values
-func NewTenantInfoOK() *TenantInfoOK {
+// NewTenantDetailsOK creates TenantDetailsOK with default headers values
+func NewTenantDetailsOK() *TenantDetailsOK {
 
-	return &TenantInfoOK{}
+	return &TenantDetailsOK{}
 }
 
-// WithPayload adds the payload to the tenant info o k response
-func (o *TenantInfoOK) WithPayload(payload *models.AdminInfoResponse) *TenantInfoOK {
+// WithPayload adds the payload to the tenant details o k response
+func (o *TenantDetailsOK) WithPayload(payload *models.Tenant) *TenantDetailsOK {
 	o.Payload = payload
 	return o
 }
 
-// SetPayload sets the payload to the tenant info o k response
-func (o *TenantInfoOK) SetPayload(payload *models.AdminInfoResponse) {
+// SetPayload sets the payload to the tenant details o k response
+func (o *TenantDetailsOK) SetPayload(payload *models.Tenant) {
 	o.Payload = payload
 }
 
 // WriteResponse to the client
-func (o *TenantInfoOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *TenantDetailsOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
 	if o.Payload != nil {
@@ -74,11 +74,11 @@ func (o *TenantInfoOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pr
 	}
 }
 
-/*TenantInfoDefault Generic error response.
+/*TenantDetailsDefault Generic error response.
 
-swagger:response tenantInfoDefault
+swagger:response tenantDetailsDefault
 */
-type TenantInfoDefault struct {
+type TenantDetailsDefault struct {
 	_statusCode int
 
 	/*
@@ -87,41 +87,41 @@ type TenantInfoDefault struct {
 	Payload *models.Error `json:"body,omitempty"`
 }
 
-// NewTenantInfoDefault creates TenantInfoDefault with default headers values
-func NewTenantInfoDefault(code int) *TenantInfoDefault {
+// NewTenantDetailsDefault creates TenantDetailsDefault with default headers values
+func NewTenantDetailsDefault(code int) *TenantDetailsDefault {
 	if code <= 0 {
 		code = 500
 	}
 
-	return &TenantInfoDefault{
+	return &TenantDetailsDefault{
 		_statusCode: code,
 	}
 }
 
-// WithStatusCode adds the status to the tenant info default response
-func (o *TenantInfoDefault) WithStatusCode(code int) *TenantInfoDefault {
+// WithStatusCode adds the status to the tenant details default response
+func (o *TenantDetailsDefault) WithStatusCode(code int) *TenantDetailsDefault {
 	o._statusCode = code
 	return o
 }
 
-// SetStatusCode sets the status to the tenant info default response
-func (o *TenantInfoDefault) SetStatusCode(code int) {
+// SetStatusCode sets the status to the tenant details default response
+func (o *TenantDetailsDefault) SetStatusCode(code int) {
 	o._statusCode = code
 }
 
-// WithPayload adds the payload to the tenant info default response
-func (o *TenantInfoDefault) WithPayload(payload *models.Error) *TenantInfoDefault {
+// WithPayload adds the payload to the tenant details default response
+func (o *TenantDetailsDefault) WithPayload(payload *models.Error) *TenantDetailsDefault {
 	o.Payload = payload
 	return o
 }
 
-// SetPayload sets the payload to the tenant info default response
-func (o *TenantInfoDefault) SetPayload(payload *models.Error) {
+// SetPayload sets the payload to the tenant details default response
+func (o *TenantDetailsDefault) SetPayload(payload *models.Error) {
 	o.Payload = payload
 }
 
 // WriteResponse to the client
-func (o *TenantInfoDefault) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *TenantDetailsDefault) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(o._statusCode)
 	if o.Payload != nil {

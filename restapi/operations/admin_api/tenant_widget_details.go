@@ -30,40 +30,40 @@ import (
 	"github.com/minio/console/models"
 )
 
-// TenantInfoHandlerFunc turns a function with the right signature into a tenant info handler
-type TenantInfoHandlerFunc func(TenantInfoParams, *models.Principal) middleware.Responder
+// TenantWidgetDetailsHandlerFunc turns a function with the right signature into a tenant widget details handler
+type TenantWidgetDetailsHandlerFunc func(TenantWidgetDetailsParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn TenantInfoHandlerFunc) Handle(params TenantInfoParams, principal *models.Principal) middleware.Responder {
+func (fn TenantWidgetDetailsHandlerFunc) Handle(params TenantWidgetDetailsParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
-// TenantInfoHandler interface for that can handle valid tenant info params
-type TenantInfoHandler interface {
-	Handle(TenantInfoParams, *models.Principal) middleware.Responder
+// TenantWidgetDetailsHandler interface for that can handle valid tenant widget details params
+type TenantWidgetDetailsHandler interface {
+	Handle(TenantWidgetDetailsParams, *models.Principal) middleware.Responder
 }
 
-// NewTenantInfo creates a new http.Handler for the tenant info operation
-func NewTenantInfo(ctx *middleware.Context, handler TenantInfoHandler) *TenantInfo {
-	return &TenantInfo{Context: ctx, Handler: handler}
+// NewTenantWidgetDetails creates a new http.Handler for the tenant widget details operation
+func NewTenantWidgetDetails(ctx *middleware.Context, handler TenantWidgetDetailsHandler) *TenantWidgetDetails {
+	return &TenantWidgetDetails{Context: ctx, Handler: handler}
 }
 
-/* TenantInfo swagger:route GET /namespaces/{namespace}/tenants/{tenant}/info AdminAPI tenantInfo
+/* TenantWidgetDetails swagger:route GET /namespaces/{namespace}/tenants/{tenant}/info/widgets/{widgetId} AdminAPI tenantWidgetDetails
 
-Tenant Info
+Returns information about a tenant deployment
 
 */
-type TenantInfo struct {
+type TenantWidgetDetails struct {
 	Context *middleware.Context
-	Handler TenantInfoHandler
+	Handler TenantWidgetDetailsHandler
 }
 
-func (o *TenantInfo) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *TenantWidgetDetails) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		*r = *rCtx
 	}
-	var Params = NewTenantInfoParams()
+	var Params = NewTenantWidgetDetailsParams()
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)

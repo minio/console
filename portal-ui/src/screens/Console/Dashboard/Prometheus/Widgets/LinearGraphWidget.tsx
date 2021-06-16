@@ -44,6 +44,7 @@ interface ILinearGraphWidget {
   timeEnd: MaterialUiPickersDate;
   propLoading: boolean;
   displayErrorMessage: any;
+  apiPrefix: string;
   hideYAxis?: boolean;
   yAxisFormatter?: (item: string) => string;
   xAxisFormatter?: (item: string) => string;
@@ -87,6 +88,7 @@ const LinearGraphWidget = ({
   timeEnd,
   propLoading,
   panelItem,
+  apiPrefix,
   hideYAxis = false,
   yAxisFormatter = (item: string) => item,
   xAxisFormatter = (item: string) => item,
@@ -94,6 +96,7 @@ const LinearGraphWidget = ({
 }: ILinearGraphWidget) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<object[]>([]);
+  const [dataMax, setDataMax] = useState<number>(0);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
 
   useEffect(() => {
@@ -115,7 +118,9 @@ const LinearGraphWidget = ({
       api
         .invoke(
           "GET",
-          `/api/v1/admin/info/widgets/${panelItem.id}/?step=${stepCalc}&${
+          `/api/v1/${apiPrefix}/info/widgets/${
+            panelItem.id
+          }/?step=${stepCalc}&${
             timeStart !== null ? `&start=${timeStart.unix()}` : ""
           }${timeStart !== null && timeEnd !== null ? "&" : ""}${
             timeEnd !== null ? `end=${timeEnd.unix()}` : ""
@@ -126,13 +131,26 @@ const LinearGraphWidget = ({
           setData(widgetsWithValue.data);
           setResult(widgetsWithValue);
           setLoading(false);
+          let maxVal = 0;
+          for (const dp of widgetsWithValue.data) {
+            for (const key in dp) {
+              if (key === "name") {
+                continue;
+              }
+              const val = parseInt(dp[key]);
+              if (maxVal < val) {
+                maxVal = val;
+              }
+            }
+          }
+          setDataMax(maxVal);
         })
         .catch((err) => {
           displayErrorMessage(err);
           setLoading(false);
         });
     }
-  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage]);
+  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
 
   let intervalCount = 5;
 
@@ -185,7 +203,8 @@ const LinearGraphWidget = ({
                     tickCount={10}
                   />
                   <YAxis
-                    domain={[0, (dataMax: number) => dataMax * 4]}
+                    type={"number"}
+                    domain={[0, dataMax * 1.1]}
                     hide={hideYAxis}
                     tickFormatter={(value: any) => yAxisFormatter(value)}
                     tick={{ fontSize: "70%" }}

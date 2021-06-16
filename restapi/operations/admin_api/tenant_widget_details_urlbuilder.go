@@ -27,12 +27,19 @@ import (
 	"net/url"
 	golangswaggerpaths "path"
 	"strings"
+
+	"github.com/go-openapi/swag"
 )
 
-// TenantInfoURL generates an URL for the tenant info operation
-type TenantInfoURL struct {
+// TenantWidgetDetailsURL generates an URL for the tenant widget details operation
+type TenantWidgetDetailsURL struct {
 	Namespace string
 	Tenant    string
+	WidgetID  int32
+
+	End   *int64
+	Start *int64
+	Step  *int32
 
 	_basePath string
 	// avoid unkeyed usage
@@ -42,7 +49,7 @@ type TenantInfoURL struct {
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *TenantInfoURL) WithBasePath(bp string) *TenantInfoURL {
+func (o *TenantWidgetDetailsURL) WithBasePath(bp string) *TenantWidgetDetailsURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -50,28 +57,35 @@ func (o *TenantInfoURL) WithBasePath(bp string) *TenantInfoURL {
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *TenantInfoURL) SetBasePath(bp string) {
+func (o *TenantWidgetDetailsURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *TenantInfoURL) Build() (*url.URL, error) {
+func (o *TenantWidgetDetailsURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/namespaces/{namespace}/tenants/{tenant}/info"
+	var _path = "/namespaces/{namespace}/tenants/{tenant}/info/widgets/{widgetId}"
 
 	namespace := o.Namespace
 	if namespace != "" {
 		_path = strings.Replace(_path, "{namespace}", namespace, -1)
 	} else {
-		return nil, errors.New("namespace is required on TenantInfoURL")
+		return nil, errors.New("namespace is required on TenantWidgetDetailsURL")
 	}
 
 	tenant := o.Tenant
 	if tenant != "" {
 		_path = strings.Replace(_path, "{tenant}", tenant, -1)
 	} else {
-		return nil, errors.New("tenant is required on TenantInfoURL")
+		return nil, errors.New("tenant is required on TenantWidgetDetailsURL")
+	}
+
+	widgetID := swag.FormatInt32(o.WidgetID)
+	if widgetID != "" {
+		_path = strings.Replace(_path, "{widgetId}", widgetID, -1)
+	} else {
+		return nil, errors.New("widgetId is required on TenantWidgetDetailsURL")
 	}
 
 	_basePath := o._basePath
@@ -80,11 +94,39 @@ func (o *TenantInfoURL) Build() (*url.URL, error) {
 	}
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
 
+	qs := make(url.Values)
+
+	var endQ string
+	if o.End != nil {
+		endQ = swag.FormatInt64(*o.End)
+	}
+	if endQ != "" {
+		qs.Set("end", endQ)
+	}
+
+	var startQ string
+	if o.Start != nil {
+		startQ = swag.FormatInt64(*o.Start)
+	}
+	if startQ != "" {
+		qs.Set("start", startQ)
+	}
+
+	var stepQ string
+	if o.Step != nil {
+		stepQ = swag.FormatInt32(*o.Step)
+	}
+	if stepQ != "" {
+		qs.Set("step", stepQ)
+	}
+
+	_result.RawQuery = qs.Encode()
+
 	return &_result, nil
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *TenantInfoURL) Must(u *url.URL, err error) *url.URL {
+func (o *TenantWidgetDetailsURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -95,17 +137,17 @@ func (o *TenantInfoURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *TenantInfoURL) String() string {
+func (o *TenantWidgetDetailsURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *TenantInfoURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *TenantWidgetDetailsURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on TenantInfoURL")
+		return nil, errors.New("scheme is required for a full url on TenantWidgetDetailsURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on TenantInfoURL")
+		return nil, errors.New("host is required for a full url on TenantWidgetDetailsURL")
 	}
 
 	base, err := o.Build()
@@ -119,6 +161,6 @@ func (o *TenantInfoURL) BuildFull(scheme, host string) (*url.URL, error) {
 }
 
 // StringFull returns the string representation of a complete url
-func (o *TenantInfoURL) StringFull(scheme, host string) string {
+func (o *TenantWidgetDetailsURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

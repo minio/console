@@ -117,6 +117,8 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	// Operator Console
 	// Register tenant handlers
 	registerTenantHandlers(api)
+	// Register admin info handlers
+	registerOperatorTenantInfoHandlers(api)
 	// Register ResourceQuota handlers
 	registerResourceQuotaHandlers(api)
 	// Register Nodes' handlers

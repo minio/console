@@ -37,6 +37,7 @@ interface ISingleRepWidget {
   displayErrorMessage: any;
   color: string;
   fillColor: string;
+  apiPrefix: string;
 }
 
 const styles = (theme: Theme) =>
@@ -60,6 +61,7 @@ const SingleRepWidget = ({
   displayErrorMessage,
   color,
   fillColor,
+  apiPrefix,
 }: ISingleRepWidget) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<IDataSRep[]>([]);
@@ -84,7 +86,9 @@ const SingleRepWidget = ({
       api
         .invoke(
           "GET",
-          `/api/v1/admin/info/widgets/${panelItem.id}/?step=${stepCalc}&${
+          `/api/v1/${apiPrefix}/info/widgets/${
+            panelItem.id
+          }/?step=${stepCalc}&${
             timeStart !== null ? `&start=${timeStart.unix()}` : ""
           }${timeStart !== null && timeEnd !== null ? "&" : ""}${
             timeEnd !== null ? `end=${timeEnd.unix()}` : ""
@@ -101,7 +105,7 @@ const SingleRepWidget = ({
           setLoading(false);
         });
     }
-  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage]);
+  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
   return (
     <div className={classes.singleValueContainer}>
       <div className={classes.titleContainer}>{title}</div>

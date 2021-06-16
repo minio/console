@@ -384,6 +384,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPITenantAddPoolHandler: admin_api.TenantAddPoolHandlerFunc(func(params admin_api.TenantAddPoolParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TenantAddPool has not yet been implemented")
 		}),
+		AdminAPITenantDetailsHandler: admin_api.TenantDetailsHandlerFunc(func(params admin_api.TenantDetailsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.TenantDetails has not yet been implemented")
+		}),
 		AdminAPITenantInfoHandler: admin_api.TenantInfoHandlerFunc(func(params admin_api.TenantInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TenantInfo has not yet been implemented")
 		}),
@@ -395,6 +398,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		AdminAPITenantUpdatePoolsHandler: admin_api.TenantUpdatePoolsHandlerFunc(func(params admin_api.TenantUpdatePoolsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TenantUpdatePools has not yet been implemented")
+		}),
+		AdminAPITenantWidgetDetailsHandler: admin_api.TenantWidgetDetailsHandlerFunc(func(params admin_api.TenantWidgetDetailsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.TenantWidgetDetails has not yet been implemented")
 		}),
 		AdminAPITiersListHandler: admin_api.TiersListHandlerFunc(func(params admin_api.TiersListParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TiersList has not yet been implemented")
@@ -681,6 +687,8 @@ type ConsoleAPI struct {
 	AdminAPISubscriptionValidateHandler admin_api.SubscriptionValidateHandler
 	// AdminAPITenantAddPoolHandler sets the operation handler for the tenant add pool operation
 	AdminAPITenantAddPoolHandler admin_api.TenantAddPoolHandler
+	// AdminAPITenantDetailsHandler sets the operation handler for the tenant details operation
+	AdminAPITenantDetailsHandler admin_api.TenantDetailsHandler
 	// AdminAPITenantInfoHandler sets the operation handler for the tenant info operation
 	AdminAPITenantInfoHandler admin_api.TenantInfoHandler
 	// AdminAPITenantUpdateCertificateHandler sets the operation handler for the tenant update certificate operation
@@ -689,6 +697,8 @@ type ConsoleAPI struct {
 	AdminAPITenantUpdateEncryptionHandler admin_api.TenantUpdateEncryptionHandler
 	// AdminAPITenantUpdatePoolsHandler sets the operation handler for the tenant update pools operation
 	AdminAPITenantUpdatePoolsHandler admin_api.TenantUpdatePoolsHandler
+	// AdminAPITenantWidgetDetailsHandler sets the operation handler for the tenant widget details operation
+	AdminAPITenantWidgetDetailsHandler admin_api.TenantWidgetDetailsHandler
 	// AdminAPITiersListHandler sets the operation handler for the tiers list operation
 	AdminAPITiersListHandler admin_api.TiersListHandler
 	// UserAPIUpdateBucketLifecycleHandler sets the operation handler for the update bucket lifecycle operation
@@ -1106,6 +1116,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.AdminAPITenantAddPoolHandler == nil {
 		unregistered = append(unregistered, "admin_api.TenantAddPoolHandler")
 	}
+	if o.AdminAPITenantDetailsHandler == nil {
+		unregistered = append(unregistered, "admin_api.TenantDetailsHandler")
+	}
 	if o.AdminAPITenantInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.TenantInfoHandler")
 	}
@@ -1117,6 +1130,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPITenantUpdatePoolsHandler == nil {
 		unregistered = append(unregistered, "admin_api.TenantUpdatePoolsHandler")
+	}
+	if o.AdminAPITenantWidgetDetailsHandler == nil {
+		unregistered = append(unregistered, "admin_api.TenantWidgetDetailsHandler")
 	}
 	if o.AdminAPITiersListHandler == nil {
 		unregistered = append(unregistered, "admin_api.TiersListHandler")
@@ -1665,7 +1681,11 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}"] = admin_api.NewTenantInfo(o.context, o.AdminAPITenantInfoHandler)
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}"] = admin_api.NewTenantDetails(o.context, o.AdminAPITenantDetailsHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/info"] = admin_api.NewTenantInfo(o.context, o.AdminAPITenantInfoHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
@@ -1678,6 +1698,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/namespaces/{namespace}/tenants/{tenant}/pools"] = admin_api.NewTenantUpdatePools(o.context, o.AdminAPITenantUpdatePoolsHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/info/widgets/{widgetId}"] = admin_api.NewTenantWidgetDetails(o.context, o.AdminAPITenantWidgetDetailsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
