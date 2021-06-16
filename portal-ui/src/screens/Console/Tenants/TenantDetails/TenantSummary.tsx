@@ -438,6 +438,6 @@ const mapState = (state: AppState) => ({
   ),
 });
 
-const connector = connect(mapState, {});
+const connector = connect(mapState, null);
 
 export default withStyles(styles)(connector(TenantSummary));
