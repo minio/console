@@ -281,7 +281,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setAccessKey(e.target.value)
                   }
-                  label="Enter Access Key"
+                  label="Enter Username"
                   name="accessKey"
                   autoComplete="username"
                   disabled={loginSending}
@@ -295,7 +295,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
                     setSecretKey(e.target.value)
                   }
                   name="secretKey"
-                  label="Enter Secret Key"
+                  label="Enter Password"
                   type="password"
                   id="secretKey"
                   autoComplete="current-password"
@@ -316,12 +316,6 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
             </Grid>
             <Grid item xs={12} className={classes.linearPredef}>
               {loginSending && <LinearProgress />}
-            </Grid>
-            <Grid item xs={12} className={classes.disclaimer}>
-              <strong>Don't have an access key?</strong>
-              <br />
-              <br />
-              Contact your administrator to have one made
             </Grid>
           </form>
         </React.Fragment>
@@ -396,11 +390,6 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
             </Grid>
             <Grid item xs={12} className={classes.linearPredef}>
               {loginSending && <LinearProgress />}
-            </Grid>
-            <Grid item xs={12} className={classes.disclaimer}>
-              <strong>Don't have an access key?</strong>
-              <br />
-              Contact your administrator to have one made
             </Grid>
           </form>
         </React.Fragment>
