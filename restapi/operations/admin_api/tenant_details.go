@@ -30,40 +30,40 @@ import (
 	"github.com/minio/console/models"
 )
 
-// TenantInfoHandlerFunc turns a function with the right signature into a tenant info handler
-type TenantInfoHandlerFunc func(TenantInfoParams, *models.Principal) middleware.Responder
+// TenantDetailsHandlerFunc turns a function with the right signature into a tenant details handler
+type TenantDetailsHandlerFunc func(TenantDetailsParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn TenantInfoHandlerFunc) Handle(params TenantInfoParams, principal *models.Principal) middleware.Responder {
+func (fn TenantDetailsHandlerFunc) Handle(params TenantDetailsParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
-// TenantInfoHandler interface for that can handle valid tenant info params
-type TenantInfoHandler interface {
-	Handle(TenantInfoParams, *models.Principal) middleware.Responder
+// TenantDetailsHandler interface for that can handle valid tenant details params
+type TenantDetailsHandler interface {
+	Handle(TenantDetailsParams, *models.Principal) middleware.Responder
 }
 
-// NewTenantInfo creates a new http.Handler for the tenant info operation
-func NewTenantInfo(ctx *middleware.Context, handler TenantInfoHandler) *TenantInfo {
-	return &TenantInfo{Context: ctx, Handler: handler}
+// NewTenantDetails creates a new http.Handler for the tenant details operation
+func NewTenantDetails(ctx *middleware.Context, handler TenantDetailsHandler) *TenantDetails {
+	return &TenantDetails{Context: ctx, Handler: handler}
 }
 
-/* TenantInfo swagger:route GET /namespaces/{namespace}/tenants/{tenant}/info AdminAPI tenantInfo
+/* TenantDetails swagger:route GET /namespaces/{namespace}/tenants/{tenant} AdminAPI tenantDetails
 
-Tenant Info
+Tenant Details
 
 */
-type TenantInfo struct {
+type TenantDetails struct {
 	Context *middleware.Context
-	Handler TenantInfoHandler
+	Handler TenantDetailsHandler
 }
 
-func (o *TenantInfo) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *TenantDetails) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		*r = *rCtx
 	}
-	var Params = NewTenantInfoParams()
+	var Params = NewTenantDetailsParams()
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)

@@ -36,6 +36,7 @@ interface IPieChartWidget {
   timeEnd: MaterialUiPickersDate;
   propLoading: boolean;
   displayErrorMessage: any;
+  apiPrefix: string;
 }
 
 const styles = (theme: Theme) =>
@@ -57,6 +58,7 @@ const PieChartWidget = ({
   timeEnd,
   propLoading,
   displayErrorMessage,
+  apiPrefix,
 }: IPieChartWidget) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [dataInner, setDataInner] = useState<object[]>([]);
@@ -82,7 +84,9 @@ const PieChartWidget = ({
       api
         .invoke(
           "GET",
-          `/api/v1/admin/info/widgets/${panelItem.id}/?step=${stepCalc}&${
+          `/api/v1/${apiPrefix}/info/widgets/${
+            panelItem.id
+          }/?step=${stepCalc}&${
             timeStart !== null ? `&start=${timeStart.unix()}` : ""
           }${timeStart !== null && timeEnd !== null ? "&" : ""}${
             timeEnd !== null ? `end=${timeEnd.unix()}` : ""
@@ -100,7 +104,7 @@ const PieChartWidget = ({
           setLoading(false);
         });
     }
-  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage]);
+  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
 
   const pieChartConfiguration = result
     ? (result.widgetConfiguration as IPieChartConfiguration)

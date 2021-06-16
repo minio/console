@@ -30,7 +30,6 @@ import api from "../../../../common/api";
 import { ITenant } from "../ListTenants/types";
 import UsageBarWrapper from "../../Common/UsageBarWrapper/UsageBarWrapper";
 import UpdateTenantModal from "./UpdateTenantModal";
-import { setErrorSnackMessage } from "../../../../actions";
 import { AppState } from "../../../../store";
 
 interface ITenantsSummary {
@@ -43,7 +42,6 @@ interface ITenantsSummary {
   adEnabled: boolean;
   oicEnabled: boolean;
   loadingTenant: boolean;
-  setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
 interface ITenantUsage {
@@ -82,7 +80,6 @@ const TenantSummary = ({
   adEnabled,
   oicEnabled,
   loadingTenant,
-  setErrorSnackMessage,
 }: ITenantsSummary) => {
   const [capacity, setCapacity] = useState<number>(0);
   const [poolCount, setPoolCount] = useState<number>(0);
@@ -441,8 +438,6 @@ const mapState = (state: AppState) => ({
   ),
 });
 
-const connector = connect(mapState, {
-  setErrorSnackMessage,
-});
+const connector = connect(mapState, null);
 
 export default withStyles(styles)(connector(TenantSummary));

@@ -2560,8 +2560,8 @@ func init() {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Tenant Info",
-        "operationId": "TenantInfo",
+        "summary": "Tenant Details",
+        "operationId": "TenantDetails",
         "parameters": [
           {
             "type": "string",
@@ -2745,6 +2745,103 @@ func init() {
         "responses": {
           "201": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/info": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Tenant Info",
+        "operationId": "TenantInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/adminInfoResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/info/widgets/{widgetId}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Returns information about a tenant deployment",
+        "operationId": "TenantWidgetDetails",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "widgetId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "name": "end",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "step",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/widgetDetails"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -9925,8 +10022,8 @@ func init() {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Tenant Info",
-        "operationId": "TenantInfo",
+        "summary": "Tenant Details",
+        "operationId": "TenantDetails",
         "parameters": [
           {
             "type": "string",
@@ -10110,6 +10207,103 @@ func init() {
         "responses": {
           "201": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/info": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Tenant Info",
+        "operationId": "TenantInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/adminInfoResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/info/widgets/{widgetId}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Returns information about a tenant deployment",
+        "operationId": "TenantWidgetDetails",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "widgetId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "name": "end",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "step",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/widgetDetails"
+            }
           },
           "default": {
             "description": "Generic error response.",
