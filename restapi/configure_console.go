@@ -21,9 +21,9 @@ package restapi
 import (
 	"bytes"
 	"crypto/tls"
-	"crypto/x509"
 	"io"
 	"io/fs"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -145,24 +145,13 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 
 // The TLS configuration before HTTPS server starts.
 func configureTLS(tlsConfig *tls.Config) {
-	if GlobalRootCAs == nil {
-		GlobalRootCAs = &x509.CertPool{}
-	}
 	// Add the global public crts as part of global root CAs
 	for _, publicCrt := range GlobalPublicCerts {
-		// Add certificates to swagger TLS configuration
-		tlsConfig.Certificates = append(tlsConfig.Certificates, tls.Certificate{
-			Certificate: [][]byte{publicCrt.Raw},
-			Leaf:        publicCrt,
-		})
 		GlobalRootCAs.AddCert(publicCrt)
 	}
 
 	tlsConfig.RootCAs = GlobalRootCAs
-
-	if GlobalTLSCertsManager != nil {
-		tlsConfig.GetCertificate = GlobalTLSCertsManager.GetCertificate
-	}
+	tlsConfig.GetCertificate = GlobalTLSCertsManager.GetCertificate
 }
 
 // The middleware configuration is for the handler executors. These do not apply to the swagger.json document.
@@ -277,9 +266,18 @@ func wrapHandlerSinglePageApplication(h http.Handler) http.HandlerFunc {
 	}
 }
 
+type logWriter struct{}
+
+func (lw logWriter) Write(b []byte) (int, error) {
+	LogError(string(bytes.TrimSuffix(b, []byte("\n"))))
+	return len(b), nil
+}
+
 // As soon as server is initialized but not run yet, this function will be called.
 // If you need to modify a config, store server instance to stop it individually later, this is the place.
 // This function can be called multiple times, depending on the number of serving schemes.
 // scheme value will be set accordingly: "http", "https" or "unix"
-func configureServer(s *http.Server, scheme, addr string) {
+func configureServer(s *http.Server, _, _ string) {
+	// Turn-off random logging by Go internall
+	s.ErrorLog = log.New(&logWriter{}, "", 0)
 }

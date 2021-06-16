@@ -234,7 +234,6 @@ func LoadX509KeyPair(certFile, keyFile string) (tls.Certificate, error) {
 }
 
 func GetTLSConfig() (x509Certs []*x509.Certificate, manager *xcerts.Manager, err error) {
-
 	ctx := context.Background()
 
 	if !(isFile(getPublicCertFile()) && isFile(getPrivateKeyFile())) {
@@ -314,30 +313,17 @@ func GetTLSConfig() (x509Certs []*x509.Certificate, manager *xcerts.Manager, err
 
 func GetAllCertificatesAndCAs() (*x509.CertPool, []*x509.Certificate, *xcerts.Manager, error) {
 	// load all CAs from ~/.console/certs/CAs
-	GlobalRootCAs, err := xcerts.GetRootCAs(GlobalCertsCADir.Get())
+	rootCAs, err := xcerts.GetRootCAs(GlobalCertsCADir.Get())
 	if err != nil {
 		return nil, nil, nil, err
 	}
 	// load all certs from ~/.console/certs
-	globalPublicCerts, globalTLSCertsManager, err := GetTLSConfig()
+	publicCerts, certsManager, err := GetTLSConfig()
 	if err != nil {
 		return nil, nil, nil, err
 	}
-	return GlobalRootCAs, globalPublicCerts, globalTLSCertsManager, nil
-}
-
-// TLSCertsManager custom TLS Manager for SNI support
-type TLSCertsManager struct {
-	*xcerts.Manager
-}
-
-// AddCertificate check if Manager is initialized and then append a new certificate to it
-func (m *TLSCertsManager) AddCertificate(ctx context.Context, publicKey, privateKey string) (err error) {
-	// If Cert Manager is not nil add more certificates
-	if m.Manager != nil {
-		return m.Manager.AddCertificate(publicKey, privateKey)
+	if rootCAs == nil {
+		rootCAs = &x509.CertPool{}
 	}
-	// Initialize cert manager
-	m.Manager, err = xcerts.NewManager(ctx, publicKey, privateKey, LoadX509KeyPair)
-	return err
+	return rootCAs, publicCerts, certsManager, nil
 }
