@@ -31,7 +31,6 @@ import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import AutocompleteWrapper from "../../Common/FormComponents/AutocompleteWrapper/AutocompleteWrapper";
 
 const styles = (theme: Theme) =>

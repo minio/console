@@ -50,6 +50,7 @@ import { TabPanel } from "../../../shared/tabs";
 interface IPrDashboard {
   classes: any;
   displayErrorMessage: typeof setErrorSnackMessage;
+  apiPrefix?: string;
 }
 
 const styles = (theme: Theme) =>
@@ -71,7 +72,11 @@ const styles = (theme: Theme) =>
     },
   });
 
-const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
+const PrDashboard = ({
+  classes,
+  displayErrorMessage,
+  apiPrefix = "admin",
+}: IPrDashboard) => {
   const [timeStart, setTimeStart] = useState<any>(null);
   const [timeEnd, setTimeEnd] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -106,6 +111,7 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
                 timeStart={timeStart}
                 timeEnd={timeEnd}
                 propLoading={loading}
+                apiPrefix={apiPrefix}
               />
             );
           case widgetType.pieChart:
@@ -116,6 +122,7 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
                 timeStart={timeStart}
                 timeEnd={timeEnd}
                 propLoading={loading}
+                apiPrefix={apiPrefix}
               />
             );
           case widgetType.linearGraph:
@@ -134,6 +141,7 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
                     ? singlePanelWidth * dashboardDistr[index].w
                     : singlePanelWidth
                 }
+                apiPrefix={apiPrefix}
               />
             );
           case widgetType.barChart:
@@ -144,6 +152,7 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
                 timeStart={timeStart}
                 timeEnd={timeEnd}
                 propLoading={loading}
+                apiPrefix={apiPrefix}
               />
             );
           case widgetType.singleRep:
@@ -157,6 +166,7 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
                 propLoading={loading}
                 color={value.color as string}
                 fillColor={fillColor as string}
+                apiPrefix={apiPrefix}
               />
             );
           default:
@@ -178,7 +188,7 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
           );
         });
     },
-    [panelInformation, dashboardDistr, timeEnd, timeStart, loading]
+    [panelInformation, dashboardDistr, timeEnd, timeStart, loading, apiPrefix]
   );
 
   const fetchUsage = useCallback(() => {
@@ -194,7 +204,7 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
     api
       .invoke(
         "GET",
-        `/api/v1/admin/info?step=${stepCalc}&${
+        `/api/v1/${apiPrefix}/info?step=${stepCalc}&${
           timeStart !== null ? `&start=${timeStart.unix()}` : ""
         }${timeStart !== null && timeEnd !== null ? "&" : ""}${
           timeEnd !== null ? `end=${timeEnd.unix()}` : ""
@@ -216,7 +226,7 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
         displayErrorMessage(err);
         setLoading(false);
       });
-  }, [timeStart, timeEnd, displayErrorMessage]);
+  }, [timeStart, timeEnd, displayErrorMessage, apiPrefix]);
 
   const triggerLoad = () => {
     setLoading(true);
@@ -242,7 +252,7 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
   const requestsPanels = [60, 71, 17, 73];
 
   return (
-    <Grid container className={classes.container}>
+    <React.Fragment>
       <Grid
         item
         xs={12}
@@ -355,7 +365,7 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
           </AutoSizer>
         </TabPanel>
       </Grid>
-    </Grid>
+    </React.Fragment>
   );
 };
 

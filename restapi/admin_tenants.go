@@ -91,12 +91,12 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 
 	})
 	// Detail Tenant
-	api.AdminAPITenantInfoHandler = admin_api.TenantInfoHandlerFunc(func(params admin_api.TenantInfoParams, session *models.Principal) middleware.Responder {
-		resp, err := getTenantInfoResponse(session, params)
+	api.AdminAPITenantDetailsHandler = admin_api.TenantDetailsHandlerFunc(func(params admin_api.TenantDetailsParams, session *models.Principal) middleware.Responder {
+		resp, err := getTenantDetailsResponse(session, params)
 		if err != nil {
-			return admin_api.NewTenantInfoDefault(int(err.Code)).WithPayload(err)
+			return admin_api.NewTenantDetailsDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewTenantInfoOK().WithPayload(resp)
+		return admin_api.NewTenantDetailsOK().WithPayload(resp)
 
 	})
 
@@ -367,7 +367,7 @@ func getTenantInfo(tenant *miniov2.Tenant) *models.Tenant {
 	}
 }
 
-func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInfoParams) (*models.Tenant, *models.Error) {
+func getTenantDetailsResponse(session *models.Principal, params admin_api.TenantDetailsParams) (*models.Tenant, *models.Error) {
 	// 5 seconds timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -408,7 +408,9 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 	// detect if OpenID is enabled
 
 	oicEnabled := false
-	consoleSecret, err := clientSet.CoreV1().Secrets(minTenant.Namespace).Get(ctx, minTenant.Name, metav1.GetOptions{})
+	consoleSelector := fmt.Sprintf("%s-console", minTenant.Name)
+	consoleSecretName := fmt.Sprintf("%s-secret", consoleSelector)
+	consoleSecret, err := clientSet.CoreV1().Secrets(minTenant.Namespace).Get(ctx, consoleSecretName, metav1.GetOptions{})
 	// we can tolerate not getting this secret
 	if err != nil {
 		LogError("unable to fetch existing secrets for %s: %v", minTenant.Name, err)
@@ -416,6 +418,13 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 	if consoleSecret != nil {
 		if _, ok := consoleSecret.Data["CONSOLE_IDP_URL"]; ok {
 			oicEnabled = true
+		}
+	}
+	if minTenant.HasConsoleEnabled() {
+		for _, env := range minTenant.Spec.Console.Env {
+			if env.Name == "CONSOLE_IDP_URL" {
+				oicEnabled = true
+			}
 		}
 	}
 

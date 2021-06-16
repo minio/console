@@ -27,6 +27,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/minio/madmin-go"
+
 	"github.com/go-openapi/swag"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -788,12 +790,21 @@ type LabelResults struct {
 // getAdminInfoResponse returns the response containing total buckets, objects and usage.
 func getAdminInfoResponse(session *models.Principal) (*models.AdminInfoResponse, *models.Error) {
 	prometheusURL := getPrometheusURL()
+	mAdmin, err := newAdminClient(session)
+	if err != nil {
+		return nil, prepareError(err)
+	}
 
+	sessionResp, err2 := getUsageWidgetsForDeployment(prometheusURL, mAdmin)
+	if err2 != nil {
+		return nil, err2
+	}
+
+	return sessionResp, nil
+}
+
+func getUsageWidgetsForDeployment(prometheusURL string, mAdmin *madmin.AdminClient) (*models.AdminInfoResponse, *models.Error) {
 	if prometheusURL == "" {
-		mAdmin, err := newAdminClient(session)
-		if err != nil {
-			return nil, prepareError(err)
-		}
 		// create a minioClient interface implementation
 		// defining the client to be used
 		adminClient := adminClient{client: mAdmin}
@@ -837,7 +848,6 @@ func getAdminInfoResponse(session *models.Principal) (*models.AdminInfoResponse,
 	sessionResp := &models.AdminInfoResponse{}
 
 	sessionResp.Widgets = wdgts
-
 	return sessionResp, nil
 }
 
@@ -872,6 +882,10 @@ func getAdminInfoWidgetResponse(params admin_api.DashboardWidgetDetailsParams) (
 	prometheusURL := getPrometheusURL()
 	prometheusJobID := getPrometheusJobID()
 
+	return getWidgetDetails(prometheusURL, prometheusJobID, params.WidgetID, params.Step, params.Start, params.End)
+}
+
+func getWidgetDetails(prometheusURL string, prometheusJobID string, widgetID int32, step *int32, start *int64, end *int64) (*models.WidgetDetails, *models.Error) {
 	labelResultsCh := make(chan LabelResults)
 
 	for _, lbl := range labels {
@@ -907,14 +921,14 @@ LabelsWaitLoop:
 	// launch a goroutines per widget
 
 	for _, m := range widgets {
-		if m.ID != params.WidgetID {
+		if m.ID != widgetID {
 			continue
 		}
 
 		targetResults := make(chan *models.ResultTarget)
 		// for each target we will launch another goroutine to fetch the values
 		for _, target := range m.Targets {
-			go func(target Target, params admin_api.DashboardWidgetDetailsParams) {
+			go func(target Target, inStep *int32, inStart *int64, inEnd *int64) {
 				apiType := "query_range"
 				now := time.Now()
 
@@ -924,15 +938,15 @@ LabelsWaitLoop:
 				if target.Step > 0 {
 					step = target.Step
 				}
-				if params.Step != nil && *params.Step > 0 {
-					step = *params.Step
+				if inStep != nil && *inStep > 0 {
+					step = *inStep
 				}
 				if step > 0 {
 					extraParamters = fmt.Sprintf("%s&step=%d", extraParamters, step)
 				}
 
-				if params.Start != nil && params.End != nil {
-					extraParamters = fmt.Sprintf("&start=%d&end=%d&step=%d", *params.Start, *params.End, *params.Step)
+				if inStart != nil && inEnd != nil {
+					extraParamters = fmt.Sprintf("&start=%d&end=%d&step=%d", *inStart, *inEnd, *inStep)
 				}
 
 				// replace the `$__interval` global for step with unit (s for seconds)
@@ -969,7 +983,7 @@ LabelsWaitLoop:
 
 				targetResults <- &targetResult
 
-			}(target, params)
+			}(target, step, start, end)
 		}
 
 		wdgtResult := models.WidgetDetails{

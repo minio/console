@@ -26,7 +26,7 @@ import {
   LinearProgress,
 } from "@material-ui/core";
 import api from "../../../common/api";
-import { User, UsersList } from "./types";
+import { UsersList } from "./types";
 import { setErrorSnackMessage } from "../../../actions";
 import history from "../../../history";
 

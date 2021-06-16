@@ -44,6 +44,7 @@ import TenantLicense from "./TenantLicense";
 import PoolsSummary from "./PoolsSummary";
 import PodsSummary from "./PodsSummary";
 import { AppState } from "../../../../store";
+import TenantMetrics from "./TenantMetrics";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -153,6 +154,7 @@ const TenantDetails = ({
     switch (section) {
       case "pools":
       case "pods":
+      case "metrics":
       case "license":
         setTenantTab(section);
         break;
@@ -232,6 +234,7 @@ const TenantDetails = ({
             scrollButtons="auto"
           >
             <Tab value="summary" label="Summary" />
+            <Tab value="metrics" label="Metrics" />
             <Tab value="pools" label="Pools" />
             <Tab value="pods" label="Pods" />
             <Tab value="license" label="License" />
@@ -243,6 +246,10 @@ const TenantDetails = ({
               <Route
                 path="/namespaces/:tenantNamespace/tenants/:tenantName/summary"
                 component={TenantSummary}
+              />
+              <Route
+                path="/namespaces/:tenantNamespace/tenants/:tenantName/metrics"
+                component={TenantMetrics}
               />
               <Route
                 path="/namespaces/:tenantNamespace/tenants/:tenantName/pools"

@@ -2229,8 +2229,8 @@ paths:
 
   /namespaces/{namespace}/tenants/{tenant}:
     get:
-      summary: Tenant Info
-      operationId: TenantInfo
+      summary: Tenant Details
+      operationId: TenantDetails
       parameters:
         - name: namespace
           in: path
@@ -2297,6 +2297,70 @@ paths:
       responses:
         201:
           description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+  /namespaces/{namespace}/tenants/{tenant}/info:
+    get:
+      summary: Tenant Info
+      operationId: TenantInfo
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/adminInfoResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /namespaces/{namespace}/tenants/{tenant}/info/widgets/{widgetId}:
+    get:
+      summary: Returns information about a tenant deployment
+      operationId: TenantWidgetDetails
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: widgetId
+          in: path
+          type: integer
+          format: int32
+          required: true
+        - name: start
+          in: query
+          type: integer
+        - name: end
+          in: query
+          type: integer
+        - name: step
+          in: query
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/widgetDetails"
         default:
           description: Generic error response.
           schema:
