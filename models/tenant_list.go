@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -40,6 +42,9 @@ type TenantList struct {
 
 	// deletion date
 	DeletionDate string `json:"deletion_date,omitempty"`
+
+	// health status
+	HealthStatus string `json:"health_status,omitempty"`
 
 	// instance count
 	InstanceCount int64 `json:"instance_count,omitempty"`
@@ -62,6 +67,11 @@ type TenantList struct {
 
 // Validate validates this tenant list
 func (m *TenantList) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this tenant list based on context it is used
+func (m *TenantList) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

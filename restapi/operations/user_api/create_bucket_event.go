@@ -48,7 +48,7 @@ func NewCreateBucketEvent(ctx *middleware.Context, handler CreateBucketEventHand
 	return &CreateBucketEvent{Context: ctx, Handler: handler}
 }
 
-/*CreateBucketEvent swagger:route POST /buckets/{bucket_name}/events UserAPI createBucketEvent
+/* CreateBucketEvent swagger:route POST /buckets/{bucket_name}/events UserAPI createBucketEvent
 
 Create Bucket Event
 
@@ -61,17 +61,16 @@ type CreateBucketEvent struct {
 func (o *CreateBucketEvent) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewCreateBucketEventParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *CreateBucketEvent) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

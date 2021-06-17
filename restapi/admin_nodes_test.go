@@ -103,7 +103,7 @@ func Test_MaxAllocatableMemory(t *testing.T) {
 						},
 						Spec: corev1.NodeSpec{
 							Taints: []corev1.Taint{
-								corev1.Taint{
+								{
 									Key:    "node.kubernetes.io/unreachable",
 									Effect: corev1.TaintEffectNoSchedule,
 								},
@@ -161,7 +161,7 @@ func Test_MaxAllocatableMemory(t *testing.T) {
 						},
 						Spec: corev1.NodeSpec{
 							Taints: []corev1.Taint{
-								corev1.Taint{
+								{
 									Key:    "node.kubernetes.io/unreachable",
 									Effect: corev1.TaintEffectNoExecute,
 								},
@@ -180,7 +180,7 @@ func Test_MaxAllocatableMemory(t *testing.T) {
 						},
 						Spec: corev1.NodeSpec{
 							Taints: []corev1.Taint{
-								corev1.Taint{
+								{
 									Key:    "node.kubernetes.io/unreachable",
 									Effect: corev1.TaintEffectPreferNoSchedule,
 								},

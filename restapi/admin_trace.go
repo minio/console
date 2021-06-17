@@ -19,14 +19,12 @@ package restapi
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/minio/minio/pkg/madmin"
+	"github.com/minio/madmin-go"
 )
 
 // shortTraceMsg Short trace record
@@ -49,15 +47,54 @@ type callStats struct {
 	Ttfb     string `json:"timeToFirstByte"`
 }
 
-type serviceTraceOpts struct {
-	AllTraffic bool
-	ErrOnly    bool
+// trace filters
+func matchTrace(opts TraceRequest, traceInfo madmin.ServiceTraceInfo) bool {
+	statusCode := int(opts.statusCode)
+	method := opts.method
+	funcName := opts.funcName
+	apiPath := opts.path
+
+	if statusCode == 0 && method == "" && funcName == "" && apiPath == "" {
+		// no specific filtering found trace all the requests
+		return true
+	}
+
+	// Filter request path if passed by the user
+	if apiPath != "" {
+		pathToLookup := strings.ToLower(apiPath)
+		pathFromTrace := strings.ToLower(traceInfo.Trace.ReqInfo.Path)
+
+		return strings.Contains(pathFromTrace, pathToLookup)
+	}
+
+	// Filter response status codes if passed by the user
+	if statusCode > 0 {
+		statusCodeFromTrace := traceInfo.Trace.RespInfo.StatusCode
+
+		return statusCodeFromTrace == statusCode
+	}
+
+	// Filter request method if passed by the user
+	if method != "" {
+		methodFromTrace := traceInfo.Trace.ReqInfo.Method
+
+		return methodFromTrace == method
+	}
+
+	if funcName != "" {
+		funcToLookup := strings.ToLower(funcName)
+		funcFromTrace := strings.ToLower(traceInfo.Trace.FuncName)
+
+		return strings.Contains(funcFromTrace, funcToLookup)
+	}
+
+	return true
 }
 
 // startTraceInfo starts trace of the servers
-func startTraceInfo(ctx context.Context, conn WSConn, client MinioAdmin, opts serviceTraceOpts) error {
+func startTraceInfo(ctx context.Context, conn WSConn, client MinioAdmin, opts TraceRequest) error {
 	// Start listening on all trace activity.
-	traceCh := client.serviceTrace(ctx, opts.AllTraffic, opts.ErrOnly)
+	traceCh := client.serviceTrace(ctx, opts.threshold, opts.s3, opts.internal, opts.storage, opts.os, opts.onlyErrors)
 	for {
 		select {
 		case <-ctx.Done():
@@ -68,20 +105,22 @@ func startTraceInfo(ctx context.Context, conn WSConn, client MinioAdmin, opts se
 				return nil
 			}
 			if traceInfo.Err != nil {
-				log.Println("error on serviceTrace:", traceInfo.Err)
+				LogError("error on serviceTrace: %v", traceInfo.Err)
 				return traceInfo.Err
 			}
-			// Serialize message to be sent
-			traceInfoBytes, err := json.Marshal(shortTrace(&traceInfo))
-			if err != nil {
-				fmt.Println("error on json.Marshal:", err)
-				return err
-			}
-			// Send Message through websocket connection
-			err = conn.writeMessage(websocket.TextMessage, traceInfoBytes)
-			if err != nil {
-				log.Println("error writeMessage:", err)
-				return err
+			if matchTrace(opts, traceInfo) {
+				// Serialize message to be sent
+				traceInfoBytes, err := json.Marshal(shortTrace(&traceInfo))
+				if err != nil {
+					LogError("error on json.Marshal: %v", err)
+					return err
+				}
+				// Send Message through websocket connection
+				err = conn.writeMessage(websocket.TextMessage, traceInfoBytes)
+				if err != nil {
+					LogError("error writeMessage: %v", err)
+					return err
+				}
 			}
 		}
 	}
@@ -102,6 +141,7 @@ func shortTrace(info *madmin.ServiceTraceInfo) shortTraceMsg {
 	s.CallStats.Duration = t.CallStats.Latency.String()
 	s.CallStats.Rx = t.CallStats.InputBytes
 	s.CallStats.Tx = t.CallStats.OutputBytes
+	s.CallStats.Ttfb = t.CallStats.TimeToFirstByte.String()
 
 	if host, ok := t.ReqInfo.Headers["Host"]; ok {
 		s.Host = strings.Join(host, "")

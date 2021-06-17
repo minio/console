@@ -48,7 +48,7 @@ func NewAdminInfo(ctx *middleware.Context, handler AdminInfoHandler) *AdminInfo 
 	return &AdminInfo{Context: ctx, Handler: handler}
 }
 
-/*AdminInfo swagger:route GET /admin/info AdminAPI adminInfo
+/* AdminInfo swagger:route GET /admin/info AdminAPI adminInfo
 
 Returns information about the deployment
 
@@ -61,17 +61,16 @@ type AdminInfo struct {
 func (o *AdminInfo) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewAdminInfoParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *AdminInfo) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

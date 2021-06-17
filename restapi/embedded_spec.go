@@ -85,6 +85,36 @@ func init() {
         }
       }
     },
+    "/account/change-user-password": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Change password of currently logged in user.",
+        "operationId": "ChangeUserPassword",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/changeUserPasswordRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Password successfully changed."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/admin/arns": {
       "get": {
         "tags": [
@@ -2500,8 +2530,8 @@ func init() {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Tenant Info",
-        "operationId": "TenantInfo",
+        "summary": "Tenant Details",
+        "operationId": "TenantDetails",
         "parameters": [
           {
             "type": "string",
@@ -2695,6 +2725,103 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/info": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Tenant Info",
+        "operationId": "TenantInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/adminInfoResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/info/widgets/{widgetId}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Returns information about a tenant deployment",
+        "operationId": "TenantWidgetDetails",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "widgetId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "name": "end",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "step",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/widgetDetails"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/pods": {
       "get": {
         "tags": [
@@ -2724,6 +2851,92 @@ func init() {
               "items": {
                 "$ref": "#/definitions/tenantPod"
               }
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/pods/{podName}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get Logs for Pod",
+        "operationId": "GetPodLogs",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "podName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/pods/{podName}/events": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get Events for Pod",
+        "operationId": "GetPodEvents",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "podName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/eventListWrapper"
             }
           },
           "default": {
@@ -2924,6 +3137,29 @@ func init() {
         "responses": {
           "201": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/nodes/labels": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "List node labels",
+        "operationId": "ListNodeLabels",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/nodeLabels"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -4409,6 +4645,21 @@ func init() {
         }
       }
     },
+    "changeUserPasswordRequest": {
+      "type": "object",
+      "required": [
+        "selectedUser",
+        "newSecretKey"
+      ],
+      "properties": {
+        "newSecretKey": {
+          "type": "string"
+        },
+        "selectedUser": {
+          "type": "string"
+        }
+      }
+    },
     "configDescription": {
       "type": "object",
       "properties": {
@@ -4741,6 +4992,36 @@ func init() {
         "message": {
           "type": "string"
         }
+      }
+    },
+    "eventListElement": {
+      "type": "object",
+      "properties": {
+        "event_type": {
+          "type": "string"
+        },
+        "last_seen": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "message": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "object": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "eventListWrapper": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/eventListElement"
       }
     },
     "expirationResponse": {
@@ -5530,6 +5811,15 @@ func init() {
           "type": "string"
         },
         "originBucket": {
+          "type": "string"
+        }
+      }
+    },
+    "nodeLabels": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
           "type": "string"
         }
       }
@@ -6667,6 +6957,9 @@ func init() {
             "$ref": "#/definitions/pool"
           }
         },
+        "status": {
+          "$ref": "#/definitions/tenantStatus"
+        },
         "subnet_license": {
           "$ref": "#/definitions/license"
         },
@@ -6686,6 +6979,9 @@ func init() {
           "type": "string"
         },
         "deletion_date": {
+          "type": "string"
+        },
+        "health_status": {
           "type": "string"
         },
         "instance_count": {
@@ -6742,6 +7038,30 @@ func init() {
         },
         "secret_key": {
           "type": "string"
+        }
+      }
+    },
+    "tenantStatus": {
+      "type": "object",
+      "properties": {
+        "drives_healing": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "drives_offline": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "drives_online": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "health_status": {
+          "type": "string"
+        },
+        "write_quorum": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -7249,6 +7569,36 @@ func init() {
             "schema": {
               "$ref": "#/definitions/loginResponse"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/account/change-user-password": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Change password of currently logged in user.",
+        "operationId": "ChangeUserPassword",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/changeUserPasswordRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Password successfully changed."
           },
           "default": {
             "description": "Generic error response.",
@@ -9674,8 +10024,8 @@ func init() {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Tenant Info",
-        "operationId": "TenantInfo",
+        "summary": "Tenant Details",
+        "operationId": "TenantDetails",
         "parameters": [
           {
             "type": "string",
@@ -9869,6 +10219,103 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/info": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Tenant Info",
+        "operationId": "TenantInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/adminInfoResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/info/widgets/{widgetId}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Returns information about a tenant deployment",
+        "operationId": "TenantWidgetDetails",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "widgetId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "name": "end",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "step",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/widgetDetails"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/pods": {
       "get": {
         "tags": [
@@ -9898,6 +10345,92 @@ func init() {
               "items": {
                 "$ref": "#/definitions/tenantPod"
               }
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/pods/{podName}": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get Logs for Pod",
+        "operationId": "GetPodLogs",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "podName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/pods/{podName}/events": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get Events for Pod",
+        "operationId": "GetPodEvents",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "podName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/eventListWrapper"
             }
           },
           "default": {
@@ -10098,6 +10631,29 @@ func init() {
         "responses": {
           "201": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/nodes/labels": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "List node labels",
+        "operationId": "ListNodeLabels",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/nodeLabels"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -12223,6 +12779,21 @@ func init() {
         }
       }
     },
+    "changeUserPasswordRequest": {
+      "type": "object",
+      "required": [
+        "selectedUser",
+        "newSecretKey"
+      ],
+      "properties": {
+        "newSecretKey": {
+          "type": "string"
+        },
+        "selectedUser": {
+          "type": "string"
+        }
+      }
+    },
     "configDescription": {
       "type": "object",
       "properties": {
@@ -12555,6 +13126,36 @@ func init() {
         "message": {
           "type": "string"
         }
+      }
+    },
+    "eventListElement": {
+      "type": "object",
+      "properties": {
+        "event_type": {
+          "type": "string"
+        },
+        "last_seen": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "message": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "object": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "eventListWrapper": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/eventListElement"
       }
     },
     "expirationResponse": {
@@ -13332,6 +13933,15 @@ func init() {
           "type": "string"
         },
         "originBucket": {
+          "type": "string"
+        }
+      }
+    },
+    "nodeLabels": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
           "type": "string"
         }
       }
@@ -14334,6 +14944,9 @@ func init() {
             "$ref": "#/definitions/pool"
           }
         },
+        "status": {
+          "$ref": "#/definitions/tenantStatus"
+        },
         "subnet_license": {
           "$ref": "#/definitions/license"
         },
@@ -14353,6 +14966,9 @@ func init() {
           "type": "string"
         },
         "deletion_date": {
+          "type": "string"
+        },
+        "health_status": {
           "type": "string"
         },
         "instance_count": {
@@ -14409,6 +15025,30 @@ func init() {
         },
         "secret_key": {
           "type": "string"
+        }
+      }
+    },
+    "tenantStatus": {
+      "type": "object",
+      "properties": {
+        "drives_healing": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "drives_offline": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "drives_online": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "health_status": {
+          "type": "string"
+        },
+        "write_quorum": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

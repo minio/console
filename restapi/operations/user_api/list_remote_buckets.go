@@ -48,7 +48,7 @@ func NewListRemoteBuckets(ctx *middleware.Context, handler ListRemoteBucketsHand
 	return &ListRemoteBuckets{Context: ctx, Handler: handler}
 }
 
-/*ListRemoteBuckets swagger:route GET /remote-buckets UserAPI listRemoteBuckets
+/* ListRemoteBuckets swagger:route GET /remote-buckets UserAPI listRemoteBuckets
 
 List Remote Buckets
 
@@ -61,17 +61,16 @@ type ListRemoteBuckets struct {
 func (o *ListRemoteBuckets) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewListRemoteBucketsParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *ListRemoteBuckets) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

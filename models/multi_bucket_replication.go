@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 	"strconv"
 
@@ -47,7 +48,6 @@ type MultiBucketReplication struct {
 
 	// buckets relation
 	// Required: true
-	// Min Length: 1
 	BucketsRelation []*MultiBucketsRelation `json:"bucketsRelation"`
 
 	// health check period
@@ -121,7 +121,7 @@ func (m *MultiBucketReplication) validateAccessKey(formats strfmt.Registry) erro
 		return err
 	}
 
-	if err := validate.MinLength("accessKey", "body", string(*m.AccessKey), 3); err != nil {
+	if err := validate.MinLength("accessKey", "body", *m.AccessKey, 3); err != nil {
 		return err
 	}
 
@@ -159,7 +159,7 @@ func (m *MultiBucketReplication) validateSecretKey(formats strfmt.Registry) erro
 		return err
 	}
 
-	if err := validate.MinLength("secretKey", "body", string(*m.SecretKey), 8); err != nil {
+	if err := validate.MinLength("secretKey", "body", *m.SecretKey, 8); err != nil {
 		return err
 	}
 
@@ -196,7 +196,6 @@ func (m *MultiBucketReplication) validateSyncModeEnum(path, location string, val
 }
 
 func (m *MultiBucketReplication) validateSyncMode(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.SyncMode) { // not required
 		return nil
 	}
@@ -213,6 +212,38 @@ func (m *MultiBucketReplication) validateTargetURL(formats strfmt.Registry) erro
 
 	if err := validate.Required("targetURL", "body", m.TargetURL); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this multi bucket replication based on the context it is used
+func (m *MultiBucketReplication) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateBucketsRelation(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MultiBucketReplication) contextValidateBucketsRelation(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.BucketsRelation); i++ {
+
+		if m.BucketsRelation[i] != nil {
+			if err := m.BucketsRelation[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("bucketsRelation" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil

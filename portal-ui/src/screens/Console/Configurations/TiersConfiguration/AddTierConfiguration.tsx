@@ -294,31 +294,30 @@ const AddTierConfiguration = ({
                     setEndpoint(e.target.value);
                   }}
                 />
-                {type === "s3" ||
-                  (type === "minio" && (
-                    <Fragment>
-                      <InputBoxWrapper
-                        id="accessKey"
-                        name="accessKey"
-                        label="Access Key"
-                        placeholder="Enter Access Key"
-                        value={accessKey}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setAccessKey(e.target.value);
-                        }}
-                      />
-                      <InputBoxWrapper
-                        id="secretKey"
-                        name="secretKey"
-                        label="Secret Key"
-                        placeholder="Enter Secret Key"
-                        value={secretKey}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setSecretKey(e.target.value);
-                        }}
-                      />
-                    </Fragment>
-                  ))}
+                {(type === "s3" || type === "minio") && (
+                  <Fragment>
+                    <InputBoxWrapper
+                      id="accessKey"
+                      name="accessKey"
+                      label="Access Key"
+                      placeholder="Enter Access Key"
+                      value={accessKey}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setAccessKey(e.target.value);
+                      }}
+                    />
+                    <InputBoxWrapper
+                      id="secretKey"
+                      name="secretKey"
+                      label="Secret Key"
+                      placeholder="Enter Secret Key"
+                      value={secretKey}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setSecretKey(e.target.value);
+                      }}
+                    />
+                  </Fragment>
+                )}
                 {type === "gcs" && (
                   <Fragment>
                     <FileSelector

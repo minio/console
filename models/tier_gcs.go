@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -53,6 +55,11 @@ type TierGcs struct {
 
 // Validate validates this tier gcs
 func (m *TierGcs) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this tier gcs based on context it is used
+func (m *TierGcs) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

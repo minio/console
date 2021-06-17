@@ -30,7 +30,8 @@ import (
 )
 
 // NewSubscriptionRefreshParams creates a new SubscriptionRefreshParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewSubscriptionRefreshParams() SubscriptionRefreshParams {
 
 	return SubscriptionRefreshParams{}

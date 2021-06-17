@@ -48,7 +48,7 @@ func NewDirectCSIFormatDrive(ctx *middleware.Context, handler DirectCSIFormatDri
 	return &DirectCSIFormatDrive{Context: ctx, Handler: handler}
 }
 
-/*DirectCSIFormatDrive swagger:route POST /direct-csi/drives/format AdminAPI directCSIFormatDrive
+/* DirectCSIFormatDrive swagger:route POST /direct-csi/drives/format AdminAPI directCSIFormatDrive
 
 Format direct-csi drives from a list
 
@@ -61,17 +61,16 @@ type DirectCSIFormatDrive struct {
 func (o *DirectCSIFormatDrive) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewDirectCSIFormatDriveParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *DirectCSIFormatDrive) ServeHTTP(rw http.ResponseWriter, r *http.Request
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

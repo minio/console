@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 )
 
@@ -33,5 +35,10 @@ type ServiceAccounts []string
 
 // Validate validates this service accounts
 func (m ServiceAccounts) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this service accounts based on context it is used
+func (m ServiceAccounts) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

@@ -17,7 +17,6 @@
 package restapi
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -29,9 +28,22 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/minio/console/models"
-	"github.com/minio/minio/cmd/config"
-	"github.com/minio/minio/pkg/event/target"
-	"github.com/minio/minio/pkg/madmin"
+	"github.com/minio/madmin-go"
+)
+
+const (
+	NotifyPostgresSubSys       = "notify_postgres"
+	PostgresFormat             = "format"
+	PostgresConnectionString   = "connection_string"
+	PostgresTable              = "table"
+	PostgresHost               = "host"
+	PostgresPort               = "port"
+	PostgresUsername           = "username"
+	PostgresPassword           = "password"
+	PostgresDatabase           = "database"
+	PostgresQueueDir           = "queue_dir"
+	PostgresQueueLimit         = "queue_limit"
+	PostgresMaxOpenConnections = "max_open_connections"
 )
 
 // assigning mock at runtime instead of compile time
@@ -345,65 +357,48 @@ func Test_getConfig(t *testing.T) {
 				name:   "notify_postgres",
 			},
 			mock: func() {
-				cfg := config.Config{}
-				cfg["notify_postgres"] = make(map[string]config.KVS)
-				cfg["notify_postgres"]["_"] = config.KVS{
-					{
-						Key:   target.PostgresConnectionString,
-						Value: "host=localhost dbname=minio_events user=postgres password=password port=5432 sslmode=disable",
-					},
-					{
-						Key:   target.PostgresTable,
-						Value: "bucketevents",
-					},
-				}
-
-				var buf = &bytes.Buffer{}
-				cw := config.NewConfigWriteTo(cfg, "notify_postgres:_")
-				cw.WriteTo(buf)
-
 				// mock function response from getConfig()
 				minioGetConfigKVMock = func(key string) ([]byte, error) {
-					return buf.Bytes(), nil
+					return []byte(`notify_postgres:_ connection_string="host=localhost dbname=minio_events user=postgres password=password port=5432 sslmode=disable" table=bucketevents`), nil
 				}
 
 				configListMock := []madmin.HelpKV{
 					{
-						Key:         target.PostgresConnectionString,
+						Key:         PostgresConnectionString,
 						Description: `Postgres server connection-string e.g. "host=localhost port=5432 dbname=minio_events user=postgres password=password sslmode=disable"`,
 						Type:        "string",
 					},
 					{
-						Key:         target.PostgresTable,
+						Key:         PostgresTable,
 						Description: "DB table name to store/update events, table is auto-created",
 						Type:        "string",
 					},
 					{
-						Key:         target.PostgresFormat,
+						Key:         PostgresFormat,
 						Description: "desc",
 						Type:        "namespace*|access",
 					},
 					{
-						Key:         target.PostgresQueueDir,
+						Key:         PostgresQueueDir,
 						Description: "des",
 						Optional:    true,
 						Type:        "path",
 					},
 					{
-						Key:         target.PostgresQueueLimit,
+						Key:         PostgresQueueLimit,
 						Description: "desc",
 						Optional:    true,
 						Type:        "number",
 					},
 					{
-						Key:         config.Comment,
-						Description: config.DefaultComment,
+						Key:         madmin.CommentKey,
+						Description: "",
 						Optional:    true,
 						Type:        "sentence",
 					},
 				}
 				mockConfigList := madmin.Help{
-					SubSys:          config.NotifyPostgresSubSys,
+					SubSys:          NotifyPostgresSubSys,
 					Description:     "publish bucket notifications to Postgres databases",
 					MultipleTargets: true,
 					KeysHelp:        configListMock,
@@ -415,11 +410,11 @@ func Test_getConfig(t *testing.T) {
 			},
 			want: []*models.ConfigurationKV{
 				{
-					Key:   target.PostgresConnectionString,
+					Key:   PostgresConnectionString,
 					Value: "host=localhost dbname=minio_events user=postgres password=password port=5432 sslmode=disable",
 				},
 				{
-					Key:   target.PostgresTable,
+					Key:   PostgresTable,
 					Value: "bucketevents",
 				},
 			},
@@ -429,59 +424,51 @@ func Test_getConfig(t *testing.T) {
 			name: "valid config, but server returned empty",
 			args: args{
 				client: client,
-				name:   "notify_postgres",
+				name:   NotifyPostgresSubSys,
 			},
 			mock: func() {
-				cfg := config.Config{}
-				cfg["notify_postgres"] = make(map[string]config.KVS)
-				cfg["notify_postgres"]["_"] = config.KVS{}
-
-				var buf = &bytes.Buffer{}
-				cw := config.NewConfigWriteTo(cfg, "notify_postgres:_")
-				cw.WriteTo(buf)
-
 				// mock function response from getConfig()
 				minioGetConfigKVMock = func(key string) ([]byte, error) {
-					return buf.Bytes(), nil
+					return []byte(`notify_postgres:_`), nil
 				}
 
 				configListMock := []madmin.HelpKV{
 					{
-						Key:         target.PostgresConnectionString,
+						Key:         PostgresConnectionString,
 						Description: `Postgres server connection-string e.g. "host=localhost port=5432 dbname=minio_events user=postgres password=password sslmode=disable"`,
 						Type:        "string",
 					},
 					{
-						Key:         target.PostgresTable,
+						Key:         PostgresTable,
 						Description: "DB table name to store/update events, table is auto-created",
 						Type:        "string",
 					},
 					{
-						Key:         target.PostgresFormat,
+						Key:         PostgresFormat,
 						Description: "desc",
 						Type:        "namespace*|access",
 					},
 					{
-						Key:         target.PostgresQueueDir,
+						Key:         PostgresQueueDir,
 						Description: "des",
 						Optional:    true,
 						Type:        "path",
 					},
 					{
-						Key:         target.PostgresQueueLimit,
+						Key:         PostgresQueueLimit,
 						Description: "desc",
 						Optional:    true,
 						Type:        "number",
 					},
 					{
-						Key:         config.Comment,
-						Description: config.DefaultComment,
+						Key:         madmin.CommentKey,
+						Description: "optionally add a comment to this setting",
 						Optional:    true,
 						Type:        "sentence",
 					},
 				}
 				mockConfigList := madmin.Help{
-					SubSys:          config.NotifyPostgresSubSys,
+					SubSys:          NotifyPostgresSubSys,
 					Description:     "publish bucket notifications to Postgres databases",
 					MultipleTargets: true,
 					KeysHelp:        configListMock,
@@ -512,41 +499,41 @@ func Test_getConfig(t *testing.T) {
 
 				configListMock := []madmin.HelpKV{
 					{
-						Key:         target.PostgresConnectionString,
+						Key:         PostgresConnectionString,
 						Description: `Postgres server connection-string e.g. "host=localhost port=5432 dbname=minio_events user=postgres password=password sslmode=disable"`,
 						Type:        "string",
 					},
 					{
-						Key:         target.PostgresTable,
+						Key:         PostgresTable,
 						Description: "DB table name to store/update events, table is auto-created",
 						Type:        "string",
 					},
 					{
-						Key:         target.PostgresFormat,
+						Key:         PostgresFormat,
 						Description: "desc",
 						Type:        "namespace*|access",
 					},
 					{
-						Key:         target.PostgresQueueDir,
+						Key:         PostgresQueueDir,
 						Description: "des",
 						Optional:    true,
 						Type:        "path",
 					},
 					{
-						Key:         target.PostgresQueueLimit,
+						Key:         PostgresQueueLimit,
 						Description: "desc",
 						Optional:    true,
 						Type:        "number",
 					},
 					{
-						Key:         config.Comment,
-						Description: config.DefaultComment,
+						Key:         madmin.CommentKey,
+						Description: "optionally add a comment to this setting",
 						Optional:    true,
 						Type:        "sentence",
 					},
 				}
 				mockConfigList := madmin.Help{
-					SubSys:          config.NotifyPostgresSubSys,
+					SubSys:          NotifyPostgresSubSys,
 					Description:     "publish bucket notifications to Postgres databases",
 					MultipleTargets: true,
 					KeysHelp:        configListMock,

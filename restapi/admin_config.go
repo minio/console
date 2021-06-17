@@ -25,7 +25,7 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
-	madmin "github.com/minio/minio/pkg/madmin"
+	madmin "github.com/minio/madmin-go"
 
 	"github.com/minio/console/restapi/operations/admin_api"
 )
@@ -77,7 +77,7 @@ func listConfig(client MinioAdmin) ([]*models.ConfigDescription, error) {
 
 // getListConfigResponse performs listConfig() and serializes it to the handler's output
 func getListConfigResponse(session *models.Principal) (*models.ListConfigResponse, *models.Error) {
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -125,7 +125,7 @@ func getConfig(ctx context.Context, client MinioAdmin, name string) ([]*models.C
 // getConfigResponse performs getConfig() and serializes it to the handler's output
 func getConfigResponse(session *models.Principal, params admin_api.ConfigInfoParams) (*models.Configuration, *models.Error) {
 	ctx := context.Background()
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -177,7 +177,7 @@ func buildConfig(configName *string, kvs []*models.ConfigurationKV) *string {
 
 // setConfigResponse implements setConfig() to be used by handler
 func setConfigResponse(session *models.Principal, name string, configRequest *models.SetConfigRequest) (*models.SetConfigResponse, *models.Error) {
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}

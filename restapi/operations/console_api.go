@@ -38,6 +38,7 @@ import (
 
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations/admin_api"
+	"github.com/minio/console/restapi/operations/operator_api"
 	"github.com/minio/console/restapi/operations/user_api"
 )
 
@@ -53,6 +54,7 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		PreServerShutdown:   func() {},
 		ServerShutdown:      func() {},
 		spec:                spec,
+		useSwaggerUI:        false,
 		ServeError:          errors.ServeError,
 		BasicAuthenticator:  security.BasicAuth,
 		APIKeyAuthenticator: security.APIKeyAuth,
@@ -103,11 +105,17 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIBulkUpdateUsersGroupsHandler: admin_api.BulkUpdateUsersGroupsHandlerFunc(func(params admin_api.BulkUpdateUsersGroupsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.BulkUpdateUsersGroups has not yet been implemented")
 		}),
+		AdminAPIChangeUserPasswordHandler: admin_api.ChangeUserPasswordHandlerFunc(func(params admin_api.ChangeUserPasswordParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.ChangeUserPassword has not yet been implemented")
+		}),
 		AdminAPIConfigInfoHandler: admin_api.ConfigInfoHandlerFunc(func(params admin_api.ConfigInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ConfigInfo has not yet been implemented")
 		}),
 		UserAPICreateBucketEventHandler: user_api.CreateBucketEventHandlerFunc(func(params user_api.CreateBucketEventParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.CreateBucketEvent has not yet been implemented")
+		}),
+		AdminAPICreateNamespaceHandler: admin_api.CreateNamespaceHandlerFunc(func(params admin_api.CreateNamespaceParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.CreateNamespace has not yet been implemented")
 		}),
 		UserAPICreateServiceAccountHandler: user_api.CreateServiceAccountHandlerFunc(func(params user_api.CreateServiceAccountParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.CreateServiceAccount has not yet been implemented")
@@ -190,6 +198,12 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIGetParityHandler: admin_api.GetParityHandlerFunc(func(params admin_api.GetParityParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetParity has not yet been implemented")
 		}),
+		AdminAPIGetPodEventsHandler: admin_api.GetPodEventsHandlerFunc(func(params admin_api.GetPodEventsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.GetPodEvents has not yet been implemented")
+		}),
+		AdminAPIGetPodLogsHandler: admin_api.GetPodLogsHandlerFunc(func(params admin_api.GetPodLogsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.GetPodLogs has not yet been implemented")
+		}),
 		AdminAPIGetResourceQuotaHandler: admin_api.GetResourceQuotaHandlerFunc(func(params admin_api.GetResourceQuotaParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.GetResourceQuota has not yet been implemented")
 		}),
@@ -234,6 +248,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		AdminAPIListGroupsHandler: admin_api.ListGroupsHandlerFunc(func(params admin_api.ListGroupsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListGroups has not yet been implemented")
+		}),
+		OperatorAPIListNodeLabelsHandler: operator_api.ListNodeLabelsHandlerFunc(func(params operator_api.ListNodeLabelsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.ListNodeLabels has not yet been implemented")
 		}),
 		UserAPIListObjectsHandler: user_api.ListObjectsHandlerFunc(func(params user_api.ListObjectsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.ListObjects has not yet been implemented")
@@ -370,6 +387,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPITenantAddPoolHandler: admin_api.TenantAddPoolHandlerFunc(func(params admin_api.TenantAddPoolParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TenantAddPool has not yet been implemented")
 		}),
+		AdminAPITenantDetailsHandler: admin_api.TenantDetailsHandlerFunc(func(params admin_api.TenantDetailsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.TenantDetails has not yet been implemented")
+		}),
 		AdminAPITenantInfoHandler: admin_api.TenantInfoHandlerFunc(func(params admin_api.TenantInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TenantInfo has not yet been implemented")
 		}),
@@ -381,6 +401,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		AdminAPITenantUpdatePoolsHandler: admin_api.TenantUpdatePoolsHandlerFunc(func(params admin_api.TenantUpdatePoolsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TenantUpdatePools has not yet been implemented")
+		}),
+		AdminAPITenantWidgetDetailsHandler: admin_api.TenantWidgetDetailsHandlerFunc(func(params admin_api.TenantWidgetDetailsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.TenantWidgetDetails has not yet been implemented")
 		}),
 		AdminAPITiersListHandler: admin_api.TiersListHandlerFunc(func(params admin_api.TiersListParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TiersList has not yet been implemented")
@@ -420,13 +443,16 @@ type ConsoleAPI struct {
 	defaultConsumes string
 	defaultProduces string
 	Middleware      func(middleware.Builder) http.Handler
+	useSwaggerUI    bool
 
 	// BasicAuthenticator generates a runtime.Authenticator from the supplied basic auth function.
 	// It has a default implementation in the security package, however you can replace it for your particular usage.
 	BasicAuthenticator func(security.UserPassAuthentication) runtime.Authenticator
+
 	// APIKeyAuthenticator generates a runtime.Authenticator from the supplied token auth function.
 	// It has a default implementation in the security package, however you can replace it for your particular usage.
 	APIKeyAuthenticator func(string, string, security.TokenAuthentication) runtime.Authenticator
+
 	// BearerAuthenticator generates a runtime.Authenticator from the supplied bearer token auth function.
 	// It has a default implementation in the security package, however you can replace it for your particular usage.
 	BearerAuthenticator func(string, security.ScopedTokenAuthentication) runtime.Authenticator
@@ -478,10 +504,14 @@ type ConsoleAPI struct {
 	UserAPIBucketSetPolicyHandler user_api.BucketSetPolicyHandler
 	// AdminAPIBulkUpdateUsersGroupsHandler sets the operation handler for the bulk update users groups operation
 	AdminAPIBulkUpdateUsersGroupsHandler admin_api.BulkUpdateUsersGroupsHandler
+	// AdminAPIChangeUserPasswordHandler sets the operation handler for the change user password operation
+	AdminAPIChangeUserPasswordHandler admin_api.ChangeUserPasswordHandler
 	// AdminAPIConfigInfoHandler sets the operation handler for the config info operation
 	AdminAPIConfigInfoHandler admin_api.ConfigInfoHandler
 	// UserAPICreateBucketEventHandler sets the operation handler for the create bucket event operation
 	UserAPICreateBucketEventHandler user_api.CreateBucketEventHandler
+	// AdminAPICreateNamespaceHandler sets the operation handler for the create namespace operation
+	AdminAPICreateNamespaceHandler admin_api.CreateNamespaceHandler
 	// UserAPICreateServiceAccountHandler sets the operation handler for the create service account operation
 	UserAPICreateServiceAccountHandler user_api.CreateServiceAccountHandler
 	// AdminAPICreateTenantHandler sets the operation handler for the create tenant operation
@@ -536,6 +566,10 @@ type ConsoleAPI struct {
 	AdminAPIGetMaxAllocatableMemHandler admin_api.GetMaxAllocatableMemHandler
 	// AdminAPIGetParityHandler sets the operation handler for the get parity operation
 	AdminAPIGetParityHandler admin_api.GetParityHandler
+	// AdminAPIGetPodEventsHandler sets the operation handler for the get pod events operation
+	AdminAPIGetPodEventsHandler admin_api.GetPodEventsHandler
+	// AdminAPIGetPodLogsHandler sets the operation handler for the get pod logs operation
+	AdminAPIGetPodLogsHandler admin_api.GetPodLogsHandler
 	// AdminAPIGetResourceQuotaHandler sets the operation handler for the get resource quota operation
 	AdminAPIGetResourceQuotaHandler admin_api.GetResourceQuotaHandler
 	// AdminAPIGetTenantPodsHandler sets the operation handler for the get tenant pods operation
@@ -566,6 +600,8 @@ type ConsoleAPI struct {
 	UserAPIListExternalBucketsHandler user_api.ListExternalBucketsHandler
 	// AdminAPIListGroupsHandler sets the operation handler for the list groups operation
 	AdminAPIListGroupsHandler admin_api.ListGroupsHandler
+	// OperatorAPIListNodeLabelsHandler sets the operation handler for the list node labels operation
+	OperatorAPIListNodeLabelsHandler operator_api.ListNodeLabelsHandler
 	// UserAPIListObjectsHandler sets the operation handler for the list objects operation
 	UserAPIListObjectsHandler user_api.ListObjectsHandler
 	// AdminAPIListPVCsHandler sets the operation handler for the list p v cs operation
@@ -656,6 +692,8 @@ type ConsoleAPI struct {
 	AdminAPISubscriptionValidateHandler admin_api.SubscriptionValidateHandler
 	// AdminAPITenantAddPoolHandler sets the operation handler for the tenant add pool operation
 	AdminAPITenantAddPoolHandler admin_api.TenantAddPoolHandler
+	// AdminAPITenantDetailsHandler sets the operation handler for the tenant details operation
+	AdminAPITenantDetailsHandler admin_api.TenantDetailsHandler
 	// AdminAPITenantInfoHandler sets the operation handler for the tenant info operation
 	AdminAPITenantInfoHandler admin_api.TenantInfoHandler
 	// AdminAPITenantUpdateCertificateHandler sets the operation handler for the tenant update certificate operation
@@ -664,6 +702,8 @@ type ConsoleAPI struct {
 	AdminAPITenantUpdateEncryptionHandler admin_api.TenantUpdateEncryptionHandler
 	// AdminAPITenantUpdatePoolsHandler sets the operation handler for the tenant update pools operation
 	AdminAPITenantUpdatePoolsHandler admin_api.TenantUpdatePoolsHandler
+	// AdminAPITenantWidgetDetailsHandler sets the operation handler for the tenant widget details operation
+	AdminAPITenantWidgetDetailsHandler admin_api.TenantWidgetDetailsHandler
 	// AdminAPITiersListHandler sets the operation handler for the tiers list operation
 	AdminAPITiersListHandler admin_api.TiersListHandler
 	// UserAPIUpdateBucketLifecycleHandler sets the operation handler for the update bucket lifecycle operation
@@ -676,6 +716,7 @@ type ConsoleAPI struct {
 	AdminAPIUpdateUserGroupsHandler admin_api.UpdateUserGroupsHandler
 	// AdminAPIUpdateUserInfoHandler sets the operation handler for the update user info operation
 	AdminAPIUpdateUserInfoHandler admin_api.UpdateUserInfoHandler
+
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
 	ServeError func(http.ResponseWriter, *http.Request, error)
@@ -693,6 +734,16 @@ type ConsoleAPI struct {
 
 	// User defined logger function.
 	Logger func(string, ...interface{})
+}
+
+// UseRedoc for documentation at /docs
+func (o *ConsoleAPI) UseRedoc() {
+	o.useSwaggerUI = false
+}
+
+// UseSwaggerUI for documentation at /docs
+func (o *ConsoleAPI) UseSwaggerUI() {
+	o.useSwaggerUI = true
 }
 
 // SetDefaultProduces sets the default produces media type
@@ -791,11 +842,17 @@ func (o *ConsoleAPI) Validate() error {
 	if o.AdminAPIBulkUpdateUsersGroupsHandler == nil {
 		unregistered = append(unregistered, "admin_api.BulkUpdateUsersGroupsHandler")
 	}
+	if o.AdminAPIChangeUserPasswordHandler == nil {
+		unregistered = append(unregistered, "admin_api.ChangeUserPasswordHandler")
+	}
 	if o.AdminAPIConfigInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.ConfigInfoHandler")
 	}
 	if o.UserAPICreateBucketEventHandler == nil {
 		unregistered = append(unregistered, "user_api.CreateBucketEventHandler")
+	}
+	if o.AdminAPICreateNamespaceHandler == nil {
+		unregistered = append(unregistered, "admin_api.CreateNamespaceHandler")
 	}
 	if o.UserAPICreateServiceAccountHandler == nil {
 		unregistered = append(unregistered, "user_api.CreateServiceAccountHandler")
@@ -878,6 +935,12 @@ func (o *ConsoleAPI) Validate() error {
 	if o.AdminAPIGetParityHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetParityHandler")
 	}
+	if o.AdminAPIGetPodEventsHandler == nil {
+		unregistered = append(unregistered, "admin_api.GetPodEventsHandler")
+	}
+	if o.AdminAPIGetPodLogsHandler == nil {
+		unregistered = append(unregistered, "admin_api.GetPodLogsHandler")
+	}
 	if o.AdminAPIGetResourceQuotaHandler == nil {
 		unregistered = append(unregistered, "admin_api.GetResourceQuotaHandler")
 	}
@@ -922,6 +985,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIListGroupsHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListGroupsHandler")
+	}
+	if o.OperatorAPIListNodeLabelsHandler == nil {
+		unregistered = append(unregistered, "operator_api.ListNodeLabelsHandler")
 	}
 	if o.UserAPIListObjectsHandler == nil {
 		unregistered = append(unregistered, "user_api.ListObjectsHandler")
@@ -1058,6 +1124,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.AdminAPITenantAddPoolHandler == nil {
 		unregistered = append(unregistered, "admin_api.TenantAddPoolHandler")
 	}
+	if o.AdminAPITenantDetailsHandler == nil {
+		unregistered = append(unregistered, "admin_api.TenantDetailsHandler")
+	}
 	if o.AdminAPITenantInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.TenantInfoHandler")
 	}
@@ -1069,6 +1138,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPITenantUpdatePoolsHandler == nil {
 		unregistered = append(unregistered, "admin_api.TenantUpdatePoolsHandler")
+	}
+	if o.AdminAPITenantWidgetDetailsHandler == nil {
+		unregistered = append(unregistered, "admin_api.TenantWidgetDetailsHandler")
 	}
 	if o.AdminAPITiersListHandler == nil {
 		unregistered = append(unregistered, "admin_api.TiersListHandler")
@@ -1242,6 +1314,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/users-groups-bulk"] = admin_api.NewBulkUpdateUsersGroups(o.context, o.AdminAPIBulkUpdateUsersGroupsHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/account/change-user-password"] = admin_api.NewChangeUserPassword(o.context, o.AdminAPIChangeUserPasswordHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -1250,6 +1326,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/buckets/{bucket_name}/events"] = user_api.NewCreateBucketEvent(o.context, o.UserAPICreateBucketEventHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/namespace"] = admin_api.NewCreateNamespace(o.context, o.AdminAPICreateNamespaceHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
@@ -1361,6 +1441,14 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/pods/{podName}/events"] = admin_api.NewGetPodEvents(o.context, o.AdminAPIGetPodEventsHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/pods/{podName}"] = admin_api.NewGetPodLogs(o.context, o.AdminAPIGetPodLogsHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/namespaces/{namespace}/resourcequotas/{resource-quota-name}"] = admin_api.NewGetResourceQuota(o.context, o.AdminAPIGetResourceQuotaHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -1418,6 +1506,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/groups"] = admin_api.NewListGroups(o.context, o.AdminAPIListGroupsHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/nodes/labels"] = operator_api.NewListNodeLabels(o.context, o.OperatorAPIListNodeLabelsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -1601,7 +1693,11 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}"] = admin_api.NewTenantInfo(o.context, o.AdminAPITenantInfoHandler)
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}"] = admin_api.NewTenantDetails(o.context, o.AdminAPITenantDetailsHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/info"] = admin_api.NewTenantInfo(o.context, o.AdminAPITenantInfoHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
@@ -1614,6 +1710,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/namespaces/{namespace}/tenants/{tenant}/pools"] = admin_api.NewTenantUpdatePools(o.context, o.AdminAPITenantUpdatePoolsHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/info/widgets/{widgetId}"] = admin_api.NewTenantWidgetDetails(o.context, o.AdminAPITenantWidgetDetailsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -1647,6 +1747,9 @@ func (o *ConsoleAPI) Serve(builder middleware.Builder) http.Handler {
 
 	if o.Middleware != nil {
 		return o.Middleware(builder)
+	}
+	if o.useSwaggerUI {
+		return o.context.APIHandlerSwaggerUI(builder)
 	}
 	return o.context.APIHandler(builder)
 }

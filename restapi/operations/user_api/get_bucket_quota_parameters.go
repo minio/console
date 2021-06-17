@@ -31,7 +31,8 @@ import (
 )
 
 // NewGetBucketQuotaParams creates a new GetBucketQuotaParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewGetBucketQuotaParams() GetBucketQuotaParams {
 
 	return GetBucketQuotaParams{}
@@ -66,7 +67,6 @@ func (o *GetBucketQuotaParams) BindRequest(r *http.Request, route *middleware.Ma
 	if err := o.bindName(rName, rhkName, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -82,7 +82,6 @@ func (o *GetBucketQuotaParams) bindName(rawData []string, hasKey bool, formats s
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Name = raw
 
 	return nil

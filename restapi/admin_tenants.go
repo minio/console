@@ -23,10 +23,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net"
 	"net/http"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -40,7 +40,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 
 	"github.com/minio/console/cluster"
-	"github.com/minio/minio/pkg/madmin"
+	"github.com/minio/madmin-go"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
@@ -92,12 +92,12 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 
 	})
 	// Detail Tenant
-	api.AdminAPITenantInfoHandler = admin_api.TenantInfoHandlerFunc(func(params admin_api.TenantInfoParams, session *models.Principal) middleware.Responder {
-		resp, err := getTenantInfoResponse(session, params)
+	api.AdminAPITenantDetailsHandler = admin_api.TenantDetailsHandlerFunc(func(params admin_api.TenantDetailsParams, session *models.Principal) middleware.Responder {
+		resp, err := getTenantDetailsResponse(session, params)
 		if err != nil {
-			return admin_api.NewTenantInfoDefault(int(err.Code)).WithPayload(err)
+			return admin_api.NewTenantDetailsDefault(int(err.Code)).WithPayload(err)
 		}
-		return admin_api.NewTenantInfoOK().WithPayload(resp)
+		return admin_api.NewTenantDetailsOK().WithPayload(resp)
 
 	})
 
@@ -144,6 +144,22 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 			return admin_api.NewGetTenantPodsDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewGetTenantPodsOK().WithPayload(payload)
+	})
+
+	api.AdminAPIGetPodLogsHandler = admin_api.GetPodLogsHandlerFunc(func(params admin_api.GetPodLogsParams, session *models.Principal) middleware.Responder {
+		payload, err := getPodLogsResponse(session, params)
+		if err != nil {
+			return admin_api.NewGetPodLogsDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewGetPodLogsOK().WithPayload(payload)
+	})
+
+	api.AdminAPIGetPodEventsHandler = admin_api.GetPodEventsHandlerFunc(func(params admin_api.GetPodEventsParams, session *models.Principal) middleware.Responder {
+		payload, err := getPodEventsResponse(session, params)
+		if err != nil {
+			return admin_api.NewGetPodEventsDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewGetPodEventsOK().WithPayload(payload)
 	})
 
 	// Update Tenant Pools
@@ -256,8 +272,7 @@ func GetTenantServiceURL(mi *miniov2.Tenant) (svcURL string) {
 		scheme = "https"
 		port = miniov2.MinIOTLSPortLoadBalancerSVC
 	}
-	svc := fmt.Sprintf("%s.%s.svc.cluster.local", mi.MinIOCIServiceName(), mi.Namespace)
-	return fmt.Sprintf("%s://%s", scheme, net.JoinHostPort(svc, strconv.Itoa(port)))
+	return fmt.Sprintf("%s://%s", scheme, net.JoinHostPort(mi.MinIOFQDNServiceName(), strconv.Itoa(port)))
 }
 
 func getTenantAdminClient(ctx context.Context, client K8sClientI, tenant *miniov2.Tenant, svcURL string) (*madmin.AdminClient, error) {
@@ -289,12 +304,12 @@ func getTenantCreds(ctx context.Context, client K8sClientI, tenant *miniov2.Tena
 	}
 	tenantAccessKey, ok := creds.Data["accesskey"]
 	if !ok {
-		log.Println("tenant's secret doesn't contain accesskey")
+		LogError("tenant's secret doesn't contain accesskey")
 		return nil, errorGeneric
 	}
 	tenantSecretKey, ok := creds.Data["secretkey"]
 	if !ok {
-		log.Println("tenant's secret doesn't contain secretkey")
+		LogError("tenant's secret doesn't contain secretkey")
 		return nil, errorGeneric
 	}
 	// TODO:
@@ -361,7 +376,7 @@ func getTenantInfo(tenant *miniov2.Tenant) *models.Tenant {
 	}
 }
 
-func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInfoParams) (*models.Tenant, *models.Error) {
+func getTenantDetailsResponse(session *models.Principal, params admin_api.TenantDetailsParams) (*models.Tenant, *models.Error) {
 	// 5 seconds timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -402,14 +417,23 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 	// detect if OpenID is enabled
 
 	oicEnabled := false
-	consoleSecret, err := clientSet.CoreV1().Secrets(minTenant.Namespace).Get(ctx, minTenant.Name, metav1.GetOptions{})
+	consoleSelector := fmt.Sprintf("%s-console", minTenant.Name)
+	consoleSecretName := fmt.Sprintf("%s-secret", consoleSelector)
+	consoleSecret, err := clientSet.CoreV1().Secrets(minTenant.Namespace).Get(ctx, consoleSecretName, metav1.GetOptions{})
 	// we can tolerate not getting this secret
 	if err != nil {
-		log.Println(err)
+		LogError("unable to fetch existing secrets for %s: %v", minTenant.Name, err)
 	}
 	if consoleSecret != nil {
 		if _, ok := consoleSecret.Data["CONSOLE_IDP_URL"]; ok {
 			oicEnabled = true
+		}
+	}
+	if minTenant.HasConsoleEnabled() {
+		for _, env := range minTenant.Spec.Console.Env {
+			if env.Name == "CONSOLE_IDP_URL" {
+				oicEnabled = true
+			}
 		}
 	}
 
@@ -434,19 +458,28 @@ func getTenantInfoResponse(session *models.Principal, params admin_api.TenantInf
 		}
 	}
 
+	// attach status information
+	info.Status = &models.TenantStatus{
+		HealthStatus:  string(minTenant.Status.HealthStatus),
+		DrivesHealing: minTenant.Status.DrivesHealing,
+		DrivesOffline: minTenant.Status.DrivesOffline,
+		DrivesOnline:  minTenant.Status.DrivesOnline,
+		WriteQuorum:   minTenant.Status.WriteQuorum,
+	}
+
 	// get tenant service
 	minTenant.EnsureDefaults()
 	//minio service
 	minSvc, err := k8sClient.getService(ctx, minTenant.Namespace, minTenant.MinIOCIServiceName(), metav1.GetOptions{})
 	if err != nil {
 		// we can tolerate this error
-		log.Println(err)
+		LogError("Unable to get MinIO service name: %v, continuing", err)
 	}
 	//console service
 	conSvc, err := k8sClient.getService(ctx, minTenant.Namespace, minTenant.ConsoleCIServiceName(), metav1.GetOptions{})
 	if err != nil {
 		// we can tolerate this error
-		log.Println(err)
+		LogError("Unable to get MinIO console service name: %v, continuing", err)
 	}
 
 	schema := "http"
@@ -533,6 +566,7 @@ func listTenants(ctx context.Context, operatorClient OperatorClientI, namespace 
 			CurrentState:  tenant.Status.CurrentState,
 			Namespace:     tenant.ObjectMeta.Namespace,
 			TotalSize:     totalSize,
+			HealthStatus:  string(tenant.Status.HealthStatus),
 		})
 	}
 
@@ -639,13 +673,13 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	// delete secrets created if an error occurred during tenant creation,
 	defer func() {
 		if mError != nil {
-			log.Printf("deleting secrets created for failed tenant: %s if any\n", tenantName)
+			LogError("deleting secrets created for failed tenant: %s if any: %v", tenantName, mError)
 			opts := metav1.ListOptions{
 				LabelSelector: fmt.Sprintf("%s=%s", miniov2.TenantLabel, tenantName),
 			}
 			err = clientSet.CoreV1().Secrets(ns).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
 			if err != nil {
-				log.Println("error deleting tenant's secrets:", err)
+				LogError("error deleting tenant's secrets: %v", err)
 			}
 		}
 	}()
@@ -934,7 +968,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 	for _, pool := range tenantReq.Pools {
 		pool, err := parseTenantPoolRequest(pool)
 		if err != nil {
-			log.Println("parseTenantPoolRequest", err)
+			LogError("parseTenantPoolRequest failed: %v", err)
 			return nil, prepareError(err)
 		}
 		minInst.Spec.Pools = append(minInst.Spec.Pools, *pool)
@@ -1075,7 +1109,7 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 
 	_, err = opClient.MinioV2().Tenants(ns).Create(context.Background(), &minInst, metav1.CreateOptions{})
 	if err != nil {
-		log.Println("Create", err)
+		LogError("Creating new tenant failed with: %v", err)
 		return nil, prepareError(err)
 	}
 
@@ -1178,7 +1212,7 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClientI, cli
 	} else {
 		// update the image pull secret content
 		if _, err := setImageRegistry(ctx, imageRegistryReq, clientset, namespace, params.Tenant); err != nil {
-			log.Println("error setting image registry secret:", err)
+			LogError("error setting image registry secret: %v", err)
 			return err
 		}
 	}
@@ -1392,17 +1426,63 @@ func getTenantPodsResponse(session *models.Principal, params admin_api.GetTenant
 	}
 	retval := []*models.TenantPod{}
 	for _, pod := range pods.Items {
-		var restarts int64 = 0
+		var restarts int64
 		if len(pod.Status.ContainerStatuses) > 0 {
 			restarts = int64(pod.Status.ContainerStatuses[0].RestartCount)
 		}
-		retval = append(retval, &models.TenantPod{Name: &pod.ObjectMeta.Name,
+		retval = append(retval, &models.TenantPod{
+			Name:        swag.String(pod.Name),
 			Status:      string(pod.Status.Phase),
 			TimeCreated: pod.CreationTimestamp.Unix(),
 			PodIP:       pod.Status.PodIP,
 			Restarts:    restarts,
 			Node:        pod.Spec.NodeName})
 	}
+	return retval, nil
+}
+
+func getPodLogsResponse(session *models.Principal, params admin_api.GetPodLogsParams) (string, *models.Error) {
+	ctx := context.Background()
+	clientset, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return "", prepareError(err)
+	}
+	listOpts := &corev1.PodLogOptions{}
+	logs := clientset.CoreV1().Pods(params.Namespace).GetLogs(params.PodName, listOpts)
+	buff, err := logs.DoRaw(ctx)
+	if err != nil {
+		return "", prepareError(err)
+	}
+	return string(buff), nil
+}
+
+func getPodEventsResponse(session *models.Principal, params admin_api.GetPodEventsParams) (models.EventListWrapper, *models.Error) {
+	ctx := context.Background()
+	clientset, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	pod, err := clientset.CoreV1().Pods(params.Namespace).Get(ctx, params.PodName, metav1.GetOptions{})
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	events, err := clientset.CoreV1().Events(params.Namespace).List(ctx, metav1.ListOptions{FieldSelector: fmt.Sprintf("involvedObject.uid=%s", pod.UID)})
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	retval := models.EventListWrapper{}
+	for i := 0; i < len(events.Items); i++ {
+		retval = append(retval, &models.EventListElement{
+			Namespace: events.Items[i].Namespace,
+			LastSeen:  events.Items[i].LastTimestamp.Unix(),
+			Message:   events.Items[i].Message,
+			EventType: events.Items[i].Type,
+			Reason:    events.Items[i].Reason,
+		})
+	}
+	sort.SliceStable(retval, func(i int, j int) bool {
+		return retval[i].LastSeen < retval[j].LastSeen
+	})
 	return retval, nil
 }
 
@@ -1832,7 +1912,7 @@ func getTenantUpdatePoolResponse(session *models.Principal, params admin_api.Ten
 
 	t, err := updateTenantPools(ctx, opClient, params.Namespace, params.Tenant, params.Body.Pools)
 	if err != nil {
-		log.Println("error updating Tenant's pools:", err)
+		LogError("error updating Tenant's pools: %v", err)
 		return nil, prepareError(err)
 	}
 

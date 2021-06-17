@@ -31,7 +31,8 @@ import (
 )
 
 // NewGetBucketReplicationParams creates a new GetBucketReplicationParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewGetBucketReplicationParams() GetBucketReplicationParams {
 
 	return GetBucketReplicationParams{}
@@ -66,7 +67,6 @@ func (o *GetBucketReplicationParams) BindRequest(r *http.Request, route *middlew
 	if err := o.bindBucketName(rBucketName, rhkBucketName, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -82,7 +82,6 @@ func (o *GetBucketReplicationParams) bindBucketName(rawData []string, hasKey boo
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.BucketName = raw
 
 	return nil

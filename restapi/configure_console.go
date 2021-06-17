@@ -21,7 +21,6 @@ package restapi
 import (
 	"bytes"
 	"crypto/tls"
-	"fmt"
 	"io"
 	"io/fs"
 	"log"
@@ -32,7 +31,6 @@ import (
 	portal_ui "github.com/minio/console/portal-ui"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/auth"
@@ -56,26 +54,14 @@ func configureFlags(api *operations.ConsoleAPI) {
 }
 
 func configureAPI(api *operations.ConsoleAPI) http.Handler {
-	// configure the api here
-	api.ServeError = errors.ServeError
 
-	// Set your custom logger if needed. Default one is log.Printf
-	// Expected interface func(string, ...interface{})
-	//
-	// Example:
-	// api.Logger = log.Printf
-
-	api.JSONConsumer = runtime.JSONConsumer()
-
-	api.JSONProducer = runtime.JSONProducer()
 	// Applies when the "x-token" header is set
-
 	api.KeyAuth = func(token string, scopes []string) (*models.Principal, error) {
 		// we are validating the session token by decrypting the claims inside, if the operation succeed that means the jwt
 		// was generated and signed by us in the first place
 		claims, err := auth.SessionTokenAuthenticate(token)
 		if err != nil {
-			log.Println(err)
+			api.Logger("Unable to validate the session token %s: %v", token, err)
 			return nil, errors.New(401, "incorrect api key auth")
 		}
 		return &models.Principal{
@@ -131,6 +117,8 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	// Operator Console
 	// Register tenant handlers
 	registerTenantHandlers(api)
+	// Register admin info handlers
+	registerOperatorTenantInfoHandlers(api)
 	// Register ResourceQuota handlers
 	registerResourceQuotaHandlers(api)
 	// Register Nodes' handlers
@@ -147,6 +135,8 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerDirectCSIHandlers(api)
 	// Volumes handlers
 	registerVolumesHandlers(api)
+	// Namespaces handlers
+	registerNamespaceHandlers(api)
 
 	api.PreServerShutdown = func() {}
 
@@ -157,23 +147,13 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 
 // The TLS configuration before HTTPS server starts.
 func configureTLS(tlsConfig *tls.Config) {
-	if GlobalRootCAs != nil {
-		// Add the global public crts as part of global root CAs
-		for _, publicCrt := range GlobalPublicCerts {
-			GlobalRootCAs.AddCert(publicCrt)
-		}
-		tlsConfig.RootCAs = GlobalRootCAs
+	// Add the global public crts as part of global root CAs
+	for _, publicCrt := range GlobalPublicCerts {
+		GlobalRootCAs.AddCert(publicCrt)
 	}
-	if GlobalTLSCertsManager != nil {
-		tlsConfig.GetCertificate = GlobalTLSCertsManager.GetCertificate
-	}
-}
 
-// As soon as server is initialized but not run yet, this function will be called.
-// If you need to modify a config, store server instance to stop it individually later, this is the place.
-// This function can be called multiple times, depending on the number of serving schemes.
-// scheme value will be set accordingly: "http", "https" or "unix"
-func configureServer(s *http.Server, scheme, addr string) {
+	tlsConfig.RootCAs = GlobalRootCAs
+	tlsConfig.GetCertificate = GlobalTLSCertsManager.GetCertificate
 }
 
 // The middleware configuration is for the handler executors. These do not apply to the swagger.json document.
@@ -215,30 +195,22 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 		IsDevelopment:                   !getProductionMode(),
 	}
 	secureMiddleware := secure.New(secureOptions)
-	app := secureMiddleware.Handler(next)
-	return app
+	return secureMiddleware.Handler(next)
 }
 
 func AuthenticationMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// prioritize authorization header and skip
-		if r.Header.Get("Authorization") != "" {
-			next.ServeHTTP(w, r)
+		token, err := auth.GetTokenFromRequest(r)
+		if err != nil && err != auth.ErrNoAuthToken {
+			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
-		tokenCookie, err := r.Cookie("token")
-		if err != nil {
-			next.ServeHTTP(w, r)
-			return
-		}
-		currentTime := time.Now()
-		if tokenCookie.Expires.After(currentTime) {
-			next.ServeHTTP(w, r)
-			return
-		}
-		token := tokenCookie.Value
+		// All handlers handle appropriately to return errors
+		// based on their swagger rules, we do not need to
+		// additionally return error here, let the next ServeHTTPs
+		// handle it appropriately.
 		if token != "" {
-			r.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
+			r.Header.Add("Authorization", "Bearer "+token)
 		}
 		next.ServeHTTP(w, r)
 	})
@@ -259,7 +231,6 @@ func FileServerMiddleware(next http.Handler) http.Handler {
 				panic(err)
 			}
 			wrapHandlerSinglePageApplication(http.FileServer(http.FS(buildFs))).ServeHTTP(w, r)
-
 		}
 	})
 }
@@ -295,4 +266,20 @@ func wrapHandlerSinglePageApplication(h http.Handler) http.HandlerFunc {
 			http.ServeContent(w, r, "index.html", time.Now(), bytes.NewReader(indexPageBytes))
 		}
 	}
+}
+
+type logWriter struct{}
+
+func (lw logWriter) Write(b []byte) (int, error) {
+	LogError(string(bytes.TrimSuffix(b, []byte("\n"))))
+	return len(b), nil
+}
+
+// As soon as server is initialized but not run yet, this function will be called.
+// If you need to modify a config, store server instance to stop it individually later, this is the place.
+// This function can be called multiple times, depending on the number of serving schemes.
+// scheme value will be set accordingly: "http", "https" or "unix"
+func configureServer(s *http.Server, _, _ string) {
+	// Turn-off random logging by Go internall
+	s.ErrorLog = log.New(&logWriter{}, "", 0)
 }

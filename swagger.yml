@@ -19,7 +19,7 @@ securityDefinitions:
     tokenUrl: http://min.io
 # Apply the key security definition to all APIs
 security:
-  - key: [ ]
+  - key: []
 paths:
   /login:
     get:
@@ -35,7 +35,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       # Exclude this API from the authentication requirement
-      security: [ ]
+      security: []
       tags:
         - UserAPI
     post:
@@ -57,7 +57,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       # Exclude this API from the authentication requirement
-      security: [ ]
+      security: []
       tags:
         - UserAPI
   /login/operator:
@@ -79,7 +79,7 @@ paths:
           description: Generic error response.
           schema:
             $ref: "#/definitions/error"
-      security: [ ]
+      security: []
       tags:
         - UserAPI
 
@@ -102,7 +102,7 @@ paths:
           description: Generic error response.
           schema:
             $ref: "#/definitions/error"
-      security: [ ]
+      security: []
       tags:
         - UserAPI
 
@@ -157,6 +157,26 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
+
+  /account/change-user-password:
+    post:
+      summary: Change password of currently logged in user.
+      operationId: ChangeUserPassword
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/changeUserPasswordRequest"
+      responses:
+        201:
+          description: Password successfully changed.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
 
   /buckets:
     get:
@@ -731,7 +751,6 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-
 
   /buckets-replication:
     post:
@@ -2086,7 +2105,7 @@ paths:
         - name: order
           in: query
           type: string
-          enum: [ timeDesc, timeAsc ]
+          enum: [timeDesc, timeAsc]
           default: timeDesc
         - name: timeStart
           in: query
@@ -2152,6 +2171,26 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
+  
+  /namespace:
+    post:
+      summary: Creates a new Namespace with given information
+      operationId: CreateNamespace
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/namespace"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
 
   /namespaces/{namespace}/tenants:
     get:
@@ -2190,8 +2229,8 @@ paths:
 
   /namespaces/{namespace}/tenants/{tenant}:
     get:
-      summary: Tenant Info
-      operationId: TenantInfo
+      summary: Tenant Details
+      operationId: TenantDetails
       parameters:
         - name: namespace
           in: path
@@ -2258,6 +2297,70 @@ paths:
       responses:
         201:
           description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+  /namespaces/{namespace}/tenants/{tenant}/info:
+    get:
+      summary: Tenant Info
+      operationId: TenantInfo
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/adminInfoResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /namespaces/{namespace}/tenants/{tenant}/info/widgets/{widgetId}:
+    get:
+      summary: Returns information about a tenant deployment
+      operationId: TenantWidgetDetails
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: widgetId
+          in: path
+          type: integer
+          format: int32
+          required: true
+        - name: start
+          in: query
+          type: integer
+        - name: end
+          in: query
+          type: integer
+        - name: step
+          in: query
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/widgetDetails"
         default:
           description: Generic error response.
           schema:
@@ -2366,6 +2469,64 @@ paths:
             type: array
             items:
               $ref: "#/definitions/tenantPod"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /namespaces/{namespace}/tenants/{tenant}/pods/{podName}:
+    get:
+      summary: Get Logs for Pod
+      operationId: GetPodLogs
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: podName
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: string
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /namespaces/{namespace}/tenants/{tenant}/pods/{podName}/events:
+    get:
+      summary: Get Events for Pod
+      operationId: GetPodEvents
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: podName
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/eventListWrapper"
         default:
           description: Generic error response.
           schema:
@@ -2604,7 +2765,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-  
+
   /direct-csi/drives/format:
     post:
       summary: Format direct-csi drives from a list
@@ -2643,6 +2804,22 @@ paths:
       tags:
         - AdminAPI
 
+  /nodes/labels:
+    get:
+      summary: List node labels
+      operationId: ListNodeLabels
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/nodeLabels"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
 definitions:
   accountChangePasswordRequest:
     type: object
@@ -2653,6 +2830,17 @@ definitions:
       current_secret_key:
         type: string
       new_secret_key:
+        type: string
+
+  changeUserPasswordRequest:
+    type: object
+    required:
+      - selectedUser
+      - newSecretKey
+    properties:
+      selectedUser:
+        type: string
+      newSecretKey:
         type: string
 
   bucketEncryptionType:
@@ -3242,7 +3430,7 @@ definitions:
     properties:
       loginStrategy:
         type: string
-        enum: [ form, redirect, service-account ]
+        enum: [form, redirect, service-account]
       redirect:
         type: string
   loginOauth2AuthRequest:
@@ -3343,7 +3531,7 @@ definitions:
           type: string
       status:
         type: string
-        enum: [ ok ]
+        enum: [ok]
       operator:
         type: boolean
   widgetResult:
@@ -3355,7 +3543,7 @@ definitions:
           type: string
       values:
         type: array
-        items: { }
+        items: {}
   resultTarget:
     type: object
     properties:
@@ -3573,7 +3761,7 @@ definitions:
         type: string
       service:
         type: string
-        enum: [ replication ]
+        enum: [replication]
       syncMode:
         type: string
       bandwidth:
@@ -3643,6 +3831,23 @@ definitions:
       object_locking_enabled:
         type: boolean
 
+  tenantStatus:
+    type: object
+    properties:
+      write_quorum:
+        type: integer
+        format: int32
+      drives_online:
+        type: integer
+        format: int32
+      drives_offline:
+        type: integer
+        format: int32
+      drives_healing:
+        type: integer
+        format: int32
+      health_status:
+        type: string
 
   tenant:
     type: object
@@ -3689,7 +3894,8 @@ definitions:
         type: boolean
       encryptionEnabled:
         type: boolean
-
+      status:
+        $ref: "#/definitions/tenantStatus"
 
   tenantUsage:
     type: object
@@ -3721,6 +3927,8 @@ definitions:
       currentState:
         type: string
       namespace:
+        type: string
+      health_status:
         type: string
 
   logSearchResponse:
@@ -4116,7 +4324,7 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/tenantResponseItem"
-          
+
   tenantResponseItem:
     type: object
     properties:
@@ -4131,11 +4339,9 @@ definitions:
       - name
     properties:
       name:
-        type:
-          string
+        type: string
       status:
-        type:
-          string
+        type: string
       timeCreated:
         type: integer
       podIP:
@@ -4709,7 +4915,7 @@ definitions:
       validity:
         type: integer
         format: int32
-  
+
   bucketLifecycleResponse:
     type: object
     properties:
@@ -4721,14 +4927,14 @@ definitions:
   expirationResponse:
     type: object
     properties:
-      date: 
+      date:
         type: string
       days:
         type: integer
         format: int64
       delete_marker:
         type: boolean
-  
+
   transitionResponse:
     type: object
     properties:
@@ -4739,7 +4945,7 @@ definitions:
       days:
         type: integer
         format: int64
-  
+
   lifecycleTag:
     type: object
     properties:
@@ -4765,7 +4971,6 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/lifecycleTag"
-
 
   addBucketLifecycle:
     type: object
@@ -4814,7 +5019,7 @@ definitions:
       noncurrentversion_transition_storage_class:
         description: Non required, can be set in case of transition is enabled
         type: string
-  
+
   updateBucketLifecycle:
     type: object
     properties:
@@ -4829,7 +5034,6 @@ definitions:
       restart:
         description: Returns wheter server needs to restart to apply changes or not
         type: boolean
-
 
   subscriptionValidateRequest:
     type: object
@@ -5094,7 +5298,7 @@ definitions:
     properties:
       yaml:
         type: string
-        
+
   listPVCsResponse:
     type: object
     properties:
@@ -5121,3 +5325,39 @@ definitions:
       age:
         type: string
 
+  nodeLabels:
+    type: object
+    additionalProperties:
+      type: array
+      items:
+        type: string
+  
+  namespace:
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        type: string
+
+  eventListWrapper:
+    type: array
+    items:
+      $ref: "#/definitions/eventListElement"
+
+  eventListElement:
+    type: object
+    properties:
+      namespace:
+        type: string
+      last_seen:
+        type: integer
+        format: int64
+      event_type:
+        type: string
+      reason:
+        type: string
+      object:
+        type: string
+      message:
+        type: string

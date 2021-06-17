@@ -17,15 +17,11 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"io/ioutil"
-	"log"
-	"os"
 	"path/filepath"
+	"strconv"
 	"time"
-
-	"github.com/minio/minio/cmd/config"
 
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
@@ -39,67 +35,73 @@ import (
 var serverCmd = cli.Command{
 	Name:    "server",
 	Aliases: []string{"srv"},
-	Usage:   "starts Console server",
-	Action:  startServer,
+	Usage:   "Start MinIO Console server",
+	Action:  StartServer,
 	Flags: []cli.Flag{
 		cli.StringFlag{
 			Name:  "host",
 			Value: restapi.GetHostname(),
-			Usage: "HTTP server hostname",
+			Usage: "bind to a specific HOST, HOST can be an IP or hostname",
 		},
 		cli.IntFlag{
 			Name:  "port",
 			Value: restapi.GetPort(),
-			Usage: "HTTP Server port",
+			Usage: "bind to specific HTTP port",
 		},
+		// This is kept here for backward compatibility,
+		// hostname's do not have HTTP or HTTPs
+		// hostnames are opaque so using --host
+		// works for both HTTP and HTTPS setup.
 		cli.StringFlag{
-			Name:  "tls-host",
-			Value: restapi.GetTLSHostname(),
-			Usage: "HTTPS server hostname",
-		},
-		cli.IntFlag{
-			Name:  "tls-port",
-			Value: restapi.GetTLSPort(),
-			Usage: "HTTPS server port",
-		},
-		cli.StringFlag{
-			Name:  "tls-redirect",
-			Value: restapi.GetTLSRedirect(),
-			Usage: "HTTPS redirect by default",
+			Name:   "tls-host",
+			Value:  restapi.GetHostname(),
+			Hidden: true,
 		},
 		cli.StringFlag{
 			Name:  "certs-dir",
 			Value: certs.GlobalCertsCADir.Get(),
 			Usage: "path to certs directory",
 		},
-		cli.StringFlag{
-			Name:  "tls-certificate",
-			Value: "",
-			Usage: "path tls certificate",
+		cli.IntFlag{
+			Name:  "tls-port",
+			Value: restapi.GetTLSPort(),
+			Usage: "bind to specific HTTPS port",
 		},
 		cli.StringFlag{
-			Name:  "tls-key",
-			Value: "",
-			Usage: "path tls key",
+			Name:  "tls-redirect",
+			Value: restapi.GetTLSRedirect(),
+			Usage: "toggle HTTP->HTTPS redirect",
 		},
 		cli.StringFlag{
-			Name:  "tls-ca",
-			Value: "",
-			Usage: "path tls ca",
+			Name:   "tls-certificate",
+			Value:  "",
+			Usage:  "path to TLS public certificate",
+			Hidden: true,
+		},
+		cli.StringFlag{
+			Name:   "tls-key",
+			Value:  "",
+			Usage:  "path to TLS private key",
+			Hidden: true,
+		},
+		cli.StringFlag{
+			Name:   "tls-ca",
+			Value:  "",
+			Usage:  "path to TLS Certificate Authority",
+			Hidden: true,
 		},
 	},
 }
 
-// starts the controller
-func startServer(ctx *cli.Context) error {
+func buildServer() (*restapi.Server, error) {
 	swaggerSpec, err := loads.Embedded(restapi.SwaggerJSON, restapi.FlatSwaggerJSON)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, err
 	}
 
 	api := operations.NewConsoleAPI(swaggerSpec)
+	api.Logger = restapi.LogInfo
 	server := restapi.NewServer(api)
-	defer server.Shutdown()
 
 	parser := flags.NewParser(server, flags.Default)
 	parser.ShortDescription = "MinIO Console Server"
@@ -107,83 +109,116 @@ func startServer(ctx *cli.Context) error {
 
 	server.ConfigureFlags()
 
+	// register all APIs
+	server.ConfigureAPI()
+
 	for _, optsGroup := range api.CommandLineOptionsGroups {
 		_, err := parser.AddGroup(optsGroup.ShortDescription, optsGroup.LongDescription, optsGroup.Options)
 		if err != nil {
-			log.Fatalln(err)
+			return nil, err
 		}
 	}
 
 	if _, err := parser.Parse(); err != nil {
-		code := 1
-		if fe, ok := err.(*flags.Error); ok {
-			if fe.Type == flags.ErrHelp {
-				code = 0
-			}
-		}
-		os.Exit(code)
+		return nil, err
 	}
 
-	server.Host = ctx.String("host")
-	server.Port = ctx.Int("port")
+	return server, nil
+}
 
-	restapi.Hostname = ctx.String("host")
-	restapi.Port = fmt.Sprintf("%v", ctx.Int("port"))
-
+func loadAllCerts(ctx *cli.Context) error {
+	var err error
 	// Set all certs and CAs directories path
-	certs.GlobalCertsDir, _ = certs.NewConfigDirFromCtx(ctx, "certs-dir", certs.DefaultCertsDir.Get)
-	certs.GlobalCertsCADir = &certs.ConfigDir{Path: filepath.Join(certs.GlobalCertsDir.Get(), certs.CertsCADir)}
-
-	// check if certs and CAs directories exists or can be created
-	if err := certs.MkdirAllIgnorePerm(certs.GlobalCertsCADir.Get()); err != nil {
-		log.Println(fmt.Sprintf("Unable to create certs CA directory at %s", certs.GlobalCertsCADir.Get()))
+	certs.GlobalCertsDir, _, err = certs.NewConfigDirFromCtx(ctx, "certs-dir", certs.DefaultCertsDir.Get)
+	if err != nil {
+		return err
 	}
-	// load the certificates and the CAs
-	restapi.GlobalRootCAs, restapi.GlobalPublicCerts, restapi.GlobalTLSCertsManager = certs.GetAllCertificatesAndCAs()
 
-	// TLS flags from swagger server, used to support older versions of minio-operator
-	swaggerServerCertificate := ctx.String("tls-certificate")
-	swaggerServerCertificateKey := ctx.String("tls-key")
-	SwaggerServerCACertificate := ctx.String("tls-ca")
-	// load tls cert and key from swagger server tls-certificate and tls-key flags
-	if swaggerServerCertificate != "" && swaggerServerCertificateKey != "" {
-		if errAddCert := certs.AddCertificate(context.Background(), restapi.GlobalTLSCertsManager, swaggerServerCertificate, swaggerServerCertificateKey); errAddCert != nil {
-			log.Println(errAddCert)
+	certs.GlobalCertsCADir = &certs.ConfigDir{Path: filepath.Join(certs.GlobalCertsDir.Get(), certs.CertsCADir)}
+	// check if certs and CAs directories exists or can be created
+	if err = certs.MkdirAllIgnorePerm(certs.GlobalCertsCADir.Get()); err != nil {
+		return fmt.Errorf("unable to create certs CA directory at %s: failed with %w", certs.GlobalCertsCADir.Get(), err)
+	}
+
+	// load the certificates and the CAs
+	restapi.GlobalRootCAs, restapi.GlobalPublicCerts, restapi.GlobalTLSCertsManager, err = certs.GetAllCertificatesAndCAs()
+	if err != nil {
+		return fmt.Errorf("unable to load certificates at %s: failed with %w", certs.GlobalCertsDir.Get(), err)
+	}
+
+	{
+		// TLS flags from swagger server, used to support VMware vsphere operator version.
+		swaggerServerCertificate := ctx.String("tls-certificate")
+		swaggerServerCertificateKey := ctx.String("tls-key")
+		swaggerServerCACertificate := ctx.String("tls-ca")
+		// load tls cert and key from swagger server tls-certificate and tls-key flags
+		if swaggerServerCertificate != "" && swaggerServerCertificateKey != "" {
+			if err = restapi.GlobalTLSCertsManager.AddCertificate(swaggerServerCertificate, swaggerServerCertificateKey); err != nil {
+				return err
+			}
+			if x509Certs, err := certs.ParsePublicCertFile(swaggerServerCertificate); err == nil {
+				restapi.GlobalPublicCerts = append(restapi.GlobalPublicCerts, x509Certs...)
+			}
 		}
-		if x509Certs, errParseCert := config.ParsePublicCertFile(swaggerServerCertificate); errParseCert == nil {
-			if len(x509Certs) > 0 {
-				restapi.GlobalPublicCerts = append(restapi.GlobalPublicCerts, x509Certs[0])
+
+		// load ca cert from swagger server tls-ca flag
+		if swaggerServerCACertificate != "" {
+			caCert, caCertErr := ioutil.ReadFile(swaggerServerCACertificate)
+			if caCertErr == nil {
+				restapi.GlobalRootCAs.AppendCertsFromPEM(caCert)
 			}
 		}
 	}
-	// load ca cert from swagger server tls-ca flag
-	if SwaggerServerCACertificate != "" {
-		caCert, caCertErr := ioutil.ReadFile(SwaggerServerCACertificate)
-		if caCertErr == nil {
-			restapi.GlobalRootCAs.AppendCertsFromPEM(caCert)
-		}
+
+	return nil
+}
+
+// StartServer starts the console service
+func StartServer(ctx *cli.Context) error {
+	if err := loadAllCerts(ctx); err != nil {
+		// Log this as a warning and continue running console without TLS certificates
+		restapi.LogError("Unable to load certs: %v", err)
 	}
+
+	var rctx restapi.Context
+	if err := rctx.Load(ctx); err != nil {
+		restapi.LogError("argument validation failed: %v", err)
+		return err
+	}
+
+	server, err := buildServer()
+	if err != nil {
+		restapi.LogError("Unable to initialize console server: %v", err)
+		return err
+	}
+
+	server.Host = rctx.Host
+	server.Port = rctx.HTTPPort
+	restapi.Port = strconv.Itoa(server.Port)
+	restapi.Hostname = server.Host
 
 	if len(restapi.GlobalPublicCerts) > 0 {
 		// If TLS certificates are provided enforce the HTTPS schema, meaning console will redirect
 		// plain HTTP connections to HTTPS server
 		server.EnabledListeners = []string{"http", "https"}
-		server.TLSPort = ctx.Int("tls-port")
-		server.TLSHost = ctx.String("tls-host")
+		server.TLSPort = rctx.HTTPSPort
 		// Need to store tls-port, tls-host un config variables so secure.middleware can read from there
-		restapi.TLSPort = fmt.Sprintf("%v", ctx.Int("tls-port"))
-		restapi.TLSHostname = ctx.String("tls-host")
-		restapi.TLSRedirect = ctx.String("tls-redirect")
+		restapi.TLSPort = strconv.Itoa(server.TLSPort)
+		restapi.Hostname = rctx.Host
+		restapi.TLSRedirect = rctx.TLSRedirect
 	}
 
-	server.ConfigureAPI()
+	defer server.Shutdown()
 
 	// subnet license refresh process
 	go func() {
+		// start refreshing subnet license after 5 seconds..
+		time.Sleep(time.Second * 5)
+
 		failedAttempts := 0
 		for {
 			if err := restapi.RefreshLicense(); err != nil {
-				log.Println(err)
+				restapi.LogError("Refreshing subnet license failed: %v", err)
 				failedAttempts++
 				// end license refresh after 3 consecutive failed attempts
 				if failedAttempts >= 3 {
@@ -200,8 +235,5 @@ func startServer(ctx *cli.Context) error {
 		}
 	}()
 
-	if err := server.Serve(); err != nil {
-		log.Fatalln(err)
-	}
-	return nil
+	return server.Serve()
 }

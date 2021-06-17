@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -40,7 +42,7 @@ type SetPolicyRequest struct {
 
 	// entity type
 	// Required: true
-	EntityType PolicyEntity `json:"entityType"`
+	EntityType *PolicyEntity `json:"entityType"`
 }
 
 // Validate validates this set policy request
@@ -72,11 +74,49 @@ func (m *SetPolicyRequest) validateEntityName(formats strfmt.Registry) error {
 
 func (m *SetPolicyRequest) validateEntityType(formats strfmt.Registry) error {
 
-	if err := m.EntityType.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("entityType")
-		}
+	if err := validate.Required("entityType", "body", m.EntityType); err != nil {
 		return err
+	}
+
+	if err := validate.Required("entityType", "body", m.EntityType); err != nil {
+		return err
+	}
+
+	if m.EntityType != nil {
+		if err := m.EntityType.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("entityType")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this set policy request based on the context it is used
+func (m *SetPolicyRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateEntityType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *SetPolicyRequest) contextValidateEntityType(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.EntityType != nil {
+		if err := m.EntityType.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("entityType")
+			}
+			return err
+		}
 	}
 
 	return nil

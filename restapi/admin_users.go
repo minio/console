@@ -17,26 +17,26 @@
 package restapi
 
 import (
+	"context"
+	"fmt"
 	"sort"
-
-	iampolicy "github.com/minio/minio/pkg/iam/policy"
+	"strings"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/admin_api"
-	"github.com/minio/minio/pkg/madmin"
-
-	"context"
-	"fmt"
-	"log"
-	"strings"
+	"github.com/minio/madmin-go"
+	iampolicy "github.com/minio/pkg/iam/policy"
 )
 
-const Allow = 1
-const Deny = -1
-const Unknown = 0
+// Policy evaluated constants
+const (
+	Unknown = 0
+	Allow   = 1
+	Deny    = -1
+)
 
 func registerUsersHandlers(api *operations.ConsoleAPI) {
 	// List Users
@@ -106,6 +106,14 @@ func registerUsersHandlers(api *operations.ConsoleAPI) {
 		}
 		return admin_api.NewListUsersWithAccessToBucketOK().WithPayload(response)
 	})
+	// Change User Password
+	api.AdminAPIChangeUserPasswordHandler = admin_api.ChangeUserPasswordHandlerFunc(func(params admin_api.ChangeUserPasswordParams, session *models.Principal) middleware.Responder {
+		err := getChangeUserPasswordResponse(session, params)
+		if err != nil {
+			return admin_api.NewChangeUserPasswordDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewChangeUserPasswordCreated()
+	})
 }
 
 func listUsers(ctx context.Context, client MinioAdmin) ([]*models.User, error) {
@@ -135,7 +143,7 @@ func listUsers(ctx context.Context, client MinioAdmin) ([]*models.User, error) {
 // getListUsersResponse performs listUsers() and serializes it to the handler's output
 func getListUsersResponse(session *models.Principal) (*models.ListUsersResponse, *models.Error) {
 	ctx := context.Background()
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -181,7 +189,7 @@ func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *strin
 
 func getUserAddResponse(session *models.Principal, params admin_api.AddUserParams) (*models.User, *models.Error) {
 	ctx := context.Background()
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -198,16 +206,13 @@ func getUserAddResponse(session *models.Principal, params admin_api.AddUserParam
 
 //removeUser invokes removing an user on `MinioAdmin`, then we return the response from API
 func removeUser(ctx context.Context, client MinioAdmin, accessKey string) error {
-	if err := client.removeUser(ctx, accessKey); err != nil {
-		return err
-	}
-	return nil
+	return client.removeUser(ctx, accessKey)
 }
 
 func getRemoveUserResponse(session *models.Principal, params admin_api.RemoveUserParams) *models.Error {
 	ctx := context.Background()
 
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return prepareError(err)
 	}
@@ -224,7 +229,6 @@ func getRemoveUserResponse(session *models.Principal, params admin_api.RemoveUse
 		return prepareError(err)
 	}
 
-	log.Println("User removed successfully:", params.Name)
 	return nil
 }
 
@@ -241,7 +245,7 @@ func getUserInfo(ctx context.Context, client MinioAdmin, accessKey string) (*mad
 func getUserInfoResponse(session *models.Principal, params admin_api.GetUserInfoParams) (*models.User, *models.Error) {
 	ctx := context.Background()
 
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -356,7 +360,7 @@ func updateUserGroups(ctx context.Context, client MinioAdmin, user string, group
 func getUpdateUserGroupsResponse(session *models.Principal, params admin_api.UpdateUserGroupsParams) (*models.User, *models.Error) {
 	ctx := context.Background()
 
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -386,16 +390,13 @@ func setUserStatus(ctx context.Context, client MinioAdmin, user string, status s
 		return errors.New(500, "status not valid")
 	}
 
-	if err := client.setUserStatus(ctx, user, setStatus); err != nil {
-		return err
-	}
-	return nil
+	return client.setUserStatus(ctx, user, setStatus)
 }
 
 func getUpdateUserResponse(session *models.Principal, params admin_api.UpdateUserInfoParams) (*models.User, *models.Error) {
 	ctx := context.Background()
 
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -466,7 +467,7 @@ func addUsersListToGroups(ctx context.Context, client MinioAdmin, usersToUpdate 
 func getAddUsersListToGroupsResponse(session *models.Principal, params admin_api.BulkUpdateUsersGroupsParams) *models.Error {
 	ctx := context.Background()
 
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return prepareError(err)
 	}
@@ -487,7 +488,7 @@ func getAddUsersListToGroupsResponse(session *models.Principal, params admin_api
 
 func getListUsersWithAccessToBucketResponse(session *models.Principal, bucket string) ([]string, *models.Error) {
 	ctx := context.Background()
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -521,65 +522,94 @@ func listUsersWithAccessToBucket(ctx context.Context, adminClient MinioAdmin, bu
 		return nil, prepareError(err)
 	}
 	var retval []string
-	akHasAccess := make(map[string]bool)
-	akIsDenied := make(map[string]bool)
+	akHasAccess := make(map[string]struct{})
+	akIsDenied := make(map[string]struct{})
 	for k, v := range users {
 		for _, policyName := range strings.Split(v.PolicyName, ",") {
 			policyName = strings.TrimSpace(policyName)
+			if policyName == "" {
+				continue
+			}
 			policy, err := adminClient.getPolicy(ctx, policyName)
-			if err == nil {
-				if !akIsDenied[k] {
-					switch policyAllowsAndMatchesBucket(policy, bucket) {
-					case Allow:
-						if !akHasAccess[k] {
-							akHasAccess[k] = true
-						}
-					case Deny:
-						akIsDenied[k] = true
-						akHasAccess[k] = false
+			if err != nil {
+				LogError("unable to fetch policy %s: %v", policyName, err)
+				continue
+			}
+			if _, ok := akIsDenied[k]; !ok {
+				switch policyAllowsAndMatchesBucket(policy, bucket) {
+				case Allow:
+					if _, ok := akHasAccess[k]; !ok {
+						akHasAccess[k] = struct{}{}
 					}
+				case Deny:
+					akIsDenied[k] = struct{}{}
+					delete(akHasAccess, k)
 				}
-			} else {
-				log.Println(err)
 			}
 		}
 	}
 
-	groups, err := listGroups(ctx, adminClient)
+	groups, err := adminClient.listGroups(ctx)
 	if err != nil {
-		log.Println(err)
+		LogError("unable to list groups: %v", err)
 		return retval, nil
 	}
-	for i := 0; i < len(*groups); i++ {
-		info, err := groupInfo(ctx, adminClient, (*groups)[i])
-		if err == nil {
-			policy, err2 := adminClient.getPolicy(ctx, info.Policy)
-			if err2 == nil {
-				for j := 0; j < len(info.Members); j++ {
-					if !akIsDenied[info.Members[j]] {
-						switch policyAllowsAndMatchesBucket(policy, bucket) {
-						case Allow:
-							if !akHasAccess[info.Members[j]] {
-								akHasAccess[info.Members[j]] = true
-							}
-						case Deny:
-							akIsDenied[info.Members[j]] = true
-							akHasAccess[info.Members[j]] = false
-						}
+
+	for _, groupName := range groups {
+		info, err := groupInfo(ctx, adminClient, groupName)
+		if err != nil {
+			LogError("unable to fetch group info %s: %v", groupName, err)
+			continue
+		}
+		policy, err := adminClient.getPolicy(ctx, info.Policy)
+		if err != nil {
+			LogError("unable to fetch group policy %s: %v", info.Policy, err)
+			continue
+		}
+		for _, member := range info.Members {
+			if _, ok := akIsDenied[member]; !ok {
+				switch policyAllowsAndMatchesBucket(policy, bucket) {
+				case Allow:
+					if _, ok := akHasAccess[member]; !ok {
+						akHasAccess[member] = struct{}{}
 					}
+				case Deny:
+					akIsDenied[member] = struct{}{}
+					delete(akHasAccess, member)
 				}
-			} else {
-				log.Println(err2)
 			}
-		} else {
-			log.Println(err)
 		}
 	}
-	for k, v := range akHasAccess {
-		if v {
-			retval = append(retval, k)
-		}
+	for k := range akHasAccess {
+		retval = append(retval, k)
 	}
 	sort.Strings(retval)
 	return retval, nil
+}
+
+// changeUserPassword changes password of selectedUser to newSecretKey
+func changeUserPassword(ctx context.Context, client MinioAdmin, selectedUser string, newSecretKey string) error {
+	return client.changePassword(ctx, selectedUser, newSecretKey)
+}
+
+// getChangeUserPasswordResponse will change the password of selctedUser to newSecretKey
+func getChangeUserPasswordResponse(session *models.Principal, params admin_api.ChangeUserPasswordParams) *models.Error {
+	ctx := context.Background()
+	mAdmin, err := newAdminClient(session)
+	if err != nil {
+		return prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := adminClient{client: mAdmin}
+
+	// params will contain selectedUser and newSecretKey credentials for the user
+	user := *params.Body.SelectedUser
+	newSecretKey := *params.Body.NewSecretKey
+
+	// changes password of user to newSecretKey
+	if err := changeUserPassword(ctx, adminClient, user, newSecretKey); err != nil {
+		return prepareError(err)
+	}
+	return nil
 }

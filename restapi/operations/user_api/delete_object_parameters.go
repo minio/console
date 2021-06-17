@@ -34,7 +34,8 @@ import (
 )
 
 // NewDeleteObjectParams creates a new DeleteObjectParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewDeleteObjectParams() DeleteObjectParams {
 
 	return DeleteObjectParams{}
@@ -99,7 +100,6 @@ func (o *DeleteObjectParams) BindRequest(r *http.Request, route *middleware.Matc
 	if err := o.bindVersionID(qVersionID, qhkVersionID, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -115,7 +115,6 @@ func (o *DeleteObjectParams) bindBucketName(rawData []string, hasKey bool, forma
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.BucketName = raw
 
 	return nil
@@ -133,10 +132,10 @@ func (o *DeleteObjectParams) bindPath(rawData []string, hasKey bool, formats str
 
 	// Required: true
 	// AllowEmptyValue: false
+
 	if err := validate.RequiredString("path", "query", raw); err != nil {
 		return err
 	}
-
 	o.Path = raw
 
 	return nil
@@ -151,6 +150,7 @@ func (o *DeleteObjectParams) bindRecursive(rawData []string, hasKey bool, format
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
@@ -173,10 +173,10 @@ func (o *DeleteObjectParams) bindVersionID(rawData []string, hasKey bool, format
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
-
 	o.VersionID = &raw
 
 	return nil

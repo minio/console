@@ -19,7 +19,6 @@ package restapi
 import (
 	"context"
 	"io"
-	"log"
 	"net/http"
 
 	"github.com/go-openapi/runtime"
@@ -27,7 +26,7 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/admin_api"
-	"github.com/minio/minio/pkg/madmin"
+	"github.com/minio/madmin-go"
 )
 
 func registerProfilingHandler(api *operations.ConsoleAPI) {
@@ -48,15 +47,11 @@ func registerProfilingHandler(api *operations.ConsoleAPI) {
 		// Custom response writer to set the content-disposition header to tell the
 		// HTTP client the name and extension of the file we are returning
 		return middleware.ResponderFunc(func(w http.ResponseWriter, _ runtime.Producer) {
+			defer profilingStopResponse.Close()
+
 			w.Header().Set("Content-Type", "application/octet-stream")
 			w.Header().Set("Content-Disposition", "attachment; filename=profile.zip")
-			if _, err := io.Copy(w, profilingStopResponse); err != nil {
-				log.Println(err)
-			} else {
-				if err := profilingStopResponse.Close(); err != nil {
-					log.Println(err)
-				}
-			}
+			io.Copy(w, profilingStopResponse)
 		})
 	})
 }
@@ -93,14 +88,14 @@ func getProfilingStartResponse(session *models.Principal, params *models.Profili
 	if params == nil {
 		return nil, prepareError(errPolicyBodyNotInRequest)
 	}
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := adminClient{client: mAdmin}
-	profilingItems, err := startProfiling(ctx, adminClient, params.Type)
+	profilingItems, err := startProfiling(ctx, adminClient, *params.Type)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -124,7 +119,7 @@ func stopProfiling(ctx context.Context, client MinioAdmin) (io.ReadCloser, error
 // getProfilingStopResponse() performs setPolicy() and serializes it to the handler's output
 func getProfilingStopResponse(session *models.Principal) (io.ReadCloser, *models.Error) {
 	ctx := context.Background()
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}

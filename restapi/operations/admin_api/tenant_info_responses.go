@@ -42,7 +42,7 @@ type TenantInfoOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Tenant `json:"body,omitempty"`
+	Payload *models.AdminInfoResponse `json:"body,omitempty"`
 }
 
 // NewTenantInfoOK creates TenantInfoOK with default headers values
@@ -52,13 +52,13 @@ func NewTenantInfoOK() *TenantInfoOK {
 }
 
 // WithPayload adds the payload to the tenant info o k response
-func (o *TenantInfoOK) WithPayload(payload *models.Tenant) *TenantInfoOK {
+func (o *TenantInfoOK) WithPayload(payload *models.AdminInfoResponse) *TenantInfoOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the tenant info o k response
-func (o *TenantInfoOK) SetPayload(payload *models.Tenant) {
+func (o *TenantInfoOK) SetPayload(payload *models.AdminInfoResponse) {
 	o.Payload = payload
 }
 

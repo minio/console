@@ -17,7 +17,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, Grid } from "@material-ui/core";
+import { Button, Grid, IconButton, Menu, MenuItem } from "@material-ui/core";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import { CreateIcon } from "../../../icons";
 import {
@@ -29,7 +29,7 @@ import {
   containerForHeader,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
-import { IPolicyItem } from "./types";
+import { IPolicyItem, User, UsersList } from "./types";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import { TabPanel } from "../../shared/tabs";
@@ -42,6 +42,10 @@ import SetUserPolicies from "./SetUserPolicies";
 import { Bookmark } from "@material-ui/icons";
 import history from "../../../history";
 import UserServiceAccountsPanel from "./UserServiceAccountsPanel";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import ChangeUserPasswordModal from "../Account/ChangeUserPasswordModal";
+import DeleteUserString from "./DeleteUserString";
+import { usersSort } from "../../../utils/sortFunctions";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -134,13 +138,28 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
   const [addGroupOpen, setAddGroupOpen] = useState<boolean>(false);
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
   const [addLoading, setAddLoading] = useState<boolean>(false);
+  const [records, setRecords] = useState<User[]>([]);
 
   const [enabled, setEnabled] = useState<boolean>(false);
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [currentGroups, setCurrentGroups] = useState<IGroupItem[]>([]);
   const [currentPolicies, setCurrentPolicies] = useState<IPolicyItem[]>([]);
+  const [changeUserPasswordModalOpen, setChangeUserPasswordModalOpen] =
+    useState<boolean>(false);
+  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const userName = match.params["userName"];
+
+  const changeUserPassword = () => {
+    setAnchorEl(null);
+    setChangeUserPasswordModalOpen(true);
+  };
+
+  const deleteUser = () => {
+    setAnchorEl(null);
+    setDeleteOpen(true);
+  };
 
   const getUserInformation = useCallback(() => {
     if (userName === "") {
@@ -168,6 +187,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
         }
         setCurrentPolicies(currentPolicies);
         setEnabled(res.status === "enabled");
+        setSelectedUser(res.user);
         setLoading(false);
       })
       .catch((err) => {
@@ -196,11 +216,40 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
       });
   };
 
+  const fetchRecords = useCallback(() => {
+    setLoading(true);
+    api
+      .invoke("GET", `/api/v1/users`)
+      .then((res: UsersList) => {
+        const users = res.users === null ? [] : res.users;
+
+        setLoading(false);
+        setRecords(users.sort(usersSort));
+      })
+      .catch((err) => {
+        setLoading(false);
+        setErrorSnackMessage(err);
+      });
+  }, [setLoading, setRecords, setErrorSnackMessage]);
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleUserMenu = (event: any) => {
+    setAnchorEl(event.currentTarget);
+  };
+
   useEffect(() => {
     getUserInformation();
   }, [getUserInformation]);
 
   const userLoggedIn = atob(localStorage.getItem("userLoggedIn") || "");
+
+  const closeDeleteModalAndRefresh = (refresh: boolean) => {
+    setDeleteOpen(false);
+    if (refresh) {
+      fetchRecords();
+    }
+  };
 
   return (
     <React.Fragment>
@@ -226,6 +275,23 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
           }}
         />
       )}
+      {deleteOpen && (
+        <DeleteUserString
+          deleteOpen={deleteOpen}
+          userName={userName}
+          closeDeleteModalAndRefresh={(refresh: boolean) => {
+            closeDeleteModalAndRefresh(refresh);
+          }}
+        />
+      )}
+      {changeUserPasswordModalOpen && (
+        <ChangeUserPasswordModal
+          open={changeUserPasswordModalOpen}
+          userName={userName}
+          closeModal={() => setChangeUserPasswordModalOpen(false)}
+        />
+      )}
+
       <Grid container>
         <Grid item xs={12} className={classes.container}>
           <Grid item xs={12}>
@@ -249,10 +315,37 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                       />
                     </div>
                   </div>
+                  <Fragment>
+                    <IconButton
+                      aria-label="more"
+                      aria-controls="long-menu"
+                      aria-haspopup="true"
+                      onClick={handleUserMenu}
+                    >
+                      <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                      id="long-menu"
+                      anchorEl={anchorEl}
+                      keepMounted
+                      open={Boolean(anchorEl)}
+                    >
+                      <MenuItem
+                        key="changeUserPassword"
+                        onClick={changeUserPassword}
+                      >
+                        Change User Password
+                      </MenuItem>
+                      <MenuItem key="deleteUser" onClick={deleteUser}>
+                        Delete User
+                      </MenuItem>
+                    </Menu>
+                  </Fragment>
                 </Paper>
               </Grid>
             </Grid>
           </Grid>
+          <h1>{selectedUser != null && selectedUser.id}</h1>
           <Grid item xs={12}>
             <br />
           </Grid>

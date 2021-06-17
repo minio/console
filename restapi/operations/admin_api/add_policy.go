@@ -48,7 +48,7 @@ func NewAddPolicy(ctx *middleware.Context, handler AddPolicyHandler) *AddPolicy 
 	return &AddPolicy{Context: ctx, Handler: handler}
 }
 
-/*AddPolicy swagger:route POST /policies AdminAPI addPolicy
+/* AddPolicy swagger:route POST /policies AdminAPI addPolicy
 
 Add Policy
 
@@ -61,17 +61,16 @@ type AddPolicy struct {
 func (o *AddPolicy) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewAddPolicyParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *AddPolicy) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

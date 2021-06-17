@@ -41,7 +41,9 @@ interface IBarChartWidget {
   panelItem: IDashboardPanel;
   timeStart: MaterialUiPickersDate;
   timeEnd: MaterialUiPickersDate;
+  propLoading: boolean;
   displayErrorMessage: any;
+  apiPrefix: string;
 }
 
 const styles = (theme: Theme) =>
@@ -76,11 +78,20 @@ const BarChartWidget = ({
   panelItem,
   timeStart,
   timeEnd,
+  propLoading,
   displayErrorMessage,
+  apiPrefix,
 }: IBarChartWidget) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any>([]);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
+
+  useEffect(() => {
+    if (propLoading) {
+      setLoading(true);
+    }
+  }, [propLoading]);
+
   useEffect(() => {
     if (loading) {
       let stepCalc = 0;
@@ -94,7 +105,9 @@ const BarChartWidget = ({
       api
         .invoke(
           "GET",
-          `/api/v1/admin/info/widgets/${panelItem.id}/?step=${stepCalc}&${
+          `/api/v1/${apiPrefix}/info/widgets/${
+            panelItem.id
+          }/?step=${stepCalc}&${
             timeStart !== null ? `&start=${timeStart.unix()}` : ""
           }${timeStart !== null && timeEnd !== null ? "&" : ""}${
             timeEnd !== null ? `end=${timeEnd.unix()}` : ""
@@ -111,7 +124,7 @@ const BarChartWidget = ({
           setLoading(false);
         });
     }
-  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage]);
+  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
 
   const barChartConfiguration = result
     ? (result.widgetConfiguration as IBarChartConfiguration[])

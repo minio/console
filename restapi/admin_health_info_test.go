@@ -24,14 +24,14 @@ import (
 	"testing"
 	"time"
 
-	madmin "github.com/minio/minio/pkg/madmin"
+	madmin "github.com/minio/madmin-go"
 )
 
 // assigning mock at runtime instead of compile time
-var minioServerHealthInfoMock func(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) <-chan madmin.HealthInfo
+var minioServerHealthInfoMock func(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) (interface{}, string, error)
 
 // mock function serverHealthInfo
-func (ac adminClientMock) serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) <-chan madmin.HealthInfo {
+func (ac adminClientMock) serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) (interface{}, string, error) {
 	return minioServerHealthInfoMock(ctx, healthDataTypes, deadline)
 }
 
@@ -58,16 +58,16 @@ func Test_serverHealthInfo(t *testing.T) {
 			args: args{
 				deadline: deadlineDuration,
 				mockMessages: []madmin.HealthInfo{
-					madmin.HealthInfo{
+					{
 						Perf: madmin.PerfInfo{
-							NetParallel: madmin.ServerNetHealthInfo{
+							NetParallel: madmin.NetPerfInfo{
 								Addr: "someaddress",
 							},
 						},
 					},
-					madmin.HealthInfo{
+					{
 						Perf: madmin.PerfInfo{
-							NetParallel: madmin.ServerNetHealthInfo{
+							NetParallel: madmin.NetPerfInfo{
 								Addr: "otheraddress",
 							},
 						},
@@ -90,9 +90,9 @@ func Test_serverHealthInfo(t *testing.T) {
 			args: args{
 				deadline: deadlineDuration,
 				mockMessages: []madmin.HealthInfo{
-					madmin.HealthInfo{
+					{
 						Perf: madmin.PerfInfo{
-							NetParallel: madmin.ServerNetHealthInfo{
+							NetParallel: madmin.NetPerfInfo{
 								Addr: "address",
 							},
 						},
@@ -115,9 +115,9 @@ func Test_serverHealthInfo(t *testing.T) {
 			args: args{
 				deadline: deadlineDuration,
 				mockMessages: []madmin.HealthInfo{
-					madmin.HealthInfo{
+					{
 						Perf: madmin.PerfInfo{
-							NetParallel: madmin.ServerNetHealthInfo{
+							NetParallel: madmin.NetPerfInfo{
 								Addr: "address",
 							},
 						},
@@ -139,7 +139,7 @@ func Test_serverHealthInfo(t *testing.T) {
 			args: args{
 				deadline: deadlineDuration,
 				mockMessages: []madmin.HealthInfo{
-					madmin.HealthInfo{
+					{
 						Error: "error on healthInfo",
 					},
 				},
@@ -152,23 +152,19 @@ func Test_serverHealthInfo(t *testing.T) {
 
 				},
 			},
-			wantError: errors.New("error on healthInfo"),
+			wantError: nil,
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.test, func(t *testing.T) {
 			// make testReceiver channel
 			testReceiver = make(chan madmin.HealthInfo, len(tt.args.mockMessages))
 			// mock function same for all tests, changes mockMessages
-			minioServerHealthInfoMock = func(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) <-chan madmin.HealthInfo {
-				respChan := make(chan madmin.HealthInfo)
-				go func(ch chan madmin.HealthInfo) {
-					defer close(ch)
-					for _, info := range tt.args.mockMessages {
-						ch <- info
-					}
-				}(respChan)
-				return respChan
+			minioServerHealthInfoMock = func(ctx context.Context, healthDataTypes []madmin.HealthDataType,
+				deadline time.Duration) (interface{}, string, error) {
+				info := tt.args.mockMessages[0]
+				return info, madmin.HealthInfoVersion, nil
 			}
 			connWriteMessageMock = tt.args.wsWriteMock
 			err := startHealthInfo(ctx, mockWSConn, client, &deadlineDuration)

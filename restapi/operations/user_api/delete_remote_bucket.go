@@ -48,7 +48,7 @@ func NewDeleteRemoteBucket(ctx *middleware.Context, handler DeleteRemoteBucketHa
 	return &DeleteRemoteBucket{Context: ctx, Handler: handler}
 }
 
-/*DeleteRemoteBucket swagger:route DELETE /remote-buckets/{source-bucket-name}/{arn} UserAPI deleteRemoteBucket
+/* DeleteRemoteBucket swagger:route DELETE /remote-buckets/{source-bucket-name}/{arn} UserAPI deleteRemoteBucket
 
 Delete Remote Bucket
 
@@ -61,17 +61,16 @@ type DeleteRemoteBucket struct {
 func (o *DeleteRemoteBucket) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewDeleteRemoteBucketParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *DeleteRemoteBucket) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

@@ -30,7 +30,8 @@ import (
 )
 
 // NewListRemoteBucketsParams creates a new ListRemoteBucketsParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewListRemoteBucketsParams() ListRemoteBucketsParams {
 
 	return ListRemoteBucketsParams{}

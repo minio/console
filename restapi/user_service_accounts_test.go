@@ -23,19 +23,18 @@ import (
 
 	"errors"
 
-	"github.com/minio/minio/pkg/auth"
-	iampolicy "github.com/minio/minio/pkg/iam/policy"
-	"github.com/minio/minio/pkg/madmin"
+	"github.com/minio/madmin-go"
+	iampolicy "github.com/minio/pkg/iam/policy"
 	"github.com/stretchr/testify/assert"
 )
 
 // assigning mock at runtime instead of compile time
-var minioAddServiceAccountMock func(ctx context.Context, policy *iampolicy.Policy) (auth.Credentials, error)
+var minioAddServiceAccountMock func(ctx context.Context, policy *iampolicy.Policy) (madmin.Credentials, error)
 var minioListServiceAccountsMock func(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error)
 var minioDeleteServiceAccountMock func(ctx context.Context, serviceAccount string) error
 
 // mock function of AddServiceAccount()
-func (ac adminClientMock) addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (auth.Credentials, error) {
+func (ac adminClientMock) addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (madmin.Credentials, error) {
 	return minioAddServiceAccountMock(ctx, policy)
 }
 
@@ -57,11 +56,11 @@ func TestAddServiceAccount(t *testing.T) {
 	// Test-1: createServiceAccount create a service account by assigning it a policy
 	ctx := context.Background()
 	policyDefinition := "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"s3:GetBucketLocation\",\"s3:GetObject\",\"s3:ListAllMyBuckets\"],\"Resource\":[\"arn:aws:s3:::bucket1/*\"]}]}"
-	mockResponse := auth.Credentials{
+	mockResponse := madmin.Credentials{
 		AccessKey: "minio",
 		SecretKey: "minio123",
 	}
-	minioAddServiceAccountMock = func(ctx context.Context, policy *iampolicy.Policy) (auth.Credentials, error) {
+	minioAddServiceAccountMock = func(ctx context.Context, policy *iampolicy.Policy) (madmin.Credentials, error) {
 		return mockResponse, nil
 	}
 	saCreds, err := createServiceAccount(ctx, client, policyDefinition)
@@ -73,11 +72,11 @@ func TestAddServiceAccount(t *testing.T) {
 
 	// Test-2: if an invalid policy is assigned to the service account, this will raise an error
 	policyDefinition = "invalid policy"
-	mockResponse = auth.Credentials{
+	mockResponse = madmin.Credentials{
 		AccessKey: "minio",
 		SecretKey: "minio123",
 	}
-	minioAddServiceAccountMock = func(ctx context.Context, policy *iampolicy.Policy) (auth.Credentials, error) {
+	minioAddServiceAccountMock = func(ctx context.Context, policy *iampolicy.Policy) (madmin.Credentials, error) {
 		return mockResponse, nil
 	}
 	saCreds, err = createServiceAccount(ctx, client, policyDefinition)
@@ -85,12 +84,12 @@ func TestAddServiceAccount(t *testing.T) {
 
 	// Test-3: if an error occurs on server while creating service account (valid policy), handle it
 	policyDefinition = "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"s3:GetBucketLocation\",\"s3:GetObject\",\"s3:ListAllMyBuckets\"],\"Resource\":[\"arn:aws:s3:::bucket1/*\"]}]}"
-	mockResponse = auth.Credentials{
+	mockResponse = madmin.Credentials{
 		AccessKey: "minio",
 		SecretKey: "minio123",
 	}
-	minioAddServiceAccountMock = func(ctx context.Context, policy *iampolicy.Policy) (auth.Credentials, error) {
-		return auth.Credentials{}, errors.New("error")
+	minioAddServiceAccountMock = func(ctx context.Context, policy *iampolicy.Policy) (madmin.Credentials, error) {
+		return madmin.Credentials{}, errors.New("error")
 	}
 	_, err = createServiceAccount(ctx, client, policyDefinition)
 	if assert.Error(err) {

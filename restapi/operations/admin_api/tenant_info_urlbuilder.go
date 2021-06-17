@@ -58,7 +58,7 @@ func (o *TenantInfoURL) SetBasePath(bp string) {
 func (o *TenantInfoURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/namespaces/{namespace}/tenants/{tenant}"
+	var _path = "/namespaces/{namespace}/tenants/{tenant}/info"
 
 	namespace := o.Namespace
 	if namespace != "" {

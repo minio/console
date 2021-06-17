@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -34,6 +35,11 @@ import (
 //
 // swagger:model notificationEventType
 type NotificationEventType string
+
+func NewNotificationEventType(value NotificationEventType) *NotificationEventType {
+	v := value
+	return &v
+}
 
 const (
 
@@ -79,5 +85,10 @@ func (m NotificationEventType) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this notification event type based on context it is used
+func (m NotificationEventType) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

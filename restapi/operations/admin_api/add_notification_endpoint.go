@@ -48,7 +48,7 @@ func NewAddNotificationEndpoint(ctx *middleware.Context, handler AddNotification
 	return &AddNotificationEndpoint{Context: ctx, Handler: handler}
 }
 
-/*AddNotificationEndpoint swagger:route POST /admin/notification_endpoints AdminAPI addNotificationEndpoint
+/* AddNotificationEndpoint swagger:route POST /admin/notification_endpoints AdminAPI addNotificationEndpoint
 
 Allows to configure a new notification endpoint
 
@@ -61,17 +61,16 @@ type AddNotificationEndpoint struct {
 func (o *AddNotificationEndpoint) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewAddNotificationEndpointParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *AddNotificationEndpoint) ServeHTTP(rw http.ResponseWriter, r *http.Requ
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

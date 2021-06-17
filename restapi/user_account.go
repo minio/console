@@ -21,7 +21,7 @@ import (
 	"net/http"
 	"time"
 
-	iampolicy "github.com/minio/minio/pkg/iam/policy"
+	iampolicy "github.com/minio/pkg/iam/policy"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
@@ -57,10 +57,7 @@ func registerAccountHandlers(api *operations.ConsoleAPI) {
 
 // changePassword validate current current user password and if it's correct set the new password
 func changePassword(ctx context.Context, client MinioAdmin, session *models.Principal, newSecretKey string) error {
-	if err := client.changePassword(ctx, session.AccountAccessKey, newSecretKey); err != nil {
-		return err
-	}
-	return nil
+	return client.changePassword(ctx, session.AccountAccessKey, newSecretKey)
 }
 
 // getChangePasswordResponse will validate user knows what is the current password (avoid account hijacking), update user account password
@@ -68,23 +65,24 @@ func changePassword(ctx context.Context, client MinioAdmin, session *models.Prin
 func getChangePasswordResponse(session *models.Principal, params user_api.AccountChangePasswordParams) (*models.LoginResponse, *models.Error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
-	accessKey := session.AccountAccessKey
-	currentSecretKey := *params.Body.CurrentSecretKey
-	newSecretKey := *params.Body.NewSecretKey
+
 	// changePassword operations requires an AdminClient initialized with parent account credentials not
 	// STS credentials
-	parentAccountClient, err := newMAdminClient(&models.Principal{
+	parentAccountClient, err := newAdminClient(&models.Principal{
 		STSAccessKeyID:     session.AccountAccessKey,
-		STSSecretAccessKey: currentSecretKey,
+		STSSecretAccessKey: *params.Body.CurrentSecretKey,
 	})
 	if err != nil {
 		return nil, prepareError(err)
 	}
 	// parentAccountClient will contain access and secret key credentials for the user
 	userClient := adminClient{client: parentAccountClient}
+	accessKey := session.AccountAccessKey
+	newSecretKey := *params.Body.NewSecretKey
+
 	// currentSecretKey will compare currentSecretKey against the stored secret key inside the encrypted session
 	if err := changePassword(ctx, userClient, session, newSecretKey); err != nil {
-		return nil, prepareError(err)
+		return nil, prepareError(errChangePassword, nil, err)
 	}
 	// user credentials are updated at this point, we need to generate a new admin client and authenticate using
 	// the new credentials
@@ -108,7 +106,7 @@ func getUserHasPermissionsResponse(session *models.Principal, params user_api.Ha
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}

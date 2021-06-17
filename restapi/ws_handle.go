@@ -18,9 +18,9 @@ package restapi
 
 import (
 	"context"
-	"log"
 	"net"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -82,6 +82,20 @@ type wsConn struct {
 	conn *websocket.Conn
 }
 
+// Types for trace request. this adds support for calls, threshold, status and extra filters
+type TraceRequest struct {
+	s3         bool
+	internal   bool
+	storage    bool
+	os         bool
+	threshold  int64
+	onlyErrors bool
+	statusCode int64
+	method     string
+	funcName   string
+	path       string
+}
+
 func (c wsConn) writeMessage(messageType int, data []byte) error {
 	return c.conn.WriteMessage(messageType, data)
 }
@@ -104,7 +118,6 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	// authenticate WS connection with Console
 	session, err := auth.GetClaimsFromTokenInRequest(req)
 	if err != nil {
-		log.Print("error on ws authentication: ", err)
 		errors.ServeError(w, req, errors.New(http.StatusUnauthorized, err.Error()))
 		return
 	}
@@ -112,7 +125,6 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	// upgrades the HTTP server connection to the WebSocket protocol.
 	conn, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
-		log.Print("error on upgrade: ", err)
 		errors.ServeError(w, req, err)
 		return
 	}
@@ -125,7 +137,35 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 			closeWsConn(conn)
 			return
 		}
-		go wsAdminClient.trace()
+
+		calls := req.URL.Query().Get("calls")
+		threshold, _ := strconv.ParseInt(req.URL.Query().Get("threshold"), 10, 64)
+		onlyErrors := req.URL.Query().Get("onlyErrors")
+		stCode, errorStCode := strconv.ParseInt(req.URL.Query().Get("statusCode"), 10, 64)
+		method := req.URL.Query().Get("method")
+		funcName := req.URL.Query().Get("funcname")
+		path := req.URL.Query().Get("path")
+
+		statusCode := int64(0)
+
+		if errorStCode == nil {
+			statusCode = stCode
+		}
+
+		traceRequestItem := TraceRequest{
+			s3:         strings.Contains(calls, "s3") || strings.Contains(calls, "all"),
+			internal:   strings.Contains(calls, "internal") || strings.Contains(calls, "all"),
+			storage:    strings.Contains(calls, "storage") || strings.Contains(calls, "all"),
+			os:         strings.Contains(calls, "os") || strings.Contains(calls, "all"),
+			onlyErrors: onlyErrors == "yes",
+			threshold:  threshold,
+			statusCode: statusCode,
+			method:     method,
+			funcName:   funcName,
+			path:       path,
+		}
+
+		go wsAdminClient.trace(traceRequestItem)
 	case strings.HasPrefix(wsPath, `/console`):
 		wsAdminClient, err := newWebSocketAdminClient(conn, session)
 		if err != nil {
@@ -136,7 +176,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	case strings.HasPrefix(wsPath, `/health-info`):
 		deadline, err := getHealthInfoOptionsFromReq(req)
 		if err != nil {
-			log.Println("error getting health info options:", err)
+			LogError("error getting health info options: %v", err)
 			closeWsConn(conn)
 			return
 		}
@@ -149,7 +189,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	case strings.HasPrefix(wsPath, `/heal`):
 		hOptions, err := getHealOptionsFromReq(req)
 		if err != nil {
-			log.Println("error getting heal options:", err)
+			LogError("error getting heal options: %v", err)
 			closeWsConn(conn)
 			return
 		}
@@ -162,7 +202,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	case strings.HasPrefix(wsPath, `/watch`):
 		wOptions, err := getWatchOptionsFromReq(req)
 		if err != nil {
-			log.Println("error getting watch options:", err)
+			LogError("error getting watch options: %v", err)
 			closeWsConn(conn)
 			return
 		}
@@ -184,7 +224,7 @@ func newWebSocketAdminClient(conn *websocket.Conn, autClaims *models.Principal) 
 	// authenticated with MinIO
 	mAdmin, err := newAdminFromClaims(autClaims)
 	if err != nil {
-		log.Println("error creating Madmin Client:", err)
+		LogError("error creating madmin client: %v", err)
 		return nil, err
 	}
 	// create a websocket connection interface implementation
@@ -204,7 +244,7 @@ func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, bucket
 	// authenticated with MinIO
 	s3Client, err := newS3BucketClient(claims, bucketName, "")
 	if err != nil {
-		log.Println("error creating S3Client:", err)
+		LogError("error creating S3Client:", err)
 		return nil, err
 	}
 	// create a websocket connection interface implementation
@@ -232,16 +272,16 @@ func wsReadClientCtx(conn WSConn) context.Context {
 			if err != nil {
 				// if error of type websocket.CloseError and is Unexpected
 				if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseNormalClosure) {
-					log.Println("error unexpected CloseError on ReadMessage:", err)
+					LogError("error unexpected CloseError on ReadMessage: %v", err)
 					return
 				}
 				// Not all errors are of type websocket.CloseError.
 				if _, ok := err.(*websocket.CloseError); !ok {
-					log.Println("error on ReadMessage:", err)
+					LogError("error on ReadMessage: %v", err)
 					return
 				}
 				// else is an expected Close Error
-				log.Println("closed conn.ReadMessage:", err)
+				LogError("closed conn.ReadMessage: %v", err)
 				return
 			}
 		}
@@ -257,20 +297,17 @@ func closeWsConn(conn *websocket.Conn) {
 
 // trace serves madmin.ServiceTraceInfo
 // on a Websocket connection.
-func (wsc *wsAdminClient) trace() {
+func (wsc *wsAdminClient) trace(traceRequestItem TraceRequest) {
 	defer func() {
-		log.Println("trace stopped")
+		LogInfo("trace stopped")
 		// close connection after return
 		wsc.conn.close()
 	}()
-	log.Println("trace started")
+	LogInfo("trace started")
 
 	ctx := wsReadClientCtx(wsc.conn)
 
-	err := startTraceInfo(ctx, wsc.conn, wsc.client, serviceTraceOpts{
-		AllTraffic: false,
-		ErrOnly:    false,
-	})
+	err := startTraceInfo(ctx, wsc.conn, wsc.client, traceRequestItem)
 
 	sendWsCloseMessage(wsc.conn, err)
 }
@@ -279,11 +316,11 @@ func (wsc *wsAdminClient) trace() {
 // on a Websocket connection.
 func (wsc *wsAdminClient) console() {
 	defer func() {
-		log.Println("console logs stopped")
+		LogInfo("console logs stopped")
 		// close connection after return
 		wsc.conn.close()
 	}()
-	log.Println("console logs started")
+	LogInfo("console logs started")
 
 	ctx := wsReadClientCtx(wsc.conn)
 
@@ -294,11 +331,11 @@ func (wsc *wsAdminClient) console() {
 
 func (wsc *wsS3Client) watch(params *watchOptions) {
 	defer func() {
-		log.Println("watch stopped")
+		LogInfo("watch stopped")
 		// close connection after return
 		wsc.conn.close()
 	}()
-	log.Println("watch started")
+	LogInfo("watch started")
 
 	ctx := wsReadClientCtx(wsc.conn)
 
@@ -309,11 +346,11 @@ func (wsc *wsS3Client) watch(params *watchOptions) {
 
 func (wsc *wsAdminClient) heal(opts *healOptions) {
 	defer func() {
-		log.Println("heal stopped")
+		LogInfo("heal stopped")
 		// close connection after return
 		wsc.conn.close()
 	}()
-	log.Println("heal started")
+	LogInfo("heal started")
 
 	ctx := wsReadClientCtx(wsc.conn)
 
@@ -324,11 +361,11 @@ func (wsc *wsAdminClient) heal(opts *healOptions) {
 
 func (wsc *wsAdminClient) healthInfo(deadline *time.Duration) {
 	defer func() {
-		log.Println("health info stopped")
+		LogInfo("health info stopped")
 		// close connection after return
 		wsc.conn.close()
 	}()
-	log.Println("health info started")
+	LogInfo("health info started")
 
 	ctx := wsReadClientCtx(wsc.conn)
 
@@ -341,7 +378,7 @@ func (wsc *wsAdminClient) healthInfo(deadline *time.Duration) {
 // see https://tools.ietf.org/html/rfc6455#page-45
 func sendWsCloseMessage(conn WSConn, err error) {
 	if err != nil {
-		log.Print("original ws error: ", err.Error())
+		LogError("original ws error: %v", err)
 		// If connection exceeded read deadline send Close
 		// Message Policy Violation code since we don't want
 		// to let the receiver figure out the read deadline.

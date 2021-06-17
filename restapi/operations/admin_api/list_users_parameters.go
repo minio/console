@@ -33,7 +33,8 @@ import (
 )
 
 // NewListUsersParams creates a new ListUsersParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewListUsersParams() ListUsersParams {
 
 	return ListUsersParams{}
@@ -78,7 +79,6 @@ func (o *ListUsersParams) BindRequest(r *http.Request, route *middleware.Matched
 	if err := o.bindOffset(qOffset, qhkOffset, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -94,6 +94,7 @@ func (o *ListUsersParams) bindLimit(rawData []string, hasKey bool, formats strfm
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
@@ -116,6 +117,7 @@ func (o *ListUsersParams) bindOffset(rawData []string, hasKey bool, formats strf
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}

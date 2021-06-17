@@ -48,7 +48,7 @@ func NewDeleteServiceAccount(ctx *middleware.Context, handler DeleteServiceAccou
 	return &DeleteServiceAccount{Context: ctx, Handler: handler}
 }
 
-/*DeleteServiceAccount swagger:route DELETE /service-accounts/{access_key} UserAPI deleteServiceAccount
+/* DeleteServiceAccount swagger:route DELETE /service-accounts/{access_key} UserAPI deleteServiceAccount
 
 Delete Service Account
 
@@ -61,17 +61,16 @@ type DeleteServiceAccount struct {
 func (o *DeleteServiceAccount) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewDeleteServiceAccountParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *DeleteServiceAccount) ServeHTTP(rw http.ResponseWriter, r *http.Request
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

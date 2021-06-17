@@ -43,10 +43,14 @@ import SingleRepWidget from "./Widgets/SingleRepWidget";
 import DateTimePickerWrapper from "../../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
 import api from "../../../../common/api";
 import SyncIcon from "../../../../icons/SyncIcon";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import { TabPanel } from "../../../shared/tabs";
 
 interface IPrDashboard {
   classes: any;
   displayErrorMessage: typeof setErrorSnackMessage;
+  apiPrefix?: string;
 }
 
 const styles = (theme: Theme) =>
@@ -68,12 +72,17 @@ const styles = (theme: Theme) =>
     },
   });
 
-const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
+const PrDashboard = ({
+  classes,
+  displayErrorMessage,
+  apiPrefix = "admin",
+}: IPrDashboard) => {
   const [timeStart, setTimeStart] = useState<any>(null);
   const [timeEnd, setTimeEnd] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [panelInformation, setPanelInformation] =
     useState<IDashboardPanel[]>(panelsConfiguration);
+  const [curTab, setCurTab] = useState<number>(0);
 
   const minHeight = 600;
   const colsInGrid = 8;
@@ -89,7 +98,7 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
   };
 
   const panels = useCallback(
-    (width: number) => {
+    (width: number, filterPanels?: number[] | null) => {
       const singlePanelWidth = width / colsInGrid + xSpacing / 2;
 
       const componentToUse = (value: IDashboardPanel, index: number) => {
@@ -101,6 +110,8 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
                 panelItem={value}
                 timeStart={timeStart}
                 timeEnd={timeEnd}
+                propLoading={loading}
+                apiPrefix={apiPrefix}
               />
             );
           case widgetType.pieChart:
@@ -110,6 +121,8 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
                 panelItem={value}
                 timeStart={timeStart}
                 timeEnd={timeEnd}
+                propLoading={loading}
+                apiPrefix={apiPrefix}
               />
             );
           case widgetType.linearGraph:
@@ -119,6 +132,7 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
                 panelItem={value}
                 timeStart={timeStart}
                 timeEnd={timeEnd}
+                propLoading={loading}
                 hideYAxis={value.disableYAxis}
                 xAxisFormatter={value.xAxisFormatter}
                 yAxisFormatter={value.yAxisFormatter}
@@ -127,6 +141,7 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
                     ? singlePanelWidth * dashboardDistr[index].w
                     : singlePanelWidth
                 }
+                apiPrefix={apiPrefix}
               />
             );
           case widgetType.barChart:
@@ -136,6 +151,8 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
                 panelItem={value}
                 timeStart={timeStart}
                 timeEnd={timeEnd}
+                propLoading={loading}
+                apiPrefix={apiPrefix}
               />
             );
           case widgetType.singleRep:
@@ -146,8 +163,10 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
                 panelItem={value}
                 timeStart={timeStart}
                 timeEnd={timeEnd}
+                propLoading={loading}
                 color={value.color as string}
                 fillColor={fillColor as string}
+                apiPrefix={apiPrefix}
               />
             );
           default:
@@ -155,13 +174,21 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
         }
       };
 
-      return panelInformation.map((val, index) => {
-        return (
-          <div key={val.layoutIdentifier}>{componentToUse(val, index)}</div>
-        );
-      });
+      return panelInformation
+        .filter((val) => {
+          if (filterPanels) {
+            return filterPanels.indexOf(val.id) > -1;
+          } else {
+            return true;
+          }
+        })
+        .map((val, index) => {
+          return (
+            <div key={val.layoutIdentifier}>{componentToUse(val, index)}</div>
+          );
+        });
     },
-    [panelInformation, dashboardDistr, timeEnd, timeStart]
+    [panelInformation, dashboardDistr, timeEnd, timeStart, loading, apiPrefix]
   );
 
   const fetchUsage = useCallback(() => {
@@ -177,7 +204,7 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
     api
       .invoke(
         "GET",
-        `/api/v1/admin/info?step=${stepCalc}&${
+        `/api/v1/${apiPrefix}/info?step=${stepCalc}&${
           timeStart !== null ? `&start=${timeStart.unix()}` : ""
         }${timeStart !== null && timeEnd !== null ? "&" : ""}${
           timeEnd !== null ? `end=${timeEnd.unix()}` : ""
@@ -199,7 +226,7 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
         displayErrorMessage(err);
         setLoading(false);
       });
-  }, [timeStart, timeEnd, displayErrorMessage]);
+  }, [timeStart, timeEnd, displayErrorMessage, apiPrefix]);
 
   const triggerLoad = () => {
     setLoading(true);
@@ -211,8 +238,21 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
     }
   }, [loading, fetchUsage]);
 
+  const a11yProps = (index: any) => {
+    return {
+      id: `simple-tab-${index}`,
+      "aria-controls": `simple-tabpanel-${index}`,
+    };
+  };
+
+  const summaryPanels = [
+    1, 64, 65, 68, 52, 44, 61, 80, 81, 66, 62, 53, 63, 50, 69, 70, 9, 78,
+  ];
+  const resourcesPanels = [76, 77, 11, 8, 82, 74];
+  const requestsPanels = [60, 71, 17, 73];
+
   return (
-    <Grid container className={classes.container}>
+    <React.Fragment>
       <Grid
         item
         xs={12}
@@ -233,31 +273,99 @@ const PrDashboard = ({ classes, displayErrorMessage }: IPrDashboard) => {
           Sync
         </Button>
       </Grid>
-      <Grid item xs={12} className={classes.widgetsContainer}>
-        <AutoSizer style={autoSizerStyleProp}>
-          {({ width, height }: any) => {
-            let hpanel = height < minHeight ? minHeight : height;
-            if (hpanel > 380) {
-              hpanel = 480;
-            }
-            const totalWidth = width > 1920 ? 1920 : width;
-            return (
-              <ReactGridLayout
-                width={totalWidth}
-                cols={colsInGrid}
-                containerPadding={[xSpacing, ySpacing]}
-                onLayoutChange={saveDashboardDistribution}
-                layout={dashboardDistr}
-                rowHeight={hpanel / 6}
-                style={{ margin: "0 auto", width: totalWidth }}
-              >
-                {panels(width)}
-              </ReactGridLayout>
-            );
+      <Grid item xs={12}>
+        <Tabs
+          indicatorColor="primary"
+          textColor="primary"
+          aria-label="cluster-tabs"
+          variant="scrollable"
+          scrollButtons="auto"
+          value={curTab}
+          onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
+            console.log(newValue);
+            setCurTab(newValue);
           }}
-        </AutoSizer>
+        >
+          <Tab label="Summary" {...a11yProps(0)} />
+          <Tab label="Traffic" {...a11yProps(1)} />
+          <Tab label="Resources" {...a11yProps(2)} />
+        </Tabs>
       </Grid>
-    </Grid>
+      <Grid item xs={12} className={classes.widgetsContainer}>
+        <TabPanel index={0} value={curTab}>
+          <AutoSizer style={autoSizerStyleProp}>
+            {({ width, height }: any) => {
+              let hpanel = height < minHeight ? minHeight : height;
+              if (hpanel > 380) {
+                hpanel = 480;
+              }
+              const totalWidth = width > 1920 ? 1920 : width;
+              return (
+                <ReactGridLayout
+                  width={totalWidth}
+                  cols={colsInGrid}
+                  containerPadding={[xSpacing, ySpacing]}
+                  onLayoutChange={saveDashboardDistribution}
+                  layout={dashboardDistr}
+                  rowHeight={hpanel / 6}
+                  style={{ margin: "0 auto", width: totalWidth }}
+                >
+                  {panels(width, summaryPanels)}
+                </ReactGridLayout>
+              );
+            }}
+          </AutoSizer>
+        </TabPanel>
+        <TabPanel index={1} value={curTab}>
+          <AutoSizer style={autoSizerStyleProp}>
+            {({ width, height }: any) => {
+              let hpanel = height < minHeight ? minHeight : height;
+              if (hpanel > 380) {
+                hpanel = 480;
+              }
+              const totalWidth = width > 1920 ? 1920 : width;
+              return (
+                <ReactGridLayout
+                  width={totalWidth}
+                  cols={colsInGrid}
+                  containerPadding={[xSpacing, ySpacing]}
+                  onLayoutChange={saveDashboardDistribution}
+                  layout={dashboardDistr}
+                  rowHeight={hpanel / 6}
+                  style={{ margin: "0 auto", width: totalWidth }}
+                >
+                  {panels(width, requestsPanels)}
+                </ReactGridLayout>
+              );
+            }}
+          </AutoSizer>
+        </TabPanel>
+        <TabPanel index={2} value={curTab}>
+          <AutoSizer style={autoSizerStyleProp}>
+            {({ width, height }: any) => {
+              let hpanel = height < minHeight ? minHeight : height;
+              if (hpanel > 380) {
+                hpanel = 480;
+              }
+              const totalWidth = width > 1920 ? 1920 : width;
+              return (
+                <ReactGridLayout
+                  width={totalWidth}
+                  cols={colsInGrid}
+                  containerPadding={[xSpacing, ySpacing]}
+                  onLayoutChange={saveDashboardDistribution}
+                  layout={dashboardDistr}
+                  rowHeight={hpanel / 6}
+                  style={{ margin: "0 auto", width: totalWidth }}
+                >
+                  {panels(width, resourcesPanels)}
+                </ReactGridLayout>
+              );
+            }}
+          </AutoSizer>
+        </TabPanel>
+      </Grid>
+    </React.Fragment>
   );
 };
 

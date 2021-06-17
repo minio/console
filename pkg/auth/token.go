@@ -29,11 +29,10 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strings"
+	"time"
 
-	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/auth/token"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -43,11 +42,11 @@ import (
 	"golang.org/x/crypto/pbkdf2"
 )
 
+// Session token errors
 var (
-	errNoAuthToken  = errors.New("session token missing")
+	ErrNoAuthToken  = errors.New("session token missing")
+	errTokenExpired = errors.New("session token has expired")
 	errReadingToken = errors.New("session token internal data is malformed")
-	errClaimsFormat = errors.New("encrypted session token claims not in the right format")
-	errorGeneric    = errors.New("an error has occurred")
 )
 
 // derivedKey is the key used to encrypt the session token claims, its derived using pbkdf on CONSOLE_PBKDF_PASSPHRASE with CONSOLE_PBKDF_SALT
@@ -82,13 +81,12 @@ type TokenClaims struct {
 //	}
 func SessionTokenAuthenticate(token string) (*TokenClaims, error) {
 	if token == "" {
-		return nil, errNoAuthToken
+		return nil, ErrNoAuthToken
 	}
 	// decrypt encrypted token
 	claimTokens, err := decryptClaims(token)
 	if err != nil {
 		// we print decryption token error information for debugging purposes
-		log.Println(err)
 		// we return a generic error that doesn't give any information to attackers
 		return nil, errReadingToken
 	}
@@ -124,8 +122,7 @@ func encryptClaims(credentials *TokenClaims) (string, error) {
 	}
 	ciphertext, err := encrypt(payload, []byte{})
 	if err != nil {
-		log.Println(err)
-		return "", errorGeneric
+		return "", err
 	}
 	return base64.StdEncoding.EncodeToString(ciphertext), nil
 }
@@ -134,19 +131,15 @@ func encryptClaims(credentials *TokenClaims) (string, error) {
 func decryptClaims(ciphertext string) (*TokenClaims, error) {
 	decoded, err := base64.StdEncoding.DecodeString(ciphertext)
 	if err != nil {
-		log.Println(err)
-		return nil, errClaimsFormat
+		return nil, err
 	}
 	plaintext, err := decrypt(decoded, []byte{})
 	if err != nil {
-		log.Println(err)
-		return nil, errClaimsFormat
+		return nil, err
 	}
 	tokenClaims := &TokenClaims{}
-	err = json.Unmarshal(plaintext, tokenClaims)
-	if err != nil {
-		log.Println(err)
-		return nil, errClaimsFormat
+	if err = json.Unmarshal(plaintext, tokenClaims); err != nil {
+		return nil, err
 	}
 	return tokenClaims, nil
 }
@@ -289,25 +282,18 @@ func decrypt(ciphertext []byte, associatedData []byte) ([]byte, error) {
 // either defined on a cookie `token` or on Authorization header.
 //
 // Authorization Header needs to be like "Authorization Bearer <token>"
-func GetTokenFromRequest(r *http.Request) (*string, error) {
-	// Get Auth token
-	var reqToken string
-
+func GetTokenFromRequest(r *http.Request) (string, error) {
 	// Token might come either as a Cookie or as a Header
 	// if not set in cookie, check if it is set on Header.
 	tokenCookie, err := r.Cookie("token")
 	if err != nil {
-		headerToken := r.Header.Get("Authorization")
-		// reqToken should come as "Bearer <token>"
-		splitHeaderToken := strings.Split(headerToken, "Bearer")
-		if len(splitHeaderToken) <= 1 {
-			return nil, errNoAuthToken
-		}
-		reqToken = strings.TrimSpace(splitHeaderToken[1])
-	} else {
-		reqToken = strings.TrimSpace(tokenCookie.Value)
+		return "", ErrNoAuthToken
 	}
-	return swag.String(reqToken), nil
+	currentTime := time.Now()
+	if tokenCookie.Expires.After(currentTime) {
+		return "", errTokenExpired
+	}
+	return strings.TrimSpace(tokenCookie.Value), nil
 }
 
 func GetClaimsFromTokenInRequest(req *http.Request) (*models.Principal, error) {
@@ -317,7 +303,7 @@ func GetClaimsFromTokenInRequest(req *http.Request) (*models.Principal, error) {
 	}
 	// Perform decryption of the session token, if Console is able to decrypt the session token that means a valid session
 	// was used in the first place to get it
-	claims, err := SessionTokenAuthenticate(*sessionID)
+	claims, err := SessionTokenAuthenticate(sessionID)
 	if err != nil {
 		return nil, err
 	}

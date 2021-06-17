@@ -31,7 +31,8 @@ import (
 )
 
 // NewDeleteBucketParams creates a new DeleteBucketParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewDeleteBucketParams() DeleteBucketParams {
 
 	return DeleteBucketParams{}
@@ -66,7 +67,6 @@ func (o *DeleteBucketParams) BindRequest(r *http.Request, route *middleware.Matc
 	if err := o.bindName(rName, rhkName, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -82,7 +82,6 @@ func (o *DeleteBucketParams) bindName(rawData []string, hasKey bool, formats str
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Name = raw
 
 	return nil

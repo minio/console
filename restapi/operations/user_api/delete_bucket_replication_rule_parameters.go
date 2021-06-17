@@ -31,7 +31,8 @@ import (
 )
 
 // NewDeleteBucketReplicationRuleParams creates a new DeleteBucketReplicationRuleParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewDeleteBucketReplicationRuleParams() DeleteBucketReplicationRuleParams {
 
 	return DeleteBucketReplicationRuleParams{}
@@ -76,7 +77,6 @@ func (o *DeleteBucketReplicationRuleParams) BindRequest(r *http.Request, route *
 	if err := o.bindRuleID(rRuleID, rhkRuleID, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -92,7 +92,6 @@ func (o *DeleteBucketReplicationRuleParams) bindBucketName(rawData []string, has
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.BucketName = raw
 
 	return nil
@@ -107,7 +106,6 @@ func (o *DeleteBucketReplicationRuleParams) bindRuleID(rawData []string, hasKey 
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.RuleID = raw
 
 	return nil

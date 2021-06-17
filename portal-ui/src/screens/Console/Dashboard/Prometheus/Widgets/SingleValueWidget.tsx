@@ -30,8 +30,10 @@ interface ISingleValueWidget {
   panelItem: IDashboardPanel;
   timeStart: MaterialUiPickersDate;
   timeEnd: MaterialUiPickersDate;
+  propLoading: boolean;
   displayErrorMessage: any;
   classes: any;
+  apiPrefix: string;
 }
 
 const styles = (theme: Theme) =>
@@ -57,11 +59,20 @@ const SingleValueWidget = ({
   panelItem,
   timeStart,
   timeEnd,
+  propLoading,
   displayErrorMessage,
   classes,
+  apiPrefix,
 }: ISingleValueWidget) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<string>("");
+
+  useEffect(() => {
+    if (propLoading) {
+      setLoading(true);
+    }
+  }, [propLoading]);
+
   useEffect(() => {
     if (loading) {
       let stepCalc = 0;
@@ -75,7 +86,9 @@ const SingleValueWidget = ({
       api
         .invoke(
           "GET",
-          `/api/v1/admin/info/widgets/${panelItem.id}/?step=${stepCalc}&${
+          `/api/v1/${apiPrefix}/info/widgets/${
+            panelItem.id
+          }/?step=${stepCalc}&${
             timeStart !== null ? `&start=${timeStart.unix()}` : ""
           }${timeStart !== null && timeEnd !== null ? "&" : ""}${
             timeEnd !== null ? `end=${timeEnd.unix()}` : ""
@@ -91,7 +104,7 @@ const SingleValueWidget = ({
           setLoading(false);
         });
     }
-  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage]);
+  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
   return (
     <div className={classes.singleValueContainer}>
       <div className={classes.titleContainer}>{title}</div>

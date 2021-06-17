@@ -17,14 +17,14 @@
 package restapi
 
 import (
+	"bytes"
 	"context"
-	"log"
 	"net/http"
 	"time"
 
 	"github.com/minio/minio-go/v7/pkg/credentials"
 
-	iampolicy "github.com/minio/minio/pkg/iam/policy"
+	iampolicy "github.com/minio/pkg/iam/policy"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
@@ -95,7 +95,7 @@ func login(credentials ConsoleCredentialsI) (*string, error) {
 	// if we made it here, the consoleCredentials work, generate a jwt with claims
 	token, err := auth.NewEncryptedTokenForClient(&tokens, credentials.GetAccountAccessKey(), credentials.GetActions())
 	if err != nil {
-		log.Println("error authenticating user", err)
+		LogError("error authenticating user: %v", err)
 		return nil, errInvalidCredentials
 	}
 	return &token, nil
@@ -109,12 +109,12 @@ func getAccountPolicy(ctx context.Context, client MinioAdmin) (*iampolicy.Policy
 	if err != nil {
 		return nil, err
 	}
-	return &accountInfo.Policy, err
+	return iampolicy.ParseConfig(bytes.NewReader(accountInfo.Policy))
 }
 
 // getConsoleCredentials will return consoleCredentials interface including the associated policy of the current account
 func getConsoleCredentials(ctx context.Context, accessKey, secretKey string) (*consoleCredentials, error) {
-	creds, err := newConsoleCredentials(accessKey, secretKey, MinioRegion)
+	creds, err := newConsoleCredentials(accessKey, secretKey, getMinIORegion())
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +129,7 @@ func getConsoleCredentials(ctx context.Context, accessKey, secretKey string) (*c
 		return nil, err
 	}
 	// initialize admin client
-	mAdminClient, err := newMAdminClient(&models.Principal{
+	mAdminClient, err := newAdminClient(&models.Principal{
 		STSAccessKeyID:     tokens.AccessKeyID,
 		STSSecretAccessKey: tokens.SecretAccessKey,
 		STSSessionToken:    tokens.SessionToken,
@@ -194,7 +194,7 @@ func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
 		identityProvider := &auth.IdentityProvider{Client: oauth2Client}
 		redirectURL = identityProvider.GenerateLoginURL()
 	} else if acl.GetOperatorMode() {
-		loginStrategy = models.LoginDetailsLoginStrategyServiceAccount
+		loginStrategy = models.LoginDetailsLoginStrategyServiceDashAccount
 	}
 
 	loginDetails := &models.LoginDetails{
@@ -208,7 +208,7 @@ func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
 func verifyUserAgainstIDP(ctx context.Context, provider auth.IdentityProviderI, code, state string) (*credentials.Credentials, error) {
 	userCredentials, err := provider.VerifyIdentity(ctx, code, state)
 	if err != nil {
-		log.Println("error validating user identity against idp:", err)
+		LogError("error validating user identity against idp: %v", err)
 		return nil, errInvalidCredentials
 	}
 	return userCredentials, nil
@@ -250,7 +250,7 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 			return nil, prepareError(errInvalidCredentials, nil, err)
 		}
 		// initialize admin client
-		mAdminClient, err := newMAdminClient(&models.Principal{
+		mAdminClient, err := newAdminClient(&models.Principal{
 			STSAccessKeyID:     creds.AccessKeyID,
 			STSSecretAccessKey: creds.SecretAccessKey,
 			STSSessionToken:    creds.SessionToken,

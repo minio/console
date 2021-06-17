@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -54,7 +55,6 @@ func (m *NotifEndpointResponse) Validate(formats strfmt.Registry) error {
 }
 
 func (m *NotifEndpointResponse) validateNotificationEndpoints(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.NotificationEndpoints) { // not required
 		return nil
 	}
@@ -66,6 +66,38 @@ func (m *NotifEndpointResponse) validateNotificationEndpoints(formats strfmt.Reg
 
 		if m.NotificationEndpoints[i] != nil {
 			if err := m.NotificationEndpoints[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("notification_endpoints" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this notif endpoint response based on the context it is used
+func (m *NotifEndpointResponse) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateNotificationEndpoints(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *NotifEndpointResponse) contextValidateNotificationEndpoints(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.NotificationEndpoints); i++ {
+
+		if m.NotificationEndpoints[i] != nil {
+			if err := m.NotificationEndpoints[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("notification_endpoints" + "." + strconv.Itoa(i))
 				}

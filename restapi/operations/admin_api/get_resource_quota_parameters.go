@@ -31,7 +31,8 @@ import (
 )
 
 // NewGetResourceQuotaParams creates a new GetResourceQuotaParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewGetResourceQuotaParams() GetResourceQuotaParams {
 
 	return GetResourceQuotaParams{}
@@ -76,7 +77,6 @@ func (o *GetResourceQuotaParams) BindRequest(r *http.Request, route *middleware.
 	if err := o.bindResourceQuotaName(rResourceQuotaName, rhkResourceQuotaName, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -92,7 +92,6 @@ func (o *GetResourceQuotaParams) bindNamespace(rawData []string, hasKey bool, fo
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Namespace = raw
 
 	return nil
@@ -107,7 +106,6 @@ func (o *GetResourceQuotaParams) bindResourceQuotaName(rawData []string, hasKey 
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.ResourceQuotaName = raw
 
 	return nil

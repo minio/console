@@ -33,7 +33,8 @@ import (
 )
 
 // NewListTenantsParams creates a new ListTenantsParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewListTenantsParams() ListTenantsParams {
 
 	return ListTenantsParams{}
@@ -97,7 +98,6 @@ func (o *ListTenantsParams) BindRequest(r *http.Request, route *middleware.Match
 	if err := o.bindSortBy(qSortBy, qhkSortBy, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -113,6 +113,7 @@ func (o *ListTenantsParams) bindLimit(rawData []string, hasKey bool, formats str
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
@@ -135,7 +136,6 @@ func (o *ListTenantsParams) bindNamespace(rawData []string, hasKey bool, formats
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Namespace = raw
 
 	return nil
@@ -150,6 +150,7 @@ func (o *ListTenantsParams) bindOffset(rawData []string, hasKey bool, formats st
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
@@ -172,10 +173,10 @@ func (o *ListTenantsParams) bindSortBy(rawData []string, hasKey bool, formats st
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
-
 	o.SortBy = &raw
 
 	return nil

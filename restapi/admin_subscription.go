@@ -21,7 +21,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	miniov2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
@@ -190,7 +189,7 @@ func saveSubscriptionLicense(ctx context.Context, clientSet K8sClientI, license 
 	err := clientSet.deleteSecret(ctx, cluster.Namespace, OperatorSubnetLicenseSecretName, metav1.DeleteOptions{})
 	if err != nil {
 		// log the error if any and continue
-		log.Println(err)
+		LogError("unable to delete secret %s: %v", OperatorSubnetLicenseSecretName, err)
 	}
 	// Save subnet license in k8s secrets
 	imm := true
@@ -225,7 +224,7 @@ func updateTenantLicenseAndRestartConsole(ctx context.Context, clientSet K8sClie
 	err = clientSet.deleteSecret(ctx, namespace, consoleSecretName, metav1.DeleteOptions{})
 	if err != nil {
 		// log the error if any and continue
-		log.Println(err)
+		LogError("unable to delete secret %s: %v", consoleSecretName, err)
 	}
 	// Save subnet license in k8s secrets
 	imm := true
@@ -305,7 +304,7 @@ func getSubscriptionLicense(ctx context.Context, clientSet K8sClientI, namespace
 	}
 	license, ok := licenseSecret.Data[ConsoleSubnetLicense]
 	if !ok {
-		log.Println("subnet secret doesn't contain jwt license")
+		LogError("subnet secret does not contain a valid subnet license")
 		return "", errorGeneric
 	}
 	return string(license), nil
@@ -386,7 +385,7 @@ func getSubscriptionRefreshResponse(session *models.Principal) (*models.License,
 	// iterate over all tenants, update console configuration and restart console pods
 	for _, tenant := range tenants.Tenants {
 		if err := updateTenantLicenseAndRestartConsole(ctx, &k8sClient, licenseRaw, tenant.Namespace, tenant.Name); err != nil {
-			log.Println(err)
+			LogError("unable to updateTenantLicenseAndRestartConsole: %v", err)
 		}
 	}
 
@@ -412,24 +411,22 @@ func RefreshLicense() error {
 	if err != nil {
 		return err
 	}
+	if refreshedLicenseKey == "" {
+		return errors.New("license expired, please open a support ticket at https://subnet.min.io/")
+	}
 	// store new license in memory for console ui
 	LicenseKey = refreshedLicenseKey
-	// Update in memory license and update k8s secret
-	if refreshedLicenseKey != "" {
-		if acl.GetOperatorMode() {
-			ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-			defer cancel()
-			clientSet, err := cluster.K8sClient(saK8SToken)
-			if err != nil {
-				return err
-			}
-			k8sClient := k8sClient{
-				client: clientSet,
-			}
-			if err = saveSubscriptionLicense(ctx, &k8sClient, refreshedLicenseKey); err != nil {
-				return err
-			}
+	if acl.GetOperatorMode() {
+		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+		defer cancel()
+		clientSet, err := cluster.K8sClient(saK8SToken)
+		if err != nil {
+			return err
 		}
+		k8sClient := k8sClient{
+			client: clientSet,
+		}
+		return saveSubscriptionLicense(ctx, &k8sClient, refreshedLicenseKey)
 	}
 	return nil
 }

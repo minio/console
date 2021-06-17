@@ -14,24 +14,28 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, useCallback, Fragment } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { AppState } from "../../../../../store";
-import { updateAddField, isPageValid } from "../../actions";
+import { isPageValid, updateAddField } from "../../actions";
 import { setModalErrorSnackMessage } from "../../../../../actions";
 import {
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
-import { Grid } from "@material-ui/core";
+import { Grid, IconButton } from "@material-ui/core";
 import {
   commonFormValidation,
   IValidation,
 } from "../../../../../utils/validationFunctions";
 import RadioGroupSelector from "../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
-import QueryMultiSelector from "../../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import api from "../../../../../common/api";
+import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import AddIcon from "../../../../../icons/AddIcon";
+import RemoveIcon from "../../../../../icons/RemoveIcon";
+import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 
 interface IAffinityProps {
   classes: any;
@@ -48,9 +52,27 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
+    overlayAction: {
+      lineHeight: "50px",
+      float: "left",
+      "& svg": {
+        maxWidth: 15,
+        maxHeight: 15,
+      },
+    },
     ...modalBasic,
     ...wizardCommon,
   });
+
+interface LabelKeyPair {
+  key: string;
+  value: string;
+}
+
+interface OptionPair {
+  label: string;
+  value: string;
+}
 
 const Affinity = ({
   classes,
@@ -62,6 +84,15 @@ const Affinity = ({
   isPageValid,
 }: IAffinityProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
+  const [loading, setLoading] = useState<boolean>(true);
+  const [keyValueMap, setKeyValueMap] = useState<{ [key: string]: string[] }>(
+    {}
+  );
+  const [keyValuePairs, setKeyValuePairs] = useState<LabelKeyPair[]>([
+    { key: "", value: "" },
+  ]);
+
+  const [keyOptions, setKeyOptions] = useState<OptionPair[]>([]);
 
   // Common
   const updateField = useCallback(
@@ -70,6 +101,45 @@ const Affinity = ({
     },
     [updateAddField]
   );
+
+  useEffect(() => {
+    if (loading) {
+      api
+        .invoke("GET", `/api/v1/nodes/labels`)
+        .then((res: { [key: string]: string[] }) => {
+          setLoading(false);
+          setKeyValueMap(res);
+          let keys: OptionPair[] = [];
+          for (let k in res) {
+            keys.push({
+              label: k,
+              value: k,
+            });
+          }
+          setKeyOptions(keys);
+          setKeyValuePairs([{ key: keys[0].value, value: keys[0].value }]);
+        })
+        .catch((err: any) => {
+          setLoading(false);
+          setModalErrorSnackMessage(err);
+          setKeyValueMap({});
+        });
+    }
+  }, [setModalErrorSnackMessage, loading]);
+
+  useEffect(() => {
+    if (keyValuePairs) {
+      const vlr = keyValuePairs
+        .filter((kvp) => kvp.key !== "")
+        .map((kvp) => `${kvp.key}=${kvp.value}`)
+        .filter((kvs, i, a) => a.indexOf(kvs) === i);
+      const vl = vlr.join("&");
+
+      console.log(vl);
+
+      updateField("nodeSelectorLabels", vl);
+    }
+  }, [keyValuePairs, updateField]);
 
   // Validation
   useEffect(() => {
@@ -162,19 +232,141 @@ const Affinity = ({
             />
           </Grid>
           <Grid item xs={12}>
-            <QueryMultiSelector
-              name="labels"
-              label="Labels"
-              elements={nodeSelectorLabels}
-              onChange={(vl: string) => {
-                updateField("nodeSelectorLabels", vl);
-              }}
-              keyPlaceholder="Label Key"
-              valuePlaceholder="Label Value"
-              tooltip="Labels to be used in nodeSelector assignation. Invalid key-pairs will be ignored"
-              withBorder
-            />
+            <h3>Labels</h3>
             <span className={classes.error}>{validationErrors["labels"]}</span>
+            <Grid container>
+              {keyValuePairs &&
+                keyValuePairs.map((kvp, i) => {
+                  return (
+                    <React.Fragment>
+                      <Grid item xs={5}>
+                        {keyOptions.length > 0 && (
+                          <SelectWrapper
+                            onChange={(
+                              e: React.ChangeEvent<{ value: unknown }>
+                            ) => {
+                              const newKey = e.target.value as string;
+                              const arrCp: LabelKeyPair[] = Object.assign(
+                                [],
+                                keyValuePairs
+                              );
+
+                              arrCp[i].key = e.target.value as string;
+                              arrCp[i].value = keyValueMap[newKey][0];
+                              setKeyValuePairs(arrCp);
+                            }}
+                            id="select-access-policy"
+                            name="select-access-policy"
+                            label={""}
+                            value={kvp.key}
+                            options={keyOptions}
+                          />
+                        )}
+                        {keyOptions.length === 0 && (
+                          <InputBoxWrapper
+                            id={`nodeselector-key-${i.toString()}`}
+                            label={""}
+                            name={`nodeselector-${i.toString()}`}
+                            value={kvp.key}
+                            onChange={(e) => {
+                              const arrCp: LabelKeyPair[] = Object.assign(
+                                [],
+                                keyValuePairs
+                              );
+                              arrCp[i].key = e.target.value;
+                              setKeyValuePairs(arrCp);
+                            }}
+                            index={i}
+                            placeholder={"Key"}
+                          />
+                        )}
+                      </Grid>
+                      <Grid item xs={5}>
+                        {keyOptions.length > 0 && (
+                          <SelectWrapper
+                            onChange={(
+                              e: React.ChangeEvent<{ value: unknown }>
+                            ) => {
+                              const arrCp: LabelKeyPair[] = Object.assign(
+                                [],
+                                keyValuePairs
+                              );
+                              arrCp[i].value = e.target.value as string;
+                              setKeyValuePairs(arrCp);
+                            }}
+                            id="select-access-policy"
+                            name="select-access-policy"
+                            label={""}
+                            value={kvp.value}
+                            options={
+                              keyValueMap[kvp.key]
+                                ? keyValueMap[kvp.key].map((v) => {
+                                    return { label: v, value: v };
+                                  })
+                                : []
+                            }
+                          />
+                        )}
+                        {keyOptions.length === 0 && (
+                          <InputBoxWrapper
+                            id={`nodeselector-value-${i.toString()}`}
+                            label={""}
+                            name={`nodeselector-${i.toString()}`}
+                            value={kvp.value}
+                            onChange={(e) => {
+                              const arrCp: LabelKeyPair[] = Object.assign(
+                                [],
+                                keyValuePairs
+                              );
+                              arrCp[i].value = e.target.value;
+                              setKeyValuePairs(arrCp);
+                            }}
+                            index={i}
+                            placeholder={"value"}
+                          />
+                        )}
+                      </Grid>
+                      <Grid item xs={2}>
+                        <div className={classes.overlayAction}>
+                          <IconButton
+                            size={"small"}
+                            onClick={() => {
+                              const arrCp = Object.assign([], keyValuePairs);
+                              if (keyOptions.length > 0) {
+                                arrCp.push({
+                                  key: keyOptions[0].value,
+                                  value: keyValueMap[keyOptions[0].value][0],
+                                });
+                              } else {
+                                arrCp.push({ key: "", value: "" });
+                              }
+
+                              setKeyValuePairs(arrCp);
+                            }}
+                          >
+                            <AddIcon />
+                          </IconButton>
+                        </div>
+                        {keyValuePairs.length > 1 && (
+                          <div className={classes.overlayAction}>
+                            <IconButton
+                              size={"small"}
+                              onClick={() => {
+                                const arrCp = keyValuePairs.filter(
+                                  (item, index) => index !== i
+                                );
+                                setKeyValuePairs(arrCp);
+                              }}
+                            >
+                              <RemoveIcon />
+                            </IconButton>
+                          </div>
+                        )}
+                      </Grid>
+                    </React.Fragment>
+                  );
+                })}
+            </Grid>
           </Grid>
         </Fragment>
       )}

@@ -28,7 +28,7 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/user_api"
-	iampolicy "github.com/minio/minio/pkg/iam/policy"
+	iampolicy "github.com/minio/pkg/iam/policy"
 )
 
 func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
@@ -95,7 +95,7 @@ func getCreateServiceAccountResponse(session *models.Principal, serviceAccount *
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
-	userAdmin, err := newMAdminClient(session)
+	userAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -129,7 +129,7 @@ func getUserServiceAccountsResponse(session *models.Principal, user string) (mod
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
-	userAdmin, err := newMAdminClient(session)
+	userAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -154,7 +154,7 @@ func getDeleteServiceAccountResponse(session *models.Principal, accessKey string
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
-	userAdmin, err := newMAdminClient(session)
+	userAdmin, err := newAdminClient(session)
 	if err != nil {
 		return prepareError(err)
 	}

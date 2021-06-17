@@ -48,7 +48,7 @@ func NewGetBucketObjectLockingStatus(ctx *middleware.Context, handler GetBucketO
 	return &GetBucketObjectLockingStatus{Context: ctx, Handler: handler}
 }
 
-/*GetBucketObjectLockingStatus swagger:route GET /buckets/{bucket_name}/object-locking UserAPI getBucketObjectLockingStatus
+/* GetBucketObjectLockingStatus swagger:route GET /buckets/{bucket_name}/object-locking UserAPI getBucketObjectLockingStatus
 
 Returns the status of object locking support on the bucket
 
@@ -61,17 +61,16 @@ type GetBucketObjectLockingStatus struct {
 func (o *GetBucketObjectLockingStatus) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
-		r = rCtx
+		*r = *rCtx
 	}
 	var Params = NewGetBucketObjectLockingStatusParams()
-
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 	if aCtx != nil {
-		r = aCtx
+		*r = *aCtx
 	}
 	var principal *models.Principal
 	if uprinc != nil {
@@ -84,7 +83,6 @@ func (o *GetBucketObjectLockingStatus) ServeHTTP(rw http.ResponseWriter, r *http
 	}
 
 	res := o.Handler.Handle(Params, principal) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

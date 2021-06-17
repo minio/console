@@ -23,6 +23,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -61,6 +63,34 @@ func (m *GcpConfiguration) validateSecretmanager(formats strfmt.Registry) error 
 
 	if m.Secretmanager != nil {
 		if err := m.Secretmanager.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("secretmanager")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this gcp configuration based on the context it is used
+func (m *GcpConfiguration) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateSecretmanager(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *GcpConfiguration) contextValidateSecretmanager(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Secretmanager != nil {
+		if err := m.Secretmanager.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("secretmanager")
 			}
@@ -124,7 +154,6 @@ func (m *GcpConfigurationSecretmanager) Validate(formats strfmt.Registry) error 
 }
 
 func (m *GcpConfigurationSecretmanager) validateCredentials(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Credentials) { // not required
 		return nil
 	}
@@ -145,6 +174,34 @@ func (m *GcpConfigurationSecretmanager) validateProjectID(formats strfmt.Registr
 
 	if err := validate.Required("secretmanager"+"."+"project_id", "body", m.ProjectID); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this gcp configuration secretmanager based on the context it is used
+func (m *GcpConfigurationSecretmanager) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateCredentials(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *GcpConfigurationSecretmanager) contextValidateCredentials(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Credentials != nil {
+		if err := m.Credentials.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("secretmanager" + "." + "credentials")
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -188,6 +245,11 @@ type GcpConfigurationSecretmanagerCredentials struct {
 
 // Validate validates this gcp configuration secretmanager credentials
 func (m *GcpConfigurationSecretmanagerCredentials) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this gcp configuration secretmanager credentials based on context it is used
+func (m *GcpConfigurationSecretmanagerCredentials) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

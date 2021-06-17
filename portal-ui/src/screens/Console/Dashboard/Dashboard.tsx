@@ -74,7 +74,9 @@ const Dashboard = ({ classes, displayErrorMessage }: IDashboardSimple) => {
         ) : (
           <Fragment>
             {widgets !== null ? (
-              <PrDashboard />
+              <Grid container className={classes.container}>
+                <PrDashboard />
+              </Grid>
             ) : (
               <BasicDashboard usage={basicResult} />
             )}

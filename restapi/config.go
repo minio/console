@@ -18,15 +18,14 @@ package restapi
 
 import (
 	"crypto/x509"
-	"fmt"
 	"io/ioutil"
+	"net"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
-	"github.com/minio/minio/pkg/certs"
-	"github.com/minio/minio/pkg/env"
+	xcerts "github.com/minio/pkg/certs"
+	"github.com/minio/pkg/env"
 )
 
 var (
@@ -34,10 +33,10 @@ var (
 	Port = "9090"
 
 	// Hostname console hostname
-	Hostname = "0.0.0.0"
-
-	// TLSHostname console tls hostname
-	TLSHostname = "0.0.0.0"
+	// avoid listening on 0.0.0.0 by default
+	// instead listen on all IPv4 and IPv6
+	// - Hostname should be empty.
+	Hostname = ""
 
 	// TLSPort console tls port
 	TLSPort = "9443"
@@ -53,13 +52,20 @@ var (
 )
 
 var (
-	logSearchAPI  string
-	logSearchURL  string
-	prometheusURL string
-	consoleImage  string
-
-	once sync.Once
+	logSearchAPI    string
+	logSearchURL    string
+	prometheusURL   string
+	prometheusJobID string
+	consoleImage    string
 )
+
+func init() {
+	logSearchAPI = env.Get(LogSearchQueryAuthToken, "")
+	logSearchURL = env.Get(LogSearchURL, "http://localhost:8080")
+	prometheusURL = env.Get(PrometheusURL, "")
+	prometheusJobID = env.Get(PrometheusJobID, "minio-job")
+	consoleImage = env.Get(ConsoleOperatorConsoleImage, ConsoleImageDefaultVersion)
+}
 
 func getMinIOServer() string {
 	return strings.TrimSpace(env.Get(ConsoleMinIOServer, "http://localhost:9000"))
@@ -116,7 +122,7 @@ func GetPort() int {
 // GetTLSHostname gets console tls hostname set on env variable
 // or default one
 func GetTLSHostname() string {
-	return strings.ToLower(env.Get(ConsoleTLSHostname, TLSHostname))
+	return strings.ToLower(env.Get(ConsoleTLSHostname, Hostname))
 }
 
 // GetTLSPort gets console tls port set on env variable
@@ -186,7 +192,7 @@ func getSecureHostsProxyHeaders() []string {
 
 // TLSHost is the host name that is used to redirect HTTP requests to HTTPS. Default is "", which indicates to use the same host.
 func getSecureTLSHost() string {
-	return env.Get(ConsoleSecureTLSHost, fmt.Sprintf("%s:%s", TLSHostname, TLSPort))
+	return env.Get(ConsoleSecureTLSHost, net.JoinHostPort(Hostname, TLSPort))
 }
 
 // STSSeconds is the max-age of the Strict-Transport-Security header. Default is 0, which would NOT include the header.
@@ -238,24 +244,19 @@ func getSecureExpectCTHeader() string {
 }
 
 func getLogSearchAPIToken() string {
-	once.Do(func() {
-		initVars()
-	})
 	return logSearchAPI
 }
 
 func getLogSearchURL() string {
-	once.Do(func() {
-		initVars()
-	})
 	return logSearchURL
 }
 
 func getPrometheusURL() string {
-	once.Do(func() {
-		initVars()
-	})
 	return prometheusURL
+}
+
+func getPrometheusJobID() string {
+	return prometheusJobID
 }
 
 // GetSubnetLicense returns the current subnet jwt license
@@ -269,20 +270,13 @@ func GetSubnetLicense() string {
 	return LicenseKey
 }
 
-func initVars() {
-	logSearchAPI = env.Get(LogSearchQueryAuthToken, "")
-	logSearchURL = env.Get(LogSearchURL, "http://localhost:8080")
-	prometheusURL = env.Get(PrometheusURL, "")
-	consoleImage = env.Get(ConsoleOperatorConsoleImage, ConsoleImageDefaultVersion)
-}
-
 var (
 	// GlobalRootCAs is CA root certificates, a nil value means system certs pool will be used
 	GlobalRootCAs *x509.CertPool
 	// GlobalPublicCerts has certificates Console will use to serve clients
 	GlobalPublicCerts []*x509.Certificate
 	// GlobalTLSCertsManager custom TLS Manager for SNI support
-	GlobalTLSCertsManager *certs.Manager
+	GlobalTLSCertsManager *xcerts.Manager
 )
 
 // getK8sSAToken assumes the plugin is running inside a k8s pod and extract the current service account from the
@@ -296,8 +290,5 @@ func getK8sSAToken() string {
 }
 
 func getConsoleImage() string {
-	once.Do(func() {
-		initVars()
-	})
 	return consoleImage
 }

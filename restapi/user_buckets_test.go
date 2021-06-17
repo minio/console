@@ -27,10 +27,10 @@ import (
 
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
+	"github.com/minio/madmin-go"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/sse"
-	"github.com/minio/minio/pkg/madmin"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -217,7 +217,7 @@ func TestBucketInfo(t *testing.T) {
 	bucketToSet := "csbucket"
 	outputExpected := &models.Bucket{
 		Name:         swag.String(bucketToSet),
-		Access:       models.BucketAccessPRIVATE,
+		Access:       models.NewBucketAccess(models.BucketAccessPRIVATE),
 		CreationDate: "", // to be implemented
 		Size:         0,  // to be implemented
 	}
@@ -239,7 +239,7 @@ func TestBucketInfo(t *testing.T) {
 	bucketToSet = "csbucket"
 	outputExpected = &models.Bucket{
 		Name:         swag.String(bucketToSet),
-		Access:       models.BucketAccessPUBLIC,
+		Access:       models.NewBucketAccess(models.BucketAccessPUBLIC),
 		CreationDate: "", // to be implemented
 		Size:         0,  // to be implemented
 	}
@@ -261,7 +261,7 @@ func TestBucketInfo(t *testing.T) {
 	bucketToSet = "csbucket"
 	outputExpected = &models.Bucket{
 		Name:         swag.String(bucketToSet),
-		Access:       models.BucketAccessCUSTOM,
+		Access:       models.NewBucketAccess(models.BucketAccessCUSTOM),
 		CreationDate: "", // to be implemented
 		Size:         0,  // to be implemented
 	}
@@ -282,7 +282,7 @@ func TestBucketInfo(t *testing.T) {
 	bucketToSet = "csbucket"
 	outputExpected = &models.Bucket{
 		Name:         swag.String(bucketToSet),
-		Access:       models.BucketAccessCUSTOM,
+		Access:       models.NewBucketAccess(models.BucketAccessCUSTOM),
 		CreationDate: "", // to be implemented
 		Size:         0,  // to be implemented
 	}
@@ -299,7 +299,7 @@ func TestBucketInfo(t *testing.T) {
 	bucketToSet = "csbucket"
 	outputExpected = &models.Bucket{
 		Name:         swag.String(bucketToSet),
-		Access:       models.BucketAccessCUSTOM,
+		Access:       models.NewBucketAccess(models.BucketAccessCUSTOM),
 		CreationDate: "", // to be implemented
 		Size:         0,  // to be implemented
 	}

@@ -32,7 +32,8 @@ import (
 )
 
 // NewGetDirectCSIVolumeListParams creates a new GetDirectCSIVolumeListParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewGetDirectCSIVolumeListParams() GetDirectCSIVolumeListParams {
 
 	return GetDirectCSIVolumeListParams{}
@@ -77,7 +78,6 @@ func (o *GetDirectCSIVolumeListParams) BindRequest(r *http.Request, route *middl
 	if err := o.bindNodes(qNodes, qhkNodes, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -93,10 +93,10 @@ func (o *GetDirectCSIVolumeListParams) bindDrives(rawData []string, hasKey bool,
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
-
 	o.Drives = &raw
 
 	return nil
@@ -111,10 +111,10 @@ func (o *GetDirectCSIVolumeListParams) bindNodes(rawData []string, hasKey bool, 
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
-
 	o.Nodes = &raw
 
 	return nil

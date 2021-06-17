@@ -20,7 +20,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
@@ -36,7 +35,7 @@ import (
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/user_api"
 	"github.com/minio/minio-go/v7/pkg/policy"
-	minioIAMPolicy "github.com/minio/minio/pkg/iam/policy"
+	minioIAMPolicy "github.com/minio/pkg/iam/policy"
 )
 
 func registerBucketsHandlers(api *operations.ConsoleAPI) {
@@ -162,7 +161,7 @@ const (
 func doSetVersioning(client MCClient, state VersionState) error {
 	err := client.setVersioning(context.Background(), string(state))
 	if err != nil {
-		log.Println("error setting versioning for bucket:", err.Cause)
+		LogError("error setting versioning for bucket: %s", err.Cause)
 		return err.Cause
 	}
 
@@ -196,7 +195,7 @@ func getBucketReplicationdResponse(session *models.Principal, bucketName string)
 
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		log.Println("error creating MinIO Client:", err)
+		LogError("error creating MinIO Client: %v", err)
 		return nil, err
 	}
 	// create a minioClient interface implementation
@@ -206,13 +205,12 @@ func getBucketReplicationdResponse(session *models.Principal, bucketName string)
 	// we will tolerate this call failing
 	res, err := minioClient.getBucketReplication(ctx, bucketName)
 	if err != nil {
-		log.Println("error versioning bucket:", err)
+		LogError("error versioning bucket: %v", err)
 	}
 
 	var rules []*models.BucketReplicationRule
 
 	for _, rule := range res.Rules {
-
 		repDelMarkerStatus := false
 		if rule.DeleteMarkerReplication.Status == "enable" {
 			repDelMarkerStatus = true
@@ -247,7 +245,7 @@ func getBucketVersionedResponse(session *models.Principal, bucketName string) (*
 
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		log.Println("error creating MinIO Client:", err)
+		LogError("error creating MinIO Client: %v", err)
 		return nil, err
 	}
 	// create a minioClient interface implementation
@@ -257,7 +255,7 @@ func getBucketVersionedResponse(session *models.Principal, bucketName string) (*
 	// we will tolerate this call failing
 	res, err := minioClient.getBucketVersioning(ctx, bucketName)
 	if err != nil {
-		log.Println("error versioning bucket:", err)
+		LogError("error versioning bucket: %v", err)
 	}
 
 	// serialize output
@@ -287,7 +285,7 @@ func getListBucketsResponse(session *models.Principal) (*models.ListBucketsRespo
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
-	mAdmin, err := newMAdminClient(session)
+	mAdmin, err := newAdminClient(session)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -310,10 +308,7 @@ func getListBucketsResponse(session *models.Principal) (*models.ListBucketsRespo
 // makeBucket creates a bucket for an specific minio client
 func makeBucket(ctx context.Context, client MinioClient, bucketName string, objectLocking bool) error {
 	// creates a new bucket with bucketName with a context to control cancellations and timeouts.
-	if err := client.makeBucketWithContext(ctx, bucketName, "us-east-1", objectLocking); err != nil {
-		return err
-	}
-	return nil
+	return client.makeBucketWithContext(ctx, bucketName, "", objectLocking)
 }
 
 // getMakeBucketResponse performs makeBucket() to create a bucket with its access policy
@@ -344,9 +339,9 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 	// make sure to delete bucket if an error occurs after bucket was created
 	defer func() {
 		if err != nil {
-			log.Println("error creating bucket:", err)
+			LogError("error creating bucket: %v", err)
 			if err := removeBucket(minioClient, *br.Name); err != nil {
-				log.Println("error removing bucket:", err)
+				LogError("error removing bucket: %v", err)
 			}
 		}
 	}()
@@ -368,7 +363,7 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 
 	// if it has support for
 	if br.Quota != nil && br.Quota.Enabled != nil && *br.Quota.Enabled {
-		mAdmin, err := newMAdminClient(session)
+		mAdmin, err := newAdminClient(session)
 		if err != nil {
 			return prepareError(err)
 		}
@@ -377,13 +372,13 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 		adminClient := adminClient{client: mAdmin}
 		// we will tolerate this call failing
 		if err := setBucketQuota(ctx, &adminClient, br.Name, br.Quota); err != nil {
-			log.Println("error versioning bucket:", err)
+			LogError("error versioning bucket:", err)
 		}
 	}
 
 	// Set Bucket Retention Configuration if defined
 	if br.Retention != nil {
-		err = setBucketRetentionConfig(ctx, minioClient, *br.Name, br.Retention.Mode, br.Retention.Unit, br.Retention.Validity)
+		err = setBucketRetentionConfig(ctx, minioClient, *br.Name, *br.Retention.Mode, *br.Retention.Unit, br.Retention.Validity)
 		if err != nil {
 			return prepareError(err)
 		}
@@ -434,7 +429,7 @@ func getBucketSetPolicyResponse(session *models.Principal, bucketName string, re
 	minioClient := minioClient{client: mClient}
 
 	// set bucket access policy
-	if err := setBucketAccessPolicy(ctx, minioClient, bucketName, req.Access); err != nil {
+	if err := setBucketAccessPolicy(ctx, minioClient, bucketName, *req.Access); err != nil {
 		return nil, prepareError(err)
 	}
 	// get updated bucket details and return it
@@ -492,7 +487,7 @@ func getBucketInfo(client MinioClient, bucketName string) (*models.Bucket, error
 	}
 	bucket := &models.Bucket{
 		Name:         &bucketName,
-		Access:       bucketAccess,
+		Access:       &bucketAccess,
 		CreationDate: "", // to be implemented
 		Size:         0,  // to be implemented
 	}
@@ -545,9 +540,9 @@ func consoleAccess2policyAccess(bucketAccess models.BucketAccess) (bucketPolicy 
 func enableBucketEncryption(ctx context.Context, client MinioClient, bucketName string, encryptionType models.BucketEncryptionType, kmsKeyID string) error {
 	var config *sse.Configuration
 	switch encryptionType {
-	case models.BucketEncryptionTypeSseKms:
+	case models.BucketEncryptionTypeSseDashKms:
 		config = sse.NewConfigurationSSEKMS(kmsKeyID)
-	case models.BucketEncryptionTypeSseS3:
+	case models.BucketEncryptionTypeSseDashS3:
 		config = sse.NewConfigurationSSES3()
 	default:
 		return errInvalidEncryptionAlgorithm
@@ -566,7 +561,7 @@ func enableBucketEncryptionResponse(session *models.Principal, params user_api.E
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
-	if err := enableBucketEncryption(ctx, minioClient, params.BucketName, params.Body.EncType, params.Body.KmsKeyID); err != nil {
+	if err := enableBucketEncryption(ctx, minioClient, params.BucketName, *params.Body.EncType, params.Body.KmsKeyID); err != nil {
 		return prepareError(err)
 	}
 	return nil
@@ -662,8 +657,7 @@ func getSetBucketRetentionConfigResponse(session *models.Principal, params user_
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
-
-	err = setBucketRetentionConfig(ctx, minioClient, params.BucketName, params.Body.Mode, params.Body.Unit, params.Body.Validity)
+	err = setBucketRetentionConfig(ctx, minioClient, params.BucketName, *params.Body.Mode, *params.Body.Unit, params.Body.Validity)
 	if err != nil {
 		return prepareError(err)
 	}
@@ -731,7 +725,7 @@ func getBucketObLockingResponse(session *models.Principal, bucketName string) (*
 
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		log.Println("error creating MinIO Client:", err)
+		LogError("error creating MinIO Client: %v", err)
 		return nil, err
 	}
 	// create a minioClient interface implementation
@@ -746,7 +740,7 @@ func getBucketObLockingResponse(session *models.Principal, bucketName string) (*
 				ObjectLockingEnabled: false,
 			}, nil
 		}
-		log.Println("error object locking bucket:", err)
+		LogError("error object locking bucket: %v", err)
 	}
 
 	// serialize output

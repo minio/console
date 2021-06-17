@@ -33,7 +33,8 @@ import (
 )
 
 // NewListConfigParams creates a new ListConfigParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewListConfigParams() ListConfigParams {
 
 	return ListConfigParams{}
@@ -78,7 +79,6 @@ func (o *ListConfigParams) BindRequest(r *http.Request, route *middleware.Matche
 	if err := o.bindOffset(qOffset, qhkOffset, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -94,6 +94,7 @@ func (o *ListConfigParams) bindLimit(rawData []string, hasKey bool, formats strf
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
@@ -116,6 +117,7 @@ func (o *ListConfigParams) bindOffset(rawData []string, hasKey bool, formats str
 
 	// Required: false
 	// AllowEmptyValue: false
+
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}

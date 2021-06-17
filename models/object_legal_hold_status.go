@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/go-openapi/errors"
@@ -34,6 +35,11 @@ import (
 //
 // swagger:model objectLegalHoldStatus
 type ObjectLegalHoldStatus string
+
+func NewObjectLegalHoldStatus(value ObjectLegalHoldStatus) *ObjectLegalHoldStatus {
+	v := value
+	return &v
+}
 
 const (
 
@@ -76,5 +82,10 @@ func (m ObjectLegalHoldStatus) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// ContextValidate validates this object legal hold status based on context it is used
+func (m ObjectLegalHoldStatus) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

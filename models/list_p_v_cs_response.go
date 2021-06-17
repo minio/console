@@ -23,6 +23,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -54,7 +55,6 @@ func (m *ListPVCsResponse) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ListPVCsResponse) validatePvcs(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Pvcs) { // not required
 		return nil
 	}
@@ -66,6 +66,38 @@ func (m *ListPVCsResponse) validatePvcs(formats strfmt.Registry) error {
 
 		if m.Pvcs[i] != nil {
 			if err := m.Pvcs[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("pvcs" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this list p v cs response based on the context it is used
+func (m *ListPVCsResponse) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidatePvcs(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ListPVCsResponse) contextValidatePvcs(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Pvcs); i++ {
+
+		if m.Pvcs[i] != nil {
+			if err := m.Pvcs[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("pvcs" + "." + strconv.Itoa(i))
 				}

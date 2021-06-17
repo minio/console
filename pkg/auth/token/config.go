@@ -20,7 +20,7 @@ import (
 	"strconv"
 
 	"github.com/minio/console/pkg/auth/utils"
-	"github.com/minio/minio/pkg/env"
+	"github.com/minio/pkg/env"
 )
 
 // ConsoleSTSDurationSeconds returns the default session duration for the STS requested tokens.

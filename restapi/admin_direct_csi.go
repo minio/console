@@ -28,8 +28,8 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/admin_api"
-	directv1alpha1apis "github.com/minio/direct-csi/pkg/apis/direct.csi.min.io/v1alpha1"
-	directv1alpha1 "github.com/minio/direct-csi/pkg/clientset/typed/direct.csi.min.io/v1alpha1"
+	directv1beta1apis "github.com/minio/direct-csi/pkg/apis/direct.csi.min.io/v1beta1"
+	directv1beta1 "github.com/minio/direct-csi/pkg/clientset/typed/direct.csi.min.io/v1beta1"
 	"github.com/minio/direct-csi/pkg/sys"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -61,7 +61,7 @@ func registerDirectCSIHandlers(api *operations.ConsoleAPI) {
 }
 
 // getDirectCSIVolumesList returns direct-csi drives
-func getDirectCSIDriveList(ctx context.Context, clientset directv1alpha1.DirectV1alpha1Interface) (*models.GetDirectCSIDriveListResponse, error) {
+func getDirectCSIDriveList(ctx context.Context, clientset directv1beta1.DirectV1beta1Interface) (*models.GetDirectCSIDriveListResponse, error) {
 	drivesList, err := clientset.DirectCSIDrives().List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return nil, err
@@ -82,7 +82,7 @@ func getDirectCSIDriveList(ctx context.Context, clientset directv1alpha1.DirectV
 	}
 	drivesSorted := drivesList.Items
 	// sort by nodename, path and status
-	sort.SliceStable(drivesSorted, func(i, j int) bool {
+	sort.Slice(drivesSorted, func(i, j int) bool {
 		d1 := drivesSorted[i]
 		d2 := drivesSorted[j]
 
@@ -107,13 +107,13 @@ func getDirectCSIDriveList(ctx context.Context, clientset directv1alpha1.DirectV
 		dr := func(val string) string {
 			dr := driveName(val)
 			for _, c := range d.Status.Conditions {
-				if c.Type == string(directv1alpha1apis.DirectCSIDriveConditionInitialized) {
+				if c.Type == string(directv1beta1apis.DirectCSIDriveConditionInitialized) {
 					if c.Status != metav1.ConditionTrue {
 						msg = c.Message
 						continue
 					}
 				}
-				if c.Type == string(directv1alpha1apis.DirectCSIDriveConditionOwned) {
+				if c.Type == string(directv1beta1apis.DirectCSIDriveConditionOwned) {
 					if c.Status != metav1.ConditionTrue {
 						msg = c.Message
 						continue
@@ -153,7 +153,7 @@ func getDirectCSIDrivesListResponse(session *models.Principal) (*models.GetDirec
 		return nil, prepareError(err)
 	}
 
-	drives, err := getDirectCSIDriveList(ctx, client.DirectV1alpha1())
+	drives, err := getDirectCSIDriveList(ctx, client.DirectV1beta1())
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -161,7 +161,7 @@ func getDirectCSIDrivesListResponse(session *models.Principal) (*models.GetDirec
 }
 
 // getDirectCSIVolumesList returns direct-csi volumes
-func getDirectCSIVolumesList(ctx context.Context, clientset directv1alpha1.DirectV1alpha1Interface) (*models.GetDirectCSIVolumeListResponse, error) {
+func getDirectCSIVolumesList(ctx context.Context, clientset directv1beta1.DirectV1beta1Interface) (*models.GetDirectCSIVolumeListResponse, error) {
 	drivesList, err := clientset.DirectCSIDrives().List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return nil, err
@@ -207,14 +207,14 @@ func getDirectCSIVolumesListResponse(session *models.Principal) (*models.GetDire
 		return nil, prepareError(err)
 	}
 
-	volumes, err := getDirectCSIVolumesList(ctx, client.DirectV1alpha1())
+	volumes, err := getDirectCSIVolumesList(ctx, client.DirectV1beta1())
 	if err != nil {
 		return nil, prepareError(err)
 	}
 	return volumes, nil
 }
 
-func formatDrives(ctx context.Context, clientset directv1alpha1.DirectV1alpha1Interface, drives []string, force bool) (*models.FormatDirectCSIDrivesResponse, error) {
+func formatDrives(ctx context.Context, clientset directv1beta1.DirectV1beta1Interface, drives []string, force bool) (*models.FormatDirectCSIDrivesResponse, error) {
 	if len(drives) == 0 {
 		return nil, errors.New("at least one drive needs to be set")
 	}
@@ -254,20 +254,20 @@ func formatDrives(ctx context.Context, clientset directv1alpha1.DirectV1alpha1In
 
 		// Element is requested to be formatted
 		if _, ok := drivesArray[driveName]; ok {
-			if driveItem.Status.DriveStatus == directv1alpha1apis.DriveStatusUnavailable {
+			if driveItem.Status.DriveStatus == directv1beta1apis.DriveStatusUnavailable {
 				base.Error = "Status is unavailable"
 				errors = append(errors, base)
 				continue
 			}
 
-			if driveItem.Status.DriveStatus == directv1alpha1apis.DriveStatusInUse {
+			if driveItem.Status.DriveStatus == directv1beta1apis.DriveStatusInUse {
 				base.Error = "Drive in use. Cannot be formatted"
 				errors = append(errors, base)
 				continue
 			}
 
 			if !force {
-				if driveItem.Status.DriveStatus == directv1alpha1apis.DriveStatusReady {
+				if driveItem.Status.DriveStatus == directv1beta1apis.DriveStatusReady {
 					base.Error = "Drive already owned and managed. Use force to overwrite"
 					errors = append(errors, base)
 					continue
@@ -281,7 +281,7 @@ func formatDrives(ctx context.Context, clientset directv1alpha1.DirectV1alpha1In
 
 			// Validation passes, we request format
 			driveItem.Spec.DirectCSIOwned = true
-			driveItem.Spec.RequestedFormat = &directv1alpha1apis.RequestedFormat{
+			driveItem.Spec.RequestedFormat = &directv1beta1apis.RequestedFormat{
 				Filesystem: XFS,
 				Force:      force,
 			}
@@ -308,7 +308,7 @@ func formatVolumesResponse(session *models.Principal, params admin_api.DirectCSI
 		return nil, prepareError(err)
 	}
 
-	formatResult, errFormat := formatDrives(ctx, client.DirectV1alpha1(), params.Body.Drives, *params.Body.Force)
+	formatResult, errFormat := formatDrives(ctx, client.DirectV1beta1(), params.Body.Drives, *params.Body.Force)
 	if errFormat != nil {
 		return nil, prepareError(errFormat)
 	}

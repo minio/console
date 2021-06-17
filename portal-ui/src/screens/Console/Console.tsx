@@ -56,6 +56,7 @@ import Heal from "./Heal/Heal";
 import Watch from "./Watch/Watch";
 import HealthInfo from "./HealthInfo/HealthInfo";
 import Storage from "./Storage/Storage";
+import PodDetails from "./Tenants/TenantDetails/PodDetails";
 
 const drawerWidth = 245;
 
@@ -352,6 +353,30 @@ const Console = ({
     {
       component: TenantDetails,
       path: "/namespaces/:tenantNamespace/tenants/:tenantName",
+    },
+    {
+      component: PodDetails,
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName/pods/:podName",
+    },
+    {
+      component: TenantDetails,
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName/summary",
+    },
+    {
+      component: TenantDetails,
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName/metrics",
+    },
+    {
+      component: TenantDetails,
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName/pods",
+    },
+    {
+      component: TenantDetails,
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName/pools",
+    },
+    {
+      component: TenantDetails,
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName/license",
     },
     {
       component: License,

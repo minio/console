@@ -34,7 +34,9 @@ interface IPieChartWidget {
   panelItem: IDashboardPanel;
   timeStart: MaterialUiPickersDate;
   timeEnd: MaterialUiPickersDate;
+  propLoading: boolean;
   displayErrorMessage: any;
+  apiPrefix: string;
 }
 
 const styles = (theme: Theme) =>
@@ -54,12 +56,20 @@ const PieChartWidget = ({
   panelItem,
   timeStart,
   timeEnd,
+  propLoading,
   displayErrorMessage,
+  apiPrefix,
 }: IPieChartWidget) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [dataInner, setDataInner] = useState<object[]>([]);
   const [dataOuter, setDataOuter] = useState<object[]>([]);
   const [result, setResult] = useState<IDashboardPanel | null>(null);
+
+  useEffect(() => {
+    if (propLoading) {
+      setLoading(true);
+    }
+  }, [propLoading]);
 
   useEffect(() => {
     if (loading) {
@@ -74,7 +84,9 @@ const PieChartWidget = ({
       api
         .invoke(
           "GET",
-          `/api/v1/admin/info/widgets/${panelItem.id}/?step=${stepCalc}&${
+          `/api/v1/${apiPrefix}/info/widgets/${
+            panelItem.id
+          }/?step=${stepCalc}&${
             timeStart !== null ? `&start=${timeStart.unix()}` : ""
           }${timeStart !== null && timeEnd !== null ? "&" : ""}${
             timeEnd !== null ? `end=${timeEnd.unix()}` : ""
@@ -92,7 +104,7 @@ const PieChartWidget = ({
           setLoading(false);
         });
     }
-  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage]);
+  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
 
   const pieChartConfiguration = result
     ? (result.widgetConfiguration as IPieChartConfiguration)
