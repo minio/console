@@ -15,7 +15,7 @@ $ docker cp console/docs/ldap/billy.ldif my-openldap-container:/container/servic
 $ docker exec my-openldap-container ldapadd -x -D "cn=admin,dc=example,dc=org" -w admin -f /container/service/slapd/assets/test/billy.ldif -H ldap://localhost
 ```
 
-Query the ldap server to check the user billy was created correctly and got assigned to the consoleAdmin group, you should get a list
+Query the ldap server to check the user billy was created correctly and got assigned to the consoleAdmin group, you should get a list 
 containing ldap users and groups.
 
 ```
@@ -30,7 +30,7 @@ $ docker exec my-openldap-container ldapsearch -x -H ldap://localhost -b uid=bil
 
 ### Change the password for user billy
 
-Set the new password for `billy` to `minio123` and enter `admin` as the default `LDAP Password`
+Set the new password for `billy` to `minio123` and enter `admin` as the default `LDAP Password` 
 
 ```
 $ docker exec -it my-openldap-container /bin/bash
@@ -41,7 +41,6 @@ Enter LDAP Password:
 ```
 
 ### Add the consoleAdmin policy to user billy on MinIO
-
 ```
 $ cat > consoleAdmin.json << EOF
 {
