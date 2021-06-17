@@ -174,6 +174,11 @@ export const searchField = {
     display: "flex",
     justifyContent: "center",
     padding: "0 16px",
+    "& label, & label.MuiInputLabel-shrink": {
+      fontSize: 10,
+      transform: "translate(5px, 2px)",
+      transformOrigin: "top left",
+    },
     "& input": {
       fontSize: 12,
       fontWeight: 700,
@@ -700,3 +705,10 @@ export const inputFieldStyles = {
     color: "#b53b4b",
   },
 };
+
+export const inlineCheckboxes = {
+  inlineCheckboxes: {
+    display: "flex",
+    justifyContent: "flex-start",
+  },
+}
