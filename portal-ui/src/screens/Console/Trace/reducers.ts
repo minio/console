@@ -51,7 +51,7 @@ export function traceReducer(
       return {
         ...state,
         traceStarted: action.status,
-      }
+      };
     default:
       return state;
   }

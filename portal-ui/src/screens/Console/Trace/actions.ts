@@ -55,6 +55,6 @@ export function traceResetMessages() {
 export function setTraceStarted(status: boolean) {
   return {
     type: TRACE_SET_STARTED,
-    status
+    status,
   };
 }

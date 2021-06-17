@@ -29,7 +29,7 @@ import {
   actionsTray,
   containerForHeader,
   searchField,
-  inlineCheckboxes
+  inlineCheckboxes,
 } from "../Common/FormComponents/common/styleLibrary";
 import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";

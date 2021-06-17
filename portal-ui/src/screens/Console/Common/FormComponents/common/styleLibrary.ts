@@ -711,4 +711,4 @@ export const inlineCheckboxes = {
     display: "flex",
     justifyContent: "flex-start",
   },
-}
+};
