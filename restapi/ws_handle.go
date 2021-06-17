@@ -20,6 +20,7 @@ import (
 	"context"
 	"net"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -81,6 +82,20 @@ type wsConn struct {
 	conn *websocket.Conn
 }
 
+// Types for trace request. this adds support for calls, threshold, status and extra filters
+type TraceRequest struct {
+	s3         bool
+	internal   bool
+	storage    bool
+	os         bool
+	threshold  int64
+	onlyErrors bool
+	statusCode int64
+	method     string
+	funcName   string
+	path       string
+}
+
 func (c wsConn) writeMessage(messageType int, data []byte) error {
 	return c.conn.WriteMessage(messageType, data)
 }
@@ -122,7 +137,35 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 			closeWsConn(conn)
 			return
 		}
-		go wsAdminClient.trace()
+
+		calls := req.URL.Query().Get("calls")
+		threshold, _ := strconv.ParseInt(req.URL.Query().Get("threshold"), 10, 64)
+		onlyErrors := req.URL.Query().Get("onlyErrors")
+		stCode, errorStCode := strconv.ParseInt(req.URL.Query().Get("statusCode"), 10, 64)
+		method := req.URL.Query().Get("method")
+		funcName := req.URL.Query().Get("funcname")
+		path := req.URL.Query().Get("path")
+
+		statusCode := int64(0)
+
+		if errorStCode == nil {
+			statusCode = stCode
+		}
+
+		traceRequestItem := TraceRequest{
+			s3:         strings.Contains(calls, "s3") || strings.Contains(calls, "all"),
+			internal:   strings.Contains(calls, "internal") || strings.Contains(calls, "all"),
+			storage:    strings.Contains(calls, "storage") || strings.Contains(calls, "all"),
+			os:         strings.Contains(calls, "os") || strings.Contains(calls, "all"),
+			onlyErrors: onlyErrors == "yes",
+			threshold:  threshold,
+			statusCode: statusCode,
+			method:     method,
+			funcName:   funcName,
+			path:       path,
+		}
+
+		go wsAdminClient.trace(traceRequestItem)
 	case strings.HasPrefix(wsPath, `/console`):
 		wsAdminClient, err := newWebSocketAdminClient(conn, session)
 		if err != nil {
@@ -254,7 +297,7 @@ func closeWsConn(conn *websocket.Conn) {
 
 // trace serves madmin.ServiceTraceInfo
 // on a Websocket connection.
-func (wsc *wsAdminClient) trace() {
+func (wsc *wsAdminClient) trace(traceRequestItem TraceRequest) {
 	defer func() {
 		LogInfo("trace stopped")
 		// close connection after return
@@ -264,10 +307,7 @@ func (wsc *wsAdminClient) trace() {
 
 	ctx := wsReadClientCtx(wsc.conn)
 
-	err := startTraceInfo(ctx, wsc.conn, wsc.client, serviceTraceOpts{
-		AllTraffic: false,
-		ErrOnly:    false,
-	})
+	err := startTraceInfo(ctx, wsc.conn, wsc.client, traceRequestItem)
 
 	sendWsCloseMessage(wsc.conn, err)
 }
