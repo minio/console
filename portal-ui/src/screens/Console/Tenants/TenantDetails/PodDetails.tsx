@@ -27,13 +27,18 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import Grid from "@material-ui/core/Grid";
 import { TextField } from "@material-ui/core";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import Paper from "@material-ui/core/Paper";
 import api from "../../../../common/api";
 import PageHeader from "../../Common/PageHeader/PageHeader";
+import { IEvent } from "../ListTenants/types";
 import { Link } from "react-router-dom";
 import { setErrorSnackMessage } from "../../../../actions";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
+import { niceDays } from "../../../../common/utils";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -148,6 +153,8 @@ const TenantDetails = ({
   match,
   setErrorSnackMessage,
 }: ITenantDetailsProps) => {
+  const [event, setEvent] = useState<IEvent[]>([]);
+  const [curTab, setCurTab] = useState<number>(0);
   const [highlight, setHighlight] = useState<string>("");
   const [logLines, setLogLines] = useState<string[]>([]);
   const tenantNamespace = match.params["tenantNamespace"];
@@ -199,6 +206,13 @@ const TenantDetails = ({
     return renderLog(m, i);
   });
 
+  function a11yProps(index: any) {
+    return {
+      id: `simple-tab-${index}`,
+      "aria-controls": `simple-tabpanel-${index}`,
+    };
+  }
+
   useEffect(() => {
     api
       .invoke(
@@ -211,7 +225,23 @@ const TenantDetails = ({
       .catch((err) => {
         setErrorSnackMessage(err);
       });
-  }, [tenantNamespace, tenantName, podName, setErrorSnackMessage]);
+    api
+      .invoke(
+        "GET",
+        `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/pods/${podName}/events`
+      )
+      .then((res: IEvent[]) => {
+        for (let i = 0; i < res.length; i++) {
+          let currentTime = (Date.now() / 1000) | 0;
+
+          res[i].seen = niceDays((currentTime - res[i].last_seen).toString());
+        }
+        setEvent(res);
+      })
+      .catch((err) => {
+        setErrorSnackMessage(err);
+      });
+  }, [podName, tenantName, tenantNamespace, setErrorSnackMessage]);
 
   return (
     <React.Fragment>
@@ -234,33 +264,71 @@ const TenantDetails = ({
       />
       <Grid item xs={12} className={classes.container} />
       <Grid container>
-        <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
-            placeholder="Highlight Line"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            onChange={(val) => {
-              setHighlight(val.target.value);
+        <Grid item xs={9}>
+          <Tabs
+            value={curTab}
+            onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
+              setCurTab(newValue);
             }}
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
+            indicatorColor="primary"
+            textColor="primary"
+            aria-label="cluster-tabs"
+            variant="scrollable"
+            scrollButtons="auto"
+          >
+            <Tab label="Logs" {...a11yProps(0)} />
+            <Tab label="Events" {...a11yProps(1)} />
+          </Tabs>
         </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
-        <Grid item xs={12}>
-          <Paper>
-            <div className={classes.logList}>{renderLines}</div>
-          </Paper>
-        </Grid>
+        {curTab === 0 && (
+          <Fragment>
+            <Grid item xs={12} className={classes.actionsTray}>
+              <TextField
+                placeholder="Highlight Line"
+                className={classes.searchField}
+                id="search-resource"
+                label=""
+                onChange={(val) => {
+                  setHighlight(val.target.value);
+                }}
+                InputProps={{
+                  disableUnderline: true,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <br />
+            </Grid>
+            <Grid item xs={12}>
+              <Paper>
+                <div className={classes.logList}>{renderLines}</div>
+              </Paper>
+            </Grid>
+          </Fragment>
+        )}
+        {curTab === 1 && (
+          <Grid item xs={12} className={classes.actionsTray}>
+            <TableWrapper
+              itemActions={[]}
+              columns={[
+                { label: "Namespace", elementKey: "namespace" },
+                { label: "Last Seen", elementKey: "seen" },
+                { label: "Message", elementKey: "message" },
+                { label: "Event Type", elementKey: "event_type" },
+                { label: "Reason", elementKey: "reason" },
+              ]}
+              isLoading={false}
+              records={event}
+              entityName="Events"
+              idField="event"
+            />
+          </Grid>
+        )}
       </Grid>
     </React.Fragment>
   );

@@ -19,7 +19,11 @@ import { Grid, Button, TextField } from "@material-ui/core";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { AppState } from "../../../store";
 import { connect } from "react-redux";
-import { traceMessageReceived, traceResetMessages, setTraceStarted } from "./actions";
+import {
+  traceMessageReceived,
+  traceResetMessages,
+  setTraceStarted,
+} from "./actions";
 import { TraceMessage } from "./types";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { niceBytes, timeFromDate } from "../../../common/utils";

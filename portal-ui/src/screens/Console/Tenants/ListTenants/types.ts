@@ -17,8 +17,13 @@
 import { LicenseInfo } from "../../License/types";
 import { IAffinityModel } from "../../../../common/types";
 
-export interface ILog {
-  log: string;
+export interface IEvent {
+  namespace: string;
+  last_seen: number;
+  seen: string;
+  message: string;
+  event_type: string;
+  reason: string;
 }
 
 export interface IPool {

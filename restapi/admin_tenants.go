@@ -26,6 +26,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -151,6 +152,14 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 			return admin_api.NewGetPodLogsDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewGetPodLogsOK().WithPayload(payload)
+	})
+
+	api.AdminAPIGetPodEventsHandler = admin_api.GetPodEventsHandlerFunc(func(params admin_api.GetPodEventsParams, session *models.Principal) middleware.Responder {
+		payload, err := getPodEventsResponse(session, params)
+		if err != nil {
+			return admin_api.NewGetPodEventsDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewGetPodEventsOK().WithPayload(payload)
 	})
 
 	// Update Tenant Pools
@@ -1436,7 +1445,6 @@ func getPodLogsResponse(session *models.Principal, params admin_api.GetPodLogsPa
 	ctx := context.Background()
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		LogError("%v", err)
 		return "", prepareError(err)
 	}
 	listOpts := &corev1.PodLogOptions{}
@@ -1446,6 +1454,36 @@ func getPodLogsResponse(session *models.Principal, params admin_api.GetPodLogsPa
 		return "", prepareError(err)
 	}
 	return string(buff), nil
+}
+
+func getPodEventsResponse(session *models.Principal, params admin_api.GetPodEventsParams) (models.EventListWrapper, *models.Error) {
+	ctx := context.Background()
+	clientset, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	pod, err := clientset.CoreV1().Pods(params.Namespace).Get(ctx, params.PodName, metav1.GetOptions{})
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	events, err := clientset.CoreV1().Events(params.Namespace).List(ctx, metav1.ListOptions{FieldSelector: fmt.Sprintf("involvedObject.uid=%s", pod.UID)})
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	retval := models.EventListWrapper{}
+	for i := 0; i < len(events.Items); i++ {
+		retval = append(retval, &models.EventListElement{
+			Namespace: events.Items[i].Namespace,
+			LastSeen:  events.Items[i].LastTimestamp.Unix(),
+			Message:   events.Items[i].Message,
+			EventType: events.Items[i].Type,
+			Reason:    events.Items[i].Reason,
+		})
+	}
+	sort.SliceStable(retval, func(i int, j int) bool {
+		return retval[i].LastSeen < retval[j].LastSeen
+	})
+	return retval, nil
 }
 
 // parseTenantPoolRequest parse pool request and returns the equivalent
