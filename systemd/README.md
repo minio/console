@@ -31,7 +31,7 @@ EOT
 
 ## Systemctl
 
-Download `minio-console.service` in `/etc/systemd/system/`
+Download `minio-console.service` in  `/etc/systemd/system/`
 
 ```
 ( cd /etc/systemd/system/; curl -O https://raw.githubusercontent.com/minio/console/master/systemd/minio-console.service )
@@ -45,6 +45,6 @@ systemctl enable minio-console.service
 
 ## Note
 
-- Replace `User=console-user` and `Group=console-user` in minio-console.service file with your local setup.
-- Ensure that `CONSOLE_PBKDF_PASSPHRASE` and `CONSOLE_PBKDF_SALT` are set to appropriate values.
-- Ensure that `CONSOLE_MINIO_SERVER` is set to appropriate server endpoint.
+- Replace ``User=console-user`` and ``Group=console-user`` in minio-console.service file with your local setup.
+- Ensure that ``CONSOLE_PBKDF_PASSPHRASE`` and ``CONSOLE_PBKDF_SALT`` are set to appropriate values.
+- Ensure that ``CONSOLE_MINIO_SERVER`` is set to appropriate server endpoint.

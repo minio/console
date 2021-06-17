@@ -6,3 +6,4 @@ kind: Kustomization
 resources:
   - ../base
   - https://github.com/minio/operator/?ref=v3.0.29
+

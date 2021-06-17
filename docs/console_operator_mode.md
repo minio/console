@@ -1,13 +1,14 @@
 # Running Console in Operator mode
 
 `Console` will authenticate against `Kubernetes`using bearer tokens via HTTP `Authorization` header. The user will provide this token once
-in the login form, Console will validate it against Kubernetes (list apis) and if valid will generate and return a new Console sessions
+in the login form, Console will validate it against Kubernetes (list apis) and if valid will generate and return a new Console sessions 
 with encrypted claims (the user Service account token will be inside the session encrypted token
 
 # Kubernetes
 
 The provided `JWT token` corresponds to the `Kubernetes service account` that `Console` will use to run tasks on behalf of the
 user, ie: list, create, edit, delete tenants, storage class, etc.
+
 
 # Development
 
