@@ -114,7 +114,7 @@ func getAccountPolicy(ctx context.Context, client MinioAdmin) (*iampolicy.Policy
 
 // getConsoleCredentials will return consoleCredentials interface including the associated policy of the current account
 func getConsoleCredentials(ctx context.Context, accessKey, secretKey string) (*consoleCredentials, error) {
-	creds, err := newConsoleCredentials(accessKey, secretKey, MinioRegion)
+	creds, err := newConsoleCredentials(accessKey, secretKey, getMinIORegion())
 	if err != nil {
 		return nil, err
 	}
