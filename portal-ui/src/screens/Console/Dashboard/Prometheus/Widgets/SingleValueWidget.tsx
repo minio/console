@@ -64,7 +64,7 @@ const SingleValueWidget = ({
   classes,
   apiPrefix,
 }: ISingleValueWidget) => {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<string>("");
 
   useEffect(() => {
