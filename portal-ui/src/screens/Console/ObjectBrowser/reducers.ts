@@ -24,6 +24,8 @@ import {
   OBJECT_BROWSER_SET_LAST_AS_FILE,
   OBJECT_BROWSER_DOWNLOAD_FILE_LOADER,
   OBJECT_BROWSER_DOWNLOADED_FILE,
+  REWIND_SET_ENABLE,
+  REWIND_RESET_REWIND,
   ObjectBrowserActionTypes,
 } from "./actions";
 
@@ -33,9 +35,16 @@ export interface Route {
   type: string;
 }
 
+export interface RewindItem {
+  rewindEnabled: boolean;
+  bucketToRewind: string;
+  dateToRewind: any;
+}
+
 export interface ObjectBrowserState {
   routesList: Route[];
   downloadingFiles: string[];
+  rewind: RewindItem;
 }
 
 export interface ObjectBrowserReducer {
@@ -46,9 +55,18 @@ const initialRoute = [
   { route: "/object-browser", label: "All Buckets", type: "path" },
 ];
 
+const defaultRewind = {
+  rewindEnabled: false,
+  bucketToRewind: "",
+  dateToRewind: null,
+};
+
 const initialState: ObjectBrowserState = {
   routesList: initialRoute,
   downloadingFiles: [],
+  rewind: {
+    ...defaultRewind,
+  },
 };
 
 export function objectBrowserReducer(
@@ -157,6 +175,21 @@ export function objectBrowserReducer(
         ...state,
         downloadingFiles: [...downloadingFiles],
       };
+    case REWIND_SET_ENABLE:
+      const rewindSetEnabled = {
+        ...state.rewind,
+        rewindEnabled: action.state,
+        bucketToRewind: action.bucket,
+        dateToRewind: action.dateRewind,
+      };
+      return { ...state, rewind: rewindSetEnabled };
+    case REWIND_RESET_REWIND:
+      const resetItem = {
+        rewindEnabled: false,
+        bucketToRewind: "",
+        dateToRewind: null,
+      };
+      return { ...state, rewind: resetItem };
     default:
       return state;
   }

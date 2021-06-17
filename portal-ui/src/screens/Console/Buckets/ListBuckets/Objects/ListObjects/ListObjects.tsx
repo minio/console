@@ -15,12 +15,22 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useRef, useState } from "react";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { withRouter } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
+import get from "lodash/get";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
-import { BucketObject, BucketObjectsList } from "./types";
+import RefreshIcon from "@material-ui/icons/Refresh";
+import RestoreIcon from "@material-ui/icons/Restore";
+import {
+  BucketObject,
+  BucketObjectsList,
+  RewindObject,
+  RewindObjectList,
+} from "./types";
 import api from "../../../../../../common/api";
 import TableWrapper from "../../../../Common/TableWrapper/TableWrapper";
 import { niceBytes } from "../../../../../../common/utils";
@@ -33,20 +43,24 @@ import {
   searchField,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import PageHeader from "../../../../Common/PageHeader/PageHeader";
-import { Button, IconButton, Input, Typography } from "@material-ui/core";
+import {
+  Badge,
+  Button,
+  IconButton,
+  Input,
+  Typography,
+} from "@material-ui/core";
 import * as reactMoment from "react-moment";
 import { CreateIcon } from "../../../../../../icons";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
-import get from "lodash/get";
-import { withRouter } from "react-router-dom";
 import {
   addRoute,
   setAllRoutes,
   setLastAsFile,
   fileIsBeingPrepared,
   fileDownloadStarted,
+  resetRewind,
 } from "../../../../ObjectBrowser/actions";
-import { connect } from "react-redux";
 import {
   ObjectBrowserReducer,
   Route,
@@ -59,7 +73,8 @@ import {
   setSnackBarMessage,
   setErrorSnackMessage,
 } from "../../../../../../actions";
-import RefreshIcon from "@material-ui/icons/Refresh";
+import { BucketVersioning } from "../../../types";
+import RewindEnable from "./RewindEnable";
 
 const commonIcon = {
   backgroundRepeat: "no-repeat",
@@ -133,6 +148,12 @@ const styles = (theme: Theme) =>
     listButton: {
       marginLeft: "10px",
     },
+    badgeOverlap: {
+      "& .MuiBadge-badge": {
+        top: 35,
+        right: 10,
+      },
+    },
     ...actionsTray,
     ...searchField,
     ...objectBrowserCommon,
@@ -147,11 +168,15 @@ interface IListObjectsProps {
   routesList: Route[];
   downloadingFiles: string[];
   setLastAsFile: () => any;
+  rewindEnabled: boolean;
+  rewindDate: any;
+  bucketToRewind: string;
   setLoadingProgress: typeof setLoadingProgress;
   setSnackBarMessage: typeof setSnackBarMessage;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   fileIsBeingPrepared: typeof fileIsBeingPrepared;
   fileDownloadStarted: typeof fileDownloadStarted;
+  resetRewind: typeof resetRewind;
 }
 
 function useInterval(callback: any, delay: number) {
@@ -185,15 +210,21 @@ const ListObjects = ({
   setAllRoutes,
   routesList,
   downloadingFiles,
+  rewindEnabled,
+  rewindDate,
+  bucketToRewind,
   setLastAsFile,
   setLoadingProgress,
   setSnackBarMessage,
   setErrorSnackMessage,
   fileIsBeingPrepared,
   fileDownloadStarted,
+  resetRewind,
 }: IListObjectsProps) => {
   const [records, setRecords] = useState<BucketObject[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [rewind, setRewind] = useState<RewindObject[]>([]);
+  const [loadingRewind, setLoadingRewind] = useState<boolean>(true);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
   const [selectedObject, setSelectedObject] = useState<string>("");
@@ -202,6 +233,11 @@ const ListObjects = ({
   const [loadingStartTime, setLoadingStartTime] = useState<number>(0);
   const [loadingMessage, setLoadingMessage] =
     useState<React.ReactNode>(defLoading);
+  const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
+  const [isVersioned, setIsVersioned] = useState<boolean>(false);
+  const [rewindSelect, setRewindSelect] = useState<boolean>(false);
+
+  const bucketName = match.params["bucket"];
 
   const updateMessage = () => {
     let timeDelta = Date.now() - loadingStartTime;
@@ -232,31 +268,113 @@ const ListObjects = ({
   }, 1000);
 
   useEffect(() => {
-    const bucketName = match.params["bucket"];
+    if (loadingVersioning) {
+      api
+        .invoke("GET", `/api/v1/buckets/${bucketName}/versioning`)
+        .then((res: BucketVersioning) => {
+          setIsVersioned(res.is_versioned);
+          setLoadingVersioning(false);
+        })
+        .catch((err: any) => {
+          setErrorSnackMessage(err);
+          setLoadingVersioning(false);
+        });
+    }
+  }, [bucketName, loadingVersioning, setErrorSnackMessage]);
+
+  // Rewind
+  useEffect(() => {
+    const internalPaths = match.params[0];
+
+    if (rewindEnabled) {
+      if (bucketToRewind !== bucketName) {
+        resetRewind();
+        return;
+      }
+
+      if (rewindDate) {
+        setLoadingRewind(true);
+        const rewindParsed = rewindDate.toISOString();
+
+        api
+          .invoke(
+            "GET",
+            `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}?prefix=${
+              internalPaths ? `${internalPaths}/` : ""
+            }`
+          )
+          .then((res: RewindObjectList) => {
+            setLoadingRewind(false);
+            if (res.objects) {
+              setRewind(res.objects);
+            } else {
+              setRewind([]);
+            }
+          })
+          .catch((err: any) => {
+            setLoadingRewind(false);
+            setErrorSnackMessage(err);
+          });
+      }
+    }
+  }, [
+    rewindEnabled,
+    rewindDate,
+    bucketToRewind,
+    bucketName,
+    match,
+    setErrorSnackMessage,
+    resetRewind,
+  ]);
+
+  useEffect(() => {
     const internalPaths = match.params[0];
 
     const verifyIfIsFile = () => {
-      const bucketName = match.params["bucket"];
-      const internalPaths = match.params[0];
-
-      api
-        .invoke(
-          "GET",
-          `/api/v1/buckets/${bucketName}/objects?prefix=${internalPaths}`
-        )
-        .then((res: BucketObjectsList) => {
-          //It is a file since it has elements in the object, setting file flag and waiting for component mount
-          if (res.objects !== null) {
-            setLastAsFile();
-          } else {
-            // It is a folder, we remove loader
+      if (rewindEnabled) {
+        const rewindParsed = rewindDate.toISOString();
+        api
+          .invoke(
+            "GET",
+            `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}?prefix=${
+              internalPaths ? `${internalPaths}/` : ""
+            }`
+          )
+          .then((res: RewindObjectList) => {
+            //It is a file since it has elements in the object, setting file flag and waiting for component mount
+            if (res.objects === null) {
+              setLastAsFile();
+            } else {
+              // It is a folder, we remove loader
+              setLoadingRewind(false);
+              setLoading(false);
+            }
+          })
+          .catch((err: any) => {
+            setLoadingRewind(false);
             setLoading(false);
-          }
-        })
-        .catch((err: any) => {
-          setLoading(false);
-          setErrorSnackMessage(err);
-        });
+            setErrorSnackMessage(err);
+          });
+      } else {
+        api
+          .invoke(
+            "GET",
+            `/api/v1/buckets/${bucketName}/objects?prefix=${internalPaths}`
+          )
+          .then((res: BucketObjectsList) => {
+            //It is a file since it has elements in the object, setting file flag and waiting for component mount
+            if (res.objects !== null) {
+              setLastAsFile();
+            } else {
+              // It is a folder, we remove loader
+              setLoading(false);
+            }
+          })
+          .catch((err: any) => {
+            setLoading(false);
+            setErrorSnackMessage(err);
+          });
+      }
     };
 
     if (loading) {
@@ -303,7 +421,15 @@ const ListObjects = ({
           setErrorSnackMessage(err);
         });
     }
-  }, [loading, match, setLastAsFile, setErrorSnackMessage]);
+  }, [
+    loading,
+    match,
+    setLastAsFile,
+    setErrorSnackMessage,
+    bucketName,
+    rewindEnabled,
+    rewindDate,
+  ]);
 
   useEffect(() => {
     const url = get(match, "url", "/object-browser");
@@ -421,6 +547,10 @@ const ListObjects = ({
     fileDownloadStarted(path);
   };
 
+  const displayDeleteFlag = (state: boolean) => {
+    return state ? "Yes" : "No";
+  };
+
   const downloadObject = (object: BucketObject) => {
     fileIsBeingPrepared(`${selectedBucket}/${object.name}`);
     if (object.size > 104857600) {
@@ -484,8 +614,26 @@ const ListObjects = ({
       onClick: downloadObject,
       showLoaderFunction: (item: string) =>
         downloadingFiles.includes(`${match.params["bucket"]}/${item}`),
+      disableButtonFunction: (item: string) => {
+        if (rewindEnabled) {
+          const element = rewind.find((elm) => elm.name === item);
+
+          if (element && element.delete_flag) {
+            return true;
+          }
+        }
+        return false;
+      },
+      sendOnlyId: false,
     },
-    { type: "delete", onClick: confirmDeleteObject, sendOnlyId: true },
+    {
+      type: "delete",
+      onClick: confirmDeleteObject,
+      sendOnlyId: true,
+      disableButtonFunction: () => {
+        return rewindEnabled;
+      },
+    },
   ];
 
   const displayName = (element: string) => {
@@ -521,6 +669,64 @@ const ListObjects = ({
     }
   });
 
+  const rewindCloseModal = (refresh: boolean) => {
+    setRewindSelect(false);
+
+    if (refresh) {
+    }
+  };
+
+  const listModeColumns = [
+    {
+      label: "Name",
+      elementKey: "name",
+      renderFunction: displayName,
+    },
+    {
+      label: "Last Modified",
+      elementKey: "last_modified",
+      renderFunction: displayParsedDate,
+      renderFullObject: true,
+    },
+    {
+      label: "Size",
+      elementKey: "size",
+      renderFunction: displayNiceBytes,
+      renderFullObject: true,
+      width: 60,
+      contentTextAlign: "right",
+    },
+  ];
+
+  const rewindModeColumns = [
+    {
+      label: "Name",
+      elementKey: "name",
+      renderFunction: displayName,
+    },
+    {
+      label: "Object Date",
+      elementKey: "last_modified",
+      renderFunction: displayParsedDate,
+      renderFullObject: true,
+    },
+    {
+      label: "Size",
+      elementKey: "size",
+      renderFunction: displayNiceBytes,
+      renderFullObject: true,
+      width: 60,
+      contentTextAlign: "right",
+    },
+    {
+      label: "Deleted",
+      elementKey: "delete_flag",
+      renderFunction: displayDeleteFlag,
+      width: 60,
+      contentTextAlign: "center",
+    },
+  ];
+
   return (
     <React.Fragment>
       {deleteOpen && (
@@ -536,6 +742,13 @@ const ListObjects = ({
           modalOpen={createFolderOpen}
           folderName={routesList[routesList.length - 1].route}
           onClose={closeAddFolderModal}
+        />
+      )}
+      {rewindSelect && (
+        <RewindEnable
+          open={rewindSelect}
+          closeModalAndRefresh={rewindCloseModal}
+          bucketName={bucketName}
         />
       )}
       <PageHeader label="Object Browser" />
@@ -571,9 +784,29 @@ const ListObjects = ({
               onClick={() => {
                 setLoading(true);
               }}
+              disabled={rewindEnabled}
             >
               <RefreshIcon />
             </IconButton>
+            <Badge
+              badgeContent=" "
+              color="secondary"
+              variant="dot"
+              invisible={!rewindEnabled}
+              className={classes.badgeOverlap}
+            >
+              <IconButton
+                color="primary"
+                aria-label="Rewind"
+                component="span"
+                onClick={() => {
+                  setRewindSelect(true);
+                }}
+                disabled={!isVersioned}
+              >
+                <RestoreIcon />
+              </IconButton>
+            </Badge>
             <Button
               variant="contained"
               color="primary"
@@ -583,6 +816,7 @@ const ListObjects = ({
                 setCreateFolderOpen(true);
               }}
               className={classes.listButton}
+              disabled={rewindEnabled}
             >
               Create Folder
             </Button>
@@ -592,6 +826,7 @@ const ListObjects = ({
               startIcon={<UploadFile />}
               component="label"
               className={classes.listButton}
+              disabled={rewindEnabled}
             >
               File
               <Input
@@ -609,32 +844,12 @@ const ListObjects = ({
           <Grid item xs={12}>
             <TableWrapper
               itemActions={tableActions}
-              columns={[
-                {
-                  label: "Name",
-                  elementKey: "name",
-                  renderFunction: displayName,
-                },
-                {
-                  label: "Last Modified",
-                  elementKey: "last_modified",
-                  renderFunction: displayParsedDate,
-                  renderFullObject: true,
-                },
-                {
-                  label: "Size",
-                  elementKey: "size",
-                  renderFunction: displayNiceBytes,
-                  renderFullObject: true,
-                  width: 60,
-                  contentTextAlign: "right",
-                },
-              ]}
-              isLoading={loading}
+              columns={rewindEnabled ? rewindModeColumns : listModeColumns}
+              isLoading={rewindEnabled ? loadingRewind : loading}
               loadingMessage={loadingMessage}
-              entityName="Objects"
+              entityName="Rewind Objects"
               idField="name"
-              records={filteredRecords}
+              records={rewindEnabled ? rewind : filteredRecords}
               customPaperHeight={classes.browsePaper}
             />
           </Grid>
@@ -647,6 +862,9 @@ const ListObjects = ({
 const mapStateToProps = ({ objectBrowser }: ObjectBrowserReducer) => ({
   routesList: get(objectBrowser, "routesList", []),
   downloadingFiles: get(objectBrowser, "downloadingFiles", []),
+  rewindEnabled: get(objectBrowser, "rewind.rewindEnabled", false),
+  rewindDate: get(objectBrowser, "rewind.dateToRewind", null),
+  bucketToRewind: get(objectBrowser, "rewind.bucketToRewind", ""),
 });
 
 const mapDispatchToProps = {
@@ -658,6 +876,7 @@ const mapDispatchToProps = {
   setErrorSnackMessage,
   fileIsBeingPrepared,
   fileDownloadStarted,
+  resetRewind,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

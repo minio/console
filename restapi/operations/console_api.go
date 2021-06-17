@@ -183,6 +183,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIGetBucketRetentionConfigHandler: user_api.GetBucketRetentionConfigHandlerFunc(func(params user_api.GetBucketRetentionConfigParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetBucketRetentionConfig has not yet been implemented")
 		}),
+		UserAPIGetBucketRewindHandler: user_api.GetBucketRewindHandlerFunc(func(params user_api.GetBucketRewindParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.GetBucketRewind has not yet been implemented")
+		}),
 		UserAPIGetBucketVersioningHandler: user_api.GetBucketVersioningHandlerFunc(func(params user_api.GetBucketVersioningParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.GetBucketVersioning has not yet been implemented")
 		}),
@@ -562,6 +565,8 @@ type ConsoleAPI struct {
 	UserAPIGetBucketReplicationHandler user_api.GetBucketReplicationHandler
 	// UserAPIGetBucketRetentionConfigHandler sets the operation handler for the get bucket retention config operation
 	UserAPIGetBucketRetentionConfigHandler user_api.GetBucketRetentionConfigHandler
+	// UserAPIGetBucketRewindHandler sets the operation handler for the get bucket rewind operation
+	UserAPIGetBucketRewindHandler user_api.GetBucketRewindHandler
 	// UserAPIGetBucketVersioningHandler sets the operation handler for the get bucket versioning operation
 	UserAPIGetBucketVersioningHandler user_api.GetBucketVersioningHandler
 	// AdminAPIGetDirectCSIDriveListHandler sets the operation handler for the get direct c s i drive list operation
@@ -929,6 +934,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIGetBucketRetentionConfigHandler == nil {
 		unregistered = append(unregistered, "user_api.GetBucketRetentionConfigHandler")
+	}
+	if o.UserAPIGetBucketRewindHandler == nil {
+		unregistered = append(unregistered, "user_api.GetBucketRewindHandler")
 	}
 	if o.UserAPIGetBucketVersioningHandler == nil {
 		unregistered = append(unregistered, "user_api.GetBucketVersioningHandler")
@@ -1434,6 +1442,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/buckets/{bucket_name}/retention"] = user_api.NewGetBucketRetentionConfig(o.context, o.UserAPIGetBucketRetentionConfigHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/buckets/{bucket_name}/rewind/{date}"] = user_api.NewGetBucketRewind(o.context, o.UserAPIGetBucketRewindHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

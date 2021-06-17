@@ -162,6 +162,9 @@ interface IObjectDetailsProps {
   classes: any;
   routesList: Route[];
   downloadingFiles: string[];
+  rewindEnabled: boolean;
+  rewindDate: any;
+  bucketToRewind: string;
   removeRouteLevel: (newRoute: string) => any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   setSnackBarMessage: typeof setSnackBarMessage;
@@ -185,6 +188,9 @@ const ObjectDetails = ({
   classes,
   routesList,
   downloadingFiles,
+  rewindEnabled,
+  rewindDate,
+  bucketToRewind,
   removeRouteLevel,
   setErrorSnackMessage,
   setSnackBarMessage,
@@ -517,6 +523,7 @@ const ObjectDetails = ({
                   onClick={() => {
                     setDeleteOpen(true);
                   }}
+                  disabled={rewindEnabled}
                 >
                   <DeleteIcon />
                 </IconButton>
@@ -607,6 +614,9 @@ const ObjectDetails = ({
 
 const mapStateToProps = ({ objectBrowser }: ObjectBrowserReducer) => ({
   downloadingFiles: get(objectBrowser, "downloadingFiles", []),
+  rewindEnabled: get(objectBrowser, "rewind.rewindEnabled", false),
+  rewindDate: get(objectBrowser, "rewind.dateToRewind", null),
+  bucketToRewind: get(objectBrowser, "rewind.bucketToRewind", ""),
 });
 
 const mapDispatchToProps = {

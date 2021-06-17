@@ -14,17 +14,26 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { Fragment } from "react";
 import MomentUtils from "@date-io/moment";
+import { Grid, InputLabel, Tooltip } from "@material-ui/core";
 import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import ScheduleIcon from "@material-ui/icons/Schedule";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import HelpIcon from "../../../../../icons/HelpIcon";
+import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 
 interface IDateTimePicker {
   value: any;
   onChange: (value: any) => any;
   classes: any;
+  forSearchBlock?: boolean;
+  label?: string;
+  required?: boolean;
+  tooltip?: string;
+  id: string;
+  disabled?: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -56,17 +65,36 @@ const styles = (theme: Theme) =>
         color: "#393939",
       },
     },
+    dateSelectorFormOverride: {
+      width: "100%",
+      maxWidth: 840,
+    },
     parentDateOverride: {
       flexGrow: 1,
     },
+    textBoxContainer: {
+      flexGrow: 1,
+    },
+    textBoxWithIcon: {
+      position: "relative",
+      paddingRight: 25,
+    },
+    ...fieldBasic,
+    ...tooltipHelper,
   });
 
 const DateTimePickerWrapper = ({
   value,
   onChange,
   classes,
+  forSearchBlock = false,
+  label,
+  tooltip = "",
+  required,
+  id,
+  disabled = false,
 }: IDateTimePicker) => {
-  return (
+  const inputItem = (
     <MuiPickersUtilsProvider utils={MomentUtils}>
       <DateTimePicker
         value={value}
@@ -77,15 +105,51 @@ const DateTimePickerWrapper = ({
               <ScheduleIcon />
             </InputAdornment>
           ),
-          className: classes.dateSelectorOverride,
+          className: forSearchBlock ? classes.dateSelectorOverride : "",
         }}
         label=""
         ampm={false}
         variant={"inline"}
-        className={classes.parentDateOverride}
+        className={
+          forSearchBlock
+            ? classes.parentDateOverride
+            : classes.dateSelectorFormOverride
+        }
         format="MMMM Do YYYY, h:mm a"
+        id={id}
+        disabled={disabled}
       />
     </MuiPickersUtilsProvider>
+  );
+
+  if (forSearchBlock) {
+    return inputItem;
+  }
+
+  return (
+    <Fragment>
+      <Grid item xs={12} className={`${classes.fieldContainer}`}>
+        {label !== "" && (
+          <InputLabel htmlFor={id} className={classes.inputLabel}>
+            <span>
+              {label}
+              {required ? "*" : ""}
+            </span>
+            {tooltip !== "" && (
+              <div className={classes.tooltipContainer}>
+                <Tooltip title={tooltip} placement="top-start">
+                  <div>
+                    <HelpIcon className={classes.tooltip} />
+                  </div>
+                </Tooltip>
+              </div>
+            )}
+          </InputLabel>
+        )}
+
+        <div className={classes.textBoxContainer}>{inputItem}</div>
+      </Grid>
+    </Fragment>
   );
 };
 

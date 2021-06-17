@@ -17,6 +17,7 @@
 import React from "react";
 import get from "lodash/get";
 import Grid from "@material-ui/core/Grid";
+import Moment from "react-moment";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core";
 import { createStyles, Theme } from "@material-ui/core/styles";
@@ -32,6 +33,8 @@ interface ObjectBrowserReducer {
 interface IObjectBrowser {
   classes: any;
   objectsList: Route[];
+  rewindEnabled: boolean;
+  rewindDate: any;
   removeRouteLevel: (path: string) => any;
 }
 
@@ -43,6 +46,8 @@ const styles = (theme: Theme) =>
 const BrowserBreadcrumbs = ({
   classes,
   objectsList,
+  rewindEnabled,
+  rewindDate,
   removeRouteLevel,
 }: IObjectBrowser) => {
   const listBreadcrumbs = objectsList.map((objectItem, index) => {
@@ -60,7 +65,6 @@ const BrowserBreadcrumbs = ({
       </React.Fragment>
     );
   });
-
   return (
     <React.Fragment>
       <Grid item xs={12}>
@@ -68,6 +72,12 @@ const BrowserBreadcrumbs = ({
           {objectsList && objectsList.length > 0
             ? objectsList.slice(-1)[0].label
             : ""}
+          {rewindEnabled && objectsList.length > 1 && (
+            <small className={classes.smallLabel}>
+              &nbsp;(Rewind:{" "}
+              <Moment date={rewindDate} format="MMMM Do YYYY, h:mm a" /> )
+            </small>
+          )}
         </div>
       </Grid>
       <Grid item xs={12} className={classes.breadcrumbs}>
@@ -79,6 +89,8 @@ const BrowserBreadcrumbs = ({
 
 const mapStateToProps = ({ objectBrowser }: ObjectBrowserReducer) => ({
   objectsList: get(objectBrowser, "routesList", []),
+  rewindEnabled: get(objectBrowser, "rewind.rewindEnabled", false),
+  rewindDate: get(objectBrowser, "rewind.dateToRewind", null),
 });
 
 const mapDispatchToProps = {

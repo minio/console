@@ -988,6 +988,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
+
   /buckets/{bucket_name}/lifecycle/{lifecycle_id}:
     put:
       summary: Update Lifecycle rule
@@ -1015,6 +1016,35 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
+  
+  /buckets/{bucket_name}/rewind/{date}:
+    get:
+      summary: Get objects in a bucket for a rewind date
+      operationId: GetBucketRewind
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: date
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: false
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/rewindResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI 
 
   /service-accounts:
     get:
@@ -5485,3 +5515,28 @@ definitions:
         type: string
       message:
         type: string
+
+  rewindItem:
+    type: object
+    properties:
+      last_modified:
+        type: string
+      size:
+        type: integer
+        format: int64
+      version_id:
+        type: string
+      delete_flag:
+        type: boolean
+      action:
+        type: string
+      name:
+        type: string
+  
+  rewindResponse:
+    type: object
+    properties:
+      objects:
+        type: array
+        items:
+          $ref: "#/definitions/rewindItem"
