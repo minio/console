@@ -306,11 +306,6 @@ func (s consoleSTSAssumeRole) IsExpired() bool {
 	return s.stsAssumeRole.IsExpired()
 }
 
-var (
-	MinioEndpoint = getMinIOServer()
-	MinioRegion   = getMinIORegion()
-)
-
 func newConsoleCredentials(accessKey, secretKey, location string) (*credentials.Credentials, error) {
 	// Future authentication methods can be added under this switch statement
 	switch {
@@ -326,10 +321,7 @@ func newConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 	// LDAP authentication for Console
 	case ldap.GetLDAPEnabled():
 		{
-			if MinioEndpoint == "" {
-				return nil, errors.New("endpoint cannot be empty for AssumeRoleSTS")
-			}
-			creds, err := auth.GetCredentialsFromLDAP(GetConsoleSTSClient(), MinioEndpoint, accessKey, secretKey)
+			creds, err := auth.GetCredentialsFromLDAP(GetConsoleSTSClient(), getMinIOServer(), accessKey, secretKey)
 			if err != nil {
 				return nil, err
 			}
@@ -338,7 +330,7 @@ func newConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 	// default authentication for Console is via STS (Security Token Service) against MinIO
 	default:
 		{
-			if MinioEndpoint == "" || accessKey == "" || secretKey == "" {
+			if accessKey == "" || secretKey == "" {
 				return nil, errors.New("credentials endpoint, access and secret key are mandatory for AssumeRoleSTS")
 			}
 			opts := credentials.STSAssumeRoleOptions{
@@ -349,7 +341,7 @@ func newConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 			}
 			stsAssumeRole := &credentials.STSAssumeRole{
 				Client:      GetConsoleSTSClient(),
-				STSEndpoint: MinioEndpoint,
+				STSEndpoint: getMinIOServer(),
 				Options:     opts,
 			}
 			consoleSTSWrapper := consoleSTSAssumeRole{stsAssumeRole: stsAssumeRole}
