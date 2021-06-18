@@ -45,6 +45,7 @@ import UserServiceAccountsPanel from "./UserServiceAccountsPanel";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import ChangeUserPasswordModal from "../Account/ChangeUserPasswordModal";
 import DeleteUserString from "./DeleteUserString";
+import DeleteUser from "./DeleteUser";
 import { usersSort } from "../../../utils/sortFunctions";
 
 const styles = (theme: Theme) =>

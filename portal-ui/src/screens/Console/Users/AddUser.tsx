@@ -98,6 +98,12 @@ const AddUser = ({
   const saveRecord = (event: React.FormEvent) => {
     event.preventDefault();
 
+    if (secretKey.length < 8) {
+      setModalErrorSnackMessage("Passwords must be at least 8 characters long");
+      setAddLoading(false);
+      return;
+    }
+
     if (addLoading) {
       return;
     }
