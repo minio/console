@@ -50,9 +50,10 @@ const (
 	ConsoleSecureExpectCTHeader                  = "CONSOLE_SECURE_EXPECT_CT_HEADER"
 	ConsoleOperatorSAToken                       = "CONSOLE_OPERATOR_SA_TOKEN"
 	ConsoleOperatorConsoleImage                  = "CONSOLE_OPERATOR_CONSOLE_IMAGE"
-	LogSearchURL                                 = "CONSOLE_LOG_QUERY_URL"
 	PrometheusURL                                = "CONSOLE_PROMETHEUS_URL"
 	PrometheusJobID                              = "CONSOLE_PROMETHEUS_JOB_ID"
+	ConsoleLogQueryURL                           = "CONSOLE_LOG_QUERY_URL"
+	ConsoleLogQueryAuthToken                     = "CONSOLE_LOG_QUERY_AUTH_TOKEN"
 	LogSearchQueryAuthToken                      = "LOGSEARCH_QUERY_AUTH_TOKEN"
 
 	// Constants for prometheus annotations

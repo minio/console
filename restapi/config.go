@@ -230,11 +230,14 @@ func getSecureExpectCTHeader() string {
 }
 
 func getLogSearchAPIToken() string {
+	if v := env.Get(ConsoleLogQueryAuthToken, ""); v != "" {
+		return v
+	}
 	return env.Get(LogSearchQueryAuthToken, "")
 }
 
 func getLogSearchURL() string {
-	return env.Get(LogSearchURL, "http://localhost:8080")
+	return env.Get(ConsoleLogQueryURL, "http://localhost:8080")
 }
 
 func getPrometheusURL() string {
