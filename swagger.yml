@@ -2227,6 +2227,57 @@ paths:
       tags:
         - AdminAPI
 
+  /namespaces/{namespace}/tenants/{tenant}/security:
+    get:
+      summary: Tenant Security
+      operationId: TenantSecurity
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/tenantSecurityResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    post:
+      summary: Update Tenant Security
+      operationId: UpdateTenantSecurity
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/updateTenantSecurityRequest"
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
   /namespaces/{namespace}/tenants/{tenant}:
     get:
       summary: Tenant Details
@@ -3848,6 +3899,73 @@ definitions:
         format: int32
       health_status:
         type: string
+  tenantSecurityResponse:
+    type: object
+    properties:
+      autoCert:
+        type: boolean
+      customCertificates:
+        type: object
+        properties:
+          minio:
+            type: array
+            items:
+              $ref: "#/definitions/certificateInfo"
+          minioCAs:
+            type: array
+            items:
+              $ref: "#/definitions/certificateInfo"
+          console:
+            type: array
+            items:
+              $ref: "#/definitions/certificateInfo"
+          consoleCAs:
+            type: array
+            items:
+              $ref: "#/definitions/certificateInfo"
+
+  updateTenantSecurityRequest:
+    type: object
+    properties:
+      autoCert:
+        type: boolean
+      customCertificates:
+        type: object
+        properties:
+          secretsToBeDeleted:
+            type: array
+            items:
+              type: string
+          minio:
+            type: array
+            items:
+              $ref: "#/definitions/keyPairConfiguration"
+          minioCAs:
+            type: array
+            items:
+              type: string
+          console:
+            type: array
+            items:
+              $ref: "#/definitions/keyPairConfiguration"
+          consoleCAs:
+            type: array
+            items:
+              type: string
+
+  certificateInfo:
+    type: object
+    properties:
+      serialNumber:
+        type: string
+      name:
+        type: string
+      domains:
+        type: array
+        items:
+          type: string
+      expiry:
+        type: string
 
   tenant:
     type: object
@@ -3896,6 +4014,12 @@ definitions:
         type: boolean
       status:
         $ref: "#/definitions/tenantStatus"
+      minioTLS:
+        type: boolean
+      consoleTLS:
+        type: boolean
+      consoleEnabled:
+        type: boolean
 
   tenantUsage:
     type: object

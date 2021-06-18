@@ -46,6 +46,8 @@ import (
 var opClientTenantDeleteMock func(ctx context.Context, namespace string, tenantName string, options metav1.DeleteOptions) error
 var opClientTenantGetMock func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error)
 var opClientTenantPatchMock func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error)
+var opClientTenantUpdateMock func(ctx context.Context, tenant *miniov2.Tenant, opts metav1.UpdateOptions) (*miniov2.Tenant, error)
+
 var opClientTenantListMock func(ctx context.Context, namespace string, opts metav1.ListOptions) (*miniov2.TenantList, error)
 var httpClientGetMock func(url string) (resp *http.Response, err error)
 var httpClientPostMock func(url, contentType string, body io.Reader) (resp *http.Response, err error)
@@ -66,6 +68,11 @@ func (ac opClientMock) TenantGet(ctx context.Context, namespace string, tenantNa
 // mock function of TenantPatch()
 func (ac opClientMock) TenantPatch(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error) {
 	return opClientTenantPatchMock(ctx, namespace, tenantName, pt, data, options)
+}
+
+// mock function of TenantUpdate()
+func (ac opClientMock) TenantUpdate(ctx context.Context, tenant *miniov2.Tenant, opts metav1.UpdateOptions) (*miniov2.Tenant, error) {
+	return opClientTenantUpdateMock(ctx, tenant, opts)
 }
 
 // mock function of TenantList()

@@ -19,8 +19,10 @@ package restapi
 import (
 	"bytes"
 	"context"
+	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
+	"encoding/pem"
 	"errors"
 	"fmt"
 	"net"
@@ -30,6 +32,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/minio/console/pkg/auth/utils"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
@@ -98,6 +102,26 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 			return admin_api.NewTenantDetailsDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewTenantDetailsOK().WithPayload(resp)
+
+	})
+
+	// Tenant Security details
+	api.AdminAPITenantSecurityHandler = admin_api.TenantSecurityHandlerFunc(func(params admin_api.TenantSecurityParams, session *models.Principal) middleware.Responder {
+		resp, err := getTenantSecurityResponse(session, params)
+		if err != nil {
+			return admin_api.NewTenantSecurityDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewTenantSecurityOK().WithPayload(resp)
+
+	})
+
+	// Update Tenant Security configuration
+	api.AdminAPIUpdateTenantSecurityHandler = admin_api.UpdateTenantSecurityHandlerFunc(func(params admin_api.UpdateTenantSecurityParams, session *models.Principal) middleware.Responder {
+		err := getUpdateTenantSecurityResponse(session, params)
+		if err != nil {
+			return admin_api.NewUpdateTenantSecurityDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewUpdateTenantSecurityNoContent()
 
 	})
 
@@ -442,6 +466,9 @@ func getTenantDetailsResponse(session *models.Principal, params admin_api.Tenant
 	info.EncryptionEnabled = minTenant.HasKESEnabled()
 	info.IdpAdEnabled = adEnabled
 	info.IdpOicEnabled = oicEnabled
+	info.MinioTLS = minTenant.TLS()
+	info.ConsoleTLS = minTenant.AutoCert() || minTenant.ConsoleExternalCert()
+	info.ConsoleEnabled = minTenant.HasConsoleEnabled()
 
 	if minTenant.Spec.Console != nil {
 		// obtain current subnet license for tenant (if exists)
@@ -520,6 +547,285 @@ func getTenantDetailsResponse(session *models.Principal, params admin_api.Tenant
 	}
 
 	return info, nil
+}
+
+// parseTenantCertificates convert public key pem certificates stored in k8s secrets for a given Tenant into x509 certificates
+func parseTenantCertificates(ctx context.Context, clientSet K8sClientI, namespace string, secrets []*miniov2.LocalCertificateReference) ([]*models.CertificateInfo, error) {
+	var certificates []*models.CertificateInfo
+	publicKey := "public.crt"
+	// Iterate over TLS secrets and build array of CertificateInfo structure
+	// that will be used to display information about certs in the UI
+	for _, secret := range secrets {
+		keyPair, err := clientSet.getSecret(ctx, namespace, secret.Name, metav1.GetOptions{})
+		if err != nil {
+			return nil, err
+		}
+		if secret.Type == "kubernetes.io/tls" || secret.Type == "cert-manager.io/v1alpha2" {
+			publicKey = "tls.crt"
+		}
+		// Extract public key from certificate TLS secret
+		if rawCert, ok := keyPair.Data[publicKey]; ok {
+			block, _ := pem.Decode(rawCert)
+			if block == nil {
+				// If certificate failed to decode skip
+				continue
+			}
+			cert, err := x509.ParseCertificate(block.Bytes)
+			if err != nil {
+				return nil, err
+			}
+			certificates = append(certificates, &models.CertificateInfo{
+				SerialNumber: cert.SerialNumber.String(),
+				Name:         secret.Name,
+				Domains:      cert.DNSNames,
+				Expiry:       cert.NotAfter.String(),
+			})
+		}
+	}
+	return certificates, nil
+}
+
+func getTenantSecurity(ctx context.Context, clientSet K8sClientI, tenant *miniov2.Tenant) (response *models.TenantSecurityResponse, err error) {
+	var minioExternalCertificates []*models.CertificateInfo
+	var minioExternalCaCertificates []*models.CertificateInfo
+	var consoleExternalCertificates []*models.CertificateInfo
+	var consoleExternalCaCertificates []*models.CertificateInfo
+	// Certificates used by MinIO server
+	if minioExternalCertificates, err = parseTenantCertificates(ctx, clientSet, tenant.Namespace, tenant.Spec.ExternalCertSecret); err != nil {
+		return nil, err
+	}
+	// CA Certificates used by MinIO server
+	if minioExternalCaCertificates, err = parseTenantCertificates(ctx, clientSet, tenant.Namespace, tenant.Spec.ExternalCaCertSecret); err != nil {
+		return nil, err
+	}
+	if tenant.HasConsoleEnabled() {
+		// Certificate used by Console server
+		if tenant.Spec.Console.ExternalCertSecret != nil {
+			if consoleExternalCertificates, err = parseTenantCertificates(ctx, clientSet, tenant.Namespace, []*miniov2.LocalCertificateReference{tenant.Spec.Console.ExternalCertSecret}); err != nil {
+				return nil, err
+			}
+		}
+		// CA Certificates used by Console server
+		if consoleExternalCaCertificates, err = parseTenantCertificates(ctx, clientSet, tenant.Namespace, tenant.Spec.Console.ExternalCaCertSecret); err != nil {
+			return nil, err
+		}
+	}
+	return &models.TenantSecurityResponse{
+		AutoCert: tenant.AutoCert(),
+		CustomCertificates: &models.TenantSecurityResponseCustomCertificates{
+			Minio:      minioExternalCertificates,
+			MinioCAs:   minioExternalCaCertificates,
+			Console:    consoleExternalCertificates,
+			ConsoleCAs: consoleExternalCaCertificates,
+		},
+	}, nil
+}
+
+func getTenantSecurityResponse(session *models.Principal, params admin_api.TenantSecurityParams) (*models.TenantSecurityResponse, *models.Error) {
+	// 5 seconds timeout
+	ctx := context.Background()
+	//ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	//defer cancel()
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+	minTenant, err := getTenant(ctx, opClient, params.Namespace, params.Tenant)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// get Kubernetes Client
+	clientSet, err := cluster.K8sClient(session.STSSessionToken)
+	k8sClient := k8sClient{
+		client: clientSet,
+	}
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	info, err := getTenantSecurity(ctx, &k8sClient, minTenant)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	return info, nil
+}
+
+func getUpdateTenantSecurityResponse(session *models.Principal, params admin_api.UpdateTenantSecurityParams) *models.Error {
+	// 5 seconds timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
+	if err != nil {
+		return prepareError(err)
+	}
+	// get Kubernetes Client
+	clientSet, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return prepareError(err)
+	}
+	k8sClient := k8sClient{
+		client: clientSet,
+	}
+	opClient := &operatorClient{
+		client: opClientClientSet,
+	}
+	if err := updateTenantSecurity(ctx, opClient, &k8sClient, params.Namespace, params); err != nil {
+		return prepareError(err, errors.New("unable to update tenant"))
+	}
+	return nil
+}
+
+// updateTenantSecurity
+func updateTenantSecurity(ctx context.Context, operatorClient OperatorClientI, client K8sClientI, namespace string, params admin_api.UpdateTenantSecurityParams) error {
+	minInst, err := operatorClient.TenantGet(ctx, namespace, params.Tenant, metav1.GetOptions{})
+	if err != nil {
+		return err
+	}
+	// Update AutoCert
+	minInst.Spec.RequestAutoCert = &params.Body.AutoCert
+	var newMinIOExternalCertSecret []*miniov2.LocalCertificateReference
+	var newMinIOExternalCaCertSecret []*miniov2.LocalCertificateReference
+	var newConsoleExternalCertSecret *miniov2.LocalCertificateReference
+	var newConsoleExternalCaCertSecret []*miniov2.LocalCertificateReference
+	// Remove Certificate Secrets from MinIO (Tenant.Spec.ExternalCertSecret)
+	for _, certificate := range minInst.Spec.ExternalCertSecret {
+		skip := false
+		for _, certificateToBeDeleted := range params.Body.CustomCertificates.SecretsToBeDeleted {
+			if certificate.Name == certificateToBeDeleted {
+				skip = true
+				break
+			}
+		}
+		if skip {
+			continue
+		}
+		newMinIOExternalCertSecret = append(newMinIOExternalCertSecret, certificate)
+	}
+	// Remove Certificate Secrets from MinIO CAs (Tenant.Spec.ExternalCaCertSecret)
+	for _, certificate := range minInst.Spec.ExternalCaCertSecret {
+		skip := false
+		for _, certificateToBeDeleted := range params.Body.CustomCertificates.SecretsToBeDeleted {
+			if certificate.Name == certificateToBeDeleted {
+				skip = true
+				break
+			}
+		}
+		if skip {
+			continue
+		}
+		newMinIOExternalCaCertSecret = append(newMinIOExternalCaCertSecret, certificate)
+	}
+	if minInst.HasConsoleEnabled() {
+		// Remove Certificate Secrets from Console (Tenant.Spec.Console.ExternalCertSecret)
+		if minInst.ConsoleExternalCert() {
+			newConsoleExternalCertSecret = minInst.Spec.Console.ExternalCertSecret
+			for _, certificateToBeDeleted := range params.Body.CustomCertificates.SecretsToBeDeleted {
+				if newConsoleExternalCertSecret.Name == certificateToBeDeleted {
+					newConsoleExternalCertSecret = nil
+					break
+				}
+			}
+		}
+		// Remove Certificate Secrets from Console CAs (Tenant.Spec.Console.ExternalCaCertSecret)
+		for _, certificate := range minInst.Spec.Console.ExternalCaCertSecret {
+			skip := false
+			for _, certificateToBeDeleted := range params.Body.CustomCertificates.SecretsToBeDeleted {
+				if certificate.Name == certificateToBeDeleted {
+					skip = true
+					break
+				}
+			}
+			if skip {
+				continue
+			}
+			newConsoleExternalCaCertSecret = append(newConsoleExternalCaCertSecret, certificate)
+		}
+	}
+
+	//Create new Certificate Secrets for MinIO
+	secretName := fmt.Sprintf("%s-%s", minInst.Name, strings.ToLower(utils.RandomCharString(5)))
+	externalCertSecretName := fmt.Sprintf("%s-external-certificates", secretName)
+	externalCertSecrets, err := createOrReplaceExternalCertSecrets(ctx, client, minInst.Namespace, params.Body.CustomCertificates.Minio, externalCertSecretName, minInst.Name)
+	if err != nil {
+		return err
+	}
+	newMinIOExternalCertSecret = append(newMinIOExternalCertSecret, externalCertSecrets...)
+
+	// Create new CAs Certificate Secrets for MinIO
+	var caCertificates []tenantSecret
+	for i, caCertificate := range params.Body.CustomCertificates.MinioCAs {
+		certificateContent, err := base64.StdEncoding.DecodeString(caCertificate)
+		if err != nil {
+			return err
+		}
+		caCertificates = append(caCertificates, tenantSecret{
+			Name: fmt.Sprintf("%s-ca-certificate-%d", secretName, i),
+			Content: map[string][]byte{
+				"public.crt": certificateContent,
+			},
+		})
+	}
+	if len(caCertificates) > 0 {
+		certificateSecrets, err := createOrReplaceSecrets(ctx, client, minInst.Namespace, caCertificates, minInst.Name)
+		if err != nil {
+			return err
+		}
+		newMinIOExternalCaCertSecret = append(newMinIOExternalCaCertSecret, certificateSecrets...)
+	}
+
+	// Create new Certificate Secrets for Console
+	consoleExternalCertSecretName := fmt.Sprintf("%s-console-external-certificates", secretName)
+	consoleExternalCertSecrets, err := createOrReplaceExternalCertSecrets(ctx, client, minInst.Namespace, params.Body.CustomCertificates.Console, consoleExternalCertSecretName, minInst.Name)
+	if err != nil {
+		return err
+	}
+	if len(consoleExternalCertSecrets) > 0 {
+		newConsoleExternalCertSecret = consoleExternalCertSecrets[0]
+	}
+
+	// Create new CAs Certificate Secrets for Console
+	var consoleCaCertificates []tenantSecret
+	for i, caCertificate := range params.Body.CustomCertificates.ConsoleCAs {
+		certificateContent, err := base64.StdEncoding.DecodeString(caCertificate)
+		if err != nil {
+			return err
+		}
+		consoleCaCertificates = append(consoleCaCertificates, tenantSecret{
+			Name: fmt.Sprintf("%s-console-ca-certificate-%d", secretName, i),
+			Content: map[string][]byte{
+				"public.crt": certificateContent,
+			},
+		})
+	}
+	if len(consoleCaCertificates) > 0 {
+		certificateSecrets, err := createOrReplaceSecrets(ctx, client, minInst.Namespace, consoleCaCertificates, minInst.Name)
+		if err != nil {
+			return err
+		}
+		newConsoleExternalCaCertSecret = append(newConsoleExternalCaCertSecret, certificateSecrets...)
+	}
+
+	// Update External Certificates
+	minInst.Spec.ExternalCertSecret = newMinIOExternalCertSecret
+	minInst.Spec.ExternalCaCertSecret = newMinIOExternalCaCertSecret
+	if minInst.HasConsoleEnabled() {
+		minInst.Spec.Console.ExternalCertSecret = newConsoleExternalCertSecret
+		minInst.Spec.Console.ExternalCaCertSecret = newConsoleExternalCaCertSecret
+	}
+	_, err = operatorClient.TenantUpdate(ctx, minInst, metav1.UpdateOptions{})
+	if err != nil {
+		return err
+	}
+	// Remove Certificate Secrets from Tenant namespace
+	for _, secretName := range params.Body.CustomCertificates.SecretsToBeDeleted {
+		err = client.deleteSecret(ctx, minInst.Namespace, secretName, metav1.DeleteOptions{})
+		if err != nil {
+			LogError("error deleting secret: %v", err)
+		}
+	}
+	return nil
 }
 
 func listTenants(ctx context.Context, operatorClient OperatorClientI, namespace string, limit *int32) (*models.ListTenantsResponse, error) {

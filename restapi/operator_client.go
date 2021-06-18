@@ -32,6 +32,7 @@ type OperatorClientI interface {
 	TenantDelete(ctx context.Context, namespace string, instanceName string, options metav1.DeleteOptions) error
 	TenantGet(ctx context.Context, namespace string, instanceName string, options metav1.GetOptions) (*miniov2.Tenant, error)
 	TenantPatch(ctx context.Context, namespace string, instanceName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error)
+	TenantUpdate(ctx context.Context, tenant *miniov2.Tenant, opts metav1.UpdateOptions) (*miniov2.Tenant, error)
 	TenantList(ctx context.Context, namespace string, opts metav1.ListOptions) (*miniov2.TenantList, error)
 }
 
@@ -56,6 +57,11 @@ func (c *operatorClient) TenantGet(ctx context.Context, namespace string, instan
 // TenantPatch implements the minio instance patch action from minio operator
 func (c *operatorClient) TenantPatch(ctx context.Context, namespace string, instanceName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error) {
 	return c.client.MinioV2().Tenants(namespace).Patch(ctx, instanceName, pt, data, options)
+}
+
+// TenantUpdate implements the minio instance patch action from minio operator
+func (c *operatorClient) TenantUpdate(ctx context.Context, tenant *miniov2.Tenant, options metav1.UpdateOptions) (*miniov2.Tenant, error) {
+	return c.client.MinioV2().Tenants(tenant.Namespace).Update(ctx, tenant, options)
 }
 
 // TenantList implements the minio instance list action from minio operator

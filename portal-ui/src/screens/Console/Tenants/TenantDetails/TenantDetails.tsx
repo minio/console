@@ -45,6 +45,7 @@ import PoolsSummary from "./PoolsSummary";
 import PodsSummary from "./PodsSummary";
 import { AppState } from "../../../../store";
 import TenantMetrics from "./TenantMetrics";
+import TenantSecurity from "./TenantSecurity";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -156,6 +157,7 @@ const TenantDetails = ({
       case "pods":
       case "metrics":
       case "license":
+      case "security":
         setTenantTab(section);
         break;
       default:
@@ -235,6 +237,7 @@ const TenantDetails = ({
           >
             <Tab value="summary" label="Summary" />
             <Tab value="metrics" label="Metrics" />
+            <Tab value="security" label="Security" />
             <Tab value="pools" label="Pools" />
             <Tab value="pods" label="Pods" />
             <Tab value="license" label="License" />
@@ -250,6 +253,10 @@ const TenantDetails = ({
               <Route
                 path="/namespaces/:tenantNamespace/tenants/:tenantName/metrics"
                 component={TenantMetrics}
+              />
+              <Route
+                path="/namespaces/:tenantNamespace/tenants/:tenantName/security"
+                component={TenantSecurity}
               />
               <Route
                 path="/namespaces/:tenantNamespace/tenants/:tenantName/pools"

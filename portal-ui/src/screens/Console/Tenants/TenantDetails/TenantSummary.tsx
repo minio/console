@@ -39,6 +39,9 @@ interface ITenantsSummary {
   logEnabled: boolean;
   monitoringEnabled: boolean;
   encryptionEnabled: boolean;
+  minioTLS: boolean;
+  consoleTLS: boolean;
+  consoleEnabled: boolean;
   adEnabled: boolean;
   oicEnabled: boolean;
   loadingTenant: boolean;
@@ -77,6 +80,9 @@ const TenantSummary = ({
   logEnabled,
   monitoringEnabled,
   encryptionEnabled,
+  minioTLS,
+  consoleTLS,
+  consoleEnabled,
   adEnabled,
   oicEnabled,
   loadingTenant,
@@ -360,6 +366,32 @@ const TenantSummary = ({
                       </td>
                     </tr>
                     <tr>
+                      <td className={classes.titleCol}>MinIO TLS:</td>
+                      <td>
+                        <Button
+                          color="primary"
+                          className={classes.anchorButton}
+                        >
+                          {minioTLS ? "Enabled" : "Disabled"}
+                        </Button>
+                      </td>
+                      {consoleEnabled ? (
+                        <Fragment>
+                          <td className={classes.titleCol}>Console TLS:</td>
+                          <td>
+                            <Button
+                              color="primary"
+                              className={classes.anchorButton}
+                            >
+                              {consoleTLS ? "Enabled" : "Disabled"}
+                            </Button>
+                          </td>
+                        </Fragment>
+                      ) : (
+                        <td />
+                      )}
+                    </tr>
+                    <tr>
                       <td className={classes.titleCol}>Encryption:</td>
                       <td>
                         <Button
@@ -428,6 +460,13 @@ const mapState = (state: AppState) => ({
   encryptionEnabled: get(
     state.tenants.tenantDetails.tenantInfo,
     "encryptionEnabled",
+    false
+  ),
+  minioTLS: get(state.tenants.tenantDetails.tenantInfo, "minioTLS", false),
+  consoleTLS: get(state.tenants.tenantDetails.tenantInfo, "consoleTLS", false),
+  consoleEnabled: get(
+    state.tenants.tenantDetails.tenantInfo,
+    "consoleEnabled",
     false
   ),
   adEnabled: get(state.tenants.tenantDetails.tenantInfo, "idpAdEnabled", false),
