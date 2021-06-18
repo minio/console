@@ -182,7 +182,8 @@ Copy your `public.crt` and `private.key` to `~/.console/certs`, then:
 
 ```sh
 ./console server
-2021-01-19 02:36:08.893735 I | 2021/01/19 02:36:08 server.go:129: Serving console at https://localhost:9090
+2021-01-19 02:36:08.893735 I | 2021/01/19 02:36:08 server.go:129: Serving console at http://[::]:9090
+2021-01-19 02:36:08.893735 I | 2021/01/19 02:36:08 server.go:129: Serving console at https://[::]:9443
 ```
 
 For advanced users, `console` has support for multiple certificates to service clients through multiple domains.
