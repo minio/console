@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: Test Restapi on Go ${{ matrix.go-version }} and ${{ matrix.os }}
+    name: Compiles on Go ${{ matrix.go-version }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -31,4 +31,4 @@ jobs:
           GO111MODULE: on
           GOOS: linux
         run: |
-          make test
+          make console

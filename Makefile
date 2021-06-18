@@ -54,6 +54,8 @@ assets:
 
 test:
 	@(GO111MODULE=on go test -race -v github.com/minio/console/restapi/...)
+
+test-pkg:
 	@(GO111MODULE=on go test -race -v github.com/minio/console/pkg/...)
 
 coverage:
