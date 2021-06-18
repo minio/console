@@ -46,6 +46,7 @@ import PodsSummary from "./PodsSummary";
 import { AppState } from "../../../../store";
 import TenantMetrics from "./TenantMetrics";
 import TenantSecurity from "./TenantSecurity";
+import RefreshIcon from "@material-ui/icons/Refresh";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -216,6 +217,18 @@ const TenantDetails = ({
               </MenuItem>
             </Menu>
           </Fragment>
+        }
+        actions={
+          <IconButton
+            color="primary"
+            aria-label="Refresh List"
+            component="span"
+            onClick={() => {
+              setTenantDetailsLoad(true);
+            }}
+          >
+            <RefreshIcon />
+          </IconButton>
         }
       />
       <Grid item xs={12} className={classes.container} />

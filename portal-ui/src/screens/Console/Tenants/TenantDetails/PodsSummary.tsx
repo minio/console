@@ -26,10 +26,19 @@ import { IPodListElement } from "../ListTenants/types";
 import { setErrorSnackMessage } from "../../../../actions";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
+import { AppState } from "../../../../store";
+import {
+  setTenantDetailsLoad,
+  setTenantInfo,
+  setTenantName,
+  setTenantTab,
+} from "../actions";
 
 interface IPodsSummary {
   match: any;
   history: any;
+  loadingTenant: boolean;
+  setTenantDetailsLoad: typeof setTenantDetailsLoad;
 }
 
 const styles = (theme: Theme) =>
@@ -38,7 +47,7 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const PodsSummary = ({ match, history }: IPodsSummary) => {
+const PodsSummary = ({ match, history, loadingTenant }: IPodsSummary) => {
   const [pods, setPods] = useState<IPodListElement[]>([]);
   const [loadingPods, setLoadingPods] = useState<boolean>(true);
 
@@ -52,6 +61,12 @@ const PodsSummary = ({ match, history }: IPodsSummary) => {
     return;
   };
   const podTableActions = [{ type: "view", onClick: podViewAction }];
+
+  useEffect(() => {
+    if (loadingTenant) {
+      setLoadingPods(true);
+    }
+  }, [loadingTenant]);
 
   useEffect(() => {
     if (loadingPods) {
@@ -104,7 +119,11 @@ const PodsSummary = ({ match, history }: IPodsSummary) => {
   );
 };
 
-const connector = connect(null, {
+const mapState = (state: AppState) => ({
+  loadingTenant: state.tenants.tenantDetails.loadingTenant,
+});
+
+const connector = connect(mapState, {
   setErrorSnackMessage,
 });
 
