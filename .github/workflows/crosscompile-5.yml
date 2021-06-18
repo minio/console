@@ -31,4 +31,4 @@ jobs:
           GO111MODULE: on
           GOOS: linux
         run: |
-          make crosscompile arg1="linux/386 netbsd/amd64"
+          make crosscompile arg1="'linux/386 netbsd/amd64'"

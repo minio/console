@@ -31,4 +31,4 @@ jobs:
           GO111MODULE: on
           GOOS: linux
         run: |
-          make crosscompile arg1="linux/ppc64le linux/mips64"
+          make crosscompile arg1="'linux/ppc64le linux/mips64'"

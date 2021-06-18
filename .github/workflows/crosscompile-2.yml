@@ -31,4 +31,4 @@ jobs:
           GO111MODULE: on
           GOOS: linux
         run: |
-          make crosscompile arg1="linux/arm64 linux/s390x"
+          make crosscompile arg1="'linux/arm64 linux/s390x'"
