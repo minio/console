@@ -393,6 +393,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPITenantInfoHandler: admin_api.TenantInfoHandlerFunc(func(params admin_api.TenantInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TenantInfo has not yet been implemented")
 		}),
+		AdminAPITenantSecurityHandler: admin_api.TenantSecurityHandlerFunc(func(params admin_api.TenantSecurityParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.TenantSecurity has not yet been implemented")
+		}),
 		AdminAPITenantUpdateCertificateHandler: admin_api.TenantUpdateCertificateHandlerFunc(func(params admin_api.TenantUpdateCertificateParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TenantUpdateCertificate has not yet been implemented")
 		}),
@@ -416,6 +419,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		AdminAPIUpdateTenantHandler: admin_api.UpdateTenantHandlerFunc(func(params admin_api.UpdateTenantParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.UpdateTenant has not yet been implemented")
+		}),
+		AdminAPIUpdateTenantSecurityHandler: admin_api.UpdateTenantSecurityHandlerFunc(func(params admin_api.UpdateTenantSecurityParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.UpdateTenantSecurity has not yet been implemented")
 		}),
 		AdminAPIUpdateUserGroupsHandler: admin_api.UpdateUserGroupsHandlerFunc(func(params admin_api.UpdateUserGroupsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.UpdateUserGroups has not yet been implemented")
@@ -696,6 +702,8 @@ type ConsoleAPI struct {
 	AdminAPITenantDetailsHandler admin_api.TenantDetailsHandler
 	// AdminAPITenantInfoHandler sets the operation handler for the tenant info operation
 	AdminAPITenantInfoHandler admin_api.TenantInfoHandler
+	// AdminAPITenantSecurityHandler sets the operation handler for the tenant security operation
+	AdminAPITenantSecurityHandler admin_api.TenantSecurityHandler
 	// AdminAPITenantUpdateCertificateHandler sets the operation handler for the tenant update certificate operation
 	AdminAPITenantUpdateCertificateHandler admin_api.TenantUpdateCertificateHandler
 	// AdminAPITenantUpdateEncryptionHandler sets the operation handler for the tenant update encryption operation
@@ -712,6 +720,8 @@ type ConsoleAPI struct {
 	AdminAPIUpdateGroupHandler admin_api.UpdateGroupHandler
 	// AdminAPIUpdateTenantHandler sets the operation handler for the update tenant operation
 	AdminAPIUpdateTenantHandler admin_api.UpdateTenantHandler
+	// AdminAPIUpdateTenantSecurityHandler sets the operation handler for the update tenant security operation
+	AdminAPIUpdateTenantSecurityHandler admin_api.UpdateTenantSecurityHandler
 	// AdminAPIUpdateUserGroupsHandler sets the operation handler for the update user groups operation
 	AdminAPIUpdateUserGroupsHandler admin_api.UpdateUserGroupsHandler
 	// AdminAPIUpdateUserInfoHandler sets the operation handler for the update user info operation
@@ -1130,6 +1140,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.AdminAPITenantInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.TenantInfoHandler")
 	}
+	if o.AdminAPITenantSecurityHandler == nil {
+		unregistered = append(unregistered, "admin_api.TenantSecurityHandler")
+	}
 	if o.AdminAPITenantUpdateCertificateHandler == nil {
 		unregistered = append(unregistered, "admin_api.TenantUpdateCertificateHandler")
 	}
@@ -1153,6 +1166,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIUpdateTenantHandler == nil {
 		unregistered = append(unregistered, "admin_api.UpdateTenantHandler")
+	}
+	if o.AdminAPIUpdateTenantSecurityHandler == nil {
+		unregistered = append(unregistered, "admin_api.UpdateTenantSecurityHandler")
 	}
 	if o.AdminAPIUpdateUserGroupsHandler == nil {
 		unregistered = append(unregistered, "admin_api.UpdateUserGroupsHandler")
@@ -1698,6 +1714,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/info"] = admin_api.NewTenantInfo(o.context, o.AdminAPITenantInfoHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/security"] = admin_api.NewTenantSecurity(o.context, o.AdminAPITenantSecurityHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
@@ -1730,6 +1750,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
 	o.handlers["PUT"]["/namespaces/{namespace}/tenants/{tenant}"] = admin_api.NewUpdateTenant(o.context, o.AdminAPIUpdateTenantHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/namespaces/{namespace}/tenants/{tenant}/security"] = admin_api.NewUpdateTenantSecurity(o.context, o.AdminAPIUpdateTenantSecurityHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

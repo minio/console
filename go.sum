@@ -1163,8 +1163,8 @@ github.com/minio/md5-simd v1.1.0/go.mod h1:XpBqgZULrMYD3R+M28PcmP0CkI7PEMzB3U77Z
 github.com/minio/minio-go/v7 v7.0.11-0.20210302210017-6ae69c73ce78/go.mod h1:mTh2uJuAbEqdhMVl6CMIIZLUeiMiWtJR4JB8/5g2skw=
 github.com/minio/minio-go/v7 v7.0.11-0.20210517200026-f0518ca447d6 h1:GVR+UTvfe2r2YTYHWrA/yRF5nouMjJh3kwxNTZ8npso=
 github.com/minio/minio-go/v7 v7.0.11-0.20210517200026-f0518ca447d6/go.mod h1:td4gW1ldOsj1PbSNS+WYK43j+P1XVhX/8W8awaYlBFo=
-github.com/minio/operator v0.0.0-20210604224119-7e256f98cf90 h1:bomLALJicW0gLAkFHomuPbyjU0OxR0znctdALiIdAJ4=
-github.com/minio/operator v0.0.0-20210604224119-7e256f98cf90/go.mod h1:8/mIXK+CFdL6VqyxRn1SwD+PEX0jsN8uqjoadaw/Np0=
+github.com/minio/operator v0.0.0-20210616045941-65f31f5f78ae h1:GONmqbjCi/KTEc1CGujnS/m1qeJeghcQ8dUBLh19qQo=
+github.com/minio/operator v0.0.0-20210616045941-65f31f5f78ae/go.mod h1:8/mIXK+CFdL6VqyxRn1SwD+PEX0jsN8uqjoadaw/Np0=
 github.com/minio/operator/logsearchapi v0.0.0-20210604224119-7e256f98cf90 h1:Qu6j6oE7+QNuq7Kr2DLyVYq3fqMdqFd/T8NAeNp47og=
 github.com/minio/operator/logsearchapi v0.0.0-20210604224119-7e256f98cf90/go.mod h1:R+38Pf3wfm+JMiyLPb/r8OMrBm0vK2hZgUT4y4aYoSY=
 github.com/minio/pkg v1.0.3/go.mod h1:obU54TZ9QlMv0TRaDgQ/JTzf11ZSXxnSfLrm4tMtBP8=

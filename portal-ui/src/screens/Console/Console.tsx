@@ -379,6 +379,10 @@ const Console = ({
       path: "/namespaces/:tenantNamespace/tenants/:tenantName/license",
     },
     {
+      component: TenantDetails,
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName/security",
+    },
+    {
       component: License,
       path: "/license",
     },
