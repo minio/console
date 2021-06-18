@@ -58,6 +58,24 @@ export const TENANT_DETAILS_SET_CURRENT_TENANT =
   "TENANT_DETAILS/SET_CURRENT_TENANT";
 export const TENANT_DETAILS_SET_TENANT = "TENANT_DETAILS/SET_TENANT";
 export const TENANT_DETAILS_SET_TAB = "TENANT_DETAILS/SET_TAB";
+export interface ICertificateInfo {
+  name: string;
+  serialNumber: string;
+  domains: string[];
+  expiry: string;
+}
+
+export interface ICustomCertificates {
+  minio: ICertificateInfo[];
+  minioCAs: ICertificateInfo[];
+  console: ICertificateInfo[];
+  consoleCAs: ICertificateInfo[];
+}
+
+export interface ITenantSecurityResponse {
+  autoCert: boolean;
+  customCertificates: ICustomCertificates;
+}
 
 export interface ICreateTenant {
   page: number;

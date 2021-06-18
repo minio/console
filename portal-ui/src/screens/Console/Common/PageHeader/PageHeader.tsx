@@ -6,6 +6,7 @@ import Typography from "@material-ui/core/Typography";
 interface IPageHeader {
   classes: any;
   label: any;
+  actions?: any;
 }
 
 const styles = (theme: Theme) =>
@@ -31,16 +32,29 @@ const styles = (theme: Theme) =>
       marginLeft: 55,
       marginTop: 8,
     },
+    rightMenu: {
+      marginTop: 16,
+      marginRight: 8,
+    },
   });
 
-const PageHeader = ({ classes, label }: IPageHeader) => {
+const PageHeader = ({ classes, label, actions }: IPageHeader) => {
   return (
-    <Grid container className={classes.headerContainer}>
-      <Grid item xs={12} className={classes.label}>
+    <Grid
+      container
+      className={classes.headerContainer}
+      justify={"space-between"}
+    >
+      <Grid item className={classes.label}>
         <Typography variant="h4" className={classes.labelStyle}>
           {label}
         </Typography>
       </Grid>
+      {actions && (
+        <Grid item className={classes.rightMenu}>
+          {actions}
+        </Grid>
+      )}
     </Grid>
   );
 };
