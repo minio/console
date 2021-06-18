@@ -192,7 +192,7 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 		ReferrerPolicy:                  getSecureReferrerPolicy(),
 		FeaturePolicy:                   getSecureFeaturePolicy(),
 		ExpectCTHeader:                  getSecureExpectCTHeader(),
-		IsDevelopment:                   !getProductionMode(),
+		IsDevelopment:                   false,
 	}
 	secureMiddleware := secure.New(secureOptions)
 	return secureMiddleware.Handler(next)
@@ -268,10 +268,9 @@ func wrapHandlerSinglePageApplication(h http.Handler) http.HandlerFunc {
 	}
 }
 
-type logWriter struct{}
+type nullWriter struct{}
 
-func (lw logWriter) Write(b []byte) (int, error) {
-	LogError(string(bytes.TrimSuffix(b, []byte("\n"))))
+func (lw nullWriter) Write(b []byte) (int, error) {
 	return len(b), nil
 }
 
@@ -280,6 +279,6 @@ func (lw logWriter) Write(b []byte) (int, error) {
 // This function can be called multiple times, depending on the number of serving schemes.
 // scheme value will be set accordingly: "http", "https" or "unix"
 func configureServer(s *http.Server, _, _ string) {
-	// Turn-off random logging by Go internall
-	s.ErrorLog = log.New(&logWriter{}, "", 0)
+	// Turn-off random logging by Go net/http
+	s.ErrorLog = log.New(&nullWriter{}, "", 0)
 }

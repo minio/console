@@ -20,7 +20,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	"github.com/go-openapi/swag"
@@ -41,9 +40,6 @@ func registerLogSearchHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewLogSearchOK().WithPayload(searchResp)
 	})
-}
-func init() {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
 }
 
 // getLogSearchResponse performs a query to Log Search if Enabled
