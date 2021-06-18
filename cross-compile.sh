@@ -4,13 +4,12 @@ set -e
 # Enable tracing if set.
 [ -n "$BASH_XTRACEFD" ] && set -x
 
-_init() {
-    ## All binaries are static make sure to disable CGO.
-    export CGO_ENABLED=0
+## All binaries are static make sure to disable CGO.
+export CGO_ENABLED=0
 
-    ## List of architectures and OS to test coss compilation.
-    SUPPORTED_OSARCH="linux/ppc64le linux/mips64 linux/arm64 linux/s390x darwin/amd64 freebsd/amd64 windows/amd64 linux/arm linux/386 netbsd/amd64"
-}
+## List of architectures and OS to test cross compilation.
+SUPPORTED_OSARCH_DEFAULTS="linux/ppc64le linux/mips64 linux/arm64 linux/s390x darwin/amd64 freebsd/amd64 windows/amd64 linux/arm linux/386 netbsd/amd64"
+SUPPORTED_OSARCH=${1:-$SUPPORTED_OSARCH_DEFAULTS}
 
 _build() {
     local osarch=$1
@@ -31,4 +30,4 @@ main() {
     done
 }
 
-_init && main "$@"
+main "$@"

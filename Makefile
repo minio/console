@@ -31,7 +31,7 @@ fmt:
 	@GO111MODULE=on gofmt -d cluster/
 
 crosscompile:
-	@(env bash $(PWD)/cross-compile.sh)
+	@(env bash $(PWD)/cross-compile.sh $(arg1))
 
 lint:
 	@echo "Running $@ check"

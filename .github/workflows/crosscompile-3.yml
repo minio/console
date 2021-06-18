@@ -31,4 +31,4 @@ jobs:
           GO111MODULE: on
           GOOS: linux
         run: |
-          make crosscompile
+          make crosscompile arg1="'darwin/amd64 freebsd/amd64'"
