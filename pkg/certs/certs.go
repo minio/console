@@ -325,5 +325,9 @@ func GetAllCertificatesAndCAs() (*x509.CertPool, []*x509.Certificate, *xcerts.Ma
 	if rootCAs == nil {
 		rootCAs = &x509.CertPool{}
 	}
+	// Add the public crts as part of root CAs to trust self.
+	for _, publicCrt := range publicCerts {
+		rootCAs.AddCert(publicCrt)
+	}
 	return rootCAs, publicCerts, certsManager, nil
 }
