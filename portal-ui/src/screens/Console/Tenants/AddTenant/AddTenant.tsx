@@ -116,6 +116,7 @@ const AddTenant = ({
     const secretKeys = fields.identityProvider.secretKeys;
     const minioCertificates = certificates.minioCertificates;
     const caCertificates = certificates.caCertificates;
+    const consoleCaCertificates = certificates.consoleCaCertificates;
     const consoleCertificate = certificates.consoleCertificate;
     const serverCertificate = certificates.serverCertificate;
     const clientCertificate = certificates.clientCertificate;
@@ -285,10 +286,19 @@ const AddTenant = ({
       let tenantCerts: any = null;
       let consoleCerts: any = null;
       let caCerts: any = null;
+      let consoleCaCerts: any = null;
 
       if (caCertificates.length > 0) {
         caCerts = {
           ca_certificates: caCertificates
+            .map((keyPair: KeyPair) => keyPair.encoded_cert)
+            .filter((keyPair) => keyPair),
+        };
+      }
+
+      if (consoleCaCertificates.length > 0) {
+        consoleCaCerts = {
+          console_ca_certificates: consoleCaCertificates
             .map((keyPair: KeyPair) => keyPair.encoded_cert)
             .filter((keyPair) => keyPair),
         };
@@ -318,13 +328,14 @@ const AddTenant = ({
         };
       }
 
-      if (tenantCerts || consoleCerts || caCerts) {
+      if (tenantCerts || consoleCerts || caCerts || consoleCaCerts) {
         dataSend = {
           ...dataSend,
           tls: {
             ...tenantCerts,
             ...consoleCerts,
             ...caCerts,
+            ...consoleCaCerts,
           },
         };
       }

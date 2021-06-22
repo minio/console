@@ -2440,6 +2440,36 @@ func init() {
         }
       }
     },
+    "/namespace": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Creates a new Namespace with given information",
+        "operationId": "CreateNamespace",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/namespace"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/resourcequotas/{resource-quota-name}": {
       "get": {
         "tags": [
@@ -5912,6 +5942,17 @@ func init() {
         }
       }
     },
+    "namespace": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "nodeLabels": {
       "type": "object",
       "additionalProperties": {
@@ -7371,6 +7412,12 @@ func init() {
         "console": {
           "type": "object",
           "$ref": "#/definitions/keyPairConfiguration"
+        },
+        "console_ca_certificates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "minio": {
           "type": "array",
@@ -10110,6 +10157,36 @@ func init() {
             "schema": {
               "$ref": "#/definitions/logSearchResponse"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespace": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Creates a new Namespace with given information",
+        "operationId": "CreateNamespace",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/namespace"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
@@ -14284,6 +14361,17 @@ func init() {
         }
       }
     },
+    "namespace": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "nodeLabels": {
       "type": "object",
       "additionalProperties": {
@@ -15608,6 +15696,12 @@ func init() {
         "console": {
           "type": "object",
           "$ref": "#/definitions/keyPairConfiguration"
+        },
+        "console_ca_certificates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "minio": {
           "type": "array",
