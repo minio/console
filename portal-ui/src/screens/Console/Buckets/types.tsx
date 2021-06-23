@@ -78,7 +78,7 @@ export interface BucketReplicationRule {
   metadata_replication: boolean;
   prefix?: string;
   tags?: string;
-  Destination: BucketReplicationDestination;
+  destination: BucketReplicationDestination;
   syncMode: string;
 }
 
