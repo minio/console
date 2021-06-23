@@ -89,6 +89,13 @@ func registersPoliciesHandler(api *operations.ConsoleAPI) {
 		}
 		return admin_api.NewListUsersForPolicyOK().WithPayload(policyUsersResponse)
 	})
+	api.AdminAPIListGroupsForPolicyHandler = admin_api.ListGroupsForPolicyHandlerFunc(func(params admin_api.ListGroupsForPolicyParams, session *models.Principal) middleware.Responder {
+		policyGroupsResponse, err := getListGroupsForPolicyResponse(session, params.Policy)
+		if err != nil {
+			return admin_api.NewListGroupsForPolicyDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewListGroupsForPolicyOK().WithPayload(policyGroupsResponse)
+	})
 }
 
 func getListPoliciesWithBucketResponse(session *models.Principal, bucket string) (*models.ListPoliciesResponse, *models.Error) {
@@ -218,6 +225,35 @@ func getListUsersForPolicyResponse(session *models.Principal, policy string) ([]
 	}
 	sort.Strings(filteredUsers)
 	return filteredUsers, nil
+}
+
+func getListGroupsForPolicyResponse(session *models.Principal, policy string) ([]string, *models.Error) {
+	ctx := context.Background()
+	mAdmin, err := newAdminClient(session)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := adminClient{client: mAdmin}
+
+	groups, err := adminClient.listGroups(ctx)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+
+	var filteredGroups []string
+	for _, group := range groups {
+		info, err := groupInfo(ctx, adminClient, group)
+		if err != nil {
+			LogError("unable to fetch group info %s: %v", group, err)
+		}
+		if info.Policy == policy {
+			filteredGroups = append(filteredGroups, group)
+		}
+	}
+	sort.Strings(filteredGroups)
+	return filteredGroups, nil
 }
 
 // removePolicy() calls MinIO server to remove a policy based on name.
