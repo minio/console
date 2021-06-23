@@ -24,4 +24,5 @@ export interface IFileInfo {
   size?: string;
   tags?: object;
   version_id: string | null;
+  is_delete_marker?: boolean;
 }

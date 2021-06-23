@@ -23,6 +23,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/sse"
@@ -147,6 +148,14 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 			return user_api.NewGetBucketObjectLockingStatusDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
 		return user_api.NewGetBucketObjectLockingStatusOK().WithPayload(getBucketObjectLockingStatus)
+	})
+	// get objects rewind for a bucket
+	api.UserAPIGetBucketRewindHandler = user_api.GetBucketRewindHandlerFunc(func(params user_api.GetBucketRewindParams, session *models.Principal) middleware.Responder {
+		getBucketRewind, err := getBucketRewindResponse(session, params)
+		if err != nil {
+			return user_api.NewGetBucketRewindDefault(500).WithPayload(err)
+		}
+		return user_api.NewGetBucketRewindOK().WithPayload(getBucketRewind)
 	})
 }
 
@@ -748,4 +757,56 @@ func getBucketObLockingResponse(session *models.Principal, bucketName string) (*
 		ObjectLockingEnabled: true,
 	}
 	return listBucketsResponse, nil
+}
+
+func getBucketRewindResponse(session *models.Principal, params user_api.GetBucketRewindParams) (*models.RewindResponse, *models.Error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+
+	var prefix = ""
+
+	if params.Prefix != nil {
+		prefix = *params.Prefix
+	}
+
+	s3Client, err := newS3BucketClient(session, params.BucketName, prefix)
+	if err != nil {
+		LogError("error creating S3Client: %v", err)
+		return nil, prepareError(err)
+	}
+
+	// create a mc S3Client interface implementation
+	// defining the client to be used
+	mcClient := mcClient{client: s3Client}
+
+	parsedDate, errDate := time.Parse(time.RFC3339, params.Date)
+
+	if errDate != nil {
+		return nil, prepareError(errDate)
+	}
+
+	var rewindItems []*models.RewindItem
+
+	for content := range mcClient.client.List(ctx, cmd.ListOptions{TimeRef: parsedDate, WithDeleteMarkers: true}) {
+		// build object name
+		name := strings.Replace(content.URL.Path, fmt.Sprintf("/%s/", params.BucketName), "", -1)
+
+		listElement := &models.RewindItem{
+			LastModified: content.Time.Format(time.RFC3339),
+			Size:         content.Size,
+			VersionID:    content.VersionID,
+			DeleteFlag:   content.IsDeleteMarker,
+			Action:       "",
+			Name:         name,
+		}
+
+		cont, _ := json.Marshal(content)
+		fmt.Println(string(cont))
+
+		rewindItems = append(rewindItems, listElement)
+	}
+
+	return &models.RewindResponse{
+		Objects: rewindItems,
+	}, nil
 }

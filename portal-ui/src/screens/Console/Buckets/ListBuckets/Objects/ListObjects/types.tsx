@@ -26,3 +26,15 @@ export interface BucketObjectsList {
   objects: BucketObject[];
   total: number;
 }
+
+export interface RewindObject {
+  last_modified: string;
+  delete_flag: boolean;
+  name: string;
+  version_id: string;
+  size: number;
+}
+
+export interface RewindObjectList {
+  objects: RewindObject[];
+}

@@ -68,7 +68,11 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 			return user_api.NewDownloadObjectDefault(int(err.Code)).WithPayload(err)
 		}
 		return middleware.ResponderFunc(func(rw http.ResponseWriter, _ runtime.Producer) {
-			io.Copy(rw, resp)
+			x, err := io.Copy(rw, resp)
+
+			fmt.Println(x)
+			fmt.Println(err)
+
 			resp.Close()
 		})
 	})
@@ -229,7 +233,7 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 }
 
 func downloadObject(ctx context.Context, client MCClient, versionID *string) (io.ReadCloser, error) {
-	// TODO: handle encripted files
+	// TODO: handle encrypted files
 	var reader io.ReadCloser
 	var version string
 	if versionID != nil {

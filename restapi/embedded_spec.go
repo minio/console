@@ -1475,6 +1475,48 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/rewind/{date}": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Get objects in a bucket for a rewind date",
+        "operationId": "GetBucketRewind",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "date",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/rewindResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/versioning": {
       "get": {
         "tags": [
@@ -2430,6 +2472,36 @@ func init() {
             "schema": {
               "$ref": "#/definitions/logSearchResponse"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespace": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Creates a new Namespace with given information",
+        "operationId": "CreateNamespace",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/namespace"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
@@ -5912,6 +5984,17 @@ func init() {
         }
       }
     },
+    "namespace": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "nodeLabels": {
       "type": "object",
       "additionalProperties": {
@@ -6771,6 +6854,41 @@ func init() {
         },
         "resultType": {
           "type": "string"
+        }
+      }
+    },
+    "rewindItem": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "delete_flag": {
+          "type": "boolean"
+        },
+        "last_modified": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "version_id": {
+          "type": "string"
+        }
+      }
+    },
+    "rewindResponse": {
+      "type": "object",
+      "properties": {
+        "objects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/rewindItem"
+          }
         }
       }
     },
@@ -9155,6 +9273,48 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/rewind/{date}": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Get objects in a bucket for a rewind date",
+        "operationId": "GetBucketRewind",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "date",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/rewindResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/versioning": {
       "get": {
         "tags": [
@@ -10110,6 +10270,36 @@ func init() {
             "schema": {
               "$ref": "#/definitions/logSearchResponse"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespace": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Creates a new Namespace with given information",
+        "operationId": "CreateNamespace",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/namespace"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
@@ -14284,6 +14474,17 @@ func init() {
         }
       }
     },
+    "namespace": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
     "nodeLabels": {
       "type": "object",
       "additionalProperties": {
@@ -15008,6 +15209,41 @@ func init() {
         },
         "resultType": {
           "type": "string"
+        }
+      }
+    },
+    "rewindItem": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "delete_flag": {
+          "type": "boolean"
+        },
+        "last_modified": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "version_id": {
+          "type": "string"
+        }
+      }
+    },
+    "rewindResponse": {
+      "type": "object",
+      "properties": {
+        "objects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/rewindItem"
+          }
         }
       }
     },

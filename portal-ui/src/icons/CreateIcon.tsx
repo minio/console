@@ -26,14 +26,12 @@ const CreateIcon = () => {
             width="2"
             height="12"
             transform="translate(-997 2555)"
-            fill="#fff"
           />
           <rect
             id="Rectangle_30"
             width="2"
             height="12"
             transform="translate(-990 2560) rotate(90)"
-            fill="#fff"
           />
         </g>
       </svg>

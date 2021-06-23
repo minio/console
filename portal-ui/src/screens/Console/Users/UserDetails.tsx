@@ -45,7 +45,6 @@ import UserServiceAccountsPanel from "./UserServiceAccountsPanel";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import ChangeUserPasswordModal from "../Account/ChangeUserPasswordModal";
 import DeleteUserString from "./DeleteUserString";
-import DeleteUser from "./DeleteUser";
 import { usersSort } from "../../../utils/sortFunctions";
 
 const styles = (theme: Theme) =>
@@ -113,6 +112,7 @@ const styles = (theme: Theme) =>
     },
     ...actionsTray,
     ...searchField,
+    actionsTray: { ...actionsTray.actionsTray, justifyContent: "flex-end" },
     ...containerForHeader(theme.spacing(4)),
   });
 
