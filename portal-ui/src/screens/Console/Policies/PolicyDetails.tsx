@@ -235,7 +235,17 @@ const PolicyDetails = ({
       loadPolicyDetails();
       loadUsersForPolicy();
     }
-  }, [policyName, loadingPolicy, loadingUsers, setErrorSnackMessage]);
+  }, [
+    policyName,
+    loadingPolicy,
+    loadingUsers,
+    setErrorSnackMessage,
+    setUserList,
+    setPolicyDefinition,
+    setPolicy,
+    addLoading,
+    setLoadingUsers,
+  ]);
 
   const resetForm = () => {
     setPolicyName("");
