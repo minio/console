@@ -616,6 +616,7 @@ const ObjectDetails = ({
                 columns={[
                   {
                     label: "",
+                    elementKey: "column1",
                     width: 20,
                     renderFullObject: true,
                     renderFunction: (r) => {
@@ -631,6 +632,7 @@ const ObjectDetails = ({
                   },
                   {
                     label: "Deleted",
+                    elementKey: "deleted",
                     width: 60,
                     contentTextAlign: "center",
                     renderFullObject: true,
