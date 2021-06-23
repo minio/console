@@ -166,7 +166,7 @@ const PolicyDetails = ({
 }: IPolicyDetailsProps) => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [policy, setPolicy] = useState<Policy | null>(null);
-  const [userList, setUserList] = useState<User[]>([]);
+  const [userList, setUserList] = useState<string[]>([]);
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [policyName, setPolicyName] = useState<string>(
     match.params["policyName"]
@@ -203,12 +203,7 @@ const PolicyDetails = ({
         api
           .invoke("GET", `/api/v1/policies/${policyName}/users`)
           .then((result: any) => {
-            var resultUserArray = result.map((x: string) => {
-              return {
-                accessKey: x,
-              };
-            });
-            setUserList(resultUserArray);
+            setUserList(result);
             setLoadingUsers(false);
           })
           .catch((err) => {
@@ -254,7 +249,7 @@ const PolicyDetails = ({
   const userTableActions = [{ type: "view", onClick: userViewAction }];
 
   const filteredUsers = userList.filter((elementItem) =>
-    elementItem.accessKey.includes(filterUsers)
+    elementItem.includes(filterUsers)
   );
 
   return (
@@ -361,7 +356,7 @@ const PolicyDetails = ({
             </Grid>
             <TableWrapper
               itemActions={userTableActions}
-              columns={[{ label: "Name", elementKey: "accessKey" }]}
+              columns={[{ label: "Name", elementKey: "name" }]}
               isLoading={loadingUsers}
               records={filteredUsers}
               entityName="Users"
