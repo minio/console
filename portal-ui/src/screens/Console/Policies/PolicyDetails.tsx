@@ -207,7 +207,7 @@ const PolicyDetails = ({
             setLoadingUsers(false);
           })
           .catch((err) => {
-            console.log("Error in loading users");
+            setErrorSnackMessage(err);
             setLoadingUsers(false);
           });
       }
@@ -226,7 +226,7 @@ const PolicyDetails = ({
             setLoadingPolicy(false);
           })
           .catch((err) => {
-            console.log("Error in loading policy");
+            setErrorSnackMessage(err);
           });
       }
     };
@@ -235,7 +235,7 @@ const PolicyDetails = ({
       loadPolicyDetails();
       loadUsersForPolicy();
     }
-  }, [policyName, loadingPolicy, loadingUsers]);
+  }, [policyName, loadingPolicy, loadingUsers, setErrorSnackMessage]);
 
   const resetForm = () => {
     setPolicyName("");
