@@ -27,7 +27,7 @@ import { Button, LinearProgress } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import { User, UserName } from "../Users/types";
+import { User } from "../Users/types";
 import api from "../../../common/api";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import { Link } from "react-router-dom";
@@ -166,7 +166,7 @@ const PolicyDetails = ({
 }: IPolicyDetailsProps) => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [policy, setPolicy] = useState<Policy | null>(null);
-  const [userList, setUserList] = useState<UserName[]>([]);
+  const [userList, setUserList] = useState<User[]>([]);
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [policyName, setPolicyName] = useState<string>(
     match.params["policyName"]
@@ -203,11 +203,11 @@ const PolicyDetails = ({
         api
           .invoke("GET", `/api/v1/policies/${policyName}/users`)
           .then((result: any) => {
-            var resultUserArray = [];
-            for (var i = 0; i < result.length; i++) {
-              var added: UserName = { name: result[i] };
-              resultUserArray.push(added);
-            }
+            var resultUserArray = result.map((x: string) => {
+              return {
+                accessKey: x,
+              };
+            });
             setUserList(resultUserArray);
             setLoadingUsers(false);
           })
@@ -254,7 +254,7 @@ const PolicyDetails = ({
   const userTableActions = [{ type: "view", onClick: userViewAction }];
 
   const filteredUsers = userList.filter((elementItem) =>
-    elementItem.name.includes(filterUsers)
+    elementItem.accessKey.includes(filterUsers)
   );
 
   return (
@@ -361,7 +361,7 @@ const PolicyDetails = ({
             </Grid>
             <TableWrapper
               itemActions={userTableActions}
-              columns={[{ label: "Name", elementKey: "name" }]}
+              columns={[{ label: "Name", elementKey: "accessKey" }]}
               isLoading={loadingUsers}
               records={filteredUsers}
               entityName="Users"
