@@ -260,9 +260,19 @@ const LogsSearchMain = ({ classes, setErrorSnackMessage }: ILogSearchProps) => {
           className={`${classes.actionsTray} ${classes.timeContainers}`}
         >
           <span className={classes.label}>Start Time</span>
-          <DateTimePickerWrapper value={timeStart} onChange={setTimeStart} />
+          <DateTimePickerWrapper
+            value={timeStart}
+            onChange={setTimeStart}
+            forSearchBlock
+            id="stTime"
+          />
           <span className={classes.label}>End Time</span>
-          <DateTimePickerWrapper value={timeEnd} onChange={setTimeEnd} />
+          <DateTimePickerWrapper
+            value={timeEnd}
+            onChange={setTimeEnd}
+            forSearchBlock
+            id="endTime"
+          />
         </Grid>
         <Grid item xs={12} className={`${classes.advancedLabelContainer}`}>
           <div

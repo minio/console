@@ -259,9 +259,19 @@ const PrDashboard = ({
         className={`${classes.actionsTray} ${classes.timeContainers}`}
       >
         <span className={classes.label}>Start Time</span>
-        <DateTimePickerWrapper value={timeStart} onChange={setTimeStart} />
+        <DateTimePickerWrapper
+          value={timeStart}
+          onChange={setTimeStart}
+          forSearchBlock
+          id="stTime"
+        />
         <span className={classes.label}>End Time</span>
-        <DateTimePickerWrapper value={timeEnd} onChange={setTimeEnd} />
+        <DateTimePickerWrapper
+          value={timeEnd}
+          onChange={setTimeEnd}
+          forSearchBlock
+          id="endTime"
+        />
         <Button
           type="button"
           variant="contained"

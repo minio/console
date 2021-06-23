@@ -1475,6 +1475,48 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/rewind/{date}": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Get objects in a bucket for a rewind date",
+        "operationId": "GetBucketRewind",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "date",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/rewindResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/versioning": {
       "get": {
         "tags": [
@@ -6815,6 +6857,41 @@ func init() {
         }
       }
     },
+    "rewindItem": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "delete_flag": {
+          "type": "boolean"
+        },
+        "last_modified": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "version_id": {
+          "type": "string"
+        }
+      }
+    },
+    "rewindResponse": {
+      "type": "object",
+      "properties": {
+        "objects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/rewindItem"
+          }
+        }
+      }
+    },
     "serviceAccountCreds": {
       "type": "object",
       "properties": {
@@ -9192,6 +9269,48 @@ func init() {
         "responses": {
           "200": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/rewind/{date}": {
+      "get": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Get objects in a bucket for a rewind date",
+        "operationId": "GetBucketRewind",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "date",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/rewindResponse"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -15096,6 +15215,41 @@ func init() {
         },
         "resultType": {
           "type": "string"
+        }
+      }
+    },
+    "rewindItem": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "delete_flag": {
+          "type": "boolean"
+        },
+        "last_modified": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "version_id": {
+          "type": "string"
+        }
+      }
+    },
+    "rewindResponse": {
+      "type": "object",
+      "properties": {
+        "objects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/rewindItem"
+          }
         }
       }
     },

@@ -26,6 +26,8 @@ export const OBJECT_BROWSER_SET_LAST_AS_FILE =
 export const OBJECT_BROWSER_DOWNLOAD_FILE_LOADER =
   "OBJECT_BROWSER/DOWNLOAD_FILE_LOADER";
 export const OBJECT_BROWSER_DOWNLOADED_FILE = "OBJECT_BROWSER/DOWNLOADED_FILE";
+export const REWIND_SET_ENABLE = "REWIND/SET_ENABLE";
+export const REWIND_RESET_REWIND = "REWIND/RESET_REWIND";
 
 interface AddRouteAction {
   type: typeof OBJECT_BROWSER_ADD_ROUTE;
@@ -68,6 +70,17 @@ interface FileDownloaded {
   path: string;
 }
 
+interface RewindSetEnabled {
+  type: typeof REWIND_SET_ENABLE;
+  bucket: string;
+  state: boolean;
+  dateRewind: any;
+}
+
+interface RewindReset {
+  type: typeof REWIND_RESET_REWIND;
+}
+
 export type ObjectBrowserActionTypes =
   | AddRouteAction
   | ResetRoutesList
@@ -76,7 +89,9 @@ export type ObjectBrowserActionTypes =
   | CreateFolder
   | SetLastAsFile
   | SetFileDownload
-  | FileDownloaded;
+  | FileDownloaded
+  | RewindSetEnabled
+  | RewindReset;
 
 export const addRoute = (route: string, label: string, routeType: string) => {
   return {
@@ -132,5 +147,24 @@ export const fileDownloadStarted = (path: string) => {
   return {
     type: OBJECT_BROWSER_DOWNLOADED_FILE,
     path,
+  };
+};
+
+export const setRewindEnable = (
+  state: boolean,
+  bucket: string,
+  dateRewind: any
+) => {
+  return {
+    type: REWIND_SET_ENABLE,
+    state,
+    bucket,
+    dateRewind,
+  };
+};
+
+export const resetRewind = () => {
+  return {
+    type: REWIND_RESET_REWIND,
   };
 };
