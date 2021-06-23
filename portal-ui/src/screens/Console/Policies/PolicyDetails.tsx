@@ -34,6 +34,13 @@ import { Link } from "react-router-dom";
 import { setErrorSnackMessage } from "../../../actions";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import history from "../../../history";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import SearchIcon from "@material-ui/icons/Search";
+import {
+  actionsTray,
+  searchField,
+} from "../Common/FormComponents/common/styleLibrary";
+import TextField from "@material-ui/core/TextField";
 
 interface IPolicyDetailsProps {
   classes: any;
@@ -84,9 +91,6 @@ const styles = (theme: Theme) =>
       "& div": {
         margin: "5px 0px",
       },
-    },
-    actionsTray: {
-      textAlign: "right",
     },
     updateButton: {
       backgroundColor: "transparent",
@@ -148,6 +152,8 @@ const styles = (theme: Theme) =>
       textDecoration: "none",
       color: "black",
     },
+    ...actionsTray,
+    ...searchField,
     ...modalBasic,
     ...containerForHeader(theme.spacing(4)),
   });
@@ -167,6 +173,8 @@ const PolicyDetails = ({
   );
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
   const [loadingPolicy, setLoadingPolicy] = useState<boolean>(true);
+  const [filterUsers, setFilterUsers] = useState<string>("");
+  const [loadingUsers, setLoadingUsers] = useState<boolean>(true);
 
   const saveRecord = (event: React.FormEvent) => {
     event.preventDefault();
@@ -191,14 +199,22 @@ const PolicyDetails = ({
 
   useEffect(() => {
     const loadUsersForPolicy = () => {
-      api
-        .invoke("GET", `/api/v1/policies/${policyName}/users`)
-        .then((result: any) => {
-          setUserList(result);
-        })
-        .catch((err) => {
-          console.log("Error in loading users");
-        });
+      if (loadingUsers) {
+        api
+          .invoke("GET", `/api/v1/policies/${policyName}/users`)
+          .then((result: any) => {
+            var resultUserArray = result.map((x: string) => {
+              return {
+                accessKey: x,
+              };
+            });
+            setUserList(resultUserArray);
+            setLoadingUsers(false);
+          })
+          .catch((err) => {
+            console.log("Error in loading users");
+          });
+      }
     };
     const loadPolicyDetails = () => {
       if (loadingPolicy) {
@@ -223,7 +239,7 @@ const PolicyDetails = ({
       loadPolicyDetails();
       loadUsersForPolicy();
     }
-  }, [policyName, loadingPolicy]);
+  }, [policyName, loadingPolicy, loadingUsers]);
 
   const resetForm = () => {
     setPolicyName("");
@@ -237,6 +253,10 @@ const PolicyDetails = ({
   };
   const userTableActions = [{ type: "view", onClick: userViewAction }];
 
+  const filteredUsers = userList.filter((elementItem) =>
+    elementItem.accessKey.includes(filterUsers)
+  );
+
   return (
     <React.Fragment>
       <PageHeader
@@ -249,86 +269,106 @@ const PolicyDetails = ({
           </Fragment>
         }
       />
-      <Grid container>
-        <Grid item xs={12} className={classes.container}>
-          <Grid item xs={12}>
-            <Tabs
-              value={selectedTab}
-              indicatorColor="primary"
-              textColor="primary"
-              onChange={(_, newValue: number) => {
-                setSelectedTab(newValue);
-              }}
-              aria-label="policy-tabs"
-            >
-              <Tab label="Details" />
-              <Tab label="Users" />
-            </Tabs>
-          </Grid>
-          <Grid item xs={12}>
-            {selectedTab === 0 && (
-              <Paper className={classes.paperContainer}>
-                <form
-                  noValidate
-                  autoComplete="off"
-                  onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                    saveRecord(e);
-                  }}
-                >
-                  <Grid container>
-                    <Grid item xs={12} className={classes.formScrollable}>
-                      <CodeMirrorWrapper
-                        label={`${policy ? "Edit" : "Write"} Policy`}
-                        value={policyDefinition}
-                        onBeforeChange={(editor, data, value) => {
-                          setPolicyDefinition(value);
-                        }}
-                      />
-                    </Grid>
-                    <Grid item xs={12} className={classes.buttonContainer}>
-                      {!policy && (
-                        <button
-                          type="button"
-                          color="primary"
-                          className={classes.clearButton}
-                          onClick={() => {
-                            resetForm();
-                          }}
-                        >
-                          Clear
-                        </button>
-                      )}
-
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        disabled={addLoading || !validSave}
-                      >
-                        Save
-                      </Button>
-                    </Grid>
-                    {addLoading && (
-                      <Grid item xs={12}>
-                        <LinearProgress />
-                      </Grid>
-                    )}
-                  </Grid>
-                </form>
-              </Paper>
-            )}
-            {selectedTab === 1 && (
-              <TableWrapper
-                itemActions={userTableActions}
-                columns={[{ label: "Name", elementKey: "name" }]}
-                isLoading={false}
-                records={userList}
-                entityName="Users"
-                idField="name"
-              />
-            )}
-          </Grid>
+      <Grid item xs={12} className={classes.container}>
+        <Grid item xs={12}>
+          <Tabs
+            value={selectedTab}
+            indicatorColor="primary"
+            textColor="primary"
+            onChange={(_, newValue: number) => {
+              setSelectedTab(newValue);
+            }}
+            aria-label="policy-tabs"
+          >
+            <Tab label="Details" />
+            <Tab label="Users" />
+          </Tabs>
         </Grid>
+        {selectedTab === 0 && (
+          <Paper className={classes.paperContainer}>
+            <form
+              noValidate
+              autoComplete="off"
+              onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                saveRecord(e);
+              }}
+            >
+              <Grid container>
+                <Grid item xs={12} className={classes.formScrollable}>
+                  <CodeMirrorWrapper
+                    label={`${policy ? "Edit" : "Write"} Policy`}
+                    value={policyDefinition}
+                    onBeforeChange={(editor, data, value) => {
+                      setPolicyDefinition(value);
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} className={classes.buttonContainer}>
+                  {!policy && (
+                    <button
+                      type="button"
+                      color="primary"
+                      className={classes.clearButton}
+                      onClick={() => {
+                        resetForm();
+                      }}
+                    >
+                      Clear
+                    </button>
+                  )}
+
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    disabled={addLoading || !validSave}
+                  >
+                    Save
+                  </Button>
+                </Grid>
+                {addLoading && (
+                  <Grid item xs={12}>
+                    <LinearProgress />
+                  </Grid>
+                )}
+              </Grid>
+            </form>
+          </Paper>
+        )}
+        {selectedTab === 1 && (
+          <Grid container>
+            <Grid item xs={12} className={classes.actionsTray}>
+              <TextField
+                placeholder="Search Users"
+                className={classes.searchField}
+                id="search-resource"
+                label=""
+                onChange={(val) => {
+                  setFilterUsers(val.target.value);
+                }}
+                InputProps={{
+                  disableUnderline: true,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.actionsTray}>
+              <br />
+            </Grid>
+            <TableWrapper
+              itemActions={userTableActions}
+              columns={[{ label: "Name", elementKey: "accessKey" }]}
+              isLoading={loadingUsers}
+              records={filteredUsers}
+              entityName="Users"
+              idField="name"
+            />
+          </Grid>
+        )}
       </Grid>
     </React.Fragment>
   );
