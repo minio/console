@@ -135,6 +135,16 @@ func registerTenantHandlers(api *operations.ConsoleAPI) {
 
 	})
 
+	// Delete Pod
+	api.AdminAPIDeletePodHandler = admin_api.DeletePodHandlerFunc(func(params admin_api.DeletePodParams, session *models.Principal) middleware.Responder {
+		err := getDeletePodResponse(session, params)
+		if err != nil {
+			return admin_api.NewTenantInfoDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewTenantInfoOK()
+
+	})
+
 	// Update Tenant
 	api.AdminAPIUpdateTenantHandler = admin_api.UpdateTenantHandlerFunc(func(params admin_api.UpdateTenantParams, session *models.Principal) middleware.Responder {
 		err := getUpdateTenantResponse(session, params)
@@ -284,6 +294,24 @@ func deleteTenantAction(
 		}
 		// delete all tenant's secrets only if deletePvcs = true
 		return clientset.Secrets(namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
+	}
+	return nil
+}
+
+// getDeleteTenantResponse gets the output of deleting a minio instance
+func getDeletePodResponse(session *models.Principal, params admin_api.DeletePodParams) *models.Error {
+	ctx := context.Background()
+	// get Kubernetes Client
+	clientset, err := cluster.K8sClient(session.STSSessionToken)
+	if err != nil {
+		return prepareError(err)
+	}
+	listOpts := metav1.ListOptions{
+		LabelSelector: fmt.Sprintf("v1.min.io/tenant=%s", params.Tenant),
+		FieldSelector: fmt.Sprintf("metadata.name=%s%s", params.Tenant, params.PodName[len(params.Tenant):]),
+	}
+	if err = clientset.CoreV1().Pods(params.Namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, listOpts); err != nil {
+		return prepareError(err)
 	}
 	return nil
 }

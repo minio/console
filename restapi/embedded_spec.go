@@ -2975,6 +2975,44 @@ func init() {
             }
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Delete pod",
+        "operationId": "DeletePod",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "podName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
       }
     },
     "/namespaces/{namespace}/tenants/{tenant}/pods/{podName}/events": {
@@ -10805,6 +10843,44 @@ func init() {
             "schema": {
               "type": "string"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Delete pod",
+        "operationId": "DeletePod",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "podName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",

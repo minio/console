@@ -141,6 +141,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIDeleteObjectRetentionHandler: user_api.DeleteObjectRetentionHandlerFunc(func(params user_api.DeleteObjectRetentionParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteObjectRetention has not yet been implemented")
 		}),
+		AdminAPIDeletePodHandler: admin_api.DeletePodHandlerFunc(func(params admin_api.DeletePodParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.DeletePod has not yet been implemented")
+		}),
 		UserAPIDeleteRemoteBucketHandler: user_api.DeleteRemoteBucketHandlerFunc(func(params user_api.DeleteRemoteBucketParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteRemoteBucket has not yet been implemented")
 		}),
@@ -540,6 +543,8 @@ type ConsoleAPI struct {
 	UserAPIDeleteObjectHandler user_api.DeleteObjectHandler
 	// UserAPIDeleteObjectRetentionHandler sets the operation handler for the delete object retention operation
 	UserAPIDeleteObjectRetentionHandler user_api.DeleteObjectRetentionHandler
+	// AdminAPIDeletePodHandler sets the operation handler for the delete pod operation
+	AdminAPIDeletePodHandler admin_api.DeletePodHandler
 	// UserAPIDeleteRemoteBucketHandler sets the operation handler for the delete remote bucket operation
 	UserAPIDeleteRemoteBucketHandler user_api.DeleteRemoteBucketHandler
 	// UserAPIDeleteServiceAccountHandler sets the operation handler for the delete service account operation
@@ -897,6 +902,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIDeleteObjectRetentionHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteObjectRetentionHandler")
+	}
+	if o.AdminAPIDeletePodHandler == nil {
+		unregistered = append(unregistered, "admin_api.DeletePodHandler")
 	}
 	if o.UserAPIDeleteRemoteBucketHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteRemoteBucketHandler")
@@ -1394,6 +1402,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/buckets/{bucket_name}/objects/retention"] = user_api.NewDeleteObjectRetention(o.context, o.UserAPIDeleteObjectRetentionHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/namespaces/{namespace}/tenants/{tenant}/pods/{podName}"] = admin_api.NewDeletePod(o.context, o.AdminAPIDeletePodHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}

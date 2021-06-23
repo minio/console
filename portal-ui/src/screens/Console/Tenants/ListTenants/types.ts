@@ -45,6 +45,8 @@ export interface IPodListElement {
   restarts: number;
   node: string;
   time: string;
+  namespace?: string;
+  tenant?: string;
 }
 
 export interface IAddPoolRequest {
