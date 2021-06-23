@@ -18,12 +18,12 @@ import { LicenseInfo } from "../../License/types";
 import { IAffinityModel } from "../../../../common/types";
 
 export interface IEvent {
-    namespace: string;
-    last_seen: number;
-    seen: string;
-    message: string;
-    event_type: string;
-    reason: string;
+  namespace: string;
+  last_seen: number;
+  seen: string;
+  message: string;
+  event_type: string;
+  reason: string;
 }
 
 export interface IPool {
@@ -92,6 +92,9 @@ export interface ITenant {
   logEnabled: boolean;
   monitoringEnabled: boolean;
   encryptionEnabled: boolean;
+  minioTLS: boolean;
+  consoleTLS: boolean;
+  consoleEnabled: boolean;
   idpAdEnabled: boolean;
   idpOicEnabled: boolean;
   health_status: string;

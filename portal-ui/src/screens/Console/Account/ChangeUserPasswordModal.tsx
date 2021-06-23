@@ -29,7 +29,6 @@ import {
 import { ChangeUserPasswordRequest } from "../Buckets/types";
 import api from "../../../common/api";
 import { setModalErrorSnackMessage } from "../../../actions";
-import { User } from "../Users/types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -67,6 +66,12 @@ const ChangeUserPassword = ({
       return;
     }
     setLoading(true);
+
+    if (newPassword.length < 8) {
+      setModalErrorSnackMessage("Passwords must be at least 8 characters long");
+      setLoading(false);
+      return;
+    }
 
     if (newPassword.length < 8) {
       setModalErrorSnackMessage("Passwords must be at least 8 characters long");
