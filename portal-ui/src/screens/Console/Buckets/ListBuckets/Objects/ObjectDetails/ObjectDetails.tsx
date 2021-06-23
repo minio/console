@@ -51,7 +51,9 @@ import PageHeader from "../../../../Common/PageHeader/PageHeader";
 import ShareIcon from "../../../../../../icons/ShareIcon";
 import DownloadIcon from "../../../../../../icons/DownloadIcon";
 import DeleteIcon from "../../../../../../icons/DeleteIcon";
-import TableWrapper from "../../../../Common/TableWrapper/TableWrapper";
+import TableWrapper, {
+  ItemActions,
+} from "../../../../Common/TableWrapper/TableWrapper";
 import PencilIcon from "../../../../Common/TableWrapper/TableActionIcons/PencilIcon";
 import SetRetention from "./SetRetention";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
@@ -227,7 +229,7 @@ const ObjectDetails = ({
           setActualInfo(
             result.find((el: IFileInfo) => el.is_latest) || emptyFile
           );
-          setVersions(result.filter((el: IFileInfo) => !el.is_latest));
+          setVersions(result);
           setLoadObjectData(false);
         })
         .catch((error) => {
@@ -292,8 +294,19 @@ const ObjectDetails = ({
     );
   };
 
-  const tableActions = [
-    { type: "share", onClick: shareObject, sendOnlyId: true },
+  const tableActions: ItemActions[] = [
+    {
+      type: "share",
+      onClick: shareObject,
+      sendOnlyId: true,
+      disableButtonFunction: (item: string) => {
+        const element = versions.find((elm) => elm.version_id === item);
+        if (element && element.is_delete_marker) {
+          return true;
+        }
+        return false;
+      },
+    },
     {
       type: "download",
       onClick: (item: IFileInfo) => {
@@ -303,6 +316,13 @@ const ObjectDetails = ({
         return downloadingFiles.includes(
           `${bucketName}/${objectName}-${version}`
         );
+      },
+      disableButtonFunction: (item: string) => {
+        const element = versions.find((elm) => elm.version_id === item);
+        if (element && element.is_delete_marker) {
+          return true;
+        }
+        return false;
       },
     },
   ];
@@ -485,6 +505,7 @@ const ObjectDetails = ({
                   onClick={() => {
                     shareObject();
                   }}
+                  disabled={actualInfo.is_delete_marker}
                 >
                   <ShareIcon />
                 </IconButton>
@@ -509,6 +530,7 @@ const ObjectDetails = ({
                     onClick={() => {
                       downloadObject(actualInfo);
                     }}
+                    disabled={actualInfo.is_delete_marker}
                   >
                     <DownloadIcon />
                   </IconButton>
@@ -523,7 +545,7 @@ const ObjectDetails = ({
                   onClick={() => {
                     setDeleteOpen(true);
                   }}
-                  disabled={rewindEnabled}
+                  disabled={actualInfo.is_delete_marker}
                 >
                   <DeleteIcon />
                 </IconButton>
@@ -592,11 +614,30 @@ const ObjectDetails = ({
               <TableWrapper
                 itemActions={tableActions}
                 columns={[
+                  {
+                    label: "",
+                    width: 20,
+                    renderFullObject: true,
+                    renderFunction: (r) => {
+                      const versOrd = versions.length - versions.indexOf(r);
+                      return `v${versOrd}`;
+                    },
+                  },
                   { label: "Version ID", elementKey: "version_id" },
                   {
                     label: "Last Modified",
                     elementKey: "last_modified",
                     renderFunction: displayParsedDate,
+                  },
+                  {
+                    label: "Deleted",
+                    width: 60,
+                    contentTextAlign: "center",
+                    renderFullObject: true,
+                    renderFunction: (r) => {
+                      const versOrd = r.is_delete_marker ? "Yes" : "No";
+                      return `${versOrd}`;
+                    },
                   },
                 ]}
                 isLoading={false}

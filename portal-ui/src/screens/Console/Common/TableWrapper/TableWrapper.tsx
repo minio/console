@@ -41,7 +41,7 @@ import CheckboxWrapper from "../FormComponents/CheckboxWrapper/CheckboxWrapper";
 
 //Interfaces for table Items
 
-interface ItemActions {
+export interface ItemActions {
   type: string;
   to?: string;
   sendOnlyId?: boolean;
