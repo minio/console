@@ -208,6 +208,7 @@ const PolicyDetails = ({
           })
           .catch((err) => {
             console.log("Error in loading users");
+            setLoadingUsers(false);
           });
       }
     };
