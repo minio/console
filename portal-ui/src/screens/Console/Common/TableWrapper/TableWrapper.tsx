@@ -53,7 +53,7 @@ export interface ItemActions {
 
 interface IColumns {
   label: string;
-  elementKey: string;
+  elementKey?: string;
   renderFunction?: (input: any) => any;
   renderFullObject?: boolean;
   globalClass?: any;
@@ -300,7 +300,7 @@ const subRenderFunction = (
 ) => {
   const itemElement = isString(rowData)
     ? rowData
-    : get(rowData, column.elementKey, null); // If the element is just a string, we render it as it is
+    : get(rowData, column.elementKey!, null); // If the element is just a string, we render it as it is
   const renderConst = column.renderFullObject ? rowData : itemElement;
 
   const renderElement = column.renderFunction
@@ -328,7 +328,7 @@ const calculateColumnRest = (
 
   if (columnsSelector) {
     colsItems = columns.filter((column) =>
-      columnsShown.includes(column.elementKey)
+      columnsShown.includes(column.elementKey!)
     );
   }
 
@@ -373,7 +373,7 @@ const generateColumnsMap = (
     columnsShown
   );
   return columns.map((column: IColumns, index: number) => {
-    if (columnsSelector && !columnsShown.includes(column.elementKey)) {
+    if (columnsSelector && !columnsShown.includes(column.elementKey!)) {
       return null;
     }
 
@@ -382,7 +382,7 @@ const generateColumnsMap = (
     return (
       <Column
         key={`col-tb-${index.toString()}`}
-        dataKey={column.elementKey}
+        dataKey={column.elementKey!}
         headerClassName={`titleHeader ${
           column.headerTextAlign ? `text-${column.headerTextAlign}` : ""
         }`}
@@ -576,9 +576,9 @@ const TableWrapper = ({
                 <CheckboxWrapper
                   key={`tableColumns-${column.label}`}
                   label={column.label}
-                  checked={columnsShown.includes(column.elementKey)}
+                  checked={columnsShown.includes(column.elementKey!)}
                   onChange={(e) => {
-                    onColumnChange(column.elementKey, e.target.checked);
+                    onColumnChange(column.elementKey!, e.target.checked);
                   }}
                   id={`chbox-${column.label}`}
                   name={`chbox-${column.label}`}
