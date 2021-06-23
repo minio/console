@@ -54,6 +54,7 @@ var (
 	storageVolumes              = "/storage/volumes"
 	storageDrives               = "/storage/drives"
 	remoteBuckets               = "/remote-buckets"
+	remoteBucketsDetail         = "/remote-buckets/:bucketName"
 	replication                 = "/replication"
 	objectBrowser               = "/object-browser/:bucket/*"
 	objectBrowserBucket         = "/object-browser/:bucket"
@@ -306,6 +307,7 @@ var endpointRules = map[string]ConfigurationActionSet{
 	serviceAccounts:             serviceAccountsActionSet,
 	changePassword:              changePasswordActionSet,
 	remoteBuckets:               remoteBucketsActionSet,
+	remoteBucketsDetail:         remoteBucketsActionSet,
 	replication:                 replicationActionSet,
 	objectBrowser:               objectBrowserActionSet,
 	mainObjectBrowser:           objectBrowserActionSet,

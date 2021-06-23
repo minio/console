@@ -36,6 +36,7 @@ import { ISessionResponse } from "./types";
 import { snackBarMessage } from "../../types";
 import { snackBarCommon } from "./Common/FormComponents/common/styleLibrary";
 import Buckets from "./Buckets/Buckets";
+import RemoteBuckets from "./Buckets/RemoteBuckets";
 import Policies from "./Policies/Policies";
 import Dashboard from "./Dashboard/Dashboard";
 import Menu from "./Menu/Menu";
@@ -226,6 +227,10 @@ const Console = ({
     {
       component: Buckets,
       path: "/buckets",
+    },
+    {
+      component: RemoteBuckets,
+      path: "/remote-buckets",
     },
     {
       component: Buckets,
