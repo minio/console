@@ -28,7 +28,7 @@ import {
 import api from "../../../common/api";
 import { setErrorSnackMessage } from "../../../actions";
 import history from "../../../history";
-import { User, UsersList } from "./types";
+import { UsersList } from "./types";
 
 interface IDeleteUserProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;

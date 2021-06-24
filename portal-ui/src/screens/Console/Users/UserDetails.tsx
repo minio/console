@@ -29,7 +29,7 @@ import {
   containerForHeader,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
-import { IPolicyItem, User, UsersList } from "./types";
+import { IPolicyItem, User } from "./types";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import { TabPanel } from "../../shared/tabs";
@@ -45,7 +45,6 @@ import UserServiceAccountsPanel from "./UserServiceAccountsPanel";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import ChangeUserPasswordModal from "../Account/ChangeUserPasswordModal";
 import DeleteUserString from "./DeleteUserString";
-import { usersSort } from "../../../utils/sortFunctions";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -139,7 +138,6 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
   const [addGroupOpen, setAddGroupOpen] = useState<boolean>(false);
   const [policyOpen, setPolicyOpen] = useState<boolean>(false);
   const [addLoading, setAddLoading] = useState<boolean>(false);
-  const [records, setRecords] = useState<User[]>([]);
 
   const [enabled, setEnabled] = useState<boolean>(false);
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
@@ -217,22 +215,6 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
       });
   };
 
-  const fetchRecords = useCallback(() => {
-    setLoading(true);
-    api
-      .invoke("GET", `/api/v1/users`)
-      .then((res: UsersList) => {
-        const users = res.users === null ? [] : res.users;
-
-        setLoading(false);
-        setRecords(users.sort(usersSort));
-      })
-      .catch((err) => {
-        setLoading(false);
-        setErrorSnackMessage(err);
-      });
-  }, [setLoading, setRecords, setErrorSnackMessage]);
-
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleUserMenu = (event: any) => {
@@ -248,7 +230,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
     if (refresh) {
-      fetchRecords();
+      getUserInformation();
     }
   };
 
