@@ -1,4 +1,4 @@
-import { ITenant } from "../ListTenants/types";
+import React, { useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import {
   containerForHeader,
@@ -13,7 +13,6 @@ import {
   DialogTitle,
   LinearProgress,
 } from "@material-ui/core";
-import React, { useState } from "react";
 
 interface IConfirmationDialog {
   classes: any;

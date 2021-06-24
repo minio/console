@@ -29,9 +29,6 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import { AppState } from "../../../../store";
 import {
   setTenantDetailsLoad,
-  setTenantInfo,
-  setTenantName,
-  setTenantTab,
 } from "../actions";
 
 interface IPodsSummary {

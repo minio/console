@@ -31,13 +31,7 @@ import {
   Button,
   CircularProgress,
   Divider,
-  LinearProgress,
   Typography,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
 } from "@material-ui/core";
 import { KeyPair } from "../ListTenants/utils";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
@@ -296,11 +290,11 @@ const TenantSecurity = ({
 
     // Update MinIO TLS certificate secrets
     const updatedMinIOTLSCertificateSecrets = minioTLSCertificateSecrets.filter(
-      (certificateSecret) => certificateSecret.name != certificateInfo.name
+      (certificateSecret) => certificateSecret.name !== certificateInfo.name
     );
     const updatedMinIOTLSCaCertificateSecrets =
       minioTLSCaCertificateSecrets.filter(
-        (certificateSecret) => certificateSecret.name != certificateInfo.name
+        (certificateSecret) => certificateSecret.name !== certificateInfo.name
       );
     setMinioTLSCertificateSecrets(updatedMinIOTLSCertificateSecrets);
     setMinioTLSCaCertificateSecrets(updatedMinIOTLSCaCertificateSecrets);
@@ -308,11 +302,11 @@ const TenantSecurity = ({
     // Update Console TLS certificate secrets
     const updatedConsoleTLSCertificateSecrets =
       consoleTLSCertificateSecrets.filter(
-        (certificateSecret) => certificateSecret.name != certificateInfo.name
+        (certificateSecret) => certificateSecret.name !== certificateInfo.name
       );
     const updatedConsoleTLSCaCertificateSecrets =
       consoleTLSCaCertificateSecrets.filter(
-        (certificateSecret) => certificateSecret.name != certificateInfo.name
+        (certificateSecret) => certificateSecret.name !== certificateInfo.name
       );
     setConsoleTLSCertificateSecrets(updatedConsoleTLSCertificateSecrets);
     setConsoleTLSCaCertificateSecrets(updatedConsoleTLSCaCertificateSecrets);
@@ -921,7 +915,7 @@ const TenantSecurity = ({
                 type="submit"
                 variant="contained"
                 color="primary"
-                disabled={dialogOpen}
+                disabled={dialogOpen || isSending}
                 onClick={() => setDialogOpen(true)}
               >
                 Save
