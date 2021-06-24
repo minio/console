@@ -4246,6 +4246,10 @@ definitions:
         type: array
         items:
           type: string
+      console_ca_certificates:
+        type: array
+        items:
+          type: string
 
   idpConfiguration:
     type: object

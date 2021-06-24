@@ -29,6 +29,9 @@ import {
   ADD_TENANT_ADD_FILE_TO_CA_KEYPAIR,
   ADD_TENANT_DELETE_CA_KEYPAIR,
   ADD_TENANT_ADD_CONSOLE_CERT,
+  ADD_TENANT_ADD_CONSOLE_CA_KEYPAIR,
+  ADD_TENANT_ADD_FILE_TO_CONSOLE_CA_KEYPAIR,
+  ADD_TENANT_DELETE_CONSOLE_CA_KEYPAIR,
   ADD_TENANT_ADD_FILE_TO_MINIO_KEYPAIR,
   ADD_TENANT_ENCRYPTION_SERVER_CERT,
   ADD_TENANT_ENCRYPTION_CLIENT_CERT,
@@ -179,6 +182,15 @@ const initialState: ITenantState = {
         },
       ],
       caCertificates: [
+        {
+          id: Date.now().toString(),
+          key: "",
+          cert: "",
+          encoded_key: "",
+          encoded_cert: "",
+        },
+      ],
+      consoleCaCertificates: [
         {
           id: Date.now().toString(),
           key: "",
@@ -373,14 +385,13 @@ export function tenantsReducer(
       newState.createTenant.certificates.caCertificates = [...NACList];
       return { ...newState };
     case ADD_TENANT_DELETE_CA_KEYPAIR:
-      const CACertsList = state.createTenant.certificates.minioCertificates;
-
+      const CACertsList = state.createTenant.certificates.caCertificates;
       if (CACertsList.length > 1) {
-        const cleanMinioCertsList = CACertsList.filter(
+        const cleanCaCertsList = CACertsList.filter(
           (item: KeyPair) => item.id !== action.id
         );
         newState.createTenant.certificates.caCertificates = [
-          ...cleanMinioCertsList,
+          ...cleanCaCertsList,
         ];
         return { ...newState };
       }
@@ -395,6 +406,52 @@ export function tenantsReducer(
       };
 
       return { ...newState };
+    case ADD_TENANT_ADD_CONSOLE_CA_KEYPAIR:
+      const ConsoleCACerts = [
+        ...state.createTenant.certificates.consoleCaCertificates,
+        {
+          id: Date.now().toString(),
+          key: "",
+          cert: "",
+          encoded_key: "",
+          encoded_cert: "",
+        },
+      ];
+      newState.createTenant.certificates.consoleCaCertificates = [
+        ...ConsoleCACerts,
+      ];
+      return { ...newState };
+    case ADD_TENANT_ADD_FILE_TO_CONSOLE_CA_KEYPAIR:
+      const consoleCaCertificates =
+        state.createTenant.certificates.consoleCaCertificates;
+
+      const consoleNACList = consoleCaCertificates.map((item: KeyPair) => {
+        if (item.id === action.id) {
+          return {
+            ...item,
+            [action.key]: action.fileName,
+            [`encoded_${action.key}`]: action.value,
+          };
+        }
+        return item;
+      });
+      newState.createTenant.certificates.consoleCaCertificates = [
+        ...consoleNACList,
+      ];
+      return { ...newState };
+    case ADD_TENANT_DELETE_CONSOLE_CA_KEYPAIR:
+      const consoleCACertsList =
+        state.createTenant.certificates.consoleCaCertificates;
+      if (consoleCACertsList.length > 1) {
+        const cleanCaCertsList = consoleCACertsList.filter(
+          (item: KeyPair) => item.id !== action.id
+        );
+        newState.createTenant.certificates.consoleCaCertificates = [
+          ...cleanCaCertsList,
+        ];
+        return { ...newState };
+      }
+      return { ...state };
     case ADD_TENANT_ENCRYPTION_SERVER_CERT:
       const encServerCert = state.createTenant.certificates.serverCertificate;
 
@@ -582,6 +639,15 @@ export function tenantsReducer(
               },
             ],
             caCertificates: [
+              {
+                id: Date.now().toString(),
+                key: "",
+                cert: "",
+                encoded_key: "",
+                encoded_cert: "",
+              },
+            ],
+            consoleCaCertificates: [
               {
                 id: Date.now().toString(),
                 key: "",

@@ -1261,6 +1261,30 @@ func getTenantCreatedResponse(session *models.Principal, params admin_api.Create
 			minInst.Spec.Console.Labels = tenantReq.Console.Labels
 			minInst.Spec.Console.NodeSelector = tenantReq.Console.NodeSelector
 		}
+
+		// External TLS CA certificates for Console
+		if tenantReq.TLS != nil && len(tenantReq.TLS.ConsoleCaCertificates) > 0 {
+			var caCertificates []tenantSecret
+			for i, caCertificate := range tenantReq.TLS.ConsoleCaCertificates {
+				certificateContent, err := base64.StdEncoding.DecodeString(caCertificate)
+				if err != nil {
+					return nil, prepareError(errorGeneric, nil, err)
+				}
+				caCertificates = append(caCertificates, tenantSecret{
+					Name: fmt.Sprintf("console-ca-certificate-%d", i),
+					Content: map[string][]byte{
+						"public.crt": certificateContent,
+					},
+				})
+			}
+			if len(caCertificates) > 0 {
+				certificateSecrets, err := createOrReplaceSecrets(ctx, &k8sClient, ns, caCertificates, tenantName)
+				if err != nil {
+					return nil, prepareError(errorGeneric, nil, err)
+				}
+				minInst.Spec.Console.ExternalCaCertSecret = certificateSecrets
+			}
+		}
 	}
 
 	// add annotations

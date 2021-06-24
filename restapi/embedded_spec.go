@@ -7490,6 +7490,12 @@ func init() {
           "type": "object",
           "$ref": "#/definitions/keyPairConfiguration"
         },
+        "console_ca_certificates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "minio": {
           "type": "array",
           "items": {
@@ -15844,6 +15850,12 @@ func init() {
         "console": {
           "type": "object",
           "$ref": "#/definitions/keyPairConfiguration"
+        },
+        "console_ca_certificates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "minio": {
           "type": "array",
