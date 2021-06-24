@@ -188,14 +188,23 @@ const BucketReplicationPanel = ({
 
   const filteredRecords = replicationRules.filter(
     (item: BucketReplicationRule) => {
-      if (
-        (item.prefix &&
-          item.prefix.toLowerCase().includes(filter.toLowerCase())) ||
-        (item.tags && item.tags.toLowerCase().includes(filter.toLowerCase()))
-      ) {
-        return true;
+      if (filter !== "") {
+        if (
+          (item.prefix &&
+            item.prefix.toLowerCase().includes(filter.toLowerCase())) ||
+          (item.tags &&
+            item.tags.toLowerCase().includes(filter.toLowerCase())) ||
+          (item.destination &&
+            item.destination.bucket
+              .toLowerCase()
+              .includes(filter.toLowerCase()))
+        ) {
+          return true;
+        }
+
+        return false;
       }
-      return false;
+      return true;
     }
   );
 
