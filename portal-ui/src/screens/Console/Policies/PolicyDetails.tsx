@@ -227,6 +227,7 @@ const PolicyDetails = ({
           })
           .catch((err) => {
             setErrorSnackMessage(err);
+            setLoadingPolicy(false);
           });
       }
     };
@@ -243,7 +244,6 @@ const PolicyDetails = ({
     setUserList,
     setPolicyDefinition,
     setPolicy,
-    addLoading,
     setLoadingUsers,
   ]);
 
