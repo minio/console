@@ -27,7 +27,6 @@ import { Button, LinearProgress } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import { User } from "../Users/types";
 import api from "../../../common/api";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import { Link } from "react-router-dom";
