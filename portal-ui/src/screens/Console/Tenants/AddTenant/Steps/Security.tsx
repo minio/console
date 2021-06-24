@@ -32,6 +32,9 @@ import {
   addFileToKeyPair,
   deleteKeyPair,
   addConsoleCertificate,
+  addFileToConsoleCaCertificates,
+  deleteConsoleCaCertificate,
+  addConsoleCaCertificate,
 } from "../../actions";
 import { AppState } from "../../../../../store";
 import { KeyPair } from "../../ListTenants/utils";
@@ -51,6 +54,10 @@ interface ISecurityProps {
   addFileToCaCertificates: typeof addFileToCaCertificates;
   deleteCaCertificate: typeof deleteCaCertificate;
   addCaCertificate: typeof addCaCertificate;
+  consoleCaCertificates: KeyPair[];
+  addFileToConsoleCaCertificates: typeof addFileToConsoleCaCertificates;
+  deleteConsoleCaCertificate: typeof deleteConsoleCaCertificate;
+  addConsoleCaCertificate: typeof addConsoleCaCertificate;
   addKeyPair: typeof addKeyPair;
   addFileToKeyPair: typeof addFileToKeyPair;
   deleteKeyPair: typeof deleteKeyPair;
@@ -79,6 +86,10 @@ const Security = ({
   addFileToCaCertificates,
   deleteCaCertificate,
   addCaCertificate,
+  consoleCaCertificates,
+  addFileToConsoleCaCertificates,
+  deleteConsoleCaCertificate,
+  addConsoleCaCertificate,
   addKeyPair,
   addFileToKeyPair,
   deleteKeyPair,
@@ -246,7 +257,7 @@ const Security = ({
               <Grid container>
                 <Grid item xs={12}>
                   <Typography variant="overline" display="block" gutterBottom>
-                    CA Certificates
+                    MinIO CA Certificates
                   </Typography>
                 </Grid>
                 {caCertificates.map((keyPair: KeyPair) => (
@@ -324,6 +335,49 @@ const Security = ({
                   />
                 </Grid>
               </Grid>
+              <Grid container>
+                <Grid item xs={12}>
+                  <Typography variant="overline" display="block" gutterBottom>
+                    Console CA Certificates
+                  </Typography>
+                </Grid>
+                {consoleCaCertificates.map((keyPair: KeyPair) => (
+                  <Fragment key={keyPair.id}>
+                    <Grid item xs={10}>
+                      <FileSelector
+                        onChange={(encodedValue, fileName) => {
+                          addFileToConsoleCaCertificates(
+                            keyPair.id,
+                            "cert",
+                            fileName,
+                            encodedValue
+                          );
+                        }}
+                        accept=".cer,.crt,.cert,.pem"
+                        id="tlsCert"
+                        name="tlsCert"
+                        label="Cert"
+                        value={keyPair.cert}
+                      />
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Button
+                        onClick={() => {
+                          deleteConsoleCaCertificate(keyPair.id);
+                        }}
+                        color="secondary"
+                      >
+                        Remove
+                      </Button>
+                    </Grid>
+                  </Fragment>
+                ))}
+                <Grid item xs={12}>
+                  <Button onClick={addConsoleCaCertificate} color="primary">
+                    Add More
+                  </Button>
+                </Grid>
+              </Grid>
             </Fragment>
           )}
         </Fragment>
@@ -339,6 +393,8 @@ const mapState = (state: AppState) => ({
     state.tenants.createTenant.fields.security.enableCustomCerts,
   minioCertificates: state.tenants.createTenant.certificates.minioCertificates,
   caCertificates: state.tenants.createTenant.certificates.caCertificates,
+  consoleCaCertificates:
+    state.tenants.createTenant.certificates.consoleCaCertificates,
   consoleCertificate:
     state.tenants.createTenant.certificates.consoleCertificate,
 });
@@ -353,6 +409,9 @@ const connector = connect(mapState, {
   addFileToKeyPair,
   deleteKeyPair,
   addConsoleCertificate,
+  addFileToConsoleCaCertificates,
+  deleteConsoleCaCertificate,
+  addConsoleCaCertificate,
 });
 
 export default withStyles(styles)(connector(Security));

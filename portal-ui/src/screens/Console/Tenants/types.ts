@@ -40,6 +40,12 @@ export const ADD_TENANT_ADD_FILE_TO_CA_KEYPAIR =
   "ADD_TENANT/ADD_FILE_TO_CA_KEYPAIR";
 export const ADD_TENANT_DELETE_CA_KEYPAIR = "ADD_TENANT/DELETE_CA_KEYPAIR";
 export const ADD_TENANT_ADD_CONSOLE_CERT = "ADD_TENANT/ADD_CONSOLE_CERT";
+export const ADD_TENANT_ADD_CONSOLE_CA_KEYPAIR =
+  "ADD_TENANT/ADD_CONSOLE_CA_KEYPAIR";
+export const ADD_TENANT_ADD_FILE_TO_CONSOLE_CA_KEYPAIR =
+  "ADD_TENANT/ADD_FILE_TO_CONSOLE_CA_KEYPAIR";
+export const ADD_TENANT_DELETE_CONSOLE_CA_KEYPAIR =
+  "ADD_TENANT/DELETE_CONSOLE_CA_KEYPAIR";
 
 // Encryption
 export const ADD_TENANT_ENCRYPTION_SERVER_CERT =
@@ -90,6 +96,7 @@ export interface ICreateTenant {
 export interface ICertificatesItems {
   minioCertificates: KeyPair[];
   caCertificates: KeyPair[];
+  consoleCaCertificates: KeyPair[];
   consoleCertificate: KeyPair;
   serverCertificate: KeyPair;
   clientCertificate: KeyPair;
@@ -296,6 +303,22 @@ interface DeleteCAKeyPair {
   type: typeof ADD_TENANT_DELETE_CA_KEYPAIR;
   id: string;
 }
+interface AddConsoleCAKeyPair {
+  type: typeof ADD_TENANT_ADD_CONSOLE_CA_KEYPAIR;
+}
+
+interface AddFileToConsoleCAKeyPair {
+  type: typeof ADD_TENANT_ADD_FILE_TO_CONSOLE_CA_KEYPAIR;
+  id: string;
+  key: string;
+  fileName: string;
+  value: string;
+}
+
+interface DeleteConsoleCAKeyPair {
+  type: typeof ADD_TENANT_DELETE_CONSOLE_CA_KEYPAIR;
+  id: string;
+}
 
 interface AddFileConsoleCert {
   type: typeof ADD_TENANT_ADD_CONSOLE_CERT;
@@ -376,9 +399,12 @@ export type TenantsManagementTypes =
   | DeleteMinioKeyPair
   | AddCAKeyPair
   | DeleteCAKeyPair
+  | AddConsoleCAKeyPair
+  | DeleteConsoleCAKeyPair
   | AddFileConsoleCert
   | AddFileToMinioKeyPair
   | AddFileToCAKeyPair
+  | AddFileToConsoleCAKeyPair
   | AddFileServerCert
   | AddFileClientCert
   | AddFileVaultCert

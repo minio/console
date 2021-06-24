@@ -30,6 +30,9 @@ import {
   ADD_TENANT_DELETE_MINIO_KEYPAIR,
   ADD_TENANT_ADD_FILE_TO_MINIO_KEYPAIR,
   ADD_TENANT_ADD_CONSOLE_CERT,
+  ADD_TENANT_ADD_CONSOLE_CA_KEYPAIR,
+  ADD_TENANT_DELETE_CONSOLE_CA_KEYPAIR,
+  ADD_TENANT_ADD_FILE_TO_CONSOLE_CA_KEYPAIR,
   ADD_TENANT_ENCRYPTION_SERVER_CERT,
   ADD_TENANT_ENCRYPTION_CLIENT_CERT,
   ADD_TENANT_ENCRYPTION_VAULT_CERT,
@@ -117,6 +120,34 @@ export const addFileToCaCertificates = (
 ) => {
   return {
     type: ADD_TENANT_ADD_FILE_TO_CA_KEYPAIR,
+    id,
+    key,
+    fileName,
+    value,
+  };
+};
+
+export const addConsoleCaCertificate = () => {
+  return {
+    type: ADD_TENANT_ADD_CONSOLE_CA_KEYPAIR,
+  };
+};
+
+export const deleteConsoleCaCertificate = (id: string) => {
+  return {
+    type: ADD_TENANT_DELETE_CONSOLE_CA_KEYPAIR,
+    id,
+  };
+};
+
+export const addFileToConsoleCaCertificates = (
+  id: string,
+  key: string,
+  fileName: string,
+  value: string
+) => {
+  return {
+    type: ADD_TENANT_ADD_FILE_TO_CONSOLE_CA_KEYPAIR,
     id,
     key,
     fileName,

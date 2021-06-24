@@ -42,6 +42,9 @@ type TLSConfiguration struct {
 	// console
 	Console *KeyPairConfiguration `json:"console,omitempty"`
 
+	// console ca certificates
+	ConsoleCaCertificates []string `json:"console_ca_certificates"`
+
 	// minio
 	Minio []*KeyPairConfiguration `json:"minio"`
 }
