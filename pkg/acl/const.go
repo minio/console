@@ -14,10 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+// +build !operator
+
 package acl
 
+// indicates if LDAP authentication to be enabled
 const (
-	consoleOperatorMode = "CONSOLE_OPERATOR_MODE"
-	// const for ldap configuration
 	ConsoleLDAPEnabled = "CONSOLE_LDAP_ENABLED"
 )

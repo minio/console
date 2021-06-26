@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+// +build !operator
+
 package acl
 
 import (
@@ -21,11 +23,6 @@ import (
 
 	"github.com/minio/pkg/env"
 )
-
-// GetOperatorMode gets Console Operator mode status set on env variable or default one
-func GetOperatorMode() bool {
-	return strings.ToLower(env.Get(consoleOperatorMode, "off")) == "on"
-}
 
 func GetLDAPEnabled() bool {
 	return strings.ToLower(env.Get(ConsoleLDAPEnabled, "off")) == "on"

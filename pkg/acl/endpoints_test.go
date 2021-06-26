@@ -1,4 +1,4 @@
-// This file is part of MinIO Orchestrator
+// This file is part of MinIO Console
 // Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -13,6 +13,8 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+// +build !operator
 
 package acl
 
@@ -99,50 +101,6 @@ func TestGetAuthorizedEndpoints(t *testing.T) {
 				[]string{},
 			},
 			want: 5,
-		},
-	}
-
-	validateEndpoints(t, tests)
-}
-
-func TestOperatorOnlyEndpoints(t *testing.T) {
-	operatorOnly = true
-
-	tests := []endpoint{
-		{
-			name: "Operator Only - all admin endpoints",
-			args: args{
-				[]string{
-					"admin:*",
-				},
-			},
-			want: 13,
-		},
-		{
-			name: "Operator Only - all s3 endpoints",
-			args: args{
-				[]string{
-					"s3:*",
-				},
-			},
-			want: 13,
-		},
-		{
-			name: "Operator Only - all admin and s3 endpoints",
-			args: args{
-				[]string{
-					"admin:*",
-					"s3:*",
-				},
-			},
-			want: 13,
-		},
-		{
-			name: "Operator Only - default endpoints",
-			args: args{
-				[]string{},
-			},
-			want: 13,
 		},
 	}
 

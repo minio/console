@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+// +build !operator
+
 package acl
 
 import (
@@ -22,7 +24,7 @@ import (
 
 // endpoints definition
 var (
-	configuration               = "/settings"
+	config                      = "/settings"
 	users                       = "/users"
 	usersDetail                 = "/users/:userName"
 	groups                      = "/groups"
@@ -41,18 +43,6 @@ var (
 	bucketsDetailAccessUsers    = "/buckets/:bucketName/access/users"
 	serviceAccounts             = "/account"
 	changePassword              = "/account/change-password"
-	tenants                     = "/tenants"
-	tenantsDetail               = "/namespaces/:tenantNamespace/tenants/:tenantName"
-	podsDetail                  = "/namespaces/:tenantNamespace/tenants/:tenantName/pods/:podName"
-	tenantsDetailSummary        = "/namespaces/:tenantNamespace/tenants/:tenantName/summary"
-	tenantsDetailMetrics        = "/namespaces/:tenantNamespace/tenants/:tenantName/metrics"
-	tenantsDetailPods           = "/namespaces/:tenantNamespace/tenants/:tenantName/pods"
-	tenantsDetailPools          = "/namespaces/:tenantNamespace/tenants/:tenantName/pools"
-	tenantsDetailLicense        = "/namespaces/:tenantNamespace/tenants/:tenantName/license"
-	tenantsDetailSecurity       = "/namespaces/:tenantNamespace/tenants/:tenantName/security"
-	storage                     = "/storage"
-	storageVolumes              = "/storage/volumes"
-	storageDrives               = "/storage/drives"
 	remoteBuckets               = "/remote-buckets"
 	replication                 = "/replication"
 	objectBrowser               = "/object-browser/:bucket/*"
@@ -66,13 +56,8 @@ var (
 	healthInfo                  = "/health-info"
 )
 
-type ConfigurationActionSet struct {
-	actionTypes iampolicy.ActionSet
-	actions     iampolicy.ActionSet
-}
-
-// configurationActionSet contains the list of admin actions required for this endpoint to work
-var configurationActionSet = ConfigurationActionSet{
+// configActionSet contains the list of admin actions required for this endpoint to work
+var configActionSet = actionsSet{
 	actionTypes: iampolicy.NewActionSet(
 		iampolicy.AllAdminActions,
 	),
@@ -82,7 +67,7 @@ var configurationActionSet = ConfigurationActionSet{
 }
 
 // dashboardActionSet contains the list of admin actions required for this endpoint to work
-var dashboardActionSet = ConfigurationActionSet{
+var dashboardActionSet = actionsSet{
 	actionTypes: iampolicy.NewActionSet(
 		iampolicy.AllAdminActions,
 	),
@@ -92,21 +77,21 @@ var dashboardActionSet = ConfigurationActionSet{
 }
 
 // groupsActionSet contains the list of admin actions required for this endpoint to work
-var groupsActionSet = ConfigurationActionSet{
+var groupsActionSet = actionsSet{
 	actionTypes: iampolicy.NewActionSet(
 		iampolicy.AllAdminActions,
 	),
 	actions: iampolicy.NewActionSet(
 		iampolicy.ListGroupsAdminAction,
 		iampolicy.AddUserToGroupAdminAction,
-		//iampolicy.GetGroupAdminAction,
+		iampolicy.GetGroupAdminAction,
 		iampolicy.EnableGroupAdminAction,
 		iampolicy.DisableGroupAdminAction,
 	),
 }
 
 // iamPoliciesActionSet contains the list of admin actions required for this endpoint to work
-var iamPoliciesActionSet = ConfigurationActionSet{
+var iamPoliciesActionSet = actionsSet{
 	actionTypes: iampolicy.NewActionSet(
 		iampolicy.AllAdminActions,
 	),
@@ -120,7 +105,7 @@ var iamPoliciesActionSet = ConfigurationActionSet{
 }
 
 // profilingActionSet contains the list of admin actions required for this endpoint to work
-var profilingActionSet = ConfigurationActionSet{
+var profilingActionSet = actionsSet{
 	actionTypes: iampolicy.NewActionSet(
 		iampolicy.AllAdminActions,
 	),
@@ -130,7 +115,7 @@ var profilingActionSet = ConfigurationActionSet{
 }
 
 // usersActionSet contains the list of admin actions required for this endpoint to work
-var usersActionSet = ConfigurationActionSet{
+var usersActionSet = actionsSet{
 	actionTypes: iampolicy.NewActionSet(
 		iampolicy.AllAdminActions,
 	),
@@ -145,7 +130,7 @@ var usersActionSet = ConfigurationActionSet{
 }
 
 // bucketsActionSet contains the list of admin actions required for this endpoint to work
-var bucketsActionSet = ConfigurationActionSet{
+var bucketsActionSet = actionsSet{
 	actionTypes: iampolicy.NewActionSet(
 		iampolicy.AllActions,
 	),
@@ -171,13 +156,13 @@ var bucketsActionSet = ConfigurationActionSet{
 }
 
 // serviceAccountsActionSet no actions needed for this module to work
-var serviceAccountsActionSet = ConfigurationActionSet{
+var serviceAccountsActionSet = actionsSet{
 	actionTypes: iampolicy.NewActionSet(),
 	actions:     iampolicy.NewActionSet(),
 }
 
 // changePasswordActionSet requires admin:CreateUser policy permission
-var changePasswordActionSet = ConfigurationActionSet{
+var changePasswordActionSet = actionsSet{
 	actionTypes: iampolicy.NewActionSet(
 		iampolicy.AllAdminActions,
 	),
@@ -186,18 +171,7 @@ var changePasswordActionSet = ConfigurationActionSet{
 	),
 }
 
-// tenantsActionSet temporally no actions needed for tenants sections to work
-var tenantsActionSet = ConfigurationActionSet{
-	actionTypes: iampolicy.NewActionSet(),
-	actions:     iampolicy.NewActionSet(),
-}
-
-var storageActionSet = ConfigurationActionSet{
-	actionTypes: iampolicy.NewActionSet(),
-	actions:     iampolicy.NewActionSet(),
-}
-
-var remoteBucketsActionSet = ConfigurationActionSet{
+var remoteBucketsActionSet = actionsSet{
 	actionTypes: iampolicy.NewActionSet(
 		iampolicy.AllAdminActions,
 	),
@@ -206,7 +180,7 @@ var remoteBucketsActionSet = ConfigurationActionSet{
 	),
 }
 
-var replicationActionSet = ConfigurationActionSet{
+var replicationActionSet = actionsSet{
 	actionTypes: iampolicy.NewActionSet(
 		iampolicy.AllAdminActions,
 	),
@@ -216,19 +190,13 @@ var replicationActionSet = ConfigurationActionSet{
 }
 
 // objectBrowserActionSet no actions needed for this module to work
-var objectBrowserActionSet = ConfigurationActionSet{
-	actionTypes: iampolicy.NewActionSet(),
-	actions:     iampolicy.NewActionSet(),
-}
-
-// licenseActionSet no actions needed for this module to work
-var licenseActionSet = ConfigurationActionSet{
+var objectBrowserActionSet = actionsSet{
 	actionTypes: iampolicy.NewActionSet(),
 	actions:     iampolicy.NewActionSet(),
 }
 
 // watchActionSet contains the list of admin actions required for this endpoint to work
-var watchActionSet = ConfigurationActionSet{
+var watchActionSet = actionsSet{
 	actionTypes: iampolicy.NewActionSet(
 		iampolicy.AllAdminActions,
 	),
@@ -238,7 +206,7 @@ var watchActionSet = ConfigurationActionSet{
 }
 
 // healActionSet contains the list of admin actions required for this endpoint to work
-var healActionSet = ConfigurationActionSet{
+var healActionSet = actionsSet{
 	actionTypes: iampolicy.NewActionSet(
 		iampolicy.AllAdminActions,
 	),
@@ -248,7 +216,7 @@ var healActionSet = ConfigurationActionSet{
 }
 
 // logsActionSet contains the list of admin actions required for this endpoint to work
-var logsActionSet = ConfigurationActionSet{
+var logsActionSet = actionsSet{
 	actionTypes: iampolicy.NewActionSet(
 		iampolicy.AllAdminActions,
 	),
@@ -258,22 +226,12 @@ var logsActionSet = ConfigurationActionSet{
 }
 
 // traceActionSet contains the list of admin actions required for this endpoint to work
-var traceActionSet = ConfigurationActionSet{
+var traceActionSet = actionsSet{
 	actionTypes: iampolicy.NewActionSet(
 		iampolicy.AllAdminActions,
 	),
 	actions: iampolicy.NewActionSet(
 		iampolicy.TraceAdminAction,
-	),
-}
-
-// healthInfoActionSet contains the list of admin actions required for this endpoint to work
-var healthInfoActionSet = ConfigurationActionSet{
-	actionTypes: iampolicy.NewActionSet(
-		iampolicy.AllAdminActions,
-	),
-	actions: iampolicy.NewActionSet(
-		iampolicy.HealthInfoAdminAction,
 	),
 }
 
@@ -288,9 +246,19 @@ var displayRules = map[string]func() bool{
 	},
 }
 
+// healthInfoActionSet contains the list of admin actions required for this endpoint to work
+var healthInfoActionSet = actionsSet{
+	actionTypes: iampolicy.NewActionSet(
+		iampolicy.AllAdminActions,
+	),
+	actions: iampolicy.NewActionSet(
+		iampolicy.HealthInfoAdminAction,
+	),
+}
+
 // endpointRules contains the mapping between endpoints and ActionSets, additional rules can be added here
-var endpointRules = map[string]ConfigurationActionSet{
-	configuration:               configurationActionSet,
+var endpointRules = map[string]actionsSet{
+	config:                      configActionSet,
 	users:                       usersActionSet,
 	usersDetail:                 usersActionSet,
 	groups:                      groupsActionSet,
@@ -322,86 +290,13 @@ var endpointRules = map[string]ConfigurationActionSet{
 	healthInfo:                  healthInfoActionSet,
 }
 
-// operatorRules contains the mapping between endpoints and ActionSets for operator only mode
-var operatorRules = map[string]ConfigurationActionSet{
-	tenants:               tenantsActionSet,
-	tenantsDetail:         tenantsActionSet,
-	tenantsDetailSummary:  tenantsActionSet,
-	tenantsDetailMetrics:  tenantsActionSet,
-	tenantsDetailPods:     tenantsActionSet,
-	tenantsDetailPools:    tenantsActionSet,
-	tenantsDetailLicense:  tenantsActionSet,
-	tenantsDetailSecurity: tenantsActionSet,
-	podsDetail:            tenantsActionSet,
-	storage:               storageActionSet,
-	storageDrives:         storageActionSet,
-	storageVolumes:        storageActionSet,
-	license:               licenseActionSet,
-}
-
-// operatorOnly ENV variable
-var operatorOnly = GetOperatorMode()
-
-// GetActionsStringFromPolicy extract the admin/s3 actions from a given policy and return them in []string format
-//
-// ie:
-//	{
-//		"Version": "2012-10-17",
-//		"Statement": [{
-//				"Action": [
-//					"admin:ServerInfo",
-//					"admin:CreatePolicy",
-//					"admin:GetUser"
-//				],
-//				...
-//			},
-//			{
-//				"Action": [
-//					"s3:ListenBucketNotification",
-//					"s3:PutBucketNotification"
-//				],
-//				...
-//			}
-//		]
-//	}
-// Will produce an array like: ["admin:ServerInfo", "admin:CreatePolicy", "admin:GetUser", "s3:ListenBucketNotification", "s3:PutBucketNotification"]\
-func GetActionsStringFromPolicy(policy *iampolicy.Policy) []string {
-	var actions []string
-	for _, statement := range policy.Statements {
-		// We only care about allowed actions
-		if statement.Effect.IsAllowed(true) {
-			for _, action := range statement.Actions.ToSlice() {
-				actions = append(actions, string(action))
-			}
-		}
-	}
-	return actions
-}
-
-// actionsStringToActionSet convert a given string array to iampolicy.ActionSet structure
-// this avoids ending with duplicate actions
-func actionsStringToActionSet(actions []string) iampolicy.ActionSet {
-	actionsSet := iampolicy.ActionSet{}
-	for _, action := range actions {
-		actionsSet.Add(iampolicy.Action(action))
-	}
-	return actionsSet
-}
-
 // GetAuthorizedEndpoints return a list of allowed endpoint based on a provided *iampolicy.Policy
 // ie: pages the user should have access based on his current privileges
 func GetAuthorizedEndpoints(actions []string) []string {
-	rangeTake := endpointRules
-
-	if operatorOnly {
-		rangeTake = operatorRules
-	}
-
 	// Prepare new ActionSet structure that will hold all the user actions
 	userAllowedAction := actionsStringToActionSet(actions)
 	var allowedEndpoints []string
-	for endpoint, rules := range rangeTake {
-
+	for endpoint, rules := range endpointRules {
 		// check if display rule exists for this endpoint, this will control
 		// what user sees on the console UI
 		if rule, ok := displayRules[endpoint]; ok {
