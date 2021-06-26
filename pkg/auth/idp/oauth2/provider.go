@@ -33,6 +33,7 @@ import (
 	"github.com/coreos/go-oidc"
 	"github.com/minio/console/pkg/auth/utils"
 	"golang.org/x/crypto/pbkdf2"
+	"golang.org/x/oauth2"
 	xoauth2 "golang.org/x/oauth2"
 )
 
@@ -167,7 +168,8 @@ func (client *Provider) VerifyIdentity(ctx context.Context, code, state string) 
 		return nil, err
 	}
 	getWebTokenExpiry := func() (*credentials.WebIdentityToken, error) {
-		oauth2Token, err := client.oauth2Config.Exchange(ctx, code)
+		customCtx := context.WithValue(ctx, oauth2.HTTPClient, client.provHTTPClient)
+		oauth2Token, err := client.oauth2Config.Exchange(customCtx, code)
 		if err != nil {
 			return nil, err
 		}
