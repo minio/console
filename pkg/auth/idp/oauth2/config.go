@@ -49,7 +49,6 @@ func GetIdpCallbackURL() string {
 func IsIdpEnabled() bool {
 	return GetIdpURL() != "" &&
 		GetIdpClientID() != "" &&
-		GetIdpSecret() != "" &&
 		GetIdpCallbackURL() != ""
 }
 
