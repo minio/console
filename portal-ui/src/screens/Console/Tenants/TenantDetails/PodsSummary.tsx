@@ -27,9 +27,7 @@ import { setErrorSnackMessage } from "../../../../actions";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import { AppState } from "../../../../store";
-import {
-  setTenantDetailsLoad,
-} from "../actions";
+import { setTenantDetailsLoad } from "../actions";
 
 interface IPodsSummary {
   match: any;
