@@ -166,6 +166,7 @@ const PolicyDetails = ({
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [policy, setPolicy] = useState<Policy | null>(null);
   const [userList, setUserList] = useState<string[]>([]);
+  const [groupList, setGroupList] = useState<string[]>([]);
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [policyName, setPolicyName] = useState<string>(
     match.params["policyName"]
@@ -174,6 +175,8 @@ const PolicyDetails = ({
   const [loadingPolicy, setLoadingPolicy] = useState<boolean>(true);
   const [filterUsers, setFilterUsers] = useState<string>("");
   const [loadingUsers, setLoadingUsers] = useState<boolean>(true);
+  const [filterGroups, setFilterGroups] = useState<string>("");
+  const [loadingGroups, setLoadingGroups] = useState<boolean>(true);
 
   const saveRecord = (event: React.FormEvent) => {
     event.preventDefault();
@@ -211,6 +214,20 @@ const PolicyDetails = ({
           });
       }
     };
+    const loadGroupsForPolicy = () => {
+      if (loadingGroups) {
+        api
+          .invoke("GET", `/api/v1/policies/${policyName}/groups`)
+          .then((result: any) => {
+            setGroupList(result);
+            setLoadingGroups(false);
+          })
+          .catch((err) => {
+            setErrorSnackMessage(err);
+            setLoadingGroups(false);
+          });
+      }
+    };
     const loadPolicyDetails = () => {
       if (loadingPolicy) {
         api
@@ -234,16 +251,20 @@ const PolicyDetails = ({
     if (loadingPolicy) {
       loadPolicyDetails();
       loadUsersForPolicy();
+      loadGroupsForPolicy();
     }
   }, [
     policyName,
     loadingPolicy,
     loadingUsers,
+    loadingGroups,
     setErrorSnackMessage,
     setUserList,
+    setGroupList,
     setPolicyDefinition,
     setPolicy,
     setLoadingUsers,
+    setLoadingGroups,
   ]);
 
   const resetForm = () => {
@@ -260,6 +281,10 @@ const PolicyDetails = ({
 
   const filteredUsers = userList.filter((elementItem) =>
     elementItem.includes(filterUsers)
+  );
+
+  const filteredGroups = groupList.filter((elementItem) =>
+    elementItem.includes(filterGroups)
   );
 
   return (
@@ -287,6 +312,7 @@ const PolicyDetails = ({
           >
             <Tab label="Details" />
             <Tab label="Users" />
+            <Tab label="Groups" />
           </Tabs>
         </Grid>
         {selectedTab === 0 && (
@@ -370,6 +396,40 @@ const PolicyDetails = ({
               isLoading={loadingUsers}
               records={filteredUsers}
               entityName="Users"
+              idField="name"
+            />
+          </Grid>
+        )}
+        {selectedTab === 2 && (
+          <Grid container>
+            <Grid item xs={12} className={classes.actionsTray}>
+              <TextField
+                placeholder="Search Groups"
+                className={classes.searchField}
+                id="search-resource"
+                label=""
+                onChange={(val) => {
+                  setFilterGroups(val.target.value);
+                }}
+                InputProps={{
+                  disableUnderline: true,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.actionsTray}>
+              <br />
+            </Grid>
+            <TableWrapper
+              itemActions={[]}
+              columns={[{ label: "Name", elementKey: "name" }]}
+              isLoading={loadingGroups}
+              records={filteredGroups}
+              entityName="Groups"
               idField="name"
             />
           </Grid>

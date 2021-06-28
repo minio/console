@@ -252,6 +252,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIListGroupsHandler: admin_api.ListGroupsHandlerFunc(func(params admin_api.ListGroupsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListGroups has not yet been implemented")
 		}),
+		AdminAPIListGroupsForPolicyHandler: admin_api.ListGroupsForPolicyHandlerFunc(func(params admin_api.ListGroupsForPolicyParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.ListGroupsForPolicy has not yet been implemented")
+		}),
 		OperatorAPIListNodeLabelsHandler: operator_api.ListNodeLabelsHandlerFunc(func(params operator_api.ListNodeLabelsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.ListNodeLabels has not yet been implemented")
 		}),
@@ -611,6 +614,8 @@ type ConsoleAPI struct {
 	UserAPIListExternalBucketsHandler user_api.ListExternalBucketsHandler
 	// AdminAPIListGroupsHandler sets the operation handler for the list groups operation
 	AdminAPIListGroupsHandler admin_api.ListGroupsHandler
+	// AdminAPIListGroupsForPolicyHandler sets the operation handler for the list groups for policy operation
+	AdminAPIListGroupsForPolicyHandler admin_api.ListGroupsForPolicyHandler
 	// OperatorAPIListNodeLabelsHandler sets the operation handler for the list node labels operation
 	OperatorAPIListNodeLabelsHandler operator_api.ListNodeLabelsHandler
 	// UserAPIListObjectsHandler sets the operation handler for the list objects operation
@@ -1003,6 +1008,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIListGroupsHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListGroupsHandler")
+	}
+	if o.AdminAPIListGroupsForPolicyHandler == nil {
+		unregistered = append(unregistered, "admin_api.ListGroupsForPolicyHandler")
 	}
 	if o.OperatorAPIListNodeLabelsHandler == nil {
 		unregistered = append(unregistered, "operator_api.ListNodeLabelsHandler")
@@ -1534,6 +1542,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/groups"] = admin_api.NewListGroups(o.context, o.AdminAPIListGroupsHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/policies/{policy}/groups"] = admin_api.NewListGroupsForPolicy(o.context, o.AdminAPIListGroupsForPolicyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
