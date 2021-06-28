@@ -1487,6 +1487,29 @@ paths:
       tags:
         - AdminAPI
 
+  /policies/{policy}/groups:
+    get:
+      summary: List Groups for a Policy
+      operationId: ListGroupsForPolicy
+      parameters:
+        - name: policy
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: array
+            items:
+              type: string
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
   /bucket-policy/{bucket}:
     get:
       summary: List Policies With Given Bucket

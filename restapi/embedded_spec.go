@@ -3387,6 +3387,40 @@ func init() {
         }
       }
     },
+    "/policies/{policy}/groups": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "List Groups for a Policy",
+        "operationId": "ListGroupsForPolicy",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "policy",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/policies/{policy}/users": {
       "get": {
         "tags": [
@@ -11180,6 +11214,40 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/policy"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/policies/{policy}/groups": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "List Groups for a Policy",
+        "operationId": "ListGroupsForPolicy",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "policy",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           "default": {
