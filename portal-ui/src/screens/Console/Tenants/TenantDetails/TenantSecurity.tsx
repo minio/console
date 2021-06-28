@@ -24,15 +24,10 @@ import {
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Chip from "@material-ui/core/Chip";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import Moment from "react-moment";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import {
-  Button,
-  CircularProgress,
-  Divider,
-  Typography,
-} from "@material-ui/core";
+import { Button, CircularProgress, Typography } from "@material-ui/core";
 import { KeyPair } from "../ListTenants/utils";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
 import api from "../../../../common/api";
@@ -110,13 +105,13 @@ const TenantSecurity = ({
   ]);
   const [consoleCaCertificates, setConsoleCaCertificates] = useState<KeyPair[]>(
     [
-      {
-        cert: "",
-        encoded_cert: "",
-        encoded_key: "",
-        id: Date.now().toString(),
-        key: "",
-      },
+      // {
+      //   cert: "",
+      //   encoded_cert: "",
+      //   encoded_key: "",
+      //   id: Date.now().toString(),
+      //   key: "",
+      // },
     ]
   );
   const [consoleTLSCertificateSecrets, setConsoleTLSCertificateSecrets] =
@@ -125,22 +120,22 @@ const TenantSecurity = ({
     useState<ICertificateInfo[]>([]);
   // MinIO certificates
   const [minioCertificates, setMinioCertificates] = useState<KeyPair[]>([
-    {
-      cert: "",
-      encoded_cert: "",
-      encoded_key: "",
-      id: Date.now().toString(),
-      key: "",
-    },
+    // {
+    //   cert: "",
+    //   encoded_cert: "",
+    //   encoded_key: "",
+    //   id: Date.now().toString(),
+    //   key: "",
+    // },
   ]);
   const [minioCaCertificates, setMinioCaCertificates] = useState<KeyPair[]>([
-    {
-      cert: "",
-      encoded_cert: "",
-      encoded_key: "",
-      id: Date.now().toString(),
-      key: "",
-    },
+    // {
+    //   cert: "",
+    //   encoded_cert: "",
+    //   encoded_key: "",
+    //   id: Date.now().toString(),
+    //   key: "",
+    // },
   ]);
   const [minioTLSCertificateSecrets, setMinioTLSCertificateSecrets] = useState<
     ICertificateInfo[]
@@ -148,13 +143,7 @@ const TenantSecurity = ({
   const [minioTLSCaCertificateSecrets, setMinioTLSCaCertificateSecrets] =
     useState<ICertificateInfo[]>([]);
 
-  useEffect(() => {
-    if (tenant) {
-      getTenantSecurityInfo();
-    }
-  }, [tenant]);
-
-  const getTenantSecurityInfo = () => {
+  const getTenantSecurityInfo = useCallback(() => {
     api
       .invoke(
         "GET",
@@ -180,7 +169,13 @@ const TenantSecurity = ({
       .catch((err) => {
         setErrorSnackMessage(err.message);
       });
-  };
+  }, [tenant, setErrorSnackMessage]);
+
+  useEffect(() => {
+    if (tenant) {
+      getTenantSecurityInfo();
+    }
+  }, [tenant, getTenantSecurityInfo]);
 
   const updateTenantSecurity = () => {
     setIsSending(true);
@@ -447,13 +442,15 @@ const TenantSecurity = ({
         okLabel={"Restart"}
       />
       <br />
-      <Paper className={classes.paperContainer}>
-        {loadingTenant ? (
+      {loadingTenant ? (
+        <Paper className={classes.paperContainer}>
           <div className={classes.loaderAlign}>
             <CircularProgress />
           </div>
-        ) : (
-          <Fragment>
+        </Paper>
+      ) : (
+        <Fragment>
+          <Paper className={classes.paperContainer}>
             <Grid item xs={12} className={classes.title}>
               <FormSwitchWrapper
                 value="enableAutoCert"
@@ -465,7 +462,10 @@ const TenantSecurity = ({
                   const checked = targetD.checked;
                   setEnableAutoCert(checked);
                 }}
-                label={"Enable AutoCert"}
+                label={"Manage Inter-Node Certificates Automatically"}
+                description={
+                  "The internode certificates will be generated and managed by MinIO Operator"
+                }
               />
               <FormSwitchWrapper
                 value="enableCustomCerts"
@@ -480,11 +480,25 @@ const TenantSecurity = ({
                 label={"Custom Certificates"}
               />
             </Grid>
-            {enableCustomCerts && (
-              <Fragment>
+            <Grid item xs={12} className={classes.buttonContainer}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={dialogOpen || isSending}
+                onClick={() => setDialogOpen(true)}
+              >
+                Save
+              </Button>
+            </Grid>
+          </Paper>
+          {enableCustomCerts && (
+            <Fragment>
+              <br />
+              <Paper className={classes.paperContainer}>
                 <Grid container>
                   <Grid container item xs={12}>
-                    <Typography variant="overline" display="block" gutterBottom>
+                    <Typography variant="h5" display="block" gutterBottom>
                       MinIO Certificates
                     </Typography>
                   </Grid>
@@ -511,7 +525,9 @@ const TenantSecurity = ({
                                 display="block"
                                 gutterBottom
                               >
-                                {certificateInfo.domains.join(", ")}
+                                {certificateInfo.domains.map((dom) => {
+                                  return <div>{dom}</div>;
+                                })}
                               </Typography>
                               <Typography
                                 className={classes.bold}
@@ -587,14 +603,15 @@ const TenantSecurity = ({
                   </Grid>
                   <Grid container item xs={12}>
                     <Button onClick={() => addKeyPair("minio")} color="primary">
-                      Add More
+                      Add Certificate
                     </Button>
                   </Grid>
                   <Grid container item xs={12}>
                     <br />
                   </Grid>
+
                   <Grid container item xs={12}>
-                    <Typography variant="overline" display="block" gutterBottom>
+                    <Typography variant="h6" display="block" gutterBottom>
                       MinIO CA Certificates
                     </Typography>
                   </Grid>
@@ -621,7 +638,9 @@ const TenantSecurity = ({
                                 display="block"
                                 gutterBottom
                               >
-                                {certificateInfo.domains.join(", ")}
+                                {certificateInfo.domains.map((dom) => {
+                                  return <div>{dom}</div>;
+                                })}
                               </Typography>
                               <Typography
                                 className={classes.bold}
@@ -684,26 +703,30 @@ const TenantSecurity = ({
                       onClick={() => addKeyPair("minioCAs")}
                       color="primary"
                     >
-                      Add More
+                      Add CA Certificate
+                    </Button>
+                  </Grid>
+                  <Grid item xs={12} className={classes.buttonContainer}>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      disabled={dialogOpen || isSending}
+                      onClick={() => setDialogOpen(true)}
+                    >
+                      Save
                     </Button>
                   </Grid>
                 </Grid>
-                <Grid container>
-                  <Grid item xs={12}>
-                    <br />
-                    <Divider />
-                    <br />
-                  </Grid>
-                </Grid>
-                {tenant?.consoleEnabled ? (
-                  <Fragment>
+              </Paper>
+
+              {tenant?.consoleEnabled ? (
+                <Fragment>
+                  <br />
+                  <Paper className={classes.paperContainer}>
                     <Grid container>
                       <Grid container item xs={12}>
-                        <Typography
-                          variant="overline"
-                          display="block"
-                          gutterBottom
-                        >
+                        <Typography variant="h5" display="block" gutterBottom>
                           Console Certificates
                         </Typography>
                       </Grid>
@@ -730,7 +753,9 @@ const TenantSecurity = ({
                                     display="block"
                                     gutterBottom
                                   >
-                                    {certificateInfo.domains.join(", ")}
+                                    {certificateInfo.domains.map((dom) => {
+                                      return <div>{dom}</div>;
+                                    })}
                                   </Typography>
                                   <Typography
                                     className={classes.bold}
@@ -799,12 +824,8 @@ const TenantSecurity = ({
                         ))}
                       </Grid>
                       <Grid container item xs={12}>
-                        <Typography
-                          variant="overline"
-                          display="block"
-                          gutterBottom
-                        >
-                          Console CA Certificates
+                        <Typography variant="h6" display="block" gutterBottom>
+                          CA Certificates
                         </Typography>
                       </Grid>
                       <Grid container item xs={12}>
@@ -830,7 +851,9 @@ const TenantSecurity = ({
                                     display="block"
                                     gutterBottom
                                   >
-                                    {certificateInfo.domains.join(", ")}
+                                    {certificateInfo.domains.map((dom) => {
+                                      return <div>{dom}</div>;
+                                    })}
                                   </Typography>
                                   <Typography
                                     className={classes.bold}
@@ -895,35 +918,28 @@ const TenantSecurity = ({
                           onClick={() => addKeyPair("consoleCAs")}
                           color="primary"
                         >
-                          Add More
+                          Add Console Certificate
                         </Button>
                       </Grid>
                     </Grid>
-                    <Grid container>
-                      <Grid item xs={12}>
-                        <br />
-                        <Divider />
-                        <br />
-                      </Grid>
+                    <Grid item xs={12} className={classes.buttonContainer}>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        disabled={dialogOpen || isSending}
+                        onClick={() => setDialogOpen(true)}
+                      >
+                        Save
+                      </Button>
                     </Grid>
-                  </Fragment>
-                ) : null}
-              </Fragment>
-            )}
-            <Grid item xs={12} className={classes.buttonContainer}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={dialogOpen || isSending}
-                onClick={() => setDialogOpen(true)}
-              >
-                Save
-              </Button>
-            </Grid>
-          </Fragment>
-        )}
-      </Paper>
+                  </Paper>
+                </Fragment>
+              ) : null}
+            </Fragment>
+          )}
+        </Fragment>
+      )}
     </React.Fragment>
   );
 };
