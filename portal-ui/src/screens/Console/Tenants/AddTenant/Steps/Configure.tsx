@@ -318,7 +318,7 @@ const Configure = ({
               label="MinIO's Image"
               value={imageName}
               error={validationErrors["image"] || ""}
-              placeholder="E.g. minio/minio:RELEASE.2021-04-22T15-44-28Z"
+              placeholder="E.g. minio/minio:RELEASE.2021-06-17T00-10-46Z"
             />
           </Grid>
           <Grid item xs={12}>
@@ -332,7 +332,7 @@ const Configure = ({
               label="Console's Image"
               value={consoleImage}
               error={validationErrors["consoleImage"] || ""}
-              placeholder="E.g. minio/console:v0.7.4"
+              placeholder="E.g. minio/console:v0.7.5"
             />
           </Grid>
           <Grid item xs={12}>
@@ -346,7 +346,7 @@ const Configure = ({
               label="Log Search API's Image"
               value={logSearchImage}
               error={validationErrors["logSearchImage"] || ""}
-              placeholder="E.g. minio/logsearchapi:v4.0.9"
+              placeholder="E.g. minio/logsearchapi:v4.1.1"
             />
           </Grid>
           <Grid item xs={12}>
