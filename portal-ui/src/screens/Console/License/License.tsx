@@ -49,18 +49,22 @@ const styles = (theme: Theme) =>
     },
     paper: {
       padding: "20px 52px 20px 28px",
+      backgroundColor: "#FFFFFF",
     },
     licenseContainer: {
-      position: "relative",
-      padding: "20px 52px 0px 28px",
+      display: "flex",
+      flexWrap: "wrap",
+      flexDirection: "row",
+      padding: "30px 30px 0px 30px",
       background: "#032F51",
       boxShadow: "0px 3px 7px #00000014",
       "& h2": {
         color: "#FFF",
-        marginBottom: 67,
+        flexDirection: "row",
       },
       "& a": {
         textDecoration: "none",
+        flexDirection: "row",
       },
       "& h3": {
         color: "#FFFFFF",
@@ -220,17 +224,6 @@ const styles = (theme: Theme) =>
       width: "100%",
       height: "100%",
     },
-    midWidth: {
-      width: "70%",
-      float: "left",
-      height: "100%",
-    },
-    smallWidth: {
-      width: "30%",
-      float: "right",
-      height: "100%",
-      borderRadius: "0px 3px 0px 0px !important",
-    },
     licenseInfo: { color: "#FFFFFF", position: "relative" },
     licenseInfoTitle: {
       textTransform: "none",
@@ -248,10 +241,7 @@ const styles = (theme: Theme) =>
       borderTop: "1px solid #e2e5e4",
       borderLeft: "1px solid #e2e5e4",
       borderRight: "1px solid #e2e5e4",
-      bottom: 0,
-      left: "5%",
-      right: "5%",
-      position: "absolute",
+      alignSelf: "flex-end",
     },
     currentPlanBG: {
       background: "#022A4A 0% 0% no-repeat padding-box",
@@ -363,10 +353,8 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
       <React.Fragment>
         <PageHeader label="License" />
         <Grid container>
-          <Grid item xs={12} className={classes.container}>
-            <Paper
-              className={`${classes.licenseContainer} ${classes.midWidth}`}
-            >
+          <Grid container xs={12} className={classes.container}>
+            <Grid item xs={12} lg={8} className={`${classes.licenseContainer}`}>
               {licenseInfo ? (
                 <React.Fragment>
                   <Grid container className={classes.licenseInfo}>
@@ -488,12 +476,16 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                     open={licenseModal}
                     closeModal={() => setLicenseModal(false)}
                   />
-                  <img src="/agpl.svg" height={40} alt="agpl" />
-                  <Typography component="h2" variant="h6">
-                    GNU Affero General Public License
-                  </Typography>
-                  <a onClick={() => setLicenseModal(true)} href="#">
-                    <div className={classes.licenseDescription}>
+                  <Grid container>
+                    <img src="/agpl.svg" height={40} alt="agpl" />
+                  </Grid>
+                  <Grid container>
+                    <Typography component="h2" variant="h6">
+                      GNU Affero General Public License
+                    </Typography>
+                  </Grid>
+                  <Grid container className={classes.licenseDescription}>
+                    <a onClick={() => setLicenseModal(true)} href="#">
                       <Typography component="h3">Version 3</Typography>
                       <Typography component="h6">
                         The GNU Affero General Public License is a free,
@@ -501,15 +493,14 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                         specifically designed to ensure cooperation with the
                         Community in the case of network server software.
                       </Typography>
-                    </div>
-                  </a>
+                    </a>
+                  </Grid>
                 </React.Fragment>
               )}
-            </Paper>
-            <Paper className={`${classes.paper} ${classes.smallWidth}`}>
+            </Grid>
+            <Grid item xs={12} lg={4} className={`${classes.paper}`}>
               {licenseInfo ? (
                 <React.Fragment>
-                  {" "}
                   <Typography
                     component="h2"
                     variant="h6"
@@ -599,7 +590,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                   </a>
                 </React.Fragment>
               )}
-            </Paper>
+            </Grid>
           </Grid>
           <Grid item xs={12} className={clsx(classes.planItemsPadding)}>
             <Paper
