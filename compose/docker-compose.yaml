@@ -53,7 +53,7 @@ services:
     ports:
       - ${PROMETHEUS_PORT}:${PROMETHEUS_PORT}
     command:
-      - --config.file=/etc/prometheus/prometheus.yml 
+      - --config.file=/etc/prometheus/prometheus.yml
       - --web.listen-address=:${PROMETHEUS_PORT}
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro

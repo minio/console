@@ -7,9 +7,9 @@ global:
 # Here it's Prometheus itself.
 scrape_configs:
     # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-  - job_name: minio-node1
+  - job_name: minio-job
     metrics_path: /minio/v2/metrics/cluster
     scheme: http
     static_configs:
-    - targets: 
+    - targets:
       - 'localhost:9000'
