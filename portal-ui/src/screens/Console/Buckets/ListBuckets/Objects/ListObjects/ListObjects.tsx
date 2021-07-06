@@ -515,7 +515,7 @@ const ListObjects = ({
     const formData = new FormData();
 
     for (let file of files) {
-      const fileName = file.name;
+      const fileName = unescape(file.name);
       const blobFile = new Blob([file]);
       formData.append(fileName, blobFile);
     }
