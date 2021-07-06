@@ -128,6 +128,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIDeleteBucketReplicationRuleHandler: user_api.DeleteBucketReplicationRuleHandlerFunc(func(params user_api.DeleteBucketReplicationRuleParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteBucketReplicationRule has not yet been implemented")
 		}),
+		UserAPIDeleteMultipleObjectsHandler: user_api.DeleteMultipleObjectsHandlerFunc(func(params user_api.DeleteMultipleObjectsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.DeleteMultipleObjects has not yet been implemented")
+		}),
 		UserAPIDeleteObjectHandler: user_api.DeleteObjectHandlerFunc(func(params user_api.DeleteObjectParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteObject has not yet been implemented")
 		}),
@@ -323,12 +326,6 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPISubscriptionInfoHandler: admin_api.SubscriptionInfoHandlerFunc(func(params admin_api.SubscriptionInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.SubscriptionInfo has not yet been implemented")
 		}),
-		AdminAPISubscriptionRefreshHandler: admin_api.SubscriptionRefreshHandlerFunc(func(params admin_api.SubscriptionRefreshParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.SubscriptionRefresh has not yet been implemented")
-		}),
-		AdminAPISubscriptionValidateHandler: admin_api.SubscriptionValidateHandlerFunc(func(params admin_api.SubscriptionValidateParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation admin_api.SubscriptionValidate has not yet been implemented")
-		}),
 		AdminAPITiersListHandler: admin_api.TiersListHandlerFunc(func(params admin_api.TiersListParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.TiersList has not yet been implemented")
 		}),
@@ -441,6 +438,8 @@ type ConsoleAPI struct {
 	UserAPIDeleteBucketEventHandler user_api.DeleteBucketEventHandler
 	// UserAPIDeleteBucketReplicationRuleHandler sets the operation handler for the delete bucket replication rule operation
 	UserAPIDeleteBucketReplicationRuleHandler user_api.DeleteBucketReplicationRuleHandler
+	// UserAPIDeleteMultipleObjectsHandler sets the operation handler for the delete multiple objects operation
+	UserAPIDeleteMultipleObjectsHandler user_api.DeleteMultipleObjectsHandler
 	// UserAPIDeleteObjectHandler sets the operation handler for the delete object operation
 	UserAPIDeleteObjectHandler user_api.DeleteObjectHandler
 	// UserAPIDeleteObjectRetentionHandler sets the operation handler for the delete object retention operation
@@ -571,10 +570,6 @@ type ConsoleAPI struct {
 	UserAPIShareObjectHandler user_api.ShareObjectHandler
 	// AdminAPISubscriptionInfoHandler sets the operation handler for the subscription info operation
 	AdminAPISubscriptionInfoHandler admin_api.SubscriptionInfoHandler
-	// AdminAPISubscriptionRefreshHandler sets the operation handler for the subscription refresh operation
-	AdminAPISubscriptionRefreshHandler admin_api.SubscriptionRefreshHandler
-	// AdminAPISubscriptionValidateHandler sets the operation handler for the subscription validate operation
-	AdminAPISubscriptionValidateHandler admin_api.SubscriptionValidateHandler
 	// AdminAPITiersListHandler sets the operation handler for the tiers list operation
 	AdminAPITiersListHandler admin_api.TiersListHandler
 	// UserAPIUpdateBucketLifecycleHandler sets the operation handler for the update bucket lifecycle operation
@@ -734,6 +729,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIDeleteBucketReplicationRuleHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteBucketReplicationRuleHandler")
+	}
+	if o.UserAPIDeleteMultipleObjectsHandler == nil {
+		unregistered = append(unregistered, "user_api.DeleteMultipleObjectsHandler")
 	}
 	if o.UserAPIDeleteObjectHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteObjectHandler")
@@ -929,12 +927,6 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPISubscriptionInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.SubscriptionInfoHandler")
-	}
-	if o.AdminAPISubscriptionRefreshHandler == nil {
-		unregistered = append(unregistered, "admin_api.SubscriptionRefreshHandler")
-	}
-	if o.AdminAPISubscriptionValidateHandler == nil {
-		unregistered = append(unregistered, "admin_api.SubscriptionValidateHandler")
 	}
 	if o.AdminAPITiersListHandler == nil {
 		unregistered = append(unregistered, "admin_api.TiersListHandler")
@@ -1137,6 +1129,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/buckets/{bucket_name}/replication/{rule_id}"] = user_api.NewDeleteBucketReplicationRule(o.context, o.UserAPIDeleteBucketReplicationRuleHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/buckets/{bucket_name}/delete-objects"] = user_api.NewDeleteMultipleObjects(o.context, o.UserAPIDeleteMultipleObjectsHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
@@ -1397,14 +1393,6 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/subscription/info"] = admin_api.NewSubscriptionInfo(o.context, o.AdminAPISubscriptionInfoHandler)
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/subscription/refresh"] = admin_api.NewSubscriptionRefresh(o.context, o.AdminAPISubscriptionRefreshHandler)
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/subscription/validate"] = admin_api.NewSubscriptionValidate(o.context, o.AdminAPISubscriptionValidateHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

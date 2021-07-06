@@ -595,6 +595,45 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/delete-objects": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Multiple Objects",
+        "operationId": "DeleteMultipleObjects",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "files",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/deleteFile"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/encryption/disable": {
       "post": {
         "tags": [
@@ -2886,62 +2925,6 @@ func init() {
         }
       }
     },
-    "/subscription/refresh": {
-      "post": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Refresh existing subscription license",
-        "operationId": "SubscriptionRefresh",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/license"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/subscription/validate": {
-      "post": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Validates subscription license",
-        "operationId": "SubscriptionValidate",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/subscriptionValidateRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/license"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
     "/users": {
       "get": {
         "tags": [
@@ -3735,6 +3718,20 @@ func init() {
           "type": "string"
         },
         "targetURL": {
+          "type": "string"
+        }
+      }
+    },
+    "deleteFile": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "recursive": {
+          "type": "boolean"
+        },
+        "versionID": {
           "type": "string"
         }
       }
@@ -5058,20 +5055,6 @@ func init() {
         }
       }
     },
-    "subscriptionValidateRequest": {
-      "type": "object",
-      "properties": {
-        "email": {
-          "type": "string"
-        },
-        "license": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        }
-      }
-    },
     "tier": {
       "type": "object",
       "properties": {
@@ -5983,6 +5966,45 @@ func init() {
             "schema": {
               "$ref": "#/definitions/multiBucketResponseState"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/delete-objects": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Multiple Objects",
+        "operationId": "DeleteMultipleObjects",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "files",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/deleteFile"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
@@ -8284,62 +8306,6 @@ func init() {
         }
       }
     },
-    "/subscription/refresh": {
-      "post": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Refresh existing subscription license",
-        "operationId": "SubscriptionRefresh",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/license"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/subscription/validate": {
-      "post": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Validates subscription license",
-        "operationId": "SubscriptionValidate",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/subscriptionValidateRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/license"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
     "/users": {
       "get": {
         "tags": [
@@ -9255,6 +9221,20 @@ func init() {
           "type": "string"
         },
         "targetURL": {
+          "type": "string"
+        }
+      }
+    },
+    "deleteFile": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "recursive": {
+          "type": "boolean"
+        },
+        "versionID": {
           "type": "string"
         }
       }
@@ -10563,20 +10543,6 @@ func init() {
           "type": "integer",
           "format": "int64",
           "title": "number of start results"
-        }
-      }
-    },
-    "subscriptionValidateRequest": {
-      "type": "object",
-      "properties": {
-        "email": {
-          "type": "string"
-        },
-        "license": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
         }
       }
     },
