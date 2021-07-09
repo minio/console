@@ -1,4 +1,4 @@
-// This file is part of MinIO Orchestrator
+// This file is part of MinIO Console Server
 // Copyright (c) 2021 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
@@ -50,7 +50,7 @@ func TestGetAuthorizedEndpoints(t *testing.T) {
 			args: args{
 				[]string{"admin:ServerInfo"},
 			},
-			want: 6,
+			want: 7,
 		},
 		{
 			name: "policies endpoint",
@@ -63,7 +63,7 @@ func TestGetAuthorizedEndpoints(t *testing.T) {
 					"admin:ListUserPolicies",
 				},
 			},
-			want: 7,
+			want: 8,
 		},
 		{
 			name: "all admin endpoints",
@@ -81,7 +81,7 @@ func TestGetAuthorizedEndpoints(t *testing.T) {
 					"s3:*",
 				},
 			},
-			want: 14,
+			want: 15,
 		},
 		{
 			name: "all admin and s3 endpoints",
@@ -98,7 +98,7 @@ func TestGetAuthorizedEndpoints(t *testing.T) {
 			args: args{
 				[]string{},
 			},
-			want: 5,
+			want: 6,
 		},
 	}
 
