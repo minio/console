@@ -22,6 +22,7 @@ package operatorapi
 import (
 	"crypto/tls"
 	"net/http"
+	"strings"
 
 	"github.com/minio/console/restapi"
 	"github.com/unrolled/secure"
@@ -137,11 +138,24 @@ func AuthenticationMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+// proxyMiddleware adds the proxy capability
+func proxyMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasPrefix(r.URL.Path, "/api/proxy") {
+			serveProxy(w, r)
+		} else {
+			next.ServeHTTP(w, r)
+		}
+	})
+}
+
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json document.
 // So this is a good place to plug in a panic handling middleware, logging and metrics.
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	// handle cookie or authorization header for session
 	next := AuthenticationMiddleware(handler)
+	// serve static files
+	next = proxyMiddleware(next)
 	// serve static files
 	next = restapi.FileServerMiddleware(next)
 	// Secure middleware, this middleware wrap all the previous handlers and add

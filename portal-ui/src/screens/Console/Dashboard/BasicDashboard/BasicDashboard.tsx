@@ -22,14 +22,12 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { Usage } from "../types";
 import { niceBytes } from "../../../../common/utils";
-import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
 import AllBucketsIcon from "../../../../icons/AllBucketsIcon";
 import UsageIcon from "../../../../icons/UsageIcon";
 import EgressIcon from "../../../../icons/EgressIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
-    ...containerForHeader(theme.spacing(4)),
     paper: {
       padding: theme.spacing(2),
       display: "flex",
