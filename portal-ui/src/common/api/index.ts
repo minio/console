@@ -17,10 +17,11 @@
 import request from "superagent";
 import get from "lodash/get";
 import { clearSession } from "../utils";
+import { baseUrl } from "../../history";
 
 export class API {
   invoke(method: string, url: string, data?: object) {
-    return request(method, url)
+    return request(method, `${baseUrl}${url}`)
       .send(data)
       .then((res) => res.body)
       .catch((err) => {

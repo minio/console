@@ -23,7 +23,7 @@ import Drawer from "@material-ui/core/Drawer";
 import Container from "@material-ui/core/Container";
 import Snackbar from "@material-ui/core/Snackbar";
 import history from "../../history";
-import { Redirect, Route, Router, Switch } from "react-router-dom";
+import { Redirect, Route, Router, Switch, useLocation } from "react-router-dom";
 import { connect } from "react-redux";
 import { AppState } from "../../store";
 import {
@@ -57,6 +57,7 @@ import Watch from "./Watch/Watch";
 import HealthInfo from "./HealthInfo/HealthInfo";
 import Storage from "./Storage/Storage";
 import PodDetails from "./Tenants/TenantDetails/pods/PodDetails";
+import Metrics from "./Dashboard/Metrics";
 
 const drawerWidth = 245;
 
@@ -222,6 +223,10 @@ const Console = ({
     {
       component: Dashboard,
       path: "/dashboard",
+    },
+    {
+      component: Metrics,
+      path: "/metrics",
     },
     {
       component: Buckets,
@@ -403,23 +408,27 @@ const Console = ({
     setOpenSnackbar(true);
   }, [snackBarMessage]);
 
+  const location = useLocation();
+
   return (
     <Fragment>
       {session.status === "ok" ? (
         <div className={classes.root}>
           <CssBaseline />
-          <Drawer
-            variant="permanent"
-            classes={{
-              paper: clsx(
-                classes.drawerPaper,
-                !open && classes.drawerPaperClose
-              ),
-            }}
-            open={open}
-          >
-            <Menu pages={session.pages} />
-          </Drawer>
+          {location.pathname !== "/metrics" && (
+            <Drawer
+              variant="permanent"
+              classes={{
+                paper: clsx(
+                  classes.drawerPaper,
+                  !open && classes.drawerPaperClose
+                ),
+              }}
+              open={open}
+            >
+              <Menu pages={session.pages} />
+            </Drawer>
+          )}
 
           <main className={classes.content}>
             {needsRestart && (

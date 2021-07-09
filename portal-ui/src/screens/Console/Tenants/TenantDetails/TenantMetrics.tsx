@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { connect } from "react-redux";
 import get from "lodash/get";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
@@ -22,15 +22,10 @@ import {
   containerForHeader,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
-import Grid from "@material-ui/core/Grid";
-import { LinearProgress } from "@material-ui/core";
-import api from "../../../../common/api";
 import { ITenant } from "../ListTenants/types";
 import { setErrorSnackMessage } from "../../../../actions";
 import { AppState } from "../../../../store";
-import { Usage } from "../../Dashboard/types";
-import PrDashboard from "../../Dashboard/Prometheus/PrDashboard";
-import BasicDashboard from "../../Dashboard/BasicDashboard/BasicDashboard";
+import { LinearProgress } from "@material-ui/core";
 
 interface ITenantMetrics {
   classes: any;
@@ -43,85 +38,41 @@ interface ITenantMetrics {
 const styles = (theme: Theme) =>
   createStyles({
     ...tenantDetailsStyles,
-    redState: {
-      color: theme.palette.error.main,
+    flexBox: {
+      display: "flex",
+      flexFlow: "column",
     },
-    yellowState: {
-      color: theme.palette.warning.main,
-    },
-    greenState: {
-      color: theme.palette.success.main,
-    },
-    greyState: {
-      color: "grey",
-    },
-    centerAlign: {
-      textAlign: "center",
+    iframeStyle: {
+      border: "0px",
+      flex: "1 1 auto",
+      minHeight: "800px",
+      width: "100%",
     },
     ...containerForHeader(theme.spacing(4)),
   });
 
-const TenantMetrics = ({
-  classes,
-  match,
-  tenant,
-  setErrorSnackMessage,
-}: ITenantMetrics) => {
-  const [loadingWidgets, setLoadingWidgets] = useState<boolean>(true);
-  const [basicResult, setBasicResult] = useState<Usage | null>(null);
-
+const TenantMetrics = ({ classes, match }: ITenantMetrics) => {
   const tenantName = match.params["tenantName"];
   const tenantNamespace = match.params["tenantNamespace"];
 
-  const fetchWidgets = useCallback(() => {
-    api
-      .invoke(
-        "GET",
-        `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}/info`
-      )
-      .then((res: Usage) => {
-        setBasicResult(res);
-        setLoadingWidgets(false);
-      })
-      .catch((err) => {
-        setErrorSnackMessage(err);
-        setLoadingWidgets(false);
-      });
-  }, [
-    setBasicResult,
-    setLoadingWidgets,
-    setErrorSnackMessage,
-    tenantNamespace,
-    tenantName,
-  ]);
-
-  useEffect(() => {
-    if (loadingWidgets) {
-      fetchWidgets();
-    }
-  }, [loadingWidgets, fetchWidgets, setErrorSnackMessage]);
-
-  const widgets = get(basicResult, "widgets", null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   return (
-    <Fragment>
-      <br />
-      {loadingWidgets ? (
-        <Grid item xs={12} className={classes.container}>
+    <React.Fragment>
+      {loading && (
+        <div style={{ marginTop: "80px" }}>
           <LinearProgress />
-        </Grid>
-      ) : (
-        <Fragment>
-          {widgets !== null ? (
-            <PrDashboard
-              apiPrefix={`namespaces/${tenantNamespace}/tenants/${tenantName}`}
-            />
-          ) : (
-            <BasicDashboard usage={basicResult} />
-          )}
-        </Fragment>
+        </div>
       )}
-    </Fragment>
+      <iframe
+        className={classes.iframeStyle}
+        title={"metrics"}
+        src={`/api/proxy/${tenantNamespace}/${tenantName}/metrics`}
+        onLoad={() => {
+          setLoading(false);
+        }}
+      />
+    </React.Fragment>
   );
 };
 
