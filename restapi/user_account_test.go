@@ -193,7 +193,7 @@ func Test_useCanDo(t *testing.T) {
 							 ]
 							}`,
 			},
-			want: false,
+			want: true,
 		},
 		{
 			name: "Create Bucket, With Bucket Name",
@@ -217,7 +217,7 @@ func Test_useCanDo(t *testing.T) {
 							 ]
 							}`,
 			},
-			want: false,
+			want: true,
 		},
 		{
 			name: "Can't Create Bucket",

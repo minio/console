@@ -123,8 +123,7 @@ func getUserHasPermissionsResponse(session *models.Principal, params user_api.Ha
 
 	for _, p := range params.Body.Actions {
 		canPerform := userCanDo(iampolicy.Args{
-			Action:     iampolicy.Action(p.Action),
-			BucketName: p.BucketName,
+			Action: iampolicy.Action(p.Action),
 		}, userPolicy)
 		perms = append(perms, &models.PermissionAction{
 			Can: canPerform,
@@ -140,7 +139,10 @@ func getUserHasPermissionsResponse(session *models.Principal, params user_api.Ha
 func userCanDo(arg iampolicy.Args, userPolicy *iampolicy.Policy) bool {
 	// check in all the statements if any allows the passed action
 	for _, stmt := range userPolicy.Statements {
-		if stmt.IsAllowed(arg) {
+		// We only care about actions to match -
+		// if resources match or not we do not
+		// care since those are dynamic entities.
+		if stmt.Actions.Match(arg.Action) {
 			return true
 		}
 	}

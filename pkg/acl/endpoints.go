@@ -178,12 +178,8 @@ var serviceAccountsActionSet = ConfigurationActionSet{
 
 // changePasswordActionSet requires admin:CreateUser policy permission
 var changePasswordActionSet = ConfigurationActionSet{
-	actionTypes: iampolicy.NewActionSet(
-		iampolicy.AllAdminActions,
-	),
-	actions: iampolicy.NewActionSet(
-		iampolicy.CreateUserAdminAction,
-	),
+	actionTypes: iampolicy.NewActionSet(),
+	actions:     iampolicy.NewActionSet(),
 }
 
 // tenantsActionSet temporally no actions needed for tenants sections to work
