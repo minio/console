@@ -50,7 +50,9 @@ var (
 )
 
 // derivedKey is the key used to encrypt the session token claims, its derived using pbkdf on CONSOLE_PBKDF_PASSPHRASE with CONSOLE_PBKDF_SALT
-var derivedKey = pbkdf2.Key([]byte(token.GetPBKDFPassphrase()), []byte(token.GetPBKDFSalt()), 4096, 32, sha1.New)
+var derivedKey = func() []byte {
+	return pbkdf2.Key([]byte(token.GetPBKDFPassphrase()), []byte(token.GetPBKDFSalt()), 4096, 32, sha1.New)
+}
 
 // IsSessionTokenValid returns true or false depending if the provided session token is valid or not
 func IsSessionTokenValid(token string) bool {
@@ -171,7 +173,7 @@ func encrypt(plaintext, associatedData []byte) ([]byte, error) {
 	var aead cipher.AEAD
 	switch algorithm {
 	case aesGcm:
-		mac := hmac.New(sha256.New, derivedKey)
+		mac := hmac.New(sha256.New, derivedKey())
 		mac.Write(iv)
 		sealingKey := mac.Sum(nil)
 
@@ -186,7 +188,7 @@ func encrypt(plaintext, associatedData []byte) ([]byte, error) {
 		}
 	case c20p1305:
 		var sealingKey []byte
-		sealingKey, err = chacha20.HChaCha20(derivedKey, iv) // HChaCha20 expects nonce of 16 bytes
+		sealingKey, err = chacha20.HChaCha20(derivedKey(), iv) // HChaCha20 expects nonce of 16 bytes
 		if err != nil {
 			return nil, err
 		}
@@ -237,7 +239,7 @@ func decrypt(ciphertext []byte, associatedData []byte) ([]byte, error) {
 	var aead cipher.AEAD
 	switch algorithm[0] {
 	case aesGcm:
-		mac := hmac.New(sha256.New, derivedKey)
+		mac := hmac.New(sha256.New, derivedKey())
 		mac.Write(iv[:])
 		sealingKey := mac.Sum(nil)
 		block, err := aes.NewCipher(sealingKey[:])
@@ -249,7 +251,7 @@ func decrypt(ciphertext []byte, associatedData []byte) ([]byte, error) {
 			return nil, err
 		}
 	case c20p1305:
-		sealingKey, err := chacha20.HChaCha20(derivedKey, iv[:]) // HChaCha20 expects nonce of 16 bytes
+		sealingKey, err := chacha20.HChaCha20(derivedKey(), iv[:]) // HChaCha20 expects nonce of 16 bytes
 		if err != nil {
 			return nil, err
 		}

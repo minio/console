@@ -96,7 +96,9 @@ type Provider struct {
 
 // derivedKey is the key used to compute the HMAC for signing the oauth state parameter
 // its derived using pbkdf on CONSOLE_IDP_HMAC_PASSPHRASE with CONSOLE_IDP_HMAC_SALT
-var derivedKey = pbkdf2.Key([]byte(getPassphraseForIdpHmac()), []byte(getSaltForIdpHmac()), 4096, 32, sha1.New)
+var derivedKey = func() []byte {
+	return pbkdf2.Key([]byte(getPassphraseForIdpHmac()), []byte(getSaltForIdpHmac()), 4096, 32, sha1.New)
+}
 
 // NewOauth2ProviderClient instantiates a new oauth2 client using the configured credentials
 // it returns a *Provider object that contains the necessary configuration to initiate an
@@ -227,7 +229,7 @@ func validateOauth2State(state string) error {
 	// extract the state and hmac
 	incomingState, incomingHmac := s[0], s[1]
 	// validate that hmac(incomingState + pbkdf2(secret, salt)) == incomingHmac
-	if calculatedHmac := utils.ComputeHmac256(incomingState, derivedKey); calculatedHmac != incomingHmac {
+	if calculatedHmac := utils.ComputeHmac256(incomingState, derivedKey()); calculatedHmac != incomingHmac {
 		return fmt.Errorf("oauth2 state is invalid, expected %s, got %s", calculatedHmac, incomingHmac)
 	}
 	return nil
@@ -236,7 +238,7 @@ func validateOauth2State(state string) error {
 // GetRandomStateWithHMAC computes message + hmac(message, pbkdf2(key, salt)) to be used as state during the oauth authorization
 func GetRandomStateWithHMAC(length int) string {
 	state := utils.RandomCharString(length)
-	hmac := utils.ComputeHmac256(state, derivedKey)
+	hmac := utils.ComputeHmac256(state, derivedKey())
 	return base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", state, hmac)))
 }
 
