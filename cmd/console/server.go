@@ -194,6 +194,10 @@ func StartServer(ctx *cli.Context) error {
 
 	server.Host = rctx.Host
 	server.Port = rctx.HTTPPort
+	// set conservative timesout for uploads
+	server.ReadTimeout = 1 * time.Hour
+	// no timeouts for response for downloads
+	server.WriteTimeout = 0
 	restapi.Port = strconv.Itoa(server.Port)
 	restapi.Hostname = server.Host
 
