@@ -25,40 +25,11 @@ export const download = (
 ) => {
   const anchor = document.createElement("a");
   document.body.appendChild(anchor);
-  const xhr = new XMLHttpRequest();
   const allPathData = objectPath.split("/");
-  const objectName = allPathData[allPathData.length - 1];
 
   let path = `/api/v1/buckets/${bucketName}/objects/download?prefix=${objectPath}`;
   if (!isNullOrUndefined(versionID) && versionID !== "null") {
     path = path.concat(`&version_id=${versionID}`);
   }
-
-  xhr.open("GET", path, true);
-  xhr.responseType = "blob";
-
-  xhr.onload = function (e) {
-    if (this.status === 200) {
-      const blob = new Blob([this.response], {
-        type: "octet/stream",
-      });
-      const blobUrl = window.URL.createObjectURL(blob);
-
-      anchor.href = blobUrl;
-      anchor.download = objectName;
-
-      anchor.click();
-      window.URL.revokeObjectURL(blobUrl);
-      anchor.remove();
-
-      if (callBack) {
-        callBack(
-          `${bucketName}/${objectPath}${
-            includeVersionInCallback ? `-${versionID}` : ""
-          }`
-        );
-      }
-    }
-  };
-  xhr.send();
+  window.location.href = path;
 };

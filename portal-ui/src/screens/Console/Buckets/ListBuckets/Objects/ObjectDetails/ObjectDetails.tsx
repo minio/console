@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import get from "lodash/get";
 import * as reactMoment from "react-moment";
@@ -36,9 +36,9 @@ import {
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import { IFileInfo } from "./types";
 import {
-  removeRouteLevel,
-  fileIsBeingPrepared,
   fileDownloadStarted,
+  fileIsBeingPrepared,
+  removeRouteLevel,
 } from "../../../../ObjectBrowser/actions";
 import {
   ObjectBrowserReducer,
@@ -62,8 +62,8 @@ import AddTagModal from "./AddTagModal";
 import DeleteTagModal from "./DeleteTagModal";
 import SetLegalHoldModal from "./SetLegalHoldModal";
 import {
-  setSnackBarMessage,
   setErrorSnackMessage,
+  setSnackBarMessage,
 } from "../../../../../../actions";
 import { CircularProgress } from "@material-ui/core";
 
@@ -274,11 +274,6 @@ const ObjectDetails = ({
   };
 
   const downloadObject = (object: IFileInfo, includeVersion?: boolean) => {
-    fileIsBeingPrepared(
-      `${bucketName}/${object.name}${
-        includeVersion ? `-${object.version_id}` : ""
-      }`
-    );
     if (object.size && parseInt(object.size) > 104857600) {
       // If file is bigger than 100MB we show a notification
       setSnackBarMessage(
@@ -311,11 +306,6 @@ const ObjectDetails = ({
       type: "download",
       onClick: (item: IFileInfo) => {
         downloadObject(item, true);
-      },
-      showLoaderFunction: (version: string) => {
-        return downloadingFiles.includes(
-          `${bucketName}/${objectName}-${version}`
-        );
       },
       disableButtonFunction: (item: string) => {
         const element = versions.find((elm) => elm.version_id === item);
