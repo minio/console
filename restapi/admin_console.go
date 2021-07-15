@@ -74,9 +74,7 @@ func startConsoleLog(ctx context.Context, conn WSConn, client MinioAdmin) error 
 func serializeConsoleLogInfo(l *madmin.LogInfo) (logInfo madmin.LogInfo) {
 	logInfo = *l
 	if logInfo.ConsoleMsg != "" {
-		if strings.HasPrefix(logInfo.ConsoleMsg, "\n") {
-			logInfo.ConsoleMsg = strings.TrimPrefix(logInfo.ConsoleMsg, "\n")
-		}
+		logInfo.ConsoleMsg = strings.TrimPrefix(logInfo.ConsoleMsg, "\n")
 	}
 	if logInfo.Time != "" {
 		logInfo.Time = getLogTime(logInfo.Time)

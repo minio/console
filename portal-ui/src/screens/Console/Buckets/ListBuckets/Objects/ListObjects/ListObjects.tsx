@@ -552,7 +552,6 @@ const ListObjects = ({
   };
 
   const downloadObject = (object: BucketObject) => {
-    fileIsBeingPrepared(`${selectedBucket}/${object.name}`);
     if (object.size > 104857600) {
       // If file is bigger than 100MB we show a notification
       setSnackBarMessage(

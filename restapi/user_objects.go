@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"path/filepath"
 	"regexp"
@@ -68,11 +69,22 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 			return user_api.NewDownloadObjectDefault(int(err.Code)).WithPayload(err)
 		}
 		return middleware.ResponderFunc(func(rw http.ResponseWriter, _ runtime.Producer) {
-			x, err := io.Copy(rw, resp)
-
-			fmt.Println(x)
-			fmt.Println(err)
-
+			// indicate it's a download to the browser, and the size of the object
+			rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", params.Prefix))
+			rw.Header().Set("Content-Type", "application/octet-stream")
+			// indicate object size
+			stat, err := resp.(*minio.Object).Stat()
+			if err != nil {
+				log.Println(err)
+			} else {
+				rw.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size))
+				rw.Header().Set("Content-Type", stat.ContentType)
+			}
+			// Copy the stream
+			_, err = io.Copy(rw, resp)
+			if err != nil {
+				log.Println(err)
+			}
 			resp.Close()
 		})
 	})
