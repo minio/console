@@ -20,7 +20,7 @@ require (
 	github.com/minio/kes v0.11.0
 	github.com/minio/madmin-go v1.0.12
 	github.com/minio/mc v0.0.0-20210626002108-cebf3318546f
-	github.com/minio/minio-go/v7 v7.0.12-0.20210617160455-b7103728fb87
+	github.com/minio/minio-go/v7 v7.0.13-0.20210715203016-9e713532886e
 	github.com/minio/operator v0.0.0-20210616045941-65f31f5f78ae
 	github.com/minio/operator/logsearchapi v0.0.0-20210604224119-7e256f98cf90
 	github.com/minio/pkg v1.0.8
