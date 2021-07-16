@@ -36,8 +36,13 @@ export const k8sUnits = ["Ki", "Mi", "Gi", "Ti", "Pi", "Ei"];
 export const k8sCalcUnits = ["B", ...k8sUnits];
 
 export const niceBytes = (x: string, showK8sUnits: boolean = false) => {
-  let l = 0,
-    n = parseInt(x, 10) || 0;
+  let n = parseInt(x, 10) || 0;
+
+  return niceBytesInt(n, showK8sUnits)
+};
+
+export const niceBytesInt = (n: number, showK8sUnits: boolean = false) => {
+  let l = 0
 
   while (n >= 1024 && ++l) {
     n = n / 1024;
@@ -46,9 +51,9 @@ export const niceBytes = (x: string, showK8sUnits: boolean = false) => {
   //less than ten of KB or greater units
   const k8sUnitsN = ["B", ...k8sUnits];
   return (
-    n.toFixed(n < 10 && l > 0 ? 1 : 0) +
-    " " +
-    (showK8sUnits ? k8sUnitsN[l] : units[l])
+      n.toFixed(n < 10 && l > 0 ? 1 : 0) +
+      " " +
+      (showK8sUnits ? k8sUnitsN[l] : units[l])
   );
 };
 
@@ -425,6 +430,11 @@ export const generatePoolName = (pools: IPool[]) => {
 export const niceDays = (secondsValue: string, timeVariant: string = "s") => {
   let seconds = parseFloat(secondsValue);
 
+  return niceDaysInt(seconds, timeVariant)
+};
+
+export const niceDaysInt = (seconds: number, timeVariant: string = "s") => {
+
   switch (timeVariant) {
     case "ns":
       seconds = Math.floor(seconds * 0.000000001);
@@ -453,7 +463,7 @@ export const niceDays = (secondsValue: string, timeVariant: string = "s") => {
     const diffDays = days - months * 30;
 
     return `${months} month${Math.floor(months) === 1 ? "" : "s"} ${
-      diffDays > 0 ? `${diffDays} day${diffDays > 1 ? "s" : ""}` : ""
+        diffDays > 0 ? `${diffDays} day${diffDays > 1 ? "s" : ""}` : ""
     }`;
   }
 
@@ -468,13 +478,13 @@ export const niceDays = (secondsValue: string, timeVariant: string = "s") => {
   }
 
   return `${hours >= 1 ? `${hours} hour${hours > 1 ? "s" : ""}` : ""} ${
-    minutes >= 1 && hours === 0
-      ? `${minutes} minute${minutes > 1 ? "s" : ""}`
-      : ""
+      minutes >= 1 && hours === 0
+          ? `${minutes} minute${minutes > 1 ? "s" : ""}`
+          : ""
   } ${
-    seconds >= 1 && minutes === 0 && hours === 0
-      ? `${seconds} second${seconds > 1 ? "s" : ""}`
-      : ""
+      seconds >= 1 && minutes === 0 && hours === 0
+          ? `${seconds} second${seconds > 1 ? "s" : ""}`
+          : ""
   }`;
 };
 
