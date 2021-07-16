@@ -18,7 +18,7 @@ require (
 	github.com/minio/cli v1.22.0
 	github.com/minio/direct-csi v1.3.5-0.20210601185811-f7776f7961bf
 	github.com/minio/kes v0.11.0
-	github.com/minio/madmin-go v1.0.12
+	github.com/minio/madmin-go v1.0.17
 	github.com/minio/mc v0.0.0-20210626002108-cebf3318546f
 	github.com/minio/minio-go/v7 v7.0.13-0.20210715203016-9e713532886e
 	github.com/minio/operator v0.0.0-20210616045941-65f31f5f78ae
