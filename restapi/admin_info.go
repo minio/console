@@ -64,8 +64,8 @@ type usageInfo struct {
 	DisksUsage int64
 }
 
-// getAdminInfo invokes admin info and returns a parsed `usageInfo` structure
-func getAdminInfo(ctx context.Context, client MinioAdmin) (*usageInfo, error) {
+// GetAdminInfo invokes admin info and returns a parsed `usageInfo` structure
+func GetAdminInfo(ctx context.Context, client MinioAdmin) (*usageInfo, error) {
 	serverInfo, err := client.serverInfo(ctx)
 	if err != nil {
 		return nil, err
@@ -790,9 +790,9 @@ type LabelResults struct {
 // getAdminInfoResponse returns the response containing total buckets, objects and usage.
 func getAdminInfoResponse(session *models.Principal) (*models.AdminInfoResponse, *models.Error) {
 	prometheusURL := getPrometheusURL()
-	mAdmin, err := newAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
 
 	sessionResp, err2 := getUsageWidgetsForDeployment(prometheusURL, mAdmin)
@@ -807,14 +807,14 @@ func getUsageWidgetsForDeployment(prometheusURL string, mAdmin *madmin.AdminClie
 	if prometheusURL == "" {
 		// create a minioClient interface implementation
 		// defining the client to be used
-		adminClient := adminClient{client: mAdmin}
+		adminClient := AdminClient{Client: mAdmin}
 		// 20 seconds timeout
 		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 		defer cancel()
 		// serialize output
-		usage, err := getAdminInfo(ctx, adminClient)
+		usage, err := GetAdminInfo(ctx, adminClient)
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, PrepareError(err)
 		}
 		sessionResp := &models.AdminInfoResponse{
 			Buckets: usage.Buckets,

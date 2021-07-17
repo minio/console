@@ -53,6 +53,7 @@ VERSION:
 var appCmds = []cli.Command{
 	serverCmd,
 	updateCmd,
+	operatorCmd,
 }
 
 func newApp(name string) *cli.App {

@@ -107,7 +107,7 @@ func (c s3ClientMock) setVersioning(ctx context.Context, state string) *probe.Er
 var minioAccountInfoMock func(ctx context.Context) (madmin.AccountInfo, error)
 
 // mock function of dataUsageInfo() needed for list bucket's usage
-func (ac adminClientMock) accountInfo(ctx context.Context) (madmin.AccountInfo, error) {
+func (ac adminClientMock) AccountInfo(ctx context.Context) (madmin.AccountInfo, error) {
 	return minioAccountInfoMock(ctx)
 }
 
@@ -441,7 +441,7 @@ func Test_disableBucketEncryption(t *testing.T) {
 				client:     minClient,
 				bucketName: "test",
 				mockBucketDisableFunc: func(ctx context.Context, bucketName string) error {
-					return errorGeneric
+					return ErrorGeneric
 				},
 			},
 			wantErr: true,

@@ -112,12 +112,12 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 
 func getListRemoteBucketsResponse(session *models.Principal) (*models.ListRemoteBucketsResponse, error) {
 	ctx := context.Background()
-	mAdmin, err := newAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		LogError("error creating Madmin Client: %v", err)
 		return nil, err
 	}
-	adminClient := adminClient{client: mAdmin}
+	adminClient := AdminClient{Client: mAdmin}
 	buckets, err := listRemoteBuckets(ctx, adminClient)
 	if err != nil {
 		LogError("error listing remote buckets: %v", err)
@@ -131,12 +131,12 @@ func getListRemoteBucketsResponse(session *models.Principal) (*models.ListRemote
 
 func getRemoteBucketDetailsResponse(session *models.Principal, params user_api.RemoteBucketDetailsParams) (*models.RemoteBucket, error) {
 	ctx := context.Background()
-	mAdmin, err := newAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		LogError("error creating Madmin Client: %v", err)
 		return nil, err
 	}
-	adminClient := adminClient{client: mAdmin}
+	adminClient := AdminClient{Client: mAdmin}
 	bucket, err := getRemoteBucket(ctx, adminClient, params.Name)
 	if err != nil {
 		LogError("error getting remote bucket details: %v", err)
@@ -147,12 +147,12 @@ func getRemoteBucketDetailsResponse(session *models.Principal, params user_api.R
 
 func getDeleteRemoteBucketResponse(session *models.Principal, params user_api.DeleteRemoteBucketParams) error {
 	ctx := context.Background()
-	mAdmin, err := newAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		LogError("error creating Madmin Client: %v", err)
 		return err
 	}
-	adminClient := adminClient{client: mAdmin}
+	adminClient := AdminClient{Client: mAdmin}
 	err = deleteRemoteBucket(ctx, adminClient, params.SourceBucketName, params.Arn)
 	if err != nil {
 		LogError("error deleting remote bucket: %v", err)
@@ -163,12 +163,12 @@ func getDeleteRemoteBucketResponse(session *models.Principal, params user_api.De
 
 func getAddRemoteBucketResponse(session *models.Principal, params user_api.AddRemoteBucketParams) error {
 	ctx := context.Background()
-	mAdmin, err := newAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		LogError("error creating Madmin Client: %v", err)
 		return err
 	}
-	adminClient := adminClient{client: mAdmin}
+	adminClient := AdminClient{Client: mAdmin}
 	_, err = addRemoteBucket(ctx, adminClient, *params.Body)
 	if err != nil {
 		LogError("error adding remote bucket: %v", err)
@@ -407,17 +407,17 @@ func setMultiBucketReplication(ctx context.Context, session *models.Principal, c
 func setMultiBucketReplicationResponse(session *models.Principal, params user_api.SetMultiBucketReplicationParams) (*models.MultiBucketResponseState, *models.Error) {
 	ctx := context.Background()
 
-	mAdmin, err := newAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		LogError("error creating Madmin Client:", err)
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
-	adminClient := adminClient{client: mAdmin}
+	adminClient := AdminClient{Client: mAdmin}
 
 	mClient, err := newMinioClient(session)
 	if err != nil {
 		LogError("error creating MinIO Client:", err)
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -427,7 +427,7 @@ func setMultiBucketReplicationResponse(session *models.Principal, params user_ap
 
 	if replicationResults == nil {
 		err = errors.New("error setting buckets replication")
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
 
 	resParsed := []*models.MultiBucketResponseItem{}
@@ -454,14 +454,14 @@ func listExternalBucketsResponse(params user_api.ListExternalBucketsParams) (*mo
 	defer cancel()
 	remoteAdmin, err := newAdminFromCreds(*params.Body.AccessKey, *params.Body.SecretKey, *params.Body.TargetURL, *params.Body.UseTLS)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
-	remoteClient := adminClient{client: remoteAdmin}
+	remoteClient := AdminClient{Client: remoteAdmin}
 	buckets, err := getAccountInfo(ctx, remoteClient)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
 
 	// serialize output
@@ -514,7 +514,7 @@ func deleteReplicationRuleResponse(session *models.Principal, params user_api.De
 	err := deleteReplicationRule(ctx, session, params.BucketName, params.RuleID)
 
 	if err != nil {
-		return prepareError(err)
+		return PrepareError(err)
 	}
 	return nil
 }

@@ -1,0 +1,3668 @@
+swagger: "2.0"
+info:
+  title: MinIO Console Server
+  version: 0.1.0
+consumes:
+  - application/json
+produces:
+  - application/json
+schemes:
+  - http
+  - ws
+basePath: /api/v1
+# We are going to be taking `Authorization: Bearer TOKEN` header for our authentication
+securityDefinitions:
+  key:
+    type: oauth2
+    flow: accessCode
+    authorizationUrl: http://min.io
+    tokenUrl: http://min.io
+# Apply the key security definition to all APIs
+security:
+  - key: []
+paths:
+  /login:
+    get:
+      summary: Returns login strategy, form or sso.
+      operationId: LoginDetail
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/loginDetails"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      # Exclude this API from the authentication requirement
+      security: []
+      tags:
+        - UserAPI
+    post:
+      summary: Login to Console
+      operationId: Login
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/loginRequest"
+      responses:
+        201:
+          description: A successful login.
+          schema:
+            $ref: "#/definitions/loginResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      # Exclude this API from the authentication requirement
+      security: []
+      tags:
+        - UserAPI
+  /login/operator:
+    post:
+      summary: Login to Operator Console.
+      operationId: LoginOperator
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/loginOperatorRequest"
+      responses:
+        201:
+          description: A successful login.
+          schema:
+            $ref: "#/definitions/loginResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      security: []
+      tags:
+        - UserAPI
+
+  /login/oauth2/auth:
+    post:
+      summary: Identity Provider oauth2 callback endpoint.
+      operationId: LoginOauth2Auth
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/loginOauth2AuthRequest"
+      responses:
+        201:
+          description: A successful login.
+          schema:
+            $ref: "#/definitions/loginResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      security: []
+      tags:
+        - UserAPI
+
+  /logout:
+    post:
+      summary: Logout from Console.
+      operationId: Logout
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /session:
+    get:
+      summary: Endpoint to check if your session is still valid
+      operationId: SessionCheck
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/sessionResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /account/change-password:
+    post:
+      summary: Change password of currently logged in user.
+      operationId: AccountChangePassword
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/accountChangePasswordRequest"
+      responses:
+        201:
+          description: A successful login.
+          schema:
+            $ref: "#/definitions/loginResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /account/change-user-password:
+    post:
+      summary: Change password of currently logged in user.
+      operationId: ChangeUserPassword
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/changeUserPasswordRequest"
+      responses:
+        201:
+          description: Password successfully changed.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /buckets:
+    get:
+      summary: List Buckets
+      operationId: ListBuckets
+      parameters:
+        - name: sort_by
+          in: query
+          required: false
+          type: string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listBucketsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    post:
+      summary: Make bucket
+      operationId: MakeBucket
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/makeBucketRequest"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{name}:
+    get:
+      summary: Bucket Info
+      operationId: BucketInfo
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucket"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    delete:
+      summary: Delete Bucket
+      operationId: DeleteBucket
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/retention:
+    get:
+      summary: Get Bucket's retention config
+      operationId: GetBucketRetentionConfig
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/getBucketRetentionConfig"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    put:
+      summary: Set Bucket's retention config
+      operationId: SetBucketRetentionConfig
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/putBucketRetentionRequest"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/objects:
+    get:
+      summary: List Objects
+      operationId: ListObjects
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: false
+          type: string
+        - name: recursive
+          in: query
+          required: false
+          type: boolean
+        - name: with_versions
+          in: query
+          required: false
+          type: boolean
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listObjectsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    delete:
+      summary: Delete Object
+      operationId: DeleteObject
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: path
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: false
+          type: string
+        - name: recursive
+          in: query
+          required: false
+          type: boolean
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/objects/upload:
+    post:
+      summary: Uploads an Object.
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          type: string
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/objects/download:
+    get:
+      summary: Download Object
+      operationId: Download Object
+      produces:
+        - application/octet-stream
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: false
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: file
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/objects/share:
+    get:
+      summary: Shares an Object on a url
+      operationId: ShareObject
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: true
+          type: string
+        - name: expires
+          in: query
+          required: false
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: string
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/objects/legalhold:
+    put:
+      summary: Put Object's legalhold status
+      operationId: PutObjectLegalHold
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/putObjectLegalHoldRequest"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/objects/retention:
+    put:
+      summary: Put Object's retention status
+      operationId: PutObjectRetention
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/putObjectRetentionRequest"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    delete:
+      summary: Delete Object retention from an object
+      operationId: DeleteObjectRetention
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/objects/tags:
+    put:
+      summary: Put Object's tags
+      operationId: PutObjectTags
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/putObjectTagsRequest"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{name}/set-policy:
+    put:
+      summary: Bucket Set Policy
+      operationId: BucketSetPolicy
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/setBucketPolicyRequest"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucket"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{name}/quota:
+    get:
+      summary: Get Bucket Quota
+      operationId: GetBucketQuota
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucketQuota"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    put:
+      summary: Bucket Quota
+      operationId: SetBucketQuota
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/setBucketQuota"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucket"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/events:
+    get:
+      summary: List Bucket Events
+      operationId: ListBucketEvents
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listBucketEventsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    post:
+      summary: Create Bucket Event
+      operationId: CreateBucketEvent
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/bucketEventRequest"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/events/{arn}:
+    delete:
+      summary: Delete Bucket Event
+      operationId: DeleteBucketEvent
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: arn
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/notificationDeleteRequest"
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /list-external-buckets:
+    post:
+      summary: Lists an External list of buckets using custom credentials
+      operationId: ListExternalBuckets
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/listExternalBucketsParams"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listBucketsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets-replication:
+    post:
+      summary: Sets Multi Bucket Replication in multiple Buckets
+      operationId: SetMultiBucketReplication
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/multiBucketReplication"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/multiBucketResponseState"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/replication:
+    get:
+      summary: Bucket Replication
+      operationId: GetBucketReplication
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucketReplicationResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/replication/{rule_id}:
+    delete:
+      summary: Bucket Replication Rule Delete
+      operationId: DeleteBucketReplicationRule
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: rule_id
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/versioning:
+    get:
+      summary: Bucket Versioning
+      operationId: GetBucketVersioning
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucketVersioningResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    put:
+      summary: Set Bucket Versioning
+      operationId: SetBucketVersioning
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/setBucketVersioning"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/object-locking:
+    get:
+      summary: Returns the status of object locking support on the bucket
+      operationId: GetBucketObjectLockingStatus
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucketObLockingResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/encryption/enable:
+    post:
+      summary: Enable bucket encryption.
+      operationId: EnableBucketEncryption
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/bucketEncryptionRequest"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/encryption/disable:
+    post:
+      summary: Disable bucket encryption.
+      operationId: DisableBucketEncryption
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/encryption/info:
+    get:
+      summary: Get bucket encryption information.
+      operationId: GetBucketEncryptionInfo
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucketEncryptionInfo"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/lifecycle:
+    get:
+      summary: Bucket Lifecycle
+      operationId: GetBucketLifecycle
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucketLifecycleResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    post:
+      summary: Add Bucket Lifecycle
+      operationId: AddBucketLifecycle
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/addBucketLifecycle"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /buckets/{bucket_name}/lifecycle/{lifecycle_id}:
+    put:
+      summary: Update Lifecycle rule
+      operationId: UpdateBucketLifecycle
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: lifecycle_id
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/updateBucketLifecycle"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+  
+  /buckets/{bucket_name}/rewind/{date}:
+    get:
+      summary: Get objects in a bucket for a rewind date
+      operationId: GetBucketRewind
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: date
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: false
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/rewindResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI 
+
+  /service-accounts:
+    get:
+      summary: List User's Service Accounts
+      operationId: ListUserServiceAccounts
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/serviceAccounts"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    post:
+      summary: Create Service Account
+      operationId: CreateServiceAccount
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/serviceAccountRequest"
+      responses:
+        201:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/serviceAccountCreds"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /service-accounts/{access_key}:
+    delete:
+      summary: Delete Service Account
+      operationId: DeleteServiceAccount
+      parameters:
+        - name: access_key
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /has-permission:
+    post:
+      summary: Checks whether the user can perform a series of actions
+      operationId: HasPermissionTo
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/hasPermissionRequest"
+      responses:
+        201:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/hasPermissionResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /users:
+    get:
+      summary: List Users
+      operationId: ListUsers
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listUsersResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    post:
+      summary: Add User
+      operationId: AddUser
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/addUserRequest"
+      responses:
+        201:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/user"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /users/{name}:
+    get:
+      summary: Get User Info
+      operationId: GetUserInfo
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/user"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    put:
+      summary: Update User Info
+      operationId: UpdateUserInfo
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/updateUser"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/user"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    delete:
+      summary: Remove user
+      operationId: RemoveUser
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /users/{name}/groups:
+    put:
+      summary: Update Groups for a user
+      operationId: UpdateUserGroups
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/updateUserGroups"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/user"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /users/{name}/service-accounts:
+    get:
+      summary: returns a list of service accounts for a user
+      operationId: ListAUserServiceAccounts
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/serviceAccounts"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /users-groups-bulk:
+    put:
+      summary: Bulk functionality to Add Users to Groups
+      operationId: BulkUpdateUsersGroups
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/bulkUserGroups"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /groups:
+    get:
+      summary: List Groups
+      operationId: ListGroups
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listGroupsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    post:
+      summary: Add Group
+      operationId: AddGroup
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/addGroupRequest"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /groups/{name}:
+    get:
+      summary: Group info
+      operationId: GroupInfo
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/group"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    delete:
+      summary: Remove group
+      operationId: RemoveGroup
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    put:
+      summary: Update Group Members or Status
+      operationId: UpdateGroup
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/updateGroupRequest"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/group"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /policies:
+    get:
+      summary: List Policies
+      operationId: ListPolicies
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listPoliciesResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    post:
+      summary: Add Policy
+      operationId: AddPolicy
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/addPolicyRequest"
+      responses:
+        201:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/policy"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /policies/{policy}/users:
+    get:
+      summary: List Users for a Policy
+      operationId: ListUsersForPolicy
+      parameters:
+        - name: policy
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: array
+            items:
+              type: string
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /policies/{policy}/groups:
+    get:
+      summary: List Groups for a Policy
+      operationId: ListGroupsForPolicy
+      parameters:
+        - name: policy
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: array
+            items:
+              type: string
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /bucket-policy/{bucket}:
+    get:
+      summary: List Policies With Given Bucket
+      operationId: ListPoliciesWithBucket
+      parameters:
+        - name: bucket
+          in: path
+          required: true
+          type: string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listPoliciesResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /bucket-users/{bucket}:
+    get:
+      summary: List Users With Access to a Given Bucket
+      operationId: ListUsersWithAccessToBucket
+      parameters:
+        - name: bucket
+          in: path
+          required: true
+          type: string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: array
+            items:
+              type: string
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /policy:
+    get:
+      summary: Policy info
+      operationId: PolicyInfo
+      parameters:
+        - name: name
+          in: query
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/policy"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    delete:
+      summary: Remove policy
+      operationId: RemovePolicy
+      parameters:
+        - name: name
+          in: query
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /configs:
+    get:
+      summary: List Configurations
+      operationId: ListConfig
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listConfigResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /set-policy/{name}:
+    put:
+      summary: Set policy
+      operationId: SetPolicy
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/setPolicyRequest"
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /set-policy-multi/{name}:
+    put:
+      summary: Set policy to multiple users/groups
+      operationId: SetPolicyMultiple
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/setPolicyMultipleRequest"
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /configs/{name}:
+    get:
+      summary: Configuration info
+      operationId: ConfigInfo
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/configuration"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    put:
+      summary: Set Configuration
+      operationId: SetConfig
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/setConfigRequest"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/setConfigResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /service/restart:
+    post:
+      summary: Restart Service
+      operationId: RestartService
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+  /profiling/start:
+    post:
+      summary: Start recording profile data
+      operationId: ProfilingStart
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/profilingStartRequest"
+      responses:
+        201:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/startProfilingList"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /profiling/stop:
+    post:
+      summary: Stop and download profile data
+      operationId: ProfilingStop
+      produces:
+        - application/octet-stream
+      responses:
+        201:
+          description: A successful response.
+          schema:
+            type: file
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /subscription/info:
+    get:
+      summary: Subscription info
+      operationId: SubscriptionInfo
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/license"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+
+  /admin/info:
+    get:
+      summary: Returns information about the deployment
+      operationId: AdminInfo
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/adminInfoResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /admin/info/widgets/{widgetId}:
+    get:
+      summary: Returns information about the deployment
+      operationId: DashboardWidgetDetails
+      parameters:
+        - name: widgetId
+          in: path
+          type: integer
+          format: int32
+          required: true
+        - name: start
+          in: query
+          type: integer
+        - name: end
+          in: query
+          type: integer
+        - name: step
+          in: query
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/widgetDetails"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /admin/arns:
+    get:
+      summary: Returns a list of active ARNs in the instance
+      operationId: ArnList
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/arnsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /admin/notification_endpoints:
+    get:
+      summary: Returns a list of active notification endpoints
+      operationId: NotificationEndpointList
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/notifEndpointResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    post:
+      summary: Allows to configure a new notification endpoint
+      operationId: AddNotificationEndpoint
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/notificationEndpoint"
+      responses:
+        201:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/setNotificationEndpointResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /admin/tiers:
+    get:
+      summary: Returns a list of tiers for ilm
+      operationId: TiersList
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/tierListResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    post:
+      summary: Allows to configure a new tier
+      operationId: AddTier
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/tier"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /admin/tiers/{type}/{name}:
+    get:
+      summary: Get Tier
+      operationId: GetTier
+      parameters:
+        - name: type
+          in: path
+          required: true
+          type: string
+          enum:
+            - s3
+            - gcs
+            - azure
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/tier"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /admin/tiers/{type}/{name}/credentials:
+    put:
+      summary: Edit Tier Credentials
+      operationId: EditTierCredentials
+      parameters:
+        - name: type
+          in: path
+          required: true
+          type: string
+          enum:
+            - s3
+            - gcs
+            - azure
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/tierCredentialsRequest"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /remote-buckets:
+    get:
+      summary: List Remote Buckets
+      operationId: ListRemoteBuckets
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listRemoteBucketsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+    post:
+      summary: Add Remote Bucket
+      operationId: AddRemoteBucket
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/createRemoteBucket"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /remote-buckets/{name}:
+    get:
+      summary: Remote Bucket Details
+      operationId: RemoteBucketDetails
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/remoteBucket"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+  /remote-buckets/{source-bucket-name}/{arn}:
+    delete:
+      summary: Delete Remote Bucket
+      operationId: DeleteRemoteBucket
+      parameters:
+        - name: source-bucket-name
+          in: path
+          required: true
+          type: string
+        - name: arn
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+  /logs/search:
+    get:
+      summary: Search the logs
+      operationId: LogSearch
+      parameters:
+        - name: fp
+          description: Filter Parameters
+          in: query
+          collectionFormat: multi
+          type: array
+          items:
+            type: string
+        - name: pageSize
+          in: query
+          type: number
+          format: int32
+          default: 10
+        - name: pageNo
+          in: query
+          type: number
+          format: int32
+          default: 0
+        - name: order
+          in: query
+          type: string
+          enum: [timeDesc, timeAsc]
+          default: timeDesc
+        - name: timeStart
+          in: query
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/logSearchResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+definitions:
+  accountChangePasswordRequest:
+    type: object
+    required:
+      - current_secret_key
+      - new_secret_key
+    properties:
+      current_secret_key:
+        type: string
+      new_secret_key:
+        type: string
+
+  changeUserPasswordRequest:
+    type: object
+    required:
+      - selectedUser
+      - newSecretKey
+    properties:
+      selectedUser:
+        type: string
+      newSecretKey:
+        type: string
+
+  bucketEncryptionType:
+    type: string
+    enum:
+      - sse-s3
+      - sse-kms
+    default: sse-s3
+
+  bucketAccess:
+    type: string
+    enum:
+      - PRIVATE
+      - PUBLIC
+      - CUSTOM
+    default: PRIVATE
+
+  bucket:
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        type: string
+        minLength: 3
+      size:
+        type: integer
+        format: int64
+      access:
+        $ref: "#/definitions/bucketAccess"
+      creation_date:
+        type: string
+
+  bucketEncryptionRequest:
+    type: object
+    properties:
+      encType:
+        $ref: "#/definitions/bucketEncryptionType"
+      kmsKeyID:
+        type: string
+
+  bucketEncryptionInfo:
+    type: object
+    properties:
+      kmsMasterKeyID:
+        type: string
+      algorithm:
+        type: string
+
+  listBucketsResponse:
+    type: object
+    properties:
+      buckets:
+        type: array
+        items:
+          $ref: "#/definitions/bucket"
+        title: list of resulting buckets
+      total:
+        type: integer
+        format: int64
+        title: number of buckets accessible to the user
+
+  listObjectsResponse:
+    type: object
+    properties:
+      objects:
+        type: array
+        items:
+          $ref: "#/definitions/bucketObject"
+        title: list of resulting objects
+      total:
+        type: integer
+        format: int64
+        title: number of objects
+
+  bucketObject:
+    type: object
+    properties:
+      name:
+        type: string
+      size:
+        type: integer
+        format: int64
+      content_type:
+        type: string
+      last_modified:
+        type: string
+      is_latest:
+        type: boolean
+      is_delete_marker:
+        type: boolean
+      version_id:
+        type: string
+      user_tags:
+        type: object
+        additionalProperties:
+          type: string
+      expiration:
+        type: string
+      expiration_rule_id:
+        type: string
+      legal_hold_status:
+        type: string
+      retention_mode:
+        type: string
+      retention_until_date:
+        type: string
+      tags:
+        type: object
+        additionalProperties:
+          type: string
+
+  makeBucketRequest:
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        type: string
+      locking:
+        type: boolean
+      versioning:
+        type: boolean
+      quota:
+        $ref: "#/definitions/setBucketQuota"
+      retention:
+        $ref: "#/definitions/putBucketRetentionRequest"
+
+  error:
+    type: object
+    required:
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+  user:
+    type: object
+    properties:
+      accessKey:
+        type: string
+      policy:
+        type: array
+        items:
+          type: string
+      memberOf:
+        type: array
+        items:
+          type: string
+      status:
+        type: string
+  listUsersResponse:
+    type: object
+    properties:
+      users:
+        type: array
+        items:
+          $ref: "#/definitions/user"
+        title: list of resulting users
+  addUserRequest:
+    type: object
+    required:
+      - accessKey
+      - secretKey
+      - groups
+    properties:
+      accessKey:
+        type: string
+      secretKey:
+        type: string
+      groups:
+        type: array
+        items:
+          type: string
+  group:
+    type: object
+    properties:
+      name:
+        type: string
+      status:
+        type: string
+      members:
+        type: array
+        items:
+          type: string
+      policy:
+        type: string
+  addGroupRequest:
+    type: object
+    required:
+      - group
+      - members
+    properties:
+      group:
+        type: string
+      members:
+        type: array
+        items:
+          type: string
+  listGroupsResponse:
+    type: object
+    properties:
+      groups:
+        type: array
+        items:
+          type: string
+        title: list of groups
+      total:
+        type: integer
+        format: int64
+        title: total number of groups
+  policy:
+    type: object
+    properties:
+      name:
+        type: string
+      policy:
+        type: string
+  policyEntity:
+    type: string
+    enum:
+      - user
+      - group
+    default: user
+  setPolicyRequest:
+    type: object
+    required:
+      - entityType
+      - entityName
+    properties:
+      entityType:
+        $ref: "#/definitions/policyEntity"
+      entityName:
+        type: string
+
+  setPolicyMultipleRequest:
+    type: object
+    properties:
+      users:
+        type: array
+        items:
+          $ref: "#/definitions/iamEntity"
+      groups:
+        type: array
+        items:
+          $ref: "#/definitions/iamEntity"
+
+  iamEntity:
+    type: string
+    pattern: '^[\w+=,.@-]{1,64}$'
+
+  addPolicyRequest:
+    type: object
+    required:
+      - name
+      - policy
+    properties:
+      name:
+        type: string
+      policy:
+        type: string
+  listPoliciesResponse:
+    type: object
+    properties:
+      policies:
+        type: array
+        items:
+          $ref: "#/definitions/policy"
+        title: list of policies
+      total:
+        type: integer
+        format: int64
+        title: total number of policies
+  updateGroupRequest:
+    type: object
+    required:
+      - members
+      - status
+    properties:
+      members:
+        type: array
+        items:
+          type: string
+      status:
+        type: string
+  configDescription:
+    type: object
+    properties:
+      key:
+        type: string
+      description:
+        type: string
+  configurationKV:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+  configuration:
+    type: object
+    properties:
+      name:
+        type: string
+      key_values:
+        type: array
+        items:
+          $ref: "#/definitions/configurationKV"
+  listConfigResponse:
+    type: object
+    properties:
+      configurations:
+        type: array
+        items:
+          $ref: "#/definitions/configDescription"
+      total:
+        type: integer
+        format: int64
+        title: total number of configurations
+  setConfigRequest:
+    type: object
+    required:
+      - key_values
+    properties:
+      key_values:
+        type: array
+        minItems: 1
+        items:
+          $ref: "#/definitions/configurationKV"
+      arn_resource_id:
+        type: string
+        title: Used if configuration is an event notification's target
+  notificationEventType:
+    type: string
+    enum:
+      - put
+      - delete
+      - get
+  notificationConfig:
+    type: object
+    required:
+      - arn
+    properties:
+      id:
+        type: string
+      arn:
+        type: string
+      events:
+        type: array
+        items:
+          $ref: "#/definitions/notificationEventType"
+        title: "filter specific type of event. Defaults to all event (default: '[put,delete,get]')"
+      prefix:
+        type: string
+        title: "filter event associated to the specified prefix"
+      suffix:
+        type: string
+        title: "filter event associated to the specified suffix"
+  notificationDeleteRequest:
+    type: object
+    required:
+      - events
+      - prefix
+      - suffix
+    properties:
+      events:
+        type: array
+        minLength: 1
+        items:
+          $ref: "#/definitions/notificationEventType"
+        title: "filter specific type of event. Defaults to all event (default: '[put,delete,get]')"
+      prefix:
+        type: string
+        title: "filter event associated to the specified prefix"
+      suffix:
+        type: string
+        title: "filter event associated to the specified suffix"
+  bucketEventRequest:
+    type: object
+    required:
+      - configuration
+    properties:
+      configuration:
+        $ref: "#/definitions/notificationConfig"
+      ignoreExisting:
+        type: boolean
+  bucketReplicationDestination:
+    type: object
+    properties:
+      bucket:
+        type: string
+  bucketReplicationRule:
+    type: object
+    properties:
+      id:
+        type: string
+      status:
+        type: string
+        enum:
+          - Enabled
+          - Disabled
+      priority:
+        type: integer
+        format: int32
+      syncMode:
+        type: string
+        enum:
+          - async
+          - sync
+        default: async
+      bandwidth:
+        type: string
+      healthCheckPeriod:
+        type: integer
+      delete_marker_replication:
+        type: boolean
+      deletes_replication:
+        type: boolean
+      metadata_replication:
+        type: boolean
+      prefix:
+        type: string
+      tags:
+        type: string
+      destination:
+        $ref: "#/definitions/bucketReplicationDestination"
+
+  bucketReplicationResponse:
+    type: object
+    properties:
+      rules:
+        type: array
+        items:
+          $ref: "#/definitions/bucketReplicationRule"
+    # missing
+    #  "Filter": {
+    #   "And": {},
+    #   "Tag": {}
+    #  }
+    # }
+    #}
+
+  listExternalBucketsParams:
+    required:
+      - accessKey
+      - secretKey
+      - targetURL
+      - useTLS
+    properties:
+      accessKey:
+        type: string
+        minLength: 3
+      secretKey:
+        type: string
+        minLength: 8
+      targetURL:
+        type: string
+      useTLS:
+        type: boolean
+      region:
+        type: string
+
+  multiBucketReplication:
+    required:
+      - accessKey
+      - secretKey
+      - targetURL
+      - bucketsRelation
+    properties:
+      accessKey:
+        type: string
+        minLength: 3
+      secretKey:
+        type: string
+        minLength: 8
+      targetURL:
+        type: string
+      region:
+        type: string
+      syncMode:
+        type: string
+        enum:
+          - async
+          - sync
+        default: async
+      bandwidth:
+        type: integer
+        format: int64
+      healthCheckPeriod:
+        type: integer
+        format: int32
+      prefix:
+        type: string
+      tags:
+        type: string
+      replicateDeleteMarkers:
+        type: boolean
+      replicateDeletes:
+        type: boolean
+      replicateMetadata:
+        type: boolean
+      bucketsRelation:
+        type: array
+        minLength: 1
+        items:
+          $ref: "#/definitions/multiBucketsRelation"
+
+  multiBucketsRelation:
+    type: object
+    properties:
+      originBucket:
+        type: string
+      destinationBucket:
+        type: string
+
+  multiBucketResponseItem:
+    type: object
+    properties:
+      originBucket:
+        type: string
+      targetBucket:
+        type: string
+      errorString:
+        type: string
+
+  multiBucketResponseState:
+    type: object
+    properties:
+      replicationState:
+        type: array
+        items:
+          $ref: "#/definitions/multiBucketResponseItem"
+
+  addBucketReplication:
+    type: object
+    properties:
+      arn:
+        type: string
+      destination_bucket:
+        type: string
+  listBucketEventsResponse:
+    type: object
+    properties:
+      events:
+        type: array
+        items:
+          $ref: "#/definitions/notificationConfig"
+      total:
+        type: integer
+        format: int64
+        title: total number of bucket events
+  setBucketPolicyRequest:
+    type: object
+    required:
+      - access
+    properties:
+      access:
+        $ref: "#/definitions/bucketAccess"
+  bucketQuota:
+    type: object
+    properties:
+      quota:
+        type: integer
+      type:
+        type: string
+        enum:
+          - hard
+          - fifo
+  setBucketQuota:
+    type: object
+    required:
+      - enabled
+    properties:
+      enabled:
+        type: boolean
+      quota_type:
+        type: string
+        enum:
+          - fifo
+          - hard
+      amount:
+        type: integer
+  loginDetails:
+    type: object
+    properties:
+      loginStrategy:
+        type: string
+        enum: [form, redirect, service-account]
+      redirect:
+        type: string
+  loginOauth2AuthRequest:
+    type: object
+    required:
+      - state
+      - code
+    properties:
+      state:
+        type: string
+      code:
+        type: string
+  loginOperatorRequest:
+    type: object
+    required:
+      - jwt
+    properties:
+      jwt:
+        type: string
+  loginRequest:
+    type: object
+    required:
+      - accessKey
+      - secretKey
+    properties:
+      accessKey:
+        type: string
+      secretKey:
+        type: string
+  loginResponse:
+    type: object
+    properties:
+      sessionId:
+        type: string
+  # Structure that holds the `Bearer {TOKEN}` present on authenticated requests
+  principal:
+    type: object
+    properties:
+      STSAccessKeyID:
+        type: string
+      STSSecretAccessKey:
+        type: string
+      STSSessionToken:
+        type: string
+      actions:
+        type: array
+        items:
+          type: string
+      accountAccessKey:
+        type: string
+  startProfilingItem:
+    type: object
+    properties:
+      nodeName:
+        type: string
+      success:
+        type: boolean
+      error:
+        type: string
+  startProfilingList:
+    type: object
+    properties:
+      total:
+        type: integer
+        format: int64
+        title: number of start results
+      startResults:
+        type: array
+        items:
+          $ref: "#/definitions/startProfilingItem"
+  profilerType:
+    type: string
+    enum:
+      - cpu
+      - mem
+      - block
+      - mutex
+      - trace
+      - threads
+      - goroutines
+  profilingStartRequest:
+    type: object
+    required:
+      - type
+    properties:
+      type:
+        $ref: "#/definitions/profilerType"
+  sessionResponse:
+    type: object
+    properties:
+      pages:
+        type: array
+        items:
+          type: string
+      features:
+        type: array
+        items:
+          type: string
+      status:
+        type: string
+        enum: [ok]
+      operator:
+        type: boolean
+  widgetResult:
+    type: object
+    properties:
+      metric:
+        type: object
+        additionalProperties:
+          type: string
+      values:
+        type: array
+        items: {}
+  resultTarget:
+    type: object
+    properties:
+      legendFormat:
+        type: string
+      resultType:
+        type: string
+      result:
+        type: array
+        items:
+          $ref: "#/definitions/widgetResult"
+  widget:
+    type: object
+    properties:
+      title:
+        type: string
+      type:
+        type: string
+      id:
+        type: integer
+        format: int32
+      options:
+        type: object
+        properties:
+          reduceOptions:
+            type: object
+            properties:
+              calcs:
+                type: array
+                items:
+                  type: string
+      targets:
+        type: array
+        items:
+          $ref: "#/definitions/resultTarget"
+  widgetDetails:
+    type: object
+    properties:
+      title:
+        type: string
+      type:
+        type: string
+      id:
+        type: integer
+        format: int32
+      options:
+        type: object
+        properties:
+          reduceOptions:
+            type: object
+            properties:
+              calcs:
+                type: array
+                items:
+                  type: string
+      targets:
+        type: array
+        items:
+          $ref: "#/definitions/resultTarget"
+  adminInfoResponse:
+    type: object
+    properties:
+      buckets:
+        type: integer
+      objects:
+        type: integer
+      usage:
+        type: integer
+      widgets:
+        type: array
+        items:
+          $ref: "#/definitions/widget"
+  arnsResponse:
+    type: object
+    properties:
+      arns:
+        type: array
+        items:
+          type: string
+  updateUserGroups:
+    type: object
+    required:
+      - groups
+    properties:
+      groups:
+        type: array
+        items:
+          type: string
+  nofiticationService:
+    type: string
+    enum:
+      - webhook
+      - amqp
+      - kafka
+      - mqtt
+      - nats
+      - nsq
+      - mysql
+      - postgres
+      - elasticsearch
+      - redis
+  notificationEndpointItem:
+    type: object
+    properties:
+      service:
+        $ref: "#/definitions/nofiticationService"
+      account_id:
+        type: string
+      status:
+        type: string
+  notificationEndpoint:
+    type: object
+    required:
+      - service
+      - account_id
+      - properties
+    properties:
+      service:
+        $ref: "#/definitions/nofiticationService"
+      account_id:
+        type: string
+      properties:
+        type: object
+        additionalProperties:
+          type: string
+  setNotificationEndpointResponse:
+    type: object
+    required:
+      - service
+      - account_id
+      - properties
+    properties:
+      service:
+        $ref: "#/definitions/nofiticationService"
+      account_id:
+        type: string
+      properties:
+        type: object
+        additionalProperties:
+          type: string
+      restart:
+        type: boolean
+  notifEndpointResponse:
+    type: object
+    properties:
+      notification_endpoints:
+        type: array
+        items:
+          $ref: "#/definitions/notificationEndpointItem"
+  updateUser:
+    type: object
+    required:
+      - status
+      - groups
+    properties:
+      status:
+        type: string
+      groups:
+        type: array
+        items:
+          type: string
+  bulkUserGroups:
+    type: object
+    required:
+      - users
+      - groups
+    properties:
+      users:
+        type: array
+        items:
+          type: string
+      groups:
+        type: array
+        items:
+          type: string
+  serviceAccounts:
+    type: array
+    items:
+      type: string
+  serviceAccountRequest:
+    type: object
+    properties:
+      policy:
+        type: string
+        title: "policy to be applied to the Service Account if any"
+  serviceAccountCreds:
+    type: object
+    properties:
+      accessKey:
+        type: string
+      secretKey:
+        type: string
+  remoteBucket:
+    type: object
+    required:
+      - accessKey
+      - sourceBucket
+      - remoteARN
+    properties:
+      accessKey:
+        type: string
+        minLength: 3
+      secretKey:
+        type: string
+        minLength: 8
+      sourceBucket:
+        type: string
+      targetURL:
+        type: string
+      targetBucket:
+        type: string
+      remoteARN:
+        type: string
+      status:
+        type: string
+      service:
+        type: string
+        enum: [replication]
+      syncMode:
+        type: string
+      bandwidth:
+        type: integer
+        format: int64
+      healthCheckPeriod:
+        type: integer
+  createRemoteBucket:
+    required:
+      - accessKey
+      - secretKey
+      - targetURL
+      - sourceBucket
+      - targetBucket
+    properties:
+      accessKey:
+        type: string
+        minLength: 3
+      secretKey:
+        type: string
+        minLength: 8
+      targetURL:
+        type: string
+      sourceBucket:
+        type: string
+      targetBucket:
+        type: string
+      region:
+        type: string
+      syncMode:
+        type: string
+        enum:
+          - async
+          - sync
+        default: async
+      bandwidth:
+        type: integer
+        format: int64
+      healthCheckPeriod:
+        type: integer
+        format: int32
+  listRemoteBucketsResponse:
+    type: object
+    properties:
+      buckets:
+        type: array
+        items:
+          $ref: "#/definitions/remoteBucket"
+        title: list of remote buckets
+      total:
+        type: integer
+        format: int64
+        title: number of remote buckets accessible to user
+  bucketVersioningResponse:
+    type: object
+    properties:
+      is_versioned:
+        type: boolean
+  setBucketVersioning:
+    type: object
+    properties:
+      versioning:
+        type: boolean
+  bucketObLockingResponse:
+    type: object
+    properties:
+      object_locking_enabled:
+        type: boolean
+
+
+  logSearchResponse:
+    type: object
+    properties:
+      results:
+        type: object
+        title: list of log search responses
+
+
+  keyPairConfiguration:
+    type: object
+    required:
+      - crt
+      - key
+    properties:
+      crt:
+        type: string
+      key:
+        type: string
+
+  tlsConfiguration:
+    type: object
+    properties:
+      minio:
+        type: array
+        items:
+          $ref: "#/definitions/keyPairConfiguration"
+      console:
+        type: object
+        $ref: "#/definitions/keyPairConfiguration"
+      ca_certificates:
+        type: array
+        items:
+          type: string
+      console_ca_certificates:
+        type: array
+        items:
+          type: string
+
+  idpConfiguration:
+    type: object
+    properties:
+      oidc:
+        type: object
+        required:
+          - url
+          - client_id
+          - secret_id
+        properties:
+          url:
+            type: string
+          client_id:
+            type: string
+          secret_id:
+            type: string
+      keys:
+        type: array
+        items:
+          type: object
+          required:
+            - access_key
+            - secret_key
+          properties:
+            access_key:
+              type: string
+            secret_key:
+              type: string
+      active_directory:
+        type: object
+        required:
+          - url
+          - username_format
+          - user_search_filter
+        properties:
+          url:
+            type: string
+          username_format:
+            type: string
+          user_search_filter:
+            type: string
+          group_search_base_dn:
+            type: string
+          group_search_filter:
+            type: string
+          group_name_attribute:
+            type: string
+          skip_tls_verification:
+            type: boolean
+          server_insecure:
+            type: boolean
+
+
+  objectLegalHoldStatus:
+    type: string
+    enum:
+      - enabled
+      - disabled
+
+  putObjectLegalHoldRequest:
+    type: object
+    required:
+      - status
+    properties:
+      status:
+        $ref: "#/definitions/objectLegalHoldStatus"
+
+  objectRetentionMode:
+    type: string
+    enum:
+      - governance
+      - compliance
+
+  putObjectRetentionRequest:
+    type: object
+    required:
+      - mode
+      - expires
+    properties:
+      mode:
+        $ref: "#/definitions/objectRetentionMode"
+      expires:
+        type: string
+      governance_bypass:
+        type: boolean
+
+  putObjectTagsRequest:
+    type: object
+    properties:
+      tags:
+        additionalProperties:
+          type: string
+
+  objectRetentionUnit:
+    type: string
+    enum:
+      - days
+      - years
+
+  putBucketRetentionRequest:
+    type: object
+    required:
+      - mode
+      - unit
+      - validity
+    properties:
+      mode:
+        $ref: "#/definitions/objectRetentionMode"
+      unit:
+        $ref: "#/definitions/objectRetentionUnit"
+      validity:
+        type: integer
+        format: int32
+
+  getBucketRetentionConfig:
+    type: object
+    properties:
+      mode:
+        $ref: "#/definitions/objectRetentionMode"
+      unit:
+        $ref: "#/definitions/objectRetentionUnit"
+      validity:
+        type: integer
+        format: int32
+
+  bucketLifecycleResponse:
+    type: object
+    properties:
+      lifecycle:
+        type: array
+        items:
+          $ref: "#/definitions/objectBucketLifecycle"
+
+  expirationResponse:
+    type: object
+    properties:
+      date:
+        type: string
+      days:
+        type: integer
+        format: int64
+      delete_marker:
+        type: boolean
+
+  transitionResponse:
+    type: object
+    properties:
+      date:
+        type: string
+      storage_class:
+        type: string
+      days:
+        type: integer
+        format: int64
+
+  lifecycleTag:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+
+  objectBucketLifecycle:
+    type: object
+    properties:
+      id:
+        type: string
+      prefix:
+        type: string
+      status:
+        type: string
+      expiration:
+        $ref: "#/definitions/expirationResponse"
+      transition:
+        $ref: "#/definitions/transitionResponse"
+      tags:
+        type: array
+        items:
+          $ref: "#/definitions/lifecycleTag"
+
+  addBucketLifecycle:
+    type: object
+    properties:
+      prefix:
+        description: Non required field, it matches a prefix to perform ILM operations on it
+        type: string
+      tags:
+        description: Non required field, tags to match ILM files
+        type: string
+      expiry_date:
+        description: Required in case of expiry_days or transition fields are not set. it defines an expiry date for ILM
+        type: string
+      expiry_days:
+        description: Required in case of expiry_date or transition fields are not set. it defines an expiry days for ILM
+        type: integer
+        format: int32
+        default: 0
+      transition_date:
+        description: Required in case of transition_days or expiry fields are not set. it defines a transition date for ILM
+        type: string
+      transition_days:
+        description: Required in case of transition_date or expiry fields are not set. it defines a transition days for ILM
+        type: integer
+        format: int32
+        default: 0
+      storage_class:
+        description: Required only in case of transition is set. it refers to a tier
+        type: string
+      disable:
+        description: Non required, toggle to disable or enable rule
+        type: boolean
+      expired_object_delete_marker:
+        description: Non required, toggle to disable or enable rule
+        type: boolean
+      noncurrentversion_expiration_days:
+        description: Non required, can be set in case of expiration is enabled
+        type: integer
+        format: int32
+        default: 0
+      noncurrentversion_transition_days:
+        description: Non required, can be set in case of transition is enabled
+        type: integer
+        format: int32
+        default: 0
+      noncurrentversion_transition_storage_class:
+        description: Non required, can be set in case of transition is enabled
+        type: string
+
+  updateBucketLifecycle:
+    type: object
+    properties:
+      tags:
+        type: string
+      disable:
+        type: boolean
+
+  setConfigResponse:
+    type: object
+    properties:
+      restart:
+        description: Returns wheter server needs to restart to apply changes or not
+        type: boolean
+
+  license:
+    type: object
+    properties:
+      email:
+        type: string
+      organization:
+        type: string
+      account_id:
+        type: integer
+      storage_capacity:
+        type: integer
+      plan:
+        type: string
+      expires_at:
+        type: string
+
+  getDirectCSIDriveListResponse:
+    type: object
+    properties:
+      drives:
+        type: array
+        items:
+          $ref: "#/definitions/directCSIDriveInfo"
+
+  directCSIDriveInfo:
+    type: object
+    properties:
+      drive:
+        type: string
+      capacity:
+        type: number
+        format: int64
+      allocated:
+        type: number
+        format: int64
+      volumes:
+        type: number
+        format: int64
+      node:
+        type: string
+      status:
+        type: string
+      message:
+        type: string
+
+  getDirectCSIVolumeListResponse:
+    type: object
+    properties:
+      volumes:
+        type: array
+        items:
+          $ref: "#/definitions/directCSIVolumeInfo"
+
+  directCSIVolumeInfo:
+    type: object
+    properties:
+      volume:
+        type: string
+      capacity:
+        type: number
+        format: int64
+      node:
+        type: string
+      drive:
+        type: string
+
+  policyArgs:
+    type: object
+    properties:
+      id:
+        type: string
+      action:
+        type: string
+      bucket_name:
+        type: string
+
+  hasPermissionRequest:
+    type: object
+    properties:
+      actions:
+        type: array
+        items:
+          $ref: "#/definitions/policyArgs"
+
+  permissionAction:
+    type: object
+    properties:
+      id:
+        type: string
+      can:
+        type: boolean
+
+  hasPermissionResponse:
+    type: object
+    properties:
+      permissions:
+        type: array
+        items:
+          $ref: "#/definitions/permissionAction"
+
+  logSearchConfiguration:
+    type: object
+    properties:
+      storageClass:
+        type: string
+        default: ""
+      storageSize:
+        type: number
+        default: 5
+      image:
+        type: string
+      postgres_image:
+        type: string
+
+  prometheusConfiguration:
+    type: object
+    properties:
+      storageClass:
+        type: string
+        default: ""
+      storageSize:
+        type: number
+        default: 5
+      image:
+        type: string
+  tier_s3:
+    type: object
+    properties:
+      name:
+        type: string
+      endpoint:
+        type: string
+      accesskey:
+        type: string
+      secretkey:
+        type: string
+      bucket:
+        type: string
+      prefix:
+        type: string
+      region:
+        type: string
+      storageclass:
+        type: string
+
+  tier_azure:
+    type: object
+    properties:
+      name:
+        type: string
+      endpoint:
+        type: string
+      accountname:
+        type: string
+      accountkey:
+        type: string
+      bucket:
+        type: string
+      prefix:
+        type: string
+      region:
+        type: string
+
+  tier_gcs:
+    type: object
+    properties:
+      name:
+        type: string
+      endpoint:
+        type: string
+      creds:
+        type: string
+      bucket:
+        type: string
+      prefix:
+        type: string
+      region:
+        type: string
+
+  tier:
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - s3
+          - gcs
+          - azure
+          - unsupported
+      s3:
+        type: object
+        $ref: "#/definitions/tier_s3"
+      gcs:
+        type: object
+        $ref: "#/definitions/tier_gcs"
+      azure:
+        type: object
+        $ref: "#/definitions/tier_azure"
+
+  tierListResponse:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/tier"
+
+  tierCredentialsRequest:
+    type: object
+    properties:
+      access_key:
+        type: string
+      secret_key:
+        type: string
+      creds:
+        type: string
+        description: a base64 encoded value
+  formatConfiguration:
+    type: object
+    required:
+      - drives
+      - force
+    properties:
+      drives:
+        type: array
+        minLength: 1
+        items:
+          type: string
+      force:
+        type: boolean
+
+
+
+  rewindItem:
+    type: object
+    properties:
+      last_modified:
+        type: string
+      size:
+        type: integer
+        format: int64
+      version_id:
+        type: string
+      delete_flag:
+        type: boolean
+      action:
+        type: string
+      name:
+        type: string
+  
+  rewindResponse:
+    type: object
+    properties:
+      objects:
+        type: array
+        items:
+          $ref: "#/definitions/rewindItem"

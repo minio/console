@@ -19,6 +19,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -175,6 +176,10 @@ func loadAllCerts(ctx *cli.Context) error {
 
 // StartServer starts the console service
 func StartServer(ctx *cli.Context) error {
+	if os.Getenv("CONSOLE_OPERATOR_MODE") != "" && os.Getenv("CONSOLE_OPERATOR_MODE") == "on" {
+		return startOperatorServer(ctx)
+	}
+
 	if err := loadAllCerts(ctx); err != nil {
 		// Log this as a warning and continue running console without TLS certificates
 		restapi.LogError("Unable to load certs: %v", err)
@@ -213,31 +218,6 @@ func StartServer(ctx *cli.Context) error {
 	}
 
 	defer server.Shutdown()
-
-	// subnet license refresh process
-	go func() {
-		// start refreshing subnet license after 5 seconds..
-		time.Sleep(time.Second * 5)
-
-		failedAttempts := 0
-		for {
-			if err := restapi.RefreshLicense(); err != nil {
-				restapi.LogError("Refreshing subnet license failed: %v", err)
-				failedAttempts++
-				// end license refresh after 3 consecutive failed attempts
-				if failedAttempts >= 3 {
-					return
-				}
-				// wait 5 minutes and retry again
-				time.Sleep(time.Minute * 5)
-				continue
-			}
-			// if license refreshed successfully reset the counter
-			failedAttempts = 0
-			// try to refresh license every 24 hrs
-			time.Sleep(time.Hour * 24)
-		}
-	}()
 
 	return server.Serve()
 }

@@ -95,17 +95,17 @@ func getCreateServiceAccountResponse(session *models.Principal, serviceAccount *
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
-	userAdmin, err := newAdminClient(session)
+	userAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
 	// create a MinIO user Admin Client interface implementation
 	// defining the client to be used
-	userAdminClient := adminClient{client: userAdmin}
+	userAdminClient := AdminClient{Client: userAdmin}
 
 	saCreds, err := createServiceAccount(ctx, userAdminClient, serviceAccount.Policy)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
 	return saCreds, nil
 }
@@ -129,17 +129,17 @@ func getUserServiceAccountsResponse(session *models.Principal, user string) (mod
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
-	userAdmin, err := newAdminClient(session)
+	userAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
 	// create a MinIO user Admin Client interface implementation
 	// defining the client to be used
-	userAdminClient := adminClient{client: userAdmin}
+	userAdminClient := AdminClient{Client: userAdmin}
 
 	serviceAccounts, err := getUserServiceAccounts(ctx, userAdminClient, user)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
 	return serviceAccounts, nil
 }
@@ -154,16 +154,16 @@ func getDeleteServiceAccountResponse(session *models.Principal, accessKey string
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
-	userAdmin, err := newAdminClient(session)
+	userAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return prepareError(err)
+		return PrepareError(err)
 	}
 	// create a MinIO user Admin Client interface implementation
 	// defining the client to be used
-	userAdminClient := adminClient{client: userAdmin}
+	userAdminClient := AdminClient{Client: userAdmin}
 
 	if err := deleteServiceAccount(ctx, userAdminClient, accessKey); err != nil {
-		return prepareError(err)
+		return PrepareError(err)
 	}
 	return nil
 }

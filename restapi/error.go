@@ -13,7 +13,7 @@ import (
 
 var (
 	// Generic error messages
-	errorGeneric               = errors.New("an error occurred, please try again")
+	ErrorGeneric               = errors.New("an error occurred, please try again")
 	errInvalidCredentials      = errors.New("invalid Login")
 	errorGenericInvalidSession = errors.New("invalid session")
 	errorGenericUnauthorized   = errors.New("unauthorized")
@@ -41,10 +41,10 @@ var (
 	errAccessDenied                       = errors.New("access denied")
 )
 
-// prepareError receives an error object and parse it against k8sErrors, returns the right error code paired with a generic error message
-func prepareError(err ...error) *models.Error {
+// PrepareError receives an error object and parse it against k8sErrors, returns the right error code paired with a generic error message
+func PrepareError(err ...error) *models.Error {
 	errorCode := int32(500)
-	errorMessage := errorGeneric.Error()
+	errorMessage := ErrorGeneric.Error()
 	if len(err) > 0 {
 		frame := getFrame(2)
 		fileParts := strings.Split(frame.File, "/")

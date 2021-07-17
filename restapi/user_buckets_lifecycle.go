@@ -98,7 +98,7 @@ func getBucketLifecycleResponse(session *models.Principal, params user_api.GetBu
 	ctx := context.Background()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -106,7 +106,7 @@ func getBucketLifecycleResponse(session *models.Principal, params user_api.GetBu
 
 	bucketEvents, err := getBucketLifecycle(ctx, minioClient, params.BucketName)
 	if err != nil {
-		return nil, prepareError(errBucketLifeCycleNotConfigured, err)
+		return nil, PrepareError(errBucketLifeCycleNotConfigured, err)
 	}
 	return bucketEvents, nil
 }
@@ -233,7 +233,7 @@ func getAddBucketLifecycleResponse(session *models.Principal, params user_api.Ad
 	ctx := context.Background()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return prepareError(err)
+		return PrepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -241,7 +241,7 @@ func getAddBucketLifecycleResponse(session *models.Principal, params user_api.Ad
 
 	err = addBucketLifecycle(ctx, minioClient, params)
 	if err != nil {
-		return prepareError(err)
+		return PrepareError(err)
 	}
 
 	return nil

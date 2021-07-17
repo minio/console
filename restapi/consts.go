@@ -48,23 +48,16 @@ const (
 	ConsoleSecureReferrerPolicy                  = "CONSOLE_SECURE_REFERRER_POLICY"
 	ConsoleSecureFeaturePolicy                   = "CONSOLE_SECURE_FEATURE_POLICY"
 	ConsoleSecureExpectCTHeader                  = "CONSOLE_SECURE_EXPECT_CT_HEADER"
-	ConsoleOperatorSAToken                       = "CONSOLE_OPERATOR_SA_TOKEN"
 	ConsoleOperatorConsoleImage                  = "CONSOLE_OPERATOR_CONSOLE_IMAGE"
 	PrometheusURL                                = "CONSOLE_PROMETHEUS_URL"
 	PrometheusJobID                              = "CONSOLE_PROMETHEUS_JOB_ID"
 	ConsoleLogQueryURL                           = "CONSOLE_LOG_QUERY_URL"
 	ConsoleLogQueryAuthToken                     = "CONSOLE_LOG_QUERY_AUTH_TOKEN"
 	LogSearchQueryAuthToken                      = "LOGSEARCH_QUERY_AUTH_TOKEN"
-
-	// Constants for prometheus annotations
-	prometheusPath   = "prometheus.io/path"
-	prometheusPort   = "prometheus.io/port"
-	prometheusScrape = "prometheus.io/scrape"
 )
 
 // Image versions
 const (
-	KESImageVersion            = "minio/kes:v0.13.4"
 	ConsoleImageDefaultVersion = "minio/console:v0.7.5"
 )
 
