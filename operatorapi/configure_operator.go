@@ -91,6 +91,8 @@ func configureAPI(api *operations.OperatorAPI) http.Handler {
 	registerVolumesHandlers(api)
 	// Namespaces handlers
 	registerNamespaceHandlers(api)
+	// Subscription handlers
+	registerOperatorSubscriptionHandlers(api)
 
 	api.PreServerShutdown = func() {}
 

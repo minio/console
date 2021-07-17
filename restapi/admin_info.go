@@ -57,15 +57,15 @@ func registerAdminInfoHandlers(api *operations.ConsoleAPI) {
 
 }
 
-type usageInfo struct {
+type UsageInfo struct {
 	Buckets    int64
 	Objects    int64
 	Usage      int64
 	DisksUsage int64
 }
 
-// GetAdminInfo invokes admin info and returns a parsed `usageInfo` structure
-func GetAdminInfo(ctx context.Context, client MinioAdmin) (*usageInfo, error) {
+// GetAdminInfo invokes admin info and returns a parsed `UsageInfo` structure
+func GetAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
 	serverInfo, err := client.serverInfo(ctx)
 	if err != nil {
 		return nil, err
@@ -80,7 +80,7 @@ func GetAdminInfo(ctx context.Context, client MinioAdmin) (*usageInfo, error) {
 		}
 	}
 
-	return &usageInfo{
+	return &UsageInfo{
 		Buckets:    int64(serverInfo.Buckets.Count),
 		Objects:    int64(serverInfo.Objects.Count),
 		Usage:      int64(serverInfo.Usage.Size),

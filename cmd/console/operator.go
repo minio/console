@@ -158,7 +158,8 @@ func loadOperatorAllCerts(ctx *cli.Context) error {
 			if err = operatorapi.GlobalTLSCertsManager.AddCertificate(swaggerServerCertificate, swaggerServerCertificateKey); err != nil {
 				return err
 			}
-			if x509Certs, err := certs.ParsePublicCertFile(swaggerServerCertificate); err == nil {
+			x509Certs, err := certs.ParsePublicCertFile(swaggerServerCertificate)
+			if err == nil {
 				operatorapi.GlobalPublicCerts = append(operatorapi.GlobalPublicCerts, x509Certs...)
 			}
 		}

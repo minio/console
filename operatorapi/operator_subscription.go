@@ -47,6 +47,14 @@ func registerOperatorSubscriptionHandlers(api *operations.OperatorAPI) {
 		}
 		return operator_api.NewSubscriptionActivateNoContent()
 	})
+	// Refresh license for k8s cluster
+	api.OperatorAPISubscriptionRefreshHandler = operator_api.SubscriptionRefreshHandlerFunc(func(params operator_api.SubscriptionRefreshParams, session *models.Principal) middleware.Responder {
+		license, err := getSubscriptionRefreshResponse(session)
+		if err != nil {
+			return operator_api.NewSubscriptionRefreshDefault(int(err.Code)).WithPayload(err)
+		}
+		return operator_api.NewSubscriptionRefreshOK().WithPayload(license)
+	})
 }
 
 // retrieveLicense returns license from K8S secrets (If console is deployed in operator mode) or from

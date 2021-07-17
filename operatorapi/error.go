@@ -31,7 +31,6 @@ var (
 	errGroupNameNotInRequest              = errors.New("error group name not in request")
 	errPolicyNameNotInRequest             = errors.New("error policy name not in request")
 	errPolicyBodyNotInRequest             = errors.New("error policy body not in request")
-	errInvalidEncryptionAlgorithm         = errors.New("error invalid encryption algorithm")
 	errSSENotConfigured                   = errors.New("error server side encryption configuration not found")
 	errBucketLifeCycleNotConfigured       = errors.New("error bucket life cycle configuration not found")
 	errChangePassword                     = errors.New("error please check your current password")

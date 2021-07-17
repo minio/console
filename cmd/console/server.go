@@ -157,7 +157,8 @@ func loadAllCerts(ctx *cli.Context) error {
 			if err = restapi.GlobalTLSCertsManager.AddCertificate(swaggerServerCertificate, swaggerServerCertificateKey); err != nil {
 				return err
 			}
-			if x509Certs, err := certs.ParsePublicCertFile(swaggerServerCertificate); err == nil {
+			x509Certs, err := certs.ParsePublicCertFile(swaggerServerCertificate)
+			if err == nil {
 				restapi.GlobalPublicCerts = append(restapi.GlobalPublicCerts, x509Certs...)
 			}
 		}

@@ -24,8 +24,6 @@ import (
 
 	"github.com/minio/console/restapi"
 
-	"github.com/minio/minio-go/v7/pkg/credentials"
-
 	iampolicy "github.com/minio/pkg/iam/policy"
 
 	"github.com/go-openapi/runtime"
@@ -61,7 +59,7 @@ func registerLoginHandlers(api *operations.OperatorAPI) {
 		})
 	})
 	api.UserAPILoginOauth2AuthHandler = user_api.LoginOauth2AuthHandlerFunc(func(params user_api.LoginOauth2AuthParams) middleware.Responder {
-		loginResponse, err := getLoginOauth2AuthResponse(params.Body)
+		loginResponse, err := getLoginOauth2AuthResponse()
 		if err != nil {
 			return user_api.NewLoginOauth2AuthDefault(int(err.Code)).WithPayload(err)
 		}
@@ -206,17 +204,7 @@ func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
 	return loginDetails, nil
 }
 
-// verifyUserAgainstIDP will verify user identity against the configured IDP and return MinIO credentials
-func verifyUserAgainstIDP(ctx context.Context, provider auth.IdentityProviderI, code, state string) (*credentials.Credentials, error) {
-	userCredentials, err := provider.VerifyIdentity(ctx, code, state)
-	if err != nil {
-		LogError("error validating user identity against idp: %v", err)
-		return nil, errInvalidCredentials
-	}
-	return userCredentials, nil
-}
-
-func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.LoginResponse, *models.Error) {
+func getLoginOauth2AuthResponse() (*models.LoginResponse, *models.Error) {
 
 	creds, err := restapi.NewConsoleCredentials("", getK8sSAToken(), "")
 	if err != nil {
@@ -232,8 +220,6 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 		SessionID: *token,
 	}
 	return loginResponse, nil
-
-	return nil, PrepareError(restapi.ErrorGeneric)
 }
 
 // getLoginOperatorResponse validate the provided service account token against k8s api

@@ -100,12 +100,10 @@ func TestStopProfiling(t *testing.T) {
 		return &ClosingBuffer{bytes.NewBufferString("In memory string eaeae")}, nil
 	}
 	function := "stopProfiling()"
-	readCloserInterface, err := stopProfiling(ctx, adminClient)
+	_, err := stopProfiling(ctx, adminClient)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
-	// Check return type of stopProfiling is io.ReadCloser by doing a cast
-	assert.NotPanics(func() { readCloserInterface.(io.ReadCloser).Close() })
 	// Test-2 : stopProfiling() Correctly handles errors returned by Minio
 	// mock function response from stopProfiling()
 	minioStopProfiling = func() (io.ReadCloser, error) {

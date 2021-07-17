@@ -281,12 +281,12 @@ func (c ConsoleCredentials) GetAccountAccessKey() string {
 	return c.AccountAccessKey
 }
 
-// implements *Login.Get()
+// Get implements *Login.Get()
 func (c ConsoleCredentials) Get() (credentials.Value, error) {
 	return c.ConsoleCredentials.Get()
 }
 
-// implements *Login.Expire()
+// Expire implements *Login.Expire()
 func (c ConsoleCredentials) Expire() {
 	c.ConsoleCredentials.Expire()
 }
