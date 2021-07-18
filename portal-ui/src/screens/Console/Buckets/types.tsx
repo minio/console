@@ -19,6 +19,12 @@ export interface Bucket {
   creation_date: Date;
 }
 
+export interface RemoteBucket {
+  sourceBucket: string;
+  targetBucket: string;
+  targetURL: string;
+}
+
 export interface BucketEncryptionInfo {
   algorithm: string;
   kmsMasterKeyID: string;
@@ -31,6 +37,11 @@ export interface BucketInfo {
 
 export interface BucketList {
   buckets: Bucket[];
+  total: number;
+}
+
+export interface RemoteBucketList {
+  buckets: RemoteBucket[];
   total: number;
 }
 
