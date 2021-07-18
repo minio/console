@@ -17,7 +17,7 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Grid, Tab, Tabs } from "@material-ui/core";
-import { Route, Router, Switch, Redirect } from "react-router-dom";
+import { Route, Router, Switch, Redirect, Link } from "react-router-dom";
 import {
   actionsTray,
   containerForHeader,
@@ -65,7 +65,16 @@ const Storage = ({ classes, match }: IStorageProps) => {
 
   return (
     <Fragment>
-      <PageHeader label={"Storage"} />
+      <PageHeader
+        label={
+          <Fragment>
+            Storage:
+            <Link to={"/tenants"} className={classes.breadcrumLink}>
+              Tenants
+            </Link>
+          </Fragment>
+        }
+      />
       <Grid container>
         <Grid item xs={12} className={classes.container}>
           <Grid item xs={12} className={classes.tabsContainer}>
