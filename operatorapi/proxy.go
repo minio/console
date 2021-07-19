@@ -85,12 +85,13 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 
 	nsTenant := fmt.Sprintf("%s/%s", namespace, tenantName)
 
-	tenantSchema := "https"
-	if !tenant.TLS() {
-		tenantSchema = "http"
+	tenantSchema := "http"
+	tenantPort := ":9090"
+	if tenant.AutoCert() || tenant.ConsoleExternalCert() {
+		tenantSchema = "https"
+		tenantPort = ":9443"
 	}
-
-	tenantURL := fmt.Sprintf("%s://%s.%s.svc.%s:9443", tenantSchema, tenant.ConsoleCIServiceName(), tenant.Namespace, v2.GetClusterDomain())
+	tenantURL := fmt.Sprintf("%s://%s.%s.svc.%s%s", tenantSchema, tenant.ConsoleCIServiceName(), tenant.Namespace, v2.GetClusterDomain(), tenantPort)
 	// for development
 	//tenantURL = "http://localhost:9091"
 	//tenantURL = "https://localhost:9443"
