@@ -219,10 +219,14 @@ const ObjectDetails = ({
 
   useEffect(() => {
     if (loadObjectData) {
+      console.log(`x "${pathInBucket}"`);
+
       api
         .invoke(
           "GET",
-          `/api/v1/buckets/${bucketName}/objects?prefix=${pathInBucket}&with_versions=true`
+          `/api/v1/buckets/${bucketName}/objects?prefix=${escape(
+            pathInBucket
+          )}&with_versions=true`
         )
         .then((res: IFileInfo[]) => {
           const result = get(res, "objects", []);
