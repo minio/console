@@ -124,7 +124,7 @@ const AddUser = ({
         });
     } else {
       api
-        .invoke("POST", "/api/v1/users", {
+        .invoke("POST", "api/v1/users", {
           accessKey,
           secretKey,
           groups: selectedGroups,

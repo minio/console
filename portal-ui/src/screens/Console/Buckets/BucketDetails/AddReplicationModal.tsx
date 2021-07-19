@@ -117,7 +117,7 @@ const AddReplicationModal = ({
     };
 
     api
-      .invoke("POST", "/api/v1/buckets-replication", remoteBucketsInfo)
+      .invoke("POST", "api/v1/buckets-replication", remoteBucketsInfo)
       .then((response: BulkReplicationResponse) => {
         setAddLoading(false);
 
