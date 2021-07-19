@@ -18,7 +18,6 @@ package restapi
 
 import (
 	"crypto/x509"
-	"io/ioutil"
 	"net"
 	"strconv"
 	"strings"
@@ -51,17 +50,11 @@ var (
 	LicenseKey = ""
 )
 
-var consoleImage string
-
-func init() {
-	consoleImage = env.Get(ConsoleOperatorConsoleImage, ConsoleImageDefaultVersion)
-}
-
 func getMinIOServer() string {
 	return strings.TrimSpace(env.Get(ConsoleMinIOServer, "http://localhost:9000"))
 }
 
-func getMinIORegion() string {
+func GetMinIORegion() string {
 	return strings.TrimSpace(env.Get(ConsoleMinIORegion, ""))
 }
 
@@ -127,7 +120,7 @@ func GetTLSRedirect() string {
 }
 
 // Get secure middleware env variable configurations
-func getSecureAllowedHosts() []string {
+func GetSecureAllowedHosts() []string {
 	allowedHosts := env.Get(ConsoleSecureAllowedHosts, "")
 	if allowedHosts != "" {
 		return strings.Split(allowedHosts, ",")
@@ -136,39 +129,39 @@ func getSecureAllowedHosts() []string {
 }
 
 // AllowedHostsAreRegex determines, if the provided AllowedHosts slice contains valid regular expressions. Default is false.
-func getSecureAllowedHostsAreRegex() bool {
+func GetSecureAllowedHostsAreRegex() bool {
 	return strings.ToLower(env.Get(ConsoleSecureAllowedHostsAreRegex, "off")) == "on"
 }
 
 // If FrameDeny is set to true, adds the X-Frame-Options header with the value of `DENY`. Default is true.
-func getSecureFrameDeny() bool {
+func GetSecureFrameDeny() bool {
 	return strings.ToLower(env.Get(ConsoleSecureFrameDeny, "on")) == "on"
 }
 
 // If ContentTypeNosniff is true, adds the X-Content-Type-Options header with the value `nosniff`. Default is true.
-func getSecureContentTypeNonSniff() bool {
+func GetSecureContentTypeNonSniff() bool {
 	return strings.ToLower(env.Get(ConsoleSecureContentTypeNoSniff, "on")) == "on"
 }
 
 // If BrowserXssFilter is true, adds the X-XSS-Protection header with the value `1; mode=block`. Default is true.
-func getSecureBrowserXSSFilter() bool {
+func GetSecureBrowserXSSFilter() bool {
 	return strings.ToLower(env.Get(ConsoleSecureBrowserXSSFilter, "on")) == "on"
 }
 
 // ContentSecurityPolicy allows the Content-Security-Policy header value to be set with a custom value. Default is "".
 // Passing a template string will replace `$NONCE` with a dynamic nonce value of 16 bytes for each request which can be
 // later retrieved using the Nonce function.
-func getSecureContentSecurityPolicy() string {
+func GetSecureContentSecurityPolicy() string {
 	return env.Get(ConsoleSecureContentSecurityPolicy, "")
 }
 
 // ContentSecurityPolicyReportOnly allows the Content-Security-Policy-Report-Only header value to be set with a custom value. Default is "".
-func getSecureContentSecurityPolicyReportOnly() string {
+func GetSecureContentSecurityPolicyReportOnly() string {
 	return env.Get(ConsoleSecureContentSecurityPolicyReportOnly, "")
 }
 
 // HostsProxyHeaders is a set of header keys that may hold a proxied hostname value for the request.
-func getSecureHostsProxyHeaders() []string {
+func GetSecureHostsProxyHeaders() []string {
 	allowedHosts := env.Get(ConsoleSecureHostsProxyHeaders, "")
 	if allowedHosts != "" {
 		return strings.Split(allowedHosts, ",")
@@ -177,12 +170,12 @@ func getSecureHostsProxyHeaders() []string {
 }
 
 // TLSHost is the host name that is used to redirect HTTP requests to HTTPS. Default is "", which indicates to use the same host.
-func getSecureTLSHost() string {
+func GetSecureTLSHost() string {
 	return env.Get(ConsoleSecureTLSHost, net.JoinHostPort(Hostname, TLSPort))
 }
 
 // STSSeconds is the max-age of the Strict-Transport-Security header. Default is 0, which would NOT include the header.
-func getSecureSTSSeconds() int64 {
+func GetSecureSTSSeconds() int64 {
 	seconds, err := strconv.Atoi(env.Get(ConsoleSecureSTSSeconds, "0"))
 	if err != nil {
 		seconds = 0
@@ -191,41 +184,41 @@ func getSecureSTSSeconds() int64 {
 }
 
 // If STSIncludeSubdomains is set to true, the `includeSubdomains` will be appended to the Strict-Transport-Security header. Default is false.
-func getSecureSTSIncludeSubdomains() bool {
+func GetSecureSTSIncludeSubdomains() bool {
 	return strings.ToLower(env.Get(ConsoleSecureSTSIncludeSubdomains, "off")) == "on"
 }
 
 // If STSPreload is set to true, the `preload` flag will be appended to the Strict-Transport-Security header. Default is false.
-func getSecureSTSPreload() bool {
+func GetSecureSTSPreload() bool {
 	return strings.ToLower(env.Get(ConsoleSecureSTSPreload, "off")) == "on"
 }
 
 // If TLSTemporaryRedirect is true, the a 302 will be used while redirecting. Default is false (301).
-func getSecureTLSTemporaryRedirect() bool {
+func GetSecureTLSTemporaryRedirect() bool {
 	return strings.ToLower(env.Get(ConsoleSecureTLSTemporaryRedirect, "off")) == "on"
 }
 
 // STS header is only included when the connection is HTTPS.
-func getSecureForceSTSHeader() bool {
+func GetSecureForceSTSHeader() bool {
 	return strings.ToLower(env.Get(ConsoleSecureForceSTSHeader, "off")) == "on"
 }
 
 // PublicKey implements HPKP to prevent MITM attacks with forged certificates. Default is "".
-func getSecurePublicKey() string {
+func GetSecurePublicKey() string {
 	return env.Get(ConsoleSecurePublicKey, "")
 }
 
 // ReferrerPolicy allows the Referrer-Policy header with the value to be set with a custom value. Default is "".
-func getSecureReferrerPolicy() string {
+func GetSecureReferrerPolicy() string {
 	return env.Get(ConsoleSecureReferrerPolicy, "")
 }
 
 // FeaturePolicy allows the Feature-Policy header with the value to be set with a custom value. Default is "".
-func getSecureFeaturePolicy() string {
+func GetSecureFeaturePolicy() string {
 	return env.Get(ConsoleSecureFeaturePolicy, "")
 }
 
-func getSecureExpectCTHeader() string {
+func GetSecureExpectCTHeader() string {
 	return env.Get(ConsoleSecureExpectCTHeader, "")
 }
 
@@ -267,17 +260,3 @@ var (
 	// GlobalTLSCertsManager custom TLS Manager for SNI support
 	GlobalTLSCertsManager *xcerts.Manager
 )
-
-// getK8sSAToken assumes the plugin is running inside a k8s pod and extract the current service account from the
-// /var/run/secrets/kubernetes.io/serviceaccount/token file
-func getK8sSAToken() string {
-	dat, err := ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/token")
-	if err != nil {
-		return env.Get(ConsoleOperatorSAToken, "")
-	}
-	return string(dat)
-}
-
-func getConsoleImage() string {
-	return consoleImage
-}

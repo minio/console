@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	// Generic error messages
-	errorGeneric               = errors.New("an error occurred, please try again")
+	// ErrorGeneric is a heneric error message
+	ErrorGeneric               = errors.New("an error occurred, please try again")
 	errInvalidCredentials      = errors.New("invalid Login")
 	errorGenericInvalidSession = errors.New("invalid session")
 	errorGenericUnauthorized   = errors.New("unauthorized")
@@ -21,30 +21,27 @@ var (
 	// ErrorGenericNotFound Generic error for not found
 	ErrorGenericNotFound = errors.New("not found")
 	// Explicit error messages
-	errorInvalidErasureCodingValue        = errors.New("invalid Erasure Coding Value")
-	errorUnableToGetTenantUsage           = errors.New("unable to get tenant usage")
-	errorUnableToUpdateTenantCertificates = errors.New("unable to update tenant certificates")
-	errorUpdatingEncryptionConfig         = errors.New("unable to update encryption configuration")
-	errBucketBodyNotInRequest             = errors.New("error bucket body not in request")
-	errBucketNameNotInRequest             = errors.New("error bucket name not in request")
-	errGroupBodyNotInRequest              = errors.New("error group body not in request")
-	errGroupNameNotInRequest              = errors.New("error group name not in request")
-	errPolicyNameNotInRequest             = errors.New("error policy name not in request")
-	errPolicyBodyNotInRequest             = errors.New("error policy body not in request")
-	errInvalidEncryptionAlgorithm         = errors.New("error invalid encryption algorithm")
-	errSSENotConfigured                   = errors.New("error server side encryption configuration not found")
-	errBucketLifeCycleNotConfigured       = errors.New("error bucket life cycle configuration not found")
-	errChangePassword                     = errors.New("error please check your current password")
-	errInvalidLicense                     = errors.New("invalid license key")
-	errLicenseNotFound                    = errors.New("license not found")
-	errAvoidSelfAccountDelete             = errors.New("logged in user cannot be deleted by itself")
-	errAccessDenied                       = errors.New("access denied")
+	errorInvalidErasureCodingValue  = errors.New("invalid Erasure Coding Value")
+	errBucketBodyNotInRequest       = errors.New("error bucket body not in request")
+	errBucketNameNotInRequest       = errors.New("error bucket name not in request")
+	errGroupBodyNotInRequest        = errors.New("error group body not in request")
+	errGroupNameNotInRequest        = errors.New("error group name not in request")
+	errPolicyNameNotInRequest       = errors.New("error policy name not in request")
+	errPolicyBodyNotInRequest       = errors.New("error policy body not in request")
+	errInvalidEncryptionAlgorithm   = errors.New("error invalid encryption algorithm")
+	errSSENotConfigured             = errors.New("error server side encryption configuration not found")
+	errBucketLifeCycleNotConfigured = errors.New("error bucket life cycle configuration not found")
+	errChangePassword               = errors.New("error please check your current password")
+	errInvalidLicense               = errors.New("invalid license key")
+	errLicenseNotFound              = errors.New("license not found")
+	errAvoidSelfAccountDelete       = errors.New("logged in user cannot be deleted by itself")
+	errAccessDenied                 = errors.New("access denied")
 )
 
-// prepareError receives an error object and parse it against k8sErrors, returns the right error code paired with a generic error message
-func prepareError(err ...error) *models.Error {
+// PrepareError receives an error object and parse it against k8sErrors, returns the right error code paired with a generic error message
+func PrepareError(err ...error) *models.Error {
 	errorCode := int32(500)
-	errorMessage := errorGeneric.Error()
+	errorMessage := ErrorGeneric.Error()
 	if len(err) > 0 {
 		frame := getFrame(2)
 		fileParts := strings.Split(frame.File, "/")

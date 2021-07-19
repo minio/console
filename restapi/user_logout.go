@@ -41,7 +41,7 @@ func registerLogoutHandlers(api *operations.ConsoleAPI) {
 	})
 }
 
-// logout() call Expire() on the provided consoleCredentials
+// logout() call Expire() on the provided ConsoleCredentials
 func logout(credentials ConsoleCredentialsI) {
 	credentials.Expire()
 }
@@ -49,6 +49,6 @@ func logout(credentials ConsoleCredentialsI) {
 // getLogoutResponse performs logout() and returns nil or error
 func getLogoutResponse(session *models.Principal) {
 	creds := getConsoleCredentialsFromSession(session)
-	credentials := consoleCredentials{consoleCredentials: creds}
+	credentials := ConsoleCredentials{ConsoleCredentials: creds}
 	logout(credentials)
 }

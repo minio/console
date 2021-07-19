@@ -84,7 +84,7 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 	})
 }
 
-// login performs a check of consoleCredentials against MinIO, generates some claims and returns the jwt
+// login performs a check of ConsoleCredentials against MinIO, generates some claims and returns the jwt
 // for subsequent authentication
 func login(credentials ConsoleCredentialsI) (*string, error) {
 	// try to obtain consoleCredentials,
@@ -105,31 +105,31 @@ func login(credentials ConsoleCredentialsI) (*string, error) {
 func getAccountPolicy(ctx context.Context, client MinioAdmin) (*iampolicy.Policy, error) {
 	// Obtain the current policy assigned to this user
 	// necessary for generating the list of allowed endpoints
-	accountInfo, err := client.accountInfo(ctx)
+	accountInfo, err := client.AccountInfo(ctx)
 	if err != nil {
 		return nil, err
 	}
 	return iampolicy.ParseConfig(bytes.NewReader(accountInfo.Policy))
 }
 
-// getConsoleCredentials will return consoleCredentials interface including the associated policy of the current account
-func getConsoleCredentials(ctx context.Context, accessKey, secretKey string) (*consoleCredentials, error) {
-	creds, err := newConsoleCredentials(accessKey, secretKey, getMinIORegion())
+// getConsoleCredentials will return ConsoleCredentials interface including the associated policy of the current account
+func getConsoleCredentials(ctx context.Context, accessKey, secretKey string) (*ConsoleCredentials, error) {
+	creds, err := NewConsoleCredentials(accessKey, secretKey, GetMinIORegion())
 	if err != nil {
 		return nil, err
 	}
 	// cCredentials will be sts credentials, account credentials will be need it in the scenario the user wish
 	// to change its password
-	cCredentials := &consoleCredentials{
-		consoleCredentials: creds,
-		accountAccessKey:   accessKey,
+	cCredentials := &ConsoleCredentials{
+		ConsoleCredentials: creds,
+		AccountAccessKey:   accessKey,
 	}
 	tokens, err := cCredentials.Get()
 	if err != nil {
 		return nil, err
 	}
 	// initialize admin client
-	mAdminClient, err := newAdminClient(&models.Principal{
+	mAdminClient, err := NewMinioAdminClient(&models.Principal{
 		STSAccessKeyID:     tokens.AccessKeyID,
 		STSSecretAccessKey: tokens.SecretAccessKey,
 		STSSessionToken:    tokens.SessionToken,
@@ -137,7 +137,7 @@ func getConsoleCredentials(ctx context.Context, accessKey, secretKey string) (*c
 	if err != nil {
 		return nil, err
 	}
-	userAdminClient := adminClient{client: mAdminClient}
+	userAdminClient := AdminClient{Client: mAdminClient}
 	// Obtain the current policy assigned to this user
 	// necessary for generating the list of allowed endpoints
 	policy, err := getAccountPolicy(ctx, userAdminClient)
@@ -152,7 +152,7 @@ func getConsoleCredentials(ctx context.Context, accessKey, secretKey string) (*c
 	if policy != nil {
 		actions = acl.GetActionsStringFromPolicy(policy)
 	}
-	cCredentials.actions = actions
+	cCredentials.Actions = actions
 	return cCredentials, nil
 }
 
@@ -163,11 +163,11 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.E
 	// prepare console credentials
 	consolCreds, err := getConsoleCredentials(ctx, *lr.AccessKey, *lr.SecretKey)
 	if err != nil {
-		return nil, prepareError(errInvalidCredentials, nil, err)
+		return nil, PrepareError(errInvalidCredentials, nil, err)
 	}
 	sessionID, err := login(consolCreds)
 	if err != nil {
-		return nil, prepareError(errInvalidCredentials, nil, err)
+		return nil, PrepareError(errInvalidCredentials, nil, err)
 	}
 	// serialize output
 	loginResponse := &models.LoginResponse{
@@ -188,7 +188,7 @@ func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil, GetConsoleSTSClient())
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, PrepareError(err)
 		}
 		// Validate user against IDP
 		identityProvider := &auth.IdentityProvider{Client: oauth2Client}
@@ -217,53 +217,38 @@ func verifyUserAgainstIDP(ctx context.Context, provider auth.IdentityProviderI, 
 func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.LoginResponse, *models.Error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
-	if acl.GetOperatorMode() {
-		creds, err := newConsoleCredentials("", getK8sSAToken(), "")
-		if err != nil {
-			return nil, prepareError(err)
-		}
-		credentials := consoleCredentials{consoleCredentials: creds, actions: []string{}}
-		token, err := login(credentials)
-		if err != nil {
-			return nil, prepareError(errInvalidCredentials, nil, err)
-		}
-		// serialize output
-		loginResponse := &models.LoginResponse{
-			SessionID: *token,
-		}
-		return loginResponse, nil
-	} else if oauth2.IsIdpEnabled() {
+	if oauth2.IsIdpEnabled() {
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil, GetConsoleSTSClient())
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, PrepareError(err)
 		}
 		// initialize new identity provider
 		identityProvider := auth.IdentityProvider{Client: oauth2Client}
 		// Validate user against IDP
 		userCredentials, err := verifyUserAgainstIDP(ctx, identityProvider, *lr.Code, *lr.State)
 		if err != nil {
-			return nil, prepareError(errInvalidCredentials, nil, err)
+			return nil, PrepareError(errInvalidCredentials, nil, err)
 		}
 		creds, err := userCredentials.Get()
 		if err != nil {
-			return nil, prepareError(errInvalidCredentials, nil, err)
+			return nil, PrepareError(errInvalidCredentials, nil, err)
 		}
 		// initialize admin client
-		mAdminClient, err := newAdminClient(&models.Principal{
+		mAdminClient, err := NewMinioAdminClient(&models.Principal{
 			STSAccessKeyID:     creds.AccessKeyID,
 			STSSecretAccessKey: creds.SecretAccessKey,
 			STSSessionToken:    creds.SessionToken,
 		})
 		if err != nil {
-			return nil, prepareError(errInvalidCredentials, nil, err)
+			return nil, PrepareError(errInvalidCredentials, nil, err)
 		}
-		userAdminClient := adminClient{client: mAdminClient}
+		userAdminClient := AdminClient{Client: mAdminClient}
 		// Obtain the current policy assigned to this user
 		// necessary for generating the list of allowed endpoints
 		policy, err := getAccountPolicy(ctx, userAdminClient)
 		if err != nil {
-			return nil, prepareError(errorGeneric, nil, err)
+			return nil, PrepareError(ErrorGeneric, nil, err)
 		}
 		// by default every user starts with an empty array of available actions
 		// therefore we would have access only to pages that doesn't require any privilege
@@ -274,13 +259,13 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 			actions = acl.GetActionsStringFromPolicy(policy)
 		}
 		// login user against console and generate session token
-		token, err := login(&consoleCredentials{
-			consoleCredentials: userCredentials,
-			accountAccessKey:   "",
-			actions:            actions,
+		token, err := login(&ConsoleCredentials{
+			ConsoleCredentials: userCredentials,
+			AccountAccessKey:   "",
+			Actions:            actions,
 		})
 		if err != nil {
-			return nil, prepareError(errInvalidCredentials, nil, err)
+			return nil, PrepareError(errInvalidCredentials, nil, err)
 		}
 		// serialize output
 		loginResponse := &models.LoginResponse{
@@ -288,19 +273,19 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 		}
 		return loginResponse, nil
 	}
-	return nil, prepareError(errorGeneric)
+	return nil, PrepareError(ErrorGeneric)
 }
 
 // getLoginOperatorResponse validate the provided service account token against k8s api
 func getLoginOperatorResponse(lmr *models.LoginOperatorRequest) (*models.LoginResponse, *models.Error) {
-	creds, err := newConsoleCredentials("", *lmr.Jwt, "")
+	creds, err := NewConsoleCredentials("", *lmr.Jwt, "")
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
-	consoleCreds := consoleCredentials{consoleCredentials: creds, actions: []string{}}
+	consoleCreds := ConsoleCredentials{ConsoleCredentials: creds, Actions: []string{}}
 	token, err := login(consoleCreds)
 	if err != nil {
-		return nil, prepareError(errInvalidCredentials, nil, err)
+		return nil, PrepareError(errInvalidCredentials, nil, err)
 	}
 	// serialize output
 	loginResponse := &models.LoginResponse{

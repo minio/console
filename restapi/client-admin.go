@@ -91,7 +91,7 @@ type MinioAdmin interface {
 	stopProfiling(ctx context.Context) (io.ReadCloser, error)
 	serviceTrace(ctx context.Context, threshold int64, s3, internal, storage, os, errTrace bool) <-chan madmin.ServiceTraceInfo
 	getLogs(ctx context.Context, node string, lineCnt int, logKind string) <-chan madmin.LogInfo
-	accountInfo(ctx context.Context) (madmin.AccountInfo, error)
+	AccountInfo(ctx context.Context) (madmin.AccountInfo, error)
 	heal(ctx context.Context, bucket, prefix string, healOpts madmin.HealOpts, clientToken string,
 		forceStart, forceStop bool) (healStart madmin.HealStartSuccess, healTaskStatus madmin.HealTaskStatus, err error)
 	// Service Accounts
@@ -119,62 +119,62 @@ type MinioAdmin interface {
 //
 // Define the structure of a minIO Client and define the functions that are actually used
 // from minIO api.
-type adminClient struct {
-	client *madmin.AdminClient
+type AdminClient struct {
+	Client *madmin.AdminClient
 }
 
-func (ac adminClient) changePassword(ctx context.Context, accessKey, secretKey string) error {
-	return ac.client.SetUser(ctx, accessKey, secretKey, madmin.AccountEnabled)
+func (ac AdminClient) changePassword(ctx context.Context, accessKey, secretKey string) error {
+	return ac.Client.SetUser(ctx, accessKey, secretKey, madmin.AccountEnabled)
 }
 
 // implements madmin.ListUsers()
-func (ac adminClient) listUsers(ctx context.Context) (map[string]madmin.UserInfo, error) {
-	return ac.client.ListUsers(ctx)
+func (ac AdminClient) listUsers(ctx context.Context) (map[string]madmin.UserInfo, error) {
+	return ac.Client.ListUsers(ctx)
 }
 
 // implements madmin.AddUser()
-func (ac adminClient) addUser(ctx context.Context, accessKey, secretKey string) error {
-	return ac.client.AddUser(ctx, accessKey, secretKey)
+func (ac AdminClient) addUser(ctx context.Context, accessKey, secretKey string) error {
+	return ac.Client.AddUser(ctx, accessKey, secretKey)
 }
 
 // implements madmin.RemoveUser()
-func (ac adminClient) removeUser(ctx context.Context, accessKey string) error {
-	return ac.client.RemoveUser(ctx, accessKey)
+func (ac AdminClient) removeUser(ctx context.Context, accessKey string) error {
+	return ac.Client.RemoveUser(ctx, accessKey)
 }
 
 //implements madmin.GetUserInfo()
-func (ac adminClient) getUserInfo(ctx context.Context, accessKey string) (madmin.UserInfo, error) {
-	return ac.client.GetUserInfo(ctx, accessKey)
+func (ac AdminClient) getUserInfo(ctx context.Context, accessKey string) (madmin.UserInfo, error) {
+	return ac.Client.GetUserInfo(ctx, accessKey)
 }
 
 // implements madmin.SetUserStatus()
-func (ac adminClient) setUserStatus(ctx context.Context, accessKey string, status madmin.AccountStatus) error {
-	return ac.client.SetUserStatus(ctx, accessKey, status)
+func (ac AdminClient) setUserStatus(ctx context.Context, accessKey string, status madmin.AccountStatus) error {
+	return ac.Client.SetUserStatus(ctx, accessKey, status)
 }
 
 // implements madmin.ListGroups()
-func (ac adminClient) listGroups(ctx context.Context) ([]string, error) {
-	return ac.client.ListGroups(ctx)
+func (ac AdminClient) listGroups(ctx context.Context) ([]string, error) {
+	return ac.Client.ListGroups(ctx)
 }
 
 // implements madmin.UpdateGroupMembers()
-func (ac adminClient) updateGroupMembers(ctx context.Context, greq madmin.GroupAddRemove) error {
-	return ac.client.UpdateGroupMembers(ctx, greq)
+func (ac AdminClient) updateGroupMembers(ctx context.Context, greq madmin.GroupAddRemove) error {
+	return ac.Client.UpdateGroupMembers(ctx, greq)
 }
 
 // implements madmin.GetGroupDescription(group)
-func (ac adminClient) getGroupDescription(ctx context.Context, group string) (*madmin.GroupDesc, error) {
-	return ac.client.GetGroupDescription(ctx, group)
+func (ac AdminClient) getGroupDescription(ctx context.Context, group string) (*madmin.GroupDesc, error) {
+	return ac.Client.GetGroupDescription(ctx, group)
 }
 
 // implements madmin.SetGroupStatus(group, status)
-func (ac adminClient) setGroupStatus(ctx context.Context, group string, status madmin.GroupStatus) error {
-	return ac.client.SetGroupStatus(ctx, group, status)
+func (ac AdminClient) setGroupStatus(ctx context.Context, group string, status madmin.GroupStatus) error {
+	return ac.Client.SetGroupStatus(ctx, group, status)
 }
 
 // implements madmin.ListCannedPolicies()
-func (ac adminClient) listPolicies(ctx context.Context) (map[string]*iampolicy.Policy, error) {
-	policyMap, err := ac.client.ListCannedPolicies(ctx)
+func (ac AdminClient) listPolicies(ctx context.Context) (map[string]*iampolicy.Policy, error) {
+	policyMap, err := ac.Client.ListCannedPolicies(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -190,8 +190,8 @@ func (ac adminClient) listPolicies(ctx context.Context) (map[string]*iampolicy.P
 }
 
 // implements madmin.ListCannedPolicies()
-func (ac adminClient) getPolicy(ctx context.Context, name string) (*iampolicy.Policy, error) {
-	praw, err := ac.client.InfoCannedPolicy(ctx, name)
+func (ac AdminClient) getPolicy(ctx context.Context, name string) (*iampolicy.Policy, error) {
+	praw, err := ac.Client.InfoCannedPolicy(ctx, name)
 	if err != nil {
 		return nil, err
 	}
@@ -199,61 +199,61 @@ func (ac adminClient) getPolicy(ctx context.Context, name string) (*iampolicy.Po
 }
 
 // implements madmin.RemoveCannedPolicy()
-func (ac adminClient) removePolicy(ctx context.Context, name string) error {
-	return ac.client.RemoveCannedPolicy(ctx, name)
+func (ac AdminClient) removePolicy(ctx context.Context, name string) error {
+	return ac.Client.RemoveCannedPolicy(ctx, name)
 }
 
 // implements madmin.AddCannedPolicy()
-func (ac adminClient) addPolicy(ctx context.Context, name string, policy *iampolicy.Policy) error {
+func (ac AdminClient) addPolicy(ctx context.Context, name string, policy *iampolicy.Policy) error {
 	buf, err := json.Marshal(policy)
 	if err != nil {
 		return err
 	}
-	return ac.client.AddCannedPolicy(ctx, name, buf)
+	return ac.Client.AddCannedPolicy(ctx, name, buf)
 }
 
 // implements madmin.SetPolicy()
-func (ac adminClient) setPolicy(ctx context.Context, policyName, entityName string, isGroup bool) error {
-	return ac.client.SetPolicy(ctx, policyName, entityName, isGroup)
+func (ac AdminClient) setPolicy(ctx context.Context, policyName, entityName string, isGroup bool) error {
+	return ac.Client.SetPolicy(ctx, policyName, entityName, isGroup)
 }
 
 // implements madmin.GetConfigKV()
-func (ac adminClient) getConfigKV(ctx context.Context, key string) ([]byte, error) {
-	return ac.client.GetConfigKV(ctx, key)
+func (ac AdminClient) getConfigKV(ctx context.Context, key string) ([]byte, error) {
+	return ac.Client.GetConfigKV(ctx, key)
 }
 
 // implements madmin.HelpConfigKV()
-func (ac adminClient) helpConfigKV(ctx context.Context, subSys, key string, envOnly bool) (madmin.Help, error) {
-	return ac.client.HelpConfigKV(ctx, subSys, key, envOnly)
+func (ac AdminClient) helpConfigKV(ctx context.Context, subSys, key string, envOnly bool) (madmin.Help, error) {
+	return ac.Client.HelpConfigKV(ctx, subSys, key, envOnly)
 }
 
 // implements madmin.SetConfigKV()
-func (ac adminClient) setConfigKV(ctx context.Context, kv string) (restart bool, err error) {
-	return ac.client.SetConfigKV(ctx, kv)
+func (ac AdminClient) setConfigKV(ctx context.Context, kv string) (restart bool, err error) {
+	return ac.Client.SetConfigKV(ctx, kv)
 }
 
 // implements madmin.ServiceRestart()
-func (ac adminClient) serviceRestart(ctx context.Context) (err error) {
-	return ac.client.ServiceRestart(ctx)
+func (ac AdminClient) serviceRestart(ctx context.Context) (err error) {
+	return ac.Client.ServiceRestart(ctx)
 }
 
 // implements madmin.ServerInfo()
-func (ac adminClient) serverInfo(ctx context.Context) (madmin.InfoMessage, error) {
-	return ac.client.ServerInfo(ctx)
+func (ac AdminClient) serverInfo(ctx context.Context) (madmin.InfoMessage, error) {
+	return ac.Client.ServerInfo(ctx)
 }
 
 // implements madmin.StartProfiling()
-func (ac adminClient) startProfiling(ctx context.Context, profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error) {
-	return ac.client.StartProfiling(ctx, profiler)
+func (ac AdminClient) startProfiling(ctx context.Context, profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error) {
+	return ac.Client.StartProfiling(ctx, profiler)
 }
 
 // implements madmin.DownloadProfilingData()
-func (ac adminClient) stopProfiling(ctx context.Context) (io.ReadCloser, error) {
-	return ac.client.DownloadProfilingData(ctx)
+func (ac AdminClient) stopProfiling(ctx context.Context) (io.ReadCloser, error) {
+	return ac.Client.DownloadProfilingData(ctx)
 }
 
 // implements madmin.ServiceTrace()
-func (ac adminClient) serviceTrace(ctx context.Context, threshold int64, s3, internal, storage, os, errTrace bool) <-chan madmin.ServiceTraceInfo {
+func (ac AdminClient) serviceTrace(ctx context.Context, threshold int64, s3, internal, storage, os, errTrace bool) <-chan madmin.ServiceTraceInfo {
 	thresholdT := time.Duration(threshold)
 
 	tracingOptions := madmin.ServiceTraceOpts{
@@ -265,21 +265,21 @@ func (ac adminClient) serviceTrace(ctx context.Context, threshold int64, s3, int
 		Threshold:  thresholdT,
 	}
 
-	return ac.client.ServiceTrace(ctx, tracingOptions)
+	return ac.Client.ServiceTrace(ctx, tracingOptions)
 }
 
 // implements madmin.GetLogs()
-func (ac adminClient) getLogs(ctx context.Context, node string, lineCnt int, logKind string) <-chan madmin.LogInfo {
-	return ac.client.GetLogs(ctx, node, lineCnt, logKind)
+func (ac AdminClient) getLogs(ctx context.Context, node string, lineCnt int, logKind string) <-chan madmin.LogInfo {
+	return ac.Client.GetLogs(ctx, node, lineCnt, logKind)
 }
 
 // implements madmin.AddServiceAccount()
-func (ac adminClient) addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (madmin.Credentials, error) {
+func (ac AdminClient) addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (madmin.Credentials, error) {
 	buf, err := json.Marshal(policy)
 	if err != nil {
 		return madmin.Credentials{}, err
 	}
-	return ac.client.AddServiceAccount(ctx, madmin.AddServiceAccountReq{
+	return ac.Client.AddServiceAccount(ctx, madmin.AddServiceAccountReq{
 		Policy:     buf,
 		TargetUser: "",
 		AccessKey:  "",
@@ -288,34 +288,34 @@ func (ac adminClient) addServiceAccount(ctx context.Context, policy *iampolicy.P
 }
 
 // implements madmin.ListServiceAccounts()
-func (ac adminClient) listServiceAccounts(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error) {
+func (ac AdminClient) listServiceAccounts(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error) {
 	// TODO: Fix this
-	return ac.client.ListServiceAccounts(ctx, user)
+	return ac.Client.ListServiceAccounts(ctx, user)
 }
 
 // implements madmin.DeleteServiceAccount()
-func (ac adminClient) deleteServiceAccount(ctx context.Context, serviceAccount string) error {
-	return ac.client.DeleteServiceAccount(ctx, serviceAccount)
+func (ac AdminClient) deleteServiceAccount(ctx context.Context, serviceAccount string) error {
+	return ac.Client.DeleteServiceAccount(ctx, serviceAccount)
 }
 
-// implements madmin.AccountingUsageInfo()
-func (ac adminClient) accountInfo(ctx context.Context) (madmin.AccountInfo, error) {
-	return ac.client.AccountInfo(ctx)
+// AccountInfo implements madmin.AccountingUsageInfo()
+func (ac AdminClient) AccountInfo(ctx context.Context) (madmin.AccountInfo, error) {
+	return ac.Client.AccountInfo(ctx)
 }
 
-func (ac adminClient) heal(ctx context.Context, bucket, prefix string, healOpts madmin.HealOpts, clientToken string,
+func (ac AdminClient) heal(ctx context.Context, bucket, prefix string, healOpts madmin.HealOpts, clientToken string,
 	forceStart, forceStop bool) (healStart madmin.HealStartSuccess, healTaskStatus madmin.HealTaskStatus, err error) {
-	return ac.client.Heal(ctx, bucket, prefix, healOpts, clientToken, forceStart, forceStop)
+	return ac.Client.Heal(ctx, bucket, prefix, healOpts, clientToken, forceStart, forceStop)
 }
 
 // listRemoteBuckets - return a list of remote buckets
-func (ac adminClient) listRemoteBuckets(ctx context.Context, bucket, arnType string) (targets []madmin.BucketTarget, err error) {
-	return ac.client.ListRemoteTargets(ctx, bucket, arnType)
+func (ac AdminClient) listRemoteBuckets(ctx context.Context, bucket, arnType string) (targets []madmin.BucketTarget, err error) {
+	return ac.Client.ListRemoteTargets(ctx, bucket, arnType)
 }
 
 // getRemoteBucket - gets remote bucked based on a given bucket name
-func (ac adminClient) getRemoteBucket(ctx context.Context, bucket, arnType string) (*madmin.BucketTarget, error) {
-	targets, err := ac.client.ListRemoteTargets(ctx, bucket, arnType)
+func (ac AdminClient) getRemoteBucket(ctx context.Context, bucket, arnType string) (*madmin.BucketTarget, error) {
+	targets, err := ac.Client.ListRemoteTargets(ctx, bucket, arnType)
 	if err != nil {
 		return nil, err
 	}
@@ -326,26 +326,26 @@ func (ac adminClient) getRemoteBucket(ctx context.Context, bucket, arnType strin
 }
 
 // removeRemoteBucket removes a remote target associated with particular ARN for this bucket
-func (ac adminClient) removeRemoteBucket(ctx context.Context, bucket, arn string) error {
-	return ac.client.RemoveRemoteTarget(ctx, bucket, arn)
+func (ac AdminClient) removeRemoteBucket(ctx context.Context, bucket, arn string) error {
+	return ac.Client.RemoveRemoteTarget(ctx, bucket, arn)
 }
 
 // addRemoteBucket sets up a remote target for this bucket
-func (ac adminClient) addRemoteBucket(ctx context.Context, bucket string, target *madmin.BucketTarget) (string, error) {
-	return ac.client.SetRemoteTarget(ctx, bucket, target)
+func (ac AdminClient) addRemoteBucket(ctx context.Context, bucket string, target *madmin.BucketTarget) (string, error) {
+	return ac.Client.SetRemoteTarget(ctx, bucket, target)
 }
 
-func (ac adminClient) setBucketQuota(ctx context.Context, bucket string, quota *madmin.BucketQuota) error {
-	return ac.client.SetBucketQuota(ctx, bucket, quota)
+func (ac AdminClient) setBucketQuota(ctx context.Context, bucket string, quota *madmin.BucketQuota) error {
+	return ac.Client.SetBucketQuota(ctx, bucket, quota)
 }
 
-func (ac adminClient) getBucketQuota(ctx context.Context, bucket string) (madmin.BucketQuota, error) {
-	return ac.client.GetBucketQuota(ctx, bucket)
+func (ac AdminClient) getBucketQuota(ctx context.Context, bucket string) (madmin.BucketQuota, error) {
+	return ac.Client.GetBucketQuota(ctx, bucket)
 }
 
 // serverHealthInfo implements mc.ServerHealthInfo - Connect to a minio server and call Health Info Management API
-func (ac adminClient) serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) (interface{}, string, error) {
-	resp, version, err := ac.client.ServerHealthInfo(ctx, healthDataTypes, deadline)
+func (ac AdminClient) serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) (interface{}, string, error) {
+	resp, version, err := ac.Client.ServerHealthInfo(ctx, healthDataTypes, deadline)
 	if err != nil {
 		return nil, version, err
 	}
@@ -378,21 +378,21 @@ func (ac adminClient) serverHealthInfo(ctx context.Context, healthDataTypes []ma
 }
 
 // implements madmin.listTiers()
-func (ac adminClient) listTiers(ctx context.Context) ([]*madmin.TierConfig, error) {
-	return ac.client.ListTiers(ctx)
+func (ac AdminClient) listTiers(ctx context.Context) ([]*madmin.TierConfig, error) {
+	return ac.Client.ListTiers(ctx)
 }
 
 // implements madmin.AddTier()
-func (ac adminClient) addTier(ctx context.Context, cfg *madmin.TierConfig) error {
-	return ac.client.AddTier(ctx, cfg)
+func (ac AdminClient) addTier(ctx context.Context, cfg *madmin.TierConfig) error {
+	return ac.Client.AddTier(ctx, cfg)
 }
 
 // implements madmin.EditTier()
-func (ac adminClient) editTierCreds(ctx context.Context, tierName string, creds madmin.TierCreds) error {
-	return ac.client.EditTier(ctx, tierName, creds)
+func (ac AdminClient) editTierCreds(ctx context.Context, tierName string, creds madmin.TierCreds) error {
+	return ac.Client.EditTier(ctx, tierName, creds)
 }
 
-func newAdminClient(sessionClaims *models.Principal) (*madmin.AdminClient, error) {
+func NewMinioAdminClient(sessionClaims *models.Principal) (*madmin.AdminClient, error) {
 	adminClient, err := newAdminFromClaims(sessionClaims)
 	if err != nil {
 		return nil, err

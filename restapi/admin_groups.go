@@ -73,17 +73,17 @@ func registerGroupsHandlers(api *operations.ConsoleAPI) {
 // getListGroupsResponse performs listGroups() and serializes it to the handler's output
 func getListGroupsResponse(session *models.Principal) (*models.ListGroupsResponse, *models.Error) {
 	ctx := context.Background()
-	mAdmin, err := newAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
-	adminClient := adminClient{client: mAdmin}
+	adminClient := AdminClient{Client: mAdmin}
 
 	groups, err := adminClient.listGroups(ctx)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
 
 	// serialize output
@@ -107,17 +107,17 @@ func groupInfo(ctx context.Context, client MinioAdmin, group string) (*madmin.Gr
 // getGroupInfoResponse performs groupInfo() and serializes it to the handler's output
 func getGroupInfoResponse(session *models.Principal, params admin_api.GroupInfoParams) (*models.Group, *models.Error) {
 	ctx := context.Background()
-	mAdmin, err := newAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
-	adminClient := adminClient{client: mAdmin}
+	adminClient := AdminClient{Client: mAdmin}
 
 	groupDesc, err := groupInfo(ctx, adminClient, params.Name)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
 
 	groupResponse := &models.Group{
@@ -148,19 +148,19 @@ func getAddGroupResponse(session *models.Principal, params *models.AddGroupReque
 	ctx := context.Background()
 	// AddGroup request needed to proceed
 	if params == nil {
-		return prepareError(errGroupBodyNotInRequest)
+		return PrepareError(errGroupBodyNotInRequest)
 	}
 
-	mAdmin, err := newAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return prepareError(err)
+		return PrepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
-	adminClient := adminClient{client: mAdmin}
+	adminClient := AdminClient{Client: mAdmin}
 
 	if err := addGroup(ctx, adminClient, *params.Group, params.Members); err != nil {
-		return prepareError(err)
+		return PrepareError(err)
 	}
 	return nil
 }
@@ -184,18 +184,18 @@ func getRemoveGroupResponse(session *models.Principal, params admin_api.RemoveGr
 	ctx := context.Background()
 
 	if params.Name == "" {
-		return prepareError(errGroupNameNotInRequest)
+		return PrepareError(errGroupNameNotInRequest)
 	}
-	mAdmin, err := newAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return prepareError(err)
+		return PrepareError(err)
 	}
 	// createad a MinIO Admin Client interface implementation
 	// defining the client to be used
-	adminClient := adminClient{client: mAdmin}
+	adminClient := AdminClient{Client: mAdmin}
 
 	if err := removeGroup(ctx, adminClient, params.Name); err != nil {
-		return prepareError(err)
+		return PrepareError(err)
 	}
 	return nil
 }
@@ -257,26 +257,26 @@ func setGroupStatus(ctx context.Context, client MinioAdmin, group, status string
 func getUpdateGroupResponse(session *models.Principal, params admin_api.UpdateGroupParams) (*models.Group, *models.Error) {
 	ctx := context.Background()
 	if params.Name == "" {
-		return nil, prepareError(errGroupNameNotInRequest)
+		return nil, PrepareError(errGroupNameNotInRequest)
 	}
 	if params.Body == nil {
-		return nil, prepareError(errGroupBodyNotInRequest)
+		return nil, PrepareError(errGroupBodyNotInRequest)
 
 	}
 	expectedGroupUpdate := params.Body
 	groupName := params.Name
 
-	mAdmin, err := newAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
-	adminClient := adminClient{client: mAdmin}
+	adminClient := AdminClient{Client: mAdmin}
 
 	groupUpdated, err := groupUpdate(ctx, adminClient, groupName, expectedGroupUpdate)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
 	groupResponse := &models.Group{
 		Name:    groupUpdated.Name,

@@ -1,0 +1,3571 @@
+swagger: "2.0"
+info:
+  title: MinIO Console Server
+  version: 0.1.0
+consumes:
+  - application/json
+produces:
+  - application/json
+schemes:
+  - http
+  - ws
+basePath: /api/v1
+# We are going to be taking `Authorization: Bearer TOKEN` header for our authentication
+securityDefinitions:
+  key:
+    type: oauth2
+    flow: accessCode
+    authorizationUrl: http://min.io
+    tokenUrl: http://min.io
+# Apply the key security definition to all APIs
+security:
+  - key: [ ]
+paths:
+  /login:
+    get:
+      summary: Returns login strategy, form or sso.
+      operationId: LoginDetail
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/loginDetails"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      # Exclude this API from the authentication requirement
+      security: [ ]
+      tags:
+        - UserAPI
+    post:
+      summary: Login to Console
+      operationId: Login
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/loginRequest"
+      responses:
+        201:
+          description: A successful login.
+          schema:
+            $ref: "#/definitions/loginResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      # Exclude this API from the authentication requirement
+      security: [ ]
+      tags:
+        - UserAPI
+  /login/operator:
+    post:
+      summary: Login to Operator Console.
+      operationId: LoginOperator
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/loginOperatorRequest"
+      responses:
+        201:
+          description: A successful login.
+          schema:
+            $ref: "#/definitions/loginResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      security: [ ]
+      tags:
+        - UserAPI
+
+  /login/oauth2/auth:
+    post:
+      summary: Identity Provider oauth2 callback endpoint.
+      operationId: LoginOauth2Auth
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/loginOauth2AuthRequest"
+      responses:
+        201:
+          description: A successful login.
+          schema:
+            $ref: "#/definitions/loginResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      security: [ ]
+      tags:
+        - UserAPI
+
+  /logout:
+    post:
+      summary: Logout from Console.
+      operationId: Logout
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+  /session:
+    get:
+      summary: Endpoint to check if your session is still valid
+      operationId: SessionCheck
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/sessionResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
+
+  /subscription/info:
+    get:
+      summary: Subscription info
+      operationId: SubscriptionInfo
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/license"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /subscription/validate:
+    post:
+      summary: Validates subscription license
+      operationId: SubscriptionValidate
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/subscriptionValidateRequest"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/license"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /subscription/refresh:
+    post:
+      summary: Refresh existing subscription license
+      operationId: SubscriptionRefresh
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/license"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /subscription/namespaces/{namespace}/tenants/{tenant}/activate:
+    post:
+      summary: Activate a particular tenant using the existing subscription license
+      operationId: SubscriptionActivate
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+
+  /tenants:
+    get:
+      summary: List Tenant of All Namespaces
+      operationId: ListAllTenants
+      parameters:
+        - name: sort_by
+          in: query
+          required: false
+          type: string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listTenantsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+    post:
+      summary: Create Tenant
+      operationId: CreateTenant
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/createTenantRequest"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/createTenantResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /namespace:
+    post:
+      summary: Creates a new Namespace with given information
+      operationId: CreateNamespace
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/namespace"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /namespaces/{namespace}/tenants:
+    get:
+      summary: List Tenants by Namespace
+      operationId: ListTenants
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: sort_by
+          in: query
+          required: false
+          type: string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listTenantsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /namespaces/{namespace}/tenants/{tenant}/security:
+    get:
+      summary: Tenant Security
+      operationId: TenantSecurity
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/tenantSecurityResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+    post:
+      summary: Update Tenant Security
+      operationId: UpdateTenantSecurity
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/updateTenantSecurityRequest"
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /namespaces/{namespace}/tenants/{tenant}:
+    get:
+      summary: Tenant Details
+      operationId: TenantDetails
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/tenant"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+    delete:
+      summary: Delete tenant and underlying pvcs
+      operationId: DeleteTenant
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: false
+          schema:
+            $ref: "#/definitions/deleteTenantRequest"
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+    put:
+      summary: Update Tenant
+      operationId: UpdateTenant
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/updateTenantRequest"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /namespaces/{namespace}/tenants/{tenant}/pools:
+    post:
+      summary: Tenant Add Pool
+      operationId: TenantAddPool
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/pool"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+    put:
+      summary: Tenant Update Pools
+      operationId: TenantUpdatePools
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/poolUpdateRequest"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/tenant"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /namespaces/{namespace}/tenants/{tenant}/usage:
+    get:
+      summary: Get Usage For The Tenant
+      operationId: GetTenantUsage
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/tenantUsage"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /namespaces/{namespace}/tenants/{tenant}/pods:
+    get:
+      summary: Get Pods For The Tenant
+      operationId: GetTenantPods
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/tenantPod"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /namespaces/{namespace}/tenants/{tenant}/pods/{podName}:
+    get:
+      summary: Get Logs for Pod
+      operationId: GetPodLogs
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: podName
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: string
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+    delete:
+      summary: Delete pod
+      operationId: DeletePod
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: podName
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /namespaces/{namespace}/tenants/{tenant}/pods/{podName}/events:
+    get:
+      summary: Get Events for Pod
+      operationId: GetPodEvents
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: podName
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/eventListWrapper"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /namespaces/{namespace}/tenants/{tenant}/certificates:
+    put:
+      summary: Tenant Update Certificates
+      operationId: TenantUpdateCertificate
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/tlsConfiguration"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /namespaces/{namespace}/tenants/{tenant}/encryption:
+    put:
+      summary: Tenant Update Encryption
+      operationId: TenantUpdateEncryption
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/encryptionConfiguration"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /namespaces/{namespace}/tenants/{tenant}/yaml:
+    get:
+      summary: Get the Tenant YAML
+      operationId: GetTenantYAML
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/tenantYAML"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+    put:
+      summary: Put the Tenant YAML
+      operationId: PutTenantYAML
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/tenantYAML"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /namespaces/{namespace}/resourcequotas/{resource-quota-name}:
+    get:
+      summary: Get Resource Quota
+      operationId: GetResourceQuota
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: resource-quota-name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/resourceQuota"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /cluster/max-allocatable-memory:
+    get:
+      summary: Get maximum allocatable memory for given number of nodes
+      operationId: GetMaxAllocatableMem
+      parameters:
+        - name: num_nodes
+          in: query
+          required: true
+          type: integer
+          format: int32
+          minimum: 1
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/maxAllocatableMemResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /get-parity/{nodes}/{disksPerNode}:
+    get:
+      summary: Gets parity by sending number of nodes & number of disks
+      operationId: GetParity
+      parameters:
+        - name: nodes
+          in: path
+          required: true
+          type: integer
+          minimum: 2
+        - name: disksPerNode
+          in: path
+          required: true
+          type: integer
+          minimum: 1
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/parityResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /direct-csi/drives:
+    get:
+      summary: Get direct-csi drives list
+      operationId: GetDirectCSIDriveList
+      parameters:
+        - name: nodes
+          in: query
+          required: false
+          type: string
+        - name: drives
+          in: query
+          required: false
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/getDirectCSIDriveListResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /direct-csi/volumes:
+    get:
+      summary: Get direct-csi volumes list
+      operationId: GetDirectCSIVolumeList
+      parameters:
+        - name: nodes
+          in: query
+          required: false
+          type: string
+        - name: drives
+          in: query
+          required: false
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/getDirectCSIVolumeListResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /direct-csi/drives/format:
+    post:
+      summary: Format direct-csi drives from a list
+      operationId: DirectCSIFormatDrive
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/formatConfiguration"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/formatDirectCSIDrivesResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /list-pvcs:
+    get:
+      summary: List all PVCs from namespaces that the user has access to
+      operationId: ListPVCs
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listPVCsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+  /nodes/labels:
+    get:
+      summary: List node labels
+      operationId: ListNodeLabels
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/nodeLabels"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI
+
+definitions:
+  accountChangePasswordRequest:
+    type: object
+    required:
+      - current_secret_key
+      - new_secret_key
+    properties:
+      current_secret_key:
+        type: string
+      new_secret_key:
+        type: string
+
+  changeUserPasswordRequest:
+    type: object
+    required:
+      - selectedUser
+      - newSecretKey
+    properties:
+      selectedUser:
+        type: string
+      newSecretKey:
+        type: string
+
+  bucketEncryptionType:
+    type: string
+    enum:
+      - sse-s3
+      - sse-kms
+    default: sse-s3
+
+  bucketAccess:
+    type: string
+    enum:
+      - PRIVATE
+      - PUBLIC
+      - CUSTOM
+    default: PRIVATE
+
+  bucket:
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        type: string
+        minLength: 3
+      size:
+        type: integer
+        format: int64
+      access:
+        $ref: "#/definitions/bucketAccess"
+      creation_date:
+        type: string
+
+  bucketEncryptionRequest:
+    type: object
+    properties:
+      encType:
+        $ref: "#/definitions/bucketEncryptionType"
+      kmsKeyID:
+        type: string
+
+  bucketEncryptionInfo:
+    type: object
+    properties:
+      kmsMasterKeyID:
+        type: string
+      algorithm:
+        type: string
+
+  listBucketsResponse:
+    type: object
+    properties:
+      buckets:
+        type: array
+        items:
+          $ref: "#/definitions/bucket"
+        title: list of resulting buckets
+      total:
+        type: integer
+        format: int64
+        title: number of buckets accessible to tenant user
+
+  listObjectsResponse:
+    type: object
+    properties:
+      objects:
+        type: array
+        items:
+          $ref: "#/definitions/bucketObject"
+        title: list of resulting objects
+      total:
+        type: integer
+        format: int64
+        title: number of objects
+
+  bucketObject:
+    type: object
+    properties:
+      name:
+        type: string
+      size:
+        type: integer
+        format: int64
+      content_type:
+        type: string
+      last_modified:
+        type: string
+      is_latest:
+        type: boolean
+      is_delete_marker:
+        type: boolean
+      version_id:
+        type: string
+      user_tags:
+        type: object
+        additionalProperties:
+          type: string
+      expiration:
+        type: string
+      expiration_rule_id:
+        type: string
+      legal_hold_status:
+        type: string
+      retention_mode:
+        type: string
+      retention_until_date:
+        type: string
+      tags:
+        type: object
+        additionalProperties:
+          type: string
+
+  makeBucketRequest:
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        type: string
+      locking:
+        type: boolean
+      versioning:
+        type: boolean
+      quota:
+        $ref: "#/definitions/setBucketQuota"
+      retention:
+        $ref: "#/definitions/putBucketRetentionRequest"
+
+  error:
+    type: object
+    required:
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+  user:
+    type: object
+    properties:
+      accessKey:
+        type: string
+      policy:
+        type: array
+        items:
+          type: string
+      memberOf:
+        type: array
+        items:
+          type: string
+      status:
+        type: string
+  listUsersResponse:
+    type: object
+    properties:
+      users:
+        type: array
+        items:
+          $ref: "#/definitions/user"
+        title: list of resulting users
+  addUserRequest:
+    type: object
+    required:
+      - accessKey
+      - secretKey
+      - groups
+    properties:
+      accessKey:
+        type: string
+      secretKey:
+        type: string
+      groups:
+        type: array
+        items:
+          type: string
+  group:
+    type: object
+    properties:
+      name:
+        type: string
+      status:
+        type: string
+      members:
+        type: array
+        items:
+          type: string
+      policy:
+        type: string
+  addGroupRequest:
+    type: object
+    required:
+      - group
+      - members
+    properties:
+      group:
+        type: string
+      members:
+        type: array
+        items:
+          type: string
+  listGroupsResponse:
+    type: object
+    properties:
+      groups:
+        type: array
+        items:
+          type: string
+        title: list of groups
+      total:
+        type: integer
+        format: int64
+        title: total number of groups
+  policy:
+    type: object
+    properties:
+      name:
+        type: string
+      policy:
+        type: string
+  policyEntity:
+    type: string
+    enum:
+      - user
+      - group
+    default: user
+  setPolicyRequest:
+    type: object
+    required:
+      - entityType
+      - entityName
+    properties:
+      entityType:
+        $ref: "#/definitions/policyEntity"
+      entityName:
+        type: string
+
+  setPolicyMultipleRequest:
+    type: object
+    properties:
+      users:
+        type: array
+        items:
+          $ref: "#/definitions/iamEntity"
+      groups:
+        type: array
+        items:
+          $ref: "#/definitions/iamEntity"
+
+  iamEntity:
+    type: string
+    pattern: '^[\w+=,.@-]{1,64}$'
+
+  addPolicyRequest:
+    type: object
+    required:
+      - name
+      - policy
+    properties:
+      name:
+        type: string
+      policy:
+        type: string
+  listPoliciesResponse:
+    type: object
+    properties:
+      policies:
+        type: array
+        items:
+          $ref: "#/definitions/policy"
+        title: list of policies
+      total:
+        type: integer
+        format: int64
+        title: total number of policies
+  updateGroupRequest:
+    type: object
+    required:
+      - members
+      - status
+    properties:
+      members:
+        type: array
+        items:
+          type: string
+      status:
+        type: string
+  configDescription:
+    type: object
+    properties:
+      key:
+        type: string
+      description:
+        type: string
+  configurationKV:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+  configuration:
+    type: object
+    properties:
+      name:
+        type: string
+      key_values:
+        type: array
+        items:
+          $ref: "#/definitions/configurationKV"
+  listConfigResponse:
+    type: object
+    properties:
+      configurations:
+        type: array
+        items:
+          $ref: "#/definitions/configDescription"
+      total:
+        type: integer
+        format: int64
+        title: total number of configurations
+  setConfigRequest:
+    type: object
+    required:
+      - key_values
+    properties:
+      key_values:
+        type: array
+        minItems: 1
+        items:
+          $ref: "#/definitions/configurationKV"
+      arn_resource_id:
+        type: string
+        title: Used if configuration is an event notification's target
+  notificationEventType:
+    type: string
+    enum:
+      - put
+      - delete
+      - get
+  notificationConfig:
+    type: object
+    required:
+      - arn
+    properties:
+      id:
+        type: string
+      arn:
+        type: string
+      events:
+        type: array
+        items:
+          $ref: "#/definitions/notificationEventType"
+        title: "filter specific type of event. Defaults to all event (default: '[put,delete,get]')"
+      prefix:
+        type: string
+        title: "filter event associated to the specified prefix"
+      suffix:
+        type: string
+        title: "filter event associated to the specified suffix"
+  notificationDeleteRequest:
+    type: object
+    required:
+      - events
+      - prefix
+      - suffix
+    properties:
+      events:
+        type: array
+        minLength: 1
+        items:
+          $ref: "#/definitions/notificationEventType"
+        title: "filter specific type of event. Defaults to all event (default: '[put,delete,get]')"
+      prefix:
+        type: string
+        title: "filter event associated to the specified prefix"
+      suffix:
+        type: string
+        title: "filter event associated to the specified suffix"
+  bucketEventRequest:
+    type: object
+    required:
+      - configuration
+    properties:
+      configuration:
+        $ref: "#/definitions/notificationConfig"
+      ignoreExisting:
+        type: boolean
+  bucketReplicationDestination:
+    type: object
+    properties:
+      bucket:
+        type: string
+  bucketReplicationRule:
+    type: object
+    properties:
+      id:
+        type: string
+      status:
+        type: string
+        enum:
+          - Enabled
+          - Disabled
+      priority:
+        type: integer
+        format: int32
+      syncMode:
+        type: string
+        enum:
+          - async
+          - sync
+        default: async
+      bandwidth:
+        type: string
+      healthCheckPeriod:
+        type: integer
+      delete_marker_replication:
+        type: boolean
+      deletes_replication:
+        type: boolean
+      metadata_replication:
+        type: boolean
+      prefix:
+        type: string
+      tags:
+        type: string
+      destination:
+        $ref: "#/definitions/bucketReplicationDestination"
+
+  bucketReplicationResponse:
+    type: object
+    properties:
+      rules:
+        type: array
+        items:
+          $ref: "#/definitions/bucketReplicationRule"
+    # missing
+    #  "Filter": {
+    #   "And": {},
+    #   "Tag": {}
+    #  }
+    # }
+    #}
+
+  listExternalBucketsParams:
+    required:
+      - accessKey
+      - secretKey
+      - targetURL
+      - useTLS
+    properties:
+      accessKey:
+        type: string
+        minLength: 3
+      secretKey:
+        type: string
+        minLength: 8
+      targetURL:
+        type: string
+      useTLS:
+        type: boolean
+      region:
+        type: string
+
+  multiBucketReplication:
+    required:
+      - accessKey
+      - secretKey
+      - targetURL
+      - bucketsRelation
+    properties:
+      accessKey:
+        type: string
+        minLength: 3
+      secretKey:
+        type: string
+        minLength: 8
+      targetURL:
+        type: string
+      region:
+        type: string
+      syncMode:
+        type: string
+        enum:
+          - async
+          - sync
+        default: async
+      bandwidth:
+        type: integer
+        format: int64
+      healthCheckPeriod:
+        type: integer
+        format: int32
+      prefix:
+        type: string
+      tags:
+        type: string
+      replicateDeleteMarkers:
+        type: boolean
+      replicateDeletes:
+        type: boolean
+      replicateMetadata:
+        type: boolean
+      bucketsRelation:
+        type: array
+        minLength: 1
+        items:
+          $ref: "#/definitions/multiBucketsRelation"
+
+  multiBucketsRelation:
+    type: object
+    properties:
+      originBucket:
+        type: string
+      destinationBucket:
+        type: string
+
+  multiBucketResponseItem:
+    type: object
+    properties:
+      originBucket:
+        type: string
+      targetBucket:
+        type: string
+      errorString:
+        type: string
+
+  multiBucketResponseState:
+    type: object
+    properties:
+      replicationState:
+        type: array
+        items:
+          $ref: "#/definitions/multiBucketResponseItem"
+
+  addBucketReplication:
+    type: object
+    properties:
+      arn:
+        type: string
+      destination_bucket:
+        type: string
+  listBucketEventsResponse:
+    type: object
+    properties:
+      events:
+        type: array
+        items:
+          $ref: "#/definitions/notificationConfig"
+      total:
+        type: integer
+        format: int64
+        title: total number of bucket events
+  setBucketPolicyRequest:
+    type: object
+    required:
+      - access
+    properties:
+      access:
+        $ref: "#/definitions/bucketAccess"
+  bucketQuota:
+    type: object
+    properties:
+      quota:
+        type: integer
+      type:
+        type: string
+        enum:
+          - hard
+          - fifo
+  setBucketQuota:
+    type: object
+    required:
+      - enabled
+    properties:
+      enabled:
+        type: boolean
+      quota_type:
+        type: string
+        enum:
+          - fifo
+          - hard
+      amount:
+        type: integer
+  loginDetails:
+    type: object
+    properties:
+      loginStrategy:
+        type: string
+        enum: [ form, redirect, service-account ]
+      redirect:
+        type: string
+  loginOauth2AuthRequest:
+    type: object
+    required:
+      - state
+      - code
+    properties:
+      state:
+        type: string
+      code:
+        type: string
+  loginOperatorRequest:
+    type: object
+    required:
+      - jwt
+    properties:
+      jwt:
+        type: string
+  loginRequest:
+    type: object
+    required:
+      - accessKey
+      - secretKey
+    properties:
+      accessKey:
+        type: string
+      secretKey:
+        type: string
+  loginResponse:
+    type: object
+    properties:
+      sessionId:
+        type: string
+  # Structure that holds the `Bearer {TOKEN}` present on authenticated requests
+  principal:
+    type: object
+    properties:
+      STSAccessKeyID:
+        type: string
+      STSSecretAccessKey:
+        type: string
+      STSSessionToken:
+        type: string
+      actions:
+        type: array
+        items:
+          type: string
+      accountAccessKey:
+        type: string
+  startProfilingItem:
+    type: object
+    properties:
+      nodeName:
+        type: string
+      success:
+        type: boolean
+      error:
+        type: string
+  startProfilingList:
+    type: object
+    properties:
+      total:
+        type: integer
+        format: int64
+        title: number of start results
+      startResults:
+        type: array
+        items:
+          $ref: "#/definitions/startProfilingItem"
+  profilerType:
+    type: string
+    enum:
+      - cpu
+      - mem
+      - block
+      - mutex
+      - trace
+      - threads
+      - goroutines
+  profilingStartRequest:
+    type: object
+    required:
+      - type
+    properties:
+      type:
+        $ref: "#/definitions/profilerType"
+  sessionResponse:
+    type: object
+    properties:
+      pages:
+        type: array
+        items:
+          type: string
+      features:
+        type: array
+        items:
+          type: string
+      status:
+        type: string
+        enum: [ ok ]
+      operator:
+        type: boolean
+  widgetResult:
+    type: object
+    properties:
+      metric:
+        type: object
+        additionalProperties:
+          type: string
+      values:
+        type: array
+        items: { }
+  resultTarget:
+    type: object
+    properties:
+      legendFormat:
+        type: string
+      resultType:
+        type: string
+      result:
+        type: array
+        items:
+          $ref: "#/definitions/widgetResult"
+  widget:
+    type: object
+    properties:
+      title:
+        type: string
+      type:
+        type: string
+      id:
+        type: integer
+        format: int32
+      options:
+        type: object
+        properties:
+          reduceOptions:
+            type: object
+            properties:
+              calcs:
+                type: array
+                items:
+                  type: string
+      targets:
+        type: array
+        items:
+          $ref: "#/definitions/resultTarget"
+  widgetDetails:
+    type: object
+    properties:
+      title:
+        type: string
+      type:
+        type: string
+      id:
+        type: integer
+        format: int32
+      options:
+        type: object
+        properties:
+          reduceOptions:
+            type: object
+            properties:
+              calcs:
+                type: array
+                items:
+                  type: string
+      targets:
+        type: array
+        items:
+          $ref: "#/definitions/resultTarget"
+  adminInfoResponse:
+    type: object
+    properties:
+      buckets:
+        type: integer
+      objects:
+        type: integer
+      usage:
+        type: integer
+      widgets:
+        type: array
+        items:
+          $ref: "#/definitions/widget"
+  arnsResponse:
+    type: object
+    properties:
+      arns:
+        type: array
+        items:
+          type: string
+  updateUserGroups:
+    type: object
+    required:
+      - groups
+    properties:
+      groups:
+        type: array
+        items:
+          type: string
+  nofiticationService:
+    type: string
+    enum:
+      - webhook
+      - amqp
+      - kafka
+      - mqtt
+      - nats
+      - nsq
+      - mysql
+      - postgres
+      - elasticsearch
+      - redis
+  notificationEndpointItem:
+    type: object
+    properties:
+      service:
+        $ref: "#/definitions/nofiticationService"
+      account_id:
+        type: string
+      status:
+        type: string
+  notificationEndpoint:
+    type: object
+    required:
+      - service
+      - account_id
+      - properties
+    properties:
+      service:
+        $ref: "#/definitions/nofiticationService"
+      account_id:
+        type: string
+      properties:
+        type: object
+        additionalProperties:
+          type: string
+  setNotificationEndpointResponse:
+    type: object
+    required:
+      - service
+      - account_id
+      - properties
+    properties:
+      service:
+        $ref: "#/definitions/nofiticationService"
+      account_id:
+        type: string
+      properties:
+        type: object
+        additionalProperties:
+          type: string
+      restart:
+        type: boolean
+  notifEndpointResponse:
+    type: object
+    properties:
+      notification_endpoints:
+        type: array
+        items:
+          $ref: "#/definitions/notificationEndpointItem"
+  updateUser:
+    type: object
+    required:
+      - status
+      - groups
+    properties:
+      status:
+        type: string
+      groups:
+        type: array
+        items:
+          type: string
+  bulkUserGroups:
+    type: object
+    required:
+      - users
+      - groups
+    properties:
+      users:
+        type: array
+        items:
+          type: string
+      groups:
+        type: array
+        items:
+          type: string
+  serviceAccounts:
+    type: array
+    items:
+      type: string
+  serviceAccountRequest:
+    type: object
+    properties:
+      policy:
+        type: string
+        title: "policy to be applied to the Service Account if any"
+  serviceAccountCreds:
+    type: object
+    properties:
+      accessKey:
+        type: string
+      secretKey:
+        type: string
+  remoteBucket:
+    type: object
+    required:
+      - accessKey
+      - sourceBucket
+      - remoteARN
+    properties:
+      accessKey:
+        type: string
+        minLength: 3
+      secretKey:
+        type: string
+        minLength: 8
+      sourceBucket:
+        type: string
+      targetURL:
+        type: string
+      targetBucket:
+        type: string
+      remoteARN:
+        type: string
+      status:
+        type: string
+      service:
+        type: string
+        enum: [ replication ]
+      syncMode:
+        type: string
+      bandwidth:
+        type: integer
+        format: int64
+      healthCheckPeriod:
+        type: integer
+  createRemoteBucket:
+    required:
+      - accessKey
+      - secretKey
+      - targetURL
+      - sourceBucket
+      - targetBucket
+    properties:
+      accessKey:
+        type: string
+        minLength: 3
+      secretKey:
+        type: string
+        minLength: 8
+      targetURL:
+        type: string
+      sourceBucket:
+        type: string
+      targetBucket:
+        type: string
+      region:
+        type: string
+      syncMode:
+        type: string
+        enum:
+          - async
+          - sync
+        default: async
+      bandwidth:
+        type: integer
+        format: int64
+      healthCheckPeriod:
+        type: integer
+        format: int32
+  listRemoteBucketsResponse:
+    type: object
+    properties:
+      buckets:
+        type: array
+        items:
+          $ref: "#/definitions/remoteBucket"
+        title: list of remote buckets
+      total:
+        type: integer
+        format: int64
+        title: number of remote buckets accessible to user
+  bucketVersioningResponse:
+    type: object
+    properties:
+      is_versioned:
+        type: boolean
+  setBucketVersioning:
+    type: object
+    properties:
+      versioning:
+        type: boolean
+  bucketObLockingResponse:
+    type: object
+    properties:
+      object_locking_enabled:
+        type: boolean
+
+  tenantStatus:
+    type: object
+    properties:
+      write_quorum:
+        type: integer
+        format: int32
+      drives_online:
+        type: integer
+        format: int32
+      drives_offline:
+        type: integer
+        format: int32
+      drives_healing:
+        type: integer
+        format: int32
+      health_status:
+        type: string
+  tenantSecurityResponse:
+    type: object
+    properties:
+      autoCert:
+        type: boolean
+      customCertificates:
+        type: object
+        properties:
+          minio:
+            type: array
+            items:
+              $ref: "#/definitions/certificateInfo"
+          minioCAs:
+            type: array
+            items:
+              $ref: "#/definitions/certificateInfo"
+          console:
+            type: array
+            items:
+              $ref: "#/definitions/certificateInfo"
+          consoleCAs:
+            type: array
+            items:
+              $ref: "#/definitions/certificateInfo"
+
+  updateTenantSecurityRequest:
+    type: object
+    properties:
+      autoCert:
+        type: boolean
+      customCertificates:
+        type: object
+        properties:
+          secretsToBeDeleted:
+            type: array
+            items:
+              type: string
+          minio:
+            type: array
+            items:
+              $ref: "#/definitions/keyPairConfiguration"
+          minioCAs:
+            type: array
+            items:
+              type: string
+          console:
+            type: array
+            items:
+              $ref: "#/definitions/keyPairConfiguration"
+          consoleCAs:
+            type: array
+            items:
+              type: string
+
+  certificateInfo:
+    type: object
+    properties:
+      serialNumber:
+        type: string
+      name:
+        type: string
+      domains:
+        type: array
+        items:
+          type: string
+      expiry:
+        type: string
+
+  tenant:
+    type: object
+    properties:
+      name:
+        type: string
+      creation_date:
+        type: string
+      deletion_date:
+        type: string
+      currentState:
+        type: string
+      pools:
+        type: array
+        items:
+          $ref: "#/definitions/pool"
+      image:
+        type: string
+      console_image:
+        type: string
+      namespace:
+        type: string
+      total_size:
+        type: integer
+        format: int64
+      enable_prometheus:
+        type: boolean
+      subnet_license:
+        $ref: "#/definitions/license"
+      endpoints:
+        type: object
+        properties:
+          minio:
+            type: string
+          console:
+            type: string
+      logEnabled:
+        type: boolean
+      monitoringEnabled:
+        type: boolean
+      idpAdEnabled:
+        type: boolean
+      idpOicEnabled:
+        type: boolean
+      encryptionEnabled:
+        type: boolean
+      status:
+        $ref: "#/definitions/tenantStatus"
+      minioTLS:
+        type: boolean
+      consoleTLS:
+        type: boolean
+      consoleEnabled:
+        type: boolean
+
+  tenantUsage:
+    type: object
+    properties:
+      used:
+        type: integer
+        format: int64
+      disk_used:
+        type: integer
+        format: int64
+
+  tenantList:
+    type: object
+    properties:
+      name:
+        type: string
+      pool_count:
+        type: integer
+      instance_count:
+        type: integer
+      total_size:
+        type: integer
+      volume_count:
+        type: integer
+      creation_date:
+        type: string
+      deletion_date:
+        type: string
+      currentState:
+        type: string
+      namespace:
+        type: string
+      health_status:
+        type: string
+
+  logSearchResponse:
+    type: object
+    properties:
+      results:
+        type: object
+        title: list of log search responses
+
+  listTenantsResponse:
+    type: object
+    properties:
+      tenants:
+        type: array
+        items:
+          $ref: "#/definitions/tenantList"
+        title: list of resulting tenants
+      total:
+        type: integer
+        format: int64
+        title: number of tenants accessible to tenant user
+
+  updateTenantRequest:
+    type: object
+    properties:
+      image:
+        type: string
+        pattern: "^((.*?)/(.*?):(.+))$"
+      console_image:
+        type: string
+        pattern: "^((.*?)/(.*?):(.+))$"
+      image_registry:
+        $ref: "#/definitions/imageRegistry"
+      image_pull_secret:
+        type: string
+      enable_prometheus:
+        type: boolean
+
+  imageRegistry:
+    type: object
+    required:
+      - registry
+      - username
+      - password
+    properties:
+      registry:
+        type: string
+      username:
+        type: string
+      password:
+        type: string
+
+  createTenantRequest:
+    type: object
+    required:
+      - name
+      - namespace
+      - pools
+    properties:
+      name:
+        type: string
+        pattern: "^[a-z0-9-]{3,63}$"
+      image:
+        type: string
+      console_image:
+        type: string
+      pools:
+        type: array
+        items:
+          $ref: "#/definitions/pool"
+      mounth_path:
+        type: string
+      access_key:
+        type: string
+      secret_key:
+        type: string
+      enable_console:
+        type: boolean
+        default: true
+      enable_tls:
+        type: boolean
+        default: true
+      enable_prometheus:
+        type: boolean
+        default: false
+      namespace:
+        type: string
+      erasureCodingParity:
+        type: integer
+      annotations:
+        type: object
+        additionalProperties:
+          type: string
+      labels:
+        type: object
+        additionalProperties:
+          type: string
+      logSearchConfiguration:
+        $ref: "#/definitions/logSearchConfiguration"
+      prometheusConfiguration:
+        $ref: "#/definitions/prometheusConfiguration"
+      image_registry:
+        $ref: "#/definitions/imageRegistry"
+      image_pull_secret:
+        type: string
+      idp:
+        type: object
+        $ref: "#/definitions/idpConfiguration"
+      tls:
+        type: object
+        $ref: "#/definitions/tlsConfiguration"
+      encryption:
+        type: object
+        $ref: "#/definitions/encryptionConfiguration"
+      console:
+        type: object
+        $ref: "#/definitions/consoleConfiguration"
+      expose_minio:
+        type: boolean
+      expose_console:
+        type: boolean
+
+  metadataFields:
+    type: object
+    properties:
+      annotations:
+        type: object
+        additionalProperties:
+          type: string
+      labels:
+        type: object
+        additionalProperties:
+          type: string
+      node_selector:
+        type: object
+        additionalProperties:
+          type: string
+
+  keyPairConfiguration:
+    type: object
+    required:
+      - crt
+      - key
+    properties:
+      crt:
+        type: string
+      key:
+        type: string
+
+  tlsConfiguration:
+    type: object
+    properties:
+      minio:
+        type: array
+        items:
+          $ref: "#/definitions/keyPairConfiguration"
+      console:
+        type: object
+        $ref: "#/definitions/keyPairConfiguration"
+      ca_certificates:
+        type: array
+        items:
+          type: string
+      console_ca_certificates:
+        type: array
+        items:
+          type: string
+
+  idpConfiguration:
+    type: object
+    properties:
+      oidc:
+        type: object
+        required:
+          - url
+          - client_id
+          - secret_id
+        properties:
+          url:
+            type: string
+          client_id:
+            type: string
+          secret_id:
+            type: string
+      keys:
+        type: array
+        items:
+          type: object
+          required:
+            - access_key
+            - secret_key
+          properties:
+            access_key:
+              type: string
+            secret_key:
+              type: string
+      active_directory:
+        type: object
+        required:
+          - url
+          - username_format
+          - user_search_filter
+        properties:
+          url:
+            type: string
+          username_format:
+            type: string
+          user_search_filter:
+            type: string
+          group_search_base_dn:
+            type: string
+          group_search_filter:
+            type: string
+          group_name_attribute:
+            type: string
+          skip_tls_verification:
+            type: boolean
+          server_insecure:
+            type: boolean
+
+  consoleConfiguration:
+    allOf:
+      - $ref: "#/definitions/metadataFields"
+      - type: object
+        properties:
+          image:
+            type: string
+
+  encryptionConfiguration:
+    allOf:
+      - $ref: "#/definitions/metadataFields"
+      - type: object
+        properties:
+          image:
+            type: string
+          replicas:
+            type: string
+          server:
+            type: object
+            $ref: "#/definitions/keyPairConfiguration"
+          client:
+            type: object
+            $ref: "#/definitions/keyPairConfiguration"
+          gemalto:
+            type: object
+            $ref: "#/definitions/gemaltoConfiguration"
+          aws:
+            type: object
+            $ref: "#/definitions/awsConfiguration"
+          vault:
+            type: object
+            $ref: "#/definitions/vaultConfiguration"
+          gcp:
+            type: object
+            $ref: "#/definitions/gcpConfiguration"
+
+  vaultConfiguration:
+    type: object
+    required:
+      - endpoint
+      - approle
+    properties:
+      endpoint:
+        type: string
+      engine:
+        type: string
+      namespace:
+        type: string
+      prefix:
+        type: string
+      approle:
+        type: object
+        required:
+          - id
+          - secret
+        properties:
+          engine:
+            type: string
+          id:
+            type: string
+          secret:
+            type: string
+          retry:
+            type: integer
+            format: int64
+      status:
+        type: object
+        properties:
+          ping:
+            type: integer
+            format: int64
+      tls:
+        type: object
+        properties:
+          key:
+            type: string
+          crt:
+            type: string
+          ca:
+            type: string
+
+  awsConfiguration:
+    type: object
+    required:
+      - secretsmanager
+    properties:
+      secretsmanager:
+        type: object
+        required:
+          - endpoint
+          - region
+          - credentials
+        properties:
+          endpoint:
+            type: string
+          region:
+            type: string
+          kmskey:
+            type: string
+          credentials:
+            type: object
+            required:
+              - accesskey
+              - secretkey
+            properties:
+              accesskey:
+                type: string
+              secretkey:
+                type: string
+              token:
+                type: string
+
+  gemaltoConfiguration:
+    type: object
+    required:
+      - keysecure
+    properties:
+      keysecure:
+        type: object
+        required:
+          - endpoint
+          - credentials
+        properties:
+          endpoint:
+            type: string
+          credentials:
+            type: object
+            required:
+              - token
+              - domain
+            properties:
+              token:
+                type: string
+              domain:
+                type: string
+              retry:
+                type: integer
+                format: int64
+          tls:
+            type: object
+            required:
+              - ca
+            properties:
+              ca:
+                type: string
+
+  gcpConfiguration:
+    type: object
+    required:
+      - secretmanager
+    properties:
+      secretmanager:
+        type: object
+        required:
+          - project_id
+        properties:
+          project_id:
+            type: string
+          endpoint:
+            type: string
+          credentials:
+            type: object
+            properties:
+              client_email:
+                type: string
+              client_id:
+                type: string
+              private_key_id:
+                type: string
+              private_key:
+                type: string
+
+  createTenantResponse:
+    type: object
+    properties:
+      console:
+        type: array
+        items:
+          $ref: "#/definitions/tenantResponseItem"
+
+  tenantResponseItem:
+    type: object
+    properties:
+      access_key:
+        type: string
+      secret_key:
+        type: string
+
+  tenantPod:
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        type: string
+      status:
+        type: string
+      timeCreated:
+        type: integer
+      podIP:
+        type: string
+      restarts:
+        type: integer
+      node:
+        type: string
+
+  pool:
+    type: object
+    required:
+      - servers
+      - volumes_per_server
+      - volume_configuration
+    properties:
+      name:
+        type: string
+      servers:
+        type: integer
+      volumes_per_server:
+        type: integer
+        format: int32
+      volume_configuration:
+        type: object
+        required:
+          - size
+        properties:
+          size:
+            type: integer
+          storage_class_name:
+            type: string
+          labels:
+            type: object
+            additionalProperties:
+              type: string
+          annotations:
+            type: object
+            additionalProperties:
+              type: string
+      resources:
+        $ref: "#/definitions/poolResources"
+      node_selector:
+        type: object
+        additionalProperties:
+          type: string
+        description: "NodeSelector is a selector which must be true for
+          the pod to fit on a node. Selector which must match a node's
+          labels for the pod to be scheduled on that node. More info:
+          https://kubernetes.io/docs/concepts/configuration/assign-pod-node/"
+      affinity:
+        $ref: "#/definitions/poolAffinity"
+      tolerations:
+        $ref: "#/definitions/poolTolerations"
+
+  poolTolerations:
+    description: Tolerations allows users to set entries like effect,
+      key, operator, value.
+    items:
+      description: The pod this Toleration is attached to tolerates
+        any taint that matches the triple <key,value,effect> using
+        the matching operator <operator>.
+      properties:
+        effect:
+          description: Effect indicates the taint effect to match.
+            Empty means match all taint effects. When specified, allowed
+            values are NoSchedule, PreferNoSchedule and NoExecute.
+          type: string
+        key:
+          description: Key is the taint key that the toleration applies
+            to. Empty means match all taint keys. If the key is empty,
+            operator must be Exists; this combination means to match
+            all values and all keys.
+          type: string
+        operator:
+          description: Operator represents a key's relationship to
+            the value. Valid operators are Exists and Equal. Defaults
+            to Equal. Exists is equivalent to wildcard for value,
+            so that a pod can tolerate all taints of a particular
+            category.
+          type: string
+        tolerationSeconds:
+          $ref: "#/definitions/poolTolerationSeconds"
+        value:
+          description: Value is the taint value the toleration matches
+            to. If the operator is Exists, the value should be empty,
+            otherwise just a regular string.
+          type: string
+      type: object
+    type: array
+
+  poolTolerationSeconds:
+    description: TolerationSeconds represents the period of
+      time the toleration (which must be of effect NoExecute,
+      otherwise this field is ignored) tolerates the taint.
+      By default, it is not set, which means tolerate the taint
+      forever (do not evict). Zero and negative values will
+      be treated as 0 (evict immediately) by the system.
+    type: object
+    required:
+      - seconds
+    properties:
+      seconds:
+        type: integer
+        format: int64
+
+  poolResources:
+    description: If provided, use these requests and limit for cpu/memory
+      resource allocation
+    properties:
+      limits:
+        additionalProperties:
+          type: integer
+          format: int64
+        description: "Limits describes the maximum amount of compute
+          resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/"
+        type: object
+      requests:
+        additionalProperties:
+          additionalProperties:
+          type: integer
+          format: int64
+        description: "Requests describes the minimum amount of compute
+          resources required. If Requests is omitted for a container,
+          it defaults to Limits if that is explicitly specified, otherwise
+          to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/"
+        type: object
+    type: object
+
+  poolAffinity:
+    description: If specified, affinity will define the pod's scheduling
+      constraints
+    properties:
+      nodeAffinity:
+        description: Describes node affinity scheduling rules for
+          the pod.
+        properties:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            description: The scheduler will prefer to schedule pods
+              to nodes that satisfy the affinity expressions specified
+              by this field, but it may choose a node that violates
+              one or more of the expressions. The node that is most
+              preferred is the one with the greatest sum of weights,
+              i.e. for each node that meets all of the scheduling
+              requirements (resource request, requiredDuringScheduling
+              affinity expressions, etc.), compute a sum by iterating
+              through the elements of this field and adding "weight"
+              to the sum if the node matches the corresponding matchExpressions;
+              the node(s) with the highest sum are the most preferred.
+            items:
+              description: An empty preferred scheduling term matches
+                all objects with implicit weight 0 (i.e. it's a no-op).
+                A null preferred scheduling term matches no objects
+                (i.e. is also a no-op).
+              properties:
+                preference:
+                  description: A node selector term, associated with
+                    the corresponding weight.
+                  $ref: "#/definitions/nodeSelectorTerm"
+                  type: object
+                weight:
+                  description: Weight associated with matching the
+                    corresponding nodeSelectorTerm, in the range 1-100.
+                  format: int32
+                  type: integer
+              required:
+                - preference
+                - weight
+              type: object
+            type: array
+          requiredDuringSchedulingIgnoredDuringExecution:
+            description: If the affinity requirements specified by
+              this field are not met at scheduling time, the pod will
+              not be scheduled onto the node. If the affinity requirements
+              specified by this field cease to be met at some point
+              during pod execution (e.g. due to an update), the system
+              may or may not try to eventually evict the pod from
+              its node.
+            properties:
+              nodeSelectorTerms:
+                description: Required. A list of node selector terms.
+                  The terms are ORed.
+                items:
+                  $ref: "#/definitions/nodeSelectorTerm"
+                type: array
+            required:
+              - nodeSelectorTerms
+            type: object
+        type: object
+      podAffinity:
+        description: Describes pod affinity scheduling rules (e.g.
+          co-locate this pod in the same node, pool, etc. as some
+          other pod(s)).
+        properties:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            description: The scheduler will prefer to schedule pods
+              to nodes that satisfy the affinity expressions specified
+              by this field, but it may choose a node that violates
+              one or more of the expressions. The node that is most
+              preferred is the one with the greatest sum of weights,
+              i.e. for each node that meets all of the scheduling
+              requirements (resource request, requiredDuringScheduling
+              affinity expressions, etc.), compute a sum by iterating
+              through the elements of this field and adding "weight"
+              to the sum if the node has pods which matches the corresponding
+              podAffinityTerm; the node(s) with the highest sum are
+              the most preferred.
+            items:
+              description:
+                The weights of all of the matched WeightedPodAffinityTerm
+                fields are added per-node to find the most preferred
+                node(s)
+              properties:
+                podAffinityTerm:
+                  $ref: "#/definitions/podAffinityTerm"
+                weight:
+                  description: weight associated with matching the
+                    corresponding podAffinityTerm, in the range 1-100.
+                  format: int32
+                  type: integer
+              required:
+                - podAffinityTerm
+                - weight
+              type: object
+            type: array
+          requiredDuringSchedulingIgnoredDuringExecution:
+            description: If the affinity requirements specified by
+              this field are not met at scheduling time, the pod will
+              not be scheduled onto the node. If the affinity requirements
+              specified by this field cease to be met at some point
+              during pod execution (e.g. due to a pod label update),
+              the system may or may not try to eventually evict the
+              pod from its node. When there are multiple elements,
+              the lists of nodes corresponding to each podAffinityTerm
+              are intersected, i.e. all terms must be satisfied.
+            items:
+              $ref: "#/definitions/podAffinityTerm"
+            type: array
+        type: object
+      podAntiAffinity:
+        description: Describes pod anti-affinity scheduling rules
+          (e.g. avoid putting this pod in the same node, pool, etc.
+          as some other pod(s)).
+        properties:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            description: The scheduler will prefer to schedule pods
+              to nodes that satisfy the anti-affinity expressions
+              specified by this field, but it may choose a node that
+              violates one or more of the expressions. The node that
+              is most preferred is the one with the greatest sum of
+              weights, i.e. for each node that meets all of the scheduling
+              requirements (resource request, requiredDuringScheduling
+              anti-affinity expressions, etc.), compute a sum by iterating
+              through the elements of this field and adding "weight"
+              to the sum if the node has pods which matches the corresponding
+              podAffinityTerm; the node(s) with the highest sum are
+              the most preferred.
+            items:
+              description:
+                The weights of all of the matched WeightedPodAffinityTerm
+                fields are added per-node to find the most preferred
+                node(s)
+              properties:
+                podAffinityTerm:
+                  $ref: "#/definitions/podAffinityTerm"
+                weight:
+                  description: weight associated with matching the
+                    corresponding podAffinityTerm, in the range 1-100.
+                  format: int32
+                  type: integer
+              required:
+                - podAffinityTerm
+                - weight
+              type: object
+            type: array
+          requiredDuringSchedulingIgnoredDuringExecution:
+            description: If the anti-affinity requirements specified
+              by this field are not met at scheduling time, the pod
+              will not be scheduled onto the node. If the anti-affinity
+              requirements specified by this field cease to be met
+              at some point during pod execution (e.g. due to a pod
+              label update), the system may or may not try to eventually
+              evict the pod from its node. When there are multiple
+              elements, the lists of nodes corresponding to each podAffinityTerm
+              are intersected, i.e. all terms must be satisfied.
+            items:
+              $ref: "#/definitions/podAffinityTerm"
+            type: array
+        type: object
+    type: object
+
+  nodeSelectorTerm:
+    type: object
+    description: A null or empty node selector term
+      matches no objects. The requirements of them are
+      ANDed. The TopologySelectorTerm type implements
+      a subset of the NodeSelectorTerm.
+    properties:
+      matchExpressions:
+        description: A list of node selector requirements
+          by node's labels.
+        items:
+          description: A node selector requirement is
+            a selector that contains values, a key,
+            and an operator that relates the key and
+            values.
+          properties:
+            key:
+              description: The label key that the selector
+                applies to.
+              type: string
+            operator:
+              description: Represents a key's relationship
+                to a set of values. Valid operators
+                are In, NotIn, Exists, DoesNotExist.
+                Gt, and Lt.
+              type: string
+            values:
+              description: An array of string values.
+                If the operator is In or NotIn, the
+                values array must be non-empty. If the
+                operator is Exists or DoesNotExist,
+                the values array must be empty. If the
+                operator is Gt or Lt, the values array
+                must have a single element, which will
+                be interpreted as an integer. This array
+                is replaced during a strategic merge
+                patch.
+              items:
+                type: string
+              type: array
+          required:
+            - key
+            - operator
+          type: object
+        type: array
+      matchFields:
+        description: A list of node selector requirements
+          by node's fields.
+        items:
+          description: A node selector requirement is
+            a selector that contains values, a key,
+            and an operator that relates the key and
+            values.
+          properties:
+            key:
+              description: The label key that the selector
+                applies to.
+              type: string
+            operator:
+              description: Represents a key's relationship
+                to a set of values. Valid operators
+                are In, NotIn, Exists, DoesNotExist.
+                Gt, and Lt.
+              type: string
+            values:
+              description: An array of string values.
+                If the operator is In or NotIn, the
+                values array must be non-empty. If the
+                operator is Exists or DoesNotExist,
+                the values array must be empty. If the
+                operator is Gt or Lt, the values array
+                must have a single element, which will
+                be interpreted as an integer. This array
+                is replaced during a strategic merge
+                patch.
+              items:
+                type: string
+              type: array
+          required:
+            - key
+            - operator
+          type: object
+        type: array
+
+  podAffinityTerm:
+    description: Required. A pod affinity term, associated
+      with the corresponding weight.
+    properties:
+      labelSelector:
+        description: A label query over a set of resources,
+          in this case pods.
+        properties:
+          matchExpressions:
+            description: matchExpressions is a list
+              of label selector requirements. The requirements
+              are ANDed.
+            items:
+              description: A label selector requirement
+                is a selector that contains values,
+                a key, and an operator that relates
+                the key and values.
+              properties:
+                key:
+                  description: key is the label key
+                    that the selector applies to.
+                  type: string
+                operator:
+                  description: operator represents a
+                    key's relationship to a set of values.
+                    Valid operators are In, NotIn, Exists
+                    and DoesNotExist.
+                  type: string
+                values:
+                  description: values is an array of
+                    string values. If the operator is
+                    In or NotIn, the values array must
+                    be non-empty. If the operator is
+                    Exists or DoesNotExist, the values
+                    array must be empty. This array
+                    is replaced during a strategic merge
+                    patch.
+                  items:
+                    type: string
+                  type: array
+              required:
+                - key
+                - operator
+              type: object
+            type: array
+          matchLabels:
+            additionalProperties:
+              type: string
+            description: matchLabels is a map of {key,value}
+              pairs. A single {key,value} in the matchLabels
+              map is equivalent to an element of matchExpressions,
+              whose key field is "key", the operator
+              is "In", and the values array contains
+              only "value". The requirements are ANDed.
+            type: object
+        type: object
+      namespaces:
+        description: namespaces specifies which namespaces
+          the labelSelector applies to (matches against);
+          null or empty list means "this pod's namespace"
+        items:
+          type: string
+        type: array
+      topologyKey:
+        description: This pod should be co-located (affinity)
+          or not co-located (anti-affinity) with the
+          pods matching the labelSelector in the specified
+          namespaces, where co-located is defined as
+          running on a node whose value of the label
+          with key topologyKey matches that of any node
+          on which any of the selected pods is running.
+          Empty topologyKey is not allowed.
+        type: string
+    required:
+      - topologyKey
+    type: object
+
+  resourceQuota:
+    type: object
+    properties:
+      name:
+        type: string
+      elements:
+        type: array
+        items:
+          $ref: "#/definitions/resourceQuotaElement"
+
+  resourceQuotaElement:
+    type: object
+    properties:
+      name:
+        type: string
+      hard:
+        type: integer
+        format: int64
+      used:
+        type: integer
+        format: int64
+
+  deleteTenantRequest:
+    type: object
+    properties:
+      delete_pvcs:
+        type: boolean
+
+  poolUpdateRequest:
+    type: object
+    required:
+      - pools
+    properties:
+      pools:
+        type: array
+        items:
+          $ref: "#/definitions/pool"
+
+  maxAllocatableMemResponse:
+    type: object
+    properties:
+      max_memory:
+        type: integer
+        format: int64
+
+  parityResponse:
+    type: array
+    items:
+      type: string
+
+  objectLegalHoldStatus:
+    type: string
+    enum:
+      - enabled
+      - disabled
+
+  putObjectLegalHoldRequest:
+    type: object
+    required:
+      - status
+    properties:
+      status:
+        $ref: "#/definitions/objectLegalHoldStatus"
+
+  objectRetentionMode:
+    type: string
+    enum:
+      - governance
+      - compliance
+
+  putObjectRetentionRequest:
+    type: object
+    required:
+      - mode
+      - expires
+    properties:
+      mode:
+        $ref: "#/definitions/objectRetentionMode"
+      expires:
+        type: string
+      governance_bypass:
+        type: boolean
+
+  putObjectTagsRequest:
+    type: object
+    properties:
+      tags:
+        additionalProperties:
+          type: string
+
+  objectRetentionUnit:
+    type: string
+    enum:
+      - days
+      - years
+
+  putBucketRetentionRequest:
+    type: object
+    required:
+      - mode
+      - unit
+      - validity
+    properties:
+      mode:
+        $ref: "#/definitions/objectRetentionMode"
+      unit:
+        $ref: "#/definitions/objectRetentionUnit"
+      validity:
+        type: integer
+        format: int32
+
+  getBucketRetentionConfig:
+    type: object
+    properties:
+      mode:
+        $ref: "#/definitions/objectRetentionMode"
+      unit:
+        $ref: "#/definitions/objectRetentionUnit"
+      validity:
+        type: integer
+        format: int32
+
+  bucketLifecycleResponse:
+    type: object
+    properties:
+      lifecycle:
+        type: array
+        items:
+          $ref: "#/definitions/objectBucketLifecycle"
+
+  expirationResponse:
+    type: object
+    properties:
+      date:
+        type: string
+      days:
+        type: integer
+        format: int64
+      delete_marker:
+        type: boolean
+
+  transitionResponse:
+    type: object
+    properties:
+      date:
+        type: string
+      storage_class:
+        type: string
+      days:
+        type: integer
+        format: int64
+
+  lifecycleTag:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+
+  objectBucketLifecycle:
+    type: object
+    properties:
+      id:
+        type: string
+      prefix:
+        type: string
+      status:
+        type: string
+      expiration:
+        $ref: "#/definitions/expirationResponse"
+      transition:
+        $ref: "#/definitions/transitionResponse"
+      tags:
+        type: array
+        items:
+          $ref: "#/definitions/lifecycleTag"
+
+  addBucketLifecycle:
+    type: object
+    properties:
+      prefix:
+        description: Non required field, it matches a prefix to perform ILM operations on it
+        type: string
+      tags:
+        description: Non required field, tags to match ILM files
+        type: string
+      expiry_date:
+        description: Required in case of expiry_days or transition fields are not set. it defines an expiry date for ILM
+        type: string
+      expiry_days:
+        description: Required in case of expiry_date or transition fields are not set. it defines an expiry days for ILM
+        type: integer
+        format: int32
+        default: 0
+      transition_date:
+        description: Required in case of transition_days or expiry fields are not set. it defines a transition date for ILM
+        type: string
+      transition_days:
+        description: Required in case of transition_date or expiry fields are not set. it defines a transition days for ILM
+        type: integer
+        format: int32
+        default: 0
+      storage_class:
+        description: Required only in case of transition is set. it refers to a tier
+        type: string
+      disable:
+        description: Non required, toggle to disable or enable rule
+        type: boolean
+      expired_object_delete_marker:
+        description: Non required, toggle to disable or enable rule
+        type: boolean
+      noncurrentversion_expiration_days:
+        description: Non required, can be set in case of expiration is enabled
+        type: integer
+        format: int32
+        default: 0
+      noncurrentversion_transition_days:
+        description: Non required, can be set in case of transition is enabled
+        type: integer
+        format: int32
+        default: 0
+      noncurrentversion_transition_storage_class:
+        description: Non required, can be set in case of transition is enabled
+        type: string
+
+  updateBucketLifecycle:
+    type: object
+    properties:
+      tags:
+        type: string
+      disable:
+        type: boolean
+
+  setConfigResponse:
+    type: object
+    properties:
+      restart:
+        description: Returns wheter server needs to restart to apply changes or not
+        type: boolean
+
+  subscriptionValidateRequest:
+    type: object
+    properties:
+      license:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+  license:
+    type: object
+    properties:
+      email:
+        type: string
+      organization:
+        type: string
+      account_id:
+        type: integer
+      storage_capacity:
+        type: integer
+      plan:
+        type: string
+      expires_at:
+        type: string
+
+  getDirectCSIDriveListResponse:
+    type: object
+    properties:
+      drives:
+        type: array
+        items:
+          $ref: "#/definitions/directCSIDriveInfo"
+
+  directCSIDriveInfo:
+    type: object
+    properties:
+      drive:
+        type: string
+      capacity:
+        type: number
+        format: int64
+      allocated:
+        type: number
+        format: int64
+      volumes:
+        type: number
+        format: int64
+      node:
+        type: string
+      status:
+        type: string
+      message:
+        type: string
+
+  getDirectCSIVolumeListResponse:
+    type: object
+    properties:
+      volumes:
+        type: array
+        items:
+          $ref: "#/definitions/directCSIVolumeInfo"
+
+  directCSIVolumeInfo:
+    type: object
+    properties:
+      volume:
+        type: string
+      capacity:
+        type: number
+        format: int64
+      node:
+        type: string
+      drive:
+        type: string
+
+  policyArgs:
+    type: object
+    properties:
+      id:
+        type: string
+      action:
+        type: string
+      bucket_name:
+        type: string
+
+  hasPermissionRequest:
+    type: object
+    properties:
+      actions:
+        type: array
+        items:
+          $ref: "#/definitions/policyArgs"
+
+  permissionAction:
+    type: object
+    properties:
+      id:
+        type: string
+      can:
+        type: boolean
+
+  hasPermissionResponse:
+    type: object
+    properties:
+      permissions:
+        type: array
+        items:
+          $ref: "#/definitions/permissionAction"
+
+  logSearchConfiguration:
+    type: object
+    properties:
+      storageClass:
+        type: string
+        default: ""
+      storageSize:
+        type: number
+        default: 5
+      image:
+        type: string
+      postgres_image:
+        type: string
+
+  prometheusConfiguration:
+    type: object
+    properties:
+      storageClass:
+        type: string
+        default: ""
+      storageSize:
+        type: number
+        default: 5
+      image:
+        type: string
+  tier_s3:
+    type: object
+    properties:
+      name:
+        type: string
+      endpoint:
+        type: string
+      accesskey:
+        type: string
+      secretkey:
+        type: string
+      bucket:
+        type: string
+      prefix:
+        type: string
+      region:
+        type: string
+      storageclass:
+        type: string
+
+  tier_azure:
+    type: object
+    properties:
+      name:
+        type: string
+      endpoint:
+        type: string
+      accountname:
+        type: string
+      accountkey:
+        type: string
+      bucket:
+        type: string
+      prefix:
+        type: string
+      region:
+        type: string
+
+  tier_gcs:
+    type: object
+    properties:
+      name:
+        type: string
+      endpoint:
+        type: string
+      creds:
+        type: string
+      bucket:
+        type: string
+      prefix:
+        type: string
+      region:
+        type: string
+
+  tier:
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - s3
+          - gcs
+          - azure
+          - unsupported
+      s3:
+        type: object
+        $ref: "#/definitions/tier_s3"
+      gcs:
+        type: object
+        $ref: "#/definitions/tier_gcs"
+      azure:
+        type: object
+        $ref: "#/definitions/tier_azure"
+
+  tierListResponse:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/tier"
+
+  tierCredentialsRequest:
+    type: object
+    properties:
+      access_key:
+        type: string
+      secret_key:
+        type: string
+      creds:
+        type: string
+        description: a base64 encoded value
+  formatConfiguration:
+    type: object
+    required:
+      - drives
+      - force
+    properties:
+      drives:
+        type: array
+        minLength: 1
+        items:
+          type: string
+      force:
+        type: boolean
+
+  csiFormatErrorResponse:
+    type: object
+    properties:
+      node:
+        type: string
+      drive:
+        type: string
+      error:
+        type: string
+
+  formatDirectCSIDrivesResponse:
+    type: object
+    properties:
+      formatIssuesList:
+        type: array
+        items:
+          $ref: "#/definitions/csiFormatErrorResponse"
+
+  tenantYAML:
+    type: object
+    properties:
+      yaml:
+        type: string
+
+  listPVCsResponse:
+    type: object
+    properties:
+      pvcs:
+        type: array
+        items:
+          $ref: "#/definitions/pvcsListResponse"
+
+  pvcsListResponse:
+    type: object
+    properties:
+      namespace:
+        type: string
+      name:
+        type: string
+      status:
+        type: string
+      volume:
+        type: string
+      capacity:
+        type: string
+      storageClass:
+        type: string
+      age:
+        type: string
+
+  nodeLabels:
+    type: object
+    additionalProperties:
+      type: array
+      items:
+        type: string
+
+  namespace:
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        type: string
+
+  eventListWrapper:
+    type: array
+    items:
+      $ref: "#/definitions/eventListElement"
+
+  eventListElement:
+    type: object
+    properties:
+      namespace:
+        type: string
+      last_seen:
+        type: integer
+        format: int64
+      event_type:
+        type: string
+      reason:
+        type: string
+      object:
+        type: string
+      message:
+        type: string
+
+  rewindItem:
+    type: object
+    properties:
+      last_modified:
+        type: string
+      size:
+        type: integer
+        format: int64
+      version_id:
+        type: string
+      delete_flag:
+        type: boolean
+      action:
+        type: string
+      name:
+        type: string
+
+  rewindResponse:
+    type: object
+    properties:
+      objects:
+        type: array
+        items:
+          $ref: "#/definitions/rewindItem"

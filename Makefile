@@ -43,11 +43,22 @@ install: console
 	@mkdir -p $(GOPATH)/bin && cp -f $(PWD)/console $(GOPATH)/bin/console
 	@echo "Installation successful. To learn more, try \"console --help\"."
 
-swagger-gen:
-	@echo "Generating swagger server code from yaml"
+swagger-gen: clean-swagger swagger-console swagger-operator
+	@echo "Done Generating swagger server code from yaml"
+
+clean-swagger:
+	@echo "cleaning"
 	@rm -rf models
 	@rm -rf restapi/operations
-	@swagger generate server -A console --main-package=console --exclude-main -P models.Principal -f ./swagger.yml -r NOTICE
+	@rm -rf operatorapi/operations
+
+swagger-console:
+	@echo "Generating swagger server code from yaml"
+	@swagger generate server -A console --main-package=management --server-package=restapi --exclude-main -P models.Principal -f ./swagger-console.yml -r NOTICE
+
+swagger-operator:
+	@echo "Generating swagger server code from yaml"
+	@swagger generate server -A operator --main-package=operator --server-package=operatorapi --exclude-main -P models.Principal -f ./swagger-operator.yml -r NOTICE
 
 assets:
 	@(cd portal-ui; yarn install; make build-static; yarn prettier --write . --loglevel warn;  cd ..)

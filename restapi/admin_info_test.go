@@ -37,7 +37,7 @@ func TestAdminInfo(t *testing.T) {
 		}, nil
 	}
 	ctx := context.Background()
-	serverInfo, err := getAdminInfo(ctx, adminClient)
+	serverInfo, err := GetAdminInfo(ctx, adminClient)
 	assert.NotNil(serverInfo, "server info was returned nil")
 	if serverInfo != nil {
 		var actual64 int64 = 10
@@ -52,7 +52,7 @@ func TestAdminInfo(t *testing.T) {
 		return madmin.InfoMessage{}, errors.New("some reason")
 	}
 
-	serverInfo, err = getAdminInfo(ctx, adminClient)
+	serverInfo, err = GetAdminInfo(ctx, adminClient)
 	assert.Nil(serverInfo, "server info was not returned nil")
 	assert.NotNil(err, "An error should have ben returned")
 

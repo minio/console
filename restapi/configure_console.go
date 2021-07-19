@@ -115,28 +115,13 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerAdminTiersHandlers(api)
 
 	// Operator Console
-	// Register tenant handlers
-	registerTenantHandlers(api)
-	// Register admin info handlers
-	registerOperatorTenantInfoHandlers(api)
-	// Register ResourceQuota handlers
-	registerResourceQuotaHandlers(api)
-	// Register Nodes' handlers
-	registerNodesHandlers(api)
-	// Register Parity' handlers
-	registerParityHandlers(api)
+
 	// Register Object's Handlers
 	registerObjectsHandlers(api)
 	// Register Bucket Quota's Handlers
 	registerBucketQuotaHandlers(api)
 	// Register Account handlers
 	registerAccountHandlers(api)
-	// Direct CSI handlers
-	registerDirectCSIHandlers(api)
-	// Volumes handlers
-	registerVolumesHandlers(api)
-	// Namespaces handlers
-	registerNamespaceHandlers(api)
 
 	api.PreServerShutdown = func() {}
 
@@ -167,26 +152,26 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	// Secure middleware, this middleware wrap all the previous handlers and add
 	// HTTP security headers
 	secureOptions := secure.Options{
-		AllowedHosts:                    getSecureAllowedHosts(),
-		AllowedHostsAreRegex:            getSecureAllowedHostsAreRegex(),
-		HostsProxyHeaders:               getSecureHostsProxyHeaders(),
+		AllowedHosts:                    GetSecureAllowedHosts(),
+		AllowedHostsAreRegex:            GetSecureAllowedHostsAreRegex(),
+		HostsProxyHeaders:               GetSecureHostsProxyHeaders(),
 		SSLRedirect:                     GetTLSRedirect() == "on" && len(GlobalPublicCerts) > 0,
-		SSLHost:                         getSecureTLSHost(),
-		STSSeconds:                      getSecureSTSSeconds(),
-		STSIncludeSubdomains:            getSecureSTSIncludeSubdomains(),
-		STSPreload:                      getSecureSTSPreload(),
-		SSLTemporaryRedirect:            getSecureTLSTemporaryRedirect(),
+		SSLHost:                         GetSecureTLSHost(),
+		STSSeconds:                      GetSecureSTSSeconds(),
+		STSIncludeSubdomains:            GetSecureSTSIncludeSubdomains(),
+		STSPreload:                      GetSecureSTSPreload(),
+		SSLTemporaryRedirect:            GetSecureTLSTemporaryRedirect(),
 		SSLHostFunc:                     nil,
-		ForceSTSHeader:                  getSecureForceSTSHeader(),
-		FrameDeny:                       getSecureFrameDeny(),
-		ContentTypeNosniff:              getSecureContentTypeNonSniff(),
-		BrowserXssFilter:                getSecureBrowserXSSFilter(),
-		ContentSecurityPolicy:           getSecureContentSecurityPolicy(),
-		ContentSecurityPolicyReportOnly: getSecureContentSecurityPolicyReportOnly(),
-		PublicKey:                       getSecurePublicKey(),
-		ReferrerPolicy:                  getSecureReferrerPolicy(),
-		FeaturePolicy:                   getSecureFeaturePolicy(),
-		ExpectCTHeader:                  getSecureExpectCTHeader(),
+		ForceSTSHeader:                  GetSecureForceSTSHeader(),
+		FrameDeny:                       GetSecureFrameDeny(),
+		ContentTypeNosniff:              GetSecureContentTypeNonSniff(),
+		BrowserXssFilter:                GetSecureBrowserXSSFilter(),
+		ContentSecurityPolicy:           GetSecureContentSecurityPolicy(),
+		ContentSecurityPolicyReportOnly: GetSecureContentSecurityPolicyReportOnly(),
+		PublicKey:                       GetSecurePublicKey(),
+		ReferrerPolicy:                  GetSecureReferrerPolicy(),
+		FeaturePolicy:                   GetSecureFeaturePolicy(),
+		ExpectCTHeader:                  GetSecureExpectCTHeader(),
 		IsDevelopment:                   false,
 	}
 	secureMiddleware := secure.New(secureOptions)

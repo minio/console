@@ -232,7 +232,7 @@ func newWebSocketAdminClient(conn *websocket.Conn, autClaims *models.Principal) 
 	wsConnection := wsConn{conn: conn}
 	// create a minioClient interface implementation
 	// defining the client to be used
-	adminClient := adminClient{client: mAdmin}
+	adminClient := AdminClient{Client: mAdmin}
 	// create websocket client and handle request
 	wsAdminClient := &wsAdminClient{conn: wsConnection, client: adminClient}
 	return wsAdminClient, nil
@@ -389,7 +389,7 @@ func sendWsCloseMessage(conn WSConn, err error) {
 			return
 		}
 		// else, internal server error
-		conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseInternalServerErr, errorGeneric.Error()))
+		conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseInternalServerErr, ErrorGeneric.Error()))
 		return
 	}
 	// normal closure

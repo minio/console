@@ -68,32 +68,32 @@ func getChangePasswordResponse(session *models.Principal, params user_api.Accoun
 
 	// changePassword operations requires an AdminClient initialized with parent account credentials not
 	// STS credentials
-	parentAccountClient, err := newAdminClient(&models.Principal{
+	parentAccountClient, err := NewMinioAdminClient(&models.Principal{
 		STSAccessKeyID:     session.AccountAccessKey,
 		STSSecretAccessKey: *params.Body.CurrentSecretKey,
 	})
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
 	// parentAccountClient will contain access and secret key credentials for the user
-	userClient := adminClient{client: parentAccountClient}
+	userClient := AdminClient{Client: parentAccountClient}
 	accessKey := session.AccountAccessKey
 	newSecretKey := *params.Body.NewSecretKey
 
 	// currentSecretKey will compare currentSecretKey against the stored secret key inside the encrypted session
 	if err := changePassword(ctx, userClient, session, newSecretKey); err != nil {
-		return nil, prepareError(errChangePassword, nil, err)
+		return nil, PrepareError(errChangePassword, nil, err)
 	}
 	// user credentials are updated at this point, we need to generate a new admin client and authenticate using
 	// the new credentials
 	credentials, err := getConsoleCredentials(ctx, accessKey, newSecretKey)
 	if err != nil {
-		return nil, prepareError(errInvalidCredentials, nil, err)
+		return nil, PrepareError(errInvalidCredentials, nil, err)
 	}
 	// authenticate user and generate new session token
 	sessionID, err := login(credentials)
 	if err != nil {
-		return nil, prepareError(errInvalidCredentials, nil, err)
+		return nil, PrepareError(errInvalidCredentials, nil, err)
 	}
 	// serialize output
 	loginResponse := &models.LoginResponse{
@@ -106,17 +106,17 @@ func getUserHasPermissionsResponse(session *models.Principal, params user_api.Ha
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
-	mAdmin, err := newAdminClient(session)
+	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
-	adminClient := adminClient{client: mAdmin}
+	adminClient := AdminClient{Client: mAdmin}
 
 	userPolicy, err := getAccountPolicy(ctx, adminClient)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, PrepareError(err)
 	}
 
 	var perms []*models.PermissionAction

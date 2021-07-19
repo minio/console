@@ -267,28 +267,28 @@ type ConsoleCredentialsI interface {
 }
 
 // Interface implementation
-type consoleCredentials struct {
-	consoleCredentials *credentials.Credentials
-	accountAccessKey   string
-	actions            []string
+type ConsoleCredentials struct {
+	ConsoleCredentials *credentials.Credentials
+	AccountAccessKey   string
+	Actions            []string
 }
 
-func (c consoleCredentials) GetActions() []string {
-	return c.actions
+func (c ConsoleCredentials) GetActions() []string {
+	return c.Actions
 }
 
-func (c consoleCredentials) GetAccountAccessKey() string {
-	return c.accountAccessKey
+func (c ConsoleCredentials) GetAccountAccessKey() string {
+	return c.AccountAccessKey
 }
 
-// implements *Login.Get()
-func (c consoleCredentials) Get() (credentials.Value, error) {
-	return c.consoleCredentials.Get()
+// Get implements *Login.Get()
+func (c ConsoleCredentials) Get() (credentials.Value, error) {
+	return c.ConsoleCredentials.Get()
 }
 
-// implements *Login.Expire()
-func (c consoleCredentials) Expire() {
-	c.consoleCredentials.Expire()
+// Expire implements *Login.Expire()
+func (c ConsoleCredentials) Expire() {
+	c.ConsoleCredentials.Expire()
 }
 
 // consoleSTSAssumeRole it's a STSAssumeRole wrapper, in general
@@ -306,7 +306,7 @@ func (s consoleSTSAssumeRole) IsExpired() bool {
 	return s.stsAssumeRole.IsExpired()
 }
 
-func newConsoleCredentials(accessKey, secretKey, location string) (*credentials.Credentials, error) {
+func NewConsoleCredentials(accessKey, secretKey, location string) (*credentials.Credentials, error) {
 	// Future authentication methods can be added under this switch statement
 	switch {
 	// authentication for Operator Console
@@ -356,7 +356,7 @@ func getConsoleCredentialsFromSession(claims *models.Principal) *credentials.Cre
 	return credentials.NewStaticV4(claims.STSAccessKeyID, claims.STSSecretAccessKey, claims.STSSessionToken)
 }
 
-// newMinioClient creates a new MinIO client based on the consoleCredentials extracted
+// newMinioClient creates a new MinIO client based on the ConsoleCredentials extracted
 // from the provided session token
 func newMinioClient(claims *models.Principal) (*minio.Client, error) {
 	creds := getConsoleCredentialsFromSession(claims)
