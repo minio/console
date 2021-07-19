@@ -83,7 +83,7 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	nsTenant := fmt.Sprintf("%s/%s", namespace, tenantName)
+	nsTenant := fmt.Sprintf("%s/%s", tenant.Namespace, tenant.Name)
 
 	tenantSchema := "http"
 	tenantPort := ":9090"
