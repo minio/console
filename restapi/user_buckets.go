@@ -21,8 +21,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
+	"github.com/minio/madmin-go"
 	"github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7"
@@ -98,7 +100,7 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 	})
 	// get bucket replication
 	api.UserAPIGetBucketReplicationHandler = user_api.GetBucketReplicationHandlerFunc(func(params user_api.GetBucketReplicationParams, session *models.Principal) middleware.Responder {
-		getBucketReplication, err := getBucketReplicationdResponse(session, params.BucketName)
+		getBucketReplication, err := getBucketReplicationResponse(session, params.BucketName)
 		if err != nil {
 			return user_api.NewGetBucketReplicationDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
@@ -198,7 +200,11 @@ func setBucketVersioningResponse(session *models.Principal, bucketName string, p
 	return nil
 }
 
-func getBucketReplicationdResponse(session *models.Principal, bucketName string) (*models.BucketReplicationResponse, error) {
+func getBucketReplicationResponse(session *models.Principal, bucketName string) (*models.BucketReplicationResponse, error) {
+	if !isErasureBackend() {
+		return &models.BucketReplicationResponse{}, nil
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
@@ -242,13 +248,19 @@ func getBucketReplicationdResponse(session *models.Principal, bucketName string)
 	}
 
 	// serialize output
-	listBucketsResponse := &models.BucketReplicationResponse{
+	bucketRResponse := &models.BucketReplicationResponse{
 		Rules: rules,
 	}
-	return listBucketsResponse, nil
+	return bucketRResponse, nil
 }
 
 func getBucketVersionedResponse(session *models.Principal, bucketName string) (*models.BucketVersioningResponse, error) {
+	if !isErasureBackend() {
+		return &models.BucketVersioningResponse{
+			IsVersioned: false,
+		}, nil
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
@@ -257,6 +269,7 @@ func getBucketVersionedResponse(session *models.Principal, bucketName string) (*
 		LogError("error creating MinIO Client: %v", err)
 		return nil, err
 	}
+
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
@@ -268,10 +281,17 @@ func getBucketVersionedResponse(session *models.Principal, bucketName string) (*
 	}
 
 	// serialize output
-	listBucketsResponse := &models.BucketVersioningResponse{
+	bucketVResponse := &models.BucketVersioningResponse{
 		IsVersioned: res.Status == "Enabled",
 	}
-	return listBucketsResponse, nil
+	return bucketVResponse, nil
+}
+
+var serverBackend madmin.BackendInfo
+var serverBackendOnce sync.Once
+
+func isErasureBackend() bool {
+	return serverBackend.Type == madmin.Erasure
 }
 
 // getAccountInfo fetches a list of all buckets allowed to that particular client from MinIO Servers
@@ -281,9 +301,17 @@ func getAccountInfo(ctx context.Context, client MinioAdmin) ([]*models.Bucket, e
 		return []*models.Bucket{}, err
 	}
 
+	serverBackendOnce.Do(func() {
+		serverBackend = info.Server
+	})
+
 	var bucketInfos []*models.Bucket
 	for _, bucket := range info.Buckets {
-		bucketElem := &models.Bucket{Name: swag.String(bucket.Name), CreationDate: bucket.Created.Format(time.RFC3339), Size: int64(bucket.Size)}
+		bucketElem := &models.Bucket{
+			Name:         swag.String(bucket.Name),
+			Size:         int64(bucket.Size),
+			CreationDate: bucket.Created.Format(time.RFC3339),
+		}
 		bucketInfos = append(bucketInfos, bucketElem)
 	}
 	return bucketInfos, nil
