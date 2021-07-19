@@ -15,8 +15,6 @@ var (
 	ErrorGeneric               = errors.New("an error occurred, please try again")
 	errInvalidCredentials      = errors.New("invalid Login")
 	errorGenericInvalidSession = errors.New("invalid session")
-	errorGenericUnauthorized   = errors.New("unauthorized")
-	errorGenericForbidden      = errors.New("forbidden")
 	// ErrorGenericNotFound Generic error for not found
 	ErrorGenericNotFound = errors.New("not found")
 	// Explicit error messages
