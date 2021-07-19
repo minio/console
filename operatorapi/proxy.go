@@ -134,6 +134,7 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 		}
 		loginReq.Header.Add("Content-Type", "application/json")
 
+              // FIXME: in the future we should use restapi.GetConsoleSTSClient()
 		tr := &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}
