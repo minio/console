@@ -26,7 +26,6 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/operatorapi/operations"
 	"github.com/minio/console/operatorapi/operations/operator_api"
-	"github.com/minio/console/restapi"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -47,7 +46,7 @@ func getPVCsResponse(session *models.Principal) (*models.ListPVCsResponse, *mode
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 
 	if err != nil {
-		return nil, restapi.PrepareError(err)
+		return nil, prepareError(err)
 	}
 
 	// Filter Tenant PVCs. They keep their v1 tenant annotation
@@ -59,7 +58,7 @@ func getPVCsResponse(session *models.Principal) (*models.ListPVCsResponse, *mode
 	listAllPvcs, err2 := clientset.CoreV1().PersistentVolumeClaims("").List(ctx, listOpts)
 
 	if err2 != nil {
-		return nil, restapi.PrepareError(err2)
+		return nil, prepareError(err2)
 	}
 
 	var ListPVCs []*models.PvcsListResponse

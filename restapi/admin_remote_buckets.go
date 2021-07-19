@@ -410,14 +410,14 @@ func setMultiBucketReplicationResponse(session *models.Principal, params user_ap
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		LogError("error creating Madmin Client:", err)
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	adminClient := AdminClient{Client: mAdmin}
 
 	mClient, err := newMinioClient(session)
 	if err != nil {
 		LogError("error creating MinIO Client:", err)
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -427,7 +427,7 @@ func setMultiBucketReplicationResponse(session *models.Principal, params user_ap
 
 	if replicationResults == nil {
 		err = errors.New("error setting buckets replication")
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 
 	resParsed := []*models.MultiBucketResponseItem{}
@@ -454,14 +454,14 @@ func listExternalBucketsResponse(params user_api.ListExternalBucketsParams) (*mo
 	defer cancel()
 	remoteAdmin, err := newAdminFromCreds(*params.Body.AccessKey, *params.Body.SecretKey, *params.Body.TargetURL, *params.Body.UseTLS)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	remoteClient := AdminClient{Client: remoteAdmin}
 	buckets, err := getAccountInfo(ctx, remoteClient)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 
 	// serialize output
@@ -514,7 +514,7 @@ func deleteReplicationRuleResponse(session *models.Principal, params user_api.De
 	err := deleteReplicationRule(ctx, session, params.BucketName, params.RuleID)
 
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	return nil
 }

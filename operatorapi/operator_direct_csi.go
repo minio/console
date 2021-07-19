@@ -22,8 +22,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/minio/console/restapi"
-
 	"github.com/minio/console/operatorapi/operations/operator_api"
 
 	"github.com/minio/console/cluster"
@@ -153,12 +151,12 @@ func getDirectCSIDrivesListResponse(session *models.Principal) (*models.GetDirec
 	ctx := context.Background()
 	client, err := cluster.DirectCSIClient(session.STSSessionToken)
 	if err != nil {
-		return nil, restapi.PrepareError(err)
+		return nil, prepareError(err)
 	}
 
 	drives, err := getDirectCSIDriveList(ctx, client.DirectV1beta1())
 	if err != nil {
-		return nil, restapi.PrepareError(err)
+		return nil, prepareError(err)
 	}
 	return drives, nil
 }
@@ -207,12 +205,12 @@ func getDirectCSIVolumesListResponse(session *models.Principal) (*models.GetDire
 	ctx := context.Background()
 	client, err := cluster.DirectCSIClient(session.STSSessionToken)
 	if err != nil {
-		return nil, restapi.PrepareError(err)
+		return nil, prepareError(err)
 	}
 
 	volumes, err := getDirectCSIVolumesList(ctx, client.DirectV1beta1())
 	if err != nil {
-		return nil, restapi.PrepareError(err)
+		return nil, prepareError(err)
 	}
 	return volumes, nil
 }
@@ -308,12 +306,12 @@ func formatVolumesResponse(session *models.Principal, params operator_api.Direct
 	ctx := context.Background()
 	client, err := cluster.DirectCSIClient(session.STSSessionToken)
 	if err != nil {
-		return nil, restapi.PrepareError(err)
+		return nil, prepareError(err)
 	}
 
 	formatResult, errFormat := formatDrives(ctx, client.DirectV1beta1(), params.Body.Drives, *params.Body.Force)
 	if errFormat != nil {
-		return nil, restapi.PrepareError(errFormat)
+		return nil, prepareError(errFormat)
 	}
 	return formatResult, nil
 }

@@ -127,7 +127,7 @@ func listBucketEvents(client MinioClient, bucketName string) ([]*models.Notifica
 func getListBucketEventsResponse(session *models.Principal, params user_api.ListBucketEventsParams) (*models.ListBucketEventsResponse, *models.Error) {
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -135,7 +135,7 @@ func getListBucketEventsResponse(session *models.Principal, params user_api.List
 
 	bucketEvents, err := listBucketEvents(minioClient, params.BucketName)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// serialize output
 	listBucketsResponse := &models.ListBucketEventsResponse{
@@ -179,14 +179,14 @@ func getCreateBucketEventsResponse(session *models.Principal, bucketName string,
 	ctx := context.Background()
 	s3Client, err := newS3BucketClient(session, bucketName, "")
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a mc S3Client interface implementation
 	// defining the client to be used
 	mcClient := mcClient{client: s3Client}
 	err = createBucketEvent(ctx, mcClient, *eventReq.Configuration.Arn, eventReq.Configuration.Events, eventReq.Configuration.Prefix, eventReq.Configuration.Suffix, eventReq.IgnoreExisting)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	return nil
 }
@@ -214,14 +214,14 @@ func getDeleteBucketEventsResponse(session *models.Principal, bucketName string,
 	ctx := context.Background()
 	s3Client, err := newS3BucketClient(session, bucketName, "")
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a mc S3Client interface implementation
 	// defining the client to be used
 	mcClient := mcClient{client: s3Client}
 	err = deleteBucketEventNotification(ctx, mcClient, arn, events, prefix, suffix)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	return nil
 }

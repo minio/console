@@ -163,11 +163,11 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.E
 	// prepare console credentials
 	consolCreds, err := getConsoleCredentials(ctx, *lr.AccessKey, *lr.SecretKey)
 	if err != nil {
-		return nil, PrepareError(errInvalidCredentials, nil, err)
+		return nil, prepareError(errInvalidCredentials, nil, err)
 	}
 	sessionID, err := login(consolCreds)
 	if err != nil {
-		return nil, PrepareError(errInvalidCredentials, nil, err)
+		return nil, prepareError(errInvalidCredentials, nil, err)
 	}
 	// serialize output
 	loginResponse := &models.LoginResponse{
@@ -188,7 +188,7 @@ func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil, restapi.GetConsoleSTSClient())
 		if err != nil {
-			return nil, PrepareError(err)
+			return nil, prepareError(err)
 		}
 		// Validate user against IDP
 		identityProvider := &auth.IdentityProvider{Client: oauth2Client}
@@ -208,12 +208,12 @@ func getLoginOauth2AuthResponse() (*models.LoginResponse, *models.Error) {
 
 	creds, err := restapi.NewConsoleCredentials("", getK8sSAToken(), "")
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	credentials := restapi.ConsoleCredentials{ConsoleCredentials: creds, Actions: []string{}}
 	token, err := login(credentials)
 	if err != nil {
-		return nil, PrepareError(errInvalidCredentials, nil, err)
+		return nil, prepareError(errInvalidCredentials, nil, err)
 	}
 	// serialize output
 	loginResponse := &models.LoginResponse{
@@ -226,12 +226,12 @@ func getLoginOauth2AuthResponse() (*models.LoginResponse, *models.Error) {
 func getLoginOperatorResponse(lmr *models.LoginOperatorRequest) (*models.LoginResponse, *models.Error) {
 	creds, err := restapi.NewConsoleCredentials("", *lmr.Jwt, "")
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	consoleCreds := restapi.ConsoleCredentials{ConsoleCredentials: creds, Actions: []string{}}
 	token, err := login(consoleCreds)
 	if err != nil {
-		return nil, PrepareError(errInvalidCredentials, nil, err)
+		return nil, prepareError(errInvalidCredentials, nil, err)
 	}
 	// serialize output
 	loginResponse := &models.LoginResponse{

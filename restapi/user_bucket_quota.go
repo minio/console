@@ -54,7 +54,7 @@ func registerBucketQuotaHandlers(api *operations.ConsoleAPI) {
 func setBucketQuotaResponse(session *models.Principal, params user_api.SetBucketQuotaParams) *models.Error {
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -102,7 +102,7 @@ func getBucketQuotaResponse(session *models.Principal, params user_api.GetBucket
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 
 	// create a minioClient interface implementation

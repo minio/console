@@ -86,18 +86,18 @@ func startProfiling(ctx context.Context, client MinioAdmin, profilerType models.
 func getProfilingStartResponse(session *models.Principal, params *models.ProfilingStartRequest) (*models.StartProfilingList, *models.Error) {
 	ctx := context.Background()
 	if params == nil {
-		return nil, PrepareError(errPolicyBodyNotInRequest)
+		return nil, prepareError(errPolicyBodyNotInRequest)
 	}
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 	profilingItems, err := startProfiling(ctx, adminClient, *params.Type)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	profilingList := &models.StartProfilingList{
 		StartResults: profilingItems,
@@ -121,14 +121,14 @@ func getProfilingStopResponse(session *models.Principal) (io.ReadCloser, *models
 	ctx := context.Background()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 	profilingData, err := stopProfiling(ctx, adminClient)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	return profilingData, nil
 }

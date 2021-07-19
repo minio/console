@@ -85,22 +85,22 @@ func getOperatorSubscriptionActivateResponse(session *models.Principal, namespac
 	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return restapi.PrepareError(restapi.ErrorGeneric, nil, err)
+		return prepareError(restapi.ErrorGeneric, nil, err)
 	}
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return restapi.PrepareError(restapi.ErrorGeneric, nil, err)
+		return prepareError(restapi.ErrorGeneric, nil, err)
 	}
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
 	minTenant, err := getTenant(ctx, opClient, namespace, tenant)
 	if err != nil {
-		return restapi.PrepareError(err, restapi.ErrorGeneric)
+		return prepareError(err, restapi.ErrorGeneric)
 	}
 	// If console is not deployed for this tenant return an error
 	if minTenant.Spec.Console == nil {
-		return restapi.PrepareError(restapi.ErrorGenericNotFound)
+		return prepareError(restapi.ErrorGenericNotFound)
 	}
 
 	// configure kubernetes client
@@ -110,11 +110,11 @@ func getOperatorSubscriptionActivateResponse(session *models.Principal, namespac
 	// Get cluster subscription license
 	license, err := getSubscriptionLicense(ctx, &k8sClient, cluster.Namespace, restapi.OperatorSubnetLicenseSecretName)
 	if err != nil {
-		return restapi.PrepareError(errInvalidCredentials, nil, err)
+		return prepareError(errInvalidCredentials, nil, err)
 	}
 	// add subscription license to existing console Tenant
 	if err = addSubscriptionLicenseToTenant(ctx, &k8sClient, license, namespace, tenant, minTenant.Spec.Console.ConsoleSecret.Name); err != nil {
-		return restapi.PrepareError(err, restapi.ErrorGeneric)
+		return prepareError(err, restapi.ErrorGeneric)
 	}
 	return nil
 }
@@ -228,35 +228,35 @@ func getSubscriptionRefreshResponse(session *models.Principal) (*models.License,
 	}
 	licenseKey, err := retrieveLicense(context.Background(), session.STSSessionToken)
 	if err != nil {
-		return nil, PrepareError(errLicenseNotFound, nil, err)
+		return nil, prepareError(errLicenseNotFound, nil, err)
 	}
 	newLicenseInfo, licenseRaw, err := subscriptionRefresh(client, licenseKey)
 	if err != nil {
-		return nil, PrepareError(errLicenseNotFound, nil, err)
+		return nil, prepareError(errLicenseNotFound, nil, err)
 	}
 	// configure kubernetes client
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return nil, PrepareError(errLicenseNotFound, nil, err)
+		return nil, prepareError(errLicenseNotFound, nil, err)
 	}
 	k8sClient := k8sClient{
 		client: clientSet,
 	}
 	// save license key to k8s and restart all console pods
 	if err = saveSubscriptionLicense(ctx, &k8sClient, licenseRaw); err != nil {
-		return nil, PrepareError(restapi.ErrorGeneric, nil, err)
+		return nil, prepareError(restapi.ErrorGeneric, nil, err)
 	}
 	// update license for all existing tenants
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	opClient := &operatorClient{
 		client: opClientClientSet,
 	}
 	tenants, err := listTenants(ctx, opClient, "", nil)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// iterate over all tenants, update console configuration and restart console pods
 	for _, tenant := range tenants.Tenants {

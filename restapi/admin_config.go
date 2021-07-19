@@ -79,7 +79,7 @@ func listConfig(client MinioAdmin) ([]*models.ConfigDescription, error) {
 func getListConfigResponse(session *models.Principal) (*models.ListConfigResponse, *models.Error) {
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
@@ -87,7 +87,7 @@ func getListConfigResponse(session *models.Principal) (*models.ListConfigRespons
 
 	configDescs, err := listConfig(adminClient)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	listGroupsResponse := &models.ListConfigResponse{
 		Configurations: configDescs,
@@ -127,7 +127,7 @@ func getConfigResponse(session *models.Principal, params admin_api.ConfigInfoPar
 	ctx := context.Background()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
@@ -135,7 +135,7 @@ func getConfigResponse(session *models.Principal, params admin_api.ConfigInfoPar
 
 	configkv, err := getConfig(ctx, adminClient, params.Name)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	configurationObj := &models.Configuration{
 		Name:      params.Name,
@@ -179,7 +179,7 @@ func buildConfig(configName *string, kvs []*models.ConfigurationKV) *string {
 func setConfigResponse(session *models.Principal, name string, configRequest *models.SetConfigRequest) (*models.SetConfigResponse, *models.Error) {
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
@@ -190,7 +190,7 @@ func setConfigResponse(session *models.Principal, name string, configRequest *mo
 
 	needsRestart, err := setConfigWithARNAccountID(ctx, adminClient, &configName, configRequest.KeyValues, configRequest.ArnResourceID)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	return &models.SetConfigResponse{Restart: needsRestart}, nil
 }

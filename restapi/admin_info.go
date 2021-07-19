@@ -792,7 +792,7 @@ func getAdminInfoResponse(session *models.Principal) (*models.AdminInfoResponse,
 	prometheusURL := getPrometheusURL()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 
 	sessionResp, err2 := getUsageWidgetsForDeployment(prometheusURL, mAdmin)
@@ -814,7 +814,7 @@ func getUsageWidgetsForDeployment(prometheusURL string, mAdmin *madmin.AdminClie
 		// serialize output
 		usage, err := GetAdminInfo(ctx, adminClient)
 		if err != nil {
-			return nil, PrepareError(err)
+			return nil, prepareError(err)
 		}
 		sessionResp := &models.AdminInfoResponse{
 			Buckets: usage.Buckets,

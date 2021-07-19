@@ -133,7 +133,7 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 func getTiersResponse(session *models.Principal) (*models.TierListResponse, *models.Error) {
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -144,7 +144,7 @@ func getTiersResponse(session *models.Principal) (*models.TierListResponse, *mod
 	// serialize output
 	tiersResp, err := getTiers(ctx, adminClient)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	return tiersResp, nil
 }
@@ -223,7 +223,7 @@ func addTier(ctx context.Context, client MinioAdmin, params *admin_api.AddTierPa
 func getAddTierResponse(session *models.Principal, params *admin_api.AddTierParams) *models.Error {
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -234,7 +234,7 @@ func getAddTierResponse(session *models.Principal, params *admin_api.AddTierPara
 	// serialize output
 	errTier := addTier(ctx, adminClient, params)
 	if errTier != nil {
-		return PrepareError(errTier)
+		return prepareError(errTier)
 	}
 	return nil
 }
@@ -306,7 +306,7 @@ func getTier(ctx context.Context, client MinioAdmin, params *admin_api.GetTierPa
 func getGetTierResponse(session *models.Principal, params *admin_api.GetTierParams) (*models.Tier, *models.Error) {
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -317,7 +317,7 @@ func getGetTierResponse(session *models.Principal, params *admin_api.GetTierPara
 	// serialize output
 	addTierResp, err := getTier(ctx, adminClient, params)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	return addTierResp, nil
 }
@@ -342,7 +342,7 @@ func editTierCredentials(ctx context.Context, client MinioAdmin, params *admin_a
 func getEditTierCredentialsResponse(session *models.Principal, params *admin_api.EditTierCredentialsParams) *models.Error {
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -353,7 +353,7 @@ func getEditTierCredentialsResponse(session *models.Principal, params *admin_api
 	// serialize output
 	err = editTierCredentials(ctx, adminClient, params)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	return nil
 }
