@@ -54,7 +54,7 @@ func getArns(ctx context.Context, client MinioAdmin) (*models.ArnsResponse, erro
 func getArnsResponse(session *models.Principal) (*models.ArnsResponse, *models.Error) {
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -65,7 +65,7 @@ func getArnsResponse(session *models.Principal) (*models.ArnsResponse, *models.E
 	// serialize output
 	arnsList, err := getArns(ctx, adminClient)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	return arnsList, nil
 }

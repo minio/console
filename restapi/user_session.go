@@ -39,7 +39,7 @@ func registerSessionHandlers(api *operations.ConsoleAPI) {
 func getSessionResponse(session *models.Principal) (*models.SessionResponse, *models.Error) {
 	// serialize output
 	if session == nil {
-		return nil, PrepareError(errorGenericInvalidSession)
+		return nil, prepareError(errorGenericInvalidSession)
 	}
 	sessionResp := &models.SessionResponse{
 		Pages:    acl.GetAuthorizedEndpoints(session.Actions),

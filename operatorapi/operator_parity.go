@@ -56,7 +56,7 @@ func getParityResponse(params operator_api.GetParityParams) (models.ParityRespon
 	parityValues, err := GetParityInfo(nodes, disksPerNode)
 	if err != nil {
 		restapi.LogError("error getting parity info: %v", err)
-		return nil, restapi.PrepareError(err)
+		return nil, prepareError(err)
 	}
 
 	return parityValues, nil

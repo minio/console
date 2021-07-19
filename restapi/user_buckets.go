@@ -182,7 +182,7 @@ func doSetVersioning(client MCClient, state VersionState) error {
 func setBucketVersioningResponse(session *models.Principal, bucketName string, params *user_api.SetBucketVersioningParams) *models.Error {
 	s3Client, err := newS3BucketClient(session, bucketName, "")
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a mc S3Client interface implementation
 	// defining the client to be used
@@ -195,7 +195,7 @@ func setBucketVersioningResponse(session *models.Principal, bucketName string, p
 	}
 
 	if err := doSetVersioning(amcClient, versioningState); err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	return nil
 }
@@ -324,14 +324,14 @@ func getListBucketsResponse(session *models.Principal) (*models.ListBucketsRespo
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 	buckets, err := getAccountInfo(ctx, adminClient)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 
 	// serialize output
@@ -354,11 +354,11 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 	defer cancel()
 	// bucket request needed to proceed
 	if br == nil {
-		return PrepareError(errBucketBodyNotInRequest)
+		return prepareError(errBucketBodyNotInRequest)
 	}
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -370,7 +370,7 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 	}
 
 	if err := makeBucket(ctx, minioClient, *br.Name, br.Locking); err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 
 	// make sure to delete bucket if an error occurs after bucket was created
@@ -387,14 +387,14 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 	if br.Versioning || br.Retention != nil {
 		s3Client, err := newS3BucketClient(session, *br.Name, "")
 		if err != nil {
-			return PrepareError(err)
+			return prepareError(err)
 		}
 		// create a mc S3Client interface implementation
 		// defining the client to be used
 		amcClient := mcClient{client: s3Client}
 
 		if err = doSetVersioning(amcClient, VersionEnable); err != nil {
-			return PrepareError(err)
+			return prepareError(err)
 		}
 	}
 
@@ -402,7 +402,7 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 	if br.Quota != nil && br.Quota.Enabled != nil && *br.Quota.Enabled {
 		mAdmin, err := NewMinioAdminClient(session)
 		if err != nil {
-			return PrepareError(err)
+			return prepareError(err)
 		}
 		// create a minioClient interface implementation
 		// defining the client to be used
@@ -417,7 +417,7 @@ func getMakeBucketResponse(session *models.Principal, br *models.MakeBucketReque
 	if br.Retention != nil {
 		err = setBucketRetentionConfig(ctx, minioClient, *br.Name, *br.Retention.Mode, *br.Retention.Unit, br.Retention.Validity)
 		if err != nil {
-			return PrepareError(err)
+			return prepareError(err)
 		}
 	}
 	return nil
@@ -459,7 +459,7 @@ func getBucketSetPolicyResponse(session *models.Principal, bucketName string, re
 
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -467,12 +467,12 @@ func getBucketSetPolicyResponse(session *models.Principal, bucketName string, re
 
 	// set bucket access policy
 	if err := setBucketAccessPolicy(ctx, minioClient, bucketName, *req.Access); err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// get updated bucket details and return it
 	bucket, err := getBucketInfo(minioClient, bucketName)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	return bucket, nil
 }
@@ -485,19 +485,19 @@ func removeBucket(client MinioClient, bucketName string) error {
 // getDeleteBucketResponse performs removeBucket() to delete a bucket
 func getDeleteBucketResponse(session *models.Principal, params user_api.DeleteBucketParams) *models.Error {
 	if params.Name == "" {
-		return PrepareError(errBucketNameNotInRequest)
+		return prepareError(errBucketNameNotInRequest)
 	}
 	bucketName := params.Name
 
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 	if err := removeBucket(minioClient, bucketName); err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	return nil
 }
@@ -535,7 +535,7 @@ func getBucketInfo(client MinioClient, bucketName string) (*models.Bucket, error
 func getBucketInfoResponse(session *models.Principal, params user_api.BucketInfoParams) (*models.Bucket, *models.Error) {
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -543,7 +543,7 @@ func getBucketInfoResponse(session *models.Principal, params user_api.BucketInfo
 
 	bucket, err := getBucketInfo(minioClient, params.Name)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	return bucket, nil
 
@@ -593,13 +593,13 @@ func enableBucketEncryptionResponse(session *models.Principal, params user_api.E
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 	if err := enableBucketEncryption(ctx, minioClient, params.BucketName, *params.Body.EncType, params.Body.KmsKeyID); err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	return nil
 }
@@ -615,13 +615,13 @@ func disableBucketEncryptionResponse(session *models.Principal, params user_api.
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 	if err := disableBucketEncryption(ctx, minioClient, params.BucketName); err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	return nil
 }
@@ -642,14 +642,14 @@ func getBucketEncryptionInfoResponse(session *models.Principal, params user_api.
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 	bucketInfo, err := getBucketEncryptionInfo(ctx, minioClient, params.BucketName)
 	if err != nil {
-		return nil, PrepareError(errSSENotConfigured, err)
+		return nil, prepareError(errSSENotConfigured, err)
 	}
 	return bucketInfo, nil
 }
@@ -689,14 +689,14 @@ func getSetBucketRetentionConfigResponse(session *models.Principal, params user_
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 	err = setBucketRetentionConfig(ctx, minioClient, params.BucketName, *params.Body.Mode, *params.Body.Unit, params.Body.Validity)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	return nil
 }
@@ -743,7 +743,7 @@ func getBucketRetentionConfigResponse(session *models.Principal, bucketName stri
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -751,7 +751,7 @@ func getBucketRetentionConfigResponse(session *models.Principal, bucketName stri
 
 	config, err := getBucketRetentionConfig(ctx, minioClient, bucketName)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	return config, nil
 }
@@ -800,7 +800,7 @@ func getBucketRewindResponse(session *models.Principal, params user_api.GetBucke
 	s3Client, err := newS3BucketClient(session, params.BucketName, prefix)
 	if err != nil {
 		LogError("error creating S3Client: %v", err)
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 
 	// create a mc S3Client interface implementation
@@ -810,7 +810,7 @@ func getBucketRewindResponse(session *models.Principal, params user_api.GetBucke
 	parsedDate, errDate := time.Parse(time.RFC3339, params.Date)
 
 	if errDate != nil {
-		return nil, PrepareError(errDate)
+		return nil, prepareError(errDate)
 	}
 
 	var rewindItems []*models.RewindItem
