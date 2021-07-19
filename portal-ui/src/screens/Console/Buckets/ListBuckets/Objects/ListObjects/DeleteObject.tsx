@@ -53,7 +53,8 @@ const DeleteObject = ({
     if (selectedObject.endsWith("/")) {
       recursive = true;
     }
-    setDeleteLoading(true);
+    // Escape object name
+    selectedObject = escape(selectedObject);
     api
       .invoke(
         "DELETE",
