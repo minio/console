@@ -60,16 +60,12 @@ func Test_serverHealthInfo(t *testing.T) {
 				mockMessages: []madmin.HealthInfo{
 					{
 						Perf: madmin.PerfInfo{
-							NetParallel: madmin.NetPerfInfo{
-								Addr: "someaddress",
-							},
+							NetParallel: madmin.NetPerfInfo{},
 						},
 					},
 					{
 						Perf: madmin.PerfInfo{
-							NetParallel: madmin.NetPerfInfo{
-								Addr: "otheraddress",
-							},
+							NetParallel: madmin.NetPerfInfo{},
 						},
 					},
 				},
@@ -92,9 +88,7 @@ func Test_serverHealthInfo(t *testing.T) {
 				mockMessages: []madmin.HealthInfo{
 					{
 						Perf: madmin.PerfInfo{
-							NetParallel: madmin.NetPerfInfo{
-								Addr: "address",
-							},
+							NetParallel: madmin.NetPerfInfo{},
 						},
 					},
 				},
@@ -117,9 +111,7 @@ func Test_serverHealthInfo(t *testing.T) {
 				mockMessages: []madmin.HealthInfo{
 					{
 						Perf: madmin.PerfInfo{
-							NetParallel: madmin.NetPerfInfo{
-								Addr: "address",
-							},
+							NetParallel: madmin.NetPerfInfo{},
 						},
 					},
 				},
