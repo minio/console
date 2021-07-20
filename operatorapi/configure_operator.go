@@ -104,7 +104,8 @@ func configureAPI(api *operations.OperatorAPI) http.Handler {
 
 // The TLS configuration before HTTPS server starts.
 func configureTLS(tlsConfig *tls.Config) {
-	// Make all necessary changes to the TLS configuration here.
+	tlsConfig.RootCAs = GlobalRootCAs
+	tlsConfig.GetCertificate = GlobalTLSCertsManager.GetCertificate
 }
 
 // As soon as server is initialized but not run yet, this function will be called.
