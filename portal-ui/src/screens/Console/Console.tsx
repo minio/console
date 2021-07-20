@@ -58,6 +58,7 @@ import HealthInfo from "./HealthInfo/HealthInfo";
 import Storage from "./Storage/Storage";
 import PodDetails from "./Tenants/TenantDetails/pods/PodDetails";
 import Metrics from "./Dashboard/Metrics";
+import Hop from "./Tenants/TenantDetails/hop/Hop";
 
 const drawerWidth = 245;
 
@@ -360,6 +361,10 @@ const Console = ({
       path: "/namespaces/:tenantNamespace/tenants/:tenantName",
     },
     {
+      component: Hop,
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName/hop",
+    },
+    {
       component: PodDetails,
       path: "/namespaces/:tenantNamespace/tenants/:tenantName/pods/:podName",
     },
@@ -410,12 +415,19 @@ const Console = ({
 
   const location = useLocation();
 
+  let hideMenu = false;
+  if (location.pathname === "/metrics") {
+    hideMenu = true;
+  } else if (location.pathname.endsWith("/hop")) {
+    hideMenu = true;
+  }
+
   return (
     <Fragment>
       {session.status === "ok" ? (
         <div className={classes.root}>
           <CssBaseline />
-          {location.pathname !== "/metrics" && (
+          {!hideMenu && (
             <Drawer
               variant="permanent"
               classes={{

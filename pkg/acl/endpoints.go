@@ -44,6 +44,7 @@ var (
 	changePassword              = "/account/change-password"
 	tenants                     = "/tenants"
 	tenantsDetail               = "/namespaces/:tenantNamespace/tenants/:tenantName"
+	tenantHop                   = "/namespaces/:tenantNamespace/tenants/:tenantName/hop"
 	podsDetail                  = "/namespaces/:tenantNamespace/tenants/:tenantName/pods/:podName"
 	tenantsDetailSummary        = "/namespaces/:tenantNamespace/tenants/:tenantName/summary"
 	tenantsDetailMetrics        = "/namespaces/:tenantNamespace/tenants/:tenantName/metrics"
@@ -324,6 +325,7 @@ var endpointRules = map[string]ConfigurationActionSet{
 var operatorRules = map[string]ConfigurationActionSet{
 	tenants:               tenantsActionSet,
 	tenantsDetail:         tenantsActionSet,
+	tenantHop:             tenantsActionSet,
 	tenantsDetailSummary:  tenantsActionSet,
 	tenantsDetailMetrics:  tenantsActionSet,
 	tenantsDetailPods:     tenantsActionSet,

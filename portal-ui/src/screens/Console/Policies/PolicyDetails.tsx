@@ -191,7 +191,7 @@ const PolicyDetails = ({
       })
       .then((res) => {
         setAddLoading(false);
-        setSnackBarMessage("Policy successfully updated")
+        setSnackBarMessage("Policy successfully updated");
       })
       .catch((err) => {
         setAddLoading(false);
@@ -441,7 +441,7 @@ const PolicyDetails = ({
 
 const connector = connect(null, {
   setErrorSnackMessage,
-  setSnackBarMessage
+  setSnackBarMessage,
 });
 
 export default withStyles(styles)(connector(PolicyDetails));
