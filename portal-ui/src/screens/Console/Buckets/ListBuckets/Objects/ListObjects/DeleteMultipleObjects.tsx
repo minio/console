@@ -52,9 +52,17 @@ const DeleteObject = ({
     let toSend = [];
     for (let i = 0; i < selectedObjects.length; i++) {
       if (selectedObjects[i].endsWith("/")) {
-        toSend.push({path: selectedObjects[i], versionID: "", recursive: true})
+        toSend.push({
+          path: selectedObjects[i],
+          versionID: "",
+          recursive: true,
+        });
       } else {
-        toSend.push({path: selectedObjects[i], versionID: "", recursive: false})
+        toSend.push({
+          path: selectedObjects[i],
+          versionID: "",
+          recursive: false,
+        });
       }
     }
     setDeleteLoading(true);
@@ -62,7 +70,7 @@ const DeleteObject = ({
       .invoke(
         "POST",
         `/api/v1/buckets/${selectedBucket}/delete-objects`,
-          toSend
+        toSend
       )
       .then(() => {
         setDeleteLoading(false);

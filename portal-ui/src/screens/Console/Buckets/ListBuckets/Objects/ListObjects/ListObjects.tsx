@@ -849,13 +849,13 @@ const ListObjects = ({
               </IconButton>
             </Badge>
             <Button
-                variant="contained"
-                color="primary"
-                startIcon={<DeleteIcon />}
-                onClick={() => {
-                  setDeleteMultipleOpen(true);
-                }}
-                disabled={selectedObjects.length === 0}
+              variant="contained"
+              color="primary"
+              startIcon={<DeleteIcon />}
+              onClick={() => {
+                setDeleteMultipleOpen(true);
+              }}
+              disabled={selectedObjects.length === 0}
             >
               Delete Selected
             </Button>
