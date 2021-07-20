@@ -27,7 +27,6 @@ import {
 } from "@material-ui/core";
 import { setErrorSnackMessage } from "../../../../../../actions";
 import api from "../../../../../../common/api";
-import * as url from "url";
 
 interface IDeleteObjectProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
