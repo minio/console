@@ -296,7 +296,7 @@ func getDeleteMultiplePathsResponse(session *models.Principal, params user_api.D
 	var version string
 	s3Client, err := newS3BucketClient(session, params.BucketName, "")
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	for i := 0; i < len(params.Files); i++ {
 		if params.Files[i].VersionID != "" {
@@ -307,7 +307,7 @@ func getDeleteMultiplePathsResponse(session *models.Principal, params user_api.D
 		mcClient := mcClient{client: s3Client}
 		err = deleteObjects(ctx, mcClient, params.BucketName, params.Files[i].Path, version, params.Files[i].Recursive)
 		if err != nil {
-			return PrepareError(err)
+			return prepareError(err)
 		}
 	}
 	return nil
