@@ -8,7 +8,6 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/models"
 	"github.com/minio/madmin-go"
-	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
 )
 
 var (
@@ -16,8 +15,6 @@ var (
 	ErrorGeneric               = errors.New("an error occurred, please try again")
 	errInvalidCredentials      = errors.New("invalid Login")
 	errorGenericInvalidSession = errors.New("invalid session")
-	errorGenericUnauthorized   = errors.New("unauthorized")
-	errorGenericForbidden      = errors.New("forbidden")
 	// ErrorGenericNotFound Generic error for not found
 	ErrorGenericNotFound = errors.New("not found")
 	// Explicit error messages
@@ -38,26 +35,14 @@ var (
 	errAccessDenied                 = errors.New("access denied")
 )
 
-// PrepareError receives an error object and parse it against k8sErrors, returns the right error code paired with a generic error message
-func PrepareError(err ...error) *models.Error {
+// prepareError receives an error object and parse it against k8sErrors, returns the right error code paired with a generic error message
+func prepareError(err ...error) *models.Error {
 	errorCode := int32(500)
 	errorMessage := ErrorGeneric.Error()
 	if len(err) > 0 {
 		frame := getFrame(2)
 		fileParts := strings.Split(frame.File, "/")
 		LogError("original error -> (%s:%d: %v)", fileParts[len(fileParts)-1], frame.Line, err[0])
-		if k8sErrors.IsUnauthorized(err[0]) {
-			errorCode = 401
-			errorMessage = errorGenericUnauthorized.Error()
-		}
-		if k8sErrors.IsForbidden(err[0]) {
-			errorCode = 403
-			errorMessage = errorGenericForbidden.Error()
-		}
-		if k8sErrors.IsNotFound(err[0]) {
-			errorCode = 404
-			errorMessage = ErrorGenericNotFound.Error()
-		}
 		if err[0] == ErrorGenericNotFound {
 			errorCode = 404
 			errorMessage = ErrorGenericNotFound.Error()

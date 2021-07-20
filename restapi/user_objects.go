@@ -149,11 +149,11 @@ func getListObjectsResponse(session *models.Principal, params user_api.ListObjec
 	}
 	// bucket request needed to proceed
 	if params.BucketName == "" {
-		return nil, PrepareError(errBucketNameNotInRequest)
+		return nil, prepareError(errBucketNameNotInRequest)
 	}
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -161,7 +161,7 @@ func getListObjectsResponse(session *models.Principal, params user_api.ListObjec
 
 	objs, err := listBucketObjects(params.HTTPRequest.Context(), minioClient, params.BucketName, prefix, recursive, withVersions)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 
 	resp := &models.ListObjectsResponse{
@@ -232,14 +232,14 @@ func getDownloadObjectResponse(session *models.Principal, params user_api.Downlo
 	ctx := context.Background()
 	s3Client, err := newS3BucketClient(session, params.BucketName, params.Prefix)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a mc S3Client interface implementation
 	// defining the client to be used
 	mcClient := mcClient{client: s3Client}
 	object, err := downloadObject(ctx, mcClient, params.VersionID)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	return object, nil
 }
@@ -263,7 +263,7 @@ func getDeleteObjectResponse(session *models.Principal, params user_api.DeleteOb
 	ctx := context.Background()
 	s3Client, err := newS3BucketClient(session, params.BucketName, params.Path)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a mc S3Client interface implementation
 	// defining the client to be used
@@ -278,7 +278,7 @@ func getDeleteObjectResponse(session *models.Principal, params user_api.DeleteOb
 	}
 	err = deleteObjects(ctx, mcClient, params.BucketName, params.Path, version, rec)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	return nil
 }
@@ -386,13 +386,13 @@ func getUploadObjectResponse(session *models.Principal, params user_api.PostBuck
 	ctx := context.Background()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 	if err := uploadFiles(ctx, minioClient, params); err != nil {
-		PrepareError(err, ErrorGeneric)
+		prepareError(err, ErrorGeneric)
 	}
 	return nil
 }
@@ -481,7 +481,7 @@ func getShareObjectResponse(session *models.Principal, params user_api.ShareObje
 	ctx := context.Background()
 	s3Client, err := newS3BucketClient(session, params.BucketName, params.Prefix)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a mc S3Client interface implementation
 	// defining the client to be used
@@ -492,7 +492,7 @@ func getShareObjectResponse(session *models.Principal, params user_api.ShareObje
 	}
 	url, err := getShareObjectURL(ctx, mcClient, params.VersionID, expireDuration)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	return url, nil
 }
@@ -519,14 +519,14 @@ func getSetObjectLegalHoldResponse(session *models.Principal, params user_api.Pu
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 	err = setObjectLegalHold(ctx, minioClient, params.BucketName, params.Prefix, params.VersionID, *params.Body.Status)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	return nil
 }
@@ -546,14 +546,14 @@ func getSetObjectRetentionResponse(session *models.Principal, params user_api.Pu
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 	err = setObjectRetention(ctx, minioClient, params.BucketName, params.VersionID, params.Prefix, params.Body)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	return nil
 }
@@ -590,14 +590,14 @@ func deleteObjectRetentionResponse(session *models.Principal, params user_api.De
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 	err = deleteObjectRetention(ctx, minioClient, params.BucketName, params.Prefix, params.VersionID)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	return nil
 }
@@ -616,14 +616,14 @@ func getPutObjectTagsResponse(session *models.Principal, params user_api.PutObje
 	defer cancel()
 	mClient, err := newMinioClient(session)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 	err = putObjectTags(ctx, minioClient, params.BucketName, params.Prefix, params.VersionID, params.Body.Tags)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	return nil
 }

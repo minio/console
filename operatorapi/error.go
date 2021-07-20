@@ -40,8 +40,8 @@ var (
 	errAccessDenied                       = errors.New("access denied")
 )
 
-// PrepareError receives an error object and parse it against k8sErrors, returns the right error code paired with a generic error message
-func PrepareError(err ...error) *models.Error {
+// prepareError receives an error object and parse it against k8sErrors, returns the right error code paired with a generic error message
+func prepareError(err ...error) *models.Error {
 	errorCode := int32(500)
 	errorMessage := errorGeneric.Error()
 	if len(err) > 0 {

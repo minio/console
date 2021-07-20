@@ -21,7 +21,6 @@ import (
 	"errors"
 
 	"github.com/minio/console/operatorapi/operations/operator_api"
-	"github.com/minio/console/restapi"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/cluster"
@@ -50,7 +49,7 @@ func getNamespaceCreatedResponse(session *models.Principal, params operator_api.
 	clientset, err := cluster.K8sClient(session.STSSessionToken)
 
 	if err != nil {
-		return restapi.PrepareError(err)
+		return prepareError(err)
 	}
 
 	namespace := *params.Body.Name
@@ -58,7 +57,7 @@ func getNamespaceCreatedResponse(session *models.Principal, params operator_api.
 	errCreation := getNamespaceCreated(ctx, clientset.CoreV1(), namespace)
 
 	if errCreation != nil {
-		return restapi.PrepareError(errCreation)
+		return prepareError(errCreation)
 	}
 
 	return nil

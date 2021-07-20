@@ -23,7 +23,6 @@ import (
 	"github.com/minio/minio-go/v7/pkg/set"
 
 	"github.com/minio/console/operatorapi/operations/operator_api"
-	"github.com/minio/console/restapi"
 
 	"github.com/minio/console/cluster"
 
@@ -136,12 +135,12 @@ func min(x, y int64) int64 {
 func getMaxAllocatableMemoryResponse(ctx context.Context, session *models.Principal, numNodes int32) (*models.MaxAllocatableMemResponse, *models.Error) {
 	client, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return nil, restapi.PrepareError(err)
+		return nil, prepareError(err)
 	}
 
 	clusterResources, err := getMaxAllocatableMemory(ctx, client.CoreV1(), numNodes)
 	if err != nil {
-		return nil, restapi.PrepareError(err)
+		return nil, prepareError(err)
 	}
 	return clusterResources, nil
 }
@@ -176,12 +175,12 @@ func getNodeLabels(ctx context.Context, clientset v1.CoreV1Interface) (*models.N
 func getNodeLabelsResponse(ctx context.Context, session *models.Principal) (*models.NodeLabels, *models.Error) {
 	client, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return nil, restapi.PrepareError(err)
+		return nil, prepareError(err)
 	}
 
 	clusterResources, err := getNodeLabels(ctx, client.CoreV1())
 	if err != nil {
-		return nil, restapi.PrepareError(err)
+		return nil, prepareError(err)
 	}
 	return clusterResources, nil
 }

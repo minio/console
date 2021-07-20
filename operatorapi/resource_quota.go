@@ -20,8 +20,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/minio/console/restapi"
-
 	"k8s.io/apimachinery/pkg/api/errors"
 
 	"github.com/minio/console/cluster"
@@ -99,14 +97,14 @@ func getResourceQuotaResponse(session *models.Principal, params operator_api.Get
 	ctx := context.Background()
 	client, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return nil, restapi.PrepareError(err)
+		return nil, prepareError(err)
 	}
 	k8sClient := &k8sClient{
 		client: client,
 	}
 	resourceQuota, err := getResourceQuota(ctx, k8sClient, params.Namespace, params.ResourceQuotaName)
 	if err != nil {
-		return nil, restapi.PrepareError(err)
+		return nil, prepareError(err)
 	}
 	return resourceQuota, nil
 }

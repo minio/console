@@ -25,8 +25,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/minio/console/restapi"
-
 	"github.com/minio/console/operatorapi/operations/operator_api"
 
 	"errors"
@@ -90,20 +88,20 @@ func getTenantUpdateCertificatesResponse(session *models.Principal, params opera
 	// get Kubernetes Client
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return restapi.PrepareError(err, errorUnableToUpdateTenantCertificates)
+		return prepareError(err, errorUnableToUpdateTenantCertificates)
 	}
 	k8sClient := k8sClient{
 		client: clientSet,
 	}
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return restapi.PrepareError(err, errorUnableToUpdateTenantCertificates)
+		return prepareError(err, errorUnableToUpdateTenantCertificates)
 	}
 	opClient := operatorClient{
 		client: opClientClientSet,
 	}
 	if err := tenantUpdateCertificates(ctx, &opClient, &k8sClient, params.Namespace, params); err != nil {
-		return restapi.PrepareError(err, errorUnableToUpdateTenantCertificates)
+		return prepareError(err, errorUnableToUpdateTenantCertificates)
 	}
 	return nil
 }
@@ -168,20 +166,20 @@ func getTenantUpdateEncryptionResponse(session *models.Principal, params operato
 	// get Kubernetes Client
 	clientSet, err := cluster.K8sClient(session.STSSessionToken)
 	if err != nil {
-		return restapi.PrepareError(err, errorUpdatingEncryptionConfig)
+		return prepareError(err, errorUpdatingEncryptionConfig)
 	}
 	k8sClient := k8sClient{
 		client: clientSet,
 	}
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
-		return restapi.PrepareError(err, errorUpdatingEncryptionConfig)
+		return prepareError(err, errorUpdatingEncryptionConfig)
 	}
 	opClient := operatorClient{
 		client: opClientClientSet,
 	}
 	if err := tenantUpdateEncryption(ctx, &opClient, &k8sClient, params.Namespace, params); err != nil {
-		return restapi.PrepareError(err, errorUpdatingEncryptionConfig)
+		return prepareError(err, errorUpdatingEncryptionConfig)
 	}
 	return nil
 }

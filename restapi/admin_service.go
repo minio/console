@@ -63,14 +63,14 @@ func getRestartServiceResponse(session *models.Principal) *models.Error {
 	ctx := context.Background()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
 	if err := serviceRestart(ctx, adminClient); err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	return nil
 }

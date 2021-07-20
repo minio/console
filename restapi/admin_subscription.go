@@ -72,7 +72,7 @@ func getSubscriptionInfoResponse() (*models.License, *models.Error) {
 	// validate license key and obtain license info
 	licenseInfo, _, err := subscriptionValidate(client, licenseKey, "", "")
 	if err != nil {
-		return nil, PrepareError(errLicenseNotFound, nil, err)
+		return nil, prepareError(errLicenseNotFound, nil, err)
 	}
 	return licenseInfo, nil
 }

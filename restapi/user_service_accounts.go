@@ -97,7 +97,7 @@ func getCreateServiceAccountResponse(session *models.Principal, serviceAccount *
 
 	userAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a MinIO user Admin Client interface implementation
 	// defining the client to be used
@@ -105,7 +105,7 @@ func getCreateServiceAccountResponse(session *models.Principal, serviceAccount *
 
 	saCreds, err := createServiceAccount(ctx, userAdminClient, serviceAccount.Policy)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	return saCreds, nil
 }
@@ -131,7 +131,7 @@ func getUserServiceAccountsResponse(session *models.Principal, user string) (mod
 
 	userAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a MinIO user Admin Client interface implementation
 	// defining the client to be used
@@ -139,7 +139,7 @@ func getUserServiceAccountsResponse(session *models.Principal, user string) (mod
 
 	serviceAccounts, err := getUserServiceAccounts(ctx, userAdminClient, user)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	return serviceAccounts, nil
 }
@@ -156,14 +156,14 @@ func getDeleteServiceAccountResponse(session *models.Principal, accessKey string
 
 	userAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a MinIO user Admin Client interface implementation
 	// defining the client to be used
 	userAdminClient := AdminClient{Client: userAdmin}
 
 	if err := deleteServiceAccount(ctx, userAdminClient, accessKey); err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	return nil
 }

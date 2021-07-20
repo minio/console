@@ -102,7 +102,7 @@ func getListPoliciesWithBucketResponse(session *models.Principal, bucket string)
 	ctx := context.Background()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
@@ -110,7 +110,7 @@ func getListPoliciesWithBucketResponse(session *models.Principal, bucket string)
 
 	policies, err := listPoliciesWithBucket(ctx, bucket, adminClient)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// serialize output
 	listPoliciesResponse := &models.ListPoliciesResponse{
@@ -180,7 +180,7 @@ func getListPoliciesResponse(session *models.Principal) (*models.ListPoliciesRes
 	ctx := context.Background()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
@@ -188,7 +188,7 @@ func getListPoliciesResponse(session *models.Principal) (*models.ListPoliciesRes
 
 	policies, err := listPolicies(ctx, adminClient)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// serialize output
 	listPoliciesResponse := &models.ListPoliciesResponse{
@@ -203,7 +203,7 @@ func getListUsersForPolicyResponse(session *models.Principal, policy string) ([]
 	ctx := context.Background()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -211,7 +211,7 @@ func getListUsersForPolicyResponse(session *models.Principal, policy string) ([]
 
 	users, err := listUsers(ctx, adminClient)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 
 	var filteredUsers []string
@@ -231,7 +231,7 @@ func getListGroupsForPolicyResponse(session *models.Principal, policy string) ([
 	ctx := context.Background()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -239,7 +239,7 @@ func getListGroupsForPolicyResponse(session *models.Principal, policy string) ([
 
 	groups, err := adminClient.listGroups(ctx)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 
 	var filteredGroups []string
@@ -269,18 +269,18 @@ func removePolicy(ctx context.Context, client MinioAdmin, name string) error {
 func getRemovePolicyResponse(session *models.Principal, params admin_api.RemovePolicyParams) *models.Error {
 	ctx := context.Background()
 	if params.Name == "" {
-		return PrepareError(errPolicyNameNotInRequest)
+		return prepareError(errPolicyNameNotInRequest)
 	}
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
 	if err := removePolicy(ctx, adminClient, params.Name); err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	return nil
 }
@@ -308,19 +308,19 @@ func addPolicy(ctx context.Context, client MinioAdmin, name, policy string) (*mo
 func getAddPolicyResponse(session *models.Principal, params *models.AddPolicyRequest) (*models.Policy, *models.Error) {
 	ctx := context.Background()
 	if params == nil {
-		return nil, PrepareError(errPolicyBodyNotInRequest)
+		return nil, prepareError(errPolicyBodyNotInRequest)
 	}
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 	policy, err := addPolicy(ctx, adminClient, *params.Name, *params.Policy)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	return policy, nil
 }
@@ -346,14 +346,14 @@ func getPolicyInfoResponse(session *models.Principal, params admin_api.PolicyInf
 	ctx := context.Background()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 	policy, err := policyInfo(ctx, adminClient, params.Name)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	return policy, nil
 }
@@ -371,18 +371,18 @@ func setPolicy(ctx context.Context, client MinioAdmin, name, entityName string, 
 func getSetPolicyResponse(session *models.Principal, name string, params *models.SetPolicyRequest) *models.Error {
 	ctx := context.Background()
 	if name == "" {
-		return PrepareError(errPolicyNameNotInRequest)
+		return prepareError(errPolicyNameNotInRequest)
 	}
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
 	if err := setPolicy(ctx, adminClient, name, *params.EntityName, *params.EntityType); err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	return nil
 }
@@ -391,14 +391,14 @@ func getSetPolicyMultipleResponse(session *models.Principal, name string, params
 	ctx := context.Background()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
 	if err := setPolicyMultipleEntities(ctx, adminClient, name, params.Users, params.Groups); err != nil {
-		return PrepareError(err)
+		return prepareError(err)
 	}
 	return nil
 }

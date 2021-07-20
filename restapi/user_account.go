@@ -73,7 +73,7 @@ func getChangePasswordResponse(session *models.Principal, params user_api.Accoun
 		STSSecretAccessKey: *params.Body.CurrentSecretKey,
 	})
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// parentAccountClient will contain access and secret key credentials for the user
 	userClient := AdminClient{Client: parentAccountClient}
@@ -82,18 +82,18 @@ func getChangePasswordResponse(session *models.Principal, params user_api.Accoun
 
 	// currentSecretKey will compare currentSecretKey against the stored secret key inside the encrypted session
 	if err := changePassword(ctx, userClient, session, newSecretKey); err != nil {
-		return nil, PrepareError(errChangePassword, nil, err)
+		return nil, prepareError(errChangePassword, nil, err)
 	}
 	// user credentials are updated at this point, we need to generate a new admin client and authenticate using
 	// the new credentials
 	credentials, err := getConsoleCredentials(ctx, accessKey, newSecretKey)
 	if err != nil {
-		return nil, PrepareError(errInvalidCredentials, nil, err)
+		return nil, prepareError(errInvalidCredentials, nil, err)
 	}
 	// authenticate user and generate new session token
 	sessionID, err := login(credentials)
 	if err != nil {
-		return nil, PrepareError(errInvalidCredentials, nil, err)
+		return nil, prepareError(errInvalidCredentials, nil, err)
 	}
 	// serialize output
 	loginResponse := &models.LoginResponse{
@@ -108,7 +108,7 @@ func getUserHasPermissionsResponse(session *models.Principal, params user_api.Ha
 
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
@@ -116,7 +116,7 @@ func getUserHasPermissionsResponse(session *models.Principal, params user_api.Ha
 
 	userPolicy, err := getAccountPolicy(ctx, adminClient)
 	if err != nil {
-		return nil, PrepareError(err)
+		return nil, prepareError(err)
 	}
 
 	var perms []*models.PermissionAction
