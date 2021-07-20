@@ -144,7 +144,7 @@ func getListObjectsResponse(session *models.Principal, params user_api.ListObjec
 	if params.Recursive != nil {
 		recursive = *params.Recursive
 	}
-	if params.WithVersions != nil {
+	if isErasureBackend() && params.WithVersions != nil {
 		withVersions = *params.WithVersions
 	}
 	// bucket request needed to proceed
@@ -206,7 +206,7 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 			retention, retUntilDate, err := client.getObjectRetention(ctx, bucketName, lsObj.Key, lsObj.VersionID)
 			if err != nil {
 				errResp := minio.ToErrorResponse(probe.NewError(err).ToGoError())
-				if errResp.Code != "NoSuchObjectLockConfiguration" {
+				if errResp.Code != "InvalidRequest" && errResp.Code != "NoSuchObjectLockConfiguration" {
 					LogError("error getting retention status for %s : %v", lsObj.VersionID, err)
 				}
 			} else {
