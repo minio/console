@@ -29,6 +29,7 @@ var (
 	iamPolicies                 = "/policies"
 	policiesDetail              = "/policies/:policyName"
 	dashboard                   = "/dashboard"
+	metrics                     = "/metrics"
 	profiling                   = "/profiling"
 	buckets                     = "/buckets"
 	bucketsDetail               = "/buckets/:bucketName"
@@ -293,6 +294,7 @@ var endpointRules = map[string]ConfigurationActionSet{
 	iamPolicies:                 iamPoliciesActionSet,
 	policiesDetail:              iamPoliciesActionSet,
 	dashboard:                   dashboardActionSet,
+	metrics:                     dashboardActionSet,
 	profiling:                   profilingActionSet,
 	buckets:                     bucketsActionSet,
 	bucketsDetail:               bucketsActionSet,

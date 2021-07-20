@@ -32,7 +32,7 @@ import { AppState } from "../../../store";
 import { userLoggedIn } from "../../../actions";
 import api from "../../../common/api";
 import { menuGroups } from "./utils";
-import { IMenuProps, IMenuItem } from "./types";
+import { IMenuItem, IMenuProps } from "./types";
 import {
   BucketsIcon,
   ClustersIcon,

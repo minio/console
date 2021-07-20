@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment, useCallback } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import get from "lodash/get";
 import PrDashboard from "./Prometheus/PrDashboard";
@@ -78,7 +78,9 @@ const Dashboard = ({ classes, displayErrorMessage }: IDashboardSimple) => {
                 <PrDashboard />
               </Grid>
             ) : (
-              <BasicDashboard usage={basicResult} />
+              <Grid container className={classes.container}>
+                <BasicDashboard usage={basicResult} />
+              </Grid>
             )}
           </Fragment>
         )}

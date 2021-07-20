@@ -20,10 +20,7 @@ import ReactGridLayout from "react-grid-layout";
 import Grid from "@material-ui/core/Grid";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
-import {
-  actionsTray,
-  containerForHeader,
-} from "../../Common/FormComponents/common/styleLibrary";
+import { actionsTray } from "../../Common/FormComponents/common/styleLibrary";
 
 import { AutoSizer } from "react-virtualized";
 import { IDashboardPanel, widgetType } from "./types";
@@ -56,7 +53,6 @@ interface IPrDashboard {
 const styles = (theme: Theme) =>
   createStyles({
     ...actionsTray,
-    ...containerForHeader(theme.spacing(4)),
     widgetsContainer: {
       height: "calc(100vh - 250px)",
       paddingBottom: 235,
