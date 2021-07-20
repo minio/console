@@ -30,6 +30,7 @@ export interface SystemState {
   snackBar: snackBarMessage;
   modalSnackBar: snackBarMessage;
   serverDiagnosticStatus: string;
+  distributedSetup: boolean;
 }
 
 export const USER_LOGGED = "USER_LOGGED";
@@ -43,6 +44,7 @@ export const SET_SERVER_DIAG_STAT = "SET_SERVER_DIAG_STAT";
 export const SET_ERROR_SNACK_MESSAGE = "SET_ERROR_SNACK_MESSAGE";
 export const SET_SNACK_MODAL_MESSAGE = "SET_SNACK_MODAL_MESSAGE";
 export const SET_MODAL_ERROR_MESSAGE = "SET_MODAL_ERROR_MESSAGE";
+export const GLOBAL_SET_DISTRIBUTED_SETUP = "GLOBAL/SET_DISTRIBUTED_SETUP";
 
 interface UserLoggedAction {
   type: typeof USER_LOGGED;
@@ -98,6 +100,11 @@ interface SetModalErrorMessage {
   message: string;
 }
 
+interface SetDistributedSetup {
+  type: typeof GLOBAL_SET_DISTRIBUTED_SETUP;
+  distributedSetup: boolean;
+}
+
 export type SystemActionTypes =
   | UserLoggedAction
   | OperatorModeAction
@@ -109,4 +116,5 @@ export type SystemActionTypes =
   | SetSnackBarMessage
   | SetErrorSnackMessage
   | SetModalSnackMessage
-  | SetModalErrorMessage;
+  | SetModalErrorMessage
+  | SetDistributedSetup;

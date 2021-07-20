@@ -26,6 +26,7 @@ import {
   SET_ERROR_SNACK_MESSAGE,
   SET_SNACK_MODAL_MESSAGE,
   SET_MODAL_ERROR_MESSAGE,
+  GLOBAL_SET_DISTRIBUTED_SETUP,
 } from "./types";
 
 export function userLoggedIn(loggedIn: boolean) {
@@ -102,5 +103,12 @@ export const setModalErrorSnackMessage = (message: string) => {
   return {
     type: SET_MODAL_ERROR_MESSAGE,
     message,
+  };
+};
+
+export const setDistributedMode = (distributedSetup: boolean) => {
+  return {
+    type: GLOBAL_SET_DISTRIBUTED_SETUP,
+    distributedSetup,
   };
 };

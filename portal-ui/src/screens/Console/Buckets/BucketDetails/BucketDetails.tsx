@@ -33,7 +33,6 @@ import {
 import { setErrorSnackMessage } from "../../../../actions";
 import { setBucketDetailsTab } from "../actions";
 import { AppState } from "../../../../store";
-import { ISessionResponse } from "../../types";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import AccessDetailsPanel from "./AccessDetailsPanel";
 import BucketSummaryPanel from "./BucketSummaryPanel";
@@ -148,8 +147,8 @@ interface IBucketDetailsProps {
   classes: any;
   match: any;
   history: any;
-  session: ISessionResponse;
   selectedTab: string;
+  distributedSetup: boolean;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   setBucketDetailsTab: typeof setBucketDetailsTab;
 }
@@ -165,10 +164,10 @@ const BucketDetails = ({
   classes,
   match,
   history,
-  session,
   selectedTab,
   setErrorSnackMessage,
   setBucketDetailsTab,
+  distributedSetup,
 }: IBucketDetailsProps) => {
   const [loadingPerms, setLoadingPerms] = useState<boolean>(true);
   const [canGetReplication, setCanGetReplication] = useState<boolean>(false);
@@ -273,9 +272,14 @@ const BucketDetails = ({
               value="replication"
               label="Replication"
               {...a11yProps(2)}
-              disabled={!canGetReplication}
+              disabled={!canGetReplication || !distributedSetup}
             />
-            <Tab value="lifecycle" label="Lifecycle" {...a11yProps(3)} />
+            <Tab
+              value="lifecycle"
+              label="Lifecycle"
+              {...a11yProps(3)}
+              disabled={!distributedSetup}
+            />
             <Tab value="access" label="Access" {...a11yProps(4)} />
           </Tabs>
         </Grid>
@@ -291,18 +295,19 @@ const BucketDetails = ({
                   path="/buckets/:bucketName/events"
                   component={BucketEventsPanel}
                 />
-                <Route
-                  path="/buckets/:bucketName/replication"
-                  component={BucketReplicationPanel}
-                />
-                <Route
-                  path="/buckets/:bucketName/lifecycle"
-                  component={BucketLifecyclePanel}
-                />
-                <Route
-                  path="/buckets/:bucketName/access"
-                  component={AccessDetailsPanel}
-                />
+                {distributedSetup && (
+                  <Route
+                    path="/buckets/:bucketName/replication"
+                    component={BucketReplicationPanel}
+                  />
+                )}
+                {distributedSetup && (
+                  <Route
+                    path="/buckets/:bucketName/lifecycle"
+                    component={BucketLifecyclePanel}
+                  />
+                )}
+
                 <Route
                   path="/buckets/:bucketName/access"
                   component={AccessDetailsPanel}
@@ -325,6 +330,7 @@ const BucketDetails = ({
 const mapState = (state: AppState) => ({
   session: state.console.session,
   selectedTab: state.buckets.bucketDetails.selectedTab,
+  distributedSetup: state.system.distributedSetup,
 });
 
 const connector = connect(mapState, {

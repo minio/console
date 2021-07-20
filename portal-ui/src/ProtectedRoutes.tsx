@@ -18,20 +18,14 @@ import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { AppState } from "./store";
-import { consoleOperatorMode, userLoggedIn } from "./actions";
+import {
+  consoleOperatorMode,
+  userLoggedIn,
+  setDistributedMode,
+} from "./actions";
 import api from "./common/api";
 import { saveSessionResponse } from "./screens/Console/actions";
 import { ISessionResponse } from "./screens/Console/types";
-
-const mapState = (state: AppState) => ({
-  loggedIn: state.system.loggedIn,
-});
-
-const connector = connect(mapState, {
-  userLoggedIn,
-  consoleOperatorMode,
-  saveSessionResponse,
-});
 
 interface ProtectedRouteProps {
   loggedIn: boolean;
@@ -39,6 +33,7 @@ interface ProtectedRouteProps {
   userLoggedIn: typeof userLoggedIn;
   consoleOperatorMode: typeof consoleOperatorMode;
   saveSessionResponse: typeof saveSessionResponse;
+  setDistributedMode: typeof setDistributedMode;
 }
 
 const ProtectedRoute = ({
@@ -47,6 +42,7 @@ const ProtectedRoute = ({
   userLoggedIn,
   consoleOperatorMode,
   saveSessionResponse,
+  setDistributedMode,
 }: ProtectedRouteProps) => {
   const [sessionLoading, setSessionLoading] = useState<boolean>(true);
   useEffect(() => {
@@ -56,6 +52,7 @@ const ProtectedRoute = ({
         saveSessionResponse(res);
         userLoggedIn(true);
         setSessionLoading(false);
+        setDistributedMode(res.distributedMode || false);
         // check for tenants presence, that indicates we are in operator mode
         if (res.operator) {
           consoleOperatorMode(true);
@@ -63,7 +60,12 @@ const ProtectedRoute = ({
         }
       })
       .catch(() => setSessionLoading(false));
-  }, [saveSessionResponse, consoleOperatorMode, userLoggedIn]);
+  }, [
+    saveSessionResponse,
+    consoleOperatorMode,
+    userLoggedIn,
+    setDistributedMode,
+  ]);
 
   // if we still trying to retrieve user session render nothing
   if (sessionLoading) {
@@ -72,5 +74,16 @@ const ProtectedRoute = ({
   // redirect user to the right page based on session status
   return loggedIn ? <Component /> : <Redirect to={{ pathname: "/login" }} />;
 };
+
+const mapState = (state: AppState) => ({
+  loggedIn: state.system.loggedIn,
+});
+
+const connector = connect(mapState, {
+  userLoggedIn,
+  consoleOperatorMode,
+  saveSessionResponse,
+  setDistributedMode,
+});
 
 export default connector(ProtectedRoute);

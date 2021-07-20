@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
+import get from "lodash/get";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import CopyToClipboard from "react-copy-to-clipboard";
@@ -31,6 +32,7 @@ import api from "../../../../../../common/api";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import DateSelector from "../../../../Common/FormComponents/DateSelector/DateSelector";
 import PredefinedList from "../../../../Common/FormComponents/PredefinedList/PredefinedList";
+import { AppState } from "../../../../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -48,6 +50,7 @@ interface IShareFileProps {
   open: boolean;
   bucketName: string;
   dataObject: IFileInfo;
+  distributedSetup: boolean;
   closeModalAndRefresh: () => void;
   setModalSnackMessage: typeof setModalSnackMessage;
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
@@ -59,6 +62,7 @@ const ShareFile = ({
   closeModalAndRefresh,
   bucketName,
   dataObject,
+  distributedSetup,
   setModalSnackMessage,
   setModalErrorSnackMessage,
 }: IShareFileProps) => {
@@ -86,6 +90,8 @@ const ShareFile = ({
 
       const diffDate = slDate.getTime() - currDate.getTime();
 
+      const versID = distributedSetup ? dataObject.version_id : "null";
+
       if (diffDate < 0) {
         setModalErrorSnackMessage(
           "Selected date must be greater than current time."
@@ -111,7 +117,7 @@ const ShareFile = ({
           "GET",
           `/api/v1/buckets/${bucketName}/objects/share?prefix=${
             dataObject.name
-          }&version_id=${dataObject.version_id}${
+          }&version_id=${versID}${
             selectedDate !== "" ? `&expires=${diffDate}ms` : ""
           }`
         )
@@ -133,6 +139,7 @@ const ShareFile = ({
     dateValid,
     setShareURL,
     setModalErrorSnackMessage,
+    distributedSetup,
   ]);
 
   return (
@@ -180,7 +187,11 @@ const ShareFile = ({
   );
 };
 
-const connector = connect(null, {
+const mapStateToProps = ({ system }: AppState) => ({
+  distributedSetup: get(system, "distributedSetup", false),
+});
+
+const connector = connect(mapStateToProps, {
   setModalSnackMessage,
   setModalErrorSnackMessage,
 });

@@ -28,6 +28,7 @@ import {
   SET_SERVER_DIAG_STAT,
   SET_SNACK_MODAL_MESSAGE,
   SET_MODAL_ERROR_MESSAGE,
+  GLOBAL_SET_DISTRIBUTED_SETUP,
 } from "./types";
 
 const initialState: SystemState = {
@@ -48,6 +49,7 @@ const initialState: SystemState = {
     type: "message",
   },
   serverDiagnosticStatus: "",
+  distributedSetup: false,
 };
 
 export function systemReducer(
@@ -110,6 +112,11 @@ export function systemReducer(
       return {
         ...state,
         serverDiagnosticStatus: action.serverDiagnosticStatus,
+      };
+    case GLOBAL_SET_DISTRIBUTED_SETUP:
+      return {
+        ...state,
+        distributedSetup: action.distributedSetup,
       };
     default:
       return state;

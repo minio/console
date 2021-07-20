@@ -2829,6 +2829,8 @@ definitions:
         enum: [ok]
       operator:
         type: boolean
+      distributedMode:
+        type: boolean
   widgetResult:
     type: object
     properties:

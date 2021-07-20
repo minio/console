@@ -27,6 +27,7 @@ const initialState: ConsoleState = {
     status: "",
     pages: [],
     features: [],
+    distributedMode: false,
   },
 };
 

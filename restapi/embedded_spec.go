@@ -2886,62 +2886,6 @@ func init() {
         }
       }
     },
-    "/subscription/refresh": {
-      "post": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Refresh existing subscription license",
-        "operationId": "SubscriptionRefresh",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/license"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/subscription/validate": {
-      "post": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Validates subscription license",
-        "operationId": "SubscriptionValidate",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/subscriptionValidateRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/license"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
     "/users": {
       "get": {
         "tags": [
@@ -4880,6 +4824,9 @@ func init() {
     "sessionResponse": {
       "type": "object",
       "properties": {
+        "distributedMode": {
+          "type": "boolean"
+        },
         "features": {
           "type": "array",
           "items": {
@@ -5055,20 +5002,6 @@ func init() {
           "type": "integer",
           "format": "int64",
           "title": "number of start results"
-        }
-      }
-    },
-    "subscriptionValidateRequest": {
-      "type": "object",
-      "properties": {
-        "email": {
-          "type": "string"
-        },
-        "license": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
         }
       }
     },
@@ -8284,62 +8217,6 @@ func init() {
         }
       }
     },
-    "/subscription/refresh": {
-      "post": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Refresh existing subscription license",
-        "operationId": "SubscriptionRefresh",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/license"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/subscription/validate": {
-      "post": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Validates subscription license",
-        "operationId": "SubscriptionValidate",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/subscriptionValidateRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/license"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
     "/users": {
       "get": {
         "tags": [
@@ -10388,6 +10265,9 @@ func init() {
     "sessionResponse": {
       "type": "object",
       "properties": {
+        "distributedMode": {
+          "type": "boolean"
+        },
         "features": {
           "type": "array",
           "items": {
@@ -10563,20 +10443,6 @@ func init() {
           "type": "integer",
           "format": "int64",
           "title": "number of start results"
-        }
-      }
-    },
-    "subscriptionValidateRequest": {
-      "type": "object",
-      "properties": {
-        "email": {
-          "type": "string"
-        },
-        "license": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
         }
       }
     },

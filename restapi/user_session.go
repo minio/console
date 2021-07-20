@@ -17,12 +17,38 @@
 package restapi
 
 import (
+	"context"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/acl"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/user_api"
+	"github.com/minio/madmin-go"
 )
+
+func validateDistributedMode(session *models.Principal) bool {
+	ctx := context.Background()
+	mAdmin, err := NewMinioAdminClient(session)
+
+	// We couldn't create the client, return false
+	if err != nil {
+		return false
+	}
+	// create a minioClient interface implementation
+	client := AdminClient{Client: mAdmin}
+
+	info, err := client.AccountInfo(ctx)
+
+	// We couldn't retrieve admin information
+	if err != nil {
+		return false
+	}
+
+	backendInfo := info.Server
+
+	return backendInfo.Type == madmin.Erasure
+}
 
 func registerSessionHandlers(api *operations.ConsoleAPI) {
 	// session check
@@ -41,11 +67,13 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 	if session == nil {
 		return nil, prepareError(errorGenericInvalidSession)
 	}
+
 	sessionResp := &models.SessionResponse{
-		Pages:    acl.GetAuthorizedEndpoints(session.Actions),
-		Features: getListOfEnabledFeatures(),
-		Status:   models.SessionResponseStatusOk,
-		Operator: acl.GetOperatorMode(),
+		Pages:           acl.GetAuthorizedEndpoints(session.Actions),
+		Features:        getListOfEnabledFeatures(),
+		Status:          models.SessionResponseStatusOk,
+		Operator:        acl.GetOperatorMode(),
+		DistributedMode: validateDistributedMode(session), // TODO: Review why this function is always returning false
 	}
 	return sessionResp, nil
 }
