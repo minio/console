@@ -230,7 +230,7 @@ func getLogSearchAPIToken() string {
 }
 
 func getLogSearchURL() string {
-	return env.Get(ConsoleLogQueryURL, "http://localhost:8080")
+	return env.Get(ConsoleLogQueryURL, "")
 }
 
 func getPrometheusURL() string {
