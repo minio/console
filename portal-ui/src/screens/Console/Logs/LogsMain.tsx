@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState, useEffect } from "react";
+import { connect } from "react-redux";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import { Grid, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
@@ -24,9 +25,11 @@ import { containerForHeader } from "../Common/FormComponents/common/styleLibrary
 import ErrorLogs from "./ErrorLogs/ErrorLogs";
 import LogsSearchMain from "./LogSearch/LogsSearchMain";
 import api from "../../../common/api";
+import { AppState } from "../../../store";
 
 interface ILogsMainProps {
   classes: any;
+  features: string[] | null;
 }
 
 const styles = (theme: Theme) =>
@@ -40,68 +43,58 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const LogsMain = ({ classes }: ILogsMainProps) => {
+const LogsMain = ({ classes, features }: ILogsMainProps) => {
   const [currentTab, setCurrentTab] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [showLogSearch, setShowLogSearch] = useState<boolean>(false);
 
-  useEffect(() => {
-    api
-      .invoke("GET", `/api/v1/logs/search?q=reqinfo&pageSize=10&pageNo=0`)
-      .then(() => {
-        setShowLogSearch(true);
-        setLoading(false);
-      })
-      .catch((err: any) => {
-        setLoading(false);
-        console.info("Log Search API not available.");
-      });
-  }, [loading]);
+  const logSearchEnabled = features && features.includes("log-search");
 
   return (
     <Fragment>
       <PageHeader label="Logs" />
       <Grid container>
         <Grid item xs={12} className={classes.container}>
-          {!loading ? (
-            <Fragment>
-              <Grid item xs={12} className={classes.headerLabel}>
-                All Logs
-              </Grid>
-              <Tabs
-                value={currentTab}
-                onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
-                  setCurrentTab(newValue);
-                }}
-                indicatorColor="primary"
-                textColor="primary"
-                aria-label="cluster-tabs"
-                variant="scrollable"
-                scrollButtons="auto"
-              >
-                <Tab label="Error Logs" />
-                {showLogSearch && <Tab label="Logs Search" />}
-              </Tabs>
-              <Grid item xs={12}>
-                {currentTab === 0 && (
-                  <Grid item xs={12}>
-                    <ErrorLogs />
-                  </Grid>
-                )}
-                {currentTab === 1 && showLogSearch && (
-                  <Grid item xs={12}>
-                    <LogsSearchMain />
-                  </Grid>
-                )}
-              </Grid>
-            </Fragment>
-          ) : (
-            <LinearProgress />
-          )}
+          <Fragment>
+            <Grid item xs={12} className={classes.headerLabel}>
+              All Logs
+            </Grid>
+            <Tabs
+              value={currentTab}
+              onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
+                setCurrentTab(newValue);
+              }}
+              indicatorColor="primary"
+              textColor="primary"
+              aria-label="cluster-tabs"
+              variant="scrollable"
+              scrollButtons="auto"
+            >
+              <Tab label="Error Logs" />
+              {logSearchEnabled && <Tab label="Logs Search" />}
+            </Tabs>
+            <Grid item xs={12}>
+              {currentTab === 0 && (
+                <Grid item xs={12}>
+                  <ErrorLogs />
+                </Grid>
+              )}
+              {currentTab === 1 && 
+              logSearchEnabled && (
+                <Grid item xs={12}>
+                  <LogsSearchMain />
+                </Grid>
+              )}
+            </Grid>
+          </Fragment>
         </Grid>
       </Grid>
     </Fragment>
   );
 };
 
-export default withStyles(styles)(LogsMain);
+const mapState = (state: AppState) => ({
+  features: state.console.session.features,
+});
+
+const connector = connect(mapState, null);
+
+export default withStyles(styles)(connector(LogsMain));

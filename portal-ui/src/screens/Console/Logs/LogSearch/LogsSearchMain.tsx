@@ -34,9 +34,11 @@ import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import FilterInputWrapper from "../../Common/FormComponents/FilterInputWrapper/FilterInputWrapper";
 import DateTimePickerWrapper from "../../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
+import { AppState } from "../../../../store";
 
 interface ILogSearchProps {
   classes: any;
+  features: string[] | null;
   setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
@@ -118,7 +120,11 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const LogsSearchMain = ({ classes, setErrorSnackMessage }: ILogSearchProps) => {
+const LogsSearchMain = ({
+  classes,
+  features,
+  setErrorSnackMessage,
+}: ILogSearchProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [timeStart, setTimeStart] = useState<any>(null);
   const [timeEnd, setTimeEnd] = useState<any>(null);
@@ -147,9 +153,10 @@ const LogsSearchMain = ({ classes, setErrorSnackMessage }: ILogSearchProps) => {
   const [alreadyFetching, setAlreadyFetching] = useState<boolean>(false);
 
   let recordsResp: any = null;
+  const logSearchEnabled = features && features.includes("log-search");
 
   const fetchRecords = useCallback(() => {
-    if (!alreadyFetching) {
+    if (!alreadyFetching && logSearchEnabled) {
       setAlreadyFetching(true);
       let queryParams = `${bucket !== "" ? `&fp=bucket:${bucket}` : ""}${
         object !== "" ? `&fp=object:${object}` : ""
@@ -196,6 +203,8 @@ const LogsSearchMain = ({ classes, setErrorSnackMessage }: ILogSearchProps) => {
         });
     }
   }, [
+    alreadyFetching,
+    logSearchEnabled,
     bucket,
     object,
     apiName,
@@ -206,7 +215,6 @@ const LogsSearchMain = ({ classes, setErrorSnackMessage }: ILogSearchProps) => {
     sortOrder,
     timeStart,
     timeEnd,
-    alreadyFetching,
     records,
     recordsResp,
     setErrorSnackMessage,
@@ -429,10 +437,14 @@ const LogsSearchMain = ({ classes, setErrorSnackMessage }: ILogSearchProps) => {
   );
 };
 
+const mapState = (state: AppState) => ({
+  features: state.console.session.features,
+});
+
 const mapDispatchToProps = {
   setErrorSnackMessage,
 };
 
-const connector = connect(null, mapDispatchToProps);
+const connector = connect(mapState, mapDispatchToProps);
 
 export default withStyles(styles)(connector(LogsSearchMain));

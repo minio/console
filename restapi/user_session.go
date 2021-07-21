@@ -73,7 +73,7 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 		Features:        getListOfEnabledFeatures(),
 		Status:          models.SessionResponseStatusOk,
 		Operator:        acl.GetOperatorMode(),
-		DistributedMode: validateDistributedMode(session), // TODO: Review why this function is always returning false
+		DistributedMode: validateDistributedMode(session),
 	}
 	return sessionResp, nil
 }
@@ -81,5 +81,11 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 // getListOfEnabledFeatures returns a list of features
 func getListOfEnabledFeatures() []string {
 	var features []string
+	logSearchURL := getLogSearchURL()
+
+	if logSearchURL != "" {
+		features = append(features, "log-search")
+	}
+
 	return features
 }
