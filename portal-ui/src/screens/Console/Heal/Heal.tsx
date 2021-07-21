@@ -14,8 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { HorizontalBar } from "react-chartjs-2";
 import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { HorizontalBar } from "react-chartjs-2";
 import { Button, Grid, TextField, InputBase } from "@material-ui/core";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
@@ -33,6 +34,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
+import { AppState } from "../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -74,6 +76,7 @@ const styles = (theme: Theme) =>
 
 interface IHeal {
   classes: any;
+  distributedSetup: boolean;
 }
 
 const SelectStyled = withStyles((theme: Theme) =>
@@ -98,7 +101,7 @@ const SelectStyled = withStyles((theme: Theme) =>
   })
 )(InputBase);
 
-const Heal = ({ classes }: IHeal) => {
+const Heal = ({ classes, distributedSetup }: IHeal) => {
   const [start, setStart] = useState(false);
   const [bucketName, setBucketName] = useState("");
   const [bucketList, setBucketList] = useState<Bucket[]>([]);
@@ -227,6 +230,10 @@ const Heal = ({ classes }: IHeal) => {
     label: bucketName.name,
     value: bucketName.name,
   }));
+  if (!distributedSetup) {
+    return null;
+  }
+
   return (
     <React.Fragment>
       <PageHeader label="Heal" />
@@ -355,4 +362,10 @@ const Heal = ({ classes }: IHeal) => {
   );
 };
 
-export default withStyles(styles)(Heal);
+const mapState = (state: AppState) => ({
+  distributedSetup: state.system.distributedSetup,
+});
+
+const connector = connect(mapState, null);
+
+export default connector(withStyles(styles)(Heal));
