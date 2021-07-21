@@ -128,6 +128,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPIDeleteBucketReplicationRuleHandler: user_api.DeleteBucketReplicationRuleHandlerFunc(func(params user_api.DeleteBucketReplicationRuleParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteBucketReplicationRule has not yet been implemented")
 		}),
+		UserAPIDeleteMultipleObjectsHandler: user_api.DeleteMultipleObjectsHandlerFunc(func(params user_api.DeleteMultipleObjectsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation user_api.DeleteMultipleObjects has not yet been implemented")
+		}),
 		UserAPIDeleteObjectHandler: user_api.DeleteObjectHandlerFunc(func(params user_api.DeleteObjectParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteObject has not yet been implemented")
 		}),
@@ -435,6 +438,8 @@ type ConsoleAPI struct {
 	UserAPIDeleteBucketEventHandler user_api.DeleteBucketEventHandler
 	// UserAPIDeleteBucketReplicationRuleHandler sets the operation handler for the delete bucket replication rule operation
 	UserAPIDeleteBucketReplicationRuleHandler user_api.DeleteBucketReplicationRuleHandler
+	// UserAPIDeleteMultipleObjectsHandler sets the operation handler for the delete multiple objects operation
+	UserAPIDeleteMultipleObjectsHandler user_api.DeleteMultipleObjectsHandler
 	// UserAPIDeleteObjectHandler sets the operation handler for the delete object operation
 	UserAPIDeleteObjectHandler user_api.DeleteObjectHandler
 	// UserAPIDeleteObjectRetentionHandler sets the operation handler for the delete object retention operation
@@ -724,6 +729,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPIDeleteBucketReplicationRuleHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteBucketReplicationRuleHandler")
+	}
+	if o.UserAPIDeleteMultipleObjectsHandler == nil {
+		unregistered = append(unregistered, "user_api.DeleteMultipleObjectsHandler")
 	}
 	if o.UserAPIDeleteObjectHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteObjectHandler")
@@ -1121,6 +1129,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/buckets/{bucket_name}/replication/{rule_id}"] = user_api.NewDeleteBucketReplicationRule(o.context, o.UserAPIDeleteBucketReplicationRuleHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/buckets/{bucket_name}/delete-objects"] = user_api.NewDeleteMultipleObjects(o.context, o.UserAPIDeleteMultipleObjectsHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}

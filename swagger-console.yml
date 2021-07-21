@@ -370,6 +370,32 @@ paths:
       tags:
         - UserAPI
 
+  /buckets/{bucket_name}/delete-objects:
+    post:
+      summary: Delete Multiple Objects
+      operationId: DeleteMultipleObjects
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: files
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+                $ref: "#/definitions/deleteFile"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - UserAPI
+
   /buckets/{bucket_name}/objects/upload:
     post:
       summary: Uploads an Object.
@@ -3589,6 +3615,16 @@ definitions:
         type: string
       region:
         type: string
+
+  deleteFile:
+    type: object
+    properties:
+      path:
+        type: string
+      versionID:
+        type: string
+      recursive:
+        type: boolean
 
   tier:
     type: object

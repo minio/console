@@ -595,6 +595,45 @@ func init() {
         }
       }
     },
+    "/buckets/{bucket_name}/delete-objects": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Multiple Objects",
+        "operationId": "DeleteMultipleObjects",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "files",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/deleteFile"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets/{bucket_name}/encryption/disable": {
       "post": {
         "tags": [
@@ -3683,6 +3722,20 @@ func init() {
         }
       }
     },
+    "deleteFile": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "recursive": {
+          "type": "boolean"
+        },
+        "versionID": {
+          "type": "string"
+        }
+      }
+    },
     "directCSIDriveInfo": {
       "type": "object",
       "properties": {
@@ -5916,6 +5969,45 @@ func init() {
             "schema": {
               "$ref": "#/definitions/multiBucketResponseState"
             }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/buckets/{bucket_name}/delete-objects": {
+      "post": {
+        "tags": [
+          "UserAPI"
+        ],
+        "summary": "Delete Multiple Objects",
+        "operationId": "DeleteMultipleObjects",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "files",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/deleteFile"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
           },
           "default": {
             "description": "Generic error response.",
@@ -9132,6 +9224,20 @@ func init() {
           "type": "string"
         },
         "targetURL": {
+          "type": "string"
+        }
+      }
+    },
+    "deleteFile": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "recursive": {
+          "type": "boolean"
+        },
+        "versionID": {
           "type": "string"
         }
       }

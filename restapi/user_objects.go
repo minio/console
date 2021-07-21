@@ -62,6 +62,13 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewDeleteObjectOK()
 	})
+	// delete multiple objects
+	api.UserAPIDeleteMultipleObjectsHandler = user_api.DeleteMultipleObjectsHandlerFunc(func(params user_api.DeleteMultipleObjectsParams, session *models.Principal) middleware.Responder {
+		if err := getDeleteMultiplePathsResponse(session, params); err != nil {
+			return user_api.NewDeleteMultipleObjectsDefault(int(err.Code)).WithPayload(err)
+		}
+		return user_api.NewDeleteMultipleObjectsOK()
+	})
 	// download object
 	api.UserAPIDownloadObjectHandler = user_api.DownloadObjectHandlerFunc(func(params user_api.DownloadObjectParams, session *models.Principal) middleware.Responder {
 		resp, err := getDownloadObjectResponse(session, params)
@@ -279,6 +286,29 @@ func getDeleteObjectResponse(session *models.Principal, params user_api.DeleteOb
 	err = deleteObjects(ctx, mcClient, params.BucketName, params.Path, version, rec)
 	if err != nil {
 		return prepareError(err)
+	}
+	return nil
+}
+
+// getDeleteMultiplePathsResponse returns whether there was an error on deletion of any object
+func getDeleteMultiplePathsResponse(session *models.Principal, params user_api.DeleteMultipleObjectsParams) *models.Error {
+	ctx := context.Background()
+	var version string
+	s3Client, err := newS3BucketClient(session, params.BucketName, "")
+	if err != nil {
+		return prepareError(err)
+	}
+	for i := 0; i < len(params.Files); i++ {
+		if params.Files[i].VersionID != "" {
+			version = params.Files[i].VersionID
+		}
+		// create a mc S3Client interface implementation
+		// defining the client to be used
+		mcClient := mcClient{client: s3Client}
+		err = deleteObjects(ctx, mcClient, params.BucketName, params.Files[i].Path, version, params.Files[i].Recursive)
+		if err != nil {
+			return prepareError(err)
+		}
 	}
 	return nil
 }

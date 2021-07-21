@@ -75,6 +75,9 @@ import {
 } from "../../../../../../actions";
 import { BucketVersioning } from "../../../types";
 import RewindEnable from "./RewindEnable";
+import FileCopyIcon from "@material-ui/icons/FileCopy";
+import DeleteIcon from "@material-ui/icons/Delete";
+import DeleteMultipleObjects from "./DeleteMultipleObjects";
 
 const commonIcon = {
   backgroundRepeat: "no-repeat",
@@ -226,6 +229,7 @@ const ListObjects = ({
   const [rewind, setRewind] = useState<RewindObject[]>([]);
   const [loadingRewind, setLoadingRewind] = useState<boolean>(true);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+  const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
   const [selectedObject, setSelectedObject] = useState<string>("");
   const [selectedBucket, setSelectedBucket] = useState<string>("");
@@ -236,6 +240,7 @@ const ListObjects = ({
   const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
   const [isVersioned, setIsVersioned] = useState<boolean>(false);
   const [rewindSelect, setRewindSelect] = useState<boolean>(false);
+  const [selectedObjects, setSelectedObjects] = useState<string[]>([]);
 
   const bucketName = match.params["bucket"];
 
@@ -447,6 +452,16 @@ const ListObjects = ({
 
     if (refresh) {
       setSnackBarMessage(`Object '${selectedObject}' deleted successfully.`);
+      setLoading(true);
+    }
+  };
+
+  const closeDeleteMultipleModalAndRefresh = (refresh: boolean) => {
+    setDeleteMultipleOpen(false);
+
+    if (refresh) {
+      setSnackBarMessage(`Objects deleted successfully.`);
+      setSelectedObjects([]);
       setLoading(true);
     }
   };
@@ -676,6 +691,25 @@ const ListObjects = ({
     }
   };
 
+  const selectListObjects = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const targetD = e.target;
+    const value = targetD.value;
+    const checked = targetD.checked;
+
+    let elements: string[] = [...selectedObjects]; // We clone the selectedBuckets array
+
+    if (checked) {
+      // If the user has checked this field we need to push this to selectedBucketsList
+      elements.push(value);
+    } else {
+      // User has unchecked this field, we need to remove it from the list
+      elements = elements.filter((element) => element !== value);
+    }
+    setSelectedObjects(elements);
+
+    return elements;
+  };
+
   const listModeColumns = [
     {
       label: "Name",
@@ -735,6 +769,14 @@ const ListObjects = ({
           selectedBucket={selectedBucket}
           selectedObject={selectedObject}
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
+        />
+      )}
+      {deleteMultipleOpen && (
+        <DeleteMultipleObjects
+          deleteOpen={deleteMultipleOpen}
+          selectedBucket={selectedBucket}
+          selectedObjects={selectedObjects}
+          closeDeleteModalAndRefresh={closeDeleteMultipleModalAndRefresh}
         />
       )}
       {createFolderOpen && (
@@ -810,6 +852,17 @@ const ListObjects = ({
             <Button
               variant="contained"
               color="primary"
+              startIcon={<DeleteIcon />}
+              onClick={() => {
+                setDeleteMultipleOpen(true);
+              }}
+              disabled={selectedObjects.length === 0}
+            >
+              Delete Selected
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
               startIcon={<CreateIcon />}
               component="label"
               onClick={() => {
@@ -851,6 +904,8 @@ const ListObjects = ({
               idField="name"
               records={rewindEnabled ? rewind : filteredRecords}
               customPaperHeight={classes.browsePaper}
+              selectedItems={selectedObjects}
+              onSelect={selectListObjects}
             />
           </Grid>
         </Grid>
