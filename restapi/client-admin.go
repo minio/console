@@ -20,7 +20,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"io"
 	"net/http"
 	"time"
@@ -355,25 +354,34 @@ func (ac AdminClient) serverHealthInfo(ctx context.Context, healthDataTypes []ma
 	decoder := json.NewDecoder(resp.Body)
 	switch version {
 	case madmin.HealthInfoVersion0:
+		info := madmin.HealthInfoV0{}
 		for {
-			var info madmin.HealthInfoV0
-			err = decoder.Decode(&info)
-			if err != nil && !errors.Is(err, io.EOF) {
-				return nil, version, err
+			if err = decoder.Decode(&info); err != nil {
+				break
 			}
-
-			healthInfo = mcCmd.MapHealthInfoToV1(info, nil)
 		}
+
+		// Old minio versions don't return the MinIO info in
+		// response of the healthinfo api. So fetch it separately
+		minioInfo, err := ac.Client.ServerInfo(ctx)
+		if err != nil {
+			info.Minio.Error = err.Error()
+		} else {
+			info.Minio.Info = minioInfo
+		}
+
+		healthInfo = mcCmd.MapHealthInfoToV1(info, nil)
+		version = madmin.HealthInfoVersion1
 	case madmin.HealthInfoVersion:
+		info := madmin.HealthInfo{}
 		for {
-			var info madmin.HealthInfo
-			if err != nil && !errors.Is(err, io.EOF) {
-				return nil, version, err
+			if err = decoder.Decode(&info); err != nil {
+				break
 			}
-
-			healthInfo = info
 		}
+		healthInfo = info
 	}
+
 	return healthInfo, version, nil
 }
 
