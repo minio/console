@@ -40,10 +40,7 @@ import {
   fileIsBeingPrepared,
   removeRouteLevel,
 } from "../../../../ObjectBrowser/actions";
-import {
-  ObjectBrowserReducer,
-  Route,
-} from "../../../../ObjectBrowser/reducers";
+import { Route } from "../../../../ObjectBrowser/reducers";
 import { download } from "../utils";
 import history from "../../../../../../history";
 import api from "../../../../../../common/api";
@@ -66,6 +63,7 @@ import {
   setSnackBarMessage,
 } from "../../../../../../actions";
 import { CircularProgress } from "@material-ui/core";
+import { AppState } from "../../../../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -167,6 +165,7 @@ interface IObjectDetailsProps {
   rewindEnabled: boolean;
   rewindDate: any;
   bucketToRewind: string;
+  distributedSetup: boolean;
   removeRouteLevel: (newRoute: string) => any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   setSnackBarMessage: typeof setSnackBarMessage;
@@ -192,6 +191,7 @@ const ObjectDetails = ({
   downloadingFiles,
   rewindEnabled,
   rewindDate,
+  distributedSetup,
   bucketToRewind,
   removeRouteLevel,
   setErrorSnackMessage,
@@ -223,14 +223,22 @@ const ObjectDetails = ({
       api
         .invoke(
           "GET",
-          `/api/v1/buckets/${bucketName}/objects?prefix=${encodedPath}&with_versions=true`
+          `/api/v1/buckets/${bucketName}/objects?prefix=${encodedPath}${
+            distributedSetup ? "&with_versions=true" : ""
+          }`
         )
         .then((res: IFileInfo[]) => {
           const result = get(res, "objects", []);
-          setActualInfo(
-            result.find((el: IFileInfo) => el.is_latest) || emptyFile
-          );
-          setVersions(result);
+          if (distributedSetup) {
+            setActualInfo(
+              result.find((el: IFileInfo) => el.is_latest) || emptyFile
+            );
+            setVersions(result);
+          } else {
+            setActualInfo(result[0]);
+            setVersions([]);
+          }
+
           setLoadObjectData(false);
         })
         .catch((error) => {
@@ -238,7 +246,13 @@ const ObjectDetails = ({
           setLoadObjectData(false);
         });
     }
-  }, [loadObjectData, bucketName, pathInBucket, setErrorSnackMessage]);
+  }, [
+    loadObjectData,
+    bucketName,
+    pathInBucket,
+    setErrorSnackMessage,
+    distributedSetup,
+  ]);
 
   let tagKeys: string[] = [];
 
@@ -543,6 +557,7 @@ const ObjectDetails = ({
               </div>
             </div>
           </Grid>
+
           <Grid item xs={12} className={classes.tagsContainer}>
             <div className={classes.tagText}>Tags:</div>
             {tagKeys &&
@@ -644,11 +659,12 @@ const ObjectDetails = ({
   );
 };
 
-const mapStateToProps = ({ objectBrowser }: ObjectBrowserReducer) => ({
+const mapStateToProps = ({ objectBrowser, system }: AppState) => ({
   downloadingFiles: get(objectBrowser, "downloadingFiles", []),
   rewindEnabled: get(objectBrowser, "rewind.rewindEnabled", false),
   rewindDate: get(objectBrowser, "rewind.dateToRewind", null),
   bucketToRewind: get(objectBrowser, "rewind.bucketToRewind", ""),
+  distributedSetup: get(system, "distributedSetup", false),
 });
 
 const mapDispatchToProps = {

@@ -37,6 +37,9 @@ import (
 // swagger:model sessionResponse
 type SessionResponse struct {
 
+	// distributed mode
+	DistributedMode bool `json:"distributedMode,omitempty"`
+
 	// features
 	Features []string `json:"features"`
 
