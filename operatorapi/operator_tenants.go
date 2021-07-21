@@ -1375,7 +1375,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 
 	if tenantReq.LogSearchConfiguration != nil {
 		if tenantReq.LogSearchConfiguration.StorageSize != nil {
-			diskSpaceFromAPI = int64(*tenantReq.LogSearchConfiguration.StorageSize) * 1024 * 1024 * 1024
+			diskSpaceFromAPI = int64(*tenantReq.LogSearchConfiguration.StorageSize) * humanize.GiByte
 		}
 		if tenantReq.LogSearchConfiguration.StorageClass != "" {
 			logSearchStorageClass = tenantReq.LogSearchConfiguration.StorageClass
