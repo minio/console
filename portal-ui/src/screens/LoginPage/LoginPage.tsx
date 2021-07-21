@@ -139,6 +139,13 @@ const styles = (theme: Theme) =>
     errorIconStyle: {
       marginRight: 3,
     },
+    loaderAlignment: {
+      display: "flex",
+      width: "100%",
+      height: "100%",
+      justifyContent: "center",
+      alignItems: "center",
+    },
   });
 
 const inputStyles = makeStyles((theme: Theme) =>
@@ -398,7 +405,9 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
     }
     default:
       loginComponent = (
-        <CircularProgress className={classes.loadingLoginStrategy} />
+        <div className={classes.loaderAlignment}>
+          <CircularProgress className={classes.loadingLoginStrategy} />
+        </div>
       );
   }
 
