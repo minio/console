@@ -31,6 +31,7 @@ import { ITenant } from "../ListTenants/types";
 import UsageBarWrapper from "../../Common/UsageBarWrapper/UsageBarWrapper";
 import UpdateTenantModal from "./UpdateTenantModal";
 import { AppState } from "../../../../store";
+import history from "./../../../../history";
 
 interface ITenantsSummary {
   classes: any;
@@ -319,6 +320,19 @@ const TenantSummary = ({
                     </tr>
                   </tbody>
                 </table>
+                <Button
+                  size={"small"}
+                  color={"primary"}
+                  variant="contained"
+                  style={{ textDecoration: "none !important" }}
+                  onClick={() => {
+                    history.push(
+                      `/namespaces/${tenantNamespace}/tenants/${tenantName}/hop`
+                    );
+                  }}
+                >
+                  Management UI
+                </Button>
               </Fragment>
             )}
           </Grid>

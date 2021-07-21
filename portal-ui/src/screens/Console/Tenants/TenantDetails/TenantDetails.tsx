@@ -26,8 +26,8 @@ import Tab from "@material-ui/core/Tab";
 import { setErrorSnackMessage } from "../../../../actions";
 import {
   setTenantDetailsLoad,
-  setTenantName,
   setTenantInfo,
+  setTenantName,
   setTenantTab,
 } from "../actions";
 import { ITenant } from "../ListTenants/types";
@@ -193,7 +193,7 @@ const TenantDetails = ({
         label={
           <Fragment>
             <Link to={"/tenants"} className={classes.breadcrumLink}>
-              Tenant
+              Tenants
             </Link>
             {` > ${match.params["tenantName"]}`}
             <IconButton
