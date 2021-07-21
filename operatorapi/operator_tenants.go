@@ -1398,7 +1398,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 
 	// the audit max cap cannot be larger than disk size on the DB, else it won't trim the data
 	auditMaxCap := 10
-	if (diskSpaceFromAPI / 1024 / 1024 / 1024) < int64(auditMaxCap) {
+	if (diskSpaceFromAPI / humanize.GiByte) < int64(auditMaxCap) {
 		auditMaxCap = int(diskSpaceFromAPI / humanize.GiByte)
 	}
 	// default activate lgo search and prometheus
