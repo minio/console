@@ -21,6 +21,7 @@ export interface IMenuProps {
   userLoggedIn: typeof userLoggedIn;
   pages: string[];
   operatorMode: boolean;
+  distributedSetup: boolean;
 }
 
 export interface IMenuItem {
@@ -33,4 +34,5 @@ export interface IMenuItem {
   onClick?: any;
   forceDisplay?: boolean;
   extraMargin?: boolean;
+  fsHidden?: boolean;
 }

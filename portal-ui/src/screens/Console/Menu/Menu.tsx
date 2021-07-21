@@ -149,13 +149,6 @@ const styles = (theme: Theme) =>
     },
   });
 
-const mapState = (state: AppState) => ({
-  open: state.system.loggedIn,
-  operatorMode: state.system.operatorMode,
-});
-
-const connector = connect(mapState, { userLoggedIn });
-
 // Menu State builder for groups
 const menuStateBuilder = () => {
   let elements: any = [];
@@ -168,7 +161,13 @@ const menuStateBuilder = () => {
   return elements;
 };
 
-const Menu = ({ userLoggedIn, classes, pages, operatorMode }: IMenuProps) => {
+const Menu = ({
+  userLoggedIn,
+  classes,
+  pages,
+  operatorMode,
+  distributedSetup,
+}: IMenuProps) => {
   const [menuOpen, setMenuOpen] = useState<any>(menuStateBuilder());
 
   const logout = () => {
@@ -278,6 +277,7 @@ const Menu = ({ userLoggedIn, classes, pages, operatorMode }: IMenuProps) => {
       to: "/heal",
       name: "Heal",
       icon: <HealIcon />,
+      fsHidden: distributedSetup,
     },
     {
       group: "Tools",
@@ -386,8 +386,7 @@ const Menu = ({ userLoggedIn, classes, pages, operatorMode }: IMenuProps) => {
   }
 
   const allowedItems = menuItems.filter(
-    (item: any) =>
-      allowedPages[item.to] || item.forceDisplay || item.type !== "item"
+    (item: any) => (allowedPages[item.to] || item.forceDisplay || item.type !== "item") && item.fsHidden !== false  
   );
 
   const setMenuCollapse = (menuClicked: string) => {
@@ -500,5 +499,13 @@ const Menu = ({ userLoggedIn, classes, pages, operatorMode }: IMenuProps) => {
     </React.Fragment>
   );
 };
+
+const mapState = (state: AppState) => ({
+  open: state.system.loggedIn,
+  operatorMode: state.system.operatorMode,
+  distributedSetup: state.system.distributedSetup,
+});
+
+const connector = connect(mapState, { userLoggedIn });
 
 export default connector(withStyles(styles)(Menu));
