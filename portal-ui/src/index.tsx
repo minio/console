@@ -64,7 +64,6 @@ ReactDOM.render(
   <Provider store={configureStore()}>
     <GlobalCss />
     <ThemeProvider theme={theme}>
-      {/*<ThemeProvider theme={newTheme}>*/}
       <Routes />
     </ThemeProvider>
   </Provider>,
