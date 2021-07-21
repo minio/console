@@ -219,10 +219,11 @@ const ObjectDetails = ({
 
   useEffect(() => {
     if (loadObjectData) {
+      const encodedPath = encodeURIComponent(pathInBucket);
       api
         .invoke(
           "GET",
-          `/api/v1/buckets/${bucketName}/objects?prefix=${pathInBucket}${
+          `/api/v1/buckets/${bucketName}/objects?prefix=${encodedPath}${
             distributedSetup ? "&with_versions=true" : ""
           }`
         )

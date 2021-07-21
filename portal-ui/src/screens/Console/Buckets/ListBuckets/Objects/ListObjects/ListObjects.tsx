@@ -468,7 +468,8 @@ const ListObjects = ({
     let files = e.target.files;
     let uploadUrl = `/api/v1/buckets/${bucketName}/objects/upload`;
     if (path !== "") {
-      uploadUrl = `${uploadUrl}?prefix=${path}`;
+      const encodedPath = encodeURIComponent(path);
+      uploadUrl = `${uploadUrl}?prefix=${encodedPath}`;
     }
     let xhr = new XMLHttpRequest();
     const areMultipleFiles = files.length > 1 ? true : false;
