@@ -1183,7 +1183,7 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/sessionResponse"
+              "$ref": "#/definitions/operatorSessionResponse"
             }
           },
           "default": {
@@ -3309,6 +3309,32 @@ func init() {
         "years"
       ]
     },
+    "operatorSessionResponse": {
+      "type": "object",
+      "properties": {
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "operator": {
+          "type": "boolean"
+        },
+        "pages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok"
+          ]
+        }
+      }
+    },
     "parityResponse": {
       "type": "array",
       "items": {
@@ -3985,32 +4011,6 @@ func init() {
       "type": "array",
       "items": {
         "type": "string"
-      }
-    },
-    "sessionResponse": {
-      "type": "object",
-      "properties": {
-        "features": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "operator": {
-          "type": "boolean"
-        },
-        "pages": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "status": {
-          "type": "string",
-          "enum": [
-            "ok"
-          ]
-        }
       }
     },
     "setBucketPolicyRequest": {
@@ -6056,7 +6056,7 @@ func init() {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/sessionResponse"
+              "$ref": "#/definitions/operatorSessionResponse"
             }
           },
           "default": {
@@ -8830,6 +8830,32 @@ func init() {
         "years"
       ]
     },
+    "operatorSessionResponse": {
+      "type": "object",
+      "properties": {
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "operator": {
+          "type": "boolean"
+        },
+        "pages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok"
+          ]
+        }
+      }
+    },
     "parityResponse": {
       "type": "array",
       "items": {
@@ -9415,32 +9441,6 @@ func init() {
       "type": "array",
       "items": {
         "type": "string"
-      }
-    },
-    "sessionResponse": {
-      "type": "object",
-      "properties": {
-        "features": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "operator": {
-          "type": "boolean"
-        },
-        "pages": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "status": {
-          "type": "string",
-          "enum": [
-            "ok"
-          ]
-        }
       }
     },
     "setBucketPolicyRequest": {

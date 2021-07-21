@@ -40,9 +40,10 @@ func validateDistributedMode(session *models.Principal) bool {
 
 	info, err := client.AccountInfo(ctx)
 
-	// We couldn't retrieve admin information
+	// We couldn't retrieve admin information, default to true for legacy reasons
+	// TODO: Revert to false after August 15th 2021
 	if err != nil {
-		return false
+		return true
 	}
 
 	backendInfo := info.Server
@@ -72,7 +73,7 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 		Pages:           acl.GetAuthorizedEndpoints(session.Actions),
 		Features:        getListOfEnabledFeatures(),
 		Status:          models.SessionResponseStatusOk,
-		Operator:        acl.GetOperatorMode(),
+		Operator:        false,
 		DistributedMode: validateDistributedMode(session),
 	}
 	return sessionResp, nil
