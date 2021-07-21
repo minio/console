@@ -64,7 +64,6 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	//STSSessionToken := currToken.Value
 	STSSessionToken := claims.STSSessionToken
 
 	opClientClientSet, err := cluster.OperatorClient(STSSessionToken)
@@ -98,7 +97,6 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 
 	h := sha1.New()
 	h.Write([]byte(nsTenant))
-	log.Printf("Proxying request for %s/%s", namespace, tenantName)
 	tenantCookieName := fmt.Sprintf("token-%x", string(h.Sum(nil)))
 	tenantCookie, err := req.Cookie(tenantCookieName)
 	if err != nil {
@@ -113,7 +111,7 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		currentSecret, err := clientSet.CoreV1().Secrets(namespace).Get(req.Context(), tenant.Spec.CredsSecret.Name, metav1.GetOptions{})
+		currentSecret, err := clientSet.CoreV1().Secrets(tenant.Namespace).Get(req.Context(), tenant.Spec.CredsSecret.Name, metav1.GetOptions{})
 		if err != nil {
 			log.Println(err)
 			responseWriter.WriteHeader(500)

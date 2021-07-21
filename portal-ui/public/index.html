@@ -13,6 +13,7 @@
       href="https://fonts.googleapis.com/css2?family=Lato:wght@400;500;700;900&display=swap"
       rel="stylesheet"
     />
+    <link href="%PUBLIC_URL%/styles/root-styles.css" rel="stylesheet" />
     <link
       rel="apple-touch-icon"
       sizes="180x180"
@@ -55,7 +56,23 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <div id="root">
+      <div id="loader-block">
+        <svg class="loader-svg-container" viewBox="22 22 44 44">
+          <circle
+            class="
+              loader-style
+              MuiCircularProgress-circle MuiCircularProgress-circleIndeterminate
+            "
+            cx="44"
+            cy="44"
+            r="20.2"
+            fill="none"
+            stroke-width="3.6"
+          ></circle>
+        </svg>
+      </div>
+    </div>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
