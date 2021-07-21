@@ -6,6 +6,7 @@ require (
 	github.com/blang/semver/v4 v4.0.0
 	github.com/cheggaaa/pb/v3 v3.0.6
 	github.com/coreos/go-oidc v2.2.1+incompatible
+	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/go-openapi/errors v0.19.9
 	github.com/go-openapi/loads v0.20.2
 	github.com/go-openapi/runtime v0.19.24
