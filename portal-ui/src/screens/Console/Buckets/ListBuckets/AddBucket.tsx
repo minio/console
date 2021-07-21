@@ -291,10 +291,8 @@ const AddBucket = ({
               {!distributedSetup && (
                 <Fragment>
                   <small className={classes.error}>
-                    Some of these features are disabled as server is running in
-                    FS mode. <br />
-                    If you require any of this, please start server in
-                    distributed mode.
+                    Some these features are disabled as server is running in
+                    non-erasure coded mode.
                   </small>
                   <br />
                   <br />
