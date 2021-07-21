@@ -33,6 +33,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dustin/go-humanize"
+
 	"github.com/minio/console/restapi"
 
 	"github.com/minio/console/operatorapi/operations/operator_api"
@@ -1369,7 +1371,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 
 	//Default class name for Log search
 	diskSpaceFromAPI := int64(5) * humanize.GiByte // Default is 5Gi
-	logSearchStorageClass := ""                       // Default is ""
+	logSearchStorageClass := ""                    // Default is ""
 	logSearchImage := ""
 	logSearchPgImage := ""
 
