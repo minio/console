@@ -25,9 +25,8 @@ export const download = (
 ) => {
   const anchor = document.createElement("a");
   document.body.appendChild(anchor);
-  const allPathData = objectPath.split("/");
-
-  let path = `/api/v1/buckets/${bucketName}/objects/download?prefix=${objectPath}`;
+  const encodedPath = encodeURIComponent(objectPath);
+  let path = `/api/v1/buckets/${bucketName}/objects/download?prefix=${encodedPath}`;
   if (!isNullOrUndefined(versionID) && versionID !== "null") {
     path = path.concat(`&version_id=${versionID}`);
   }

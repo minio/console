@@ -30,7 +30,7 @@ import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import { Link } from "react-router-dom";
-import { setErrorSnackMessage } from "../../../actions";
+import { setErrorSnackMessage, setSnackBarMessage } from "../../../actions";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import history from "../../../history";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -44,8 +44,8 @@ import TextField from "@material-ui/core/TextField";
 interface IPolicyDetailsProps {
   classes: any;
   match: any;
-  closeModalAndRefresh: (refresh: boolean) => void;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  setSnackBarMessage: typeof setSnackBarMessage;
 }
 
 const styles = (theme: Theme) =>
@@ -160,8 +160,8 @@ const styles = (theme: Theme) =>
 const PolicyDetails = ({
   classes,
   match,
-  closeModalAndRefresh,
   setErrorSnackMessage,
+  setSnackBarMessage,
 }: IPolicyDetailsProps) => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [policy, setPolicy] = useState<Policy | null>(null);
@@ -191,7 +191,7 @@ const PolicyDetails = ({
       })
       .then((res) => {
         setAddLoading(false);
-        closeModalAndRefresh(true);
+        setSnackBarMessage("Policy successfully updated")
       })
       .catch((err) => {
         setAddLoading(false);
@@ -441,6 +441,7 @@ const PolicyDetails = ({
 
 const connector = connect(null, {
   setErrorSnackMessage,
+  setSnackBarMessage
 });
 
 export default withStyles(styles)(connector(PolicyDetails));

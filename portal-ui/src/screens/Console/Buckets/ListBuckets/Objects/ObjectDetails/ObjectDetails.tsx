@@ -219,10 +219,11 @@ const ObjectDetails = ({
 
   useEffect(() => {
     if (loadObjectData) {
+      const encodedPath = encodeURIComponent(pathInBucket);
       api
         .invoke(
           "GET",
-          `/api/v1/buckets/${bucketName}/objects?prefix=${pathInBucket}&with_versions=true`
+          `/api/v1/buckets/${bucketName}/objects?prefix=${encodedPath}&with_versions=true`
         )
         .then((res: IFileInfo[]) => {
           const result = get(res, "objects", []);
