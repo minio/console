@@ -1368,7 +1368,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	}
 
 	//Default class name for Log search
-	diskSpaceFromAPI := int64(5) * 1024 * 1024 * 1024 // Default is 5Gi
+	diskSpaceFromAPI := int64(5) * humanize.GiByte // Default is 5Gi
 	logSearchStorageClass := ""                       // Default is ""
 	logSearchImage := ""
 	logSearchPgImage := ""
