@@ -48,7 +48,6 @@ const PodsSummary = ({ match, history, loadingTenant }: IPodsSummary) => {
   const [loadingPods, setLoadingPods] = useState<boolean>(true);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedPod, setSelectedPod] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const tenantName = match.params["tenantName"];
   const tenantNamespace = match.params["tenantNamespace"];
@@ -62,10 +61,6 @@ const PodsSummary = ({ match, history, loadingTenant }: IPodsSummary) => {
 
   const closeDeleteModalAndRefresh = (reloadData: boolean) => {
     setDeleteOpen(false);
-
-    if (reloadData) {
-      setIsLoading(true);
-    }
   };
 
   const confirmDeletePod = (pod: IPodListElement) => {

@@ -4877,6 +4877,9 @@ func init() {
     "sessionResponse": {
       "type": "object",
       "properties": {
+        "distributedMode": {
+          "type": "boolean"
+        },
         "features": {
           "type": "array",
           "items": {
@@ -10368,6 +10371,9 @@ func init() {
     "sessionResponse": {
       "type": "object",
       "properties": {
+        "distributedMode": {
+          "type": "boolean"
+        },
         "features": {
           "type": "array",
           "items": {

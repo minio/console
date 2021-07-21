@@ -31,6 +31,7 @@ import { ISessionResponse } from "../types";
 interface IConfigurationMain {
   classes: any;
   session: ISessionResponse;
+  distributedSetup: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -44,7 +45,11 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const ConfigurationMain = ({ classes, session }: IConfigurationMain) => {
+const ConfigurationMain = ({
+  classes,
+  session,
+  distributedSetup,
+}: IConfigurationMain) => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
 
   return (
@@ -65,7 +70,7 @@ const ConfigurationMain = ({ classes, session }: IConfigurationMain) => {
           >
             <Tab label="Configurations" />
             <Tab label="Lambda Notifications" />
-            <Tab label="Tiers" />
+            <Tab label="Tiers" disabled={!distributedSetup} />
           </Tabs>
           <Grid item xs={12}>
             {selectedTab === 0 && (
@@ -78,7 +83,7 @@ const ConfigurationMain = ({ classes, session }: IConfigurationMain) => {
                 <ListNotificationEndpoints />
               </Grid>
             )}
-            {selectedTab === 2 && (
+            {selectedTab === 2 && distributedSetup && (
               <Grid item xs={12}>
                 <ListTiersConfiguration />
               </Grid>
@@ -92,6 +97,7 @@ const ConfigurationMain = ({ classes, session }: IConfigurationMain) => {
 
 const mapState = (state: AppState) => ({
   session: state.console.session,
+  distributedSetup: state.system.distributedSetup,
 });
 
 const connector = connect(mapState, {});

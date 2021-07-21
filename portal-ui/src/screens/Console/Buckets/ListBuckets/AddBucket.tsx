@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import Grid from "@material-ui/core/Grid";
 import { Button, LinearProgress, Typography } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
@@ -64,6 +64,9 @@ const styles = (theme: Theme) =>
       marginLeft: 8,
       alignSelf: "flex-start" as const,
     },
+    error: {
+      color: "#b53b4b",
+    },
     ...modalBasic,
   });
 
@@ -94,6 +97,7 @@ interface IAddBucketProps {
   retentionMode: string;
   retentionUnit: string;
   retentionValidity: number;
+  distributedSetup: boolean;
 }
 
 const AddBucket = ({
@@ -123,6 +127,7 @@ const AddBucket = ({
   retentionMode,
   retentionUnit,
   retentionValidity,
+  distributedSetup,
 }: IAddBucketProps) => {
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [sendEnabled, setSendEnabled] = useState<boolean>(false);
@@ -138,25 +143,27 @@ const AddBucket = ({
 
     let request: MakeBucketRequest = {
       name: bucketName,
-      versioning: versioningEnabled,
-      locking: lockingEnabled,
+      versioning: distributedSetup ? versioningEnabled : false,
+      locking: distributedSetup ? lockingEnabled : false,
     };
 
-    if (quotaEnabled) {
-      const amount = getBytes(quotaSize, quotaUnit, false);
-      request.quota = {
-        enabled: true,
-        quota_type: quotaType,
-        amount: parseInt(amount),
-      };
-    }
+    if (distributedSetup) {
+      if (quotaEnabled) {
+        const amount = getBytes(quotaSize, quotaUnit, false);
+        request.quota = {
+          enabled: true,
+          quota_type: quotaType,
+          amount: parseInt(amount),
+        };
+      }
 
-    if (retentionEnabled) {
-      request.retention = {
-        mode: retentionMode,
-        unit: retentionUnit,
-        validity: retentionValidity,
-      };
+      if (retentionEnabled) {
+        request.retention = {
+          mode: retentionMode,
+          unit: retentionUnit,
+          validity: retentionValidity,
+        };
+      }
     }
 
     api
@@ -281,7 +288,20 @@ const AddBucket = ({
                 Features
               </Typography>
               <hr />
+              {!distributedSetup && (
+                <Fragment>
+                  <small className={classes.error}>
+                    Some of these features are disabled as server is running in
+                    FS mode. <br />
+                    If you require any of this, please start server in
+                    distributed mode.
+                  </small>
+                  <br />
+                  <br />
+                </Fragment>
+              )}
             </Grid>
+
             <Grid item xs={12}>
               <FormSwitchWrapper
                 value="versioned"
@@ -296,6 +316,7 @@ const AddBucket = ({
                 }
                 label={"Versioning"}
                 indicatorLabels={["On", "Off"]}
+                disabled={!distributedSetup}
               />
             </Grid>
             <Grid item xs={12}>
@@ -303,7 +324,7 @@ const AddBucket = ({
                 value="locking"
                 id="locking"
                 name="locking"
-                disabled={lockingFieldDisabled}
+                disabled={lockingFieldDisabled || !distributedSetup}
                 checked={lockingEnabled}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   enableObjectLocking(event.target.checked);
@@ -315,6 +336,7 @@ const AddBucket = ({
                 indicatorLabels={["On", "Off"]}
               />
             </Grid>
+
             <Grid item xs={12}>
               <FormSwitchWrapper
                 value="bucket_quota"
@@ -327,9 +349,10 @@ const AddBucket = ({
                 label={"Quota"}
                 description={"Limit the amount of data in the bucket."}
                 indicatorLabels={["On", "Off"]}
+                disabled={!distributedSetup}
               />
             </Grid>
-            {quotaEnabled && (
+            {quotaEnabled && distributedSetup && (
               <React.Fragment>
                 <Grid item xs={12}>
                   <RadioGroupSelector
@@ -380,7 +403,7 @@ const AddBucket = ({
                 </Grid>
               </React.Fragment>
             )}
-            {versioningEnabled && (
+            {versioningEnabled && distributedSetup && (
               <Grid item xs={12}>
                 <FormSwitchWrapper
                   value="bucket_retention"
@@ -398,7 +421,7 @@ const AddBucket = ({
                 />
               </Grid>
             )}
-            {retentionEnabled && (
+            {retentionEnabled && distributedSetup && (
               <React.Fragment>
                 <Grid item xs={12}>
                   <RadioGroupSelector
@@ -489,6 +512,7 @@ const mapState = (state: AppState) => ({
   retentionMode: state.buckets.addBucketRetentionMode,
   retentionUnit: state.buckets.addBucketRetentionUnit,
   retentionValidity: state.buckets.addBucketRetentionValidity,
+  distributedSetup: state.system.distributedSetup,
 });
 
 const connector = connect(mapState, {

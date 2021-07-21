@@ -19,4 +19,5 @@ export interface ISessionResponse {
   pages: string[];
   features: string[];
   operator: boolean;
+  distributedMode: boolean;
 }

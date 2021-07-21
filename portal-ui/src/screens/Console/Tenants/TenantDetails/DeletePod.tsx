@@ -25,7 +25,7 @@ import {
   LinearProgress,
 } from "@material-ui/core";
 import api from "../../../../common/api";
-import { IPodListElement, ITenant } from "../ListTenants/types";
+import { IPodListElement } from "../ListTenants/types";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import Grid from "@material-ui/core/Grid";
 import { connect } from "react-redux";

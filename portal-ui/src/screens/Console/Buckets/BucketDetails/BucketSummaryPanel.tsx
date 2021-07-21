@@ -50,6 +50,7 @@ import EnableQuota from "./EnableQuota";
 interface IBucketSummaryProps {
   classes: any;
   match: any;
+  distributedSetup: boolean;
   setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
@@ -87,6 +88,7 @@ const styles = (theme: Theme) =>
 const BucketSummary = ({
   classes,
   match,
+  distributedSetup,
   setErrorSnackMessage,
 }: IBucketSummaryProps) => {
   const [info, setInfo] = useState<BucketInfo | null>(null);
@@ -166,7 +168,7 @@ const BucketSummary = ({
   }, [loadingEncryption, bucketName]);
 
   useEffect(() => {
-    if (loadingVersioning) {
+    if (loadingVersioning && distributedSetup) {
       api
         .invoke("GET", `/api/v1/buckets/${bucketName}/versioning`)
         .then((res: BucketVersioning) => {
@@ -178,10 +180,10 @@ const BucketSummary = ({
           setLoadingVersioning(false);
         });
     }
-  }, [loadingVersioning, setErrorSnackMessage, bucketName]);
+  }, [loadingVersioning, setErrorSnackMessage, bucketName, distributedSetup]);
 
   useEffect(() => {
-    if (loadingQuota) {
+    if (loadingQuota && distributedSetup) {
       api
         .invoke("GET", `/api/v1/buckets/${bucketName}/quota`)
         .then((res: BucketQuota) => {
@@ -199,10 +201,16 @@ const BucketSummary = ({
           setLoadingVersioning(false);
         });
     }
-  }, [loadingQuota, setLoadingVersioning, setErrorSnackMessage, bucketName]);
+  }, [
+    loadingQuota,
+    setLoadingVersioning,
+    setErrorSnackMessage,
+    bucketName,
+    distributedSetup,
+  ]);
 
   useEffect(() => {
-    if (loadingVersioning) {
+    if (loadingVersioning && distributedSetup) {
       api
         .invoke("GET", `/api/v1/buckets/${bucketName}/object-locking`)
         .then((res: BucketObjectLocking) => {
@@ -219,6 +227,7 @@ const BucketSummary = ({
     setErrorSnackMessage,
     bucketName,
     loadingVersioning,
+    distributedSetup,
   ]);
 
   useEffect(() => {
@@ -244,7 +253,7 @@ const BucketSummary = ({
   }, [loadingSize, setErrorSnackMessage, bucketName]);
 
   useEffect(() => {
-    if (loadingReplication) {
+    if (loadingReplication && distributedSetup) {
       api
         .invoke("GET", `/api/v1/buckets/${bucketName}/replication`)
         .then((res: BucketReplication) => {
@@ -257,7 +266,7 @@ const BucketSummary = ({
           setLoadingReplication(false);
         });
     }
-  }, [loadingReplication, setErrorSnackMessage, bucketName]);
+  }, [loadingReplication, setErrorSnackMessage, bucketName, distributedSetup]);
 
   const loadAllBucketData = () => {
     setLoadingBucket(true);
@@ -399,22 +408,24 @@ const BucketSummary = ({
                     )}
                   </td>
                 </tr>
-                <tr>
-                  <td className={classes.titleCol}>Replication:</td>
-                  <td className={classes.doubleElement}>
-                    <span>{replicationRules ? "Enabled" : "Disabled"}</span>
-                  </td>
-                  {!hasObjectLocking ? (
-                    <React.Fragment>
-                      <td className={classes.titleCol}>Object Locking:</td>
-                      <td>Disabled</td>
-                    </React.Fragment>
-                  ) : (
-                    <React.Fragment>
-                      <td colSpan={2}></td>
-                    </React.Fragment>
-                  )}
-                </tr>
+                {distributedSetup && (
+                  <tr>
+                    <td className={classes.titleCol}>Replication:</td>
+                    <td className={classes.doubleElement}>
+                      <span>{replicationRules ? "Enabled" : "Disabled"}</span>
+                    </td>
+                    {!hasObjectLocking ? (
+                      <React.Fragment>
+                        <td className={classes.titleCol}>Object Locking:</td>
+                        <td>Disabled</td>
+                      </React.Fragment>
+                    ) : (
+                      <React.Fragment>
+                        <td colSpan={2}></td>
+                      </React.Fragment>
+                    )}
+                  </tr>
+                )}
               </tbody>
             </table>
           </Grid>
@@ -437,79 +448,84 @@ const BucketSummary = ({
       </Paper>
       <br />
       <br />
-      <Paper className={classes.paperContainer}>
-        <Grid container>
-          <Grid item xs={quotaEnabled ? 9 : 12}>
-            <h2>Versioning</h2>
-            <hr className={classes.hrClass} />
-            <table width={"100%"}>
-              <tbody>
-                <tr>
-                  <td className={classes.titleCol}>Versioning:</td>
-                  <td>
-                    {loadingVersioning ? (
-                      <CircularProgress
-                        color="primary"
-                        size={16}
-                        variant="indeterminate"
-                      />
-                    ) : (
-                      <Fragment>
-                        <Button
-                          color="primary"
-                          className={classes.anchorButton}
-                          onClick={setBucketVersioning}
-                        >
-                          {isVersioned ? "Enabled" : "Disabled"}
-                        </Button>
-                      </Fragment>
-                    )}
-                  </td>
-                  <td className={classes.titleCol}>Quota:</td>
-                  <td>
-                    {loadingQuota ? (
-                      <CircularProgress
-                        color="primary"
-                        size={16}
-                        variant="indeterminate"
-                      />
-                    ) : (
-                      <Fragment>
-                        <Button
-                          color="primary"
-                          className={classes.anchorButton}
-                          onClick={setBucketQuota}
-                        >
-                          {quotaEnabled ? "Enabled" : "Disabled"}
-                        </Button>
-                      </Fragment>
-                    )}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </Grid>
-          {quotaEnabled && quota && (
-            <Grid item xs={3} className={classes.reportedUsage}>
-              <Grid container direction="row" alignItems="center">
-                <Grid item className={classes.icon} xs={2}>
-                  <GavelIcon />
-                </Grid>
-                <Grid item xs={10}>
-                  <Typography className={classes.elementTitle}>
-                    {cap(quota?.type)} Quota
+      {distributedSetup && (
+        <Fragment>
+          <Paper className={classes.paperContainer}>
+            <Grid container>
+              <Grid item xs={quotaEnabled ? 9 : 12}>
+                <h2>Versioning</h2>
+                <hr className={classes.hrClass} />
+                <table width={"100%"}>
+                  <tbody>
+                    <tr>
+                      <td className={classes.titleCol}>Versioning:</td>
+                      <td>
+                        {loadingVersioning ? (
+                          <CircularProgress
+                            color="primary"
+                            size={16}
+                            variant="indeterminate"
+                          />
+                        ) : (
+                          <Fragment>
+                            <Button
+                              color="primary"
+                              className={classes.anchorButton}
+                              onClick={setBucketVersioning}
+                            >
+                              {isVersioned ? "Enabled" : "Disabled"}
+                            </Button>
+                          </Fragment>
+                        )}
+                      </td>
+                      <td className={classes.titleCol}>Quota:</td>
+                      <td>
+                        {loadingQuota ? (
+                          <CircularProgress
+                            color="primary"
+                            size={16}
+                            variant="indeterminate"
+                          />
+                        ) : (
+                          <Fragment>
+                            <Button
+                              color="primary"
+                              className={classes.anchorButton}
+                              onClick={setBucketQuota}
+                            >
+                              {quotaEnabled ? "Enabled" : "Disabled"}
+                            </Button>
+                          </Fragment>
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </Grid>
+              {quotaEnabled && quota && (
+                <Grid item xs={3} className={classes.reportedUsage}>
+                  <Grid container direction="row" alignItems="center">
+                    <Grid item className={classes.icon} xs={2}>
+                      <GavelIcon />
+                    </Grid>
+                    <Grid item xs={10}>
+                      <Typography className={classes.elementTitle}>
+                        {cap(quota?.type)} Quota
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                  <Typography className={classes.consumptionValue}>
+                    {niceBytes(`${quota?.quota}`)}
                   </Typography>
                 </Grid>
-              </Grid>
-              <Typography className={classes.consumptionValue}>
-                {niceBytes(`${quota?.quota}`)}
-              </Typography>
+              )}
             </Grid>
-          )}
-        </Grid>
-      </Paper>
-      <br />
-      <br />
+          </Paper>
+          <br />
+          <br />
+        </Fragment>
+      )}
+
       {hasObjectLocking && (
         <Paper className={classes.paperContainer}>
           <Grid container>
@@ -554,6 +570,7 @@ const BucketSummary = ({
 
 const mapState = (state: AppState) => ({
   session: state.console.session,
+  distributedSetup: state.system.distributedSetup,
 });
 
 const connector = connect(mapState, {

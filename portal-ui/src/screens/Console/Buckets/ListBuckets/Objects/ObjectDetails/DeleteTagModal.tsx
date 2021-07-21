@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState } from "react";
+import get from "lodash/get";
 import { connect } from "react-redux";
 import {
   Button,
@@ -29,6 +30,7 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../../../actions";
 import api from "../../../../../../common/api";
+import { AppState } from "../../../../../../store";
 
 interface IDeleteTagModal {
   deleteOpen: boolean;
@@ -38,6 +40,7 @@ interface IDeleteTagModal {
   selectedTag: string[];
   onCloseAndUpdate: (refresh: boolean) => void;
   selectedObject: string;
+  distributedSetup: boolean;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   classes: any;
 }
@@ -62,6 +65,7 @@ const DeleteTagModal = ({
   onCloseAndUpdate,
   bucketName,
   versionId,
+  distributedSetup,
   setErrorSnackMessage,
   classes,
 }: IDeleteTagModal) => {
@@ -73,10 +77,12 @@ const DeleteTagModal = ({
     const cleanObject = { ...currentTags };
     delete cleanObject[tagKey];
 
+    const verID = distributedSetup ? versionId : "null";
+
     api
       .invoke(
         "PUT",
-        `/api/v1/buckets/${bucketName}/objects/tags?prefix=${selectedObject}&version_id=${versionId}`,
+        `/api/v1/buckets/${bucketName}/objects/tags?prefix=${selectedObject}&version_id=${verID}`,
         { tags: cleanObject }
       )
       .then((res: any) => {
@@ -127,10 +133,14 @@ const DeleteTagModal = ({
   );
 };
 
+const mapStateToProps = ({ system }: AppState) => ({
+  distributedSetup: get(system, "distributedSetup", false),
+});
+
 const mapDispatchToProps = {
   setErrorSnackMessage,
 };
 
-const connector = connect(null, mapDispatchToProps);
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
 export default withStyles(styles)(connector(DeleteTagModal));

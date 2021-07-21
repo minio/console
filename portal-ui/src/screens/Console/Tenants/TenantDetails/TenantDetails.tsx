@@ -30,7 +30,7 @@ import {
   setTenantInfo,
   setTenantTab,
 } from "../actions";
-import { IPodListElement, ITenant } from "../ListTenants/types";
+import { ITenant } from "../ListTenants/types";
 import {
   containerForHeader,
   tenantDetailsStyles,
