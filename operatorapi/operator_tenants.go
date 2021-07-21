@@ -33,6 +33,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dustin/go-humanize"
+
 	"github.com/minio/console/restapi"
 
 	"github.com/minio/console/operatorapi/operations/operator_api"
@@ -1368,14 +1370,14 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	}
 
 	//Default class name for Log search
-	diskSpaceFromAPI := int64(5) // Default is 5
-	logSearchStorageClass := ""  // Default is ""
+	diskSpaceFromAPI := int64(5) * humanize.GiByte // Default is 5Gi
+	logSearchStorageClass := ""                    // Default is ""
 	logSearchImage := ""
 	logSearchPgImage := ""
 
 	if tenantReq.LogSearchConfiguration != nil {
 		if tenantReq.LogSearchConfiguration.StorageSize != nil {
-			diskSpaceFromAPI = int64(*tenantReq.LogSearchConfiguration.StorageSize)
+			diskSpaceFromAPI = int64(*tenantReq.LogSearchConfiguration.StorageSize) * humanize.GiByte
 		}
 		if tenantReq.LogSearchConfiguration.StorageClass != "" {
 			logSearchStorageClass = tenantReq.LogSearchConfiguration.StorageClass
@@ -1396,9 +1398,14 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 
 	logSearchDiskSpace := resource.NewQuantity(diskSpaceFromAPI, resource.DecimalExponent)
 
+	// the audit max cap cannot be larger than disk size on the DB, else it won't trim the data
+	auditMaxCap := 10
+	if (diskSpaceFromAPI / humanize.GiByte) < int64(auditMaxCap) {
+		auditMaxCap = int(diskSpaceFromAPI / humanize.GiByte)
+	}
 	// default activate lgo search and prometheus
 	minInst.Spec.Log = &miniov2.LogConfig{
-		Audit: &miniov2.AuditConfig{DiskCapacityGB: swag.Int(10)},
+		Audit: &miniov2.AuditConfig{DiskCapacityGB: swag.Int(auditMaxCap)},
 		Db: &miniov2.LogDbConfig{
 			VolumeClaimTemplate: &corev1.PersistentVolumeClaim{
 				ObjectMeta: metav1.ObjectMeta{
