@@ -3851,6 +3851,9 @@ func init() {
         "storageClass": {
           "type": "string"
         },
+        "tenant": {
+          "type": "string"
+        },
         "volume": {
           "type": "string"
         }
@@ -9279,6 +9282,9 @@ func init() {
           "type": "string"
         },
         "storageClass": {
+          "type": "string"
+        },
+        "tenant": {
           "type": "string"
         },
         "volume": {

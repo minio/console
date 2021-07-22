@@ -23,6 +23,7 @@ export interface IStoragePVCs {
   storageClass: string;
   node: string;
   age: string;
+  tenant: string;
 }
 
 export interface IPVCsResponse {
