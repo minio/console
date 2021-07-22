@@ -386,7 +386,9 @@ const Menu = ({
   }
 
   const allowedItems = menuItems.filter(
-    (item: any) => (allowedPages[item.to] || item.forceDisplay || item.type !== "item") && item.fsHidden !== false  
+    (item: any) =>
+      (allowedPages[item.to] || item.forceDisplay || item.type !== "item") &&
+      item.fsHidden !== false
   );
 
   const setMenuCollapse = (menuClicked: string) => {

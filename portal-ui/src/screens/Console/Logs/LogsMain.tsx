@@ -77,8 +77,7 @@ const LogsMain = ({ classes, features }: ILogsMainProps) => {
                   <ErrorLogs />
                 </Grid>
               )}
-              {currentTab === 1 && 
-              logSearchEnabled && (
+              {currentTab === 1 && logSearchEnabled && (
                 <Grid item xs={12}>
                   <LogsSearchMain />
                 </Grid>
