@@ -42,7 +42,7 @@ type SessionCheckOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.SessionResponse `json:"body,omitempty"`
+	Payload *models.OperatorSessionResponse `json:"body,omitempty"`
 }
 
 // NewSessionCheckOK creates SessionCheckOK with default headers values
@@ -52,13 +52,13 @@ func NewSessionCheckOK() *SessionCheckOK {
 }
 
 // WithPayload adds the payload to the session check o k response
-func (o *SessionCheckOK) WithPayload(payload *models.SessionResponse) *SessionCheckOK {
+func (o *SessionCheckOK) WithPayload(payload *models.OperatorSessionResponse) *SessionCheckOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the session check o k response
-func (o *SessionCheckOK) SetPayload(payload *models.SessionResponse) {
+func (o *SessionCheckOK) SetPayload(payload *models.OperatorSessionResponse) {
 	o.Payload = payload
 }
 

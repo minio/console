@@ -193,8 +193,6 @@ func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
 		// Validate user against IDP
 		identityProvider := &auth.IdentityProvider{Client: oauth2Client}
 		redirectURL = identityProvider.GenerateLoginURL()
-	} else if acl.GetOperatorMode() {
-		loginStrategy = models.LoginDetailsLoginStrategyServiceDashAccount
 	}
 
 	loginDetails := &models.LoginDetails{

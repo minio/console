@@ -108,7 +108,7 @@ func getOperatorSubscriptionActivateResponse(session *models.Principal, namespac
 		client: clientSet,
 	}
 	// Get cluster subscription license
-	license, err := getSubscriptionLicense(ctx, &k8sClient, cluster.Namespace, restapi.OperatorSubnetLicenseSecretName)
+	license, err := getSubscriptionLicense(ctx, &k8sClient, cluster.Namespace, OperatorSubnetLicenseSecretName)
 	if err != nil {
 		return prepareError(errInvalidCredentials, nil, err)
 	}

@@ -128,7 +128,7 @@ paths:
         200:
           description: A successful response.
           schema:
-            $ref: "#/definitions/sessionResponse"
+            $ref: "#/definitions/operatorSessionResponse"
         default:
           description: Generic error response.
           schema:
@@ -1624,7 +1624,7 @@ definitions:
     properties:
       type:
         $ref: "#/definitions/profilerType"
-  sessionResponse:
+  operatorSessionResponse:
     type: object
     properties:
       pages:

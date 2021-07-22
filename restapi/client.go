@@ -30,7 +30,6 @@ import (
 
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg"
-	"github.com/minio/console/pkg/acl"
 	"github.com/minio/console/pkg/auth"
 	"github.com/minio/console/pkg/auth/ldap"
 	xjwt "github.com/minio/console/pkg/auth/token"
@@ -309,15 +308,6 @@ func (s consoleSTSAssumeRole) IsExpired() bool {
 func NewConsoleCredentials(accessKey, secretKey, location string) (*credentials.Credentials, error) {
 	// Future authentication methods can be added under this switch statement
 	switch {
-	// authentication for Operator Console
-	case acl.GetOperatorMode():
-		{
-			creds, err := auth.GetConsoleCredentialsForOperator(secretKey)
-			if err != nil {
-				return nil, err
-			}
-			return creds, nil
-		}
 	// LDAP authentication for Console
 	case ldap.GetLDAPEnabled():
 		{

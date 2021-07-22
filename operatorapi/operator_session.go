@@ -36,16 +36,16 @@ func registerSessionHandlers(api *operations.OperatorAPI) {
 }
 
 // getSessionResponse parse the token of the current session and returns a list of allowed actions to render in the UI
-func getSessionResponse(session *models.Principal) (*models.SessionResponse, *models.Error) {
+func getSessionResponse(session *models.Principal) (*models.OperatorSessionResponse, *models.Error) {
 	// serialize output
 	if session == nil {
 		return nil, prepareError(errorGenericInvalidSession)
 	}
-	sessionResp := &models.SessionResponse{
+	sessionResp := &models.OperatorSessionResponse{
 		Pages:    acl.GetAuthorizedEndpoints(session.Actions),
 		Features: getListOfEnabledFeatures(),
-		Status:   models.SessionResponseStatusOk,
-		Operator: acl.GetOperatorMode(),
+		Status:   models.OperatorSessionResponseStatusOk,
+		Operator: true,
 	}
 	return sessionResp, nil
 }

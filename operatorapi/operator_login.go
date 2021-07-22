@@ -22,6 +22,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/minio/minio-go/v7/pkg/credentials"
+
 	"github.com/minio/console/restapi"
 
 	iampolicy "github.com/minio/pkg/iam/policy"
@@ -114,7 +116,7 @@ func getAccountPolicy(ctx context.Context, client restapi.MinioAdmin) (*iampolic
 
 // getConsoleCredentials will return consoleCredentials interface including the associated policy of the current account
 func getConsoleCredentials(ctx context.Context, accessKey, secretKey string) (*restapi.ConsoleCredentials, error) {
-	creds, err := restapi.NewConsoleCredentials(accessKey, secretKey, restapi.GetMinIORegion())
+	creds, err := newConsoleCredentials(secretKey)
 	if err != nil {
 		return nil, err
 	}
@@ -180,7 +182,7 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.E
 func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
-	loginStrategy := models.LoginDetailsLoginStrategyForm
+	loginStrategy := models.LoginDetailsLoginStrategyServiceDashAccount
 	redirectURL := ""
 
 	if oauth2.IsIdpEnabled() {
@@ -193,8 +195,6 @@ func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
 		// Validate user against IDP
 		identityProvider := &auth.IdentityProvider{Client: oauth2Client}
 		redirectURL = identityProvider.GenerateLoginURL()
-	} else if acl.GetOperatorMode() {
-		loginStrategy = models.LoginDetailsLoginStrategyServiceDashAccount
 	}
 
 	loginDetails := &models.LoginDetails{
@@ -206,12 +206,12 @@ func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
 
 func getLoginOauth2AuthResponse() (*models.LoginResponse, *models.Error) {
 
-	creds, err := restapi.NewConsoleCredentials("", getK8sSAToken(), "")
+	creds, err := newConsoleCredentials(getK8sSAToken())
 	if err != nil {
 		return nil, prepareError(err)
 	}
-	credentials := restapi.ConsoleCredentials{ConsoleCredentials: creds, Actions: []string{}}
-	token, err := login(credentials)
+	consoleCredentials := restapi.ConsoleCredentials{ConsoleCredentials: creds, Actions: []string{}}
+	token, err := login(consoleCredentials)
 	if err != nil {
 		return nil, prepareError(errInvalidCredentials, nil, err)
 	}
@@ -222,9 +222,17 @@ func getLoginOauth2AuthResponse() (*models.LoginResponse, *models.Error) {
 	return loginResponse, nil
 }
 
+func newConsoleCredentials(secretKey string) (*credentials.Credentials, error) {
+	creds, err := auth.GetConsoleCredentialsForOperator(secretKey)
+	if err != nil {
+		return nil, err
+	}
+	return creds, nil
+}
+
 // getLoginOperatorResponse validate the provided service account token against k8s api
 func getLoginOperatorResponse(lmr *models.LoginOperatorRequest) (*models.LoginResponse, *models.Error) {
-	creds, err := restapi.NewConsoleCredentials("", *lmr.Jwt, "")
+	creds, err := newConsoleCredentials(*lmr.Jwt)
 	if err != nil {
 		return nil, prepareError(err)
 	}

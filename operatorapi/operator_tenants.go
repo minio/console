@@ -1220,7 +1220,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		}
 		// If Subnet License is present in k8s secrets, copy that to the CONSOLE_SUBNET_LICENSE env variable
 		// of the console tenant
-		license, _ := getSubscriptionLicense(ctx, &k8sClient, cluster.Namespace, restapi.OperatorSubnetLicenseSecretName)
+		license, _ := getSubscriptionLicense(ctx, &k8sClient, cluster.Namespace, OperatorSubnetLicenseSecretName)
 		if license != "" {
 			consoleSecretData[restapi.ConsoleSubnetLicense] = []byte(license)
 		}
