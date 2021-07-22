@@ -17,7 +17,7 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Grid, Tab, Tabs } from "@material-ui/core";
-import { Route, Router, Switch, Redirect} from "react-router-dom";
+import { Route, Router, Switch, Redirect } from "react-router-dom";
 import {
   actionsTray,
   containerForHeader,
