@@ -19,6 +19,7 @@ import get from "lodash/get";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Grid, InputAdornment, TextField } from "@material-ui/core";
+import history from "../../../history";
 import SearchIcon from "@material-ui/icons/Search";
 import {
   actionsTray,
@@ -69,6 +70,10 @@ const StorageVolumes = ({
         .invoke("GET", `/api/v1/list-pvcs`)
         .then((res: IPVCsResponse) => {
           let volumes = get(res, "pvcs", []);
+          for (let i = 0; i < volumes.length; i++) {
+              let tenantName = volumes[i].name.split("-")[1]
+              volumes[i].volume = volumes[i].namespace+"/"+tenantName
+          }
           setRecords(volumes ? volumes : []);
           setLoading(false);
         })
@@ -83,7 +88,16 @@ const StorageVolumes = ({
     elementItem.name.includes(filter)
   );
 
-  return (
+  const tableActions = [
+      {
+          type: "view",
+          onClick: (record: any) => {
+              history.push(`/namespaces/${record.namespace}/tenants/${record.volume.split('/')[``]}`);
+              },
+      },
+  ];
+  // @ts-ignore
+    return (
     <Fragment>
       <Grid item xs={12} className={classes.actionsTray}>
         <TextField
@@ -109,7 +123,7 @@ const StorageVolumes = ({
       </Grid>
       <Grid item xs={12}>
         <TableWrapper
-          itemActions={[]}
+          itemActions={tableActions}
           columns={[
             {
               label: "Name",
@@ -142,7 +156,7 @@ const StorageVolumes = ({
           isLoading={loading}
           records={filteredRecords}
           entityName="PVCs"
-          idField="name"
+          idField="id"
           customPaperHeight={classes.tableWrapper}
         />
       </Grid>
