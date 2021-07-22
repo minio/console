@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState, useCallback } from "react";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
@@ -88,6 +88,22 @@ const AddTierConfiguration = ({
 
   // Validations
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
+  const [nameInputError, setNameInputError] = useState<string>("");
+
+  // Extra validation functions
+
+  const validName = useCallback(() => {
+    const patternAgainst = /^[A-Z0-9-_]+$/; // Only allow uppercase, numbers, dashes and underscores
+    if (patternAgainst.test(name)) {
+      setNameInputError("");
+      return true;
+    }
+
+    setNameInputError(
+      "Please verify that string is uppercase only and contains valid characters (numbers, dashes & underscores)."
+    );
+    return false;
+  }, [name]);
 
   //Effects
 
@@ -177,11 +193,7 @@ const AddTierConfiguration = ({
     if (type === "") {
       valid = false;
     }
-
-    if (type === "") {
-      valid = false;
-    }
-    if (name === "") {
+    if (name === "" || !validName()) {
       valid = false;
     }
     if (endpoint === "") {
@@ -236,6 +248,7 @@ const AddTierConfiguration = ({
     secretKey,
     storageClass,
     type,
+    validName,
   ]);
 
   useEffect(() => {
@@ -264,6 +277,11 @@ const AddTierConfiguration = ({
     setSaving(true);
   };
 
+  // Input actions
+  const updateTierName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value.toUpperCase());
+  };
+
   return (
     <Fragment>
       <form noValidate onSubmit={submitForm}>
@@ -278,11 +296,10 @@ const AddTierConfiguration = ({
                   id="name"
                   name="name"
                   label="Name"
-                  placeholder="Enter Name"
+                  placeholder="Enter Name (Eg. REMOTE-TIER)"
                   value={name}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setName(e.target.value);
-                  }}
+                  onChange={updateTierName}
+                  error={nameInputError}
                 />
                 <InputBoxWrapper
                   id="endpoint"
