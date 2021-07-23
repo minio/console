@@ -35,6 +35,15 @@ var (
 	errAccessDenied                 = errors.New("access denied")
 )
 
+// Tiering errors
+var (
+	errRemoteTierExists         = errors.New("Specified remote tier already exists")
+	errRemoteTierNotFound       = errors.New("Specified remote tier was not found")
+	errRemoteTierUppercase      = errors.New("Tier name must be in uppercase")
+	errRemoteTierBucketNotFound = errors.New("Remote tier bucket not found")
+	errRemoteInvalidCredentials = errors.New("Invalid remote tier credentials")
+)
+
 // prepareError receives an error object and parse it against k8sErrors, returns the right error code paired with a generic error message
 func prepareError(err ...error) *models.Error {
 	errorCode := int32(500)
@@ -134,9 +143,26 @@ func prepareError(err ...error) *models.Error {
 		if len(err) > 2 && err[2] != nil {
 			LogError("debugging error: %v", err[2].Error())
 		}
+		// tiering errors
+		if err[0].Error() == errRemoteTierExists.Error() {
+			errorCode = 400
+			errorMessage = err[0].Error()
+		}
+		if err[0].Error() == errRemoteTierNotFound.Error() {
+			errorCode = 400
+			errorMessage = err[0].Error()
+		}
 
-		errRemoteTierExists := errors.New("Specified remote tier already exists") //nolint
-		if errors.Is(err[0], errRemoteTierExists) {
+		if err[0].Error() == errRemoteTierUppercase.Error() {
+			errorCode = 400
+			errorMessage = err[0].Error()
+		}
+		if err[0].Error() == errRemoteTierBucketNotFound.Error() {
+			errorCode = 400
+			errorMessage = err[0].Error()
+		}
+		if err[0].Error() == errRemoteInvalidCredentials.Error() {
+			errorCode = 401
 			errorMessage = err[0].Error()
 		}
 	}
