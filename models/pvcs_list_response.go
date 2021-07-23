@@ -52,6 +52,9 @@ type PvcsListResponse struct {
 	// storage class
 	StorageClass string `json:"storageClass,omitempty"`
 
+	// tenant
+	Tenant string `json:"tenant,omitempty"`
+
 	// volume
 	Volume string `json:"volume,omitempty"`
 }
