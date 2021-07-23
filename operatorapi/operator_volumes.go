@@ -72,8 +72,8 @@ func getPVCsResponse(session *models.Principal) (*models.ListPVCsResponse, *mode
 			Status:       string(pvc.Status.Phase),
 			StorageClass: *pvc.Spec.StorageClassName,
 			Volume:       pvc.Spec.VolumeName,
+			Tenant:       pvc.Labels["v1.min.io/tenant"],
 		}
-
 		ListPVCs = append(ListPVCs, &pvcResponse)
 	}
 

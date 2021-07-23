@@ -19,6 +19,7 @@ import get from "lodash/get";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Grid, InputAdornment, TextField } from "@material-ui/core";
+import history from "../../../history";
 import SearchIcon from "@material-ui/icons/Search";
 import {
   actionsTray,
@@ -83,7 +84,16 @@ const StorageVolumes = ({
     elementItem.name.includes(filter)
   );
 
-  return (
+  const tableActions = [
+    {
+      type: "view",
+      onClick: (record: any) => {
+        history.push(`/namespaces/${record.namespace}/tenants/${record.tenant}`);
+      },
+    },
+  ];
+
+    return (
     <Fragment>
       <Grid item xs={12} className={classes.actionsTray}>
         <TextField
@@ -109,7 +119,7 @@ const StorageVolumes = ({
       </Grid>
       <Grid item xs={12}>
         <TableWrapper
-          itemActions={[]}
+          itemActions={tableActions}
           columns={[
             {
               label: "Name",
@@ -126,8 +136,9 @@ const StorageVolumes = ({
               width: 120,
             },
             {
-              label: "Volume",
-              elementKey: "volume",
+              label: "Tenant",
+              renderFullObject: true,
+              renderFunction: (record: any) => `${record.namespace}/${record.tenant}`,
             },
             {
               label: "Capacity",

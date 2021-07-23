@@ -3501,6 +3501,8 @@ definitions:
         type: string
       volume:
         type: string
+      tenant:
+        type: string
       capacity:
         type: string
       storageClass:
