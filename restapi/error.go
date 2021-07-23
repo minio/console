@@ -162,7 +162,7 @@ func prepareError(err ...error) *models.Error {
 			errorMessage = err[0].Error()
 		}
 		if err[0].Error() == errRemoteInvalidCredentials.Error() {
-			errorCode = 401
+			errorCode = 403
 			errorMessage = err[0].Error()
 		}
 	}

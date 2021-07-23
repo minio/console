@@ -48,7 +48,7 @@ func NewListAUserServiceAccounts(ctx *middleware.Context, handler ListAUserServi
 	return &ListAUserServiceAccounts{Context: ctx, Handler: handler}
 }
 
-/* ListAUserServiceAccounts swagger:route GET /users/{name}/service-accounts AdminAPI listAUserServiceAccounts
+/* ListAUserServiceAccounts swagger:route GET /user/service-accounts AdminAPI listAUserServiceAccounts
 
 returns a list of service accounts for a user
 

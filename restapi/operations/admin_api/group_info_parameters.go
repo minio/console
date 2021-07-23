@@ -26,8 +26,10 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/validate"
 )
 
 // NewGroupInfoParams creates a new GroupInfoParams object
@@ -49,7 +51,7 @@ type GroupInfoParams struct {
 
 	/*
 	  Required: true
-	  In: path
+	  In: query
 	*/
 	Name string
 }
@@ -63,8 +65,10 @@ func (o *GroupInfoParams) BindRequest(r *http.Request, route *middleware.Matched
 
 	o.HTTPRequest = r
 
-	rName, rhkName, _ := route.Params.GetOK("name")
-	if err := o.bindName(rName, rhkName, route.Formats); err != nil {
+	qs := runtime.Values(r.URL.Query())
+
+	qName, qhkName, _ := qs.GetOK("name")
+	if err := o.bindName(qName, qhkName, route.Formats); err != nil {
 		res = append(res, err)
 	}
 	if len(res) > 0 {
@@ -73,15 +77,22 @@ func (o *GroupInfoParams) BindRequest(r *http.Request, route *middleware.Matched
 	return nil
 }
 
-// bindName binds and validates parameter Name from path.
+// bindName binds and validates parameter Name from query.
 func (o *GroupInfoParams) bindName(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	if !hasKey {
+		return errors.Required("name", "query", rawData)
+	}
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
 	}
 
 	// Required: true
-	// Parameter is provided by construction from the route
+	// AllowEmptyValue: false
+
+	if err := validate.RequiredString("name", "query", raw); err != nil {
+		return err
+	}
 	o.Name = raw
 
 	return nil

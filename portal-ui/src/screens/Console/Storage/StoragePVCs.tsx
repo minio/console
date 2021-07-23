@@ -88,12 +88,14 @@ const StorageVolumes = ({
     {
       type: "view",
       onClick: (record: any) => {
-        history.push(`/namespaces/${record.namespace}/tenants/${record.tenant}`);
+        history.push(
+          `/namespaces/${record.namespace}/tenants/${record.tenant}`
+        );
       },
     },
   ];
 
-    return (
+  return (
     <Fragment>
       <Grid item xs={12} className={classes.actionsTray}>
         <TextField
@@ -138,7 +140,8 @@ const StorageVolumes = ({
             {
               label: "Tenant",
               renderFullObject: true,
-              renderFunction: (record: any) => `${record.namespace}/${record.tenant}`,
+              renderFunction: (record: any) =>
+                `${record.namespace}/${record.tenant}`,
             },
             {
               label: "Capacity",

@@ -1890,6 +1890,100 @@ func init() {
         }
       }
     },
+    "/group": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Group info",
+        "operationId": "GroupInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/group"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Update Group Members or Status",
+        "operationId": "UpdateGroup",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateGroupRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/group"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Remove group",
+        "operationId": "RemoveGroup",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/groups": {
       "get": {
         "tags": [
@@ -1944,100 +2038,6 @@ func init() {
         ],
         "responses": {
           "201": {
-            "description": "A successful response."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/groups/{name}": {
-      "get": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Group info",
-        "operationId": "GroupInfo",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/group"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Update Group Members or Status",
-        "operationId": "UpdateGroup",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/updateGroupRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/group"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Remove group",
-        "operationId": "RemoveGroup",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "204": {
             "description": "A successful response."
           },
           "default": {
@@ -2925,6 +2925,170 @@ func init() {
         }
       }
     },
+    "/user": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get User Info",
+        "operationId": "GetUserInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/user"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Update User Info",
+        "operationId": "UpdateUserInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/user"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Remove user",
+        "operationId": "RemoveUser",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/user/groups": {
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Update Groups for a user",
+        "operationId": "UpdateUserGroups",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateUserGroups"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/user"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/user/service-accounts": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "returns a list of service accounts for a user",
+        "operationId": "ListAUserServiceAccounts",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceAccounts"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/users": {
       "get": {
         "tags": [
@@ -3013,170 +3177,6 @@ func init() {
         "responses": {
           "200": {
             "description": "A successful response."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/users/{name}": {
-      "get": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Get User Info",
-        "operationId": "GetUserInfo",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/user"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Update User Info",
-        "operationId": "UpdateUserInfo",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/updateUser"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/user"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Remove user",
-        "operationId": "RemoveUser",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "A successful response."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/users/{name}/groups": {
-      "put": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Update Groups for a user",
-        "operationId": "UpdateUserGroups",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/updateUserGroups"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/user"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/users/{name}/service-accounts": {
-      "get": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "returns a list of service accounts for a user",
-        "operationId": "ListAUserServiceAccounts",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/serviceAccounts"
-            }
           },
           "default": {
             "description": "Generic error response.",
@@ -7274,6 +7274,100 @@ func init() {
         }
       }
     },
+    "/group": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Group info",
+        "operationId": "GroupInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/group"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Update Group Members or Status",
+        "operationId": "UpdateGroup",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateGroupRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/group"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Remove group",
+        "operationId": "RemoveGroup",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/groups": {
       "get": {
         "tags": [
@@ -7328,100 +7422,6 @@ func init() {
         ],
         "responses": {
           "201": {
-            "description": "A successful response."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/groups/{name}": {
-      "get": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Group info",
-        "operationId": "GroupInfo",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/group"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Update Group Members or Status",
-        "operationId": "UpdateGroup",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/updateGroupRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/group"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Remove group",
-        "operationId": "RemoveGroup",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "204": {
             "description": "A successful response."
           },
           "default": {
@@ -8309,6 +8309,170 @@ func init() {
         }
       }
     },
+    "/user": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Get User Info",
+        "operationId": "GetUserInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/user"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Update User Info",
+        "operationId": "UpdateUserInfo",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/user"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Remove user",
+        "operationId": "RemoveUser",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/user/groups": {
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Update Groups for a user",
+        "operationId": "UpdateUserGroups",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateUserGroups"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/user"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/user/service-accounts": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "returns a list of service accounts for a user",
+        "operationId": "ListAUserServiceAccounts",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceAccounts"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/users": {
       "get": {
         "tags": [
@@ -8397,170 +8561,6 @@ func init() {
         "responses": {
           "200": {
             "description": "A successful response."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/users/{name}": {
-      "get": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Get User Info",
-        "operationId": "GetUserInfo",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/user"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Update User Info",
-        "operationId": "UpdateUserInfo",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/updateUser"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/user"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Remove user",
-        "operationId": "RemoveUser",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "A successful response."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/users/{name}/groups": {
-      "put": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "Update Groups for a user",
-        "operationId": "UpdateUserGroups",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/updateUserGroups"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/user"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/error"
-            }
-          }
-        }
-      }
-    },
-    "/users/{name}/service-accounts": {
-      "get": {
-        "tags": [
-          "AdminAPI"
-        ],
-        "summary": "returns a list of service accounts for a user",
-        "operationId": "ListAUserServiceAccounts",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/serviceAccounts"
-            }
           },
           "default": {
             "description": "Generic error response.",

@@ -51,7 +51,7 @@ const DeleteGroup = ({
         }
 
         api
-          .invoke("DELETE", `/api/v1/groups/${selectedGroup}`)
+          .invoke("DELETE", `/api/v1/group?name=${encodeURI(selectedGroup)}`)
           .then(() => {
             setDeleteLoading(false);
             closeDeleteModalAndRefresh(true);

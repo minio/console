@@ -287,7 +287,7 @@ const Console = ({
     },
     {
       component: Users,
-      path: "/users/:userName",
+      path: "/users/:userName+",
     },
     {
       component: Users,

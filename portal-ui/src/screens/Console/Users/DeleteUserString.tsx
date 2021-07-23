@@ -54,7 +54,7 @@ const DeleteUserString = ({
     }
     setDeleteLoading(true);
     api
-      .invoke("DELETE", `/api/v1/users/${userName}`, {
+      .invoke("DELETE", `/api/v1/user?name=${encodeURI(userName)}`, {
         id: userName,
       })
       .then((res: UsersList) => {

@@ -75,7 +75,7 @@ const UserServiceAccountsPanel = ({
   useEffect(() => {
     if (loading) {
       api
-        .invoke("GET", `/api/v1/users/${user}/service-accounts`)
+        .invoke("GET", `/api/v1/user/service-accounts?name=${user}`)
         .then((res: string[]) => {
           const serviceAccounts = res.sort(stringSort);
 

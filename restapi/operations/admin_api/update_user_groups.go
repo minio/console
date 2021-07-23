@@ -48,7 +48,7 @@ func NewUpdateUserGroups(ctx *middleware.Context, handler UpdateUserGroupsHandle
 	return &UpdateUserGroups{Context: ctx, Handler: handler}
 }
 
-/* UpdateUserGroups swagger:route PUT /users/{name}/groups AdminAPI updateUserGroups
+/* UpdateUserGroups swagger:route PUT /user/groups AdminAPI updateUserGroups
 
 Update Groups for a user
 
