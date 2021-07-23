@@ -85,12 +85,12 @@ const StorageVolumes = ({
   );
 
   const tableActions = [
-      {
-          type: "view",
-          onClick: (record: any) => {
-              history.push(`/namespaces/${record.namespace}/tenants/${record.tenant}`);
-              },
+    {
+      type: "view",
+      onClick: (record: any) => {
+        history.push(`/namespaces/${record.namespace}/tenants/${record.tenant}`);
       },
+    },
   ];
 
     return (
@@ -138,9 +138,7 @@ const StorageVolumes = ({
             {
               label: "Tenant",
               renderFullObject: true,
-              renderFunction: (record: any) => {
-                return `${record.namespace}/${record.tenant}`
-              },
+              renderFunction: (record: any) => `${record.namespace}/${record.tenant}`,
             },
             {
               label: "Capacity",
