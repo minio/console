@@ -256,10 +256,16 @@ export interface IActiveDirectoryConfiguration {
   url: string;
   skip_tls_verification: boolean;
   server_insecure: boolean;
-  user_search_filter: string;
+  server_start_tls: boolean;
+  username_search_filter: string;
   group_Search_base_dn: string;
   group_search_filter: string;
   group_name_attribute: string;
+  user_dns: string[];
+  lookup_bind_dn: string;
+  lookup_bind_password: string;
+  user_dn_search_base_dn: string;
+  user_dn_search_filter: string;
 }
 
 export interface IStorageDistribution {

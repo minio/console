@@ -22,8 +22,8 @@ require (
 	github.com/minio/madmin-go v1.0.17
 	github.com/minio/mc v0.0.0-20210626002108-cebf3318546f
 	github.com/minio/minio-go/v7 v7.0.13-0.20210715203016-9e713532886e
-	github.com/minio/operator v0.0.0-20210616045941-65f31f5f78ae
-	github.com/minio/operator/logsearchapi v0.0.0-20210604224119-7e256f98cf90
+	github.com/minio/operator v0.0.0-20210803012017-0f43eee7fd7a
+	github.com/minio/operator/logsearchapi v0.0.0-20210803012017-0f43eee7fd7a
 	github.com/minio/pkg v1.0.8
 	github.com/minio/selfupdate v0.3.1
 	github.com/mitchellh/go-homedir v1.1.0

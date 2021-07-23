@@ -3240,8 +3240,6 @@ definitions:
         type: object
         required:
           - url
-          - username_format
-          - user_search_filter
         properties:
           url:
             type: string

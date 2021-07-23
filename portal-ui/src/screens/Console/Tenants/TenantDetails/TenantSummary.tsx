@@ -45,7 +45,7 @@ interface ITenantsSummary {
   consoleTLS: boolean;
   consoleEnabled: boolean;
   adEnabled: boolean;
-  oicEnabled: boolean;
+  oidcEnabled: boolean;
   loadingTenant: boolean;
 }
 
@@ -86,7 +86,7 @@ const TenantSummary = ({
   consoleTLS,
   consoleEnabled,
   adEnabled,
-  oicEnabled,
+  oidcEnabled,
   loadingTenant,
 }: ITenantsSummary) => {
   const [capacity, setCapacity] = useState<number>(0);
@@ -421,36 +421,28 @@ const TenantSummary = ({
                       <td></td>
                     </tr>
                     <tr>
-                      {adEnabled ||
-                        (!adEnabled && !oicEnabled && (
-                          <React.Fragment>
-                            <td className={classes.titleCol}>
-                              Active Directory:
-                            </td>
-                            <td>
-                              <Button
-                                color="primary"
-                                className={classes.anchorButton}
-                              >
-                                {adEnabled ? "Enabled" : "Disabled"}
-                              </Button>
-                            </td>
-                          </React.Fragment>
-                        ))}
-                      {oicEnabled ||
-                        (!oicEnabled && !adEnabled && (
-                          <React.Fragment>
-                            <td className={classes.titleCol}>OpenID:</td>
-                            <td>
-                              <Button
-                                color="primary"
-                                className={classes.anchorButton}
-                              >
-                                {oicEnabled ? "Enabled" : "Disabled"}
-                              </Button>
-                            </td>
-                          </React.Fragment>
-                        ))}
+                      <React.Fragment>
+                        <td className={classes.titleCol}>Active Directory:</td>
+                        <td>
+                          <Button
+                            color="primary"
+                            className={classes.anchorButton}
+                          >
+                            {adEnabled ? "Enabled" : "Disabled"}
+                          </Button>
+                        </td>
+                      </React.Fragment>
+                      <React.Fragment>
+                        <td className={classes.titleCol}>OpenID:</td>
+                        <td>
+                          <Button
+                            color="primary"
+                            className={classes.anchorButton}
+                          >
+                            {oidcEnabled ? "Enabled" : "Disabled"}
+                          </Button>
+                        </td>
+                      </React.Fragment>
                     </tr>
                   </Fragment>
                 )}
@@ -486,9 +478,9 @@ const mapState = (state: AppState) => ({
     false
   ),
   adEnabled: get(state.tenants.tenantDetails.tenantInfo, "idpAdEnabled", false),
-  oicEnabled: get(
+  oidcEnabled: get(
     state.tenants.tenantDetails.tenantInfo,
-    "idpOicEnabled",
+    "idpOidcEnabled",
     false
   ),
 });

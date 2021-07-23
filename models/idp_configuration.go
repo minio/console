@@ -227,8 +227,17 @@ type IdpConfigurationActiveDirectory struct {
 	// group search filter
 	GroupSearchFilter string `json:"group_search_filter,omitempty"`
 
+	// lookup bind dn
+	LookupBindDn string `json:"lookup_bind_dn,omitempty"`
+
+	// lookup bind password
+	LookupBindPassword string `json:"lookup_bind_password,omitempty"`
+
 	// server insecure
 	ServerInsecure bool `json:"server_insecure,omitempty"`
+
+	// server start tls
+	ServerStartTLS bool `json:"server_start_tls,omitempty"`
 
 	// skip tls verification
 	SkipTLSVerification bool `json:"skip_tls_verification,omitempty"`
@@ -237,13 +246,20 @@ type IdpConfigurationActiveDirectory struct {
 	// Required: true
 	URL *string `json:"url"`
 
-	// user search filter
-	// Required: true
-	UserSearchFilter *string `json:"user_search_filter"`
+	// user dn search base dn
+	UserDnSearchBaseDn string `json:"user_dn_search_base_dn,omitempty"`
+
+	// user dn search filter
+	UserDnSearchFilter string `json:"user_dn_search_filter,omitempty"`
+
+	// user dns
+	UserDNS []string `json:"user_dns"`
 
 	// username format
-	// Required: true
-	UsernameFormat *string `json:"username_format"`
+	UsernameFormat string `json:"username_format,omitempty"`
+
+	// username search filter
+	UsernameSearchFilter string `json:"username_search_filter,omitempty"`
 }
 
 // Validate validates this idp configuration active directory
@@ -251,14 +267,6 @@ func (m *IdpConfigurationActiveDirectory) Validate(formats strfmt.Registry) erro
 	var res []error
 
 	if err := m.validateURL(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateUserSearchFilter(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateUsernameFormat(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -271,24 +279,6 @@ func (m *IdpConfigurationActiveDirectory) Validate(formats strfmt.Registry) erro
 func (m *IdpConfigurationActiveDirectory) validateURL(formats strfmt.Registry) error {
 
 	if err := validate.Required("active_directory"+"."+"url", "body", m.URL); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *IdpConfigurationActiveDirectory) validateUserSearchFilter(formats strfmt.Registry) error {
-
-	if err := validate.Required("active_directory"+"."+"user_search_filter", "body", m.UserSearchFilter); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *IdpConfigurationActiveDirectory) validateUsernameFormat(formats strfmt.Registry) error {
-
-	if err := validate.Required("active_directory"+"."+"username_format", "body", m.UsernameFormat); err != nil {
 		return err
 	}
 
@@ -396,9 +386,23 @@ func (m *IdpConfigurationKeysItems0) UnmarshalBinary(b []byte) error {
 // swagger:model IdpConfigurationOidc
 type IdpConfigurationOidc struct {
 
+	// callback url
+	CallbackURL string `json:"callback_url,omitempty"`
+
+	// claim name
+	// Required: true
+	ClaimName *string `json:"claim_name"`
+
 	// client id
 	// Required: true
 	ClientID *string `json:"client_id"`
+
+	// configuration url
+	// Required: true
+	ConfigurationURL *string `json:"configuration_url"`
+
+	// scopes
+	Scopes string `json:"scopes,omitempty"`
 
 	// secret id
 	// Required: true
@@ -413,7 +417,15 @@ type IdpConfigurationOidc struct {
 func (m *IdpConfigurationOidc) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateClaimName(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateClientID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateConfigurationURL(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -431,9 +443,27 @@ func (m *IdpConfigurationOidc) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *IdpConfigurationOidc) validateClaimName(formats strfmt.Registry) error {
+
+	if err := validate.Required("oidc"+"."+"claim_name", "body", m.ClaimName); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *IdpConfigurationOidc) validateClientID(formats strfmt.Registry) error {
 
 	if err := validate.Required("oidc"+"."+"client_id", "body", m.ClientID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *IdpConfigurationOidc) validateConfigurationURL(formats strfmt.Registry) error {
+
+	if err := validate.Required("oidc"+"."+"configuration_url", "body", m.ConfigurationURL); err != nil {
 		return err
 	}
 
