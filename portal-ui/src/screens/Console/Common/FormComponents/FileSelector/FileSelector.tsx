@@ -40,6 +40,8 @@ interface InputBoxProps {
   value?: string;
 }
 
+const componentHeight = 48;
+
 const styles = (theme: Theme) =>
   createStyles({
     ...fieldBasic,
@@ -47,7 +49,9 @@ const styles = (theme: Theme) =>
     textBoxContainer: {
       flexGrow: 1,
       position: "relative",
-      flexDirection: "column",
+      display: "flex",
+      flexWrap: "nowrap",
+      height: componentHeight,
     },
     errorState: {
       color: "#b53b4b",
@@ -76,6 +80,7 @@ const styles = (theme: Theme) =>
     fileReselect: {
       display: "flex",
       alignItems: "center",
+      height: componentHeight,
     },
     fieldBottom: {
       borderBottom: "#9c9c9c 1px solid",
