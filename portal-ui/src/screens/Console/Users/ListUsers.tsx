@@ -155,7 +155,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
   };
 
   const viewAction = (selectionElement: any): void => {
-    console.log(encodeURI(selectionElement.accessKey));
+    
     history.push(`/users/${encodeURI(selectionElement.accessKey)}`);
   };
 
