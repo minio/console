@@ -90,7 +90,7 @@ const AddGroup = ({
       const saveRecord = () => {
         if (selectedGroup !== null) {
           api
-            .invoke("PUT", `/api/v1/groups/${groupName}`, {
+            .invoke("PUT", `/api/v1/group?name=${encodeURI(groupName)}`, {
               group: groupName,
               members: selectedUsers,
               status: groupEnabled ? "enabled" : "disabled",
@@ -135,7 +135,7 @@ const AddGroup = ({
     if (selectedGroup && loadingGroup) {
       const fetchGroupInfo = () => {
         api
-          .invoke("GET", `/api/v1/groups/${selectedGroup}`)
+          .invoke("GET", `/api/v1/group?name=${encodeURI(selectedGroup)}`)
           .then((res: MainGroupProps) => {
             setGroupEnabled(res.status === "enabled");
             setGroupName(res.name);

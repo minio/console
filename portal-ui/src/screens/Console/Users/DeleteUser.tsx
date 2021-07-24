@@ -53,9 +53,13 @@ const DeleteUser = ({
     }
     setDeleteLoading(true);
     api
-      .invoke("DELETE", `/api/v1/users/${selectedUser.accessKey}`, {
-        id: selectedUser.id,
-      })
+      .invoke(
+        "DELETE",
+        `/api/v1/user?name=${encodeURI(selectedUser.accessKey)}`,
+        {
+          id: selectedUser.id,
+        }
+      )
       .then((res: UsersList) => {
         setDeleteLoading(false);
         closeDeleteModalAndRefresh(true);

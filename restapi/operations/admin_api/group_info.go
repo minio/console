@@ -48,7 +48,7 @@ func NewGroupInfo(ctx *middleware.Context, handler GroupInfoHandler) *GroupInfo 
 	return &GroupInfo{Context: ctx, Handler: handler}
 }
 
-/* GroupInfo swagger:route GET /groups/{name} AdminAPI groupInfo
+/* GroupInfo swagger:route GET /group AdminAPI groupInfo
 
 Group info
 

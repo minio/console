@@ -1207,13 +1207,13 @@ paths:
       tags:
         - AdminAPI
 
-  /users/{name}:
+  /user:
     get:
       summary: Get User Info
       operationId: GetUserInfo
       parameters:
         - name: name
-          in: path
+          in: query
           required: true
           type: string
       responses:
@@ -1232,7 +1232,7 @@ paths:
       operationId: UpdateUserInfo
       parameters:
         - name: name
-          in: path
+          in: query
           required: true
           type: string
         - name: body
@@ -1256,7 +1256,7 @@ paths:
       operationId: RemoveUser
       parameters:
         - name: name
-          in: path
+          in: query
           required: true
           type: string
       responses:
@@ -1269,13 +1269,13 @@ paths:
       tags:
         - AdminAPI
 
-  /users/{name}/groups:
+  /user/groups:
     put:
       summary: Update Groups for a user
       operationId: UpdateUserGroups
       parameters:
         - name: name
-          in: path
+          in: query
           required: true
           type: string
         - name: body
@@ -1295,13 +1295,13 @@ paths:
       tags:
         - AdminAPI
 
-  /users/{name}/service-accounts:
+  /user/service-accounts:
     get:
       summary: returns a list of service accounts for a user
       operationId: ListAUserServiceAccounts
       parameters:
         - name: name
-          in: path
+          in: query
           required: true
           type: string
       responses:
@@ -1381,13 +1381,13 @@ paths:
       tags:
         - AdminAPI
 
-  /groups/{name}:
+  /group:
     get:
       summary: Group info
       operationId: GroupInfo
       parameters:
         - name: name
-          in: path
+          in: query
           required: true
           type: string
       responses:
@@ -1406,7 +1406,7 @@ paths:
       operationId: RemoveGroup
       parameters:
         - name: name
-          in: path
+          in: query
           required: true
           type: string
       responses:
@@ -1423,7 +1423,7 @@ paths:
       operationId: UpdateGroup
       parameters:
         - name: name
-          in: path
+          in: query
           required: true
           type: string
         - name: body

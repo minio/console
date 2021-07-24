@@ -71,7 +71,7 @@ const AddUser = ({
     }
 
     api
-      .invoke("GET", `/api/v1/users/${selectedUser.accessKey}`)
+      .invoke("GET", `/api/v1/user?name=${encodeURI(selectedUser.accessKey)}`)
       .then((res) => {
         setAddLoading(false);
         setAccessKey(res.accessKey);
@@ -110,10 +110,14 @@ const AddUser = ({
     setAddLoading(true);
     if (selectedUser !== null) {
       api
-        .invoke("PUT", `/api/v1/users/${selectedUser.accessKey}`, {
-          status: enabled ? "enabled" : "disabled",
-          groups: selectedGroups,
-        })
+        .invoke(
+          "PUT",
+          `/api/v1/user?name=${encodeURI(selectedUser.accessKey)}`,
+          {
+            status: enabled ? "enabled" : "disabled",
+            groups: selectedGroups,
+          }
+        )
         .then((res) => {
           setAddLoading(false);
           closeModalAndRefresh();

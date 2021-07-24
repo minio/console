@@ -24,7 +24,7 @@ import (
 var (
 	configuration               = "/settings"
 	users                       = "/users"
-	usersDetail                 = "/users/:userName"
+	usersDetail                 = "/users/:userName+"
 	groups                      = "/groups"
 	iamPolicies                 = "/policies"
 	policiesDetail              = "/policies/:policyName"

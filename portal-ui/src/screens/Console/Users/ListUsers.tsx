@@ -36,7 +36,6 @@ import AddToGroup from "./BulkAddToGroup";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import SetPolicy from "../Policies/SetPolicy";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import history from "../../../history";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -77,10 +76,11 @@ const styles = (theme: Theme) =>
 
 interface IUsersProps {
   classes: any;
+  history: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
 }
 
-const ListUsers = ({ classes, setErrorSnackMessage }: IUsersProps) => {
+const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
   const [records, setRecords] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
@@ -155,7 +155,8 @@ const ListUsers = ({ classes, setErrorSnackMessage }: IUsersProps) => {
   };
 
   const viewAction = (selectionElement: any): void => {
-    history.push(`/users/${selectionElement.accessKey}`);
+    
+    history.push(`/users/${encodeURI(selectionElement.accessKey)}`);
   };
 
   const deleteAction = (selectionElement: any): void => {

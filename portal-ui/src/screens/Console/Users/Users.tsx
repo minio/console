@@ -35,7 +35,7 @@ const Users = () => {
   return (
     <Router history={history}>
       <Switch>
-        <Route path="/users/:userName" component={UserDetails} />
+        <Route path="/users/:userName+" component={UserDetails} />
         <Route path="/" component={ListUsers} />
         <Route component={NotFoundPage} />
       </Switch>
