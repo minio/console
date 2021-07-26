@@ -38,6 +38,9 @@ var (
 	errLicenseNotFound                    = errors.New("license not found")
 	errAvoidSelfAccountDelete             = errors.New("logged in user cannot be deleted by itself")
 	errAccessDenied                       = errors.New("access denied")
+	errTooFewNodes                        = errors.New("at least 4 nodes are required in cluster")
+	errTooFewSchedulableNodes             = errors.New("at least 4 schedulable nodes are required in cluster")
+	errFewerThanFourNodes                 = errors.New("at least 4 nodes are required in request")
 )
 
 // prepareError receives an error object and parse it against k8sErrors, returns the right error code paired with a generic error message
@@ -155,6 +158,18 @@ func prepareError(err ...error) *models.Error {
 		errRemoteTierExists := errors.New("Specified remote tier already exists") //nolint
 		if errors.Is(err[0], errRemoteTierExists) {
 			errorMessage = err[0].Error()
+		}
+		if errors.Is(err[0], errTooFewNodes) {
+			errorCode = 507
+			errorMessage = errTooFewNodes.Error()
+		}
+		if errors.Is(err[0], errTooFewSchedulableNodes) {
+			errorCode = 507
+			errorMessage = errTooFewSchedulableNodes.Error()
+		}
+		if errors.Is(err[0], errFewerThanFourNodes) {
+			errorCode = 507
+			errorMessage = errFewerThanFourNodes.Error()
 		}
 	}
 	return &models.Error{Code: errorCode, Message: swag.String(errorMessage), DetailedMessage: swag.String(err[0].Error())}

@@ -56,14 +56,26 @@ func registerNodesHandlers(api *operations.OperatorAPI) {
 
 // getMaxAllocatableMemory get max allocatable memory given a desired number of nodes
 func getMaxAllocatableMemory(ctx context.Context, clientset v1.CoreV1Interface, numNodes int32) (*models.MaxAllocatableMemResponse, error) {
-	if numNodes == 0 {
-		return nil, errors.New("error NumNodes must be greated than 0")
+	if numNodes < 4 {
+		return nil, errors.New("error NumNodes must be at least 4")
 	}
 
 	// get all nodes from cluster
 	nodes, err := clientset.Nodes().List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return nil, err
+	}
+	if len(nodes.Items) < int(numNodes) {
+		return nil, errTooFewNodes
+	}
+	activeNodes := 0
+	for i := 0; i < len(nodes.Items); i++ {
+		if !nodes.Items[i].Spec.Unschedulable {
+			activeNodes++
+		}
+	}
+	if activeNodes < int(numNodes) {
+		return nil, errTooFewSchedulableNodes
 	}
 
 	availableMemSizes := []int64{}
