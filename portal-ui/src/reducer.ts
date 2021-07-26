@@ -42,10 +42,12 @@ const initialState: SystemState = {
   loadingProgress: 100,
   snackBar: {
     message: "",
+    detailedErrorMsg: "",
     type: "message",
   },
   modalSnackBar: {
     message: "",
+    detailedErrorMsg: "",
     type: "message",
   },
   serverDiagnosticStatus: "",

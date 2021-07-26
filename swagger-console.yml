@@ -2294,11 +2294,14 @@ definitions:
     type: object
     required:
       - message
+      - detailedMessage
     properties:
       code:
         type: integer
         format: int32
       message:
+        type: string
+      detailedMessage:
         type: string
   user:
     type: object

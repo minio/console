@@ -157,7 +157,7 @@ func prepareError(err ...error) *models.Error {
 			errorMessage = err[0].Error()
 		}
 	}
-	return &models.Error{Code: errorCode, Message: swag.String(errorMessage)}
+	return &models.Error{Code: errorCode, Message: swag.String(errorMessage), DetailedMessage: swag.String(err[0].Error())}
 }
 
 func getFrame(skipFrames int) runtime.Frame {

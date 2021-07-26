@@ -2220,12 +2220,16 @@ func init() {
     "error": {
       "type": "object",
       "required": [
-        "message"
+        "message",
+        "detailedMessage"
       ],
       "properties": {
         "code": {
           "type": "integer",
           "format": "int32"
+        },
+        "detailedMessage": {
+          "type": "string"
         },
         "message": {
           "type": "string"
@@ -7800,12 +7804,16 @@ func init() {
     "error": {
       "type": "object",
       "required": [
-        "message"
+        "message",
+        "detailedMessage"
       ],
       "properties": {
         "code": {
           "type": "integer",
           "format": "int32"
+        },
+        "detailedMessage": {
+          "type": "string"
         },
         "message": {
           "type": "string"
