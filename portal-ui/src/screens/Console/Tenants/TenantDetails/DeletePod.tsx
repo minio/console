@@ -68,7 +68,10 @@ const DeletePod = ({
 
   const removeRecord = () => {
     if (retypePod !== selectedPod.name) {
-      setErrorSnackMessage("Tenant name is not correct");
+      setErrorSnackMessage({
+        errorMessage: "Tenant name is incorrect",
+        detailedError: "",
+      });
       return;
     }
     setDeleteLoading(true);

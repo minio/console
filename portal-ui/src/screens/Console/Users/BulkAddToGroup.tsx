@@ -79,9 +79,10 @@ const BulkAddToGroup = ({
           });
       } else {
         isSaving(false);
-        setModalErrorSnackMessage(
-          "You need to select at least one group to assign"
-        );
+        setModalErrorSnackMessage({
+          errorMessage: "You need to select at least one group to assign",
+          detailedError: "",
+        });
       }
     }
   }, [

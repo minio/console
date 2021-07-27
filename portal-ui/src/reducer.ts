@@ -93,22 +93,38 @@ export function systemReducer(
     case SET_SNACK_BAR_MESSAGE:
       return {
         ...state,
-        snackBar: { message: action.message, type: "message" },
+        snackBar: {
+          message: action.message,
+          detailedErrorMsg: "",
+          type: "message",
+        },
       };
     case SET_ERROR_SNACK_MESSAGE:
       return {
         ...state,
-        snackBar: { message: action.message, type: "error" },
+        snackBar: {
+          message: action.message.errorMessage,
+          detailedErrorMsg: action.message.detailedError,
+          type: "error",
+        },
       };
     case SET_SNACK_MODAL_MESSAGE:
       return {
         ...state,
-        modalSnackBar: { message: action.message, type: "message" },
+        modalSnackBar: {
+          message: action.message,
+          detailedErrorMsg: "",
+          type: "message",
+        },
       };
     case SET_MODAL_ERROR_MESSAGE:
       return {
         ...state,
-        modalSnackBar: { message: action.message, type: "error" },
+        modalSnackBar: {
+          message: action.message.errorMessage,
+          detailedErrorMsg: action.message.detailedError,
+          type: "error",
+        },
       };
     case SET_SERVER_DIAG_STAT:
       return {

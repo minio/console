@@ -14,17 +14,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState } from "react";
 import { connect } from "react-redux";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import { Grid, LinearProgress } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import ErrorLogs from "./ErrorLogs/ErrorLogs";
 import LogsSearchMain from "./LogSearch/LogsSearchMain";
-import api from "../../../common/api";
 import { AppState } from "../../../store";
 
 interface ILogsMainProps {

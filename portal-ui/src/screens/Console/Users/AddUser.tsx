@@ -99,7 +99,10 @@ const AddUser = ({
     event.preventDefault();
 
     if (secretKey.length < 8) {
-      setModalErrorSnackMessage("Passwords must be at least 8 characters long");
+      setModalErrorSnackMessage({
+        errorMessage: "Passwords must be at least 8 characters long",
+        detailedError: "",
+      });
       setAddLoading(false);
       return;
     }

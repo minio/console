@@ -99,7 +99,10 @@ const PodsSummary = ({ match, history, loadingTenant }: IPodsSummary) => {
           setLoadingPods(false);
         })
         .catch((err) => {
-          setErrorSnackMessage("Error loading pods");
+          setErrorSnackMessage({
+            errorMessage: "Error loading pods",
+            detailedError: err.detailedError,
+          });
         });
     }
   }, [loadingPods, tenantName, tenantNamespace]);

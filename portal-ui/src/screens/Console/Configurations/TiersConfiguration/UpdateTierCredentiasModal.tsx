@@ -115,9 +115,10 @@ const UpdateTierCredentialsModal = ({
           setModalErrorSnackMessage(err);
         });
     } else {
-      setModalErrorSnackMessage(
-        "There was an error retrieving tier information"
-      );
+      setModalErrorSnackMessage({
+        errorMessage: "There was an error retrieving tier information",
+        detailedError: "",
+      });
     }
   };
 
