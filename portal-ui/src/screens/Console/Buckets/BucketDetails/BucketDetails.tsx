@@ -15,12 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Redirect, Route, Router, Switch } from "react-router-dom";
+import { Link, Redirect, Route, Router, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
 import api from "../../../../common/api";
 import { HasPermissionResponse } from "../types";
 import {
@@ -39,6 +37,9 @@ import BucketSummaryPanel from "./BucketSummaryPanel";
 import BucketEventsPanel from "./BucketEventsPanel";
 import BucketReplicationPanel from "./BucketReplicationPanel";
 import BucketLifecyclePanel from "./BucketLifecyclePanel";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -132,6 +133,10 @@ const styles = (theme: Theme) =>
     titleCol: {
       fontWeight: "bold",
     },
+    breadcrumLink: {
+      textDecoration: "none",
+      color: "black",
+    },
     ...searchField,
     ...actionsTray,
     actionsTray: {
@@ -151,13 +156,6 @@ interface IBucketDetailsProps {
   distributedSetup: boolean;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   setBucketDetailsTab: typeof setBucketDetailsTab;
-}
-
-function a11yProps(index: any) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
 }
 
 const BucketDetails = ({
@@ -252,75 +250,105 @@ const BucketDetails = ({
 
   return (
     <Fragment>
-      <PageHeader label={`Bucket > ${match.params["bucketName"]}`} />
+      <PageHeader
+        label={
+          <Fragment>
+            <Link to={"/buckets"} className={classes.breadcrumLink}>
+              Buckets
+            </Link>
+            {` > ${bucketName}`}
+          </Fragment>
+        }
+      />
       <Grid container className={classes.container}>
-        <Grid item xs={12}>
-          <Tabs
-            value={selectedTab !== "" ? selectedTab : "summary"}
-            onChange={(e: React.ChangeEvent<{}>, newValue: string) => {
-              changeRoute(newValue);
-            }}
-            indicatorColor="primary"
-            textColor="primary"
-            aria-label="cluster-tabs"
-            variant="scrollable"
-            scrollButtons="auto"
-          >
-            <Tab value="summary" label="Summary" {...a11yProps(0)} />
-            <Tab value="events" label="Events" {...a11yProps(1)} />
-            <Tab
-              value="replication"
-              label="Replication"
-              {...a11yProps(2)}
-              disabled={!canGetReplication || !distributedSetup}
-            />
-            <Tab
-              value="lifecycle"
-              label="Lifecycle"
-              {...a11yProps(3)}
-              disabled={!distributedSetup}
-            />
-            <Tab value="access" label="Access" {...a11yProps(4)} />
-          </Tabs>
-        </Grid>
-        <Grid item xs={12}>
-          <Grid item xs={12} className={classes.routerContainer}>
-            <Router history={history}>
-              <Switch>
-                <Route
-                  path="/buckets/:bucketName/summary"
-                  component={BucketSummaryPanel}
-                />
-                <Route
-                  path="/buckets/:bucketName/events"
-                  component={BucketEventsPanel}
-                />
-                {distributedSetup && (
-                  <Route
-                    path="/buckets/:bucketName/replication"
-                    component={BucketReplicationPanel}
-                  />
-                )}
-                {distributedSetup && (
-                  <Route
-                    path="/buckets/:bucketName/lifecycle"
-                    component={BucketLifecyclePanel}
-                  />
-                )}
+        <Grid item xs={2}>
+          <List component="nav" dense={true}>
+            <ListItem
+              className={classes.listItem}
+              button
+              onClick={() => {
+                changeRoute("summary");
+              }}
+            >
+              <ListItemText primary="Summary" />
+            </ListItem>
+            <ListItem
+              className={classes.listItem}
+              button
+              onClick={() => {
+                changeRoute("events");
+              }}
+            >
+              <ListItemText primary="Events" />
+            </ListItem>
+            {canGetReplication && (
+              <ListItem
+                className={classes.listItem}
+                button
+                onClick={() => {
+                  changeRoute("replication");
+                }}
+              >
+                <ListItemText primary="Replication" />
+              </ListItem>
+            )}
 
+            <ListItem
+              className={classes.listItem}
+              button
+              onClick={() => {
+                changeRoute("lifecycle");
+              }}
+            >
+              <ListItemText primary="Lifecycle" />
+            </ListItem>
+            <ListItem
+              className={classes.listItem}
+              button
+              onClick={() => {
+                changeRoute("access");
+              }}
+            >
+              <ListItemText primary="Audit Access" />
+            </ListItem>
+          </List>
+        </Grid>
+        <Grid item xs={10}>
+          <Router history={history}>
+            <Switch>
+              <Route
+                path="/buckets/:bucketName/summary"
+                component={BucketSummaryPanel}
+              />
+              <Route
+                path="/buckets/:bucketName/events"
+                component={BucketEventsPanel}
+              />
+              {distributedSetup && (
                 <Route
-                  path="/buckets/:bucketName/access"
-                  component={AccessDetailsPanel}
+                  path="/buckets/:bucketName/replication"
+                  component={BucketReplicationPanel}
                 />
+              )}
+              {distributedSetup && (
                 <Route
-                  path="/buckets/:bucketName"
-                  component={() => (
-                    <Redirect to={`/buckets/${bucketName}/summary`} />
-                  )}
+                  path="/buckets/:bucketName/lifecycle"
+                  component={BucketLifecyclePanel}
                 />
-              </Switch>
-            </Router>
-          </Grid>
+              )}
+
+              <Route
+                path="/buckets/:bucketName/access"
+                component={AccessDetailsPanel}
+              />
+              <Route
+                path="/buckets/:bucketName"
+                component={() => (
+                  <Redirect to={`/buckets/${bucketName}/summary`} />
+                )}
+              />
+            </Switch>
+          </Router>
         </Grid>
       </Grid>
     </Fragment>

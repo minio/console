@@ -127,7 +127,7 @@ export const radioIcons = {
 
 export const containerForHeader = (bottomSpacing: any) => ({
   container: {
-    padding: "110px 33px 0",
+    padding: "100px 8px 0",
     "& h6": {
       color: "#777777",
       fontSize: 14,

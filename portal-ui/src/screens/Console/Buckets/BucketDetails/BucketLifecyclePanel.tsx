@@ -14,15 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, TextField } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import get from "lodash/get";
 import * as reactMoment from "react-moment";
 import Grid from "@material-ui/core/Grid";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
 import { LifeCycleItem } from "../types";
 import { CreateIcon } from "../../../../icons";
 import {
@@ -40,10 +38,6 @@ const styles = (theme: Theme) =>
   createStyles({
     ...searchField,
     ...actionsTray,
-    actionsTray: {
-      ...actionsTray.actionsTray,
-      padding: "15px 0 0",
-    },
   });
 
 interface IBucketLifecyclePanelProps {
@@ -61,7 +55,6 @@ const BucketLifecyclePanel = ({
   const [lifecycleRecords, setLifecycleRecords] = useState<LifeCycleItem[]>([]);
   const [addLifecycleOpen, setAddLifecycleOpen] = useState<boolean>(false);
   const [editLifecycleOpen, setEditLifecycleOpen] = useState<boolean>(false);
-  const [filter, setFilter] = useState<string>("");
 
   const bucketName = match.params["bucketName"];
 
@@ -154,13 +147,6 @@ const BucketLifecyclePanel = ({
     },
   ];
 
-  const filteredRecords = lifecycleRecords.filter((item: LifeCycleItem) => {
-    if (item.id.toLocaleLowerCase().includes(filter.toLowerCase())) {
-      return true;
-    }
-    return false;
-  });
-
   return (
     <Fragment>
       {editLifecycleOpen && (
@@ -182,23 +168,7 @@ const BucketLifecyclePanel = ({
       )}
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
-            placeholder="Filter"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            onChange={(event) => {
-              setFilter(event.target.value);
-            }}
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
+          <h1 style={{ padding: "0px", margin: "0px" }}>Lifecycle Rules</h1>
           <Button
             variant="contained"
             color="primary"
@@ -219,7 +189,7 @@ const BucketLifecyclePanel = ({
             itemActions={[]}
             columns={lifecycleColumns}
             isLoading={loadingLifecycle}
-            records={filteredRecords}
+            records={lifecycleRecords}
             entityName="Lifecycle"
             customEmptyMessage="There are no Lifecycle rules yet"
             idField="id"

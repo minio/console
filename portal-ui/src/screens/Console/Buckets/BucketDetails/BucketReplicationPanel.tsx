@@ -14,13 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, IconButton, TextField } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
 import { CreateIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../actions";
 import {
@@ -38,7 +36,6 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import AddReplicationModal from "./AddReplicationModal";
 import DeleteReplicationRule from "./DeleteReplicationRule";
 import { AppState } from "../../../../store";
-import RefreshIcon from "@material-ui/icons/Refresh";
 
 interface IBucketReplicationProps {
   classes: any;
@@ -52,7 +49,6 @@ const styles = (theme: Theme) =>
     ...actionsTray,
     actionsTray: {
       ...actionsTray.actionsTray,
-      padding: "15px 0 0",
     },
   });
 
@@ -72,7 +68,6 @@ const BucketReplicationPanel = ({
     useState<boolean>(false);
   const [openSetReplication, setOpenSetReplication] = useState<boolean>(false);
   const [selectedRRule, setSelectedRRule] = useState<string>("");
-  const [filter, setFilter] = useState<string>("");
 
   const bucketName = match.params["bucketName"];
 
@@ -186,28 +181,6 @@ const BucketReplicationPanel = ({
     },
   ];
 
-  const filteredRecords = replicationRules.filter(
-    (item: BucketReplicationRule) => {
-      if (filter !== "") {
-        if (
-          (item.prefix &&
-            item.prefix.toLowerCase().includes(filter.toLowerCase())) ||
-          (item.tags &&
-            item.tags.toLowerCase().includes(filter.toLowerCase())) ||
-          (item.destination &&
-            item.destination.bucket
-              .toLowerCase()
-              .includes(filter.toLowerCase()))
-        ) {
-          return true;
-        }
-
-        return false;
-      }
-      return true;
-    }
-  );
-
   return (
     <Fragment>
       {openSetReplication && (
@@ -228,33 +201,8 @@ const BucketReplicationPanel = ({
       )}
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
-            placeholder="Filter"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            onChange={(event) => {
-              setFilter(event.target.value);
-            }}
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <IconButton
-            color="primary"
-            aria-label="Refresh Replication Rules"
-            component="span"
-            onClick={() => {
-              setLoadingReplication(true);
-            }}
-          >
-            <RefreshIcon />
-          </IconButton>
+          <h1 style={{ padding: "0px", margin: "0px" }}>Replication</h1>
+
           {canPutReplication && (
             <Button
               variant="contained"
@@ -297,7 +245,7 @@ const BucketReplicationPanel = ({
               { label: "Status", elementKey: "status" },
             ]}
             isLoading={loadingReplication}
-            records={filteredRecords}
+            records={replicationRules}
             entityName="Replication Rules"
             idField="id"
           />

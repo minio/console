@@ -118,22 +118,21 @@ const AccessDetails = ({
 
   return (
     <Fragment>
-      <br />
+      <Tabs
+        value={curTab}
+        onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
+          setCurTab(newValue);
+        }}
+        indicatorColor="primary"
+        textColor="primary"
+        aria-label="cluster-tabs"
+        variant="scrollable"
+        scrollButtons="auto"
+      >
+        <Tab label="Policies" {...a11yProps(0)} />
+        {usersEnabled && <Tab label="Users" {...a11yProps(1)} />}
+      </Tabs>
       <Paper>
-        <Tabs
-          value={curTab}
-          onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
-            setCurTab(newValue);
-          }}
-          indicatorColor="primary"
-          textColor="primary"
-          aria-label="cluster-tabs"
-          variant="scrollable"
-          scrollButtons="auto"
-        >
-          <Tab label="Policies" {...a11yProps(0)} />
-          {usersEnabled && <Tab label="Users" {...a11yProps(1)} />}
-        </Tabs>
         <TabPanel index={0} value={curTab}>
           <TableWrapper
             noBackground={true}

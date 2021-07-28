@@ -17,10 +17,7 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { TextField } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
 import {
   actionsTray,
   searchField,
@@ -58,7 +55,6 @@ const UserServiceAccountsPanel = ({
 }: IUserServiceAccountsProps) => {
   const [records, setRecords] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [filter, setFilter] = useState<string>("");
   const [addScreenOpen, setAddScreenOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedServiceAccount, setSelectedServiceAccount] = useState<
@@ -131,10 +127,6 @@ const UserServiceAccountsPanel = ({
     { type: "delete", onClick: confirmDeleteServiceAccount },
   ];
 
-  const filteredRecords = records.filter((elementItem) =>
-    elementItem.toLowerCase().includes(filter.toLowerCase())
-  );
-
   return (
     <React.Fragment>
       {addScreenOpen && (
@@ -164,40 +156,16 @@ const UserServiceAccountsPanel = ({
           entity="Service Account"
         />
       )}
-      <Grid container>
-        <Grid item xs={12} className={classes.container}>
-          <Grid item xs={12} className={classes.actionsTray}>
-            <TextField
-              placeholder="Search Service Accounts"
-              className={classes.searchField}
-              id="search-resource"
-              label=""
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-              onChange={(e) => {
-                setFilter(e.target.value);
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12}>
-            <TableWrapper
-              isLoading={loading}
-              records={filteredRecords}
-              entityName={"Service Accounts"}
-              idField={""}
-              columns={[{ label: "Service Account", elementKey: "" }]}
-              itemActions={tableActions}
-            />
-          </Grid>
+      <Grid container className={classes.container}>
+        <Grid item xs={12}>
+          <TableWrapper
+            isLoading={loading}
+            records={records}
+            entityName={"Service Accounts"}
+            idField={""}
+            columns={[{ label: "Service Account", elementKey: "" }]}
+            itemActions={tableActions}
+          />
         </Grid>
       </Grid>
     </React.Fragment>
