@@ -29,8 +29,9 @@ import {
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../../../actions";
-import api from "../../../../../../common/api";
 import { AppState } from "../../../../../../store";
+import { ErrorResponseHandler } from "../../../../../../common/types";
+import api from "../../../../../../common/api";
 
 interface IDeleteTagModal {
   deleteOpen: boolean;
@@ -89,7 +90,7 @@ const DeleteTagModal = ({
         setDeleteSending(false);
         onCloseAndUpdate(true);
       })
-      .catch((error) => {
+      .catch((error: ErrorResponseHandler) => {
         setErrorSnackMessage(error);
         setDeleteSending(false);
       });

@@ -35,6 +35,7 @@ import {
   settingsCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { servicesList } from "./utils";
+import { ErrorResponseHandler } from "../../../../common/types";
 import ConfMySql from "../CustomForms/ConfMySql";
 import ConfTargetGeneric from "../ConfTargetGeneric";
 
@@ -98,7 +99,7 @@ const AddNotificationEndpoint = ({
           serverNeedsRestart(true);
           saveAndRefresh();
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setSaving(false);
           setErrorSnackMessage(err);
         });

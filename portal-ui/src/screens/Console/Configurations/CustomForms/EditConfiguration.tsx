@@ -29,6 +29,7 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import { fieldsConfigurations, removeEmptyFields } from "../utils";
 import { IConfigurationElement, IElementValue } from "../types";
+import { ErrorResponseHandler } from "../../../../common/types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -84,7 +85,7 @@ const EditConfiguration = ({
           const keyVals = get(res, "key_values", []);
           setConfigValues(keyVals);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setLoadingConfig(false);
           setErrorSnackMessage(err);
         });
@@ -109,7 +110,7 @@ const EditConfiguration = ({
 
           closeModalAndRefresh();
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setSaving(false);
           setErrorSnackMessage(err);
         });

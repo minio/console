@@ -14,26 +14,27 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
+import { connect } from "react-redux";
+import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { CircularProgress, LinearProgress } from "@material-ui/core";
 import clsx from "clsx";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import Moment from "react-moment";
 import Typography from "@material-ui/core/Typography";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import PageHeader from "../Common/PageHeader/PageHeader";
+import { LicenseInfo } from "./types";
+import { AppState } from "../../../store";
+import { niceBytes } from "../../../common/utils";
+import { ErrorResponseHandler } from "../../../common/types";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import { planDetails, planItems, planButtons } from "./utils";
+import PageHeader from "../Common/PageHeader/PageHeader";
 import ActivationModal from "./ActivationModal";
 import LicenseModal from "./LicenseModal";
 import api from "../../../common/api";
-import { LicenseInfo } from "./types";
-import { CircularProgress, LinearProgress } from "@material-ui/core";
-import { AppState } from "../../../store";
-import { connect } from "react-redux";
-import { niceBytes } from "../../../common/utils";
-import Moment from "react-moment";
 
 const mapState = (state: AppState) => ({
   operatorMode: state.system.operatorMode,
@@ -300,7 +301,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
         }
         setLoadingLicenseInfo(false);
       })
-      .catch((err: any) => {
+      .catch(() => {
         setLoadingLicenseInfo(false);
       });
   };
@@ -321,7 +322,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
         }
         setLoadingRefreshLicense(false);
       })
-      .catch((err: any) => {
+      .catch((err: ErrorResponseHandler) => {
         setLoadingRefreshLicense(false);
       });
   };
@@ -349,14 +350,14 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
     );
   }
   return (
-    <React.Fragment>
-      <React.Fragment>
+    <Fragment>
+      <Fragment>
         <PageHeader label="License" />
         <Grid container>
           <Grid container xs={12} className={classes.container}>
             <Grid item xs={12} lg={8} className={`${classes.licenseContainer}`}>
               {licenseInfo ? (
-                <React.Fragment>
+                <Fragment>
                   <Grid container className={classes.licenseInfo}>
                     <Grid item xs={6}>
                       <Typography
@@ -469,9 +470,9 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                       alt="verified"
                     />
                   </Grid>
-                </React.Fragment>
+                </Fragment>
               ) : (
-                <React.Fragment>
+                <Fragment>
                   <LicenseModal
                     open={licenseModal}
                     closeModal={() => setLicenseModal(false)}
@@ -495,12 +496,12 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                       </Typography>
                     </a>
                   </Grid>
-                </React.Fragment>
+                </Fragment>
               )}
             </Grid>
             <Grid item xs={12} lg={4} className={`${classes.paper}`}>
               {licenseInfo ? (
-                <React.Fragment>
+                <Fragment>
                   <Typography
                     component="h2"
                     variant="h6"
@@ -526,7 +527,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                     Login to SUBNET
                   </Button>
                   {operatorMode && (
-                    <React.Fragment>
+                    <Fragment>
                       {" "}
                       <br />
                       <br />
@@ -545,11 +546,11 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                           className={classes.loadingLoginStrategy}
                         />
                       )}
-                    </React.Fragment>
+                    </Fragment>
                   )}
-                </React.Fragment>
+                </Fragment>
               ) : (
-                <React.Fragment>
+                <Fragment>
                   <Typography
                     component="h2"
                     variant="h6"
@@ -588,7 +589,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                   >
                     Trademark Policy
                   </a>
-                </React.Fragment>
+                </Fragment>
               )}
             </Grid>
           </Grid>
@@ -836,8 +837,8 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
             </Paper>
           </Grid>
         </Grid>
-      </React.Fragment>
-    </React.Fragment>
+      </Fragment>
+    </Fragment>
   );
 };
 

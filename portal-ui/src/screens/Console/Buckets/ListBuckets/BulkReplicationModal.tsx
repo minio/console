@@ -37,6 +37,7 @@ import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/For
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { SelectorTypes } from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import { getBytes, k8sfactorForDropdown } from "../../../../common/utils";
+import { ErrorResponseHandler } from "../../../../common/types";
 
 interface IBulkReplicationModal {
   open: boolean;
@@ -172,7 +173,7 @@ const AddBulkReplicationModal = ({
           }, 500);
         }
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
         setModalErrorSnackMessage(err);
       });
@@ -205,7 +206,7 @@ const AddBulkReplicationModal = ({
         wizardPageJump("++");
         setExternalLoading(false);
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setExternalLoading(false);
         setModalErrorSnackMessage(err);
       });

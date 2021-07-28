@@ -26,6 +26,7 @@ import {
   fieldBasic,
   modalBasic,
 } from "../Common/FormComponents/common/styleLibrary";
+import { ErrorResponseHandler } from "../../../common/types";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
@@ -78,7 +79,7 @@ const AddPolicy = ({
 
         closeModalAndRefresh(true);
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
         setModalErrorSnackMessage(err);
       });

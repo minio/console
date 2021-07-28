@@ -22,6 +22,7 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import { User } from "./types";
 import { setModalErrorSnackMessage } from "../../../actions";
+import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import GroupsSelectors from "./GroupsSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
@@ -79,7 +80,7 @@ const AddUser = ({
         setCurrentGroups(res.memberOf || []);
         setEnabled(res.status === "enabled");
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
         setModalErrorSnackMessage(err);
       });
@@ -125,7 +126,7 @@ const AddUser = ({
           setAddLoading(false);
           closeModalAndRefresh();
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setAddLoading(false);
           setModalErrorSnackMessage(err);
         });
@@ -140,7 +141,7 @@ const AddUser = ({
           setAddLoading(false);
           closeModalAndRefresh();
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setAddLoading(false);
           setModalErrorSnackMessage(err);
         });

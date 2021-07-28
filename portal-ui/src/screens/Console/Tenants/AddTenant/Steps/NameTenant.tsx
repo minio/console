@@ -41,6 +41,7 @@ import {
 import { AppState } from "../../../../../store";
 import { commonFormValidation } from "../../../../../utils/validationFunctions";
 import { clearValidationError } from "../../utils";
+import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
@@ -145,13 +146,13 @@ const NameTenant = ({
             }
             setLoadingNamespaceInfo(false);
           })
-          .catch((err: any) => {
+          .catch((err: ErrorResponseHandler) => {
             setLoadingNamespaceInfo(false);
             setShowCreateButton(true);
             console.error("Namespace error: ", err);
           });
       })
-      .catch((err: any) => {
+      .catch((err: ErrorResponseHandler) => {
         setModalErrorSnackMessage({
           errorMessage: "Error validating if namespace already has tenants",
           detailedError: err.detailedError,

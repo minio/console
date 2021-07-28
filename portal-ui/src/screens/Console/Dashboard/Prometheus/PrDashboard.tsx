@@ -21,7 +21,6 @@ import Grid from "@material-ui/core/Grid";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
 import { actionsTray } from "../../Common/FormComponents/common/styleLibrary";
-
 import { AutoSizer } from "react-virtualized";
 import { IDashboardPanel, widgetType } from "./types";
 import {
@@ -30,7 +29,8 @@ import {
   panelsConfiguration,
   saveDashboardDistribution,
 } from "./utils";
-
+import { TabPanel } from "../../../shared/tabs";
+import { ErrorResponseHandler } from "../../../../common/types";
 import { setErrorSnackMessage } from "../../../../actions";
 import SingleValueWidget from "./Widgets/SingleValueWidget";
 import LinearGraphWidget from "./Widgets/LinearGraphWidget";
@@ -42,7 +42,6 @@ import api from "../../../../common/api";
 import SyncIcon from "../../../../icons/SyncIcon";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import { TabPanel } from "../../../shared/tabs";
 
 interface IPrDashboard {
   classes: any;
@@ -220,7 +219,7 @@ const PrDashboard = ({
 
         setLoading(false);
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         displayErrorMessage(err);
         setLoading(false);
       });

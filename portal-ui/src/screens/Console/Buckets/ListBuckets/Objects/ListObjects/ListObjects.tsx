@@ -74,6 +74,7 @@ import {
   setErrorSnackMessage,
 } from "../../../../../../actions";
 import { BucketVersioning } from "../../../types";
+import { ErrorResponseHandler } from "../../../../../../common/types";
 import RewindEnable from "./RewindEnable";
 import DeleteIcon from "@material-ui/icons/Delete";
 import DeleteMultipleObjects from "./DeleteMultipleObjects";
@@ -279,7 +280,7 @@ const ListObjects = ({
           setIsVersioned(res.is_versioned);
           setLoadingVersioning(false);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setErrorSnackMessage(err);
           setLoadingVersioning(false);
         });
@@ -315,7 +316,7 @@ const ListObjects = ({
               setRewind([]);
             }
           })
-          .catch((err: any) => {
+          .catch((err: ErrorResponseHandler) => {
             setLoadingRewind(false);
             setErrorSnackMessage(err);
           });
@@ -354,7 +355,7 @@ const ListObjects = ({
               setLoading(false);
             }
           })
-          .catch((err: any) => {
+          .catch((err: ErrorResponseHandler) => {
             setLoadingRewind(false);
             setLoading(false);
             setErrorSnackMessage(err);
@@ -374,7 +375,7 @@ const ListObjects = ({
               setLoading(false);
             }
           })
-          .catch((err: any) => {
+          .catch((err: ErrorResponseHandler) => {
             setLoading(false);
             setErrorSnackMessage(err);
           });
@@ -420,7 +421,7 @@ const ListObjects = ({
           }
           setLoading(false);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setLoading(false);
           setErrorSnackMessage(err);
         });

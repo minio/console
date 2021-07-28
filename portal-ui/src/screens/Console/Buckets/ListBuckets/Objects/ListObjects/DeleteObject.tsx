@@ -26,6 +26,7 @@ import {
   LinearProgress,
 } from "@material-ui/core";
 import { setErrorSnackMessage } from "../../../../../../actions";
+import { ErrorResponseHandler } from "../../../../../../common/types";
 import api from "../../../../../../common/api";
 
 interface IDeleteObjectProps {
@@ -65,7 +66,7 @@ const DeleteObject = ({
         setDeleteLoading(false);
         closeDeleteModalAndRefresh(true);
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setDeleteLoading(false);
         setErrorSnackMessage(err);
       });

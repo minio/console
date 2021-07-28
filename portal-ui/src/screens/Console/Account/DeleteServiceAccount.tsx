@@ -27,6 +27,7 @@ import {
   LinearProgress,
 } from "@material-ui/core";
 import { setErrorSnackMessage } from "../../../actions";
+import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 
 const styles = (theme: Theme) =>
@@ -63,7 +64,7 @@ const DeleteServiceAccount = ({
           setDeleteLoading(false);
           closeDeleteModalAndRefresh(true);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setDeleteLoading(false);
           setErrorSnackMessage(err);
         });

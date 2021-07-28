@@ -16,19 +16,20 @@
 
 import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
-import { AppState } from "../../../../store";
-import { setErrorSnackMessage } from "../../../../actions";
+import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Paper } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import { Paper } from "@material-ui/core";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
+import { AppState } from "../../../../store";
+import { setErrorSnackMessage } from "../../../../actions";
 import { TabPanel } from "../../../shared/tabs";
 import { Policy } from "../../Policies/types";
 import { ISessionResponse } from "../../types";
 import { User } from "../../Users/types";
+import { ErrorResponseHandler } from "../../../../common/types";
+import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import api from "../../../../common/api";
 import history from "../../../../history";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 
 const styles = (theme: Theme) => createStyles({});
 
@@ -94,7 +95,7 @@ const AccessDetails = ({
           setBucketUsers(res);
           setLoadingUsers(false);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setErrorSnackMessage(err);
           setLoadingUsers(false);
         });
@@ -109,7 +110,7 @@ const AccessDetails = ({
           setBucketPolicy(res.policies);
           setLoadingPolicies(false);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setErrorSnackMessage(err);
           setLoadingPolicies(false);
         });

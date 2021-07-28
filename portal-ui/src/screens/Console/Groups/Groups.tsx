@@ -31,6 +31,7 @@ import {
   containerForHeader,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
+import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import AddGroup from "../Groups/AddGroup";
 import DeleteGroup from "./DeleteGroup";
@@ -111,7 +112,7 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
             setRecords(resGroups);
             isLoading(false);
           })
-          .catch((err) => {
+          .catch((err: ErrorResponseHandler) => {
             setErrorSnackMessage(err);
             isLoading(false);
           });

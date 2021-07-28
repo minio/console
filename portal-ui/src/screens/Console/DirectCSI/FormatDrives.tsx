@@ -27,11 +27,12 @@ import {
   LinearProgress,
 } from "@material-ui/core";
 import { setErrorSnackMessage } from "../../../actions";
+import { IDirectCSIFormatResItem, IDirectCSIFormatResult } from "./types";
+import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import { IDirectCSIFormatResItem, IDirectCSIFormatResult } from "./types";
 
 interface IFormatAllDrivesProps {
   closeFormatModalAndRefresh: (
@@ -69,7 +70,7 @@ const FormatDrives = ({
         setDeleteLoading(false);
         closeFormatModalAndRefresh(true, res.formatIssuesList);
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setDeleteLoading(false);
         setErrorSnackMessage(err);
       });

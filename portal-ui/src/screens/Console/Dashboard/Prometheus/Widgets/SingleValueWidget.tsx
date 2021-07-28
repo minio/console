@@ -24,6 +24,7 @@ import { IDashboardPanel } from "../types";
 import { connect } from "react-redux";
 import { setErrorSnackMessage } from "../../../../../actions";
 import { CircularProgress } from "@material-ui/core";
+import { ErrorResponseHandler } from "../../../../../common/types";
 
 interface ISingleValueWidget {
   title: string;
@@ -99,7 +100,7 @@ const SingleValueWidget = ({
           setData(widgetsWithValue.data);
           setLoading(false);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           displayErrorMessage(err);
           setLoading(false);
         });

@@ -21,6 +21,7 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../actions";
+import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
@@ -68,7 +69,7 @@ const SetRetentionConfig = ({
         setAddLoading(false);
         closeModalAndRefresh();
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
         setModalErrorSnackMessage(err);
       });

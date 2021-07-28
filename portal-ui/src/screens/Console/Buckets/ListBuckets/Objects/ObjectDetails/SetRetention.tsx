@@ -22,12 +22,13 @@ import Button from "@material-ui/core/Button";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
 import { IFileInfo } from "./types";
 import { setModalErrorSnackMessage } from "../../../../../../actions";
+import { twoDigitDate } from "../../../../Common/FormComponents/DateSelector/utils";
+import { ErrorResponseHandler } from "../../../../../../common/types";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import RadioGroupSelector from "../../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import DateSelector from "../../../../Common/FormComponents/DateSelector/DateSelector";
 import api from "../../../../../../common/api";
-import { twoDigitDate } from "../../../../Common/FormComponents/DateSelector/utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -128,7 +129,7 @@ const SetRetention = ({
         setIsSaving(false);
         closeModalAndRefresh(true);
       })
-      .catch((error) => {
+      .catch((error: ErrorResponseHandler) => {
         setModalErrorSnackMessage(error);
         setIsSaving(false);
       });
@@ -147,7 +148,7 @@ const SetRetention = ({
         setIsSaving(false);
         closeModalAndRefresh(true);
       })
-      .catch((error) => {
+      .catch((error: ErrorResponseHandler) => {
         setModalErrorSnackMessage(error);
         setIsSaving(false);
       });

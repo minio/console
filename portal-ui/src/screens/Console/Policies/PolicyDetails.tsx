@@ -31,6 +31,7 @@ import api from "../../../common/api";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import { Link } from "react-router-dom";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../actions";
+import { ErrorResponseHandler } from "../../../common/types";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import history from "../../../history";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -193,7 +194,7 @@ const PolicyDetails = ({
         setAddLoading(false);
         setSnackBarMessage("Policy successfully updated");
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
         setErrorSnackMessage(err);
       });
@@ -208,7 +209,7 @@ const PolicyDetails = ({
             setUserList(result);
             setLoadingUsers(false);
           })
-          .catch((err) => {
+          .catch((err: ErrorResponseHandler) => {
             setErrorSnackMessage(err);
             setLoadingUsers(false);
           });
@@ -222,7 +223,7 @@ const PolicyDetails = ({
             setGroupList(result);
             setLoadingGroups(false);
           })
-          .catch((err) => {
+          .catch((err: ErrorResponseHandler) => {
             setErrorSnackMessage(err);
             setLoadingGroups(false);
           });
@@ -241,7 +242,7 @@ const PolicyDetails = ({
             }
             setLoadingPolicy(false);
           })
-          .catch((err) => {
+          .catch((err: ErrorResponseHandler) => {
             setErrorSnackMessage(err);
             setLoadingPolicy(false);
           });

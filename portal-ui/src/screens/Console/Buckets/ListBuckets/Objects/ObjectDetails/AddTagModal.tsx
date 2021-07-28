@@ -21,10 +21,11 @@ import { Button, Grid } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../../../actions";
+import { AppState } from "../../../../../../store";
+import { ErrorResponseHandler } from "../../../../../../common/types";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import api from "../../../../../../common/api";
-import { AppState } from "../../../../../../store";
 
 interface ITagModal {
   modalOpen: boolean;
@@ -89,7 +90,7 @@ const AddTagModal = ({
         setIsSending(false);
         onCloseAndUpdate(true);
       })
-      .catch((error) => {
+      .catch((error: ErrorResponseHandler) => {
         setModalErrorSnackMessage(error);
         setIsSending(false);
       });

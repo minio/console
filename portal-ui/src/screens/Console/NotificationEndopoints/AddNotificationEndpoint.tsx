@@ -37,6 +37,7 @@ import {
 } from "../Configurations/utils";
 import { IElementValue } from "../Configurations/types";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
+import { ErrorResponseHandler } from "../../../common/types";
 import ConfMySql from "../Configurations/CustomForms/ConfMySql";
 import ConfTargetGeneric from "../Configurations/ConfTargetGeneric";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
@@ -160,7 +161,7 @@ const AddNotificationEndpoint = ({
 
           closeModalAndRefresh();
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setSaving(false);
           setErrorSnackMessage(err);
         });

@@ -28,6 +28,7 @@ import {
 import api from "../../../common/api";
 import { PolicyList } from "./types";
 import { setErrorSnackMessage } from "../../../actions";
+import { ErrorResponseHandler } from "../../../common/types";
 
 interface IDeletePolicyProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -55,7 +56,7 @@ const DeletePolicy = ({
 
         closeDeleteModalAndRefresh(true);
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setDeleteLoading(false);
         setErrorSnackMessage(err);
       });

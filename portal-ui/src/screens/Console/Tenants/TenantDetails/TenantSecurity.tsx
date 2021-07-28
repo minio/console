@@ -34,6 +34,7 @@ import api from "../../../../common/api";
 import { setErrorSnackMessage } from "../../../../actions";
 import { connect } from "react-redux";
 import { AppState } from "../../../../store";
+import { ErrorResponseHandler } from "../../../../common/types";
 import { setTenantDetailsLoad } from "../actions";
 import ConfirmationDialog from "./ConfirmationDialog";
 
@@ -142,8 +143,8 @@ const TenantSecurity = ({
           res.customCertificates.consoleCAs || []
         );
       })
-      .catch((err) => {
-        setErrorSnackMessage(err.message);
+      .catch((err: ErrorResponseHandler) => {
+        setErrorSnackMessage(err);
       });
   }, [tenant, setErrorSnackMessage]);
 
@@ -244,7 +245,7 @@ const TenantSecurity = ({
         ]);
         getTenantSecurityInfo();
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setErrorSnackMessage(err);
         setIsSending(false);
       });

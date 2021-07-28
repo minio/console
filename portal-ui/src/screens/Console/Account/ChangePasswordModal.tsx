@@ -28,6 +28,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { ChangePasswordRequest } from "../Buckets/types";
 import { setModalErrorSnackMessage } from "../../../actions";
+import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 
 const styles = (theme: Theme) =>
@@ -96,7 +97,7 @@ const ChangePassword = ({
         setCurrentPassword("");
         closeModal();
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setLoading(false);
         setNewPassword("");
         setReNewPassword("");

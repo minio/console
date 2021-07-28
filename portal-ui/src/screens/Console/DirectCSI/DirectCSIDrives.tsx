@@ -42,6 +42,7 @@ import {
 } from "./types";
 import { niceBytes } from "../../../common/utils";
 import { selectDrive } from "./actions";
+import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import FormatDrives from "./FormatDrives";
@@ -149,7 +150,7 @@ const DirectCSIMain = ({
           setLoading(false);
           setNotAvailable(false);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setLoading(false);
           setNotAvailable(true);
         });

@@ -26,6 +26,7 @@ import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBo
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
 import api from "../../../../common/api";
 import { ITierElement } from "./types";
+import { ErrorResponseHandler } from "../../../../common/types";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 
 interface ITierCredentialsModal {
@@ -110,7 +111,7 @@ const UpdateTierCredentialsModal = ({
           setSavingTiers(false);
           closeModalAndRefresh(true);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setSavingTiers(false);
           setModalErrorSnackMessage(err);
         });

@@ -26,10 +26,11 @@ import {
 } from "@material-ui/core";
 import api from "../../../../common/api";
 import { ITenant } from "./types";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import Grid from "@material-ui/core/Grid";
 import { connect } from "react-redux";
 import { setErrorSnackMessage } from "../../../../actions";
+import { ErrorResponseHandler } from "../../../../common/types";
+import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import Grid from "@material-ui/core/Grid";
 
 interface IDeleteTenant {
   deleteOpen: boolean;
@@ -58,7 +59,7 @@ const DeleteTenant = ({
           setDeleteLoading(false);
           closeDeleteModalAndRefresh(true);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setDeleteLoading(false);
           setErrorSnackMessage(err);
         });

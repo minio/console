@@ -9,7 +9,7 @@ import { generatePoolName, niceBytes } from "../../../../common/utils";
 import { Button, LinearProgress } from "@material-ui/core";
 import api from "../../../../common/api";
 import { IAddPoolRequest, ITenant } from "../ListTenants/types";
-import { IAffinityModel } from "../../../../common/types";
+import { ErrorResponseHandler, IAffinityModel } from "../../../../common/types";
 import { getDefaultAffinity } from "./utils";
 
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
@@ -102,7 +102,7 @@ const AddPoolModal = ({
           setSelectedStorageClass(newStorage[0].value);
         }
       })
-      .catch((err: any) => {
+      .catch((err: ErrorResponseHandler) => {
         console.error(err);
       });
   }, [tenant]);
@@ -149,7 +149,7 @@ const AddPoolModal = ({
               setAddSending(false);
               onClosePoolAndReload(true);
             })
-            .catch((err) => {
+            .catch((err: ErrorResponseHandler) => {
               setAddSending(false);
               // setDeleteError(err);
             });

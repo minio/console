@@ -32,6 +32,8 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
 import { CreateIcon } from "../../../../icons";
+import { resetAddTenantForm } from "../actions";
+import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import DeleteTenant from "./DeleteTenant";
@@ -41,7 +43,6 @@ import history from "../../../../history";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import SlideOptions from "../../Common/SlideOptions/SlideOptions";
 import BackSettingsIcon from "../../../../icons/BackSettingsIcon";
-import { resetAddTenantForm } from "../actions";
 
 interface ITenantsList {
   classes: any;
@@ -198,7 +199,7 @@ const ListTenants = ({
             setRecords(resTenants);
             setIsLoading(false);
           })
-          .catch((err) => {
+          .catch((err: ErrorResponseHandler) => {
             setErrorSnackMessage(err);
             setIsLoading(false);
           });

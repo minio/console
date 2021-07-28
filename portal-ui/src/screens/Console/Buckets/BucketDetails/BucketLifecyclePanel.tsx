@@ -28,11 +28,12 @@ import {
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
+import { AppState } from "../../../../store";
+import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import EditLifecycleConfiguration from "./EditLifecycleConfiguration";
 import AddLifecycleModal from "./AddLifecycleModal";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import { AppState } from "../../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -68,7 +69,7 @@ const BucketLifecyclePanel = ({
           setLifecycleRecords(records || []);
           setLoadingLifecycle(false);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           console.error(err);
           setLoadingLifecycle(false);
         });

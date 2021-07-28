@@ -15,13 +15,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import request from "superagent";
 import { connect } from "react-redux";
-import ErrorIcon from "@material-ui/icons/Error";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import { OutlinedInputProps } from "@material-ui/core/OutlinedInput";
 import {
   CircularProgress,
   LinearProgress,
@@ -34,14 +29,19 @@ import {
   Theme,
   withStyles,
 } from "@material-ui/core/styles";
+import request from "superagent";
+import ErrorIcon from "@material-ui/icons/Error";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import RefreshIcon from "@material-ui/icons/Refresh";
+import { ILoginDetails, loginStrategyType } from "./types";
 import { SystemState } from "../../types";
 import { userLoggedIn } from "../../actions";
-import api from "../../common/api";
-import { ILoginDetails, loginStrategyType } from "./types";
-import history from "../../history";
-import { OutlinedInputProps } from "@material-ui/core/OutlinedInput";
 import { ErrorResponseHandler } from "../../common/types";
-import RefreshIcon from "@material-ui/icons/Refresh";
+import api from "../../common/api";
+import history from "../../history";
 
 const styles = (theme: Theme) =>
   createStyles({

@@ -30,11 +30,12 @@ import {
 import { IReqInfoSearchResults, ISearchResponse } from "./types";
 import { niceBytes, nsToSeconds } from "../../../../common/utils";
 import { setErrorSnackMessage } from "../../../../actions";
+import { AppState } from "../../../../store";
+import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import FilterInputWrapper from "../../Common/FormComponents/FilterInputWrapper/FilterInputWrapper";
 import DateTimePickerWrapper from "../../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
-import { AppState } from "../../../../store";
 
 interface ILogSearchProps {
   classes: any;
@@ -196,7 +197,7 @@ const LogsSearchMain = ({
             recordsResp();
           }
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setLoading(false);
           setAlreadyFetching(false);
           setErrorSnackMessage(err);

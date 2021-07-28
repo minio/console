@@ -31,7 +31,7 @@ import { generatePoolName } from "../../../../common/utils";
 import GenericWizard from "../../Common/GenericWizard/GenericWizard";
 import { IWizardElement } from "../../Common/GenericWizard/types";
 import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
-import { ITenantCreator } from "../../../../common/types";
+import { ErrorResponseHandler, ITenantCreator } from "../../../../common/types";
 import { KeyPair } from "../ListTenants/utils";
 
 import { setModalErrorSnackMessage } from "../../../../actions";
@@ -561,7 +561,7 @@ const AddTenant = ({
           setShowNewCredentials(true);
           setCreatedAccount(newSrvAcc);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setAddSending(false);
           setModalErrorSnackMessage(err);
         });

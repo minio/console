@@ -27,6 +27,7 @@ import { LinearProgress } from "@material-ui/core";
 import api from "../../../common/api";
 import { Usage } from "./types";
 import { setErrorSnackMessage } from "../../../actions";
+import { ErrorResponseHandler } from "../../../common/types";
 
 interface IDashboardSimple {
   classes: any;
@@ -49,7 +50,7 @@ const Dashboard = ({ classes, displayErrorMessage }: IDashboardSimple) => {
         setBasicResult(res);
         setLoading(false);
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         displayErrorMessage(err);
         setLoading(false);
       });

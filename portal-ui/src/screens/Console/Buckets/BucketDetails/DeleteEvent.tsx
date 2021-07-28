@@ -29,6 +29,7 @@ import {
 import api from "../../../../common/api";
 import { BucketEvent, BucketList } from "../types";
 import { setErrorSnackMessage } from "../../../../actions";
+import { ErrorResponseHandler } from "../../../../common/types";
 
 interface IDeleteEventProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -74,7 +75,7 @@ const DeleteEvent = ({
         setDeleteLoading(false);
         closeDeleteModalAndRefresh(true);
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setDeleteLoading(false);
         setErrorSnackMessage(err);
       });

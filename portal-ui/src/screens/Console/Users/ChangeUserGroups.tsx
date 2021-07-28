@@ -21,6 +21,7 @@ import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../actions";
+import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import GroupsSelectors from "./GroupsSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
@@ -73,7 +74,7 @@ const ChangeUserGroups = ({
         setSelectedGroups(res.memberOf || []);
         setEnabled(res.status === "enabled");
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
         setModalErrorSnackMessage(err);
       });
@@ -106,7 +107,7 @@ const ChangeUserGroups = ({
           setAddLoading(false);
           closeModalAndRefresh();
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setAddLoading(false);
           setModalErrorSnackMessage(err);
         });
@@ -121,7 +122,7 @@ const ChangeUserGroups = ({
           setAddLoading(false);
           closeModalAndRefresh();
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setAddLoading(false);
           setModalErrorSnackMessage(err);
         });

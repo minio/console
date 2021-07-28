@@ -17,6 +17,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Grid, IconButton } from "@material-ui/core";
 import { AppState } from "../../../../../store";
 import { isPageValid, updateAddField } from "../../actions";
 import { setModalErrorSnackMessage } from "../../../../../actions";
@@ -24,11 +25,11 @@ import {
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
-import { Grid, IconButton } from "@material-ui/core";
 import {
   commonFormValidation,
   IValidation,
 } from "../../../../../utils/validationFunctions";
+import { ErrorResponseHandler } from "../../../../../common/types";
 import RadioGroupSelector from "../../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import api from "../../../../../common/api";
@@ -119,7 +120,7 @@ const Affinity = ({
           setKeyOptions(keys);
           setKeyValuePairs([{ key: keys[0].value, value: keys[0].value }]);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setLoading(false);
           setModalErrorSnackMessage(err);
           setKeyValueMap({});

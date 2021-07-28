@@ -17,19 +17,20 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { CircularProgress } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
 import {
   containerForHeader,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
-import Grid from "@material-ui/core/Grid";
-import api from "../../../../common/api";
 import { ITenant } from "../ListTenants/types";
 import { LicenseInfo } from "../../License/types";
 import { setErrorSnackMessage } from "../../../../actions";
-import SubnetLicenseTenant from "./SubnetLicenseTenant";
 import { AppState } from "../../../../store";
 import { setTenantDetailsLoad } from "../actions";
-import { CircularProgress } from "@material-ui/core";
+import { ErrorResponseHandler } from "../../../../common/types";
+import SubnetLicenseTenant from "./SubnetLicenseTenant";
+import api from "../../../../common/api";
 
 interface ITenantLicense {
   classes: any;
@@ -74,7 +75,7 @@ const TenantLicense = ({
         setTenantDetailsLoad(true);
         setLoadingLicenseInfo(true);
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setLoadingActivateProduct(false);
         setErrorSnackMessage(err);
       });
@@ -88,7 +89,7 @@ const TenantLicense = ({
           setLicenseInfo(res);
           setLoadingLicenseInfo(false);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setLoadingLicenseInfo(false);
         });
     }

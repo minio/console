@@ -28,6 +28,7 @@ import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import { AppState } from "../../../../store";
 import { setTenantDetailsLoad } from "../actions";
+import { ErrorResponseHandler } from "../../../../common/types";
 import DeletePod from "./DeletePod";
 
 interface IPodsSummary {
@@ -98,7 +99,7 @@ const PodsSummary = ({ match, history, loadingTenant }: IPodsSummary) => {
           setPods(result);
           setLoadingPods(false);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setErrorSnackMessage({
             errorMessage: "Error loading pods",
             detailedError: err.detailedError,

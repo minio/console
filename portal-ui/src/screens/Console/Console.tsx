@@ -35,6 +35,7 @@ import {
 import { ISessionResponse } from "./types";
 import { snackBarMessage } from "../../types";
 import { snackBarCommon } from "./Common/FormComponents/common/styleLibrary";
+import { ErrorResponseHandler } from "../../common/types";
 import Buckets from "./Buckets/Buckets";
 import Policies from "./Policies/Policies";
 import Dashboard from "./Dashboard/Dashboard";
@@ -207,7 +208,7 @@ const Console = ({
         serverIsLoading(false);
         serverNeedsRestart(false);
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         serverIsLoading(false);
         console.log("failure restarting service");
         console.log(err);

@@ -31,6 +31,7 @@ import {
   containerForHeader,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
+import { ErrorResponseHandler } from "../../../common/types";
 import AddPolicy from "./AddPolicy";
 import DeletePolicy from "./DeletePolicy";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
@@ -110,7 +111,7 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
           setLoading(false);
           setRecords(policies);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setLoading(false);
           setErrorSnackMessage(err);
         });

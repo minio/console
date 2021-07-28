@@ -34,6 +34,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { addRoute, resetRoutesList } from "./actions";
 import { setErrorSnackMessage } from "../../../actions";
+import { ErrorResponseHandler } from "../../../common/types";
 import BrowserBreadcrumbs from "./BrowserBreadcrumbs";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import AddBucket from "../Buckets/ListBuckets/AddBucket";
@@ -147,7 +148,7 @@ const BrowseBuckets = ({
           setLoadingPerms(false);
           // setRecords(res.buckets || []);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setLoadingPerms(false);
           setErrorSnackMessage(err);
         });
@@ -166,7 +167,7 @@ const BrowseBuckets = ({
           setLoading(false);
           setRecords(res.buckets || []);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setLoading(false);
           displayErrorMessage(err);
         });

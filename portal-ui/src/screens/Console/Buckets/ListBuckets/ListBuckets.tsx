@@ -35,6 +35,7 @@ import {
   containerForHeader,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
+import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import AddBucket from "./AddBucket";
@@ -128,7 +129,7 @@ const ListBuckets = ({
 
           setLoadingPerms(false);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setLoadingPerms(false);
           setErrorSnackMessage(err);
         });
@@ -145,7 +146,7 @@ const ListBuckets = ({
             setLoading(false);
             setRecords(res.buckets || []);
           })
-          .catch((err: any) => {
+          .catch((err: ErrorResponseHandler) => {
             setLoading(false);
             setErrorSnackMessage(err);
           });

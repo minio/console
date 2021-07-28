@@ -27,6 +27,7 @@ import {
 } from "@material-ui/core";
 import api from "../../../../common/api";
 import { setErrorSnackMessage } from "../../../../actions";
+import { ErrorResponseHandler } from "../../../../common/types";
 
 interface IVersioningEventProps {
   closeVersioningModalAndRefresh: (refresh: boolean) => void;
@@ -59,7 +60,7 @@ const EnableVersioningModal = ({
         setVersioningLoading(false);
         closeVersioningModalAndRefresh(true);
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setVersioningLoading(false);
         setErrorSnackMessage(err);
       });
