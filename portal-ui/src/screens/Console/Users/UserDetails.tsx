@@ -17,9 +17,9 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, Grid, IconButton, Menu, MenuItem } from "@material-ui/core";
+import { Button, Grid, IconButton, Tooltip } from "@material-ui/core";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import { CreateIcon } from "../../../icons";
+import { CreateIcon, DeleteIcon } from "../../../icons";
 import {
   setErrorSnackMessage,
   setModalErrorSnackMessage,
@@ -29,22 +29,22 @@ import {
   containerForHeader,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
-import { IPolicyItem, User } from "./types";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
+import { IPolicyItem } from "./types";
 import { TabPanel } from "../../shared/tabs";
-import Paper from "@material-ui/core/Paper";
 import api from "../../../common/api";
-import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import ChangeUserGroups from "./ChangeUserGroups";
 import SetUserPolicies from "./SetUserPolicies";
 import { Bookmark } from "@material-ui/icons";
 import history from "../../../history";
 import UserServiceAccountsPanel from "./UserServiceAccountsPanel";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
 import ChangeUserPasswordModal from "../Account/ChangeUserPasswordModal";
 import DeleteUserString from "./DeleteUserString";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import List from "@material-ui/core/List";
+import { Link } from "react-router-dom";
+import LockIcon from "@material-ui/icons/Lock";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -109,9 +109,13 @@ const styles = (theme: Theme) =>
         minWidth: 150,
       },
     },
+    breadcrumLink: {
+      textDecoration: "none",
+      color: "black",
+    },
     ...actionsTray,
     ...searchField,
-    actionsTray: { ...actionsTray.actionsTray, justifyContent: "flex-end" },
+    actionsTray: { ...actionsTray.actionsTray },
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -119,13 +123,6 @@ interface IUserDetailsProps {
   classes: any;
   match: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
-}
-
-function a11yProps(index: any) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
 }
 
 interface IGroupItem {
@@ -146,17 +143,14 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
   const [changeUserPasswordModalOpen, setChangeUserPasswordModalOpen] =
     useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const userName = match.params["userName"];
 
   const changeUserPassword = () => {
-    setAnchorEl(null);
     setChangeUserPasswordModalOpen(true);
   };
 
   const deleteUser = () => {
-    setAnchorEl(null);
     setDeleteOpen(true);
   };
 
@@ -186,7 +180,6 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
         }
         setCurrentPolicies(currentPolicies);
         setEnabled(res.status === "enabled");
-        setSelectedUser(res.user);
         setLoading(false);
       })
       .catch((err) => {
@@ -215,17 +208,9 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
       });
   };
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handleUserMenu = (event: any) => {
-    setAnchorEl(event.currentTarget);
-  };
-
   useEffect(() => {
     getUserInformation();
   }, [getUserInformation]);
-
-  const userLoggedIn = atob(localStorage.getItem("userLoggedIn") || "");
 
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
@@ -236,7 +221,49 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
 
   return (
     <React.Fragment>
-      <PageHeader label={`User: ${userName}`} />
+      <PageHeader
+        label={
+          <Fragment>
+            <Link to={"/users"} className={classes.breadcrumLink}>
+              Users
+            </Link>
+            {` > ${userName}`}
+          </Fragment>
+        }
+        actions={
+          <React.Fragment>
+            <Button
+              onClick={() => {
+                setEnabled(!enabled);
+                saveRecord(!enabled);
+              }}
+              color={"primary"}
+            >
+              {enabled ? "Enabled" : "Disabled"}
+            </Button>
+            <Tooltip title="Delete User">
+              <IconButton
+                color="primary"
+                aria-label="Delete User"
+                component="span"
+                onClick={deleteUser}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Change Password">
+              <IconButton
+                color="primary"
+                aria-label="Change Password"
+                component="span"
+                onClick={changeUserPassword}
+              >
+                <LockIcon />
+              </IconButton>
+            </Tooltip>
+          </React.Fragment>
+        }
+      />
       {addGroupOpen && (
         <ChangeUserGroups
           open={addGroupOpen}
@@ -274,84 +301,40 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
           closeModal={() => setChangeUserPasswordModalOpen(false)}
         />
       )}
-
-      <Grid container>
-        <Grid item xs={12} className={classes.container}>
+      <Grid container className={classes.container}>
+        <Grid item xs={2}>
+          <List component="nav" dense={true}>
+            <ListItem
+              button
+              onClick={() => {
+                setCurTab(0);
+              }}
+            >
+              <ListItemText primary="Groups" />
+            </ListItem>
+            <ListItem
+              button
+              onClick={() => {
+                setCurTab(1);
+              }}
+            >
+              <ListItemText primary="Service Accounts" />
+            </ListItem>
+            <ListItem
+              button
+              onClick={() => {
+                setCurTab(2);
+              }}
+            >
+              <ListItemText primary="Policies" />
+            </ListItem>
+          </List>
+        </Grid>
+        <Grid item xs={10}>
           <Grid item xs={12}>
-            <Grid container spacing={2}>
-              <Grid item>
-                <Paper className={classes.paperContainer}>
-                  <div className={classes.gridContainer}>
-                    <div>Enabled:</div>
-                    <div className={classes.capitalizeFirst}>
-                      <FormSwitchWrapper
-                        checked={enabled}
-                        value={"user_enabled"}
-                        id="user-status"
-                        name="user-status"
-                        disabled={userLoggedIn === userName}
-                        onChange={(e) => {
-                          setEnabled(e.target.checked);
-                          saveRecord(e.target.checked);
-                        }}
-                        switchOnly
-                      />
-                    </div>
-                  </div>
-                  <Fragment>
-                    <IconButton
-                      aria-label="more"
-                      aria-controls="long-menu"
-                      aria-haspopup="true"
-                      onClick={handleUserMenu}
-                    >
-                      <MoreVertIcon />
-                    </IconButton>
-                    <Menu
-                      id="long-menu"
-                      anchorEl={anchorEl}
-                      keepMounted
-                      open={Boolean(anchorEl)}
-                    >
-                      <MenuItem
-                        key="changeUserPassword"
-                        onClick={changeUserPassword}
-                      >
-                        Change User Password
-                      </MenuItem>
-                      <MenuItem key="deleteUser" onClick={deleteUser}>
-                        Delete User
-                      </MenuItem>
-                    </Menu>
-                  </Fragment>
-                </Paper>
-              </Grid>
-            </Grid>
-          </Grid>
-          <h1>{selectedUser != null && selectedUser.id}</h1>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid container item xs={12}>
-            <Grid item xs={9}>
-              <Tabs
-                value={curTab}
-                onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
-                  setCurTab(newValue);
-                }}
-                indicatorColor="primary"
-                textColor="primary"
-                aria-label="cluster-tabs"
-                variant="scrollable"
-                scrollButtons="auto"
-              >
-                <Tab label="Groups" {...a11yProps(0)} />
-                <Tab label="Service Accounts" {...a11yProps(2)} />
-                <Tab label="Policies" {...a11yProps(1)} />
-              </Tabs>
-            </Grid>
-            <Grid item xs={3} className={classes.actionsTray}>
-              {curTab === 0 && (
+            <TabPanel index={0} value={curTab}>
+              <div className={classes.actionsTray}>
+                <h1 style={{ padding: "0px", margin: "0px" }}>Groups</h1>
                 <Button
                   variant="contained"
                   color="primary"
@@ -363,26 +346,8 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                 >
                   Add to Groups
                 </Button>
-              )}
-              {curTab === 2 && (
-                <Fragment>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<Bookmark />}
-                    size="medium"
-                    onClick={() => {
-                      setPolicyOpen(true);
-                    }}
-                  >
-                    Assign Policies
-                  </Button>
-                </Fragment>
-              )}
-            </Grid>
-          </Grid>
-          <Grid item xs={12}>
-            <TabPanel index={0} value={curTab}>
+              </div>
+              <br />
               <TableWrapper
                 // itemActions={userTableActions}
                 columns={[{ label: "Name", elementKey: "group" }]}
@@ -393,9 +358,41 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
               />
             </TabPanel>
             <TabPanel index={1} value={curTab}>
+              <div className={classes.actionsTray}>
+                <h1 style={{ padding: "0px", margin: "0px" }}>
+                  Service Accounts
+                </h1>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<Bookmark />}
+                  size="medium"
+                  onClick={() => {
+                    setPolicyOpen(true);
+                  }}
+                >
+                  Assign Policies
+                </Button>
+              </div>
+              <br />
               <UserServiceAccountsPanel user={userName} />
             </TabPanel>
             <TabPanel index={2} value={curTab}>
+              <div className={classes.actionsTray}>
+                <h1 style={{ padding: "0px", margin: "0px" }}>Policies</h1>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<CreateIcon />}
+                  size="medium"
+                  onClick={() => {
+                    setAddGroupOpen(true);
+                  }}
+                >
+                  Add to Groups
+                </Button>
+              </div>
+              <br />
               <TableWrapper
                 itemActions={[
                   {

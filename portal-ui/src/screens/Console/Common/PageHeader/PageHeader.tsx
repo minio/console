@@ -17,7 +17,8 @@ const styles = (theme: Theme) =>
       height: 77,
       display: "flex",
       backgroundColor: "#fff",
-      borderBottom: "#E3E3E3 1px solid",
+      borderBottom: "2px solid",
+      borderBottomColor: "#e8e8e8",
       left: 0,
     },
     label: {

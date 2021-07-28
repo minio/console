@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, CircularProgress } from "@material-ui/core";
@@ -46,6 +46,7 @@ import EnableVersioningModal from "./EnableVersioningModal";
 import UsageIcon from "../../../../icons/UsageIcon";
 import GavelIcon from "@material-ui/icons/Gavel";
 import EnableQuota from "./EnableQuota";
+import { CreateIcon } from "../../../../icons";
 
 interface IBucketSummaryProps {
   classes: any;
@@ -358,12 +359,17 @@ const BucketSummary = ({
           versioningCurrentState={isVersioned}
         />
       )}
-      <br />
+      <Grid container>
+        <Grid item xs={12} className={classes.actionsTray}>
+          <h1 style={{ padding: "0px", margin: "0px" }}>Summary</h1>
+        </Grid>
+        <Grid item xs={12}>
+          <br />
+        </Grid>
+      </Grid>
       <Paper className={classes.paperContainer}>
         <Grid container>
-          <Grid item xs={9}>
-            <h2>Details</h2>
-            <hr className={classes.hrClass} />
+          <Grid item xs={8}>
             <table width={"100%"}>
               <tbody>
                 <tr>
@@ -387,6 +393,26 @@ const BucketSummary = ({
                       )}
                     </Button>
                   </td>
+                </tr>
+                {distributedSetup && (
+                  <React.Fragment>
+                    <tr>
+                      <td className={classes.titleCol}>Replication:</td>
+                      <td className={classes.doubleElement}>
+                        <span>{replicationRules ? "Enabled" : "Disabled"}</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      {!hasObjectLocking && (
+                        <React.Fragment>
+                          <td className={classes.titleCol}>Object Locking:</td>
+                          <td>Disabled</td>
+                        </React.Fragment>
+                      )}
+                    </tr>
+                  </React.Fragment>
+                )}
+                <tr>
                   <td className={classes.titleCol}>Encryption:</td>
                   <td>
                     {loadingEncryption ? (
@@ -408,28 +434,10 @@ const BucketSummary = ({
                     )}
                   </td>
                 </tr>
-                {distributedSetup && (
-                  <tr>
-                    <td className={classes.titleCol}>Replication:</td>
-                    <td className={classes.doubleElement}>
-                      <span>{replicationRules ? "Enabled" : "Disabled"}</span>
-                    </td>
-                    {!hasObjectLocking ? (
-                      <React.Fragment>
-                        <td className={classes.titleCol}>Object Locking:</td>
-                        <td>Disabled</td>
-                      </React.Fragment>
-                    ) : (
-                      <React.Fragment>
-                        <td colSpan={2}></td>
-                      </React.Fragment>
-                    )}
-                  </tr>
-                )}
               </tbody>
             </table>
           </Grid>
-          <Grid item xs={3} className={classes.reportedUsage}>
+          <Grid item xs={4} className={classes.reportedUsage}>
             <Grid container direction="row" alignItems="center">
               <Grid item className={classes.icon} xs={2}>
                 <UsageIcon />
@@ -450,7 +458,7 @@ const BucketSummary = ({
       <br />
       {distributedSetup && (
         <Fragment>
-          <Paper className={classes.paperContainer}>
+          <Paper className={classes.paperContainer} elevation={1}>
             <Grid container>
               <Grid item xs={quotaEnabled ? 9 : 12}>
                 <h2>Versioning</h2>

@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import api from "../../../common/api";
-import { Button } from "@material-ui/core";
+import { Button, IconButton, Tooltip } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { setErrorSnackMessage } from "../../../actions";
@@ -38,7 +38,6 @@ import {
   containerForHeader,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
-import Divider from "@material-ui/core/Divider";
 import LockIcon from "@material-ui/icons/Lock";
 import ChangePasswordModal from "./ChangePasswordModal";
 
@@ -206,40 +205,31 @@ const Account = ({
           entity="Service Account"
         />
       )}
-      <PageHeader label="Account" />
-      <Grid container>
-        <Grid item xs={12} className={classes.container}>
-          {changePassword && (
-            <React.Fragment>
-              <Grid item xs={12}>
-                <Typography variant="h5" component="h5">
-                  Settings
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <br />
-              </Grid>
-              <Grid item xs={12}>
-                <ChangePasswordModal
-                  open={changePasswordModalOpen}
-                  closeModal={() => setChangePasswordModalOpen(false)}
-                />
-                <Button
-                  variant="contained"
+      <ChangePasswordModal
+        open={changePasswordModalOpen}
+        closeModal={() => setChangePasswordModalOpen(false)}
+      />
+      <PageHeader
+        label="Account"
+        actions={
+          <React.Fragment>
+            {changePassword && (
+              <Tooltip title="Change Password">
+                <IconButton
                   color="primary"
-                  startIcon={<LockIcon />}
+                  aria-label="Change Password"
+                  component="span"
                   onClick={() => setChangePasswordModalOpen(true)}
                 >
-                  Change Password
-                </Button>
-              </Grid>
-              <Grid item xs={12}>
-                <br />
-                <Divider />
-                <br />
-              </Grid>
-            </React.Fragment>
-          )}
+                  <LockIcon />
+                </IconButton>
+              </Tooltip>
+            )}
+          </React.Fragment>
+        }
+      />
+      <Grid container>
+        <Grid item xs={12} className={classes.container}>
           <Grid item xs={12}>
             <Typography variant="h5" component="h5">
               Service Accounts

@@ -14,14 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect, Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, TextField } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import get from "lodash/get";
 import Grid from "@material-ui/core/Grid";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
 import { CreateIcon } from "../../../../icons";
 import { BucketEvent, BucketEventList } from "../types";
 import { setErrorSnackMessage } from "../../../../actions";
@@ -41,7 +39,6 @@ const styles = (theme: Theme) =>
     ...actionsTray,
     actionsTray: {
       ...actionsTray.actionsTray,
-      padding: "15px 0 0",
     },
   });
 
@@ -61,7 +58,6 @@ const BucketEventsPanel = ({
   const [records, setRecords] = useState<BucketEvent[]>([]);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedEvent, setSelectedEvent] = useState<BucketEvent | null>(null);
-  const [filter, setFilter] = useState<string>("");
 
   const bucketName = match.params["bucketName"];
 
@@ -104,13 +100,6 @@ const BucketEventsPanel = ({
 
   const tableActions = [{ type: "delete", onClick: confirmDeleteEvent }];
 
-  const filteredRecords = records.filter((item: BucketEvent) => {
-    if (item.arn.toLowerCase().includes(filter.toLowerCase())) {
-      return true;
-    }
-    return false;
-  });
-
   return (
     <Fragment>
       {deleteOpen && (
@@ -131,23 +120,7 @@ const BucketEventsPanel = ({
 
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
-            placeholder="Filter"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            onChange={(event) => {
-              setFilter(event.target.value);
-            }}
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
+          <h1 style={{ padding: "0px", margin: "0px" }}>Events</h1>
           <Button
             variant="contained"
             color="primary"
@@ -177,7 +150,7 @@ const BucketEventsPanel = ({
               { label: "Suffix", elementKey: "suffix" },
             ]}
             isLoading={loadingEvents}
-            records={filteredRecords}
+            records={records}
             entityName="Events"
             idField="id"
           />

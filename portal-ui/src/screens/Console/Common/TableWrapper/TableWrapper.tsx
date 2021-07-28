@@ -125,7 +125,7 @@ const styles = () =>
       display: "flex",
       overflow: "auto",
       flexDirection: "column",
-      padding: "19px 38px",
+      padding: "8px 16px",
       boxShadow: "none",
       border: "#EAEDEE 1px solid",
       borderRadius: 3,

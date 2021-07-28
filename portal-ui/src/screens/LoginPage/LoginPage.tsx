@@ -40,6 +40,8 @@ import api from "../../common/api";
 import { ILoginDetails, loginStrategyType } from "./types";
 import history from "../../history";
 import { OutlinedInputProps } from "@material-ui/core/OutlinedInput";
+import { ErrorResponseHandler } from "../../common/types";
+import RefreshIcon from "@material-ui/icons/Refresh";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -145,6 +147,10 @@ const styles = (theme: Theme) =>
       height: "100%",
       justifyContent: "center",
       alignItems: "center",
+      flexDirection: "column",
+    },
+    retryButton: {
+      alignSelf: "flex-end",
     },
   });
 
@@ -196,7 +202,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
   const [accessKey, setAccessKey] = useState<string>("");
   const [jwt, setJwt] = useState<string>("");
   const [secretKey, setSecretKey] = useState<string>("");
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<ErrorResponseHandler | null>(null);
   const [loginStrategy, setLoginStrategy] = useState<ILoginDetails>({
     loginStrategy: loginStrategyType.unknown,
     redirect: "",
@@ -217,7 +223,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
       .invoke("GET", "/api/v1/login")
       .then((loginDetails: ILoginDetails) => {
         setLoginStrategy(loginDetails);
-        setError("");
+        setError(null);
         if (
           loginDetails.loginStrategy === "redirect" &&
           loginDetails.redirect !== ""
@@ -225,7 +231,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
           //location.href = loginDetails.redirect;
         }
       })
-      .catch((err: any) => {
+      .catch((err: ErrorResponseHandler) => {
         setError(err);
       });
   };
@@ -406,17 +412,37 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
     default:
       loginComponent = (
         <div className={classes.loaderAlignment}>
-          <CircularProgress className={classes.loadingLoginStrategy} />
+          {error === null ? (
+            <CircularProgress className={classes.loadingLoginStrategy} />
+          ) : (
+            <React.Fragment>
+              <div>
+                <p>An error has ocurred, the backend cannot be reached.</p>
+              </div>
+              <div>
+                <Button
+                  onClick={() => {
+                    fetchConfiguration();
+                  }}
+                  startIcon={<RefreshIcon />}
+                  color={"primary"}
+                  className={classes.retryButton}
+                >
+                  Retry
+                </Button>
+              </div>
+            </React.Fragment>
+          )}
         </div>
       );
   }
 
   return (
     <React.Fragment>
-      {error !== "" && (
+      {error !== null && (
         <div className={classes.errorBlock}>
           <ErrorIcon fontSize="small" className={classes.errorIconStyle} />{" "}
-          {error}
+          {error.errorMessage}
         </div>
       )}
       <Paper className={classes.paper}>
