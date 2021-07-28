@@ -93,9 +93,10 @@ const ShareFile = ({
       const versID = distributedSetup ? dataObject.version_id : "null";
 
       if (diffDate < 0) {
-        setModalErrorSnackMessage(
-          "Selected date must be greater than current time."
-        );
+        setModalErrorSnackMessage({
+          errorMessage: "Selected date must be greater than current time.",
+          detailedError: "",
+        });
         setShareURL("");
         setIsLoadingFile(false);
 
@@ -103,9 +104,10 @@ const ShareFile = ({
       }
 
       if (diffDate > 604800000) {
-        setModalErrorSnackMessage(
-          "You can share a file only for less than 7 days."
-        );
+        setModalErrorSnackMessage({
+          errorMessage: "You can share a file only for less than 7 days.",
+          detailedError: "",
+        });
         setShareURL("");
         setIsLoadingFile(false);
 

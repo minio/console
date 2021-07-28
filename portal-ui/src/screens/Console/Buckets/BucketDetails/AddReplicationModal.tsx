@@ -129,7 +129,10 @@ const AddReplicationModal = ({
           setAddLoading(false);
 
           if (itemVal.errorString && itemVal.errorString !== "") {
-            setModalErrorSnackMessage(itemVal.errorString);
+            setModalErrorSnackMessage({
+              errorMessage: itemVal.errorString,
+              detailedError: "",
+            });
             return;
           }
 
@@ -137,7 +140,10 @@ const AddReplicationModal = ({
 
           return;
         }
-        setModalErrorSnackMessage("No changes applied");
+        setModalErrorSnackMessage({
+          errorMessage: "No changes applied",
+          detailedError: "",
+        });
       })
       .catch((err) => {
         setAddLoading(false);

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { ErrorResponseHandler } from "./common/types";
 import {
   MENU_OPEN,
   OPERATOR_MODE,
@@ -85,7 +86,7 @@ export const setSnackBarMessage = (message: string) => {
   };
 };
 
-export const setErrorSnackMessage = (message: string) => {
+export const setErrorSnackMessage = (message: ErrorResponseHandler) => {
   return {
     type: SET_ERROR_SNACK_MESSAGE,
     message,
@@ -99,7 +100,7 @@ export const setModalSnackMessage = (message: string) => {
   };
 };
 
-export const setModalErrorSnackMessage = (message: string) => {
+export const setModalErrorSnackMessage = (message: ErrorResponseHandler) => {
   return {
     type: SET_MODAL_ERROR_MESSAGE,
     message,

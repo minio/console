@@ -152,10 +152,10 @@ const NameTenant = ({
           });
       })
       .catch((err: any) => {
-        console.error(err);
-        setModalErrorSnackMessage(
-          "Error validating if namespace already has tenants"
-        );
+        setModalErrorSnackMessage({
+          errorMessage: "Error validating if namespace already has tenants",
+          detailedError: err.detailedError,
+        });
       });
   }, [
     namespace,

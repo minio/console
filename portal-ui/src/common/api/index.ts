@@ -18,6 +18,7 @@ import request from "superagent";
 import get from "lodash/get";
 import { clearSession } from "../utils";
 import { baseUrl } from "../../history";
+import { ErrorResponseHandler } from "../types";
 
 export class API {
   invoke(method: string, url: string, data?: object) {
@@ -42,11 +43,24 @@ export class API {
       const errMessage = get(
         err.response,
         "body.message",
-        err.status.toString()
+        `Error ${err.status.toString()}`
       );
 
-      const throwMessage =
+      let detailedMessage = get(err.response, "body.detailedMessage", "");
+
+      if (errMessage === detailedMessage) {
+        detailedMessage = "";
+      }
+
+      const capMessage =
         errMessage.charAt(0).toUpperCase() + errMessage.slice(1);
+      const capDetailed =
+        detailedMessage.charAt(0).toUpperCase() + detailedMessage.slice(1);
+
+      const throwMessage: ErrorResponseHandler = {
+        errorMessage: capMessage,
+        detailedError: capDetailed,
+      };
 
       return Promise.reject(throwMessage);
     } else {

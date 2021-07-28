@@ -59,6 +59,7 @@ import Storage from "./Storage/Storage";
 import PodDetails from "./Tenants/TenantDetails/pods/PodDetails";
 import Metrics from "./Dashboard/Metrics";
 import Hop from "./Tenants/TenantDetails/hop/Hop";
+import MainError from "./Common/MainError/MainError";
 
 const drawerWidth = 245;
 
@@ -410,7 +411,9 @@ const Console = ({
       return;
     }
     // Open SnackBar
-    setOpenSnackbar(true);
+    if (snackBarMessage.type !== "error") {
+      setOpenSnackbar(true);
+    }
   }, [snackBarMessage]);
 
   const location = useLocation();
@@ -474,6 +477,7 @@ const Console = ({
                 value={loadingProgress}
               />
             )}
+            <MainError />
             <div className={classes.snackDiv}>
               <Snackbar
                 open={openSnackbar}

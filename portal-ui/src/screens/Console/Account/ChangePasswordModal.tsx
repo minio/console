@@ -27,8 +27,8 @@ import {
   modalBasic,
 } from "../Common/FormComponents/common/styleLibrary";
 import { ChangePasswordRequest } from "../Buckets/types";
-import api from "../../../common/api";
 import { setModalErrorSnackMessage } from "../../../actions";
+import api from "../../../common/api";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -62,12 +62,18 @@ const ChangePassword = ({
     event.preventDefault();
 
     if (newPassword !== reNewPassword) {
-      setModalErrorSnackMessage("New passwords don't match");
+      setModalErrorSnackMessage({
+        errorMessage: "New passwords don't match",
+        detailedError: "",
+      });
       return;
     }
 
     if (newPassword.length < 8) {
-      setModalErrorSnackMessage("Passwords must be at least 8 characters long");
+      setModalErrorSnackMessage({
+        errorMessage: "Passwords must be at least 8 characters long",
+        detailedError: "",
+      });
       return;
     }
 

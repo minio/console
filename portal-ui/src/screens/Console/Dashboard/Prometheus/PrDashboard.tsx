@@ -211,9 +211,11 @@ const PrDashboard = ({
           const widgetsWithValue = getWidgetsWithValue(res.widgets);
           setPanelInformation(widgetsWithValue);
         } else {
-          displayErrorMessage(
-            "Widget information could not be retrieved at this time. Please try again"
-          );
+          displayErrorMessage({
+            errorMessage:
+              "Widget information could not be retrieved at this time. Please try again",
+            detailedError: "",
+          });
         }
 
         setLoading(false);

@@ -144,6 +144,18 @@ const ModalWrapper = ({
       }
     : { maxWidth: "md" as const, fullWidth: true };
 
+  let message = "";
+
+  if (modalSnackMessage) {
+    message = modalSnackMessage.detailedErrorMsg;
+    if (
+      modalSnackMessage.detailedErrorMsg === "" ||
+      modalSnackMessage.detailedErrorMsg.length < 5
+    ) {
+      message = modalSnackMessage.message;
+    }
+  }
+
   return (
     <Dialog
       open={modalOpen}
@@ -159,7 +171,7 @@ const ModalWrapper = ({
           onClose={() => {
             closeSnackBar();
           }}
-          message={modalSnackMessage ? modalSnackMessage.message : ""}
+          message={message}
           ContentProps={{
             className: `${classes.snackBar} ${
               modalSnackMessage && modalSnackMessage.type === "error"

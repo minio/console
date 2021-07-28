@@ -378,3 +378,8 @@ export interface AffinityConfiguration {
   nodeSelectorLabels?: ILabelKeyPair[];
   withPodAntiAffinity?: boolean;
 }
+
+export interface ErrorResponseHandler {
+  errorMessage: string;
+  detailedError: string;
+}

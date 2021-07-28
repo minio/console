@@ -12,10 +12,13 @@
 // GNU Affero General Public License for more details.
 //
 // You should have received a copy of the GNU Affero General Public License
+
+import { ErrorResponseHandler } from "./common/types";
+
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 export interface snackBarMessage {
   message: string;
-  detailedErrorMsg?: string;
+  detailedErrorMsg: string;
   type: "message" | "error";
 }
 
@@ -88,7 +91,7 @@ interface SetSnackBarMessage {
 
 interface SetErrorSnackMessage {
   type: typeof SET_ERROR_SNACK_MESSAGE;
-  message: string;
+  message: ErrorResponseHandler;
 }
 
 interface SetModalSnackMessage {
@@ -98,7 +101,7 @@ interface SetModalSnackMessage {
 
 interface SetModalErrorMessage {
   type: typeof SET_MODAL_ERROR_MESSAGE;
-  message: string;
+  message: ErrorResponseHandler;
 }
 
 interface SetDistributedSetup {

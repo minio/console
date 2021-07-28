@@ -68,7 +68,10 @@ const DeleteTenant = ({
 
   const removeRecord = () => {
     if (retypeTenant !== selectedTenant.name) {
-      setErrorSnackMessage("Tenant name is not correct");
+      setErrorSnackMessage({
+        errorMessage: "Tenant name is incorrect",
+        detailedError: "",
+      });
       return;
     }
     setDeleteLoading(true);

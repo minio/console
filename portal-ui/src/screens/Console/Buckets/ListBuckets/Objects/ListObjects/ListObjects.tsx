@@ -75,7 +75,6 @@ import {
 } from "../../../../../../actions";
 import { BucketVersioning } from "../../../types";
 import RewindEnable from "./RewindEnable";
-import FileCopyIcon from "@material-ui/icons/FileCopy";
 import DeleteIcon from "@material-ui/icons/Delete";
 import DeleteMultipleObjects from "./DeleteMultipleObjects";
 
