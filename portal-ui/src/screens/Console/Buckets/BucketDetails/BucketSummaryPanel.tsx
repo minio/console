@@ -46,6 +46,7 @@ import EnableVersioningModal from "./EnableVersioningModal";
 import UsageIcon from "../../../../icons/UsageIcon";
 import GavelIcon from "@material-ui/icons/Gavel";
 import EnableQuota from "./EnableQuota";
+import { CreateIcon } from "../../../../icons";
 
 interface IBucketSummaryProps {
   classes: any;
@@ -358,11 +359,17 @@ const BucketSummary = ({
           versioningCurrentState={isVersioned}
         />
       )}
+      <Grid container>
+        <Grid item xs={12} className={classes.actionsTray}>
+          <h1 style={{ padding: "0px", margin: "0px" }}>Summary</h1>
+        </Grid>
+        <Grid item xs={12}>
+          <br />
+        </Grid>
+      </Grid>
       <Paper className={classes.paperContainer}>
         <Grid container>
           <Grid item xs={8}>
-            <h2>Details</h2>
-            <hr className={classes.hrClass} />
             <table width={"100%"}>
               <tbody>
                 <tr>
@@ -451,7 +458,7 @@ const BucketSummary = ({
       <br />
       {distributedSetup && (
         <Fragment>
-          <Paper className={classes.paperContainer}>
+          <Paper className={classes.paperContainer} elevation={1}>
             <Grid container>
               <Grid item xs={quotaEnabled ? 9 : 12}>
                 <h2>Versioning</h2>

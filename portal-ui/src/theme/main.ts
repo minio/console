@@ -31,7 +31,7 @@ const theme = createMuiTheme({
       900: "#333333",
     },
     background: {
-      default: "#F4F4F4",
+      default: "#ffffff",
     },
   },
   typography: {
@@ -82,6 +82,13 @@ const theme = createMuiTheme({
         "& .MuiButton-iconSizeMedium > *:first-child": {
           fontSize: 12,
         },
+      },
+    },
+    MuiPaper: {
+      elevation1: {
+        boxShadow: "none",
+        border: "#EAEDEE 1px solid",
+        borderRadius: 3,
       },
     },
   },
