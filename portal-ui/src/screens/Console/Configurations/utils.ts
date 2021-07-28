@@ -23,7 +23,7 @@ export const notifyMqtt = "notify_mqtt";
 export const notifyRedis = "notify_redis";
 export const notifyNats = "notify_nats";
 export const notifyElasticsearch = "notify_elasticsearch";
-export const notifyWebhooks = "notify_webhooks";
+export const notifyWebhooks = "notify_webhook";
 export const notifyNsq = "notify_nsq";
 
 export const configurationElements: IConfigurationElement[] = [
