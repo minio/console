@@ -294,13 +294,14 @@ func getDeleteObjectResponse(session *models.Principal, params user_api.DeleteOb
 func getDeleteMultiplePathsResponse(session *models.Principal, params user_api.DeleteMultipleObjectsParams) *models.Error {
 	ctx := context.Background()
 	var version string
-	s3Client, err := newS3BucketClient(session, params.BucketName, "")
-	if err != nil {
-		return prepareError(err)
-	}
 	for i := 0; i < len(params.Files); i++ {
 		if params.Files[i].VersionID != "" {
 			version = params.Files[i].VersionID
+		}
+		prefix := params.Files[i].Path
+		s3Client, err := newS3BucketClient(session, params.BucketName, prefix)
+		if err != nil {
+			return prepareError(err)
 		}
 		// create a mc S3Client interface implementation
 		// defining the client to be used
