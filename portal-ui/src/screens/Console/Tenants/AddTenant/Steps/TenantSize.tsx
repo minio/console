@@ -101,7 +101,7 @@ const TenantSize = ({
 }: ITenantSizeProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
   const [errorFlag, setErrorFlag] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
+  const [nodeError, setNodeError] = useState<string>("");
   const usableInformation = ecParityCalc.storageFactors.find(
     (element) => element.erasureCode === ecParity
   );
@@ -149,7 +149,7 @@ const TenantSize = ({
         })
         .catch((err: any) => {
           setErrorFlag(true);
-          setError(err.errorMessage);
+          setNodeError(err.errorMessage);
           console.error(err);
         });
     }
@@ -242,7 +242,7 @@ const TenantSize = ({
         required: true,
         value: nodes,
         customValidation: errorFlag,
-        customValidationMessage: error,
+        customValidationMessage: nodeError,
       },
       {
         fieldKey: "volume_size",
@@ -297,7 +297,7 @@ const TenantSize = ({
     selectedStorageClass,
     isPageValid,
     errorFlag,
-    error
+    nodeError
   ]);
 
   /* End Validation of pages */
