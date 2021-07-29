@@ -21,6 +21,7 @@ import (
 	"crypto/sha1"
 	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -145,6 +146,12 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 			return
 		}
 
+		if loginResp.StatusCode < 200 && loginResp.StatusCode <= 299 {
+			log.Println(fmt.Printf("Status: %d. Couldn't complete login", loginResp.StatusCode))
+			responseWriter.WriteHeader(500)
+			return
+		}
+
 		for _, c := range loginResp.Cookies() {
 			if c.Name == "token" {
 				tenantCookie = c
@@ -161,6 +168,11 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 			}
 		}
 		defer loginResp.Body.Close()
+	}
+	if tenantCookie == nil {
+		log.Println(errors.New("couldn't login to tenant and get cookie"))
+		responseWriter.WriteHeader(500)
+		return
 	}
 
 	targetURL, err := url2.Parse(tenantURL)
