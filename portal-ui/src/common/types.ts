@@ -383,3 +383,9 @@ export interface ErrorResponseHandler {
   errorMessage: string;
   detailedError: string;
 }
+
+export interface IRetentionConfig {
+  mode: string;
+  unit: string;
+  validity: number;
+}
