@@ -32,6 +32,7 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import DeletePod from "./DeletePod";
 
 interface IPodsSummary {
+  classes: any;
   match: any;
   history: any;
   loadingTenant: boolean;
@@ -44,7 +45,12 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const PodsSummary = ({ match, history, loadingTenant }: IPodsSummary) => {
+const PodsSummary = ({
+  classes,
+  match,
+  history,
+  loadingTenant,
+}: IPodsSummary) => {
   const [pods, setPods] = useState<IPodListElement[]>([]);
   const [loadingPods, setLoadingPods] = useState<boolean>(true);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
@@ -117,7 +123,7 @@ const PodsSummary = ({ match, history, loadingTenant }: IPodsSummary) => {
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
-      <br />
+      <div className={classes.topSpacer} />
       <TableWrapper
         columns={[
           { label: "Name", elementKey: "name" },

@@ -175,7 +175,7 @@ const TenantSummary = ({
           namespace={tenantNamespace}
         />
       )}
-      <br />
+      <div className={classes.topSpacer} />
       <Paper className={classes.paperContainer}>
         <Grid container>
           <Grid item xs={8}>

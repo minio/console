@@ -138,6 +138,9 @@ export const containerForHeader = (bottomSpacing: any) => ({
       },
     },
   },
+  topSpacer: {
+    height: "8px",
+  },
 });
 
 export const actionsTray = {

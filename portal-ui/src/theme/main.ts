@@ -91,6 +91,16 @@ const theme = createMuiTheme({
         borderRadius: 3,
       },
     },
+    MuiListItem: {
+      root: {
+        "&.MuiListItem-root.Mui-selected": {
+          background: "inherit",
+          "& .MuiTypography-root": {
+            fontWeight: "bold",
+          },
+        },
+      },
+    },
   },
 });
 

@@ -308,6 +308,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
           <List component="nav" dense={true}>
             <ListItem
               button
+              selected={curTab == 0}
               onClick={() => {
                 setCurTab(0);
               }}
@@ -316,6 +317,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
             </ListItem>
             <ListItem
               button
+              selected={curTab == 1}
               onClick={() => {
                 setCurTab(1);
               }}
@@ -324,6 +326,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
             </ListItem>
             <ListItem
               button
+              selected={curTab == 2}
               onClick={() => {
                 setCurTab(2);
               }}
