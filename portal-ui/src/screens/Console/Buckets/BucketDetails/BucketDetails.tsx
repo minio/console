@@ -265,8 +265,8 @@ const BucketDetails = ({
         <Grid item xs={2}>
           <List component="nav" dense={true}>
             <ListItem
-              className={classes.listItem}
               button
+              selected={selectedTab === "summary"}
               onClick={() => {
                 changeRoute("summary");
               }}
@@ -274,8 +274,8 @@ const BucketDetails = ({
               <ListItemText primary="Summary" />
             </ListItem>
             <ListItem
-              className={classes.listItem}
               button
+              selected={selectedTab === "events"}
               onClick={() => {
                 changeRoute("events");
               }}
@@ -284,8 +284,8 @@ const BucketDetails = ({
             </ListItem>
             {canGetReplication && (
               <ListItem
-                className={classes.listItem}
                 button
+                selected={selectedTab === "replication"}
                 onClick={() => {
                   changeRoute("replication");
                 }}
@@ -295,8 +295,8 @@ const BucketDetails = ({
             )}
 
             <ListItem
-              className={classes.listItem}
               button
+              selected={selectedTab === "lifecycle"}
               onClick={() => {
                 changeRoute("lifecycle");
               }}
@@ -304,8 +304,8 @@ const BucketDetails = ({
               <ListItemText primary="Lifecycle" />
             </ListItem>
             <ListItem
-              className={classes.listItem}
               button
+              selected={selectedTab === "access"}
               onClick={() => {
                 changeRoute("access");
               }}

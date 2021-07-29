@@ -97,7 +97,7 @@ const TenantLicense = ({
 
   return (
     <Fragment>
-      <br />
+      <div className={classes.topSpacer} />
       {loadingTenant ? (
         <div className={classes.loaderAlign}>
           <CircularProgress />

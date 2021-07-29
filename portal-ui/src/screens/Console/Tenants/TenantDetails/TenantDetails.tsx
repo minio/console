@@ -21,8 +21,6 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { IconButton, Menu, MenuItem } from "@material-ui/core";
 import get from "lodash/get";
 import Grid from "@material-ui/core/Grid";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import { setErrorSnackMessage } from "../../../../actions";
@@ -48,6 +46,9 @@ import PoolsSummary from "./PoolsSummary";
 import PodsSummary from "./PodsSummary";
 import TenantMetrics from "./TenantMetrics";
 import TenantSecurity from "./TenantSecurity";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -180,6 +181,13 @@ const TenantDetails = ({
     setTenantDetailsLoad(true);
   };
 
+  const changeRoute = (newValue: string) => {
+    setTenantTab(newValue);
+    history.push(
+      `/namespaces/${tenantNamespace}/tenants/${tenantName}/${newValue}`
+    );
+  };
+
   return (
     <Fragment>
       {yamlScreenOpen && (
@@ -233,30 +241,65 @@ const TenantDetails = ({
       />
       <Grid item xs={12} className={classes.container} />
       <Grid container>
-        <Grid item xs={12}>
-          <Tabs
-            value={currentTab}
-            indicatorColor="primary"
-            textColor="primary"
-            onChange={(_, newValue: string) => {
-              setTenantTab(newValue);
-              history.push(
-                `/namespaces/${tenantNamespace}/tenants/${tenantName}/${newValue}`
-              );
-            }}
-            aria-label="tenant-tabs"
-            variant="scrollable"
-            scrollButtons="auto"
-          >
-            <Tab value="summary" label="Summary" />
-            <Tab value="metrics" label="Metrics" />
-            <Tab value="security" label="Security" />
-            <Tab value="pools" label="Pools" />
-            <Tab value="pods" label="Pods" />
-            <Tab value="license" label="License" />
-          </Tabs>
+        <Grid item xs={2}>
+          <List component="nav" dense={true}>
+            <ListItem
+              button
+              selected={currentTab === "summary"}
+              onClick={() => {
+                changeRoute("summary");
+              }}
+            >
+              <ListItemText primary="Summary" />
+            </ListItem>
+            <ListItem
+              button
+              selected={currentTab === "metrics"}
+              onClick={() => {
+                changeRoute("metrics");
+              }}
+            >
+              <ListItemText primary="Metrics" />
+            </ListItem>
+            <ListItem
+              button
+              selected={currentTab === "security"}
+              onClick={() => {
+                changeRoute("security");
+              }}
+            >
+              <ListItemText primary="Security" />
+            </ListItem>
+            <ListItem
+              button
+              selected={currentTab === "pools"}
+              onClick={() => {
+                changeRoute("pools");
+              }}
+            >
+              <ListItemText primary="Pools" />
+            </ListItem>
+            <ListItem
+              button
+              selected={currentTab === "pods"}
+              onClick={() => {
+                changeRoute("pods");
+              }}
+            >
+              <ListItemText primary="Pods" />
+            </ListItem>
+            <ListItem
+              button
+              selected={currentTab === "license"}
+              onClick={() => {
+                changeRoute("license");
+              }}
+            >
+              <ListItemText primary="License" />
+            </ListItem>
+          </List>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={10}>
           <Router history={history}>
             <Switch>
               <Route

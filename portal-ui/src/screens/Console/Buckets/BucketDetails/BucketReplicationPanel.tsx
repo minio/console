@@ -48,9 +48,6 @@ const styles = (theme: Theme) =>
   createStyles({
     ...searchField,
     ...actionsTray,
-    actionsTray: {
-      ...actionsTray.actionsTray,
-    },
   });
 
 const BucketReplicationPanel = ({

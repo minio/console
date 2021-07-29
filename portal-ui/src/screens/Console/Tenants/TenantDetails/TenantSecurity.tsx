@@ -418,7 +418,7 @@ const TenantSecurity = ({
         cancelLabel="Cancel"
         okLabel={"Restart"}
       />
-      <br />
+      <div className={classes.topSpacer} />
       {loadingTenant ? (
         <Paper className={classes.paperContainer}>
           <div className={classes.loaderAlign}>

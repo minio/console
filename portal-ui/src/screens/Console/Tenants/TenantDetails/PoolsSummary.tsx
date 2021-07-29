@@ -18,6 +18,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import {
+  actionsTray,
   containerForHeader,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
@@ -56,6 +57,7 @@ const styles = (theme: Theme) =>
     greyState: {
       color: "grey",
     },
+    ...actionsTray,
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -101,6 +103,7 @@ const PoolsSummary = ({
           tenant={tenant}
         />
       )}
+      <div className={classes.topSpacer} />
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
           <TextField
