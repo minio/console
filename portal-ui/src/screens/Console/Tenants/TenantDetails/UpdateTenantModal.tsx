@@ -20,6 +20,7 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, Grid } from "@material-ui/core";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../actions";
+import { ErrorResponseHandler } from "../../../../common/types";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
@@ -133,7 +134,7 @@ const UpdateTenantModal = ({
         setIsSending(false);
         closeModalAndRefresh(true);
       })
-      .catch((error) => {
+      .catch((error: ErrorResponseHandler) => {
         setModalErrorSnackMessage(error);
         setIsSending(false);
       });

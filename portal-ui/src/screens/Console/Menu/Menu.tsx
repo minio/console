@@ -17,20 +17,19 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import { NavLink } from "react-router-dom";
+import { Divider, withStyles } from "@material-ui/core";
+import { createStyles, Theme } from "@material-ui/core/styles";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import DescriptionIcon from "@material-ui/icons/Description";
 import Collapse from "@material-ui/core/Collapse";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
-import { Divider, withStyles } from "@material-ui/core";
-import { createStyles, Theme } from "@material-ui/core/styles";
-import history from "../../../history";
-import logo from "../../../icons/minio_console_logo.svg";
-import operator_logo from "../../../icons/minio_operator_logo.svg";
+import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
+import TrackChangesSharpIcon from "@material-ui/icons/TrackChangesSharp";
+import StorageIcon from "@material-ui/icons/Storage";
 import { AppState } from "../../../store";
 import { userLoggedIn } from "../../../actions";
-import api from "../../../common/api";
 import { menuGroups } from "./utils";
 import { IMenuItem, IMenuProps } from "./types";
 import {
@@ -44,15 +43,17 @@ import {
   TraceIcon,
   UsersIcon,
 } from "../../../icons";
-import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
+import { ErrorResponseHandler } from "../../../common/types";
 import { clearSession } from "../../../common/utils";
 import LicenseIcon from "../../../icons/LicenseIcon";
 import LogoutIcon from "../../../icons/LogoutIcon";
 import ConsoleIcon from "../../../icons/ConsoleIcon";
 import HealIcon from "../../../icons/HealIcon";
 import WatchIcon from "../../../icons/WatchIcon";
-import TrackChangesSharpIcon from "@material-ui/icons/TrackChangesSharp";
-import StorageIcon from "@material-ui/icons/Storage";
+import history from "../../../history";
+import logo from "../../../icons/minio_console_logo.svg";
+import operator_logo from "../../../icons/minio_operator_logo.svg";
+import api from "../../../common/api";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -183,7 +184,7 @@ const Menu = ({
       .then(() => {
         deleteSession();
       })
-      .catch((err: any) => {
+      .catch((err: ErrorResponseHandler) => {
         console.log(err);
         deleteSession();
       });

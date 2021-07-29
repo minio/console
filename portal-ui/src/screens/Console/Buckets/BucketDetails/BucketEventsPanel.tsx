@@ -28,6 +28,7 @@ import {
   actionsTray,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
+import { ErrorResponseHandler } from "../../../../common/types";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import api from "../../../../common/api";
 import DeleteEvent from "./DeleteEvent";
@@ -70,7 +71,7 @@ const BucketEventsPanel = ({
           setLoadingEvents(false);
           setRecords(events || []);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setLoadingEvents(false);
           setErrorSnackMessage(err);
         });

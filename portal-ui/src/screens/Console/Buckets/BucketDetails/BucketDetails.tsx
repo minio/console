@@ -31,6 +31,7 @@ import {
 import { setErrorSnackMessage } from "../../../../actions";
 import { setBucketDetailsTab } from "../actions";
 import { AppState } from "../../../../store";
+import { ErrorResponseHandler } from "../../../../common/types";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import AccessDetailsPanel from "./AccessDetailsPanel";
 import BucketSummaryPanel from "./BucketSummaryPanel";
@@ -217,7 +218,7 @@ const BucketDetails = ({
 
           setLoadingPerms(false);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setLoadingPerms(false);
           setErrorSnackMessage(err);
         });

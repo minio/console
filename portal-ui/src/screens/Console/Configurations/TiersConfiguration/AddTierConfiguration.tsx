@@ -25,6 +25,7 @@ import {
   modalBasic,
   settingsCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
+import { ErrorResponseHandler } from "../../../../common/types";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
 
@@ -165,7 +166,7 @@ const AddTierConfiguration = ({
           setSaving(false);
           saveAndRefresh();
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setSaving(false);
           setErrorSnackMessage(err);
         });

@@ -38,6 +38,7 @@ import {
   containerForHeader,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
+import { ErrorResponseHandler } from "../../../common/types";
 import LockIcon from "@material-ui/icons/Lock";
 import ChangePasswordModal from "./ChangePasswordModal";
 
@@ -123,7 +124,7 @@ const Account = ({
           setLoading(false);
           setRecords(serviceAccounts);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           displayErrorMessage(err);
           setLoading(false);
         });

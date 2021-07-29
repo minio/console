@@ -17,19 +17,20 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { TextField } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import SearchIcon from "@material-ui/icons/Search";
+import api from "../../../../../common/api";
 import {
   actionsTray,
   buttonsStyles,
   containerForHeader,
   searchField,
 } from "../../../Common/FormComponents/common/styleLibrary";
-import Grid from "@material-ui/core/Grid";
-import { TextField } from "@material-ui/core";
-import Paper from "@material-ui/core/Paper";
-import api from "../../../../../common/api";
 import { setErrorSnackMessage } from "../../../../../actions";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
+import { ErrorResponseHandler } from "../../../../../common/types";
 
 interface IPodLogsProps {
   classes: any;
@@ -150,7 +151,7 @@ const PodLogs = ({
           setLogLines(res.split("\n"));
           setLoading(false);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setErrorSnackMessage(err);
           setLoading(false);
         });

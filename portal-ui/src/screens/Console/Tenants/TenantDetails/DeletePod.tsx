@@ -30,6 +30,7 @@ import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBo
 import Grid from "@material-ui/core/Grid";
 import { connect } from "react-redux";
 import { setErrorSnackMessage } from "../../../../actions";
+import { ErrorResponseHandler } from "../../../../common/types";
 
 interface IDeletePod {
   deleteOpen: boolean;
@@ -58,7 +59,7 @@ const DeletePod = ({
           setDeleteLoading(false);
           closeDeleteModalAndRefresh(true);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setDeleteLoading(false);
           setErrorSnackMessage(err);
         });

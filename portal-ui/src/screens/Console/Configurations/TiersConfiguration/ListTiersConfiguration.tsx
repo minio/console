@@ -33,6 +33,7 @@ import {
 import { CreateIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../actions";
 import { ITierElement, ITierResponse } from "./types";
+import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import SlideOptions from "../../Common/SlideOptions/SlideOptions";
@@ -106,7 +107,7 @@ const ListTiersConfiguration = ({
             setRecords(res.items || []);
             setIsLoading(false);
           })
-          .catch((err) => {
+          .catch((err: ErrorResponseHandler) => {
             setErrorSnackMessage(err);
             setIsLoading(false);
           });

@@ -20,6 +20,7 @@ import get from "lodash/get";
 import * as reactMoment from "react-moment";
 import clsx from "clsx";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { CircularProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Chip from "@material-ui/core/Chip";
 import TextField from "@material-ui/core/TextField";
@@ -51,6 +52,12 @@ import DeleteIcon from "../../../../../../icons/DeleteIcon";
 import TableWrapper, {
   ItemActions,
 } from "../../../../Common/TableWrapper/TableWrapper";
+import { AppState } from "../../../../../../store";
+import { ErrorResponseHandler } from "../../../../../../common/types";
+import {
+  setErrorSnackMessage,
+  setSnackBarMessage,
+} from "../../../../../../actions";
 import PencilIcon from "../../../../Common/TableWrapper/TableActionIcons/PencilIcon";
 import SetRetention from "./SetRetention";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
@@ -58,12 +65,6 @@ import DeleteObject from "../ListObjects/DeleteObject";
 import AddTagModal from "./AddTagModal";
 import DeleteTagModal from "./DeleteTagModal";
 import SetLegalHoldModal from "./SetLegalHoldModal";
-import {
-  setErrorSnackMessage,
-  setSnackBarMessage,
-} from "../../../../../../actions";
-import { CircularProgress } from "@material-ui/core";
-import { AppState } from "../../../../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -241,7 +242,7 @@ const ObjectDetails = ({
 
           setLoadObjectData(false);
         })
-        .catch((error) => {
+        .catch((error: ErrorResponseHandler) => {
           setErrorSnackMessage(error);
           setLoadObjectData(false);
         });

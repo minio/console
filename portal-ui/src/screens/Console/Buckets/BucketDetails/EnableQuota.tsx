@@ -16,18 +16,19 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import Grid from "@material-ui/core/Grid";
 import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
-import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
+import Grid from "@material-ui/core/Grid";
 import { factorForDropdown, getBytes, units } from "../../../../common/utils";
 import { BucketQuota } from "../types";
 import { setModalErrorSnackMessage } from "../../../../actions";
+import { ErrorResponseHandler } from "../../../../common/types";
+import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
+import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import api from "../../../../common/api";
 
 const styles = (theme: Theme) =>
@@ -118,7 +119,7 @@ const EnableQuota = ({
         setLoading(false);
         closeModalAndRefresh();
       })
-      .catch((err: any) => {
+      .catch((err: ErrorResponseHandler) => {
         setLoading(false);
         setModalErrorSnackMessage(err);
       });

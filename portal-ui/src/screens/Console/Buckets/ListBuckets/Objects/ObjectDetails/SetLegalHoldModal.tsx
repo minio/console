@@ -23,6 +23,7 @@ import Button from "@material-ui/core/Button";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../../../actions";
 import { IFileInfo } from "./types";
+import { ErrorResponseHandler } from "../../../../../../common/types";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import FormSwitchWrapper from "../../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import api from "../../../../../../common/api";
@@ -82,7 +83,7 @@ const SetLegalHoldModal = ({
         setIsSaving(false);
         closeModalAndRefresh(true);
       })
-      .catch((error) => {
+      .catch((error: ErrorResponseHandler) => {
         setModalErrorSnackMessage(error);
         setIsSaving(false);
       });

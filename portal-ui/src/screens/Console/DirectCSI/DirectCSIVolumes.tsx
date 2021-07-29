@@ -29,6 +29,7 @@ import {
 import { IDirectCSIVolumes, IVolumesResponse } from "./types";
 import { setErrorSnackMessage } from "../../../actions";
 import { niceBytes } from "../../../common/utils";
+import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
@@ -93,7 +94,7 @@ const DirectCSIVolumes = ({
           setRecords(volumes);
           setLoading(false);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setLoading(false);
           setErrorSnackMessage(err);
         });

@@ -27,6 +27,7 @@ import {
 } from "@material-ui/core";
 import api from "../../../common/api";
 import { setErrorSnackMessage } from "../../../actions";
+import { ErrorResponseHandler } from "../../../common/types";
 
 interface IDeleteGroup {
   selectedGroup: string;
@@ -56,7 +57,7 @@ const DeleteGroup = ({
             setDeleteLoading(false);
             closeDeleteModalAndRefresh(true);
           })
-          .catch((err) => {
+          .catch((err: ErrorResponseHandler) => {
             setDeleteLoading(false);
             setErrorSnackMessage(err);
           });

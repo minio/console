@@ -28,6 +28,7 @@ import { AppState } from "../../../store";
 import { setErrorSnackMessage } from "../../../actions";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { stringSort } from "../../../utils/sortFunctions";
+import { ErrorResponseHandler } from "../../../common/types";
 import AddServiceAccount from "../Account/AddServiceAccount";
 import DeleteServiceAccount from "../Account/DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
@@ -78,7 +79,7 @@ const UserServiceAccountsPanel = ({
           setLoading(false);
           setRecords(serviceAccounts);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setErrorSnackMessage(err);
           setLoading(false);
         });

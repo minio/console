@@ -23,6 +23,8 @@ import get from "lodash/get";
 import Grid from "@material-ui/core/Grid";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import RefreshIcon from "@material-ui/icons/Refresh";
 import { setErrorSnackMessage } from "../../../../actions";
 import {
   setTenantDetailsLoad,
@@ -35,18 +37,17 @@ import {
   containerForHeader,
   tenantDetailsStyles,
 } from "../../Common/FormComponents/common/styleLibrary";
+import { AppState } from "../../../../store";
+import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
 import TenantYAML from "./TenantYAML";
 import TenantSummary from "./TenantSummary";
 import TenantLicense from "./TenantLicense";
 import PoolsSummary from "./PoolsSummary";
 import PodsSummary from "./PodsSummary";
-import { AppState } from "../../../../store";
 import TenantMetrics from "./TenantMetrics";
 import TenantSecurity from "./TenantSecurity";
-import RefreshIcon from "@material-ui/icons/Refresh";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -133,7 +134,7 @@ const TenantDetails = ({
           setTenantInfo(res);
           setTenantDetailsLoad(false);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setErrorSnackMessage(err);
           setTenantDetailsLoad(false);
         });

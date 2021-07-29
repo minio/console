@@ -31,11 +31,12 @@ import {
   BucketReplicationRule,
   HasPermissionResponse,
 } from "../types";
+import { ErrorResponseHandler } from "../../../../common/types";
+import { AppState } from "../../../../store";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import AddReplicationModal from "./AddReplicationModal";
 import DeleteReplicationRule from "./DeleteReplicationRule";
-import { AppState } from "../../../../store";
 
 interface IBucketReplicationProps {
   classes: any;
@@ -116,7 +117,7 @@ const BucketReplicationPanel = ({
 
           setLoadingPerms(false);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setLoadingPerms(false);
           setErrorSnackMessage(err);
         });
@@ -132,7 +133,7 @@ const BucketReplicationPanel = ({
           setReplicationRules(r);
           setLoadingReplication(false);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setErrorSnackMessage(err);
           setLoadingReplication(false);
         });

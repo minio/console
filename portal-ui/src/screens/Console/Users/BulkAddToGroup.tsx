@@ -21,6 +21,7 @@ import { Button, LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../actions";
+import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import GroupsSelectors from "./GroupsSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
@@ -73,7 +74,7 @@ const BulkAddToGroup = ({
             isSaving(false);
             setAccepted(true);
           })
-          .catch((err) => {
+          .catch((err: ErrorResponseHandler) => {
             isSaving(false);
             setModalErrorSnackMessage(err);
           });

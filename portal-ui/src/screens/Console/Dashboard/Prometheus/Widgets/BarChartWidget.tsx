@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import {
   Bar,
   BarChart,
@@ -23,17 +24,17 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { IBarChartConfiguration } from "./types";
+import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
+import { CircularProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { IBarChartConfiguration } from "./types";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import BarChartTooltip from "./tooltips/BarChartTooltip";
 import { setErrorSnackMessage } from "../../../../../actions";
-import { connect } from "react-redux";
 import { IDashboardPanel } from "../types";
-import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
-import api from "../../../../../common/api";
 import { widgetDetailsToPanel } from "../utils";
-import { CircularProgress } from "@material-ui/core";
+import { ErrorResponseHandler } from "../../../../../common/types";
+import api from "../../../../../common/api";
 
 interface IBarChartWidget {
   classes: any;
@@ -119,7 +120,7 @@ const BarChartWidget = ({
           setResult(widgetsWithValue);
           setLoading(false);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           displayErrorMessage(err);
           setLoading(false);
         });

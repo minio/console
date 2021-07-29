@@ -24,6 +24,7 @@ import Button from "@material-ui/core/Button";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import { SubscriptionActivateRequest } from "../Buckets/types";
 import { setModalErrorSnackMessage } from "../../../actions";
+import { ErrorResponseHandler } from "../../../common/types";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import api from "../../../common/api";
@@ -104,7 +105,7 @@ const ActivationModal = ({
         setSubnetEmail("");
         closeModal();
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setLoading(false);
         setLicense("");
         setSubnetPassword("");

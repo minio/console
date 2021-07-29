@@ -28,6 +28,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { IPVCsResponse, IStoragePVCs } from "./types";
 import { setErrorSnackMessage } from "../../../actions";
+import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
@@ -73,7 +74,7 @@ const StorageVolumes = ({
           setRecords(volumes ? volumes : []);
           setLoading(false);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setLoading(false);
           setErrorSnackMessage(err);
         });

@@ -21,11 +21,12 @@ import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
+import { BucketEncryptionInfo } from "../types";
+import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { BucketEncryptionInfo } from "../types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -89,7 +90,7 @@ const EnableBucketEncryption = ({
           setLoading(false);
           closeModalAndRefresh();
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setLoading(false);
           setModalErrorSnackMessage(err);
         });
@@ -103,7 +104,7 @@ const EnableBucketEncryption = ({
           setLoading(false);
           closeModalAndRefresh();
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setLoading(false);
           setModalErrorSnackMessage(err);
         });

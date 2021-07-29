@@ -25,10 +25,11 @@ import {
   DialogTitle,
   LinearProgress,
 } from "@material-ui/core";
-import api from "../../../common/api";
 import { setErrorSnackMessage } from "../../../actions";
-import history from "../../../history";
 import { UsersList } from "./types";
+import { ErrorResponseHandler } from "../../../common/types";
+import history from "../../../history";
+import api from "../../../common/api";
 
 interface IDeleteUserProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -61,7 +62,7 @@ const DeleteUserString = ({
         setDeleteLoading(false);
         closeDeleteModalAndRefresh(true);
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setDeleteLoading(false);
         setErrorSnackMessage(err);
       });

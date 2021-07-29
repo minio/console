@@ -30,6 +30,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { PolicyList } from "./types";
 import { setModalErrorSnackMessage } from "../../../actions";
+import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
@@ -127,7 +128,7 @@ const PolicySelectors = ({
         isLoading(false);
         setRecords(policies.sort(policySort));
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         isLoading(false);
         setModalErrorSnackMessage(err);
       });

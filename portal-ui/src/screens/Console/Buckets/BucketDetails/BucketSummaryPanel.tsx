@@ -38,6 +38,7 @@ import {
   buttonsStyles,
   hrClass,
 } from "../../Common/FormComponents/common/styleLibrary";
+import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import SetAccessPolicy from "./SetAccessPolicy";
 import SetRetentionConfig from "./SetRetentionConfig";
@@ -46,7 +47,6 @@ import EnableVersioningModal from "./EnableVersioningModal";
 import UsageIcon from "../../../../icons/UsageIcon";
 import GavelIcon from "@material-ui/icons/Gavel";
 import EnableQuota from "./EnableQuota";
-import { CreateIcon } from "../../../../icons";
 
 interface IBucketSummaryProps {
   classes: any;
@@ -138,7 +138,7 @@ const BucketSummary = ({
           setLoadingBucket(false);
           setInfo(res);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setLoadingBucket(false);
           setErrorSnackMessage(err);
         });
@@ -156,9 +156,10 @@ const BucketSummary = ({
           }
           setLoadingEncryption(false);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           if (
-            err === "The server side encryption configuration was not found"
+            err.errorMessage ===
+            "The server side encryption configuration was not found"
           ) {
             setEncryptionEnabled(false);
             setEncryptionCfg(null);
@@ -176,7 +177,7 @@ const BucketSummary = ({
           setIsVersioned(res.is_versioned);
           setLoadingVersioning(false);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setErrorSnackMessage(err);
           setLoadingVersioning(false);
         });
@@ -196,7 +197,7 @@ const BucketSummary = ({
           }
           setLoadingQuota(false);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setErrorSnackMessage(err);
           setQuotaEnabled(false);
           setLoadingVersioning(false);
@@ -218,7 +219,7 @@ const BucketSummary = ({
           setHasObjectLocking(res.object_locking_enabled);
           setLoadingLocking(false);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setErrorSnackMessage(err);
           setLoadingLocking(false);
         });
@@ -246,7 +247,7 @@ const BucketSummary = ({
           setLoadingSize(false);
           setBucketSize(size);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setLoadingSize(false);
           setErrorSnackMessage(err);
         });
@@ -262,7 +263,7 @@ const BucketSummary = ({
           setReplicationRules(r.length > 0);
           setLoadingReplication(false);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setErrorSnackMessage(err);
           setLoadingReplication(false);
         });

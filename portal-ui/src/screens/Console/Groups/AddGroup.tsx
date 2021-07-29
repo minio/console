@@ -21,6 +21,7 @@ import { Button, LinearProgress } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../actions";
+import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import UsersSelectors from "./UsersSelectors";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
@@ -99,7 +100,7 @@ const AddGroup = ({
               isSaving(false);
               closeModalAndRefresh();
             })
-            .catch((err) => {
+            .catch((err: ErrorResponseHandler) => {
               isSaving(false);
               setModalErrorSnackMessage(err);
             });
@@ -113,7 +114,7 @@ const AddGroup = ({
               isSaving(false);
               closeModalAndRefresh();
             })
-            .catch((err) => {
+            .catch((err: ErrorResponseHandler) => {
               isSaving(false);
               setModalErrorSnackMessage(err);
             });
@@ -141,7 +142,7 @@ const AddGroup = ({
             setGroupName(res.name);
             setSelectedUsers(res.members);
           })
-          .catch((err) => {
+          .catch((err: ErrorResponseHandler) => {
             setModalErrorSnackMessage(err);
             isLoadingGroup(false);
           });

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import {
   Area,
   AreaChart,
@@ -24,17 +25,17 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { ILinearGraphConfiguration } from "./types";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
-import LineChartTooltip from "./tooltips/LineChartTooltip";
-import { IDashboardPanel } from "../types";
-import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
-import { connect } from "react-redux";
-import { setErrorSnackMessage } from "../../../../../actions";
-import api from "../../../../../common/api";
-import { widgetDetailsToPanel } from "../utils";
 import { CircularProgress } from "@material-ui/core";
+import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
+import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { ILinearGraphConfiguration } from "./types";
+import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
+import { IDashboardPanel } from "../types";
+import { setErrorSnackMessage } from "../../../../../actions";
+import { widgetDetailsToPanel } from "../utils";
+import { ErrorResponseHandler } from "../../../../../common/types";
+import api from "../../../../../common/api";
+import LineChartTooltip from "./tooltips/LineChartTooltip";
 
 interface ILinearGraphWidget {
   classes: any;
@@ -145,7 +146,7 @@ const LinearGraphWidget = ({
           }
           setDataMax(maxVal);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           displayErrorMessage(err);
           setLoading(false);
         });

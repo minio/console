@@ -28,6 +28,7 @@ import {
 import api from "../../../common/api";
 import { User, UsersList } from "./types";
 import { setErrorSnackMessage } from "../../../actions";
+import { ErrorResponseHandler } from "../../../common/types";
 
 interface IDeleteUserProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -64,7 +65,7 @@ const DeleteUser = ({
         setDeleteLoading(false);
         closeDeleteModalAndRefresh(true);
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setDeleteLoading(false);
         setErrorSnackMessage(err);
       });

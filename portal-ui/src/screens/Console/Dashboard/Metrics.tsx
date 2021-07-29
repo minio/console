@@ -23,6 +23,7 @@ import { LinearProgress } from "@material-ui/core";
 import api from "../../../common/api";
 import { Usage } from "./types";
 import { setErrorSnackMessage } from "../../../actions";
+import { ErrorResponseHandler } from "../../../common/types";
 import PrDashboard from "./Prometheus/PrDashboard";
 import BasicDashboard from "./BasicDashboard/BasicDashboard";
 
@@ -44,7 +45,7 @@ const Metrics = ({ classes, displayErrorMessage }: IMetricsSimple) => {
         setBasicResult(res);
         setLoading(false);
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         displayErrorMessage(err);
         setLoading(false);
       });

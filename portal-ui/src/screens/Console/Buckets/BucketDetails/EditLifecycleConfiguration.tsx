@@ -21,12 +21,13 @@ import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../actions";
+import { LifeCycleItem } from "../types";
+import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
-import { LifeCycleItem } from "../types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -103,7 +104,7 @@ const EditLifecycleConfiguration = ({
           setAddLoading(false);
           closeModalAndRefresh(true);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setAddLoading(false);
           setModalErrorSnackMessage(err);
         });

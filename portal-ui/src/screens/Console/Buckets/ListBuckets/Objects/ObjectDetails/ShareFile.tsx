@@ -28,11 +28,12 @@ import {
   setModalErrorSnackMessage,
   setModalSnackMessage,
 } from "../../../../../../actions";
+import { AppState } from "../../../../../../store";
+import { ErrorResponseHandler } from "../../../../../../common/types";
 import api from "../../../../../../common/api";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import DateSelector from "../../../../Common/FormComponents/DateSelector/DateSelector";
 import PredefinedList from "../../../../Common/FormComponents/PredefinedList/PredefinedList";
-import { AppState } from "../../../../../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -127,7 +128,7 @@ const ShareFile = ({
           setShareURL(res);
           setIsLoadingFile(false);
         })
-        .catch((error) => {
+        .catch((error: ErrorResponseHandler) => {
           setModalErrorSnackMessage(error);
           setShareURL("");
           setIsLoadingFile(false);

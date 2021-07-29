@@ -16,10 +16,12 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, Grid, IconButton, Tooltip } from "@material-ui/core";
-import PageHeader from "../Common/PageHeader/PageHeader";
 import { CreateIcon, DeleteIcon } from "../../../icons";
+import { Bookmark } from "@material-ui/icons";
 import {
   setErrorSnackMessage,
   setModalErrorSnackMessage,
@@ -30,12 +32,13 @@ import {
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
 import { IPolicyItem } from "./types";
+import { ErrorResponseHandler } from "../../../common/types";
 import { TabPanel } from "../../shared/tabs";
+import PageHeader from "../Common/PageHeader/PageHeader";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import ChangeUserGroups from "./ChangeUserGroups";
 import SetUserPolicies from "./SetUserPolicies";
-import { Bookmark } from "@material-ui/icons";
 import history from "../../../history";
 import UserServiceAccountsPanel from "./UserServiceAccountsPanel";
 import ChangeUserPasswordModal from "../Account/ChangeUserPasswordModal";
@@ -43,7 +46,6 @@ import DeleteUserString from "./DeleteUserString";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
-import { Link } from "react-router-dom";
 import LockIcon from "@material-ui/icons/Lock";
 
 const styles = (theme: Theme) =>
@@ -182,7 +184,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
         setEnabled(res.status === "enabled");
         setLoading(false);
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
         setLoading(false);
         setModalErrorSnackMessage(err);
@@ -202,7 +204,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
       .then((_) => {
         setAddLoading(false);
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
         setModalErrorSnackMessage(err);
       });

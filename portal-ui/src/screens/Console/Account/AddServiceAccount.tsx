@@ -15,16 +15,17 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
+import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
+import { setModalErrorSnackMessage } from "../../../actions";
+import { ErrorResponseHandler } from "../../../common/types";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import api from "../../../common/api";
-import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
-import { setModalErrorSnackMessage } from "../../../actions";
-import { connect } from "react-redux";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 
 const styles = (theme: Theme) =>
@@ -77,7 +78,7 @@ const AddServiceAccount = ({
           setAddSending(false);
           closeModalAndRefresh(res);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setAddSending(false);
           setModalErrorSnackMessage(err);
         });

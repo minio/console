@@ -16,22 +16,23 @@
 import React, { useEffect, useState } from "react";
 import { Button, Grid, TextField, InputBase } from "@material-ui/core";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import { AppState } from "../../../store";
 import { connect } from "react-redux";
+import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { AppState } from "../../../store";
 import { watchMessageReceived, watchResetMessages } from "./actions";
 import { EventInfo, BucketList, Bucket } from "./types";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { niceBytes, timeFromDate } from "../../../common/utils";
 import { wsProtocol } from "../../../utils/wsUtils";
-import api from "../../../common/api";
 import { FormControl, MenuItem, Select } from "@material-ui/core";
 import {
   actionsTray,
   containerForHeader,
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
+import { ErrorResponseHandler } from "../../../common/types";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
+import api from "../../../common/api";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -109,7 +110,7 @@ const Watch = ({
         }
         setBucketList(buckets);
       })
-      .catch((err: any) => {
+      .catch((err: ErrorResponseHandler) => {
         console.log(err);
       });
   };

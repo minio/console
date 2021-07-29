@@ -27,6 +27,7 @@ import {
 } from "@material-ui/core";
 import { BucketList } from "../types";
 import { setErrorSnackMessage } from "../../../../actions";
+import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 
 interface IDeleteBucketProps {
@@ -56,7 +57,7 @@ const DeleteBucket = ({
           setDeleteLoading(false);
           closeDeleteModalAndRefresh(true);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setDeleteLoading(false);
           setErrorSnackMessage(err);
         });

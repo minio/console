@@ -44,6 +44,7 @@ import { useDebounce } from "use-debounce";
 import { MakeBucketRequest } from "../types";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import { setModalErrorSnackMessage } from "../../../../actions";
+import { ErrorResponseHandler } from "../../../../common/types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -172,7 +173,7 @@ const AddBucket = ({
         setAddLoading(false);
         closeModalAndRefresh(true);
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
         setModalError(err);
       });

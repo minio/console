@@ -24,11 +24,12 @@ import {
   searchField,
 } from "../../../Common/FormComponents/common/styleLibrary";
 import Grid from "@material-ui/core/Grid";
-import TableWrapper from "../../../Common/TableWrapper/TableWrapper";
-import api from "../../../../../common/api";
 import { IEvent } from "../../ListTenants/types";
 import { setErrorSnackMessage } from "../../../../../actions";
 import { niceDays } from "../../../../../common/utils";
+import { ErrorResponseHandler } from "../../../../../common/types";
+import TableWrapper from "../../../Common/TableWrapper/TableWrapper";
+import api from "../../../../../common/api";
 
 interface IPodEventsProps {
   classes: any;
@@ -84,7 +85,7 @@ const PodEvents = ({
           setEvent(res);
           setLoading(false);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setErrorSnackMessage(err);
           setLoading(false);
         });

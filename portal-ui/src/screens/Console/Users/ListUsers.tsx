@@ -30,6 +30,7 @@ import {
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../actions";
+import { ErrorResponseHandler } from "../../../common/types";
 import AddUser from "./AddUser";
 import DeleteUser from "./DeleteUser";
 import AddToGroup from "./BulkAddToGroup";
@@ -101,7 +102,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
         setLoading(false);
         setRecords(users.sort(usersSort));
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setLoading(false);
         setErrorSnackMessage(err);
       });

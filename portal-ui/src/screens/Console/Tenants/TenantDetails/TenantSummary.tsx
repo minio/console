@@ -31,6 +31,7 @@ import { ITenant } from "../ListTenants/types";
 import UsageBarWrapper from "../../Common/UsageBarWrapper/UsageBarWrapper";
 import UpdateTenantModal from "./UpdateTenantModal";
 import { AppState } from "../../../../store";
+import { ErrorResponseHandler } from "../../../../common/types";
 import history from "./../../../../history";
 
 interface ITenantsSummary {
@@ -123,8 +124,8 @@ const TenantSummary = ({
           setUsageError("");
           setLoadingUsage(false);
         })
-        .catch((err) => {
-          setUsageError(err);
+        .catch((err: ErrorResponseHandler) => {
+          setUsageError(err.errorMessage);
           setUsage(0);
           setLoadingUsage(false);
         });

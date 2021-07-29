@@ -29,6 +29,7 @@ import Table from "@material-ui/core/Table";
 import { ArnList } from "../types";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../actions";
+import { ErrorResponseHandler } from "../../../../common/types";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import AutocompleteWrapper from "../../Common/FormComponents/AutocompleteWrapper/AutocompleteWrapper";
@@ -91,7 +92,7 @@ const AddEvent = ({
         setAddLoading(false);
         closeModalAndRefresh();
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
         setModalErrorSnackMessage(err);
       });
@@ -109,7 +110,7 @@ const AddEvent = ({
         setAddLoading(false);
         setArnList(arns);
       })
-      .catch((err: any) => {
+      .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
         setModalErrorSnackMessage(err);
       });

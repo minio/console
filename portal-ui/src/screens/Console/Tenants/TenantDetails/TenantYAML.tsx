@@ -25,6 +25,7 @@ import {
   fieldBasic,
   modalBasic,
 } from "../../Common/FormComponents/common/styleLibrary";
+import { ErrorResponseHandler } from "../../../../common/types";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import CodeMirrorWrapper from "../../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 
@@ -88,10 +89,9 @@ const TenantYAML = ({
         closeModalAndRefresh(true);
         setErrorMessage("");
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
-        console.log(err);
-        setErrorMessage(err);
+        setErrorMessage(err.errorMessage);
       });
   };
 
@@ -103,7 +103,7 @@ const TenantYAML = ({
         setLoading(false);
         setTenantYaml(res.yaml);
       })
-      .catch((err: any) => {
+      .catch((err: ErrorResponseHandler) => {
         setLoading(false);
         setModalErrorSnackMessage(err);
       });

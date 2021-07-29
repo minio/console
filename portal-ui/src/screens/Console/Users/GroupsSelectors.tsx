@@ -32,6 +32,7 @@ import {
   selectorsCommon,
 } from "../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../actions";
+import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
@@ -131,7 +132,7 @@ const GroupsSelectors = ({
         setRecords(groups.sort(stringSort));
         isLoading(false);
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setModalErrorSnackMessage(err);
         isLoading(false);
       });

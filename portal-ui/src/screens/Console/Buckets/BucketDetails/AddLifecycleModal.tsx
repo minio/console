@@ -26,6 +26,7 @@ import {
   ITierResponse,
   ITierElement,
 } from "../../Configurations/TiersConfiguration/types";
+import { ErrorResponseHandler } from "../../../../common/types";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
@@ -112,7 +113,7 @@ const AddLifecycleModal = ({
           }
           setLoadingTiers(false);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setLoadingTiers(false);
         });
     }
@@ -210,7 +211,7 @@ const AddLifecycleModal = ({
         setAddLoading(false);
         closeModalAndRefresh(true);
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setAddLoading(false);
         setModalErrorSnackMessage(err);
       });

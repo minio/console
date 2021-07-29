@@ -15,24 +15,25 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState, useEffect, useCallback } from "react";
-import get from "lodash/get";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { LinearProgress } from "@material-ui/core";
+import get from "lodash/get";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import { UsersList } from "../Users/types";
-import { usersSort } from "../../../utils/sortFunctions";
-import api from "../../../common/api";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
-import TableWrapper from "../Common/TableWrapper/TableWrapper";
+import { UsersList } from "../Users/types";
+import { usersSort } from "../../../utils/sortFunctions";
 import {
   actionsTray,
   selectorsCommon,
 } from "../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../actions";
-import { connect } from "react-redux";
+import { ErrorResponseHandler } from "../../../common/types";
+import api from "../../../common/api";
+import TableWrapper from "../Common/TableWrapper/TableWrapper";
 
 interface IGroupsProps {
   classes: any;
@@ -133,7 +134,7 @@ const UsersSelectors = ({
         setRecords(users.sort(usersSort));
         isLoading(false);
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setModalErrorSnackMessage(err);
         isLoading(false);
       });

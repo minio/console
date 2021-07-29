@@ -21,7 +21,6 @@ import { Button, Grid, TextField, InputBase } from "@material-ui/core";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { wsProtocol } from "../../../utils/wsUtils";
-import api from "../../../common/api";
 import { FormControl, MenuItem, Select } from "@material-ui/core";
 import { BucketList, Bucket } from "../Watch/types";
 import { HealStatus, colorH } from "./types";
@@ -32,9 +31,11 @@ import {
   searchField,
   inlineCheckboxes,
 } from "../Common/FormComponents/common/styleLibrary";
+import { AppState } from "../../../store";
+import { ErrorResponseHandler } from "../../../common/types";
 import CheckboxWrapper from "../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import { AppState } from "../../../store";
+import api from "../../../common/api";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -129,7 +130,7 @@ const Heal = ({ classes, distributedSetup }: IHeal) => {
         }
         setBucketList(buckets);
       })
-      .catch((err: any) => {
+      .catch((err: ErrorResponseHandler) => {
         console.log(err);
       });
   };

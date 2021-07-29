@@ -15,18 +15,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import get from "lodash/get";
+import { connect } from "react-redux";
+import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
+import { CircularProgress } from "@material-ui/core";
+import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 import { IPieChartConfiguration } from "./types";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
-import { connect } from "react-redux";
 import { setErrorSnackMessage } from "../../../../../actions";
 import { IDashboardPanel } from "../types";
-import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
-import api from "../../../../../common/api";
 import { widgetDetailsToPanel } from "../utils";
-import { CircularProgress } from "@material-ui/core";
+import { ErrorResponseHandler } from "../../../../../common/types";
+import get from "lodash/get";
+import api from "../../../../../common/api";
 
 interface IPieChartWidget {
   classes: any;
@@ -99,7 +100,7 @@ const PieChartWidget = ({
           setResult(widgetsWithValue);
           setLoading(false);
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           displayErrorMessage(err);
           setLoading(false);
         });

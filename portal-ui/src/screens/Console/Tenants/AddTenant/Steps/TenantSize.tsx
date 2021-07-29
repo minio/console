@@ -39,11 +39,15 @@ import {
 import { clearValidationError } from "../../utils";
 import { ecListTransform, Opts } from "../../ListTenants/utils";
 import { IMemorySize } from "../../ListTenants/types";
-import { ICapacity, IErasureCodeCalc } from "../../../../../common/types";
+import {
+  ErrorResponseHandler,
+  ICapacity,
+  IErasureCodeCalc,
+} from "../../../../../common/types";
+import { commonFormValidation } from "../../../../../utils/validationFunctions";
 import api from "../../../../../common/api";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { commonFormValidation } from "../../../../../utils/validationFunctions";
 
 interface ITenantSizeProps {
   classes: any;
@@ -142,7 +146,7 @@ const TenantSize = ({
           const maxMemory = res.max_memory ? res.max_memory : 0;
           updateField("maxAllocableMemo", maxMemory);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           updateField("maxAllocableMemo", 0);
           console.error(err);
         });
@@ -210,7 +214,7 @@ const TenantSize = ({
           updateField("ecParityChoices", ecListTransform(ecList));
           updateField("cleanECChoices", ecList);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           updateField("ecparityChoices", []);
           isPageValid("tenantSize", false);
           updateField("ecParity", "");

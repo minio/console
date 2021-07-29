@@ -23,6 +23,7 @@ import Grid from "@material-ui/core/Grid";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import { User } from "../Users/types";
 import { setModalErrorSnackMessage } from "../../../actions";
+import { ErrorResponseHandler } from "../../../common/types";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import api from "../../../common/api";
 import PolicySelectors from "./PolicySelectors";
@@ -81,7 +82,7 @@ const SetPolicy = ({
         setLoading(false);
         closeModalAndRefresh();
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setLoading(false);
         setModalErrorSnackMessage(err);
       });
@@ -96,7 +97,7 @@ const SetPolicy = ({
           setActualPolicy(groupPolicy.split(","));
           setSelectedPolicy(groupPolicy.split(","));
         })
-        .catch((err) => {
+        .catch((err: ErrorResponseHandler) => {
           setModalErrorSnackMessage(err);
           setLoading(false);
         });
