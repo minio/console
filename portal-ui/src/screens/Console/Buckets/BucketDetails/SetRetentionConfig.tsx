@@ -16,12 +16,15 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Button, LinearProgress } from "@material-ui/core";
+import { Button, LinearProgress, CircularProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../actions";
-import { ErrorResponseHandler } from "../../../../common/types";
+import {
+  ErrorResponseHandler,
+  IRetentionConfig,
+} from "../../../../common/types";
 import api from "../../../../common/api";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
@@ -48,6 +51,7 @@ const SetRetentionConfig = ({
   setModalErrorSnackMessage,
 }: ISetRetentionConfigProps) => {
   const [addLoading, setAddLoading] = useState<boolean>(false);
+  const [loadingForm, setLoadingForm] = useState<boolean>(true);
   const [retentionMode, setRetentionMode] = useState<string>("compliance");
   const [retentionUnit, setRetentionUnit] = useState<string>("days");
   const [retentionValidity, setRetentionValidity] = useState<number>(1);
@@ -83,6 +87,24 @@ const SetRetentionConfig = ({
     setValid(true);
   }, [retentionValidity]);
 
+  useEffect(() => {
+    if (loadingForm) {
+      api
+        .invoke("GET", `/api/v1/buckets/${bucketName}/retention`)
+        .then((res: IRetentionConfig) => {
+          setLoadingForm(false);
+
+          // We set default values
+          setRetentionMode(res.mode);
+          setRetentionValidity(res.validity);
+          setRetentionUnit(res.unit);
+        })
+        .catch((err: ErrorResponseHandler) => {
+          setLoadingForm(false);
+        });
+    }
+  }, [loadingForm, bucketName]);
+
   return (
     <ModalWrapper
       title="Set Retention Configuration"
@@ -91,78 +113,82 @@ const SetRetentionConfig = ({
         closeModalAndRefresh();
       }}
     >
-      <form
-        noValidate
-        autoComplete="off"
-        onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-          setRetention(e);
-        }}
-      >
-        <Grid container>
-          <Grid item xs={12} className={classes.formScrollable}>
-            <Grid item xs={12}>
-              <RadioGroupSelector
-                currentSelection={retentionMode}
-                id="retention_mode"
-                name="retention_mode"
-                label="Retention Mode"
-                onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                  setRetentionMode(e.target.value as string);
-                }}
-                selectorOptions={[
-                  { value: "compliance", label: "Compliance" },
-                  { value: "governance", label: "Governance" },
-                ]}
-              />
+      {loadingForm ? (
+        <CircularProgress color="primary" size={16} variant="indeterminate" />
+      ) : (
+        <form
+          noValidate
+          autoComplete="off"
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+            setRetention(e);
+          }}
+        >
+          <Grid container>
+            <Grid item xs={12} className={classes.formScrollable}>
+              <Grid item xs={12}>
+                <RadioGroupSelector
+                  currentSelection={retentionMode}
+                  id="retention_mode"
+                  name="retention_mode"
+                  label="Retention Mode"
+                  onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                    setRetentionMode(e.target.value as string);
+                  }}
+                  selectorOptions={[
+                    { value: "compliance", label: "Compliance" },
+                    { value: "governance", label: "Governance" },
+                  ]}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <RadioGroupSelector
+                  currentSelection={retentionUnit}
+                  id="retention_unit"
+                  name="retention_unit"
+                  label="Retention Unit"
+                  onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                    setRetentionUnit(e.target.value as string);
+                  }}
+                  selectorOptions={[
+                    { value: "days", label: "Days" },
+                    { value: "years", label: "Years" },
+                  ]}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  type="number"
+                  id="retention_validity"
+                  name="retention_validity"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setRetentionValidity(e.target.valueAsNumber);
+                  }}
+                  label="Retention Validity"
+                  value={String(retentionValidity)}
+                  required
+                  min="1"
+                />
+              </Grid>
             </Grid>
             <Grid item xs={12}>
-              <RadioGroupSelector
-                currentSelection={retentionUnit}
-                id="retention_unit"
-                name="retention_unit"
-                label="Retention Unit"
-                onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                  setRetentionUnit(e.target.value as string);
-                }}
-                selectorOptions={[
-                  { value: "days", label: "Days" },
-                  { value: "years", label: "Years" },
-                ]}
-              />
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                disabled={addLoading || !valid}
+              >
+                Set
+              </Button>
             </Grid>
-            <Grid item xs={12}>
-              <InputBoxWrapper
-                type="number"
-                id="retention_validity"
-                name="retention_validity"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setRetentionValidity(e.target.valueAsNumber);
-                }}
-                label="Retention Validity"
-                value={String(retentionValidity)}
-                required
-                min="1"
-              />
-            </Grid>
+            {addLoading && (
+              <Grid item xs={12}>
+                <LinearProgress />
+              </Grid>
+            )}
           </Grid>
-          <Grid item xs={12}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              disabled={addLoading || !valid}
-            >
-              Set
-            </Button>
-          </Grid>
-          {addLoading && (
-            <Grid item xs={12}>
-              <LinearProgress />
-            </Grid>
-          )}
-        </Grid>
-      </form>
+        </form>
+      )}
     </ModalWrapper>
   );
 };

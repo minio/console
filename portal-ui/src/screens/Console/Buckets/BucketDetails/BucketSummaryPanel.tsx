@@ -38,7 +38,10 @@ import {
   buttonsStyles,
   hrClass,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler } from "../../../../common/types";
+import {
+  ErrorResponseHandler,
+  IRetentionConfig,
+} from "../../../../common/types";
 import api from "../../../../common/api";
 import SetAccessPolicy from "./SetAccessPolicy";
 import SetRetentionConfig from "./SetRetentionConfig";
@@ -82,6 +85,12 @@ const styles = (theme: Theme) =>
     dualCardRight: {
       paddingLeft: "5px",
     },
+    capitalizeFirst: {
+      textTransform: "capitalize",
+    },
+    titleCol: {
+      width: "25%",
+    },
     ...hrClass,
     ...buttonsStyles,
   });
@@ -107,10 +116,14 @@ const BucketSummary = ({
   const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
   const [loadingQuota, setLoadingQuota] = useState<boolean>(true);
   const [loadingReplication, setLoadingReplication] = useState<boolean>(true);
+  const [loadingRetention, setLoadingRetention] = useState<boolean>(true);
   const [isVersioned, setIsVersioned] = useState<boolean>(false);
   const [quotaEnabled, setQuotaEnabled] = useState<boolean>(false);
   const [quota, setQuota] = useState<BucketQuota | null>(null);
   const [encryptionEnabled, setEncryptionEnabled] = useState<boolean>(false);
+  const [retentionEnabled, setRetentionEnabled] = useState<boolean>(false);
+  const [retentionConfig, setRetentionConfig] =
+    useState<IRetentionConfig | null>(null);
   const [retentionConfigOpen, setRetentionConfigOpen] =
     useState<boolean>(false);
   const [enableEncryptionScreenOpen, setEnableEncryptionScreenOpen] =
@@ -270,11 +283,29 @@ const BucketSummary = ({
     }
   }, [loadingReplication, setErrorSnackMessage, bucketName, distributedSetup]);
 
+  useEffect(() => {
+    if (loadingRetention && hasObjectLocking) {
+      api
+        .invoke("GET", `/api/v1/buckets/${bucketName}/retention`)
+        .then((res: IRetentionConfig) => {
+          setLoadingRetention(false);
+          setRetentionEnabled(true);
+          setRetentionConfig(res);
+        })
+        .catch((err: ErrorResponseHandler) => {
+          setRetentionEnabled(false);
+          setLoadingRetention(false);
+          setRetentionConfig(null);
+        });
+    }
+  }, [loadingRetention, hasObjectLocking, bucketName]);
+
   const loadAllBucketData = () => {
     setLoadingBucket(true);
     setLoadingSize(true);
     setLoadingVersioning(true);
     setLoadingEncryption(true);
+    setLoadingRetention(true);
   };
 
   const setBucketVersioning = () => {
@@ -396,7 +427,7 @@ const BucketSummary = ({
                   </td>
                 </tr>
                 {distributedSetup && (
-                  <React.Fragment>
+                  <Fragment>
                     <tr>
                       <td className={classes.titleCol}>Replication:</td>
                       <td className={classes.doubleElement}>
@@ -404,14 +435,10 @@ const BucketSummary = ({
                       </td>
                     </tr>
                     <tr>
-                      {!hasObjectLocking && (
-                        <React.Fragment>
-                          <td className={classes.titleCol}>Object Locking:</td>
-                          <td>Disabled</td>
-                        </React.Fragment>
-                      )}
+                      <td className={classes.titleCol}>Object Locking:</td>
+                      <td>{!hasObjectLocking ? "Disabled" : "Enabled"}</td>
                     </tr>
-                  </React.Fragment>
+                  </Fragment>
                 )}
                 <tr>
                   <td className={classes.titleCol}>Encryption:</td>
@@ -539,14 +566,14 @@ const BucketSummary = ({
         <Paper className={classes.paperContainer}>
           <Grid container>
             <Grid item xs={12}>
-              <h2>Object Locking</h2>
+              <h2>Retention</h2>
               <hr className={classes.hrClass} />
-              <table>
+              <table width={"100%"}>
                 <tbody>
                   <tr className={classes.gridContainer}>
-                    <td className={classes.titleCol}>Retention:</td>
+                    <td className={classes.titleCol}>Status:</td>
                     <td>
-                      {loadingVersioning ? (
+                      {loadingRetention ? (
                         <CircularProgress
                           color="primary"
                           size={16}
@@ -561,11 +588,37 @@ const BucketSummary = ({
                               setRetentionConfigOpen(true);
                             }}
                           >
-                            Configure
+                            {!retentionEnabled ? "Disabled" : "Enabled"}
                           </Button>
                         </Fragment>
                       )}
                     </td>
+                    {retentionConfig === null ? (
+                      <td colSpan={2}>&nbsp;</td>
+                    ) : (
+                      <Fragment>
+                        <td className={classes.titleCol}>Mode:</td>
+                        <td className={classes.capitalizeFirst}>
+                          {retentionConfig && retentionConfig.mode}
+                        </td>
+                      </Fragment>
+                    )}
+                  </tr>
+                  <tr className={classes.gridContainer}>
+                    {retentionConfig === null ? (
+                      <td colSpan={2}></td>
+                    ) : (
+                      <Fragment>
+                        <td className={classes.titleCol}>Valitidy:</td>
+                        <td className={classes.capitalizeFirst}>
+                          {retentionConfig && retentionConfig.validity}{" "}
+                          {retentionConfig &&
+                            (retentionConfig.validity === 1
+                              ? retentionConfig.unit.slice(0, -1)
+                              : retentionConfig.unit)}
+                        </td>
+                      </Fragment>
+                    )}
                   </tr>
                 </tbody>
               </table>
