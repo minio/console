@@ -393,7 +393,7 @@ const BucketSummary = ({
       )}
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
-          <h1 style={{ padding: "0px", margin: "0px" }}>Summary</h1>
+          <h1 className={classes.sectionTitle}>Summary</h1>
         </Grid>
         <Grid item xs={12}>
           <br />

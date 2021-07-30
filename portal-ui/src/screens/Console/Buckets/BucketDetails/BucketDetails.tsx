@@ -282,17 +282,16 @@ const BucketDetails = ({
             >
               <ListItemText primary="Events" />
             </ListItem>
-            {canGetReplication && (
-              <ListItem
-                button
-                selected={selectedTab === "replication"}
-                onClick={() => {
-                  changeRoute("replication");
-                }}
-              >
-                <ListItemText primary="Replication" />
-              </ListItem>
-            )}
+            <ListItem
+              button
+              disabled={!canGetReplication}
+              selected={selectedTab === "replication"}
+              onClick={() => {
+                changeRoute("replication");
+              }}
+            >
+              <ListItemText primary="Replication" />
+            </ListItem>
 
             <ListItem
               button
@@ -310,7 +309,7 @@ const BucketDetails = ({
                 changeRoute("access");
               }}
             >
-              <ListItemText primary="Audit Access" />
+              <ListItemText primary="Access Audit" />
             </ListItem>
           </List>
         </Grid>

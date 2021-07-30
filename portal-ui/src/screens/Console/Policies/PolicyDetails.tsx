@@ -41,6 +41,9 @@ import {
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
 import TextField from "@material-ui/core/TextField";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import List from "@material-ui/core/List";
 
 interface IPolicyDetailsProps {
   classes: any;
@@ -300,141 +303,167 @@ const PolicyDetails = ({
           </Fragment>
         }
       />
-      <Grid item xs={12} className={classes.container}>
-        <Grid item xs={12}>
-          <Tabs
-            value={selectedTab}
-            indicatorColor="primary"
-            textColor="primary"
-            onChange={(_, newValue: number) => {
-              setSelectedTab(newValue);
-            }}
-            aria-label="policy-tabs"
-          >
-            <Tab label="Details" />
-            <Tab label="Users" />
-            <Tab label="Groups" />
-          </Tabs>
-        </Grid>
-        {selectedTab === 0 && (
-          <Paper className={classes.paperContainer}>
-            <form
-              noValidate
-              autoComplete="off"
-              onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                saveRecord(e);
+      <Grid container className={classes.container}>
+        <Grid item xs={2}>
+          <List component="nav" dense={true}>
+            <ListItem
+              button
+              selected={selectedTab === 0}
+              onClick={() => {
+                setSelectedTab(0);
               }}
             >
+              <ListItemText primary="Details" />
+            </ListItem>
+            <ListItem
+              button
+              selected={selectedTab === 1}
+              onClick={() => {
+                setSelectedTab(1);
+              }}
+            >
+              <ListItemText primary="Users" />
+            </ListItem>
+            <ListItem
+              button
+              selected={selectedTab === 2}
+              onClick={() => {
+                setSelectedTab(2);
+              }}
+            >
+              <ListItemText primary="Groups" />
+            </ListItem>
+          </List>
+        </Grid>
+        <Grid item xs={10}>
+          {selectedTab === 0 && (
+            <Fragment>
+              <h1 className={classes.sectionTitle}>Edit Policy</h1>
+              <Paper className={classes.paperContainer}>
+                <form
+                  noValidate
+                  autoComplete="off"
+                  onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                    saveRecord(e);
+                  }}
+                >
+                  <Grid container>
+                    <Grid item xs={12} className={classes.formScrollable}>
+                      <CodeMirrorWrapper
+                        value={policyDefinition}
+                        onBeforeChange={(editor, data, value) => {
+                          setPolicyDefinition(value);
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} className={classes.buttonContainer}>
+                      {!policy && (
+                        <button
+                          type="button"
+                          color="primary"
+                          className={classes.clearButton}
+                          onClick={() => {
+                            resetForm();
+                          }}
+                        >
+                          Clear
+                        </button>
+                      )}
+
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        disabled={addLoading || !validSave}
+                      >
+                        Save
+                      </Button>
+                    </Grid>
+                    {addLoading && (
+                      <Grid item xs={12}>
+                        <LinearProgress />
+                      </Grid>
+                    )}
+                  </Grid>
+                </form>
+              </Paper>
+            </Fragment>
+          )}
+          {selectedTab === 1 && (
+            <Fragment>
+              <h1 className={classes.sectionTitle}>Users</h1>
               <Grid container>
-                <Grid item xs={12} className={classes.formScrollable}>
-                  <CodeMirrorWrapper
-                    label={`${policy ? "Edit" : "Write"} Policy`}
-                    value={policyDefinition}
-                    onBeforeChange={(editor, data, value) => {
-                      setPolicyDefinition(value);
+                <Grid item xs={12} className={classes.actionsTray}>
+                  <TextField
+                    placeholder="Search Users"
+                    className={classes.searchField}
+                    id="search-resource"
+                    label=""
+                    onChange={(val) => {
+                      setFilterUsers(val.target.value);
+                    }}
+                    InputProps={{
+                      disableUnderline: true,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
                     }}
                   />
                 </Grid>
-                <Grid item xs={12} className={classes.buttonContainer}>
-                  {!policy && (
-                    <button
-                      type="button"
-                      color="primary"
-                      className={classes.clearButton}
-                      onClick={() => {
-                        resetForm();
-                      }}
-                    >
-                      Clear
-                    </button>
-                  )}
-
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    disabled={addLoading || !validSave}
-                  >
-                    Save
-                  </Button>
+                <Grid item xs={12} className={classes.actionsTray}>
+                  <br />
                 </Grid>
-                {addLoading && (
-                  <Grid item xs={12}>
-                    <LinearProgress />
-                  </Grid>
-                )}
+                <TableWrapper
+                  itemActions={userTableActions}
+                  columns={[{ label: "Name", elementKey: "name" }]}
+                  isLoading={loadingUsers}
+                  records={filteredUsers}
+                  entityName="Users"
+                  idField="name"
+                />
               </Grid>
-            </form>
-          </Paper>
-        )}
-        {selectedTab === 1 && (
-          <Grid container>
-            <Grid item xs={12} className={classes.actionsTray}>
-              <TextField
-                placeholder="Search Users"
-                className={classes.searchField}
-                id="search-resource"
-                label=""
-                onChange={(val) => {
-                  setFilterUsers(val.target.value);
-                }}
-                InputProps={{
-                  disableUnderline: true,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.actionsTray}>
-              <br />
-            </Grid>
-            <TableWrapper
-              itemActions={userTableActions}
-              columns={[{ label: "Name", elementKey: "name" }]}
-              isLoading={loadingUsers}
-              records={filteredUsers}
-              entityName="Users"
-              idField="name"
-            />
-          </Grid>
-        )}
-        {selectedTab === 2 && (
-          <Grid container>
-            <Grid item xs={12} className={classes.actionsTray}>
-              <TextField
-                placeholder="Search Groups"
-                className={classes.searchField}
-                id="search-resource"
-                label=""
-                onChange={(val) => {
-                  setFilterGroups(val.target.value);
-                }}
-                InputProps={{
-                  disableUnderline: true,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.actionsTray}>
-              <br />
-            </Grid>
-            <TableWrapper
-              itemActions={[]}
-              columns={[{ label: "Name", elementKey: "name" }]}
-              isLoading={loadingGroups}
-              records={filteredGroups}
-              entityName="Groups"
-              idField="name"
-            />
-          </Grid>
-        )}
+            </Fragment>
+          )}
+          {selectedTab === 2 && (
+            <Fragment>
+              <h1 className={classes.sectionTitle}>Groups</h1>
+              <Grid container>
+                <Grid item xs={12} className={classes.actionsTray}>
+                  <TextField
+                    placeholder="Search Groups"
+                    className={classes.searchField}
+                    id="search-resource"
+                    label=""
+                    onChange={(val) => {
+                      setFilterGroups(val.target.value);
+                    }}
+                    InputProps={{
+                      disableUnderline: true,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} className={classes.actionsTray}>
+                  <br />
+                </Grid>
+                <TableWrapper
+                  itemActions={[]}
+                  columns={[{ label: "Name", elementKey: "name" }]}
+                  isLoading={loadingGroups}
+                  records={filteredGroups}
+                  entityName="Groups"
+                  idField="name"
+                />
+              </Grid>
+            </Fragment>
+          )}
+        </Grid>
       </Grid>
     </React.Fragment>
   );
