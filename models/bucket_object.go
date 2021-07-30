@@ -55,6 +55,9 @@ type BucketObject struct {
 	// legal hold status
 	LegalHoldStatus string `json:"legal_hold_status,omitempty"`
 
+	// metadata
+	Metadata map[string]string `json:"metadata,omitempty"`
+
 	// name
 	Name string `json:"name,omitempty"`
 
@@ -69,6 +72,9 @@ type BucketObject struct {
 
 	// tags
 	Tags map[string]string `json:"tags,omitempty"`
+
+	// user metadata
+	UserMetadata map[string]string `json:"user_metadata,omitempty"`
 
 	// user tags
 	UserTags map[string]string `json:"user_tags,omitempty"`

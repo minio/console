@@ -1014,6 +1014,11 @@ func init() {
             "type": "boolean",
             "name": "with_versions",
             "in": "query"
+          },
+          {
+            "type": "boolean",
+            "name": "with_metadata",
+            "in": "query"
           }
         ],
         "responses": {
@@ -3480,6 +3485,12 @@ func init() {
         "legal_hold_status": {
           "type": "string"
         },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
         "name": {
           "type": "string"
         },
@@ -3494,6 +3505,12 @@ func init() {
           "format": "int64"
         },
         "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "user_metadata": {
           "type": "object",
           "additionalProperties": {
             "type": "string"
@@ -6402,6 +6419,11 @@ func init() {
             "type": "boolean",
             "name": "with_versions",
             "in": "query"
+          },
+          {
+            "type": "boolean",
+            "name": "with_metadata",
+            "in": "query"
           }
         ],
         "responses": {
@@ -8990,6 +9012,12 @@ func init() {
         "legal_hold_status": {
           "type": "string"
         },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
         "name": {
           "type": "string"
         },
@@ -9004,6 +9032,12 @@ func init() {
           "format": "int64"
         },
         "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "user_metadata": {
           "type": "object",
           "additionalProperties": {
             "type": "string"
