@@ -17,7 +17,7 @@
 import React, { Fragment, useState } from "react";
 import { connect } from "react-redux";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import { Grid } from "@material-ui/core";
+import { Grid, List, ListItem, ListItemText } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
@@ -50,39 +50,43 @@ const LogsMain = ({ classes, features }: ILogsMainProps) => {
   return (
     <Fragment>
       <PageHeader label="Logs" />
-      <Grid container>
-        <Grid item xs={12} className={classes.container}>
-          <Fragment>
-            <Grid item xs={12} className={classes.headerLabel}>
-              All Logs
-            </Grid>
-            <Tabs
-              value={currentTab}
-              onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
-                setCurrentTab(newValue);
+      <Grid container className={classes.container}>
+        <Grid item xs={2}>
+          <List component="nav" dense={true}>
+            <ListItem
+              button
+              selected={currentTab === 0}
+              onClick={() => {
+                setCurrentTab(0);
               }}
-              indicatorColor="primary"
-              textColor="primary"
-              aria-label="cluster-tabs"
-              variant="scrollable"
-              scrollButtons="auto"
             >
-              <Tab label="Error Logs" />
-              {logSearchEnabled && <Tab label="Logs Search" />}
-            </Tabs>
-            <Grid item xs={12}>
-              {currentTab === 0 && (
-                <Grid item xs={12}>
-                  <ErrorLogs />
-                </Grid>
-              )}
-              {currentTab === 1 && logSearchEnabled && (
-                <Grid item xs={12}>
-                  <LogsSearchMain />
-                </Grid>
-              )}
-            </Grid>
-          </Fragment>
+              <ListItemText primary="Error Logs" />
+            </ListItem>
+            <ListItem
+              button
+              selected={currentTab === 1}
+              disabled={!logSearchEnabled}
+              onClick={() => {
+                setCurrentTab(1);
+              }}
+            >
+              <ListItemText primary="Audit Logs" />
+            </ListItem>
+          </List>
+        </Grid>
+        <Grid item xs={10}>
+          {currentTab === 0 && (
+            <Fragment>
+              <h1 className={classes.sectionTitle}>Error Logs</h1>
+              <ErrorLogs />
+            </Fragment>
+          )}
+          {currentTab === 1 && logSearchEnabled && (
+            <Fragment>
+              <h1 className={classes.sectionTitle}>Audit Logs</h1>
+              <LogsSearchMain />
+            </Fragment>
+          )}
         </Grid>
       </Grid>
     </Fragment>

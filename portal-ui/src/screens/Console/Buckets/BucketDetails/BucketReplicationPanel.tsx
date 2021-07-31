@@ -137,10 +137,6 @@ const BucketReplicationPanel = ({
     }
   }, [loadingReplication, setErrorSnackMessage, bucketName]);
 
-  if (!canGetReplication) {
-    return null;
-  }
-
   const closeAddReplication = () => {
     setOpenReplicationOpen(false);
     setLoadingReplication(true);
@@ -199,21 +195,19 @@ const BucketReplicationPanel = ({
       )}
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
-          <h1 style={{ padding: "0px", margin: "0px" }}>Replication</h1>
-
-          {canPutReplication && (
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<CreateIcon />}
-              size="medium"
-              onClick={() => {
-                setOpenReplicationOpen(true);
-              }}
-            >
-              Add Replication Rule
-            </Button>
-          )}
+          <h1 className={classes.sectionTitle}>Replication</h1>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={!canPutReplication}
+            startIcon={<CreateIcon />}
+            size="medium"
+            onClick={() => {
+              setOpenReplicationOpen(true);
+            }}
+          >
+            Add Replication Rule
+          </Button>
         </Grid>
         <Grid item xs={12}>
           <br />

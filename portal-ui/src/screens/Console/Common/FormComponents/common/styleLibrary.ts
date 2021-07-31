@@ -138,6 +138,10 @@ export const containerForHeader = (bottomSpacing: any) => ({
       },
     },
   },
+  sectionTitle: {
+    padding: "0px",
+    margin: "0px",
+  },
   topSpacer: {
     height: "8px",
   },

@@ -121,7 +121,7 @@ const BucketEventsPanel = ({
 
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
-          <h1 style={{ padding: "0px", margin: "0px" }}>Events</h1>
+          <h1 className={classes.sectionTitle}>Events</h1>
           <Button
             variant="contained"
             color="primary"

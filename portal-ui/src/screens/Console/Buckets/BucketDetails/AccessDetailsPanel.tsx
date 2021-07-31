@@ -119,6 +119,7 @@ const AccessDetails = ({
 
   return (
     <Fragment>
+      <h1 className={classes.sectionTitle}>Access Audit</h1>
       <Tabs
         value={curTab}
         onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
