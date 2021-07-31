@@ -427,6 +427,7 @@ const TenantSecurity = ({
         </Paper>
       ) : (
         <Fragment>
+          <h1 className={classes.sectionTitle}>Security</h1>
           <Paper className={classes.paperContainer}>
             <Grid item xs={12} className={classes.title}>
               <FormSwitchWrapper

@@ -104,6 +104,7 @@ const PoolsSummary = ({
         />
       )}
       <div className={classes.topSpacer} />
+      <h1 className={classes.sectionTitle}>Pools</h1>
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
           <TextField
