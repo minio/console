@@ -249,7 +249,7 @@ const DirectCSIMain = ({
           }}
         />
       )}
-
+      <h1 className={classes.sectionTitle}>Drives</h1>
       <Grid item xs={12} className={classes.actionsTray}>
         <TextField
           placeholder="Search Drives"

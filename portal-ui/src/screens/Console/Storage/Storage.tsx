@@ -16,7 +16,7 @@
 
 import React, { Fragment, useState, useEffect } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Grid, Tab, Tabs } from "@material-ui/core";
+import { Grid, ListItem, ListItemText, Tab, Tabs } from "@material-ui/core";
 import { Route, Router, Switch, Redirect } from "react-router-dom";
 import {
   actionsTray,
@@ -27,6 +27,7 @@ import history from "../../../history";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import StoragePVCs from "./StoragePVCs";
 import DirectCSIDrives from "../DirectCSI/DirectCSIDrives";
+import List from "@material-ui/core/List";
 
 interface IStorageProps {
   classes: any;
@@ -40,9 +41,6 @@ const styles = (theme: Theme) =>
       fontWeight: 600,
       color: "#000",
       marginTop: 4,
-    },
-    tabsContainer: {
-      marginBottom: 15,
     },
     ...actionsTray,
     ...searchField,
@@ -59,27 +57,37 @@ const Storage = ({ classes, match }: IStorageProps) => {
     setSelectedTab(index);
   }, [match]);
 
-  const routeChange = (e: React.ChangeEvent<{}>, newValue: number) => {
+  const routeChange = (newValue: number) => {
     history.push(routes[newValue]);
   };
 
   return (
     <Fragment>
       <PageHeader label={"Storage"} />
-      <Grid container>
-        <Grid item xs={12} className={classes.container}>
-          <Grid item xs={12} className={classes.tabsContainer}>
-            <Tabs
-              value={selectedTab}
-              onChange={routeChange}
-              indicatorColor="primary"
-              textColor="primary"
-              aria-label="cluster-tabs"
+      <Grid container className={classes.container}>
+        <Grid item xs={2}>
+          <List component="nav" dense={true}>
+            <ListItem
+              button
+              selected={selectedTab === 0}
+              onClick={() => {
+                routeChange(0);
+              }}
             >
-              <Tab label="Volumes" />
-              <Tab label="Drives" />
-            </Tabs>
-          </Grid>
+              <ListItemText primary="Volumes" />
+            </ListItem>
+            <ListItem
+              button
+              selected={selectedTab === 1}
+              onClick={() => {
+                routeChange(1);
+              }}
+            >
+              <ListItemText primary="Drives" />
+            </ListItem>
+          </List>
+        </Grid>
+        <Grid item xs={10}>
           <Router history={history}>
             <Switch>
               <Route path={routes[0]} component={StoragePVCs} />
