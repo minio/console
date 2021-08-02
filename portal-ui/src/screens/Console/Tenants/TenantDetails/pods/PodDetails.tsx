@@ -117,7 +117,7 @@ const PodDetails = ({ classes, match }: IPodDetailsProps) => {
             tenant={tenantName}
             namespace={tenantNamespace}
             podName={podName}
-            propLoading={loading}
+            propLoading={true}
           />
         )}
         {curTab === 1 && (
@@ -125,7 +125,7 @@ const PodDetails = ({ classes, match }: IPodDetailsProps) => {
             tenant={tenantName}
             namespace={tenantNamespace}
             podName={podName}
-            propLoading={loading}
+            propLoading={true}
           />
         )}
       </Grid>
