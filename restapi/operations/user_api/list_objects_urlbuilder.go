@@ -37,6 +37,7 @@ type ListObjectsURL struct {
 
 	Prefix       *string
 	Recursive    *bool
+	WithMetadata *bool
 	WithVersions *bool
 
 	_basePath string
@@ -94,6 +95,14 @@ func (o *ListObjectsURL) Build() (*url.URL, error) {
 	}
 	if recursiveQ != "" {
 		qs.Set("recursive", recursiveQ)
+	}
+
+	var withMetadataQ string
+	if o.WithMetadata != nil {
+		withMetadataQ = swag.FormatBool(*o.WithMetadata)
+	}
+	if withMetadataQ != "" {
+		qs.Set("with_metadata", withMetadataQ)
 	}
 
 	var withVersionsQ string

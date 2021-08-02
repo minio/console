@@ -107,6 +107,7 @@ func Test_listObjects(t *testing.T) {
 		prefix               string
 		recursive            bool
 		withVersions         bool
+		withMetadata         bool
 		listFunc             func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo
 		objectLegalHoldFunc  func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error)
 		objectRetentionFunc  func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error)
@@ -125,6 +126,7 @@ func Test_listObjects(t *testing.T) {
 				prefix:       "prefix",
 				recursive:    true,
 				withVersions: false,
+				withMetadata: false,
 				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 					objectStatCh := make(chan minio.ObjectInfo, 1)
 					go func(objectStatCh chan<- minio.ObjectInfo) {
@@ -201,6 +203,7 @@ func Test_listObjects(t *testing.T) {
 				prefix:       "prefix",
 				recursive:    true,
 				withVersions: false,
+				withMetadata: false,
 				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 					objectStatCh := make(chan minio.ObjectInfo, 1)
 					defer close(objectStatCh)
@@ -235,6 +238,7 @@ func Test_listObjects(t *testing.T) {
 				prefix:       "prefix",
 				recursive:    true,
 				withVersions: false,
+				withMetadata: false,
 				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 					objectStatCh := make(chan minio.ObjectInfo, 1)
 					go func(objectStatCh chan<- minio.ObjectInfo) {
@@ -286,6 +290,7 @@ func Test_listObjects(t *testing.T) {
 				prefix:       "prefix",
 				recursive:    true,
 				withVersions: false,
+				withMetadata: false,
 				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 					objectStatCh := make(chan minio.ObjectInfo, 1)
 					go func(objectStatCh chan<- minio.ObjectInfo) {
@@ -361,6 +366,7 @@ func Test_listObjects(t *testing.T) {
 				prefix:       "prefix",
 				recursive:    true,
 				withVersions: false,
+				withMetadata: false,
 				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 					objectStatCh := make(chan minio.ObjectInfo, 1)
 					go func(objectStatCh chan<- minio.ObjectInfo) {
@@ -408,6 +414,7 @@ func Test_listObjects(t *testing.T) {
 				prefix:       "prefix/folder/",
 				recursive:    true,
 				withVersions: false,
+				withMetadata: false,
 				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 					objectStatCh := make(chan minio.ObjectInfo, 1)
 					go func(objectStatCh chan<- minio.ObjectInfo) {
@@ -475,6 +482,7 @@ func Test_listObjects(t *testing.T) {
 				prefix:       "",
 				recursive:    true,
 				withVersions: false,
+				withMetadata: false,
 				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 					objectStatCh := make(chan minio.ObjectInfo, 1)
 					go func(objectStatCh chan<- minio.ObjectInfo) {
@@ -540,7 +548,7 @@ func Test_listObjects(t *testing.T) {
 			minioGetObjectLegalHoldMock = tt.args.objectLegalHoldFunc
 			minioGetObjectRetentionMock = tt.args.objectRetentionFunc
 			minioGetObjectTaggingMock = tt.args.objectGetTaggingFunc
-			resp, err := listBucketObjects(ctx, minClient, tt.args.bucketName, tt.args.prefix, tt.args.recursive, tt.args.withVersions)
+			resp, err := listBucketObjects(ctx, minClient, tt.args.bucketName, tt.args.prefix, tt.args.recursive, tt.args.withVersions, tt.args.withMetadata)
 			if !reflect.DeepEqual(err, tt.wantError) {
 				t.Errorf("listBucketObjects() error: %v, wantErr: %v", err, tt.wantError)
 				return

@@ -61,7 +61,6 @@ const BucketReplicationPanel = ({
     BucketReplicationRule[]
   >([]);
   const [loadingPerms, setLoadingPerms] = useState<boolean>(true);
-  const [canGetReplication, setCanGetReplication] = useState<boolean>(false);
   const [deleteReplicationModal, setDeleteReplicationModal] =
     useState<boolean>(false);
   const [openSetReplication, setOpenSetReplication] = useState<boolean>(false);
@@ -101,15 +100,6 @@ const BucketReplicationPanel = ({
             setCanPutReplication(true);
           } else {
             setCanPutReplication(false);
-          }
-          let canGetReplication = actions.find(
-            (s) => s.id === "GetReplicationConfiguration"
-          );
-
-          if (canGetReplication && canGetReplication.can) {
-            setCanGetReplication(true);
-          } else {
-            setCanGetReplication(false);
           }
 
           setLoadingPerms(false);

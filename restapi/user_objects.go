@@ -145,6 +145,8 @@ func getListObjectsResponse(session *models.Principal, params user_api.ListObjec
 	var prefix string
 	var recursive bool
 	var withVersions bool
+	var withMetadata bool
+
 	if params.Prefix != nil {
 		prefix = *params.Prefix
 	}
@@ -153,6 +155,9 @@ func getListObjectsResponse(session *models.Principal, params user_api.ListObjec
 	}
 	if isErasureBackend() && params.WithVersions != nil {
 		withVersions = *params.WithVersions
+	}
+	if params.WithMetadata != nil {
+		withMetadata = *params.WithMetadata
 	}
 	// bucket request needed to proceed
 	if params.BucketName == "" {
@@ -166,7 +171,7 @@ func getListObjectsResponse(session *models.Principal, params user_api.ListObjec
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 
-	objs, err := listBucketObjects(params.HTTPRequest.Context(), minioClient, params.BucketName, prefix, recursive, withVersions)
+	objs, err := listBucketObjects(params.HTTPRequest.Context(), minioClient, params.BucketName, prefix, recursive, withVersions, withMetadata)
 	if err != nil {
 		return nil, prepareError(err)
 	}
@@ -179,12 +184,13 @@ func getListObjectsResponse(session *models.Principal, params user_api.ListObjec
 }
 
 // listBucketObjects gets an array of objects in a bucket
-func listBucketObjects(ctx context.Context, client MinioClient, bucketName string, prefix string, recursive, withVersions bool) ([]*models.BucketObject, error) {
+func listBucketObjects(ctx context.Context, client MinioClient, bucketName string, prefix string, recursive, withVersions bool, withMetadata bool) ([]*models.BucketObject, error) {
 	var objects []*models.BucketObject
-	for lsObj := range client.listObjects(ctx, bucketName, minio.ListObjectsOptions{Prefix: prefix, Recursive: recursive, WithVersions: withVersions}) {
+	for lsObj := range client.listObjects(ctx, bucketName, minio.ListObjectsOptions{Prefix: prefix, Recursive: recursive, WithVersions: withVersions, WithMetadata: withMetadata}) {
 		if lsObj.Err != nil {
 			return nil, lsObj.Err
 		}
+
 		obj := &models.BucketObject{
 			Name:           lsObj.Key,
 			Size:           lsObj.Size,
@@ -194,6 +200,7 @@ func listBucketObjects(ctx context.Context, client MinioClient, bucketName strin
 			IsLatest:       lsObj.IsLatest,
 			IsDeleteMarker: lsObj.IsDeleteMarker,
 			UserTags:       lsObj.UserTags,
+			UserMetadata:   lsObj.UserMetadata,
 		}
 		// only if single object with or without versions; get legalhold, retention and tags
 		if !lsObj.IsDeleteMarker && prefix != "" && !strings.HasSuffix(prefix, "/") {

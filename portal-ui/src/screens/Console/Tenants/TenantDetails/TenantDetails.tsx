@@ -18,12 +18,11 @@ import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Link, Redirect, Route, Router, Switch } from "react-router-dom";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { IconButton, Menu, MenuItem } from "@material-ui/core";
+import { IconButton, Tooltip } from "@material-ui/core";
 import get from "lodash/get";
 import Grid from "@material-ui/core/Grid";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
 import RefreshIcon from "@material-ui/icons/Refresh";
-import { setErrorSnackMessage } from "../../../../actions";
+import { setErrorSnackMessage, setSnackBarMessage } from "../../../../actions";
 import {
   setTenantDetailsLoad,
   setTenantInfo,
@@ -49,6 +48,9 @@ import TenantSecurity from "./TenantSecurity";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+import { DeleteIcon } from "../../../../icons";
+import DeleteTenant from "../ListTenants/DeleteTenant";
+import PencilIcon from "../../Common/TableWrapper/TableActionIcons/PencilIcon";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -57,8 +59,10 @@ interface ITenantDetailsProps {
   loadingTenant: boolean;
   currentTab: string;
   selectedTenant: string;
+  tenantInfo: ITenant | null;
   selectedNamespace: string;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  setSnackBarMessage: typeof setSnackBarMessage;
   setTenantDetailsLoad: typeof setTenantDetailsLoad;
   setTenantName: typeof setTenantName;
   setTenantInfo: typeof setTenantInfo;
@@ -90,8 +94,10 @@ const TenantDetails = ({
   loadingTenant,
   currentTab,
   selectedTenant,
+  tenantInfo,
   selectedNamespace,
   setErrorSnackMessage,
+  setSnackBarMessage,
   setTenantDetailsLoad,
   setTenantName,
   setTenantInfo,
@@ -102,6 +108,7 @@ const TenantDetails = ({
   const tenantName = match.params["tenantName"];
   const tenantNamespace = match.params["tenantNamespace"];
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (!loadingTenant) {
@@ -188,6 +195,19 @@ const TenantDetails = ({
     );
   };
 
+  const confirmDeleteTenant = () => {
+    setDeleteOpen(true);
+  };
+
+  const closeDeleteModalAndRefresh = (reloadData: boolean) => {
+    setDeleteOpen(false);
+
+    if (reloadData) {
+      setSnackBarMessage("Tenant Deleted");
+      history.push(`/tenants`);
+    }
+  };
+
   return (
     <Fragment>
       {yamlScreenOpen && (
@@ -198,6 +218,13 @@ const TenantDetails = ({
           namespace={tenantNamespace}
         />
       )}
+      {deleteOpen && tenantInfo !== null && (
+        <DeleteTenant
+          deleteOpen={deleteOpen}
+          selectedTenant={tenantInfo}
+          closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
+        />
+      )}
       <PageHeader
         label={
           <Fragment>
@@ -205,38 +232,47 @@ const TenantDetails = ({
               Tenants
             </Link>
             {` > ${match.params["tenantName"]}`}
-            <IconButton
-              aria-label="more"
-              aria-controls="long-menu"
-              aria-haspopup="true"
-              onClick={handleTenantMenu}
-            >
-              <MoreVertIcon />
-            </IconButton>
-            <Menu
-              id="long-menu"
-              anchorEl={anchorEl}
-              keepMounted
-              open={Boolean(anchorEl)}
-              onClose={editYaml}
-            >
-              <MenuItem key="yaml" onClick={editYaml}>
-                Edit YAML
-              </MenuItem>
-            </Menu>
           </Fragment>
         }
         actions={
-          <IconButton
-            color="primary"
-            aria-label="Refresh List"
-            component="span"
-            onClick={() => {
-              setTenantDetailsLoad(true);
-            }}
-          >
-            <RefreshIcon />
-          </IconButton>
+          <Fragment>
+            <Tooltip title={"Delete"}>
+              <IconButton
+                color="primary"
+                aria-label="Delete"
+                component="span"
+                onClick={() => {
+                  confirmDeleteTenant();
+                }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={"Edit YAML"}>
+              <IconButton
+                color="primary"
+                aria-label="Edit YAML"
+                component="span"
+                onClick={() => {
+                  editYaml();
+                }}
+              >
+                <PencilIcon active={true} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={"Refresh"}>
+              <IconButton
+                color="primary"
+                aria-label="Refresh List"
+                component="span"
+                onClick={() => {
+                  setTenantDetailsLoad(true);
+                }}
+              >
+                <RefreshIcon />
+              </IconButton>
+            </Tooltip>
+          </Fragment>
         }
       />
       <Grid item xs={12} className={classes.container} />
@@ -347,10 +383,12 @@ const mapState = (state: AppState) => ({
   currentTab: state.tenants.tenantDetails.currentTab,
   selectedTenant: state.tenants.tenantDetails.currentTenant,
   selectedNamespace: state.tenants.tenantDetails.currentNamespace,
+  tenantInfo: state.tenants.tenantDetails.tenantInfo,
 });
 
 const connector = connect(mapState, {
   setErrorSnackMessage,
+  setSnackBarMessage,
   setTenantDetailsLoad,
   setTenantName,
   setTenantInfo,

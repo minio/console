@@ -59,6 +59,7 @@ const TenantMetrics = ({ classes, match }: ITenantMetrics) => {
 
   return (
     <React.Fragment>
+      <h1 className={classes.sectionTitle}>Metrics</h1>
       {loading && (
         <div style={{ marginTop: "80px" }}>
           <LinearProgress />

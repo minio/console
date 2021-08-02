@@ -65,6 +65,10 @@ type ListObjectsParams struct {
 	/*
 	  In: query
 	*/
+	WithMetadata *bool
+	/*
+	  In: query
+	*/
 	WithVersions *bool
 }
 
@@ -91,6 +95,11 @@ func (o *ListObjectsParams) BindRequest(r *http.Request, route *middleware.Match
 
 	qRecursive, qhkRecursive, _ := qs.GetOK("recursive")
 	if err := o.bindRecursive(qRecursive, qhkRecursive, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qWithMetadata, qhkWithMetadata, _ := qs.GetOK("with_metadata")
+	if err := o.bindWithMetadata(qWithMetadata, qhkWithMetadata, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -155,6 +164,29 @@ func (o *ListObjectsParams) bindRecursive(rawData []string, hasKey bool, formats
 		return errors.InvalidType("recursive", "query", "bool", raw)
 	}
 	o.Recursive = &value
+
+	return nil
+}
+
+// bindWithMetadata binds and validates parameter WithMetadata from query.
+func (o *ListObjectsParams) bindWithMetadata(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+
+	if raw == "" { // empty values pass all other validations
+		return nil
+	}
+
+	value, err := swag.ConvertBool(raw)
+	if err != nil {
+		return errors.InvalidType("with_metadata", "query", "bool", raw)
+	}
+	o.WithMetadata = &value
 
 	return nil
 }

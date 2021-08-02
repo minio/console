@@ -19,8 +19,6 @@ import { connect } from "react-redux";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import { Grid, List, ListItem, ListItemText } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Tab from "@material-ui/core/Tab";
-import Tabs from "@material-ui/core/Tabs";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import ErrorLogs from "./ErrorLogs/ErrorLogs";
 import LogsSearchMain from "./LogSearch/LogsSearchMain";

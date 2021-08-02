@@ -18,14 +18,14 @@ import { Policy } from "./types";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import {
+  actionsTray,
   containerForHeader,
   modalBasic,
+  searchField,
 } from "../Common/FormComponents/common/styleLibrary";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import { Button, LinearProgress } from "@material-ui/core";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -36,10 +36,6 @@ import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMi
 import history from "../../../history";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
-import {
-  actionsTray,
-  searchField,
-} from "../Common/FormComponents/common/styleLibrary";
 import TextField from "@material-ui/core/TextField";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
