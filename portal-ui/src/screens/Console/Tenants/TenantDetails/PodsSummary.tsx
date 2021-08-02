@@ -124,6 +124,7 @@ const PodsSummary = ({
         />
       )}
       <div className={classes.topSpacer} />
+      <h1 className={classes.sectionTitle}>Pods</h1>
       <TableWrapper
         columns={[
           { label: "Name", elementKey: "name" },

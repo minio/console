@@ -176,6 +176,7 @@ const TenantSummary = ({
         />
       )}
       <div className={classes.topSpacer} />
+      <h1 className={classes.sectionTitle}>Summary</h1>
       <Paper className={classes.paperContainer}>
         <Grid container>
           <Grid item xs={8}>
