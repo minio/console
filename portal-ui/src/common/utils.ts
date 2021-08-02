@@ -224,16 +224,6 @@ export const calculateDistribution = (
     };
   }
 
-  if (forcedNodes < 4) {
-    return {
-      error: "Number of nodes cannot be less than 4",
-      nodes: 0,
-      persistentVolumes: 0,
-      disks: 0,
-      pvSize: 0,
-    };
-  }
-
   if (drivesPerServer <= 0) {
     return {
       error: "Number of drives must be at least 1",

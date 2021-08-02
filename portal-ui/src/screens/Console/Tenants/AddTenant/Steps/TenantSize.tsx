@@ -14,14 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState, useEffect, useCallback } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { AppState } from "../../../../../store";
-import { updateAddField, isPageValid } from "../../actions";
+import { isPageValid, updateAddField } from "../../actions";
 import {
-  wizardCommon,
   modalBasic,
+  wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
 import Grid from "@material-ui/core/Grid";
 import Table from "@material-ui/core/Table";
@@ -29,11 +29,11 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 import {
+  calculateDistribution,
+  erasureCodeCalc,
   getBytes,
   k8sfactorForDropdown,
   niceBytes,
-  calculateDistribution,
-  erasureCodeCalc,
   setMemoryResource,
 } from "../../../../../common/utils";
 import { clearValidationError } from "../../utils";
@@ -138,6 +138,7 @@ const TenantSize = ({
 
   const getMaxAllocableMemory = (nodes: string) => {
     if (nodes !== "" && !isNaN(parseInt(nodes))) {
+      setNodeError("");
       api
         .invoke(
           "GET",
@@ -147,10 +148,9 @@ const TenantSize = ({
           const maxMemory = res.max_memory ? res.max_memory : 0;
           updateField("maxAllocableMemo", maxMemory);
         })
-        .catch((err: any) => {
+        .catch((err: ErrorResponseHandler) => {
           setErrorFlag(true);
           setNodeError(err.errorMessage);
-          console.error(err);
         });
     }
   };
@@ -234,13 +234,6 @@ const TenantSize = ({
         fieldKey: "nodes",
         required: true,
         value: nodes,
-        customValidation: parseInt(nodes) < 4,
-        customValidationMessage: "Number of nodes cannot be less than 4",
-      },
-      {
-        fieldKey: "nodes",
-        required: true,
-        value: nodes,
         customValidation: errorFlag,
         customValidationMessage: nodeError,
       },
@@ -297,7 +290,7 @@ const TenantSize = ({
     selectedStorageClass,
     isPageValid,
     errorFlag,
-    nodeError
+    nodeError,
   ]);
 
   /* End Validation of pages */
@@ -310,8 +303,12 @@ const TenantSize = ({
           Please select the desired capacity
         </span>
       </div>
-      <span className={classes.error}>{distribution.error}</span>
-      <span className={classes.error}>{memorySize.error}</span>
+      {distribution.error !== "" && (
+        <div className={classes.error}>{distribution.error}</div>
+      )}
+      {memorySize.error !== "" && (
+        <div className={classes.error}>{memorySize.error}</div>
+      )}
       <Grid item xs={12}>
         <InputBoxWrapper
           id="nodes"

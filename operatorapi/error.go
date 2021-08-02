@@ -38,9 +38,10 @@ var (
 	errLicenseNotFound                    = errors.New("license not found")
 	errAvoidSelfAccountDelete             = errors.New("logged in user cannot be deleted by itself")
 	errAccessDenied                       = errors.New("access denied")
-	errTooFewNodes                        = errors.New("at least 4 nodes are required in cluster")
-	errTooFewSchedulableNodes             = errors.New("at least 4 schedulable nodes are required in cluster")
-	errFewerThanFourNodes                 = errors.New("at least 4 nodes are required in request")
+	errTooManyNodes                       = errors.New("cannot request more nodes than what is available in the cluster")
+	errTooFewNodes                        = errors.New("there are not enough nodes in the cluster to support this tenant")
+	errTooFewSchedulableNodes             = errors.New("there is not enough schedulable nodes to satisfy this requirement")
+	errFewerThanFourNodes                 = errors.New("at least 4 nodes are required for a tenant")
 )
 
 // prepareError receives an error object and parse it against k8sErrors, returns the right error code paired with a generic error message
