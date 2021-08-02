@@ -100,6 +100,8 @@ const TenantSize = ({
   selectedStorageClass,
 }: ITenantSizeProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
+  const [errorFlag, setErrorFlag] = useState<boolean>(false);
+  const [nodeError, setNodeError] = useState<string>("");
   const usableInformation = ecParityCalc.storageFactors.find(
     (element) => element.erasureCode === ecParity
   );
@@ -131,7 +133,6 @@ const TenantSize = ({
       clusterSizeFactor
     );
     const memoSize = setMemoryResource(memSize, clusterSizeBytes, maxMemSize);
-
     updateField("memorySize", memoSize);
   }, [maxAllocableMemo, memoryNode, sizeFactor, updateField, volumeSize]);
 
@@ -146,8 +147,9 @@ const TenantSize = ({
           const maxMemory = res.max_memory ? res.max_memory : 0;
           updateField("maxAllocableMemo", maxMemory);
         })
-        .catch((err: ErrorResponseHandler) => {
-          updateField("maxAllocableMemo", 0);
+        .catch((err: any) => {
+          setErrorFlag(true);
+          setNodeError(err.errorMessage);
           console.error(err);
         });
     }
@@ -227,7 +229,6 @@ const TenantSize = ({
 
   useEffect(() => {
     const parsedSize = getBytes(volumeSize, sizeFactor, true);
-
     const commonValidation = commonFormValidation([
       {
         fieldKey: "nodes",
@@ -235,6 +236,13 @@ const TenantSize = ({
         value: nodes,
         customValidation: parseInt(nodes) < 4,
         customValidationMessage: "Number of nodes cannot be less than 4",
+      },
+      {
+        fieldKey: "nodes",
+        required: true,
+        value: nodes,
+        customValidation: errorFlag,
+        customValidationMessage: nodeError,
       },
       {
         fieldKey: "volume_size",
@@ -288,6 +296,8 @@ const TenantSize = ({
     limitSize,
     selectedStorageClass,
     isPageValid,
+    errorFlag,
+    nodeError
   ]);
 
   /* End Validation of pages */
