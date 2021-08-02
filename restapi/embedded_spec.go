@@ -570,9 +570,7 @@ func init() {
             }
           }
         }
-      }
-    },
-    "/bucket/{bucket}/access-rules/{prefix}": {
+      },
       "delete": {
         "tags": [
           "AdminAPI"
@@ -587,10 +585,12 @@ func init() {
             "required": true
           },
           {
-            "type": "string",
             "name": "prefix",
-            "in": "path",
-            "required": true
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prefixWrapper"
+            }
           }
         ],
         "responses": {
@@ -4655,6 +4655,14 @@ func init() {
         }
       }
     },
+    "prefixWrapper": {
+      "type": "object",
+      "properties": {
+        "prefix": {
+          "type": "string"
+        }
+      }
+    },
     "principal": {
       "type": "object",
       "properties": {
@@ -5963,9 +5971,7 @@ func init() {
             }
           }
         }
-      }
-    },
-    "/bucket/{bucket}/access-rules/{prefix}": {
+      },
       "delete": {
         "tags": [
           "AdminAPI"
@@ -5980,10 +5986,12 @@ func init() {
             "required": true
           },
           {
-            "type": "string",
             "name": "prefix",
-            "in": "path",
-            "required": true
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prefixWrapper"
+            }
           }
         ],
         "responses": {
@@ -10097,6 +10105,14 @@ func init() {
         "access": {
           "type": "string"
         },
+        "prefix": {
+          "type": "string"
+        }
+      }
+    },
+    "prefixWrapper": {
+      "type": "object",
+      "properties": {
         "prefix": {
           "type": "string"
         }

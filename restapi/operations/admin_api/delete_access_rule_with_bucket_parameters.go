@@ -23,11 +23,17 @@ package admin_api
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"io"
 	"net/http"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/validate"
+
+	"github.com/minio/console/models"
 )
 
 // NewDeleteAccessRuleWithBucketParams creates a new DeleteAccessRuleWithBucketParams object
@@ -54,9 +60,9 @@ type DeleteAccessRuleWithBucketParams struct {
 	Bucket string
 	/*
 	  Required: true
-	  In: path
+	  In: body
 	*/
-	Prefix string
+	Prefix *models.PrefixWrapper
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -73,9 +79,32 @@ func (o *DeleteAccessRuleWithBucketParams) BindRequest(r *http.Request, route *m
 		res = append(res, err)
 	}
 
-	rPrefix, rhkPrefix, _ := route.Params.GetOK("prefix")
-	if err := o.bindPrefix(rPrefix, rhkPrefix, route.Formats); err != nil {
-		res = append(res, err)
+	if runtime.HasBody(r) {
+		defer r.Body.Close()
+		var body models.PrefixWrapper
+		if err := route.Consumer.Consume(r.Body, &body); err != nil {
+			if err == io.EOF {
+				res = append(res, errors.Required("prefix", "body", ""))
+			} else {
+				res = append(res, errors.NewParseError("prefix", "body", "", err))
+			}
+		} else {
+			// validate body object
+			if err := body.Validate(route.Formats); err != nil {
+				res = append(res, err)
+			}
+
+			ctx := validate.WithOperationRequest(context.Background())
+			if err := body.ContextValidate(ctx, route.Formats); err != nil {
+				res = append(res, err)
+			}
+
+			if len(res) == 0 {
+				o.Prefix = &body
+			}
+		}
+	} else {
+		res = append(res, errors.Required("prefix", "body", ""))
 	}
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
@@ -93,20 +122,6 @@ func (o *DeleteAccessRuleWithBucketParams) bindBucket(rawData []string, hasKey b
 	// Required: true
 	// Parameter is provided by construction from the route
 	o.Bucket = raw
-
-	return nil
-}
-
-// bindPrefix binds and validates parameter Prefix from path.
-func (o *DeleteAccessRuleWithBucketParams) bindPrefix(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	var raw string
-	if len(rawData) > 0 {
-		raw = rawData[len(rawData)-1]
-	}
-
-	// Required: true
-	// Parameter is provided by construction from the route
-	o.Prefix = raw
 
 	return nil
 }

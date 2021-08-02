@@ -64,7 +64,10 @@ const DeleteAccessRule = ({
 }: IDeleteAccessRule) => {
   const deleteProcess = () => {
     api
-      .invoke("DELETE", `/api/v1/bucket/${bucket}/access-rules/${toDelete}`)
+      .invoke("DELETE", `/api/v1/bucket/${bucket}/access-rules`,
+        {
+          prefix: toDelete,
+        })
       .then((res: any) => {})
       .catch((err: ErrorResponseHandler) => {
         setErrorSnackMessage(err);

@@ -1156,7 +1156,7 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/bucket/{bucket}/access-rules/{prefix}"] = admin_api.NewDeleteAccessRuleWithBucket(o.context, o.AdminAPIDeleteAccessRuleWithBucketHandler)
+	o.handlers["DELETE"]["/bucket/{bucket}/access-rules"] = admin_api.NewDeleteAccessRuleWithBucket(o.context, o.AdminAPIDeleteAccessRuleWithBucketHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}

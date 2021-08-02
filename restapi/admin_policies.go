@@ -146,9 +146,9 @@ func getSetAccessRuleWithBucketResponse(session *models.Principal, bucket string
 	return true, nil
 }
 
-func getDeleteAccessRuleWithBucketResponse(session *models.Principal, bucket string, prefix string) (bool, *models.Error) {
+func getDeleteAccessRuleWithBucketResponse(session *models.Principal, bucket string, prefix *models.PrefixWrapper) (bool, *models.Error) {
 	ctx := context.Background()
-	client, err := newS3BucketClient(session, bucket, prefix)
+	client, err := newS3BucketClient(session, bucket, prefix.Prefix)
 	if err != nil {
 		return false, prepareError(err)
 	}
