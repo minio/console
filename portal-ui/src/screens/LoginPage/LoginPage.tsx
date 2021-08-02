@@ -263,7 +263,7 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
       })
       .catch((err) => {
         setLoginSending(false);
-        setError(err.message);
+        setError({ detailedError: "", errorMessage: err.message });
       });
   };
 

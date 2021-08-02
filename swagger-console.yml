@@ -329,6 +329,10 @@ paths:
           in: query
           required: false
           type: boolean
+        - name: with_metadata
+          in: query
+          required: false
+          type: boolean
       responses:
         200:
           description: A successful response.
@@ -2270,6 +2274,14 @@ definitions:
       retention_until_date:
         type: string
       tags:
+        type: object
+        additionalProperties:
+          type: string
+      metadata:
+        type: object
+        additionalProperties:
+          type: string
+      user_metadata:
         type: object
         additionalProperties:
           type: string

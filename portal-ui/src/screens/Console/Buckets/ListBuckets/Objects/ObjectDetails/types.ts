@@ -25,4 +25,10 @@ export interface IFileInfo {
   tags?: object;
   version_id: string | null;
   is_delete_marker?: boolean;
+  user_metadata?: object;
+}
+
+export interface FileInfoResponse {
+  objects: IFileInfo[];
+  total: number;
 }
