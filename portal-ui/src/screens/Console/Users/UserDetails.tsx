@@ -339,7 +339,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
           <Grid item xs={12}>
             <TabPanel index={0} value={curTab}>
               <div className={classes.actionsTray}>
-                <h1 style={{ padding: "0px", margin: "0px" }}>Groups</h1>
+                <h1 className={classes.sectionTitle}>Groups</h1>
                 <Button
                   variant="contained"
                   color="primary"
@@ -364,9 +364,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
             </TabPanel>
             <TabPanel index={1} value={curTab}>
               <div className={classes.actionsTray}>
-                <h1 style={{ padding: "0px", margin: "0px" }}>
-                  Service Accounts
-                </h1>
+                <h1 className={classes.sectionTitle}>Service Accounts</h1>
                 <Button
                   variant="contained"
                   color="primary"
@@ -384,7 +382,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
             </TabPanel>
             <TabPanel index={2} value={curTab}>
               <div className={classes.actionsTray}>
-                <h1 style={{ padding: "0px", margin: "0px" }}>Policies</h1>
+                <h1 className={classes.sectionTitle}>Policies</h1>
                 <Button
                   variant="contained"
                   color="primary"

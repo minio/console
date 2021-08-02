@@ -169,7 +169,7 @@ const BucketLifecyclePanel = ({
       )}
       <Grid container>
         <Grid item xs={12} className={classes.actionsTray}>
-          <h1 style={{ padding: "0px", margin: "0px" }}>Lifecycle Rules</h1>
+          <h1 className={classes.sectionTitle}>Lifecycle Rules</h1>
           <Button
             variant="contained"
             color="primary"

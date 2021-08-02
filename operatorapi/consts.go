@@ -59,7 +59,7 @@ const (
 // Image versions
 const (
 	KESImageVersion            = "minio/kes:v0.13.4"
-	ConsoleImageDefaultVersion = "minio/console:v0.8.0"
+	ConsoleImageDefaultVersion = "minio/console:v0.8.1"
 )
 
 // K8s

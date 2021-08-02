@@ -27,6 +27,9 @@ import ListTiersConfiguration from "./TiersConfiguration/ListTiersConfiguration"
 import { AppState } from "../../../store";
 import { connect } from "react-redux";
 import { ISessionResponse } from "../types";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
 
 interface IConfigurationMain {
   classes: any;
@@ -55,40 +58,57 @@ const ConfigurationMain = ({
   return (
     <Fragment>
       <PageHeader label="Settings" />
-      <Grid container>
-        <Grid item xs={12} className={classes.container}>
-          <Tabs
-            value={selectedTab}
-            indicatorColor="primary"
-            textColor="primary"
-            onChange={(_, newValue: number) => {
-              setSelectedTab(newValue);
-            }}
-            aria-label="tenant-tabs"
-            variant="scrollable"
-            scrollButtons="auto"
-          >
-            <Tab label="Configurations" />
-            <Tab label="Lambda Notifications" />
-            <Tab label="Tiers" disabled={!distributedSetup} />
-          </Tabs>
-          <Grid item xs={12}>
-            {selectedTab === 0 && (
-              <Grid item xs={12}>
-                <ConfigurationsList />
-              </Grid>
-            )}
-            {selectedTab === 1 && (
-              <Grid item xs={12}>
-                <ListNotificationEndpoints />
-              </Grid>
-            )}
-            {selectedTab === 2 && distributedSetup && (
-              <Grid item xs={12}>
-                <ListTiersConfiguration />
-              </Grid>
-            )}
-          </Grid>
+      <Grid container className={classes.container}>
+        <Grid item xs={2}>
+          <List component="nav" dense={true}>
+            <ListItem
+              button
+              selected={selectedTab === 0}
+              onClick={() => {
+                setSelectedTab(0);
+              }}
+            >
+              <ListItemText primary="Configurations" />
+            </ListItem>
+            <ListItem
+              button
+              selected={selectedTab === 1}
+              onClick={() => {
+                setSelectedTab(1);
+              }}
+            >
+              <ListItemText primary="Lambda Notifications" />
+            </ListItem>
+            <ListItem
+              button
+              selected={selectedTab === 2}
+              onClick={() => {
+                setSelectedTab(2);
+              }}
+            >
+              <ListItemText primary="Tiers" />
+            </ListItem>
+          </List>
+        </Grid>
+        <Grid item xs={10}>
+          {selectedTab === 0 && (
+            <Grid item xs={12}>
+              <h1 className={classes.sectionTitle}>Configurations</h1>
+              <ConfigurationsList />
+            </Grid>
+          )}
+          {selectedTab === 1 && (
+            <Grid item xs={12}>
+              <h1 className={classes.sectionTitle}>Lambda Notifications</h1>
+              <ListNotificationEndpoints />
+            </Grid>
+          )}
+          {selectedTab === 2 && distributedSetup && (
+            <Grid item xs={12}>
+              <h1 className={classes.sectionTitle}>Tiers</h1>
+              <ListTiersConfiguration />
+            </Grid>
+          )}
         </Grid>
       </Grid>
     </Fragment>
