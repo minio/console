@@ -61,7 +61,7 @@ const PodEvents = ({
   setErrorSnackMessage,
 }: IPodEventsProps) => {
   const [event, setEvent] = useState<IEvent[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (propLoading) {
