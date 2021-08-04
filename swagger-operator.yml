@@ -2066,7 +2066,7 @@ definitions:
         type: boolean
       idpAdEnabled:
         type: boolean
-      idpOicEnabled:
+      idpOidcEnabled:
         type: boolean
       encryptionEnabled:
         type: boolean
@@ -2285,15 +2285,25 @@ definitions:
       oidc:
         type: object
         required:
+          - configuration_url
           - url
           - client_id
           - secret_id
+          - claim_name
         properties:
           url:
+            type: string
+          configuration_url:
             type: string
           client_id:
             type: string
           secret_id:
+            type: string
+          callback_url:
+            type: string
+          claim_name:
+            type: string
+          scopes:
             type: string
       keys:
         type: array
@@ -2311,14 +2321,12 @@ definitions:
         type: object
         required:
           - url
-          - username_format
-          - user_search_filter
         properties:
           url:
             type: string
           username_format:
             type: string
-          user_search_filter:
+          username_search_filter:
             type: string
           group_search_base_dn:
             type: string
@@ -2330,6 +2338,20 @@ definitions:
             type: boolean
           server_insecure:
             type: boolean
+          server_start_tls:
+            type: boolean
+          lookup_bind_dn:
+            type: string
+          lookup_bind_password:
+            type: string
+          user_dn_search_base_dn:
+            type: string
+          user_dn_search_filter:
+            type: string
+          user_dns:
+            type: array
+            items:
+              type: string
 
   consoleConfiguration:
     allOf:

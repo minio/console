@@ -90,6 +90,7 @@ const Security = ({
   addFileToConsoleCaCertificates,
   deleteConsoleCaCertificate,
   addConsoleCaCertificate,
+  addConsoleCertificate,
   addKeyPair,
   addFileToKeyPair,
   deleteKeyPair,
@@ -200,23 +201,6 @@ const Security = ({
                         onChange={(encodedValue, fileName) => {
                           addFileToKeyPair(
                             keyPair.id,
-                            "key",
-                            fileName,
-                            encodedValue
-                          );
-                        }}
-                        accept=".key,.pem"
-                        id="tlsKey"
-                        name="tlsKey"
-                        label="Key"
-                        value={keyPair.key}
-                      />
-                    </Grid>
-                    <Grid item xs={5}>
-                      <FileSelector
-                        onChange={(encodedValue, fileName) => {
-                          addFileToKeyPair(
-                            keyPair.id,
                             "cert",
                             fileName,
                             encodedValue
@@ -227,6 +211,23 @@ const Security = ({
                         name="tlsCert"
                         label="Cert"
                         value={keyPair.cert}
+                      />
+                    </Grid>
+                    <Grid item xs={5}>
+                      <FileSelector
+                        onChange={(encodedValue, fileName) => {
+                          addFileToKeyPair(
+                            keyPair.id,
+                            "key",
+                            fileName,
+                            encodedValue
+                          );
+                        }}
+                        accept=".key,.pem"
+                        id="tlsKey"
+                        name="tlsKey"
+                        label="Key"
+                        value={keyPair.key}
                       />
                     </Grid>
                     <Grid item xs={1}>
@@ -313,18 +314,6 @@ const Security = ({
                 <Grid item xs={6}>
                   <FileSelector
                     onChange={(encodedValue, fileName) => {
-                      addConsoleCertificate("key", fileName, encodedValue);
-                    }}
-                    accept=".key,.pem"
-                    id="consoleKey"
-                    name="consoleKey"
-                    label="Key"
-                    value={consoleCertificate.key}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <FileSelector
-                    onChange={(encodedValue, fileName) => {
                       addConsoleCertificate("cert", fileName, encodedValue);
                     }}
                     accept=".cer,.crt,.cert,.pem"
@@ -332,6 +321,18 @@ const Security = ({
                     name="consoleCert"
                     label="Cert"
                     value={consoleCertificate.cert}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <FileSelector
+                    onChange={(encodedValue, fileName) => {
+                      addConsoleCertificate("key", fileName, encodedValue);
+                    }}
+                    accept=".key,.pem"
+                    id="consoleKey"
+                    name="consoleKey"
+                    label="Key"
+                    value={consoleCertificate.key}
                   />
                 </Grid>
               </Grid>

@@ -150,15 +150,26 @@ export interface IIdentityProviderFields {
   accessKeys: string[];
   secretKeys: string[];
   openIDURL: string;
+  openIDConfigurationURL: string;
   openIDClientID: string;
   openIDSecretID: string;
+  openIDCallbackURL: string;
+  openIDClaimName: string;
+  openIDScopes: string;
   ADURL: string;
   ADSkipTLS: boolean;
   ADServerInsecure: boolean;
-  ADUserNameFilter: string;
-  ADGroupBaseDN: string;
+  ADUserNameSearchFilter: string;
+  ADUserNameFormat: string;
+  ADGroupSearchBaseDN: string;
   ADGroupSearchFilter: string;
-  ADNameAttribute: string;
+  ADGroupNameAttribute: string;
+  ADUserDNs: string[];
+  ADLookupBindDN: string;
+  ADLookupBindPassword: string;
+  ADUserDNSearchBaseDN: string;
+  ADUserDNSearchFilter: string;
+  ADServerStartTLS: boolean;
 }
 
 export interface ISecurityFields {

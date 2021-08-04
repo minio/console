@@ -98,7 +98,7 @@ export interface ITenant {
   consoleTLS: boolean;
   consoleEnabled: boolean;
   idpAdEnabled: boolean;
-  idpOicEnabled: boolean;
+  idpOidcEnabled: boolean;
   health_status: string;
   status?: ITenantStatus;
   // computed

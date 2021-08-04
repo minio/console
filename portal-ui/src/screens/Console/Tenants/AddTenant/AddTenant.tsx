@@ -103,15 +103,28 @@ const AddTenant = ({
     const exposeConsole = fields.configure.exposeConsole;
     const idpSelection = fields.identityProvider.idpSelection;
     const openIDURL = fields.identityProvider.openIDURL;
+    const openIDConfigurationURL =
+      fields.identityProvider.openIDConfigurationURL;
     const openIDClientID = fields.identityProvider.openIDClientID;
+    const openIDClaimName = fields.identityProvider.openIDClaimName;
+    const openIDCallbackURL = fields.identityProvider.openIDCallbackURL;
+    const openIDScopes = fields.identityProvider.openIDScopes;
     const openIDSecretID = fields.identityProvider.openIDSecretID;
     const ADURL = fields.identityProvider.ADURL;
     const ADSkipTLS = fields.identityProvider.ADSkipTLS;
     const ADServerInsecure = fields.identityProvider.ADServerInsecure;
-    const ADUserNameFilter = fields.identityProvider.ADUserNameFilter;
-    const ADGroupBaseDN = fields.identityProvider.ADGroupBaseDN;
+    const ADUserNameSearchFilter =
+      fields.identityProvider.ADUserNameSearchFilter;
+    const ADGroupSearchBaseDN = fields.identityProvider.ADGroupSearchBaseDN;
     const ADGroupSearchFilter = fields.identityProvider.ADGroupSearchFilter;
-    const ADNameAttribute = fields.identityProvider.ADNameAttribute;
+    const ADGroupNameAttribute = fields.identityProvider.ADGroupNameAttribute;
+    const ADUserDNs = fields.identityProvider.ADUserDNs;
+    const ADUserNameFormat = fields.identityProvider.ADUserNameFormat;
+    const ADLookupBindDN = fields.identityProvider.ADLookupBindDN;
+    const ADLookupBindPassword = fields.identityProvider.ADLookupBindPassword;
+    const ADUserDNSearchBaseDN = fields.identityProvider.ADUserDNSearchBaseDN;
+    const ADUserDNSearchFilter = fields.identityProvider.ADUserDNSearchFilter;
+    const ADServerStartTLS = fields.identityProvider.ADServerStartTLS;
     const accessKeys = fields.identityProvider.accessKeys;
     const secretKeys = fields.identityProvider.secretKeys;
     const minioCertificates = certificates.minioCertificates;
@@ -503,8 +516,12 @@ const AddTenant = ({
           dataIDP = {
             oidc: {
               url: openIDURL,
+              configuration_url: openIDConfigurationURL,
               client_id: openIDClientID,
               secret_id: openIDSecretID,
+              claim_name: openIDClaimName,
+              callback_url: openIDCallbackURL,
+              scopes: openIDScopes,
             },
           };
           break;
@@ -514,11 +531,17 @@ const AddTenant = ({
               url: ADURL,
               skip_tls_verification: ADSkipTLS,
               server_insecure: ADServerInsecure,
-              username_format: "",
-              user_search_filter: ADUserNameFilter,
-              group_search_base_dn: ADGroupBaseDN,
+              username_format: ADUserNameFormat,
+              username_search_filter: ADUserNameSearchFilter,
+              group_search_base_dn: ADGroupSearchBaseDN,
               group_search_filter: ADGroupSearchFilter,
-              group_name_attribute: ADNameAttribute,
+              group_name_attribute: ADGroupNameAttribute,
+              user_dns: ADUserDNs,
+              lookup_bind_dn: ADLookupBindDN,
+              lookup_bind_password: ADLookupBindPassword,
+              user_dn_search_base_dn: ADUserDNSearchBaseDN,
+              user_dn_search_filter: ADUserDNSearchFilter,
+              server_start_tls: ADServerStartTLS,
             },
           };
           break;
@@ -528,7 +551,6 @@ const AddTenant = ({
         ...dataSend,
         idp: { ...dataIDP },
       };
-
       api
         .invoke("POST", `/api/v1/tenants`, dataSend)
         .then((res) => {
