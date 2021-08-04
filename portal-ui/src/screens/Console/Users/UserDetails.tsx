@@ -365,17 +365,6 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
             <TabPanel index={1} value={curTab}>
               <div className={classes.actionsTray}>
                 <h1 className={classes.sectionTitle}>Service Accounts</h1>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<Bookmark />}
-                  size="medium"
-                  onClick={() => {
-                    setPolicyOpen(true);
-                  }}
-                >
-                  Assign Policies
-                </Button>
               </div>
               <br />
               <UserServiceAccountsPanel user={userName} />
@@ -386,13 +375,13 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                 <Button
                   variant="contained"
                   color="primary"
-                  startIcon={<CreateIcon />}
+                  startIcon={<Bookmark />}
                   size="medium"
                   onClick={() => {
-                    setAddGroupOpen(true);
+                    setPolicyOpen(true);
                   }}
                 >
-                  Add to Groups
+                  Assign Policies
                 </Button>
               </div>
               <br />
