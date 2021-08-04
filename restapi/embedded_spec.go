@@ -492,6 +492,86 @@ func init() {
         }
       }
     },
+    "/bucket/{bucket}/access-rules": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "List Access Rules With Given Bucket",
+        "operationId": "ListAccessRulesWithBucket",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listAccessRulesResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Add Access Rule To Given Bucket",
+        "operationId": "SetAccessRuleWithBucket",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "prefixaccess",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prefixAccessPair"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets": {
       "get": {
         "tags": [
@@ -3194,6 +3274,17 @@ func init() {
     }
   },
   "definitions": {
+    "accessRule": {
+      "type": "object",
+      "properties": {
+        "access": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        }
+      }
+    },
     "accountChangePasswordRequest": {
       "type": "object",
       "required": [
@@ -3889,6 +3980,23 @@ func init() {
         }
       }
     },
+    "listAccessRulesResponse": {
+      "type": "object",
+      "properties": {
+        "accessRules": {
+          "type": "array",
+          "title": "list of policies",
+          "items": {
+            "$ref": "#/definitions/accessRule"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "title": "total number of policies"
+        }
+      }
+    },
     "listBucketEventsResponse": {
       "type": "object",
       "properties": {
@@ -4455,6 +4563,17 @@ func init() {
         "user",
         "group"
       ]
+    },
+    "prefixAccessPair": {
+      "type": "object",
+      "properties": {
+        "access": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        }
+      }
     },
     "principal": {
       "type": "object",
@@ -5652,6 +5771,86 @@ func init() {
               "items": {
                 "type": "string"
               }
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/bucket/{bucket}/access-rules": {
+      "get": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "List Access Rules With Given Bucket",
+        "operationId": "ListAccessRulesWithBucket",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int32",
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listAccessRulesResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Add Access Rule To Given Bucket",
+        "operationId": "SetAccessRuleWithBucket",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "prefixaccess",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/prefixAccessPair"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "boolean"
             }
           },
           "default": {
@@ -8419,6 +8618,17 @@ func init() {
         }
       }
     },
+    "accessRule": {
+      "type": "object",
+      "properties": {
+        "access": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        }
+      }
+    },
     "accountChangePasswordRequest": {
       "type": "object",
       "required": [
@@ -9114,6 +9324,23 @@ func init() {
         }
       }
     },
+    "listAccessRulesResponse": {
+      "type": "object",
+      "properties": {
+        "accessRules": {
+          "type": "array",
+          "title": "list of policies",
+          "items": {
+            "$ref": "#/definitions/accessRule"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "title": "total number of policies"
+        }
+      }
+    },
     "listBucketEventsResponse": {
       "type": "object",
       "properties": {
@@ -9680,6 +9907,17 @@ func init() {
         "user",
         "group"
       ]
+    },
+    "prefixAccessPair": {
+      "type": "object",
+      "properties": {
+        "access": {
+          "type": "string"
+        },
+        "prefix": {
+          "type": "string"
+        }
+      }
     },
     "principal": {
       "type": "object",

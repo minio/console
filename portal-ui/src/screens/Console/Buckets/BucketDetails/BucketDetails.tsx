@@ -50,6 +50,7 @@ import { IconButton, Tooltip } from "@material-ui/core";
 import { BucketsIcon, DeleteIcon } from "../../../../icons";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import DeleteBucket from "../ListBuckets/DeleteBucket";
+import AccessRulePanel from "./AccessRulePanel";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -289,6 +290,9 @@ const BucketDetails = ({
       case "access":
         mainRoute += "/access";
         break;
+      case "prefix":
+        mainRoute += "/prefix";
+        break;
       default:
         mainRoute += "/summary";
     }
@@ -420,6 +424,15 @@ const BucketDetails = ({
             >
               <ListItemText primary="Access Audit" />
             </ListItem>
+            <ListItem
+              button
+              selected={selectedTab === "prefix"}
+              onClick={() => {
+                changeRoute("prefix");
+              }}
+            >
+              <ListItemText primary="Access Rules" />
+            </ListItem>
           </List>
         </Grid>
         <Grid item xs={10}>
@@ -449,6 +462,10 @@ const BucketDetails = ({
               <Route
                 path="/buckets/:bucketName/access"
                 component={AccessDetailsPanel}
+              />
+              <Route
+                path="/buckets/:bucketName/prefix"
+                component={AccessRulePanel}
               />
               <Route
                 path="/buckets/:bucketName"
