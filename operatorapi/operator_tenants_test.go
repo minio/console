@@ -1036,7 +1036,7 @@ func Test_UpdateTenantAction(t *testing.T) {
 				},
 				params: operator_api.UpdateTenantParams{
 					Body: &models.UpdateTenantRequest{
-						ConsoleImage: "minio/console:v0.8.2",
+						ConsoleImage: "minio/console:v0.8.3",
 					},
 				},
 			},
