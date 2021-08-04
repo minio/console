@@ -107,7 +107,6 @@ const TenantDetails = ({
 
   const tenantName = match.params["tenantName"];
   const tenantNamespace = match.params["tenantNamespace"];
-  const [anchorEl, setAnchorEl] = React.useState(null);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
   useEffect(() => {
@@ -174,12 +173,7 @@ const TenantDetails = ({
     }
   }, [match, setTenantTab]);
 
-  const handleTenantMenu = (event: any) => {
-    setAnchorEl(event.currentTarget);
-  };
-
   const editYaml = () => {
-    setAnchorEl(null);
     setYamlScreenOpen(true);
   };
 

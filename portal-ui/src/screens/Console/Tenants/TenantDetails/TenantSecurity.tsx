@@ -503,9 +503,10 @@ const TenantSecurity = ({
                                 display="block"
                                 gutterBottom
                               >
-                                {certificateInfo.domains.map((dom) => {
-                                  return <div>{dom}</div>;
-                                })}
+                                {certificateInfo.domains &&
+                                  certificateInfo.domains.map((dom) => {
+                                    return <div>{dom}</div>;
+                                  })}
                               </Typography>
                               <Typography
                                 className={classes.bold}
@@ -616,9 +617,10 @@ const TenantSecurity = ({
                                 display="block"
                                 gutterBottom
                               >
-                                {certificateInfo.domains.map((dom) => {
-                                  return <div>{dom}</div>;
-                                })}
+                                {certificateInfo.domains &&
+                                  certificateInfo.domains.map((dom) => {
+                                    return <div>{dom}</div>;
+                                  })}
                               </Typography>
                               <Typography
                                 className={classes.bold}
@@ -731,9 +733,10 @@ const TenantSecurity = ({
                                     display="block"
                                     gutterBottom
                                   >
-                                    {certificateInfo.domains.map((dom) => {
-                                      return <div>{dom}</div>;
-                                    })}
+                                    {certificateInfo.domains &&
+                                      certificateInfo.domains.map((dom) => {
+                                        return <div>{dom}</div>;
+                                      })}
                                   </Typography>
                                   <Typography
                                     className={classes.bold}
@@ -829,9 +832,10 @@ const TenantSecurity = ({
                                     display="block"
                                     gutterBottom
                                   >
-                                    {certificateInfo.domains.map((dom) => {
-                                      return <div>{dom}</div>;
-                                    })}
+                                    {certificateInfo.domains &&
+                                      certificateInfo.domains.map((dom) => {
+                                        return <div>{dom}</div>;
+                                      })}
                                   </Typography>
                                   <Typography
                                     className={classes.bold}

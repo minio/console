@@ -203,7 +203,8 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
 		}}
-
+	// copy query params
+	targetURL.RawQuery = req.URL.Query().Encode()
 	proxRequest, err := http.NewRequest(req.Method, targetURL.String(), req.Body)
 	if err != nil {
 		log.Println(err)

@@ -26,8 +26,6 @@ import (
 
 	"github.com/minio/console/cluster"
 
-	"errors"
-
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/operatorapi/operations"
@@ -56,8 +54,9 @@ func registerNodesHandlers(api *operations.OperatorAPI) {
 
 // getMaxAllocatableMemory get max allocatable memory given a desired number of nodes
 func getMaxAllocatableMemory(ctx context.Context, clientset v1.CoreV1Interface, numNodes int32) (*models.MaxAllocatableMemResponse, error) {
+	// can't request less than 4 nodes
 	if numNodes < 4 {
-		return nil, errors.New("error NumNodes must be at least 4")
+		return nil, errFewerThanFourNodes
 	}
 
 	// get all nodes from cluster
@@ -65,16 +64,32 @@ func getMaxAllocatableMemory(ctx context.Context, clientset v1.CoreV1Interface, 
 	if err != nil {
 		return nil, err
 	}
-	if len(nodes.Items) < int(numNodes) {
-		return nil, errTooFewNodes
-	}
-	activeNodes := 0
-	for i := 0; i < len(nodes.Items); i++ {
-		if !nodes.Items[i].Spec.Unschedulable {
-			activeNodes++
+
+	// requesting more nodes than are schedulable in the cluster
+	schedulableNodes := len(nodes.Items)
+	nonMasterNodes := len(nodes.Items)
+	for _, node := range nodes.Items {
+		// check taints to check if node is schedulable
+		for _, taint := range node.Spec.Taints {
+			if taint.Effect == corev1.TaintEffectNoSchedule {
+				schedulableNodes--
+			}
+			// check if the node is a master
+			if taint.Key == "node-role.kubernetes.io/master" {
+				nonMasterNodes--
+			}
 		}
 	}
-	if activeNodes < int(numNodes) {
+	// requesting more nodes than schedulable and less than total number of workers
+	if int(numNodes) > schedulableNodes && int(numNodes) < nonMasterNodes {
+		return nil, errTooManyNodes
+	}
+	if nonMasterNodes < int(numNodes) {
+		return nil, errTooFewNodes
+	}
+
+	// not enough schedulable nodes
+	if schedulableNodes < int(numNodes) {
 		return nil, errTooFewSchedulableNodes
 	}
 

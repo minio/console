@@ -78,6 +78,7 @@ import { ErrorResponseHandler } from "../../../../../../common/types";
 import RewindEnable from "./RewindEnable";
 import DeleteIcon from "@material-ui/icons/Delete";
 import DeleteMultipleObjects from "./DeleteMultipleObjects";
+import { baseUrl } from "../../../../../../history";
 
 const commonIcon = {
   backgroundRepeat: "no-repeat",
@@ -481,7 +482,7 @@ const ListObjects = ({
     }
     e.preventDefault();
     let files = e.target.files;
-    let uploadUrl = `/api/v1/buckets/${bucketName}/objects/upload`;
+    let uploadUrl = `${baseUrl}/api/v1/buckets/${bucketName}/objects/upload`;
     if (path !== "") {
       const encodedPath = encodeURIComponent(path);
       uploadUrl = `${uploadUrl}?prefix=${encodedPath}`;

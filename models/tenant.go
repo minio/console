@@ -66,8 +66,8 @@ type Tenant struct {
 	// idp ad enabled
 	IdpAdEnabled bool `json:"idpAdEnabled,omitempty"`
 
-	// idp oic enabled
-	IdpOicEnabled bool `json:"idpOicEnabled,omitempty"`
+	// idp oidc enabled
+	IdpOidcEnabled bool `json:"idpOidcEnabled,omitempty"`
 
 	// image
 	Image string `json:"image,omitempty"`

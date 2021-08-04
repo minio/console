@@ -2489,9 +2489,7 @@ func init() {
         "active_directory": {
           "type": "object",
           "required": [
-            "url",
-            "username_format",
-            "user_search_filter"
+            "url"
           ],
           "properties": {
             "group_name_attribute": {
@@ -2503,7 +2501,16 @@ func init() {
             "group_search_filter": {
               "type": "string"
             },
+            "lookup_bind_dn": {
+              "type": "string"
+            },
+            "lookup_bind_password": {
+              "type": "string"
+            },
             "server_insecure": {
+              "type": "boolean"
+            },
+            "server_start_tls": {
               "type": "boolean"
             },
             "skip_tls_verification": {
@@ -2512,10 +2519,22 @@ func init() {
             "url": {
               "type": "string"
             },
-            "user_search_filter": {
+            "user_dn_search_base_dn": {
               "type": "string"
             },
+            "user_dn_search_filter": {
+              "type": "string"
+            },
+            "user_dns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             "username_format": {
+              "type": "string"
+            },
+            "username_search_filter": {
               "type": "string"
             }
           }
@@ -2541,12 +2560,26 @@ func init() {
         "oidc": {
           "type": "object",
           "required": [
+            "configuration_url",
             "url",
             "client_id",
-            "secret_id"
+            "secret_id",
+            "claim_name"
           ],
           "properties": {
+            "callback_url": {
+              "type": "string"
+            },
+            "claim_name": {
+              "type": "string"
+            },
             "client_id": {
+              "type": "string"
+            },
+            "configuration_url": {
+              "type": "string"
+            },
+            "scopes": {
               "type": "string"
             },
             "secret_id": {
@@ -4230,7 +4263,7 @@ func init() {
         "idpAdEnabled": {
           "type": "boolean"
         },
-        "idpOicEnabled": {
+        "idpOidcEnabled": {
           "type": "boolean"
         },
         "image": {
@@ -6441,9 +6474,7 @@ func init() {
     "IdpConfigurationActiveDirectory": {
       "type": "object",
       "required": [
-        "url",
-        "username_format",
-        "user_search_filter"
+        "url"
       ],
       "properties": {
         "group_name_attribute": {
@@ -6455,7 +6486,16 @@ func init() {
         "group_search_filter": {
           "type": "string"
         },
+        "lookup_bind_dn": {
+          "type": "string"
+        },
+        "lookup_bind_password": {
+          "type": "string"
+        },
         "server_insecure": {
+          "type": "boolean"
+        },
+        "server_start_tls": {
           "type": "boolean"
         },
         "skip_tls_verification": {
@@ -6464,10 +6504,22 @@ func init() {
         "url": {
           "type": "string"
         },
-        "user_search_filter": {
+        "user_dn_search_base_dn": {
           "type": "string"
         },
+        "user_dn_search_filter": {
+          "type": "string"
+        },
+        "user_dns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "username_format": {
+          "type": "string"
+        },
+        "username_search_filter": {
           "type": "string"
         }
       }
@@ -6490,12 +6542,26 @@ func init() {
     "IdpConfigurationOidc": {
       "type": "object",
       "required": [
+        "configuration_url",
         "url",
         "client_id",
-        "secret_id"
+        "secret_id",
+        "claim_name"
       ],
       "properties": {
+        "callback_url": {
+          "type": "string"
+        },
+        "claim_name": {
+          "type": "string"
+        },
         "client_id": {
+          "type": "string"
+        },
+        "configuration_url": {
+          "type": "string"
+        },
+        "scopes": {
           "type": "string"
         },
         "secret_id": {
@@ -8073,9 +8139,7 @@ func init() {
         "active_directory": {
           "type": "object",
           "required": [
-            "url",
-            "username_format",
-            "user_search_filter"
+            "url"
           ],
           "properties": {
             "group_name_attribute": {
@@ -8087,7 +8151,16 @@ func init() {
             "group_search_filter": {
               "type": "string"
             },
+            "lookup_bind_dn": {
+              "type": "string"
+            },
+            "lookup_bind_password": {
+              "type": "string"
+            },
             "server_insecure": {
+              "type": "boolean"
+            },
+            "server_start_tls": {
               "type": "boolean"
             },
             "skip_tls_verification": {
@@ -8096,10 +8169,22 @@ func init() {
             "url": {
               "type": "string"
             },
-            "user_search_filter": {
+            "user_dn_search_base_dn": {
               "type": "string"
             },
+            "user_dn_search_filter": {
+              "type": "string"
+            },
+            "user_dns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             "username_format": {
+              "type": "string"
+            },
+            "username_search_filter": {
               "type": "string"
             }
           }
@@ -8113,12 +8198,26 @@ func init() {
         "oidc": {
           "type": "object",
           "required": [
+            "configuration_url",
             "url",
             "client_id",
-            "secret_id"
+            "secret_id",
+            "claim_name"
           ],
           "properties": {
+            "callback_url": {
+              "type": "string"
+            },
+            "claim_name": {
+              "type": "string"
+            },
             "client_id": {
+              "type": "string"
+            },
+            "configuration_url": {
+              "type": "string"
+            },
+            "scopes": {
               "type": "string"
             },
             "secret_id": {
@@ -9667,7 +9766,7 @@ func init() {
         "idpAdEnabled": {
           "type": "boolean"
         },
-        "idpOicEnabled": {
+        "idpOidcEnabled": {
           "type": "boolean"
         },
         "image": {

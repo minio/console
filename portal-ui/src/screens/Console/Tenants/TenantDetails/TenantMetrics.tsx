@@ -93,9 +93,9 @@ const mapState = (state: AppState) => ({
     false
   ),
   adEnabled: get(state.tenants.tenantDetails.tenantInfo, "idpAdEnabled", false),
-  oicEnabled: get(
+  oidcEnabled: get(
     state.tenants.tenantDetails.tenantInfo,
-    "idpOicEnabled",
+    "idpOidcEnabled",
     false
   ),
 });

@@ -42,15 +42,26 @@ interface IIdentityProviderProps {
   accessKeys: string[];
   secretKeys: string[];
   openIDURL: string;
+  openIDConfigurationURL: string;
   openIDClientID: string;
   openIDSecretID: string;
+  openIDCallbackURL: string;
+  openIDClaimName: string;
+  openIDScopes: string;
   ADURL: string;
   ADSkipTLS: boolean;
   ADServerInsecure: boolean;
-  ADUserNameFilter: string;
-  ADGroupBaseDN: string;
+  ADUserNameSearchFilter: string;
+  ADGroupSearchBaseDN: string;
   ADGroupSearchFilter: string;
-  ADNameAttribute: string;
+  ADGroupNameAttribute: string;
+  ADUserDNs: string[];
+  ADUserNameFormat: string;
+  ADLookupBindDN: string;
+  ADLookupBindPassword: string;
+  ADUserDNSearchBaseDN: string;
+  ADUserDNSearchFilter: string;
+  ADServerStartTLS: boolean;
   updateAddField: typeof updateAddField;
   isPageValid: typeof isPageValid;
 }
@@ -82,15 +93,26 @@ const IdentityProvider = ({
   accessKeys,
   secretKeys,
   openIDURL,
+  openIDConfigurationURL,
   openIDClientID,
   openIDSecretID,
+  openIDCallbackURL,
+  openIDClaimName,
+  openIDScopes,
   ADURL,
   ADSkipTLS,
   ADServerInsecure,
-  ADUserNameFilter,
-  ADGroupBaseDN,
+  ADUserNameSearchFilter,
+  ADGroupSearchBaseDN,
   ADGroupSearchFilter,
-  ADNameAttribute,
+  ADGroupNameAttribute,
+  ADUserDNs,
+  ADUserNameFormat,
+  ADLookupBindDN,
+  ADLookupBindPassword,
+  ADUserDNSearchBaseDN,
+  ADUserDNSearchFilter,
+  ADServerStartTLS,
   updateAddField,
   isPageValid,
 }: IIdentityProviderProps) => {
@@ -112,7 +134,11 @@ const IdentityProvider = ({
     newUserField[index] = value;
     updateField("secretKeys", newUserField);
   };
-
+  const updateADUserField = (index: number, value: string) => {
+    const newADUserDNsField = [...ADUserDNs];
+    newADUserDNsField[index] = value;
+    updateField("ADUserDNs", newADUserDNsField);
+  };
   const cleanValidation = (fieldName: string) => {
     setValidationErrors(clearValidationError(validationErrors, fieldName));
   };
@@ -151,6 +177,11 @@ const IdentityProvider = ({
           value: openIDURL,
         },
         {
+          fieldKey: "openID_CONFIGURATION_URL",
+          required: true,
+          value: openIDConfigurationURL,
+        },
+        {
           fieldKey: "openID_clientID",
           required: true,
           value: openIDClientID,
@@ -159,6 +190,11 @@ const IdentityProvider = ({
           fieldKey: "openID_secretID",
           required: true,
           value: openIDSecretID,
+        },
+        {
+          fieldKey: "openID_claimName",
+          required: true,
+          value: openIDClaimName,
         },
       ];
     }
@@ -171,27 +207,15 @@ const IdentityProvider = ({
           required: true,
           value: ADURL,
         },
-        {
-          fieldKey: "ad_userNameFilter",
-          required: true,
-          value: ADUserNameFilter,
-        },
-        {
-          fieldKey: "ad_groupBaseDN",
-          required: true,
-          value: ADGroupBaseDN,
-        },
-        {
-          fieldKey: "ad_groupSearchFilter",
-          required: true,
-          value: ADGroupSearchFilter,
-        },
-        {
-          fieldKey: "ad_nameAttribute",
-          required: true,
-          value: ADNameAttribute,
-        },
       ];
+      // validate user DNs
+      for (let i = 0; i < ADUserDNs.length; i++) {
+        customIDPValidation.push({
+          fieldKey: `ad-userdn-${i.toString()}`,
+          required: true,
+          value: ADUserDNs[i],
+        });
+      }
     }
 
     const commonVal = commonFormValidation(customIDPValidation);
@@ -207,10 +231,11 @@ const IdentityProvider = ({
     openIDClientID,
     openIDSecretID,
     ADURL,
-    ADUserNameFilter,
-    ADGroupBaseDN,
+    ADUserNameSearchFilter,
+    ADGroupSearchBaseDN,
     ADGroupSearchFilter,
-    ADNameAttribute,
+    ADGroupNameAttribute,
+    ADUserDNs,
     isPageValid,
   ]);
   let inputs = null;
@@ -296,6 +321,60 @@ const IdentityProvider = ({
       );
     });
   }
+  if (idpSelection === "AD") {
+    inputs = ADUserDNs.map((_, index) => {
+      return (
+        <Fragment key={`identityField-${index.toString()}`}>
+          <div className={classes.shortened}>
+            <InputBoxWrapper
+              id={`ad-userdn-${index.toString()}`}
+              label={""}
+              placeholder=""
+              name={`ad-userdn-${index.toString()}`}
+              value={ADUserDNs[index]}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateADUserField(index, e.target.value);
+                cleanValidation(`ad-userdn-${index.toString()}`);
+              }}
+              index={index}
+              key={`csv-ad-userdn-${index.toString()}`}
+              error={validationErrors[`ad-userdn-${index.toString()}`] || ""}
+            />
+            <div className={classes.buttonTray}>
+              <Tooltip title="Add User" aria-label="add">
+                <IconButton
+                  size={"small"}
+                  onClick={() => {
+                    ADUserDNs.push("");
+                    updateADUserField(ADUserDNs.length - 1, "");
+                  }}
+                >
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Remove" aria-label="add">
+                <IconButton
+                  size={"small"}
+                  style={{ marginLeft: 16 }}
+                  onClick={() => {
+                    if (ADUserDNs.length > 1) {
+                      ADUserDNs.splice(index, 1);
+                      updateUserField(
+                        ADUserDNs.length - 1,
+                        ADUserDNs[ADUserDNs.length - 1]
+                      );
+                    }
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            </div>
+          </div>
+        </Fragment>
+      );
+    });
+  }
   return (
     <Fragment>
       <div className={classes.headerElement}>
@@ -320,9 +399,13 @@ const IdentityProvider = ({
             { label: "Active Directory", value: "AD" },
           ]}
         />
-        Add additional users
-      </Grid>{" "}
-      {idpSelection === "Built-in" && <Fragment>{inputs}</Fragment>}
+      </Grid>
+      {idpSelection === "Built-in" && (
+        <Fragment>
+          Add additional users
+          {inputs}
+        </Fragment>
+      )}
       {idpSelection === "OpenID" && (
         <Fragment>
           <Grid item xs={12}>
@@ -335,7 +418,23 @@ const IdentityProvider = ({
               }}
               label="URL"
               value={openIDURL}
+              placeholder="https://your-identity-provider.com/"
               error={validationErrors["openID_URL"] || ""}
+              required
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="openID_CONFIGURATION_URL"
+              name="openID_CONFIGURATION_URL"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("openIDConfigurationURL", e.target.value);
+                cleanValidation("openID_CONFIGURATION_URL");
+              }}
+              label="Configuration URL"
+              value={openIDConfigurationURL}
+              placeholder="https://your-identity-provider.com/.well-known/openid-configuration"
+              error={validationErrors["openID_CONFIGURATION_URL"] || ""}
               required
             />
           </Grid>
@@ -367,6 +466,46 @@ const IdentityProvider = ({
               required
             />
           </Grid>
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="openID_callbackURL"
+              name="openID_callbackURL"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("openIDCallbackURL", e.target.value);
+                cleanValidation("openID_callbackURL");
+              }}
+              label="Callback URL"
+              value={openIDCallbackURL}
+              placeholder="https://your-console-endpoint:9443/oauth_callback"
+              error={validationErrors["openID_callbackURL"] || ""}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="openID_claimName"
+              name="openID_claimName"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("openIDClaimName", e.target.value);
+                cleanValidation("openID_claimName");
+              }}
+              label="Claim Name"
+              value={openIDClaimName}
+              error={validationErrors["openID_claimName"] || ""}
+              required
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="openID_scopes"
+              name="openID_scopes"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("openIDScopes", e.target.value);
+                cleanValidation("openID_scopes");
+              }}
+              label="Scopes"
+              value={openIDScopes}
+            />
+          </Grid>
         </Fragment>
       )}
       {idpSelection === "AD" && (
@@ -379,8 +518,9 @@ const IdentityProvider = ({
                 updateField("ADURL", e.target.value);
                 cleanValidation("AD_URL");
               }}
-              label="URL"
+              label="LDAP Server Address"
               value={ADURL}
+              placeholder="ldap-server:636"
               error={validationErrors["AD_URL"] || ""}
               required
             />
@@ -394,7 +534,6 @@ const IdentityProvider = ({
               onChange={(e) => {
                 const targetD = e.target;
                 const checked = targetD.checked;
-
                 updateField("ADSkipTLS", checked);
               }}
               label={"Skip TLS Verification"}
@@ -409,7 +548,6 @@ const IdentityProvider = ({
               onChange={(e) => {
                 const targetD = e.target;
                 const checked = targetD.checked;
-
                 updateField("ADServerInsecure", checked);
               }}
               label={"Server Insecure"}
@@ -429,31 +567,53 @@ const IdentityProvider = ({
             </Grid>
           ) : null}
           <Grid item xs={12}>
-            <InputBoxWrapper
-              id="ad_userNameFilter"
-              name="ad_userNameFilter"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                updateField("ADUserNameFilter", e.target.value);
-                cleanValidation("ad_userNameFilter");
+            <FormSwitchWrapper
+              value="ad_serverStartTLS"
+              id="ad_serverStartTLS"
+              name="ad_serverStartTLS"
+              checked={ADServerStartTLS}
+              onChange={(e) => {
+                const targetD = e.target;
+                const checked = targetD.checked;
+                updateField("ADServerStartTLS", checked);
               }}
-              label="User Search Filter"
-              value={ADUserNameFilter}
-              error={validationErrors["ad_userNameFilter"] || ""}
-              required
+              label={"Start TLS connection to AD/LDAP server"}
             />
           </Grid>
           <Grid item xs={12}>
             <InputBoxWrapper
-              id="ad_groupBaseDN"
-              name="ad_groupBaseDN"
+              id="ad_userNameFormat"
+              name="ad_userNameFormat"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                updateField("ADGroupBaseDN", e.target.value);
-                cleanValidation("ad_groupBaseDN");
+                updateField("ADUserNameFormat", e.target.value);
+              }}
+              label="Username Format"
+              value={ADUserNameFormat}
+              placeholder="uid=%s,cn=accounts,dc=myldapserver,dc=com"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="ad_userNameFilter"
+              name="ad_userNameFilter"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("ADUserNameSearchFilter", e.target.value);
+              }}
+              label="Username Search Filter"
+              value={ADUserNameSearchFilter}
+              placeholder="(|(objectclass=posixAccount)(uid=%s))"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="ad_groupSearchBaseDN"
+              name="ad_groupSearchBaseDN"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("ADGroupSearchBaseDN", e.target.value);
               }}
               label="Group Search Base DN"
-              value={ADGroupBaseDN}
-              error={validationErrors["ad_groupBaseDN"] || ""}
-              required
+              value={ADGroupSearchBaseDN}
+              placeholder="ou=hwengg,dc=min,dc=io;ou=swengg,dc=min,dc=io"
             />
           </Grid>
           <Grid item xs={12}>
@@ -462,27 +622,75 @@ const IdentityProvider = ({
               name="ad_groupSearchFilter"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 updateField("ADGroupSearchFilter", e.target.value);
-                cleanValidation("ad_groupSearchFilter");
               }}
               label="Group Search Filter"
               value={ADGroupSearchFilter}
-              error={validationErrors["ad_groupSearchFilter"] || ""}
-              required
+              placeholder="(&(objectclass=groupOfNames)(member=%s))"
             />
           </Grid>
           <Grid item xs={12}>
             <InputBoxWrapper
-              id="ad_nameAttribute"
-              name="ad_nameAttribute"
+              id="ad_groupNameAttribute"
+              name="ad_groupNameAttribute"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                updateField("ADNameAttribute", e.target.value);
-                cleanValidation("ad_nameAttribute");
+                updateField("ADGroupNameAttribute", e.target.value);
               }}
               label="Group Name Attribute"
-              value={ADNameAttribute}
-              error={validationErrors["ad_nameAttribute"] || ""}
-              required
+              value={ADGroupNameAttribute}
+              placeholder="cn"
             />
+          </Grid>
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="ad_lookupBindDN"
+              name="ad_lookupBindDN"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("ADLookupBindDN", e.target.value);
+              }}
+              label="Lookup Bind DN"
+              value={ADLookupBindDN}
+              placeholder="cn=admin,dc=min,dc=io"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="ad_lookupBindPassword"
+              name="ad_lookupBindPassword"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("ADLookupBindPassword", e.target.value);
+              }}
+              label="Lookup Bind Password"
+              value={ADLookupBindPassword}
+              placeholder="admin"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="ad_userDNSearchBaseDN"
+              name="ad_userDNSearchBaseDN"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("ADUserDNSearchBaseDN", e.target.value);
+              }}
+              label="User DN Search Base DN"
+              value={ADUserDNSearchBaseDN}
+              placeholder="dc=min,dc=io"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="ad_userDNSearchFilter"
+              name="ad_userDNSearchFilter"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("ADUserDNSearchFilter", e.target.value);
+              }}
+              label="User DN Search Filter"
+              value={ADUserDNSearchFilter}
+              placeholder="(uid=%s)"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            List of user DNs (Distinguished Names) to be Tenant Administrators
+            {inputs}
           </Grid>
         </Fragment>
       )}
@@ -495,22 +703,42 @@ const mapState = (state: AppState) => ({
   accessKeys: state.tenants.createTenant.fields.identityProvider.accessKeys,
   secretKeys: state.tenants.createTenant.fields.identityProvider.secretKeys,
   openIDURL: state.tenants.createTenant.fields.identityProvider.openIDURL,
+  openIDConfigurationURL:
+    state.tenants.createTenant.fields.identityProvider.openIDConfigurationURL,
   openIDClientID:
     state.tenants.createTenant.fields.identityProvider.openIDClientID,
   openIDSecretID:
     state.tenants.createTenant.fields.identityProvider.openIDSecretID,
+  openIDCallbackURL:
+    state.tenants.createTenant.fields.identityProvider.openIDCallbackURL,
+  openIDClaimName:
+    state.tenants.createTenant.fields.identityProvider.openIDClaimName,
+  openIDScopes: state.tenants.createTenant.fields.identityProvider.openIDScopes,
   ADURL: state.tenants.createTenant.fields.identityProvider.ADURL,
   ADSkipTLS: state.tenants.createTenant.fields.identityProvider.ADSkipTLS,
   ADServerInsecure:
     state.tenants.createTenant.fields.identityProvider.ADServerInsecure,
-  ADUserNameFilter:
-    state.tenants.createTenant.fields.identityProvider.ADUserNameFilter,
-  ADGroupBaseDN:
-    state.tenants.createTenant.fields.identityProvider.ADGroupBaseDN,
+  ADUserNameSearchFilter:
+    state.tenants.createTenant.fields.identityProvider.ADUserNameSearchFilter,
+  ADGroupSearchBaseDN:
+    state.tenants.createTenant.fields.identityProvider.ADGroupSearchBaseDN,
   ADGroupSearchFilter:
     state.tenants.createTenant.fields.identityProvider.ADGroupSearchFilter,
-  ADNameAttribute:
-    state.tenants.createTenant.fields.identityProvider.ADNameAttribute,
+  ADGroupNameAttribute:
+    state.tenants.createTenant.fields.identityProvider.ADGroupNameAttribute,
+  ADUserDNs: state.tenants.createTenant.fields.identityProvider.ADUserDNs,
+  ADUserNameFormat:
+    state.tenants.createTenant.fields.identityProvider.ADUserNameFormat,
+  ADLookupBindDN:
+    state.tenants.createTenant.fields.identityProvider.ADLookupBindDN,
+  ADLookupBindPassword:
+    state.tenants.createTenant.fields.identityProvider.ADLookupBindPassword,
+  ADUserDNSearchBaseDN:
+    state.tenants.createTenant.fields.identityProvider.ADUserDNSearchBaseDN,
+  ADUserDNSearchFilter:
+    state.tenants.createTenant.fields.identityProvider.ADUserDNSearchFilter,
+  ADServerStartTLS:
+    state.tenants.createTenant.fields.identityProvider.ADServerStartTLS,
 });
 
 const connector = connect(mapState, {
