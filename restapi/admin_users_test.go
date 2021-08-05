@@ -122,6 +122,7 @@ func TestAddUser(t *testing.T) {
 	accessKey := "ABCDEFGHI"
 	secretKey := "ABCDEFGHIABCDEFGHI"
 	groups := []string{"group1", "group2", "group3"}
+	policies := []string{}
 	emptyGroupTest := []string{}
 	mockResponse := &madmin.UserInfo{
 		MemberOf:   []string{"group1", "group2", "gropup3"},
@@ -144,7 +145,7 @@ func TestAddUser(t *testing.T) {
 	}
 	// Test-1: Add a user
 	function := "addUser()"
-	user, err := addUser(ctx, adminClient, &accessKey, &secretKey, groups)
+	user, err := addUser(ctx, adminClient, &accessKey, &secretKey, groups, policies)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
@@ -154,7 +155,7 @@ func TestAddUser(t *testing.T) {
 	assert.Equal(user.AccessKey, accessKey)
 
 	// Test-2 Add a user with empty groups list
-	user, err = addUser(ctx, adminClient, &accessKey, &secretKey, emptyGroupTest)
+	user, err = addUser(ctx, adminClient, &accessKey, &secretKey, emptyGroupTest, policies)
 	// no error should have been returned
 	assert.Nil(err, "Error is not null")
 	// the same access key should be in the model users
@@ -168,7 +169,7 @@ func TestAddUser(t *testing.T) {
 		return errors.New("error")
 	}
 
-	user, err = addUser(ctx, adminClient, &accessKey, &secretKey, groups)
+	user, err = addUser(ctx, adminClient, &accessKey, &secretKey, groups, policies)
 
 	// no error should have been returned
 	assert.Nil(user, "User is not null")
@@ -183,7 +184,7 @@ func TestAddUser(t *testing.T) {
 		return errors.New("error")
 	}
 
-	user, err = addUser(ctx, adminClient, &accessKey, &secretKey, groups)
+	user, err = addUser(ctx, adminClient, &accessKey, &secretKey, groups, policies)
 
 	// no error should have been returned
 	assert.Nil(user, "User is not null")

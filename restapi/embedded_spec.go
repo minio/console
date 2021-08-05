@@ -3319,13 +3319,20 @@ func init() {
       "required": [
         "accessKey",
         "secretKey",
-        "groups"
+        "groups",
+        "policies"
       ],
       "properties": {
         "accessKey": {
           "type": "string"
         },
         "groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "policies": {
           "type": "array",
           "items": {
             "type": "string"
@@ -3942,9 +3949,7 @@ func init() {
         "active_directory": {
           "type": "object",
           "required": [
-            "url",
-            "username_format",
-            "user_search_filter"
+            "url"
           ],
           "properties": {
             "group_name_attribute": {
@@ -8602,9 +8607,7 @@ func init() {
     "IdpConfigurationActiveDirectory": {
       "type": "object",
       "required": [
-        "url",
-        "username_format",
-        "user_search_filter"
+        "url"
       ],
       "properties": {
         "group_name_attribute": {
@@ -8846,13 +8849,20 @@ func init() {
       "required": [
         "accessKey",
         "secretKey",
-        "groups"
+        "groups",
+        "policies"
       ],
       "properties": {
         "accessKey": {
           "type": "string"
         },
         "groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "policies": {
           "type": "array",
           "items": {
             "type": "string"
@@ -9469,9 +9479,7 @@ func init() {
         "active_directory": {
           "type": "object",
           "required": [
-            "url",
-            "username_format",
-            "user_search_filter"
+            "url"
           ],
           "properties": {
             "group_name_attribute": {

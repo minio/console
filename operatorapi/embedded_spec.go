@@ -1459,72 +1459,6 @@ func init() {
         }
       }
     },
-    "addBucketReplication": {
-      "type": "object",
-      "properties": {
-        "arn": {
-          "type": "string"
-        },
-        "destination_bucket": {
-          "type": "string"
-        }
-      }
-    },
-    "addGroupRequest": {
-      "type": "object",
-      "required": [
-        "group",
-        "members"
-      ],
-      "properties": {
-        "group": {
-          "type": "string"
-        },
-        "members": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "addPolicyRequest": {
-      "type": "object",
-      "required": [
-        "name",
-        "policy"
-      ],
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "policy": {
-          "type": "string"
-        }
-      }
-    },
-    "addUserRequest": {
-      "type": "object",
-      "required": [
-        "accessKey",
-        "secretKey",
-        "groups"
-      ],
-      "properties": {
-        "accessKey": {
-          "type": "string"
-        },
-        "groups": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "secretKey": {
-          "type": "string"
-        }
-      }
-    },
     "adminInfoResponse": {
       "type": "object",
       "properties": {
@@ -1662,20 +1596,6 @@ func init() {
         "sse-kms"
       ]
     },
-    "bucketEventRequest": {
-      "type": "object",
-      "required": [
-        "configuration"
-      ],
-      "properties": {
-        "configuration": {
-          "$ref": "#/definitions/notificationConfig"
-        },
-        "ignoreExisting": {
-          "type": "boolean"
-        }
-      }
-    },
     "bucketLifecycleResponse": {
       "type": "object",
       "properties": {
@@ -1695,60 +1615,6 @@ func init() {
         }
       }
     },
-    "bucketObject": {
-      "type": "object",
-      "properties": {
-        "content_type": {
-          "type": "string"
-        },
-        "expiration": {
-          "type": "string"
-        },
-        "expiration_rule_id": {
-          "type": "string"
-        },
-        "is_delete_marker": {
-          "type": "boolean"
-        },
-        "is_latest": {
-          "type": "boolean"
-        },
-        "last_modified": {
-          "type": "string"
-        },
-        "legal_hold_status": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "retention_mode": {
-          "type": "string"
-        },
-        "retention_until_date": {
-          "type": "string"
-        },
-        "size": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "tags": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "user_tags": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "version_id": {
-          "type": "string"
-        }
-      }
-    },
     "bucketQuota": {
       "type": "object",
       "properties": {
@@ -1764,102 +1630,11 @@ func init() {
         }
       }
     },
-    "bucketReplicationDestination": {
-      "type": "object",
-      "properties": {
-        "bucket": {
-          "type": "string"
-        }
-      }
-    },
-    "bucketReplicationResponse": {
-      "type": "object",
-      "properties": {
-        "rules": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/bucketReplicationRule"
-          }
-        }
-      }
-    },
-    "bucketReplicationRule": {
-      "type": "object",
-      "properties": {
-        "bandwidth": {
-          "type": "string"
-        },
-        "delete_marker_replication": {
-          "type": "boolean"
-        },
-        "deletes_replication": {
-          "type": "boolean"
-        },
-        "destination": {
-          "$ref": "#/definitions/bucketReplicationDestination"
-        },
-        "healthCheckPeriod": {
-          "type": "integer"
-        },
-        "id": {
-          "type": "string"
-        },
-        "metadata_replication": {
-          "type": "boolean"
-        },
-        "prefix": {
-          "type": "string"
-        },
-        "priority": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "status": {
-          "type": "string",
-          "enum": [
-            "Enabled",
-            "Disabled"
-          ]
-        },
-        "syncMode": {
-          "type": "string",
-          "default": "async",
-          "enum": [
-            "async",
-            "sync"
-          ]
-        },
-        "tags": {
-          "type": "string"
-        }
-      }
-    },
     "bucketVersioningResponse": {
       "type": "object",
       "properties": {
         "is_versioned": {
           "type": "boolean"
-        }
-      }
-    },
-    "bulkUserGroups": {
-      "type": "object",
-      "required": [
-        "users",
-        "groups"
-      ],
-      "properties": {
-        "groups": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "users": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     },
@@ -1894,17 +1669,6 @@ func init() {
           "type": "string"
         },
         "selectedUser": {
-          "type": "string"
-        }
-      }
-    },
-    "configDescription": {
-      "type": "object",
-      "properties": {
-        "description": {
-          "type": "string"
-        },
-        "key": {
           "type": "string"
         }
       }
@@ -1948,53 +1712,6 @@ func init() {
           }
         }
       ]
-    },
-    "createRemoteBucket": {
-      "required": [
-        "accessKey",
-        "secretKey",
-        "targetURL",
-        "sourceBucket",
-        "targetBucket"
-      ],
-      "properties": {
-        "accessKey": {
-          "type": "string",
-          "minLength": 3
-        },
-        "bandwidth": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "healthCheckPeriod": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "region": {
-          "type": "string"
-        },
-        "secretKey": {
-          "type": "string",
-          "minLength": 8
-        },
-        "sourceBucket": {
-          "type": "string"
-        },
-        "syncMode": {
-          "type": "string",
-          "default": "async",
-          "enum": [
-            "async",
-            "sync"
-          ]
-        },
-        "targetBucket": {
-          "type": "string"
-        },
-        "targetURL": {
-          "type": "string"
-        }
-      }
     },
     "createTenantRequest": {
       "type": "object",
@@ -2479,10 +2196,6 @@ func init() {
         }
       }
     },
-    "iamEntity": {
-      "type": "string",
-      "pattern": "^[\\w+=,.@-]{1,64}$"
-    },
     "idpConfiguration": {
       "type": "object",
       "properties": {
@@ -2660,22 +2373,6 @@ func init() {
         }
       }
     },
-    "listBucketEventsResponse": {
-      "type": "object",
-      "properties": {
-        "events": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/notificationConfig"
-          }
-        },
-        "total": {
-          "type": "integer",
-          "format": "int64",
-          "title": "total number of bucket events"
-        }
-      }
-    },
     "listBucketsResponse": {
       "type": "object",
       "properties": {
@@ -2693,83 +2390,6 @@ func init() {
         }
       }
     },
-    "listConfigResponse": {
-      "type": "object",
-      "properties": {
-        "configurations": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/configDescription"
-          }
-        },
-        "total": {
-          "type": "integer",
-          "format": "int64",
-          "title": "total number of configurations"
-        }
-      }
-    },
-    "listExternalBucketsParams": {
-      "required": [
-        "accessKey",
-        "secretKey",
-        "targetURL",
-        "useTLS"
-      ],
-      "properties": {
-        "accessKey": {
-          "type": "string",
-          "minLength": 3
-        },
-        "region": {
-          "type": "string"
-        },
-        "secretKey": {
-          "type": "string",
-          "minLength": 8
-        },
-        "targetURL": {
-          "type": "string"
-        },
-        "useTLS": {
-          "type": "boolean"
-        }
-      }
-    },
-    "listGroupsResponse": {
-      "type": "object",
-      "properties": {
-        "groups": {
-          "type": "array",
-          "title": "list of groups",
-          "items": {
-            "type": "string"
-          }
-        },
-        "total": {
-          "type": "integer",
-          "format": "int64",
-          "title": "total number of groups"
-        }
-      }
-    },
-    "listObjectsResponse": {
-      "type": "object",
-      "properties": {
-        "objects": {
-          "type": "array",
-          "title": "list of resulting objects",
-          "items": {
-            "$ref": "#/definitions/bucketObject"
-          }
-        },
-        "total": {
-          "type": "integer",
-          "format": "int64",
-          "title": "number of objects"
-        }
-      }
-    },
     "listPVCsResponse": {
       "type": "object",
       "properties": {
@@ -2778,40 +2398,6 @@ func init() {
           "items": {
             "$ref": "#/definitions/pvcsListResponse"
           }
-        }
-      }
-    },
-    "listPoliciesResponse": {
-      "type": "object",
-      "properties": {
-        "policies": {
-          "type": "array",
-          "title": "list of policies",
-          "items": {
-            "$ref": "#/definitions/policy"
-          }
-        },
-        "total": {
-          "type": "integer",
-          "format": "int64",
-          "title": "total number of policies"
-        }
-      }
-    },
-    "listRemoteBucketsResponse": {
-      "type": "object",
-      "properties": {
-        "buckets": {
-          "type": "array",
-          "title": "list of remote buckets",
-          "items": {
-            "$ref": "#/definitions/remoteBucket"
-          }
-        },
-        "total": {
-          "type": "integer",
-          "format": "int64",
-          "title": "number of remote buckets accessible to user"
         }
       }
     },
@@ -2829,18 +2415,6 @@ func init() {
           "type": "integer",
           "format": "int64",
           "title": "number of tenants accessible to tenant user"
-        }
-      }
-    },
-    "listUsersResponse": {
-      "type": "object",
-      "properties": {
-        "users": {
-          "type": "array",
-          "title": "list of resulting users",
-          "items": {
-            "$ref": "#/definitions/user"
-          }
         }
       }
     },
@@ -2937,29 +2511,6 @@ func init() {
         }
       }
     },
-    "makeBucketRequest": {
-      "type": "object",
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "locking": {
-          "type": "boolean"
-        },
-        "name": {
-          "type": "string"
-        },
-        "quota": {
-          "$ref": "#/definitions/setBucketQuota"
-        },
-        "retention": {
-          "$ref": "#/definitions/putBucketRetentionRequest"
-        },
-        "versioning": {
-          "type": "boolean"
-        }
-      }
-    },
     "maxAllocatableMemResponse": {
       "type": "object",
       "properties": {
@@ -2989,104 +2540,6 @@ func init() {
           "additionalProperties": {
             "type": "string"
           }
-        }
-      }
-    },
-    "multiBucketReplication": {
-      "required": [
-        "accessKey",
-        "secretKey",
-        "targetURL",
-        "bucketsRelation"
-      ],
-      "properties": {
-        "accessKey": {
-          "type": "string",
-          "minLength": 3
-        },
-        "bandwidth": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "bucketsRelation": {
-          "type": "array",
-          "minLength": 1,
-          "items": {
-            "$ref": "#/definitions/multiBucketsRelation"
-          }
-        },
-        "healthCheckPeriod": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "prefix": {
-          "type": "string"
-        },
-        "region": {
-          "type": "string"
-        },
-        "replicateDeleteMarkers": {
-          "type": "boolean"
-        },
-        "replicateDeletes": {
-          "type": "boolean"
-        },
-        "replicateMetadata": {
-          "type": "boolean"
-        },
-        "secretKey": {
-          "type": "string",
-          "minLength": 8
-        },
-        "syncMode": {
-          "type": "string",
-          "default": "async",
-          "enum": [
-            "async",
-            "sync"
-          ]
-        },
-        "tags": {
-          "type": "string"
-        },
-        "targetURL": {
-          "type": "string"
-        }
-      }
-    },
-    "multiBucketResponseItem": {
-      "type": "object",
-      "properties": {
-        "errorString": {
-          "type": "string"
-        },
-        "originBucket": {
-          "type": "string"
-        },
-        "targetBucket": {
-          "type": "string"
-        }
-      }
-    },
-    "multiBucketResponseState": {
-      "type": "object",
-      "properties": {
-        "replicationState": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/multiBucketResponseItem"
-          }
-        }
-      }
-    },
-    "multiBucketsRelation": {
-      "type": "object",
-      "properties": {
-        "destinationBucket": {
-          "type": "string"
-        },
-        "originBucket": {
-          "type": "string"
         }
       }
     },
@@ -3189,17 +2642,6 @@ func init() {
         "redis"
       ]
     },
-    "notifEndpointResponse": {
-      "type": "object",
-      "properties": {
-        "notification_endpoints": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/notificationEndpointItem"
-          }
-        }
-      }
-    },
     "notificationConfig": {
       "type": "object",
       "required": [
@@ -3252,42 +2694,6 @@ func init() {
         "suffix": {
           "type": "string",
           "title": "filter event associated to the specified suffix"
-        }
-      }
-    },
-    "notificationEndpoint": {
-      "type": "object",
-      "required": [
-        "service",
-        "account_id",
-        "properties"
-      ],
-      "properties": {
-        "account_id": {
-          "type": "string"
-        },
-        "properties": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "service": {
-          "$ref": "#/definitions/nofiticationService"
-        }
-      }
-    },
-    "notificationEndpointItem": {
-      "type": "object",
-      "properties": {
-        "account_id": {
-          "type": "string"
-        },
-        "service": {
-          "$ref": "#/definitions/nofiticationService"
-        },
-        "status": {
-          "type": "string"
         }
       }
     },
@@ -3475,14 +2881,6 @@ func init() {
           "type": "string"
         }
       }
-    },
-    "policyEntity": {
-      "type": "string",
-      "default": "user",
-      "enum": [
-        "user",
-        "group"
-      ]
     },
     "pool": {
       "type": "object",
@@ -3896,55 +3294,6 @@ func init() {
         }
       }
     },
-    "remoteBucket": {
-      "type": "object",
-      "required": [
-        "accessKey",
-        "sourceBucket",
-        "remoteARN"
-      ],
-      "properties": {
-        "accessKey": {
-          "type": "string",
-          "minLength": 3
-        },
-        "bandwidth": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "healthCheckPeriod": {
-          "type": "integer"
-        },
-        "remoteARN": {
-          "type": "string"
-        },
-        "secretKey": {
-          "type": "string",
-          "minLength": 8
-        },
-        "service": {
-          "type": "string",
-          "enum": [
-            "replication"
-          ]
-        },
-        "sourceBucket": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "syncMode": {
-          "type": "string"
-        },
-        "targetBucket": {
-          "type": "string"
-        },
-        "targetURL": {
-          "type": "string"
-        }
-      }
-    },
     "resourceQuota": {
       "type": "object",
       "properties": {
@@ -4053,17 +3402,6 @@ func init() {
         "type": "string"
       }
     },
-    "setBucketPolicyRequest": {
-      "type": "object",
-      "required": [
-        "access"
-      ],
-      "properties": {
-        "access": {
-          "$ref": "#/definitions/bucketAccess"
-        }
-      }
-    },
     "setBucketQuota": {
       "type": "object",
       "required": [
@@ -4093,88 +3431,12 @@ func init() {
         }
       }
     },
-    "setConfigRequest": {
-      "type": "object",
-      "required": [
-        "key_values"
-      ],
-      "properties": {
-        "arn_resource_id": {
-          "type": "string",
-          "title": "Used if configuration is an event notification's target"
-        },
-        "key_values": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/definitions/configurationKV"
-          }
-        }
-      }
-    },
     "setConfigResponse": {
       "type": "object",
       "properties": {
         "restart": {
           "description": "Returns wheter server needs to restart to apply changes or not",
           "type": "boolean"
-        }
-      }
-    },
-    "setNotificationEndpointResponse": {
-      "type": "object",
-      "required": [
-        "service",
-        "account_id",
-        "properties"
-      ],
-      "properties": {
-        "account_id": {
-          "type": "string"
-        },
-        "properties": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "restart": {
-          "type": "boolean"
-        },
-        "service": {
-          "$ref": "#/definitions/nofiticationService"
-        }
-      }
-    },
-    "setPolicyMultipleRequest": {
-      "type": "object",
-      "properties": {
-        "groups": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/iamEntity"
-          }
-        },
-        "users": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/iamEntity"
-          }
-        }
-      }
-    },
-    "setPolicyRequest": {
-      "type": "object",
-      "required": [
-        "entityType",
-        "entityName"
-      ],
-      "properties": {
-        "entityName": {
-          "type": "string"
-        },
-        "entityType": {
-          "$ref": "#/definitions/policyEntity"
         }
       }
     },
@@ -4639,24 +3901,6 @@ func init() {
         }
       }
     },
-    "updateGroupRequest": {
-      "type": "object",
-      "required": [
-        "members",
-        "status"
-      ],
-      "properties": {
-        "members": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "status": {
-          "type": "string"
-        }
-      }
-    },
     "updateTenantRequest": {
       "type": "object",
       "properties": {
@@ -4737,20 +3981,6 @@ func init() {
         },
         "status": {
           "type": "string"
-        }
-      }
-    },
-    "updateUserGroups": {
-      "type": "object",
-      "required": [
-        "groups"
-      ],
-      "properties": {
-        "groups": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     },
@@ -7109,72 +6339,6 @@ func init() {
         }
       }
     },
-    "addBucketReplication": {
-      "type": "object",
-      "properties": {
-        "arn": {
-          "type": "string"
-        },
-        "destination_bucket": {
-          "type": "string"
-        }
-      }
-    },
-    "addGroupRequest": {
-      "type": "object",
-      "required": [
-        "group",
-        "members"
-      ],
-      "properties": {
-        "group": {
-          "type": "string"
-        },
-        "members": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "addPolicyRequest": {
-      "type": "object",
-      "required": [
-        "name",
-        "policy"
-      ],
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "policy": {
-          "type": "string"
-        }
-      }
-    },
-    "addUserRequest": {
-      "type": "object",
-      "required": [
-        "accessKey",
-        "secretKey",
-        "groups"
-      ],
-      "properties": {
-        "accessKey": {
-          "type": "string"
-        },
-        "groups": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "secretKey": {
-          "type": "string"
-        }
-      }
-    },
     "adminInfoResponse": {
       "type": "object",
       "properties": {
@@ -7312,20 +6476,6 @@ func init() {
         "sse-kms"
       ]
     },
-    "bucketEventRequest": {
-      "type": "object",
-      "required": [
-        "configuration"
-      ],
-      "properties": {
-        "configuration": {
-          "$ref": "#/definitions/notificationConfig"
-        },
-        "ignoreExisting": {
-          "type": "boolean"
-        }
-      }
-    },
     "bucketLifecycleResponse": {
       "type": "object",
       "properties": {
@@ -7345,60 +6495,6 @@ func init() {
         }
       }
     },
-    "bucketObject": {
-      "type": "object",
-      "properties": {
-        "content_type": {
-          "type": "string"
-        },
-        "expiration": {
-          "type": "string"
-        },
-        "expiration_rule_id": {
-          "type": "string"
-        },
-        "is_delete_marker": {
-          "type": "boolean"
-        },
-        "is_latest": {
-          "type": "boolean"
-        },
-        "last_modified": {
-          "type": "string"
-        },
-        "legal_hold_status": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "retention_mode": {
-          "type": "string"
-        },
-        "retention_until_date": {
-          "type": "string"
-        },
-        "size": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "tags": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "user_tags": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "version_id": {
-          "type": "string"
-        }
-      }
-    },
     "bucketQuota": {
       "type": "object",
       "properties": {
@@ -7414,102 +6510,11 @@ func init() {
         }
       }
     },
-    "bucketReplicationDestination": {
-      "type": "object",
-      "properties": {
-        "bucket": {
-          "type": "string"
-        }
-      }
-    },
-    "bucketReplicationResponse": {
-      "type": "object",
-      "properties": {
-        "rules": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/bucketReplicationRule"
-          }
-        }
-      }
-    },
-    "bucketReplicationRule": {
-      "type": "object",
-      "properties": {
-        "bandwidth": {
-          "type": "string"
-        },
-        "delete_marker_replication": {
-          "type": "boolean"
-        },
-        "deletes_replication": {
-          "type": "boolean"
-        },
-        "destination": {
-          "$ref": "#/definitions/bucketReplicationDestination"
-        },
-        "healthCheckPeriod": {
-          "type": "integer"
-        },
-        "id": {
-          "type": "string"
-        },
-        "metadata_replication": {
-          "type": "boolean"
-        },
-        "prefix": {
-          "type": "string"
-        },
-        "priority": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "status": {
-          "type": "string",
-          "enum": [
-            "Enabled",
-            "Disabled"
-          ]
-        },
-        "syncMode": {
-          "type": "string",
-          "default": "async",
-          "enum": [
-            "async",
-            "sync"
-          ]
-        },
-        "tags": {
-          "type": "string"
-        }
-      }
-    },
     "bucketVersioningResponse": {
       "type": "object",
       "properties": {
         "is_versioned": {
           "type": "boolean"
-        }
-      }
-    },
-    "bulkUserGroups": {
-      "type": "object",
-      "required": [
-        "users",
-        "groups"
-      ],
-      "properties": {
-        "groups": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "users": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     },
@@ -7544,17 +6549,6 @@ func init() {
           "type": "string"
         },
         "selectedUser": {
-          "type": "string"
-        }
-      }
-    },
-    "configDescription": {
-      "type": "object",
-      "properties": {
-        "description": {
-          "type": "string"
-        },
-        "key": {
           "type": "string"
         }
       }
@@ -7598,53 +6592,6 @@ func init() {
           }
         }
       ]
-    },
-    "createRemoteBucket": {
-      "required": [
-        "accessKey",
-        "secretKey",
-        "targetURL",
-        "sourceBucket",
-        "targetBucket"
-      ],
-      "properties": {
-        "accessKey": {
-          "type": "string",
-          "minLength": 3
-        },
-        "bandwidth": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "healthCheckPeriod": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "region": {
-          "type": "string"
-        },
-        "secretKey": {
-          "type": "string",
-          "minLength": 8
-        },
-        "sourceBucket": {
-          "type": "string"
-        },
-        "syncMode": {
-          "type": "string",
-          "default": "async",
-          "enum": [
-            "async",
-            "sync"
-          ]
-        },
-        "targetBucket": {
-          "type": "string"
-        },
-        "targetURL": {
-          "type": "string"
-        }
-      }
     },
     "createTenantRequest": {
       "type": "object",
@@ -8129,10 +7076,6 @@ func init() {
         }
       }
     },
-    "iamEntity": {
-      "type": "string",
-      "pattern": "^[\\w+=,.@-]{1,64}$"
-    },
     "idpConfiguration": {
       "type": "object",
       "properties": {
@@ -8298,22 +7241,6 @@ func init() {
         }
       }
     },
-    "listBucketEventsResponse": {
-      "type": "object",
-      "properties": {
-        "events": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/notificationConfig"
-          }
-        },
-        "total": {
-          "type": "integer",
-          "format": "int64",
-          "title": "total number of bucket events"
-        }
-      }
-    },
     "listBucketsResponse": {
       "type": "object",
       "properties": {
@@ -8331,83 +7258,6 @@ func init() {
         }
       }
     },
-    "listConfigResponse": {
-      "type": "object",
-      "properties": {
-        "configurations": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/configDescription"
-          }
-        },
-        "total": {
-          "type": "integer",
-          "format": "int64",
-          "title": "total number of configurations"
-        }
-      }
-    },
-    "listExternalBucketsParams": {
-      "required": [
-        "accessKey",
-        "secretKey",
-        "targetURL",
-        "useTLS"
-      ],
-      "properties": {
-        "accessKey": {
-          "type": "string",
-          "minLength": 3
-        },
-        "region": {
-          "type": "string"
-        },
-        "secretKey": {
-          "type": "string",
-          "minLength": 8
-        },
-        "targetURL": {
-          "type": "string"
-        },
-        "useTLS": {
-          "type": "boolean"
-        }
-      }
-    },
-    "listGroupsResponse": {
-      "type": "object",
-      "properties": {
-        "groups": {
-          "type": "array",
-          "title": "list of groups",
-          "items": {
-            "type": "string"
-          }
-        },
-        "total": {
-          "type": "integer",
-          "format": "int64",
-          "title": "total number of groups"
-        }
-      }
-    },
-    "listObjectsResponse": {
-      "type": "object",
-      "properties": {
-        "objects": {
-          "type": "array",
-          "title": "list of resulting objects",
-          "items": {
-            "$ref": "#/definitions/bucketObject"
-          }
-        },
-        "total": {
-          "type": "integer",
-          "format": "int64",
-          "title": "number of objects"
-        }
-      }
-    },
     "listPVCsResponse": {
       "type": "object",
       "properties": {
@@ -8416,40 +7266,6 @@ func init() {
           "items": {
             "$ref": "#/definitions/pvcsListResponse"
           }
-        }
-      }
-    },
-    "listPoliciesResponse": {
-      "type": "object",
-      "properties": {
-        "policies": {
-          "type": "array",
-          "title": "list of policies",
-          "items": {
-            "$ref": "#/definitions/policy"
-          }
-        },
-        "total": {
-          "type": "integer",
-          "format": "int64",
-          "title": "total number of policies"
-        }
-      }
-    },
-    "listRemoteBucketsResponse": {
-      "type": "object",
-      "properties": {
-        "buckets": {
-          "type": "array",
-          "title": "list of remote buckets",
-          "items": {
-            "$ref": "#/definitions/remoteBucket"
-          }
-        },
-        "total": {
-          "type": "integer",
-          "format": "int64",
-          "title": "number of remote buckets accessible to user"
         }
       }
     },
@@ -8467,18 +7283,6 @@ func init() {
           "type": "integer",
           "format": "int64",
           "title": "number of tenants accessible to tenant user"
-        }
-      }
-    },
-    "listUsersResponse": {
-      "type": "object",
-      "properties": {
-        "users": {
-          "type": "array",
-          "title": "list of resulting users",
-          "items": {
-            "$ref": "#/definitions/user"
-          }
         }
       }
     },
@@ -8575,29 +7379,6 @@ func init() {
         }
       }
     },
-    "makeBucketRequest": {
-      "type": "object",
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "locking": {
-          "type": "boolean"
-        },
-        "name": {
-          "type": "string"
-        },
-        "quota": {
-          "$ref": "#/definitions/setBucketQuota"
-        },
-        "retention": {
-          "$ref": "#/definitions/putBucketRetentionRequest"
-        },
-        "versioning": {
-          "type": "boolean"
-        }
-      }
-    },
     "maxAllocatableMemResponse": {
       "type": "object",
       "properties": {
@@ -8627,104 +7408,6 @@ func init() {
           "additionalProperties": {
             "type": "string"
           }
-        }
-      }
-    },
-    "multiBucketReplication": {
-      "required": [
-        "accessKey",
-        "secretKey",
-        "targetURL",
-        "bucketsRelation"
-      ],
-      "properties": {
-        "accessKey": {
-          "type": "string",
-          "minLength": 3
-        },
-        "bandwidth": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "bucketsRelation": {
-          "type": "array",
-          "minLength": 1,
-          "items": {
-            "$ref": "#/definitions/multiBucketsRelation"
-          }
-        },
-        "healthCheckPeriod": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "prefix": {
-          "type": "string"
-        },
-        "region": {
-          "type": "string"
-        },
-        "replicateDeleteMarkers": {
-          "type": "boolean"
-        },
-        "replicateDeletes": {
-          "type": "boolean"
-        },
-        "replicateMetadata": {
-          "type": "boolean"
-        },
-        "secretKey": {
-          "type": "string",
-          "minLength": 8
-        },
-        "syncMode": {
-          "type": "string",
-          "default": "async",
-          "enum": [
-            "async",
-            "sync"
-          ]
-        },
-        "tags": {
-          "type": "string"
-        },
-        "targetURL": {
-          "type": "string"
-        }
-      }
-    },
-    "multiBucketResponseItem": {
-      "type": "object",
-      "properties": {
-        "errorString": {
-          "type": "string"
-        },
-        "originBucket": {
-          "type": "string"
-        },
-        "targetBucket": {
-          "type": "string"
-        }
-      }
-    },
-    "multiBucketResponseState": {
-      "type": "object",
-      "properties": {
-        "replicationState": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/multiBucketResponseItem"
-          }
-        }
-      }
-    },
-    "multiBucketsRelation": {
-      "type": "object",
-      "properties": {
-        "destinationBucket": {
-          "type": "string"
-        },
-        "originBucket": {
-          "type": "string"
         }
       }
     },
@@ -8783,17 +7466,6 @@ func init() {
         "redis"
       ]
     },
-    "notifEndpointResponse": {
-      "type": "object",
-      "properties": {
-        "notification_endpoints": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/notificationEndpointItem"
-          }
-        }
-      }
-    },
     "notificationConfig": {
       "type": "object",
       "required": [
@@ -8846,42 +7518,6 @@ func init() {
         "suffix": {
           "type": "string",
           "title": "filter event associated to the specified suffix"
-        }
-      }
-    },
-    "notificationEndpoint": {
-      "type": "object",
-      "required": [
-        "service",
-        "account_id",
-        "properties"
-      ],
-      "properties": {
-        "account_id": {
-          "type": "string"
-        },
-        "properties": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "service": {
-          "$ref": "#/definitions/nofiticationService"
-        }
-      }
-    },
-    "notificationEndpointItem": {
-      "type": "object",
-      "properties": {
-        "account_id": {
-          "type": "string"
-        },
-        "service": {
-          "$ref": "#/definitions/nofiticationService"
-        },
-        "status": {
-          "type": "string"
         }
       }
     },
@@ -9047,14 +7683,6 @@ func init() {
           "type": "string"
         }
       }
-    },
-    "policyEntity": {
-      "type": "string",
-      "default": "user",
-      "enum": [
-        "user",
-        "group"
-      ]
     },
     "pool": {
       "type": "object",
@@ -9399,55 +8027,6 @@ func init() {
         }
       }
     },
-    "remoteBucket": {
-      "type": "object",
-      "required": [
-        "accessKey",
-        "sourceBucket",
-        "remoteARN"
-      ],
-      "properties": {
-        "accessKey": {
-          "type": "string",
-          "minLength": 3
-        },
-        "bandwidth": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "healthCheckPeriod": {
-          "type": "integer"
-        },
-        "remoteARN": {
-          "type": "string"
-        },
-        "secretKey": {
-          "type": "string",
-          "minLength": 8
-        },
-        "service": {
-          "type": "string",
-          "enum": [
-            "replication"
-          ]
-        },
-        "sourceBucket": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "syncMode": {
-          "type": "string"
-        },
-        "targetBucket": {
-          "type": "string"
-        },
-        "targetURL": {
-          "type": "string"
-        }
-      }
-    },
     "resourceQuota": {
       "type": "object",
       "properties": {
@@ -9556,17 +8135,6 @@ func init() {
         "type": "string"
       }
     },
-    "setBucketPolicyRequest": {
-      "type": "object",
-      "required": [
-        "access"
-      ],
-      "properties": {
-        "access": {
-          "$ref": "#/definitions/bucketAccess"
-        }
-      }
-    },
     "setBucketQuota": {
       "type": "object",
       "required": [
@@ -9596,88 +8164,12 @@ func init() {
         }
       }
     },
-    "setConfigRequest": {
-      "type": "object",
-      "required": [
-        "key_values"
-      ],
-      "properties": {
-        "arn_resource_id": {
-          "type": "string",
-          "title": "Used if configuration is an event notification's target"
-        },
-        "key_values": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "$ref": "#/definitions/configurationKV"
-          }
-        }
-      }
-    },
     "setConfigResponse": {
       "type": "object",
       "properties": {
         "restart": {
           "description": "Returns wheter server needs to restart to apply changes or not",
           "type": "boolean"
-        }
-      }
-    },
-    "setNotificationEndpointResponse": {
-      "type": "object",
-      "required": [
-        "service",
-        "account_id",
-        "properties"
-      ],
-      "properties": {
-        "account_id": {
-          "type": "string"
-        },
-        "properties": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "restart": {
-          "type": "boolean"
-        },
-        "service": {
-          "$ref": "#/definitions/nofiticationService"
-        }
-      }
-    },
-    "setPolicyMultipleRequest": {
-      "type": "object",
-      "properties": {
-        "groups": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/iamEntity"
-          }
-        },
-        "users": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/iamEntity"
-          }
-        }
-      }
-    },
-    "setPolicyRequest": {
-      "type": "object",
-      "required": [
-        "entityType",
-        "entityName"
-      ],
-      "properties": {
-        "entityName": {
-          "type": "string"
-        },
-        "entityType": {
-          "$ref": "#/definitions/policyEntity"
         }
       }
     },
@@ -10142,24 +8634,6 @@ func init() {
         }
       }
     },
-    "updateGroupRequest": {
-      "type": "object",
-      "required": [
-        "members",
-        "status"
-      ],
-      "properties": {
-        "members": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "status": {
-          "type": "string"
-        }
-      }
-    },
     "updateTenantRequest": {
       "type": "object",
       "properties": {
@@ -10240,20 +8714,6 @@ func init() {
         },
         "status": {
           "type": "string"
-        }
-      }
-    },
-    "updateUserGroups": {
-      "type": "object",
-      "required": [
-        "groups"
-      ],
-      "properties": {
-        "groups": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     },

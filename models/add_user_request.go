@@ -44,6 +44,10 @@ type AddUserRequest struct {
 	// Required: true
 	Groups []string `json:"groups"`
 
+	// policies
+	// Required: true
+	Policies []string `json:"policies"`
+
 	// secret key
 	// Required: true
 	SecretKey *string `json:"secretKey"`
@@ -58,6 +62,10 @@ func (m *AddUserRequest) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateGroups(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePolicies(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -83,6 +91,15 @@ func (m *AddUserRequest) validateAccessKey(formats strfmt.Registry) error {
 func (m *AddUserRequest) validateGroups(formats strfmt.Registry) error {
 
 	if err := validate.Required("groups", "body", m.Groups); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *AddUserRequest) validatePolicies(formats strfmt.Registry) error {
+
+	if err := validate.Required("policies", "body", m.Policies); err != nil {
 		return err
 	}
 

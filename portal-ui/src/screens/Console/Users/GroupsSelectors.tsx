@@ -177,46 +177,44 @@ const GroupsSelectors = ({
   return (
     <React.Fragment>
       <Grid item xs={12}>
-        <Paper className={classes.paper}>
-          {loading && <LinearProgress />}
-          {records != null && records.length > 0 ? (
-            <React.Fragment>
-              <Grid item xs={12} className={classes.actionsTray}>
-                <span className={classes.actionsTitle}>Assign Groups</span>
-                <TextField
-                  placeholder="Filter by Group"
-                  className={classes.filterField}
-                  id="search-resource"
-                  label=""
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                  onChange={(e) => {
-                    setFilter(e.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} className={classes.tableBlock}>
-                <TableWrapper
-                  columns={[{ label: "Group", elementKey: "" }]}
-                  onSelect={selectionChanged}
-                  selectedItems={selGroups}
-                  isLoading={loading}
-                  records={filteredRecords}
-                  entityName="Groups"
-                  idField=""
-                  customPaperHeight={classes.multiSelectTable}
-                />
-              </Grid>
-            </React.Fragment>
-          ) : (
-            <div className={classes.noFound}>No Groups Available</div>
-          )}
-        </Paper>
+        {loading && <LinearProgress />}
+        {records != null && records.length > 0 ? (
+          <React.Fragment>
+            <Grid item xs={12} className={classes.actionsTray}>
+              <span className={classes.actionsTitle}>Assign Groups</span>
+              <TextField
+                placeholder="Filter by Group"
+                className={classes.filterField}
+                id="search-resource"
+                label=""
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                onChange={(e) => {
+                  setFilter(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.tableBlock}>
+              <TableWrapper
+                columns={[{ label: "Group", elementKey: "" }]}
+                onSelect={selectionChanged}
+                selectedItems={selGroups}
+                isLoading={loading}
+                records={filteredRecords}
+                entityName="Groups"
+                idField=""
+                customPaperHeight={classes.multiSelectTable}
+              />
+            </Grid>
+          </React.Fragment>
+        ) : (
+          <div className={classes.noFound}>No Groups Available</div>
+        )}
       </Grid>
     </React.Fragment>
   );
