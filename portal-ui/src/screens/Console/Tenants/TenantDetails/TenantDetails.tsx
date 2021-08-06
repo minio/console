@@ -51,6 +51,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import { DeleteIcon } from "../../../../icons";
 import DeleteTenant from "../ListTenants/DeleteTenant";
 import PencilIcon from "../../Common/TableWrapper/TableActionIcons/PencilIcon";
+import PodDetails from "./pods/PodDetails";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -160,9 +161,12 @@ const TenantDetails = ({
     const splitSections = path.split("/");
     const section = splitSections[splitSections.length - 1];
 
+    console.log(`section ${section}`);
+
     switch (section) {
       case "pools":
       case "pods":
+      case ":podName":
       case "metrics":
       case "license":
       case "security":
@@ -311,7 +315,7 @@ const TenantDetails = ({
             </ListItem>
             <ListItem
               button
-              selected={currentTab === "pods"}
+              selected={currentTab === "pods" || currentTab === ":podName"}
               onClick={() => {
                 changeRoute("pods");
               }}
@@ -347,6 +351,10 @@ const TenantDetails = ({
               <Route
                 path="/namespaces/:tenantNamespace/tenants/:tenantName/pools"
                 component={PoolsSummary}
+              />
+              <Route
+                path="/namespaces/:tenantNamespace/tenants/:tenantName/pods/:podName"
+                component={PodDetails}
               />
               <Route
                 path="/namespaces/:tenantNamespace/tenants/:tenantName/pods"

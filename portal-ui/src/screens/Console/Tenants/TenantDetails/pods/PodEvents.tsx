@@ -30,6 +30,7 @@ import { niceDays } from "../../../../../common/utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import TableWrapper from "../../../Common/TableWrapper/TableWrapper";
 import api from "../../../../../common/api";
+import { AppState } from "../../../../../store";
 
 interface IPodEventsProps {
   classes: any;
@@ -38,6 +39,7 @@ interface IPodEventsProps {
   podName: string;
   propLoading: boolean;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  loadingTenant: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -59,6 +61,7 @@ const PodEvents = ({
   podName,
   propLoading,
   setErrorSnackMessage,
+  loadingTenant,
 }: IPodEventsProps) => {
   const [event, setEvent] = useState<IEvent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -68,6 +71,12 @@ const PodEvents = ({
       setLoading(true);
     }
   }, [propLoading]);
+
+  useEffect(() => {
+    if (loadingTenant) {
+      setLoading(true);
+    }
+  }, [loadingTenant]);
 
   useEffect(() => {
     if (loading) {
@@ -113,8 +122,10 @@ const PodEvents = ({
     </React.Fragment>
   );
 };
-
-const connector = connect(null, {
+const mapState = (state: AppState) => ({
+  loadingTenant: state.tenants.tenantDetails.loadingTenant,
+});
+const connector = connect(mapState, {
   setErrorSnackMessage,
 });
 
