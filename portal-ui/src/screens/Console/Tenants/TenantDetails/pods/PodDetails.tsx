@@ -65,36 +65,18 @@ const PodDetails = ({ classes, match }: IPodDetailsProps) => {
 
   return (
     <React.Fragment>
-      <PageHeader
-        label={
-          <Fragment>
-            <Link to={"/tenants"} className={classes.breadcrumLink}>
-              Tenants
-            </Link>
-            {" > "}
-            <Link
-              to={`/namespaces/${tenantNamespace}/tenants/${tenantName}`}
-              className={classes.breadcrumLink}
-            >
-              {tenantName}
-            </Link>
-            {` > Pods > ${podName}`}
-          </Fragment>
-        }
-        actions={
-          <IconButton
-            color="primary"
-            aria-label="Refresh List"
-            component="span"
-            onClick={() => {
-              setLoading(true);
-            }}
+      <Grid item xs={12}>
+        <div className={classes.topSpacer} />
+        <h1 className={classes.sectionTitle}>
+          <Link
+            to={`/namespaces/${tenantNamespace}/tenants/${tenantName}/pods`}
+            className={classes.breadcrumLink}
           >
-            <RefreshIcon />
-          </IconButton>
-        }
-      />
-      <Grid item xs={12} className={classes.container} />
+            Pods
+          </Link>{" "}
+          &gt; {podName}
+        </h1>
+      </Grid>
       <Grid container>
         <Grid item xs={9}>
           <Tabs
