@@ -39,7 +39,7 @@ type ListBucketsResponse struct {
 	// list of resulting buckets
 	Buckets []*Bucket `json:"buckets"`
 
-	// number of buckets accessible to the user
+	// number of buckets accessible to tenant user
 	Total int64 `json:"total,omitempty"`
 }
 

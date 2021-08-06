@@ -172,46 +172,44 @@ const PolicySelectors = ({
   return (
     <React.Fragment>
       <Grid item xs={12}>
-        <Paper className={classes.paper}>
-          {loading && <LinearProgress />}
-          {records.length > 0 ? (
-            <React.Fragment>
-              <Grid item xs={12} className={classes.actionsTray}>
-                <span className={classes.actionsTitle}>Assign Policies</span>
-                <TextField
-                  placeholder="Filter by Policy"
-                  className={classes.filterField}
-                  id="search-resource"
-                  label=""
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                  onChange={(e) => {
-                    setFilter(e.target.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} className={classes.tableBlock}>
-                <TableWrapper
-                  columns={[{ label: "Policy", elementKey: "name" }]}
-                  onSelect={selectionChanged}
-                  selectedItems={selectedPolicy}
-                  isLoading={loading}
-                  records={filteredRecords}
-                  entityName="Policies"
-                  idField="name"
-                  customPaperHeight={classes.multiSelectTable}
-                />
-              </Grid>
-            </React.Fragment>
-          ) : (
-            <div className={classes.noFound}>No Policies Available</div>
-          )}
-        </Paper>
+        {loading && <LinearProgress />}
+        {records.length > 0 ? (
+          <React.Fragment>
+            <Grid item xs={12} className={classes.actionsTray}>
+              <span className={classes.actionsTitle}>Assign Policies</span>
+              <TextField
+                placeholder="Filter by Policy"
+                className={classes.filterField}
+                id="search-resource"
+                label=""
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                onChange={(e) => {
+                  setFilter(e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.tableBlock}>
+              <TableWrapper
+                columns={[{ label: "Policy", elementKey: "name" }]}
+                onSelect={selectionChanged}
+                selectedItems={selectedPolicy}
+                isLoading={loading}
+                records={filteredRecords}
+                entityName="Policies"
+                idField="name"
+                customPaperHeight={classes.multiSelectTable}
+              />
+            </Grid>
+          </React.Fragment>
+        ) : (
+          <div className={classes.noFound}>No Policies Available</div>
+        )}
       </Grid>
     </React.Fragment>
   );

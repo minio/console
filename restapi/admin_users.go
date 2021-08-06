@@ -163,26 +163,41 @@ func getListUsersResponse(session *models.Principal) (*models.ListUsersResponse,
 }
 
 // addUser invokes adding a users on `MinioAdmin` and builds the response `models.User`
-func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *string, groups []string) (*models.User, error) {
+func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *string, groups []string, policies []string) (*models.User, error) {
 	// Calls into MinIO to add a new user if there's an error return it
 	if err := client.addUser(ctx, *accessKey, *secretKey); err != nil {
 		return nil, err
 	}
-
+	// set groups for the newly created user
+	var userWithGroups *models.User
 	if len(groups) > 0 {
-		userElem, errUG := updateUserGroups(ctx, client, *accessKey, groups)
+		var errUG error
+		userWithGroups, errUG = updateUserGroups(ctx, client, *accessKey, groups)
 
 		if errUG != nil {
 			return nil, errUG
 		}
-		return userElem, nil
+	}
+	// set policies for the newly created user
+	if len(policies) > 0 {
+		policyString := strings.Join(policies, ",")
+		if err := setPolicy(ctx, client, policyString, *accessKey, "user"); err != nil {
+			return nil, err
+		}
+	}
+
+	memberOf := []string{}
+	status := "enabled"
+	if userWithGroups != nil {
+		memberOf = userWithGroups.MemberOf
+		status = userWithGroups.Status
 	}
 
 	userRet := &models.User{
 		AccessKey: *accessKey,
-		MemberOf:  nil,
-		Policy:    []string{},
-		Status:    "",
+		MemberOf:  memberOf,
+		Policy:    policies,
+		Status:    status,
 	}
 	return userRet, nil
 }
@@ -197,7 +212,14 @@ func getUserAddResponse(session *models.Principal, params admin_api.AddUserParam
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	user, err := addUser(ctx, adminClient, params.Body.AccessKey, params.Body.SecretKey, params.Body.Groups)
+	user, err := addUser(
+		ctx,
+		adminClient,
+		params.Body.AccessKey,
+		params.Body.SecretKey,
+		params.Body.Groups,
+		params.Body.Policies,
+	)
 	if err != nil {
 		return nil, prepareError(err)
 	}
