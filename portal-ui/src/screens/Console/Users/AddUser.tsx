@@ -17,7 +17,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
-import { Button, LinearProgress, Tab, Tabs } from "@material-ui/core";
+import { Button, LinearProgress } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import { User } from "./types";
@@ -29,7 +29,6 @@ import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FormSwitchWrapper from "../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PredefinedList from "../Common/FormComponents/PredefinedList/PredefinedList";
-import PolicySelectors from "../Policies/PolicySelectors";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -65,9 +64,7 @@ const AddUser = ({
   const [secretKey, setSecretKey] = useState<string>("");
   const [enabled, setEnabled] = useState<boolean>(false);
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
-  const [selectedPolicies, setSelectedPolicies] = useState<string[]>([]);
   const [currentGroups, setCurrentGroups] = useState<string[]>([]);
-  const [currenTab, setCurrenTab] = useState<number>(0);
 
   const getUserInformation = useCallback(() => {
     if (!selectedUser) {
@@ -123,7 +120,6 @@ const AddUser = ({
           {
             status: enabled ? "enabled" : "disabled",
             groups: selectedGroups,
-            policies: selectedPolicies,
           }
         )
         .then((res) => {
@@ -140,7 +136,6 @@ const AddUser = ({
           accessKey,
           secretKey,
           groups: selectedGroups,
-          policies: selectedPolicies,
         })
         .then((res) => {
           setAddLoading(false);
@@ -231,33 +226,13 @@ const AddUser = ({
                 />
               )}
               <Grid item xs={12}>
-                <Tabs
-                  onChange={(e, nv) => {
-                    setCurrenTab(nv);
+                <GroupsSelectors
+                  selectedGroups={selectedGroups}
+                  setSelectedGroups={(elements: string[]) => {
+                    setSelectedGroups(elements);
                   }}
-                >
-                  <Tab label="Policies" />
-                  <Tab label="Groups" />
-                </Tabs>
+                />
               </Grid>
-              {currenTab === 0 && (
-                <Grid item xs={12}>
-                  <PolicySelectors
-                    selectedPolicy={selectedPolicies}
-                    setSelectedPolicy={setSelectedPolicies}
-                  />
-                </Grid>
-              )}
-              {currenTab === 1 && (
-                <Grid item xs={12}>
-                  <GroupsSelectors
-                    selectedGroups={selectedGroups}
-                    setSelectedGroups={(elements: string[]) => {
-                      setSelectedGroups(elements);
-                    }}
-                  />
-                </Grid>
-              )}
             </Grid>
             <Grid item xs={12} className={classes.buttonContainer}>
               <button

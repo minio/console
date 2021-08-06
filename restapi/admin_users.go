@@ -163,12 +163,12 @@ func getListUsersResponse(session *models.Principal) (*models.ListUsersResponse,
 }
 
 // addUser invokes adding a users on `MinioAdmin` and builds the response `models.User`
-func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *string, groups []string, policies []string) (*models.User, error) {
+func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *string, groups []string) (*models.User, error) {
 	// Calls into MinIO to add a new user if there's an error return it
 	if err := client.addUser(ctx, *accessKey, *secretKey); err != nil {
 		return nil, err
 	}
-	// set groups for the newly created user
+
 	if len(groups) > 0 {
 		userElem, errUG := updateUserGroups(ctx, client, *accessKey, groups)
 
@@ -176,13 +176,6 @@ func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *strin
 			return nil, errUG
 		}
 		return userElem, nil
-	}
-	// set policies for the newly created user
-	if len(policies) > 0 {
-		policyString := strings.Join(policies, ",")
-		if err := setPolicy(ctx, client, policyString, *accessKey, "user"); err != nil {
-			return nil, err
-		}
 	}
 
 	userRet := &models.User{
@@ -204,14 +197,7 @@ func getUserAddResponse(session *models.Principal, params admin_api.AddUserParam
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	user, err := addUser(
-		ctx,
-		adminClient,
-		params.Body.AccessKey,
-		params.Body.SecretKey,
-		params.Body.Groups,
-		params.Body.Policies,
-	)
+	user, err := addUser(ctx, adminClient, params.Body.AccessKey, params.Body.SecretKey, params.Body.Groups)
 	if err != nil {
 		return nil, prepareError(err)
 	}

@@ -161,8 +161,6 @@ const TenantDetails = ({
     const splitSections = path.split("/");
     const section = splitSections[splitSections.length - 1];
 
-    console.log(`section ${section}`);
-
     switch (section) {
       case "pools":
       case "pods":
