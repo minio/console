@@ -112,16 +112,39 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		currentSecret, err := clientSet.CoreV1().Secrets(tenant.Namespace).Get(req.Context(), tenant.Spec.CredsSecret.Name, metav1.GetOptions{})
-		if err != nil {
-			log.Println(err)
-			responseWriter.WriteHeader(500)
-			return
+		// FIXME: abstract this to a common tenant.GetConfiguration() function
+		tenantConfiguration := map[string][]byte{}
+
+		for _, config := range tenant.GetEnvVars() {
+			tenantConfiguration[config.Name] = []byte(config.Value)
+		}
+
+		if tenant.HasCredsSecret() {
+			minioSecret, err := clientSet.CoreV1().Secrets(tenant.Namespace).Get(req.Context(), tenant.Spec.CredsSecret.Name, metav1.GetOptions{})
+			if err != nil {
+				log.Println(err)
+				responseWriter.WriteHeader(500)
+				return
+			}
+			configFromCredsSecret := minioSecret.Data
+			for key, val := range configFromCredsSecret {
+				tenantConfiguration[key] = val
+			}
+		}
+
+		if tenant.HasConfigurationSecret() {
+			minioConfigurationSecret, err := clientSet.CoreV1().Secrets(tenant.Namespace).Get(req.Context(), tenant.Spec.Configuration.Name, metav1.GetOptions{})
+			if err == nil {
+				configFromFile := v2.ParseRawConfiguration(minioConfigurationSecret.Data["config.env"])
+				for key, val := range configFromFile {
+					tenantConfiguration[key] = val
+				}
+			}
 		}
 
 		data := map[string]string{
-			"accessKey": string(currentSecret.Data["accesskey"]),
-			"secretKey": string(currentSecret.Data["secretkey"]),
+			"accessKey": string(tenantConfiguration["accesskey"]),
+			"secretKey": string(tenantConfiguration["secretkey"]),
 		}
 		payload, _ := json.Marshal(data)
 
