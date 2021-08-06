@@ -186,11 +186,18 @@ func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *strin
 		}
 	}
 
+	memberOf := []string{}
+	status := "enabled"
+	if userWithGroups != nil {
+		memberOf = userWithGroups.MemberOf
+		status = userWithGroups.Status
+	}
+
 	userRet := &models.User{
 		AccessKey: *accessKey,
-		MemberOf:  userWithGroups.MemberOf,
+		MemberOf:  memberOf,
 		Policy:    policies,
-		Status:    userWithGroups.Status,
+		Status:    status,
 	}
 	return userRet, nil
 }
