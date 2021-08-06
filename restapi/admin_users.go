@@ -169,13 +169,14 @@ func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *strin
 		return nil, err
 	}
 	// set groups for the newly created user
+	var userWithGroups *models.User
 	if len(groups) > 0 {
-		userElem, errUG := updateUserGroups(ctx, client, *accessKey, groups)
+		var errUG error
+		userWithGroups, errUG = updateUserGroups(ctx, client, *accessKey, groups)
 
 		if errUG != nil {
 			return nil, errUG
 		}
-		return userElem, nil
 	}
 	// set policies for the newly created user
 	if len(policies) > 0 {
@@ -187,9 +188,9 @@ func addUser(ctx context.Context, client MinioAdmin, accessKey, secretKey *strin
 
 	userRet := &models.User{
 		AccessKey: *accessKey,
-		MemberOf:  nil,
-		Policy:    []string{},
-		Status:    "",
+		MemberOf:  userWithGroups.MemberOf,
+		Policy:    policies,
+		Status:    userWithGroups.Status,
 	}
 	return userRet, nil
 }
