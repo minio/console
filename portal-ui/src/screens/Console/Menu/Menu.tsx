@@ -50,9 +50,9 @@ import LogoutIcon from "../../../icons/LogoutIcon";
 import ConsoleIcon from "../../../icons/ConsoleIcon";
 import HealIcon from "../../../icons/HealIcon";
 import WatchIcon from "../../../icons/WatchIcon";
+import OperatorLogo from "../../../icons/OperatorLogo";
+import ConsoleLogo from "../../../icons/ConsoleLogo";
 import history from "../../../history";
-import logo from "../../../icons/minio_console_logo.svg";
-import operator_logo from "../../../icons/minio_operator_logo.svg";
 import api from "../../../common/api";
 
 const styles = (theme: Theme) =>
@@ -403,7 +403,7 @@ const Menu = ({
   return (
     <React.Fragment>
       <div className={classes.logo}>
-        <img src={operatorMode ? operator_logo : logo} alt="logo" />
+        {operatorMode ? <OperatorLogo /> : <ConsoleLogo />}
       </div>
       <List className={classes.menuList}>
         {menuGroups.map((groupMember, index) => {
