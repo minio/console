@@ -145,7 +145,7 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 	})
 	// get bucket object locking status
 	api.UserAPIGetBucketObjectLockingStatusHandler = user_api.GetBucketObjectLockingStatusHandlerFunc(func(params user_api.GetBucketObjectLockingStatusParams, session *models.Principal) middleware.Responder {
-		getBucketObjectLockingStatus, err := getBucketObLockingResponse(session, params.BucketName)
+		getBucketObjectLockingStatus, err := getBucketObjectLockingResponse(session, params.BucketName)
 		if err != nil {
 			return user_api.NewGetBucketObjectLockingStatusDefault(500).WithPayload(&models.Error{Code: 500, Message: swag.String(err.Error())})
 		}
@@ -710,30 +710,48 @@ func getBucketRetentionConfig(ctx context.Context, client MinioClient, bucketNam
 		}
 		return nil, err
 	}
-	var mode models.ObjectRetentionMode
-	var unit models.ObjectRetentionUnit
-	switch *m {
-	case minio.Governance:
-		mode = models.ObjectRetentionModeGovernance
-	case minio.Compliance:
-		mode = models.ObjectRetentionModeCompliance
-	default:
-		return nil, errors.New("invalid retention mode")
+
+	// These values can be empty when all are empty, it means
+	// object was created with object locking enabled but
+	// does not have any default object locking configuration.
+	if m == nil && v == nil && u == nil {
+		return &models.GetBucketRetentionConfig{}, nil
 	}
 
-	switch *u {
-	case minio.Days:
-		unit = models.ObjectRetentionUnitDays
-	case minio.Years:
-		unit = models.ObjectRetentionUnitYears
-	default:
-		return nil, errors.New("invalid retention unit")
+	var mode models.ObjectRetentionMode
+	var unit models.ObjectRetentionUnit
+
+	if m != nil {
+		switch *m {
+		case minio.Governance:
+			mode = models.ObjectRetentionModeGovernance
+		case minio.Compliance:
+			mode = models.ObjectRetentionModeCompliance
+		default:
+			return nil, errors.New("invalid retention mode")
+		}
+	}
+
+	if u != nil {
+		switch *u {
+		case minio.Days:
+			unit = models.ObjectRetentionUnitDays
+		case minio.Years:
+			unit = models.ObjectRetentionUnitYears
+		default:
+			return nil, errors.New("invalid retention unit")
+		}
+	}
+
+	var validity int32
+	if v != nil {
+		validity = int32(*v)
 	}
 
 	config := &models.GetBucketRetentionConfig{
 		Mode:     mode,
 		Unit:     unit,
-		Validity: int32(*v),
+		Validity: validity,
 	}
 	return config, nil
 }
@@ -745,6 +763,7 @@ func getBucketRetentionConfigResponse(session *models.Principal, bucketName stri
 	if err != nil {
 		return nil, prepareError(err)
 	}
+
 	// create a minioClient interface implementation
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
@@ -756,7 +775,7 @@ func getBucketRetentionConfigResponse(session *models.Principal, bucketName stri
 	return config, nil
 }
 
-func getBucketObLockingResponse(session *models.Principal, bucketName string) (*models.BucketObLockingResponse, error) {
+func getBucketObjectLockingResponse(session *models.Principal, bucketName string) (*models.BucketObLockingResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
@@ -772,19 +791,18 @@ func getBucketObLockingResponse(session *models.Principal, bucketName string) (*
 	// we will tolerate this call failing
 	_, _, _, _, err = minioClient.getObjectLockConfig(ctx, bucketName)
 	if err != nil {
-		if err.Error() == "Object Lock configuration does not exist for this bucket" {
+		if minio.ToErrorResponse(err).Code == "ObjectLockConfigurationNotFoundError" {
 			return &models.BucketObLockingResponse{
 				ObjectLockingEnabled: false,
 			}, nil
 		}
-		LogError("error object locking bucket: %v", err)
+		return nil, err
 	}
 
 	// serialize output
-	listBucketsResponse := &models.BucketObLockingResponse{
+	return &models.BucketObLockingResponse{
 		ObjectLockingEnabled: true,
-	}
-	return listBucketsResponse, nil
+	}, nil
 }
 
 func getBucketRewindResponse(session *models.Principal, params user_api.GetBucketRewindParams) (*models.RewindResponse, *models.Error) {
