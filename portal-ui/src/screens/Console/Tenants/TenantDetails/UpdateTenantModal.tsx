@@ -167,18 +167,6 @@ const UpdateTenantModal = ({
             />
           </Grid>
           <Grid item xs={12}>
-            <InputBoxWrapper
-              value={consoleImage}
-              label={"Console's Image"}
-              id={"consoleImage"}
-              name={"consoleImage"}
-              placeholder={"E.g. minio/console:v0.3.13"}
-              onChange={(e) => {
-                setConsoleImage(e.target.value);
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
             <FormSwitchWrapper
               value="imageRegistry"
               id="setImageRegistry"

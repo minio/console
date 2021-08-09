@@ -335,7 +335,7 @@ const Console = ({
       path: "/namespaces/:tenantNamespace/tenants/:tenantName/hop",
     },
     {
-      component: PodDetails,
+      component: TenantDetails,
       path: "/namespaces/:tenantNamespace/tenants/:tenantName/pods/:podName",
     },
     {

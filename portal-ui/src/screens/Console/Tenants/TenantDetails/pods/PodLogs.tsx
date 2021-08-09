@@ -31,6 +31,7 @@ import {
 } from "../../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../../actions";
 import { ErrorResponseHandler } from "../../../../../common/types";
+import { AppState } from "../../../../../store";
 
 interface IPodLogsProps {
   classes: any;
@@ -39,6 +40,7 @@ interface IPodLogsProps {
   podName: string;
   propLoading: boolean;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  loadingTenant: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -84,6 +86,7 @@ const PodLogs = ({
   podName,
   propLoading,
   setErrorSnackMessage,
+  loadingTenant,
 }: IPodLogsProps) => {
   const [highlight, setHighlight] = useState<string>("");
   const [logLines, setLogLines] = useState<string[]>([]);
@@ -94,6 +97,12 @@ const PodLogs = ({
       setLoading(true);
     }
   }, [propLoading]);
+
+  useEffect(() => {
+    if (loadingTenant) {
+      setLoading(true);
+    }
+  }, [loadingTenant]);
 
   const renderLog = (logMessage: string, index: number) => {
     // remove any non ascii characters, exclude any control codes
@@ -191,7 +200,11 @@ const PodLogs = ({
   );
 };
 
-const connector = connect(null, {
+const mapState = (state: AppState) => ({
+  loadingTenant: state.tenants.tenantDetails.loadingTenant,
+});
+
+const connector = connect(mapState, {
   setErrorSnackMessage,
 });
 

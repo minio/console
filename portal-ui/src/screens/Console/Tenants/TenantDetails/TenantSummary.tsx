@@ -199,34 +199,8 @@ const TenantSummary = ({
                     <tr>
                       <td className={classes.titleCol}>Capacity:</td>
                       <td>{niceBytes(capacity.toString(10))}</td>
-                      <td className={classes.titleCol}>MinIO:</td>
-                      <td>
-                        <Button
-                          color="primary"
-                          className={classes.anchorButton}
-                          onClick={() => {
-                            setUpdateMinioVersion(true);
-                          }}
-                        >
-                          {tenant ? tenant.image : ""}
-                        </Button>
-                      </td>
-                    </tr>
-                    <tr>
                       <td className={classes.titleCol}>Clusters:</td>
                       <td>{poolCount}</td>
-                      <td className={classes.titleCol}>Console:</td>
-                      <td>
-                        <Button
-                          color="primary"
-                          className={classes.anchorButton}
-                          onClick={() => {
-                            setUpdateMinioVersion(true);
-                          }}
-                        >
-                          {tenant ? tenant.console_image : ""}
-                        </Button>
-                      </td>
                     </tr>
                     <tr>
                       <td className={classes.titleCol}>Instances:</td>
@@ -258,6 +232,20 @@ const TenantSummary = ({
                         </td>
                       </tr>
                     )}
+                    <tr>
+                      <td className={classes.titleCol}>MinIO:</td>
+                      <td colSpan={3}>
+                        <Button
+                          color="primary"
+                          className={classes.anchorButton}
+                          onClick={() => {
+                            setUpdateMinioVersion(true);
+                          }}
+                        >
+                          {tenant ? tenant.image : ""}
+                        </Button>
+                      </td>
+                    </tr>
                     <tr>
                       <td className={classes.titleCol}>State:</td>
                       <td colSpan={3}>{tenant?.currentState}</td>
@@ -333,7 +321,7 @@ const TenantSummary = ({
                     );
                   }}
                 >
-                  Management UI
+                  Manage Tenant
                 </Button>
               </Fragment>
             )}
@@ -391,23 +379,6 @@ const TenantSummary = ({
                           {minioTLS ? "Enabled" : "Disabled"}
                         </Button>
                       </td>
-                      {consoleEnabled ? (
-                        <Fragment>
-                          <td className={classes.titleCol}>Console TLS:</td>
-                          <td>
-                            <Button
-                              color="primary"
-                              className={classes.anchorButton}
-                            >
-                              {consoleTLS ? "Enabled" : "Disabled"}
-                            </Button>
-                          </td>
-                        </Fragment>
-                      ) : (
-                        <td />
-                      )}
-                    </tr>
-                    <tr>
                       <td className={classes.titleCol}>Encryption:</td>
                       <td>
                         <Button
@@ -417,8 +388,6 @@ const TenantSummary = ({
                           {encryptionEnabled ? "Enabled" : "Disabled"}
                         </Button>
                       </td>
-                      <td></td>
-                      <td></td>
                     </tr>
                     <tr>
                       <React.Fragment>

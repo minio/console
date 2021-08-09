@@ -323,20 +323,6 @@ const Configure = ({
           </Grid>
           <Grid item xs={12}>
             <InputBoxWrapper
-              id="consoleImage"
-              name="consoleImage"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                updateField("consoleImage", e.target.value);
-                cleanValidation("consoleImage");
-              }}
-              label="Console's Image"
-              value={consoleImage}
-              error={validationErrors["consoleImage"] || ""}
-              placeholder="E.g. minio/console:v0.8.3"
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <InputBoxWrapper
               id="logSearchImage"
               name="logSearchImage"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
