@@ -55,6 +55,10 @@ const styles = (theme: Theme) =>
     ...actionsTray,
     ...searchField,
     ...settingsCommon,
+    settingsOptionsContainer: {
+      ...settingsCommon.settingsOptionsContainer,
+      height: "calc(100vh - 150px)",
+    },
     seeMore: {
       marginTop: theme.spacing(3),
     },
@@ -88,7 +92,7 @@ const styles = (theme: Theme) =>
       padding: "15px 0",
     },
     customConfigurationPage: {
-      height: "calc(100vh - 440px)",
+      height: "calc(100vh - 260px)",
       scrollbarWidth: "none" as const,
       "&::-webkit-scrollbar": {
         display: "none",
@@ -250,108 +254,103 @@ const ListTenants = ({
       )}
       <Grid container>
         <Grid item xs={12}>
-          <Grid item xs={12}>
-            <div className={classes.settingsOptionsContainer}>
-              <SlideOptions
-                slideOptions={[
-                  <Fragment>
-                    <Grid item xs={12} className={classes.tenantsContainer}>
-                      <Grid item xs={12} className={classes.actionsTray}>
-                        <TextField
-                          placeholder="Search Tenants"
-                          className={classes.searchField}
-                          id="search-resource"
-                          label=""
-                          onChange={(val) => {
-                            setFilterTenants(val.target.value);
-                          }}
-                          InputProps={{
-                            disableUnderline: true,
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                <SearchIcon />
-                              </InputAdornment>
-                            ),
-                          }}
-                        />
-                        <IconButton
-                          color="primary"
-                          aria-label="Refresh Tenant List"
-                          component="span"
-                          onClick={() => {
-                            setIsLoading(true);
-                          }}
-                        >
-                          <RefreshIcon />
-                        </IconButton>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          startIcon={<CreateIcon />}
-                          onClick={createTenant}
-                        >
-                          Create Tenant
-                        </Button>
-                      </Grid>
-                      <Grid item xs={12} className={classes.tenantsContainer}>
-                        <TableWrapper
-                          itemActions={tableActions}
-                          columns={[
-                            {
-                              label: "Name",
-                              elementKey: "name",
-                              renderFullObject: true,
-                              renderFunction: (t) => {
-                                return (
-                                  <React.Fragment>
-                                    <span
-                                      className={healthStatusToClass(
-                                        t.health_status
-                                      )}
-                                    >
-                                      ⬤
-                                    </span>{" "}
-                                    {t.name}
-                                  </React.Fragment>
-                                );
-                              },
-                            },
-                            { label: "Namespace", elementKey: "namespace" },
-                            { label: "Capacity", elementKey: "capacity" },
-                            { label: "# of Pools", elementKey: "pool_count" },
-                            { label: "State", elementKey: "currentState" },
-                          ]}
-                          isLoading={isLoading}
-                          records={filteredRecords}
-                          entityName="Tenants"
-                          idField="name"
-                          customPaperHeight={classes.customConfigurationPage}
-                          noBackground
-                        />
-                      </Grid>
-                    </Grid>
-                  </Fragment>,
-                  <Fragment>
-                    <Grid item xs={12} className={classes.backContainer}>
-                      <button
-                        onClick={backClick}
-                        className={classes.backButton}
+          <div className={classes.settingsOptionsContainer}>
+            <SlideOptions
+              slideOptions={[
+                <Fragment>
+                  <Grid item xs={12} className={classes.tenantsContainer}>
+                    <Grid item xs={12} className={classes.actionsTray}>
+                      <TextField
+                        placeholder="Search Tenants"
+                        className={classes.searchField}
+                        id="search-resource"
+                        label=""
+                        onChange={(val) => {
+                          setFilterTenants(val.target.value);
+                        }}
+                        InputProps={{
+                          disableUnderline: true,
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SearchIcon />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                      <IconButton
+                        color="primary"
+                        aria-label="Refresh Tenant List"
+                        component="span"
+                        onClick={() => {
+                          setIsLoading(true);
+                        }}
                       >
-                        <BackSettingsIcon />
-                        Back To Tenants List
-                      </button>
+                        <RefreshIcon />
+                      </IconButton>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<CreateIcon />}
+                        onClick={createTenant}
+                      >
+                        Create Tenant
+                      </Button>
                     </Grid>
-                    <Grid item xs={12}>
-                      {currentPanel === 1 && (
-                        <AddTenant closeAndRefresh={closeAddModalAndRefresh} />
-                      )}
+                    <Grid item xs={12} className={classes.tenantsContainer}>
+                      <TableWrapper
+                        itemActions={tableActions}
+                        columns={[
+                          {
+                            label: "Name",
+                            elementKey: "name",
+                            renderFullObject: true,
+                            renderFunction: (t) => {
+                              return (
+                                <React.Fragment>
+                                  <span
+                                    className={healthStatusToClass(
+                                      t.health_status
+                                    )}
+                                  >
+                                    ⬤
+                                  </span>{" "}
+                                  {t.name}
+                                </React.Fragment>
+                              );
+                            },
+                          },
+                          { label: "Namespace", elementKey: "namespace" },
+                          { label: "Capacity", elementKey: "capacity" },
+                          { label: "# of Pools", elementKey: "pool_count" },
+                          { label: "State", elementKey: "currentState" },
+                        ]}
+                        isLoading={isLoading}
+                        records={filteredRecords}
+                        entityName="Tenants"
+                        idField="name"
+                        customPaperHeight={classes.customConfigurationPage}
+                        noBackground
+                      />
                     </Grid>
-                  </Fragment>,
-                ]}
-                currentSlide={currentPanel}
-              />
-            </div>
-          </Grid>
+                  </Grid>
+                </Fragment>,
+                <Fragment>
+                  <Grid item xs={12} className={classes.backContainer}>
+                    <button onClick={backClick} className={classes.backButton}>
+                      <BackSettingsIcon />
+                      Back To Tenants List
+                    </button>
+                  </Grid>
+                  <Grid item xs={12}>
+                    {currentPanel === 1 && (
+                      <AddTenant closeAndRefresh={closeAddModalAndRefresh} />
+                    )}
+                  </Grid>
+                </Fragment>,
+              ]}
+              currentSlide={currentPanel}
+            />
+          </div>
         </Grid>
       </Grid>
     </Fragment>

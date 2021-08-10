@@ -28,7 +28,7 @@ const styles = (theme: Theme) =>
     wizardComponent: {
       overflowY: "auto",
       marginBottom: 10,
-      height: "calc(100vh - 435px)",
+      height: "calc(100vh - 342px)",
       maxWidth: 840,
       width: "100%",
     },

@@ -29,7 +29,7 @@ const styles = (theme: Theme) =>
       flexGrow: 1,
     },
     wizFromContainer: {
-      height: "calc(100vh - 365px)",
+      height: "calc(100vh - 270px)",
       minHeight: 450,
       padding: "0 30px",
     },
