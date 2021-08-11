@@ -36,6 +36,7 @@ interface IObjectBrowser {
   rewindEnabled: boolean;
   rewindDate: any;
   removeRouteLevel: (path: string) => any;
+  title?: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -49,6 +50,7 @@ const BrowserBreadcrumbs = ({
   rewindEnabled,
   rewindDate,
   removeRouteLevel,
+  title = true,
 }: IObjectBrowser) => {
   const listBreadcrumbs = objectsList.map((objectItem, index) => {
     return (
@@ -67,19 +69,22 @@ const BrowserBreadcrumbs = ({
   });
   return (
     <React.Fragment>
-      <Grid item xs={12}>
-        <div className={classes.sectionTitle}>
-          {objectsList && objectsList.length > 0
-            ? objectsList.slice(-1)[0].label
-            : ""}
-          {rewindEnabled && objectsList.length > 1 && (
-            <small className={classes.smallLabel}>
-              &nbsp;(Rewind:{" "}
-              <Moment date={rewindDate} format="MMMM Do YYYY, h:mm a" /> )
-            </small>
-          )}
-        </div>
-      </Grid>
+      {title && (
+        <Grid item xs={12}>
+          <div className={classes.sectionTitle}>
+            {objectsList && objectsList.length > 0
+              ? objectsList.slice(-1)[0].label
+              : ""}
+            {rewindEnabled && objectsList.length > 1 && (
+              <small className={classes.smallLabel}>
+                &nbsp;(Rewind:{" "}
+                <Moment date={rewindDate} format="MMMM Do YYYY, h:mm a" /> )
+              </small>
+            )}
+          </div>
+        </Grid>
+      )}
+
       <Grid item xs={12} className={classes.breadcrumbs}>
         {listBreadcrumbs}
       </Grid>

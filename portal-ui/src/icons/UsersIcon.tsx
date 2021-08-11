@@ -17,9 +17,13 @@
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
 
-const UsersIcon = () => {
+interface IUsersIcon {
+  width?: number;
+}
+
+const UsersIcon = ({ width = 20 }: IUsersIcon) => {
   return (
-    <SvgIcon>
+    <SvgIcon style={{ width: width, height: width }}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6.131 10">
         <g transform="translate(193 719.787)">
           <g transform="translate(-193 -719.787)">

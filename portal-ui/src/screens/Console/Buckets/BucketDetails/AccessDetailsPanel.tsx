@@ -35,6 +35,7 @@ const styles = (theme: Theme) => createStyles({});
 
 const mapState = (state: AppState) => ({
   session: state.console.session,
+  loadingBucket: state.buckets.bucketDetails.loadingBucket,
 });
 
 const connector = connect(mapState, { setErrorSnackMessage });
@@ -51,6 +52,7 @@ interface IAccessDetailsProps {
   setErrorSnackMessage: typeof setErrorSnackMessage;
   classes: any;
   match: any;
+  loadingBucket: boolean;
 }
 
 const AccessDetails = ({
@@ -58,6 +60,7 @@ const AccessDetails = ({
   match,
   setErrorSnackMessage,
   session,
+  loadingBucket,
 }: IAccessDetailsProps) => {
   const [curTab, setCurTab] = useState<number>(0);
   const [loadingPolicies, setLoadingPolicies] = useState<boolean>(true);
@@ -68,6 +71,13 @@ const AccessDetails = ({
   const bucketName = match.params["bucketName"];
 
   const usersEnabled = session.pages?.indexOf("/users") > -1;
+
+  useEffect(() => {
+    if (loadingBucket) {
+      setLoadingUsers(true);
+      setLoadingPolicies(true);
+    }
+  }, [loadingBucket, setLoadingUsers, setLoadingPolicies]);
 
   const PolicyActions = [
     {

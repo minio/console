@@ -45,12 +45,14 @@ interface IBucketLifecyclePanelProps {
   classes: any;
   match: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  loadingBucket: boolean;
 }
 
 const BucketLifecyclePanel = ({
   classes,
   match,
   setErrorSnackMessage,
+  loadingBucket,
 }: IBucketLifecyclePanelProps) => {
   const [loadingLifecycle, setLoadingLifecycle] = useState<boolean>(true);
   const [lifecycleRecords, setLifecycleRecords] = useState<LifeCycleItem[]>([]);
@@ -58,6 +60,12 @@ const BucketLifecyclePanel = ({
   const [editLifecycleOpen, setEditLifecycleOpen] = useState<boolean>(false);
 
   const bucketName = match.params["bucketName"];
+
+  useEffect(() => {
+    if (loadingBucket) {
+      setLoadingLifecycle(true);
+    }
+  }, [loadingBucket, setLoadingLifecycle]);
 
   useEffect(() => {
     if (loadingLifecycle) {
@@ -183,9 +191,6 @@ const BucketLifecyclePanel = ({
           </Button>
         </Grid>
         <Grid item xs={12}>
-          <br />
-        </Grid>
-        <Grid item xs={12}>
           <TableWrapper
             itemActions={[]}
             columns={lifecycleColumns}
@@ -203,6 +208,7 @@ const BucketLifecyclePanel = ({
 
 const mapState = (state: AppState) => ({
   session: state.console.session,
+  loadingBucket: state.buckets.bucketDetails.loadingBucket,
 });
 
 const connector = connect(mapState, {

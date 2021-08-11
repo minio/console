@@ -20,7 +20,7 @@ import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import api from "../../../../common/api";
-import { HasPermissionResponse } from "../types";
+import { BucketInfo, HasPermissionResponse } from "../types";
 import {
   actionsTray,
   buttonsStyles,
@@ -29,7 +29,11 @@ import {
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
-import { setBucketDetailsTab } from "../actions";
+import {
+  setBucketDetailsLoad,
+  setBucketDetailsTab,
+  setBucketInfo,
+} from "../actions";
 import { AppState } from "../../../../store";
 import { ErrorResponseHandler } from "../../../../common/types";
 import PageHeader from "../../Common/PageHeader/PageHeader";
@@ -41,6 +45,13 @@ import BucketLifecyclePanel from "./BucketLifecyclePanel";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
+import { niceBytes } from "../../../../common/utils";
+import { IconButton, Tooltip } from "@material-ui/core";
+import { BucketsIcon, ClustersIcon, DeleteIcon } from "../../../../icons";
+import PencilIcon from "../../Common/TableWrapper/TableActionIcons/PencilIcon";
+import RefreshIcon from "@material-ui/icons/Refresh";
+import DeleteBucket from "../ListBuckets/DeleteBucket";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -134,6 +145,7 @@ const styles = (theme: Theme) =>
     titleCol: {
       fontWeight: "bold",
     },
+
     breadcrumLink: {
       textDecoration: "none",
       color: "black",
@@ -157,6 +169,10 @@ interface IBucketDetailsProps {
   distributedSetup: boolean;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   setBucketDetailsTab: typeof setBucketDetailsTab;
+  setBucketDetailsLoad: typeof setBucketDetailsLoad;
+  loadingBucket: boolean;
+  setBucketInfo: typeof setBucketInfo;
+  bucketInfo: BucketInfo | null;
 }
 
 const BucketDetails = ({
@@ -167,10 +183,38 @@ const BucketDetails = ({
   setErrorSnackMessage,
   setBucketDetailsTab,
   distributedSetup,
+  setBucketDetailsLoad,
+  loadingBucket,
+  setBucketInfo,
+  bucketInfo,
 }: IBucketDetailsProps) => {
+  const [iniLoad, setIniLoad] = useState<boolean>(false);
   const [loadingPerms, setLoadingPerms] = useState<boolean>(true);
   const [canGetReplication, setCanGetReplication] = useState<boolean>(false);
+  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const bucketName = match.params["bucketName"];
+
+  useEffect(() => {
+    if (!iniLoad) {
+      setBucketDetailsLoad(true);
+      setIniLoad(true);
+    }
+  }, [iniLoad, setIniLoad]);
+
+  useEffect(() => {
+    if (loadingBucket) {
+      api
+        .invoke("GET", `/api/v1/buckets/${bucketName}`)
+        .then((res: BucketInfo) => {
+          setBucketDetailsLoad(false);
+          setBucketInfo(res);
+        })
+        .catch((err: ErrorResponseHandler) => {
+          setBucketDetailsLoad(false);
+          setErrorSnackMessage(err);
+        });
+    }
+  }, [loadingBucket, setBucketDetailsLoad]);
 
   useEffect(() => {
     let matchURL = match.params ? match.params["0"] : "summary";
@@ -249,19 +293,80 @@ const BucketDetails = ({
     history.push(mainRoute);
   };
 
+  const closeDeleteModalAndRefresh = (refresh: boolean) => {
+    setDeleteOpen(false);
+    if (refresh) {
+      history.push("/buckets");
+    }
+  };
+
   return (
     <Fragment>
+      {deleteOpen && (
+        <DeleteBucket
+          deleteOpen={deleteOpen}
+          selectedBucket={bucketName}
+          closeDeleteModalAndRefresh={(refresh: boolean) => {
+            closeDeleteModalAndRefresh(refresh);
+          }}
+        />
+      )}
       <PageHeader
         label={
           <Fragment>
             <Link to={"/buckets"} className={classes.breadcrumLink}>
               Buckets
             </Link>
-            {` > ${bucketName}`}
           </Fragment>
         }
       />
       <Grid container className={classes.container}>
+        <Grid item xs={12}>
+          <ScreenTitle
+            icon={
+              <Fragment>
+                <BucketsIcon width={40} />
+              </Fragment>
+            }
+            title={bucketName}
+            subTitle={
+              <Fragment>
+                Access:{" "}
+                {bucketInfo &&
+                  bucketInfo?.access[0].toUpperCase() +
+                    bucketInfo?.access.substr(1).toLowerCase()}
+              </Fragment>
+            }
+            actions={
+              <Fragment>
+                <Tooltip title={"Delete"}>
+                  <IconButton
+                    color="primary"
+                    aria-label="Delete"
+                    component="span"
+                    onClick={() => {
+                      setDeleteOpen(true);
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={"Refresh"}>
+                  <IconButton
+                    color="primary"
+                    aria-label="Refresh List"
+                    component="span"
+                    onClick={() => {
+                      setBucketDetailsLoad(true);
+                    }}
+                  >
+                    <RefreshIcon />
+                  </IconButton>
+                </Tooltip>
+              </Fragment>
+            }
+          />
+        </Grid>
         <Grid item xs={2}>
           <List component="nav" dense={true}>
             <ListItem
@@ -359,11 +464,15 @@ const mapState = (state: AppState) => ({
   session: state.console.session,
   selectedTab: state.buckets.bucketDetails.selectedTab,
   distributedSetup: state.system.distributedSetup,
+  loadingBucket: state.buckets.bucketDetails.loadingBucket,
+  bucketInfo: state.buckets.bucketDetails.bucketInfo,
 });
 
 const connector = connect(mapState, {
   setErrorSnackMessage,
   setBucketDetailsTab,
+  setBucketDetailsLoad,
+  setBucketInfo,
 });
 
 export default withStyles(styles)(connector(BucketDetails));

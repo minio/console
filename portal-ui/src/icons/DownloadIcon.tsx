@@ -17,9 +17,13 @@
 import React from "react";
 import SvgIcon from "@material-ui/core/SvgIcon";
 
-const DownloadIcon = () => {
+interface IDownloadIcon {
+  width?: number;
+}
+
+const DownloadIcon = ({ width = 20 }: IDownloadIcon) => {
   return (
-    <SvgIcon>
+    <SvgIcon style={{ width: width, height: width }}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 12.996">
         <path d="M11.05 9.096v1.95h-9.1v-1.95H0v3.9h13v-3.9z"></path>
         <path d="M6.5 9.75L9 6.672H7.475V0h-1.95v6.672H4z"></path>

@@ -48,10 +48,12 @@ import TenantSecurity from "./TenantSecurity";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import { DeleteIcon } from "../../../../icons";
+import { ClustersIcon, DeleteIcon } from "../../../../icons";
 import DeleteTenant from "../ListTenants/DeleteTenant";
 import PencilIcon from "../../Common/TableWrapper/TableActionIcons/PencilIcon";
 import PodDetails from "./pods/PodDetails";
+import { niceBytes } from "../../../../common/utils";
+import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -84,6 +86,13 @@ const styles = (theme: Theme) =>
     },
     greyState: {
       color: "grey",
+    },
+    healthStatusIcon: {
+      position: "relative",
+      fontSize: 10,
+      left: 26,
+      height: 10,
+      bottom: 16,
     },
     ...containerForHeader(theme.spacing(4)),
   });
@@ -204,6 +213,16 @@ const TenantDetails = ({
     }
   };
 
+  const healthStatusToClass = (health_status: string) => {
+    return health_status === "red"
+      ? classes.redState
+      : health_status === "yellow"
+      ? classes.yellowState
+      : health_status === "green"
+      ? classes.greenState
+      : classes.greyState;
+  };
+
   return (
     <Fragment>
       {yamlScreenOpen && (
@@ -227,52 +246,77 @@ const TenantDetails = ({
             <Link to={"/tenants"} className={classes.breadcrumLink}>
               Tenants
             </Link>
-            {` > ${match.params["tenantName"]}`}
-          </Fragment>
-        }
-        actions={
-          <Fragment>
-            <Tooltip title={"Delete"}>
-              <IconButton
-                color="primary"
-                aria-label="Delete"
-                component="span"
-                onClick={() => {
-                  confirmDeleteTenant();
-                }}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title={"Edit YAML"}>
-              <IconButton
-                color="primary"
-                aria-label="Edit YAML"
-                component="span"
-                onClick={() => {
-                  editYaml();
-                }}
-              >
-                <PencilIcon active={true} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title={"Refresh"}>
-              <IconButton
-                color="primary"
-                aria-label="Refresh List"
-                component="span"
-                onClick={() => {
-                  setTenantDetailsLoad(true);
-                }}
-              >
-                <RefreshIcon />
-              </IconButton>
-            </Tooltip>
           </Fragment>
         }
       />
-      <Grid item xs={12} className={classes.container} />
-      <Grid container>
+      <Grid container className={classes.container}>
+        <Grid item xs={12}>
+          <ScreenTitle
+            icon={
+              <Fragment>
+                <ClustersIcon width={40} />
+                <div className={classes.healthStatusIcon}>
+                  {tenantInfo && tenantInfo.status && (
+                    <span
+                      className={healthStatusToClass(
+                        tenantInfo.status.health_status
+                      )}
+                    >
+                      ⬤
+                    </span>
+                  )}
+                </div>
+              </Fragment>
+            }
+            title={match.params["tenantName"]}
+            subTitle={
+              <Fragment>
+                Namespace: {tenantNamespace} / Capacity:{" "}
+                {niceBytes((tenantInfo?.total_size || 0).toString(10))}
+              </Fragment>
+            }
+            actions={
+              <Fragment>
+                <Tooltip title={"Delete"}>
+                  <IconButton
+                    color="primary"
+                    aria-label="Delete"
+                    component="span"
+                    onClick={() => {
+                      confirmDeleteTenant();
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={"Edit YAML"}>
+                  <IconButton
+                    color="primary"
+                    aria-label="Edit YAML"
+                    component="span"
+                    onClick={() => {
+                      editYaml();
+                    }}
+                  >
+                    <PencilIcon active={true} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={"Refresh"}>
+                  <IconButton
+                    color="primary"
+                    aria-label="Refresh List"
+                    component="span"
+                    onClick={() => {
+                      setTenantDetailsLoad(true);
+                    }}
+                  >
+                    <RefreshIcon />
+                  </IconButton>
+                </Tooltip>
+              </Fragment>
+            }
+          />
+        </Grid>
         <Grid item xs={2}>
           <List component="nav" dense={true}>
             <ListItem

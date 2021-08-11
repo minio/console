@@ -17,9 +17,13 @@
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
 
-const UploadFile = () => {
+interface IUploadFile {
+  width?: number;
+}
+
+const UploadFile = ({ width = 20 }: IUploadFile) => {
   return (
-    <SvgIcon>
+    <SvgIcon style={{ width: width, height: width }}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 12.996">
         <g transform="translate(-63.686 -70.783)">
           <path

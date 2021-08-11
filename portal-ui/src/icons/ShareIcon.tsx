@@ -17,9 +17,13 @@
 import React from "react";
 import SvgIcon from "@material-ui/core/SvgIcon";
 
-const ShareIcon = () => {
+interface IShareIcon {
+  width?: number;
+}
+
+const ShareIcon = ({ width = 20 }: IShareIcon) => {
   return (
-    <SvgIcon>
+    <SvgIcon style={{ width: width, height: width }}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 13">
         <path
           d="M11.05 8.617v2.429h-9.1v-9.1h2.429v-1.95H0v13h13V8.617z"
