@@ -16,9 +16,14 @@
 
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
-const CreateIcon = () => {
+
+interface ICreateIcon {
+  width?: number;
+}
+
+const CreateIcon = ({ width = 20 }: ICreateIcon) => {
   return (
-    <SvgIcon>
+    <SvgIcon style={{ width: width, height: width }}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12">
         <g id="Group_55" data-name="Group 55" transform="translate(1002 -2555)">
           <rect

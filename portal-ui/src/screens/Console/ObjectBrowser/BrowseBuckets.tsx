@@ -23,8 +23,8 @@ import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@material-ui/icons/Search";
-import { Button, IconButton } from "@material-ui/core";
-import { CreateIcon } from "../../../icons";
+import { Button, IconButton, Tooltip } from "@material-ui/core";
+import { BucketsIcon, CreateIcon } from "../../../icons";
 import { niceBytes } from "../../../common/utils";
 import { Bucket, BucketList, HasPermissionResponse } from "../Buckets/types";
 import {
@@ -40,6 +40,7 @@ import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import AddBucket from "../Buckets/ListBuckets/AddBucket";
 import api from "../../../common/api";
 import RefreshIcon from "@material-ui/icons/Refresh";
+import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -214,10 +215,52 @@ const BrowseBuckets = ({
         />
       )}
       <Grid container>
-        <Grid item xs={12} className={classes.obTitleSection}>
-          <div>
-            <BrowserBreadcrumbs />
-          </div>
+        <Grid item xs={12}>
+          <ScreenTitle
+            icon={
+              <Fragment>
+                <BucketsIcon width={40} />
+              </Fragment>
+            }
+            title={"All Buckets"}
+            subTitle={
+              <Fragment>
+                <BrowserBreadcrumbs title={false} />
+              </Fragment>
+            }
+            actions={
+              <Fragment>
+                {canCreateBucket && (
+                  <Fragment>
+                    <Tooltip title={"Create Bucket"}>
+                      <IconButton
+                        color="primary"
+                        aria-label="Refresh List"
+                        component="span"
+                        onClick={() => {
+                          setLoading(true);
+                        }}
+                      >
+                        <CreateIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </Fragment>
+                )}
+                <Tooltip title={"Refresh List"}>
+                  <IconButton
+                    color="primary"
+                    aria-label="Refresh List"
+                    component="span"
+                    onClick={() => {
+                      setLoading(true);
+                    }}
+                  >
+                    <RefreshIcon />
+                  </IconButton>
+                </Tooltip>
+              </Fragment>
+            }
+          />
         </Grid>
         <Grid item xs={12} className={classes.actionsTray}>
           <TextField
@@ -237,30 +280,6 @@ const BrowseBuckets = ({
               ),
             }}
           />
-          <IconButton
-            color="primary"
-            aria-label="Refresh List"
-            component="span"
-            onClick={() => {
-              setLoading(true);
-            }}
-          >
-            <RefreshIcon />
-          </IconButton>
-          {canCreateBucket && (
-            <div>
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<CreateIcon />}
-                onClick={() => {
-                  setAddScreenOpen(true);
-                }}
-              >
-                Create Bucket
-              </Button>
-            </div>
-          )}
         </Grid>
         <Grid item xs={12}>
           <br />

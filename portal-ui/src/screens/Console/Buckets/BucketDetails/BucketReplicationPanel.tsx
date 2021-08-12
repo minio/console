@@ -42,6 +42,7 @@ interface IBucketReplicationProps {
   classes: any;
   match: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  loadingBucket: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -54,6 +55,7 @@ const BucketReplicationPanel = ({
   classes,
   match,
   setErrorSnackMessage,
+  loadingBucket,
 }: IBucketReplicationProps) => {
   const [canPutReplication, setCanPutReplication] = useState<boolean>(false);
   const [loadingReplication, setLoadingReplication] = useState<boolean>(true);
@@ -67,6 +69,12 @@ const BucketReplicationPanel = ({
   const [selectedRRule, setSelectedRRule] = useState<string>("");
 
   const bucketName = match.params["bucketName"];
+
+  useEffect(() => {
+    if (loadingBucket) {
+      setLoadingReplication(true);
+    }
+  }, [loadingBucket, setLoadingReplication]);
 
   useEffect(() => {
     if (loadingPerms) {
@@ -200,9 +208,6 @@ const BucketReplicationPanel = ({
           </Button>
         </Grid>
         <Grid item xs={12}>
-          <br />
-        </Grid>
-        <Grid item xs={12}>
           <TableWrapper
             itemActions={replicationTableActions}
             columns={[
@@ -239,6 +244,7 @@ const BucketReplicationPanel = ({
 
 const mapState = (state: AppState) => ({
   session: state.console.session,
+  loadingBucket: state.buckets.bucketDetails.loadingBucket,
 });
 
 const connector = connect(mapState, {

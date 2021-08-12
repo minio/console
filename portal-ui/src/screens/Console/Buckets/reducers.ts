@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import {
+  ADD_BUCKET_LOCKING,
   ADD_BUCKET_NAME,
   ADD_BUCKET_OPEN,
   ADD_BUCKET_QUOTA,
@@ -22,15 +23,17 @@ import {
   ADD_BUCKET_QUOTA_TYPE,
   ADD_BUCKET_QUOTA_UNIT,
   ADD_BUCKET_RESET,
-  ADD_BUCKET_VERSIONED,
   ADD_BUCKET_RETENTION,
   ADD_BUCKET_RETENTION_MODE,
   ADD_BUCKET_RETENTION_UNIT,
   ADD_BUCKET_RETENTION_VALIDITY,
-  BucketActionTypes,
-  ADD_BUCKET_LOCKING,
+  ADD_BUCKET_VERSIONED,
+  BUCKET_DETAILS_LOADING,
+  BUCKET_DETAILS_SET_INFO,
   BUCKET_DETAILS_SET_TAB,
+  BucketActionTypes,
 } from "./actions";
+import { BucketInfo } from "./types";
 
 export interface BucketsState {
   open: boolean;
@@ -50,6 +53,8 @@ export interface BucketsState {
 
 export interface BucketDetailsState {
   selectedTab: string;
+  loadingBucket: boolean;
+  bucketInfo: BucketInfo | null;
 }
 
 const initialState: BucketsState = {
@@ -67,6 +72,8 @@ const initialState: BucketsState = {
   addBucketRetentionValidity: 1,
   bucketDetails: {
     selectedTab: "summary",
+    loadingBucket: false,
+    bucketInfo: null,
   },
 };
 
@@ -157,6 +164,22 @@ export function bucketsReducer(
         addBucketRetentionMode: "compliance",
         addBucketRetentionUnit: "days",
         addBucketRetentionValidity: 1,
+      };
+    case BUCKET_DETAILS_LOADING:
+      return {
+        ...state,
+        bucketDetails: {
+          ...state.bucketDetails,
+          loadingBucket: action.state,
+        },
+      };
+    case BUCKET_DETAILS_SET_INFO:
+      return {
+        ...state,
+        bucketDetails: {
+          ...state.bucketDetails,
+          bucketInfo: action.info,
+        },
       };
     default:
       return state;

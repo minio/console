@@ -20,7 +20,7 @@ import { Link } from "react-router-dom";
 
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, Grid, IconButton, Tooltip } from "@material-ui/core";
-import { CreateIcon, DeleteIcon } from "../../../icons";
+import { CreateIcon, DeleteIcon, UsersIcon } from "../../../icons";
 import { Bookmark } from "@material-ui/icons";
 import {
   setErrorSnackMessage,
@@ -47,6 +47,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
 import LockIcon from "@material-ui/icons/Lock";
+import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -229,42 +230,9 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
             <Link to={"/users"} className={classes.breadcrumLink}>
               Users
             </Link>
-            {` > ${userName}`}
           </Fragment>
         }
-        actions={
-          <React.Fragment>
-            <Button
-              onClick={() => {
-                setEnabled(!enabled);
-                saveRecord(!enabled);
-              }}
-              color={"primary"}
-            >
-              {enabled ? "Enabled" : "Disabled"}
-            </Button>
-            <Tooltip title="Delete User">
-              <IconButton
-                color="primary"
-                aria-label="Delete User"
-                component="span"
-                onClick={deleteUser}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Change Password">
-              <IconButton
-                color="primary"
-                aria-label="Change Password"
-                component="span"
-                onClick={changeUserPassword}
-              >
-                <LockIcon />
-              </IconButton>
-            </Tooltip>
-          </React.Fragment>
-        }
+        actions={<React.Fragment></React.Fragment>}
       />
       {addGroupOpen && (
         <ChangeUserGroups
@@ -304,6 +272,52 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
         />
       )}
       <Grid container className={classes.container}>
+        <Grid item xs={12}>
+          <ScreenTitle
+            icon={
+              <Fragment>
+                <UsersIcon width={40} />
+              </Fragment>
+            }
+            title={userName}
+            subTitle={
+              <Fragment>Status: {enabled ? "Enabled" : "Disabled"}</Fragment>
+            }
+            actions={
+              <Fragment>
+                <Button
+                  onClick={() => {
+                    setEnabled(!enabled);
+                    saveRecord(!enabled);
+                  }}
+                  color={"primary"}
+                >
+                  {enabled ? "Disable" : "Enable"}
+                </Button>
+                <Tooltip title="Delete User">
+                  <IconButton
+                    color="primary"
+                    aria-label="Delete User"
+                    component="span"
+                    onClick={deleteUser}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Change Password">
+                  <IconButton
+                    color="primary"
+                    aria-label="Change Password"
+                    component="span"
+                    onClick={changeUserPassword}
+                  >
+                    <LockIcon />
+                  </IconButton>
+                </Tooltip>
+              </Fragment>
+            }
+          />
+        </Grid>
         <Grid item xs={2}>
           <List component="nav" dense={true}>
             <ListItem

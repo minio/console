@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { FormEvent, Fragment, useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router-dom";
@@ -46,8 +46,10 @@ import PageHeader from "../../../../Common/PageHeader/PageHeader";
 import {
   Badge,
   Button,
+  CircularProgress,
   IconButton,
   Input,
+  Tooltip,
   Typography,
 } from "@material-ui/core";
 import * as reactMoment from "react-moment";
@@ -79,6 +81,11 @@ import RewindEnable from "./RewindEnable";
 import DeleteIcon from "@material-ui/icons/Delete";
 import DeleteMultipleObjects from "./DeleteMultipleObjects";
 import { baseUrl } from "../../../../../../history";
+import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
+import AttachFileIcon from "@material-ui/icons/AttachFile";
+import ShareIcon from "../../../../../../icons/ShareIcon";
+import DownloadIcon from "../../../../../../icons/DownloadIcon";
+import { CreateNewFolder, FolderOpen } from "@material-ui/icons";
 
 const commonIcon = {
   backgroundRepeat: "no-repeat",
@@ -244,6 +251,8 @@ const ListObjects = ({
   const [selectedObjects, setSelectedObjects] = useState<string[]>([]);
 
   const bucketName = match.params["bucket"];
+
+  const fileUpload = useRef<HTMLInputElement>(null);
 
   const updateMessage = () => {
     let timeDelta = Date.now() - loadingStartTime;
@@ -762,6 +771,17 @@ const ListObjects = ({
     },
   ];
 
+  let pageTitle = "Folder";
+
+  if (match) {
+    if ("bucket" in match.params) {
+      pageTitle = match.params["bucket"];
+    }
+    if ("0" in match.params) {
+      pageTitle = match.params["0"].split("/").pop();
+    }
+  }
+
   return (
     <React.Fragment>
       {deleteOpen && (
@@ -795,120 +815,145 @@ const ListObjects = ({
         />
       )}
       <PageHeader label="Object Browser" />
-      <Grid container>
-        <Grid item xs={12} className={classes.container}>
-          <Grid item xs={12} className={classes.obTitleSection}>
-            <div>
-              <BrowserBreadcrumbs />
-            </div>
-          </Grid>
-          <Grid item xs={12} className={classes.actionsTray}>
-            <TextField
-              placeholder="Search Objects"
-              className={classes.searchField}
-              id="search-resource"
-              label=""
-              onChange={(val) => {
-                setFilterObjects(val.target.value);
-              }}
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <IconButton
-              color="primary"
-              aria-label="Refresh List"
-              component="span"
-              onClick={() => {
-                setLoading(true);
-              }}
-              disabled={rewindEnabled}
-            >
-              <RefreshIcon />
-            </IconButton>
-            <Badge
-              badgeContent=" "
-              color="secondary"
-              variant="dot"
-              invisible={!rewindEnabled}
-              className={classes.badgeOverlap}
-            >
-              <IconButton
-                color="primary"
-                aria-label="Rewind"
-                component="span"
-                onClick={() => {
-                  setRewindSelect(true);
-                }}
-                disabled={!isVersioned}
-              >
-                <RestoreIcon />
-              </IconButton>
-            </Badge>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<DeleteIcon />}
-              onClick={() => {
-                setDeleteMultipleOpen(true);
-              }}
-              disabled={selectedObjects.length === 0}
-            >
-              Delete Selected
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<CreateIcon />}
-              component="label"
-              onClick={() => {
-                setCreateFolderOpen(true);
-              }}
-              className={classes.listButton}
-              disabled={rewindEnabled}
-            >
-              Create Folder
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<UploadFile />}
-              component="label"
-              className={classes.listButton}
-              disabled={rewindEnabled}
-            >
-              File
-              <Input
-                type="file"
-                inputProps={{ multiple: true }}
-                onChange={(e) => uploadObject(e)}
-                id="file-input"
-                style={{ display: "none" }}
-              />
-            </Button>
-          </Grid>
-          <Grid item xs={12}>
-            <br />
-          </Grid>
-          <Grid item xs={12}>
-            <TableWrapper
-              itemActions={tableActions}
-              columns={rewindEnabled ? rewindModeColumns : listModeColumns}
-              isLoading={rewindEnabled ? loadingRewind : loading}
-              loadingMessage={loadingMessage}
-              entityName="Rewind Objects"
-              idField="name"
-              records={rewindEnabled ? rewind : filteredRecords}
-              customPaperHeight={classes.browsePaper}
-              selectedItems={selectedObjects}
-              onSelect={selectListObjects}
-            />
-          </Grid>
+      <Grid container className={classes.container}>
+        <Grid item xs={12}>
+          <ScreenTitle
+            icon={
+              <Fragment>
+                <FolderOpen style={{ width: 40, height: 40 }} />
+              </Fragment>
+            }
+            title={pageTitle}
+            subTitle={
+              <Fragment>
+                <BrowserBreadcrumbs title={false} />
+              </Fragment>
+            }
+            actions={
+              <Fragment>
+                <Tooltip title={"Create Folder"}>
+                  <IconButton
+                    color="primary"
+                    aria-label="Create Folder"
+                    component="span"
+                    onClick={() => {
+                      setCreateFolderOpen(true);
+                    }}
+                    disabled={rewindEnabled}
+                  >
+                    <CreateNewFolder />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title={"Upload file"}>
+                  <IconButton
+                    color="primary"
+                    aria-label="Refresh List"
+                    component="span"
+                    onClick={() => {
+                      if (fileUpload && fileUpload.current) {
+                        fileUpload.current.click();
+                      }
+                    }}
+                    disabled={rewindEnabled}
+                  >
+                    <UploadFile />
+                  </IconButton>
+                </Tooltip>
+
+                <input
+                  type="file"
+                  multiple={true}
+                  onChange={(e) => uploadObject(e)}
+                  id="file-input"
+                  style={{ display: "none" }}
+                  ref={fileUpload}
+                />
+                <Tooltip title={"Rewind"}>
+                  <Badge
+                    badgeContent=" "
+                    color="secondary"
+                    variant="dot"
+                    invisible={!rewindEnabled}
+                    className={classes.badgeOverlap}
+                  >
+                    <IconButton
+                      color="primary"
+                      aria-label="Rewind"
+                      component="span"
+                      onClick={() => {
+                        setRewindSelect(true);
+                      }}
+                      disabled={!isVersioned}
+                    >
+                      <RestoreIcon />
+                    </IconButton>
+                  </Badge>
+                </Tooltip>
+                <Tooltip title={"Refresh list"}>
+                  <IconButton
+                    color="primary"
+                    aria-label="Refresh List"
+                    component="span"
+                    onClick={() => {
+                      setLoading(true);
+                    }}
+                    disabled={rewindEnabled}
+                  >
+                    <RefreshIcon />
+                  </IconButton>
+                </Tooltip>
+              </Fragment>
+            }
+          />
+        </Grid>
+        <Grid item xs={12} className={classes.actionsTray}>
+          <TextField
+            placeholder="Search Objects"
+            className={classes.searchField}
+            id="search-resource"
+            label=""
+            onChange={(val) => {
+              setFilterObjects(val.target.value);
+            }}
+            InputProps={{
+              disableUnderline: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<DeleteIcon />}
+            onClick={() => {
+              setDeleteMultipleOpen(true);
+            }}
+            disabled={selectedObjects.length === 0}
+          >
+            Delete Selected
+          </Button>
+        </Grid>
+        <Grid item xs={12}>
+          <br />
+        </Grid>
+        <Grid item xs={12}>
+          <TableWrapper
+            itemActions={tableActions}
+            columns={rewindEnabled ? rewindModeColumns : listModeColumns}
+            isLoading={rewindEnabled ? loadingRewind : loading}
+            loadingMessage={loadingMessage}
+            entityName="Rewind Objects"
+            idField="name"
+            records={rewindEnabled ? rewind : filteredRecords}
+            customPaperHeight={classes.browsePaper}
+            selectedItems={selectedObjects}
+            onSelect={selectListObjects}
+          />
         </Grid>
       </Grid>
     </React.Fragment>

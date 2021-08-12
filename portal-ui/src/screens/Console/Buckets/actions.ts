@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { TENANT_DETAILS_SET_LOADING } from "../Tenants/types";
+import { BucketInfo } from "./types";
+
 export const ADD_BUCKET_OPEN = "ADD_BUCKET_OPEN";
 export const ADD_BUCKET_NAME = "ADD_BUCKET_NAME";
 export const ADD_BUCKET_VERSIONED = "ADD_BUCKET_VERSIONED";
@@ -28,6 +31,8 @@ export const ADD_BUCKET_RETENTION_MODE = "ADD_BUCKET_RETENTION_MODE";
 export const ADD_BUCKET_RETENTION_UNIT = "ADD_BUCKET_RETENTION_UNIT";
 export const ADD_BUCKET_RETENTION_VALIDITY = "ADD_BUCKET_RETENTION_VALIDITY";
 export const BUCKET_DETAILS_SET_TAB = "BUCKET_DETAILS/SET_TAB";
+export const BUCKET_DETAILS_LOADING = "BUCKET_DETAILS/LOADING";
+export const BUCKET_DETAILS_SET_INFO = "BUCKET_DETAILS/SET_INFO";
 
 interface AddBucketOpenAction {
   type: typeof ADD_BUCKET_OPEN;
@@ -96,6 +101,16 @@ interface SetBucketDetailsTab {
   tab: string;
 }
 
+interface SetLoadingBucket {
+  type: typeof BUCKET_DETAILS_LOADING;
+  state: boolean;
+}
+
+interface SetBucketInfo {
+  type: typeof BUCKET_DETAILS_SET_INFO;
+  info: BucketInfo | null;
+}
+
 export type BucketActionTypes =
   | AddBucketOpenAction
   | AddBucketNameAction
@@ -110,7 +125,9 @@ export type BucketActionTypes =
   | AddBucketRetentionModeAction
   | AddBucketRetentionUnitAction
   | AddBucketRetentionValidityAction
-  | SetBucketDetailsTab;
+  | SetBucketDetailsTab
+  | SetLoadingBucket
+  | SetBucketInfo;
 
 export function addBucketOpen(open: boolean) {
   return {
@@ -207,3 +224,17 @@ export function setBucketDetailsTab(tab: string) {
     tab,
   };
 }
+
+export const setBucketDetailsLoad = (loading: boolean) => {
+  return {
+    type: BUCKET_DETAILS_LOADING,
+    state: loading,
+  };
+};
+
+export const setBucketInfo = (bucketInfo: BucketInfo | null) => {
+  return {
+    type: BUCKET_DETAILS_SET_INFO,
+    info: bucketInfo,
+  };
+};

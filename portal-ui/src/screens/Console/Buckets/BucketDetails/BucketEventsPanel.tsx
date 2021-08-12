@@ -47,12 +47,14 @@ interface IBucketEventsProps {
   classes: any;
   match: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  loadingBucket: boolean;
 }
 
 const BucketEventsPanel = ({
   classes,
   match,
   setErrorSnackMessage,
+  loadingBucket,
 }: IBucketEventsProps) => {
   const [addEventScreenOpen, setAddEventScreenOpen] = useState<boolean>(false);
   const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
@@ -61,6 +63,12 @@ const BucketEventsPanel = ({
   const [selectedEvent, setSelectedEvent] = useState<BucketEvent | null>(null);
 
   const bucketName = match.params["bucketName"];
+
+  useEffect(() => {
+    if (loadingBucket) {
+      setLoadingEvents(true);
+    }
+  }, [loadingBucket, setLoadingEvents]);
 
   useEffect(() => {
     if (loadingEvents) {
@@ -135,9 +143,6 @@ const BucketEventsPanel = ({
           </Button>
         </Grid>
         <Grid item xs={12}>
-          <br />
-        </Grid>
-        <Grid item xs={12}>
           <TableWrapper
             itemActions={tableActions}
             columns={[
@@ -163,6 +168,7 @@ const BucketEventsPanel = ({
 
 const mapState = (state: AppState) => ({
   session: state.console.session,
+  loadingBucket: state.buckets.bucketDetails.loadingBucket,
 });
 
 const connector = connect(mapState, {

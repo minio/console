@@ -30,7 +30,7 @@ const styles = (theme: Theme) =>
       color: "#000",
       fontSize: 18,
       fontWeight: 700,
-      marginLeft: 55,
+      marginLeft: 34,
       marginTop: 8,
     },
     rightMenu: {

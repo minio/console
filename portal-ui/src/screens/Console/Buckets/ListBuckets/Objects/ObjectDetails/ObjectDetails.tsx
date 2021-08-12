@@ -79,6 +79,9 @@ import DeleteObject from "../ListObjects/DeleteObject";
 import AddTagModal from "./AddTagModal";
 import DeleteTagModal from "./DeleteTagModal";
 import SetLegalHoldModal from "./SetLegalHoldModal";
+import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
+import AttachFileIcon from "@material-ui/icons/AttachFile";
+import DescriptionIcon from "@material-ui/icons/Description";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -450,61 +453,6 @@ const ObjectDetails = ({
 
   return (
     <React.Fragment>
-      <PageHeader
-        label={"Object Browser > Details"}
-        actions={
-          <Fragment>
-            <Tooltip title="Share">
-              <IconButton
-                color="primary"
-                aria-label="share"
-                onClick={() => {
-                  shareObject();
-                }}
-                disabled={actualInfo.is_delete_marker}
-              >
-                <ShareIcon />
-              </IconButton>
-            </Tooltip>
-
-            {downloadingFiles.includes(`${bucketName}/${actualInfo.name}`) ? (
-              <div className="progressDetails">
-                <CircularProgress
-                  color="primary"
-                  size={17}
-                  variant="indeterminate"
-                />
-              </div>
-            ) : (
-              <Tooltip title="Download">
-                <IconButton
-                  color="primary"
-                  aria-label="download"
-                  onClick={() => {
-                    downloadObject(actualInfo);
-                  }}
-                  disabled={actualInfo.is_delete_marker}
-                >
-                  <DownloadIcon />
-                </IconButton>
-              </Tooltip>
-            )}
-
-            <Tooltip title="Delete Object">
-              <IconButton
-                color="primary"
-                aria-label="delete"
-                onClick={() => {
-                  setDeleteOpen(true);
-                }}
-                disabled={actualInfo.is_delete_marker}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
-          </Fragment>
-        }
-      />
       {shareFileModalOpen && (
         <ShareFile
           open={shareFileModalOpen}
@@ -560,12 +508,77 @@ const ObjectDetails = ({
           actualInfo={actualInfo}
         />
       )}
+      <PageHeader label={"Object Browser"} />
+
       <Grid container className={classes.container}>
-        <Grid item xs={12} className={classes.obTitleSection}>
-          <div>
-            <BrowserBreadcrumbs />
-          </div>
-          <hr style={{ border: 0, borderTop: "1px solid #EAEAEA" }} />
+        <Grid item xs={12}>
+          <ScreenTitle
+            icon={
+              <Fragment>
+                <DescriptionIcon style={{ width: 40, height: 40 }} />
+              </Fragment>
+            }
+            title={objectName}
+            subTitle={
+              <Fragment>
+                <BrowserBreadcrumbs title={false} />
+              </Fragment>
+            }
+            actions={
+              <Fragment>
+                <Tooltip title="Share">
+                  <IconButton
+                    color="primary"
+                    aria-label="share"
+                    onClick={() => {
+                      shareObject();
+                    }}
+                    disabled={actualInfo.is_delete_marker}
+                  >
+                    <ShareIcon />
+                  </IconButton>
+                </Tooltip>
+
+                {downloadingFiles.includes(
+                  `${bucketName}/${actualInfo.name}`
+                ) ? (
+                  <div className="progressDetails">
+                    <CircularProgress
+                      color="primary"
+                      size={17}
+                      variant="indeterminate"
+                    />
+                  </div>
+                ) : (
+                  <Tooltip title="Download">
+                    <IconButton
+                      color="primary"
+                      aria-label="download"
+                      onClick={() => {
+                        downloadObject(actualInfo);
+                      }}
+                      disabled={actualInfo.is_delete_marker}
+                    >
+                      <DownloadIcon />
+                    </IconButton>
+                  </Tooltip>
+                )}
+
+                <Tooltip title="Delete Object">
+                  <IconButton
+                    color="primary"
+                    aria-label="delete"
+                    onClick={() => {
+                      setDeleteOpen(true);
+                    }}
+                    disabled={actualInfo.is_delete_marker}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
+              </Fragment>
+            }
+          />
         </Grid>
         <Grid item xs={2}>
           <List component="nav" dense={true}>

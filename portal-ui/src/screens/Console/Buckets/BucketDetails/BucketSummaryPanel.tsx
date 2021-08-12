@@ -50,12 +50,16 @@ import EnableVersioningModal from "./EnableVersioningModal";
 import UsageIcon from "../../../../icons/UsageIcon";
 import GavelIcon from "@material-ui/icons/Gavel";
 import EnableQuota from "./EnableQuota";
+import { setBucketDetailsLoad } from "../actions";
 
 interface IBucketSummaryProps {
   classes: any;
   match: any;
   distributedSetup: boolean;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  loadingBucket: boolean;
+  bucketInfo: BucketInfo | null;
+  setBucketDetailsLoad: typeof setBucketDetailsLoad;
 }
 
 const styles = (theme: Theme) =>
@@ -100,8 +104,10 @@ const BucketSummary = ({
   match,
   distributedSetup,
   setErrorSnackMessage,
+  loadingBucket,
+  bucketInfo,
+  setBucketDetailsLoad,
 }: IBucketSummaryProps) => {
-  const [info, setInfo] = useState<BucketInfo | null>(null);
   const [encryptionCfg, setEncryptionCfg] =
     useState<BucketEncryptionInfo | null>(null);
   const [bucketSize, setBucketSize] = useState<string>("0");
@@ -111,7 +117,7 @@ const BucketSummary = ({
   const [replicationRules, setReplicationRules] = useState<boolean>(false);
   const [loadingObjectLocking, setLoadingLocking] = useState<boolean>(true);
   const [loadingSize, setLoadingSize] = useState<boolean>(true);
-  const [loadingBucket, setLoadingBucket] = useState<boolean>(true);
+  const [bucketLoading, setBucketLoading] = useState<boolean>(true);
   const [loadingEncryption, setLoadingEncryption] = useState<boolean>(true);
   const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
   const [loadingQuota, setLoadingQuota] = useState<boolean>(true);
@@ -137,26 +143,17 @@ const BucketSummary = ({
 
   let accessPolicy = "n/a";
 
-  if (info !== null) {
-    accessPolicy = info.access;
+  if (bucketInfo !== null) {
+    accessPolicy = bucketInfo.access;
   }
-
-  // Effects
 
   useEffect(() => {
     if (loadingBucket) {
-      api
-        .invoke("GET", `/api/v1/buckets/${bucketName}`)
-        .then((res: BucketInfo) => {
-          setLoadingBucket(false);
-          setInfo(res);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setLoadingBucket(false);
-          setErrorSnackMessage(err);
-        });
+      setBucketLoading(true);
+    } else {
+      setBucketLoading(false);
     }
-  }, [loadingBucket, setErrorSnackMessage, bucketName]);
+  }, [loadingBucket, setBucketLoading]);
 
   useEffect(() => {
     if (loadingEncryption) {
@@ -301,7 +298,8 @@ const BucketSummary = ({
   }, [loadingRetention, hasObjectLocking, bucketName]);
 
   const loadAllBucketData = () => {
-    setLoadingBucket(true);
+    setBucketDetailsLoad(true);
+    setBucketLoading(true);
     setLoadingSize(true);
     setLoadingVersioning(true);
     setLoadingEncryption(true);
@@ -395,9 +393,6 @@ const BucketSummary = ({
         <Grid item xs={12} className={classes.actionsTray}>
           <h1 className={classes.sectionTitle}>Summary</h1>
         </Grid>
-        <Grid item xs={12}>
-          <br />
-        </Grid>
       </Grid>
       <Paper className={classes.paperContainer}>
         <Grid container>
@@ -414,7 +409,7 @@ const BucketSummary = ({
                         setAccessPolicyScreenOpen(true);
                       }}
                     >
-                      {loadingBucket ? (
+                      {bucketLoading ? (
                         <CircularProgress
                           color="primary"
                           size={16}
@@ -633,10 +628,13 @@ const BucketSummary = ({
 const mapState = (state: AppState) => ({
   session: state.console.session,
   distributedSetup: state.system.distributedSetup,
+  loadingBucket: state.buckets.bucketDetails.loadingBucket,
+  bucketInfo: state.buckets.bucketDetails.bucketInfo,
 });
 
 const connector = connect(mapState, {
   setErrorSnackMessage,
+  setBucketDetailsLoad,
 });
 
 export default withStyles(styles)(connector(BucketSummary));
