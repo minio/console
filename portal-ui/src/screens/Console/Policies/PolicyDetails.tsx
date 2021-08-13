@@ -14,7 +14,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { IAMPolicy, IAMStatement, newStatement, Policy } from "./types";
+import { IAMPolicy, IAMStatement, Policy } from "./types";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import {
@@ -40,15 +40,10 @@ import TextField from "@material-ui/core/TextField";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
-import { CreateIcon, DeleteIcon } from "../../../icons";
+import { DeleteIcon } from "../../../icons";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import { Assignment } from "@material-ui/icons";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
-import CancelIcon from "@material-ui/icons/Cancel";
-import PencilIcon from "../Common/TableWrapper/TableActionIcons/PencilIcon";
-import SelectWrapper from "../Common/FormComponents/SelectWrapper/SelectWrapper";
-import AddPolicy from "./AddPolicy";
-import EditResources from "./EditResources";
 import { Bucket, BucketList } from "../Buckets/types";
 
 interface IPolicyDetailsProps {
@@ -207,7 +202,6 @@ const PolicyDetails = ({
   const [loadingUsers, setLoadingUsers] = useState<boolean>(true);
   const [filterGroups, setFilterGroups] = useState<string>("");
   const [loadingGroups, setLoadingGroups] = useState<boolean>(true);
-  const [editResourcesOpen, setEditResourcesOpen] = useState<boolean>(false);
 
   const [buckets, setBuckets] = useState<Bucket[]>([]);
   const [loadingBuckets, setLoadingBuckets] = useState<boolean>(false);
@@ -324,8 +318,6 @@ const PolicyDetails = ({
   );
 
   const closeAddModalAndRefresh = (refresh: boolean) => {
-    setEditResourcesOpen(false);
-
     if (refresh) {
       setLoadingUsers(true);
       setLoadingGroups(true);
@@ -353,14 +345,6 @@ const PolicyDetails = ({
 
   return (
     <Fragment>
-      {editResourcesOpen && (
-        <EditResources
-          open={editResourcesOpen}
-          closeModalAndRefresh={closeAddModalAndRefresh}
-          policyEdit={policy!}
-          buckets={buckets}
-        />
-      )}
       <PageHeader
         label={
           <Fragment>
