@@ -125,12 +125,6 @@ func (m *UpdateTenantSecurityRequest) UnmarshalBinary(b []byte) error {
 // swagger:model UpdateTenantSecurityRequestCustomCertificates
 type UpdateTenantSecurityRequestCustomCertificates struct {
 
-	// console
-	Console []*KeyPairConfiguration `json:"console"`
-
-	// console c as
-	ConsoleCAs []string `json:"consoleCAs"`
-
 	// minio
 	Minio []*KeyPairConfiguration `json:"minio"`
 
@@ -145,10 +139,6 @@ type UpdateTenantSecurityRequestCustomCertificates struct {
 func (m *UpdateTenantSecurityRequestCustomCertificates) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateConsole(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateMinio(formats); err != nil {
 		res = append(res, err)
 	}
@@ -156,30 +146,6 @@ func (m *UpdateTenantSecurityRequestCustomCertificates) Validate(formats strfmt.
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *UpdateTenantSecurityRequestCustomCertificates) validateConsole(formats strfmt.Registry) error {
-	if swag.IsZero(m.Console) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.Console); i++ {
-		if swag.IsZero(m.Console[i]) { // not required
-			continue
-		}
-
-		if m.Console[i] != nil {
-			if err := m.Console[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("customCertificates" + "." + "console" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
 	return nil
 }
 
@@ -211,10 +177,6 @@ func (m *UpdateTenantSecurityRequestCustomCertificates) validateMinio(formats st
 func (m *UpdateTenantSecurityRequestCustomCertificates) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.contextValidateConsole(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.contextValidateMinio(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -222,24 +184,6 @@ func (m *UpdateTenantSecurityRequestCustomCertificates) ContextValidate(ctx cont
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *UpdateTenantSecurityRequestCustomCertificates) contextValidateConsole(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Console); i++ {
-
-		if m.Console[i] != nil {
-			if err := m.Console[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("customCertificates" + "." + "console" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
 	return nil
 }
 

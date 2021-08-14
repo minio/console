@@ -94,23 +94,6 @@ const TenantSecurity = ({
   const [certificatesToBeRemoved, setCertificatesToBeRemoved] = useState<
     string[]
   >([]);
-  // Console certificates
-  const [consoleCertificates, setConsoleCertificates] = useState<KeyPair[]>([
-    {
-      cert: "",
-      encoded_cert: "",
-      encoded_key: "",
-      id: Date.now().toString(),
-      key: "",
-    },
-  ]);
-  const [consoleCaCertificates, setConsoleCaCertificates] = useState<KeyPair[]>(
-    []
-  );
-  const [consoleTLSCertificateSecrets, setConsoleTLSCertificateSecrets] =
-    useState<ICertificateInfo[]>([]);
-  const [consoleTLSCaCertificateSecrets, setConsoleTLSCaCertificateSecrets] =
-    useState<ICertificateInfo[]>([]);
   // MinIO certificates
   const [minioCertificates, setMinioCertificates] = useState<KeyPair[]>([]);
   const [minioCaCertificates, setMinioCaCertificates] = useState<KeyPair[]>([]);
@@ -128,20 +111,11 @@ const TenantSecurity = ({
       )
       .then((res: ITenantSecurityResponse) => {
         setEnableAutoCert(res.autoCert);
-        if (
-          res.customCertificates.minio ||
-          res.customCertificates.minioCAs ||
-          res.customCertificates.console ||
-          res.customCertificates.consoleCAs
-        ) {
+        if (res.customCertificates.minio || res.customCertificates.minioCAs) {
           setEnableCustomCerts(true);
         }
         setMinioTLSCertificateSecrets(res.customCertificates.minio || []);
         setMinioTLSCaCertificateSecrets(res.customCertificates.minioCAs || []);
-        setConsoleTLSCertificateSecrets(res.customCertificates.console || []);
-        setConsoleTLSCaCertificateSecrets(
-          res.customCertificates.consoleCAs || []
-        );
       })
       .catch((err: ErrorResponseHandler) => {
         setErrorSnackMessage(err);
@@ -172,28 +146,15 @@ const TenantSecurity = ({
         minioCAs: minioCaCertificates
           .map((keyPair: KeyPair) => keyPair.encoded_cert)
           .filter((cert: any) => cert),
-        console: consoleCertificates
-          .map((keyPair: KeyPair) => ({
-            crt: keyPair.encoded_cert,
-            key: keyPair.encoded_key,
-          }))
-          .filter((cert: any) => cert.crt && cert.key),
-        consoleCAs: consoleCaCertificates
-          .map((keyPair: KeyPair) => keyPair.encoded_cert)
-          .filter((cert: any) => cert),
       };
     } else {
       payload["customCertificates"] = {
         secretsToBeDeleted: [
           ...minioTLSCertificateSecrets.map((cert) => cert.name),
           ...minioTLSCaCertificateSecrets.map((cert) => cert.name),
-          ...consoleTLSCertificateSecrets.map((cert) => cert.name),
-          ...consoleTLSCaCertificateSecrets.map((cert) => cert.name),
         ],
         minio: [],
         minioCAs: [],
-        console: [],
-        consoleCAs: [],
       };
     }
     api
@@ -217,24 +178,6 @@ const TenantSecurity = ({
           },
         ]);
         setMinioCaCertificates([
-          {
-            cert: "",
-            encoded_cert: "",
-            encoded_key: "",
-            id: Date.now().toString(),
-            key: "",
-          },
-        ]);
-        setConsoleCertificates([
-          {
-            cert: "",
-            encoded_cert: "",
-            encoded_key: "",
-            id: Date.now().toString(),
-            key: "",
-          },
-        ]);
-        setConsoleCaCertificates([
           {
             cert: "",
             encoded_cert: "",
@@ -270,18 +213,6 @@ const TenantSecurity = ({
       );
     setMinioTLSCertificateSecrets(updatedMinIOTLSCertificateSecrets);
     setMinioTLSCaCertificateSecrets(updatedMinIOTLSCaCertificateSecrets);
-
-    // Update Console TLS certificate secrets
-    const updatedConsoleTLSCertificateSecrets =
-      consoleTLSCertificateSecrets.filter(
-        (certificateSecret) => certificateSecret.name !== certificateInfo.name
-      );
-    const updatedConsoleTLSCaCertificateSecrets =
-      consoleTLSCaCertificateSecrets.filter(
-        (certificateSecret) => certificateSecret.name !== certificateInfo.name
-      );
-    setConsoleTLSCertificateSecrets(updatedConsoleTLSCertificateSecrets);
-    setConsoleTLSCaCertificateSecrets(updatedConsoleTLSCaCertificateSecrets);
   };
 
   const addFileToKeyPair = (
@@ -303,16 +234,6 @@ const TenantSecurity = ({
       case "minioCAs": {
         certificates = minioCaCertificates;
         updateCertificates = setMinioCaCertificates;
-        break;
-      }
-      case "console": {
-        certificates = consoleCertificates;
-        updateCertificates = setConsoleCertificates;
-        break;
-      }
-      case "consoleCAs": {
-        certificates = consoleCaCertificates;
-        updateCertificates = setConsoleCaCertificates;
         break;
       }
       default:
@@ -346,16 +267,6 @@ const TenantSecurity = ({
         updateCertificates = setMinioCaCertificates;
         break;
       }
-      case "console": {
-        certificates = consoleCertificates;
-        updateCertificates = setConsoleCertificates;
-        break;
-      }
-      case "consoleCAs": {
-        certificates = consoleCaCertificates;
-        updateCertificates = setConsoleCaCertificates;
-        break;
-      }
       default:
     }
 
@@ -380,16 +291,6 @@ const TenantSecurity = ({
       case "minioCAs": {
         certificates = minioCaCertificates;
         updateCertificates = setMinioCaCertificates;
-        break;
-      }
-      case "console": {
-        certificates = consoleCertificates;
-        updateCertificates = setConsoleCertificates;
-        break;
-      }
-      case "consoleCAs": {
-        certificates = consoleCaCertificates;
-        updateCertificates = setConsoleCaCertificates;
         break;
       }
       default:
@@ -699,225 +600,6 @@ const TenantSecurity = ({
                   </Grid>
                 </Grid>
               </Paper>
-
-              {tenant?.consoleEnabled ? (
-                <Fragment>
-                  <br />
-                  <Paper className={classes.paperContainer}>
-                    <Grid container>
-                      <Grid container item xs={12}>
-                        <Typography variant="h5" display="block" gutterBottom>
-                          Console Certificates
-                        </Typography>
-                      </Grid>
-                      <Grid container item xs={12}>
-                        {consoleTLSCertificateSecrets.map(
-                          (certificateInfo: ICertificateInfo) => (
-                            <Chip
-                              key={certificateInfo.name}
-                              variant="outlined"
-                              color="primary"
-                              className={classes.certificateInfo}
-                              label={
-                                <div>
-                                  <Typography
-                                    variant="subtitle1"
-                                    display="block"
-                                    gutterBottom
-                                  >
-                                    {certificateInfo.name}
-                                  </Typography>
-                                  <Typography
-                                    className={classes.italic}
-                                    variant="caption"
-                                    display="block"
-                                    gutterBottom
-                                  >
-                                    {certificateInfo.domains &&
-                                      certificateInfo.domains.map((dom) => {
-                                        return <div>{dom}</div>;
-                                      })}
-                                  </Typography>
-                                  <Typography
-                                    className={classes.bold}
-                                    variant="overline"
-                                    gutterBottom
-                                  >
-                                    Expiry:&nbsp;
-                                  </Typography>
-                                  <Typography variant="caption" gutterBottom>
-                                    <Moment format="YYYY-MM-DD">
-                                      {certificateInfo.expiry}
-                                    </Moment>
-                                  </Typography>
-                                </div>
-                              }
-                              onDelete={() =>
-                                removeCertificate(certificateInfo)
-                              }
-                            />
-                          )
-                        )}
-                      </Grid>
-                      <Grid container item xs={12}>
-                        <br />
-                      </Grid>
-                      <Grid container item xs={12}>
-                        {consoleCertificates.map((keyPair: KeyPair) => (
-                          <Fragment key={keyPair.id}>
-                            <Grid item xs={6}>
-                              <FileSelector
-                                onChange={(encodedValue, fileName) =>
-                                  addFileToKeyPair(
-                                    "console",
-                                    keyPair.id,
-                                    "cert",
-                                    fileName,
-                                    encodedValue
-                                  )
-                                }
-                                accept=".cer,.crt,.cert,.pem"
-                                id="consoleCert"
-                                name="consoleCert"
-                                label="Cert"
-                                value={keyPair.cert}
-                              />
-                            </Grid>
-                            <Grid item xs={6}>
-                              <FileSelector
-                                onChange={(encodedValue, fileName) =>
-                                  addFileToKeyPair(
-                                    "console",
-                                    keyPair.id,
-                                    "key",
-                                    fileName,
-                                    encodedValue
-                                  )
-                                }
-                                accept=".key,.pem"
-                                id="consoleKey"
-                                name="consoleKey"
-                                label="Key"
-                                value={keyPair.key}
-                              />
-                            </Grid>
-                          </Fragment>
-                        ))}
-                      </Grid>
-                      <Grid container item xs={12}>
-                        <Typography variant="h6" display="block" gutterBottom>
-                          CA Certificates
-                        </Typography>
-                      </Grid>
-                      <Grid container item xs={12}>
-                        {consoleTLSCaCertificateSecrets.map(
-                          (certificateInfo: ICertificateInfo) => (
-                            <Chip
-                              key={certificateInfo.name}
-                              variant="outlined"
-                              color="primary"
-                              className={classes.certificateInfo}
-                              label={
-                                <div>
-                                  <Typography
-                                    variant="subtitle1"
-                                    display="block"
-                                    gutterBottom
-                                  >
-                                    {certificateInfo.name}
-                                  </Typography>
-                                  <Typography
-                                    className={classes.italic}
-                                    variant="caption"
-                                    display="block"
-                                    gutterBottom
-                                  >
-                                    {certificateInfo.domains &&
-                                      certificateInfo.domains.map((dom) => {
-                                        return <div>{dom}</div>;
-                                      })}
-                                  </Typography>
-                                  <Typography
-                                    className={classes.bold}
-                                    variant="overline"
-                                    gutterBottom
-                                  >
-                                    Expiry:&nbsp;
-                                  </Typography>
-                                  <Typography variant="caption" gutterBottom>
-                                    <Moment format="YYYY-MM-DD">
-                                      {certificateInfo.expiry}
-                                    </Moment>
-                                  </Typography>
-                                </div>
-                              }
-                              onDelete={() =>
-                                removeCertificate(certificateInfo)
-                              }
-                            />
-                          )
-                        )}
-                      </Grid>
-                      <Grid container item xs={12}>
-                        <br />
-                      </Grid>
-                      <Grid container item xs={12}>
-                        {consoleCaCertificates.map((keyPair: KeyPair) => (
-                          <Fragment key={keyPair.id}>
-                            <Grid item xs={10}>
-                              <FileSelector
-                                onChange={(encodedValue, fileName) =>
-                                  addFileToKeyPair(
-                                    "consoleCAs",
-                                    keyPair.id,
-                                    "cert",
-                                    fileName,
-                                    encodedValue
-                                  )
-                                }
-                                accept=".cer,.crt,.cert,.pem"
-                                id="tlsCert"
-                                name="tlsCert"
-                                label="Cert"
-                                value={keyPair.cert}
-                              />
-                            </Grid>
-                            <Grid item xs={1}>
-                              <Button
-                                onClick={() =>
-                                  deleteKeyPair("consoleCAs", keyPair.id)
-                                }
-                                color="secondary"
-                              >
-                                Remove
-                              </Button>
-                            </Grid>
-                          </Fragment>
-                        ))}
-                      </Grid>
-                      <Grid container item xs={12}>
-                        <Button
-                          onClick={() => addKeyPair("consoleCAs")}
-                          color="primary"
-                        >
-                          Add Console Certificate
-                        </Button>
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={12} className={classes.buttonContainer}>
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        disabled={dialogOpen || isSending}
-                        onClick={() => setDialogOpen(true)}
-                      >
-                        Save
-                      </Button>
-                    </Grid>
-                  </Paper>
-                </Fragment>
-              ) : null}
             </Fragment>
           )}
         </Fragment>

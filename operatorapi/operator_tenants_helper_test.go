@@ -33,6 +33,7 @@ import (
 var DeletePodCollectionMock func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error
 var DeleteSecretMock func(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error
 var CreateSecretMock func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error)
+var UpdateSecretMock func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.UpdateOptions) (*v1.Secret, error)
 
 func (c k8sClientMock) deletePodCollection(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
 	return DeletePodCollectionMock(ctx, namespace, opts, listOpts)
@@ -44,6 +45,10 @@ func (c k8sClientMock) deleteSecret(ctx context.Context, namespace string, name 
 
 func (c k8sClientMock) createSecret(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error) {
 	return CreateSecretMock(ctx, namespace, secret, opts)
+}
+
+func (c k8sClientMock) updateSecret(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.UpdateOptions) (*v1.Secret, error) {
+	return UpdateSecretMock(ctx, namespace, secret, opts)
 }
 
 func Test_tenantUpdateCertificates(t *testing.T) {
@@ -224,70 +229,6 @@ func Test_tenantUpdateCertificates(t *testing.T) {
 				},
 				mockDeletePodCollection: func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
 					return errors.New("error deleting minio pods")
-				},
-			},
-			wantErr: true,
-		},
-		{
-			name: "error replacing external certs for console because of missing keypair",
-			args: args{
-				ctx:       context.Background(),
-				opClient:  opClient,
-				clientSet: k8sClient,
-				namespace: "",
-				params: operator_api.TenantUpdateCertificateParams{
-					Body: &models.TLSConfiguration{
-						Console: &models.KeyPairConfiguration{},
-					},
-				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
-					return &miniov2.Tenant{
-						Spec: miniov2.TenantSpec{
-							Console: &miniov2.ConsoleConfiguration{
-								ExternalCertSecret: &miniov2.LocalCertificateReference{
-									Name: "secret",
-								},
-							},
-						},
-					}, nil
-				},
-			},
-			wantErr: true,
-		},
-		{
-			name: "certificates replaced but error during deleting existing tenant pods",
-			args: args{
-				ctx:       context.Background(),
-				opClient:  opClient,
-				clientSet: k8sClient,
-				namespace: "",
-				params: operator_api.TenantUpdateCertificateParams{
-					Body: &models.TLSConfiguration{
-						Console: &models.KeyPairConfiguration{
-							Crt: &crt,
-							Key: &key,
-						},
-					},
-				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
-					return &miniov2.Tenant{
-						Spec: miniov2.TenantSpec{
-							Console: &miniov2.ConsoleConfiguration{
-								ExternalCertSecret: &miniov2.LocalCertificateReference{
-									Name: "secret",
-								},
-							},
-						},
-					}, nil
-				},
-				mockDeleteSecret: func(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error {
-					return nil
-				},
-				mockCreateSecret: func(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error) {
-					return &v1.Secret{}, nil
-				},
-				mockDeletePodCollection: func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
-					return errors.New("error deleting console pods")
 				},
 			},
 			wantErr: true,

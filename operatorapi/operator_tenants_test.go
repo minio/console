@@ -468,9 +468,6 @@ func Test_TenantInfo(t *testing.T) {
 					Spec: miniov2.TenantSpec{
 						Pools: []miniov2.Pool{},
 						Image: "minio/minio:RELEASE.2020-06-14T18-32-17Z",
-						Console: &miniov2.ConsoleConfiguration{
-							Image: "minio/console:master",
-						},
 					},
 					Status: miniov2.TenantStatus{
 						CurrentState: "ready",
@@ -484,7 +481,6 @@ func Test_TenantInfo(t *testing.T) {
 				Namespace:        "minio-ns",
 				Image:            "minio/minio:RELEASE.2020-06-14T18-32-17Z",
 				EnablePrometheus: false,
-				ConsoleImage:     "minio/console:master",
 			},
 		},
 	}
@@ -1012,31 +1008,6 @@ func Test_UpdateTenantAction(t *testing.T) {
 					Tenant: "minio-tenant",
 					Body: &models.UpdateTenantRequest{
 						Image: "",
-					},
-				},
-			},
-			wantErr: false,
-		},
-		{
-			name: "Update minio console version no errors",
-			args: args{
-				ctx:            context.Background(),
-				operatorClient: opClient,
-				httpCl:         httpClientM,
-				nameSpace:      "default",
-				tenantName:     "minio-tenant",
-				mockTenantPatch: func(ctx context.Context, namespace string, tenantName string, pt types.PatchType, data []byte, options metav1.PatchOptions) (*miniov2.Tenant, error) {
-					return &miniov2.Tenant{}, nil
-				},
-				mockTenantGet: func(ctx context.Context, namespace string, tenantName string, options metav1.GetOptions) (*miniov2.Tenant, error) {
-					return &miniov2.Tenant{}, nil
-				},
-				mockHTTPClientGet: func(url string) (resp *http.Response, err error) {
-					return nil, errors.New("use default minio")
-				},
-				params: operator_api.UpdateTenantParams{
-					Body: &models.UpdateTenantRequest{
-						ConsoleImage: "minio/console:v0.9.1",
 					},
 				},
 			},

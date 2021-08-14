@@ -56,12 +56,6 @@ var (
 	GlobalTLSCertsManager *xcerts.Manager
 )
 
-var consoleImage string
-
-func init() {
-	consoleImage = env.Get(ConsoleOperatorConsoleImage, ConsoleImageDefaultVersion)
-}
-
 // getK8sSAToken assumes the plugin is running inside a k8s pod and extract the current service account from the
 // /var/run/secrets/kubernetes.io/serviceaccount/token file
 func getK8sSAToken() string {
@@ -70,7 +64,4 @@ func getK8sSAToken() string {
 		return env.Get(ConsoleOperatorSAToken, "")
 	}
 	return string(dat)
-}
-func getConsoleImage() string {
-	return consoleImage
 }

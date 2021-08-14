@@ -890,10 +890,10 @@ github.com/minio/minio-go/v7 v7.0.11-0.20210302210017-6ae69c73ce78/go.mod h1:mTh
 github.com/minio/minio-go/v7 v7.0.11-0.20210607181445-e162fdb8e584/go.mod h1:WoyW+ySKAKjY98B9+7ZbI8z8S3jaxaisdcvj9TGlazA=
 github.com/minio/minio-go/v7 v7.0.13-0.20210715203016-9e713532886e h1:aVnxKPpUI1gVeEf9vC+QEt8OxMXiiNMeUWcrBM62oDU=
 github.com/minio/minio-go/v7 v7.0.13-0.20210715203016-9e713532886e/go.mod h1:S23iSP5/gbMwtxeY5FM71R+TkAYyzEdoNEDDwpt8yWs=
-github.com/minio/operator v0.0.0-20210803012017-0f43eee7fd7a h1:jvEyFZBLo1mIc5YTg+AIAieDkzoAnc9+j4yT5kZO15E=
-github.com/minio/operator v0.0.0-20210803012017-0f43eee7fd7a/go.mod h1:zQqn6VGT46xlSpVXh1I/VZRv+eSgHtVu6URdg71YKX8=
-github.com/minio/operator/logsearchapi v0.0.0-20210803012017-0f43eee7fd7a h1:tnyzzgWP0PXM1nrwHtlyawuBguY+6R9/yee0bezbGDY=
-github.com/minio/operator/logsearchapi v0.0.0-20210803012017-0f43eee7fd7a/go.mod h1:R+38Pf3wfm+JMiyLPb/r8OMrBm0vK2hZgUT4y4aYoSY=
+github.com/minio/operator v0.0.0-20210812082324-26350f153661 h1:dGAJHpfmhNukFg0M0wDqH+G1OB2YPgZCcT6uv4n9YQk=
+github.com/minio/operator v0.0.0-20210812082324-26350f153661/go.mod h1:zQqn6VGT46xlSpVXh1I/VZRv+eSgHtVu6URdg71YKX8=
+github.com/minio/operator/logsearchapi v0.0.0-20210812082324-26350f153661 h1:tJw15hS3b1dVTf5PwA4roXZ/oRNnHyZ/8Y+yNTmQ5rA=
+github.com/minio/operator/logsearchapi v0.0.0-20210812082324-26350f153661/go.mod h1:R+38Pf3wfm+JMiyLPb/r8OMrBm0vK2hZgUT4y4aYoSY=
 github.com/minio/pkg v1.0.3/go.mod h1:obU54TZ9QlMv0TRaDgQ/JTzf11ZSXxnSfLrm4tMtBP8=
 github.com/minio/pkg v1.0.4/go.mod h1:obU54TZ9QlMv0TRaDgQ/JTzf11ZSXxnSfLrm4tMtBP8=
 github.com/minio/pkg v1.0.8 h1:lWQwHSeYlvnRoPpO+wS0I4mL6c00ABxBgbGjSmjwOi4=

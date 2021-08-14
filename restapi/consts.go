@@ -26,6 +26,8 @@ const (
 	ConsoleTLSHostname   = "CONSOLE_TLS_HOSTNAME"
 	ConsoleTLSPort       = "CONSOLE_TLS_PORT"
 	ConsoleSubnetLicense = "CONSOLE_SUBNET_LICENSE"
+	MinIOConfigEnvFile   = "MINIO_CONFIG_ENV_FILE"
+	MinIOSubnetLicense   = "MINIO_SUBNET_LICENSE"
 
 	// Constants for Secure middleware
 	ConsoleSecureAllowedHosts                    = "CONSOLE_SECURE_ALLOWED_HOSTS"

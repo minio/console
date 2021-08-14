@@ -20,6 +20,8 @@ import (
 	"context"
 	"testing"
 
+	v2 "github.com/minio/operator/pkg/apis/minio.min.io/v2"
+
 	"errors"
 
 	corev1 "k8s.io/api/core/v1"
@@ -28,13 +30,17 @@ import (
 
 func Test_addSubscriptionLicenseToTenant(t *testing.T) {
 	k8sClient := k8sClientMock{}
+	opClient := opClientMock{}
+	tenant := &v2.Tenant{
+		ObjectMeta: metav1.ObjectMeta{},
+		Spec:       v2.TenantSpec{},
+	}
 	type args struct {
-		ctx        context.Context
-		clientSet  K8sClientI
-		license    string
-		namespace  string
-		tenantName string
-		secretName string
+		ctx       context.Context
+		clientSet K8sClientI
+		opClient  OperatorClientI
+		license   string
+		tenant    *v2.Tenant
 	}
 	tests := []struct {
 		name     string
@@ -43,150 +49,158 @@ func Test_addSubscriptionLicenseToTenant(t *testing.T) {
 		mockFunc func()
 	}{
 		{
-			name: "error because subnet license doesnt exists",
+			name: "success updating subscription for tenant with configuration file",
 			args: args{
-				ctx:        context.Background(),
-				clientSet:  k8sClient,
-				license:    "",
-				namespace:  "",
-				tenantName: "",
-				secretName: "subnet-license",
-			},
-			wantErr: true,
-			mockFunc: func() {
-				k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
-					return nil, errors.New("something went wrong")
-				}
-			},
-		},
-		{
-			name: "error because existing license could not be deleted",
-			args: args{
-				ctx:        context.Background(),
-				clientSet:  k8sClient,
-				license:    "",
-				namespace:  "",
-				tenantName: "",
-				secretName: OperatorSubnetLicenseSecretName,
-			},
-			wantErr: true,
-			mockFunc: func() {
-				k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
-					imm := true
-					return &corev1.Secret{
-						ObjectMeta: metav1.ObjectMeta{
-							Name: OperatorSubnetLicenseSecretName,
-						},
-						Immutable: &imm,
-						Data: map[string][]byte{
-							ConsoleSubnetLicense: []byte("eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsZW5pbitjMUBtaW5pby5pbyIsInRlYW1OYW1lIjoiY29uc29sZS1jdXN0b21lciIsImV4cCI6MS42Mzk5NTI2MTE2MDkxNDQ3MzJlOSwiaXNzIjoic3VibmV0QG1pbmlvLmlvIiwiY2FwYWNpdHkiOjI1LCJpYXQiOjEuNjA4NDE2NjExNjA5MTQ0NzMyZTksImFjY291bnRJZCI6MTc2LCJzZXJ2aWNlVHlwZSI6IlNUQU5EQVJEIn0.ndtf8V_FJTvhXeemVLlORyDev6RJaSPhZ2djkMVK9SvXD0srR_qlYJATPjC4NljkS71nXMGVDov5uCTuUL97x6FGQEKDruA-z24x_2Zr8kof4LfBb3HUHudCR8QvE--I"),
-						},
-					}, nil
-				}
-				DeleteSecretMock = func(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error {
-					return errors.New("something went wrong")
-				}
-			},
-		},
-		{
-			name: "error because unable to create new subnet license",
-			args: args{
-				ctx:        context.Background(),
-				clientSet:  k8sClient,
-				license:    "",
-				namespace:  "",
-				tenantName: "",
-				secretName: OperatorSubnetLicenseSecretName,
-			},
-			wantErr: true,
-			mockFunc: func() {
-				k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
-					imm := true
-					return &corev1.Secret{
-						ObjectMeta: metav1.ObjectMeta{
-							Name: OperatorSubnetLicenseSecretName,
-						},
-						Immutable: &imm,
-						Data: map[string][]byte{
-							ConsoleSubnetLicense: []byte("eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsZW5pbitjMUBtaW5pby5pbyIsInRlYW1OYW1lIjoiY29uc29sZS1jdXN0b21lciIsImV4cCI6MS42Mzk5NTI2MTE2MDkxNDQ3MzJlOSwiaXNzIjoic3VibmV0QG1pbmlvLmlvIiwiY2FwYWNpdHkiOjI1LCJpYXQiOjEuNjA4NDE2NjExNjA5MTQ0NzMyZTksImFjY291bnRJZCI6MTc2LCJzZXJ2aWNlVHlwZSI6IlNUQU5EQVJEIn0.ndtf8V_FJTvhXeemVLlORyDev6RJaSPhZ2djkMVK9SvXD0srR_qlYJATPjC4NljkS71nXMGVDov5uCTuUL97x6FGQEKDruA-z24x_2Zr8kof4LfBb3HUHudCR8QvE--I"),
-						},
-					}, nil
-				}
-				DeleteSecretMock = func(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error {
-					return nil
-				}
-				CreateSecretMock = func(ctx context.Context, namespace string, secret *corev1.Secret, opts metav1.CreateOptions) (*corev1.Secret, error) {
-					return nil, errors.New("something went wrong")
-				}
-			},
-		},
-		{
-			name: "error because unable to delete pod collection",
-			args: args{
-				ctx:        context.Background(),
-				clientSet:  k8sClient,
-				license:    "",
-				namespace:  "",
-				tenantName: "",
-				secretName: OperatorSubnetLicenseSecretName,
-			},
-			wantErr: true,
-			mockFunc: func() {
-				k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
-					imm := true
-					return &corev1.Secret{
-						ObjectMeta: metav1.ObjectMeta{
-							Name: OperatorSubnetLicenseSecretName,
-						},
-						Immutable: &imm,
-						Data: map[string][]byte{
-							ConsoleSubnetLicense: []byte("eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsZW5pbitjMUBtaW5pby5pbyIsInRlYW1OYW1lIjoiY29uc29sZS1jdXN0b21lciIsImV4cCI6MS42Mzk5NTI2MTE2MDkxNDQ3MzJlOSwiaXNzIjoic3VibmV0QG1pbmlvLmlvIiwiY2FwYWNpdHkiOjI1LCJpYXQiOjEuNjA4NDE2NjExNjA5MTQ0NzMyZTksImFjY291bnRJZCI6MTc2LCJzZXJ2aWNlVHlwZSI6IlNUQU5EQVJEIn0.ndtf8V_FJTvhXeemVLlORyDev6RJaSPhZ2djkMVK9SvXD0srR_qlYJATPjC4NljkS71nXMGVDov5uCTuUL97x6FGQEKDruA-z24x_2Zr8kof4LfBb3HUHudCR8QvE--I"),
-						},
-					}, nil
-				}
-				DeleteSecretMock = func(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error {
-					return nil
-				}
-				CreateSecretMock = func(ctx context.Context, namespace string, secret *corev1.Secret, opts metav1.CreateOptions) (*corev1.Secret, error) {
-					return nil, nil
-				}
-				DeletePodCollectionMock = func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
-					return errors.New("something went wrong")
-				}
-			},
-		},
-		{
-			name: "subscription updated successfully",
-			args: args{
-				ctx:        context.Background(),
-				clientSet:  k8sClient,
-				license:    "",
-				namespace:  "",
-				tenantName: "",
-				secretName: OperatorSubnetLicenseSecretName,
+				ctx:       context.Background(),
+				clientSet: k8sClient,
+				opClient:  opClient,
+				license:   "",
+				tenant:    tenant,
 			},
 			wantErr: false,
 			mockFunc: func() {
+				tenant.Spec.Configuration = &corev1.LocalObjectReference{
+					Name: "minio-configuration",
+				}
 				k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
-					imm := true
 					return &corev1.Secret{
 						ObjectMeta: metav1.ObjectMeta{
-							Name: OperatorSubnetLicenseSecretName,
+							Name: "minio-configuration",
 						},
-						Immutable: &imm,
 						Data: map[string][]byte{
-							ConsoleSubnetLicense: []byte("eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsZW5pbitjMUBtaW5pby5pbyIsInRlYW1OYW1lIjoiY29uc29sZS1jdXN0b21lciIsImV4cCI6MS42Mzk5NTI2MTE2MDkxNDQ3MzJlOSwiaXNzIjoic3VibmV0QG1pbmlvLmlvIiwiY2FwYWNpdHkiOjI1LCJpYXQiOjEuNjA4NDE2NjExNjA5MTQ0NzMyZTksImFjY291bnRJZCI6MTc2LCJzZXJ2aWNlVHlwZSI6IlNUQU5EQVJEIn0.ndtf8V_FJTvhXeemVLlORyDev6RJaSPhZ2djkMVK9SvXD0srR_qlYJATPjC4NljkS71nXMGVDov5uCTuUL97x6FGQEKDruA-z24x_2Zr8kof4LfBb3HUHudCR8QvE--I"),
+							"config.env": []byte("export MINIO_SUBNET_LICENSE=\"eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsZW5pbitjMUBtaW5pby5pbyIsInRlYW1OYW1lIjoiY29uc29sZS1jdXN0b21lciIsImV4cCI6MS42Mzk5NTI2MTE2MDkxNDQ3MzJlOSwiaXNzIjoic3VibmV0QG1pbmlvLmlvIiwiY2FwYWNpdHkiOjI1LCJpYXQiOjEuNjA4NDE2NjExNjA5MTQ0NzMyZTksImFjY291bnRJZCI6MTc2LCJzZXJ2aWNlVHlwZSI6IlNUQU5EQVJEIn0.ndtf8V_FJTvhXeemVLlORyDev6RJaSPhZ2djkMVK9SvXD0srR_qlYJATPjC4NljkS71nXMGVDov5uCTuUL97x6FGQEKDruA-z24x_2Zr8kof4LfBb3HUHudCR8QvE--I\""),
 						},
 					}, nil
 				}
-				DeleteSecretMock = func(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error {
-					return nil
-				}
-				CreateSecretMock = func(ctx context.Context, namespace string, secret *corev1.Secret, opts metav1.CreateOptions) (*corev1.Secret, error) {
+				UpdateSecretMock = func(ctx context.Context, namespace string, secret *corev1.Secret, opts metav1.UpdateOptions) (*corev1.Secret, error) {
 					return nil, nil
 				}
-				DeletePodCollectionMock = func(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error {
-					return nil
+			},
+		},
+		{
+			name: "error updating subscription for tenant because cannot get configuration file",
+			args: args{
+				ctx:       context.Background(),
+				clientSet: k8sClient,
+				opClient:  opClient,
+				license:   "",
+				tenant:    tenant,
+			},
+			wantErr: true,
+			mockFunc: func() {
+				tenant.Spec.Configuration = &corev1.LocalObjectReference{
+					Name: "minio-configuration",
+				}
+				k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+					return nil, errors.New("something wrong happened")
+				}
+				UpdateSecretMock = func(ctx context.Context, namespace string, secret *corev1.Secret, opts metav1.UpdateOptions) (*corev1.Secret, error) {
+					return nil, nil
+				}
+			},
+		},
+		{
+			name: "error updating subscription for tenant because configuration file has wrong format",
+			args: args{
+				ctx:       context.Background(),
+				clientSet: k8sClient,
+				opClient:  opClient,
+				license:   "",
+				tenant:    tenant,
+			},
+			wantErr: true,
+			mockFunc: func() {
+				tenant.Spec.Configuration = &corev1.LocalObjectReference{
+					Name: "minio-configuration",
+				}
+				k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+					return &corev1.Secret{
+						ObjectMeta: metav1.ObjectMeta{
+							Name: "minio-configuration",
+						},
+						Data: map[string][]byte{
+							"aaaaa": []byte("export MINIO_SUBNET_LICENSE=\"eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsZW5pbitjMUBtaW5pby5pbyIsInRlYW1OYW1lIjoiY29uc29sZS1jdXN0b21lciIsImV4cCI6MS42Mzk5NTI2MTE2MDkxNDQ3MzJlOSwiaXNzIjoic3VibmV0QG1pbmlvLmlvIiwiY2FwYWNpdHkiOjI1LCJpYXQiOjEuNjA4NDE2NjExNjA5MTQ0NzMyZTksImFjY291bnRJZCI6MTc2LCJzZXJ2aWNlVHlwZSI6IlNUQU5EQVJEIn0.ndtf8V_FJTvhXeemVLlORyDev6RJaSPhZ2djkMVK9SvXD0srR_qlYJATPjC4NljkS71nXMGVDov5uCTuUL97x6FGQEKDruA-z24x_2Zr8kof4LfBb3HUHudCR8QvE--I\""),
+						},
+					}, nil
+				}
+				UpdateSecretMock = func(ctx context.Context, namespace string, secret *corev1.Secret, opts metav1.UpdateOptions) (*corev1.Secret, error) {
+					return nil, nil
+				}
+			},
+		},
+		{
+			name: "error updating subscription for tenant because cannot update configuration file",
+			args: args{
+				ctx:       context.Background(),
+				clientSet: k8sClient,
+				opClient:  opClient,
+				license:   "",
+				tenant:    tenant,
+			},
+			wantErr: true,
+			mockFunc: func() {
+				tenant.Spec.Configuration = &corev1.LocalObjectReference{
+					Name: "minio-configuration",
+				}
+				k8sclientGetSecretMock = func(ctx context.Context, namespace, secretName string, opts metav1.GetOptions) (*corev1.Secret, error) {
+					return &corev1.Secret{
+						ObjectMeta: metav1.ObjectMeta{
+							Name: "minio-configuration",
+						},
+						Data: map[string][]byte{
+							"config.env": []byte("export MINIO_SUBNET_LICENSE=\"eyJhbGciOiJFUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsZW5pbitjMUBtaW5pby5pbyIsInRlYW1OYW1lIjoiY29uc29sZS1jdXN0b21lciIsImV4cCI6MS42Mzk5NTI2MTE2MDkxNDQ3MzJlOSwiaXNzIjoic3VibmV0QG1pbmlvLmlvIiwiY2FwYWNpdHkiOjI1LCJpYXQiOjEuNjA4NDE2NjExNjA5MTQ0NzMyZTksImFjY291bnRJZCI6MTc2LCJzZXJ2aWNlVHlwZSI6IlNUQU5EQVJEIn0.ndtf8V_FJTvhXeemVLlORyDev6RJaSPhZ2djkMVK9SvXD0srR_qlYJATPjC4NljkS71nXMGVDov5uCTuUL97x6FGQEKDruA-z24x_2Zr8kof4LfBb3HUHudCR8QvE--I\""),
+						},
+					}, nil
+				}
+				UpdateSecretMock = func(ctx context.Context, namespace string, secret *corev1.Secret, opts metav1.UpdateOptions) (*corev1.Secret, error) {
+					return nil, errors.New("something wrong happened")
+				}
+
+			},
+		},
+		{
+			name: "success updating subscription for tenant with env variable",
+			args: args{
+				ctx:       context.Background(),
+				clientSet: k8sClient,
+				opClient:  opClient,
+				license:   "",
+				tenant:    tenant,
+			},
+			wantErr: false,
+			mockFunc: func() {
+				tenant.Spec.Env = []corev1.EnvVar{
+					{
+						Name:      "MINIO_SUBNET_LICENSE",
+						Value:     "",
+						ValueFrom: nil,
+					},
+				}
+				opClientTenantUpdateMock = func(ctx context.Context, tenant *v2.Tenant, opts metav1.UpdateOptions) (*v2.Tenant, error) {
+					return nil, nil
+				}
+			},
+		},
+		{
+			name: "error updating subscription for tenant with env variable because of update tenant error",
+			args: args{
+				ctx:       context.Background(),
+				clientSet: k8sClient,
+				opClient:  opClient,
+				license:   "",
+				tenant:    tenant,
+			},
+			wantErr: true,
+			mockFunc: func() {
+				tenant.Spec.Env = []corev1.EnvVar{
+					{
+						Name:      "MINIO_SUBNET_LICENSE",
+						Value:     "",
+						ValueFrom: nil,
+					},
+				}
+				opClientTenantUpdateMock = func(ctx context.Context, tenant *v2.Tenant, opts metav1.UpdateOptions) (*v2.Tenant, error) {
+					return nil, errors.New("something wrong happened")
 				}
 			},
 		},
@@ -196,7 +210,7 @@ func Test_addSubscriptionLicenseToTenant(t *testing.T) {
 			if tt.mockFunc != nil {
 				tt.mockFunc()
 			}
-			if err := addSubscriptionLicenseToTenant(tt.args.ctx, tt.args.clientSet, tt.args.license, tt.args.namespace, tt.args.tenantName, tt.args.secretName); (err != nil) != tt.wantErr {
+			if err := addSubscriptionLicenseToTenant(tt.args.ctx, tt.args.clientSet, tt.args.opClient, tt.args.license, tt.args.tenant); (err != nil) != tt.wantErr {
 				t.Errorf("addSubscriptionLicenseToTenant() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

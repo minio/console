@@ -144,11 +144,17 @@ func Test_getLicenseFromCredentials(t *testing.T) {
 			mockFunc: func() {
 				HTTPPostMock = func(url, contentType string, body io.Reader) (resp *http.Response, err error) {
 					// returning test jwt token
-					return &http.Response{Body: ioutil.NopCloser(bytes.NewReader([]byte("{\"has_memberships\":true,\"token_info\":{\"access_token\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik4wRXdOa1V5UXpORU1UUkNOekU0UmpSR1JVWkJSa1UxUmtZNE9EY3lOekZHTXpjNU1qZ3hNZyJ9.eyJodHRwczovL2lkLnN1Ym5ldC5taW4uaW8vY2xhaW1zL2dyb3VwcyI6W10sImh0dHBzOi8vaWQuc3VibmV0Lm1pbi5pby9jbGFpbXMvcm9sZXMiOltdLCJodHRwczovL2lkLnN1Ym5ldC5taW4uaW8vY2xhaW1zL2VtYWlsIjoibGVuaW4rYzFAbWluaW8uaW8iLCJpc3MiOiJodHRwczovL2lkLnN1Ym5ldC5taW4uaW8vIiwic3ViIjoiYXV0aDB8NWZjZWFlYTMyNTNhZjEwMDc3NDZkMDM0IiwiYXVkIjoiaHR0cHM6Ly9zdWJuZXQubWluLmlvL2FwaSIsImlhdCI6MTYwODQxNjE5NiwiZXhwIjoxNjExMDA4MTk2LCJhenAiOiI1WTA0eVZlejNiOFgxUFVzRHVqSmxuZXVuY3ExVjZxaiIsInNjb3BlIjoib2ZmbGluZV9hY2Nlc3MiLCJndHkiOiJwYXNzd29yZCJ9.GC8DRLT0jUEteuBZBmyMXMswLSblCr_89Gu5NcVRUzKSYAaZ5VFW4UFgo1BpiC0sePuWJ0Vykitphx7znTfZfj5B3mZbOw3ejG6kxz7nm9DuYMmySJFYnwroZ9EP02vkW7-n_-YvEg8le1wXfkJ3lTUzO3aWddS4rfQRsZ2YJJUj61GiNyEK_QNP4PrYOuzLyD1wV75NejFqfcFoj7nRkT1K2BM0-89-_f2AFDGTjov6Ig6s1s-zLC9wxcYSmubNwpCJytZmQgPqIepOr065Y6OB4n0n0B5sXguuGuzb8VAkECrHhHPz8ta926fc0jC4XxVCNKdbV1_qC3-1yY7AJA\",\"expires_in\":2592000.0,\"token_type\":\"Bearer\"}}")))}, nil
+					return &http.Response{
+						StatusCode: 200,
+						Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"has_memberships\":true,\"token_info\":{\"access_token\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik4wRXdOa1V5UXpORU1UUkNOekU0UmpSR1JVWkJSa1UxUmtZNE9EY3lOekZHTXpjNU1qZ3hNZyJ9.eyJodHRwczovL2lkLnN1Ym5ldC5taW4uaW8vY2xhaW1zL2dyb3VwcyI6W10sImh0dHBzOi8vaWQuc3VibmV0Lm1pbi5pby9jbGFpbXMvcm9sZXMiOltdLCJodHRwczovL2lkLnN1Ym5ldC5taW4uaW8vY2xhaW1zL2VtYWlsIjoibGVuaW4rYzFAbWluaW8uaW8iLCJpc3MiOiJodHRwczovL2lkLnN1Ym5ldC5taW4uaW8vIiwic3ViIjoiYXV0aDB8NWZjZWFlYTMyNTNhZjEwMDc3NDZkMDM0IiwiYXVkIjoiaHR0cHM6Ly9zdWJuZXQubWluLmlvL2FwaSIsImlhdCI6MTYwODQxNjE5NiwiZXhwIjoxNjExMDA4MTk2LCJhenAiOiI1WTA0eVZlejNiOFgxUFVzRHVqSmxuZXVuY3ExVjZxaiIsInNjb3BlIjoib2ZmbGluZV9hY2Nlc3MiLCJndHkiOiJwYXNzd29yZCJ9.GC8DRLT0jUEteuBZBmyMXMswLSblCr_89Gu5NcVRUzKSYAaZ5VFW4UFgo1BpiC0sePuWJ0Vykitphx7znTfZfj5B3mZbOw3ejG6kxz7nm9DuYMmySJFYnwroZ9EP02vkW7-n_-YvEg8le1wXfkJ3lTUzO3aWddS4rfQRsZ2YJJUj61GiNyEK_QNP4PrYOuzLyD1wV75NejFqfcFoj7nRkT1K2BM0-89-_f2AFDGTjov6Ig6s1s-zLC9wxcYSmubNwpCJytZmQgPqIepOr065Y6OB4n0n0B5sXguuGuzb8VAkECrHhHPz8ta926fc0jC4XxVCNKdbV1_qC3-1yY7AJA\",\"expires_in\":2592000.0,\"token_type\":\"Bearer\"}}"))),
+					}, nil
 				}
 				HTTPDoMock = func(req *http.Request) (*http.Response, error) {
 					// returning test jwt license
-					return &http.Response{Body: ioutil.NopCloser(bytes.NewReader([]byte("{\"license\":\"" + license + "\",\"metadata\":{\"email\":\"lenin+c1@minio.io\",\"issuer\":\"subnet@minio.io\",\"accountId\":176,\"teamName\":\"console-customer\",\"serviceType\":\"STANDARD\",\"capacity\":25,\"requestedAt\":\"2020-12-19T22:23:31.609144732Z\",\"expiresAt\":\"2021-12-19T22:23:31.609144732Z\"}}")))}, nil
+					return &http.Response{
+						StatusCode: 200,
+						Body:       ioutil.NopCloser(bytes.NewReader([]byte("{\"license\":\"" + license + "\",\"metadata\":{\"email\":\"lenin+c1@minio.io\",\"issuer\":\"subnet@minio.io\",\"accountId\":176,\"teamName\":\"console-customer\",\"serviceType\":\"STANDARD\",\"capacity\":25,\"requestedAt\":\"2020-12-19T22:23:31.609144732Z\",\"expiresAt\":\"2021-12-19T22:23:31.609144732Z\"}}"))),
+					}, nil
 				}
 			},
 		},
