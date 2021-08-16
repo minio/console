@@ -3760,53 +3760,6 @@ func init() {
         }
       }
     },
-    "directCSIDriveInfo": {
-      "type": "object",
-      "properties": {
-        "allocated": {
-          "type": "number",
-          "format": "int64"
-        },
-        "capacity": {
-          "type": "number",
-          "format": "int64"
-        },
-        "drive": {
-          "type": "string"
-        },
-        "message": {
-          "type": "string"
-        },
-        "node": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "volumes": {
-          "type": "number",
-          "format": "int64"
-        }
-      }
-    },
-    "directCSIVolumeInfo": {
-      "type": "object",
-      "properties": {
-        "capacity": {
-          "type": "number",
-          "format": "int64"
-        },
-        "drive": {
-          "type": "string"
-        },
-        "node": {
-          "type": "string"
-        },
-        "volume": {
-          "type": "string"
-        }
-      }
-    },
     "error": {
       "type": "object",
       "required": [
@@ -3841,25 +3794,6 @@ func init() {
         }
       }
     },
-    "formatConfiguration": {
-      "type": "object",
-      "required": [
-        "drives",
-        "force"
-      ],
-      "properties": {
-        "drives": {
-          "type": "array",
-          "minLength": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "force": {
-          "type": "boolean"
-        }
-      }
-    },
     "getBucketRetentionConfig": {
       "type": "object",
       "properties": {
@@ -3872,28 +3806,6 @@ func init() {
         "validity": {
           "type": "integer",
           "format": "int32"
-        }
-      }
-    },
-    "getDirectCSIDriveListResponse": {
-      "type": "object",
-      "properties": {
-        "drives": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/directCSIDriveInfo"
-          }
-        }
-      }
-    },
-    "getDirectCSIVolumeListResponse": {
-      "type": "object",
-      "properties": {
-        "volumes": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/directCSIVolumeInfo"
-          }
         }
       }
     },
@@ -3942,95 +3854,6 @@ func init() {
     "iamEntity": {
       "type": "string",
       "pattern": "^[\\w+=,.@-]{1,64}$"
-    },
-    "idpConfiguration": {
-      "type": "object",
-      "properties": {
-        "active_directory": {
-          "type": "object",
-          "required": [
-            "url"
-          ],
-          "properties": {
-            "group_name_attribute": {
-              "type": "string"
-            },
-            "group_search_base_dn": {
-              "type": "string"
-            },
-            "group_search_filter": {
-              "type": "string"
-            },
-            "server_insecure": {
-              "type": "boolean"
-            },
-            "skip_tls_verification": {
-              "type": "boolean"
-            },
-            "url": {
-              "type": "string"
-            },
-            "user_search_filter": {
-              "type": "string"
-            },
-            "username_format": {
-              "type": "string"
-            }
-          }
-        },
-        "keys": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": [
-              "access_key",
-              "secret_key"
-            ],
-            "properties": {
-              "access_key": {
-                "type": "string"
-              },
-              "secret_key": {
-                "type": "string"
-              }
-            }
-          }
-        },
-        "oidc": {
-          "type": "object",
-          "required": [
-            "url",
-            "client_id",
-            "secret_id"
-          ],
-          "properties": {
-            "client_id": {
-              "type": "string"
-            },
-            "secret_id": {
-              "type": "string"
-            },
-            "url": {
-              "type": "string"
-            }
-          }
-        }
-      }
-    },
-    "keyPairConfiguration": {
-      "type": "object",
-      "required": [
-        "crt",
-        "key"
-      ],
-      "properties": {
-        "crt": {
-          "type": "string"
-        },
-        "key": {
-          "type": "string"
-        }
-      }
     },
     "license": {
       "type": "object",
@@ -4219,25 +4042,6 @@ func init() {
           "items": {
             "$ref": "#/definitions/user"
           }
-        }
-      }
-    },
-    "logSearchConfiguration": {
-      "type": "object",
-      "properties": {
-        "image": {
-          "type": "string"
-        },
-        "postgres_image": {
-          "type": "string"
-        },
-        "storageClass": {
-          "type": "string",
-          "default": ""
-        },
-        "storageSize": {
-          "type": "number",
-          "default": 5
         }
       }
     },
@@ -4695,22 +4499,6 @@ func init() {
       "properties": {
         "type": {
           "$ref": "#/definitions/profilerType"
-        }
-      }
-    },
-    "prometheusConfiguration": {
-      "type": "object",
-      "properties": {
-        "image": {
-          "type": "string"
-        },
-        "storageClass": {
-          "type": "string",
-          "default": ""
-        },
-        "storageSize": {
-          "type": "number",
-          "default": 5
         }
       }
     },
@@ -5211,33 +4999,6 @@ func init() {
         },
         "storageclass": {
           "type": "string"
-        }
-      }
-    },
-    "tlsConfiguration": {
-      "type": "object",
-      "properties": {
-        "ca_certificates": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "console": {
-          "type": "object",
-          "$ref": "#/definitions/keyPairConfiguration"
-        },
-        "console_ca_certificates": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "minio": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/keyPairConfiguration"
-          }
         }
       }
     },
@@ -8604,72 +8365,6 @@ func init() {
     }
   },
   "definitions": {
-    "IdpConfigurationActiveDirectory": {
-      "type": "object",
-      "required": [
-        "url"
-      ],
-      "properties": {
-        "group_name_attribute": {
-          "type": "string"
-        },
-        "group_search_base_dn": {
-          "type": "string"
-        },
-        "group_search_filter": {
-          "type": "string"
-        },
-        "server_insecure": {
-          "type": "boolean"
-        },
-        "skip_tls_verification": {
-          "type": "boolean"
-        },
-        "url": {
-          "type": "string"
-        },
-        "user_search_filter": {
-          "type": "string"
-        },
-        "username_format": {
-          "type": "string"
-        }
-      }
-    },
-    "IdpConfigurationKeysItems0": {
-      "type": "object",
-      "required": [
-        "access_key",
-        "secret_key"
-      ],
-      "properties": {
-        "access_key": {
-          "type": "string"
-        },
-        "secret_key": {
-          "type": "string"
-        }
-      }
-    },
-    "IdpConfigurationOidc": {
-      "type": "object",
-      "required": [
-        "url",
-        "client_id",
-        "secret_id"
-      ],
-      "properties": {
-        "client_id": {
-          "type": "string"
-        },
-        "secret_id": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
-        }
-      }
-    },
     "WidgetDetailsOptions": {
       "type": "object",
       "properties": {
@@ -9290,53 +8985,6 @@ func init() {
         }
       }
     },
-    "directCSIDriveInfo": {
-      "type": "object",
-      "properties": {
-        "allocated": {
-          "type": "number",
-          "format": "int64"
-        },
-        "capacity": {
-          "type": "number",
-          "format": "int64"
-        },
-        "drive": {
-          "type": "string"
-        },
-        "message": {
-          "type": "string"
-        },
-        "node": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "volumes": {
-          "type": "number",
-          "format": "int64"
-        }
-      }
-    },
-    "directCSIVolumeInfo": {
-      "type": "object",
-      "properties": {
-        "capacity": {
-          "type": "number",
-          "format": "int64"
-        },
-        "drive": {
-          "type": "string"
-        },
-        "node": {
-          "type": "string"
-        },
-        "volume": {
-          "type": "string"
-        }
-      }
-    },
     "error": {
       "type": "object",
       "required": [
@@ -9371,25 +9019,6 @@ func init() {
         }
       }
     },
-    "formatConfiguration": {
-      "type": "object",
-      "required": [
-        "drives",
-        "force"
-      ],
-      "properties": {
-        "drives": {
-          "type": "array",
-          "minLength": 1,
-          "items": {
-            "type": "string"
-          }
-        },
-        "force": {
-          "type": "boolean"
-        }
-      }
-    },
     "getBucketRetentionConfig": {
       "type": "object",
       "properties": {
@@ -9402,28 +9031,6 @@ func init() {
         "validity": {
           "type": "integer",
           "format": "int32"
-        }
-      }
-    },
-    "getDirectCSIDriveListResponse": {
-      "type": "object",
-      "properties": {
-        "drives": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/directCSIDriveInfo"
-          }
-        }
-      }
-    },
-    "getDirectCSIVolumeListResponse": {
-      "type": "object",
-      "properties": {
-        "volumes": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/directCSIVolumeInfo"
-          }
         }
       }
     },
@@ -9472,83 +9079,6 @@ func init() {
     "iamEntity": {
       "type": "string",
       "pattern": "^[\\w+=,.@-]{1,64}$"
-    },
-    "idpConfiguration": {
-      "type": "object",
-      "properties": {
-        "active_directory": {
-          "type": "object",
-          "required": [
-            "url"
-          ],
-          "properties": {
-            "group_name_attribute": {
-              "type": "string"
-            },
-            "group_search_base_dn": {
-              "type": "string"
-            },
-            "group_search_filter": {
-              "type": "string"
-            },
-            "server_insecure": {
-              "type": "boolean"
-            },
-            "skip_tls_verification": {
-              "type": "boolean"
-            },
-            "url": {
-              "type": "string"
-            },
-            "user_search_filter": {
-              "type": "string"
-            },
-            "username_format": {
-              "type": "string"
-            }
-          }
-        },
-        "keys": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/IdpConfigurationKeysItems0"
-          }
-        },
-        "oidc": {
-          "type": "object",
-          "required": [
-            "url",
-            "client_id",
-            "secret_id"
-          ],
-          "properties": {
-            "client_id": {
-              "type": "string"
-            },
-            "secret_id": {
-              "type": "string"
-            },
-            "url": {
-              "type": "string"
-            }
-          }
-        }
-      }
-    },
-    "keyPairConfiguration": {
-      "type": "object",
-      "required": [
-        "crt",
-        "key"
-      ],
-      "properties": {
-        "crt": {
-          "type": "string"
-        },
-        "key": {
-          "type": "string"
-        }
-      }
     },
     "license": {
       "type": "object",
@@ -9737,25 +9267,6 @@ func init() {
           "items": {
             "$ref": "#/definitions/user"
           }
-        }
-      }
-    },
-    "logSearchConfiguration": {
-      "type": "object",
-      "properties": {
-        "image": {
-          "type": "string"
-        },
-        "postgres_image": {
-          "type": "string"
-        },
-        "storageClass": {
-          "type": "string",
-          "default": ""
-        },
-        "storageSize": {
-          "type": "number",
-          "default": 5
         }
       }
     },
@@ -10213,22 +9724,6 @@ func init() {
       "properties": {
         "type": {
           "$ref": "#/definitions/profilerType"
-        }
-      }
-    },
-    "prometheusConfiguration": {
-      "type": "object",
-      "properties": {
-        "image": {
-          "type": "string"
-        },
-        "storageClass": {
-          "type": "string",
-          "default": ""
-        },
-        "storageSize": {
-          "type": "number",
-          "default": 5
         }
       }
     },
@@ -10729,33 +10224,6 @@ func init() {
         },
         "storageclass": {
           "type": "string"
-        }
-      }
-    },
-    "tlsConfiguration": {
-      "type": "object",
-      "properties": {
-        "ca_certificates": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "console": {
-          "type": "object",
-          "$ref": "#/definitions/keyPairConfiguration"
-        },
-        "console_ca_certificates": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "minio": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/keyPairConfiguration"
-          }
         }
       }
     },

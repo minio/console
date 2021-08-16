@@ -3183,85 +3183,6 @@ definitions:
         title: list of log search responses
 
 
-  keyPairConfiguration:
-    type: object
-    required:
-      - crt
-      - key
-    properties:
-      crt:
-        type: string
-      key:
-        type: string
-
-  tlsConfiguration:
-    type: object
-    properties:
-      minio:
-        type: array
-        items:
-          $ref: "#/definitions/keyPairConfiguration"
-      console:
-        type: object
-        $ref: "#/definitions/keyPairConfiguration"
-      ca_certificates:
-        type: array
-        items:
-          type: string
-      console_ca_certificates:
-        type: array
-        items:
-          type: string
-
-  idpConfiguration:
-    type: object
-    properties:
-      oidc:
-        type: object
-        required:
-          - url
-          - client_id
-          - secret_id
-        properties:
-          url:
-            type: string
-          client_id:
-            type: string
-          secret_id:
-            type: string
-      keys:
-        type: array
-        items:
-          type: object
-          required:
-            - access_key
-            - secret_key
-          properties:
-            access_key:
-              type: string
-            secret_key:
-              type: string
-      active_directory:
-        type: object
-        required:
-          - url
-        properties:
-          url:
-            type: string
-          username_format:
-            type: string
-          user_search_filter:
-            type: string
-          group_search_base_dn:
-            type: string
-          group_search_filter:
-            type: string
-          group_name_attribute:
-            type: string
-          skip_tls_verification:
-            type: boolean
-          server_insecure:
-            type: boolean
 
 
   objectLegalHoldStatus:
@@ -3471,56 +3392,6 @@ definitions:
       expires_at:
         type: string
 
-  getDirectCSIDriveListResponse:
-    type: object
-    properties:
-      drives:
-        type: array
-        items:
-          $ref: "#/definitions/directCSIDriveInfo"
-
-  directCSIDriveInfo:
-    type: object
-    properties:
-      drive:
-        type: string
-      capacity:
-        type: number
-        format: int64
-      allocated:
-        type: number
-        format: int64
-      volumes:
-        type: number
-        format: int64
-      node:
-        type: string
-      status:
-        type: string
-      message:
-        type: string
-
-  getDirectCSIVolumeListResponse:
-    type: object
-    properties:
-      volumes:
-        type: array
-        items:
-          $ref: "#/definitions/directCSIVolumeInfo"
-
-  directCSIVolumeInfo:
-    type: object
-    properties:
-      volume:
-        type: string
-      capacity:
-        type: number
-        format: int64
-      node:
-        type: string
-      drive:
-        type: string
-
   policyArgs:
     type: object
     properties:
@@ -3555,31 +3426,7 @@ definitions:
         items:
           $ref: "#/definitions/permissionAction"
 
-  logSearchConfiguration:
-    type: object
-    properties:
-      storageClass:
-        type: string
-        default: ""
-      storageSize:
-        type: number
-        default: 5
-      image:
-        type: string
-      postgres_image:
-        type: string
 
-  prometheusConfiguration:
-    type: object
-    properties:
-      storageClass:
-        type: string
-        default: ""
-      storageSize:
-        type: number
-        default: 5
-      image:
-        type: string
   tier_s3:
     type: object
     properties:
@@ -3682,21 +3529,6 @@ definitions:
       creds:
         type: string
         description: a base64 encoded value
-  formatConfiguration:
-    type: object
-    required:
-      - drives
-      - force
-    properties:
-      drives:
-        type: array
-        minLength: 1
-        items:
-          type: string
-      force:
-        type: boolean
-
-
 
   rewindItem:
     type: object
