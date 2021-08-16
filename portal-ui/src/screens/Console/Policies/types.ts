@@ -23,3 +23,22 @@ export interface PolicyList {
   policies: Policy[];
   total: number;
 }
+
+export interface IAMStatement {
+  Effect: string;
+  Action: string[];
+  Resource: string[];
+}
+
+export const newStatement = (): IAMStatement => {
+  return {
+    Effect: "Deny",
+    Action: [],
+    Resource: [],
+  };
+};
+
+export interface IAMPolicy {
+  Version: string;
+  Statement: IAMStatement[];
+}

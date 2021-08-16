@@ -27,7 +27,7 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 import HelpIcon from "../../../../../icons/HelpIcon";
 
-interface selectorTypes {
+export interface selectorTypes {
   label: string;
   value: string;
 }
