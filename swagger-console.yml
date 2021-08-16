@@ -1626,6 +1626,31 @@ paths:
       tags:
         - AdminAPI
 
+  /bucket/{bucket}/access-rules/{prefix}:
+    delete:
+      summary: Delete Access Rule From Given Bucket
+      operationId: DeleteAccessRuleWithBucket
+      parameters:
+        - name: bucket
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: boolean
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
   /bucket-users/{bucket}:
     get:
       summary: List Users With Access to a Given Bucket

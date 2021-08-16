@@ -572,6 +572,43 @@ func init() {
         }
       }
     },
+    "/bucket/{bucket}/access-rules/{prefix}": {
+      "delete": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Delete Access Rule From Given Bucket",
+        "operationId": "DeleteAccessRuleWithBucket",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/buckets": {
       "get": {
         "tags": [
@@ -5844,6 +5881,43 @@ func init() {
             "schema": {
               "$ref": "#/definitions/prefixAccessPair"
             }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/bucket/{bucket}/access-rules/{prefix}": {
+      "delete": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Delete Access Rule From Given Bucket",
+        "operationId": "DeleteAccessRuleWithBucket",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "bucket",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "prefix",
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {

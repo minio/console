@@ -67,10 +67,7 @@ const DeleteAccessRule = ({
 
   const deleteProcess = () => {
     api
-      .invoke("PUT", `/api/v1/bucket/${bucket}/access-rules`, {
-        prefix: toDelete,
-        access: "none",
-      })
+      .invoke("DELETE", `/api/v1/bucket/${bucket}/access-rules/${toDelete}`)
       .then((res: any) => {
       })
       .catch((err: ErrorResponseHandler) => {

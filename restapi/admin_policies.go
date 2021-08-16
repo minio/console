@@ -96,6 +96,13 @@ func registersPoliciesHandler(api *operations.ConsoleAPI) {
 		}
 		return admin_api.NewSetAccessRuleWithBucketOK().WithPayload(policyResponse)
 	})
+	api.AdminAPIDeleteAccessRuleWithBucketHandler = admin_api.DeleteAccessRuleWithBucketHandlerFunc(func(params admin_api.DeleteAccessRuleWithBucketParams, session *models.Principal) middleware.Responder {
+		policyResponse, err := getDeleteAccessRuleWithBucketResponse(session, params.Bucket, params.Prefix)
+		if err != nil {
+			return admin_api.NewDeleteAccessRuleWithBucketDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewDeleteAccessRuleWithBucketOK().WithPayload(policyResponse)
+	})
 	api.AdminAPIListUsersForPolicyHandler = admin_api.ListUsersForPolicyHandlerFunc(func(params admin_api.ListUsersForPolicyParams, session *models.Principal) middleware.Responder {
 		policyUsersResponse, err := getListUsersForPolicyResponse(session, params.Policy)
 		if err != nil {
@@ -133,6 +140,19 @@ func getSetAccessRuleWithBucketResponse(session *models.Principal, bucket string
 		return false, prepareError(err)
 	}
 	errorVal := client.SetAccess(ctx, prefixAccess.Access, false)
+	if errorVal != nil {
+		return false, prepareError(errorVal.Cause)
+	}
+	return true, nil
+}
+
+func getDeleteAccessRuleWithBucketResponse(session *models.Principal, bucket string, prefix string) (bool, *models.Error) {
+	ctx := context.Background()
+	client, err := newS3BucketClient(session, bucket, prefix)
+	if err != nil {
+		return false, prepareError(err)
+	}
+	errorVal := client.SetAccess(ctx, "none", false)
 	if errorVal != nil {
 		return false, prepareError(errorVal.Cause)
 	}
