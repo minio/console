@@ -19,7 +19,6 @@ package restapi
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/go-openapi/swag"
@@ -64,16 +63,12 @@ func getLogSearchResponse(params user_api.LogSearchParams) (*models.LogSearchRes
 }
 
 func logSearch(endpoint string) (*models.LogSearchResponse, *models.Error) {
-	resp, err := http.Get(endpoint)
+	httpClnt := GetConsoleHTTPClient()
+	resp, err := httpClnt.Get(endpoint)
 	if err != nil {
 		return nil, prepareError(err)
 	}
-
-	body, err := ioutil.ReadAll(resp.Body)
-	resp.Body.Close()
-	if err != nil {
-		return nil, prepareError(err)
-	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
 		return nil, &models.Error{
@@ -83,13 +78,11 @@ func logSearch(endpoint string) (*models.LogSearchResponse, *models.Error) {
 	}
 
 	var results []logsearchServer.ReqInfoRow
-	if err = json.Unmarshal(body, &results); err != nil {
+	if err = json.NewDecoder(resp.Body).Decode(&results); err != nil {
 		return nil, prepareError(err)
 	}
 
-	response := models.LogSearchResponse{
+	return &models.LogSearchResponse{
 		Results: results,
-	}
-
-	return &response, nil
+	}, nil
 }
