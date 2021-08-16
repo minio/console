@@ -289,7 +289,6 @@ const PrDashboard = ({
           scrollButtons="auto"
           value={curTab}
           onChange={(e: React.ChangeEvent<{}>, newValue: number) => {
-            console.log(newValue);
             setCurTab(newValue);
           }}
         >

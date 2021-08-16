@@ -18,13 +18,10 @@ import React, { Fragment, useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
 import Grid from "@material-ui/core/Grid";
-import { IconButton } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import PageHeader from "../../../Common/PageHeader/PageHeader";
 import { Link } from "react-router-dom";
 import { setErrorSnackMessage } from "../../../../../actions";
-import RefreshIcon from "@material-ui/icons/Refresh";
 import PodLogs from "./PodLogs";
 import PodEvents from "./PodEvents";
 
@@ -64,7 +61,7 @@ const PodDetails = ({ classes, match }: IPodDetailsProps) => {
   }, [loading]);
 
   return (
-    <React.Fragment>
+    <Fragment>
       <Grid item xs={12}>
         <div className={classes.topSpacer} />
         <h1 className={classes.sectionTitle}>
@@ -111,7 +108,7 @@ const PodDetails = ({ classes, match }: IPodDetailsProps) => {
           />
         )}
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

@@ -80,7 +80,6 @@ import AddTagModal from "./AddTagModal";
 import DeleteTagModal from "./DeleteTagModal";
 import SetLegalHoldModal from "./SetLegalHoldModal";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
-import AttachFileIcon from "@material-ui/icons/AttachFile";
 import DescriptionIcon from "@material-ui/icons/Description";
 
 const styles = (theme: Theme) =>
