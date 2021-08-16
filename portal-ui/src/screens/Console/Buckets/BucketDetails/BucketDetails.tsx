@@ -46,10 +46,8 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
-import { niceBytes } from "../../../../common/utils";
 import { IconButton, Tooltip } from "@material-ui/core";
-import { BucketsIcon, ClustersIcon, DeleteIcon } from "../../../../icons";
-import PencilIcon from "../../Common/TableWrapper/TableActionIcons/PencilIcon";
+import { BucketsIcon, DeleteIcon } from "../../../../icons";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import DeleteBucket from "../ListBuckets/DeleteBucket";
 
@@ -199,7 +197,7 @@ const BucketDetails = ({
       setBucketDetailsLoad(true);
       setIniLoad(true);
     }
-  }, [iniLoad, setIniLoad]);
+  }, [iniLoad, setBucketDetailsLoad, setIniLoad]);
 
   useEffect(() => {
     if (loadingBucket) {
@@ -214,7 +212,13 @@ const BucketDetails = ({
           setErrorSnackMessage(err);
         });
     }
-  }, [loadingBucket, setBucketDetailsLoad]);
+  }, [
+    bucketName,
+    loadingBucket,
+    setBucketDetailsLoad,
+    setBucketInfo,
+    setErrorSnackMessage,
+  ]);
 
   useEffect(() => {
     let matchURL = match.params ? match.params["0"] : "summary";

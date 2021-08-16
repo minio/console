@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { FormEvent, Fragment, useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router-dom";
@@ -46,14 +46,11 @@ import PageHeader from "../../../../Common/PageHeader/PageHeader";
 import {
   Badge,
   Button,
-  CircularProgress,
   IconButton,
-  Input,
   Tooltip,
   Typography,
 } from "@material-ui/core";
 import * as reactMoment from "react-moment";
-import { CreateIcon } from "../../../../../../icons";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import {
   addRoute,
@@ -82,9 +79,6 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import DeleteMultipleObjects from "./DeleteMultipleObjects";
 import { baseUrl } from "../../../../../../history";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
-import AttachFileIcon from "@material-ui/icons/AttachFile";
-import ShareIcon from "../../../../../../icons/ShareIcon";
-import DownloadIcon from "../../../../../../icons/DownloadIcon";
 import { CreateNewFolder, FolderOpen } from "@material-ui/icons";
 
 const commonIcon = {

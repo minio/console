@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { TENANT_DETAILS_SET_LOADING } from "../Tenants/types";
 import { BucketInfo } from "./types";
 
 export const ADD_BUCKET_OPEN = "ADD_BUCKET_OPEN";

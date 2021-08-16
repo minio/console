@@ -237,6 +237,8 @@ const IdentityProvider = ({
     ADGroupNameAttribute,
     ADUserDNs,
     isPageValid,
+    openIDConfigurationURL,
+    openIDClaimName,
   ]);
   let inputs = null;
   if (idpSelection === "Built-in") {

@@ -57,7 +57,6 @@ import Heal from "./Heal/Heal";
 import Watch from "./Watch/Watch";
 import HealthInfo from "./HealthInfo/HealthInfo";
 import Storage from "./Storage/Storage";
-import PodDetails from "./Tenants/TenantDetails/pods/PodDetails";
 import Metrics from "./Dashboard/Metrics";
 import Hop from "./Tenants/TenantDetails/hop/Hop";
 import MainError from "./Common/MainError/MainError";
