@@ -14,7 +14,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Policy } from "./types";
+import { IAMPolicy, IAMStatement, Policy } from "./types";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import {
@@ -25,7 +25,7 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import { Button, LinearProgress } from "@material-ui/core";
+import { Button, IconButton, LinearProgress, Tooltip } from "@material-ui/core";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import api from "../../../common/api";
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -40,6 +40,10 @@ import TextField from "@material-ui/core/TextField";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
+import { DeleteIcon } from "../../../icons";
+import RefreshIcon from "@material-ui/icons/Refresh";
+import { Assignment } from "@material-ui/icons";
+import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
 
 interface IPolicyDetailsProps {
   classes: any;
@@ -151,6 +155,25 @@ const styles = (theme: Theme) =>
       textDecoration: "none",
       color: "black",
     },
+    statement: {
+      border: "1px solid #DADADA",
+      padding: 8,
+      marginBottom: 8,
+      borderRadius: 4,
+    },
+    labelCol: {
+      fontWeight: "bold",
+    },
+    statementActions: {
+      textAlign: "right",
+    },
+    addStmt: {
+      color: theme.palette.primary.main,
+    },
+    listBox: {
+      border: "1px solid #DADADA",
+      height: 100,
+    },
     ...actionsTray,
     ...searchField,
     ...modalBasic,
@@ -165,6 +188,7 @@ const PolicyDetails = ({
 }: IPolicyDetailsProps) => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [policy, setPolicy] = useState<Policy | null>(null);
+  const [policyStatements, setPolicyStatements] = useState<IAMStatement[]>([]);
   const [userList, setUserList] = useState<string[]>([]);
   const [groupList, setGroupList] = useState<string[]>([]);
   const [addLoading, setAddLoading] = useState<boolean>(false);
@@ -189,7 +213,7 @@ const PolicyDetails = ({
         name: policyName,
         policy: policyDefinition,
       })
-      .then((res) => {
+      .then((_) => {
         setAddLoading(false);
         setSnackBarMessage("Policy successfully updated");
       })
@@ -238,6 +262,8 @@ const PolicyDetails = ({
               setPolicyDefinition(
                 result ? JSON.stringify(JSON.parse(result.policy), null, 4) : ""
               );
+              const pol: IAMPolicy = JSON.parse(result.policy);
+              setPolicyStatements(pol.Statement);
             }
             setLoadingPolicy(false);
           })
@@ -288,18 +314,58 @@ const PolicyDetails = ({
   );
 
   return (
-    <React.Fragment>
+    <Fragment>
       <PageHeader
         label={
           <Fragment>
             <Link to={"/policies"} className={classes.breadcrumLink}>
               Policy
             </Link>
-            {` > ${match.params["policyName"]}`}
           </Fragment>
         }
       />
       <Grid container className={classes.container}>
+        <Grid item xs={12}>
+          <ScreenTitle
+            icon={
+              <Fragment>
+                <Assignment style={{ width: 40, height: 40 }} />
+              </Fragment>
+            }
+            title={policyName}
+            subTitle={<Fragment>IAM Policy</Fragment>}
+            actions={
+              <Fragment>
+                <Tooltip title={"Delete"}>
+                  <IconButton
+                    color="primary"
+                    aria-label="Delete"
+                    component="span"
+                    onClick={() => {
+                      // setDeleteOpen(true);
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={"Refresh"}>
+                  <IconButton
+                    color="primary"
+                    aria-label="Refresh List"
+                    component="span"
+                    onClick={() => {
+                      setLoadingUsers(true);
+                      setLoadingGroups(true);
+                      setLoadingPolicy(true);
+                    }}
+                  >
+                    <RefreshIcon />
+                  </IconButton>
+                </Tooltip>
+              </Fragment>
+            }
+          />
+        </Grid>
         <Grid item xs={2}>
           <List component="nav" dense={true}>
             <ListItem
@@ -309,7 +375,7 @@ const PolicyDetails = ({
                 setSelectedTab(0);
               }}
             >
-              <ListItemText primary="Details" />
+              <ListItemText primary="Summary" />
             </ListItem>
             <ListItem
               button
@@ -329,12 +395,21 @@ const PolicyDetails = ({
             >
               <ListItemText primary="Groups" />
             </ListItem>
+            <ListItem
+              button
+              selected={selectedTab === 3}
+              onClick={() => {
+                setSelectedTab(3);
+              }}
+            >
+              <ListItemText primary="JSON" />
+            </ListItem>
           </List>
         </Grid>
         <Grid item xs={10}>
           {selectedTab === 0 && (
             <Fragment>
-              <h1 className={classes.sectionTitle}>Edit Policy</h1>
+              <h1 className={classes.sectionTitle}>Summary</h1>
               <Paper className={classes.paperContainer}>
                 <form
                   noValidate
@@ -344,42 +419,56 @@ const PolicyDetails = ({
                   }}
                 >
                   <Grid container>
-                    <Grid item xs={12} className={classes.formScrollable}>
-                      <CodeMirrorWrapper
-                        value={policyDefinition}
-                        onBeforeChange={(editor, data, value) => {
-                          setPolicyDefinition(value);
-                        }}
-                      />
+                    <Grid item xs={8}>
+                      <h4>Statements</h4>
                     </Grid>
-                    <Grid item xs={12} className={classes.buttonContainer}>
-                      {!policy && (
-                        <button
-                          type="button"
-                          color="primary"
-                          className={classes.clearButton}
-                          onClick={() => {
-                            resetForm();
-                          }}
-                        >
-                          Clear
-                        </button>
-                      )}
+                    <Grid item xs={4} />
 
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        disabled={addLoading || !validSave}
-                      >
-                        Save
-                      </Button>
-                    </Grid>
-                    {addLoading && (
-                      <Grid item xs={12}>
-                        <LinearProgress />
-                      </Grid>
-                    )}
+                    <Fragment>
+                      {policyStatements.map((stmt, i) => {
+                        return (
+                          <Grid
+                            item
+                            xs={12}
+                            className={classes.statement}
+                            key={`s-${i}`}
+                          >
+                            <Grid container>
+                              <Grid item xs={2} className={classes.labelCol}>
+                                Effect
+                              </Grid>
+                              <Grid item xs={4}>
+                                <Fragment>{stmt.Effect}</Fragment>
+                              </Grid>
+                              <Grid item xs={2} className={classes.labelCol} />
+                              <Grid item xs={4} />
+                              <Grid item xs={2} className={classes.labelCol}>
+                                Actions
+                              </Grid>
+                              <Grid item xs={4}>
+                                <ul>
+                                  {stmt.Action &&
+                                    stmt.Action.map((act, actIndex) => (
+                                      <li key={`${i}-r-${actIndex}`}>{act}</li>
+                                    ))}
+                                </ul>
+                              </Grid>
+                              <Grid item xs={2} className={classes.labelCol}>
+                                Resources
+                              </Grid>
+                              <Grid item xs={4}>
+                                <ul>
+                                  {stmt.Resource &&
+                                    stmt.Resource.map((res, resIndex) => (
+                                      <li key={`${i}-r-${resIndex}`}>{res}</li>
+                                    ))}
+                                </ul>
+                              </Grid>
+                            </Grid>
+                          </Grid>
+                        );
+                      })}
+                    </Fragment>
                   </Grid>
                 </form>
               </Paper>
@@ -459,9 +548,62 @@ const PolicyDetails = ({
               </Grid>
             </Fragment>
           )}
+          {selectedTab === 3 && (
+            <Fragment>
+              <h1 className={classes.sectionTitle}>Raw Policy</h1>
+              <Paper className={classes.paperContainer}>
+                <form
+                  noValidate
+                  autoComplete="off"
+                  onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                    saveRecord(e);
+                  }}
+                >
+                  <Grid container>
+                    <Grid item xs={12} className={classes.formScrollable}>
+                      <CodeMirrorWrapper
+                        value={policyDefinition}
+                        onBeforeChange={(editor, data, value) => {
+                          setPolicyDefinition(value);
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} className={classes.buttonContainer}>
+                      {!policy && (
+                        <button
+                          type="button"
+                          color="primary"
+                          className={classes.clearButton}
+                          onClick={() => {
+                            resetForm();
+                          }}
+                        >
+                          Clear
+                        </button>
+                      )}
+
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        disabled={addLoading || !validSave}
+                      >
+                        Save
+                      </Button>
+                    </Grid>
+                    {addLoading && (
+                      <Grid item xs={12}>
+                        <LinearProgress />
+                      </Grid>
+                    )}
+                  </Grid>
+                </form>
+              </Paper>
+            </Fragment>
+          )}
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

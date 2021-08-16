@@ -212,7 +212,7 @@ const Menu = ({
       type: "item",
       component: NavLink,
       to: "/account",
-      name: "Account",
+      name: "Service Accounts",
       icon: <ServiceAccountsIcon />,
     },
     {
