@@ -156,7 +156,7 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 		}
 		loginReq.Header.Add("Content-Type", "application/json")
 
-		// FIXME: in the future we should use restapi.GetConsoleSTSClient()
+		// FIXME: in the future we should use restapi.GetConsoleHTTPClient()
 		tr := &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}
@@ -218,7 +218,7 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 	proxyCookieJar.SetCookies(targetURL, []*http.Cookie{proxiedCookie})
 
 	tr := &http.Transport{
-		// FIXME: use restapi.GetConsoleSTSClient()
+		// FIXME: use restapi.GetConsoleHTTPClient()
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{Transport: tr,

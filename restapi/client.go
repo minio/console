@@ -311,7 +311,7 @@ func NewConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 	// LDAP authentication for Console
 	case ldap.GetLDAPEnabled():
 		{
-			creds, err := auth.GetCredentialsFromLDAP(GetConsoleSTSClient(), getMinIOServer(), accessKey, secretKey)
+			creds, err := auth.GetCredentialsFromLDAP(GetConsoleHTTPClient(), getMinIOServer(), accessKey, secretKey)
 			if err != nil {
 				return nil, err
 			}
@@ -330,7 +330,7 @@ func NewConsoleCredentials(accessKey, secretKey, location string) (*credentials.
 				DurationSeconds: xjwt.GetConsoleSTSDurationInSeconds(),
 			}
 			stsAssumeRole := &credentials.STSAssumeRole{
-				Client:      GetConsoleSTSClient(),
+				Client:      GetConsoleHTTPClient(),
 				STSEndpoint: getMinIOServer(),
 				Options:     opts,
 			}
@@ -353,7 +353,7 @@ func newMinioClient(claims *models.Principal) (*minio.Client, error) {
 	minioClient, err := minio.New(getMinIOEndpoint(), &minio.Options{
 		Creds:     creds,
 		Secure:    getMinIOEndpointIsSecure(),
-		Transport: GetConsoleSTSClient().Transport,
+		Transport: GetConsoleHTTPClient().Transport,
 	})
 	if err != nil {
 		return nil, err

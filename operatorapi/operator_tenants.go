@@ -522,7 +522,7 @@ func getTenantDetailsResponse(session *models.Principal, params operator_api.Ten
 		license, _ := getSubscriptionLicense(context.Background(), &k8sClient, params.Namespace, minTenant.Spec.Console.ConsoleSecret.Name)
 		if license != "" {
 			client := &cluster.HTTPClient{
-				Client: restapi.GetConsoleSTSClient(),
+				Client: restapi.GetConsoleHTTPClient(),
 			}
 			licenseInfo, _, _ := subscriptionValidate(client, license, "", "")
 			// if licenseInfo is present attach it to the tenantInfo response
