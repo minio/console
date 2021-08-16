@@ -54,9 +54,9 @@ func prepareSTSClientTransport(insecure bool) *http.Transport {
 	return DefaultTransport
 }
 
-// PrepareSTSClient returns an http.Client with custom configurations need it by *credentials.STSAssumeRole
+// PrepareConsoleHTTPClient returns an http.Client with custom configurations need it by *credentials.STSAssumeRole
 // custom configurations include the use of CA certificates
-func PrepareSTSClient(insecure bool) *http.Client {
+func PrepareConsoleHTTPClient(insecure bool) *http.Client {
 	transport := prepareSTSClientTransport(insecure)
 	// Return http client with default configuration
 	c := &http.Client{

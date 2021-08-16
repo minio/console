@@ -20,8 +20,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"net/url"
 	"regexp"
 	"strings"
@@ -852,25 +850,20 @@ func getUsageWidgetsForDeployment(prometheusURL string, mAdmin *madmin.AdminClie
 }
 
 func unmarshalPrometheus(endpoint string, data interface{}) bool {
-	resp, err := http.Get(endpoint)
+	httpClnt := GetConsoleHTTPClient()
+	resp, err := httpClnt.Get(endpoint)
 	if err != nil {
 		LogError("Unable to fetch labels from prometheus %s, %v", endpoint, err)
 		return true
 	}
-
-	body, err := ioutil.ReadAll(resp.Body)
-	resp.Body.Close()
-	if err != nil {
-		LogError("Unexpected error reading response from prometheus %s, %v", endpoint, err)
-		return true
-	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		LogError("Unexpected error from prometheus %s, %s (%s)", endpoint, string(body), resp.Status)
+		LogError("Unexpected error from prometheus %s (%s)", endpoint, resp.Status)
 		return true
 	}
 
-	if err = json.Unmarshal(body, data); err != nil {
+	if err = json.NewDecoder(resp.Body).Decode(data); err != nil {
 		LogError("Unexpected error reading response from prometheus %s, %v", endpoint, err)
 		return true
 	}

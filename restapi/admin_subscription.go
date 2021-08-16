@@ -66,7 +66,7 @@ func subscriptionValidate(client cluster.HTTPClientI, license, email, password s
 func getSubscriptionInfoResponse() (*models.License, *models.Error) {
 	var licenseInfo *models.License
 	client := &cluster.HTTPClient{
-		Client: GetConsoleSTSClient(),
+		Client: GetConsoleHTTPClient(),
 	}
 	licenseKey := retrieveLicense()
 	// validate license key and obtain license info
