@@ -224,7 +224,7 @@ func getSubscriptionRefreshResponse(session *models.Principal) (*models.License,
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	client := &cluster.HTTPClient{
-		Client: restapi.GetConsoleSTSClient(),
+		Client: restapi.GetConsoleHTTPClient(),
 	}
 	licenseKey, err := retrieveLicense(context.Background(), session.STSSessionToken)
 	if err != nil {
@@ -280,7 +280,7 @@ func RefreshLicense() error {
 		return err
 	}
 	client := &cluster.HTTPClient{
-		Client: restapi.GetConsoleSTSClient(),
+		Client: restapi.GetConsoleHTTPClient(),
 	}
 	// Attempt to refresh license
 	_, refreshedLicenseKey, err := subscriptionRefresh(client, licenseKey)

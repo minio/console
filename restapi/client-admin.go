@@ -54,7 +54,7 @@ func NewAdminClientWithInsecure(url, accessKey, secretKey, sessionToken string, 
 	if err != nil {
 		return nil, err.Trace(url)
 	}
-	stsClient := PrepareSTSClient(insecure)
+	stsClient := PrepareConsoleHTTPClient(insecure)
 	s3Client.SetCustomTransport(stsClient.Transport)
 	return s3Client, nil
 }
@@ -420,7 +420,7 @@ func newAdminFromClaims(claims *models.Principal) (*madmin.AdminClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	adminClient.SetCustomTransport(GetConsoleSTSClient().Transport)
+	adminClient.SetCustomTransport(GetConsoleHTTPClient().Transport)
 	return adminClient, nil
 }
 
@@ -438,14 +438,17 @@ func newAdminFromCreds(accessKey, secretKey, endpoint string, tlsEnabled bool) (
 	return minioClient, nil
 }
 
-// stsClient is a custom http client, this client should not be called directly and instead be
-// called using GetConsoleSTSClient() to ensure is initialized and the certificates are loaded correctly
-var stsClient *http.Client
+// httpClient is a custom http client, this client should not be called directly and instead be
+// called using GetConsoleHTTPClient() to ensure is initialized and the certificates are loaded correctly
+var httpClient *http.Client
 
-// GetConsoleSTSClient will initialize the console STS Client with Custom TLS Transport that with loads certs at .console/certs/CAs
-func GetConsoleSTSClient() *http.Client {
-	if stsClient == nil {
-		stsClient = PrepareSTSClient(false)
+// GetConsoleHTTPClient will initialize the console HTTP Client with fully populated custom TLS
+// Transport that with loads certs at
+// - ${HOME}/.console/certs/CAs
+// - ${HOME}/.minio/certs/CAs
+func GetConsoleHTTPClient() *http.Client {
+	if httpClient == nil {
+		httpClient = PrepareConsoleHTTPClient(false)
 	}
-	return stsClient
+	return httpClient
 }
