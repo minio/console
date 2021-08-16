@@ -44,7 +44,6 @@ import { DeleteIcon } from "../../../icons";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import { Assignment } from "@material-ui/icons";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
-import { Bucket, BucketList } from "../Buckets/types";
 
 interface IPolicyDetailsProps {
   classes: any;
@@ -203,9 +202,6 @@ const PolicyDetails = ({
   const [filterGroups, setFilterGroups] = useState<string>("");
   const [loadingGroups, setLoadingGroups] = useState<boolean>(true);
 
-  const [buckets, setBuckets] = useState<Bucket[]>([]);
-  const [loadingBuckets, setLoadingBuckets] = useState<boolean>(false);
-
   const saveRecord = (event: React.FormEvent) => {
     event.preventDefault();
     if (addLoading) {
@@ -217,7 +213,7 @@ const PolicyDetails = ({
         name: policyName,
         policy: policyDefinition,
       })
-      .then((res) => {
+      .then((_) => {
         setAddLoading(false);
         setSnackBarMessage("Policy successfully updated");
       })
@@ -316,32 +312,6 @@ const PolicyDetails = ({
   const filteredGroups = groupList.filter((elementItem) =>
     elementItem.includes(filterGroups)
   );
-
-  const closeAddModalAndRefresh = (refresh: boolean) => {
-    if (refresh) {
-      setLoadingUsers(true);
-      setLoadingGroups(true);
-      setLoadingPolicy(true);
-    }
-  };
-
-  useEffect(() => {
-    if (loadingBuckets) {
-      const fetchRecords = () => {
-        api
-          .invoke("GET", `/api/v1/buckets`)
-          .then((res: BucketList) => {
-            setLoadingBuckets(false);
-            setBuckets(res.buckets || []);
-          })
-          .catch((err: ErrorResponseHandler) => {
-            setLoadingBuckets(false);
-            setErrorSnackMessage(err);
-          });
-      };
-      fetchRecords();
-    }
-  }, [loadingBuckets, setLoadingBuckets, setErrorSnackMessage]);
 
   return (
     <Fragment>
