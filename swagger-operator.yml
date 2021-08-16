@@ -927,87 +927,6 @@ paths:
         - OperatorAPI
 
 definitions:
-  accountChangePasswordRequest:
-    type: object
-    required:
-      - current_secret_key
-      - new_secret_key
-    properties:
-      current_secret_key:
-        type: string
-      new_secret_key:
-        type: string
-
-  changeUserPasswordRequest:
-    type: object
-    required:
-      - selectedUser
-      - newSecretKey
-    properties:
-      selectedUser:
-        type: string
-      newSecretKey:
-        type: string
-
-  bucketEncryptionType:
-    type: string
-    enum:
-      - sse-s3
-      - sse-kms
-    default: sse-s3
-
-  bucketAccess:
-    type: string
-    enum:
-      - PRIVATE
-      - PUBLIC
-      - CUSTOM
-    default: PRIVATE
-
-  bucket:
-    type: object
-    required:
-      - name
-    properties:
-      name:
-        type: string
-        minLength: 3
-      size:
-        type: integer
-        format: int64
-      access:
-        $ref: "#/definitions/bucketAccess"
-      creation_date:
-        type: string
-
-  bucketEncryptionRequest:
-    type: object
-    properties:
-      encType:
-        $ref: "#/definitions/bucketEncryptionType"
-      kmsKeyID:
-        type: string
-
-  bucketEncryptionInfo:
-    type: object
-    properties:
-      kmsMasterKeyID:
-        type: string
-      algorithm:
-        type: string
-
-  listBucketsResponse:
-    type: object
-    properties:
-      buckets:
-        type: array
-        items:
-          $ref: "#/definitions/bucket"
-        title: list of resulting buckets
-      total:
-        type: integer
-        format: int64
-        title: number of buckets accessible to tenant user
 
   error:
     type: object
@@ -1022,128 +941,6 @@ definitions:
         type: string
       detailedMessage:
         type: string
-  user:
-    type: object
-    properties:
-      accessKey:
-        type: string
-      policy:
-        type: array
-        items:
-          type: string
-      memberOf:
-        type: array
-        items:
-          type: string
-      status:
-        type: string
-  group:
-    type: object
-    properties:
-      name:
-        type: string
-      status:
-        type: string
-      members:
-        type: array
-        items:
-          type: string
-      policy:
-        type: string
-  policy:
-    type: object
-    properties:
-      name:
-        type: string
-      policy:
-        type: string
-
-  configurationKV:
-    type: object
-    properties:
-      key:
-        type: string
-      value:
-        type: string
-  configuration:
-    type: object
-    properties:
-      name:
-        type: string
-      key_values:
-        type: array
-        items:
-          $ref: "#/definitions/configurationKV"
-  notificationEventType:
-    type: string
-    enum:
-      - put
-      - delete
-      - get
-  notificationConfig:
-    type: object
-    required:
-      - arn
-    properties:
-      id:
-        type: string
-      arn:
-        type: string
-      events:
-        type: array
-        items:
-          $ref: "#/definitions/notificationEventType"
-        title: "filter specific type of event. Defaults to all event (default: '[put,delete,get]')"
-      prefix:
-        type: string
-        title: "filter event associated to the specified prefix"
-      suffix:
-        type: string
-        title: "filter event associated to the specified suffix"
-  notificationDeleteRequest:
-    type: object
-    required:
-      - events
-      - prefix
-      - suffix
-    properties:
-      events:
-        type: array
-        minLength: 1
-        items:
-          $ref: "#/definitions/notificationEventType"
-        title: "filter specific type of event. Defaults to all event (default: '[put,delete,get]')"
-      prefix:
-        type: string
-        title: "filter event associated to the specified prefix"
-      suffix:
-        type: string
-        title: "filter event associated to the specified suffix"
-
-  bucketQuota:
-    type: object
-    properties:
-      quota:
-        type: integer
-      type:
-        type: string
-        enum:
-          - hard
-          - fifo
-  setBucketQuota:
-    type: object
-    required:
-      - enabled
-    properties:
-      enabled:
-        type: boolean
-      quota_type:
-        type: string
-        enum:
-          - fifo
-          - hard
-      amount:
-        type: integer
   loginDetails:
     type: object
     properties:
@@ -1151,6 +948,21 @@ definitions:
         type: string
         enum: [ form, redirect, service-account ]
       redirect:
+        type: string
+  loginRequest:
+    type: object
+    required:
+      - accessKey
+      - secretKey
+    properties:
+      accessKey:
+        type: string
+      secretKey:
+        type: string
+  loginResponse:
+    type: object
+    properties:
+      sessionId:
         type: string
   loginOauth2AuthRequest:
     type: object
@@ -1169,74 +981,6 @@ definitions:
     properties:
       jwt:
         type: string
-  loginRequest:
-    type: object
-    required:
-      - accessKey
-      - secretKey
-    properties:
-      accessKey:
-        type: string
-      secretKey:
-        type: string
-  loginResponse:
-    type: object
-    properties:
-      sessionId:
-        type: string
-  # Structure that holds the `Bearer {TOKEN}` present on authenticated requests
-  principal:
-    type: object
-    properties:
-      STSAccessKeyID:
-        type: string
-      STSSecretAccessKey:
-        type: string
-      STSSessionToken:
-        type: string
-      actions:
-        type: array
-        items:
-          type: string
-      accountAccessKey:
-        type: string
-  startProfilingItem:
-    type: object
-    properties:
-      nodeName:
-        type: string
-      success:
-        type: boolean
-      error:
-        type: string
-  startProfilingList:
-    type: object
-    properties:
-      total:
-        type: integer
-        format: int64
-        title: number of start results
-      startResults:
-        type: array
-        items:
-          $ref: "#/definitions/startProfilingItem"
-  profilerType:
-    type: string
-    enum:
-      - cpu
-      - mem
-      - block
-      - mutex
-      - trace
-      - threads
-      - goroutines
-  profilingStartRequest:
-    type: object
-    required:
-      - type
-    properties:
-      type:
-        $ref: "#/definitions/profilerType"
   operatorSessionResponse:
     type: object
     properties:
@@ -1252,152 +996,6 @@ definitions:
         type: string
         enum: [ ok ]
       operator:
-        type: boolean
-  widgetResult:
-    type: object
-    properties:
-      metric:
-        type: object
-        additionalProperties:
-          type: string
-      values:
-        type: array
-        items: { }
-  resultTarget:
-    type: object
-    properties:
-      legendFormat:
-        type: string
-      resultType:
-        type: string
-      result:
-        type: array
-        items:
-          $ref: "#/definitions/widgetResult"
-  widget:
-    type: object
-    properties:
-      title:
-        type: string
-      type:
-        type: string
-      id:
-        type: integer
-        format: int32
-      options:
-        type: object
-        properties:
-          reduceOptions:
-            type: object
-            properties:
-              calcs:
-                type: array
-                items:
-                  type: string
-      targets:
-        type: array
-        items:
-          $ref: "#/definitions/resultTarget"
-  widgetDetails:
-    type: object
-    properties:
-      title:
-        type: string
-      type:
-        type: string
-      id:
-        type: integer
-        format: int32
-      options:
-        type: object
-        properties:
-          reduceOptions:
-            type: object
-            properties:
-              calcs:
-                type: array
-                items:
-                  type: string
-      targets:
-        type: array
-        items:
-          $ref: "#/definitions/resultTarget"
-  adminInfoResponse:
-    type: object
-    properties:
-      buckets:
-        type: integer
-      objects:
-        type: integer
-      usage:
-        type: integer
-      widgets:
-        type: array
-        items:
-          $ref: "#/definitions/widget"
-  arnsResponse:
-    type: object
-    properties:
-      arns:
-        type: array
-        items:
-          type: string
-  nofiticationService:
-    type: string
-    enum:
-      - webhook
-      - amqp
-      - kafka
-      - mqtt
-      - nats
-      - nsq
-      - mysql
-      - postgres
-      - elasticsearch
-      - redis
-  updateUser:
-    type: object
-    required:
-      - status
-      - groups
-    properties:
-      status:
-        type: string
-      groups:
-        type: array
-        items:
-          type: string
-  serviceAccounts:
-    type: array
-    items:
-      type: string
-  serviceAccountRequest:
-    type: object
-    properties:
-      policy:
-        type: string
-        title: "policy to be applied to the Service Account if any"
-  serviceAccountCreds:
-    type: object
-    properties:
-      accessKey:
-        type: string
-      secretKey:
-        type: string
-  bucketVersioningResponse:
-    type: object
-    properties:
-      is_versioned:
-        type: boolean
-  setBucketVersioning:
-    type: object
-    properties:
-      versioning:
-        type: boolean
-  bucketObLockingResponse:
-    type: object
-    properties:
-      object_locking_enabled:
         type: boolean
 
   tenantStatus:
@@ -1573,13 +1171,6 @@ definitions:
       health_status:
         type: string
 
-  logSearchResponse:
-    type: object
-    properties:
-      results:
-        type: object
-        title: list of log search responses
-
   listTenantsResponse:
     type: object
     properties:
@@ -1738,7 +1329,30 @@ definitions:
         type: array
         items:
           type: string
-
+  logSearchConfiguration:
+    type: object
+    properties:
+      storageClass:
+        type: string
+        default: ""
+      storageSize:
+        type: number
+        default: 5
+      image:
+        type: string
+      postgres_image:
+        type: string
+  prometheusConfiguration:
+    type: object
+    properties:
+      storageClass:
+        type: string
+        default: ""
+      storageSize:
+        type: number
+        default: 5
+      image:
+        type: string
   idpConfiguration:
     type: object
     properties:
@@ -2512,196 +2126,6 @@ definitions:
     items:
       type: string
 
-  objectLegalHoldStatus:
-    type: string
-    enum:
-      - enabled
-      - disabled
-
-  putObjectLegalHoldRequest:
-    type: object
-    required:
-      - status
-    properties:
-      status:
-        $ref: "#/definitions/objectLegalHoldStatus"
-
-  objectRetentionMode:
-    type: string
-    enum:
-      - governance
-      - compliance
-
-  putObjectRetentionRequest:
-    type: object
-    required:
-      - mode
-      - expires
-    properties:
-      mode:
-        $ref: "#/definitions/objectRetentionMode"
-      expires:
-        type: string
-      governance_bypass:
-        type: boolean
-
-  putObjectTagsRequest:
-    type: object
-    properties:
-      tags:
-        additionalProperties:
-          type: string
-
-  objectRetentionUnit:
-    type: string
-    enum:
-      - days
-      - years
-
-  putBucketRetentionRequest:
-    type: object
-    required:
-      - mode
-      - unit
-      - validity
-    properties:
-      mode:
-        $ref: "#/definitions/objectRetentionMode"
-      unit:
-        $ref: "#/definitions/objectRetentionUnit"
-      validity:
-        type: integer
-        format: int32
-
-  getBucketRetentionConfig:
-    type: object
-    properties:
-      mode:
-        $ref: "#/definitions/objectRetentionMode"
-      unit:
-        $ref: "#/definitions/objectRetentionUnit"
-      validity:
-        type: integer
-        format: int32
-
-  bucketLifecycleResponse:
-    type: object
-    properties:
-      lifecycle:
-        type: array
-        items:
-          $ref: "#/definitions/objectBucketLifecycle"
-
-  expirationResponse:
-    type: object
-    properties:
-      date:
-        type: string
-      days:
-        type: integer
-        format: int64
-      delete_marker:
-        type: boolean
-
-  transitionResponse:
-    type: object
-    properties:
-      date:
-        type: string
-      storage_class:
-        type: string
-      days:
-        type: integer
-        format: int64
-
-  lifecycleTag:
-    type: object
-    properties:
-      key:
-        type: string
-      value:
-        type: string
-
-  objectBucketLifecycle:
-    type: object
-    properties:
-      id:
-        type: string
-      prefix:
-        type: string
-      status:
-        type: string
-      expiration:
-        $ref: "#/definitions/expirationResponse"
-      transition:
-        $ref: "#/definitions/transitionResponse"
-      tags:
-        type: array
-        items:
-          $ref: "#/definitions/lifecycleTag"
-
-  addBucketLifecycle:
-    type: object
-    properties:
-      prefix:
-        description: Non required field, it matches a prefix to perform ILM operations on it
-        type: string
-      tags:
-        description: Non required field, tags to match ILM files
-        type: string
-      expiry_date:
-        description: Required in case of expiry_days or transition fields are not set. it defines an expiry date for ILM
-        type: string
-      expiry_days:
-        description: Required in case of expiry_date or transition fields are not set. it defines an expiry days for ILM
-        type: integer
-        format: int32
-        default: 0
-      transition_date:
-        description: Required in case of transition_days or expiry fields are not set. it defines a transition date for ILM
-        type: string
-      transition_days:
-        description: Required in case of transition_date or expiry fields are not set. it defines a transition days for ILM
-        type: integer
-        format: int32
-        default: 0
-      storage_class:
-        description: Required only in case of transition is set. it refers to a tier
-        type: string
-      disable:
-        description: Non required, toggle to disable or enable rule
-        type: boolean
-      expired_object_delete_marker:
-        description: Non required, toggle to disable or enable rule
-        type: boolean
-      noncurrentversion_expiration_days:
-        description: Non required, can be set in case of expiration is enabled
-        type: integer
-        format: int32
-        default: 0
-      noncurrentversion_transition_days:
-        description: Non required, can be set in case of transition is enabled
-        type: integer
-        format: int32
-        default: 0
-      noncurrentversion_transition_storage_class:
-        description: Non required, can be set in case of transition is enabled
-        type: string
-
-  updateBucketLifecycle:
-    type: object
-    properties:
-      tags:
-        type: string
-      disable:
-        type: boolean
-
-  setConfigResponse:
-    type: object
-    properties:
-      restart:
-        description: Returns wheter server needs to restart to apply changes or not
-        type: boolean
 
   subscriptionValidateRequest:
     type: object
@@ -2778,170 +2202,6 @@ definitions:
       drive:
         type: string
 
-  policyArgs:
-    type: object
-    properties:
-      id:
-        type: string
-      action:
-        type: string
-      bucket_name:
-        type: string
-
-  hasPermissionRequest:
-    type: object
-    properties:
-      actions:
-        type: array
-        items:
-          $ref: "#/definitions/policyArgs"
-
-  permissionAction:
-    type: object
-    properties:
-      id:
-        type: string
-      can:
-        type: boolean
-
-  hasPermissionResponse:
-    type: object
-    properties:
-      permissions:
-        type: array
-        items:
-          $ref: "#/definitions/permissionAction"
-
-  logSearchConfiguration:
-    type: object
-    properties:
-      storageClass:
-        type: string
-        default: ""
-      storageSize:
-        type: number
-        default: 5
-      image:
-        type: string
-      postgres_image:
-        type: string
-
-  prometheusConfiguration:
-    type: object
-    properties:
-      storageClass:
-        type: string
-        default: ""
-      storageSize:
-        type: number
-        default: 5
-      image:
-        type: string
-  tier_s3:
-    type: object
-    properties:
-      name:
-        type: string
-      endpoint:
-        type: string
-      accesskey:
-        type: string
-      secretkey:
-        type: string
-      bucket:
-        type: string
-      prefix:
-        type: string
-      region:
-        type: string
-      storageclass:
-        type: string
-
-  tier_azure:
-    type: object
-    properties:
-      name:
-        type: string
-      endpoint:
-        type: string
-      accountname:
-        type: string
-      accountkey:
-        type: string
-      bucket:
-        type: string
-      prefix:
-        type: string
-      region:
-        type: string
-
-  tier_gcs:
-    type: object
-    properties:
-      name:
-        type: string
-      endpoint:
-        type: string
-      creds:
-        type: string
-      bucket:
-        type: string
-      prefix:
-        type: string
-      region:
-        type: string
-
-  tier:
-    type: object
-    properties:
-      type:
-        type: string
-        enum:
-          - s3
-          - gcs
-          - azure
-          - unsupported
-      s3:
-        type: object
-        $ref: "#/definitions/tier_s3"
-      gcs:
-        type: object
-        $ref: "#/definitions/tier_gcs"
-      azure:
-        type: object
-        $ref: "#/definitions/tier_azure"
-
-  tierListResponse:
-    type: object
-    properties:
-      items:
-        type: array
-        items:
-          $ref: "#/definitions/tier"
-
-  tierCredentialsRequest:
-    type: object
-    properties:
-      access_key:
-        type: string
-      secret_key:
-        type: string
-      creds:
-        type: string
-        description: a base64 encoded value
-  formatConfiguration:
-    type: object
-    required:
-      - drives
-      - force
-    properties:
-      drives:
-        type: array
-        minLength: 1
-        items:
-          type: string
-      force:
-        type: boolean
 
   csiFormatErrorResponse:
     type: object
@@ -3032,27 +2292,16 @@ definitions:
       message:
         type: string
 
-  rewindItem:
+  formatConfiguration:
     type: object
+    required:
+      - drives
+      - force
     properties:
-      last_modified:
-        type: string
-      size:
-        type: integer
-        format: int64
-      version_id:
-        type: string
-      delete_flag:
-        type: boolean
-      action:
-        type: string
-      name:
-        type: string
-
-  rewindResponse:
-    type: object
-    properties:
-      objects:
+      drives:
         type: array
+        minLength: 1
         items:
-          $ref: "#/definitions/rewindItem"
+          type: string
+      force:
+        type: boolean

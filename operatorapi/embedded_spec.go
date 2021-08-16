@@ -1383,113 +1383,6 @@ func init() {
     }
   },
   "definitions": {
-    "accountChangePasswordRequest": {
-      "type": "object",
-      "required": [
-        "current_secret_key",
-        "new_secret_key"
-      ],
-      "properties": {
-        "current_secret_key": {
-          "type": "string"
-        },
-        "new_secret_key": {
-          "type": "string"
-        }
-      }
-    },
-    "addBucketLifecycle": {
-      "type": "object",
-      "properties": {
-        "disable": {
-          "description": "Non required, toggle to disable or enable rule",
-          "type": "boolean"
-        },
-        "expired_object_delete_marker": {
-          "description": "Non required, toggle to disable or enable rule",
-          "type": "boolean"
-        },
-        "expiry_date": {
-          "description": "Required in case of expiry_days or transition fields are not set. it defines an expiry date for ILM",
-          "type": "string"
-        },
-        "expiry_days": {
-          "description": "Required in case of expiry_date or transition fields are not set. it defines an expiry days for ILM",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
-        },
-        "noncurrentversion_expiration_days": {
-          "description": "Non required, can be set in case of expiration is enabled",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
-        },
-        "noncurrentversion_transition_days": {
-          "description": "Non required, can be set in case of transition is enabled",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
-        },
-        "noncurrentversion_transition_storage_class": {
-          "description": "Non required, can be set in case of transition is enabled",
-          "type": "string"
-        },
-        "prefix": {
-          "description": "Non required field, it matches a prefix to perform ILM operations on it",
-          "type": "string"
-        },
-        "storage_class": {
-          "description": "Required only in case of transition is set. it refers to a tier",
-          "type": "string"
-        },
-        "tags": {
-          "description": "Non required field, tags to match ILM files",
-          "type": "string"
-        },
-        "transition_date": {
-          "description": "Required in case of transition_days or expiry fields are not set. it defines a transition date for ILM",
-          "type": "string"
-        },
-        "transition_days": {
-          "description": "Required in case of transition_date or expiry fields are not set. it defines a transition days for ILM",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
-        }
-      }
-    },
-    "adminInfoResponse": {
-      "type": "object",
-      "properties": {
-        "buckets": {
-          "type": "integer"
-        },
-        "objects": {
-          "type": "integer"
-        },
-        "usage": {
-          "type": "integer"
-        },
-        "widgets": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/widget"
-          }
-        }
-      }
-    },
-    "arnsResponse": {
-      "type": "object",
-      "properties": {
-        "arns": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
     "awsConfiguration": {
       "type": "object",
       "required": [
@@ -1535,109 +1428,6 @@ func init() {
         }
       }
     },
-    "bucket": {
-      "type": "object",
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "access": {
-          "$ref": "#/definitions/bucketAccess"
-        },
-        "creation_date": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string",
-          "minLength": 3
-        },
-        "size": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
-    },
-    "bucketAccess": {
-      "type": "string",
-      "default": "PRIVATE",
-      "enum": [
-        "PRIVATE",
-        "PUBLIC",
-        "CUSTOM"
-      ]
-    },
-    "bucketEncryptionInfo": {
-      "type": "object",
-      "properties": {
-        "algorithm": {
-          "type": "string"
-        },
-        "kmsMasterKeyID": {
-          "type": "string"
-        }
-      }
-    },
-    "bucketEncryptionRequest": {
-      "type": "object",
-      "properties": {
-        "encType": {
-          "$ref": "#/definitions/bucketEncryptionType"
-        },
-        "kmsKeyID": {
-          "type": "string"
-        }
-      }
-    },
-    "bucketEncryptionType": {
-      "type": "string",
-      "default": "sse-s3",
-      "enum": [
-        "sse-s3",
-        "sse-kms"
-      ]
-    },
-    "bucketLifecycleResponse": {
-      "type": "object",
-      "properties": {
-        "lifecycle": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/objectBucketLifecycle"
-          }
-        }
-      }
-    },
-    "bucketObLockingResponse": {
-      "type": "object",
-      "properties": {
-        "object_locking_enabled": {
-          "type": "boolean"
-        }
-      }
-    },
-    "bucketQuota": {
-      "type": "object",
-      "properties": {
-        "quota": {
-          "type": "integer"
-        },
-        "type": {
-          "type": "string",
-          "enum": [
-            "hard",
-            "fifo"
-          ]
-        }
-      }
-    },
-    "bucketVersioningResponse": {
-      "type": "object",
-      "properties": {
-        "is_versioned": {
-          "type": "boolean"
-        }
-      }
-    },
     "certificateInfo": {
       "type": "object",
       "properties": {
@@ -1654,46 +1444,6 @@ func init() {
           "type": "string"
         },
         "serialNumber": {
-          "type": "string"
-        }
-      }
-    },
-    "changeUserPasswordRequest": {
-      "type": "object",
-      "required": [
-        "selectedUser",
-        "newSecretKey"
-      ],
-      "properties": {
-        "newSecretKey": {
-          "type": "string"
-        },
-        "selectedUser": {
-          "type": "string"
-        }
-      }
-    },
-    "configuration": {
-      "type": "object",
-      "properties": {
-        "key_values": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/configurationKV"
-          }
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "configurationKV": {
-      "type": "object",
-      "properties": {
-        "key": {
-          "type": "string"
-        },
-        "value": {
           "type": "string"
         }
       }
@@ -1983,21 +1733,6 @@ func init() {
         "$ref": "#/definitions/eventListElement"
       }
     },
-    "expirationResponse": {
-      "type": "object",
-      "properties": {
-        "date": {
-          "type": "string"
-        },
-        "days": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "delete_marker": {
-          "type": "boolean"
-        }
-      }
-    },
     "formatConfiguration": {
       "type": "object",
       "required": [
@@ -2117,21 +1852,6 @@ func init() {
         }
       }
     },
-    "getBucketRetentionConfig": {
-      "type": "object",
-      "properties": {
-        "mode": {
-          "$ref": "#/definitions/objectRetentionMode"
-        },
-        "unit": {
-          "$ref": "#/definitions/objectRetentionUnit"
-        },
-        "validity": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
     "getDirectCSIDriveListResponse": {
       "type": "object",
       "properties": {
@@ -2150,48 +1870,6 @@ func init() {
           "type": "array",
           "items": {
             "$ref": "#/definitions/directCSIVolumeInfo"
-          }
-        }
-      }
-    },
-    "group": {
-      "type": "object",
-      "properties": {
-        "members": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "name": {
-          "type": "string"
-        },
-        "policy": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        }
-      }
-    },
-    "hasPermissionRequest": {
-      "type": "object",
-      "properties": {
-        "actions": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/policyArgs"
-          }
-        }
-      }
-    },
-    "hasPermissionResponse": {
-      "type": "object",
-      "properties": {
-        "permissions": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/permissionAction"
           }
         }
       }
@@ -2362,34 +2040,6 @@ func init() {
         }
       }
     },
-    "lifecycleTag": {
-      "type": "object",
-      "properties": {
-        "key": {
-          "type": "string"
-        },
-        "value": {
-          "type": "string"
-        }
-      }
-    },
-    "listBucketsResponse": {
-      "type": "object",
-      "properties": {
-        "buckets": {
-          "type": "array",
-          "title": "list of resulting buckets",
-          "items": {
-            "$ref": "#/definitions/bucket"
-          }
-        },
-        "total": {
-          "type": "integer",
-          "format": "int64",
-          "title": "number of buckets accessible to tenant user"
-        }
-      }
-    },
     "listPVCsResponse": {
       "type": "object",
       "properties": {
@@ -2434,15 +2084,6 @@ func init() {
         "storageSize": {
           "type": "number",
           "default": 5
-        }
-      }
-    },
-    "logSearchResponse": {
-      "type": "object",
-      "properties": {
-        "results": {
-          "type": "object",
-          "title": "list of log search responses"
         }
       }
     },
@@ -2627,131 +2268,6 @@ func init() {
         }
       }
     },
-    "nofiticationService": {
-      "type": "string",
-      "enum": [
-        "webhook",
-        "amqp",
-        "kafka",
-        "mqtt",
-        "nats",
-        "nsq",
-        "mysql",
-        "postgres",
-        "elasticsearch",
-        "redis"
-      ]
-    },
-    "notificationConfig": {
-      "type": "object",
-      "required": [
-        "arn"
-      ],
-      "properties": {
-        "arn": {
-          "type": "string"
-        },
-        "events": {
-          "type": "array",
-          "title": "filter specific type of event. Defaults to all event (default: '[put,delete,get]')",
-          "items": {
-            "$ref": "#/definitions/notificationEventType"
-          }
-        },
-        "id": {
-          "type": "string"
-        },
-        "prefix": {
-          "type": "string",
-          "title": "filter event associated to the specified prefix"
-        },
-        "suffix": {
-          "type": "string",
-          "title": "filter event associated to the specified suffix"
-        }
-      }
-    },
-    "notificationDeleteRequest": {
-      "type": "object",
-      "required": [
-        "events",
-        "prefix",
-        "suffix"
-      ],
-      "properties": {
-        "events": {
-          "type": "array",
-          "title": "filter specific type of event. Defaults to all event (default: '[put,delete,get]')",
-          "minLength": 1,
-          "items": {
-            "$ref": "#/definitions/notificationEventType"
-          }
-        },
-        "prefix": {
-          "type": "string",
-          "title": "filter event associated to the specified prefix"
-        },
-        "suffix": {
-          "type": "string",
-          "title": "filter event associated to the specified suffix"
-        }
-      }
-    },
-    "notificationEventType": {
-      "type": "string",
-      "enum": [
-        "put",
-        "delete",
-        "get"
-      ]
-    },
-    "objectBucketLifecycle": {
-      "type": "object",
-      "properties": {
-        "expiration": {
-          "$ref": "#/definitions/expirationResponse"
-        },
-        "id": {
-          "type": "string"
-        },
-        "prefix": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "tags": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/lifecycleTag"
-          }
-        },
-        "transition": {
-          "$ref": "#/definitions/transitionResponse"
-        }
-      }
-    },
-    "objectLegalHoldStatus": {
-      "type": "string",
-      "enum": [
-        "enabled",
-        "disabled"
-      ]
-    },
-    "objectRetentionMode": {
-      "type": "string",
-      "enum": [
-        "governance",
-        "compliance"
-      ]
-    },
-    "objectRetentionUnit": {
-      "type": "string",
-      "enum": [
-        "days",
-        "years"
-      ]
-    },
     "operatorSessionResponse": {
       "type": "object",
       "properties": {
@@ -2782,17 +2298,6 @@ func init() {
       "type": "array",
       "items": {
         "type": "string"
-      }
-    },
-    "permissionAction": {
-      "type": "object",
-      "properties": {
-        "can": {
-          "type": "boolean"
-        },
-        "id": {
-          "type": "string"
-        }
       }
     },
     "podAffinityTerm": {
@@ -2853,31 +2358,6 @@ func init() {
         },
         "topologyKey": {
           "description": "This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.",
-          "type": "string"
-        }
-      }
-    },
-    "policy": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "policy": {
-          "type": "string"
-        }
-      }
-    },
-    "policyArgs": {
-      "type": "object",
-      "properties": {
-        "action": {
-          "type": "string"
-        },
-        "bucket_name": {
-          "type": "string"
-        },
-        "id": {
           "type": "string"
         }
       }
@@ -3144,52 +2624,6 @@ func init() {
         }
       }
     },
-    "principal": {
-      "type": "object",
-      "properties": {
-        "STSAccessKeyID": {
-          "type": "string"
-        },
-        "STSSecretAccessKey": {
-          "type": "string"
-        },
-        "STSSessionToken": {
-          "type": "string"
-        },
-        "accountAccessKey": {
-          "type": "string"
-        },
-        "actions": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "profilerType": {
-      "type": "string",
-      "enum": [
-        "cpu",
-        "mem",
-        "block",
-        "mutex",
-        "trace",
-        "threads",
-        "goroutines"
-      ]
-    },
-    "profilingStartRequest": {
-      "type": "object",
-      "required": [
-        "type"
-      ],
-      "properties": {
-        "type": {
-          "$ref": "#/definitions/profilerType"
-        }
-      }
-    },
     "prometheusConfiguration": {
       "type": "object",
       "properties": {
@@ -3203,65 +2637,6 @@ func init() {
         "storageSize": {
           "type": "number",
           "default": 5
-        }
-      }
-    },
-    "putBucketRetentionRequest": {
-      "type": "object",
-      "required": [
-        "mode",
-        "unit",
-        "validity"
-      ],
-      "properties": {
-        "mode": {
-          "$ref": "#/definitions/objectRetentionMode"
-        },
-        "unit": {
-          "$ref": "#/definitions/objectRetentionUnit"
-        },
-        "validity": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "putObjectLegalHoldRequest": {
-      "type": "object",
-      "required": [
-        "status"
-      ],
-      "properties": {
-        "status": {
-          "$ref": "#/definitions/objectLegalHoldStatus"
-        }
-      }
-    },
-    "putObjectRetentionRequest": {
-      "type": "object",
-      "required": [
-        "mode",
-        "expires"
-      ],
-      "properties": {
-        "expires": {
-          "type": "string"
-        },
-        "governance_bypass": {
-          "type": "boolean"
-        },
-        "mode": {
-          "$ref": "#/definitions/objectRetentionMode"
-        }
-      }
-    },
-    "putObjectTagsRequest": {
-      "type": "object",
-      "properties": {
-        "tags": {
-          "additionalProperties": {
-            "type": "string"
-          }
         }
       }
     },
@@ -3321,152 +2696,6 @@ func init() {
         "used": {
           "type": "integer",
           "format": "int64"
-        }
-      }
-    },
-    "resultTarget": {
-      "type": "object",
-      "properties": {
-        "legendFormat": {
-          "type": "string"
-        },
-        "result": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/widgetResult"
-          }
-        },
-        "resultType": {
-          "type": "string"
-        }
-      }
-    },
-    "rewindItem": {
-      "type": "object",
-      "properties": {
-        "action": {
-          "type": "string"
-        },
-        "delete_flag": {
-          "type": "boolean"
-        },
-        "last_modified": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "size": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "version_id": {
-          "type": "string"
-        }
-      }
-    },
-    "rewindResponse": {
-      "type": "object",
-      "properties": {
-        "objects": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/rewindItem"
-          }
-        }
-      }
-    },
-    "serviceAccountCreds": {
-      "type": "object",
-      "properties": {
-        "accessKey": {
-          "type": "string"
-        },
-        "secretKey": {
-          "type": "string"
-        }
-      }
-    },
-    "serviceAccountRequest": {
-      "type": "object",
-      "properties": {
-        "policy": {
-          "type": "string",
-          "title": "policy to be applied to the Service Account if any"
-        }
-      }
-    },
-    "serviceAccounts": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "setBucketQuota": {
-      "type": "object",
-      "required": [
-        "enabled"
-      ],
-      "properties": {
-        "amount": {
-          "type": "integer"
-        },
-        "enabled": {
-          "type": "boolean"
-        },
-        "quota_type": {
-          "type": "string",
-          "enum": [
-            "fifo",
-            "hard"
-          ]
-        }
-      }
-    },
-    "setBucketVersioning": {
-      "type": "object",
-      "properties": {
-        "versioning": {
-          "type": "boolean"
-        }
-      }
-    },
-    "setConfigResponse": {
-      "type": "object",
-      "properties": {
-        "restart": {
-          "description": "Returns wheter server needs to restart to apply changes or not",
-          "type": "boolean"
-        }
-      }
-    },
-    "startProfilingItem": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "nodeName": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "startProfilingList": {
-      "type": "object",
-      "properties": {
-        "startResults": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/startProfilingItem"
-          }
-        },
-        "total": {
-          "type": "integer",
-          "format": "int64",
-          "title": "number of start results"
         }
       }
     },
@@ -3718,136 +2947,6 @@ func init() {
         }
       }
     },
-    "tier": {
-      "type": "object",
-      "properties": {
-        "azure": {
-          "type": "object",
-          "$ref": "#/definitions/tier_azure"
-        },
-        "gcs": {
-          "type": "object",
-          "$ref": "#/definitions/tier_gcs"
-        },
-        "s3": {
-          "type": "object",
-          "$ref": "#/definitions/tier_s3"
-        },
-        "type": {
-          "type": "string",
-          "enum": [
-            "s3",
-            "gcs",
-            "azure",
-            "unsupported"
-          ]
-        }
-      }
-    },
-    "tierCredentialsRequest": {
-      "type": "object",
-      "properties": {
-        "access_key": {
-          "type": "string"
-        },
-        "creds": {
-          "description": "a base64 encoded value",
-          "type": "string"
-        },
-        "secret_key": {
-          "type": "string"
-        }
-      }
-    },
-    "tierListResponse": {
-      "type": "object",
-      "properties": {
-        "items": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/tier"
-          }
-        }
-      }
-    },
-    "tier_azure": {
-      "type": "object",
-      "properties": {
-        "accountkey": {
-          "type": "string"
-        },
-        "accountname": {
-          "type": "string"
-        },
-        "bucket": {
-          "type": "string"
-        },
-        "endpoint": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "prefix": {
-          "type": "string"
-        },
-        "region": {
-          "type": "string"
-        }
-      }
-    },
-    "tier_gcs": {
-      "type": "object",
-      "properties": {
-        "bucket": {
-          "type": "string"
-        },
-        "creds": {
-          "type": "string"
-        },
-        "endpoint": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "prefix": {
-          "type": "string"
-        },
-        "region": {
-          "type": "string"
-        }
-      }
-    },
-    "tier_s3": {
-      "type": "object",
-      "properties": {
-        "accesskey": {
-          "type": "string"
-        },
-        "bucket": {
-          "type": "string"
-        },
-        "endpoint": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "prefix": {
-          "type": "string"
-        },
-        "region": {
-          "type": "string"
-        },
-        "secretkey": {
-          "type": "string"
-        },
-        "storageclass": {
-          "type": "string"
-        }
-      }
-    },
     "tlsConfiguration": {
       "type": "object",
       "properties": {
@@ -3872,32 +2971,6 @@ func init() {
           "items": {
             "$ref": "#/definitions/keyPairConfiguration"
           }
-        }
-      }
-    },
-    "transitionResponse": {
-      "type": "object",
-      "properties": {
-        "date": {
-          "type": "string"
-        },
-        "days": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "storage_class": {
-          "type": "string"
-        }
-      }
-    },
-    "updateBucketLifecycle": {
-      "type": "object",
-      "properties": {
-        "disable": {
-          "type": "boolean"
-        },
-        "tags": {
-          "type": "string"
         }
       }
     },
@@ -3966,47 +3039,6 @@ func init() {
         }
       }
     },
-    "updateUser": {
-      "type": "object",
-      "required": [
-        "status",
-        "groups"
-      ],
-      "properties": {
-        "groups": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "status": {
-          "type": "string"
-        }
-      }
-    },
-    "user": {
-      "type": "object",
-      "properties": {
-        "accessKey": {
-          "type": "string"
-        },
-        "memberOf": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "policy": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "status": {
-          "type": "string"
-        }
-      }
-    },
     "vaultConfiguration": {
       "type": "object",
       "required": [
@@ -4070,95 +3102,6 @@ func init() {
               "type": "string"
             }
           }
-        }
-      }
-    },
-    "widget": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "options": {
-          "type": "object",
-          "properties": {
-            "reduceOptions": {
-              "type": "object",
-              "properties": {
-                "calcs": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "targets": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/resultTarget"
-          }
-        },
-        "title": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string"
-        }
-      }
-    },
-    "widgetDetails": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "options": {
-          "type": "object",
-          "properties": {
-            "reduceOptions": {
-              "type": "object",
-              "properties": {
-                "calcs": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "targets": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/resultTarget"
-          }
-        },
-        "title": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string"
-        }
-      }
-    },
-    "widgetResult": {
-      "type": "object",
-      "properties": {
-        "metric": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "values": {
-          "type": "array",
-          "items": {}
         }
       }
     }
@@ -6209,167 +5152,6 @@ func init() {
         }
       }
     },
-    "WidgetDetailsOptions": {
-      "type": "object",
-      "properties": {
-        "reduceOptions": {
-          "type": "object",
-          "properties": {
-            "calcs": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      }
-    },
-    "WidgetDetailsOptionsReduceOptions": {
-      "type": "object",
-      "properties": {
-        "calcs": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "WidgetOptions": {
-      "type": "object",
-      "properties": {
-        "reduceOptions": {
-          "type": "object",
-          "properties": {
-            "calcs": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      }
-    },
-    "WidgetOptionsReduceOptions": {
-      "type": "object",
-      "properties": {
-        "calcs": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "accountChangePasswordRequest": {
-      "type": "object",
-      "required": [
-        "current_secret_key",
-        "new_secret_key"
-      ],
-      "properties": {
-        "current_secret_key": {
-          "type": "string"
-        },
-        "new_secret_key": {
-          "type": "string"
-        }
-      }
-    },
-    "addBucketLifecycle": {
-      "type": "object",
-      "properties": {
-        "disable": {
-          "description": "Non required, toggle to disable or enable rule",
-          "type": "boolean"
-        },
-        "expired_object_delete_marker": {
-          "description": "Non required, toggle to disable or enable rule",
-          "type": "boolean"
-        },
-        "expiry_date": {
-          "description": "Required in case of expiry_days or transition fields are not set. it defines an expiry date for ILM",
-          "type": "string"
-        },
-        "expiry_days": {
-          "description": "Required in case of expiry_date or transition fields are not set. it defines an expiry days for ILM",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
-        },
-        "noncurrentversion_expiration_days": {
-          "description": "Non required, can be set in case of expiration is enabled",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
-        },
-        "noncurrentversion_transition_days": {
-          "description": "Non required, can be set in case of transition is enabled",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
-        },
-        "noncurrentversion_transition_storage_class": {
-          "description": "Non required, can be set in case of transition is enabled",
-          "type": "string"
-        },
-        "prefix": {
-          "description": "Non required field, it matches a prefix to perform ILM operations on it",
-          "type": "string"
-        },
-        "storage_class": {
-          "description": "Required only in case of transition is set. it refers to a tier",
-          "type": "string"
-        },
-        "tags": {
-          "description": "Non required field, tags to match ILM files",
-          "type": "string"
-        },
-        "transition_date": {
-          "description": "Required in case of transition_days or expiry fields are not set. it defines a transition date for ILM",
-          "type": "string"
-        },
-        "transition_days": {
-          "description": "Required in case of transition_date or expiry fields are not set. it defines a transition days for ILM",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
-        }
-      }
-    },
-    "adminInfoResponse": {
-      "type": "object",
-      "properties": {
-        "buckets": {
-          "type": "integer"
-        },
-        "objects": {
-          "type": "integer"
-        },
-        "usage": {
-          "type": "integer"
-        },
-        "widgets": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/widget"
-          }
-        }
-      }
-    },
-    "arnsResponse": {
-      "type": "object",
-      "properties": {
-        "arns": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
     "awsConfiguration": {
       "type": "object",
       "required": [
@@ -6415,109 +5197,6 @@ func init() {
         }
       }
     },
-    "bucket": {
-      "type": "object",
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "access": {
-          "$ref": "#/definitions/bucketAccess"
-        },
-        "creation_date": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string",
-          "minLength": 3
-        },
-        "size": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
-    },
-    "bucketAccess": {
-      "type": "string",
-      "default": "PRIVATE",
-      "enum": [
-        "PRIVATE",
-        "PUBLIC",
-        "CUSTOM"
-      ]
-    },
-    "bucketEncryptionInfo": {
-      "type": "object",
-      "properties": {
-        "algorithm": {
-          "type": "string"
-        },
-        "kmsMasterKeyID": {
-          "type": "string"
-        }
-      }
-    },
-    "bucketEncryptionRequest": {
-      "type": "object",
-      "properties": {
-        "encType": {
-          "$ref": "#/definitions/bucketEncryptionType"
-        },
-        "kmsKeyID": {
-          "type": "string"
-        }
-      }
-    },
-    "bucketEncryptionType": {
-      "type": "string",
-      "default": "sse-s3",
-      "enum": [
-        "sse-s3",
-        "sse-kms"
-      ]
-    },
-    "bucketLifecycleResponse": {
-      "type": "object",
-      "properties": {
-        "lifecycle": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/objectBucketLifecycle"
-          }
-        }
-      }
-    },
-    "bucketObLockingResponse": {
-      "type": "object",
-      "properties": {
-        "object_locking_enabled": {
-          "type": "boolean"
-        }
-      }
-    },
-    "bucketQuota": {
-      "type": "object",
-      "properties": {
-        "quota": {
-          "type": "integer"
-        },
-        "type": {
-          "type": "string",
-          "enum": [
-            "hard",
-            "fifo"
-          ]
-        }
-      }
-    },
-    "bucketVersioningResponse": {
-      "type": "object",
-      "properties": {
-        "is_versioned": {
-          "type": "boolean"
-        }
-      }
-    },
     "certificateInfo": {
       "type": "object",
       "properties": {
@@ -6534,46 +5213,6 @@ func init() {
           "type": "string"
         },
         "serialNumber": {
-          "type": "string"
-        }
-      }
-    },
-    "changeUserPasswordRequest": {
-      "type": "object",
-      "required": [
-        "selectedUser",
-        "newSecretKey"
-      ],
-      "properties": {
-        "newSecretKey": {
-          "type": "string"
-        },
-        "selectedUser": {
-          "type": "string"
-        }
-      }
-    },
-    "configuration": {
-      "type": "object",
-      "properties": {
-        "key_values": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/configurationKV"
-          }
-        },
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "configurationKV": {
-      "type": "object",
-      "properties": {
-        "key": {
-          "type": "string"
-        },
-        "value": {
           "type": "string"
         }
       }
@@ -6863,21 +5502,6 @@ func init() {
         "$ref": "#/definitions/eventListElement"
       }
     },
-    "expirationResponse": {
-      "type": "object",
-      "properties": {
-        "date": {
-          "type": "string"
-        },
-        "days": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "delete_marker": {
-          "type": "boolean"
-        }
-      }
-    },
     "formatConfiguration": {
       "type": "object",
       "required": [
@@ -6997,21 +5621,6 @@ func init() {
         }
       }
     },
-    "getBucketRetentionConfig": {
-      "type": "object",
-      "properties": {
-        "mode": {
-          "$ref": "#/definitions/objectRetentionMode"
-        },
-        "unit": {
-          "$ref": "#/definitions/objectRetentionUnit"
-        },
-        "validity": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
     "getDirectCSIDriveListResponse": {
       "type": "object",
       "properties": {
@@ -7030,48 +5639,6 @@ func init() {
           "type": "array",
           "items": {
             "$ref": "#/definitions/directCSIVolumeInfo"
-          }
-        }
-      }
-    },
-    "group": {
-      "type": "object",
-      "properties": {
-        "members": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "name": {
-          "type": "string"
-        },
-        "policy": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        }
-      }
-    },
-    "hasPermissionRequest": {
-      "type": "object",
-      "properties": {
-        "actions": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/policyArgs"
-          }
-        }
-      }
-    },
-    "hasPermissionResponse": {
-      "type": "object",
-      "properties": {
-        "permissions": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/permissionAction"
           }
         }
       }
@@ -7230,34 +5797,6 @@ func init() {
         }
       }
     },
-    "lifecycleTag": {
-      "type": "object",
-      "properties": {
-        "key": {
-          "type": "string"
-        },
-        "value": {
-          "type": "string"
-        }
-      }
-    },
-    "listBucketsResponse": {
-      "type": "object",
-      "properties": {
-        "buckets": {
-          "type": "array",
-          "title": "list of resulting buckets",
-          "items": {
-            "$ref": "#/definitions/bucket"
-          }
-        },
-        "total": {
-          "type": "integer",
-          "format": "int64",
-          "title": "number of buckets accessible to tenant user"
-        }
-      }
-    },
     "listPVCsResponse": {
       "type": "object",
       "properties": {
@@ -7302,15 +5841,6 @@ func init() {
         "storageSize": {
           "type": "number",
           "default": 5
-        }
-      }
-    },
-    "logSearchResponse": {
-      "type": "object",
-      "properties": {
-        "results": {
-          "type": "object",
-          "title": "list of log search responses"
         }
       }
     },
@@ -7451,131 +5981,6 @@ func init() {
         }
       }
     },
-    "nofiticationService": {
-      "type": "string",
-      "enum": [
-        "webhook",
-        "amqp",
-        "kafka",
-        "mqtt",
-        "nats",
-        "nsq",
-        "mysql",
-        "postgres",
-        "elasticsearch",
-        "redis"
-      ]
-    },
-    "notificationConfig": {
-      "type": "object",
-      "required": [
-        "arn"
-      ],
-      "properties": {
-        "arn": {
-          "type": "string"
-        },
-        "events": {
-          "type": "array",
-          "title": "filter specific type of event. Defaults to all event (default: '[put,delete,get]')",
-          "items": {
-            "$ref": "#/definitions/notificationEventType"
-          }
-        },
-        "id": {
-          "type": "string"
-        },
-        "prefix": {
-          "type": "string",
-          "title": "filter event associated to the specified prefix"
-        },
-        "suffix": {
-          "type": "string",
-          "title": "filter event associated to the specified suffix"
-        }
-      }
-    },
-    "notificationDeleteRequest": {
-      "type": "object",
-      "required": [
-        "events",
-        "prefix",
-        "suffix"
-      ],
-      "properties": {
-        "events": {
-          "type": "array",
-          "title": "filter specific type of event. Defaults to all event (default: '[put,delete,get]')",
-          "minLength": 1,
-          "items": {
-            "$ref": "#/definitions/notificationEventType"
-          }
-        },
-        "prefix": {
-          "type": "string",
-          "title": "filter event associated to the specified prefix"
-        },
-        "suffix": {
-          "type": "string",
-          "title": "filter event associated to the specified suffix"
-        }
-      }
-    },
-    "notificationEventType": {
-      "type": "string",
-      "enum": [
-        "put",
-        "delete",
-        "get"
-      ]
-    },
-    "objectBucketLifecycle": {
-      "type": "object",
-      "properties": {
-        "expiration": {
-          "$ref": "#/definitions/expirationResponse"
-        },
-        "id": {
-          "type": "string"
-        },
-        "prefix": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "tags": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/lifecycleTag"
-          }
-        },
-        "transition": {
-          "$ref": "#/definitions/transitionResponse"
-        }
-      }
-    },
-    "objectLegalHoldStatus": {
-      "type": "string",
-      "enum": [
-        "enabled",
-        "disabled"
-      ]
-    },
-    "objectRetentionMode": {
-      "type": "string",
-      "enum": [
-        "governance",
-        "compliance"
-      ]
-    },
-    "objectRetentionUnit": {
-      "type": "string",
-      "enum": [
-        "days",
-        "years"
-      ]
-    },
     "operatorSessionResponse": {
       "type": "object",
       "properties": {
@@ -7606,17 +6011,6 @@ func init() {
       "type": "array",
       "items": {
         "type": "string"
-      }
-    },
-    "permissionAction": {
-      "type": "object",
-      "properties": {
-        "can": {
-          "type": "boolean"
-        },
-        "id": {
-          "type": "string"
-        }
       }
     },
     "podAffinityTerm": {
@@ -7655,31 +6049,6 @@ func init() {
         },
         "topologyKey": {
           "description": "This pod should be co-located (affinity) or not co-located (anti-affinity) with the pods matching the labelSelector in the specified namespaces, where co-located is defined as running on a node whose value of the label with key topologyKey matches that of any node on which any of the selected pods is running. Empty topologyKey is not allowed.",
-          "type": "string"
-        }
-      }
-    },
-    "policy": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "policy": {
-          "type": "string"
-        }
-      }
-    },
-    "policyArgs": {
-      "type": "object",
-      "properties": {
-        "action": {
-          "type": "string"
-        },
-        "bucket_name": {
-          "type": "string"
-        },
-        "id": {
           "type": "string"
         }
       }
@@ -7877,52 +6246,6 @@ func init() {
         }
       }
     },
-    "principal": {
-      "type": "object",
-      "properties": {
-        "STSAccessKeyID": {
-          "type": "string"
-        },
-        "STSSecretAccessKey": {
-          "type": "string"
-        },
-        "STSSessionToken": {
-          "type": "string"
-        },
-        "accountAccessKey": {
-          "type": "string"
-        },
-        "actions": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "profilerType": {
-      "type": "string",
-      "enum": [
-        "cpu",
-        "mem",
-        "block",
-        "mutex",
-        "trace",
-        "threads",
-        "goroutines"
-      ]
-    },
-    "profilingStartRequest": {
-      "type": "object",
-      "required": [
-        "type"
-      ],
-      "properties": {
-        "type": {
-          "$ref": "#/definitions/profilerType"
-        }
-      }
-    },
     "prometheusConfiguration": {
       "type": "object",
       "properties": {
@@ -7936,65 +6259,6 @@ func init() {
         "storageSize": {
           "type": "number",
           "default": 5
-        }
-      }
-    },
-    "putBucketRetentionRequest": {
-      "type": "object",
-      "required": [
-        "mode",
-        "unit",
-        "validity"
-      ],
-      "properties": {
-        "mode": {
-          "$ref": "#/definitions/objectRetentionMode"
-        },
-        "unit": {
-          "$ref": "#/definitions/objectRetentionUnit"
-        },
-        "validity": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "putObjectLegalHoldRequest": {
-      "type": "object",
-      "required": [
-        "status"
-      ],
-      "properties": {
-        "status": {
-          "$ref": "#/definitions/objectLegalHoldStatus"
-        }
-      }
-    },
-    "putObjectRetentionRequest": {
-      "type": "object",
-      "required": [
-        "mode",
-        "expires"
-      ],
-      "properties": {
-        "expires": {
-          "type": "string"
-        },
-        "governance_bypass": {
-          "type": "boolean"
-        },
-        "mode": {
-          "$ref": "#/definitions/objectRetentionMode"
-        }
-      }
-    },
-    "putObjectTagsRequest": {
-      "type": "object",
-      "properties": {
-        "tags": {
-          "additionalProperties": {
-            "type": "string"
-          }
         }
       }
     },
@@ -8054,152 +6318,6 @@ func init() {
         "used": {
           "type": "integer",
           "format": "int64"
-        }
-      }
-    },
-    "resultTarget": {
-      "type": "object",
-      "properties": {
-        "legendFormat": {
-          "type": "string"
-        },
-        "result": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/widgetResult"
-          }
-        },
-        "resultType": {
-          "type": "string"
-        }
-      }
-    },
-    "rewindItem": {
-      "type": "object",
-      "properties": {
-        "action": {
-          "type": "string"
-        },
-        "delete_flag": {
-          "type": "boolean"
-        },
-        "last_modified": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "size": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "version_id": {
-          "type": "string"
-        }
-      }
-    },
-    "rewindResponse": {
-      "type": "object",
-      "properties": {
-        "objects": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/rewindItem"
-          }
-        }
-      }
-    },
-    "serviceAccountCreds": {
-      "type": "object",
-      "properties": {
-        "accessKey": {
-          "type": "string"
-        },
-        "secretKey": {
-          "type": "string"
-        }
-      }
-    },
-    "serviceAccountRequest": {
-      "type": "object",
-      "properties": {
-        "policy": {
-          "type": "string",
-          "title": "policy to be applied to the Service Account if any"
-        }
-      }
-    },
-    "serviceAccounts": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "setBucketQuota": {
-      "type": "object",
-      "required": [
-        "enabled"
-      ],
-      "properties": {
-        "amount": {
-          "type": "integer"
-        },
-        "enabled": {
-          "type": "boolean"
-        },
-        "quota_type": {
-          "type": "string",
-          "enum": [
-            "fifo",
-            "hard"
-          ]
-        }
-      }
-    },
-    "setBucketVersioning": {
-      "type": "object",
-      "properties": {
-        "versioning": {
-          "type": "boolean"
-        }
-      }
-    },
-    "setConfigResponse": {
-      "type": "object",
-      "properties": {
-        "restart": {
-          "description": "Returns wheter server needs to restart to apply changes or not",
-          "type": "boolean"
-        }
-      }
-    },
-    "startProfilingItem": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string"
-        },
-        "nodeName": {
-          "type": "string"
-        },
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "startProfilingList": {
-      "type": "object",
-      "properties": {
-        "startResults": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/startProfilingItem"
-          }
-        },
-        "total": {
-          "type": "integer",
-          "format": "int64",
-          "title": "number of start results"
         }
       }
     },
@@ -8451,136 +6569,6 @@ func init() {
         }
       }
     },
-    "tier": {
-      "type": "object",
-      "properties": {
-        "azure": {
-          "type": "object",
-          "$ref": "#/definitions/tier_azure"
-        },
-        "gcs": {
-          "type": "object",
-          "$ref": "#/definitions/tier_gcs"
-        },
-        "s3": {
-          "type": "object",
-          "$ref": "#/definitions/tier_s3"
-        },
-        "type": {
-          "type": "string",
-          "enum": [
-            "s3",
-            "gcs",
-            "azure",
-            "unsupported"
-          ]
-        }
-      }
-    },
-    "tierCredentialsRequest": {
-      "type": "object",
-      "properties": {
-        "access_key": {
-          "type": "string"
-        },
-        "creds": {
-          "description": "a base64 encoded value",
-          "type": "string"
-        },
-        "secret_key": {
-          "type": "string"
-        }
-      }
-    },
-    "tierListResponse": {
-      "type": "object",
-      "properties": {
-        "items": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/tier"
-          }
-        }
-      }
-    },
-    "tier_azure": {
-      "type": "object",
-      "properties": {
-        "accountkey": {
-          "type": "string"
-        },
-        "accountname": {
-          "type": "string"
-        },
-        "bucket": {
-          "type": "string"
-        },
-        "endpoint": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "prefix": {
-          "type": "string"
-        },
-        "region": {
-          "type": "string"
-        }
-      }
-    },
-    "tier_gcs": {
-      "type": "object",
-      "properties": {
-        "bucket": {
-          "type": "string"
-        },
-        "creds": {
-          "type": "string"
-        },
-        "endpoint": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "prefix": {
-          "type": "string"
-        },
-        "region": {
-          "type": "string"
-        }
-      }
-    },
-    "tier_s3": {
-      "type": "object",
-      "properties": {
-        "accesskey": {
-          "type": "string"
-        },
-        "bucket": {
-          "type": "string"
-        },
-        "endpoint": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "prefix": {
-          "type": "string"
-        },
-        "region": {
-          "type": "string"
-        },
-        "secretkey": {
-          "type": "string"
-        },
-        "storageclass": {
-          "type": "string"
-        }
-      }
-    },
     "tlsConfiguration": {
       "type": "object",
       "properties": {
@@ -8605,32 +6593,6 @@ func init() {
           "items": {
             "$ref": "#/definitions/keyPairConfiguration"
           }
-        }
-      }
-    },
-    "transitionResponse": {
-      "type": "object",
-      "properties": {
-        "date": {
-          "type": "string"
-        },
-        "days": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "storage_class": {
-          "type": "string"
-        }
-      }
-    },
-    "updateBucketLifecycle": {
-      "type": "object",
-      "properties": {
-        "disable": {
-          "type": "boolean"
-        },
-        "tags": {
-          "type": "string"
         }
       }
     },
@@ -8699,47 +6661,6 @@ func init() {
         }
       }
     },
-    "updateUser": {
-      "type": "object",
-      "required": [
-        "status",
-        "groups"
-      ],
-      "properties": {
-        "groups": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "status": {
-          "type": "string"
-        }
-      }
-    },
-    "user": {
-      "type": "object",
-      "properties": {
-        "accessKey": {
-          "type": "string"
-        },
-        "memberOf": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "policy": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "status": {
-          "type": "string"
-        }
-      }
-    },
     "vaultConfiguration": {
       "type": "object",
       "required": [
@@ -8803,95 +6724,6 @@ func init() {
               "type": "string"
             }
           }
-        }
-      }
-    },
-    "widget": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "options": {
-          "type": "object",
-          "properties": {
-            "reduceOptions": {
-              "type": "object",
-              "properties": {
-                "calcs": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "targets": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/resultTarget"
-          }
-        },
-        "title": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string"
-        }
-      }
-    },
-    "widgetDetails": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "options": {
-          "type": "object",
-          "properties": {
-            "reduceOptions": {
-              "type": "object",
-              "properties": {
-                "calcs": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "targets": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/resultTarget"
-          }
-        },
-        "title": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string"
-        }
-      }
-    },
-    "widgetResult": {
-      "type": "object",
-      "properties": {
-        "metric": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "values": {
-          "type": "array",
-          "items": {}
         }
       }
     }
