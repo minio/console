@@ -82,6 +82,27 @@ func registersPoliciesHandler(api *operations.ConsoleAPI) {
 		}
 		return admin_api.NewListPoliciesWithBucketOK().WithPayload(policyResponse)
 	})
+	api.AdminAPIListAccessRulesWithBucketHandler = admin_api.ListAccessRulesWithBucketHandlerFunc(func(params admin_api.ListAccessRulesWithBucketParams, session *models.Principal) middleware.Responder {
+		policyResponse, err := getListAccessRulesWithBucketResponse(session, params.Bucket)
+		if err != nil {
+			return admin_api.NewListAccessRulesWithBucketDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewListAccessRulesWithBucketOK().WithPayload(policyResponse)
+	})
+	api.AdminAPISetAccessRuleWithBucketHandler = admin_api.SetAccessRuleWithBucketHandlerFunc(func(params admin_api.SetAccessRuleWithBucketParams, session *models.Principal) middleware.Responder {
+		policyResponse, err := getSetAccessRuleWithBucketResponse(session, params.Bucket, params.Prefixaccess)
+		if err != nil {
+			return admin_api.NewSetAccessRuleWithBucketDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewSetAccessRuleWithBucketOK().WithPayload(policyResponse)
+	})
+	api.AdminAPIDeleteAccessRuleWithBucketHandler = admin_api.DeleteAccessRuleWithBucketHandlerFunc(func(params admin_api.DeleteAccessRuleWithBucketParams, session *models.Principal) middleware.Responder {
+		policyResponse, err := getDeleteAccessRuleWithBucketResponse(session, params.Bucket, params.Prefix)
+		if err != nil {
+			return admin_api.NewDeleteAccessRuleWithBucketDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewDeleteAccessRuleWithBucketOK().WithPayload(policyResponse)
+	})
 	api.AdminAPIListUsersForPolicyHandler = admin_api.ListUsersForPolicyHandlerFunc(func(params admin_api.ListUsersForPolicyParams, session *models.Principal) middleware.Responder {
 		policyUsersResponse, err := getListUsersForPolicyResponse(session, params.Policy)
 		if err != nil {
@@ -96,6 +117,46 @@ func registersPoliciesHandler(api *operations.ConsoleAPI) {
 		}
 		return admin_api.NewListGroupsForPolicyOK().WithPayload(policyGroupsResponse)
 	})
+}
+
+func getListAccessRulesWithBucketResponse(session *models.Principal, bucket string) (*models.ListAccessRulesResponse, *models.Error) {
+	ctx := context.Background()
+	client, err := newS3BucketClient(session, bucket, "")
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	accessRules, _ := client.GetAccessRules(ctx)
+	var accessRuleList []*models.AccessRule
+	for k, v := range accessRules {
+		accessRuleList = append(accessRuleList, &models.AccessRule{Prefix: k[len(bucket)+1 : len(k)-1], Access: v})
+	}
+	return &models.ListAccessRulesResponse{AccessRules: accessRuleList}, nil
+}
+
+func getSetAccessRuleWithBucketResponse(session *models.Principal, bucket string, prefixAccess *models.PrefixAccessPair) (bool, *models.Error) {
+	ctx := context.Background()
+	client, err := newS3BucketClient(session, bucket, prefixAccess.Prefix)
+	if err != nil {
+		return false, prepareError(err)
+	}
+	errorVal := client.SetAccess(ctx, prefixAccess.Access, false)
+	if errorVal != nil {
+		return false, prepareError(errorVal.Cause)
+	}
+	return true, nil
+}
+
+func getDeleteAccessRuleWithBucketResponse(session *models.Principal, bucket string, prefix string) (bool, *models.Error) {
+	ctx := context.Background()
+	client, err := newS3BucketClient(session, bucket, prefix)
+	if err != nil {
+		return false, prepareError(err)
+	}
+	errorVal := client.SetAccess(ctx, "none", false)
+	if errorVal != nil {
+		return false, prepareError(errorVal.Cause)
+	}
+	return true, nil
 }
 
 func getListPoliciesWithBucketResponse(session *models.Principal, bucket string) (*models.ListPoliciesResponse, *models.Error) {

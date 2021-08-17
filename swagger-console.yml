@@ -1571,6 +1571,86 @@ paths:
       tags:
         - AdminAPI
 
+  /bucket/{bucket}/access-rules:
+    put:
+      summary: Add Access Rule To Given Bucket
+      operationId: SetAccessRuleWithBucket
+      parameters:
+        - name: bucket
+          in: path
+          required: true
+          type: string
+        - name: prefixaccess
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/prefixAccessPair"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: boolean
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    get:
+      summary: List Access Rules With Given Bucket
+      operationId: ListAccessRulesWithBucket
+      parameters:
+        - name: bucket
+          in: path
+          required: true
+          type: string
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listAccessRulesResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /bucket/{bucket}/access-rules/{prefix}:
+    delete:
+      summary: Delete Access Rule From Given Bucket
+      operationId: DeleteAccessRuleWithBucket
+      parameters:
+        - name: bucket
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: boolean
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
   /bucket-users/{bucket}:
     get:
       summary: List Users With Access to a Given Bucket
@@ -2457,6 +2537,28 @@ definitions:
         type: integer
         format: int64
         title: total number of policies
+
+  listAccessRulesResponse:
+    type: object
+    properties:
+      accessRules:
+        type: array
+        items:
+          $ref: "#/definitions/accessRule"
+        title: list of policies
+      total:
+        type: integer
+        format: int64
+        title: total number of policies
+
+  accessRule:
+    type: object
+    properties:
+      prefix:
+        type: string
+      access:
+        type: string
+
   updateGroupRequest:
     type: object
     required:
@@ -3368,6 +3470,14 @@ definitions:
         type: string
       disable:
         type: boolean
+
+  prefixAccessPair:
+    type: object
+    properties:
+      prefix:
+        type: string
+      access:
+        type: string
 
   setConfigResponse:
     type: object

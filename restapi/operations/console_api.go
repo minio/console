@@ -119,6 +119,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIDashboardWidgetDetailsHandler: admin_api.DashboardWidgetDetailsHandlerFunc(func(params admin_api.DashboardWidgetDetailsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.DashboardWidgetDetails has not yet been implemented")
 		}),
+		AdminAPIDeleteAccessRuleWithBucketHandler: admin_api.DeleteAccessRuleWithBucketHandlerFunc(func(params admin_api.DeleteAccessRuleWithBucketParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.DeleteAccessRuleWithBucket has not yet been implemented")
+		}),
 		UserAPIDeleteBucketHandler: user_api.DeleteBucketHandlerFunc(func(params user_api.DeleteBucketParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.DeleteBucket has not yet been implemented")
 		}),
@@ -193,6 +196,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		AdminAPIListAUserServiceAccountsHandler: admin_api.ListAUserServiceAccountsHandlerFunc(func(params admin_api.ListAUserServiceAccountsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ListAUserServiceAccounts has not yet been implemented")
+		}),
+		AdminAPIListAccessRulesWithBucketHandler: admin_api.ListAccessRulesWithBucketHandlerFunc(func(params admin_api.ListAccessRulesWithBucketParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.ListAccessRulesWithBucket has not yet been implemented")
 		}),
 		UserAPIListBucketEventsHandler: user_api.ListBucketEventsHandlerFunc(func(params user_api.ListBucketEventsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.ListBucketEvents has not yet been implemented")
@@ -298,6 +304,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		UserAPISessionCheckHandler: user_api.SessionCheckHandlerFunc(func(params user_api.SessionCheckParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.SessionCheck has not yet been implemented")
+		}),
+		AdminAPISetAccessRuleWithBucketHandler: admin_api.SetAccessRuleWithBucketHandlerFunc(func(params admin_api.SetAccessRuleWithBucketParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.SetAccessRuleWithBucket has not yet been implemented")
 		}),
 		UserAPISetBucketQuotaHandler: user_api.SetBucketQuotaHandlerFunc(func(params user_api.SetBucketQuotaParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.SetBucketQuota has not yet been implemented")
@@ -432,6 +441,8 @@ type ConsoleAPI struct {
 	UserAPICreateServiceAccountHandler user_api.CreateServiceAccountHandler
 	// AdminAPIDashboardWidgetDetailsHandler sets the operation handler for the dashboard widget details operation
 	AdminAPIDashboardWidgetDetailsHandler admin_api.DashboardWidgetDetailsHandler
+	// AdminAPIDeleteAccessRuleWithBucketHandler sets the operation handler for the delete access rule with bucket operation
+	AdminAPIDeleteAccessRuleWithBucketHandler admin_api.DeleteAccessRuleWithBucketHandler
 	// UserAPIDeleteBucketHandler sets the operation handler for the delete bucket operation
 	UserAPIDeleteBucketHandler user_api.DeleteBucketHandler
 	// UserAPIDeleteBucketEventHandler sets the operation handler for the delete bucket event operation
@@ -482,6 +493,8 @@ type ConsoleAPI struct {
 	UserAPIHasPermissionToHandler user_api.HasPermissionToHandler
 	// AdminAPIListAUserServiceAccountsHandler sets the operation handler for the list a user service accounts operation
 	AdminAPIListAUserServiceAccountsHandler admin_api.ListAUserServiceAccountsHandler
+	// AdminAPIListAccessRulesWithBucketHandler sets the operation handler for the list access rules with bucket operation
+	AdminAPIListAccessRulesWithBucketHandler admin_api.ListAccessRulesWithBucketHandler
 	// UserAPIListBucketEventsHandler sets the operation handler for the list bucket events operation
 	UserAPIListBucketEventsHandler user_api.ListBucketEventsHandler
 	// UserAPIListBucketsHandler sets the operation handler for the list buckets operation
@@ -552,6 +565,8 @@ type ConsoleAPI struct {
 	AdminAPIRestartServiceHandler admin_api.RestartServiceHandler
 	// UserAPISessionCheckHandler sets the operation handler for the session check operation
 	UserAPISessionCheckHandler user_api.SessionCheckHandler
+	// AdminAPISetAccessRuleWithBucketHandler sets the operation handler for the set access rule with bucket operation
+	AdminAPISetAccessRuleWithBucketHandler admin_api.SetAccessRuleWithBucketHandler
 	// UserAPISetBucketQuotaHandler sets the operation handler for the set bucket quota operation
 	UserAPISetBucketQuotaHandler user_api.SetBucketQuotaHandler
 	// UserAPISetBucketRetentionConfigHandler sets the operation handler for the set bucket retention config operation
@@ -721,6 +736,9 @@ func (o *ConsoleAPI) Validate() error {
 	if o.AdminAPIDashboardWidgetDetailsHandler == nil {
 		unregistered = append(unregistered, "admin_api.DashboardWidgetDetailsHandler")
 	}
+	if o.AdminAPIDeleteAccessRuleWithBucketHandler == nil {
+		unregistered = append(unregistered, "admin_api.DeleteAccessRuleWithBucketHandler")
+	}
 	if o.UserAPIDeleteBucketHandler == nil {
 		unregistered = append(unregistered, "user_api.DeleteBucketHandler")
 	}
@@ -795,6 +813,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIListAUserServiceAccountsHandler == nil {
 		unregistered = append(unregistered, "admin_api.ListAUserServiceAccountsHandler")
+	}
+	if o.AdminAPIListAccessRulesWithBucketHandler == nil {
+		unregistered = append(unregistered, "admin_api.ListAccessRulesWithBucketHandler")
 	}
 	if o.UserAPIListBucketEventsHandler == nil {
 		unregistered = append(unregistered, "user_api.ListBucketEventsHandler")
@@ -900,6 +921,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPISessionCheckHandler == nil {
 		unregistered = append(unregistered, "user_api.SessionCheckHandler")
+	}
+	if o.AdminAPISetAccessRuleWithBucketHandler == nil {
+		unregistered = append(unregistered, "admin_api.SetAccessRuleWithBucketHandler")
 	}
 	if o.UserAPISetBucketQuotaHandler == nil {
 		unregistered = append(unregistered, "user_api.SetBucketQuotaHandler")
@@ -1120,6 +1144,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
+	o.handlers["DELETE"]["/bucket/{bucket}/access-rules/{prefix}"] = admin_api.NewDeleteAccessRuleWithBucket(o.context, o.AdminAPIDeleteAccessRuleWithBucketHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
 	o.handlers["DELETE"]["/buckets/{name}"] = user_api.NewDeleteBucket(o.context, o.UserAPIDeleteBucketHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
@@ -1217,6 +1245,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/user/service-accounts"] = admin_api.NewListAUserServiceAccounts(o.context, o.AdminAPIListAUserServiceAccountsHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/bucket/{bucket}/access-rules"] = admin_api.NewListAccessRulesWithBucket(o.context, o.AdminAPIListAccessRulesWithBucketHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -1357,6 +1389,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/session"] = user_api.NewSessionCheck(o.context, o.UserAPISessionCheckHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/bucket/{bucket}/access-rules"] = admin_api.NewSetAccessRuleWithBucket(o.context, o.AdminAPISetAccessRuleWithBucketHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
