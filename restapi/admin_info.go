@@ -19,7 +19,9 @@ package restapi
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"net/http"
 	"net/url"
 	"regexp"
 	"strings"
@@ -871,9 +873,37 @@ func unmarshalPrometheus(endpoint string, data interface{}) bool {
 	return false
 }
 
+func testPrometheusURL(url string) bool {
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url+"/-/healthy", nil)
+
+	if err != nil {
+		LogError("Error Building Request: (%v)", err)
+		return false
+	}
+
+	response, err := GetConsoleHTTPClient().Do(req)
+
+	if err != nil {
+		LogError("Non reachable Prometheus URL: %s (%v)", url, err)
+		return false
+
+	}
+
+	return response.StatusCode == http.StatusOK
+}
+
 func getAdminInfoWidgetResponse(params admin_api.DashboardWidgetDetailsParams) (*models.WidgetDetails, *models.Error) {
 	prometheusURL := getPrometheusURL()
 	prometheusJobID := getPrometheusJobID()
+
+	// We test if prometheus URL is reachable. this is meant to avoid unuseful calls and application hang.
+	if !testPrometheusURL(prometheusURL) {
+		error := errors.New("Prometheus URL is unreachable")
+		return nil, prepareError(error)
+	}
 
 	return getWidgetDetails(prometheusURL, prometheusJobID, params.WidgetID, params.Step, params.Start, params.End)
 }
