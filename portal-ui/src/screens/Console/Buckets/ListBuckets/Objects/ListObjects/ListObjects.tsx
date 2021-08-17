@@ -825,10 +825,10 @@ const ListObjects = ({
             }
             actions={
               <Fragment>
-                <Tooltip title={"Create Folder"}>
+                <Tooltip title={"Choose or create a new path"}>
                   <IconButton
                     color="primary"
-                    aria-label="Create Folder"
+                    aria-label="Choose or create a new path"
                     component="span"
                     onClick={() => {
                       setCreateFolderOpen(true);
