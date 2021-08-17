@@ -17,13 +17,14 @@
 import React from "react";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import {
-  Button, Dialog,
+  Button,
+  Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
   Grid,
-  LinearProgress
+  LinearProgress,
 } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
@@ -64,49 +65,44 @@ const DeleteAccessRule = ({
   bucket,
   toDelete,
 }: IDeleteAccessRule) => {
-
   const deleteProcess = () => {
     api
       .invoke("DELETE", `/api/v1/bucket/${bucket}/access-rules/${toDelete}`)
-      .then((res: any) => {
-      })
+      .then((res: any) => {})
       .catch((err: ErrorResponseHandler) => {
         setErrorSnackMessage(err);
       });
   };
 
   return (
-      <Dialog
-          open={modalOpen}
-          onClose={onClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">Delete Access Rule</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete this access rule?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={onClose}
-            color="primary"
-          >
-            Cancel
-          </Button>
-          <Button
-              onClick={() => {
-                deleteProcess();
-                onClose();
-              }}
-              color="secondary"
-              autoFocus
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+    <Dialog
+      open={modalOpen}
+      onClose={onClose}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle id="alert-dialog-title">Delete Access Rule</DialogTitle>
+      <DialogContent>
+        <DialogContentText id="alert-dialog-description">
+          Are you sure you want to delete this access rule?
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="primary">
+          Cancel
+        </Button>
+        <Button
+          onClick={() => {
+            deleteProcess();
+            onClose();
+          }}
+          color="secondary"
+          autoFocus
+        >
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
