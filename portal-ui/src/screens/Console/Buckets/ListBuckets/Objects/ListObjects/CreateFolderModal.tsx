@@ -65,7 +65,7 @@ const CreateFolderModal = ({
 
   return (
     <React.Fragment>
-      <ModalWrapper modalOpen={modalOpen} title="Add Folder" onClose={onClose}>
+      <ModalWrapper modalOpen={modalOpen} title="Choose or create a new path" onClose={onClose}>
         <Grid container>
           <h3 className={classes.pathLabel}>
             Current Path: {folderTruncated}/
@@ -73,10 +73,10 @@ const CreateFolderModal = ({
           <Grid item xs={12}>
             <InputBoxWrapper
               value={pathUrl}
-              label={"Folder Path"}
+              label={"New Folder Path"}
               id={"folderPath"}
               name={"folderPath"}
-              placeholder={"Enter Folder Path"}
+              placeholder={"Enter the new Folder Path"}
               onChange={(e) => {
                 setPathUrl(e.target.value);
               }}
@@ -98,7 +98,7 @@ const CreateFolderModal = ({
               disabled={pathUrl.trim() === ""}
               onClick={createProcess}
             >
-              Save
+              Go
             </Button>
           </Grid>
         </Grid>
