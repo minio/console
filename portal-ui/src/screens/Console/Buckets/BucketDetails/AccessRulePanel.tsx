@@ -127,7 +127,8 @@ const AccessRule = ({
   const [loadingAccessRules, setLoadingAccessRules] = useState<boolean>(true);
   const [accessRules, setAccessRules] = useState([]);
   const [addAccessRuleOpen, setAddAccessRuleOpen] = useState<boolean>(false);
-  const [deleteAccessRuleOpen, setDeleteAccessRuleOpen] = useState<boolean>(false);
+  const [deleteAccessRuleOpen, setDeleteAccessRuleOpen] =
+    useState<boolean>(false);
   const [accessRuleToDelete, setAccessRuleToDelete] = useState<string>("");
 
   const bucketName = match.params["bucketName"];
