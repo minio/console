@@ -26,6 +26,7 @@ import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import api from "../../../../common/api";
 import AddAccessRuleModal from "./AddAccessRule";
 import DeleteAccessRuleModal from "./DeleteAccessRule";
+import EditAccessRuleModal from "./EditAccessRule";
 import { CreateIcon } from "../../../../icons";
 import Grid from "@material-ui/core/Grid";
 import {
@@ -130,6 +131,9 @@ const AccessRule = ({
   const [deleteAccessRuleOpen, setDeleteAccessRuleOpen] =
     useState<boolean>(false);
   const [accessRuleToDelete, setAccessRuleToDelete] = useState<string>("");
+  const [editAccessRuleOpen, setEditAccessRuleOpen] = useState<boolean>(false);
+  const [accessRuleToEdit, setAccessRuleToEdit] = useState<string>("");
+  const [initialAccess, setInitialAccess] = useState<string>("");
 
   const bucketName = match.params["bucketName"];
 
@@ -145,6 +149,14 @@ const AccessRule = ({
       onClick: (accessRule: any) => {
         setDeleteAccessRuleOpen(true);
         setAccessRuleToDelete(accessRule.prefix);
+      },
+    },
+    {
+      type: "view",
+      onClick: (accessRule: any) => {
+        setAccessRuleToEdit(accessRule.prefix);
+        setInitialAccess(accessRule.access)
+        setEditAccessRuleOpen(true);
       },
     },
   ];
@@ -174,6 +186,11 @@ const AccessRule = ({
     setLoadingAccessRules(true);
   };
 
+  const closeEditAccessRuleModal = () => {
+    setEditAccessRuleOpen(false);
+    setLoadingAccessRules(true);
+  };
+
   return (
     <Fragment>
       {addAccessRuleOpen && (
@@ -189,6 +206,15 @@ const AccessRule = ({
           onClose={closeDeleteAccessRuleModal}
           bucket={bucketName}
           toDelete={accessRuleToDelete}
+        />
+      )}
+      {editAccessRuleOpen && (
+        <EditAccessRuleModal
+          modalOpen={editAccessRuleOpen}
+          onClose={closeEditAccessRuleModal}
+          bucket={bucketName}
+          toEdit={accessRuleToEdit}
+          initial={initialAccess}
         />
       )}
       <Grid item xs={12} className={classes.actionsTray}>
