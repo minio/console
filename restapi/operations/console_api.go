@@ -119,6 +119,12 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		UserAPICreateServiceAccountHandler: user_api.CreateServiceAccountHandlerFunc(func(params user_api.CreateServiceAccountParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.CreateServiceAccount has not yet been implemented")
 		}),
+		AdminAPICreateServiceAccountCredentialsHandler: admin_api.CreateServiceAccountCredentialsHandlerFunc(func(params admin_api.CreateServiceAccountCredentialsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.CreateServiceAccountCredentials has not yet been implemented")
+		}),
+		AdminAPICreateServiceAccountCredsHandler: admin_api.CreateServiceAccountCredsHandlerFunc(func(params admin_api.CreateServiceAccountCredsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.CreateServiceAccountCreds has not yet been implemented")
+		}),
 		AdminAPIDashboardWidgetDetailsHandler: admin_api.DashboardWidgetDetailsHandlerFunc(func(params admin_api.DashboardWidgetDetailsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.DashboardWidgetDetails has not yet been implemented")
 		}),
@@ -444,6 +450,10 @@ type ConsoleAPI struct {
 	UserAPICreateBucketEventHandler user_api.CreateBucketEventHandler
 	// UserAPICreateServiceAccountHandler sets the operation handler for the create service account operation
 	UserAPICreateServiceAccountHandler user_api.CreateServiceAccountHandler
+	// AdminAPICreateServiceAccountCredentialsHandler sets the operation handler for the create service account credentials operation
+	AdminAPICreateServiceAccountCredentialsHandler admin_api.CreateServiceAccountCredentialsHandler
+	// AdminAPICreateServiceAccountCredsHandler sets the operation handler for the create service account creds operation
+	AdminAPICreateServiceAccountCredsHandler admin_api.CreateServiceAccountCredsHandler
 	// AdminAPIDashboardWidgetDetailsHandler sets the operation handler for the dashboard widget details operation
 	AdminAPIDashboardWidgetDetailsHandler admin_api.DashboardWidgetDetailsHandler
 	// AdminAPIDeleteAccessRuleWithBucketHandler sets the operation handler for the delete access rule with bucket operation
@@ -740,6 +750,12 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.UserAPICreateServiceAccountHandler == nil {
 		unregistered = append(unregistered, "user_api.CreateServiceAccountHandler")
+	}
+	if o.AdminAPICreateServiceAccountCredentialsHandler == nil {
+		unregistered = append(unregistered, "admin_api.CreateServiceAccountCredentialsHandler")
+	}
+	if o.AdminAPICreateServiceAccountCredsHandler == nil {
+		unregistered = append(unregistered, "admin_api.CreateServiceAccountCredsHandler")
 	}
 	if o.AdminAPIDashboardWidgetDetailsHandler == nil {
 		unregistered = append(unregistered, "admin_api.DashboardWidgetDetailsHandler")
@@ -1149,6 +1165,14 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/service-accounts"] = user_api.NewCreateServiceAccount(o.context, o.UserAPICreateServiceAccountHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/user/{name}/service-account-credentials"] = admin_api.NewCreateServiceAccountCredentials(o.context, o.AdminAPICreateServiceAccountCredentialsHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/service-account-credentials"] = admin_api.NewCreateServiceAccountCreds(o.context, o.AdminAPICreateServiceAccountCredsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

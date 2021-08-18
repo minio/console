@@ -1123,6 +1123,28 @@ paths:
       tags:
         - UserAPI
 
+  /service-account-credentials:
+    post:
+      summary: Create Service Account With Credentials
+      operationId: CreateServiceAccountCreds
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/serviceAccountRequestCreds"
+      responses:
+        201:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/serviceAccountCreds"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
   /service-accounts/{access_key}:
     delete:
       summary: Delete Service Account
@@ -1332,6 +1354,32 @@ paths:
           required: true
           schema:
             $ref: "#/definitions/serviceAccountRequest"
+      responses:
+        201:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/serviceAccountCreds"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+
+  /user/{name}/service-account-credentials:
+    post:
+      summary: Create Service Account for User With Credentials
+      operationId: CreateServiceAccountCredentials
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/serviceAccountRequestCreds"
       responses:
         201:
           description: A successful response.
@@ -3230,6 +3278,16 @@ definitions:
       policy:
         type: string
         title: "policy to be applied to the Service Account if any"
+  serviceAccountRequestCreds:
+    type: object
+    properties:
+      policy:
+        type: string
+        title: "policy to be applied to the Service Account if any"
+      accessKey:
+        type: string
+      secretKey:
+        type: string
   serviceAccountCreds:
     type: object
     properties:

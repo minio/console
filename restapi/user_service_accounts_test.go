@@ -31,6 +31,8 @@ import (
 // assigning mock at runtime instead of compile time
 var minioAddServiceAccountMock func(ctx context.Context, policy *iampolicy.Policy) (madmin.Credentials, error)
 var minioAddServiceAccountWithUserMock func(ctx context.Context, policy *iampolicy.Policy, user string) (madmin.Credentials, error)
+var minioAddServiceAccountWithUserAndCredsMock func(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string) (madmin.Credentials, error)
+var minioAddServiceAccountWithCredsMock func(ctx context.Context, policy *iampolicy.Policy, accessKey string, secretKey string) (madmin.Credentials, error)
 var minioListServiceAccountsMock func(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error)
 var minioDeleteServiceAccountMock func(ctx context.Context, serviceAccount string) error
 
@@ -41,6 +43,14 @@ func (ac adminClientMock) addServiceAccount(ctx context.Context, policy *iampoli
 
 func (ac adminClientMock) addServiceAccountWithUser(ctx context.Context, policy *iampolicy.Policy, user string) (madmin.Credentials, error) {
 	return minioAddServiceAccountWithUserMock(ctx, policy, user)
+}
+
+func (ac adminClientMock) addServiceAccountWithUserAndCreds(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string) (madmin.Credentials, error) {
+	return minioAddServiceAccountWithUserAndCredsMock(ctx, policy, user, accessKey, secretKey)
+}
+
+func (ac adminClientMock) addServiceAccountWithCreds(ctx context.Context, policy *iampolicy.Policy, accessKey string, secretKey string) (madmin.Credentials, error) {
+	return minioAddServiceAccountWithCredsMock(ctx, policy, accessKey, secretKey)
 }
 
 // mock function of ListServiceAccounts()

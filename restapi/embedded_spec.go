@@ -2813,6 +2813,39 @@ func init() {
         }
       }
     },
+    "/service-account-credentials": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Create Service Account With Credentials",
+        "operationId": "CreateServiceAccountCreds",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serviceAccountRequestCreds"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceAccountCreds"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/service-accounts": {
       "get": {
         "tags": [
@@ -3169,6 +3202,45 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/user"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/user/{name}/service-account-credentials": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Create Service Account for User With Credentials",
+        "operationId": "CreateServiceAccountCredentials",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serviceAccountRequestCreds"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceAccountCreds"
             }
           },
           "default": {
@@ -4932,6 +5004,21 @@ func init() {
         "policy": {
           "type": "string",
           "title": "policy to be applied to the Service Account if any"
+        }
+      }
+    },
+    "serviceAccountRequestCreds": {
+      "type": "object",
+      "properties": {
+        "accessKey": {
+          "type": "string"
+        },
+        "policy": {
+          "type": "string",
+          "title": "policy to be applied to the Service Account if any"
+        },
+        "secretKey": {
+          "type": "string"
         }
       }
     },
@@ -8237,6 +8324,39 @@ func init() {
         }
       }
     },
+    "/service-account-credentials": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Create Service Account With Credentials",
+        "operationId": "CreateServiceAccountCreds",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serviceAccountRequestCreds"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceAccountCreds"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/service-accounts": {
       "get": {
         "tags": [
@@ -8593,6 +8713,45 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/user"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/user/{name}/service-account-credentials": {
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Create Service Account for User With Credentials",
+        "operationId": "CreateServiceAccountCredentials",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serviceAccountRequestCreds"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceAccountCreds"
             }
           },
           "default": {
@@ -10410,6 +10569,21 @@ func init() {
         "policy": {
           "type": "string",
           "title": "policy to be applied to the Service Account if any"
+        }
+      }
+    },
+    "serviceAccountRequestCreds": {
+      "type": "object",
+      "properties": {
+        "accessKey": {
+          "type": "string"
+        },
+        "policy": {
+          "type": "string",
+          "title": "policy to be applied to the Service Account if any"
+        },
+        "secretKey": {
+          "type": "string"
         }
       }
     },
