@@ -155,7 +155,7 @@ const AccessRule = ({
       type: "view",
       onClick: (accessRule: any) => {
         setAccessRuleToEdit(accessRule.prefix);
-        setInitialAccess(accessRule.access)
+        setInitialAccess(accessRule.access);
         setEditAccessRuleOpen(true);
       },
     },
