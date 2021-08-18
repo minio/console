@@ -106,6 +106,27 @@ func createServiceAccount(ctx context.Context, userClient MinioAdmin, policy str
 	}
 
 	creds, err := userClient.addServiceAccount(ctx, iamPolicy, "", "", "")
+<<<<<<< HEAD
+	if err != nil {
+		return nil, err
+	}
+	return &models.ServiceAccountCreds{AccessKey: creds.AccessKey, SecretKey: creds.SecretKey}, nil
+}
+
+// createServiceAccount adds a service account with the given credentials to the userClient and assigns a policy to him if defined.
+func createServiceAccountCreds(ctx context.Context, userClient MinioAdmin, policy string, accessKey string, secretKey string) (*models.ServiceAccountCreds, error) {
+	// By default a nil policy will be used so the service account inherit the parent account policy, otherwise
+	// we override with the user provided iam policy
+	var iamPolicy *iampolicy.Policy
+	if strings.TrimSpace(policy) != "" {
+		iamp, err := iampolicy.ParseConfig(bytes.NewReader([]byte(policy)))
+		if err != nil {
+			return nil, err
+		}
+		iamPolicy = iamp
+	}
+
+	creds, err := userClient.addServiceAccount(ctx, iamPolicy, "", accessKey, secretKey)
 	if err != nil {
 		return nil, err
 	}
@@ -168,6 +189,25 @@ func createAUserServiceAccount(ctx context.Context, userClient MinioAdmin, polic
 	}
 
 	creds, err := userClient.addServiceAccount(ctx, iamPolicy, user, "", "")
+	if err != nil {
+		return nil, err
+	}
+	return &models.ServiceAccountCreds{AccessKey: creds.AccessKey, SecretKey: creds.SecretKey}, nil
+}
+
+func createAUserServiceAccountCreds(ctx context.Context, userClient MinioAdmin, policy string, user string, accessKey string, secretKey string) (*models.ServiceAccountCreds, error) {
+	// By default a nil policy will be used so the service account inherit the parent account policy, otherwise
+	// we override with the user provided iam policy
+	var iamPolicy *iampolicy.Policy
+	if strings.TrimSpace(policy) != "" {
+		iamp, err := iampolicy.ParseConfig(bytes.NewReader([]byte(policy)))
+		if err != nil {
+			return nil, err
+		}
+		iamPolicy = iamp
+	}
+
+	creds, err := userClient.addServiceAccount(ctx, iamPolicy, user, accessKey, secretKey)
 	if err != nil {
 		return nil, err
 	}

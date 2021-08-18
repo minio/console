@@ -381,7 +381,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
               />
             </TabPanel>
             <TabPanel index={1} value={curTab}>
-              <UserServiceAccountsPanel user={userName} classes={classes} />
+              <UserServiceAccountsPanel user={userName} classes={classes} hasPolicy={currentPolicies.length >= 1} />
             </TabPanel>
             <TabPanel index={2} value={curTab}>
               <div className={classes.actionsTray}>
