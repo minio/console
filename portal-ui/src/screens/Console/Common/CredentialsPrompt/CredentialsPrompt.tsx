@@ -73,6 +73,7 @@ const CredentialsPrompt = ({
   }
 
   const consoleCreds = get(newServiceAccount, "console", null);
+  const idp = get(newServiceAccount, "idp", false);
 
   return (
     <ModalWrapper
@@ -86,7 +87,7 @@ const CredentialsPrompt = ({
         <Grid container>
           <Grid item xs={12} className={classes.formScrollable}>
             A new {entity} has been created with the following details:
-            {consoleCreds && (
+            {!idp && consoleCreds && (
               <React.Fragment>
                 <Grid item xs={12} className={classes.credentialsPanel}>
                   <strong>Console Credentials</strong>
@@ -116,55 +117,67 @@ const CredentialsPrompt = ({
                 </Grid>
               </React.Fragment>
             )}
-            <Typography
-              component="p"
-              variant="body1"
-              className={classes.warningBlock}
-            >
-              Write these down, as this is the only time the secret will be
-              displayed.
-            </Typography>
+            {idp ? (
+              <Typography
+                component="p"
+                variant="body1"
+                className={classes.warningBlock}
+              >
+                Please Login via the configured external identity provider.
+              </Typography>
+            ) : (
+              <Typography
+                component="p"
+                variant="body1"
+                className={classes.warningBlock}
+              >
+                Write these down, as this is the only time the secret will be
+                displayed.
+              </Typography>
+            )}
           </Grid>
           <Grid item xs={12} className={classes.buttonContainer}>
-            <Button
-              onClick={() => {
-                let consoleExtras = {};
+            {!idp && (
+              <Button
+                onClick={() => {
+                  let consoleExtras = {};
 
-                if (consoleCreds) {
-                  if (!Array.isArray(consoleCreds)) {
-                    consoleExtras = {
-                      console: [
-                        {
-                          access_key: consoleCreds.accessKey,
-                          secret_key: consoleCreds.secretKey,
-                        },
-                      ],
-                    };
-                  } else {
-                    const cCreds = consoleCreds.map((itemMap) => {
-                      return {
-                        access_key: itemMap.accessKey,
-                        secret_key: itemMap.secretKey,
+                  if (consoleCreds) {
+                    if (!Array.isArray(consoleCreds)) {
+                      consoleExtras = {
+                        console: [
+                          {
+                            access_key: consoleCreds.accessKey,
+                            secret_key: consoleCreds.secretKey,
+                          },
+                        ],
                       };
-                    });
+                    } else {
+                      const cCreds = consoleCreds.map((itemMap) => {
+                        return {
+                          access_key: itemMap.accessKey,
+                          secret_key: itemMap.secretKey,
+                        };
+                      });
 
-                    consoleExtras = {
-                      console: [...cCreds],
-                    };
+                      consoleExtras = {
+                        console: [...cCreds],
+                      };
+                    }
                   }
-                }
 
-                download(
-                  "credentials.json",
-                  JSON.stringify({
-                    ...consoleExtras,
-                  })
-                );
-              }}
-              color="primary"
-            >
-              Download
-            </Button>
+                  download(
+                    "credentials.json",
+                    JSON.stringify({
+                      ...consoleExtras,
+                    })
+                  );
+                }}
+                color="primary"
+              >
+                Download
+              </Button>
+            )}
             <Button
               onClick={() => {
                 closeModal();

@@ -1448,21 +1448,6 @@ func init() {
         }
       }
     },
-    "consoleConfiguration": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/metadataFields"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "image": {
-              "type": "string"
-            }
-          }
-        }
-      ]
-    },
     "createTenantRequest": {
       "type": "object",
       "required": [
@@ -1479,13 +1464,6 @@ func init() {
           "additionalProperties": {
             "type": "string"
           }
-        },
-        "console": {
-          "type": "object",
-          "$ref": "#/definitions/consoleConfiguration"
-        },
-        "console_image": {
-          "type": "string"
         },
         "enable_console": {
           "type": "boolean",
@@ -1570,6 +1548,9 @@ func init() {
           "items": {
             "$ref": "#/definitions/tenantResponseItem"
           }
+        },
+        "externalIDP": {
+          "type": "boolean"
         }
       }
     },
@@ -2716,15 +2697,6 @@ func init() {
     "tenant": {
       "type": "object",
       "properties": {
-        "consoleEnabled": {
-          "type": "boolean"
-        },
-        "consoleTLS": {
-          "type": "boolean"
-        },
-        "console_image": {
-          "type": "string"
-        },
         "creation_date": {
           "type": "string"
         },
@@ -2874,18 +2846,6 @@ func init() {
         "customCertificates": {
           "type": "object",
           "properties": {
-            "console": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/certificateInfo"
-              }
-            },
-            "consoleCAs": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/certificateInfo"
-              }
-            },
             "minio": {
               "type": "array",
               "items": {
@@ -2956,16 +2916,6 @@ func init() {
             "type": "string"
           }
         },
-        "console": {
-          "type": "object",
-          "$ref": "#/definitions/keyPairConfiguration"
-        },
-        "console_ca_certificates": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "minio": {
           "type": "array",
           "items": {
@@ -2977,10 +2927,6 @@ func init() {
     "updateTenantRequest": {
       "type": "object",
       "properties": {
-        "console_image": {
-          "type": "string",
-          "pattern": "^((.*?)/(.*?):(.+))$"
-        },
         "enable_prometheus": {
           "type": "boolean"
         },
@@ -3005,18 +2951,6 @@ func init() {
         "customCertificates": {
           "type": "object",
           "properties": {
-            "console": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/keyPairConfiguration"
-              }
-            },
-            "consoleCAs": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
             "minio": {
               "type": "array",
               "items": {
@@ -5046,18 +4980,6 @@ func init() {
     "TenantSecurityResponseCustomCertificates": {
       "type": "object",
       "properties": {
-        "console": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/certificateInfo"
-          }
-        },
-        "consoleCAs": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/certificateInfo"
-          }
-        },
         "minio": {
           "type": "array",
           "items": {
@@ -5075,18 +4997,6 @@ func init() {
     "UpdateTenantSecurityRequestCustomCertificates": {
       "type": "object",
       "properties": {
-        "console": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/keyPairConfiguration"
-          }
-        },
-        "consoleCAs": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "minio": {
           "type": "array",
           "items": {
@@ -5217,21 +5127,6 @@ func init() {
         }
       }
     },
-    "consoleConfiguration": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/metadataFields"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "image": {
-              "type": "string"
-            }
-          }
-        }
-      ]
-    },
     "createTenantRequest": {
       "type": "object",
       "required": [
@@ -5248,13 +5143,6 @@ func init() {
           "additionalProperties": {
             "type": "string"
           }
-        },
-        "console": {
-          "type": "object",
-          "$ref": "#/definitions/consoleConfiguration"
-        },
-        "console_image": {
-          "type": "string"
         },
         "enable_console": {
           "type": "boolean",
@@ -5339,6 +5227,9 @@ func init() {
           "items": {
             "$ref": "#/definitions/tenantResponseItem"
           }
+        },
+        "externalIDP": {
+          "type": "boolean"
         }
       }
     },
@@ -6338,15 +6229,6 @@ func init() {
     "tenant": {
       "type": "object",
       "properties": {
-        "consoleEnabled": {
-          "type": "boolean"
-        },
-        "consoleTLS": {
-          "type": "boolean"
-        },
-        "console_image": {
-          "type": "string"
-        },
         "creation_date": {
           "type": "string"
         },
@@ -6496,18 +6378,6 @@ func init() {
         "customCertificates": {
           "type": "object",
           "properties": {
-            "console": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/certificateInfo"
-              }
-            },
-            "consoleCAs": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/certificateInfo"
-              }
-            },
             "minio": {
               "type": "array",
               "items": {
@@ -6578,16 +6448,6 @@ func init() {
             "type": "string"
           }
         },
-        "console": {
-          "type": "object",
-          "$ref": "#/definitions/keyPairConfiguration"
-        },
-        "console_ca_certificates": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "minio": {
           "type": "array",
           "items": {
@@ -6599,10 +6459,6 @@ func init() {
     "updateTenantRequest": {
       "type": "object",
       "properties": {
-        "console_image": {
-          "type": "string",
-          "pattern": "^((.*?)/(.*?):(.+))$"
-        },
         "enable_prometheus": {
           "type": "boolean"
         },
@@ -6627,18 +6483,6 @@ func init() {
         "customCertificates": {
           "type": "object",
           "properties": {
-            "console": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/keyPairConfiguration"
-              }
-            },
-            "consoleCAs": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
             "minio": {
               "type": "array",
               "items": {

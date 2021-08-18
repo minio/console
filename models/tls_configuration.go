@@ -39,12 +39,6 @@ type TLSConfiguration struct {
 	// ca certificates
 	CaCertificates []string `json:"ca_certificates"`
 
-	// console
-	Console *KeyPairConfiguration `json:"console,omitempty"`
-
-	// console ca certificates
-	ConsoleCaCertificates []string `json:"console_ca_certificates"`
-
 	// minio
 	Minio []*KeyPairConfiguration `json:"minio"`
 }
@@ -53,10 +47,6 @@ type TLSConfiguration struct {
 func (m *TLSConfiguration) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateConsole(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateMinio(formats); err != nil {
 		res = append(res, err)
 	}
@@ -64,23 +54,6 @@ func (m *TLSConfiguration) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *TLSConfiguration) validateConsole(formats strfmt.Registry) error {
-	if swag.IsZero(m.Console) { // not required
-		return nil
-	}
-
-	if m.Console != nil {
-		if err := m.Console.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("console")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 
@@ -112,10 +85,6 @@ func (m *TLSConfiguration) validateMinio(formats strfmt.Registry) error {
 func (m *TLSConfiguration) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.contextValidateConsole(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.contextValidateMinio(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -123,20 +92,6 @@ func (m *TLSConfiguration) ContextValidate(ctx context.Context, formats strfmt.R
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *TLSConfiguration) contextValidateConsole(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Console != nil {
-		if err := m.Console.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("console")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 

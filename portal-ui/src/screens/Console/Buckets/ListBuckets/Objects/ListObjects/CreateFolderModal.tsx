@@ -65,7 +65,11 @@ const CreateFolderModal = ({
 
   return (
     <React.Fragment>
-      <ModalWrapper modalOpen={modalOpen} title="Choose or create a new path" onClose={onClose}>
+      <ModalWrapper
+        modalOpen={modalOpen}
+        title="Choose or create a new path"
+        onClose={onClose}
+      >
         <Grid container>
           <h3 className={classes.pathLabel}>
             Current Path: {folderTruncated}/

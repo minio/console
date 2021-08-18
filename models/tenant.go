@@ -36,15 +36,6 @@ import (
 // swagger:model tenant
 type Tenant struct {
 
-	// console enabled
-	ConsoleEnabled bool `json:"consoleEnabled,omitempty"`
-
-	// console TLS
-	ConsoleTLS bool `json:"consoleTLS,omitempty"`
-
-	// console image
-	ConsoleImage string `json:"console_image,omitempty"`
-
 	// creation date
 	CreationDate string `json:"creation_date,omitempty"`
 

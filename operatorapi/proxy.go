@@ -86,11 +86,12 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 	nsTenant := fmt.Sprintf("%s/%s", tenant.Namespace, tenant.Name)
 
 	tenantSchema := "http"
-	tenantPort := ":9090"
-	if tenant.AutoCert() || tenant.ConsoleExternalCert() {
+	tenantPort := fmt.Sprintf(":%d", v2.ConsolePort)
+	if tenant.AutoCert() {
 		tenantSchema = "https"
-		tenantPort = ":9443"
+		tenantPort = fmt.Sprintf(":%d", v2.ConsoleTLSPort)
 	}
+
 	tenantURL := fmt.Sprintf("%s://%s.%s.svc.%s%s", tenantSchema, tenant.ConsoleCIServiceName(), tenant.Namespace, v2.GetClusterDomain(), tenantPort)
 	// for development
 	//tenantURL = "http://localhost:9091"
@@ -112,34 +113,14 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		// FIXME: abstract this to a common tenant.GetConfiguration() function
-		tenantConfiguration := map[string][]byte{}
-
-		for _, config := range tenant.GetEnvVars() {
-			tenantConfiguration[config.Name] = []byte(config.Value)
+		k8sClient := k8sClient{
+			client: clientSet,
 		}
-
-		if tenant.HasCredsSecret() {
-			minioSecret, err := clientSet.CoreV1().Secrets(tenant.Namespace).Get(req.Context(), tenant.Spec.CredsSecret.Name, metav1.GetOptions{})
-			if err != nil {
-				log.Println(err)
-				responseWriter.WriteHeader(500)
-				return
-			}
-			configFromCredsSecret := minioSecret.Data
-			for key, val := range configFromCredsSecret {
-				tenantConfiguration[key] = val
-			}
-		}
-
-		if tenant.HasConfigurationSecret() {
-			minioConfigurationSecret, err := clientSet.CoreV1().Secrets(tenant.Namespace).Get(req.Context(), tenant.Spec.Configuration.Name, metav1.GetOptions{})
-			if err == nil {
-				configFromFile := v2.ParseRawConfiguration(minioConfigurationSecret.Data["config.env"])
-				for key, val := range configFromFile {
-					tenantConfiguration[key] = val
-				}
-			}
+		tenantConfiguration, err := GetTenantConfiguration(req.Context(), &k8sClient, tenant)
+		if err != nil {
+			log.Println(err)
+			responseWriter.WriteHeader(500)
+			return
 		}
 
 		data := map[string]string{
