@@ -557,29 +557,30 @@ const AddTenant = ({
           const consoleSAList = get(res, "console", []);
 
           let newSrvAcc: NewServiceAccount = {
+            idp: get(res, "externalIDP", false),
             console: [],
           };
 
-          if (consoleSAList && Array.isArray(consoleSAList)) {
-            const consoleItem = consoleSAList.map((consoleKey) => {
-              return {
-                accessKey: consoleKey.access_key,
-                secretKey: consoleKey.secret_key,
+          if (consoleSAList) {
+            if (Array.isArray(consoleSAList)) {
+              const consoleItem = consoleSAList.map((consoleKey) => {
+                return {
+                  accessKey: consoleKey.access_key,
+                  secretKey: consoleKey.secret_key,
+                };
+              });
+
+              newSrvAcc.console = consoleItem;
+            } else {
+              newSrvAcc = {
+                console: {
+                  accessKey: res.console.access_key,
+                  secretKey: res.console.secret_key,
+                },
               };
-            });
-
-            newSrvAcc.console = consoleItem;
-          } else {
-            newSrvAcc = {
-              console: {
-                accessKey: res.console.access_key,
-                secretKey: res.console.secret_key,
-              },
-            };
+            }
           }
-
           setAddSending(false);
-
           setShowNewCredentials(true);
           setCreatedAccount(newSrvAcc);
         })

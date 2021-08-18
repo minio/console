@@ -33,10 +33,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/minio/console/pkg/auth/ldap"
-
-	"github.com/minio/console/pkg/auth/idp/oauth2"
-
 	"github.com/dustin/go-humanize"
 
 	"github.com/minio/console/restapi"
@@ -342,7 +338,7 @@ func getTenantAdminClient(ctx context.Context, client K8sClientI, tenant *miniov
 		return nil, err
 	}
 	sessionToken := ""
-	mAdmin, pErr := restapi.NewAdminClientWithInsecure(svcURL, tenantCreds.accessKey, tenantCreds.secretKey, sessionToken, false)
+	mAdmin, pErr := restapi.NewAdminClientWithInsecure(svcURL, tenantCreds.accessKey, tenantCreds.secretKey, sessionToken, true)
 	if pErr != nil {
 		return nil, pErr.Cause
 	}
@@ -355,28 +351,21 @@ type tenantKeys struct {
 }
 
 func getTenantCreds(ctx context.Context, client K8sClientI, tenant *miniov2.Tenant) (*tenantKeys, error) {
-	if tenant == nil || tenant.Spec.CredsSecret == nil {
-		return nil, errors.New("invalid arguments")
-	}
-	// get admin credentials from secret
-	creds, err := client.getSecret(ctx, tenant.Namespace, tenant.Spec.CredsSecret.Name, metav1.GetOptions{})
+	tenantConfiguration, err := GetTenantConfiguration(ctx, client, tenant)
 	if err != nil {
 		return nil, err
 	}
-	tenantAccessKey, ok := creds.Data["accesskey"]
+	tenantAccessKey, ok := tenantConfiguration["accesskey"]
 	if !ok {
 		restapi.LogError("tenant's secret doesn't contain accesskey")
 		return nil, restapi.ErrorGeneric
 	}
-	tenantSecretKey, ok := creds.Data["secretkey"]
+	tenantSecretKey, ok := tenantConfiguration["secretkey"]
 	if !ok {
 		restapi.LogError("tenant's secret doesn't contain secretkey")
 		return nil, restapi.ErrorGeneric
 	}
-	// TODO:
-	// We need to avoid using minio root credentials to talk to tenants, and instead use a different user credentials
-	// when that its implemented we also need to check here if the tenant has LDAP enabled so we authenticate first against AD
-	return &tenantKeys{accessKey: string(tenantAccessKey), secretKey: string(tenantSecretKey)}, nil
+	return &tenantKeys{accessKey: tenantAccessKey, secretKey: tenantSecretKey}, nil
 }
 
 func getTenant(ctx context.Context, operatorClient OperatorClientI, namespace, tenantName string) (*miniov2.Tenant, error) {
@@ -407,7 +396,6 @@ func isPrometheusEnabled(annotations map[string]string) bool {
 
 func getTenantInfo(tenant *miniov2.Tenant) *models.Tenant {
 	var pools []*models.Pool
-	consoleImage := ""
 	var totalSize int64
 	for _, p := range tenant.Spec.Pools {
 		pools = append(pools, parseTenantPool(&p))
@@ -419,10 +407,6 @@ func getTenantInfo(tenant *miniov2.Tenant) *models.Tenant {
 		deletion = tenant.ObjectMeta.DeletionTimestamp.Format(time.RFC3339)
 	}
 
-	if tenant.HasConsoleEnabled() {
-		consoleImage = tenant.Spec.Console.Image
-	}
-
 	return &models.Tenant{
 		CreationDate:     tenant.ObjectMeta.CreationTimestamp.Format(time.RFC3339),
 		DeletionDate:     deletion,
@@ -432,16 +416,14 @@ func getTenantInfo(tenant *miniov2.Tenant) *models.Tenant {
 		Pools:            pools,
 		Namespace:        tenant.ObjectMeta.Namespace,
 		Image:            tenant.Spec.Image,
-		ConsoleImage:     consoleImage,
 		EnablePrometheus: isPrometheusEnabled(tenant.Annotations),
 	}
 }
 
 func getTenantDetailsResponse(session *models.Principal, params operator_api.TenantDetailsParams) (*models.Tenant, *models.Error) {
 	// 5 seconds timeout
-	//ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	//defer cancel()
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)
 	if err != nil {
 		return nil, prepareError(err)
@@ -468,32 +450,9 @@ func getTenantDetailsResponse(session *models.Principal, params operator_api.Ten
 		client: clientSet,
 	}
 
-	tenantConfiguration := map[string][]byte{}
-
-	for _, config := range minTenant.GetEnvVars() {
-		tenantConfiguration[config.Name] = []byte(config.Value)
-	}
-
-	if minTenant.HasCredsSecret() {
-		minioSecret, err := clientSet.CoreV1().Secrets(minTenant.Namespace).Get(ctx, minTenant.Spec.CredsSecret.Name, metav1.GetOptions{})
-		// we can tolerate not getting this secret
-		if err != nil {
-			restapi.LogError("unable to fetch existing secrets for %s: %v", minTenant.Name, err)
-		}
-		configFromCredsSecret := minioSecret.Data
-		for key, val := range configFromCredsSecret {
-			tenantConfiguration[key] = val
-		}
-	}
-
-	if minTenant.HasConfigurationSecret() {
-		minioConfigurationSecret, err := clientSet.CoreV1().Secrets(minTenant.Namespace).Get(ctx, minTenant.Spec.Configuration.Name, metav1.GetOptions{})
-		if err == nil {
-			configFromFile := miniov2.ParseRawConfiguration(minioConfigurationSecret.Data["config.env"])
-			for key, val := range configFromFile {
-				tenantConfiguration[key] = val
-			}
-		}
+	tenantConfiguration, err := GetTenantConfiguration(ctx, &k8sClient, minTenant)
+	if err != nil {
+		restapi.LogError("unable to fetch configuration for tenant %s: %v", minTenant.Name, err)
 	}
 
 	// detect if AD/LDAP is enabled
@@ -508,27 +467,26 @@ func getTenantDetailsResponse(session *models.Principal, params operator_api.Ten
 		oidcEnabled = true
 	}
 
+	// detect if encryption is enabled
+	if minTenant.HasKESEnabled() || string(tenantConfiguration["MINIO_KMS_SECRET_KEY"]) != "" {
+		info.EncryptionEnabled = true
+	}
+
 	info.LogEnabled = minTenant.HasLogEnabled()
 	info.MonitoringEnabled = minTenant.HasPrometheusEnabled()
-	info.EncryptionEnabled = minTenant.HasKESEnabled()
 	info.IdpAdEnabled = ldapEnabled
 	info.IdpOidcEnabled = oidcEnabled
 	info.MinioTLS = minTenant.TLS()
-	info.ConsoleTLS = minTenant.AutoCert() || minTenant.ConsoleExternalCert()
-	info.ConsoleEnabled = minTenant.HasConsoleEnabled()
 
-	if minTenant.Spec.Console != nil {
-		// obtain current subnet license for tenant (if exists)
-		license, _ := getSubscriptionLicense(context.Background(), &k8sClient, params.Namespace, minTenant.Spec.Console.ConsoleSecret.Name)
-		if license != "" {
-			client := &cluster.HTTPClient{
-				Client: restapi.GetConsoleHTTPClient(),
-			}
-			licenseInfo, _, _ := subscriptionValidate(client, license, "", "")
-			// if licenseInfo is present attach it to the tenantInfo response
-			if licenseInfo != nil {
-				info.SubnetLicense = licenseInfo
-			}
+	// obtain current subnet license for tenant (if exists)
+	if license, ok := tenantConfiguration[MinIOSubnetLicense]; ok {
+		client := &cluster.HTTPClient{
+			Client: restapi.GetConsoleHTTPClient(),
+		}
+		licenseInfo, _, _ := subscriptionValidate(client, string(license), "", "")
+		// if licenseInfo is present attach it to the tenantInfo response
+		if licenseInfo != nil {
+			info.SubnetLicense = licenseInfo
 		}
 	}
 
@@ -558,13 +516,11 @@ func getTenantDetailsResponse(session *models.Principal, params operator_api.Ten
 
 	schema := "http"
 	consoleSchema := "http"
-	consolePort := ":9090"
+	consolePort := fmt.Sprintf(":%d", miniov2.ConsolePort)
 	if minTenant.TLS() {
 		schema = "https"
-	}
-	if minTenant.AutoCert() || minTenant.ConsoleExternalCert() {
 		consoleSchema = "https"
-		consolePort = ":9443"
+		consolePort = fmt.Sprintf(":%d", miniov2.ConsoleTLSPort)
 	}
 	var minioEndpoint string
 	var consoleEndpoint string
@@ -646,8 +602,6 @@ func parseTenantCertificates(ctx context.Context, clientSet K8sClientI, namespac
 func getTenantSecurity(ctx context.Context, clientSet K8sClientI, tenant *miniov2.Tenant) (response *models.TenantSecurityResponse, err error) {
 	var minioExternalCertificates []*models.CertificateInfo
 	var minioExternalCaCertificates []*models.CertificateInfo
-	var consoleExternalCertificates []*models.CertificateInfo
-	var consoleExternalCaCertificates []*models.CertificateInfo
 	// Certificates used by MinIO server
 	if minioExternalCertificates, err = parseTenantCertificates(ctx, clientSet, tenant.Namespace, tenant.Spec.ExternalCertSecret); err != nil {
 		return nil, err
@@ -656,25 +610,11 @@ func getTenantSecurity(ctx context.Context, clientSet K8sClientI, tenant *miniov
 	if minioExternalCaCertificates, err = parseTenantCertificates(ctx, clientSet, tenant.Namespace, tenant.Spec.ExternalCaCertSecret); err != nil {
 		return nil, err
 	}
-	if tenant.HasConsoleEnabled() {
-		// Certificate used by Console server
-		if tenant.Spec.Console.ExternalCertSecret != nil {
-			if consoleExternalCertificates, err = parseTenantCertificates(ctx, clientSet, tenant.Namespace, []*miniov2.LocalCertificateReference{tenant.Spec.Console.ExternalCertSecret}); err != nil {
-				return nil, err
-			}
-		}
-		// CA Certificates used by Console server
-		if consoleExternalCaCertificates, err = parseTenantCertificates(ctx, clientSet, tenant.Namespace, tenant.Spec.Console.ExternalCaCertSecret); err != nil {
-			return nil, err
-		}
-	}
 	return &models.TenantSecurityResponse{
 		AutoCert: tenant.AutoCert(),
 		CustomCertificates: &models.TenantSecurityResponseCustomCertificates{
-			Minio:      minioExternalCertificates,
-			MinioCAs:   minioExternalCaCertificates,
-			Console:    consoleExternalCertificates,
-			ConsoleCAs: consoleExternalCaCertificates,
+			Minio:    minioExternalCertificates,
+			MinioCAs: minioExternalCaCertificates,
 		},
 	}, nil
 }
@@ -746,8 +686,6 @@ func updateTenantSecurity(ctx context.Context, operatorClient OperatorClientI, c
 	minInst.Spec.RequestAutoCert = &params.Body.AutoCert
 	var newMinIOExternalCertSecret []*miniov2.LocalCertificateReference
 	var newMinIOExternalCaCertSecret []*miniov2.LocalCertificateReference
-	var newConsoleExternalCertSecret *miniov2.LocalCertificateReference
-	var newConsoleExternalCaCertSecret []*miniov2.LocalCertificateReference
 	// Remove Certificate Secrets from MinIO (Tenant.Spec.ExternalCertSecret)
 	for _, certificate := range minInst.Spec.ExternalCertSecret {
 		skip := false
@@ -776,33 +714,6 @@ func updateTenantSecurity(ctx context.Context, operatorClient OperatorClientI, c
 		}
 		newMinIOExternalCaCertSecret = append(newMinIOExternalCaCertSecret, certificate)
 	}
-	if minInst.HasConsoleEnabled() {
-		// Remove Certificate Secrets from Console (Tenant.Spec.Console.ExternalCertSecret)
-		if minInst.ConsoleExternalCert() {
-			newConsoleExternalCertSecret = minInst.Spec.Console.ExternalCertSecret
-			for _, certificateToBeDeleted := range params.Body.CustomCertificates.SecretsToBeDeleted {
-				if newConsoleExternalCertSecret.Name == certificateToBeDeleted {
-					newConsoleExternalCertSecret = nil
-					break
-				}
-			}
-		}
-		// Remove Certificate Secrets from Console CAs (Tenant.Spec.Console.ExternalCaCertSecret)
-		for _, certificate := range minInst.Spec.Console.ExternalCaCertSecret {
-			skip := false
-			for _, certificateToBeDeleted := range params.Body.CustomCertificates.SecretsToBeDeleted {
-				if certificate.Name == certificateToBeDeleted {
-					skip = true
-					break
-				}
-			}
-			if skip {
-				continue
-			}
-			newConsoleExternalCaCertSecret = append(newConsoleExternalCaCertSecret, certificate)
-		}
-	}
-
 	//Create new Certificate Secrets for MinIO
 	secretName := fmt.Sprintf("%s-%s", minInst.Name, strings.ToLower(utils.RandomCharString(5)))
 	externalCertSecretName := fmt.Sprintf("%s-external-certificates", secretName)
@@ -811,7 +722,6 @@ func updateTenantSecurity(ctx context.Context, operatorClient OperatorClientI, c
 		return err
 	}
 	newMinIOExternalCertSecret = append(newMinIOExternalCertSecret, externalCertSecrets...)
-
 	// Create new CAs Certificate Secrets for MinIO
 	var caCertificates []tenantSecret
 	for i, caCertificate := range params.Body.CustomCertificates.MinioCAs {
@@ -833,46 +743,9 @@ func updateTenantSecurity(ctx context.Context, operatorClient OperatorClientI, c
 		}
 		newMinIOExternalCaCertSecret = append(newMinIOExternalCaCertSecret, certificateSecrets...)
 	}
-
-	// Create new Certificate Secrets for Console
-	consoleExternalCertSecretName := fmt.Sprintf("%s-console-external-certificates", secretName)
-	consoleExternalCertSecrets, err := createOrReplaceExternalCertSecrets(ctx, client, minInst.Namespace, params.Body.CustomCertificates.Console, consoleExternalCertSecretName, minInst.Name)
-	if err != nil {
-		return err
-	}
-	if len(consoleExternalCertSecrets) > 0 {
-		newConsoleExternalCertSecret = consoleExternalCertSecrets[0]
-	}
-
-	// Create new CAs Certificate Secrets for Console
-	var consoleCaCertificates []tenantSecret
-	for i, caCertificate := range params.Body.CustomCertificates.ConsoleCAs {
-		certificateContent, err := base64.StdEncoding.DecodeString(caCertificate)
-		if err != nil {
-			return err
-		}
-		consoleCaCertificates = append(consoleCaCertificates, tenantSecret{
-			Name: fmt.Sprintf("%s-console-ca-certificate-%d", secretName, i),
-			Content: map[string][]byte{
-				"public.crt": certificateContent,
-			},
-		})
-	}
-	if len(consoleCaCertificates) > 0 {
-		certificateSecrets, err := createOrReplaceSecrets(ctx, client, minInst.Namespace, consoleCaCertificates, minInst.Name)
-		if err != nil {
-			return err
-		}
-		newConsoleExternalCaCertSecret = append(newConsoleExternalCaCertSecret, certificateSecrets...)
-	}
-
 	// Update External Certificates
 	minInst.Spec.ExternalCertSecret = newMinIOExternalCertSecret
 	minInst.Spec.ExternalCaCertSecret = newMinIOExternalCaCertSecret
-	if minInst.HasConsoleEnabled() {
-		minInst.Spec.Console.ExternalCertSecret = newConsoleExternalCertSecret
-		minInst.Spec.Console.ExternalCaCertSecret = newConsoleExternalCaCertSecret
-	}
 	_, err = operatorClient.TenantUpdate(ctx, minInst, metav1.UpdateOptions{})
 	if err != nil {
 		return err
@@ -978,8 +851,6 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	tenantReq := params.Body
 	minioImage := tenantReq.Image
 	ctx := context.Background()
-	consoleHasTLS := false
-
 	if minioImage == "" {
 		minImg, err := cluster.GetMinioImage()
 		// we can live without figuring out the latest version of MinIO, Operator will use a hardcoded value
@@ -1015,9 +886,9 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	var instanceSecret corev1.Secret
 	var users []*corev1.LocalObjectReference
 
-	var tenantConfigurationENV string
+	tenantConfigurationENV := map[string]string{}
 
-	// Create the secret for the root credentials
+	// Create the secret for the root credentials (deprecated)
 	secretName := fmt.Sprintf("%s-secret", tenantName)
 	instanceSecret = corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
@@ -1033,8 +904,14 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		},
 	}
 
-	tenantConfigurationENV += fmt.Sprintf("export MINIO_ROOT_USER=\"%s\"\n", accessKey)
-	tenantConfigurationENV += fmt.Sprintf("export MINIO_ROOT_PASSWORD=\"%s\"\n", secretKey)
+	// Enable/Disable console object browser for MinIO tenant (default is on)
+	enabledConsole := "on"
+	if tenantReq.EnableConsole != nil && !*tenantReq.EnableConsole {
+		enabledConsole = "off"
+	}
+	tenantConfigurationENV["MINIO_BROWSER"] = enabledConsole
+	tenantConfigurationENV["MINIO_ROOT_USER"] = accessKey
+	tenantConfigurationENV["MINIO_ROOT_PASSWORD"] = secretKey
 
 	_, err = clientSet.CoreV1().Secrets(ns).Create(ctx, &instanceSecret, metav1.CreateOptions{})
 	if err != nil {
@@ -1060,7 +937,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		if tenantReq.ErasureCodingParity < 2 || tenantReq.ErasureCodingParity > 8 {
 			return nil, prepareError(errorInvalidErasureCodingValue)
 		}
-		tenantConfigurationENV += fmt.Sprintf("export MINIO_STORAGE_CLASS_STANDARD=\"%s\"\n", fmt.Sprintf("EC:%d", tenantReq.ErasureCodingParity))
+		tenantConfigurationENV["MINIO_STORAGE_CLASS_STANDARD"] = fmt.Sprintf("EC:%d", tenantReq.ErasureCodingParity)
 	}
 
 	//Construct a MinIO Instance with everything we are getting from parameters
@@ -1077,10 +954,11 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 			},
 		},
 	}
-
+	var tenantExternalIDPConfigured bool
 	if tenantReq.Idp != nil {
 		// Enable IDP (Active Directory) for MinIO
 		if tenantReq.Idp.ActiveDirectory != nil {
+			tenantExternalIDPConfigured = true
 			serverAddress := *tenantReq.Idp.ActiveDirectory.URL
 			userNameFormat := tenantReq.Idp.ActiveDirectory.UsernameFormat
 			userNameSearchFilter := tenantReq.Idp.ActiveDirectory.UsernameSearchFilter
@@ -1096,33 +974,33 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 			serverStartTLS := tenantReq.Idp.ActiveDirectory.ServerStartTLS
 
 			// LDAP Server
-			tenantConfigurationENV += fmt.Sprintf("export MINIO_IDENTITY_LDAP_SERVER_ADDR=\"%s\"\n", serverAddress)
+			tenantConfigurationENV["MINIO_IDENTITY_LDAP_SERVER_ADDR"] = serverAddress
 			if tlsSkipVerify {
-				tenantConfigurationENV += "export MINIO_IDENTITY_LDAP_TLS_SKIP_VERIFY=on\n"
+				tenantConfigurationENV["MINIO_IDENTITY_LDAP_TLS_SKIP_VERIFY"] = "on"
 			}
 			if serverInsecure {
-				tenantConfigurationENV += "export MINIO_IDENTITY_LDAP_SERVER_INSECURE=on\n"
+				tenantConfigurationENV["MINIO_IDENTITY_LDAP_SERVER_INSECURE"] = "on"
 			}
 			if serverStartTLS {
-				tenantConfigurationENV += "export MINIO_IDENTITY_LDAP_SERVER_STARTTLS=on\n"
+				tenantConfigurationENV["MINIO_IDENTITY_LDAP_SERVER_STARTTLS"] = "on"
 			}
 
 			// LDAP Username
-			tenantConfigurationENV += fmt.Sprintf("export MINIO_IDENTITY_LDAP_USERNAME_FORMAT=\"%s\"\n", userNameFormat)
-			tenantConfigurationENV += fmt.Sprintf("export MINIO_IDENTITY_LDAP_USERNAME_SEARCH_FILTER=\"%s\"\n", userNameSearchFilter)
+			tenantConfigurationENV["MINIO_IDENTITY_LDAP_USERNAME_FORMAT"] = userNameFormat
+			tenantConfigurationENV["MINIO_IDENTITY_LDAP_USERNAME_SEARCH_FILTER"] = userNameSearchFilter
 
 			// LDAP Lookup
-			tenantConfigurationENV += fmt.Sprintf("export MINIO_IDENTITY_LDAP_LOOKUP_BIND_DN=\"%s\"\n", lookupBindDN)
-			tenantConfigurationENV += fmt.Sprintf("export MINIO_IDENTITY_LDAP_LOOKUP_BIND_PASSWORD=\"%s\"\n", lookupBindPassword)
+			tenantConfigurationENV["MINIO_IDENTITY_LDAP_LOOKUP_BIND_DN"] = lookupBindDN
+			tenantConfigurationENV["MINIO_IDENTITY_LDAP_LOOKUP_BIND_PASSWORD"] = lookupBindPassword
 
 			// LDAP User DN
-			tenantConfigurationENV += fmt.Sprintf("export MINIO_IDENTITY_LDAP_USER_DN_SEARCH_BASE_DN=\"%s\"\n", userDNSearchBaseDN)
-			tenantConfigurationENV += fmt.Sprintf("export MINIO_IDENTITY_LDAP_USER_DN_SEARCH_FILTER=\"%s\"\n", userDNSearchFilter)
+			tenantConfigurationENV["MINIO_IDENTITY_LDAP_USER_DN_SEARCH_BASE_DN"] = userDNSearchBaseDN
+			tenantConfigurationENV["MINIO_IDENTITY_LDAP_USER_DN_SEARCH_FILTER"] = userDNSearchFilter
 
 			// LDAP Group
-			tenantConfigurationENV += fmt.Sprintf("export MINIO_IDENTITY_LDAP_GROUP_NAME_ATTRIBUTE=\"%s\"\n", groupNameAttribute)
-			tenantConfigurationENV += fmt.Sprintf("export MINIO_IDENTITY_LDAP_GROUP_SEARCH_BASE_DN=\"%s\"\n", groupSearchBaseDN)
-			tenantConfigurationENV += fmt.Sprintf("export MINIO_IDENTITY_LDAP_GROUP_SEARCH_FILTER=\"%s\"\n", groupSearchFilter)
+			tenantConfigurationENV["MINIO_IDENTITY_LDAP_GROUP_NAME_ATTRIBUTE"] = groupNameAttribute
+			tenantConfigurationENV["MINIO_IDENTITY_LDAP_GROUP_SEARCH_BASE_DN"] = groupSearchBaseDN
+			tenantConfigurationENV["MINIO_IDENTITY_LDAP_GROUP_SEARCH_FILTER"] = groupSearchFilter
 
 			// Attach the list of LDAP user DNs that will be administrator for the Tenant
 			for i, userDN := range tenantReq.Idp.ActiveDirectory.UserDNS {
@@ -1149,20 +1027,23 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 			minInst.Spec.Users = users
 
 		} else if tenantReq.Idp.Oidc != nil {
+			tenantExternalIDPConfigured = true
 			// Enable IDP (OIDC) for MinIO
 			url := *tenantReq.Idp.Oidc.ConfigurationURL
 			clientID := *tenantReq.Idp.Oidc.ClientID
 			secretID := *tenantReq.Idp.Oidc.SecretID
 			claimName := *tenantReq.Idp.Oidc.ClaimName
 			scopes := tenantReq.Idp.Oidc.Scopes
-			tenantConfigurationENV += fmt.Sprintf("export MINIO_IDENTITY_OPENID_CONFIG_URL=\"%s\"\n", url)
-			tenantConfigurationENV += fmt.Sprintf("export MINIO_IDENTITY_OPENID_CLIENT_ID=\"%s\"\n", clientID)
-			tenantConfigurationENV += fmt.Sprintf("export MINIO_IDENTITY_OPENID_CLIENT_SECRET=\"%s\"\n", secretID)
-			tenantConfigurationENV += fmt.Sprintf("export MINIO_IDENTITY_OPENID_CLAIM_NAME=\"%s\"\n", claimName)
+			callbackURL := tenantReq.Idp.Oidc.CallbackURL
+			tenantConfigurationENV["MINIO_IDENTITY_OPENID_CONFIG_URL"] = url
+			tenantConfigurationENV["MINIO_IDENTITY_OPENID_CLIENT_ID"] = clientID
+			tenantConfigurationENV["MINIO_IDENTITY_OPENID_CLIENT_SECRET"] = secretID
+			tenantConfigurationENV["MINIO_IDENTITY_OPENID_CLAIM_NAME"] = claimName
+			tenantConfigurationENV["MINIO_IDENTITY_OPENID_REDIRECT_URI"] = callbackURL
 			if scopes == "" {
 				scopes = "openid,profile,email"
 			}
-			tenantConfigurationENV += fmt.Sprintf("export MINIO_IDENTITY_OPENID_SCOPES=\"%s\"\n", scopes)
+			tenantConfigurationENV["MINIO_IDENTITY_OPENID_SCOPES"] = scopes
 		} else if len(tenantReq.Idp.Keys) > 0 {
 			// Create the secret any built-in user passed if no external IDP was configured
 			for i := 0; i < len(tenantReq.Idp.Keys); i++ {
@@ -1200,7 +1081,6 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		if *tenantReq.EnableTLS {
 			// requestAutoCert is enabled, MinIO will be deployed with TLS enabled and encryption can be enabled
 			isEncryptionEnabled = true
-			consoleHasTLS = true
 		}
 	}
 	// External TLS certificates for MinIO
@@ -1262,130 +1142,12 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 			minInst.Spec.ExternalCaCertSecret = certificateSecrets
 		}
 	}
-	// optionals are set below
-	var tenantUserAccessKey string
-	var tenantUserSecretKey string
-	keyElementEmpty := len(tenantReq.Idp.Keys) == 1 && (*tenantReq.Idp.Keys[0].AccessKey == "" && *tenantReq.Idp.Keys[0].SecretKey == "")
 
-	enableConsole := true
-	if tenantReq.EnableConsole != nil && *tenantReq.EnableConsole {
-		enableConsole = *tenantReq.EnableConsole
-	}
-
-	if enableConsole {
-		consoleSelector := fmt.Sprintf("%s-console", tenantName)
-		consoleSecretName := fmt.Sprintf("%s-secret", consoleSelector)
-		consoleSecretData := map[string][]byte{
-			"CONSOLE_PBKDF_PASSPHRASE": []byte(restapi.RandomCharString(16)),
-			"CONSOLE_PBKDF_SALT":       []byte(restapi.RandomCharString(8)),
-		}
-		// If Subnet License is present in k8s secrets, copy that to the CONSOLE_SUBNET_LICENSE env variable
-		// of the console tenant
-		license, _ := getSubscriptionLicense(ctx, &k8sClient, cluster.Namespace, OperatorSubnetLicenseSecretName)
-		if license != "" {
-			consoleSecretData[restapi.ConsoleSubnetLicense] = []byte(license)
-		}
-		imm := true
-		consoleSecret := corev1.Secret{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: consoleSecretName,
-				Labels: map[string]string{
-					miniov2.TenantLabel: tenantName,
-				},
-			},
-			Immutable: &imm,
-			Data:      consoleSecretData,
-		}
-
-		minInst.Spec.Console = &miniov2.ConsoleConfiguration{
-			Replicas:      1,
-			Image:         getConsoleImage(),
-			ConsoleSecret: &corev1.LocalObjectReference{Name: consoleSecretName},
-			Resources: corev1.ResourceRequirements{
-				Requests: map[corev1.ResourceName]resource.Quantity{
-					"memory": resource.MustParse("64Mi"),
-				},
-			},
-		}
-		if tenantReq.TLS != nil && tenantReq.TLS.Console != nil {
-			consoleHasTLS = true
-			// Certificates used by the console instance
-			externalCertSecretName := fmt.Sprintf("%s-console-external-certificates", secretName)
-			certificates := []*models.KeyPairConfiguration{tenantReq.TLS.Console}
-			externalCertSecret, err := createOrReplaceExternalCertSecrets(ctx, &k8sClient, ns, certificates, externalCertSecretName, tenantName)
-			if err != nil {
-				return nil, prepareError(restapi.ErrorGeneric)
-			}
-			if len(externalCertSecret) > 0 {
-				minInst.Spec.Console.ExternalCertSecret = externalCertSecret[0]
-			}
-		}
-
-		// If IDP is not already enabled via LDAP (Active Directory) and OIDC configuration is present then
-		// enable oidc for console
-		if tenantReq.Idp != nil {
-			if tenantReq.Idp.ActiveDirectory != nil {
-				consoleSecret.Data[ldap.ConsoleLDAPEnabled] = []byte("on")
-			} else if tenantReq.Idp.Oidc != nil {
-				url := *tenantReq.Idp.Oidc.URL
-				clientID := *tenantReq.Idp.Oidc.ClientID
-				secretID := *tenantReq.Idp.Oidc.SecretID
-				callbackURL := tenantReq.Idp.Oidc.CallbackURL
-				if url != "" && clientID != "" && secretID != "" {
-					consoleSecret.Data[oauth2.ConsoleIdpURL] = []byte(url)
-					consoleSecret.Data[oauth2.ConsoleIdpClientID] = []byte(clientID)
-					consoleSecret.Data[oauth2.ConsoleIdpSecret] = []byte(secretID)
-					consoleScheme := "http"
-					consolePort := miniov2.ConsolePort
-					// If Console will be deployed with TLS enabled (using AutoCert or External certificates)
-					if consoleHasTLS {
-						consoleScheme = "https"
-						consolePort = miniov2.ConsoleTLSPort
-					}
-					// default callback url is https://localhost:9443/oauth_callback
-					consoleSecret.Data[oauth2.ConsoleIdpCallbackURL] = []byte(fmt.Sprintf("%s://localhost:%d/oauth_callback", consoleScheme, consolePort))
-					if callbackURL != "" {
-						consoleSecret.Data[oauth2.ConsoleIdpCallbackURL] = []byte(callbackURL)
-					}
-				}
-			}
-		}
-
-		_, err = clientSet.CoreV1().Secrets(ns).Create(ctx, &consoleSecret, metav1.CreateOptions{})
-		if err != nil {
-			return nil, prepareError(restapi.ErrorGeneric)
-		}
-
-		// Set Labels, Annotations and Node Selector for Console
-		if tenantReq.Console != nil {
-			minInst.Spec.Console.Annotations = tenantReq.Console.Annotations
-			minInst.Spec.Console.Labels = tenantReq.Console.Labels
-			minInst.Spec.Console.NodeSelector = tenantReq.Console.NodeSelector
-		}
-
-		// External TLS CA certificates for Console
-		if tenantReq.TLS != nil && len(tenantReq.TLS.ConsoleCaCertificates) > 0 {
-			var caCertificates []tenantSecret
-			for i, caCertificate := range tenantReq.TLS.ConsoleCaCertificates {
-				certificateContent, err := base64.StdEncoding.DecodeString(caCertificate)
-				if err != nil {
-					return nil, prepareError(restapi.ErrorGeneric, nil, err)
-				}
-				caCertificates = append(caCertificates, tenantSecret{
-					Name: fmt.Sprintf("console-ca-certificate-%d", i),
-					Content: map[string][]byte{
-						"public.crt": certificateContent,
-					},
-				})
-			}
-			if len(caCertificates) > 0 {
-				certificateSecrets, err := createOrReplaceSecrets(ctx, &k8sClient, ns, caCertificates, tenantName)
-				if err != nil {
-					return nil, prepareError(restapi.ErrorGeneric, nil, err)
-				}
-				minInst.Spec.Console.ExternalCaCertSecret = certificateSecrets
-			}
-		}
+	// If Subnet License is present in k8s secrets, copy that to the MINIO_SUBNET_LICENSE env variable
+	// of the console tenant
+	license, _ := getSubscriptionLicense(ctx, &k8sClient, cluster.Namespace, OperatorSubnetLicenseSecretName)
+	if license != "" {
+		tenantConfigurationENV[MinIOSubnetLicense] = license
 	}
 
 	// add annotations
@@ -1432,11 +1194,6 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		minInst.Annotations[prometheusScrape] = "true"
 	}
 
-	// set console image if provided
-	if tenantReq.ConsoleImage != "" {
-		minInst.Spec.Console.Image = tenantReq.ConsoleImage
-	}
-
 	//Default class name for Log search
 	diskSpaceFromAPI := int64(5) * humanize.GiByte // Default is 5Gi
 	logSearchStorageClass := ""                    // Default is ""
@@ -1450,18 +1207,15 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		if tenantReq.LogSearchConfiguration.StorageClass != "" {
 			logSearchStorageClass = tenantReq.LogSearchConfiguration.StorageClass
 		}
-
 		if tenantReq.LogSearchConfiguration.StorageClass == "" && len(tenantReq.Pools) > 0 {
 			logSearchStorageClass = tenantReq.Pools[0].VolumeConfiguration.StorageClassName
 		}
-
 		if tenantReq.LogSearchConfiguration.Image != "" {
 			logSearchImage = tenantReq.LogSearchConfiguration.Image
 		}
 		if tenantReq.LogSearchConfiguration.PostgresImage != "" {
 			logSearchPgImage = tenantReq.LogSearchConfiguration.PostgresImage
 		}
-
 	}
 
 	logSearchDiskSpace := resource.NewQuantity(diskSpaceFromAPI, resource.DecimalExponent)
@@ -1542,7 +1296,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		{
 			Name: tenantConfigurationName,
 			Content: map[string][]byte{
-				"config.env": []byte(tenantConfigurationENV),
+				"config.env": []byte(GenerateTenantConfigurationFile(tenantConfigurationENV)),
 			},
 		},
 	}, tenantName)
@@ -1569,20 +1323,16 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 			return nil, prepareError(err)
 		}
 	}
-	response = &models.CreateTenantResponse{}
-	// Attach Console Credentials
-	if enableConsole {
-		var itemsToReturn []*models.TenantResponseItem
-
-		if len(tenantReq.Idp.Keys) == 0 || keyElementEmpty {
-			itemsToReturn = append(itemsToReturn, &models.TenantResponseItem{AccessKey: tenantUserAccessKey, SecretKey: tenantUserSecretKey})
-		} else { // IDP Keys
-			for _, item := range tenantReq.Idp.Keys {
-				itemsToReturn = append(itemsToReturn, &models.TenantResponseItem{AccessKey: *item.AccessKey, SecretKey: *item.SecretKey})
-			}
+	response = &models.CreateTenantResponse{
+		ExternalIDP: tenantExternalIDPConfigured,
+	}
+	if tenantReq.Idp != nil && !tenantExternalIDPConfigured {
+		for _, credential := range tenantReq.Idp.Keys {
+			response.Console = append(response.Console, &models.TenantResponseItem{
+				AccessKey: *credential.AccessKey,
+				SecretKey: *credential.SecretKey,
+			})
 		}
-
-		response.Console = itemsToReturn
 	}
 	return response, nil
 }
@@ -1664,11 +1414,6 @@ func updateTenantAction(ctx context.Context, operatorClient OperatorClientI, cli
 			restapi.LogError("error setting image registry secret: %v", err)
 			return err
 		}
-	}
-
-	// update the console image
-	if strings.TrimSpace(params.Body.ConsoleImage) != "" && minInst.Spec.Console != nil {
-		minInst.Spec.Console.Image = params.Body.ConsoleImage
 	}
 
 	// if image to update is empty we'll use the latest image by default
@@ -1811,8 +1556,8 @@ func getTenantAddPoolResponse(session *models.Principal, params operator_api.Ten
 
 // getTenantUsageResponse returns the usage of a tenant
 func getTenantUsageResponse(session *models.Principal, params operator_api.GetTenantUsageParams) (*models.TenantUsage, *models.Error) {
-	// 5 seconds timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	// 30 seconds timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	opClientClientSet, err := cluster.OperatorClient(session.STSSessionToken)

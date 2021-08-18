@@ -38,6 +38,9 @@ type CreateTenantResponse struct {
 
 	// console
 	Console []*TenantResponseItem `json:"console"`
+
+	// external ID p
+	ExternalIDP bool `json:"externalIDP,omitempty"`
 }
 
 // Validate validates this create tenant response

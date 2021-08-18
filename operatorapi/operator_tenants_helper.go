@@ -63,22 +63,6 @@ func tenantUpdateCertificates(ctx context.Context, operatorClient OperatorClient
 			return err
 		}
 	}
-	// check if Console is deployed with external certs and user provided new Console keypair
-	if tenant.ConsoleExternalCert() && tenant.HasConsoleEnabled() && body.Console != nil {
-		consoleCertSecretName := fmt.Sprintf("%s-console-external-certificates", secretName)
-		// update certificates
-		certificates := []*models.KeyPairConfiguration{body.Console}
-		if _, err := createOrReplaceExternalCertSecrets(ctx, clientSet, namespace, certificates, consoleCertSecretName, tenantName); err != nil {
-			return err
-		}
-		// restart Console pods
-		err := clientSet.deletePodCollection(ctx, namespace, metav1.DeleteOptions{}, metav1.ListOptions{
-			LabelSelector: fmt.Sprintf("%s=%s", miniov2.ConsoleTenantLabel, fmt.Sprintf("%s-console", tenantName)),
-		})
-		if err != nil {
-			return err
-		}
-	}
 	return nil
 }
 
@@ -251,7 +235,6 @@ func createOrReplaceSecrets(ctx context.Context, clientSet K8sClientI, ns string
 				// log the error if any and continue
 				LogError("deleting secret name %s failed: %v, continuing..", secret.Name, err)
 			}
-			imm := true
 			k8sSecret := &corev1.Secret{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: secret.Name,
@@ -259,9 +242,8 @@ func createOrReplaceSecrets(ctx context.Context, clientSet K8sClientI, ns string
 						miniov2.TenantLabel: tenantName,
 					},
 				},
-				Type:      corev1.SecretTypeOpaque,
-				Immutable: &imm,
-				Data:      secret.Content,
+				Type: corev1.SecretTypeOpaque,
+				Data: secret.Content,
 			}
 			_, err = clientSet.createSecret(ctx, ns, k8sSecret, metav1.CreateOptions{})
 			if err != nil {

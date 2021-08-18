@@ -37,6 +37,7 @@ type K8sClientI interface {
 	deletePodCollection(ctx context.Context, namespace string, opts metav1.DeleteOptions, listOpts metav1.ListOptions) error
 	deleteSecret(ctx context.Context, namespace string, name string, opts metav1.DeleteOptions) error
 	createSecret(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error)
+	updateSecret(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.UpdateOptions) (*v1.Secret, error)
 }
 
 // Interface implementation
@@ -68,6 +69,10 @@ func (c *k8sClient) deleteSecret(ctx context.Context, namespace string, name str
 
 func (c *k8sClient) createSecret(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.CreateOptions) (*v1.Secret, error) {
 	return c.client.CoreV1().Secrets(namespace).Create(ctx, secret, opts)
+}
+
+func (c *k8sClient) updateSecret(ctx context.Context, namespace string, secret *v1.Secret, opts metav1.UpdateOptions) (*v1.Secret, error) {
+	return c.client.CoreV1().Secrets(namespace).Update(ctx, secret, opts)
 }
 
 func (c *k8sClient) getNamespace(ctx context.Context, name string, opts metav1.GetOptions) (*v1.Namespace, error) {

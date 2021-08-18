@@ -36,10 +36,6 @@ import (
 // swagger:model updateTenantRequest
 type UpdateTenantRequest struct {
 
-	// console image
-	// Pattern: ^((.*?)/(.*?):(.+))$
-	ConsoleImage string `json:"console_image,omitempty"`
-
 	// enable prometheus
 	EnablePrometheus bool `json:"enable_prometheus,omitempty"`
 
@@ -58,10 +54,6 @@ type UpdateTenantRequest struct {
 func (m *UpdateTenantRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateConsoleImage(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateImage(formats); err != nil {
 		res = append(res, err)
 	}
@@ -73,18 +65,6 @@ func (m *UpdateTenantRequest) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *UpdateTenantRequest) validateConsoleImage(formats strfmt.Registry) error {
-	if swag.IsZero(m.ConsoleImage) { // not required
-		return nil
-	}
-
-	if err := validate.Pattern("console_image", "body", m.ConsoleImage, `^((.*?)/(.*?):(.+))$`); err != nil {
-		return err
-	}
-
 	return nil
 }
 

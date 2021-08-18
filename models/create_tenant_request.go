@@ -43,12 +43,6 @@ type CreateTenantRequest struct {
 	// annotations
 	Annotations map[string]string `json:"annotations,omitempty"`
 
-	// console
-	Console *ConsoleConfiguration `json:"console,omitempty"`
-
-	// console image
-	ConsoleImage string `json:"console_image,omitempty"`
-
 	// enable console
 	EnableConsole *bool `json:"enable_console,omitempty"`
 
@@ -118,10 +112,6 @@ type CreateTenantRequest struct {
 func (m *CreateTenantRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateConsole(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateEncryption(formats); err != nil {
 		res = append(res, err)
 	}
@@ -161,23 +151,6 @@ func (m *CreateTenantRequest) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *CreateTenantRequest) validateConsole(formats strfmt.Registry) error {
-	if swag.IsZero(m.Console) { // not required
-		return nil
-	}
-
-	if m.Console != nil {
-		if err := m.Console.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("console")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 
@@ -334,10 +307,6 @@ func (m *CreateTenantRequest) validateTLS(formats strfmt.Registry) error {
 func (m *CreateTenantRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.contextValidateConsole(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.contextValidateEncryption(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -369,20 +338,6 @@ func (m *CreateTenantRequest) ContextValidate(ctx context.Context, formats strfm
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *CreateTenantRequest) contextValidateConsole(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Console != nil {
-		if err := m.Console.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("console")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 

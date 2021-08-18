@@ -150,6 +150,9 @@ func getLicenseFromCredentials(client cluster.HTTPClientI, username, password st
 	if err != nil {
 		return "", err
 	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return "", fmt.Errorf("subnet served returned status %d code", resp.StatusCode)
+	}
 	userLicense := &subnetLicenseResponse{}
 	// Parse subnet license response
 	err = json.Unmarshal(bodyBytes, userLicense)

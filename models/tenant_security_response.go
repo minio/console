@@ -125,12 +125,6 @@ func (m *TenantSecurityResponse) UnmarshalBinary(b []byte) error {
 // swagger:model TenantSecurityResponseCustomCertificates
 type TenantSecurityResponseCustomCertificates struct {
 
-	// console
-	Console []*CertificateInfo `json:"console"`
-
-	// console c as
-	ConsoleCAs []*CertificateInfo `json:"consoleCAs"`
-
 	// minio
 	Minio []*CertificateInfo `json:"minio"`
 
@@ -141,14 +135,6 @@ type TenantSecurityResponseCustomCertificates struct {
 // Validate validates this tenant security response custom certificates
 func (m *TenantSecurityResponseCustomCertificates) Validate(formats strfmt.Registry) error {
 	var res []error
-
-	if err := m.validateConsole(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateConsoleCAs(formats); err != nil {
-		res = append(res, err)
-	}
 
 	if err := m.validateMinio(formats); err != nil {
 		res = append(res, err)
@@ -161,54 +147,6 @@ func (m *TenantSecurityResponseCustomCertificates) Validate(formats strfmt.Regis
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *TenantSecurityResponseCustomCertificates) validateConsole(formats strfmt.Registry) error {
-	if swag.IsZero(m.Console) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.Console); i++ {
-		if swag.IsZero(m.Console[i]) { // not required
-			continue
-		}
-
-		if m.Console[i] != nil {
-			if err := m.Console[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("customCertificates" + "." + "console" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *TenantSecurityResponseCustomCertificates) validateConsoleCAs(formats strfmt.Registry) error {
-	if swag.IsZero(m.ConsoleCAs) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.ConsoleCAs); i++ {
-		if swag.IsZero(m.ConsoleCAs[i]) { // not required
-			continue
-		}
-
-		if m.ConsoleCAs[i] != nil {
-			if err := m.ConsoleCAs[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("customCertificates" + "." + "consoleCAs" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
 	return nil
 }
 
@@ -264,14 +202,6 @@ func (m *TenantSecurityResponseCustomCertificates) validateMinioCAs(formats strf
 func (m *TenantSecurityResponseCustomCertificates) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.contextValidateConsole(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateConsoleCAs(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.contextValidateMinio(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -283,42 +213,6 @@ func (m *TenantSecurityResponseCustomCertificates) ContextValidate(ctx context.C
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *TenantSecurityResponseCustomCertificates) contextValidateConsole(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Console); i++ {
-
-		if m.Console[i] != nil {
-			if err := m.Console[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("customCertificates" + "." + "console" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *TenantSecurityResponseCustomCertificates) contextValidateConsoleCAs(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.ConsoleCAs); i++ {
-
-		if m.ConsoleCAs[i] != nil {
-			if err := m.ConsoleCAs[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("customCertificates" + "." + "consoleCAs" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
 	return nil
 }
 
