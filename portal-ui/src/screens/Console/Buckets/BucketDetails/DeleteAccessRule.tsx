@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import {
   Button,
   Dialog,
@@ -23,8 +22,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Grid,
-  LinearProgress,
 } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";

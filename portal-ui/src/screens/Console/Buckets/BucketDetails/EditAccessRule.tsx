@@ -14,10 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
+import React, {useState} from "react";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import { Button, Grid } from "@material-ui/core";
-import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { connect } from "react-redux";
@@ -33,11 +32,13 @@ const mapState = (state: AppState) => ({
 
 const connector = connect(mapState, { setErrorSnackMessage });
 
-interface IAddAccessRule {
+interface IEditAccessRule {
   classes: any;
   modalOpen: boolean;
   onClose: () => any;
   bucket: string;
+  toEdit: string;
+  initial: string;
 }
 
 const styles = (theme: Theme) =>
@@ -52,14 +53,15 @@ const styles = (theme: Theme) =>
     ...modalBasic,
   });
 
-const AddAccessRule = ({
+const EditAccessRule = ({
   modalOpen,
   onClose,
   classes,
   bucket,
-}: IAddAccessRule) => {
-  const [prefix, setPrefix] = useState("");
-  const [selectedAccess, setSelectedAccess] = useState<any>("readonly");
+  toEdit,
+  initial
+}: IEditAccessRule) => {
+  const [selectedAccess, setSelectedAccess] = useState<any>(initial);
 
   const accessOptions = [
     { label: "readonly", value: "readonly" },
@@ -68,14 +70,13 @@ const AddAccessRule = ({
   ];
 
   const resetForm = () => {
-    setPrefix("");
-    setSelectedAccess("readonly");
+    setSelectedAccess(initial);
   };
 
   const createProcess = () => {
     api
       .invoke("PUT", `/api/v1/bucket/${bucket}/access-rules`, {
-        prefix: prefix,
+        prefix: toEdit,
         access: selectedAccess,
       })
       .then((res: any) => {
@@ -91,21 +92,11 @@ const AddAccessRule = ({
     <React.Fragment>
       <ModalWrapper
         modalOpen={modalOpen}
-        title="Add Access Rule"
+        title={`Edit Access Rule for ${toEdit}`}
         onClose={onClose}
       >
         <Grid container>
           <Grid item xs={12}>
-            <InputBoxWrapper
-              value={prefix}
-              label={"Prefix"}
-              id={"prefix"}
-              name={"prefix"}
-              placeholder={"Enter Prefix"}
-              onChange={(e) => {
-                setPrefix(e.target.value);
-              }}
-            />
             <SelectWrapper
               id="access"
               name="Access"
@@ -131,7 +122,6 @@ const AddAccessRule = ({
               type="submit"
               variant="contained"
               color="primary"
-              disabled={prefix.trim() === ""}
               onClick={createProcess}
             >
               Save
@@ -143,4 +133,4 @@ const AddAccessRule = ({
   );
 };
 
-export default withStyles(styles)(connector(AddAccessRule));
+export default withStyles(styles)(connector(EditAccessRule));
