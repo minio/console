@@ -110,6 +110,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		AdminAPIConfigInfoHandler: admin_api.ConfigInfoHandlerFunc(func(params admin_api.ConfigInfoParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation admin_api.ConfigInfo has not yet been implemented")
 		}),
+		AdminAPICreateAUserServiceAccountHandler: admin_api.CreateAUserServiceAccountHandlerFunc(func(params admin_api.CreateAUserServiceAccountParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation admin_api.CreateAUserServiceAccount has not yet been implemented")
+		}),
 		UserAPICreateBucketEventHandler: user_api.CreateBucketEventHandlerFunc(func(params user_api.CreateBucketEventParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.CreateBucketEvent has not yet been implemented")
 		}),
@@ -435,6 +438,8 @@ type ConsoleAPI struct {
 	AdminAPIChangeUserPasswordHandler admin_api.ChangeUserPasswordHandler
 	// AdminAPIConfigInfoHandler sets the operation handler for the config info operation
 	AdminAPIConfigInfoHandler admin_api.ConfigInfoHandler
+	// AdminAPICreateAUserServiceAccountHandler sets the operation handler for the create a user service account operation
+	AdminAPICreateAUserServiceAccountHandler admin_api.CreateAUserServiceAccountHandler
 	// UserAPICreateBucketEventHandler sets the operation handler for the create bucket event operation
 	UserAPICreateBucketEventHandler user_api.CreateBucketEventHandler
 	// UserAPICreateServiceAccountHandler sets the operation handler for the create service account operation
@@ -726,6 +731,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.AdminAPIConfigInfoHandler == nil {
 		unregistered = append(unregistered, "admin_api.ConfigInfoHandler")
+	}
+	if o.AdminAPICreateAUserServiceAccountHandler == nil {
+		unregistered = append(unregistered, "admin_api.CreateAUserServiceAccountHandler")
 	}
 	if o.UserAPICreateBucketEventHandler == nil {
 		unregistered = append(unregistered, "user_api.CreateBucketEventHandler")
@@ -1129,6 +1137,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/configs/{name}"] = admin_api.NewConfigInfo(o.context, o.AdminAPIConfigInfoHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/user/service-accounts"] = admin_api.NewCreateAUserServiceAccount(o.context, o.AdminAPICreateAUserServiceAccountHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
