@@ -958,6 +958,43 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/pvcs": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "List all PVCs from given Tenant",
+        "operationId": "ListPVCsForTenant",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listPVCsResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/security": {
       "get": {
         "tags": [
@@ -4007,6 +4044,43 @@ func init() {
         "responses": {
           "201": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/pvcs": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "List all PVCs from given Tenant",
+        "operationId": "ListPVCsForTenant",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/listPVCsResponse"
+            }
           },
           "default": {
             "description": "Generic error response.",
