@@ -389,7 +389,7 @@ paths:
           schema:
             type: array
             items:
-                $ref: "#/definitions/deleteFile"
+              $ref: "#/definitions/deleteFile"
       responses:
         200:
           description: A successful response.
@@ -1046,7 +1046,7 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - UserAPI
-  
+
   /buckets/{bucket_name}/rewind/{date}:
     get:
       summary: Get objects in a bucket for a rewind date
@@ -1074,7 +1074,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
       tags:
-        - UserAPI 
+        - UserAPI
 
   /service-accounts:
     get:
@@ -1910,7 +1910,6 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-
 
   /admin/info:
     get:
@@ -3061,6 +3060,25 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/widget"
+      servers:
+        type: array
+        items:
+          $ref: "#/definitions/serverProperties"
+  serverProperties:
+    type: object
+    properties:
+      state:
+        type: string
+      endpoint:
+        type: string
+      uptime:
+        type: integer
+      version:
+        type: string
+      commitID:
+        type: string
+      poolNumber:
+        type: integer
   arnsResponse:
     type: object
     properties:
@@ -3276,15 +3294,12 @@ definitions:
       object_locking_enabled:
         type: boolean
 
-
   logSearchResponse:
     type: object
     properties:
       results:
         type: object
         title: list of log search responses
-
-
 
   objectLegalHoldStatus:
     type: string
@@ -3535,7 +3550,6 @@ definitions:
         items:
           $ref: "#/definitions/permissionAction"
 
-
   tier_s3:
     type: object
     properties:
@@ -3655,7 +3669,7 @@ definitions:
         type: string
       name:
         type: string
-  
+
   rewindResponse:
     type: object
     properties:

@@ -62,6 +62,7 @@ type UsageInfo struct {
 	Objects    int64
 	Usage      int64
 	DisksUsage int64
+	Servers    []*models.ServerProperties
 }
 
 // GetAdminInfo invokes admin info and returns a parsed `UsageInfo` structure
@@ -80,11 +81,27 @@ func GetAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
 		}
 	}
 
+	//serverArray contains the serverProperties which describe the servers in the network
+	var serverArray []*models.ServerProperties
+	for _, serv := range serverInfo.Servers {
+		var newServer = &models.ServerProperties{
+			State:      serv.State,
+			Endpoint:   serv.Endpoint,
+			Uptime:     int64(serv.Uptime),
+			Version:    serv.Version,
+			CommitID:   serv.CommitID,
+			PoolNumber: int64(serv.PoolNumber),
+		}
+
+		serverArray = append(serverArray, newServer)
+	}
+
 	return &UsageInfo{
 		Buckets:    int64(serverInfo.Buckets.Count),
 		Objects:    int64(serverInfo.Objects.Count),
 		Usage:      int64(serverInfo.Usage.Size),
 		DisksUsage: usedSpace,
+		Servers:    serverArray,
 	}, nil
 }
 
@@ -804,7 +821,7 @@ func getAdminInfoResponse(session *models.Principal) (*models.AdminInfoResponse,
 }
 
 func getUsageWidgetsForDeployment(prometheusURL string, mAdmin *madmin.AdminClient) (*models.AdminInfoResponse, *models.Error) {
-	if prometheusURL == "" {
+	if prometheusURL == "" || true {
 		// create a minioClient interface implementation
 		// defining the client to be used
 		adminClient := AdminClient{Client: mAdmin}
@@ -820,6 +837,7 @@ func getUsageWidgetsForDeployment(prometheusURL string, mAdmin *madmin.AdminClie
 			Buckets: usage.Buckets,
 			Objects: usage.Objects,
 			Usage:   usage.Usage,
+			Servers: usage.Servers,
 		}
 		return sessionResp, nil
 	}
