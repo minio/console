@@ -3480,6 +3480,12 @@ func init() {
         "objects": {
           "type": "integer"
         },
+        "servers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/serverProperties"
+          }
+        },
         "usage": {
           "type": "integer"
         },
@@ -4815,6 +4821,29 @@ func init() {
           "items": {
             "$ref": "#/definitions/rewindItem"
           }
+        }
+      }
+    },
+    "serverProperties": {
+      "type": "object",
+      "properties": {
+        "commitID": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "poolNumber": {
+          "type": "integer"
+        },
+        "state": {
+          "type": "string"
+        },
+        "uptime": {
+          "type": "integer"
+        },
+        "version": {
+          "type": "string"
         }
       }
     },
@@ -8861,6 +8890,12 @@ func init() {
         "objects": {
           "type": "integer"
         },
+        "servers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/serverProperties"
+          }
+        },
         "usage": {
           "type": "integer"
         },
@@ -10196,6 +10231,29 @@ func init() {
           "items": {
             "$ref": "#/definitions/rewindItem"
           }
+        }
+      }
+    },
+    "serverProperties": {
+      "type": "object",
+      "properties": {
+        "commitID": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "poolNumber": {
+          "type": "integer"
+        },
+        "state": {
+          "type": "string"
+        },
+        "uptime": {
+          "type": "integer"
+        },
+        "version": {
+          "type": "string"
         }
       }
     },
