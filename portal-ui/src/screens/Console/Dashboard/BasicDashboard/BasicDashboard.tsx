@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import Grid from "@material-ui/core/Grid";
@@ -24,8 +24,10 @@ import { Usage } from "../types";
 import { niceBytes } from "../../../../common/utils";
 import AllBucketsIcon from "../../../../icons/AllBucketsIcon";
 import UsageIcon from "../../../../icons/UsageIcon";
+import DnsIcon from '@material-ui/icons/Dns';
 import EgressIcon from "../../../../icons/EgressIcon";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
+import { TableContainer } from "@material-ui/core";
 
 
 const styles = (theme: Theme) =>
@@ -88,6 +90,7 @@ const styles = (theme: Theme) =>
     smallUnit: {
       fontSize: 20,
     },
+   
   });
 
 interface IDashboardProps {
@@ -125,10 +128,29 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
     return usage.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
-  const serverColumns = (usage: Usage) => {
-    const serverArray = usage.servers;
-    
-  }
+  const serverColumns = [
+      {
+        label:"Endpoint",
+        elementKey: "endpoint",
+      },
+      {
+        label: "Status",
+        elementKey: "state",
+      },
+      {
+        label: "Uptime",
+        elementKey: "uptime"
+      },
+      {
+        label: "Version",
+        elementKey: "version"}];
+ 
+  const makeServerArray = (usage: Usage | null) => {
+    if (usage != null) {return(usage.servers)} 
+    else return([]);
+  };
+
+  const serverArray = makeServerArray(usage);
 
   return (
     <Fragment>
@@ -182,15 +204,24 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
                 {usage ? prettyNumber(usage.objects) : 0}
               </Typography>
             </Paper>
-            <Paper className={fixedHeightPaper}>
+            <Grid container direction="row" alignItems="center">
+              <Grid item className={classes.icon}>
+                  <DnsIcon />
+                </Grid>
+                <Grid item>
+                  <Typography className={classes.elementTitle}>
+                    {" "}
+                    Servers
+                  </Typography>
+                </Grid>
             <TableWrapper              
-              columns={[{label:"First"}, {label:"second"}, {label:"third"}]}
+              columns={serverColumns}
               isLoading={false}
-              records={[{accessKey:"one"},{accessKey:"two"},{accessKey:"three"}]}
+              records={serverArray}
               entityName="Servers"
               idField="endpoint"
             />
-            </Paper>
+           </Grid>
           </Grid>
         </Grid>
       </Grid>
