@@ -42,6 +42,9 @@ type AdminInfoResponse struct {
 	// objects
 	Objects int64 `json:"objects,omitempty"`
 
+	// servers
+	Servers []*ServerProperties `json:"servers"`
+
 	// usage
 	Usage int64 `json:"usage,omitempty"`
 
@@ -53,6 +56,10 @@ type AdminInfoResponse struct {
 func (m *AdminInfoResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateServers(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateWidgets(formats); err != nil {
 		res = append(res, err)
 	}
@@ -60,6 +67,30 @@ func (m *AdminInfoResponse) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *AdminInfoResponse) validateServers(formats strfmt.Registry) error {
+	if swag.IsZero(m.Servers) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Servers); i++ {
+		if swag.IsZero(m.Servers[i]) { // not required
+			continue
+		}
+
+		if m.Servers[i] != nil {
+			if err := m.Servers[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("servers" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
@@ -91,6 +122,10 @@ func (m *AdminInfoResponse) validateWidgets(formats strfmt.Registry) error {
 func (m *AdminInfoResponse) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateServers(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateWidgets(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -98,6 +133,24 @@ func (m *AdminInfoResponse) ContextValidate(ctx context.Context, formats strfmt.
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *AdminInfoResponse) contextValidateServers(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Servers); i++ {
+
+		if m.Servers[i] != nil {
+			if err := m.Servers[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("servers" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
