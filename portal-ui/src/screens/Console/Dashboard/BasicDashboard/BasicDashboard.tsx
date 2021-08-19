@@ -25,6 +25,8 @@ import { niceBytes } from "../../../../common/utils";
 import AllBucketsIcon from "../../../../icons/AllBucketsIcon";
 import UsageIcon from "../../../../icons/UsageIcon";
 import EgressIcon from "../../../../icons/EgressIcon";
+import TableWrapper from "../../Common/TableWrapper/TableWrapper";
+
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -36,6 +38,7 @@ const styles = (theme: Theme) =>
       border: "#eaedee 1px solid",
       borderRadius: 5,
       boxShadow: "none",
+      
     },
     fixedHeight: {
       height: 165,
@@ -45,6 +48,7 @@ const styles = (theme: Theme) =>
       "& svg": {
         maxHeight: 18,
       },
+      
     },
     consumptionValue: {
       color: "#000000",
@@ -57,6 +61,7 @@ const styles = (theme: Theme) =>
     },
     notationContainer: {
       display: "flex",
+      flexWrap: "wrap",
     },
     dashboardBG: {
       width: 390,
@@ -120,6 +125,11 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
     return usage.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
+  const serverColumns = (usage: Usage) => {
+    const serverArray = usage.servers;
+    
+  }
+
   return (
     <Fragment>
       <div className={classes.dashboardBG} />
@@ -171,6 +181,15 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
               <Typography className={classes.consumptionValue}>
                 {usage ? prettyNumber(usage.objects) : 0}
               </Typography>
+            </Paper>
+            <Paper className={fixedHeightPaper}>
+            <TableWrapper              
+              columns={[{label:"First"}, {label:"second"}, {label:"third"}]}
+              isLoading={false}
+              records={[{accessKey:"one"},{accessKey:"two"},{accessKey:"three"}]}
+              entityName="Servers"
+              idField="endpoint"
+            />
             </Paper>
           </Grid>
         </Grid>
