@@ -24,11 +24,10 @@ import { Usage } from "../types";
 import { niceBytes } from "../../../../common/utils";
 import AllBucketsIcon from "../../../../icons/AllBucketsIcon";
 import UsageIcon from "../../../../icons/UsageIcon";
-import DnsIcon from '@material-ui/icons/Dns';
+import DnsIcon from "@material-ui/icons/Dns";
 import EgressIcon from "../../../../icons/EgressIcon";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import { TableContainer } from "@material-ui/core";
-
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -40,7 +39,6 @@ const styles = (theme: Theme) =>
       border: "#eaedee 1px solid",
       borderRadius: 5,
       boxShadow: "none",
-      
     },
     fixedHeight: {
       height: 165,
@@ -50,7 +48,6 @@ const styles = (theme: Theme) =>
       "& svg": {
         maxHeight: 18,
       },
-      
     },
     consumptionValue: {
       color: "#000000",
@@ -90,7 +87,6 @@ const styles = (theme: Theme) =>
     smallUnit: {
       fontSize: 20,
     },
-   
   });
 
 interface IDashboardProps {
@@ -129,25 +125,28 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
   };
 
   const serverColumns = [
-      {
-        label:"Endpoint",
-        elementKey: "endpoint",
-      },
-      {
-        label: "Status",
-        elementKey: "state",
-      },
-      {
-        label: "Uptime",
-        elementKey: "uptime"
-      },
-      {
-        label: "Version",
-        elementKey: "version"}];
- 
+    {
+      label: "Endpoint",
+      elementKey: "endpoint",
+    },
+    {
+      label: "Status",
+      elementKey: "state",
+    },
+    {
+      label: "Uptime",
+      elementKey: "uptime",
+    },
+    {
+      label: "Version",
+      elementKey: "version",
+    },
+  ];
+
   const makeServerArray = (usage: Usage | null) => {
-    if (usage != null) {return(usage.servers)} 
-    else return([]);
+    if (usage != null) {
+      return usage.servers;
+    } else return [];
   };
 
   const serverArray = makeServerArray(usage);
@@ -206,22 +205,22 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
             </Paper>
             <Grid container direction="row" alignItems="center">
               <Grid item className={classes.icon}>
-                  <DnsIcon />
-                </Grid>
-                <Grid item>
-                  <Typography className={classes.elementTitle}>
-                    {" "}
-                    Servers
-                  </Typography>
-                </Grid>
-            <TableWrapper              
-              columns={serverColumns}
-              isLoading={false}
-              records={serverArray}
-              entityName="Servers"
-              idField="endpoint"
-            />
-           </Grid>
+                <DnsIcon />
+              </Grid>
+              <Grid item>
+                <Typography className={classes.elementTitle}>
+                  {" "}
+                  Servers
+                </Typography>
+              </Grid>
+              <TableWrapper
+                columns={serverColumns}
+                isLoading={false}
+                records={serverArray}
+                entityName="Servers"
+                idField="endpoint"
+              />
+            </Grid>
           </Grid>
         </Grid>
       </Grid>

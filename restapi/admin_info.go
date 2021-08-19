@@ -821,7 +821,7 @@ func getAdminInfoResponse(session *models.Principal) (*models.AdminInfoResponse,
 }
 
 func getUsageWidgetsForDeployment(prometheusURL string, mAdmin *madmin.AdminClient) (*models.AdminInfoResponse, *models.Error) {
-	if prometheusURL == "" || true {
+	if prometheusURL == "" {
 		// create a minioClient interface implementation
 		// defining the client to be used
 		adminClient := AdminClient{Client: mAdmin}
