@@ -32,7 +32,7 @@ export class API {
           clearSession();
           // Refresh the whole page to ensure cache is clear
           // and we dont end on an infinite loop
-          window.location.href = "/login";
+          window.location.href = `${baseUrl}/login`;
           return;
         }
         return this.onError(err);
@@ -66,7 +66,7 @@ export class API {
       return Promise.reject(throwMessage);
     } else {
       clearSession();
-      window.location.href = "/login";
+      window.location.href = `${baseUrl}/login`;
     }
   }
 }

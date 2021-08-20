@@ -41,7 +41,7 @@ import { SystemState } from "../../types";
 import { userLoggedIn } from "../../actions";
 import { ErrorResponseHandler } from "../../common/types";
 import api from "../../common/api";
-import history from "../../history";
+import history, { baseUrl } from "../../history";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -110,7 +110,7 @@ const styles = (theme: Theme) =>
         "transparent linear-gradient(to bottom, #073052 0%,#05122b 100%); 0% 0% no-repeat padding-box;",
     },
     oceanBg: {
-      backgroundImage: "url(/images/BG_Illustration.svg)",
+      backgroundImage: `url(${baseUrl}/images/BG_Illustration.svg)`,
       backgroundRepeat: "no-repeat",
       backgroundPosition: "bottom left",
       height: "100%",
@@ -239,31 +239,19 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
   const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoginSending(true);
-    request
-      .post(
-        loginStrategyEndpoints[loginStrategy.loginStrategy] || "/api/v1/login"
-      )
-      .send(loginStrategyPayload[loginStrategy.loginStrategy])
-      .then((res: any) => {
-        const bodyResponse = res.body;
-        if (bodyResponse.error) {
-          setLoginSending(false);
-          // throw will be moved to catch block once bad login returns 403
-          throw bodyResponse.error;
-        }
-      })
-      .then(() => {
+    api
+      .invoke("POST", (loginStrategyEndpoints[loginStrategy.loginStrategy] || "/api/v1/login"), loginStrategyPayload[loginStrategy.loginStrategy])
+      .then( (res: any) => {
         // We set the state in redux
         userLoggedIn(true);
         if (loginStrategy.loginStrategy === loginStrategyType.form) {
           localStorage.setItem("userLoggedIn", btoa(accessKey));
         }
-
         history.push("/");
       })
-      .catch((err) => {
+      .catch((err: ErrorResponseHandler) => {
         setLoginSending(false);
-        setError({ detailedError: "", errorMessage: err.message });
+        setError({ detailedError: err.detailedError, errorMessage: err.errorMessage });
       });
   };
 

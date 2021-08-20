@@ -18,6 +18,7 @@ import React, { FC, useEffect, useState } from "react"; // eslint-disable-line @
 import { RouteComponentProps } from "react-router";
 import storage from "local-storage-fallback";
 import api from "../../common/api";
+import { baseUrl } from "../../history"
 
 const LoginCallback: FC<RouteComponentProps> = ({ location }) => {
   const [error, setError] = useState<string>("");
@@ -40,11 +41,11 @@ const LoginCallback: FC<RouteComponentProps> = ({ location }) => {
             // store the jwt token
             storage.setItem("token", res.sessionId);
             // We push to history the new URL.
-            window.location.href = "/";
+            window.location.href = `${baseUrl}/`;
           }
         })
         .catch((res: any) => {
-          window.location.href = "/login";
+          window.location.href = `${baseUrl}/login`;
         });
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }

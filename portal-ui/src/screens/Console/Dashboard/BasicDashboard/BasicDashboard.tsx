@@ -25,6 +25,7 @@ import { niceBytes } from "../../../../common/utils";
 import AllBucketsIcon from "../../../../icons/AllBucketsIcon";
 import UsageIcon from "../../../../icons/UsageIcon";
 import EgressIcon from "../../../../icons/EgressIcon";
+import { baseUrl } from "../../../../history";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -64,7 +65,7 @@ const styles = (theme: Theme) =>
       zIndex: 500,
       position: "absolute",
       backgroundSize: "fill",
-      backgroundImage: "url(/images/BG_IllustrationDarker.svg)",
+      backgroundImage: `url(${baseUrl}/images/BG_IllustrationDarker.svg)`,
       backgroundPosition: "right bottom",
       right: 0,
       bottom: 0,

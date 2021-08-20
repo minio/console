@@ -127,11 +127,11 @@ const styles = (theme: Theme) =>
       textOverflow: "ellipsis",
     },
     iconFolder: {
-      backgroundImage: "url(/images/ob_folder_clear.svg)",
+      backgroundImage: `url(${baseUrl}/images/ob_folder_clear.svg)`,
       ...commonIcon,
     },
     iconFile: {
-      backgroundImage: "url(/images/ob_file_clear.svg)",
+      backgroundImage: `url(${baseUrl}/images/ob_file_clear.svg)`,
       ...commonIcon,
     },
     buttonsContainer: {
@@ -144,10 +144,10 @@ const styles = (theme: Theme) =>
     },
     "@global": {
       ".rowLine:hover  .iconFileElm": {
-        backgroundImage: "url(/images/ob_file_filled.svg)",
+        backgroundImage: `url(${baseUrl}/images/ob_file_filled.svg)`,
       },
       ".rowLine:hover  .iconFolderElm": {
-        backgroundImage: "url(/images/ob_folder_filled.svg)",
+        backgroundImage: `url(${baseUrl}images/ob_folder_filled.svg)`,
       },
     },
     listButton: {

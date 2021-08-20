@@ -41,6 +41,7 @@ import AddBucket from "../Buckets/ListBuckets/AddBucket";
 import api from "../../../common/api";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
+import { baseUrl } from "../../../history";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -82,7 +83,7 @@ const styles = (theme: Theme) =>
       alignItems: "center",
     },
     iconBucket: {
-      backgroundImage: "url(/images/ob_bucket_clear.svg)",
+      backgroundImage: `url(${baseUrl}/images/ob_bucket_clear.svg)`,
       backgroundRepeat: "no-repeat",
       backgroundPosition: "center center",
       width: 16,
@@ -91,7 +92,7 @@ const styles = (theme: Theme) =>
     },
     "@global": {
       ".rowLine:hover  .iconBucketElm": {
-        backgroundImage: "url(/images/ob_bucket_filled.svg)",
+        backgroundImage: `url(${baseUrl}/images/ob_bucket_filled.svg)`,
       },
     },
     browsePaper: {
