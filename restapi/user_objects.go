@@ -38,6 +38,7 @@ import (
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/tags"
+	"github.com/minio/pkg/mimedb"
 )
 
 // enum types
@@ -76,6 +77,8 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 			return user_api.NewDownloadObjectDefault(int(err.Code)).WithPayload(err)
 		}
 		return middleware.ResponderFunc(func(rw http.ResponseWriter, _ runtime.Producer) {
+			defer resp.Close()
+
 			// indicate it's a download to the browser, and the size of the object
 			rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", params.Prefix))
 			rw.Header().Set("Content-Type", "application/octet-stream")
@@ -92,7 +95,6 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 			if err != nil {
 				log.Println(err)
 			}
-			resp.Close()
 		})
 	})
 	// upload object
@@ -506,12 +508,13 @@ func getFormFiles(r *http.Request) (files []*objectFile, err error) {
 	return files, nil
 }
 
-func uploadObject(ctx context.Context, client MinioClient, bucketName, prefix string, objectSize int64, object io.ReadCloser) error {
-	_, err := client.putObject(ctx, bucketName, prefix, object, objectSize, minio.PutObjectOptions{ContentType: "application/octet-stream"})
-	if err != nil {
-		return err
-	}
-	return nil
+func uploadObject(ctx context.Context, client MinioClient, bucket, object string, size int64, reader io.ReadCloser) error {
+	contentType := mimedb.TypeByExtension(filepath.Ext(object))
+	_, err := client.putObject(ctx, bucket, object, reader, size, minio.PutObjectOptions{
+		ContentType:      contentType,
+		DisableMultipart: true, // Do not upload as multipart stream for console uploader.
+	})
+	return err
 }
 
 // getShareObjectResponse returns a share object url
