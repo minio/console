@@ -235,7 +235,7 @@ const BrowseBuckets = ({
                     <Tooltip title={"Create Bucket"}>
                       <IconButton
                         color="primary"
-                        aria-label="Refresh List"
+                        aria-label="Create Bucket"
                         component="span"
                         onClick={() => {
                           setAddScreenOpen(true);
