@@ -23,7 +23,7 @@
     "@types/react-router-dom": "^5.1.2",
     "@types/react-virtualized": "^9.21.10",
     "@types/recharts": "^1.8.19",
-    "@types/superagent": "^4.1.4",
+    "@types/superagent": "^4.1.12",
     "@types/webpack-env": "^1.14.1",
     "@types/websocket": "^1.0.0",
     "ansi-to-react": "^6.0.5",
@@ -52,7 +52,7 @@
     "recharts": "^2.0.3",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "superagent": "^5.1.0",
+    "superagent": "^6.1.0",
     "typeface-roboto": "^0.0.75",
     "use-debounce": "^5.0.1",
     "websocket": "^1.0.31"

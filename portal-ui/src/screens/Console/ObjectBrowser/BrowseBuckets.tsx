@@ -238,7 +238,7 @@ const BrowseBuckets = ({
                         aria-label="Refresh List"
                         component="span"
                         onClick={() => {
-                          setLoading(true);
+                          setAddScreenOpen(true);
                         }}
                       >
                         <CreateIcon />
@@ -264,7 +264,7 @@ const BrowseBuckets = ({
         </Grid>
         <Grid item xs={12} className={classes.actionsTray}>
           <TextField
-            placeholder="Search Buckets"
+            placeholder="Filter Buckets"
             className={classes.searchField}
             id="search-resource"
             label=""
