@@ -3072,7 +3072,7 @@ definitions:
       endpoint:
         type: string
       uptime:
-        type: integer
+        type: string
       version:
         type: string
       commitID:

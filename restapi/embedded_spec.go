@@ -4840,7 +4840,7 @@ func init() {
           "type": "string"
         },
         "uptime": {
-          "type": "integer"
+          "type": "string"
         },
         "version": {
           "type": "string"
@@ -10250,7 +10250,7 @@ func init() {
           "type": "string"
         },
         "uptime": {
-          "type": "integer"
+          "type": "string"
         },
         "version": {
           "type": "string"

@@ -47,7 +47,7 @@ type ServerProperties struct {
 	State string `json:"state,omitempty"`
 
 	// uptime
-	Uptime int64 `json:"uptime,omitempty"`
+	Uptime string `json:"uptime,omitempty"`
 
 	// version
 	Version string `json:"version,omitempty"`
