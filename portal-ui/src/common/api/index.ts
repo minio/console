@@ -27,8 +27,8 @@ export class API {
       .send(data)
       .then((res) => res.body)
       .catch((err) => {
-        // if we get unauthorized, kick out the user
-        if (err.status === 401) {
+        // if we get unauthorized, kick out the user, unless they are attempting to log in
+        if (err.status === 401 && url !== "/api/v1/login") {
           clearSession();
           // Refresh the whole page to ensure cache is clear
           // and we dont end on an infinite loop

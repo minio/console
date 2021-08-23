@@ -29,7 +29,6 @@ import {
   Theme,
   withStyles,
 } from "@material-ui/core/styles";
-import request from "superagent";
 import ErrorIcon from "@material-ui/icons/Error";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";

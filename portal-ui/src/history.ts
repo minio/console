@@ -14,11 +14,11 @@ let browserHistoryOpts: BrowserHistoryBuildOptions = {};
 
 export let baseUrl = getBasename(window.location.pathname);
 
-if (`${window.location.pathname}`.startsWith("/api/proxy/")) {
-  // grab from api to the tenant name (/api/proxy/namespace/tenant)
-  const urlParts = `${window.location.pathname}`.split("/").slice(0, 5);
-  browserHistoryOpts.basename = urlParts.join("/");
-  baseUrl = `${urlParts.join("/")}/`;
+if (`${window.location.pathname}`.startsWith(`${baseUrl}/api/proxy/`)) {
+  // grab from api to the tenant name (`${baseUrl}/api/proxy/namespace/tenant`)
+  const urlWithoutBasename = window.location.pathname.replace(baseUrl, "")
+  const urlParts = urlWithoutBasename.split("/").slice(0, 5);
+  browserHistoryOpts.basename = baseUrl + urlParts.join("/");
 } else {
   browserHistoryOpts.basename = baseUrl;
 }
