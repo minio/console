@@ -255,7 +255,7 @@ const ListBuckets = ({
         <Grid item xs={12} className={classes.container}>
           <Grid item xs={12} className={classes.actionsTray}>
             <TextField
-              placeholder="Search Buckets"
+              placeholder="Filter Buckets"
               className={classes.searchField}
               id="search-resource"
               label=""
