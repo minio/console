@@ -87,7 +87,7 @@ func GetAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
 		var newServer = &models.ServerProperties{
 			State:      serv.State,
 			Endpoint:   serv.Endpoint,
-			Uptime:     int64(serv.Uptime),
+			Uptime:     string(serv.Uptime),
 			Version:    serv.Version,
 			CommitID:   serv.CommitID,
 			PoolNumber: int64(serv.PoolNumber),

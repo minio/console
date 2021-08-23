@@ -25,7 +25,7 @@ export interface Usage {
 export interface ServerInfo {
   state: string;
   endpoint: string;
-  uptime: number;
+  uptime: string;
   version: string;
   commitID: string;
   poolNumber: number;
