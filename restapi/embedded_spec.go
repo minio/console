@@ -3180,7 +3180,7 @@ func init() {
         }
       }
     },
-    "/user/service-accounts": {
+    "/user/{name}/service-accounts": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -3191,7 +3191,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           }
         ],
@@ -3220,7 +3220,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           },
           {
@@ -8544,7 +8544,7 @@ func init() {
         }
       }
     },
-    "/user/service-accounts": {
+    "/user/{name}/service-accounts": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -8555,7 +8555,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           }
         ],
@@ -8584,7 +8584,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           },
           {

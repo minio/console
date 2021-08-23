@@ -73,7 +73,7 @@ const AddUserServiceAccount = ({
   useEffect(() => {
     if (addSending) {
       api
-        .invoke("POST", `/api/v1/user/service-accounts?name=${user}`, {
+        .invoke("POST", `/api/v1/user/${user}/service-accounts`, {
           policy: policyDefinition,
         })
         .then((res) => {

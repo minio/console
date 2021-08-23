@@ -48,7 +48,7 @@ func NewCreateAUserServiceAccount(ctx *middleware.Context, handler CreateAUserSe
 	return &CreateAUserServiceAccount{Context: ctx, Handler: handler}
 }
 
-/* CreateAUserServiceAccount swagger:route POST /user/service-accounts AdminAPI createAUserServiceAccount
+/* CreateAUserServiceAccount swagger:route POST /user/{name}/service-accounts AdminAPI createAUserServiceAccount
 
 Create Service Account for User
 

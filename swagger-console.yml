@@ -1299,13 +1299,13 @@ paths:
       tags:
         - AdminAPI
 
-  /user/service-accounts:
+  /user/{name}/service-accounts:
     get:
       summary: returns a list of service accounts for a user
       operationId: ListAUserServiceAccounts
       parameters:
         - name: name
-          in: query
+          in: path
           required: true
           type: string
       responses:
@@ -1324,7 +1324,7 @@ paths:
       operationId: CreateAUserServiceAccount
       parameters:
         - name: name
-          in: query
+          in: path
           required: true
           type: string
         - name: body

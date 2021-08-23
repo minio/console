@@ -1140,7 +1140,7 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/user/service-accounts"] = admin_api.NewCreateAUserServiceAccount(o.context, o.AdminAPICreateAUserServiceAccountHandler)
+	o.handlers["POST"]["/user/{name}/service-accounts"] = admin_api.NewCreateAUserServiceAccount(o.context, o.AdminAPICreateAUserServiceAccountHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
@@ -1256,7 +1256,7 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/user/service-accounts"] = admin_api.NewListAUserServiceAccounts(o.context, o.AdminAPIListAUserServiceAccountsHandler)
+	o.handlers["GET"]["/user/{name}/service-accounts"] = admin_api.NewListAUserServiceAccounts(o.context, o.AdminAPIListAUserServiceAccountsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
