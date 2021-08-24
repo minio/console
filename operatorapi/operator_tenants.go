@@ -395,11 +395,11 @@ func getTenantCreds(ctx context.Context, client K8sClientI, tenant *miniov2.Tena
 }
 
 func getTenant(ctx context.Context, operatorClient OperatorClientI, namespace, tenantName string) (*miniov2.Tenant, error) {
-	minInst, err := operatorClient.TenantGet(ctx, namespace, tenantName, metav1.GetOptions{})
+	tenant, err := operatorClient.TenantGet(ctx, namespace, tenantName, metav1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}
-	return minInst, nil
+	return tenant, nil
 }
 
 func isPrometheusEnabled(annotations map[string]string) bool {
@@ -1308,6 +1308,16 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	}
 	if prometheusImage != "" {
 		minInst.Spec.Prometheus.Image = prometheusImage
+	}
+	// if security context for prometheus is present, configure it.
+	if tenantReq.PrometheusConfiguration != nil && tenantReq.PrometheusConfiguration.SecurityContext != nil {
+		sc := tenantReq.PrometheusConfiguration.SecurityContext
+		minInst.Spec.Prometheus.SecurityContext = &corev1.PodSecurityContext{
+			RunAsUser:    sc.RunAsUser,
+			RunAsGroup:   sc.RunAsGroup,
+			RunAsNonRoot: sc.RunAsNonRoot,
+			FSGroup:      sc.FsGroup,
+		}
 	}
 
 	// expose services
