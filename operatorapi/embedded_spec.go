@@ -2611,6 +2611,10 @@ func init() {
         "image": {
           "type": "string"
         },
+        "securityContext": {
+          "type": "object",
+          "$ref": "#/definitions/securityContext"
+        },
         "storageClass": {
           "type": "string",
           "default": ""
@@ -2675,6 +2679,32 @@ func init() {
           "type": "string"
         },
         "used": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "securityContext": {
+      "type": "object",
+      "required": [
+        "runAsUser",
+        "runAsGroup",
+        "runAsNonRoot",
+        "fsGroup"
+      ],
+      "properties": {
+        "fsGroup": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "runAsGroup": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "runAsNonRoot": {
+          "type": "boolean"
+        },
+        "runAsUser": {
           "type": "integer",
           "format": "int64"
         }
@@ -6143,6 +6173,10 @@ func init() {
         "image": {
           "type": "string"
         },
+        "securityContext": {
+          "type": "object",
+          "$ref": "#/definitions/securityContext"
+        },
         "storageClass": {
           "type": "string",
           "default": ""
@@ -6207,6 +6241,32 @@ func init() {
           "type": "string"
         },
         "used": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "securityContext": {
+      "type": "object",
+      "required": [
+        "runAsUser",
+        "runAsGroup",
+        "runAsNonRoot",
+        "fsGroup"
+      ],
+      "properties": {
+        "fsGroup": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "runAsGroup": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "runAsNonRoot": {
+          "type": "boolean"
+        },
+        "runAsUser": {
           "type": "integer",
           "format": "int64"
         }

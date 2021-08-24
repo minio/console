@@ -1299,13 +1299,13 @@ paths:
       tags:
         - AdminAPI
 
-  /user/service-accounts:
+  /user/{name}/service-accounts:
     get:
       summary: returns a list of service accounts for a user
       operationId: ListAUserServiceAccounts
       parameters:
         - name: name
-          in: query
+          in: path
           required: true
           type: string
       responses:
@@ -1313,6 +1313,30 @@ paths:
           description: A successful response.
           schema:
             $ref: "#/definitions/serviceAccounts"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - AdminAPI
+    post:
+      summary: Create Service Account for User
+      operationId: CreateAUserServiceAccount
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/serviceAccountRequest"
+      responses:
+        201:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/serviceAccountCreds"
         default:
           description: Generic error response.
           schema:
