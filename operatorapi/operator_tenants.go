@@ -290,15 +290,41 @@ func deleteTenantAction(
 	}
 
 	if deletePvcs {
-		opts := metav1.ListOptions{
-			LabelSelector: fmt.Sprintf("%s=%s", miniov2.TenantLabel, tenantName),
-		}
-		err = clientset.PersistentVolumeClaims(namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
+		tenant, err := operatorClient.TenantGet(ctx, namespace, tenantName, metav1.GetOptions{})
 		if err != nil {
 			return err
 		}
+		tenant.EnsureDefaults()
+		// delete MinIO PVCs
+		opts := metav1.ListOptions{
+			LabelSelector: fmt.Sprintf("%s=%s", miniov2.TenantLabel, tenantName),
+		}
+		err = clientset.PersistentVolumeClaims(tenant.Namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
+		if err != nil {
+			return err
+		}
+		// delete postgres PVCs
+		if tenant.HasLogEnabled() {
+			opts := metav1.ListOptions{
+				LabelSelector: fmt.Sprintf("%s=%s", miniov2.LogDBInstanceLabel, tenant.LogStatefulsetName()),
+			}
+			err := clientset.PersistentVolumeClaims(tenant.Namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
+			if err != nil {
+				return err
+			}
+		}
+		// delete prometheus PVCs
+		if tenant.HasPrometheusEnabled() {
+			opts := metav1.ListOptions{
+				LabelSelector: fmt.Sprintf("%s=%s", miniov2.PrometheusInstanceLabel, tenant.PrometheusStatefulsetName()),
+			}
+			err := clientset.PersistentVolumeClaims(tenant.Namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
+			if err != nil {
+				return err
+			}
+		}
 		// delete all tenant's secrets only if deletePvcs = true
-		return clientset.Secrets(namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
+		return clientset.Secrets(tenant.Namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
 	}
 	return nil
 }
@@ -369,11 +395,11 @@ func getTenantCreds(ctx context.Context, client K8sClientI, tenant *miniov2.Tena
 }
 
 func getTenant(ctx context.Context, operatorClient OperatorClientI, namespace, tenantName string) (*miniov2.Tenant, error) {
-	minInst, err := operatorClient.TenantGet(ctx, namespace, tenantName, metav1.GetOptions{})
+	tenant, err := operatorClient.TenantGet(ctx, namespace, tenantName, metav1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}
-	return minInst, nil
+	return tenant, nil
 }
 
 func isPrometheusEnabled(annotations map[string]string) bool {
@@ -1282,6 +1308,16 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	}
 	if prometheusImage != "" {
 		minInst.Spec.Prometheus.Image = prometheusImage
+	}
+	// if security context for prometheus is present, configure it.
+	if tenantReq.PrometheusConfiguration != nil && tenantReq.PrometheusConfiguration.SecurityContext != nil {
+		sc := tenantReq.PrometheusConfiguration.SecurityContext
+		minInst.Spec.Prometheus.SecurityContext = &corev1.PodSecurityContext{
+			RunAsUser:    sc.RunAsUser,
+			RunAsGroup:   sc.RunAsGroup,
+			RunAsNonRoot: sc.RunAsNonRoot,
+			FSGroup:      sc.FsGroup,
+		}
 	}
 
 	// expose services
