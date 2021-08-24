@@ -24,6 +24,7 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -87,7 +88,7 @@ func GetAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
 		var newServer = &models.ServerProperties{
 			State:      serv.State,
 			Endpoint:   serv.Endpoint,
-			Uptime:     string(serv.Uptime),
+			Uptime:     strconv.Itoa(int(serv.Uptime)),
 			Version:    serv.Version,
 			CommitID:   serv.CommitID,
 			PoolNumber: int64(serv.PoolNumber),

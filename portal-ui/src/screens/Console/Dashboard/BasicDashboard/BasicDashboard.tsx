@@ -20,7 +20,7 @@ import clsx from "clsx";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import { Usage } from "../types";
+import { Usage, ServerInfo } from "../types";
 import { niceBytes, niceDays } from "../../../../common/utils";
 import AllBucketsIcon from "../../../../icons/AllBucketsIcon";
 import UsageIcon from "../../../../icons/UsageIcon";
@@ -28,7 +28,6 @@ import DnsIcon from "@material-ui/icons/Dns";
 import EgressIcon from "../../../../icons/EgressIcon";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import { TableContainer } from "@material-ui/core";
-
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -146,10 +145,10 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
 
   const makeServerArray = (usage: Usage | null) => {
     if (usage != null) {
-      
-        usage.servers.forEach( server => server.uptime = niceDays(server.uptime))
-        return usage.servers;
-    } else return [];
+      usage.servers.forEach(s => s.uptime = niceDays(s.uptime))
+      return usage.servers 
+    }
+     else return [];
   };
 
   const serverArray = makeServerArray(usage);
