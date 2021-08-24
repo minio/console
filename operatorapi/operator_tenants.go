@@ -264,7 +264,14 @@ func getDeleteTenantResponse(session *models.Principal, params operator_api.Dele
 	if params.Body != nil {
 		deleteTenantPVCs = params.Body.DeletePvcs
 	}
-	if err = deleteTenantAction(context.Background(), opClient, clientset.CoreV1(), params.Namespace, params.Tenant, deleteTenantPVCs); err != nil {
+
+	tenant, err := opClient.TenantGet(params.HTTPRequest.Context(), params.Namespace, params.Tenant, metav1.GetOptions{})
+	if err != nil {
+		return prepareError(err)
+	}
+	tenant.EnsureDefaults()
+
+	if err = deleteTenantAction(params.HTTPRequest.Context(), opClient, clientset.CoreV1(), tenant, deleteTenantPVCs); err != nil {
 		return prepareError(err)
 	}
 	return nil
@@ -277,10 +284,10 @@ func deleteTenantAction(
 	ctx context.Context,
 	operatorClient OperatorClientI,
 	clientset v1.CoreV1Interface,
-	namespace, tenantName string,
+	tenant *miniov2.Tenant,
 	deletePvcs bool) error {
 
-	err := operatorClient.TenantDelete(ctx, namespace, tenantName, metav1.DeleteOptions{})
+	err := operatorClient.TenantDelete(ctx, tenant.Namespace, tenant.Name, metav1.DeleteOptions{})
 	if err != nil {
 		// try to delete pvc even if the tenant doesn't exist anymore but only if deletePvcs is set to true,
 		// else, we return the error
@@ -290,39 +297,35 @@ func deleteTenantAction(
 	}
 
 	if deletePvcs {
-		tenant, err := operatorClient.TenantGet(ctx, namespace, tenantName, metav1.GetOptions{})
-		if err != nil {
-			return err
-		}
-		tenant.EnsureDefaults()
+
 		// delete MinIO PVCs
 		opts := metav1.ListOptions{
-			LabelSelector: fmt.Sprintf("%s=%s", miniov2.TenantLabel, tenantName),
+			LabelSelector: fmt.Sprintf("%s=%s", miniov2.TenantLabel, tenant.Name),
 		}
 		err = clientset.PersistentVolumeClaims(tenant.Namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
 		if err != nil {
 			return err
 		}
 		// delete postgres PVCs
-		if tenant.HasLogEnabled() {
-			opts := metav1.ListOptions{
-				LabelSelector: fmt.Sprintf("%s=%s", miniov2.LogDBInstanceLabel, tenant.LogStatefulsetName()),
-			}
-			err := clientset.PersistentVolumeClaims(tenant.Namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
-			if err != nil {
-				return err
-			}
+
+		logOpts := metav1.ListOptions{
+			LabelSelector: fmt.Sprintf("%s=%s", miniov2.LogDBInstanceLabel, tenant.LogStatefulsetName()),
 		}
+		err := clientset.PersistentVolumeClaims(tenant.Namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, logOpts)
+		if err != nil {
+			return err
+		}
+
 		// delete prometheus PVCs
-		if tenant.HasPrometheusEnabled() {
-			opts := metav1.ListOptions{
-				LabelSelector: fmt.Sprintf("%s=%s", miniov2.PrometheusInstanceLabel, tenant.PrometheusStatefulsetName()),
-			}
-			err := clientset.PersistentVolumeClaims(tenant.Namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
-			if err != nil {
-				return err
-			}
+
+		promOpts := metav1.ListOptions{
+			LabelSelector: fmt.Sprintf("%s=%s", miniov2.PrometheusInstanceLabel, tenant.PrometheusStatefulsetName()),
 		}
+
+		if err := clientset.PersistentVolumeClaims(tenant.Namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, promOpts); err != nil {
+			return err
+		}
+
 		// delete all tenant's secrets only if deletePvcs = true
 		return clientset.Secrets(tenant.Namespace).DeleteCollection(ctx, metav1.DeleteOptions{}, opts)
 	}
