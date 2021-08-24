@@ -501,8 +501,7 @@ func Test_deleteTenantAction(t *testing.T) {
 	type args struct {
 		ctx              context.Context
 		operatorClient   OperatorClientI
-		nameSpace        string
-		tenantName       string
+		tenant           *miniov2.Tenant
 		deletePvcs       bool
 		objs             []runtime.Object
 		mockTenantDelete func(ctx context.Context, namespace string, tenantName string, options metav1.DeleteOptions) error
@@ -517,9 +516,13 @@ func Test_deleteTenantAction(t *testing.T) {
 			args: args{
 				ctx:            context.Background(),
 				operatorClient: opClient,
-				nameSpace:      "default",
-				tenantName:     "minio-tenant",
-				deletePvcs:     false,
+				tenant: &miniov2.Tenant{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "default",
+						Namespace: "minio-tenant",
+					},
+				},
+				deletePvcs: false,
 				mockTenantDelete: func(ctx context.Context, namespace string, tenantName string, options metav1.DeleteOptions) error {
 					return nil
 				},
@@ -531,9 +534,13 @@ func Test_deleteTenantAction(t *testing.T) {
 			args: args{
 				ctx:            context.Background(),
 				operatorClient: opClient,
-				nameSpace:      "default",
-				tenantName:     "minio-tenant",
-				deletePvcs:     false,
+				tenant: &miniov2.Tenant{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "default",
+						Namespace: "minio-tenant",
+					},
+				},
+				deletePvcs: false,
 				mockTenantDelete: func(ctx context.Context, namespace string, tenantName string, options metav1.DeleteOptions) error {
 					return errors.New("something happened")
 				},
@@ -546,9 +553,13 @@ func Test_deleteTenantAction(t *testing.T) {
 			args: args{
 				ctx:            context.Background(),
 				operatorClient: opClient,
-				nameSpace:      "minio-tenant",
-				tenantName:     "tenant1",
-				deletePvcs:     true,
+				tenant: &miniov2.Tenant{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "tenant1",
+						Namespace: "minio-tenant",
+					},
+				},
+				deletePvcs: true,
 				objs: []runtime.Object{
 					&corev1.PersistentVolumeClaim{
 						ObjectMeta: metav1.ObjectMeta{
@@ -573,9 +584,13 @@ func Test_deleteTenantAction(t *testing.T) {
 			args: args{
 				ctx:            context.Background(),
 				operatorClient: opClient,
-				nameSpace:      "minio-tenant",
-				tenantName:     "tenant1",
-				deletePvcs:     false,
+				tenant: &miniov2.Tenant{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "tenant1",
+						Namespace: "minio-tenant",
+					},
+				},
+				deletePvcs: false,
 				objs: []runtime.Object{
 					&corev1.PersistentVolumeClaim{
 						ObjectMeta: metav1.ObjectMeta{
@@ -600,9 +615,13 @@ func Test_deleteTenantAction(t *testing.T) {
 			args: args{
 				ctx:            context.Background(),
 				operatorClient: opClient,
-				nameSpace:      "minio-tenant",
-				tenantName:     "tenant1",
-				deletePvcs:     true,
+				tenant: &miniov2.Tenant{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "tenant1",
+						Namespace: "minio-tenant",
+					},
+				},
+				deletePvcs: true,
 				objs: []runtime.Object{
 					&corev1.PersistentVolumeClaim{
 						ObjectMeta: metav1.ObjectMeta{
@@ -627,9 +646,13 @@ func Test_deleteTenantAction(t *testing.T) {
 			args: args{
 				ctx:            context.Background(),
 				operatorClient: opClient,
-				nameSpace:      "minio-tenant",
-				tenantName:     "tenant1",
-				deletePvcs:     true,
+				tenant: &miniov2.Tenant{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "tenant1",
+						Namespace: "minio-tenant",
+					},
+				},
+				deletePvcs: true,
 				objs: []runtime.Object{
 					&corev1.PersistentVolumeClaim{
 						ObjectMeta: metav1.ObjectMeta{
@@ -655,9 +678,13 @@ func Test_deleteTenantAction(t *testing.T) {
 			args: args{
 				ctx:            context.Background(),
 				operatorClient: opClient,
-				nameSpace:      "minio-tenant",
-				tenantName:     "tenant1",
-				deletePvcs:     false,
+				tenant: &miniov2.Tenant{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      "tenant1",
+						Namespace: "minio-tenant",
+					},
+				},
+				deletePvcs: false,
 				objs: []runtime.Object{
 					&corev1.PersistentVolumeClaim{
 						ObjectMeta: metav1.ObjectMeta{
@@ -681,7 +708,7 @@ func Test_deleteTenantAction(t *testing.T) {
 		opClientTenantDeleteMock = tt.args.mockTenantDelete
 		kubeClient := fake.NewSimpleClientset(tt.args.objs...)
 		t.Run(tt.name, func(t *testing.T) {
-			if err := deleteTenantAction(tt.args.ctx, tt.args.operatorClient, kubeClient.CoreV1(), tt.args.nameSpace, tt.args.tenantName, tt.args.deletePvcs); (err != nil) != tt.wantErr {
+			if err := deleteTenantAction(tt.args.ctx, tt.args.operatorClient, kubeClient.CoreV1(), tt.args.tenant, tt.args.deletePvcs); (err != nil) != tt.wantErr {
 				t.Errorf("deleteTenantAction() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

@@ -145,20 +145,19 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
 
   const makeServerArray = (usage: Usage | null) => {
     if (usage != null) {
-      usage.servers.forEach(s => s.uptime = niceDays(s.uptime))
-      return usage.servers.sort(function (a, b) {  
-        var nameA = a.endpoint.toUpperCase(); 
+      usage.servers.forEach((s) => (s.uptime = niceDays(s.uptime)));
+      return usage.servers.sort(function (a, b) {
+        var nameA = a.endpoint.toUpperCase();
         var nameB = b.endpoint.toUpperCase();
         if (nameA < nameB) {
           return -1;
-          }
-      if (nameA > nameB) {
-        return 1;
-          }
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
         return 0;
-  }); 
-    }
-     else return [];
+      });
+    } else return [];
   };
 
   const serverArray = makeServerArray(usage);
