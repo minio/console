@@ -48,7 +48,7 @@ func NewDeleteAccessRuleWithBucket(ctx *middleware.Context, handler DeleteAccess
 	return &DeleteAccessRuleWithBucket{Context: ctx, Handler: handler}
 }
 
-/* DeleteAccessRuleWithBucket swagger:route DELETE /bucket/{bucket}/access-rules/{prefix} AdminAPI deleteAccessRuleWithBucket
+/* DeleteAccessRuleWithBucket swagger:route DELETE /bucket/{bucket}/access-rules AdminAPI deleteAccessRuleWithBucket
 
 Delete Access Rule From Given Bucket
 

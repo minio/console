@@ -32,7 +32,6 @@ import (
 // DeleteAccessRuleWithBucketURL generates an URL for the delete access rule with bucket operation
 type DeleteAccessRuleWithBucketURL struct {
 	Bucket string
-	Prefix string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -58,20 +57,13 @@ func (o *DeleteAccessRuleWithBucketURL) SetBasePath(bp string) {
 func (o *DeleteAccessRuleWithBucketURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/bucket/{bucket}/access-rules/{prefix}"
+	var _path = "/bucket/{bucket}/access-rules"
 
 	bucket := o.Bucket
 	if bucket != "" {
 		_path = strings.Replace(_path, "{bucket}", bucket, -1)
 	} else {
 		return nil, errors.New("bucket is required on DeleteAccessRuleWithBucketURL")
-	}
-
-	prefix := o.Prefix
-	if prefix != "" {
-		_path = strings.Replace(_path, "{prefix}", prefix, -1)
-	} else {
-		return nil, errors.New("prefix is required on DeleteAccessRuleWithBucketURL")
 	}
 
 	_basePath := o._basePath

@@ -1649,8 +1649,6 @@ paths:
             $ref: "#/definitions/error"
       tags:
         - AdminAPI
-
-  /bucket/{bucket}/access-rules/{prefix}:
     delete:
       summary: Delete Access Rule From Given Bucket
       operationId: DeleteAccessRuleWithBucket
@@ -1660,9 +1658,10 @@ paths:
           required: true
           type: string
         - name: prefix
-          in: path
+          in: body
           required: true
-          type: string
+          schema:
+            $ref: "#/definitions/prefixWrapper"
       responses:
         200:
           description: A successful response.
@@ -3515,6 +3514,12 @@ definitions:
       prefix:
         type: string
       access:
+        type: string
+
+  prefixWrapper:
+    type: object
+    properties:
+      prefix:
         type: string
 
   setConfigResponse:
