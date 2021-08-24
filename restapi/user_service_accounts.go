@@ -40,6 +40,14 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 		}
 		return user_api.NewCreateServiceAccountCreated().WithPayload(creds)
 	})
+	// Create User Service Account
+	api.AdminAPICreateAUserServiceAccountHandler = admin_api.CreateAUserServiceAccountHandlerFunc(func(params admin_api.CreateAUserServiceAccountParams, session *models.Principal) middleware.Responder {
+		creds, err := getCreateAUserServiceAccountResponse(session, params.Body, params.Name)
+		if err != nil {
+			return user_api.NewCreateServiceAccountDefault(int(err.Code)).WithPayload(err)
+		}
+		return admin_api.NewCreateAUserServiceAccountCreated().WithPayload(creds)
+	})
 	// List Service Accounts for User
 	api.UserAPIListUserServiceAccountsHandler = user_api.ListUserServiceAccountsHandlerFunc(func(params user_api.ListUserServiceAccountsParams, session *models.Principal) middleware.Responder {
 		serviceAccounts, err := getUserServiceAccountsResponse(session, "")
@@ -104,6 +112,48 @@ func getCreateServiceAccountResponse(session *models.Principal, serviceAccount *
 	userAdminClient := AdminClient{Client: userAdmin}
 
 	saCreds, err := createServiceAccount(ctx, userAdminClient, serviceAccount.Policy)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	return saCreds, nil
+}
+
+// createServiceAccount adds a service account to the userClient and assigns a policy to him if defined.
+func createAUserServiceAccount(ctx context.Context, userClient MinioAdmin, policy string, user string) (*models.ServiceAccountCreds, error) {
+	// By default a nil policy will be used so the service account inherit the parent account policy, otherwise
+	// we override with the user provided iam policy
+	var iamPolicy *iampolicy.Policy
+	if strings.TrimSpace(policy) != "" {
+		iamp, err := iampolicy.ParseConfig(bytes.NewReader([]byte(policy)))
+		if err != nil {
+			return nil, err
+		}
+		iamPolicy = iamp
+	}
+
+	creds, err := userClient.addServiceAccountWithUser(ctx, iamPolicy, user)
+	if err != nil {
+		return nil, err
+	}
+	return &models.ServiceAccountCreds{AccessKey: creds.AccessKey, SecretKey: creds.SecretKey}, nil
+}
+
+// getCreateServiceAccountResponse creates a service account with the defined policy for the user that
+//   is requestingit ,it first gets the credentials of the user and creates a client which is going to
+//   make the call to create the Service Account
+func getCreateAUserServiceAccountResponse(session *models.Principal, serviceAccount *models.ServiceAccountRequest, user string) (*models.ServiceAccountCreds, *models.Error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
+	defer cancel()
+
+	userAdmin, err := NewMinioAdminClient(session)
+	if err != nil {
+		return nil, prepareError(err)
+	}
+	// create a MinIO user Admin Client interface implementation
+	// defining the client to be used
+	userAdminClient := AdminClient{Client: userAdmin}
+
+	saCreds, err := createAUserServiceAccount(ctx, userAdminClient, serviceAccount.Policy, user)
 	if err != nil {
 		return nil, prepareError(err)
 	}
