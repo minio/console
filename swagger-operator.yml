@@ -1317,6 +1317,9 @@ definitions:
         default: 5
       image:
         type: string
+      securityContext:
+        type: object
+        $ref: '#/definitions/securityContext'
   idpConfiguration:
     type: object
     properties:
@@ -2263,3 +2266,23 @@ definitions:
           type: string
       force:
         type: boolean
+  securityContext:
+     type: object
+     required:
+       - runAsUser
+       - runAsGroup
+       - runAsNonRoot
+       - fsGroup
+     properties:
+       runAsUser:
+         type: integer
+         format: int64
+       runAsGroup:
+         type: integer
+         format: int64
+       runAsNonRoot:
+         type: boolean
+       fsGroup:
+         type: integer
+         format: int64
+
