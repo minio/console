@@ -19,4 +19,14 @@ export interface Usage {
   buckets: number;
   objects: number;
   widgets?: any;
+  servers: ServerInfo[];
+}
+
+export interface ServerInfo {
+  state: string;
+  endpoint: string;
+  uptime: string;
+  version: string;
+  commitID: string;
+  poolNumber: number;
 }

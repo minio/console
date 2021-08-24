@@ -14,17 +14,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import { Usage } from "../types";
-import { niceBytes } from "../../../../common/utils";
+import { Usage, ServerInfo } from "../types";
+import { niceBytes, niceDays } from "../../../../common/utils";
 import AllBucketsIcon from "../../../../icons/AllBucketsIcon";
 import UsageIcon from "../../../../icons/UsageIcon";
+import DnsIcon from "@material-ui/icons/Dns";
 import EgressIcon from "../../../../icons/EgressIcon";
+import TableWrapper from "../../Common/TableWrapper/TableWrapper";
+import { TableContainer } from "@material-ui/core";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -57,6 +60,7 @@ const styles = (theme: Theme) =>
     },
     notationContainer: {
       display: "flex",
+      flexWrap: "wrap",
     },
     dashboardBG: {
       width: 390,
@@ -120,6 +124,45 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
     return usage.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
+  const serverColumns = [
+    {
+      label: "Endpoint",
+      elementKey: "endpoint",
+    },
+    {
+      label: "Status",
+      elementKey: "state",
+    },
+    {
+      label: "Uptime",
+      elementKey: "uptime",
+    },
+    {
+      label: "Version",
+      elementKey: "version",
+    },
+  ];
+
+  const makeServerArray = (usage: Usage | null) => {
+    if (usage != null) {
+      usage.servers.forEach(s => s.uptime = niceDays(s.uptime))
+      return usage.servers.sort(function (a, b) {  
+        var nameA = a.endpoint.toUpperCase(); 
+        var nameB = b.endpoint.toUpperCase();
+        if (nameA < nameB) {
+          return -1;
+          }
+      if (nameA > nameB) {
+        return 1;
+          }
+        return 0;
+  }); 
+    }
+     else return [];
+  };
+
+  const serverArray = makeServerArray(usage);
+
   return (
     <Fragment>
       <div className={classes.dashboardBG} />
@@ -172,6 +215,24 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
                 {usage ? prettyNumber(usage.objects) : 0}
               </Typography>
             </Paper>
+            <Grid container direction="row" alignItems="center">
+              <Grid item className={classes.icon}>
+                <DnsIcon />
+              </Grid>
+              <Grid item>
+                <Typography className={classes.elementTitle}>
+                  {" "}
+                  Servers
+                </Typography>
+              </Grid>
+              <TableWrapper
+                columns={serverColumns}
+                isLoading={false}
+                records={serverArray}
+                entityName="Servers"
+                idField="endpoint"
+              />
+            </Grid>
           </Grid>
         </Grid>
       </Grid>
