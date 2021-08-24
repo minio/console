@@ -29,9 +29,11 @@ import { setErrorSnackMessage } from "../../../actions";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { stringSort } from "../../../utils/sortFunctions";
 import { ErrorResponseHandler } from "../../../common/types";
-import AddServiceAccount from "../Account/AddServiceAccount";
+import AddUserServiceAccount from "./AddUserServiceAccount";
 import DeleteServiceAccount from "../Account/DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
+import {CreateIcon} from "../../../icons";
+import Button from "@material-ui/core/Button";
 
 interface IUserServiceAccountsProps {
   classes: any;
@@ -45,7 +47,6 @@ const styles = (theme: Theme) =>
     ...actionsTray,
     actionsTray: {
       ...actionsTray.actionsTray,
-      padding: "15px 0 0",
     },
   });
 
@@ -72,7 +73,7 @@ const UserServiceAccountsPanel = ({
   useEffect(() => {
     if (loading) {
       api
-        .invoke("GET", `/api/v1/user/service-accounts?name=${user}`)
+        .invoke("GET", `/api/v1/user/${user}/service-accounts`)
         .then((res: string[]) => {
           const serviceAccounts = res.sort(stringSort);
 
@@ -131,11 +132,12 @@ const UserServiceAccountsPanel = ({
   return (
     <React.Fragment>
       {addScreenOpen && (
-        <AddServiceAccount
+        <AddUserServiceAccount
           open={addScreenOpen}
           closeModalAndRefresh={(res: NewServiceAccount | null) => {
             closeAddModalAndRefresh(res);
           }}
+          user={user}
         />
       )}
       {deleteOpen && (
@@ -157,18 +159,30 @@ const UserServiceAccountsPanel = ({
           entity="Service Account"
         />
       )}
-      <Grid container className={classes.container}>
-        <Grid item xs={12}>
-          <TableWrapper
-            isLoading={loading}
-            records={records}
-            entityName={"Service Accounts"}
-            idField={""}
-            columns={[{ label: "Service Account", elementKey: "" }]}
-            itemActions={tableActions}
-          />
-        </Grid>
-      </Grid>
+      <div className={classes.actionsTray}>
+        <h1 className={classes.sectionTitle}>Service Accounts</h1>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<CreateIcon />}
+          onClick={() => {
+          setAddScreenOpen(true);
+            setAddScreenOpen(true);
+            setSelectedServiceAccount(null);
+          }}
+        >
+          Create service account
+        </Button>
+      </div>
+      <br/>
+      <TableWrapper
+        isLoading={loading}
+        records={records}
+        entityName={"Service Accounts"}
+        idField={""}
+        columns={[{ label: "Service Account", elementKey: "" }]}
+        itemActions={tableActions}
+      />
     </React.Fragment>
   );
 };

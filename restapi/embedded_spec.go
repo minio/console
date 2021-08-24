@@ -3180,7 +3180,7 @@ func init() {
         }
       }
     },
-    "/user/service-accounts": {
+    "/user/{name}/service-accounts": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -3191,7 +3191,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           }
         ],
@@ -3200,6 +3200,43 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/serviceAccounts"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Create Service Account for User",
+        "operationId": "CreateAUserServiceAccount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serviceAccountRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceAccountCreds"
             }
           },
           "default": {
@@ -8507,7 +8544,7 @@ func init() {
         }
       }
     },
-    "/user/service-accounts": {
+    "/user/{name}/service-accounts": {
       "get": {
         "tags": [
           "AdminAPI"
@@ -8518,7 +8555,7 @@ func init() {
           {
             "type": "string",
             "name": "name",
-            "in": "query",
+            "in": "path",
             "required": true
           }
         ],
@@ -8527,6 +8564,43 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/serviceAccounts"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AdminAPI"
+        ],
+        "summary": "Create Service Account for User",
+        "operationId": "CreateAUserServiceAccount",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/serviceAccountRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceAccountCreds"
             }
           },
           "default": {

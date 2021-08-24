@@ -30,40 +30,40 @@ import (
 	"github.com/minio/console/models"
 )
 
-// ListAUserServiceAccountsHandlerFunc turns a function with the right signature into a list a user service accounts handler
-type ListAUserServiceAccountsHandlerFunc func(ListAUserServiceAccountsParams, *models.Principal) middleware.Responder
+// CreateAUserServiceAccountHandlerFunc turns a function with the right signature into a create a user service account handler
+type CreateAUserServiceAccountHandlerFunc func(CreateAUserServiceAccountParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn ListAUserServiceAccountsHandlerFunc) Handle(params ListAUserServiceAccountsParams, principal *models.Principal) middleware.Responder {
+func (fn CreateAUserServiceAccountHandlerFunc) Handle(params CreateAUserServiceAccountParams, principal *models.Principal) middleware.Responder {
 	return fn(params, principal)
 }
 
-// ListAUserServiceAccountsHandler interface for that can handle valid list a user service accounts params
-type ListAUserServiceAccountsHandler interface {
-	Handle(ListAUserServiceAccountsParams, *models.Principal) middleware.Responder
+// CreateAUserServiceAccountHandler interface for that can handle valid create a user service account params
+type CreateAUserServiceAccountHandler interface {
+	Handle(CreateAUserServiceAccountParams, *models.Principal) middleware.Responder
 }
 
-// NewListAUserServiceAccounts creates a new http.Handler for the list a user service accounts operation
-func NewListAUserServiceAccounts(ctx *middleware.Context, handler ListAUserServiceAccountsHandler) *ListAUserServiceAccounts {
-	return &ListAUserServiceAccounts{Context: ctx, Handler: handler}
+// NewCreateAUserServiceAccount creates a new http.Handler for the create a user service account operation
+func NewCreateAUserServiceAccount(ctx *middleware.Context, handler CreateAUserServiceAccountHandler) *CreateAUserServiceAccount {
+	return &CreateAUserServiceAccount{Context: ctx, Handler: handler}
 }
 
-/* ListAUserServiceAccounts swagger:route GET /user/{name}/service-accounts AdminAPI listAUserServiceAccounts
+/* CreateAUserServiceAccount swagger:route POST /user/{name}/service-accounts AdminAPI createAUserServiceAccount
 
-returns a list of service accounts for a user
+Create Service Account for User
 
 */
-type ListAUserServiceAccounts struct {
+type CreateAUserServiceAccount struct {
 	Context *middleware.Context
-	Handler ListAUserServiceAccountsHandler
+	Handler CreateAUserServiceAccountHandler
 }
 
-func (o *ListAUserServiceAccounts) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *CreateAUserServiceAccount) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		*r = *rCtx
 	}
-	var Params = NewListAUserServiceAccountsParams()
+	var Params = NewCreateAUserServiceAccountParams()
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {
 		o.Context.Respond(rw, r, route.Produces, route, err)

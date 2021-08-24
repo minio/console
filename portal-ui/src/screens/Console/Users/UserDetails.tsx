@@ -377,11 +377,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
               />
             </TabPanel>
             <TabPanel index={1} value={curTab}>
-              <div className={classes.actionsTray}>
-                <h1 className={classes.sectionTitle}>Service Accounts</h1>
-              </div>
-              <br />
-              <UserServiceAccountsPanel user={userName} />
+              <UserServiceAccountsPanel user={userName} classes={classes} />
             </TabPanel>
             <TabPanel index={2} value={curTab}>
               <div className={classes.actionsTray}>
