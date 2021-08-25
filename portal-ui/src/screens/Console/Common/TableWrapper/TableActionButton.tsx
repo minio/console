@@ -64,7 +64,7 @@ const defineIcon = (type: string, selected: boolean) => {
     case "edit":
       return <EditIcon width={16} />;
     case "delete":
-      return <TrashIcon width={16} />;
+      return <TrashIcon width={16} active={selected} />;
     case "description":
       return <IAMPoliciesIcon width={16} />;
     case "share":
