@@ -21,7 +21,7 @@ const StorageIcon = ({ width = 24 }: IIcon) => {
   return (
     <SvgIcon style={{ width: width, height: width }}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 17.03 17.305">
-        <g transform="translate(.1 .1)" stroke="#000" strokeWidth={0.2}>
+        <g transform="translate(.1 .1)" strokeWidth={0.2}>
           <path
             data-name="Trazado 396"
             d="M15.875 0H.955A.956.956 0 000 .955v3.472a.957.957 0 00.955.956h14.92a.957.957 0 00.956-.956V.955A.957.957 0 0015.875 0zm.019 4.427a.019.019 0 01-.019.019L.937 4.427.956.937l14.938.019z"
