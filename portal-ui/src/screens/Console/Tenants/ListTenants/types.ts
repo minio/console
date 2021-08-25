@@ -81,7 +81,6 @@ export interface ITenant {
   name: string;
   namespace: string;
   image: string;
-  console_image: string;
   pool_count: number;
   currentState: string;
   instance_count: 4;

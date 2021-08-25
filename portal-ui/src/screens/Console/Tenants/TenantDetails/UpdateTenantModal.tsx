@@ -53,7 +53,6 @@ const UpdateTenantModal = ({
 }: IUpdateTenantModal) => {
   const [isSending, setIsSending] = useState<boolean>(false);
   const [minioImage, setMinioImage] = useState<string>("");
-  const [consoleImage, setConsoleImage] = useState<string>("");
   const [imageRegistry, setImageRegistry] = useState<boolean>(false);
   const [imageRegistryEndpoint, setImageRegistryEndpoint] =
     useState<string>("");
@@ -62,31 +61,23 @@ const UpdateTenantModal = ({
   const [imageRegistryPassword, setImageRegistryPassword] =
     useState<string>("");
   const [validMinioImage, setValidMinioImage] = useState<boolean>(true);
-  const [validConsoleImage, setValidConsoleImage] = useState<boolean>(true);
 
   const validateImage = useCallback(
     (fieldToCheck: string) => {
       const pattern = new RegExp("^$|^((.*?)/(.*?):(.+))$");
 
       switch (fieldToCheck) {
-        case "consoleImage":
-          setValidConsoleImage(pattern.test(consoleImage));
-          break;
         case "minioImage":
           setValidMinioImage(pattern.test(minioImage));
           break;
       }
     },
-    [consoleImage, minioImage]
+    [minioImage]
   );
 
   useEffect(() => {
     validateImage("minioImage");
   }, [minioImage, validateImage]);
-
-  useEffect(() => {
-    validateImage("consoleImage");
-  }, [consoleImage, validateImage]);
 
   const closeAction = () => {
     closeModalAndRefresh(false);
@@ -94,7 +85,6 @@ const UpdateTenantModal = ({
 
   const resetForm = () => {
     setMinioImage("");
-    setConsoleImage("");
     setImageRegistry(false);
     setImageRegistryEndpoint("");
     setImageRegistryUsername("");
@@ -106,7 +96,6 @@ const UpdateTenantModal = ({
 
     let payload = {
       image: minioImage,
-      console_image: consoleImage,
       enable_prometheus: true,
     };
 
@@ -235,7 +224,6 @@ const UpdateTenantModal = ({
             color="primary"
             disabled={
               !validMinioImage ||
-              !validConsoleImage ||
               (imageRegistry &&
                 (imageRegistryEndpoint.trim() === "" ||
                   imageRegistryUsername.trim() === "" ||

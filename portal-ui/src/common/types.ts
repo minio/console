@@ -25,7 +25,6 @@ export interface ITenant {
   deletion_date: string;
   currentState: string;
   image: string;
-  console_image: string;
   instance_count: string;
   name: string;
   namespace?: string;
@@ -59,7 +58,6 @@ export interface ITenantCreator {
   access_keys: string[];
   secret_keys: string[];
   image: string;
-  console_image: string;
   expose_minio: boolean;
   expose_console: boolean;
   pools: IPoolModel[];

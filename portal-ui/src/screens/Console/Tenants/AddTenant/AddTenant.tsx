@@ -94,7 +94,6 @@ const AddTenant = ({
     const tenantName = fields.nameTenant.tenantName;
     const selectedStorageClass = fields.nameTenant.selectedStorageClass;
     const imageName = fields.configure.imageName;
-    const consoleImage = fields.configure.consoleImage;
     const customDockerhub = fields.configure.customDockerhub;
     const imageRegistry = fields.configure.imageRegistry;
     const imageRegistryUsername = fields.configure.imageRegistryUsername;
@@ -221,7 +220,6 @@ const AddTenant = ({
         enable_prometheus: true,
         service_name: "",
         image: imageName,
-        console_image: consoleImage,
         expose_minio: exposeMinIO,
         expose_console: exposeConsole,
         pools: [

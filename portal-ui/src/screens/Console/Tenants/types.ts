@@ -124,7 +124,6 @@ export interface INameTenantFields {
 export interface IConfigureFields {
   customImage: boolean;
   imageName: string;
-  consoleImage: string;
   customDockerhub: boolean;
   imageRegistry: string;
   imageRegistryUsername: string;
