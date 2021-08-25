@@ -17,6 +17,7 @@
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
 import { IIcon } from "./props";
+import { selected, unSelected } from "../screens/Console/Common/TableWrapper/TableActionIcons/common";
 
 const IAMPoliciesIcon = ({ width = 24, active=false }: IIcon) => {
   return (
