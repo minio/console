@@ -318,7 +318,7 @@ const Configure = ({
               label="MinIO's Image"
               value={imageName}
               error={validationErrors["image"] || ""}
-              placeholder="E.g. minio/minio:RELEASE.2021-06-17T00-10-46Z"
+              placeholder="E.g. minio/minio:RELEASE.2021-08-20T18-32-01Z"
             />
           </Grid>
           <Grid item xs={12}>
