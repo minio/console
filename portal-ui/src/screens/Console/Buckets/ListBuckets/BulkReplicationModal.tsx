@@ -154,7 +154,7 @@ const AddBulkReplicationModal = ({
     };
 
     api
-      .invoke("POST", "api/v1/buckets-replication", remoteBucketsInfo)
+      .invoke("POST", "/api/v1/buckets-replication", remoteBucketsInfo)
       .then((response: BulkReplicationResponse) => {
         setAddLoading(false);
 
@@ -191,7 +191,7 @@ const AddBulkReplicationModal = ({
     setExternalLoading(true);
 
     api
-      .invoke("POST", "api/v1/list-external-buckets", remoteConnectInfo)
+      .invoke("POST", "/api/v1/list-external-buckets", remoteConnectInfo)
       .then((dataReturn) => {
         const buckets = get(dataReturn, "buckets", []);
 
