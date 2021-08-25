@@ -23,7 +23,6 @@ import Grid from "@material-ui/core/Grid";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 import Button from "@material-ui/core/Button";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
 import {
   NotificationEndpointItem,
   NotificationEndpointsList,
@@ -45,7 +44,8 @@ import api from "../../../../common/api";
 import SlideOptions from "../../Common/SlideOptions/SlideOptions";
 import BackSettingsIcon from "../../../../icons/BackSettingsIcon";
 import NotificationTypeSelector from "./NotificationTypeSelector";
-import RefreshIcon from "@material-ui/icons/Refresh";
+import RefreshIcon from "../../../../icons/RefreshIcon";
+import SearchIcon from "../../../../icons/SearchIcon";
 
 interface IListNotificationEndpoints {
   classes: any;
@@ -183,7 +183,7 @@ const ListNotificationEndpoints = ({
                             disableUnderline: true,
                             startAdornment: (
                               <InputAdornment position="start">
-                                <SearchIcon />
+                                <SearchIcon width={18} />
                               </InputAdornment>
                             ),
                           }}

@@ -21,7 +21,7 @@ interface IUploadFile {
   width?: number;
 }
 
-const UploadFile = ({ width = 20 }: IUploadFile) => {
+const UploadFile = ({ width = 24 }: IUploadFile) => {
   return (
     <SvgIcon style={{ width: width, height: width }}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 12.996">

@@ -35,13 +35,13 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import RefreshIcon from "@material-ui/icons/Refresh";
 import { ILoginDetails, loginStrategyType } from "./types";
 import { SystemState } from "../../types";
 import { userLoggedIn } from "../../actions";
 import { ErrorResponseHandler } from "../../common/types";
 import api from "../../common/api";
 import history from "../../history";
+import RefreshIcon from "../../icons/RefreshIcon";
 
 const styles = (theme: Theme) =>
   createStyles({

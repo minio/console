@@ -20,7 +20,6 @@ import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Grid, InputAdornment, TextField } from "@material-ui/core";
 import history from "../../../history";
-import SearchIcon from "@material-ui/icons/Search";
 import {
   actionsTray,
   containerForHeader,
@@ -31,6 +30,7 @@ import { setErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
+import SearchIcon from "../../../icons/SearchIcon";
 
 interface IStorageVolumesProps {
   classes: any;
@@ -109,7 +109,7 @@ const StorageVolumes = ({
             disableUnderline: true,
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon />
+                <SearchIcon width={18} />
               </InputAdornment>
             ),
           }}

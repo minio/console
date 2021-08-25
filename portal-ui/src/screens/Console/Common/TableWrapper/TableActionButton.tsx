@@ -19,7 +19,6 @@ import { Link } from "react-router-dom";
 import { createStyles, withStyles } from "@material-ui/core/styles";
 import { IconButton } from "@material-ui/core";
 import ViewIcon from "./TableActionIcons/ViewIcon";
-import PencilIcon from "./TableActionIcons/PencilIcon";
 import ShareIcon from "./TableActionIcons/ShareIcon";
 import DeleteIcon from "./TableActionIcons/DeleteIcon";
 import DescriptionIcon from "./TableActionIcons/DescriptionIcon";
@@ -28,6 +27,9 @@ import ConsoleIcon from "./TableActionIcons/ConsoleIcon";
 import DownloadIcon from "./TableActionIcons/DownloadIcon";
 import DisableIcon from "./TableActionIcons/DisableIcon";
 import FormatDriveIcon from "./TableActionIcons/FormatDriveIcon";
+import EditIcon from "../../../../icons/EditIcon";
+import TrashIcon from "../../../../icons/TrashIcon";
+import { IAMPoliciesIcon } from "../../../../icons";
 
 const styles = () =>
   createStyles({
@@ -60,11 +62,11 @@ const defineIcon = (type: string, selected: boolean) => {
     case "view":
       return <ViewIcon active={selected} />;
     case "edit":
-      return <PencilIcon active={selected} />;
+      return <EditIcon width={16} active={selected} />;
     case "delete":
-      return <DeleteIcon active={selected} />;
+      return <TrashIcon width={16} active={selected} />;
     case "description":
-      return <DescriptionIcon active={selected} />;
+      return <IAMPoliciesIcon width={16} active={selected} />;
     case "share":
       return <ShareIcon active={selected} />;
     case "cloud":

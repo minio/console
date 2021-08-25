@@ -22,7 +22,6 @@ import { IconButton, TextField } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
 import {
   actionsTray,
   containerForHeader,
@@ -40,7 +39,8 @@ import SlideOptions from "../../Common/SlideOptions/SlideOptions";
 import BackSettingsIcon from "../../../../icons/BackSettingsIcon";
 import AddTierConfiguration from "./AddTierConfiguration";
 import UpdateTierCredentiasModal from "./UpdateTierCredentiasModal";
-import RefreshIcon from "@material-ui/icons/Refresh";
+import RefreshIcon from "../../../../icons/RefreshIcon";
+import SearchIcon from "../../../../icons/SearchIcon";
 
 interface IListTiersConfig {
   classes: any;
@@ -228,7 +228,7 @@ const ListTiersConfiguration = ({
                             disableUnderline: true,
                             startAdornment: (
                               <InputAdornment position="start">
-                                <SearchIcon />
+                                <SearchIcon width={18} />
                               </InputAdornment>
                             ),
                           }}

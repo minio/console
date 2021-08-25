@@ -25,21 +25,15 @@ import DescriptionIcon from "@material-ui/icons/Description";
 import Collapse from "@material-ui/core/Collapse";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
-import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
-import TrackChangesSharpIcon from "@material-ui/icons/TrackChangesSharp";
-import StorageIcon from "@material-ui/icons/Storage";
 import { AppState } from "../../../store";
 import { userLoggedIn } from "../../../actions";
 import { menuGroups } from "./utils";
 import { IMenuItem, IMenuProps } from "./types";
 import {
   BucketsIcon,
-  ClustersIcon,
-  ConfigurationsListIcon,
   DashboardIcon,
   GroupsIcon,
   IAMPoliciesIcon,
-  ServiceAccountsIcon,
   TraceIcon,
   UsersIcon,
 } from "../../../icons";
@@ -47,13 +41,19 @@ import { ErrorResponseHandler } from "../../../common/types";
 import { clearSession } from "../../../common/utils";
 import LicenseIcon from "../../../icons/LicenseIcon";
 import LogoutIcon from "../../../icons/LogoutIcon";
-import ConsoleIcon from "../../../icons/ConsoleIcon";
 import HealIcon from "../../../icons/HealIcon";
 import WatchIcon from "../../../icons/WatchIcon";
 import OperatorLogo from "../../../icons/OperatorLogo";
 import ConsoleLogo from "../../../icons/ConsoleLogo";
 import history from "../../../history";
 import api from "../../../common/api";
+import AccountIcon from "../../../icons/AccountIcon";
+import DiagnosticsIcon from "../../../icons/DiagnosticsIcon";
+import DocumentationIcon from "../../../icons/DocumentationIcon";
+import LogsIcon from "../../../icons/LogsIcon";
+import SettingsIcon from "../../../icons/SettingsIcon";
+import StorageIcon from "../../../icons/StorageIcon";
+import TenantsOutlinedIcon from "../../../icons/TenantsOutlineIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -213,7 +213,7 @@ const Menu = ({
       component: NavLink,
       to: "/account",
       name: "Service Accounts",
-      icon: <ServiceAccountsIcon />,
+      icon: <AccountIcon />,
     },
     {
       group: "Admin",
@@ -253,7 +253,7 @@ const Menu = ({
       component: NavLink,
       to: "/logs",
       name: "Logs",
-      icon: <ConsoleIcon />,
+      icon: <LogsIcon />,
     },
     {
       group: "Tools",
@@ -286,7 +286,7 @@ const Menu = ({
       component: NavLink,
       to: "/health-info",
       name: "Diagnostic",
-      icon: <TrackChangesSharpIcon />,
+      icon: <DiagnosticsIcon />,
     },
     {
       group: "Admin",
@@ -294,7 +294,7 @@ const Menu = ({
       component: NavLink,
       to: "/settings",
       name: "Settings",
-      icon: <ConfigurationsListIcon />,
+      icon: <SettingsIcon />,
     },
     {
       group: "Operator",
@@ -302,7 +302,7 @@ const Menu = ({
       component: NavLink,
       to: "/tenants",
       name: "Tenants",
-      icon: <ClustersIcon />,
+      icon: <TenantsOutlinedIcon />,
     },
     {
       group: "Operator",
@@ -325,7 +325,7 @@ const Menu = ({
     component: NavLink,
     to: "/documentation",
     name: "Documentation",
-    icon: <LibraryBooksIcon />,
+    icon: <DocumentationIcon />,
     forceDisplay: true,
   };
 

@@ -22,9 +22,6 @@ import Grid from "@material-ui/core/Grid";
 import get from "lodash/get";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
-import RefreshIcon from "@material-ui/icons/Refresh";
-import RestoreIcon from "@material-ui/icons/Restore";
 import {
   BucketObject,
   BucketObjectsList,
@@ -54,11 +51,11 @@ import * as reactMoment from "react-moment";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import {
   addRoute,
+  fileDownloadStarted,
+  fileIsBeingPrepared,
+  resetRewind,
   setAllRoutes,
   setLastAsFile,
-  fileIsBeingPrepared,
-  fileDownloadStarted,
-  resetRewind,
 } from "../../../../ObjectBrowser/actions";
 import {
   ObjectBrowserReducer,
@@ -68,9 +65,9 @@ import CreateFolderModal from "./CreateFolderModal";
 import UploadFile from "../../../../../../icons/UploadFile";
 import { download } from "../utils";
 import {
+  setErrorSnackMessage,
   setLoadingProgress,
   setSnackBarMessage,
-  setErrorSnackMessage,
 } from "../../../../../../actions";
 import { BucketVersioning } from "../../../types";
 import { ErrorResponseHandler } from "../../../../../../common/types";
@@ -79,7 +76,14 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import DeleteMultipleObjects from "./DeleteMultipleObjects";
 import { baseUrl } from "../../../../../../history";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
-import { CreateNewFolder, FolderOpen } from "@material-ui/icons";
+import AddFolderIcon from "../../../../../../icons/AddFolderIcon";
+import HistoryIcon from "../../../../../../icons/HistoryIcon";
+import ObjectBrowserIcon from "../../../../../../icons/ObjectBrowserIcon";
+import ObjectBrowserFolderIcon from "../../../../../../icons/ObjectBrowserFolderIcon";
+import FolderIcon from "../../../../../../icons/FolderIcon";
+import RefreshIcon from "../../../../../../icons/RefreshIcon";
+import SearchIcon from "../../../../../../icons/SearchIcon";
+import UploadIcon from "../../../../../../icons/UploadIcon";
 
 const commonIcon = {
   backgroundRepeat: "no-repeat",
@@ -120,6 +124,9 @@ const styles = (theme: Theme) =>
     fileName: {
       display: "flex",
       alignItems: "center",
+      "& .MuiSvgIcon-root": {
+        marginRight: 4,
+      },
     },
     fileNameText: {
       whiteSpace: "nowrap",
@@ -127,11 +134,13 @@ const styles = (theme: Theme) =>
       textOverflow: "ellipsis",
     },
     iconFolder: {
-      backgroundImage: "url(/images/ob_folder_clear.svg)",
+      backgroundImage: "url(/images/object-browser-folder-icn.svg)",
+      backgroundSize: "auto",
       ...commonIcon,
     },
     iconFile: {
-      backgroundImage: "url(/images/ob_file_clear.svg)",
+      backgroundImage: "url(/images/object-browser-icn.svg)",
+      backgroundSize: "auto",
       ...commonIcon,
     },
     buttonsContainer: {
@@ -199,6 +208,7 @@ function useInterval(callback: any, delay: number) {
         savedCallback.current();
       }
     }
+
     if (delay !== null) {
       let id = setInterval(tick, delay);
       return () => clearInterval(id);
@@ -657,10 +667,10 @@ const ListObjects = ({
 
   const displayName = (element: string) => {
     let elementString = element;
-    let icon = `${classes.iconFile} iconFileElm`;
+    let icon = <ObjectBrowserIcon width={16} />;
     // Element is a folder
     if (element.endsWith("/")) {
-      icon = `${classes.iconFolder} iconFolderElm`;
+      icon = <ObjectBrowserFolderIcon width={16} />;
       elementString = element.substr(0, element.length - 1);
     }
 
@@ -668,7 +678,7 @@ const ListObjects = ({
 
     return (
       <div className={classes.fileName}>
-        <div className={icon} />
+        {icon}
         <span className={classes.fileNameText}>
           {splitItem[splitItem.length - 1]}
         </span>
@@ -814,7 +824,7 @@ const ListObjects = ({
           <ScreenTitle
             icon={
               <Fragment>
-                <FolderOpen style={{ width: 40, height: 40 }} />
+                <FolderIcon width={40} />
               </Fragment>
             }
             title={pageTitle}
@@ -828,14 +838,14 @@ const ListObjects = ({
                 <Tooltip title={"Choose or create a new path"}>
                   <IconButton
                     color="primary"
-                    aria-label="Choose or create a new path"
+                    aria-label="Add a new folder"
                     component="span"
                     onClick={() => {
                       setCreateFolderOpen(true);
                     }}
                     disabled={rewindEnabled}
                   >
-                    <CreateNewFolder />
+                    <AddFolderIcon />
                   </IconButton>
                 </Tooltip>
 
@@ -851,7 +861,7 @@ const ListObjects = ({
                     }}
                     disabled={rewindEnabled}
                   >
-                    <UploadFile />
+                    <UploadIcon />
                   </IconButton>
                 </Tooltip>
 
@@ -880,7 +890,7 @@ const ListObjects = ({
                       }}
                       disabled={!isVersioned}
                     >
-                      <RestoreIcon />
+                      <HistoryIcon />
                     </IconButton>
                   </Badge>
                 </Tooltip>
@@ -914,7 +924,7 @@ const ListObjects = ({
               disableUnderline: true,
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon />
+                  <SearchIcon width={18} />
                 </InputAdornment>
               ),
             }}

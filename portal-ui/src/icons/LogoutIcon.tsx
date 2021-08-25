@@ -16,27 +16,15 @@
 
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
-const LogoutIcon = () => {
+import { IIcon } from "./props";
+const LogoutIcon = ({ width = 24 }: IIcon) => {
   return (
-    <SvgIcon>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12.122 10.571">
-        <g transform="translate(0 0.5)">
-          <path
-            style={{ fill: "none", stroke: "rgba(255,255,255,0.8)" }}
-            d="M4816.27,3755.205v-2.939h8.539v9.571h-8.539v-2.932"
-            transform="translate(-4813.187 -3752.266)"
-          />
-          <path
-            style={{ fill: "none", stroke: "rgba(255,255,255,0.8)" }}
-            d="M4813.187,3757.052h8.081"
-            transform="translate(-4813.187 -3752.266)"
-          />
-          <path
-            style={{ fill: "none", stroke: "rgba(255,255,255,0.8)" }}
-            d="M4806.5,3756.511l2.265,2.063-2.265,2.063"
-            transform="translate(-4800.808 -3753.863)"
-          />
-        </g>
+    <SvgIcon style={{ width: width, height: width }}>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9.461 12.636">
+        <path
+          data-name="Trazado 358"
+          d="M7.44 0a.81.81 0 010 1.621H1.62v9.4h5.82a.81.81 0 010 1.62H.81a.81.81 0 01-.81-.81V.81A.811.811 0 01.81 0zM2.777 5.508a.81.81 0 000 1.62h3.918l-.918.917a.81.81 0 001.145 1.146l2.3-2.3a.81.81 0 000-1.155l-2.3-2.3a.81.81 0 00-1.145 1.145l.918.918z"
+        />
       </svg>
     </SvgIcon>
   );

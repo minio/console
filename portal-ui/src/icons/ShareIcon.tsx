@@ -21,7 +21,7 @@ interface IShareIcon {
   width?: number;
 }
 
-const ShareIcon = ({ width = 20 }: IShareIcon) => {
+const ShareIcon = ({ width = 24 }: IShareIcon) => {
   return (
     <SvgIcon style={{ width: width, height: width }}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 13">

@@ -25,9 +25,7 @@ import {
   IconButton,
 } from "@material-ui/core";
 import get from "lodash/get";
-import SearchIcon from "@material-ui/icons/Search";
 import GroupIcon from "@material-ui/icons/Group";
-import RefreshIcon from "@material-ui/icons/Refresh";
 import { CreateIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
 import {
@@ -47,6 +45,8 @@ import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import FormatDrives from "./FormatDrives";
 import FormatErrorsResult from "./FormatErrorsResult";
+import RefreshIcon from "../../../icons/RefreshIcon";
+import SearchIcon from "../../../icons/SearchIcon";
 
 interface IDirectCSIMain {
   classes: any;
@@ -260,7 +260,7 @@ const DirectCSIMain = ({
             disableUnderline: true,
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon />
+                <SearchIcon width={18} />
               </InputAdornment>
             ),
           }}

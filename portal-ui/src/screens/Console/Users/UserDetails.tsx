@@ -20,8 +20,12 @@ import { Link } from "react-router-dom";
 
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, Grid, IconButton, Tooltip } from "@material-ui/core";
-import { CreateIcon, DeleteIcon, UsersIcon } from "../../../icons";
-import { Bookmark } from "@material-ui/icons";
+import {
+  CreateIcon,
+  DeleteIcon,
+  IAMPoliciesIcon,
+  UsersIcon,
+} from "../../../icons";
 import {
   setErrorSnackMessage,
   setModalErrorSnackMessage,
@@ -385,7 +389,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                 <Button
                   variant="contained"
                   color="primary"
-                  startIcon={<Bookmark />}
+                  startIcon={<IAMPoliciesIcon />}
                   size="medium"
                   onClick={() => {
                     setPolicyOpen(true);

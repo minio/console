@@ -35,15 +35,15 @@ import { ErrorResponseHandler } from "../../../common/types";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import history from "../../../history";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
 import TextField from "@material-ui/core/TextField";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
-import { DeleteIcon } from "../../../icons";
-import RefreshIcon from "@material-ui/icons/Refresh";
-import { Assignment } from "@material-ui/icons";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
+import IAMPoliciesIcon from "../../../icons/IAMPoliciesIcon";
+import RefreshIcon from "../../../icons/RefreshIcon";
+import SearchIcon from "../../../icons/SearchIcon";
+import TrashIcon from "../../../icons/TrashIcon";
 
 interface IPolicyDetailsProps {
   classes: any;
@@ -329,7 +329,7 @@ const PolicyDetails = ({
           <ScreenTitle
             icon={
               <Fragment>
-                <Assignment style={{ width: 40, height: 40 }} />
+                <IAMPoliciesIcon width={40} />
               </Fragment>
             }
             title={policyName}
@@ -345,7 +345,7 @@ const PolicyDetails = ({
                       // setDeleteOpen(true);
                     }}
                   >
-                    <DeleteIcon />
+                    <TrashIcon />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title={"Refresh"}>
@@ -491,7 +491,7 @@ const PolicyDetails = ({
                       disableUnderline: true,
                       startAdornment: (
                         <InputAdornment position="start">
-                          <SearchIcon />
+                          <SearchIcon width={18} />
                         </InputAdornment>
                       ),
                     }}

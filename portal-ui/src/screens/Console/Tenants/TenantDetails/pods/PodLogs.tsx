@@ -21,7 +21,6 @@ import { TextField } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
 import api from "../../../../../common/api";
 import {
   actionsTray,
@@ -32,6 +31,7 @@ import {
 import { setErrorSnackMessage } from "../../../../../actions";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import { AppState } from "../../../../../store";
+import SearchIcon from "../../../../../icons/SearchIcon";
 
 interface IPodLogsProps {
   classes: any;
@@ -182,7 +182,7 @@ const PodLogs = ({
             disableUnderline: true,
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon />
+                <SearchIcon width={18} />
               </InputAdornment>
             ),
           }}

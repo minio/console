@@ -21,7 +21,6 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { IconButton, Tooltip } from "@material-ui/core";
 import get from "lodash/get";
 import Grid from "@material-ui/core/Grid";
-import RefreshIcon from "@material-ui/icons/Refresh";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../../actions";
 import {
   setTenantDetailsLoad,
@@ -48,12 +47,14 @@ import TenantSecurity from "./TenantSecurity";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import { ClustersIcon, DeleteIcon } from "../../../../icons";
+import { DeleteIcon } from "../../../../icons";
 import DeleteTenant from "../ListTenants/DeleteTenant";
-import PencilIcon from "../../Common/TableWrapper/TableActionIcons/PencilIcon";
 import PodDetails from "./pods/PodDetails";
 import { niceBytes } from "../../../../common/utils";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
+import EditIcon from "../../../../icons/EditIcon";
+import RefreshIcon from "../../../../icons/RefreshIcon";
+import TenantIcon from "../../../../icons/TenantIcon";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -254,7 +255,7 @@ const TenantDetails = ({
           <ScreenTitle
             icon={
               <Fragment>
-                <ClustersIcon width={40} />
+                <TenantIcon width={40} />
                 <div className={classes.healthStatusIcon}>
                   {tenantInfo && tenantInfo.status && (
                     <span
@@ -298,7 +299,7 @@ const TenantDetails = ({
                       editYaml();
                     }}
                   >
-                    <PencilIcon active={true} />
+                    <EditIcon width={16} />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title={"Refresh"}>

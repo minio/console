@@ -16,27 +16,32 @@
 
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
+import { IIcon } from "./props";
 
-const DashboardIcon = () => {
+const DashboardIcon = ({ width = 24 }: IIcon) => {
   return (
-    <SvgIcon>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
-        <g transform="translate(249 720)">
-          <rect
-            width="6"
-            height="5"
-            transform="translate(-244 -720) rotate(90)"
+    <SvgIcon style={{ width: width, height: width }}>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11.863 11.862">
+        <g stroke="#000" strokeWidth={0.1}>
+          <path
+            data-name="Trazado 317"
+            d="M11.019.05H.844A.8.8 0 00.05.844v10.174a.8.8 0 00.794.794h10.175a.8.8 0 00.794-.794V.845a.8.8 0 00-.794-.795zm-.032 10.25a.686.686 0 01-.686.686H1.563a.686.686 0 01-.686-.686V1.563a.686.686 0 01.686-.686H10.3a.686.686 0 01.686.686z"
           />
-          <rect width="4" height="4" transform="translate(-243 -720)" />
-          <rect
-            width="5"
-            height="4"
-            transform="translate(-239 -715) rotate(90)"
+          <path
+            data-name="Trazado 318"
+            d="M4.909 5.308H2.664a.683.683 0 00-.71.651V9.37a.683.683 0 00.71.651h2.245a.683.683 0 00.71-.651V5.959a.683.683 0 00-.71-.651z"
           />
-          <rect
-            width="5"
-            height="3"
-            transform="translate(-244 -710) rotate(180)"
+          <path
+            data-name="Trazado 319"
+            d="M2.664 1.84h2.244a.71.71 0 01.71.71v1.051a.71.71 0 01-.71.71H2.664a.71.71 0 01-.71-.71V2.55a.71.71 0 01.71-.71z"
+          />
+          <path
+            data-name="Trazado 320"
+            d="M9.462 1.84H7.217a.683.683 0 00-.71.651v3.411a.683.683 0 00.71.651h2.244a.683.683 0 00.71-.651V2.491a.683.683 0 00-.709-.651z"
+          />
+          <path
+            data-name="Trazado 321"
+            d="M7.217 7.551h2.245a.71.71 0 01.71.71v1.051a.71.71 0 01-.71.71H7.217a.71.71 0 01-.71-.71V8.261a.71.71 0 01.71-.71z"
           />
         </g>
       </svg>

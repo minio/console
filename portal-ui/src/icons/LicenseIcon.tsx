@@ -16,27 +16,43 @@
 
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
+import { IIcon } from "./props";
 
-const LicenseIcon = () => {
+const LicenseIcon = ({ width = 24 }: IIcon) => {
   return (
-    <SvgIcon>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 11">
-        <path fill="#fff" d="M11 11H0V2h11v9zM2 8v1h7V8zm0-3v1h5V5z"></path>
-        <g
-          fill="#07274a"
-          stroke="#fdfdfd"
-          strokeWidth="0.5"
-          transform="translate(7)"
-        >
-          <circle cx="3" cy="3" r="3" stroke="none"></circle>
-          <circle cx="3" cy="3" r="2.75" fill="none"></circle>
+    <SvgIcon style={{ width: width, height: width }}>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11.595 10.953">
+        <g transform="translate(.1 .1)" strokeWidth={0.2}>
+          <path
+            data-name="Trazado 354"
+            d="M8.632 0a2.764 2.764 0 00-1.324.338A2.762 2.762 0 005.96 2.074L.671 2.12A.7.7 0 000 2.843v7.186a.7.7 0 00.671.723h7.952a.7.7 0 00.671-.723V5.44a2.765 2.765 0 002.1-2.679A2.766 2.766 0 008.632 0zm-.036 9.376a.6.6 0 01-.58.625H1.277a.6.6 0 01-.58-.625V3.5a.6.6 0 01.58-.624h4.6a2.763 2.763 0 002.721 2.65zm.7-4.652v-.017l-.019.024a2.067 2.067 0 01-.644.1 2.074 2.074 0 01-2.072-2.072A2.072 2.072 0 017.64.94a2.073 2.073 0 01.993-.253 2.074 2.074 0 012.072 2.072 2.074 2.074 0 01-1.411 1.965z"
+          />
+          <path
+            data-name="Trazado 355"
+            d="M9.927 2.044a.278.278 0 00-.393 0L8.486 3.09l-.424-.424a.28.28 0 00-.382 0 .28.28 0 00-.014.4l.622.622a.275.275 0 00.2.083.273.273 0 00.2-.083l1.246-1.244h0a.278.278 0 000-.394z"
+          />
+          <rect
+            data-name="Rect\xE1ngulo 798"
+            width={4}
+            height={1}
+            rx={0.5}
+            transform="translate(1.999 4)"
+          />
+          <rect
+            data-name="Rect\xE1ngulo 799"
+            width={5}
+            height={1}
+            rx={0.5}
+            transform="translate(1.999 6)"
+          />
+          <rect
+            data-name="Rect\xE1ngulo 800"
+            width={5}
+            height={1}
+            rx={0.5}
+            transform="translate(1.999 8)"
+          />
         </g>
-        <path
-          fill="none"
-          stroke="#fff"
-          strokeWidth="0.5"
-          d="M8.73 2.794l.954.953 1.471-1.471"
-        ></path>
       </svg>
     </SvgIcon>
   );

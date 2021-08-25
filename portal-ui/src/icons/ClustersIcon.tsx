@@ -21,7 +21,7 @@ interface IClusterIcon {
   width?: number;
 }
 
-const ClustersIcon = ({ width = 20 }: IClusterIcon) => {
+const ClustersIcon = ({ width = 24 }: IClusterIcon) => {
   return (
     <SvgIcon style={{ width: width, height: width }}>
       <svg
