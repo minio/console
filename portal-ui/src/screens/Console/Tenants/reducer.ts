@@ -63,7 +63,6 @@ const initialState: ITenantState = {
       configure: {
         customImage: false,
         imageName: "",
-        consoleImage: "",
         customDockerhub: false,
         imageRegistry: "",
         imageRegistryUsername: "",
@@ -531,7 +530,6 @@ export function tenantsReducer(
             configure: {
               customImage: false,
               imageName: "",
-              consoleImage: "",
               customDockerhub: false,
               imageRegistry: "",
               imageRegistryUsername: "",

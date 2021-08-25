@@ -18,10 +18,9 @@ package operatorapi
 
 // list of all console environment constants
 const (
-	ConsoleSubnetLicense        = "CONSOLE_SUBNET_LICENSE"
-	ConsoleOperatorSAToken      = "CONSOLE_OPERATOR_SA_TOKEN"
-	ConsoleOperatorConsoleImage = "CONSOLE_OPERATOR_CONSOLE_IMAGE"
-	MinIOSubnetLicense          = "MINIO_SUBNET_LICENSE"
+	ConsoleSubnetLicense   = "CONSOLE_SUBNET_LICENSE"
+	ConsoleOperatorSAToken = "CONSOLE_OPERATOR_SA_TOKEN"
+	MinIOSubnetLicense     = "MINIO_SUBNET_LICENSE"
 
 	// Constants for prometheus annotations
 	prometheusPath   = "prometheus.io/path"

@@ -32,7 +32,6 @@ interface IPreviewProps {
   tenantName: string;
   customImage: boolean;
   imageName: string;
-  consoleImage: string;
   namespace: string;
   selectedStorageClass: string;
   volumeSize: string;
@@ -55,7 +54,6 @@ const Preview = ({
   tenantName,
   customImage,
   imageName,
-  consoleImage,
   namespace,
   selectedStorageClass,
   volumeSize,
@@ -87,12 +85,6 @@ const Preview = ({
                   MinIO Image
                 </TableCell>
                 <TableCell>{imageName}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell align="right" className={classes.tableTitle}>
-                  Console Image
-                </TableCell>
-                <TableCell>{consoleImage}</TableCell>
               </TableRow>
             </Fragment>
           )}
@@ -145,7 +137,6 @@ const mapState = (state: AppState) => ({
     state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
   customImage: state.tenants.createTenant.fields.configure.customImage,
   imageName: state.tenants.createTenant.fields.configure.imageName,
-  consoleImage: state.tenants.createTenant.fields.configure.consoleImage,
   namespace: state.tenants.createTenant.fields.nameTenant.namespace,
   volumeSize: state.tenants.createTenant.fields.tenantSize.volumeSize,
   sizeFactor: state.tenants.createTenant.fields.tenantSize.sizeFactor,

@@ -317,7 +317,6 @@ const ObjectDetails = ({
           let metadata = get(fileData, "user_metadata", {});
 
           setMetadata(metadata);
-          console.log("metadata:", res);
           setMetadataLoad(false);
         })
         .catch((error: ErrorResponseHandler) => {

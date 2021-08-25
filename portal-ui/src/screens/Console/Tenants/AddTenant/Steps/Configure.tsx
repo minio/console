@@ -40,7 +40,6 @@ interface IConfigureProps {
   classes: any;
   customImage: boolean;
   imageName: string;
-  consoleImage: string;
   customDockerhub: boolean;
   imageRegistry: string;
   imageRegistryUsername: string;
@@ -76,7 +75,6 @@ const Configure = ({
   storageClasses,
   customImage,
   imageName,
-  consoleImage,
   customDockerhub,
   imageRegistry,
   imageRegistryUsername,
@@ -165,14 +163,6 @@ const Configure = ({
           customPatternMessage: "Format must be of form: 'minio/minio:VERSION'",
         },
         {
-          fieldKey: "consoleImage",
-          required: false,
-          value: consoleImage,
-          pattern: /^((.*?)\/(.*?):(.+))$/,
-          customPatternMessage:
-            "Format must be of form: 'minio/console:VERSION'",
-        },
-        {
           fieldKey: "logSearchImage",
           required: false,
           value: logSearchImage,
@@ -234,7 +224,6 @@ const Configure = ({
   }, [
     customImage,
     imageName,
-    consoleImage,
     logSearchImage,
     kesImage,
     logSearchPostgresImage,
@@ -606,7 +595,6 @@ const mapState = (state: AppState) => ({
   storageClasses: state.tenants.createTenant.storageClasses,
   customImage: state.tenants.createTenant.fields.configure.customImage,
   imageName: state.tenants.createTenant.fields.configure.imageName,
-  consoleImage: state.tenants.createTenant.fields.configure.consoleImage,
   customDockerhub: state.tenants.createTenant.fields.configure.customDockerhub,
   imageRegistry: state.tenants.createTenant.fields.configure.imageRegistry,
   imageRegistryUsername:
