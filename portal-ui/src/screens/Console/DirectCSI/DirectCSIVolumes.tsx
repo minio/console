@@ -19,7 +19,6 @@ import get from "lodash/get";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Grid, InputAdornment, TextField } from "@material-ui/core";
-import SearchIcon from "@material-ui/icons/Search";
 import { AppState } from "../../../store";
 import {
   actionsTray,
@@ -32,6 +31,7 @@ import { niceBytes } from "../../../common/utils";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
+import SearchIcon from "../../../icons/SearchIcon";
 
 interface IDirectCSIVolumesProps {
   classes: any;
@@ -117,7 +117,7 @@ const DirectCSIVolumes = ({
             disableUnderline: true,
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon />
+                <SearchIcon width={18} />
               </InputAdornment>
             ),
           }}

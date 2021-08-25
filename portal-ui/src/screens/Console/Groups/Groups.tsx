@@ -20,7 +20,6 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
 import { Button } from "@material-ui/core";
 import { CreateIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
@@ -38,6 +37,7 @@ import DeleteGroup from "./DeleteGroup";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import SetPolicy from "../Policies/SetPolicy";
 import PageHeader from "../Common/PageHeader/PageHeader";
+import SearchIcon from "../../../icons/SearchIcon";
 
 interface IGroupsProps {
   classes: any;
@@ -198,7 +198,7 @@ const Groups = ({ classes, setErrorSnackMessage }: IGroupsProps) => {
                 disableUnderline: true,
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon />
+                    <SearchIcon width={18} />
                   </InputAdornment>
                 ),
               }}

@@ -29,7 +29,6 @@ import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import { CreateIcon } from "../../../icons";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import { stringSort } from "../../../utils/sortFunctions";
 import PageHeader from "../Common/PageHeader/PageHeader";
@@ -41,6 +40,7 @@ import {
 import { ErrorResponseHandler } from "../../../common/types";
 import LockIcon from "@material-ui/icons/Lock";
 import ChangePasswordModal from "./ChangePasswordModal";
+import SearchIcon from "../../../icons/SearchIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -249,7 +249,7 @@ const Account = ({
                 disableUnderline: true,
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon />
+                    <SearchIcon width={18} />
                   </InputAdornment>
                 ),
               }}

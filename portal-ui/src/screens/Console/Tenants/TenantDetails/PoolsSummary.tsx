@@ -30,9 +30,9 @@ import { setErrorSnackMessage } from "../../../../actions";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import AddPoolModal from "./AddPoolModal";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
 import { AppState } from "../../../../store";
 import { setTenantDetailsLoad } from "../actions";
+import SearchIcon from "../../../../icons/SearchIcon";
 
 interface IPoolsSummary {
   classes: any;
@@ -119,7 +119,7 @@ const PoolsSummary = ({
               disableUnderline: true,
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon />
+                  <SearchIcon width={18} />
                 </InputAdornment>
               ),
             }}

@@ -21,7 +21,7 @@ interface ICreateIcon {
   width?: number;
 }
 
-const CreateIcon = ({ width = 20 }: ICreateIcon) => {
+const CreateIcon = ({ width = 24 }: ICreateIcon) => {
   return (
     <SvgIcon style={{ width: width, height: width }}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12">

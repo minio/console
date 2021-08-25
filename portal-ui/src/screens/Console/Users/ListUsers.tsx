@@ -19,7 +19,6 @@ import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import api from "../../../common/api";
 import { Button, Grid, InputAdornment, TextField } from "@material-ui/core";
-import SearchIcon from "@material-ui/icons/Search";
 import GroupIcon from "@material-ui/icons/Group";
 import { User, UsersList } from "./types";
 import { usersSort } from "../../../utils/sortFunctions";
@@ -37,6 +36,7 @@ import AddToGroup from "./BulkAddToGroup";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import SetPolicy from "../Policies/SetPolicy";
 import PageHeader from "../Common/PageHeader/PageHeader";
+import SearchIcon from "../../../icons/SearchIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -228,7 +228,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
                 disableUnderline: true,
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon />
+                    <SearchIcon width={18} />
                   </InputAdornment>
                 ),
               }}

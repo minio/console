@@ -18,11 +18,11 @@ import React, { Fragment, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import { CircularProgress, IconButton } from "@material-ui/core";
-import RefreshIcon from "@material-ui/icons/Refresh";
 import PageHeader from "../../../Common/PageHeader/PageHeader";
 import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import history from "./../../../../../history";
+import RefreshIcon from "../../../../../icons/RefreshIcon";
 
 interface IHopSimple {
   classes: any;

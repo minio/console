@@ -23,7 +23,6 @@ import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
 import { UsersList } from "../Users/types";
 import { usersSort } from "../../../utils/sortFunctions";
 import {
@@ -34,6 +33,7 @@ import { setModalErrorSnackMessage } from "../../../actions";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
+import SearchIcon from "../../../icons/SearchIcon";
 
 interface IGroupsProps {
   classes: any;
@@ -196,7 +196,7 @@ const UsersSelectors = ({
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <SearchIcon />
+                        <SearchIcon width={18} />
                       </InputAdornment>
                     ),
                   }}

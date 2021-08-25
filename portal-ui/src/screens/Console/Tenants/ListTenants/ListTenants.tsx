@@ -19,7 +19,6 @@ import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
 import { Button, IconButton } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { ITenant, ITenantsResponse } from "./types";
@@ -40,9 +39,10 @@ import DeleteTenant from "./DeleteTenant";
 import AddTenant from "../AddTenant/AddTenant";
 import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 import history from "../../../../history";
-import RefreshIcon from "@material-ui/icons/Refresh";
 import SlideOptions from "../../Common/SlideOptions/SlideOptions";
 import BackSettingsIcon from "../../../../icons/BackSettingsIcon";
+import RefreshIcon from "../../../../icons/RefreshIcon";
+import SearchIcon from "../../../../icons/SearchIcon";
 
 interface ITenantsList {
   classes: any;
@@ -272,7 +272,7 @@ const ListTenants = ({
                           disableUnderline: true,
                           startAdornment: (
                             <InputAdornment position="start">
-                              <SearchIcon />
+                              <SearchIcon width={18} />
                             </InputAdornment>
                           ),
                         }}

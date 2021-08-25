@@ -48,9 +48,9 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import { IconButton, Tooltip } from "@material-ui/core";
 import { BucketsIcon, DeleteIcon } from "../../../../icons";
-import RefreshIcon from "@material-ui/icons/Refresh";
 import DeleteBucket from "../ListBuckets/DeleteBucket";
 import AccessRulePanel from "./AccessRulePanel";
+import RefreshIcon from "../../../../icons/RefreshIcon";
 
 const styles = (theme: Theme) =>
   createStyles({

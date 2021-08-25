@@ -16,17 +16,16 @@
 
 import React from "react";
 import SvgIcon from "@material-ui/core/SvgIcon";
+import { IIcon } from "./props";
 
-interface IDownloadIcon {
-  width?: number;
-}
-
-const DownloadIcon = ({ width = 20 }: IDownloadIcon) => {
+const DownloadIcon = ({ width = 24 }: IIcon) => {
   return (
     <SvgIcon style={{ width: width, height: width }}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 12.996">
-        <path d="M11.05 9.096v1.95h-9.1v-1.95H0v3.9h13v-3.9z"></path>
-        <path d="M6.5 9.75L9 6.672H7.475V0h-1.95v6.672H4z"></path>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14.368 14.146">
+        <path
+          data-name="Trazado 362"
+          d="M0 5.685a.921.921 0 011.842 0v6.618h10.684V5.685a.921.921 0 011.842 0v7.54a.921.921 0 01-.921.921H.921A.922.922 0 010 13.225v-7.54zM8.105.908a.921.921 0 00-1.842 0v7.7L5.22 7.564a.921.921 0 00-1.3 1.3l2.61 2.611a.922.922 0 001.314 0l2.61-2.611a.921.921 0 00-1.3-1.3L8.111 8.608v-7.7z"
+        />
       </svg>
     </SvgIcon>
   );

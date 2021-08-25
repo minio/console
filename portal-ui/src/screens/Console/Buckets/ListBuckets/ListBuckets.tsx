@@ -21,7 +21,6 @@ import { Button } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import Moment from "react-moment";
 import { Bucket, BucketList, HasPermissionResponse } from "../types";
@@ -42,6 +41,7 @@ import AddBucket from "./AddBucket";
 import DeleteBucket from "./DeleteBucket";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import BulkReplicationModal from "./BulkReplicationModal";
+import SearchIcon from "../../../../icons/SearchIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -266,7 +266,7 @@ const ListBuckets = ({
                 disableUnderline: true,
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon />
+                    <SearchIcon width={18} />
                   </InputAdornment>
                 ),
               }}

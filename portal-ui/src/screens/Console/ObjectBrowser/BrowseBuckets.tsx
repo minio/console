@@ -22,7 +22,6 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
 import { IconButton, Tooltip } from "@material-ui/core";
 import { BucketsIcon, CreateIcon } from "../../../icons";
 import { niceBytes } from "../../../common/utils";
@@ -39,8 +38,9 @@ import BrowserBreadcrumbs from "./BrowserBreadcrumbs";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import AddBucket from "../Buckets/ListBuckets/AddBucket";
 import api from "../../../common/api";
-import RefreshIcon from "@material-ui/icons/Refresh";
 import ScreenTitle from "../Common/ScreenTitle/ScreenTitle";
+import RefreshIcon from "../../../icons/RefreshIcon";
+import SearchIcon from "../../../icons/SearchIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -275,7 +275,7 @@ const BrowseBuckets = ({
               disableUnderline: true,
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon />
+                  <SearchIcon width={18} />
                 </InputAdornment>
               ),
             }}

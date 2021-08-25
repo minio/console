@@ -14,20 +14,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import { Usage, ServerInfo } from "../types";
+import { Usage } from "../types";
 import { niceBytes, niceDays } from "../../../../common/utils";
-import AllBucketsIcon from "../../../../icons/AllBucketsIcon";
-import UsageIcon from "../../../../icons/UsageIcon";
 import DnsIcon from "@material-ui/icons/Dns";
 import EgressIcon from "../../../../icons/EgressIcon";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import { TableContainer } from "@material-ui/core";
+import ReportedUsageIcon from "../../../../icons/ReportedUsageIcon";
+import { BucketsIcon } from "../../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -171,7 +170,7 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
             <Paper className={fixedHeightPaper}>
               <Grid container direction="row" alignItems="center">
                 <Grid item className={classes.icon}>
-                  <AllBucketsIcon />
+                  <BucketsIcon />
                 </Grid>
                 <Grid item>
                   <Typography className={classes.elementTitle}>
@@ -186,7 +185,7 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
             <Paper className={fixedHeightPaper}>
               <Grid container direction="row" alignItems="center">
                 <Grid item className={classes.icon}>
-                  <UsageIcon />
+                  <ReportedUsageIcon />
                 </Grid>
                 <Grid item>
                   <Typography className={classes.elementTitle}>

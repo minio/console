@@ -16,19 +16,24 @@
 
 import React from "react";
 import { SvgIcon } from "@material-ui/core";
+import { IIcon } from "./props";
 
 interface IDeleteIcon {
   width?: number;
 }
 
-const DeleteIcon = ({ width = 20 }: IDeleteIcon) => {
+const DeleteIcon = ({ width = 24 }: IIcon) => {
   return (
     <SvgIcon style={{ width: width, height: width }}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10.402 13">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9.836 12.646">
         <path
-          d="M6.761 1V0H3.64v1H.004v1h10.4V1zM.004 2.998l1.672 10h7.052l1.673-10zm3.412 8.243l-.552-6.478h.653l.553 6.472zm3.569 0h-.653l.551-6.472h.654z"
-          className="a"
-        ></path>
+          data-name="Trazado 359"
+          d="M9.527.7h-2.5V.305a.308.308 0 00-.308-.308h-3.6a.308.308 0 00-.308.308V.7h-2.5a.309.309 0 00-.309.309v.787a.309.309 0 00.309.309h9.218a.309.309 0 00.309-.309v-.787A.309.309 0 009.527.7z"
+        />
+        <path
+          data-name="Trazado 360"
+          d="M.703 11.225a1.425 1.425 0 001.42 1.421h5.59a1.425 1.425 0 001.42-1.421V2.81H.703z"
+        />
       </svg>
     </SvgIcon>
   );

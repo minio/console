@@ -21,10 +21,10 @@ import Typography from "@material-ui/core/Typography";
 import { Button, TextField } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
 import AddIcon from "@material-ui/icons/Add";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import EditConfiguration from "../CustomForms/EditConfiguration";
+import SearchIcon from "../../../../icons/SearchIcon";
 
 interface IMatchParams {
   isExact: boolean;
@@ -147,7 +147,7 @@ const WebhookPanel = ({ match, classes }: IWebhookPanel) => {
               disableUnderline: true,
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon />
+                  <SearchIcon width={18} />
                 </InputAdornment>
               ),
             }}

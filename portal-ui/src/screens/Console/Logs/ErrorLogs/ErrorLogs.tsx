@@ -20,7 +20,6 @@ import { connect } from "react-redux";
 import { Grid } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
 import moment from "moment/moment";
 import { AppState } from "../../../../store";
 import { logMessageReceived, logResetMessages } from "../actions";
@@ -32,6 +31,7 @@ import {
   logsCommon,
   searchField,
 } from "../../Common/FormComponents/common/styleLibrary";
+import SearchIcon from "../../../../icons/SearchIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -337,7 +337,7 @@ const ErrorLogs = ({
               disableUnderline: true,
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon />
+                  <SearchIcon width={18} />
                 </InputAdornment>
               ),
             }}

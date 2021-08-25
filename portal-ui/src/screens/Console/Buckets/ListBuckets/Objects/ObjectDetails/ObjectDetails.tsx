@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import get from "lodash/get";
 import * as reactMoment from "react-moment";
@@ -37,7 +37,6 @@ import Chip from "@material-ui/core/Chip";
 import TextField from "@material-ui/core/TextField";
 import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import SearchIcon from "@material-ui/icons/Search";
 import AddIcon from "@material-ui/icons/Add";
 import CloseIcon from "@material-ui/icons/Close";
 import ShareFile from "./ShareFile";
@@ -72,7 +71,6 @@ import {
   setErrorSnackMessage,
   setSnackBarMessage,
 } from "../../../../../../actions";
-import PencilIcon from "../../../../Common/TableWrapper/TableActionIcons/PencilIcon";
 import SetRetention from "./SetRetention";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import DeleteObject from "../ListObjects/DeleteObject";
@@ -81,6 +79,8 @@ import DeleteTagModal from "./DeleteTagModal";
 import SetLegalHoldModal from "./SetLegalHoldModal";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import DescriptionIcon from "@material-ui/icons/Description";
+import EditIcon from "../../../../../../icons/EditIcon";
+import SearchIcon from "../../../../../../icons/SearchIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -633,7 +633,7 @@ const ObjectDetails = ({
                                     setLegalholdOpen(true);
                                   }}
                                 >
-                                  <PencilIcon active={true} />
+                                  <EditIcon width={16} />
                                 </IconButton>
                               </Fragment>
                             ) : (
@@ -656,7 +656,7 @@ const ObjectDetails = ({
                                 openRetentionModal();
                               }}
                             >
-                              <PencilIcon active={true} />
+                              <EditIcon width={16} />
                             </IconButton>
                           </td>
                         </tr>
@@ -760,7 +760,7 @@ const ObjectDetails = ({
                         disableUnderline: true,
                         startAdornment: (
                           <InputAdornment position="start">
-                            <SearchIcon />
+                            <SearchIcon width={18} />
                           </InputAdornment>
                         ),
                       }}

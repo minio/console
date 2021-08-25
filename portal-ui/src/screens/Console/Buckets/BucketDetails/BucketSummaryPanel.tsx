@@ -47,10 +47,10 @@ import SetAccessPolicy from "./SetAccessPolicy";
 import SetRetentionConfig from "./SetRetentionConfig";
 import EnableBucketEncryption from "./EnableBucketEncryption";
 import EnableVersioningModal from "./EnableVersioningModal";
-import UsageIcon from "../../../../icons/UsageIcon";
 import GavelIcon from "@material-ui/icons/Gavel";
 import EnableQuota from "./EnableQuota";
 import { setBucketDetailsLoad } from "../actions";
+import ReportedUsageIcon from "../../../../icons/ReportedUsageIcon";
 
 interface IBucketSummaryProps {
   classes: any;
@@ -463,7 +463,7 @@ const BucketSummary = ({
           <Grid item xs={4} className={classes.reportedUsage}>
             <Grid container direction="row" alignItems="center">
               <Grid item className={classes.icon} xs={2}>
-                <UsageIcon />
+                <ReportedUsageIcon />
               </Grid>
               <Grid item xs={10}>
                 <Typography className={classes.elementTitle}>
