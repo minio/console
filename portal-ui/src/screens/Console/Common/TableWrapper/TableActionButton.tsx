@@ -62,7 +62,7 @@ const defineIcon = (type: string, selected: boolean) => {
     case "view":
       return <ViewIcon active={selected} />;
     case "edit":
-      return <EditIcon width={16} />;
+      return <EditIcon width={16} active={selected} />;
     case "delete":
       return <TrashIcon width={16} active={selected} />;
     case "description":
