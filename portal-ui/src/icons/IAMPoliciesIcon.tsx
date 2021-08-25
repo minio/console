@@ -18,7 +18,7 @@ import React from "react";
 import { SvgIcon } from "@material-ui/core";
 import { IIcon } from "./props";
 
-const IAMPoliciesIcon = ({ width = 24 }: IIcon) => {
+const IAMPoliciesIcon = ({ width = 24, active=false }: IIcon) => {
   return (
     <SvgIcon style={{ width: width, height: width }}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11.983 13.868">
