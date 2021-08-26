@@ -874,18 +874,18 @@ func unmarshalPrometheus(endpoint string, data interface{}) bool {
 	httpClnt := GetConsoleHTTPClient()
 	resp, err := httpClnt.Get(endpoint)
 	if err != nil {
-		LogError("Unable to fetch labels from prometheus %s, %v", endpoint, err)
+		LogError("Unable to fetch labels from prometheus (%s)", resp.Status)
 		return true
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		LogError("Unexpected error from prometheus %s (%s)", endpoint, resp.Status)
+		LogError("Unexpected error from prometheus (%s)", resp.Status)
 		return true
 	}
 
 	if err = json.NewDecoder(resp.Body).Decode(data); err != nil {
-		LogError("Unexpected error reading response from prometheus %s, %v", endpoint, err)
+		LogError("Unexpected error reading response from prometheus, %v", err)
 		return true
 	}
 
@@ -906,7 +906,7 @@ func testPrometheusURL(url string) bool {
 	response, err := GetConsoleHTTPClient().Do(req)
 
 	if err != nil {
-		LogError("Non reachable Prometheus URL: %s (%v)", url, err)
+		LogError("Non reachable Prometheus URL: (%v)", err)
 		return false
 
 	}
