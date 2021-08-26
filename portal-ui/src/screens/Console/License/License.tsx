@@ -271,6 +271,9 @@ const styles = (theme: Theme) =>
     loadingLoginStrategy: {
       textAlign: "center",
     },
+    clickableBlock: {
+      cursor: "pointer",
+    },
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -486,7 +489,10 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                     </Typography>
                   </Grid>
                   <Grid container className={classes.licenseDescription}>
-                    <a onClick={() => setLicenseModal(true)} href="#">
+                    <div
+                      onClick={() => setLicenseModal(true)}
+                      className={classes.clickableBlock}
+                    >
                       <Typography component="h3">Version 3</Typography>
                       <Typography component="h6">
                         The GNU Affero General Public License is a free,
@@ -494,7 +500,7 @@ const License = ({ classes, operatorMode }: ILicenseProps) => {
                         specifically designed to ensure cooperation with the
                         Community in the case of network server software.
                       </Typography>
-                    </a>
+                    </div>
                   </Grid>
                 </Fragment>
               )}

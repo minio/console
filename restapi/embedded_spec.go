@@ -4869,14 +4869,37 @@ func init() {
         }
       }
     },
+    "serverDrives": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "type": "string"
+        },
+        "uuid": {
+          "type": "string"
+        }
+      }
+    },
     "serverProperties": {
       "type": "object",
       "properties": {
         "commitID": {
           "type": "string"
         },
+        "drives": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/serverDrives"
+          }
+        },
         "endpoint": {
           "type": "string"
+        },
+        "network": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "poolNumber": {
           "type": "integer"
@@ -4885,7 +4908,7 @@ func init() {
           "type": "string"
         },
         "uptime": {
-          "type": "string"
+          "type": "integer"
         },
         "version": {
           "type": "string"
@@ -10324,14 +10347,37 @@ func init() {
         }
       }
     },
+    "serverDrives": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "type": "string"
+        },
+        "uuid": {
+          "type": "string"
+        }
+      }
+    },
     "serverProperties": {
       "type": "object",
       "properties": {
         "commitID": {
           "type": "string"
         },
+        "drives": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/serverDrives"
+          }
+        },
         "endpoint": {
           "type": "string"
+        },
+        "network": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "poolNumber": {
           "type": "integer"
@@ -10340,7 +10386,7 @@ func init() {
           "type": "string"
         },
         "uptime": {
-          "type": "string"
+          "type": "integer"
         },
         "version": {
           "type": "string"

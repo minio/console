@@ -20,8 +20,6 @@ import { createStyles, withStyles } from "@material-ui/core/styles";
 import { IconButton } from "@material-ui/core";
 import ViewIcon from "./TableActionIcons/ViewIcon";
 import ShareIcon from "./TableActionIcons/ShareIcon";
-import DeleteIcon from "./TableActionIcons/DeleteIcon";
-import DescriptionIcon from "./TableActionIcons/DescriptionIcon";
 import CloudIcon from "./TableActionIcons/CloudIcon";
 import ConsoleIcon from "./TableActionIcons/ConsoleIcon";
 import DownloadIcon from "./TableActionIcons/DownloadIcon";

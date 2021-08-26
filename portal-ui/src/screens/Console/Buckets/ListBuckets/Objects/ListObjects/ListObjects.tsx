@@ -62,7 +62,6 @@ import {
   Route,
 } from "../../../../ObjectBrowser/reducers";
 import CreateFolderModal from "./CreateFolderModal";
-import UploadFile from "../../../../../../icons/UploadFile";
 import { download } from "../utils";
 import {
   setErrorSnackMessage,

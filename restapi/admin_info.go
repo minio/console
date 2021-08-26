@@ -24,7 +24,6 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
-	"strconv"
 	"strings"
 	"time"
 
@@ -85,13 +84,21 @@ func GetAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
 	//serverArray contains the serverProperties which describe the servers in the network
 	var serverArray []*models.ServerProperties
 	for _, serv := range serverInfo.Servers {
+		var drives = []*models.ServerDrives{}
+
+		for _, drive := range serv.Disks {
+			drives = append(drives, &models.ServerDrives{State: drive.State, UUID: drive.UUID})
+		}
+
 		var newServer = &models.ServerProperties{
 			State:      serv.State,
 			Endpoint:   serv.Endpoint,
-			Uptime:     strconv.Itoa(int(serv.Uptime)),
+			Uptime:     serv.Uptime,
 			Version:    serv.Version,
 			CommitID:   serv.CommitID,
 			PoolNumber: int64(serv.PoolNumber),
+			Network:    serv.Network,
+			Drives:     drives,
 		}
 
 		serverArray = append(serverArray, newServer)

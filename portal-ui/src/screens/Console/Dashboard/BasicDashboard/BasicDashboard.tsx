@@ -21,12 +21,12 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { Usage } from "../types";
-import { niceBytes, niceDays } from "../../../../common/utils";
+import { niceBytes } from "../../../../common/utils";
 import DnsIcon from "@material-ui/icons/Dns";
 import EgressIcon from "../../../../icons/EgressIcon";
 import ReportedUsageIcon from "../../../../icons/ReportedUsageIcon";
+import ServerInfoCard from "./ServerInfoCard";
 import { BucketsIcon } from "../../../../icons";
-import {ServerInfoCard} from "./ServerInfoCard"
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -38,17 +38,22 @@ const styles = (theme: Theme) =>
       border: "#eaedee 1px solid",
       borderRadius: 5,
       boxShadow: "none",
+      marginBottom: 15,
     },
     fixedHeight: {
       height: 165,
       minWidth: 247,
       marginRight: 20,
       padding: "25px 28px",
-      "& svg": {
+      "& svg:not(.computerIcon)": {
         maxHeight: 18,
       },
     },
-     infoHeight: {
+    serversContainer: {
+      height: 250,
+      overflow: "hidden" as const,
+    },
+    infoHeight: {
       height: 180,
       minWidth: 247,
       marginRight: 20,
@@ -67,7 +72,7 @@ const styles = (theme: Theme) =>
       fontSize: "20px",
       fontWeight: "bold",
     },
-     infoValue: {
+    infoValue: {
       fontWeight: 500,
       color: "#777777",
       fontSize: 14,
@@ -80,22 +85,19 @@ const styles = (theme: Theme) =>
     notationContainer: {
       display: "flex",
       flexWrap: "wrap",
+      marginTop: 20,
     },
     dashboardBG: {
       width: 390,
       height: 255,
-      zIndex: 500,
-      position: "absolute",
+      zIndex: -1,
+      position: "fixed",
       backgroundSize: "fill",
       backgroundImage: "url(/images/BG_IllustrationDarker.svg)",
       backgroundPosition: "right bottom",
       right: 0,
       bottom: 0,
       backgroundRepeat: "no-repeat",
-    },
-    dashboardContainer: {
-      zIndex: 600,
-      position: "absolute",
     },
     elementTitle: {
       fontWeight: 500,
@@ -106,6 +108,19 @@ const styles = (theme: Theme) =>
     smallUnit: {
       fontSize: 20,
     },
+    serversListContainer: {
+      overflowY: "auto",
+      height: 200,
+      width: "100%",
+    },
+    cardsContainer: {
+      display: "flex",
+      flexWrap: "wrap",
+      justifyContent: "center",
+    },
+    serversAdj: {
+      maxWidth: 1380,
+    },
   });
 
 interface IDashboardProps {
@@ -115,7 +130,11 @@ interface IDashboardProps {
 
 const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-  
+  const serversPaperContainer = clsx(
+    classes.paper,
+    classes.fixedHeight,
+    classes.serversContainer
+  );
 
   const prettyUsage = (usage: string | undefined) => {
     if (usage === undefined) {
@@ -144,13 +163,11 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
     return usage.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
-  
   const makeServerArray = (usage: Usage | null) => {
     if (usage != null) {
-      usage.servers.forEach((s) => (s.uptime = niceDays(s.uptime)));
       return usage.servers.sort(function (a, b) {
-        var nameA = a.endpoint.toUpperCase();
-        var nameB = b.endpoint.toUpperCase();
+        var nameA = a.endpoint.toLowerCase();
+        var nameB = b.endpoint.toLowerCase();
         if (nameA < nameB) {
           return -1;
         }
@@ -169,7 +186,7 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
       <div className={classes.dashboardBG} />
       <Grid container className={classes.dashboardContainer}>
         <Grid container spacing={3} className={classes.container}>
-          <Grid item className={classes.notationContainer}>
+          <Grid item xs={12} className={classes.notationContainer}>
             <Paper className={fixedHeightPaper}>
               <Grid container direction="row" alignItems="center">
                 <Grid item className={classes.icon}>
@@ -216,25 +233,33 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
                 {usage ? prettyNumber(usage.objects) : 0}
               </Typography>
             </Paper>
-            <Paper className={classes.paper}>
-             <Grid item className={classes.notationContainer}>
-             <Grid item className={classes.icon}>
-                  <DnsIcon />
-                  <Typography className={classes.elementTitle}>
-                    Servers
-                  </Typography>
+          </Grid>
+          <Grid item xs={12} className={classes.serversAdj}>
+            <Paper className={serversPaperContainer}>
+              <div>
+                <Grid container direction="row" alignItems="center">
+                  <Grid item className={classes.icon}>
+                    <DnsIcon />
+                  </Grid>
+                  <Grid item>
+                    <Typography className={classes.elementTitle}>
+                      {" "}
+                      Servers
+                    </Typography>
+                  </Grid>
                 </Grid>
-                 <Grid item className={classes.notationContainer}>
-          {serverArray.map((server) => {
-            return(
-              <ServerInfoCard server={server} classes={classes}/>
-            )
-          })}
-            
-</Grid>
-
-    </Grid>
-    </Paper>
+              </div>
+              <div className={classes.serversListContainer}>
+                <div className={classes.cardsContainer}>
+                  {serverArray.map((server, index) => (
+                    <ServerInfoCard
+                      server={server}
+                      key={`serverDS-${index.toString()}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </Paper>
           </Grid>
         </Grid>
       </Grid>
