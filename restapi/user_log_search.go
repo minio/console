@@ -66,7 +66,11 @@ func logSearch(endpoint string) (*models.LogSearchResponse, *models.Error) {
 	httpClnt := GetConsoleHTTPClient()
 	resp, err := httpClnt.Get(endpoint)
 	if err != nil {
-		return nil, prepareError(err)
+		return nil, &models.Error{
+			Code:            int32(500),
+			Message:         swag.String("Log Search API not available."),
+			DetailedMessage: swag.String("The Log Search API cannot be reached. Please review the URL and try again."),
+		}
 	}
 	defer resp.Body.Close()
 
