@@ -24,9 +24,9 @@ import { Usage } from "../types";
 import { niceBytes, niceDays } from "../../../../common/utils";
 import DnsIcon from "@material-ui/icons/Dns";
 import EgressIcon from "../../../../icons/EgressIcon";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import ReportedUsageIcon from "../../../../icons/ReportedUsageIcon";
 import { BucketsIcon } from "../../../../icons";
+import {ServerInfoCard} from "./ServerInfoCard"
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -48,10 +48,30 @@ const styles = (theme: Theme) =>
         maxHeight: 18,
       },
     },
+     infoHeight: {
+      height: 180,
+      minWidth: 247,
+      marginRight: 20,
+      padding: "25px 28px",
+      "& svg": {
+        maxHeight: 18,
+      },
+    },
     consumptionValue: {
       color: "#000000",
       fontSize: "60px",
       fontWeight: "bold",
+    },
+    endpoint: {
+      color: "#000000",
+      fontSize: "20px",
+      fontWeight: "bold",
+    },
+     infoValue: {
+      fontWeight: 500,
+      color: "#777777",
+      fontSize: 14,
+      marginTop: 9,
     },
     icon: {
       marginRight: 10,
@@ -95,6 +115,7 @@ interface IDashboardProps {
 
 const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  
 
   const prettyUsage = (usage: string | undefined) => {
     if (usage === undefined) {
@@ -123,25 +144,7 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
     return usage.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
-  const serverColumns = [
-    {
-      label: "Endpoint",
-      elementKey: "endpoint",
-    },
-    {
-      label: "Status",
-      elementKey: "state",
-    },
-    {
-      label: "Uptime",
-      elementKey: "uptime",
-    },
-    {
-      label: "Version",
-      elementKey: "version",
-    },
-  ];
-
+  
   const makeServerArray = (usage: Usage | null) => {
     if (usage != null) {
       usage.servers.forEach((s) => (s.uptime = niceDays(s.uptime)));
@@ -213,24 +216,25 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
                 {usage ? prettyNumber(usage.objects) : 0}
               </Typography>
             </Paper>
-            <Grid container direction="row" alignItems="center">
-              <Grid item className={classes.icon}>
-                <DnsIcon />
-              </Grid>
-              <Grid item>
-                <Typography className={classes.elementTitle}>
-                  {" "}
-                  Servers
-                </Typography>
-              </Grid>
-              <TableWrapper
-                columns={serverColumns}
-                isLoading={false}
-                records={serverArray}
-                entityName="Servers"
-                idField="endpoint"
-              />
-            </Grid>
+            <Paper className={classes.paper}>
+             <Grid item className={classes.notationContainer}>
+             <Grid item className={classes.icon}>
+                  <DnsIcon />
+                  <Typography className={classes.elementTitle}>
+                    Servers
+                  </Typography>
+                </Grid>
+                 <Grid item className={classes.notationContainer}>
+          {serverArray.map((server) => {
+            return(
+              <ServerInfoCard server={server} classes={classes}/>
+            )
+          })}
+            
+</Grid>
+
+    </Grid>
+    </Paper>
           </Grid>
         </Grid>
       </Grid>
