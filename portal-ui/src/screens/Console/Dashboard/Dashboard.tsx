@@ -67,25 +67,25 @@ const Dashboard = ({ classes, displayErrorMessage }: IDashboardSimple) => {
   return (
     <Fragment>
       <PageHeader label="Dashboard" />
-      <Grid container>
-        {loading ? (
+      {loading ? (
+        <Grid container>
           <Grid item xs={12} className={classes.container}>
             <LinearProgress />
           </Grid>
-        ) : (
-          <Fragment>
-            {widgets !== null ? (
-              <Grid container className={classes.container}>
-                <PrDashboard />
-              </Grid>
-            ) : (
-              <Grid container className={classes.container}>
-                <BasicDashboard usage={basicResult} />
-              </Grid>
-            )}
-          </Fragment>
-        )}
-      </Grid>
+        </Grid>
+      ) : (
+        <Fragment>
+          {widgets !== null ? (
+            <Grid container className={classes.container}>
+              <PrDashboard />
+            </Grid>
+          ) : (
+            <Grid container className={classes.container}>
+              <BasicDashboard usage={basicResult} />
+            </Grid>
+          )}
+        </Fragment>
+      )}
     </Fragment>
   );
 };

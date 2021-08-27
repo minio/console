@@ -3095,13 +3095,28 @@ definitions:
       endpoint:
         type: string
       uptime:
-        type: string
+        type: integer
       version:
         type: string
       commitID:
         type: string
       poolNumber:
         type: integer
+      network:
+        type: object
+        additionalProperties:
+          type: string
+      drives:
+        type: array
+        items:
+          $ref: "#/definitions/serverDrives"
+  serverDrives:
+    type: object
+    properties:
+      uuid:
+        type: string
+      state:
+        type: string
   arnsResponse:
     type: object
     properties:

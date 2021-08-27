@@ -18,10 +18,6 @@ import React from "react";
 import { SvgIcon } from "@material-ui/core";
 import { IIcon } from "./props";
 
-interface IDeleteIcon {
-  width?: number;
-}
-
 const DeleteIcon = ({ width = 24 }: IIcon) => {
   return (
     <SvgIcon style={{ width: width, height: width }}>
