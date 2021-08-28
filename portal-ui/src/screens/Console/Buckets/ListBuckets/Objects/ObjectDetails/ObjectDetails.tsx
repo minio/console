@@ -81,6 +81,7 @@ import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import DescriptionIcon from "@material-ui/icons/Description";
 import EditIcon from "../../../../../../icons/EditIcon";
 import SearchIcon from "../../../../../../icons/SearchIcon";
+import ObjectBrowserIcon from "../../../../../../icons/ObjectBrowserIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -513,7 +514,7 @@ const ObjectDetails = ({
           <ScreenTitle
             icon={
               <Fragment>
-                <DescriptionIcon style={{ width: 40, height: 40 }} />
+                <ObjectBrowserIcon width={40} />
               </Fragment>
             }
             title={objectName}
