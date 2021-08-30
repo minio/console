@@ -36,4 +36,13 @@ export interface ServerInfo {
 export interface IDriveInfo {
   state: string;
   uuid: string;
+  endpoint: string;
+  drivePath: string;
+  rootDisk: boolean;
+  healing: boolean;
+  model: string;
+  totalSpace: number;
+  usedSpace: number;
+  availableSpace: number;
+
 }

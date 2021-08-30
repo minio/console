@@ -26,7 +26,9 @@ import DnsIcon from "@material-ui/icons/Dns";
 import EgressIcon from "../../../../icons/EgressIcon";
 import ReportedUsageIcon from "../../../../icons/ReportedUsageIcon";
 import ServerInfoCard from "./ServerInfoCard";
+import DriveInfoCard from "./DriveInfoCard";
 import { BucketsIcon } from "../../../../icons";
+import StorageIcon from "../../../../icons/StorageIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -50,8 +52,11 @@ const styles = (theme: Theme) =>
       },
     },
     serversContainer: {
-      height: 250,
+      height: "auto",
       overflow: "hidden" as const,
+    },
+    drivesContainer: {
+      overflow: "flex",  
     },
     infoHeight: {
       height: 180,
@@ -133,6 +138,10 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
   const serversPaperContainer = clsx(
     classes.paper,
     classes.fixedHeight,
+    classes.serversContainer
+  );
+  const expandedServersPaperContainer = clsx(
+    classes.paper,
     classes.serversContainer
   );
 
@@ -235,7 +244,7 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
             </Paper>
           </Grid>
           <Grid item xs={12} className={classes.serversAdj}>
-            <Paper className={serversPaperContainer}>
+            <Paper className={expandedServersPaperContainer}>
               <div>
                 <Grid container direction="row" alignItems="center">
                   <Grid item className={classes.icon}>
@@ -249,20 +258,41 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
                   </Grid>
                 </Grid>
               </div>
-              <div className={classes.serversListContainer}>
+               
+              <div >
                 <div className={classes.cardsContainer}>
                   {serverArray.map((server, index) => (
-                    <ServerInfoCard
+                   <ServerInfoCard
                       server={server}
                       key={`serverDS-${index.toString()}`}
-                    />
+                    />                    
                   ))}
                 </div>
+                </div>
+               <div>
+                <Grid container direction="row" alignItems="center">
+                  <Grid item className={classes.icon}>
+                    <StorageIcon />
+                  </Grid>
+                  <Grid item>
+                    <Typography className={classes.elementTitle}>
+                      {" "}
+                      Drives
+                    </Typography>
+                  </Grid>
+                </Grid>
               </div>
-            </Paper>
-          </Grid>
-        </Grid>
+                     <div className={classes.cardsContainer}>
+                  {serverArray.map((server, index) => (
+                   server.drives.map((drive) => (
+                     <DriveInfoCard drive={drive}/>
+                    ))) )}
+                    </div>
+                     </Paper>
+                 </Grid>
+                </Grid>
       </Grid>
+     
     </Fragment>
   );
 };

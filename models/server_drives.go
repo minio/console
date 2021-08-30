@@ -34,8 +34,32 @@ import (
 // swagger:model serverDrives
 type ServerDrives struct {
 
+	// available space
+	AvailableSpace int64 `json:"availableSpace,omitempty"`
+
+	// drive path
+	DrivePath string `json:"drivePath,omitempty"`
+
+	// endpoint
+	Endpoint string `json:"endpoint,omitempty"`
+
+	// healing
+	Healing bool `json:"healing,omitempty"`
+
+	// model
+	Model string `json:"model,omitempty"`
+
+	// root disk
+	RootDisk bool `json:"rootDisk,omitempty"`
+
 	// state
 	State string `json:"state,omitempty"`
+
+	// total space
+	TotalSpace int64 `json:"totalSpace,omitempty"`
+
+	// used space
+	UsedSpace int64 `json:"usedSpace,omitempty"`
 
 	// uuid
 	UUID string `json:"uuid,omitempty"`
