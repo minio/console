@@ -200,7 +200,7 @@ const BrowseBuckets = ({
   const renderBucket = (bucketName: string) => {
     return (
       <div className={classes.bucketName}>
-        <div className={`${classes.iconBucket} iconBucketElm`} />
+        <BucketsIcon width={16} />
         <span>{bucketName}</span>
       </div>
     );

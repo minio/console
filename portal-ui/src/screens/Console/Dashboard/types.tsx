@@ -29,11 +29,11 @@ export interface ServerInfo {
   version: string;
   commitID: string;
   poolNumber: number;
-  drives: IDriveInfo[],
-  network: any,
+  drives: IDriveInfo[];
+  network: any;
 }
 
 export interface IDriveInfo {
-  state: string,
-  uuid: string,
+  state: string;
+  uuid: string;
 }

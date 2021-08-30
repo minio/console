@@ -22,12 +22,12 @@ import ViewIcon from "./TableActionIcons/ViewIcon";
 import ShareIcon from "./TableActionIcons/ShareIcon";
 import CloudIcon from "./TableActionIcons/CloudIcon";
 import ConsoleIcon from "./TableActionIcons/ConsoleIcon";
-import DownloadIcon from "./TableActionIcons/DownloadIcon";
 import DisableIcon from "./TableActionIcons/DisableIcon";
 import FormatDriveIcon from "./TableActionIcons/FormatDriveIcon";
 import EditIcon from "../../../../icons/EditIcon";
 import TrashIcon from "../../../../icons/TrashIcon";
 import { IAMPoliciesIcon } from "../../../../icons";
+import DownloadIcon from "../../../../icons/DownloadIcon";
 
 const styles = () =>
   createStyles({
@@ -72,7 +72,7 @@ const defineIcon = (type: string, selected: boolean) => {
     case "console":
       return <ConsoleIcon active={selected} />;
     case "download":
-      return <DownloadIcon active={selected} />;
+      return <DownloadIcon width={16} active={selected} />;
     case "disable":
       return <DisableIcon active={selected} />;
     case "format":
