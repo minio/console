@@ -4872,8 +4872,32 @@ func init() {
     "serverDrives": {
       "type": "object",
       "properties": {
+        "availableSpace": {
+          "type": "integer"
+        },
+        "drivePath": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "healing": {
+          "type": "boolean"
+        },
+        "model": {
+          "type": "string"
+        },
+        "rootDisk": {
+          "type": "boolean"
+        },
         "state": {
           "type": "string"
+        },
+        "totalSpace": {
+          "type": "integer"
+        },
+        "usedSpace": {
+          "type": "integer"
         },
         "uuid": {
           "type": "string"
@@ -10350,8 +10374,32 @@ func init() {
     "serverDrives": {
       "type": "object",
       "properties": {
+        "availableSpace": {
+          "type": "integer"
+        },
+        "drivePath": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "healing": {
+          "type": "boolean"
+        },
+        "model": {
+          "type": "string"
+        },
+        "rootDisk": {
+          "type": "boolean"
+        },
         "state": {
           "type": "string"
+        },
+        "totalSpace": {
+          "type": "integer"
+        },
+        "usedSpace": {
+          "type": "integer"
         },
         "uuid": {
           "type": "string"
