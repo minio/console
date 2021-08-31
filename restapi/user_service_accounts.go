@@ -105,7 +105,7 @@ func createServiceAccount(ctx context.Context, userClient MinioAdmin, policy str
 		iamPolicy = iamp
 	}
 
-	creds, err := userClient.addServiceAccount(ctx, iamPolicy)
+	creds, err := userClient.addServiceAccount(ctx, iamPolicy, "", "", "")
 	if err != nil {
 		return nil, err
 	}
@@ -125,7 +125,7 @@ func createServiceAccountCreds(ctx context.Context, userClient MinioAdmin, polic
 		iamPolicy = iamp
 	}
 
-	creds, err := userClient.addServiceAccountWithCreds(ctx, iamPolicy, accessKey, secretKey)
+	creds, err := userClient.addServiceAccount(ctx, iamPolicy, "", accessKey, secretKey)
 	if err != nil {
 		return nil, err
 	}
@@ -167,7 +167,7 @@ func createAUserServiceAccount(ctx context.Context, userClient MinioAdmin, polic
 		iamPolicy = iamp
 	}
 
-	creds, err := userClient.addServiceAccountWithUser(ctx, iamPolicy, user)
+	creds, err := userClient.addServiceAccount(ctx, iamPolicy, user, "", "")
 	if err != nil {
 		return nil, err
 	}
@@ -186,7 +186,7 @@ func createAUserServiceAccountCreds(ctx context.Context, userClient MinioAdmin, 
 		iamPolicy = iamp
 	}
 
-	creds, err := userClient.addServiceAccountWithUserAndCreds(ctx, iamPolicy, user, accessKey, secretKey)
+	creds, err := userClient.addServiceAccount(ctx, iamPolicy, user, accessKey, secretKey)
 	if err != nil {
 		return nil, err
 	}
