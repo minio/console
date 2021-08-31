@@ -60,11 +60,11 @@ const defineIcon = (type: string, selected: boolean) => {
     case "view":
       return <ViewIcon active={selected} />;
     case "edit":
-      return <EditIcon width={16} active={selected} />;
+      return <EditIcon />;
     case "delete":
-      return <TrashIcon width={16} active={selected} />;
+      return <TrashIcon />;
     case "description":
-      return <IAMPoliciesIcon width={16} active={selected} />;
+      return <IAMPoliciesIcon />;
     case "share":
       return <ShareIcon active={selected} />;
     case "cloud":
@@ -72,7 +72,7 @@ const defineIcon = (type: string, selected: boolean) => {
     case "console":
       return <ConsoleIcon active={selected} />;
     case "download":
-      return <DownloadIcon width={16} active={selected} />;
+      return <DownloadIcon />;
     case "disable":
       return <DisableIcon active={selected} />;
     case "format":

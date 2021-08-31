@@ -81,7 +81,7 @@ const AddUserServiceAccount = ({
           .invoke("POST", `/api/v1/user/${user}/service-account-credentials`, {
             policy: policyDefinition,
             accessKey: accessKey,
-            secretKey: secretKey
+            secretKey: secretKey,
           })
           .then((res) => {
             setAddSending(false);
@@ -201,14 +201,14 @@ const AddUserServiceAccount = ({
                 }}
               />
               <InputBoxWrapper
-                  value={secretKey}
-                  label={"Secret Key"}
-                  id={"secretKey"}
-                  name={"secretKey"}
-                  placeholder={"Enter Secret Key"}
-                  onChange={(e) => {
-                    setSecretKey(e.target.value);
-                  }}
+                value={secretKey}
+                label={"Secret Key"}
+                id={"secretKey"}
+                name={"secretKey"}
+                placeholder={"Enter Secret Key"}
+                onChange={(e) => {
+                  setSecretKey(e.target.value);
+                }}
               />
             </Grid>
           )}

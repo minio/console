@@ -634,7 +634,7 @@ const ObjectDetails = ({
                                     setLegalholdOpen(true);
                                   }}
                                 >
-                                  <EditIcon width={16} />
+                                  <EditIcon />
                                 </IconButton>
                               </Fragment>
                             ) : (
@@ -657,7 +657,7 @@ const ObjectDetails = ({
                                 openRetentionModal();
                               }}
                             >
-                              <EditIcon width={16} />
+                              <EditIcon />
                             </IconButton>
                           </td>
                         </tr>
@@ -761,7 +761,7 @@ const ObjectDetails = ({
                         disableUnderline: true,
                         startAdornment: (
                           <InputAdornment position="start">
-                            <SearchIcon width={18} />
+                            <SearchIcon />
                           </InputAdornment>
                         ),
                       }}

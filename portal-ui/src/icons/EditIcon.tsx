@@ -14,15 +14,21 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-import SvgIcon from "@material-ui/core/SvgIcon";
-import { IIcon } from "./props";
+import * as React from "react";
+import { SvgIcon, SvgIconProps } from "@material-ui/core";
 
-const EditIcon = ({ width = 24, active = false }: IIcon) => {
+const EditIcon = (props: SvgIconProps) => {
   return (
-    <SvgIcon style={{ width: width, height: width }}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22.376 22.351">
-        <path d="M17.638 0a4.936 4.936 0 00-3.4 1.384l-12.58 12.58a1.154 1.154 0 00-.335.629l-1.3 6.332a1.165 1.165 0 00.335 1.09 1.273 1.273 0 00.881.335.532.532 0 00.252-.042l6.292-1.22a1.154 1.154 0 00.629-.335l12.58-12.58a4.809 4.809 0 000-6.751A4.631 4.631 0 0017.638 0zM4.514 19.288a2.609 2.609 0 00-.587-.8 3.551 3.551 0 00-.8-.587l.461-2.181a4.027 4.027 0 012.055 1.048 3.727 3.727 0 011.048 2.055zm14.759-12.83l-11.2 11.154a4.912 4.912 0 00-1.3-2.013 5.732 5.732 0 00-2.013-1.3l11.2-11.2a2.309 2.309 0 011.677-.671 2.493 2.493 0 011.677.671 2.419 2.419 0 01-.041 3.359z" />
+    <SvgIcon {...props}>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+        <defs>
+          <clipPath id="prefix__a">
+            <path d="M0 0h256v256H0z" />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#prefix__a)">
+          <path d="M202.19 0a56.615 56.615 0 00-38.958 15.872L18.945 160.159a13.233 13.233 0 00-3.848 7.214L.188 239.998a13.364 13.364 0 003.848 12.5 14.606 14.606 0 0010.1 3.848 6.1 6.1 0 002.886-.481l72.144-13.948a13.233 13.233 0 007.214-3.848L240.666 93.788c21.162-21.162 21.162-56.272 0-77.434A53.11 53.11 0 00202.19 0zM51.65 221.24a29.925 29.925 0 00-6.733-9.138 40.721 40.721 0 00-9.138-6.733l5.291-25.01a46.19 46.19 0 0123.567 12.024 42.742 42.742 0 0112.024 23.567zm169.3-147.173L92.532 202.002a56.341 56.341 0 00-14.91-23.086 65.746 65.746 0 00-23.086-14.91L182.952 35.588a26.488 26.488 0 0119.238-7.7 28.6 28.6 0 0119.238 7.7 27.744 27.744 0 01-.481 38.479z" />
+        </g>
       </svg>
     </SvgIcon>
   );

@@ -33,6 +33,10 @@ const styles = (theme: Theme) =>
       paddingTop: 10,
       marginRight: 12,
       color: theme.palette.primary.main,
+      "& .MuiSvgIcon-root": {
+        width: 44,
+        height: 44,
+      },
     },
     headerBarSubheader: {
       color: "grey",

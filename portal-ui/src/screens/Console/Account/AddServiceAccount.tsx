@@ -79,7 +79,7 @@ const AddServiceAccount = ({
           .invoke("POST", `/api/v1/service-account-credentials`, {
             policy: policyDefinition,
             accessKey: accessKey,
-            secretKey: secretKey
+            secretKey: secretKey,
           })
           .then((res) => {
             setAddSending(false);

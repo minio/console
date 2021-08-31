@@ -228,7 +228,7 @@ const ListTiersConfiguration = ({
                             disableUnderline: true,
                             startAdornment: (
                               <InputAdornment position="start">
-                                <SearchIcon width={18} />
+                                <SearchIcon />
                               </InputAdornment>
                             ),
                           }}
