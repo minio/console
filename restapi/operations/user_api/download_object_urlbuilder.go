@@ -27,6 +27,8 @@ import (
 	"net/url"
 	golangswaggerpaths "path"
 	"strings"
+
+	"github.com/go-openapi/swag"
 )
 
 // DownloadObjectURL generates an URL for the download object operation
@@ -34,6 +36,7 @@ type DownloadObjectURL struct {
 	BucketName string
 
 	Prefix    string
+	Preview   *bool
 	VersionID *string
 
 	_basePath string
@@ -80,6 +83,14 @@ func (o *DownloadObjectURL) Build() (*url.URL, error) {
 	prefixQ := o.Prefix
 	if prefixQ != "" {
 		qs.Set("prefix", prefixQ)
+	}
+
+	var previewQ string
+	if o.Preview != nil {
+		previewQ = swag.FormatBool(*o.Preview)
+	}
+	if previewQ != "" {
+		qs.Set("preview", previewQ)
 	}
 
 	var versionIDQ string

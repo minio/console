@@ -62,7 +62,7 @@ import {
   Route,
 } from "../../../../ObjectBrowser/reducers";
 import CreateFolderModal from "./CreateFolderModal";
-import { download } from "../utils";
+import { download, extensionPreview } from "../utils";
 import {
   setErrorSnackMessage,
   setLoadingProgress,
@@ -73,6 +73,7 @@ import { ErrorResponseHandler } from "../../../../../../common/types";
 import RewindEnable from "./RewindEnable";
 import DeleteIcon from "@material-ui/icons/Delete";
 import DeleteMultipleObjects from "./DeleteMultipleObjects";
+import PreviewFileModal from "../Preview/PreviewFileModal";
 import { baseUrl } from "../../../../../../history";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
 import AddFolderIcon from "../../../../../../icons/AddFolderIcon";
@@ -252,6 +253,12 @@ const ListObjects = ({
   const [isVersioned, setIsVersioned] = useState<boolean>(false);
   const [rewindSelect, setRewindSelect] = useState<boolean>(false);
   const [selectedObjects, setSelectedObjects] = useState<string[]>([]);
+  const [previewOpen, setPreviewOpen] = useState<boolean>(false);
+  const [selectedPreview, setSelectedPreview] = useState<BucketObject | null>(
+    null
+  );
+
+  const internalPaths = match.params[0];
 
   const bucketName = match.params["bucket"];
 
@@ -302,8 +309,6 @@ const ListObjects = ({
 
   // Rewind
   useEffect(() => {
-    const internalPaths = match.params[0];
-
     if (rewindEnabled) {
       if (bucketToRewind !== bucketName) {
         resetRewind();
@@ -343,6 +348,7 @@ const ListObjects = ({
     match,
     setErrorSnackMessage,
     resetRewind,
+    internalPaths,
   ]);
 
   useEffect(() => {
@@ -635,8 +641,20 @@ const ListObjects = ({
     upload(e, selectedBucket, path);
   };
 
+  const openPreview = (fileObject: BucketObject) => {
+    setSelectedPreview(fileObject);
+
+    setPreviewOpen(true);
+  };
+
   const tableActions = [
     { type: "view", onClick: openPath, sendOnlyId: true },
+    {
+      type: "preview",
+      onClick: openPreview,
+      disableButtonFunction: (item: string) =>
+        extensionPreview(item) === "none",
+    },
     {
       type: "download",
       onClick: downloadObject,
@@ -702,6 +720,10 @@ const ListObjects = ({
 
     if (refresh) {
     }
+  };
+
+  const closePreviewWindow = () => {
+    setPreviewOpen(false);
   };
 
   const selectListObjects = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -817,6 +839,15 @@ const ListObjects = ({
           bucketName={bucketName}
         />
       )}
+      {previewOpen && (
+        <PreviewFileModal
+          open={previewOpen}
+          bucketName={bucketName}
+          object={selectedPreview}
+          onClosePreview={closePreviewWindow}
+        />
+      )}
+
       <PageHeader label="Object Browser" />
       <Grid container className={classes.container}>
         <Grid item xs={12}>
