@@ -432,7 +432,7 @@ func getUploadObjectResponse(session *models.Principal, params user_api.PostBuck
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 	if err := uploadFiles(ctx, minioClient, params); err != nil {
-		prepareError(err, ErrorGeneric)
+		return prepareError(err, ErrorGeneric)
 	}
 	return nil
 }
