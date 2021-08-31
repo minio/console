@@ -1,0 +1,108 @@
+// This file is part of MinIO Console Server
+// Copyright (c) 2021 MinIO, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import React, { Fragment, useState } from "react";
+import { createStyles, withStyles } from "@material-ui/core/styles";
+import { Grid, LinearProgress } from "@material-ui/core";
+import { BucketObject } from "../ListObjects/types";
+import { extensionPreview } from "../utils";
+
+const styles = () =>
+  createStyles({
+    iframeContainer: {
+      border: "0px",
+      flex: "1 1 auto",
+      width: "100%",
+      backgroundColor: "transparent",
+    },
+    iframeBase: {
+      backgroundColor: "#fff",
+    },
+    iframeHidden: {
+      display: "none",
+    },
+  });
+
+interface IPreviewFileProps {
+  bucketName: string;
+  object: BucketObject | null;
+  isFullscreen?: boolean;
+  classes: any;
+}
+
+const PreviewFile = ({
+  bucketName,
+  object,
+  isFullscreen = false,
+  classes,
+}: IPreviewFileProps) => {
+  const [loading, setLoading] = useState<boolean>(true);
+
+  let path = "";
+
+  if (object) {
+    const encodedPath = encodeURIComponent(object.name);
+    path = `${window.location.origin}/api/v1/buckets/${bucketName}/objects/download?preview=true&prefix=${encodedPath}`;
+    if (object.version_id) {
+      path = path.concat(`&version_id=${object.version_id}`);
+    }
+  }
+
+  const objectType = extensionPreview(object?.name || "");
+
+  let customHeight = 250;
+
+  switch (objectType) {
+    case "image":
+    case "text":
+      customHeight = 500;
+      break;
+    case "audio":
+      customHeight = 150;
+      break;
+    case "video":
+      customHeight = 350;
+      break;
+  }
+
+  const iframeLoaded = () => {
+    setLoading(false);
+  };
+
+  return (
+    <Fragment>
+      {loading && (
+        <Grid item xs={12}>
+          <LinearProgress />
+        </Grid>
+      )}
+      <div className={`${loading ? classes.iframeHidden : ""} iframeBase`}>
+        <iframe
+          src={path}
+          title="File Preview"
+          height={customHeight}
+          allowTransparency
+          className={classes.iframeContainer}
+          onLoad={iframeLoaded}
+        >
+          File couldn't be loaded. Please try Download instead
+        </iframe>
+      </div>
+    </Fragment>
+  );
+};
+
+export default withStyles(styles)(PreviewFile);

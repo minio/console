@@ -95,6 +95,10 @@ const styles = (theme: Theme) =>
         fontWeight: 600,
         color: "#000",
         fontSize: 22,
+        width: "100%",
+        overflow: "hidden",
+        whiteSpace: "nowrap",
+        textOverflow: "ellipsis",
       },
     },
     modalContent: {
