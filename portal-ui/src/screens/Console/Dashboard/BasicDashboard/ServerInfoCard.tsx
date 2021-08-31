@@ -14,108 +14,174 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import clsx from "clsx";
+import ComputerIcon from "@material-ui/icons/Computer";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import { Usage, ServerInfo } from "../types";
-import { niceBytes, niceDays } from "../../../../common/utils";
-import DnsIcon from "@material-ui/icons/Dns";
-import EgressIcon from "../../../../icons/EgressIcon";
-import ReportedUsageIcon from "../../../../icons/ReportedUsageIcon";
-import { BucketsIcon } from "../../../../icons";
+import { ServerInfo } from "../types";
+import { niceDays } from "../../../../common/utils";
+import { Tooltip } from "@material-ui/core";
 
 const styles = (theme: Theme) =>
   createStyles({
-    paper: {
-      padding: theme.spacing(2),
+    serverCard: {
+      padding: 15,
+      margin: 8,
+      width: "100%",
+      maxWidth: 620,
+      "& .computerIcon": {
+        marginRight: 10,
+      },
+    },
+    titleContainer: {
       display: "flex",
-      overflow: "auto",
-      flexDirection: "column",
-      border: "#eaedee 1px solid",
-      borderRadius: 5,
-      boxShadow: "none",
     },
-    fixedHeight: {
-      height: 165,
-      minWidth: 247,
-      marginRight: 20,
-      padding: "25px 28px",
-      "& svg": {
-        maxHeight: 18,
-      },
-    },
-     infoHeight: {
-      height: 180,
-      minWidth: 247,
-      marginRight: 20,
-      padding: "25px 28px",
-      "& svg": {
-        maxHeight: 18,
-      },
-    },
-    consumptionValue: {
-      color: "#000000",
-      fontSize: "60px",
-      fontWeight: "bold",
+    cardIconContainer: {
+      display: "flex",
+      position: "relative",
+      alignItems: "center",
     },
     endpoint: {
       color: "#000000",
-      fontSize: "20px",
+      fontSize: 20,
       fontWeight: "bold",
+      position: "relative" as const,
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
     },
-     infoValue: {
-      fontWeight: 500,
-      color: "#777777",
-      fontSize: 14,
-      marginTop: 9,
-    },
-    icon: {
-      marginRight: 10,
-      color: "#777777",
-    },
-    notationContainer: {
+    stateContainer: {
       display: "flex",
       flexWrap: "wrap",
+      justifyContent: "space-between",
     },
-   
-    elementTitle: {
+    infoValue: {
       fontWeight: 500,
       color: "#777777",
       fontSize: 14,
-      marginTop: -9,
+      margin: "5px 4px",
+      display: "inline-flex",
+      "& strong": {
+        marginRight: 4,
+      },
+    },
+    redState: {
+      color: theme.palette.error.main,
+    },
+    greenState: {
+      color: theme.palette.success.main,
+    },
+    yellowState: {
+      color: theme.palette.warning.main,
+    },
+    greyState: {
+      color: "grey",
+    },
+    healthStatusIcon: {
+      position: "absolute",
+      fontSize: 10,
+      left: 18,
+      height: 10,
+      bottom: 5,
+    },
+    innerState: {
+      fontSize: 10,
+      marginLeft: 5,
+      display: "flex",
+      alignItems: "center",
+      marginTop: -3,
     },
   });
 
-  interface ICardProps {
+interface ICardProps {
   classes: any;
   server: ServerInfo;
 }
 
-  export const ServerInfoCard = ({classes, server}: ICardProps) => {
-    return(
-      <Paper className={classes.infoPaper}>
-              <Grid container direction="row" alignItems="center">
-               
-                <Grid item>
-                  <Typography className={classes.endpoint}>
-                    {" "}
-                     {server.endpoint}
-                  </Typography>
-                  <Typography className={classes.infoValue}>
-                    Status:  {server.state}
-                  </Typography>
-                  <Typography className={classes.infoValue}>
-                    Uptime:  {niceDays(server.uptime)}
-                  </Typography>
-                  <Typography className={classes.infoValue}>
-                    Version:  {server.version}
-                  </Typography>
-                </Grid>
-              </Grid>
-              
-            </Paper>
-    )
-  }
+const ServerInfoCard = ({ classes, server }: ICardProps) => {
+  console.log(server);
+  const serverStatusToClass = (health_status: string) => {
+    switch (health_status) {
+      case "offline":
+        return classes.redState;
+      case "online":
+        return classes.greenState;
+      default:
+        return classes.greyState;
+    }
+  };
+
+  const networkKeys = Object.keys(server.network);
+
+  const networkTotal = networkKeys.length;
+  const totalDrives = server.drives.length;
+
+  const activeNetwork = networkKeys.reduce((acc: number, currValue: string) => {
+    const item = server.network[currValue];
+    if (item === "online") {
+      return acc + 1;
+    }
+    return acc;
+  }, 0);
+
+  const activeDisks = server.drives.filter(
+    (element) => element.state === "ok"
+  ).length;
+
+  return (
+    <Paper className={classes.serverCard}>
+      <Grid container direction="row" alignItems="center">
+        <Grid item xs={12}>
+          <div className={classes.titleContainer}>
+            <div className={classes.cardIconContainer}>
+              <ComputerIcon className="computerIcon" />
+              <div className={classes.healthStatusIcon}>
+                {server.state && (
+                  <span className={serverStatusToClass(server.state)}>⬤</span>
+                )}
+              </div>
+            </div>{" "}
+            <Tooltip title={server.endpoint} placement="bottom">
+              <div className={classes.endpoint}>{server.endpoint}</div>
+            </Tooltip>
+          </div>
+          <div className={classes.infoValue}>
+            <strong>Version:</strong> {server.version}
+          </div>
+        </Grid>
+        <Grid item xs={12} className={classes.stateContainer}>
+          <span className={classes.infoValue}>
+            <strong>Drives:</strong> {activeDisks}/{totalDrives}{" "}
+            <span
+              className={`${classes.innerState} ${
+                activeDisks <= totalDrives / 2 && classes.redState
+              } ${activeDisks === totalDrives / 2 + 1 && classes.yellowState} ${
+                activeDisks === totalDrives && classes.greenState
+              }`}
+            >
+              ⬤
+            </span>
+          </span>
+          <span className={classes.infoValue}>
+            <strong>Network:</strong> {activeNetwork}/{networkTotal}{" "}
+            <span
+              className={`${classes.innerState} ${
+                activeNetwork <= networkTotal / 2 && classes.redState
+              } ${
+                activeNetwork === networkTotal / 2 + 1 && classes.yellowState
+              } ${activeNetwork === networkTotal && classes.greenState}`}
+            >
+              ⬤
+            </span>
+          </span>
+          <span className={classes.infoValue}>
+            <strong>Uptime:</strong> {niceDays(server.uptime)}
+          </span>
+        </Grid>
+      </Grid>
+    </Paper>
+  );
+};
+
+export default withStyles(styles)(ServerInfoCard);

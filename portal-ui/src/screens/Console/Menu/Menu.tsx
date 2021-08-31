@@ -54,6 +54,7 @@ import LogsIcon from "../../../icons/LogsIcon";
 import SettingsIcon from "../../../icons/SettingsIcon";
 import StorageIcon from "../../../icons/StorageIcon";
 import TenantsOutlinedIcon from "../../../icons/TenantsOutlineIcon";
+import ObjectBrowserIcon from "../../../icons/ObjectBrowserIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -205,7 +206,7 @@ const Menu = ({
       component: NavLink,
       to: "/object-browser",
       name: "Object Browser",
-      icon: <DescriptionIcon />,
+      icon: <ObjectBrowserIcon />,
     },
     {
       group: "User",
