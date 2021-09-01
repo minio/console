@@ -265,6 +265,10 @@ const styles = () =>
       },
       ".optionsAlignment": {
         textAlign: "center",
+        "& .MuiSvgIcon-root": {
+          width: 16,
+          height: 16,
+        },
       },
       ".text-center": {
         textAlign: "center",

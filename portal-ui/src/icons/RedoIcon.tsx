@@ -17,7 +17,7 @@
 import * as React from "react";
 import { SvgIcon, SvgIconProps } from "@material-ui/core";
 
-const DownloadIcon = (props: SvgIconProps) => {
+const RedoIcon = (props: SvgIconProps) => {
   return (
     <SvgIcon {...props}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
@@ -28,8 +28,8 @@ const DownloadIcon = (props: SvgIconProps) => {
         </defs>
         <g clipPath="url(#prefix__a)">
           <path
-            data-name="Trazado 362"
-            d="M0 104.121c0-21.583 32.822-21.583 32.822 0v117.917h190.356V104.121c0-21.583 32.822-21.583 32.822 0v134.338a16.416 16.416 0 01-16.4 16.413H16.415A16.421 16.421 0 01.002 238.459V104.121zm144.415-85.112c0-21.574-32.826-21.574-32.826 0v137.162l-18.591-18.6c-15.263-15.267-38.474 7.945-23.211 23.211l46.51 46.518a16.427 16.427 0 0023.406 0l46.507-46.518c15.266-15.266-7.945-38.478-23.208-23.211l-18.587 18.6V19.009z"
+            data-name="Trazado 373"
+            d="M18 145.888A110.2 110.2 0 01126.767 35.85L113.78 22.869c-12.378-12.378 6.448-31.2 18.822-18.824l37.722 37.72a13.32 13.32 0 010 18.979l-37.722 37.714c-12.374 12.374-31.2-6.442-18.822-18.82l14.085-14.085a80.434 80.434 0 00-80.1 80.335 80.443 80.443 0 0080.349 80.35 80.441 80.441 0 0080.349-80.35 14.878 14.878 0 0114.879-14.877 14.879 14.879 0 0114.882 14.877A110.234 110.234 0 01128.114 256 110.232 110.232 0 0118 145.888z"
           />
         </g>
       </svg>
@@ -37,4 +37,4 @@ const DownloadIcon = (props: SvgIconProps) => {
   );
 };
 
-export default DownloadIcon;
+export default RedoIcon;

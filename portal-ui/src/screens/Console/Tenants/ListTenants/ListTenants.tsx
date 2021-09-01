@@ -30,7 +30,7 @@ import {
   settingsCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
-import { CreateIcon } from "../../../../icons";
+import { CircleIcon, CreateIcon } from "../../../../icons";
 import { resetAddTenantForm } from "../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
@@ -100,15 +100,39 @@ const styles = (theme: Theme) =>
     },
     redState: {
       color: theme.palette.error.main,
+      "& .MuiSvgIcon-root": {
+        width: 16,
+        height: 16,
+        float: "left",
+        marginRight: 4,
+      },
     },
     yellowState: {
       color: theme.palette.warning.main,
+      "& .MuiSvgIcon-root": {
+        width: 16,
+        height: 16,
+        float: "left",
+        marginRight: 4,
+      },
     },
     greenState: {
       color: theme.palette.success.main,
+      "& .MuiSvgIcon-root": {
+        width: 16,
+        height: 16,
+        float: "left",
+        marginRight: 4,
+      },
     },
     greyState: {
       color: "grey",
+      "& .MuiSvgIcon-root": {
+        width: 16,
+        height: 16,
+        float: "left",
+        marginRight: 4,
+      },
     },
   });
 
@@ -272,7 +296,7 @@ const ListTenants = ({
                           disableUnderline: true,
                           startAdornment: (
                             <InputAdornment position="start">
-                              <SearchIcon width={18} />
+                              <SearchIcon />
                             </InputAdornment>
                           ),
                         }}
@@ -307,14 +331,14 @@ const ListTenants = ({
                             renderFunction: (t) => {
                               return (
                                 <React.Fragment>
-                                  <span
+                                  <div
                                     className={healthStatusToClass(
                                       t.health_status
                                     )}
                                   >
-                                    ⬤
-                                  </span>{" "}
-                                  {t.name}
+                                    <CircleIcon />
+                                  </div>
+                                  <div>{t.name}</div>
                                 </React.Fragment>
                               );
                             },

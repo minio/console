@@ -22,6 +22,7 @@ import Paper from "@material-ui/core/Paper";
 import { ServerInfo } from "../types";
 import { niceDays } from "../../../../common/utils";
 import { Tooltip } from "@material-ui/core";
+import { CircleIcon } from "../../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -65,6 +66,10 @@ const styles = (theme: Theme) =>
       "& strong": {
         marginRight: 4,
       },
+      "& .MuiSvgIcon-root": {
+        width: 16,
+        height: 16,
+      },
     },
     redState: {
       color: theme.palette.error.main,
@@ -83,7 +88,11 @@ const styles = (theme: Theme) =>
       fontSize: 10,
       left: 18,
       height: 10,
-      bottom: 5,
+      bottom: 2,
+      "& .MuiSvgIcon-root": {
+        width: 10,
+        height: 10,
+      },
     },
     innerState: {
       fontSize: 10,
@@ -138,7 +147,9 @@ const ServerInfoCard = ({ classes, server }: ICardProps) => {
               <ComputerIcon className="computerIcon" />
               <div className={classes.healthStatusIcon}>
                 {server.state && (
-                  <span className={serverStatusToClass(server.state)}>⬤</span>
+                  <span className={serverStatusToClass(server.state)}>
+                    <CircleIcon />
+                  </span>
                 )}
               </div>
             </div>{" "}
@@ -160,7 +171,7 @@ const ServerInfoCard = ({ classes, server }: ICardProps) => {
                 activeDisks === totalDrives && classes.greenState
               }`}
             >
-              ⬤
+              <CircleIcon />
             </span>
           </span>
           <span className={classes.infoValue}>
@@ -172,7 +183,7 @@ const ServerInfoCard = ({ classes, server }: ICardProps) => {
                 activeNetwork === networkTotal / 2 + 1 && classes.yellowState
               } ${activeNetwork === networkTotal && classes.greenState}`}
             >
-              ⬤
+              <CircleIcon />
             </span>
           </span>
           <span className={classes.infoValue}>
