@@ -1223,6 +1223,12 @@ func init() {
             "type": "string",
             "name": "version_id",
             "in": "query"
+          },
+          {
+            "type": "boolean",
+            "default": false,
+            "name": "preview",
+            "in": "query"
           }
         ],
         "responses": {
@@ -6733,6 +6739,12 @@ func init() {
           {
             "type": "string",
             "name": "version_id",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "default": false,
+            "name": "preview",
             "in": "query"
           }
         ],

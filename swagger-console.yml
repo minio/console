@@ -442,6 +442,11 @@ paths:
           in: query
           required: false
           type: string
+        - name: preview
+          in: query
+          required: false
+          type: boolean
+          default: false
       responses:
         200:
           description: A successful response.

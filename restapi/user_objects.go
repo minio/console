@@ -72,6 +72,7 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 	})
 	// download object
 	api.UserAPIDownloadObjectHandler = user_api.DownloadObjectHandlerFunc(func(params user_api.DownloadObjectParams, session *models.Principal) middleware.Responder {
+		isPreview := *params.Preview
 		resp, err := getDownloadObjectResponse(session, params)
 		if err != nil {
 			return user_api.NewDownloadObjectDefault(int(err.Code)).WithPayload(err)
@@ -79,17 +80,38 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 		return middleware.ResponderFunc(func(rw http.ResponseWriter, _ runtime.Producer) {
 			defer resp.Close()
 
-			// indicate it's a download to the browser, and the size of the object
-			rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", params.Prefix))
-			rw.Header().Set("Content-Type", "application/octet-stream")
-			// indicate object size
+			// indicate it's a download / inline content to the browser, and the size of the object
+			filename := params.Prefix
+
+			if isPreview {
+				rw.Header().Set("Content-Disposition", fmt.Sprintf("inline; filename=\"%s\"", filename))
+				rw.Header().Set("X-Frame-Options", "SAMEORIGIN")
+				rw.Header().Set("X-XSS-Protection", "1")
+
+			} else {
+				rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
+				rw.Header().Set("Content-Type", "application/octet-stream")
+			}
+
+			// indicate object size & content type
 			stat, err := resp.(*minio.Object).Stat()
 			if err != nil {
 				log.Println(err)
 			} else {
 				rw.Header().Set("Content-Length", fmt.Sprintf("%d", stat.Size))
-				rw.Header().Set("Content-Type", stat.ContentType)
+
+				contentType := stat.ContentType
+
+				if isPreview {
+					// In case content type was uploaded as octet-stream, we double verify content type
+					if stat.ContentType == "application/octet-stream" {
+						contentType = mimedb.TypeByExtension(filepath.Ext(filename))
+					}
+				}
+
+				rw.Header().Set("Content-Type", contentType)
 			}
+
 			// Copy the stream
 			_, err = io.Copy(rw, resp)
 			if err != nil {

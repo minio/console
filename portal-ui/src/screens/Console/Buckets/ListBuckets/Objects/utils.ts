@@ -32,3 +32,37 @@ export const download = (
   }
   window.location.href = path;
 };
+
+// Review file extension by name & returns the type of preview browser that can be used
+export const extensionPreview = (
+  fileName: string
+): "image" | "text" | "audio" | "video" | "none" => {
+  const imageExtensions = ["jpg", "jpeg", "gif", "png"];
+  const textExtensions = ["pdf", "txt"];
+  const audioExtensions = ["wav", "mp3", "aac"];
+  const videoExtensions = ["mp4", ".avi", ".mpg"];
+
+  const fileExtension = fileName.split(".").pop();
+
+  if (!fileExtension) {
+    return "none";
+  }
+
+  if (imageExtensions.includes(fileExtension)) {
+    return "image";
+  }
+
+  if (textExtensions.includes(fileExtension)) {
+    return "text";
+  }
+
+  if (audioExtensions.includes(fileExtension)) {
+    return "audio";
+  }
+
+  if (videoExtensions.includes(fileExtension)) {
+    return "video";
+  }
+
+  return "none";
+};

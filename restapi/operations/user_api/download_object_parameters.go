@@ -29,15 +29,23 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // NewDownloadObjectParams creates a new DownloadObjectParams object
-//
-// There are no default values defined in the spec.
+// with the default values initialized.
 func NewDownloadObjectParams() DownloadObjectParams {
 
-	return DownloadObjectParams{}
+	var (
+		// initialize parameters with default values
+
+		previewDefault = bool(false)
+	)
+
+	return DownloadObjectParams{
+		Preview: &previewDefault,
+	}
 }
 
 // DownloadObjectParams contains all the bound params for the download object operation
@@ -59,6 +67,11 @@ type DownloadObjectParams struct {
 	  In: query
 	*/
 	Prefix string
+	/*
+	  In: query
+	  Default: false
+	*/
+	Preview *bool
 	/*
 	  In: query
 	*/
@@ -83,6 +96,11 @@ func (o *DownloadObjectParams) BindRequest(r *http.Request, route *middleware.Ma
 
 	qPrefix, qhkPrefix, _ := qs.GetOK("prefix")
 	if err := o.bindPrefix(qPrefix, qhkPrefix, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qPreview, qhkPreview, _ := qs.GetOK("preview")
+	if err := o.bindPreview(qPreview, qhkPreview, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -127,6 +145,30 @@ func (o *DownloadObjectParams) bindPrefix(rawData []string, hasKey bool, formats
 		return err
 	}
 	o.Prefix = raw
+
+	return nil
+}
+
+// bindPreview binds and validates parameter Preview from query.
+func (o *DownloadObjectParams) bindPreview(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+
+	if raw == "" { // empty values pass all other validations
+		// Default values have been previously initialized by NewDownloadObjectParams()
+		return nil
+	}
+
+	value, err := swag.ConvertBool(raw)
+	if err != nil {
+		return errors.InvalidType("preview", "query", "bool", raw)
+	}
+	o.Preview = &value
 
 	return nil
 }
