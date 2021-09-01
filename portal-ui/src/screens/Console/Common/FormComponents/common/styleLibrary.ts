@@ -198,6 +198,10 @@ export const searchField = {
     "&:hover": {
       borderColor: "#000",
     },
+    "& .MuiSvgIcon-root": {
+      width: 16,
+      height: 16,
+    },
   },
 };
 

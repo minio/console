@@ -47,14 +47,14 @@ import TenantSecurity from "./TenantSecurity";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import { DeleteIcon } from "../../../../icons";
+import { CircleIcon, DeleteIcon } from "../../../../icons";
 import DeleteTenant from "../ListTenants/DeleteTenant";
 import PodDetails from "./pods/PodDetails";
 import { niceBytes } from "../../../../common/utils";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import EditIcon from "../../../../icons/EditIcon";
 import RefreshIcon from "../../../../icons/RefreshIcon";
-import TenantIcon from "../../../../icons/TenantIcon";
+import TenantsIcon from "../../../../icons/TenantsIcon";
 
 interface ITenantDetailsProps {
   classes: any;
@@ -78,15 +78,31 @@ const styles = (theme: Theme) =>
     ...tenantDetailsStyles,
     redState: {
       color: theme.palette.error.main,
+      "& .MuiSvgIcon-root": {
+        width: 16,
+        height: 16,
+      },
     },
     yellowState: {
       color: theme.palette.warning.main,
+      "& .MuiSvgIcon-root": {
+        width: 16,
+        height: 16,
+      },
     },
     greenState: {
       color: theme.palette.success.main,
+      "& .MuiSvgIcon-root": {
+        width: 16,
+        height: 16,
+      },
     },
     greyState: {
       color: "grey",
+      "& .MuiSvgIcon-root": {
+        width: 16,
+        height: 16,
+      },
     },
     healthStatusIcon: {
       position: "relative",
@@ -255,7 +271,7 @@ const TenantDetails = ({
           <ScreenTitle
             icon={
               <Fragment>
-                <TenantIcon width={40} />
+                <TenantsIcon width={40} />
                 <div className={classes.healthStatusIcon}>
                   {tenantInfo && tenantInfo.status && (
                     <span
@@ -263,7 +279,7 @@ const TenantDetails = ({
                         tenantInfo.status.health_status
                       )}
                     >
-                      ⬤
+                      <CircleIcon />
                     </span>
                   )}
                 </div>
@@ -299,7 +315,7 @@ const TenantDetails = ({
                       editYaml();
                     }}
                   >
-                    <EditIcon width={16} />
+                    <EditIcon />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title={"Refresh"}>

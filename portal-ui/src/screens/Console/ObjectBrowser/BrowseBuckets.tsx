@@ -80,6 +80,11 @@ const styles = (theme: Theme) =>
     bucketName: {
       display: "flex",
       alignItems: "center",
+      "& .MuiSvgIcon-root": {
+        width: 16,
+        height: 16,
+        marginRight: 4,
+      },
     },
     iconBucket: {
       backgroundImage: "url(/images/ob_bucket_clear.svg)",
@@ -200,7 +205,7 @@ const BrowseBuckets = ({
   const renderBucket = (bucketName: string) => {
     return (
       <div className={classes.bucketName}>
-        <BucketsIcon width={16} />
+        <BucketsIcon />
         <span>{bucketName}</span>
       </div>
     );
@@ -275,7 +280,7 @@ const BrowseBuckets = ({
               disableUnderline: true,
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon width={18} />
+                  <SearchIcon />
                 </InputAdornment>
               ),
             }}

@@ -14,35 +14,46 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-import { SvgIcon } from "@material-ui/core";
-import { IIcon } from "./props";
+import * as React from "react";
+import { SvgIcon, SvgIconProps } from "@material-ui/core";
 
-const DashboardIcon = ({ width = 24 }: IIcon) => {
+const DashboardIcon = (props: SvgIconProps) => {
   return (
-    <SvgIcon style={{ width: width, height: width }}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11.863 11.862">
-        <g stroke="#000" strokeWidth={0.1}>
-          <path
-            data-name="Trazado 317"
-            d="M11.019.05H.844A.8.8 0 00.05.844v10.174a.8.8 0 00.794.794h10.175a.8.8 0 00.794-.794V.845a.8.8 0 00-.794-.795zm-.032 10.25a.686.686 0 01-.686.686H1.563a.686.686 0 01-.686-.686V1.563a.686.686 0 01.686-.686H10.3a.686.686 0 01.686.686z"
-          />
-          <path
-            data-name="Trazado 318"
-            d="M4.909 5.308H2.664a.683.683 0 00-.71.651V9.37a.683.683 0 00.71.651h2.245a.683.683 0 00.71-.651V5.959a.683.683 0 00-.71-.651z"
-          />
-          <path
-            data-name="Trazado 319"
-            d="M2.664 1.84h2.244a.71.71 0 01.71.71v1.051a.71.71 0 01-.71.71H2.664a.71.71 0 01-.71-.71V2.55a.71.71 0 01.71-.71z"
-          />
-          <path
-            data-name="Trazado 320"
-            d="M9.462 1.84H7.217a.683.683 0 00-.71.651v3.411a.683.683 0 00.71.651h2.244a.683.683 0 00.71-.651V2.491a.683.683 0 00-.709-.651z"
-          />
-          <path
-            data-name="Trazado 321"
-            d="M7.217 7.551h2.245a.71.71 0 01.71.71v1.051a.71.71 0 01-.71.71H7.217a.71.71 0 01-.71-.71V8.261a.71.71 0 01.71-.71z"
-          />
+    <SvgIcon {...props}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        //
+        //
+        viewBox="0 0 256 256"
+      >
+        <defs>
+          <clipPath id="prefix__a">
+            <path d="M0 0h256v256H0z" />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#prefix__a)">
+          <g stroke="#000" strokeWidth={0.1}>
+            <path
+              data-name="Trazado 317"
+              d="M238.72 0H17.28A17.318 17.318 0 000 17.28V238.7a17.325 17.325 0 0017.28 17.28h221.44A17.318 17.318 0 00256 238.7V17.3A17.312 17.312 0 00238.72 0zm-.7 223.072a14.938 14.938 0 01-14.931 14.938H32.928a14.938 14.938 0 01-14.938-14.938V32.928A14.938 14.938 0 0132.928 17.99h190.15a14.938 14.938 0 0114.932 14.938z"
+            />
+            <path
+              data-name="Trazado 318"
+              d="M105.746 114.442H56.899c-8.525 0-15.456 6.355-15.456 14.169v74.24c0 7.808 6.931 14.17 15.456 14.17h48.851c8.525 0 15.456-6.362 15.456-14.17v-74.24c-.007-7.814-6.935-14.169-15.46-14.169z"
+            />
+            <path
+              data-name="Trazado 319"
+              d="M56.899 38.955h48.845a15.462 15.462 0 0115.455 15.462v22.88a15.462 15.462 0 01-15.462 15.462H56.899a15.456 15.456 0 01-15.46-15.455V54.411a15.456 15.456 0 0115.46-15.456z"
+            />
+            <path
+              data-name="Trazado 320"
+              d="M204.825 38.955h-48.844c-8.525 0-15.456 6.355-15.456 14.169v74.24c0 7.814 6.931 14.17 15.456 14.17h48.844c8.525 0 15.463-6.355 15.463-14.17v-74.24c0-7.814-6.937-14.169-15.463-14.169z"
+            />
+            <path
+              data-name="Trazado 321"
+              d="M155.981 163.25h48.851a15.456 15.456 0 0115.456 15.456v22.88a15.456 15.456 0 01-15.456 15.456h-48.851a15.462 15.462 0 01-15.462-15.462v-22.874a15.456 15.456 0 0115.462-15.456z"
+            />
+          </g>
         </g>
       </svg>
     </SvgIcon>

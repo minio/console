@@ -188,7 +188,7 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
                 disableUnderline: true,
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon width={18} />
+                    <SearchIcon />
                   </InputAdornment>
                 ),
               }}

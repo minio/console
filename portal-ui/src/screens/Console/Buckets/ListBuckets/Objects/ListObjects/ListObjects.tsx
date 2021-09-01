@@ -125,6 +125,8 @@ const styles = (theme: Theme) =>
       display: "flex",
       alignItems: "center",
       "& .MuiSvgIcon-root": {
+        width: 16,
+        height: 16,
         marginRight: 4,
       },
     },
@@ -684,10 +686,10 @@ const ListObjects = ({
 
   const displayName = (element: string) => {
     let elementString = element;
-    let icon = <ObjectBrowserIcon width={16} />;
+    let icon = <ObjectBrowserIcon />;
     // Element is a folder
     if (element.endsWith("/")) {
-      icon = <ObjectBrowserFolderIcon width={16} />;
+      icon = <ObjectBrowserFolderIcon />;
       elementString = element.substr(0, element.length - 1);
     }
 
@@ -954,7 +956,7 @@ const ListObjects = ({
               disableUnderline: true,
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon width={18} />
+                  <SearchIcon />
                 </InputAdornment>
               ),
             }}

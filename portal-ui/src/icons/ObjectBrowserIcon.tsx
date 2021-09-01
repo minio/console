@@ -14,35 +14,44 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-import { SvgIcon } from "@material-ui/core";
-import { IIcon } from "./props";
-const ObjectBrowserIcon = ({ width = 24 }: IIcon) => {
+import * as React from "react";
+import { SvgIcon, SvgIconProps } from "@material-ui/core";
+
+const ObjectBrowserIcon = (props: SvgIconProps) => {
   return (
-    <SvgIcon style={{ width: width, height: width }}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 11.502 13.542">
-        <circle
-          data-name="Elipse 55"
-          cx={1.667}
-          cy={1.667}
-          r={1.667}
-          transform="rotate(-10.901 40.65 -25.855)"
-        />
-        <rect
-          data-name="Rect\xE1ngulo 797"
-          width={3.561}
-          height={3.019}
-          rx={1.51}
-          transform="translate(2.105 3.699)"
-        />
-        <path
-          data-name="Trazado 322"
-          d="M4.076 8.73a.352.352 0 00-.609 0L2.15 11.012a.352.352 0 00.3.527h2.635a.352.352 0 00.3-.527z"
-        />
-        <path
-          data-name="Trazado 323"
-          d="M11.479 4.083a22.083 22.083 0 00-.027-2.536 1.472 1.472 0 00-.943-1.371 2.294 2.294 0 00-.266-.077A5.586 5.586 0 009.18.004c-.62-.018-1.24.019-1.86.017C6.077.016 4.834.038 3.591.043H.911a.913.913 0 00-.912.912v11.674a.913.913 0 00.912.912h9.656a.912.912 0 00.912-.912V6.813c.001-.909-.022-1.822 0-2.73zm-1.107 7.722a.788.788 0 01-.787.788H1.736a.787.787 0 01-.787-.788V1.78a.787.787 0 01.787-.788h5.266v1.347a2 2 0 002 2h1.373zm0-8.339H8.999a1.128 1.128 0 01-1.126-1.127V.992h1.712a.788.788 0 01.787.788z"
-        />
+    <SvgIcon {...props}>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+        <defs>
+          <clipPath id="prefix__a">
+            <path d="M0 0h256v256H0z" />
+          </clipPath>
+        </defs>
+        <g data-name="Object Browser" clipPath="url(#prefix__a)">
+          <g transform="translate(19.001)">
+            <circle
+              data-name="Elipse 55"
+              cx={31.523}
+              cy={31.523}
+              r={31.523}
+              transform="rotate(-10.901 768.453 -488.791)"
+            />
+            <rect
+              data-name="Rect\xE1ngulo 797"
+              width={67.32}
+              height={57.082}
+              rx={1.895}
+              transform="translate(39.804 69.922)"
+            />
+            <path
+              data-name="Trazado 322"
+              d="M77.056 165.044a6.656 6.656 0 00-11.523 0l-24.893 43.14a6.644 6.644 0 005.758 9.967h49.809a6.649 6.649 0 005.756-9.967z"
+            />
+            <path
+              data-name="Trazado 323"
+              d="M217.014 77.196c.375-15.75.949-32.247-.506-47.947-1.1-11.752-6.187-21.735-17.832-25.915a44.135 44.135 0 00-5.014-1.447c-6.561-1.479-13.436-1.6-20.1-1.792-11.725-.342-23.453.361-35.178.313-23.488-.1-46.988.321-70.484.415-2.8.011-5.629.014-8.457.014h-42.2a17.262 17.262 0 00-17.25 17.24v220.688a17.258 17.258 0 0017.25 17.236h182.55a17.246 17.246 0 0017.236-17.236V128.816c0-17.189-.429-34.466-.015-51.62zm-20.93 145.99a14.9 14.9 0 01-14.883 14.893H32.826a14.876 14.876 0 01-14.875-14.893V33.658a14.876 14.876 0 0114.875-14.893h99.549v25.461a37.794 37.794 0 0037.754 37.76h25.955zm0-157.655h-25.955a21.328 21.328 0 01-21.3-21.3V18.77H181.2a14.9 14.9 0 0114.883 14.893z"
+            />
+          </g>
+        </g>
       </svg>
     </SvgIcon>
   );

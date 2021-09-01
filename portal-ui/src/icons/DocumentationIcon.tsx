@@ -14,43 +14,51 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-import { SvgIcon } from "@material-ui/core";
-import { IIcon } from "./props";
+import * as React from "react";
+import { SvgIcon, SvgIconProps } from "@material-ui/core";
 
-const DocumentationIcon = ({ width = 24 }: IIcon) => {
+const DocumentationIcon = (props: SvgIconProps) => {
   return (
-    <SvgIcon style={{ width: width, height: width }}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10.863 10.437">
-        <path
-          data-name="Trazado 356"
-          d="M10.26 0H2.548a.59.59 0 00-.6.575V7.94a.59.59 0 00.6.575h7.712a.59.59 0 00.6-.575V.576a.59.59 0 00-.6-.576zm-.662 6.893a.424.424 0 01-.434.414H3.643a.424.424 0 01-.434-.414V1.621a.424.424 0 01.434-.414h5.521a.424.424 0 01.434.414z"
-        />
-        <rect
-          data-name="Rect\xE1ngulo 801"
-          width={4.828}
-          height={1.207}
-          rx={0.604}
-          transform="translate(4.023 1.987)"
-        />
-        <rect
-          data-name="Rect\xE1ngulo 802"
-          width={4.828}
-          height={1.207}
-          rx={0.604}
-          transform="translate(4.023 3.597)"
-        />
-        <rect
-          data-name="Rect\xE1ngulo 803"
-          width={4.828}
-          height={1.207}
-          rx={0.604}
-          transform="translate(4.023 5.206)"
-        />
-        <path
-          data-name="Trazado 357"
-          d="M6.073 9.23H1.208V3.158a.367.367 0 00-.365-.365H.366a.367.367 0 00-.365.365v6.914a.367.367 0 00.365.365h5.708a.367.367 0 00.365-.365v-.48a.367.367 0 00-.366-.362z"
-        />
+    <SvgIcon {...props}>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+        <defs>
+          <clipPath id="prefix__a">
+            <path d="M0 0h256v256H0z" />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#prefix__a)">
+          <g transform="translate(0 41)">
+            <rect
+              data-name="Rect\xE1ngulo 801"
+              width={117.064}
+              height={25.116}
+              rx={0.908}
+              transform="translate(93.838)"
+            />
+            <rect
+              data-name="Rect\xE1ngulo 821"
+              width={117.064}
+              height={25.116}
+              rx={0.908}
+              transform="translate(93.838 105)"
+            />
+            <rect
+              data-name="Rect\xE1ngulo 822"
+              width={117.064}
+              height={25.116}
+              rx={0.908}
+              transform="translate(93.838 53)"
+            />
+            <path
+              data-name="Trazado 357"
+              d="M143.734 189.393H24.57V36.448a8.842 8.842 0 00-8.648-8.961H8.633A8.844 8.844 0 000 36.448V206.04a8.844 8.844 0 008.633 8.961h135.1a8.847 8.847 0 008.648-8.961v-7.685a8.847 8.847 0 00-8.647-8.962z"
+            />
+          </g>
+          <path
+            data-name="Rect\xE1ngulo 818"
+            d="M66 20v170h170V20H66M61 0h180a15 15 0 0115 15v180a15 15 0 01-15 15H61a15 15 0 01-15-15V15A15 15 0 0161 0z"
+          />
+        </g>
       </svg>
     </SvgIcon>
   );

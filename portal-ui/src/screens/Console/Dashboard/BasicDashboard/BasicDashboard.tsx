@@ -26,7 +26,12 @@ import DnsIcon from "@material-ui/icons/Dns";
 import EgressIcon from "../../../../icons/EgressIcon";
 import ReportedUsageIcon from "../../../../icons/ReportedUsageIcon";
 import ServerInfoCard from "./ServerInfoCard";
-import { BucketsIcon } from "../../../../icons";
+import {
+  BucketsIcon,
+  DashboardIcon,
+  ServersIcon,
+  TotalObjectsIcon,
+} from "../../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -220,7 +225,7 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
             <Paper className={fixedHeightPaper}>
               <Grid container direction="row" alignItems="center">
                 <Grid item className={classes.icon}>
-                  <EgressIcon />
+                  <TotalObjectsIcon />
                 </Grid>
                 <Grid item>
                   <Typography className={classes.elementTitle}>
@@ -239,7 +244,7 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
               <div>
                 <Grid container direction="row" alignItems="center">
                   <Grid item className={classes.icon}>
-                    <DnsIcon />
+                    <ServersIcon />
                   </Grid>
                   <Grid item>
                     <Typography className={classes.elementTitle}>
