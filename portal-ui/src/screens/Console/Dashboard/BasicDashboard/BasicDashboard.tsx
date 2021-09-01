@@ -268,31 +268,31 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
                     />                    
                   ))}
                 </div>
-                
-                <Grid item className={classes.icon}>
+                </div>
+               <div>
+                <Grid container direction="row" alignItems="center">
+                  <Grid item className={classes.icon}>
                     <StorageIcon />
-                  
+                  </Grid>
                   <Grid item>
                     <Typography className={classes.elementTitle}>
                       {" "}
                       Drives
                     </Typography>
+                  </Grid>
+                </Grid>
+              </div>
+                     <div className={classes.cardsContainer}>
                   {serverArray.map((server, index) => (
                    server.drives.map((drive) => (
                      <DriveInfoCard drive={drive}/>
                     ))) )}
+                    </div>
+                     </Paper>
                  </Grid>
-                              </Grid>
-
-                </div>
-             
-            
-           
-            </Paper>
-        
+                </Grid>
       </Grid>
-      </Grid>
-       </Grid>
+     
     </Fragment>
   );
 };
