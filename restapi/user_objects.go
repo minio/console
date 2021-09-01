@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"mime"
 	"net/http"
 	"path/filepath"
 	"regexp"
@@ -104,17 +103,9 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 				contentType := stat.ContentType
 
 				if isPreview {
-					// In case content type was uploaded as octet-stream, we double verify file type
+					// In case content type was uploaded as octet-stream, we double verify content type
 					if stat.ContentType == "application/octet-stream" {
-						extension := strings.Split(filename, ".")
-
-						if len(extension) > 1 {
-							mimeType := mime.TypeByExtension(fmt.Sprintf(".%s", extension[len(extension)-1]))
-
-							if mimeType != "" && mimeType != "application/octet-stream" {
-								contentType = mimeType
-							}
-						}
+						contentType = mimedb.TypeByExtension(filepath.Ext(filename))
 					}
 				}
 
