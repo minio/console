@@ -54,7 +54,7 @@ import {
   removeRouteLevel,
 } from "../../../../ObjectBrowser/actions";
 import { Route } from "../../../../ObjectBrowser/reducers";
-import { download } from "../utils";
+import { download, extensionPreview } from "../utils";
 import { TabPanel } from "../../../../../shared/tabs";
 import history from "../../../../../../history";
 import api from "../../../../../../common/api";
@@ -78,10 +78,11 @@ import AddTagModal from "./AddTagModal";
 import DeleteTagModal from "./DeleteTagModal";
 import SetLegalHoldModal from "./SetLegalHoldModal";
 import ScreenTitle from "../../../../Common/ScreenTitle/ScreenTitle";
-import DescriptionIcon from "@material-ui/icons/Description";
 import EditIcon from "../../../../../../icons/EditIcon";
 import SearchIcon from "../../../../../../icons/SearchIcon";
 import ObjectBrowserIcon from "../../../../../../icons/ObjectBrowserIcon";
+import PreviewFileContent from "../Preview/PreviewFileContent";
+import { BucketObject } from "../ListObjects/types";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -266,6 +267,14 @@ const ObjectDetails = ({
   const objectName = allPathData[allPathData.length - 1];
   const bucketName = allPathData[2];
   const pathInBucket = allPathData.slice(3).join("/");
+
+  const previewObject: BucketObject = {
+    name: actualInfo.name,
+    version_id: actualInfo.version_id || "null",
+    size: parseInt(actualInfo.size || "0"),
+    content_type: "",
+    last_modified: new Date(actualInfo.last_modified),
+  };
 
   useEffect(() => {
     if (loadObjectData) {
@@ -602,6 +611,16 @@ const ObjectDetails = ({
             >
               <ListItemText primary="Versions" />
             </ListItem>
+            <ListItem
+              button
+              selected={selectedTab === 2}
+              onClick={() => {
+                setSelectedTab(2);
+              }}
+              disabled={extensionPreview(objectName) === "none"}
+            >
+              <ListItemText primary="Preview" />
+            </ListItem>
           </List>
         </Grid>
         <Grid item xs={10}>
@@ -808,6 +827,15 @@ const ObjectDetails = ({
                   )}
                 </Grid>
               </Fragment>
+            </TabPanel>
+            <TabPanel index={2} value={selectedTab}>
+              {selectedTab === 2 && (
+                <PreviewFileContent
+                  bucketName={bucketName}
+                  object={previewObject}
+                  isFullscreen
+                />
+              )}
             </TabPanel>
           </Grid>
         </Grid>

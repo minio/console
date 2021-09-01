@@ -26,7 +26,25 @@ const styles = () =>
       border: "0px",
       flex: "1 1 auto",
       width: "100%",
+      height: 250,
       backgroundColor: "transparent",
+      borderRadius: 5,
+
+      "&.image": {
+        height: 500,
+      },
+      "&.text": {
+        height: 500,
+      },
+      "&.audio": {
+        height: 150,
+      },
+      "&.video": {
+        height: 350,
+      },
+      "&.fullHeight": {
+        height: "calc(100vh - 185px)",
+      },
     },
     iframeBase: {
       backgroundColor: "#fff",
@@ -63,21 +81,6 @@ const PreviewFile = ({
 
   const objectType = extensionPreview(object?.name || "");
 
-  let customHeight = 250;
-
-  switch (objectType) {
-    case "image":
-    case "text":
-      customHeight = 500;
-      break;
-    case "audio":
-      customHeight = 150;
-      break;
-    case "video":
-      customHeight = 350;
-      break;
-  }
-
   const iframeLoaded = () => {
     setLoading(false);
   };
@@ -93,9 +96,10 @@ const PreviewFile = ({
         <iframe
           src={path}
           title="File Preview"
-          height={customHeight}
           allowTransparency
-          className={classes.iframeContainer}
+          className={`${classes.iframeContainer} ${
+            isFullscreen ? "fullHeight" : objectType
+          }`}
           onLoad={iframeLoaded}
         >
           File couldn't be loaded. Please try Download instead
