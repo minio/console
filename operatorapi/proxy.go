@@ -87,7 +87,7 @@ func serveProxy(responseWriter http.ResponseWriter, req *http.Request) {
 
 	tenantSchema := "http"
 	tenantPort := fmt.Sprintf(":%d", v2.ConsolePort)
-	if tenant.AutoCert() {
+	if tenant.AutoCert() || tenant.ExternalCert() {
 		tenantSchema = "https"
 		tenantPort = fmt.Sprintf(":%d", v2.ConsoleTLSPort)
 	}

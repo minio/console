@@ -228,7 +228,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
                 disableUnderline: true,
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon width={18} />
+                    <SearchIcon />
                   </InputAdornment>
                 ),
               }}

@@ -94,8 +94,7 @@ type MinioAdmin interface {
 	heal(ctx context.Context, bucket, prefix string, healOpts madmin.HealOpts, clientToken string,
 		forceStart, forceStop bool) (healStart madmin.HealStartSuccess, healTaskStatus madmin.HealTaskStatus, err error)
 	// Service Accounts
-	addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (madmin.Credentials, error)
-	addServiceAccountWithUser(ctx context.Context, policy *iampolicy.Policy, user string) (madmin.Credentials, error)
+	addServiceAccount(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string) (madmin.Credentials, error)
 	listServiceAccounts(ctx context.Context, user string) (madmin.ListServiceAccountsResp, error)
 	deleteServiceAccount(ctx context.Context, serviceAccount string) error
 	// Remote Buckets
@@ -274,20 +273,7 @@ func (ac AdminClient) getLogs(ctx context.Context, node string, lineCnt int, log
 }
 
 // implements madmin.AddServiceAccount()
-func (ac AdminClient) addServiceAccount(ctx context.Context, policy *iampolicy.Policy) (madmin.Credentials, error) {
-	buf, err := json.Marshal(policy)
-	if err != nil {
-		return madmin.Credentials{}, err
-	}
-	return ac.Client.AddServiceAccount(ctx, madmin.AddServiceAccountReq{
-		Policy:     buf,
-		TargetUser: "",
-		AccessKey:  "",
-		SecretKey:  "",
-	})
-}
-
-func (ac AdminClient) addServiceAccountWithUser(ctx context.Context, policy *iampolicy.Policy, user string) (madmin.Credentials, error) {
+func (ac AdminClient) addServiceAccount(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string) (madmin.Credentials, error) {
 	buf, err := json.Marshal(policy)
 	if err != nil {
 		return madmin.Credentials{}, err
@@ -295,8 +281,8 @@ func (ac AdminClient) addServiceAccountWithUser(ctx context.Context, policy *iam
 	return ac.Client.AddServiceAccount(ctx, madmin.AddServiceAccountReq{
 		Policy:     buf,
 		TargetUser: user,
-		AccessKey:  "",
-		SecretKey:  "",
+		AccessKey:  accessKey,
+		SecretKey:  secretKey,
 	})
 }
 

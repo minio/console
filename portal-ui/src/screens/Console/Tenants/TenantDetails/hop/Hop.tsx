@@ -93,7 +93,21 @@ const Hop = ({ classes, match }: IHopSimple) => {
                   consoleFrame.current !== null &&
                   consoleFrame.current.contentDocument !== null
                 ) {
-                  consoleFrame.current.contentDocument.location.reload(true);
+                  const loc =
+                    consoleFrame.current.contentDocument.location.toString();
+
+                  let add = "&";
+
+                  if (loc.indexOf("?") < 0) {
+                    add = `?`;
+                  }
+
+                  if (loc.indexOf("cp=y") < 0) {
+                    const next = `${loc}${add}cp=y`;
+                    consoleFrame.current.contentDocument.location.replace(next);
+                  } else {
+                    consoleFrame.current.contentDocument.location.reload(true);
+                  }
                 }
               }}
             >
@@ -124,7 +138,7 @@ const Hop = ({ classes, match }: IHopSimple) => {
           ref={consoleFrame}
           className={classes.iframeStyle}
           title={"metrics"}
-          src={`/api/proxy/${tenantNamespace}/${tenantName}/`}
+          src={`/api/proxy/${tenantNamespace}/${tenantName}/?cp=y`}
           onLoad={(val) => {
             setLoading(false);
           }}

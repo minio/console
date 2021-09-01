@@ -14,18 +14,24 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-import SvgIcon from "@material-ui/core/SvgIcon";
-import { IIcon } from "./props";
+import * as React from "react";
+import { SvgIcon, SvgIconProps } from "@material-ui/core";
 
-const DownloadIcon = ({ width = 24 }: IIcon) => {
+const DownloadIcon = (props: SvgIconProps) => {
   return (
-    <SvgIcon style={{ width: width, height: width }}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14.368 14.146">
-        <path
-          data-name="Trazado 362"
-          d="M0 5.685a.921.921 0 011.842 0v6.618h10.684V5.685a.921.921 0 011.842 0v7.54a.921.921 0 01-.921.921H.921A.922.922 0 010 13.225v-7.54zM8.105.908a.921.921 0 00-1.842 0v7.7L5.22 7.564a.921.921 0 00-1.3 1.3l2.61 2.611a.922.922 0 001.314 0l2.61-2.611a.921.921 0 00-1.3-1.3L8.111 8.608v-7.7z"
-        />
+    <SvgIcon {...props}>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+        <defs>
+          <clipPath id="prefix__a">
+            <path d="M0 0h256v256H0z" />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#prefix__a)">
+          <path
+            data-name="Trazado 362"
+            d="M0 104.121c0-21.583 32.822-21.583 32.822 0v117.917h190.356V104.121c0-21.583 32.822-21.583 32.822 0v134.338a16.416 16.416 0 01-16.4 16.413H16.415A16.421 16.421 0 01.002 238.459V104.121zm144.415-85.112c0-21.574-32.826-21.574-32.826 0v137.162l-18.591-18.6c-15.263-15.267-38.474 7.945-23.211 23.211l46.51 46.518a16.427 16.427 0 0023.406 0l46.507-46.518c15.266-15.266-7.945-38.478-23.208-23.211l-18.587 18.6V19.009z"
+          />
+        </g>
       </svg>
     </SvgIcon>
   );
