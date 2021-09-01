@@ -47,7 +47,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ScreenTitle from "../../Common/ScreenTitle/ScreenTitle";
 import { IconButton, Tooltip } from "@material-ui/core";
-import { BucketsIcon, DeleteIcon } from "../../../../icons";
+import { BucketsIcon, DeleteIcon, FolderIcon } from "../../../../icons";
 import DeleteBucket from "../ListBuckets/DeleteBucket";
 import AccessRulePanel from "./AccessRulePanel";
 import RefreshIcon from "../../../../icons/RefreshIcon";
@@ -226,7 +226,7 @@ const BucketDetails = ({
   ]);
 
   useEffect(() => {
-    let matchURL = match.params ? match.params["0"] : "summary";
+    let matchURL = match.params ? match.params["0"] : "browse";
 
     if (!matchURL) {
       matchURL = "";
@@ -283,22 +283,22 @@ const BucketDetails = ({
 
     switch (newTab) {
       case "events":
-        mainRoute += "/events";
+        mainRoute += "/admin/events";
         break;
       case "replication":
-        mainRoute += "/replication";
+        mainRoute += "/admin/replication";
         break;
       case "lifecycle":
-        mainRoute += "/lifecycle";
+        mainRoute += "/admin/lifecycle";
         break;
       case "access":
-        mainRoute += "/access";
+        mainRoute += "/admin/access";
         break;
       case "prefix":
-        mainRoute += "/prefix";
+        mainRoute += "/admin/prefix";
         break;
       default:
-        mainRoute += "/summary";
+        mainRoute += "/admin/summary";
     }
 
     setBucketDetailsTab(newTab);
@@ -310,6 +310,10 @@ const BucketDetails = ({
     if (refresh) {
       history.push("/buckets");
     }
+  };
+
+  const openBucketBrowser = () => {
+    history.push(`/buckets/${bucketName}/browse`);
   };
 
   return (
@@ -329,6 +333,20 @@ const BucketDetails = ({
             <Link to={"/buckets"} className={classes.breadcrumLink}>
               Buckets
             </Link>
+          </Fragment>
+        }
+        actions={
+          <Fragment>
+            <Tooltip title={"Browse Bucket"}>
+              <IconButton
+                color="primary"
+                aria-label="Browse Bucket"
+                component="span"
+                onClick={openBucketBrowser}
+              >
+                <FolderIcon />
+              </IconButton>
+            </Tooltip>
           </Fragment>
         }
       />
@@ -443,38 +461,38 @@ const BucketDetails = ({
           <Router history={history}>
             <Switch>
               <Route
-                path="/buckets/:bucketName/summary"
+                path="/buckets/:bucketName/admin/summary"
                 component={BucketSummaryPanel}
               />
               <Route
-                path="/buckets/:bucketName/events"
+                path="/buckets/:bucketName/admin/events"
                 component={BucketEventsPanel}
               />
               {distributedSetup && (
                 <Route
-                  path="/buckets/:bucketName/replication"
+                  path="/buckets/:bucketName/admin/replication"
                   component={BucketReplicationPanel}
                 />
               )}
               {distributedSetup && (
                 <Route
-                  path="/buckets/:bucketName/lifecycle"
+                  path="/buckets/:bucketName/admin/lifecycle"
                   component={BucketLifecyclePanel}
                 />
               )}
 
               <Route
-                path="/buckets/:bucketName/access"
+                path="/buckets/:bucketName/admin/access"
                 component={AccessDetailsPanel}
               />
               <Route
-                path="/buckets/:bucketName/prefix"
+                path="/buckets/:bucketName/admin/prefix"
                 component={AccessRulePanel}
               />
               <Route
                 path="/buckets/:bucketName"
                 component={() => (
-                  <Redirect to={`/buckets/${bucketName}/summary`} />
+                  <Redirect to={`/buckets/${bucketName}/admin/summary`} />
                 )}
               />
             </Switch>

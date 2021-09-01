@@ -13,19 +13,10 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import history from "../../../history";
-
 import {
-  OBJECT_BROWSER_ADD_ROUTE,
-  OBJECT_BROWSER_CREATE_FOLDER,
-  OBJECT_BROWSER_REMOVE_ROUTE_LEVEL,
-  OBJECT_BROWSER_RESET_ROUTES_LIST,
-  OBJECT_BROWSER_SET_ALL_ROUTES,
-  OBJECT_BROWSER_SET_LAST_AS_FILE,
-  OBJECT_BROWSER_DOWNLOAD_FILE_LOADER,
-  OBJECT_BROWSER_DOWNLOADED_FILE,
   REWIND_SET_ENABLE,
   REWIND_RESET_REWIND,
+  REWIND_FILE_MODE_ENABLED,
   ObjectBrowserActionTypes,
 } from "./actions";
 
@@ -42,18 +33,13 @@ export interface RewindItem {
 }
 
 export interface ObjectBrowserState {
-  routesList: Route[];
-  downloadingFiles: string[];
+  fileMode: boolean;
   rewind: RewindItem;
 }
 
 export interface ObjectBrowserReducer {
   objectBrowser: ObjectBrowserState;
 }
-
-const initialRoute = [
-  { route: "/object-browser", label: "All Buckets", type: "path" },
-];
 
 const defaultRewind = {
   rewindEnabled: false,
@@ -62,8 +48,7 @@ const defaultRewind = {
 };
 
 const initialState: ObjectBrowserState = {
-  routesList: initialRoute,
-  downloadingFiles: [],
+  fileMode: false,
   rewind: {
     ...defaultRewind,
   },
@@ -74,107 +59,6 @@ export function objectBrowserReducer(
   action: ObjectBrowserActionTypes
 ): ObjectBrowserState {
   switch (action.type) {
-    case OBJECT_BROWSER_ADD_ROUTE:
-      const newRouteList = [
-        ...state.routesList,
-        { route: action.route, label: action.label, type: action.routeType },
-      ];
-      history.push(action.route);
-
-      return { ...state, routesList: newRouteList };
-    case OBJECT_BROWSER_RESET_ROUTES_LIST:
-      return {
-        ...state,
-        routesList: [...initialRoute],
-      };
-    case OBJECT_BROWSER_REMOVE_ROUTE_LEVEL:
-      const indexOfTopPath =
-        state.routesList.findIndex(
-          (element) => element.route === action.toRoute
-        ) + 1;
-      const newRouteLevels = state.routesList.slice(0, indexOfTopPath);
-
-      return {
-        ...state,
-        routesList: newRouteLevels,
-      };
-    case OBJECT_BROWSER_SET_ALL_ROUTES:
-      const splitRoutes = action.currentRoute.split("/");
-      const routesArray: Route[] = [];
-      let initRoute = initialRoute[0].route;
-
-      splitRoutes.forEach((route) => {
-        if (route !== "" && route !== "object-browser") {
-          initRoute = `${initRoute}/${route}`;
-
-          routesArray.push({
-            route: initRoute,
-            label: route,
-            type: "path",
-          });
-        }
-      });
-
-      const newSetOfRoutes = [...initialRoute, ...routesArray];
-
-      return {
-        ...state,
-        routesList: newSetOfRoutes,
-      };
-    case OBJECT_BROWSER_CREATE_FOLDER:
-      const newFoldersRoutes = [...state.routesList];
-      let lastRoute = state.routesList[state.routesList.length - 1].route;
-
-      const splitElements = action.newRoute.split("/");
-
-      splitElements.forEach((element) => {
-        const folderTrim = element.trim();
-        if (folderTrim !== "") {
-          lastRoute = `${lastRoute}/${folderTrim}`;
-
-          const newItem = { route: lastRoute, label: folderTrim, type: "path" };
-          newFoldersRoutes.push(newItem);
-        }
-      });
-
-      history.push(lastRoute);
-
-      return {
-        ...state,
-        routesList: newFoldersRoutes,
-      };
-    case OBJECT_BROWSER_SET_LAST_AS_FILE:
-      const currentList = state.routesList;
-      const lastItem = currentList.slice(-1)[0];
-
-      if (lastItem.type === "path") {
-        lastItem.type = "file";
-      }
-
-      const newList = [...currentList.slice(0, -1), lastItem];
-
-      return {
-        ...state,
-        routesList: newList,
-      };
-    case OBJECT_BROWSER_DOWNLOAD_FILE_LOADER:
-      const actualFiles = [...state.downloadingFiles];
-
-      actualFiles.push(action.path);
-
-      return {
-        ...state,
-        downloadingFiles: [...actualFiles],
-      };
-    case OBJECT_BROWSER_DOWNLOADED_FILE:
-      const downloadingFiles = state.downloadingFiles.filter(
-        (item) => item !== action.path
-      );
-
-      return {
-        ...state,
-        downloadingFiles: [...downloadingFiles],
-      };
     case REWIND_SET_ENABLE:
       const rewindSetEnabled = {
         ...state.rewind,
@@ -190,6 +74,8 @@ export function objectBrowserReducer(
         dateToRewind: null,
       };
       return { ...state, rewind: resetItem };
+    case REWIND_FILE_MODE_ENABLED:
+      return { ...state, fileMode: action.status };
     default:
       return state;
   }

@@ -39,7 +39,6 @@ import {
   objectBrowserCommon,
   searchField,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import PageHeader from "../../../../Common/PageHeader/PageHeader";
 import {
   Badge,
   Button,
@@ -50,12 +49,8 @@ import {
 import * as reactMoment from "react-moment";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import {
-  addRoute,
-  fileDownloadStarted,
-  fileIsBeingPrepared,
   resetRewind,
-  setAllRoutes,
-  setLastAsFile,
+  setFileModeEnabled,
 } from "../../../../ObjectBrowser/actions";
 import {
   ObjectBrowserReducer,
@@ -179,20 +174,17 @@ const styles = (theme: Theme) =>
 interface IListObjectsProps {
   classes: any;
   match: any;
-  addRoute: (param1: string, param2: string, param3: string) => any;
-  setAllRoutes: (path: string) => any;
+  history: any;
   routesList: Route[];
   downloadingFiles: string[];
-  setLastAsFile: () => any;
   rewindEnabled: boolean;
   rewindDate: any;
   bucketToRewind: string;
   setLoadingProgress: typeof setLoadingProgress;
   setSnackBarMessage: typeof setSnackBarMessage;
   setErrorSnackMessage: typeof setErrorSnackMessage;
-  fileIsBeingPrepared: typeof fileIsBeingPrepared;
-  fileDownloadStarted: typeof fileDownloadStarted;
   resetRewind: typeof resetRewind;
+  setFileModeEnabled: typeof setFileModeEnabled;
 }
 
 function useInterval(callback: any, delay: number) {
@@ -223,30 +215,25 @@ const defLoading = <Typography component="h3">Loading...</Typography>;
 const ListObjects = ({
   classes,
   match,
-  addRoute,
-  setAllRoutes,
-  routesList,
+  history,
   downloadingFiles,
   rewindEnabled,
   rewindDate,
   bucketToRewind,
-  setLastAsFile,
   setLoadingProgress,
   setSnackBarMessage,
   setErrorSnackMessage,
-  fileIsBeingPrepared,
-  fileDownloadStarted,
   resetRewind,
+  setFileModeEnabled,
 }: IListObjectsProps) => {
   const [records, setRecords] = useState<BucketObject[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [rewind, setRewind] = useState<RewindObject[]>([]);
-  const [loadingRewind, setLoadingRewind] = useState<boolean>(true);
+  const [loadingRewind, setLoadingRewind] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [deleteMultipleOpen, setDeleteMultipleOpen] = useState<boolean>(false);
   const [createFolderOpen, setCreateFolderOpen] = useState<boolean>(false);
   const [selectedObject, setSelectedObject] = useState<string>("");
-  const [selectedBucket, setSelectedBucket] = useState<string>("");
   const [filterObjects, setFilterObjects] = useState<string>("");
   const [loadingStartTime, setLoadingStartTime] = useState<number>(0);
   const [loadingMessage, setLoadingMessage] =
@@ -260,9 +247,8 @@ const ListObjects = ({
     null
   );
 
-  const internalPaths = match.params[0];
-
-  const bucketName = match.params["bucket"];
+  const internalPaths = get(match.params, "subpaths", "");
+  const bucketName = match.params["bucketName"];
 
   const fileUpload = useRef<HTMLInputElement>(null);
 
@@ -354,55 +340,10 @@ const ListObjects = ({
   ]);
 
   useEffect(() => {
-    const internalPaths = match.params[0];
+    setLoading(true);
+  }, [internalPaths]);
 
-    const verifyIfIsFile = () => {
-      if (rewindEnabled) {
-        const rewindParsed = rewindDate.toISOString();
-        api
-          .invoke(
-            "GET",
-            `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}?prefix=${
-              internalPaths ? `${internalPaths}/` : ""
-            }`
-          )
-          .then((res: RewindObjectList) => {
-            //It is a file since it has elements in the object, setting file flag and waiting for component mount
-            if (res.objects === null) {
-              setLastAsFile();
-            } else {
-              // It is a folder, we remove loader
-              setLoadingRewind(false);
-              setLoading(false);
-            }
-          })
-          .catch((err: ErrorResponseHandler) => {
-            setLoadingRewind(false);
-            setLoading(false);
-            setErrorSnackMessage(err);
-          });
-      } else {
-        api
-          .invoke(
-            "GET",
-            `/api/v1/buckets/${bucketName}/objects?prefix=${internalPaths}`
-          )
-          .then((res: BucketObjectsList) => {
-            //It is a file since it has elements in the object, setting file flag and waiting for component mount
-            if (res.objects !== null) {
-              setLastAsFile();
-            } else {
-              // It is a folder, we remove loader
-              setLoading(false);
-            }
-          })
-          .catch((err: ErrorResponseHandler) => {
-            setLoading(false);
-            setErrorSnackMessage(err);
-          });
-      }
-    };
-
+  useEffect(() => {
     if (loading) {
       let extraPath = "";
       if (internalPaths) {
@@ -416,8 +357,6 @@ const ListObjects = ({
       api
         .invoke("GET", `/api/v1/buckets/${bucketName}/objects${extraPath}`)
         .then((res: BucketObjectsList) => {
-          setSelectedBucket(bucketName);
-
           const records: BucketObject[] = res.objects || [];
           const folders: BucketObject[] = [];
           const files: BucketObject[] = [];
@@ -437,10 +376,68 @@ const ListObjects = ({
           setRecords(recordsInElement);
           // In case no objects were retrieved, We check if item is a file
           if (!res.objects && extraPath !== "") {
-            verifyIfIsFile();
-            return;
+            if (rewindEnabled) {
+              const rewindParsed = rewindDate.toISOString();
+              api
+                .invoke(
+                  "GET",
+                  `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}?prefix=${
+                    internalPaths ? `${internalPaths}/` : ""
+                  }`
+                )
+                .then((res: RewindObjectList) => {
+                  //It is a file since it has elements in the object, setting file flag and waiting for component mount
+                  if (res.objects === null) {
+                    setFileModeEnabled(true);
+                    setLoadingRewind(false);
+                    setLoading(false);
+                  } else {
+                    // It is a folder, we remove loader
+                    setLoadingRewind(false);
+                    setLoading(false);
+                    setFileModeEnabled(false);
+                  }
+                })
+                .catch((err: ErrorResponseHandler) => {
+                  setLoadingRewind(false);
+                  setLoading(false);
+                  setErrorSnackMessage(err);
+                });
+            } else {
+              api
+                .invoke(
+                  "GET",
+                  `/api/v1/buckets/${bucketName}/objects?prefix=${internalPaths}`
+                )
+                .then((res: BucketObjectsList) => {
+                  //It is a file since it has elements in the object, setting file flag and waiting for component mount
+                  if (!res.objects) {
+                    // It is a folder, we remove loader
+                    setFileModeEnabled(false);
+                    setLoading(false);
+                  } else {
+                    // This is an empty folder.
+                    if (
+                      res.objects.length === 1 &&
+                      res.objects[0].name.endsWith("/")
+                    ) {
+                      setFileModeEnabled(false);
+                    } else {
+                      setFileModeEnabled(true);  
+                    }
+
+                    setLoading(false);
+                  }
+                })
+                .catch((err: ErrorResponseHandler) => {
+                  setLoading(false);
+                  setErrorSnackMessage(err);
+                });
+            }
+          } else {
+            setFileModeEnabled(false);
+            setLoading(false);
           }
-          setLoading(false);
         })
         .catch((err: ErrorResponseHandler) => {
           setLoading(false);
@@ -450,23 +447,13 @@ const ListObjects = ({
   }, [
     loading,
     match,
-    setLastAsFile,
     setErrorSnackMessage,
     bucketName,
     rewindEnabled,
     rewindDate,
+    internalPaths,
+    setFileModeEnabled,
   ]);
-
-  useEffect(() => {
-    const url = get(match, "url", "/object-browser");
-    if (url !== routesList[routesList.length - 1].route) {
-      setAllRoutes(url);
-    }
-  }, [match, routesList, setAllRoutes]);
-
-  useEffect(() => {
-    setLoading(true);
-  }, [routesList, setLoading]);
 
   const closeDeleteModalAndRefresh = (refresh: boolean) => {
     setDeleteOpen(false);
@@ -580,10 +567,6 @@ const ListObjects = ({
     setSelectedObject(object);
   };
 
-  const removeDownloadAnimation = (path: string) => {
-    fileDownloadStarted(path);
-  };
-
   const displayDeleteFlag = (state: boolean) => {
     return state ? "Yes" : "No";
   };
@@ -596,16 +579,11 @@ const ListObjects = ({
       );
     }
 
-    download(
-      selectedBucket,
-      object.name,
-      object.version_id,
-      removeDownloadAnimation
-    );
+    download(bucketName, object.name, object.version_id);
   };
 
   const openPath = (idElement: string) => {
-    const currentPath = get(match, "url", "/object-browser");
+    const currentPath = get(match, "url", `/buckets/${bucketName}`);
 
     // Element is a folder, we redirect to it
     if (idElement.endsWith("/")) {
@@ -615,7 +593,7 @@ const ListObjects = ({
       const lastIndex = idElementClean.length - 1;
       const newPath = `${currentPath}/${idElementClean[lastIndex]}`;
 
-      addRoute(newPath, idElementClean[lastIndex], "path");
+      history.push(newPath);
       return;
     }
     // Element is a file. we open details here
@@ -623,24 +601,12 @@ const ListObjects = ({
     const fileName = pathInArray[pathInArray.length - 1];
     const newPath = `${currentPath}/${fileName}`;
 
-    addRoute(newPath, fileName, "file");
+    history.push(newPath);
     return;
   };
 
   const uploadObject = (e: any): void => {
-    // Handle of deeper routes.
-    const currentPath = routesList[routesList.length - 1].route;
-    const splitPaths = currentPath
-      .split("/")
-      .filter((item) => item.trim() !== "");
-
-    let path = "";
-
-    if (splitPaths.length > 2) {
-      path = `${splitPaths.slice(2).join("/")}/`;
-    }
-
-    upload(e, selectedBucket, path);
+    upload(e, bucketName, `${internalPaths}/`);
   };
 
   const openPreview = (fileObject: BucketObject) => {
@@ -798,23 +764,16 @@ const ListObjects = ({
     },
   ];
 
-  let pageTitle = "Folder";
+  const ccPath = internalPaths.split("/").pop();
 
-  if (match) {
-    if ("bucket" in match.params) {
-      pageTitle = match.params["bucket"];
-    }
-    if ("0" in match.params) {
-      pageTitle = match.params["0"].split("/").pop();
-    }
-  }
+  const pageTitle = ccPath !== "" ? ccPath : "/";
 
   return (
     <React.Fragment>
       {deleteOpen && (
         <DeleteObject
           deleteOpen={deleteOpen}
-          selectedBucket={selectedBucket}
+          selectedBucket={bucketName}
           selectedObject={selectedObject}
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
@@ -822,7 +781,7 @@ const ListObjects = ({
       {deleteMultipleOpen && (
         <DeleteMultipleObjects
           deleteOpen={deleteMultipleOpen}
-          selectedBucket={selectedBucket}
+          selectedBucket={bucketName}
           selectedObjects={selectedObjects}
           closeDeleteModalAndRefresh={closeDeleteMultipleModalAndRefresh}
         />
@@ -830,7 +789,8 @@ const ListObjects = ({
       {createFolderOpen && (
         <CreateFolderModal
           modalOpen={createFolderOpen}
-          folderName={routesList[routesList.length - 1].route}
+          bucketName={bucketName}
+          folderName={internalPaths}
           onClose={closeAddFolderModal}
         />
       )}
@@ -850,8 +810,7 @@ const ListObjects = ({
         />
       )}
 
-      <PageHeader label="Object Browser" />
-      <Grid container className={classes.container}>
+      <Grid container>
         <Grid item xs={12}>
           <ScreenTitle
             icon={
@@ -862,7 +821,10 @@ const ListObjects = ({
             title={pageTitle}
             subTitle={
               <Fragment>
-                <BrowserBreadcrumbs title={false} />
+                <BrowserBreadcrumbs
+                  bucketName={bucketName}
+                  internalPaths={internalPaths}
+                />
               </Fragment>
             }
             actions={
@@ -983,12 +945,13 @@ const ListObjects = ({
             columns={rewindEnabled ? rewindModeColumns : listModeColumns}
             isLoading={rewindEnabled ? loadingRewind : loading}
             loadingMessage={loadingMessage}
-            entityName="Rewind Objects"
+            entityName="Objects"
             idField="name"
             records={rewindEnabled ? rewind : filteredRecords}
             customPaperHeight={classes.browsePaper}
             selectedItems={selectedObjects}
             onSelect={selectListObjects}
+            customEmptyMessage={`This location is empty${!rewindEnabled ? ", please try uploading a new file" : ""}`}
           />
         </Grid>
       </Grid>
@@ -1005,14 +968,10 @@ const mapStateToProps = ({ objectBrowser }: ObjectBrowserReducer) => ({
 });
 
 const mapDispatchToProps = {
-  addRoute,
-  setAllRoutes,
-  setLastAsFile,
   setLoadingProgress,
   setSnackBarMessage,
   setErrorSnackMessage,
-  fileIsBeingPrepared,
-  fileDownloadStarted,
+  setFileModeEnabled,
   resetRewind,
 };
 

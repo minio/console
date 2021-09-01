@@ -21,13 +21,15 @@ import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/I
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
 import { connect } from "react-redux";
-import { createFolder } from "../../../../ObjectBrowser/actions";
+import { setFileModeEnabled } from "../../../../ObjectBrowser/actions";
+import history from "../../../../../../history";
 
 interface ICreateFolder {
   classes: any;
   modalOpen: boolean;
+  bucketName: string;
   folderName: string;
-  createFolder: (newFolder: string) => any;
+  setFileModeEnabled: typeof setFileModeEnabled;
   onClose: () => any;
 }
 
@@ -46,22 +48,27 @@ const styles = (theme: Theme) =>
 const CreateFolderModal = ({
   modalOpen,
   folderName,
+  bucketName,
   onClose,
-  createFolder,
+  setFileModeEnabled,
   classes,
 }: ICreateFolder) => {
   const [pathUrl, setPathUrl] = useState("");
+
+  const currentPath = `${bucketName}/${folderName}`;
 
   const resetForm = () => {
     setPathUrl("");
   };
 
   const createProcess = () => {
-    createFolder(pathUrl);
+    const newPath = `/buckets/${bucketName}/browse/${folderName !== "" ? `${folderName}/` : ""}${pathUrl}`;
+
+    history.push(newPath);
+
+    setFileModeEnabled(false);
     onClose();
   };
-
-  const folderTruncated = folderName.split("/").slice(2).join("/");
 
   return (
     <React.Fragment>
@@ -72,7 +79,7 @@ const CreateFolderModal = ({
       >
         <Grid container>
           <h3 className={classes.pathLabel}>
-            Current Path: {folderTruncated}/
+            Current Path: {currentPath}
           </h3>
           <Grid item xs={12}>
             <InputBoxWrapper
@@ -112,7 +119,7 @@ const CreateFolderModal = ({
 };
 
 const mapDispatchToProps = {
-  createFolder,
+  setFileModeEnabled,
 };
 
 const connector = connect(null, mapDispatchToProps);

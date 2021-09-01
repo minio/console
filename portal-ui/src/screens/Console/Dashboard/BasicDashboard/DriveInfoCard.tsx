@@ -87,14 +87,14 @@ interface ICardProps {
 }
 
 const DriveInfoCard = ({ classes, drive }: ICardProps) => {
-  console.log(drive);
   const driveStatusToClass = (health_status: string) => {
     switch (health_status) {
       case "offline":
         return classes.redState;
       case "ok":
         return classes.greenState;
-        deefault: return classes.greyState;
+      default:
+        return classes.greyState;
     }
   };
 

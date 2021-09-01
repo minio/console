@@ -14,61 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export const OBJECT_BROWSER_ADD_ROUTE = "OBJECT_BROWSER/ADD_ROUTE";
-export const OBJECT_BROWSER_RESET_ROUTES_LIST =
-  "OBJECT_BROWSER/RESET_ROUTES_LIST";
-export const OBJECT_BROWSER_REMOVE_ROUTE_LEVEL =
-  "OBJECT_BROWSER/REMOVE_ROUTE_LEVEL";
-export const OBJECT_BROWSER_SET_ALL_ROUTES = "OBJECT_BROWSER/SET_ALL_ROUTES";
-export const OBJECT_BROWSER_CREATE_FOLDER = "OBJECT_BROWSER/CREATE_FOLDER";
-export const OBJECT_BROWSER_SET_LAST_AS_FILE =
-  "OBJECT_BROWSER/SET_LAST_AS_FILE";
-export const OBJECT_BROWSER_DOWNLOAD_FILE_LOADER =
-  "OBJECT_BROWSER/DOWNLOAD_FILE_LOADER";
-export const OBJECT_BROWSER_DOWNLOADED_FILE = "OBJECT_BROWSER/DOWNLOADED_FILE";
 export const REWIND_SET_ENABLE = "REWIND/SET_ENABLE";
 export const REWIND_RESET_REWIND = "REWIND/RESET_REWIND";
 
-interface AddRouteAction {
-  type: typeof OBJECT_BROWSER_ADD_ROUTE;
-  route: string;
-  label: string;
-  routeType: string;
-}
-
-interface ResetRoutesList {
-  type: typeof OBJECT_BROWSER_RESET_ROUTES_LIST;
-  reset: boolean;
-}
-
-interface RemoveRouteLevel {
-  type: typeof OBJECT_BROWSER_REMOVE_ROUTE_LEVEL;
-  toRoute: string;
-}
-
-interface SetAllRoutes {
-  type: typeof OBJECT_BROWSER_SET_ALL_ROUTES;
-  currentRoute: string;
-}
-
-interface CreateFolder {
-  type: typeof OBJECT_BROWSER_CREATE_FOLDER;
-  newRoute: string;
-}
-
-interface SetLastAsFile {
-  type: typeof OBJECT_BROWSER_SET_LAST_AS_FILE;
-}
-
-interface SetFileDownload {
-  type: typeof OBJECT_BROWSER_DOWNLOAD_FILE_LOADER;
-  path: string;
-}
-
-interface FileDownloaded {
-  type: typeof OBJECT_BROWSER_DOWNLOADED_FILE;
-  path: string;
-}
+export const REWIND_FILE_MODE_ENABLED = "BUCKET_BROWSER/FILE_MODE_ENABLED";
 
 interface RewindSetEnabled {
   type: typeof REWIND_SET_ENABLE;
@@ -81,74 +30,15 @@ interface RewindReset {
   type: typeof REWIND_RESET_REWIND;
 }
 
+interface FileModeEnabled {
+  type: typeof REWIND_FILE_MODE_ENABLED;
+  status: boolean;
+}
+
 export type ObjectBrowserActionTypes =
-  | AddRouteAction
-  | ResetRoutesList
-  | RemoveRouteLevel
-  | SetAllRoutes
-  | CreateFolder
-  | SetLastAsFile
-  | SetFileDownload
-  | FileDownloaded
   | RewindSetEnabled
-  | RewindReset;
-
-export const addRoute = (route: string, label: string, routeType: string) => {
-  return {
-    type: OBJECT_BROWSER_ADD_ROUTE,
-    route,
-    label,
-    routeType,
-  };
-};
-
-export const resetRoutesList = (reset: boolean) => {
-  return {
-    type: OBJECT_BROWSER_RESET_ROUTES_LIST,
-    reset,
-  };
-};
-
-export const removeRouteLevel = (toRoute: string) => {
-  return {
-    type: OBJECT_BROWSER_REMOVE_ROUTE_LEVEL,
-    toRoute,
-  };
-};
-
-export const setAllRoutes = (currentRoute: string) => {
-  return {
-    type: OBJECT_BROWSER_SET_ALL_ROUTES,
-    currentRoute,
-  };
-};
-
-export const createFolder = (newRoute: string) => {
-  return {
-    type: OBJECT_BROWSER_CREATE_FOLDER,
-    newRoute,
-  };
-};
-
-export const setLastAsFile = () => {
-  return {
-    type: OBJECT_BROWSER_SET_LAST_AS_FILE,
-  };
-};
-
-export const fileIsBeingPrepared = (path: string) => {
-  return {
-    type: OBJECT_BROWSER_DOWNLOAD_FILE_LOADER,
-    path,
-  };
-};
-
-export const fileDownloadStarted = (path: string) => {
-  return {
-    type: OBJECT_BROWSER_DOWNLOADED_FILE,
-    path,
-  };
-};
+  | RewindReset
+  | FileModeEnabled;
 
 export const setRewindEnable = (
   state: boolean,
@@ -166,5 +56,12 @@ export const setRewindEnable = (
 export const resetRewind = () => {
   return {
     type: REWIND_RESET_REWIND,
+  };
+};
+
+export const setFileModeEnabled = (status: boolean) => {
+  return {
+    type: REWIND_FILE_MODE_ENABLED,
+    status,
   };
 };

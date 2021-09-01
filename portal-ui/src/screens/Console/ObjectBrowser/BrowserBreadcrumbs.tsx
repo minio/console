@@ -21,8 +21,7 @@ import Moment from "react-moment";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core";
 import { createStyles, Theme } from "@material-ui/core/styles";
-import { removeRouteLevel } from "./actions";
-import { ObjectBrowserState, Route } from "./reducers";
+import { ObjectBrowserState } from "./reducers";
 import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrary";
 import { Link } from "react-router-dom";
 
@@ -32,11 +31,10 @@ interface ObjectBrowserReducer {
 
 interface IObjectBrowser {
   classes: any;
-  objectsList: Route[];
-  rewindEnabled: boolean;
-  rewindDate: any;
-  removeRouteLevel: (path: string) => any;
-  title?: boolean;
+  bucketName: string;
+  internalPaths: string;
+  rewindEnabled?: boolean;
+  rewindDate?: any;
 }
 
 const styles = (theme: Theme) =>
@@ -46,36 +44,44 @@ const styles = (theme: Theme) =>
 
 const BrowserBreadcrumbs = ({
   classes,
-  objectsList,
+  bucketName,
+  internalPaths,
   rewindEnabled,
   rewindDate,
-  removeRouteLevel,
-  title = true,
 }: IObjectBrowser) => {
-  const listBreadcrumbs = objectsList.map((objectItem, index) => {
-    return (
-      <React.Fragment key={`breadcrumbs-${index.toString()}`}>
-        <Link
-          to={objectItem.route}
-          onClick={() => {
-            removeRouteLevel(objectItem.route);
-          }}
-        >
-          {objectItem.label}
-        </Link>
-        {index < objectsList.length - 1 && <span> / </span>}
-      </React.Fragment>
-    );
-  });
+  let paths = internalPaths;
+
+  if (internalPaths !== "") {
+    paths = `/${internalPaths}`;
+  }
+
+  const splitPaths = paths.split("/");
+
+  const listBreadcrumbs = splitPaths.map(
+    (objectItem: string, index: number) => {
+      const subSplit = splitPaths.slice(1, index + 1).join("/");
+
+      const route = `/buckets/${bucketName}/browse${
+        objectItem !== "" ? `/${subSplit}` : ""}`;
+      const label = objectItem === "" ? bucketName : objectItem;
+
+      return (
+        <React.Fragment key={`breadcrumbs-${index.toString()}`}>
+          <Link to={route}>{label}</Link>
+          {index < splitPaths.length - 1 && <span> / </span>}
+        </React.Fragment>
+      );
+    }
+  );
+
+  const title = false;
   return (
     <React.Fragment>
       {title && (
         <Grid item xs={12}>
           <div className={classes.sectionTitle}>
-            {objectsList && objectsList.length > 0
-              ? objectsList.slice(-1)[0].label
-              : ""}
-            {rewindEnabled && objectsList.length > 1 && (
+            {splitPaths && splitPaths.length > 0 ? splitPaths[splitPaths.length - 1] : ""}
+            {rewindEnabled && splitPaths.length > 1 && (
               <small className={classes.smallLabel}>
                 &nbsp;(Rewind:{" "}
                 <Moment date={rewindDate} format="MMMM Do YYYY, h:mm a" /> )
@@ -93,15 +99,10 @@ const BrowserBreadcrumbs = ({
 };
 
 const mapStateToProps = ({ objectBrowser }: ObjectBrowserReducer) => ({
-  objectsList: get(objectBrowser, "routesList", []),
   rewindEnabled: get(objectBrowser, "rewind.rewindEnabled", false),
   rewindDate: get(objectBrowser, "rewind.dateToRewind", null),
 });
 
-const mapDispatchToProps = {
-  removeRouteLevel,
-};
+const connector = connect(mapStateToProps, null);
 
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-export default connector(withStyles(styles)(BrowserBreadcrumbs));
+export default withStyles(styles)(connector(BrowserBreadcrumbs));

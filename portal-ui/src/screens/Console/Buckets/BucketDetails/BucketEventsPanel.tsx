@@ -20,7 +20,7 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
 import get from "lodash/get";
 import Grid from "@material-ui/core/Grid";
-import { AddIcon, CreateIcon } from "../../../../icons";
+import { AddIcon } from "../../../../icons";
 import { BucketEvent, BucketEventList } from "../types";
 import { setErrorSnackMessage } from "../../../../actions";
 import { AppState } from "../../../../store";

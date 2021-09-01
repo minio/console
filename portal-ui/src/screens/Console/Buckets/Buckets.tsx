@@ -16,13 +16,14 @@
 
 import React from "react";
 import history from "../../../history";
-import { Route, Router, Switch, withRouter } from "react-router-dom";
+import { Route, Router, Switch, withRouter, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { AppState } from "../../../store";
 import { setMenuOpen } from "../../../actions";
 import NotFoundPage from "../../NotFoundPage";
 import ListBuckets from "./ListBuckets/ListBuckets";
 import BucketDetails from "./BucketDetails/BucketDetails";
+import BrowserHandler from "./BucketDetails/BrowserHandler";
 
 const mapState = (state: AppState) => ({
   open: state.system.sidebarOpen,
@@ -34,8 +35,17 @@ const Buckets = () => {
   return (
     <Router history={history}>
       <Switch>
-        <Route path="/buckets/:bucketName/*" component={BucketDetails} />
-        <Route path="/buckets/:bucketName" component={BucketDetails} />
+        <Route path="/buckets/:bucketName/admin/*" component={BucketDetails} />
+        <Route path="/buckets/:bucketName/admin" component={BucketDetails} />
+        <Route
+          path="/buckets/:bucketName/browse/:subpaths+"
+          component={BrowserHandler}
+        />
+        <Route path="/buckets/:bucketName/browse" component={BrowserHandler} />
+        <Route
+          path="/buckets/:bucketName"
+          component={() => <Redirect to={`/buckets`} />}
+        />
         <Route path="/" component={ListBuckets} />
         <Route component={NotFoundPage} />
       </Switch>
