@@ -87,7 +87,18 @@ func GetAdminInfo(ctx context.Context, client MinioAdmin) (*UsageInfo, error) {
 		var drives = []*models.ServerDrives{}
 
 		for _, drive := range serv.Disks {
-			drives = append(drives, &models.ServerDrives{State: drive.State, UUID: drive.UUID})
+			drives = append(drives, &models.ServerDrives{
+				State:          drive.State,
+				UUID:           drive.UUID,
+				Endpoint:       drive.Endpoint,
+				RootDisk:       drive.RootDisk,
+				DrivePath:      drive.DrivePath,
+				Healing:        drive.Healing,
+				Model:          drive.Model,
+				TotalSpace:     int64(drive.TotalSpace),
+				UsedSpace:      int64(drive.UsedSpace),
+				AvailableSpace: int64(drive.AvailableSpace),
+			})
 		}
 
 		var newServer = &models.ServerProperties{

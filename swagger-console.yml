@@ -3170,6 +3170,22 @@ definitions:
         type: string
       state:
         type: string
+      endpoint:
+        type: string
+      drivePath:
+        type: string
+      rootDisk:
+        type: boolean
+      healing:
+        type: boolean
+      model:
+        type: string
+      totalSpace:
+        type: integer
+      usedSpace:
+        type: integer
+      availableSpace:
+        type: integer
   arnsResponse:
     type: object
     properties:
