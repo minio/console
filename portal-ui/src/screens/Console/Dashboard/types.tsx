@@ -44,5 +44,4 @@ export interface IDriveInfo {
   totalSpace: number;
   usedSpace: number;
   availableSpace: number;
-
 }

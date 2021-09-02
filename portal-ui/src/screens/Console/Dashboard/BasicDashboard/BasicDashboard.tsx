@@ -58,7 +58,7 @@ const styles = (theme: Theme) =>
       overflow: "hidden" as const,
     },
     drivesContainer: {
-      overflow: "flex",  
+      overflow: "flex",
     },
     infoHeight: {
       height: 180,
@@ -255,18 +255,18 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
                   </Grid>
                 </Grid>
               </div>
-               
-              <div >
+
+              <div>
                 <div className={classes.cardsContainer}>
                   {serverArray.map((server, index) => (
-                   <ServerInfoCard
+                    <ServerInfoCard
                       server={server}
                       key={`serverDS-${index.toString()}`}
-                    />                    
+                    />
                   ))}
                 </div>
-                </div>
-               <div>
+              </div>
+              <div>
                 <Grid container direction="row" alignItems="center">
                   <Grid item className={classes.icon}>
                     <StorageIcon />
@@ -279,17 +279,15 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
                   </Grid>
                 </Grid>
               </div>
-                     <div className={classes.cardsContainer}>
-                  {serverArray.map((server, index) => (
-                   server.drives.map((drive) => (
-                     <DriveInfoCard drive={drive}/>
-                    ))) )}
-                    </div>
-                     </Paper>
-                 </Grid>
-                </Grid>
+              <div className={classes.cardsContainer}>
+                {serverArray.map((server, index) =>
+                  server.drives.map((drive) => <DriveInfoCard drive={drive} />)
+                )}
+              </div>
+            </Paper>
+          </Grid>
+        </Grid>
       </Grid>
-     
     </Fragment>
   );
 };

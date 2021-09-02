@@ -131,23 +131,23 @@ const DriveInfoCard = ({ classes, drive }: ICardProps) => {
               <div className={classes.endpoint}>{drive.endpoint}</div>
             </Tooltip>
             <span className={classes.infoValue}>
-            {drive.healing && <HealIcon />}
-            {drive.rootDisk  && <HelpIcon />} 
-          </span>
+              {drive.healing && <HealIcon />}
+              {drive.rootDisk && <HelpIcon />}
+            </span>
           </div>
-          
         </Grid>
         <Grid item xs={12} className={classes.stateContainer}>
           <span className={classes.infoValue}>
-            <strong>Total Space:</strong> {niceBytes(drive.totalSpace.toString())}
-            </span>
-            <span className={classes.infoValue}>
-            <strong>Used Space:</strong> {niceBytes(drive.usedSpace.toString())}
-            </span>
-            <span className={classes.infoValue}>
-            <strong>Available Space:</strong> {niceBytes(drive.availableSpace.toString())}
+            <strong>Total Space:</strong>{" "}
+            {niceBytes(drive.totalSpace.toString())}
           </span>
-        
+          <span className={classes.infoValue}>
+            <strong>Used Space:</strong> {niceBytes(drive.usedSpace.toString())}
+          </span>
+          <span className={classes.infoValue}>
+            <strong>Available Space:</strong>{" "}
+            {niceBytes(drive.availableSpace.toString())}
+          </span>
         </Grid>
       </Grid>
     </Paper>
