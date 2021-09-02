@@ -108,7 +108,7 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
   return (
     <Fragment>
       <div className={classes.dashboardBG} />
-      <Grid container style={{ flexGrow: 1 }} spacing={2}>
+      <Grid container spacing={2}>
         <Grid item xs={6}>
           <Grid container spacing={2}>
             <Grid item xs={6}>
