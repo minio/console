@@ -18,7 +18,6 @@ import React, { Fragment } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { Usage } from "../types";
 import { niceBytes } from "../../../../common/utils";
@@ -31,69 +30,10 @@ import {
   StorageIcon,
   TotalObjectsIcon,
 } from "../../../../icons";
+import { Card, CardHeader } from "@material-ui/core";
 
 const styles = (theme: Theme) =>
   createStyles({
-    paper: {
-      padding: theme.spacing(2),
-      display: "flex",
-      overflow: "auto",
-      flexDirection: "column",
-      border: "#eaedee 1px solid",
-      borderRadius: 5,
-      boxShadow: "none",
-      marginBottom: 15,
-    },
-    fixedHeight: {
-      height: 165,
-      minWidth: 247,
-      marginRight: 20,
-      padding: "25px 28px",
-      "& svg:not(.computerIcon)": {
-        maxHeight: 18,
-      },
-    },
-    serversContainer: {
-      height: "auto",
-      overflow: "hidden" as const,
-    },
-    drivesContainer: {
-      overflow: "flex",
-    },
-    infoHeight: {
-      height: 180,
-      minWidth: 247,
-      marginRight: 20,
-      padding: "25px 28px",
-      "& svg": {
-        maxHeight: 18,
-      },
-    },
-    consumptionValue: {
-      color: "#000000",
-      fontSize: "60px",
-      fontWeight: "bold",
-    },
-    endpoint: {
-      color: "#000000",
-      fontSize: "20px",
-      fontWeight: "bold",
-    },
-    infoValue: {
-      fontWeight: 500,
-      color: "#777777",
-      fontSize: 14,
-      marginTop: 9,
-    },
-    icon: {
-      marginRight: 10,
-      color: "#777777",
-    },
-    notationContainer: {
-      display: "flex",
-      flexWrap: "wrap",
-      marginTop: 20,
-    },
     dashboardBG: {
       width: 390,
       height: 255,
@@ -106,27 +46,11 @@ const styles = (theme: Theme) =>
       bottom: 0,
       backgroundRepeat: "no-repeat",
     },
-    elementTitle: {
-      fontWeight: 500,
-      color: "#777777",
-      fontSize: 14,
-      marginTop: -9,
-    },
-    smallUnit: {
-      fontSize: 20,
-    },
-    serversListContainer: {
-      overflowY: "auto",
-      height: 200,
-      width: "100%",
-    },
+
     cardsContainer: {
-      display: "flex",
-      flexWrap: "wrap",
-      justifyContent: "center",
-    },
-    serversAdj: {
-      maxWidth: 1380,
+      maxHeight: 440,
+      overflowY: "auto",
+      overflowX: "hidden",
     },
   });
 
@@ -136,12 +60,6 @@ interface IDashboardProps {
 }
 
 const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-  const expandedServersPaperContainer = clsx(
-    classes.paper,
-    classes.serversContainer
-  );
-
   const prettyUsage = (usage: string | undefined) => {
     if (usage === undefined) {
       return "0";
@@ -190,101 +108,77 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
   return (
     <Fragment>
       <div className={classes.dashboardBG} />
-      <Grid container className={classes.dashboardContainer}>
-        <Grid container spacing={3} className={classes.container}>
-          <Grid item xs={12} className={classes.notationContainer}>
-            <Paper className={fixedHeightPaper}>
-              <Grid container direction="row" alignItems="center">
-                <Grid item className={classes.icon}>
-                  <BucketsIcon />
-                </Grid>
-                <Grid item>
-                  <Typography className={classes.elementTitle}>
-                    All buckets
-                  </Typography>
-                </Grid>
-              </Grid>
-              <Typography className={classes.consumptionValue}>
-                {usage ? prettyNumber(usage.buckets) : 0}
-              </Typography>
-            </Paper>
-            <Paper className={fixedHeightPaper}>
-              <Grid container direction="row" alignItems="center">
-                <Grid item className={classes.icon}>
-                  <ReportedUsageIcon />
-                </Grid>
-                <Grid item>
-                  <Typography className={classes.elementTitle}>
-                    Usage
-                  </Typography>
-                </Grid>
-              </Grid>
-              <Typography className={classes.consumptionValue}>
-                {usage ? prettyUsage(usage.usage + "") : 0}
-              </Typography>
-            </Paper>
-            <Paper className={fixedHeightPaper}>
-              <Grid container direction="row" alignItems="center">
-                <Grid item className={classes.icon}>
-                  <TotalObjectsIcon />
-                </Grid>
-                <Grid item>
-                  <Typography className={classes.elementTitle}>
-                    {" "}
-                    Total Objects
-                  </Typography>
-                </Grid>
-              </Grid>
-              <Typography className={classes.consumptionValue}>
-                {usage ? prettyNumber(usage.objects) : 0}
-              </Typography>
-            </Paper>
+      <Grid container spacing={2}>
+        <Grid item xs={6}>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <Card className={classes.cardRoot}>
+                <CardHeader
+                  avatar={<BucketsIcon />}
+                  title="Number of Buckets"
+                  subheader={usage ? prettyNumber(usage.buckets) : 0}
+                />
+              </Card>
+            </Grid>
+            <Grid item xs={6}>
+              <Card className={classes.cardRoot}>
+                <CardHeader
+                  avatar={<ReportedUsageIcon />}
+                  title="Usage"
+                  subheader={usage ? prettyUsage(usage.usage + "") : 0}
+                />
+              </Card>
+            </Grid>
+            <Grid item xs={6}>
+              <Card className={classes.cardRoot}>
+                <CardHeader
+                  avatar={<TotalObjectsIcon />}
+                  title="Total Objects"
+                  subheader={usage ? prettyNumber(usage.objects) : 0}
+                />
+              </Card>
+            </Grid>
+            <Grid item xs={6} />
           </Grid>
-          <Grid item xs={12} className={classes.serversAdj}>
-            <Paper className={expandedServersPaperContainer}>
-              <div>
-                <Grid container direction="row" alignItems="center">
-                  <Grid item className={classes.icon}>
-                    <ServersIcon />
-                  </Grid>
-                  <Grid item>
-                    <Typography className={classes.elementTitle}>
-                      {" "}
-                      Servers
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </div>
 
-              <div>
-                <div className={classes.cardsContainer}>
-                  {serverArray.map((server, index) => (
-                    <ServerInfoCard
-                      server={server}
-                      key={`serverDS-${index.toString()}`}
-                    />
-                  ))}
-                </div>
-              </div>
-              <div>
-                <Grid container direction="row" alignItems="center">
-                  <Grid item className={classes.icon}>
-                    <StorageIcon />
+          <Grid item xs={12}>
+            <Grid container alignItems="center" spacing={2}>
+              <Grid item>
+                <StorageIcon />
+              </Grid>
+              <Grid item>
+                <Typography variant="h5">Drives Status</Typography>
+              </Grid>
+            </Grid>
+            <Grid container spacing={1} className={classes.cardsContainer}>
+              {serverArray.map((server, index) =>
+                server.drives.map((drive) => (
+                  <Grid item xs={12}>
+                    <DriveInfoCard drive={drive} />
                   </Grid>
-                  <Grid item>
-                    <Typography className={classes.elementTitle}>
-                      {" "}
-                      Drives
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </div>
-              <div className={classes.cardsContainer}>
-                {serverArray.map((server, index) =>
-                  server.drives.map((drive) => <DriveInfoCard drive={drive} />)
-                )}
-              </div>
-            </Paper>
+                ))
+              )}
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item xs={6}>
+          <Grid container alignItems="center" spacing={2}>
+            <Grid item>
+              <ServersIcon />
+            </Grid>
+            <Grid item>
+              <Typography variant="h5">Servers Status</Typography>
+            </Grid>
+          </Grid>
+          <Grid container spacing={1}>
+            {serverArray.map((server, index) => (
+              <Grid item xs={12}>
+                <ServerInfoCard
+                  server={server}
+                  key={`serverDS-${index.toString()}`}
+                />
+              </Grid>
+            ))}
           </Grid>
         </Grid>
       </Grid>
