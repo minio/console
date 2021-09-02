@@ -22,14 +22,13 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { Usage } from "../types";
 import { niceBytes } from "../../../../common/utils";
-import DnsIcon from "@material-ui/icons/Dns";
-import EgressIcon from "../../../../icons/EgressIcon";
 import ReportedUsageIcon from "../../../../icons/ReportedUsageIcon";
 import ServerInfoCard from "./ServerInfoCard";
+import DriveInfoCard from "./DriveInfoCard";
 import {
   BucketsIcon,
-  DashboardIcon,
   ServersIcon,
+  StorageIcon,
   TotalObjectsIcon,
 } from "../../../../icons";
 
@@ -138,11 +137,6 @@ interface IDashboardProps {
 
 const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-  const serversPaperContainer = clsx(
-    classes.paper,
-    classes.fixedHeight,
-    classes.serversContainer
-  );
   const expandedServersPaperContainer = clsx(
     classes.paper,
     classes.serversContainer
