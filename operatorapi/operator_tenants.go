@@ -1228,6 +1228,7 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	logSearchStorageClass := ""                    // Default is ""
 	logSearchImage := ""
 	logSearchPgImage := ""
+	logSearchPgInitImage := ""
 
 	if tenantReq.LogSearchConfiguration != nil {
 		if tenantReq.LogSearchConfiguration.StorageSize != nil {
@@ -1244,6 +1245,9 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		}
 		if tenantReq.LogSearchConfiguration.PostgresImage != "" {
 			logSearchPgImage = tenantReq.LogSearchConfiguration.PostgresImage
+		}
+		if tenantReq.LogSearchConfiguration.PostgresInitImage != "" {
+			logSearchPgInitImage = tenantReq.LogSearchConfiguration.PostgresInitImage
 		}
 	}
 
@@ -1276,16 +1280,22 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 			},
 		},
 	}
+	// set log search images if any
 	if logSearchImage != "" {
 		minInst.Spec.Log.Image = logSearchImage
 	}
 	if logSearchPgImage != "" {
 		minInst.Spec.Log.Db.Image = logSearchPgImage
 	}
+	if logSearchPgInitImage != "" {
+		minInst.Spec.Log.Db.InitImage = logSearchPgInitImage
+	}
 
-	prometheusDiskSpace := 5     // Default is 5 by API
-	prometheusStorageClass := "" // Default is ""
-	prometheusImage := ""        // Default is ""
+	prometheusDiskSpace := 5      // Default is 5 by API
+	prometheusStorageClass := ""  // Default is ""
+	prometheusImage := ""         // Default is ""
+	prometheusSidecardImage := "" // Default is ""
+	prometheusInitImage := ""     // Default is ""
 
 	if tenantReq.PrometheusConfiguration != nil {
 		if tenantReq.PrometheusConfiguration.StorageSize != nil {
@@ -1303,6 +1313,12 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		if tenantReq.PrometheusConfiguration.Image != "" {
 			prometheusImage = tenantReq.PrometheusConfiguration.Image
 		}
+		if tenantReq.PrometheusConfiguration.SidecarImage != "" {
+			prometheusSidecardImage = tenantReq.PrometheusConfiguration.SidecarImage
+		}
+		if tenantReq.PrometheusConfiguration.InitImage != "" {
+			prometheusInitImage = tenantReq.PrometheusConfiguration.InitImage
+		}
 	}
 
 	minInst.Spec.Prometheus = &miniov2.PrometheusConfig{
@@ -1311,6 +1327,12 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 	}
 	if prometheusImage != "" {
 		minInst.Spec.Prometheus.Image = prometheusImage
+	}
+	if prometheusSidecardImage != "" {
+		minInst.Spec.Prometheus.SideCarImage = prometheusSidecardImage
+	}
+	if prometheusInitImage != "" {
+		minInst.Spec.Prometheus.InitImage = prometheusInitImage
 	}
 	// if security context for prometheus is present, configure it.
 	if tenantReq.PrometheusConfiguration != nil && tenantReq.PrometheusConfiguration.SecurityContext != nil {

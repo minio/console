@@ -369,12 +369,15 @@ export interface LogSearchConfiguration {
   storageSize?: number;
   image: string;
   postgres_image: string;
+  postgres_init_image: string;
 }
 
 export interface PrometheusConfiguration {
   storageClass?: string;
   storageSize?: number;
   image: string;
+  sidecar_image: string;
+  init_image: string;
 }
 
 export interface AffinityConfiguration {

@@ -1306,6 +1306,8 @@ definitions:
         type: string
       postgres_image:
         type: string
+      postgres_init_image:
+        type: string
   prometheusConfiguration:
     type: object
     properties:
@@ -1316,6 +1318,10 @@ definitions:
         type: number
         default: 5
       image:
+        type: string
+      sidecar_image:
+        type: string
+      init_image:
         type: string
       securityContext:
         type: object

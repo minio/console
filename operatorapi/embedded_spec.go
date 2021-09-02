@@ -2058,6 +2058,9 @@ func init() {
         "postgres_image": {
           "type": "string"
         },
+        "postgres_init_image": {
+          "type": "string"
+        },
         "storageClass": {
           "type": "string",
           "default": ""
@@ -2611,9 +2614,15 @@ func init() {
         "image": {
           "type": "string"
         },
+        "init_image": {
+          "type": "string"
+        },
         "securityContext": {
           "type": "object",
           "$ref": "#/definitions/securityContext"
+        },
+        "sidecar_image": {
+          "type": "string"
         },
         "storageClass": {
           "type": "string",
@@ -5755,6 +5764,9 @@ func init() {
         "postgres_image": {
           "type": "string"
         },
+        "postgres_init_image": {
+          "type": "string"
+        },
         "storageClass": {
           "type": "string",
           "default": ""
@@ -6173,9 +6185,15 @@ func init() {
         "image": {
           "type": "string"
         },
+        "init_image": {
+          "type": "string"
+        },
         "securityContext": {
           "type": "object",
           "$ref": "#/definitions/securityContext"
+        },
+        "sidecar_image": {
+          "type": "string"
         },
         "storageClass": {
           "type": "string",

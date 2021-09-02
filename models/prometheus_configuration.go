@@ -38,8 +38,14 @@ type PrometheusConfiguration struct {
 	// image
 	Image string `json:"image,omitempty"`
 
+	// init image
+	InitImage string `json:"init_image,omitempty"`
+
 	// security context
 	SecurityContext *SecurityContext `json:"securityContext,omitempty"`
+
+	// sidecar image
+	SidecarImage string `json:"sidecar_image,omitempty"`
 
 	// storage class
 	StorageClass string `json:"storageClass,omitempty"`

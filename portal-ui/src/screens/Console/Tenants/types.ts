@@ -138,10 +138,13 @@ export interface IConfigureFields {
   logSearchImage: string;
   kesImage: string;
   logSearchPostgresImage: string;
+  logSearchPostgresInitImage: string;
   prometheusVolumeSize: string;
   prometheusSizeFactor: string;
   prometheusSelectedStorageClass: string;
   prometheusImage: string;
+  prometheusSidecarImage: string;
+  prometheusInitImage: string;
 }
 
 export interface IIdentityProviderFields {
