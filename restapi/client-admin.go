@@ -274,33 +274,6 @@ func (ac AdminClient) getLogs(ctx context.Context, node string, lineCnt int, log
 
 // implements madmin.AddServiceAccount()
 func (ac AdminClient) addServiceAccount(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string) (madmin.Credentials, error) {
-<<<<<<< HEAD
-	buf, err := json.Marshal(policy)
-	if err != nil {
-		return madmin.Credentials{}, err
-	}
-	return ac.Client.AddServiceAccount(ctx, madmin.AddServiceAccountReq{
-		Policy:     buf,
-		TargetUser: user,
-		AccessKey:  accessKey,
-		SecretKey:  secretKey,
-	})
-}
-
-func (ac AdminClient) addServiceAccountWithCreds(ctx context.Context, policy *iampolicy.Policy, accessKey string, secretKey string) (madmin.Credentials, error) {
-	buf, err := json.Marshal(policy)
-	if err != nil {
-		return madmin.Credentials{}, err
-	}
-	return ac.Client.AddServiceAccount(ctx, madmin.AddServiceAccountReq{
-		Policy:     buf,
-		TargetUser: "",
-		AccessKey:  accessKey,
-		SecretKey:  secretKey,
-	})
-}
-
-func (ac AdminClient) addServiceAccountWithUserAndCreds(ctx context.Context, policy *iampolicy.Policy, user string, accessKey string, secretKey string) (madmin.Credentials, error) {
 	buf, err := json.Marshal(policy)
 	if err != nil {
 		return madmin.Credentials{}, err
