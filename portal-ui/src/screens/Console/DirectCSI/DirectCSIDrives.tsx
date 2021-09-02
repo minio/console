@@ -26,7 +26,7 @@ import {
 } from "@material-ui/core";
 import get from "lodash/get";
 import GroupIcon from "@material-ui/icons/Group";
-import { CreateIcon } from "../../../icons";
+import { AddIcon, CreateIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
 import {
   actionsTray,
@@ -292,7 +292,7 @@ const DirectCSIMain = ({
         <Button
           variant="contained"
           color="primary"
-          startIcon={<CreateIcon />}
+          startIcon={<AddIcon />}
           onClick={formatAllDrives}
           disabled={notAvailable}
         >

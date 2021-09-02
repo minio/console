@@ -118,6 +118,10 @@ const styles = (theme: Theme) =>
     },
     capitalizeFirst: {
       textTransform: "capitalize",
+      "& .MuiSvgIcon-root": {
+        width: 16,
+        height: 16,
+      },
     },
     doubleElement: {
       display: "flex",

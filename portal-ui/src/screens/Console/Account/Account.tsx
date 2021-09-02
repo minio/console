@@ -26,7 +26,7 @@ import { setErrorSnackMessage } from "../../../actions";
 import AddServiceAccount from "./AddServiceAccount";
 import DeleteServiceAccount from "./DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
-import { CreateIcon } from "../../../icons";
+import { AddIcon, CreateIcon, LockIcon } from "../../../icons";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
@@ -38,7 +38,6 @@ import {
   searchField,
 } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
-import LockIcon from "@material-ui/icons/Lock";
 import ChangePasswordModal from "./ChangePasswordModal";
 import SearchIcon from "../../../icons/SearchIcon";
 
@@ -260,7 +259,7 @@ const Account = ({
             <Button
               variant="contained"
               color="primary"
-              startIcon={<CreateIcon />}
+              startIcon={<AddIcon />}
               onClick={() => {
                 setAddScreenOpen(true);
                 setSelectedServiceAccount(null);

@@ -22,7 +22,7 @@ import get from "lodash/get";
 import * as reactMoment from "react-moment";
 import Grid from "@material-ui/core/Grid";
 import { LifeCycleItem } from "../types";
-import { CreateIcon } from "../../../../icons";
+import { AddIcon, CreateIcon } from "../../../../icons";
 import {
   actionsTray,
   searchField,
@@ -181,7 +181,7 @@ const BucketLifecyclePanel = ({
           <Button
             variant="contained"
             color="primary"
-            startIcon={<CreateIcon />}
+            startIcon={<AddIcon />}
             size="medium"
             onClick={() => {
               setAddLifecycleOpen(true);

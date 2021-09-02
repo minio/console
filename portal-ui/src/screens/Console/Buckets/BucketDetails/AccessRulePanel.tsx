@@ -27,7 +27,7 @@ import api from "../../../../common/api";
 import AddAccessRuleModal from "./AddAccessRule";
 import DeleteAccessRuleModal from "./DeleteAccessRule";
 import EditAccessRuleModal from "./EditAccessRule";
-import { CreateIcon } from "../../../../icons";
+import { AddIcon, CreateIcon } from "../../../../icons";
 import Grid from "@material-ui/core/Grid";
 import {
   actionsTray,
@@ -222,7 +222,7 @@ const AccessRule = ({
         <Button
           variant="contained"
           color="primary"
-          startIcon={<CreateIcon />}
+          startIcon={<AddIcon />}
           component="label"
           onClick={() => {
             setAddAccessRuleOpen(true);

@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import { CreateIcon } from "../../../../icons";
+import { AddIcon, CreateIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../actions";
 import {
   actionsTray,
@@ -198,7 +198,7 @@ const BucketReplicationPanel = ({
             variant="contained"
             color="primary"
             disabled={!canPutReplication}
-            startIcon={<CreateIcon />}
+            startIcon={<AddIcon />}
             size="medium"
             onClick={() => {
               setOpenReplicationOpen(true);

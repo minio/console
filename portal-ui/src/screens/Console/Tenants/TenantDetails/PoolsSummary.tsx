@@ -24,7 +24,7 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import { Button, TextField } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import { CreateIcon } from "../../../../icons";
+import { AddIcon, CreateIcon } from "../../../../icons";
 import { IPool, ITenant } from "../ListTenants/types";
 import { setErrorSnackMessage } from "../../../../actions";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
@@ -127,7 +127,7 @@ const PoolsSummary = ({
           <Button
             variant="contained"
             color="primary"
-            startIcon={<CreateIcon />}
+            startIcon={<AddIcon />}
             onClick={() => {
               setAddPool(true);
             }}

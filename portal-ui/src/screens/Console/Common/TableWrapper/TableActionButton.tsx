@@ -18,7 +18,6 @@ import isString from "lodash/isString";
 import { Link } from "react-router-dom";
 import { createStyles, withStyles } from "@material-ui/core/styles";
 import { IconButton } from "@material-ui/core";
-import ViewIcon from "./TableActionIcons/ViewIcon";
 import ShareIcon from "./TableActionIcons/ShareIcon";
 import CloudIcon from "./TableActionIcons/CloudIcon";
 import ConsoleIcon from "./TableActionIcons/ConsoleIcon";
@@ -26,7 +25,7 @@ import DisableIcon from "./TableActionIcons/DisableIcon";
 import FormatDriveIcon from "./TableActionIcons/FormatDriveIcon";
 import EditIcon from "../../../../icons/EditIcon";
 import TrashIcon from "../../../../icons/TrashIcon";
-import { IAMPoliciesIcon } from "../../../../icons";
+import { IAMPoliciesIcon, PreviewIcon } from "../../../../icons";
 import DownloadIcon from "../../../../icons/DownloadIcon";
 
 const styles = () =>
@@ -58,7 +57,7 @@ interface IActionButton {
 const defineIcon = (type: string, selected: boolean) => {
   switch (type) {
     case "view":
-      return <ViewIcon active={selected} />;
+      return <PreviewIcon />;
     case "edit":
       return <EditIcon />;
     case "delete":
@@ -78,7 +77,7 @@ const defineIcon = (type: string, selected: boolean) => {
     case "format":
       return <FormatDriveIcon active={selected} />;
     case "preview":
-      return <ViewIcon active={selected} />;
+      return <PreviewIcon />;
   }
 
   return null;
