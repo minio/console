@@ -175,7 +175,11 @@ const AddTenant = ({
     const logSearchImage = fields.configure.logSearchImage;
     const kesImage = fields.configure.kesImage;
     const logSearchPostgresImage = fields.configure.logSearchPostgresImage;
+    const logSearchPostgresInitImage =
+      fields.configure.logSearchPostgresInitImage;
     const prometheusImage = fields.configure.prometheusImage;
+    const prometheusSidecarImage = fields.configure.prometheusSidecarImage;
+    const prometheusInitImage = fields.configure.prometheusInitImage;
     const prometheusSelectedStorageClass =
       fields.configure.prometheusSelectedStorageClass;
     const prometheusVolumeSize = fields.configure.prometheusVolumeSize;
@@ -264,6 +268,7 @@ const AddTenant = ({
             storageSize: parseInt(logSearchVolumeSize),
             image: logSearchImage,
             postgres_image: logSearchPostgresImage,
+            postgres_init_image: logSearchPostgresInitImage,
           },
         };
       } else {
@@ -272,6 +277,7 @@ const AddTenant = ({
           logSearchConfiguration: {
             image: logSearchImage,
             postgres_image: logSearchPostgresImage,
+            postgres_init_image: logSearchPostgresInitImage,
           },
         };
       }
@@ -283,6 +289,8 @@ const AddTenant = ({
             storageClass: prometheusSelectedStorageClass,
             storageSize: parseInt(prometheusVolumeSize),
             image: prometheusImage,
+            sidecar_image: prometheusSidecarImage,
+            init_image: prometheusInitImage,
           },
         };
       } else {
@@ -290,6 +298,8 @@ const AddTenant = ({
           ...dataSend,
           prometheusConfiguration: {
             image: prometheusImage,
+            sidecar_image: prometheusSidecarImage,
+            init_image: prometheusInitImage,
           },
         };
       }

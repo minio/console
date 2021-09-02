@@ -56,8 +56,11 @@ interface IConfigureProps {
   logSearchImage: string;
   kesImage: string;
   logSearchPostgresImage: string;
+  logSearchPostgresInitImage: string;
   prometheusSelectedStorageClass: string;
   prometheusImage: string;
+  prometheusSidecarImage: string;
+  prometheusInitImage: string;
   selectedStorageClass: string;
 }
 
@@ -88,11 +91,14 @@ const Configure = ({
   logSearchImage,
   kesImage,
   logSearchPostgresImage,
+  logSearchPostgresInitImage,
   prometheusVolumeSize,
   prometheusSizeFactor,
   logSearchSelectedStorageClass,
   prometheusSelectedStorageClass,
   prometheusImage,
+  prometheusSidecarImage,
+  prometheusInitImage,
   updateAddField,
   isPageValid,
   selectedStorageClass,
@@ -186,12 +192,36 @@ const Configure = ({
             "Format must be of form: 'library/postgres:VERSION'",
         },
         {
+          fieldKey: "logSearchPostgresInitImage",
+          required: false,
+          value: logSearchPostgresInitImage,
+          pattern: /^((.*?)\/(.*?):(.+))$/,
+          customPatternMessage:
+            "Format must be of form: 'library/busybox:VERSION'",
+        },
+        {
           fieldKey: "prometheusImage",
           required: false,
           value: prometheusImage,
           pattern: /^((.*?)\/(.*?):(.+))$/,
           customPatternMessage:
             "Format must be of form: 'minio/prometheus:VERSION'",
+        },
+        {
+          fieldKey: "prometheusSidecarImage",
+          required: false,
+          value: prometheusSidecarImage,
+          pattern: /^((.*?)\/(.*?):(.+))$/,
+          customPatternMessage:
+            "Format must be of form: 'project/container:VERSION'",
+        },
+        {
+          fieldKey: "prometheusInitImage",
+          required: false,
+          value: prometheusInitImage,
+          pattern: /^((.*?)\/(.*?):(.+))$/,
+          customPatternMessage:
+            "Format must be of form: 'library/busybox:VERSION'",
         },
       ];
       if (customDockerhub) {
@@ -227,7 +257,10 @@ const Configure = ({
     logSearchImage,
     kesImage,
     logSearchPostgresImage,
+    logSearchPostgresInitImage,
     prometheusImage,
+    prometheusSidecarImage,
+    prometheusInitImage,
     customDockerhub,
     imageRegistry,
     imageRegistryUsername,
@@ -354,6 +387,20 @@ const Configure = ({
           </Grid>
           <Grid item xs={12}>
             <InputBoxWrapper
+              id="logSearchPostgresInitImage"
+              name="logSearchPostgresInitImage"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("logSearchPostgresInitImage", e.target.value);
+                cleanValidation("logSearchPostgresInitImage");
+              }}
+              label="Log Search Postgres's Init Image"
+              value={logSearchPostgresInitImage}
+              error={validationErrors["logSearchPostgresInitImage"] || ""}
+              placeholder="E.g. library/busybox:1.33.1"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <InputBoxWrapper
               id="prometheusImage"
               name="prometheusImage"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -363,6 +410,34 @@ const Configure = ({
               label="Prometheus Image"
               value={prometheusImage}
               error={validationErrors["prometheusImage"] || ""}
+              placeholder="E.g. quay.io/prometheus/prometheus:latest"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="prometheusSidecarImage"
+              name="prometheusSidecarImage"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("prometheusSidecarImage", e.target.value);
+                cleanValidation("prometheusSidecarImage");
+              }}
+              label="Prometheus Sidecar Image"
+              value={prometheusSidecarImage}
+              error={validationErrors["prometheusSidecarImage"] || ""}
+              placeholder="E.g. quay.io/prometheus/prometheus:latest"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="prometheusInitImage"
+              name="prometheusInitImage"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("prometheusInitImage", e.target.value);
+                cleanValidation("prometheusInitImage");
+              }}
+              label="Prometheus Init Image"
+              value={prometheusInitImage}
+              error={validationErrors["prometheusInitImage"] || ""}
               placeholder="E.g. quay.io/prometheus/prometheus:latest"
             />
           </Grid>
@@ -620,9 +695,15 @@ const mapState = (state: AppState) => ({
   kesImage: state.tenants.createTenant.fields.configure.kesImage,
   logSearchPostgresImage:
     state.tenants.createTenant.fields.configure.logSearchPostgresImage,
+  logSearchPostgresInitImage:
+    state.tenants.createTenant.fields.configure.logSearchPostgresInitImage,
   prometheusSelectedStorageClass:
     state.tenants.createTenant.fields.configure.prometheusSelectedStorageClass,
   prometheusImage: state.tenants.createTenant.fields.configure.prometheusImage,
+  prometheusSidecarImage:
+    state.tenants.createTenant.fields.configure.prometheusSidecarImage,
+  prometheusInitImage:
+    state.tenants.createTenant.fields.configure.prometheusInitImage,
   selectedStorageClass:
     state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
 });

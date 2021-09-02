@@ -40,6 +40,9 @@ type LogSearchConfiguration struct {
 	// postgres image
 	PostgresImage string `json:"postgres_image,omitempty"`
 
+	// postgres init image
+	PostgresInitImage string `json:"postgres_init_image,omitempty"`
+
 	// storage class
 	StorageClass string `json:"storageClass,omitempty"`
 
