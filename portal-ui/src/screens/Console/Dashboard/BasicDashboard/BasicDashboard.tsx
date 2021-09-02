@@ -115,7 +115,7 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
               <Card className={classes.cardRoot}>
                 <CardHeader
                   avatar={<BucketsIcon />}
-                  title="Total Bucket"
+                  title="Number of Buckets"
                   subheader={usage ? prettyNumber(usage.buckets) : 0}
                 />
               </Card>
