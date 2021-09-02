@@ -21,7 +21,6 @@ import { Divider, withStyles } from "@material-ui/core";
 import { createStyles, Theme } from "@material-ui/core/styles";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
-import DescriptionIcon from "@material-ui/icons/Description";
 import Collapse from "@material-ui/core/Collapse";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
