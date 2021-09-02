@@ -14,44 +14,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { Fragment } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import ComputerIcon from "@material-ui/icons/Computer";
-import HealIcon from "../../../../icons/HealIcon";
 import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
 import { IDriveInfo } from "../types";
 import { niceBytes } from "../../../../common/utils";
-import { Tooltip } from "@material-ui/core";
-import HelpIcon from "../../../../icons/HelpIcon";
+import { Card, CardHeader } from "@material-ui/core";
+import { CircleIcon, StorageIcon } from "../../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
-    serverCard: {
-      padding: 15,
-      margin: 8,
-      width: "100%",
-      maxWidth: 620,
-      "& .computerIcon": {
-        marginRight: 10,
-      },
-    },
-    titleContainer: {
-      display: "flex",
-    },
     cardIconContainer: {
       display: "flex",
       position: "relative",
       alignItems: "center",
-    },
-    endpoint: {
-      color: "#000000",
-      fontSize: 20,
-      fontWeight: "bold",
-      position: "relative" as const,
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-      overflow: "hidden",
     },
     stateContainer: {
       display: "flex",
@@ -85,7 +61,11 @@ const styles = (theme: Theme) =>
       fontSize: 10,
       left: 18,
       height: 10,
-      bottom: 5,
+      bottom: 2,
+      "& .MuiSvgIcon-root": {
+        width: 10,
+        height: 10,
+      },
     },
     innerState: {
       fontSize: 10,
@@ -93,6 +73,11 @@ const styles = (theme: Theme) =>
       display: "flex",
       alignItems: "center",
       marginTop: -3,
+    },
+    cardHeader: {
+      "& .MuiCardHeader-title": {
+        fontWeight: "bolder",
+      },
     },
   });
 
@@ -115,42 +100,41 @@ const DriveInfoCard = ({ classes, drive }: ICardProps) => {
   };
 
   return (
-    <Paper className={classes.serverCard}>
-      <Grid container direction="row" alignItems="center">
-        <Grid item xs={12}>
-          <div className={classes.titleContainer}>
+    <Fragment>
+      <Card>
+        <CardHeader
+          className={classes.cardHeader}
+          avatar={
             <div className={classes.cardIconContainer}>
-              <ComputerIcon className="computerIcon" />
+              <StorageIcon className="computerIcon" />
               <div className={classes.healthStatusIcon}>
                 {drive.state && (
-                  <span className={driveStatusToClass(drive.state)}>⬤</span>
+                  <span className={driveStatusToClass(drive.state)}>
+                    <CircleIcon />
+                  </span>
                 )}
               </div>
-            </div>{" "}
-            <Tooltip title={drive.endpoint} placement="bottom">
-              <div className={classes.endpoint}>{drive.endpoint}</div>
-            </Tooltip>
-            <span className={classes.infoValue}>
-              {drive.healing && <HealIcon />}
-              {drive.rootDisk && <HelpIcon />}
-            </span>
-          </div>
-        </Grid>
-        <Grid item xs={12} className={classes.stateContainer}>
-          <span className={classes.infoValue}>
-            <strong>Total Space:</strong>{" "}
-            {niceBytes(drive.totalSpace.toString())}
-          </span>
-          <span className={classes.infoValue}>
-            <strong>Used Space:</strong> {niceBytes(drive.usedSpace.toString())}
-          </span>
-          <span className={classes.infoValue}>
-            <strong>Available Space:</strong>{" "}
-            {niceBytes(drive.availableSpace.toString())}
-          </span>
-        </Grid>
-      </Grid>
-    </Paper>
+            </div>
+          }
+          title={drive.endpoint}
+          subheader={
+            <Grid item xs={12} className={classes.stateContainer}>
+              <span className={classes.infoValue}>
+                <strong>Capacity:</strong>{" "}
+                {niceBytes(drive.totalSpace.toString())}
+              </span>
+              <span className={classes.infoValue}>
+                <strong>Used:</strong> {niceBytes(drive.usedSpace.toString())}
+              </span>
+              <span className={classes.infoValue}>
+                <strong>Available:</strong>{" "}
+                {niceBytes(drive.availableSpace.toString())}
+              </span>
+            </Grid>
+          }
+        />
+      </Card>
+    </Fragment>
   );
 };
 

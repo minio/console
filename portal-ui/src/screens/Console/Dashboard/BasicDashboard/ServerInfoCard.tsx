@@ -18,39 +18,17 @@ import React from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import ComputerIcon from "@material-ui/icons/Computer";
 import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
 import { ServerInfo } from "../types";
 import { niceDays } from "../../../../common/utils";
-import { Tooltip } from "@material-ui/core";
+import { Card, CardHeader } from "@material-ui/core";
 import { CircleIcon } from "../../../../icons";
 
 const styles = (theme: Theme) =>
   createStyles({
-    serverCard: {
-      padding: 15,
-      margin: 8,
-      width: "100%",
-      maxWidth: 620,
-      "& .computerIcon": {
-        marginRight: 10,
-      },
-    },
-    titleContainer: {
-      display: "flex",
-    },
     cardIconContainer: {
       display: "flex",
       position: "relative",
       alignItems: "center",
-    },
-    endpoint: {
-      color: "#000000",
-      fontSize: 20,
-      fontWeight: "bold",
-      position: "relative" as const,
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-      overflow: "hidden",
     },
     stateContainer: {
       display: "flex",
@@ -101,6 +79,11 @@ const styles = (theme: Theme) =>
       alignItems: "center",
       marginTop: -3,
     },
+    cardHeader: {
+      "& .MuiCardHeader-title": {
+        fontWeight: "bolder",
+      },
+    },
   });
 
 interface ICardProps {
@@ -139,59 +122,55 @@ const ServerInfoCard = ({ classes, server }: ICardProps) => {
   ).length;
 
   return (
-    <Paper className={classes.serverCard}>
-      <Grid container direction="row" alignItems="center">
-        <Grid item xs={12}>
-          <div className={classes.titleContainer}>
-            <div className={classes.cardIconContainer}>
-              <ComputerIcon className="computerIcon" />
-              <div className={classes.healthStatusIcon}>
-                {server.state && (
-                  <span className={serverStatusToClass(server.state)}>
-                    <CircleIcon />
-                  </span>
-                )}
-              </div>
-            </div>{" "}
-            <Tooltip title={server.endpoint} placement="bottom">
-              <div className={classes.endpoint}>{server.endpoint}</div>
-            </Tooltip>
+    <Card>
+      <CardHeader
+        className={classes.cardHeader}
+        avatar={
+          <div className={classes.cardIconContainer}>
+            <ComputerIcon className="computerIcon" />
+            <div className={classes.healthStatusIcon}>
+              {server.state && (
+                <span className={serverStatusToClass(server.state)}>
+                  <CircleIcon />
+                </span>
+              )}
+            </div>
           </div>
-          <div className={classes.infoValue}>
-            <strong>Version:</strong> {server.version}
-          </div>
-        </Grid>
-        <Grid item xs={12} className={classes.stateContainer}>
-          <span className={classes.infoValue}>
-            <strong>Drives:</strong> {activeDisks}/{totalDrives}{" "}
-            <span
-              className={`${classes.innerState} ${
-                activeDisks <= totalDrives / 2 && classes.redState
-              } ${activeDisks === totalDrives / 2 + 1 && classes.yellowState} ${
-                activeDisks === totalDrives && classes.greenState
-              }`}
-            >
-              <CircleIcon />
+        }
+        title={server.endpoint}
+        subheader={
+          <Grid item xs={12} className={classes.stateContainer}>
+            <span className={classes.infoValue}>
+              <strong>Drives:</strong> {activeDisks}/{totalDrives}{" "}
+              <span
+                className={`${classes.innerState} ${
+                  activeDisks <= totalDrives / 2 && classes.redState
+                } ${
+                  activeDisks === totalDrives / 2 + 1 && classes.yellowState
+                } ${activeDisks === totalDrives && classes.greenState}`}
+              >
+                <CircleIcon />
+              </span>
             </span>
-          </span>
-          <span className={classes.infoValue}>
-            <strong>Network:</strong> {activeNetwork}/{networkTotal}{" "}
-            <span
-              className={`${classes.innerState} ${
-                activeNetwork <= networkTotal / 2 && classes.redState
-              } ${
-                activeNetwork === networkTotal / 2 + 1 && classes.yellowState
-              } ${activeNetwork === networkTotal && classes.greenState}`}
-            >
-              <CircleIcon />
+            <span className={classes.infoValue}>
+              <strong>Network:</strong> {activeNetwork}/{networkTotal}{" "}
+              <span
+                className={`${classes.innerState} ${
+                  activeNetwork <= networkTotal / 2 && classes.redState
+                } ${
+                  activeNetwork === networkTotal / 2 + 1 && classes.yellowState
+                } ${activeNetwork === networkTotal && classes.greenState}`}
+              >
+                <CircleIcon />
+              </span>
             </span>
-          </span>
-          <span className={classes.infoValue}>
-            <strong>Uptime:</strong> {niceDays(server.uptime)}
-          </span>
-        </Grid>
-      </Grid>
-    </Paper>
+            <span className={classes.infoValue}>
+              <strong>Uptime:</strong> {niceDays(server.uptime)}
+            </span>
+          </Grid>
+        }
+      />
+    </Card>
   );
 };
 
