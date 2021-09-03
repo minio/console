@@ -14,25 +14,26 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
-import SvgIcon from "@material-ui/core/SvgIcon";
+import * as React from "react";
+import { SvgIcon, SvgIconProps } from "@material-ui/core";
 
-interface IShareIcon {
-  width?: number;
-}
-
-const ShareIcon = ({ width = 24 }: IShareIcon) => {
+const ShareIcon = (props: SvgIconProps) => {
   return (
-    <SvgIcon style={{ width: width, height: width }}>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 13">
+    <SvgIcon {...props}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="1em"
+        height="1em"
+        viewBox="0 0 255.999 243.852"
+      >
         <path
-          d="M11.05 8.617v2.429h-9.1v-9.1h2.429v-1.95H0v13h13V8.617z"
-          className="a"
-        ></path>
+          data-name="Trazado 410"
+          d="M251.315 67.671L207.79 25.459c-14.279-13.851-35.342 7.862-21.063 21.716l12.959 12.567a156.689 156.689 0 00-82.95 23.182 156.774 156.774 0 00-71.051 97.677 15.547 15.547 0 0011.474 18.755 15.62 15.62 0 003.655.438 15.555 15.555 0 0015.1-11.909c14.6-60.586 70.74-100.461 130.9-96.758l-3.335 4.317-15.767 16.248c-13.849 14.285 7.867 35.345 21.719 21.063l42.214-43.518a15.131 15.131 0 00-.33-21.566z"
+        />
         <path
-          d="M3.854 9.256h1.95a4.945 4.945 0 013.6-4.74v1.3l.6-.487 2.474-2.012L9.4.817v1.7a6.9 6.9 0 00-5.546 6.739z"
-          className="a"
-        ></path>
+          data-name="Trazado 411"
+          d="M229.501 148.665a14.352 14.352 0 00-14.348 14.351v52.134H28.703V28.703h126.71a14.352 14.352 0 0014.351-14.351A14.353 14.353 0 00155.413.001h-130.1A25.34 25.34 0 00.002 25.314v193.228a25.339 25.339 0 0025.311 25.311h193.23a25.339 25.339 0 0025.311-25.311v-55.526a14.353 14.353 0 00-14.353-14.351z"
+        />
       </svg>
     </SvgIcon>
   );
