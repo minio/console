@@ -5454,6 +5454,9 @@ func init() {
         "accessKey": {
           "type": "string"
         },
+        "hasPolicy": {
+          "type": "boolean"
+        },
         "memberOf": {
           "type": "array",
           "items": {
@@ -11048,6 +11051,9 @@ func init() {
       "properties": {
         "accessKey": {
           "type": "string"
+        },
+        "hasPolicy": {
+          "type": "boolean"
         },
         "memberOf": {
           "type": "array",
