@@ -21,6 +21,7 @@ import { Link } from "react-router-dom";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, Grid, IconButton, Tooltip } from "@material-ui/core";
 import {
+  AddIcon,
   CreateIcon,
   DeleteIcon,
   IAMPoliciesIcon,
@@ -363,7 +364,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
                 <Button
                   variant="contained"
                   color="primary"
-                  startIcon={<CreateIcon />}
+                  startIcon={<AddIcon />}
                   size="medium"
                   onClick={() => {
                     setAddGroupOpen(true);

@@ -29,7 +29,7 @@ import {
   TransformedEndpointItem,
 } from "./types";
 import { notificationTransform } from "./utils";
-import { CreateIcon } from "../../../../icons";
+import { AddIcon, CreateIcon } from "../../../../icons";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import AddNotificationEndpoint from "./AddNotificationEndpoint";
 import { setErrorSnackMessage } from "../../../../actions";
@@ -201,7 +201,7 @@ const ListNotificationEndpoints = ({
                         <Button
                           variant="contained"
                           color="primary"
-                          startIcon={<CreateIcon />}
+                          startIcon={<AddIcon />}
                           onClick={openNewLambdaSelector}
                         >
                           Add Notification Target

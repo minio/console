@@ -29,7 +29,7 @@ import {
   settingsCommon,
   typesSelection,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { CreateIcon } from "../../../../icons";
+import { AddIcon, CreateIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../actions";
 import { ITierElement, ITierResponse } from "./types";
 import { ErrorResponseHandler } from "../../../../common/types";
@@ -246,7 +246,7 @@ const ListTiersConfiguration = ({
                         <Button
                           variant="contained"
                           color="primary"
-                          startIcon={<CreateIcon />}
+                          startIcon={<AddIcon />}
                           onClick={addTier}
                         >
                           Add Tier

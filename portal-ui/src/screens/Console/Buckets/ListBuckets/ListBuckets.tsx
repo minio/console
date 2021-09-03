@@ -24,7 +24,7 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import Moment from "react-moment";
 import { Bucket, BucketList, HasPermissionResponse } from "../types";
-import { CreateIcon } from "../../../../icons";
+import { AddIcon, CreateIcon } from "../../../../icons";
 import { niceBytes } from "../../../../common/utils";
 import { AppState } from "../../../../store";
 import { addBucketOpen, addBucketReset } from "../actions";
@@ -286,7 +286,7 @@ const ListBuckets = ({
               <Button
                 variant="contained"
                 color="primary"
-                startIcon={<CreateIcon />}
+                startIcon={<AddIcon />}
                 onClick={() => {
                   addBucketOpen(true);
                 }}

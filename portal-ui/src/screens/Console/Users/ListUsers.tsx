@@ -22,7 +22,7 @@ import { Button, Grid, InputAdornment, TextField } from "@material-ui/core";
 import GroupIcon from "@material-ui/icons/Group";
 import { User, UsersList } from "./types";
 import { usersSort } from "../../../utils/sortFunctions";
-import { CreateIcon } from "../../../icons";
+import { AddIcon, CreateIcon } from "../../../icons";
 import {
   actionsTray,
   containerForHeader,
@@ -252,7 +252,7 @@ const ListUsers = ({ classes, setErrorSnackMessage, history }: IUsersProps) => {
             <Button
               variant="contained"
               color="primary"
-              startIcon={<CreateIcon />}
+              startIcon={<AddIcon />}
               onClick={() => {
                 setAddScreenOpen(true);
                 setSelectedUser(null);
