@@ -84,18 +84,6 @@ const UserServiceAccountsPanel = ({
           setErrorSnackMessage(err);
           setLoading(false);
         });
-      api
-        .invoke("GET", `/api/v1/user/${user}/service-accounts`)
-        .then((res: string[]) => {
-          const serviceAccounts = res.sort(stringSort);
-
-          setLoading(false);
-          setRecords(serviceAccounts);
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setErrorSnackMessage(err);
-          setLoading(false);
-        });
     }
   }, [loading, setLoading, setRecords, setErrorSnackMessage, user]);
 
