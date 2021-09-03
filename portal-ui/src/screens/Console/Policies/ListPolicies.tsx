@@ -23,7 +23,7 @@ import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import { Policy, PolicyList } from "./types";
-import { CreateIcon } from "../../../icons";
+import { AddIcon, CreateIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
 import {
   actionsTray,
@@ -196,7 +196,7 @@ const ListPolicies = ({ classes, setErrorSnackMessage }: IPoliciesProps) => {
             <Button
               variant="contained"
               color="primary"
-              startIcon={<CreateIcon />}
+              startIcon={<AddIcon />}
               onClick={() => {
                 setAddScreenOpen(true);
                 setPolicyEdit(null);

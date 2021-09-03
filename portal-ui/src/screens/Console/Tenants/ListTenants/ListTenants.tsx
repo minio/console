@@ -30,7 +30,7 @@ import {
   settingsCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
-import { CircleIcon, CreateIcon } from "../../../../icons";
+import { AddIcon, CircleIcon, CreateIcon } from "../../../../icons";
 import { resetAddTenantForm } from "../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
@@ -314,7 +314,7 @@ const ListTenants = ({
                       <Button
                         variant="contained"
                         color="primary"
-                        startIcon={<CreateIcon />}
+                        startIcon={<AddIcon />}
                         onClick={createTenant}
                       >
                         Create Tenant

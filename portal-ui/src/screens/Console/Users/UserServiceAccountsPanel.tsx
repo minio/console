@@ -31,7 +31,7 @@ import { ErrorResponseHandler } from "../../../common/types";
 import AddUserServiceAccount from "./AddUserServiceAccount";
 import DeleteServiceAccount from "../Account/DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
-import { CreateIcon } from "../../../icons";
+import { AddIcon, CreateIcon } from "../../../icons";
 import Button from "@material-ui/core/Button";
 
 interface IUserServiceAccountsProps {
@@ -163,7 +163,7 @@ const UserServiceAccountsPanel = ({
         <Button
           variant="contained"
           color="primary"
-          startIcon={<CreateIcon />}
+          startIcon={<AddIcon />}
           onClick={() => {
             setAddScreenOpen(true);
             setAddScreenOpen(true);

@@ -23,7 +23,7 @@ import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import { IconButton, Tooltip } from "@material-ui/core";
-import { BucketsIcon, CreateIcon } from "../../../icons";
+import { AddIcon, BucketsIcon, CreateIcon } from "../../../icons";
 import { niceBytes } from "../../../common/utils";
 import { Bucket, BucketList, HasPermissionResponse } from "../Buckets/types";
 import {
@@ -246,7 +246,7 @@ const BrowseBuckets = ({
                           setAddScreenOpen(true);
                         }}
                       >
-                        <CreateIcon />
+                        <AddIcon />
                       </IconButton>
                     </Tooltip>
                   </Fragment>
