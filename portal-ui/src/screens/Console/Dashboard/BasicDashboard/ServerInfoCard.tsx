@@ -92,7 +92,6 @@ interface ICardProps {
 }
 
 const ServerInfoCard = ({ classes, server }: ICardProps) => {
-  console.log(server);
   const serverStatusToClass = (health_status: string) => {
     switch (health_status) {
       case "offline":
@@ -104,7 +103,7 @@ const ServerInfoCard = ({ classes, server }: ICardProps) => {
     }
   };
 
-  const networkKeys = Object.keys(server.network);
+  const networkKeys = Object.keys(get(server, "network", []));
 
   const networkTotal = networkKeys.length;
   const totalDrives = server.drives.length;
