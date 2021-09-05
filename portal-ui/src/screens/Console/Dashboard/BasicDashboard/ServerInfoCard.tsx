@@ -22,6 +22,7 @@ import { ServerInfo } from "../types";
 import { niceDays } from "../../../../common/utils";
 import { Card, CardHeader } from "@material-ui/core";
 import { CircleIcon } from "../../../../icons";
+import get from "lodash/get";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -92,7 +93,6 @@ interface ICardProps {
 }
 
 const ServerInfoCard = ({ classes, server }: ICardProps) => {
-  console.log(server);
   const serverStatusToClass = (health_status: string) => {
     switch (health_status) {
       case "offline":
@@ -104,7 +104,7 @@ const ServerInfoCard = ({ classes, server }: ICardProps) => {
     }
   };
 
-  const networkKeys = Object.keys(server.network);
+  const networkKeys = Object.keys(get(server, "network", []));
 
   const networkTotal = networkKeys.length;
   const totalDrives = server.drives.length;
