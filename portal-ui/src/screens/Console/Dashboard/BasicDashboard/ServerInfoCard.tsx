@@ -22,6 +22,7 @@ import { ServerInfo } from "../types";
 import { niceDays } from "../../../../common/utils";
 import { Card, CardHeader } from "@material-ui/core";
 import { CircleIcon } from "../../../../icons";
+import get from "lodash/get";
 
 const styles = (theme: Theme) =>
   createStyles({
