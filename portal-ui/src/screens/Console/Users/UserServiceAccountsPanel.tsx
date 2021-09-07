@@ -38,6 +38,7 @@ interface IUserServiceAccountsProps {
   classes: any;
   user: string;
   setErrorSnackMessage: typeof setErrorSnackMessage;
+  hasPolicy: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -53,6 +54,7 @@ const UserServiceAccountsPanel = ({
   classes,
   user,
   setErrorSnackMessage,
+  hasPolicy,
 }: IUserServiceAccountsProps) => {
   const [records, setRecords] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -75,7 +77,6 @@ const UserServiceAccountsPanel = ({
         .invoke("GET", `/api/v1/user/${user}/service-accounts`)
         .then((res: string[]) => {
           const serviceAccounts = res.sort(stringSort);
-
           setLoading(false);
           setRecords(serviceAccounts);
         })
@@ -169,6 +170,7 @@ const UserServiceAccountsPanel = ({
             setAddScreenOpen(true);
             setSelectedServiceAccount(null);
           }}
+          disabled={!hasPolicy}
         >
           Create service account
         </Button>

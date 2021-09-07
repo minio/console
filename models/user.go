@@ -37,6 +37,9 @@ type User struct {
 	// access key
 	AccessKey string `json:"accessKey,omitempty"`
 
+	// has policy
+	HasPolicy bool `json:"hasPolicy,omitempty"`
+
 	// member of
 	MemberOf []string `json:"memberOf"`
 

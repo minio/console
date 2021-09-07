@@ -2485,6 +2485,9 @@ definitions:
           type: string
       status:
         type: string
+      hasPolicy:
+        type: boolean
+
   listUsersResponse:
     type: object
     properties:
