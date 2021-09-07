@@ -64,7 +64,7 @@ const defineIcon = (type: string, selected: boolean) => {
     case "description":
       return <IAMPoliciesIcon />;
     case "share":
-      return <ShareIcon active={selected} />;
+      return <ShareIcon />;
     case "cloud":
       return <CloudIcon active={selected} />;
     case "console":
