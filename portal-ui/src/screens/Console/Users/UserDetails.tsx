@@ -189,7 +189,7 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
         }
         setCurrentPolicies(currentPolicies);
         setEnabled(res.status === "enabled");
-        setHasPolicy(res.hasPolicy)
+        setHasPolicy(res.hasPolicy);
         setLoading(false);
       })
       .catch((err: ErrorResponseHandler) => {
@@ -384,7 +384,11 @@ const UserDetails = ({ classes, match }: IUserDetailsProps) => {
               />
             </TabPanel>
             <TabPanel index={1} value={curTab}>
-              <UserServiceAccountsPanel user={userName} classes={classes} hasPolicy={hasPolicy} />
+              <UserServiceAccountsPanel
+                user={userName}
+                classes={classes}
+                hasPolicy={hasPolicy}
+              />
             </TabPanel>
             <TabPanel index={2} value={curTab}>
               <div className={classes.actionsTray}>
