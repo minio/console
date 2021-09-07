@@ -281,11 +281,35 @@ func getUserInfoResponse(session *models.Principal, params admin_api.GetUserInfo
 		return nil, prepareError(err)
 	}
 
+	var policies []string
+	if user.PolicyName == "" {
+		policies = []string{}
+	} else {
+		policies = strings.Split(user.PolicyName, ",")
+	}
+
+	hasPolicy := true
+
+	if len(policies) == 0 {
+		hasPolicy = false
+		for i := 0; i < len(user.MemberOf); i++ {
+			group, err := adminClient.getGroupDescription(ctx, user.MemberOf[i])
+			if err != nil {
+				continue
+			}
+			if group.Policy != "" {
+				hasPolicy = true
+				break
+			}
+		}
+	}
+
 	userInformation := &models.User{
 		AccessKey: params.Name,
 		MemberOf:  user.MemberOf,
-		Policy:    strings.Split(user.PolicyName, ","),
+		Policy:    policies,
 		Status:    string(user.Status),
+		HasPolicy: hasPolicy,
 	}
 
 	return userInformation, nil
