@@ -94,8 +94,7 @@ const DriveInfoCard = ({ classes, drive }: ICardProps) => {
         return classes.redState;
       case "ok":
         return classes.greenState;
-      default:
-        return classes.greyState;
+        deefault: return classes.greyState;
     }
   };
 
