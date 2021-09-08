@@ -22,7 +22,7 @@ import { ErrorResponseHandler } from "../types";
 
 export class API {
   invoke(method: string, url: string, data?: object) {
-    const targetURL = `${baseUrl}${url}`.replaceAll("//", "/");
+    const targetURL = `${baseUrl}${url}`.replace(/\/\//g, "/");
     return request(method, targetURL)
       .send(data)
       .then((res) => res.body)
