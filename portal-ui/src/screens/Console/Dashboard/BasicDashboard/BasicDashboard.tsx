@@ -87,6 +87,7 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
     return usage.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
+  
   const makeServerArray = (usage: Usage | null) => {
     if (usage != null) {
       return usage.servers.sort(function (a, b) {
@@ -138,9 +139,20 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
                 />
               </Card>
             </Grid>
+            
+            <Grid item xs={6}>
+              <Card className={classes.cardRoot}>
+                {usage ? usage.servers.length !== 0 && 
+                <CardHeader
+                  avatar={<TotalObjectsIcon />}
+                  title="MinIO Version"
+                  subheader={usage ? usage.servers[0].version : 0}
+                /> : 0}
+              </Card>
+            </Grid>
             <Grid item xs={6} />
           </Grid>
-
+          
           <Grid item xs={12}>
             <Grid container alignItems="center" spacing={2}>
               <Grid item>
