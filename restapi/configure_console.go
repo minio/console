@@ -240,6 +240,11 @@ var reHrefIndex = regexp.MustCompile(`(?m)((href|src)="(.\/).*?")`)
 // wrapHandlerSinglePageApplication handles a http.FileServer returning a 404 and overrides it with index.html
 func wrapHandlerSinglePageApplication(h http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		// This is used to enforce application/javascript MIME on Windows (https://github.com/golang/go/issues/32350)
+		if strings.HasSuffix(r.URL.Path, ".js") {
+			w.Header().Set("Content-Type", "application/javascript")
+		}
+
 		nfrw := &notFoundRedirectRespWr{ResponseWriter: w}
 		h.ServeHTTP(nfrw, r)
 		if nfrw.status == 404 || r.URL.String() == "/" {
