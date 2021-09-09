@@ -14,38 +14,29 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface ILinearGraphConfiguration {
-  dataKey: string;
-  keyLabel: string;
-  lineColor: string;
-  fillColor: string;
+import React, { Fragment } from "react";
+import CommonCard from "../CommonCard";
+
+interface IMergedWidgets {
+  title: string;
+  leftComponent: any;
+  rightComponent: any;
 }
 
-export interface IBarChartConfiguration {
-  dataKey: string;
-  color: string;
-  background?: object;
-  greatestColor?: string;
-}
+const MergedWidgets = ({
+  title,
+  leftComponent,
+  rightComponent,
+}: IMergedWidgets) => {
+  return (
+    <Fragment>
+      <CommonCard
+        title={title}
+        metricValue={leftComponent}
+        rightComponent={rightComponent}
+      />
+    </Fragment>
+  );
+};
 
-export interface IPieChartConfiguration {
-  innerChart: ISinglePieConfiguration;
-  outerChart?: ISinglePieConfiguration;
-}
-
-export interface ISinglePieConfiguration {
-  colorList: string[];
-  startAngle?: number;
-  endAngle?: number;
-  innerRadius?: number | string;
-  outerRadius?: number | string;
-}
-
-export interface IDataSRep {
-  value: number;
-}
-
-export interface IBarChartRelation {
-  originTag: string;
-  displayTag: string;
-}
+export default MergedWidgets;

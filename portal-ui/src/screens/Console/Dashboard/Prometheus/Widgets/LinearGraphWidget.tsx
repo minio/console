@@ -49,7 +49,7 @@ interface ILinearGraphWidget {
   hideYAxis?: boolean;
   yAxisFormatter?: (item: string) => string;
   xAxisFormatter?: (item: string) => string;
-  panelWidth?: number;
+  areaWidget?: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -57,24 +57,29 @@ const styles = (theme: Theme) =>
     ...widgetCommon,
     containerElements: {
       display: "flex",
-      flexDirection: "column",
-      height: "calc(100% - 18px)",
+      flexDirection: "row",
+      height: "100%",
+      flexGrow: 1,
     },
     chartCont: {
       position: "relative",
-      flexGrow: 1,
-      minHeight: "65%",
-      height: 1,
+      height: 140,
+      width: "100%",
     },
     legendChart: {
       display: "flex",
-      flexWrap: "wrap",
+      flexDirection: "column",
       flex: "0 1 auto",
-      maxHeight: "35%",
+      height: 130,
       margin: 0,
       overflowY: "auto",
       position: "relative",
       textAlign: "center",
+      width: "100%",
+      justifyContent: "flex-start",
+      color: "#404143",
+      fontWeight: "bold",
+      fontSize: 12,
     },
     loadingAlign: {
       margin: "auto",
@@ -91,9 +96,9 @@ const LinearGraphWidget = ({
   panelItem,
   apiPrefix,
   hideYAxis = false,
+  areaWidget = false,
   yAxisFormatter = (item: string) => item,
   xAxisFormatter = (item: string) => item,
-  panelWidth = 0,
 }: ILinearGraphWidget) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<object[]>([]);
@@ -153,25 +158,20 @@ const LinearGraphWidget = ({
     }
   }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
 
-  let intervalCount = 5;
-
-  if (panelWidth !== 0) {
-    if (panelWidth > 400) {
-      intervalCount = 5;
-    } else if (panelWidth > 350) {
-      intervalCount = 10;
-    } else if (panelWidth > 300) {
-      intervalCount = 15;
-    } else if (panelWidth > 250) {
-      intervalCount = 20;
-    } else {
-      intervalCount = 30;
-    }
-  }
+  let intervalCount = Math.floor(data.length / 5);
 
   const linearConfiguration = result
     ? (result?.widgetConfiguration as ILinearGraphConfiguration[])
     : [];
+
+  const CustomizedDot = (prop: any) => {
+    const { cx, cy, index } = prop;
+
+    if (index % 3 !== 0) {
+      return null;
+    }
+    return <circle cx={cx} cy={cy} r={3} strokeWidth={0} fill="#07264A" />;
+  };
 
   return (
     <div className={classes.singleValueContainer}>
@@ -191,24 +191,52 @@ const LinearGraphWidget = ({
                     bottom: 0,
                   }}
                 >
+                  {areaWidget && (
+                    <defs>
+                      <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                        <stop
+                          offset="0%"
+                          stopColor="#ABC8F2"
+                          stopOpacity={0.9}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor="#ABC8F2"
+                          stopOpacity={0}
+                        />
+                      </linearGradient>
+                    </defs>
+                  )}
                   <CartesianGrid
-                    strokeDasharray="3 3"
+                    strokeDasharray={areaWidget ? "0 0" : "3 3"}
                     strokeWidth={1}
                     strokeOpacity={0.5}
+                    stroke={"#07264A30"}
+                    vertical={!areaWidget}
                   />
                   <XAxis
                     dataKey="name"
                     tickFormatter={(value: any) => xAxisFormatter(value)}
                     interval={intervalCount}
-                    tick={{ fontSize: "70%" }}
+                    tick={{
+                      fontSize: "70%",
+                      fontWeight: "bold",
+                      color: "#404143",
+                    }}
                     tickCount={10}
+                    stroke={"#082045"}
                   />
                   <YAxis
                     type={"number"}
                     domain={[0, dataMax * 1.1]}
                     hide={hideYAxis}
                     tickFormatter={(value: any) => yAxisFormatter(value)}
-                    tick={{ fontSize: "70%" }}
+                    tick={{
+                      fontSize: "70%",
+                      fontWeight: "bold",
+                      color: "#404143",
+                    }}
+                    stroke={"#082045"}
                   />
                   {linearConfiguration.map((section, index) => {
                     return (
@@ -217,8 +245,10 @@ const LinearGraphWidget = ({
                         type="monotone"
                         dataKey={section.dataKey}
                         stroke={section.lineColor}
-                        fill={section.fillColor}
-                        fillOpacity={0.3}
+                        fill={areaWidget ? "url(#colorUv)" : section.fillColor}
+                        fillOpacity={areaWidget ? 0.3 : 0}
+                        strokeWidth={areaWidget ? 0 : 2}
+                        dot={areaWidget ? <CustomizedDot /> : false}
                       />
                     );
                   })}
@@ -236,24 +266,26 @@ const LinearGraphWidget = ({
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-            <div className={classes.legendChart}>
-              {linearConfiguration.map((section, index) => {
-                return (
-                  <div
-                    className={classes.singleLegendContainer}
-                    key={`legend-${section.keyLabel}-${index.toString()}`}
-                  >
+            {!areaWidget && (
+              <div className={classes.legendChart}>
+                {linearConfiguration.map((section, index) => {
+                  return (
                     <div
-                      className={classes.colorContainer}
-                      style={{ backgroundColor: section.lineColor }}
-                    />
-                    <div className={classes.legendLabel}>
-                      {section.keyLabel}
+                      className={classes.singleLegendContainer}
+                      key={`legend-${section.keyLabel}-${index.toString()}`}
+                    >
+                      <div
+                        className={classes.colorContainer}
+                        style={{ backgroundColor: section.lineColor }}
+                      />
+                      <div className={classes.legendLabel}>
+                        {section.keyLabel}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </React.Fragment>
         )}
       </div>

@@ -20,10 +20,8 @@ import Grid from "@material-ui/core/Grid";
 import { IDriveInfo, Usage } from "../types";
 import { calculateBytes } from "../../../../common/utils";
 import { TabPanel } from "../../../shared/tabs";
-import ReportedUsageIcon from "../../../../icons/ReportedUsageIcon";
 import ServerInfoCard from "./ServerInfoCard";
 import DriveInfoCard from "./DriveInfoCard";
-import { BucketsIcon, TotalObjectsIcon } from "../../../../icons";
 import CommonCard from "../CommonCard";
 import TabSelector from "../../Common/TabSelector/TabSelector";
 import GeneralUsePaginator from "../../Common/GeneralUsePaginator/GeneralUsePaginator";
@@ -133,23 +131,19 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
         </Grid>
         <Grid item xs={12} className={classes.generalStatusCards}>
           <CommonCard
-            avatar={<BucketsIcon />}
             title={"All Buckets"}
             metricValue={usage ? prettyNumber(usage.buckets) : 0}
           />
           <CommonCard
-            avatar={<ReportedUsageIcon />}
             title={"Usage"}
             metricValue={usageToRepresent.total}
             metricUnit={usageToRepresent.unit}
           />
           <CommonCard
-            avatar={<TotalObjectsIcon />}
             title={"Total Objects"}
             metricValue={usage ? prettyNumber(usage.objects) : 0}
           />
           <CommonCard
-            avatar={<TotalObjectsIcon />}
             title={"Servers"}
             metricValue={usage ? prettyNumber(serverArray.length) : 0}
             subMessage={{ message: "Total" }}

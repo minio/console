@@ -14,11 +14,11 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import api from "../../../../../common/api";
-import { widgetDetailsToPanel } from "../utils";
+import { splitSizeMetric, widgetDetailsToPanel } from "../utils";
 import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
 import { IDashboardPanel } from "../types";
 import { connect } from "react-redux";
@@ -49,9 +49,29 @@ const styles = (theme: Theme) =>
     },
     loadingAlign: {
       width: "100%",
-      paddingTop: "15px",
       textAlign: "center",
       margin: "auto",
+    },
+    metric: {
+      fontSize: 60,
+      lineHeight: 1,
+      color: "#07193E",
+      fontWeight: 700,
+    },
+    titleElement: {
+      fontSize: 10,
+      color: "#767676",
+      fontWeight: 700,
+    },
+    containerAlignment: {
+      display: "flex",
+      height: 140,
+      flexDirection: "column",
+      justifyContent: "center",
+      "& .unitText": {
+        color: "#767676",
+        fontSize: 12,
+      }
     },
   });
 
@@ -107,14 +127,18 @@ const SingleValueWidget = ({
     }
   }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
   return (
-    <div className={classes.singleValueContainer}>
-      <div className={classes.titleContainer}>{title}</div>
+    <div className={classes.containerAlignment}>
       {loading && (
         <div className={classes.loadingAlign}>
           <CircularProgress />
         </div>
       )}
-      {!loading && <div className={classes.contentContainer}>{data}</div>}
+      {!loading && (
+        <Fragment>
+          <div className={classes.metric}>{splitSizeMetric(data)}</div>
+          <div className={classes.titleElement}>{title}</div>
+        </Fragment>
+      )}
     </div>
   );
 };

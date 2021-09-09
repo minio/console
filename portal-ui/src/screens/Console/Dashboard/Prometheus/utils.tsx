@@ -14,311 +14,32 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import React, { Fragment } from "react";
 import get from "lodash/get";
-import { Layout } from "react-grid-layout";
 import { IDashboardPanel, widgetType } from "./types";
 import {
   getTimeFromTimestamp,
   niceBytes,
   niceDays,
   textToRGBColor,
+  units,
 } from "../../../../common/utils";
+import HealIcon from "../../../../icons/HealIcon";
+import DiagnosticsIcon from "../../../../icons/DiagnosticsIcon";
+import HistoryIcon from "../../../../icons/HistoryIcon";
 
 const dLocalStorageV = "dashboardConfig";
 
-export const defaultWidgetsLayout: Layout[] = [
-  {
-    w: 1,
-    h: 2,
-    x: 0,
-    y: 0,
-    i: "panel-0",
-    minW: 1,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 1,
-    h: 1,
-    x: 1,
-    y: 2,
-    i: "panel-1",
-    minW: 1,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 1,
-    h: 1,
-    x: 1,
-    y: 3,
-    i: "panel-2",
-    minW: 1,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 1,
-    h: 2,
-    x: 2,
-    y: 0,
-    i: "panel-3",
-    minW: 1,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 4,
-    h: 2,
-    x: 4,
-    y: 2,
-    i: "panel-4",
-    minW: 2,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 4,
-    h: 2,
-    x: 4,
-    y: 0,
-    i: "panel-5",
-    minW: 2,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 1,
-    h: 1,
-    x: 0,
-    y: 2,
-    i: "panel-6",
-    minW: 1,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 1,
-    h: 1,
-    x: 0,
-    y: 3,
-    i: "panel-7",
-    minW: 1,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 1,
-    h: 1,
-    x: 2,
-    y: 2,
-    i: "panel-8",
-    minW: 1,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 1,
-    h: 1,
-    x: 2,
-    y: 3,
-    i: "panel-9",
-    minW: 1,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 4,
-    h: 3,
-    x: 0,
-    y: 4,
-    i: "panel-10",
-    minW: 2,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 1,
-    h: 1,
-    x: 3,
-    y: 0,
-    i: "panel-11",
-    minW: 1,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 1,
-    h: 1,
-    x: 3,
-    y: 1,
-    i: "panel-12",
-    minW: 1,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 4,
-    h: 3,
-    x: 0,
-    y: 10,
-    i: "panel-13",
-    minW: 2,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 4,
-    h: 3,
-    x: 0,
-    y: 4,
-    i: "panel-14",
-    minW: 2,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 4,
-    h: 3,
-    x: 4,
-    y: 4,
-    i: "panel-15",
-    minW: 2,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 8,
-    h: 3,
-    x: 0,
-    y: 7,
-    i: "panel-16",
-    minW: 2,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 8,
-    h: 3,
-    x: 0,
-    y: 19,
-    i: "panel-19",
-    minW: 2,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 1,
-    h: 1,
-    x: 3,
-    y: 2,
-    i: "panel-20",
-    minW: 1,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 1,
-    h: 1,
-    x: 3,
-    y: 3,
-    i: "panel-21",
-    minW: 1,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 4,
-    h: 3,
-    x: 4,
-    y: 4,
-    i: "panel-22",
-    minW: 2,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 4,
-    h: 3,
-    x: 4,
-    y: 10,
-    i: "panel-23",
-    minW: 2,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 4,
-    h: 3,
-    x: 0,
-    y: 13,
-    i: "panel-24",
-    minW: 2,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 4,
-    h: 3,
-    x: 4,
-    y: 13,
-    i: "panel-25",
-    minW: 2,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 4,
-    h: 3,
-    x: 0,
-    y: 16,
-    i: "panel-26",
-    minW: 2,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 4,
-    h: 3,
-    x: 4,
-    y: 16,
-    i: "panel-27",
-    minW: 2,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 1,
-    h: 1,
-    x: 1,
-    y: 0,
-    i: "panel-28",
-    minW: 1,
-    moved: false,
-    static: false,
-  },
-  {
-    w: 1,
-    h: 1,
-    x: 1,
-    y: 1,
-    i: "panel-29",
-    minW: 1,
-    moved: false,
-    static: false,
-  },
-];
-
 const colorsMain = [
-  "#6992B7",
-  "#E2AD17",
-  "#22B573",
-  "#F7655E",
-  "#0071BC",
+  "#C4D4E9",
+  "#DCD1EE",
+  "#D1EEE7",
+  "#EEDED1",
+  "#AAF38F",
   "#F9E6C5",
-  "#A6E8C4",
+  "#C83B51",
   "#F4CECE",
-  "#ADD5E0",
+  "#D6D6D6",
 ];
 
 const niceDaysFromNS = (seconds: string) => {
@@ -334,23 +55,9 @@ export const panelsConfiguration: IDashboardPanel[] = [
     id: 1,
     title: "Uptime",
     data: "N/A",
-    type: widgetType.singleValue,
-    layoutIdentifier: "panel-0",
+    type: widgetType.simpleWidget,
+    widgetIcon: <HistoryIcon />,
     labelDisplayFunction: niceDays,
-  },
-  {
-    id: 9,
-    title: "Total Online Disks",
-    data: "N/A",
-    type: widgetType.singleValue,
-    layoutIdentifier: "panel-1",
-  },
-  {
-    id: 78,
-    title: "Total Offline Disks",
-    data: "N/A",
-    type: widgetType.singleValue,
-    layoutIdentifier: "panel-2",
   },
   {
     id: 50,
@@ -360,21 +67,20 @@ export const panelsConfiguration: IDashboardPanel[] = [
     widgetConfiguration: {
       outerChart: {
         colorList: ["#9c9c9c"],
-        innerRadius: 51,
-        outerRadius: 54,
-        startAngle: -15,
-        endAngle: 195,
+        innerRadius: 0,
+        outerRadius: 0,
+        startAngle: 0,
+        endAngle: 0,
       },
       innerChart: {
         colorList: colorsMain,
-        innerRadius: 35,
+        innerRadius: 20,
         outerRadius: 50,
-        startAngle: -15,
-        endAngle: 195,
+        startAngle: 90,
+        endAngle: -200,
       },
     },
     type: widgetType.pieChart,
-    layoutIdentifier: "panel-3",
     innerLabel: "N/A",
     labelDisplayFunction: niceBytes,
   },
@@ -390,8 +96,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
         fillColor: "#000",
       },
     ],
-    type: widgetType.linearGraph,
-    layoutIdentifier: "panel-4",
+    type: widgetType.areaGraph,
     yAxisFormatter: niceBytes,
     xAxisFormatter: getTimeFromTimestamp,
   },
@@ -404,8 +109,9 @@ export const panelsConfiguration: IDashboardPanel[] = [
         dataKey: "a",
         color: colorsMain[0],
         background: {
-          fill: "rgba(0,0,0,0.1)",
+          fill: "#EEF1F4",
         },
+        greatestColor: "#081C42",
       },
     ],
     customStructure: [
@@ -436,21 +142,6 @@ export const panelsConfiguration: IDashboardPanel[] = [
       },
     ],
     type: widgetType.barChart,
-    layoutIdentifier: "panel-5",
-  },
-  {
-    id: 53,
-    title: "Total Online Servers",
-    data: "N/A",
-    type: widgetType.singleValue,
-    layoutIdentifier: "panel-6",
-  },
-  {
-    id: 69,
-    title: "Total Offline Servers",
-    data: "N/A",
-    type: widgetType.singleValue,
-    layoutIdentifier: "panel-7",
   },
   {
     id: 66,
@@ -460,7 +151,6 @@ export const panelsConfiguration: IDashboardPanel[] = [
     type: widgetType.singleRep,
     color: "#0071BC",
     fillColor: "#ADD5E0",
-    layoutIdentifier: "panel-8",
   },
   {
     id: 44,
@@ -470,7 +160,6 @@ export const panelsConfiguration: IDashboardPanel[] = [
     type: widgetType.singleRep,
     color: "#0071BC",
     fillColor: "#ADD5E0",
-    layoutIdentifier: "panel-9",
   },
   {
     id: 63,
@@ -485,7 +174,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
       },
     ],
     type: widgetType.linearGraph,
-    layoutIdentifier: "panel-10",
+
     xAxisFormatter: getTimeFromTimestamp,
     yAxisFormatter: niceBytes,
   },
@@ -495,7 +184,6 @@ export const panelsConfiguration: IDashboardPanel[] = [
     data: [],
     innerLabel: "N/A",
     type: widgetType.singleRep,
-    layoutIdentifier: "panel-11",
     color: "#22B573",
     fillColor: "#A6E8C4",
   },
@@ -505,7 +193,6 @@ export const panelsConfiguration: IDashboardPanel[] = [
     data: [],
     innerLabel: "N/A",
     type: widgetType.singleRep,
-    layoutIdentifier: "panel-12",
     color: "#F7655E",
     fillColor: "#F4CECE",
   },
@@ -522,7 +209,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
       },
     ],
     type: widgetType.linearGraph,
-    layoutIdentifier: "panel-13",
+
     yAxisFormatter: roundNumber,
     xAxisFormatter: getTimeFromTimestamp,
   },
@@ -539,7 +226,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
       },
     ],
     type: widgetType.linearGraph,
-    layoutIdentifier: "panel-14",
+
     xAxisFormatter: getTimeFromTimestamp,
   },
   {
@@ -555,7 +242,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
       },
     ],
     type: widgetType.linearGraph,
-    layoutIdentifier: "panel-15",
+
     xAxisFormatter: getTimeFromTimestamp,
     yAxisFormatter: niceBytes,
   },
@@ -572,7 +259,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
       },
     ],
     type: widgetType.linearGraph,
-    layoutIdentifier: "panel-16",
+
     yAxisFormatter: niceBytes,
     xAxisFormatter: getTimeFromTimestamp,
   },
@@ -589,7 +276,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
       },
     ],
     type: widgetType.linearGraph,
-    layoutIdentifier: "panel-19",
+
     yAxisFormatter: niceBytes,
     xAxisFormatter: getTimeFromTimestamp,
   },
@@ -597,16 +284,16 @@ export const panelsConfiguration: IDashboardPanel[] = [
     id: 80,
     title: "Time Since Last Heal Activity",
     data: "N/A",
-    type: widgetType.singleValue,
-    layoutIdentifier: "panel-20",
+    type: widgetType.simpleWidget,
+    widgetIcon: <HealIcon />,
     labelDisplayFunction: niceDaysFromNS,
   },
   {
     id: 81,
     title: "Time Since Last Scan Activity",
     data: "N/A",
-    type: widgetType.singleValue,
-    layoutIdentifier: "panel-21",
+    type: widgetType.simpleWidget,
+    widgetIcon: <DiagnosticsIcon />,
     labelDisplayFunction: niceDaysFromNS,
   },
   {
@@ -622,7 +309,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
       },
     ],
     type: widgetType.linearGraph,
-    layoutIdentifier: "panel-22",
+
     xAxisFormatter: getTimeFromTimestamp,
   },
   {
@@ -638,7 +325,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
       },
     ],
     type: widgetType.linearGraph,
-    layoutIdentifier: "panel-23",
+
     xAxisFormatter: getTimeFromTimestamp,
     yAxisFormatter: niceBytes,
   },
@@ -655,7 +342,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
       },
     ],
     type: widgetType.linearGraph,
-    layoutIdentifier: "panel-24",
+
     xAxisFormatter: getTimeFromTimestamp,
     yAxisFormatter: niceBytes,
   },
@@ -672,7 +359,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
       },
     ],
     type: widgetType.linearGraph,
-    layoutIdentifier: "panel-25",
+
     disableYAxis: true,
     xAxisFormatter: getTimeFromTimestamp,
   },
@@ -689,7 +376,6 @@ export const panelsConfiguration: IDashboardPanel[] = [
       },
     ],
     type: widgetType.linearGraph,
-    layoutIdentifier: "panel-26",
     yAxisFormatter: roundNumber,
     xAxisFormatter: getTimeFromTimestamp,
   },
@@ -706,25 +392,66 @@ export const panelsConfiguration: IDashboardPanel[] = [
       },
     ],
     type: widgetType.linearGraph,
-    layoutIdentifier: "panel-27",
     yAxisFormatter: roundNumber,
     xAxisFormatter: getTimeFromTimestamp,
   },
   {
-    id: 65,
-    title: "Total S3 Traffic Inbound",
-    data: "N/A",
-    type: widgetType.singleValue,
-    layoutIdentifier: "panel-28",
-    labelDisplayFunction: niceBytes,
+    id: 500,
+    mergedPanels: [
+      {
+        id: 53,
+        title: "Online Servers",
+        data: "N/A",
+        type: widgetType.singleValue,
+      },
+      {
+        id: 69,
+        title: "Offline Servers",
+        data: "N/A",
+        type: widgetType.singleValue,
+      },
+    ],
+    title: "Servers",
   },
   {
-    id: 64,
-    title: "Total S3 Traffic Outbound",
-    data: "N/A",
-    type: widgetType.singleValue,
-    layoutIdentifier: "panel-29",
-    labelDisplayFunction: niceBytes,
+    id: 501,
+    mergedPanels: [
+      {
+        id: 9,
+        title: "Online Disks",
+        data: "N/A",
+        type: widgetType.singleValue,
+      },
+      {
+        id: 78,
+        title: "Offline Disks",
+        data: "N/A",
+        type: widgetType.singleValue,
+      },
+    ],
+    title: "Disks",
+  },
+  {
+    id: 502,
+    mergedPanels: [
+      {
+        id: 65,
+        title: "Inbound Traffic",
+        data: "N/A",
+        type: widgetType.singleValue,
+
+        labelDisplayFunction: niceBytes,
+      },
+      {
+        id: 64,
+        title: "Outbound Traffic",
+        data: "N/A",
+        type: widgetType.singleValue,
+
+        labelDisplayFunction: niceBytes,
+      },
+    ],
+    title: "Total S3 Traffic",
   },
 ];
 
@@ -804,6 +531,7 @@ export const widgetDetailsToPanel = (
 
   switch (panelItem.type) {
     case widgetType.singleValue:
+    case widgetType.simpleWidget:
       if (typeOfPayload === "stat" || typeOfPayload === "singlestat") {
         // We sort values & get the last value
         let elements = get(payloadData, "targets[0].result[0].values", []);
@@ -873,6 +601,7 @@ export const widgetDetailsToPanel = (
       }
       break;
     case widgetType.linearGraph:
+    case widgetType.areaGraph:
       if (typeOfPayload === "graph") {
         let targets = get(payloadData, "targets", []);
         if (targets === null) {
@@ -1064,30 +793,21 @@ export const widgetDetailsToPanel = (
   return panelItem;
 };
 
-export const saveDashboardDistribution = (configuration: Layout[]) => {
-  localStorage.setItem(dLocalStorageV, btoa(JSON.stringify(configuration)));
-};
-
-export const getDashboardDistribution = (currentItems: number) => {
-  const storedConfiguration = localStorage.getItem(dLocalStorageV);
-
-  if (!storedConfiguration) {
-    return defaultWidgetsLayout;
+export const splitSizeMetric = (val: string) => {
+  const splittedText = val.split(" ");
+  // Value is not a size metric, we return as common string
+  if (splittedText.length !== 2) {
+    return <Fragment>{val}</Fragment>;
   }
 
-  const parsedConfig = JSON.parse(atob(storedConfiguration));
-
-  if (
-    parsedConfig.length === 0 ||
-    (parsedConfig.length > 0 && !parsedConfig[0].minW)
-  ) {
-    return defaultWidgetsLayout;
+  if (!units.includes(splittedText[1])) {
+    return <Fragment>{val}</Fragment>;
   }
 
-  // Stored Widgets length is not the same as the currentItems, then we return the new configuration
-  if (currentItems !== 0 && parsedConfig.length !== currentItems) {
-    return defaultWidgetsLayout;
-  }
-
-  return parsedConfig;
+  return (
+    <span className="commonValue">
+      {splittedText[0]}
+      <span className="unitText">{splittedText[1]}</span>
+    </span>
+  );
 };
