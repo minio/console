@@ -30,7 +30,7 @@ import {
   settingsCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
-import { AddIcon, CircleIcon, CreateIcon } from "../../../../icons";
+import { AddIcon, CircleIcon } from "../../../../icons";
 import { resetAddTenantForm } from "../actions";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";

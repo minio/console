@@ -22,7 +22,7 @@ import { Button, Grid, InputAdornment, TextField } from "@material-ui/core";
 import GroupIcon from "@material-ui/icons/Group";
 import { User, UsersList } from "./types";
 import { usersSort } from "../../../utils/sortFunctions";
-import { AddIcon, CreateIcon } from "../../../icons";
+import { AddIcon } from "../../../icons";
 import {
   actionsTray,
   containerForHeader,

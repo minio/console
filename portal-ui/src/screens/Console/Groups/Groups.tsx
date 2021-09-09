@@ -21,7 +21,7 @@ import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import { Button } from "@material-ui/core";
-import { AddIcon, CreateIcon } from "../../../icons";
+import { AddIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
 import { GroupsList } from "./types";
 import { stringSort } from "../../../utils/sortFunctions";

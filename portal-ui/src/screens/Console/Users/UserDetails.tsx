@@ -22,7 +22,6 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, Grid, IconButton, Tooltip } from "@material-ui/core";
 import {
   AddIcon,
-  CreateIcon,
   DeleteIcon,
   IAMPoliciesIcon,
   UsersIcon,

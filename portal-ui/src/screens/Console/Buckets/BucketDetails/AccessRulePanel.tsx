@@ -27,7 +27,7 @@ import api from "../../../../common/api";
 import AddAccessRuleModal from "./AddAccessRule";
 import DeleteAccessRuleModal from "./DeleteAccessRule";
 import EditAccessRuleModal from "./EditAccessRule";
-import { AddIcon, CreateIcon } from "../../../../icons";
+import { AddIcon } from "../../../../icons";
 import Grid from "@material-ui/core/Grid";
 import {
   actionsTray,

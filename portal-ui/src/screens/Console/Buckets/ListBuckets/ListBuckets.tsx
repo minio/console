@@ -37,9 +37,9 @@ import api from "../../../../common/api";
 import AddBucket from "./AddBucket";
 import DeleteBucket from "./DeleteBucket";
 import PageHeader from "../../Common/PageHeader/PageHeader";
+import BucketListItem from "./BucketListItem";
 import BulkReplicationModal from "./BulkReplicationModal";
 import SearchIcon from "../../../../icons/SearchIcon";
-import BucketListItem from "./BucketListItem";
 
 const styles = (theme: Theme) =>
   createStyles({

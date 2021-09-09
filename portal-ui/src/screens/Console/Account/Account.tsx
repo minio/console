@@ -26,7 +26,7 @@ import { setErrorSnackMessage } from "../../../actions";
 import AddServiceAccount from "./AddServiceAccount";
 import DeleteServiceAccount from "./DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
-import { AddIcon, CreateIcon, LockIcon } from "../../../icons";
+import { AddIcon, LockIcon } from "../../../icons";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";

@@ -29,7 +29,7 @@ import {
   settingsCommon,
   typesSelection,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { AddIcon, CreateIcon } from "../../../../icons";
+import { AddIcon } from "../../../../icons";
 import { setErrorSnackMessage } from "../../../../actions";
 import { ITierElement, ITierResponse } from "./types";
 import { ErrorResponseHandler } from "../../../../common/types";
