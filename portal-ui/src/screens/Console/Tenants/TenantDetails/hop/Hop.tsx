@@ -106,7 +106,7 @@ const Hop = ({ classes, match }: IHopSimple) => {
                     const next = `${loc}${add}cp=y`;
                     consoleFrame.current.contentDocument.location.replace(next);
                   } else {
-                    consoleFrame.current.contentDocument.location.reload(true);
+                    consoleFrame.current.contentDocument.location.reload();
                   }
                 }
               }}

@@ -730,3 +730,107 @@ export const inlineCheckboxes = {
     justifyContent: "flex-start",
   },
 };
+
+const commonStateIcon = {
+  marginRight: 10,
+  lineHeight: 1,
+  display: "inline-flex",
+  marginTop: 6 ,
+};
+
+export const commonDashboardInfocard = {
+  cardIconContainer: {
+    display: "flex" as const,
+    position: "relative" as const,
+    alignItems: "center" as const,
+  },
+  stateContainer: {
+    display: "flex" as const,
+    flexWrap: "wrap" as const,
+    justifyContent: "flex-start" as const,
+  },
+  infoValue: {
+    fontWeight: 500,
+    color: "#07193E",
+    fontSize: 16,
+    margin: "8px 40px 5px 0",
+    display: "inline-flex" as const,
+    "& strong": {
+      marginRight: 4,
+    },
+    "& .MuiSvgIcon-root": {
+      width: 20,
+      height: 20,
+    },
+    alignItems: "center" as const,
+  },
+  redState: {
+    color: "#F55B5B",
+    ...commonStateIcon,
+  },
+  greenState: {
+    color: "#9FF281",
+    ...commonStateIcon,
+  },
+  yellowState: {
+    color: "#F7A25A",
+    ...commonStateIcon,
+  },
+  greyState: {
+    color: "grey",
+    ...commonStateIcon,
+  },
+  healthStatusIcon: {
+    position: "absolute" as const,
+    fontSize: 8,
+    left: 18,
+    height: 10,
+    bottom: 2,
+    marginRight: 10,
+    "& .MuiSvgIcon-root": {
+      width: 5,
+      height: 5,
+    },
+  },
+  innerState: {
+    fontSize: 8,
+    display: "flex" as const,
+    alignItems: "center" as const,
+    marginTop: -3,
+    "& .MuiSvgIcon-root": {
+      marginTop: 5,
+      width: 10,
+      height: 10,
+    },
+  },
+  cardContainer: {
+    border: "#EEF1F4 2px solid",
+    borderRadius: 10,
+    boxShadow: "0 0 15px #00000029",
+    maxWidth: 1185,
+    marginBottom: 30,
+  },
+  cardHeader: {
+    "& .MuiCardHeader-title": {
+      fontWeight: "bolder" as const,
+    },
+  },
+  cardNumber: {
+    color: "#848484",
+    fontSize: 16,
+    fontWeight: 400,
+    marginBottom: 10,
+  },
+  referenceTitle: {
+    display: "flex",
+    alignItems: "center" as const,
+    lineHeight: 1,
+    fontWeight: "bold" as const,
+    textTransform: "capitalize" as const,
+    "& .MuiSvgIcon-root": {
+      width: 10,
+      height: 10,
+      marginTop: -5,
+    },
+  },
+};
