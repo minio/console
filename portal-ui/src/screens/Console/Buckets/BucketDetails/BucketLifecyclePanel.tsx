@@ -22,7 +22,7 @@ import get from "lodash/get";
 import * as reactMoment from "react-moment";
 import Grid from "@material-ui/core/Grid";
 import { LifeCycleItem } from "../types";
-import { AddIcon, CreateIcon } from "../../../../icons";
+import { AddIcon } from "../../../../icons";
 import {
   actionsTray,
   searchField,

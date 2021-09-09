@@ -16,6 +16,7 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 import get from "lodash/get";
 import * as reactMoment from "react-moment";
 import clsx from "clsx";
@@ -48,17 +49,10 @@ import {
   searchField,
 } from "../../../../Common/FormComponents/common/styleLibrary";
 import { FileInfoResponse, IFileInfo } from "./types";
-import {
-  fileDownloadStarted,
-  fileIsBeingPrepared,
-  removeRouteLevel,
-} from "../../../../ObjectBrowser/actions";
-import { Route } from "../../../../ObjectBrowser/reducers";
 import { download, extensionPreview } from "../utils";
 import { TabPanel } from "../../../../../shared/tabs";
 import history from "../../../../../../history";
 import api from "../../../../../../common/api";
-import PageHeader from "../../../../Common/PageHeader/PageHeader";
 import ShareIcon from "../../../../../../icons/ShareIcon";
 import DownloadIcon from "../../../../../../icons/DownloadIcon";
 import DeleteIcon from "../../../../../../icons/DeleteIcon";
@@ -86,7 +80,7 @@ import { BucketObject } from "../ListObjects/types";
 
 const styles = (theme: Theme) =>
   createStyles({
-    objectNameContainer: {
+    currentItemContainer: {
       marginBottom: 8,
     },
     objectPathContainer: {
@@ -98,7 +92,7 @@ const styles = (theme: Theme) =>
         color: "#000",
       },
     },
-    objectName: {
+    currentItem: {
       fontSize: 24,
     },
     propertiesContainer: {
@@ -212,17 +206,14 @@ const styles = (theme: Theme) =>
 
 interface IObjectDetailsProps {
   classes: any;
-  routesList: Route[];
   downloadingFiles: string[];
   rewindEnabled: boolean;
   rewindDate: any;
+  match: any;
   bucketToRewind: string;
   distributedSetup: boolean;
-  removeRouteLevel: (newRoute: string) => any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   setSnackBarMessage: typeof setSnackBarMessage;
-  fileIsBeingPrepared: typeof fileIsBeingPrepared;
-  fileDownloadStarted: typeof fileDownloadStarted;
 }
 
 const emptyFile: IFileInfo = {
@@ -239,17 +230,14 @@ const emptyFile: IFileInfo = {
 
 const ObjectDetails = ({
   classes,
-  routesList,
   downloadingFiles,
   rewindEnabled,
   rewindDate,
   distributedSetup,
+  match,
   bucketToRewind,
-  removeRouteLevel,
   setErrorSnackMessage,
   setSnackBarMessage,
-  fileIsBeingPrepared,
-  fileDownloadStarted,
 }: IObjectDetailsProps) => {
   const [loadObjectData, setLoadObjectData] = useState<boolean>(true);
   const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
@@ -266,11 +254,10 @@ const ObjectDetails = ({
   const [metadata, setMetadata] = useState<any>({});
   const [selectedTab, setSelectedTab] = useState<number>(0);
 
-  const currentItem = routesList[routesList.length - 1];
-  const allPathData = currentItem.route.split("/");
-  const objectName = allPathData[allPathData.length - 1];
-  const bucketName = allPathData[2];
-  const pathInBucket = allPathData.slice(3).join("/");
+  const internalPaths = get(match.params, "subpaths", "");
+  const bucketName = match.params["bucketName"];
+  const allPathData = internalPaths.split("/");
+  const currentItem = allPathData.pop();
 
   const previewObject: BucketObject = {
     name: actualInfo.name,
@@ -282,7 +269,7 @@ const ObjectDetails = ({
 
   useEffect(() => {
     if (loadObjectData) {
-      const encodedPath = encodeURIComponent(pathInBucket);
+      const encodedPath = encodeURIComponent(internalPaths);
       api
         .invoke(
           "GET",
@@ -313,14 +300,14 @@ const ObjectDetails = ({
   }, [
     loadObjectData,
     bucketName,
-    pathInBucket,
+    internalPaths,
     setErrorSnackMessage,
     distributedSetup,
   ]);
 
   useEffect(() => {
     if (metadataLoad) {
-      const encodedPath = encodeURIComponent(pathInBucket);
+      const encodedPath = encodeURIComponent(internalPaths);
       api
         .invoke(
           "GET",
@@ -337,7 +324,7 @@ const ObjectDetails = ({
           setMetadataLoad(false);
         });
     }
-  }, [bucketName, metadataLoad, pathInBucket]);
+  }, [bucketName, metadataLoad, internalPaths]);
 
   let tagKeys: string[] = [];
 
@@ -369,10 +356,6 @@ const ObjectDetails = ({
     setDeleteTagModalOpen(true);
   };
 
-  const removeDownloadAnimation = (path: string) => {
-    fileDownloadStarted(path);
-  };
-
   const downloadObject = (object: IFileInfo, includeVersion?: boolean) => {
     if (object.size && parseInt(object.size) > 104857600) {
       // If file is bigger than 100MB we show a notification
@@ -382,9 +365,9 @@ const ObjectDetails = ({
     }
     download(
       bucketName,
-      pathInBucket,
+      internalPaths,
       object.version_id,
-      removeDownloadAnimation,
+      () => {},
       includeVersion
     );
   };
@@ -432,10 +415,8 @@ const ObjectDetails = ({
     setDeleteOpen(false);
 
     if (redirectBack) {
-      const newPath = allPathData.slice(0, -1).join("/");
-
-      removeRouteLevel(newPath);
-      history.push(newPath);
+      const newPath = allPathData.join("/");
+      history.push(`/buckets/${bucketName}/browse${newPath === "" ? "" : `/${newPath}`}`);
     }
   };
 
@@ -477,7 +458,7 @@ const ObjectDetails = ({
         <SetRetention
           open={retentionModalOpen}
           closeModalAndRefresh={closeRetentionModal}
-          objectName={objectName}
+          objectName={currentItem}
           objectInfo={actualInfo}
           bucketName={bucketName}
         />
@@ -486,7 +467,7 @@ const ObjectDetails = ({
         <DeleteObject
           deleteOpen={deleteOpen}
           selectedBucket={bucketName}
-          selectedObject={pathInBucket}
+          selectedObject={internalPaths}
           closeDeleteModalAndRefresh={closeDeleteModal}
         />
       )}
@@ -494,7 +475,7 @@ const ObjectDetails = ({
         <AddTagModal
           modalOpen={tagModalOpen}
           currentTags={actualInfo.tags}
-          selectedObject={pathInBucket}
+          selectedObject={internalPaths}
           versionId={actualInfo.version_id}
           bucketName={bucketName}
           onCloseAndUpdate={closeAddTagModal}
@@ -504,7 +485,7 @@ const ObjectDetails = ({
         <DeleteTagModal
           deleteOpen={deleteTagModalOpen}
           currentTags={actualInfo.tags}
-          selectedObject={pathInBucket}
+          selectedObject={internalPaths}
           versionId={actualInfo.version_id}
           bucketName={bucketName}
           onCloseAndUpdate={closeDeleteTagModal}
@@ -515,14 +496,13 @@ const ObjectDetails = ({
         <SetLegalHoldModal
           open={legalholdOpen}
           closeModalAndRefresh={closeLegalholdModal}
-          objectName={pathInBucket}
+          objectName={internalPaths}
           bucketName={bucketName}
           actualInfo={actualInfo}
         />
       )}
-      <PageHeader label={"Object Browser"} />
 
-      <Grid container className={classes.container}>
+      <Grid container>
         <Grid item xs={12}>
           <ScreenTitle
             icon={
@@ -530,10 +510,13 @@ const ObjectDetails = ({
                 <ObjectBrowserIcon width={40} />
               </Fragment>
             }
-            title={objectName}
+            title={currentItem}
             subTitle={
               <Fragment>
-                <BrowserBreadcrumbs title={false} />
+                <BrowserBreadcrumbs
+                  bucketName={bucketName}
+                  internalPaths={internalPaths}
+                />
               </Fragment>
             }
             actions={
@@ -621,7 +604,7 @@ const ObjectDetails = ({
               onClick={() => {
                 setSelectedTab(2);
               }}
-              disabled={extensionPreview(objectName) === "none"}
+              disabled={extensionPreview(currentItem) === "none"}
             >
               <ListItemText primary="Preview" />
             </ListItem>
@@ -742,9 +725,9 @@ const ObjectDetails = ({
                   <Grid item xs={12}>
                     <Table className={classes.table} aria-label="simple table">
                       <TableBody>
-                        {Object.keys(metadata).map((element) => {
+                        {Object.keys(metadata).map((element, index) => {
                           return (
-                            <TableRow>
+                            <TableRow key={`tRow-${index.toString()}`}>
                               <TableCell
                                 component="th"
                                 scope="row"
@@ -773,7 +756,7 @@ const ObjectDetails = ({
                 <Grid item xs={12} className={classes.actionsTray}>
                   {actualInfo.version_id && actualInfo.version_id !== "null" && (
                     <TextField
-                      placeholder={`Search ${objectName}`}
+                      placeholder={`Search ${currentItem}`}
                       className={clsx(classes.search, classes.searchField)}
                       id="search-resource"
                       label=""
@@ -805,6 +788,7 @@ const ObjectDetails = ({
                               versions.length - versions.indexOf(r);
                             return `v${versOrd}`;
                           },
+                          elementKey: "version_id"
                         },
                         { label: "Version ID", elementKey: "version_id" },
                         {
@@ -817,6 +801,7 @@ const ObjectDetails = ({
                           width: 60,
                           contentTextAlign: "center",
                           renderFullObject: true,
+                          elementKey: "is_delete_marker",
                           renderFunction: (r) => {
                             const versOrd = r.is_delete_marker ? "Yes" : "No";
                             return `${versOrd}`;
@@ -857,13 +842,10 @@ const mapStateToProps = ({ objectBrowser, system }: AppState) => ({
 });
 
 const mapDispatchToProps = {
-  removeRouteLevel,
   setErrorSnackMessage,
-  fileIsBeingPrepared,
-  fileDownloadStarted,
   setSnackBarMessage,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connector(withStyles(styles)(ObjectDetails));
+export default withRouter(connector(withStyles(styles)(ObjectDetails)));

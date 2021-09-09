@@ -52,7 +52,6 @@ const download = (filename: string, text: string) => {
     "href",
     "data:application/json;charset=utf-8," + encodeURIComponent(text)
   );
-  console.log(filename);
   element.setAttribute("download", filename);
 
   element.style.display = "none";

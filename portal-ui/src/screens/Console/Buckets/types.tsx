@@ -17,6 +17,7 @@
 export interface Bucket {
   name: string;
   creation_date: Date;
+  size?: string;
 }
 
 export interface BucketEncryptionInfo {

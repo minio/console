@@ -48,8 +48,6 @@ import ConfigurationMain from "./Configurations/ConfigurationMain";
 import WebhookPanel from "./Configurations/ConfigurationPanels/WebhookPanel";
 import TenantsMain from "./Tenants/TenantsMain";
 import TenantDetails from "./Tenants/TenantDetails/TenantDetails";
-import ObjectBrowser from "./ObjectBrowser/ObjectBrowser";
-import ObjectRouting from "./Buckets/ListBuckets/Objects/ListObjects/ObjectRouting";
 import License from "./License/License";
 import Trace from "./Trace/Trace";
 import LogsMain from "./Logs/LogsMain";
@@ -237,18 +235,6 @@ const Console = ({
     {
       component: Buckets,
       path: "/buckets/*",
-    },
-    {
-      component: ObjectBrowser,
-      path: "/object-browser",
-    },
-    {
-      component: ObjectRouting,
-      path: "/object-browser/:bucket",
-    },
-    {
-      component: ObjectRouting,
-      path: "/object-browser/:bucket/*",
     },
     {
       component: Watch,

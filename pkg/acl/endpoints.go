@@ -32,7 +32,11 @@ var (
 	metrics               = "/metrics"
 	profiling             = "/profiling"
 	buckets               = "/buckets"
-	bucketsDetail         = "/buckets/*"
+	bucketsGeneral        = "/buckets/*"
+	bucketsAdmin          = "/buckets/:bucketName/admin/*"
+	bucketsAdminMain      = "/buckets/:bucketName/admin"
+	bucketsBrowser        = "/buckets/:bucketName/browse/*"
+	bucketsBrowserMain    = "/buckets/:bucketName/browse"
 	serviceAccounts       = "/account"
 	changePassword        = "/account/change-password"
 	tenants               = "/tenants"
@@ -50,9 +54,6 @@ var (
 	storageDrives         = "/storage/drives"
 	remoteBuckets         = "/remote-buckets"
 	replication           = "/replication"
-	objectBrowser         = "/object-browser/:bucket/*"
-	objectBrowserBucket   = "/object-browser/:bucket"
-	mainObjectBrowser     = "/object-browser"
 	license               = "/license"
 	watch                 = "/watch"
 	heal                  = "/heal"
@@ -281,30 +282,31 @@ var displayRules = map[string]func() bool{
 
 // endpointRules contains the mapping between endpoints and ActionSets, additional rules can be added here
 var endpointRules = map[string]ConfigurationActionSet{
-	configuration:       configurationActionSet,
-	users:               usersActionSet,
-	usersDetail:         usersActionSet,
-	groups:              groupsActionSet,
-	iamPolicies:         iamPoliciesActionSet,
-	policiesDetail:      iamPoliciesActionSet,
-	dashboard:           dashboardActionSet,
-	metrics:             dashboardActionSet,
-	profiling:           profilingActionSet,
-	buckets:             bucketsActionSet,
-	bucketsDetail:       bucketsActionSet,
-	serviceAccounts:     serviceAccountsActionSet,
-	changePassword:      changePasswordActionSet,
-	remoteBuckets:       remoteBucketsActionSet,
-	replication:         replicationActionSet,
-	objectBrowser:       objectBrowserActionSet,
-	mainObjectBrowser:   objectBrowserActionSet,
-	objectBrowserBucket: objectBrowserActionSet,
-	license:             licenseActionSet,
-	watch:               watchActionSet,
-	heal:                healActionSet,
-	trace:               traceActionSet,
-	logs:                logsActionSet,
-	healthInfo:          healthInfoActionSet,
+	configuration:      configurationActionSet,
+	users:              usersActionSet,
+	usersDetail:        usersActionSet,
+	groups:             groupsActionSet,
+	iamPolicies:        iamPoliciesActionSet,
+	policiesDetail:     iamPoliciesActionSet,
+	dashboard:          dashboardActionSet,
+	metrics:            dashboardActionSet,
+	profiling:          profilingActionSet,
+	buckets:            bucketsActionSet,
+	bucketsGeneral:     bucketsActionSet,
+	bucketsAdmin:       bucketsActionSet,
+	bucketsAdminMain:   bucketsActionSet,
+	serviceAccounts:    serviceAccountsActionSet,
+	changePassword:     changePasswordActionSet,
+	remoteBuckets:      remoteBucketsActionSet,
+	replication:        replicationActionSet,
+	bucketsBrowser:     objectBrowserActionSet,
+	bucketsBrowserMain: objectBrowserActionSet,
+	license:            licenseActionSet,
+	watch:              watchActionSet,
+	heal:               healActionSet,
+	trace:              traceActionSet,
+	logs:               logsActionSet,
+	healthInfo:         healthInfoActionSet,
 }
 
 // operatorRules contains the mapping between endpoints and ActionSets for operator only mode

@@ -22,10 +22,8 @@ import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
-import Moment from "react-moment";
 import { Bucket, BucketList, HasPermissionResponse } from "../types";
-import { AddIcon, CreateIcon } from "../../../../icons";
-import { niceBytes } from "../../../../common/utils";
+import { AddIcon } from "../../../../icons";
 import { AppState } from "../../../../store";
 import { addBucketOpen, addBucketReset } from "../actions";
 import { setErrorSnackMessage } from "../../../../actions";
@@ -36,12 +34,12 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import AddBucket from "./AddBucket";
 import DeleteBucket from "./DeleteBucket";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import BulkReplicationModal from "./BulkReplicationModal";
 import SearchIcon from "../../../../icons/SearchIcon";
+import BucketListItem from "./BucketListItem";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -70,6 +68,12 @@ const styles = (theme: Theme) =>
         },
       },
     },
+    bucketsIconsContainer: {
+      display: "flex",
+      flexWrap: "wrap",
+      flexDirection: "row",
+      justifyContent: "flex-start",
+    },
     ...actionsTray,
     ...searchField,
     ...containerForHeader(theme.spacing(4)),
@@ -77,6 +81,7 @@ const styles = (theme: Theme) =>
 
 interface IListBucketsProps {
   classes: any;
+  history: any;
   addBucketOpen: typeof addBucketOpen;
   addBucketModalOpen: boolean;
   addBucketReset: typeof addBucketReset;
@@ -85,6 +90,7 @@ interface IListBucketsProps {
 
 const ListBuckets = ({
   classes,
+  history,
   addBucketOpen,
   addBucketModalOpen,
   addBucketReset,
@@ -178,15 +184,6 @@ const ListBuckets = ({
     setSelectedBucket(bucket);
   };
 
-  const tableActions = [
-    { type: "view", to: `/buckets`, sendOnlyId: true },
-    { type: "delete", onClick: confirmDeleteBucket, sendOnlyId: true },
-  ];
-
-  const displayParsedDate = (date: string) => {
-    return <Moment>{date}</Moment>;
-  };
-
   const filteredRecords = records.filter((b: Bucket) => {
     if (filterBuckets === "") {
       return true;
@@ -225,6 +222,27 @@ const ListBuckets = ({
       setSelectedBuckets([]);
     }
   };
+
+  /*
+  [
+                { label: "Name", elementKey: "name" },
+                {
+                  label: "Creation Date",
+                  elementKey: "creation_date",
+                  renderFunction: displayParsedDate,
+                },
+                {
+                  label: "Size",
+                  elementKey: "size",
+                  renderFunction: niceBytes,
+                  width: 60,
+                  contentTextAlign: "right",
+                },
+              ]
+
+
+  
+  */
 
   return (
     <Fragment>
@@ -298,31 +316,18 @@ const ListBuckets = ({
           <Grid item xs={12}>
             <br />
           </Grid>
-          <Grid item xs={12}>
-            <TableWrapper
-              itemActions={tableActions}
-              columns={[
-                { label: "Name", elementKey: "name" },
-                {
-                  label: "Creation Date",
-                  elementKey: "creation_date",
-                  renderFunction: displayParsedDate,
-                },
-                {
-                  label: "Size",
-                  elementKey: "size",
-                  renderFunction: niceBytes,
-                  width: 60,
-                  contentTextAlign: "right",
-                },
-              ]}
-              isLoading={loading}
-              records={filteredRecords}
-              entityName="Buckets"
-              idField="name"
-              selectedItems={selectedBuckets}
-              onSelect={selectListBuckets}
-            />
+          <Grid item xs={12} className={classes.bucketsIconsContainer}>
+            {filteredRecords.map((bucket, index) => {
+              return (
+                <BucketListItem
+                  bucket={bucket}
+                  key={`bucketListItem-${index.toString()}`}
+                  onDelete={confirmDeleteBucket}
+                  onSelect={selectListBuckets}
+                  selected={selectedBuckets.includes(bucket.name)}
+                />
+              );
+            })}
           </Grid>
         </Grid>
       </Grid>
