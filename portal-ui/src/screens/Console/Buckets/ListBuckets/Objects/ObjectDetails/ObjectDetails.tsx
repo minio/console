@@ -416,7 +416,9 @@ const ObjectDetails = ({
 
     if (redirectBack) {
       const newPath = allPathData.join("/");
-      history.push(`/buckets/${bucketName}/browse${newPath === "" ? "" : `/${newPath}`}`);
+      history.push(
+        `/buckets/${bucketName}/browse${newPath === "" ? "" : `/${newPath}`}`
+      );
     }
   };
 
@@ -788,7 +790,7 @@ const ObjectDetails = ({
                               versions.length - versions.indexOf(r);
                             return `v${versOrd}`;
                           },
-                          elementKey: "version_id"
+                          elementKey: "version_id",
                         },
                         { label: "Version ID", elementKey: "version_id" },
                         {

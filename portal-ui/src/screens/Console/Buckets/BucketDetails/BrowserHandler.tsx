@@ -68,7 +68,10 @@ const BrowserHandler = ({
       <PageHeader
         label={
           <Fragment>
-            <Link to={"/buckets"} className={classes.breadcrumLink}>Buckets</Link> &gt; {bucketName}
+            <Link to={"/buckets"} className={classes.breadcrumLink}>
+              Buckets
+            </Link>{" "}
+            &gt; {bucketName}
           </Fragment>
         }
         actions={

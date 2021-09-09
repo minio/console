@@ -62,7 +62,9 @@ const CreateFolderModal = ({
   };
 
   const createProcess = () => {
-    const newPath = `/buckets/${bucketName}/browse/${folderName !== "" ? `${folderName}/` : ""}${pathUrl}`;
+    const newPath = `/buckets/${bucketName}/browse/${
+      folderName !== "" ? `${folderName}/` : ""
+    }${pathUrl}`;
 
     history.push(newPath);
 
@@ -78,9 +80,7 @@ const CreateFolderModal = ({
         onClose={onClose}
       >
         <Grid container>
-          <h3 className={classes.pathLabel}>
-            Current Path: {currentPath}
-          </h3>
+          <h3 className={classes.pathLabel}>Current Path: {currentPath}</h3>
           <Grid item xs={12}>
             <InputBoxWrapper
               value={pathUrl}
