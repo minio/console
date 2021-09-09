@@ -23,7 +23,7 @@ import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import { Policy, PolicyList } from "./types";
-import { AddIcon, CreateIcon } from "../../../icons";
+import { AddIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
 import {
   actionsTray,
