@@ -423,7 +423,7 @@ const ListObjects = ({
                     ) {
                       setFileModeEnabled(false);
                     } else {
-                      setFileModeEnabled(true);  
+                      setFileModeEnabled(true);
                     }
 
                     setLoading(false);
@@ -951,7 +951,9 @@ const ListObjects = ({
             customPaperHeight={classes.browsePaper}
             selectedItems={selectedObjects}
             onSelect={selectListObjects}
-            customEmptyMessage={`This location is empty${!rewindEnabled ? ", please try uploading a new file" : ""}`}
+            customEmptyMessage={`This location is empty${
+              !rewindEnabled ? ", please try uploading a new file" : ""
+            }`}
           />
         </Grid>
       </Grid>
