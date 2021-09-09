@@ -26,7 +26,7 @@ import {
 } from "@material-ui/core";
 import get from "lodash/get";
 import GroupIcon from "@material-ui/icons/Group";
-import { AddIcon, CreateIcon } from "../../../icons";
+import { AddIcon } from "../../../icons";
 import { setErrorSnackMessage } from "../../../actions";
 import {
   actionsTray,

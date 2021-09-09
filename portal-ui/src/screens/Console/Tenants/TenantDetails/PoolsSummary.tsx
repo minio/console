@@ -24,7 +24,7 @@ import {
 } from "../../Common/FormComponents/common/styleLibrary";
 import { Button, TextField } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import { AddIcon, CreateIcon } from "../../../../icons";
+import { AddIcon } from "../../../../icons";
 import { IPool, ITenant } from "../ListTenants/types";
 import { setErrorSnackMessage } from "../../../../actions";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";

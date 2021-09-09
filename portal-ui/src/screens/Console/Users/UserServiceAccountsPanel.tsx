@@ -31,7 +31,7 @@ import { ErrorResponseHandler } from "../../../common/types";
 import AddUserServiceAccount from "./AddUserServiceAccount";
 import DeleteServiceAccount from "../Account/DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
-import { AddIcon, CreateIcon } from "../../../icons";
+import { AddIcon } from "../../../icons";
 import Button from "@material-ui/core/Button";
 
 interface IUserServiceAccountsProps {

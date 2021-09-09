@@ -29,7 +29,7 @@ import {
   TransformedEndpointItem,
 } from "./types";
 import { notificationTransform } from "./utils";
-import { AddIcon, CreateIcon } from "../../../../icons";
+import { AddIcon } from "../../../../icons";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import AddNotificationEndpoint from "./AddNotificationEndpoint";
 import { setErrorSnackMessage } from "../../../../actions";

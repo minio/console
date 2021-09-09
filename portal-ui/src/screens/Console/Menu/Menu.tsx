@@ -53,7 +53,6 @@ import LogsIcon from "../../../icons/LogsIcon";
 import SettingsIcon from "../../../icons/SettingsIcon";
 import StorageIcon from "../../../icons/StorageIcon";
 import TenantsOutlinedIcon from "../../../icons/TenantsOutlineIcon";
-import ObjectBrowserIcon from "../../../icons/ObjectBrowserIcon";
 
 const styles = (theme: Theme) =>
   createStyles({
