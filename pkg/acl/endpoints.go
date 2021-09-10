@@ -35,6 +35,8 @@ var (
 	bucketsGeneral        = "/buckets/*"
 	bucketsAdmin          = "/buckets/:bucketName/admin/*"
 	bucketsAdminMain      = "/buckets/:bucketName/admin"
+	bucketsBrowserMenu    = "/buckets"
+	bucketsBrowserList    = "/buckets/*"
 	bucketsBrowser        = "/buckets/:bucketName/browse/*"
 	bucketsBrowserMain    = "/buckets/:bucketName/browse"
 	serviceAccounts       = "/account"
@@ -300,6 +302,8 @@ var endpointRules = map[string]ConfigurationActionSet{
 	remoteBuckets:      remoteBucketsActionSet,
 	replication:        replicationActionSet,
 	bucketsBrowser:     objectBrowserActionSet,
+	bucketsBrowserMenu: objectBrowserActionSet,
+	bucketsBrowserList: objectBrowserActionSet,
 	bucketsBrowserMain: objectBrowserActionSet,
 	license:            licenseActionSet,
 	watch:              watchActionSet,
