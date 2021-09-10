@@ -384,20 +384,7 @@ const Console = ({
       {session.status === "ok" ? (
         <div className={classes.root}>
           <CssBaseline />
-          {!hideMenu && (
-            <Drawer
-              variant="permanent"
-              classes={{
-                paper: clsx(
-                  classes.drawerPaper,
-                  !open && classes.drawerPaperClose
-                ),
-              }}
-              open={open}
-            >
-              <Menu pages={session.pages} />
-            </Drawer>
-          )}
+          {!hideMenu && <Menu pages={session.pages} />}
 
           <main className={classes.content}>
             {needsRestart && (
