@@ -74,7 +74,8 @@ const SetPolicy = ({
     setLoading(true);
 
     api
-      .invoke("PUT", `/api/v1/set-policy/${selectedPolicy}`, {
+      .invoke("PUT", `/api/v1/set-policy`, {
+        name: selectedPolicy,
         entityName: value,
         entityType: entity,
       })

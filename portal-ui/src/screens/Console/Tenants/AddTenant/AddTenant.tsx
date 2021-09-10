@@ -49,7 +49,6 @@ import Preview from "./Steps/Preview";
 import Affinity from "./Steps/Affinity";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import history from "../../../../history";
-import Images from "./Steps/Images";
 
 interface IAddTenantProps {
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;

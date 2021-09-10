@@ -41,68 +41,6 @@ func validateEndpoints(t *testing.T, configs []endpoint) {
 	}
 }
 
-func TestGetAuthorizedEndpoints(t *testing.T) {
-	tests := []endpoint{
-		{
-			name: "dashboard endpoint",
-			args: args{
-				[]string{"admin:ServerInfo"},
-			},
-			want: 9,
-		},
-		{
-			name: "policies endpoint",
-			args: args{
-				[]string{
-					"admin:CreatePolicy",
-					"admin:DeletePolicy",
-					"admin:GetPolicy",
-					"admin:AttachUserOrGroupPolicy",
-					"admin:ListUserPolicies",
-				},
-			},
-			want: 9,
-		},
-		{
-			name: "all admin endpoints",
-			args: args{
-				[]string{
-					"admin:*",
-				},
-			},
-			want: 23,
-		},
-		{
-			name: "all s3 endpoints",
-			args: args{
-				[]string{
-					"s3:*",
-				},
-			},
-			want: 9,
-		},
-		{
-			name: "all admin and s3 endpoints",
-			args: args{
-				[]string{
-					"admin:*",
-					"s3:*",
-				},
-			},
-			want: 25,
-		},
-		{
-			name: "Console User - default endpoints",
-			args: args{
-				[]string{},
-			},
-			want: 7,
-		},
-	}
-
-	validateEndpoints(t, tests)
-}
-
 func TestOperatorOnlyEndpoints(t *testing.T) {
 	operatorOnly = true
 
@@ -110,7 +48,7 @@ func TestOperatorOnlyEndpoints(t *testing.T) {
 		{
 			name: "Operator Only - all admin endpoints",
 			args: args{},
-			want: 17,
+			want: 16,
 		},
 	}
 

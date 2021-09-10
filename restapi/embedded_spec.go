@@ -2991,26 +2991,20 @@ func init() {
         }
       }
     },
-    "/set-policy-multi/{name}": {
+    "/set-policy": {
       "put": {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Set policy to multiple users/groups",
-        "operationId": "SetPolicyMultiple",
+        "summary": "Set policy",
+        "operationId": "SetPolicy",
         "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          },
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/setPolicyMultipleRequest"
+              "$ref": "#/definitions/setPolicyNameRequest"
             }
           }
         ],
@@ -3027,26 +3021,20 @@ func init() {
         }
       }
     },
-    "/set-policy/{name}": {
+    "/set-policy-multi": {
       "put": {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Set policy",
-        "operationId": "SetPolicy",
+        "summary": "Set policy to multiple users/groups",
+        "operationId": "SetPolicyMultiple",
         "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          },
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/setPolicyRequest"
+              "$ref": "#/definitions/setPolicyMultipleNameRequest"
             }
           }
         ],
@@ -5180,7 +5168,7 @@ func init() {
         }
       }
     },
-    "setPolicyMultipleRequest": {
+    "setPolicyMultipleNameRequest": {
       "type": "object",
       "properties": {
         "groups": {
@@ -5189,10 +5177,38 @@ func init() {
             "$ref": "#/definitions/iamEntity"
           }
         },
+        "name": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "users": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/iamEntity"
+          }
+        }
+      }
+    },
+    "setPolicyNameRequest": {
+      "type": "object",
+      "required": [
+        "name",
+        "entityType",
+        "entityName"
+      ],
+      "properties": {
+        "entityName": {
+          "type": "string"
+        },
+        "entityType": {
+          "$ref": "#/definitions/policyEntity"
+        },
+        "name": {
+          "type": "array",
+          "items": {
+            "type": "string"
           }
         }
       }
@@ -8535,26 +8551,20 @@ func init() {
         }
       }
     },
-    "/set-policy-multi/{name}": {
+    "/set-policy": {
       "put": {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Set policy to multiple users/groups",
-        "operationId": "SetPolicyMultiple",
+        "summary": "Set policy",
+        "operationId": "SetPolicy",
         "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          },
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/setPolicyMultipleRequest"
+              "$ref": "#/definitions/setPolicyNameRequest"
             }
           }
         ],
@@ -8571,26 +8581,20 @@ func init() {
         }
       }
     },
-    "/set-policy/{name}": {
+    "/set-policy-multi": {
       "put": {
         "tags": [
           "AdminAPI"
         ],
-        "summary": "Set policy",
-        "operationId": "SetPolicy",
+        "summary": "Set policy to multiple users/groups",
+        "operationId": "SetPolicyMultiple",
         "parameters": [
-          {
-            "type": "string",
-            "name": "name",
-            "in": "path",
-            "required": true
-          },
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/setPolicyRequest"
+              "$ref": "#/definitions/setPolicyMultipleNameRequest"
             }
           }
         ],
@@ -10778,7 +10782,7 @@ func init() {
         }
       }
     },
-    "setPolicyMultipleRequest": {
+    "setPolicyMultipleNameRequest": {
       "type": "object",
       "properties": {
         "groups": {
@@ -10787,10 +10791,38 @@ func init() {
             "$ref": "#/definitions/iamEntity"
           }
         },
+        "name": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "users": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/iamEntity"
+          }
+        }
+      }
+    },
+    "setPolicyNameRequest": {
+      "type": "object",
+      "required": [
+        "name",
+        "entityType",
+        "entityName"
+      ],
+      "properties": {
+        "entityName": {
+          "type": "string"
+        },
+        "entityType": {
+          "$ref": "#/definitions/policyEntity"
+        },
+        "name": {
+          "type": "array",
+          "items": {
+            "type": "string"
           }
         }
       }

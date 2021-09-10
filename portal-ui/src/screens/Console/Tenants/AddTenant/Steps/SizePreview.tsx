@@ -23,6 +23,7 @@ import {
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
+import Grid from "@material-ui/core/Grid";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -31,9 +32,11 @@ import {
   calculateDistribution,
   erasureCodeCalc,
   getBytes,
+  k8sfactorForDropdown,
   niceBytes,
   setMemoryResource,
 } from "../../../../../common/utils";
+import { clearValidationError } from "../../utils";
 import { ecListTransform, Opts } from "../../ListTenants/utils";
 import { IMemorySize } from "../../ListTenants/types";
 import {
@@ -43,6 +46,8 @@ import {
 } from "../../../../../common/types";
 import { commonFormValidation } from "../../../../../utils/validationFunctions";
 import api from "../../../../../common/api";
+import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
+import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import { Divider } from "@material-ui/core";
 
 interface ISizePreviewProps {
@@ -103,6 +108,7 @@ const SizePreview = ({
   limitSize,
   selectedStorageClass,
 }: ISizePreviewProps) => {
+  const [validationErrors, setValidationErrors] = useState<any>({});
   const [errorFlag, setErrorFlag] = useState<boolean>(false);
   const [nodeError, setNodeError] = useState<string>("");
   const usableInformation = ecParityCalc.storageFactors.find(
@@ -116,6 +122,10 @@ const SizePreview = ({
     },
     [updateAddField]
   );
+
+  const cleanValidation = (fieldName: string) => {
+    setValidationErrors(clearValidationError(validationErrors, fieldName));
+  };
 
   /*Debounce functions*/
 
@@ -274,6 +284,8 @@ const SizePreview = ({
         ecParityCalc.error === 0 &&
         memorySize.error === ""
     );
+
+    setValidationErrors(commonValidation);
   }, [
     nodes,
     volumeSize,

@@ -1452,11 +1452,11 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/set-policy/{name}"] = admin_api.NewSetPolicy(o.context, o.AdminAPISetPolicyHandler)
+	o.handlers["PUT"]["/set-policy"] = admin_api.NewSetPolicy(o.context, o.AdminAPISetPolicyHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/set-policy-multi/{name}"] = admin_api.NewSetPolicyMultiple(o.context, o.AdminAPISetPolicyMultipleHandler)
+	o.handlers["PUT"]["/set-policy-multi"] = admin_api.NewSetPolicyMultiple(o.context, o.AdminAPISetPolicyMultipleHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

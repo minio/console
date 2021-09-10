@@ -32,10 +32,10 @@ import {
 } from "../../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../../actions";
 import {
+  updateAddField,
   isPageValid,
   setLimitSize,
   setStorageClassesList,
-  updateAddField,
 } from "../../actions";
 import {
   getLimitSizes,
@@ -52,6 +52,11 @@ import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/Inpu
 import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 import AddIcon from "../../../../../icons/AddIcon";
 import AddNamespaceModal from "./helpers/AddNamespaceModal";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableRow from "@material-ui/core/TableRow";
+import TableCell from "@material-ui/core/TableCell";
+import { niceBytes } from "../../../../../common/utils";
 import SizePreview from "./SizePreview";
 import TenantSize from "./TenantSize";
 import { Paper } from "@material-ui/core";
