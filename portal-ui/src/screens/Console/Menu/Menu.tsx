@@ -21,7 +21,6 @@ import { Divider, withStyles } from "@material-ui/core";
 import { createStyles, Theme } from "@material-ui/core/styles";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
-import Collapse from "@material-ui/core/Collapse";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
 import { AppState } from "../../../store";
@@ -66,28 +65,28 @@ const styles = (theme: Theme) =>
     },
     menuList: {
       "& .active": {
-        borderTopLeftRadius: 2,
-        borderBottomLeftRadius: 2,
         color: "#fff",
-        backgroundColor: "rgba(255, 255, 255, .18)",
+        backgroundBlendMode: "multiply",
+        background:
+          "transparent linear-gradient(90deg, rgba(0, 0, 0, 0.14) 0%, #00000000 100%) 0% 0% no-repeat padding-box",
         "& .MuiSvgIcon-root": {
           color: "white",
         },
         "& .MuiTypography-root": {
           color: "#fff",
-          fontWeight: 700,
+          fontWeight: "bold",
         },
       },
       "& .MuiSvgIcon-root": {
         fontSize: 16,
         color: "rgba(255, 255, 255, 0.8)",
-        maxWidth: 14,
+        maxWidth: 16,
       },
       "& .MuiListItemIcon-root": {
-        minWidth: 25,
+        minWidth: 36,
       },
       "& .MuiTypography-root": {
-        fontSize: 12,
+        fontSize: 15,
         color: "rgba(255, 255, 255, 0.8)",
       },
       "& .MuiListItem-gutters": {
@@ -96,16 +95,17 @@ const styles = (theme: Theme) =>
       },
       "& .MuiListItem-root": {
         padding: "2px 0 2px 16px",
-        marginBottom: 8,
-        marginLeft: 30,
+        marginLeft: 36,
+        height: 50,
         width: "calc(100% - 30px)",
       },
-      "& .MuiCollapse-container .MuiCollapse-wrapper .MuiCollapse-wrapperInner .MuiDivider-root":
-        {
-          backgroundColor: "rgba(112,112,112,0.5)",
-          marginBottom: 12,
-          height: 1,
-        },
+    },
+    menuDivider: {
+      backgroundColor: "#1C3B64",
+      marginRight: 36,
+      marginLeft: 36,
+      marginBottom: 0,
+      height: 1,
     },
     extraMargin: {
       "&.MuiListItem-gutters": {
@@ -199,23 +199,16 @@ const Menu = ({
       icon: <DashboardIcon />,
     },
     {
-      group: "User",
-      type: "item",
-      component: NavLink,
-      to: "/account",
-      name: "Service Accounts",
-      icon: <AccountIcon />,
-    },
-    {
-      group: "Admin",
+      group: "common",
       type: "item",
       component: NavLink,
       to: "/buckets",
       name: "Buckets",
       icon: <BucketsIcon />,
     },
+
     {
-      group: "Admin",
+      group: "common",
       type: "item",
       component: NavLink,
       to: "/users",
@@ -223,7 +216,7 @@ const Menu = ({
       icon: <UsersIcon />,
     },
     {
-      group: "Admin",
+      group: "common",
       type: "item",
       component: NavLink,
       to: "/groups",
@@ -231,12 +224,28 @@ const Menu = ({
       icon: <GroupsIcon />,
     },
     {
-      group: "Admin",
+      group: "common",
+      type: "item",
+      component: NavLink,
+      to: "/account",
+      name: "Service Accounts",
+      icon: <AccountIcon />,
+    },
+    {
+      group: "common",
       type: "item",
       component: NavLink,
       to: "/policies",
       name: "IAM Policies",
       icon: <IAMPoliciesIcon />,
+    },
+    {
+      group: "common",
+      type: "item",
+      component: NavLink,
+      to: "/settings",
+      name: "Settings",
+      icon: <SettingsIcon />,
     },
     {
       group: "Tools",
@@ -279,14 +288,7 @@ const Menu = ({
       name: "Diagnostic",
       icon: <DiagnosticsIcon />,
     },
-    {
-      group: "Admin",
-      type: "item",
-      component: NavLink,
-      to: "/settings",
-      name: "Settings",
-      icon: <SettingsIcon />,
-    },
+
     {
       group: "Operator",
       type: "item",
@@ -412,77 +414,45 @@ const Menu = ({
 
           return (
             <React.Fragment key={`menuElem-${index.toString()}`}>
-              {groupMember.label !== "" && (
-                <ListItem
-                  className={classes.groupTitle}
-                  onClick={() => {
-                    if (groupMember.collapsible) {
-                      setMenuCollapse(groupMember.group);
-                    }
-                  }}
-                >
-                  <span>{groupMember.label}</span>
-                  {groupMember.collapsible && (
-                    <span
-                      className={`${classes.selectorArrow} ${
-                        menuOpen[groupMember.group]
-                          ? classes.selectorArrowOpen
-                          : ""
-                      }`}
-                    />
-                  )}
-                </ListItem>
-              )}
-              <Collapse
-                in={
-                  groupMember.collapsible ? menuOpen[groupMember.group] : true
-                }
-                timeout="auto"
-                unmountOnExit
-                key={`menuGroup-${groupMember.group}`}
-              >
-                {filterByGroup.map((page: IMenuItem) => {
-                  switch (page.type) {
-                    case "item": {
-                      return (
-                        <ListItem
-                          key={page.to}
-                          button
-                          onClick={page.onClick}
-                          component={page.component}
-                          to={page.to}
-                          className={
-                            page.extraMargin ? classes.extraMargin : null
-                          }
-                        >
-                          {page.icon && (
-                            <ListItemIcon>{page.icon}</ListItemIcon>
-                          )}
-                          {page.name && <ListItemText primary={page.name} />}
-                        </ListItem>
-                      );
-                    }
-                    case "title": {
-                      return (
-                        <ListItem
-                          key={page.name}
-                          component={page.component}
-                          className={classes.subTitleMenu}
-                        >
-                          {page.name}
-                        </ListItem>
-                      );
-                    }
-                    default:
-                      return null;
+              <Divider className={classes.menuDivider} />
+              {filterByGroup.map((page: IMenuItem) => {
+                switch (page.type) {
+                  case "item": {
+                    return (
+                      <ListItem
+                        key={page.to}
+                        button
+                        onClick={page.onClick}
+                        component={page.component}
+                        to={page.to}
+                        className={
+                          page.extraMargin ? classes.extraMargin : null
+                        }
+                      >
+                        {page.icon && <ListItemIcon>{page.icon}</ListItemIcon>}
+                        {page.name && <ListItemText primary={page.name} />}
+                      </ListItem>
+                    );
                   }
-                })}
-                <Divider />
-              </Collapse>
+                  case "title": {
+                    return (
+                      <ListItem
+                        key={page.name}
+                        component={page.component}
+                        className={classes.subTitleMenu}
+                      >
+                        {page.name}
+                      </ListItem>
+                    );
+                  }
+                  default:
+                    return null;
+                }
+              })}
             </React.Fragment>
           );
         })}
-
+        <Divider className={classes.menuDivider} />
         <ListItem button onClick={logout}>
           <ListItemIcon>
             <LogoutIcon />

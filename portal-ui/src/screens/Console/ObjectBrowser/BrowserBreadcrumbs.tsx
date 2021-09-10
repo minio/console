@@ -62,7 +62,8 @@ const BrowserBreadcrumbs = ({
       const subSplit = splitPaths.slice(1, index + 1).join("/");
 
       const route = `/buckets/${bucketName}/browse${
-        objectItem !== "" ? `/${subSplit}` : ""}`;
+        objectItem !== "" ? `/${subSplit}` : ""
+      }`;
       const label = objectItem === "" ? bucketName : objectItem;
 
       return (
@@ -80,7 +81,9 @@ const BrowserBreadcrumbs = ({
       {title && (
         <Grid item xs={12}>
           <div className={classes.sectionTitle}>
-            {splitPaths && splitPaths.length > 0 ? splitPaths[splitPaths.length - 1] : ""}
+            {splitPaths && splitPaths.length > 0
+              ? splitPaths[splitPaths.length - 1]
+              : ""}
             {rewindEnabled && splitPaths.length > 1 && (
               <small className={classes.smallLabel}>
                 &nbsp;(Rewind:{" "}
