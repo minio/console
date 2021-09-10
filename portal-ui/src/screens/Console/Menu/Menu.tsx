@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { NavLink } from "react-router-dom";
 import {
@@ -265,18 +265,6 @@ const styles = (theme: Theme) =>
     },
   });
 
-// Menu State builder for groups
-const menuStateBuilder = () => {
-  let elements: any = [];
-  menuGroups.forEach((menuItem) => {
-    if (menuItem.collapsible) {
-      elements[menuItem.group] = true;
-    }
-  });
-
-  return elements;
-};
-
 interface IMenuProps {
   classes: any;
   userLoggedIn: typeof userLoggedIn;
@@ -510,14 +498,6 @@ const Menu = ({
       (allowedPages[item.to] || item.forceDisplay || item.type !== "item") &&
       item.fsHidden !== false
   );
-
-  const handleDrawerOpen = () => {
-    setMenuOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setMenuOpen(false);
-  };
 
   return (
     <React.Fragment>

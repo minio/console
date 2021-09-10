@@ -17,7 +17,7 @@
 import React, { Fragment, useState, useEffect, useCallback } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Typography } from "@material-ui/core";
+import { Paper, Typography } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import {
   updateAddField,
@@ -328,7 +328,7 @@ const Encryption = ({
   ]);
 
   return (
-    <Fragment>
+    <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
         <h3 className={classes.h3Section}>Encryption</h3>
         <span className={classes.descriptionText}>
@@ -862,7 +862,7 @@ const Encryption = ({
           )}
         </Fragment>
       )}
-    </Fragment>
+    </Paper>
   );
 };
 

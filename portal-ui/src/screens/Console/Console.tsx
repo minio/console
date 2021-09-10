@@ -14,12 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState, useEffect } from "react";
-import clsx from "clsx";
+import React, { Fragment, useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, LinearProgress } from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import Drawer from "@material-ui/core/Drawer";
 import Container from "@material-ui/core/Container";
 import Snackbar from "@material-ui/core/Snackbar";
 import history from "../../history";
@@ -58,6 +56,7 @@ import Storage from "./Storage/Storage";
 import Metrics from "./Dashboard/Metrics";
 import Hop from "./Tenants/TenantDetails/hop/Hop";
 import MainError from "./Common/MainError/MainError";
+import AddTenant from "./Tenants/AddTenant/AddTenant";
 
 const drawerWidth = 245;
 
@@ -298,6 +297,10 @@ const Console = ({
     {
       component: TenantsMain,
       path: "/tenants",
+    },
+    {
+      component: AddTenant,
+      path: "/tenants/add",
     },
     {
       component: Storage,

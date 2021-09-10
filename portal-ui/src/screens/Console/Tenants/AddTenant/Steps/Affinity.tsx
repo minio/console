@@ -17,7 +17,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Grid, IconButton } from "@material-ui/core";
+import { Grid, IconButton, Paper } from "@material-ui/core";
 import { AppState } from "../../../../../store";
 import { isPageValid, updateAddField } from "../../actions";
 import { setModalErrorSnackMessage } from "../../../../../actions";
@@ -190,7 +190,7 @@ const Affinity = ({
   }, [isPageValid, podAffinity, nodeSelectorLabels]);
 
   return (
-    <Fragment>
+    <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
         <h3 className={classes.h3Section}>Pod Affinity</h3>
         <span className={classes.descriptionText}>
@@ -371,7 +371,7 @@ const Affinity = ({
           </Grid>
         </Fragment>
       )}
-    </Fragment>
+    </Paper>
   );
 };
 

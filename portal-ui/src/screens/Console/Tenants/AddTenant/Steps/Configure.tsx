@@ -17,7 +17,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Grid } from "@material-ui/core";
+import { Grid, Paper } from "@material-ui/core";
 import {
   modalBasic,
   wizardCommon,
@@ -304,7 +304,7 @@ const Configure = ({
   };
 
   return (
-    <Fragment>
+    <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
         <h3 className={classes.h3Section}>Configure</h3>
         <span className={classes.descriptionText}>
@@ -662,7 +662,7 @@ const Configure = ({
           <br />
         </Fragment>
       )}
-    </Fragment>
+    </Paper>
   );
 };
 

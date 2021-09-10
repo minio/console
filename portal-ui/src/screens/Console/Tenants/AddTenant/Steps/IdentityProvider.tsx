@@ -17,7 +17,13 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Grid, IconButton, Tooltip, Typography } from "@material-ui/core";
+import {
+  Grid,
+  IconButton,
+  Paper,
+  Tooltip,
+  Typography,
+} from "@material-ui/core";
 import CasinoIcon from "@material-ui/icons/Casino";
 import DeleteIcon from "@material-ui/icons/Delete";
 import {
@@ -378,7 +384,7 @@ const IdentityProvider = ({
     });
   }
   return (
-    <Fragment>
+    <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
         <h3 className={classes.h3Section}>Identity Provider</h3>
         <span className={classes.descriptionText}>
@@ -696,7 +702,7 @@ const IdentityProvider = ({
           </Grid>
         </Fragment>
       )}
-    </Fragment>
+    </Paper>
   );
 };
 

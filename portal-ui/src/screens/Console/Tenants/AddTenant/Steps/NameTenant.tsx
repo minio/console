@@ -14,7 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import get from "lodash/get";
@@ -26,17 +32,16 @@ import {
 } from "../../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../../actions";
 import {
-  setAdvancedMode,
-  updateAddField,
   isPageValid,
-  setStorageClassesList,
   setLimitSize,
+  setStorageClassesList,
+  updateAddField,
 } from "../../actions";
 import {
+  getLimitSizes,
   IQuotaElement,
   IQuotas,
   Opts,
-  getLimitSizes,
 } from "../../ListTenants/utils";
 import { AppState } from "../../../../../store";
 import { commonFormValidation } from "../../../../../utils/validationFunctions";
@@ -45,14 +50,19 @@ import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import AddIcon from "../../../../../icons/AddIcon";
 import AddNamespaceModal from "./helpers/AddNamespaceModal";
+import SizePreview from "./SizePreview";
+import TenantSize from "./TenantSize";
+import { Paper } from "@material-ui/core";
 
 const styles = (theme: Theme) =>
   createStyles({
     buttonContainer: {
       textAlign: "right",
+    },
+    sizePreview: {
+      position: "fixed",
     },
     ...modalBasic,
     ...wizardCommon,
@@ -62,7 +72,6 @@ interface INameTenantScreen {
   classes: any;
   storageClasses: Opts[];
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
-  setAdvancedMode: typeof setAdvancedMode;
   updateAddField: typeof updateAddField;
   isPageValid: typeof isPageValid;
   setStorageClassesList: typeof setStorageClassesList;
@@ -70,17 +79,14 @@ interface INameTenantScreen {
   tenantName: string;
   namespace: string;
   selectedStorageClass: string;
-  advancedMode: boolean;
 }
 
 const NameTenant = ({
   classes,
   storageClasses,
-  advancedMode,
   tenantName,
   namespace,
   selectedStorageClass,
-  setAdvancedMode,
   updateAddField,
   setStorageClassesList,
   setLimitSize,
@@ -250,7 +256,7 @@ const NameTenant = ({
   };
 
   return (
-    <React.Fragment>
+    <Fragment>
       {openAddNSConfirm && (
         <AddNamespaceModal
           addNamespaceOpen={openAddNSConfirm}
@@ -258,87 +264,77 @@ const NameTenant = ({
           namespace={namespace}
         />
       )}
-      <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Name Tenant</h3>
-        <span className={classes.descriptionText}>
-          How would you like to name this new tenant?
-        </span>
-      </div>
-      <Grid item xs={12}>
-        <InputBoxWrapper
-          id="tenant-name"
-          name="tenant-name"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            updateField("tenantName", e.target.value);
-            frmValidationCleanup("tenant-name");
-          }}
-          label="Name"
-          value={tenantName}
-          required
-          error={validationErrors["tenant-name"] || ""}
-        />
+      <Grid container>
+        <Grid item xs={8}>
+          <Paper className={classes.paperWrapper}>
+            <Grid container>
+              <Grid item xs={12}>
+                <div className={classes.headerElement}>
+                  <h3 className={classes.h3Section}>Name Tenant</h3>
+                  <span className={classes.descriptionText}>
+                    How would you like to name this new tenant?
+                  </span>
+                </div>
+                <InputBoxWrapper
+                  id="tenant-name"
+                  name="tenant-name"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    updateField("tenantName", e.target.value);
+                    frmValidationCleanup("tenant-name");
+                  }}
+                  label="Name"
+                  value={tenantName}
+                  required
+                  error={validationErrors["tenant-name"] || ""}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="namespace"
+                  name="namespace"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    updateField("namespace", e.target.value);
+                    frmValidationCleanup("namespace");
+                  }}
+                  label="Namespace"
+                  value={namespace}
+                  error={validationErrors["namespace"] || ""}
+                  overlayIcon={showCreateButton ? <AddIcon /> : null}
+                  overlayAction={addNamespace}
+                  required
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <SelectWrapper
+                  id="storage_class"
+                  name="storage_class"
+                  onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                    updateField(
+                      "selectedStorageClass",
+                      e.target.value as string
+                    );
+                  }}
+                  label="Storage Class"
+                  value={selectedStorageClass}
+                  options={storageClasses}
+                  disabled={storageClasses.length < 1}
+                />
+              </Grid>
+              <TenantSize />
+            </Grid>
+          </Paper>
+        </Grid>
+        <Grid item xs={4}>
+          <div className={classes.sizePreview}>
+            <SizePreview />
+          </div>
+        </Grid>
       </Grid>
-      <Grid item xs={12}>
-        <InputBoxWrapper
-          id="namespace"
-          name="namespace"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            updateField("namespace", e.target.value);
-            frmValidationCleanup("namespace");
-          }}
-          label="Namespace"
-          value={namespace}
-          error={validationErrors["namespace"] || ""}
-          overlayIcon={showCreateButton ? <AddIcon /> : null}
-          overlayAction={addNamespace}
-          required
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <SelectWrapper
-          id="storage_class"
-          name="storage_class"
-          onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-            updateField("selectedStorageClass", e.target.value as string);
-          }}
-          label="Storage Class"
-          value={selectedStorageClass}
-          options={storageClasses}
-          disabled={storageClasses.length < 1}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <br />
-        <span className={classes.descriptionText}>
-          Check 'Advanced Mode' for additional configuration options, such as
-          configuring an Identity Provider, Encryption at rest, and customized
-          TLS/SSL Certificates.
-          <br />
-          Leave 'Advanced Mode' unchecked to use the secure default settings for
-          the tenant.
-        </span>
-        <br />
-        <br />
-        <FormSwitchWrapper
-          value="adv_mode"
-          id="adv_mode"
-          name="adv_mode"
-          checked={advancedMode}
-          onChange={(e) => {
-            const targetD = e.target;
-            const checked = targetD.checked;
-
-            setAdvancedMode(checked);
-          }}
-          label={"Advanced Mode"}
-        />
-      </Grid>
-    </React.Fragment>
+    </Fragment>
   );
 };
 
 const mapState = (state: AppState) => ({
-  advancedMode: state.tenants.createTenant.advancedModeOn,
   tenantName: state.tenants.createTenant.fields.nameTenant.tenantName,
   namespace: state.tenants.createTenant.fields.nameTenant.namespace,
   selectedStorageClass:
@@ -348,7 +344,6 @@ const mapState = (state: AppState) => ({
 
 const connector = connect(mapState, {
   setModalErrorSnackMessage,
-  setAdvancedMode,
   updateAddField,
   setStorageClassesList,
   setLimitSize,
