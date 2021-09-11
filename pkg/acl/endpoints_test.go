@@ -116,7 +116,7 @@ func TestOperatorOnlyEndpoints(t *testing.T) {
 					"admin:*",
 				},
 			},
-			want: 14,
+			want: 15,
 		},
 		{
 			name: "Operator Only - all s3 endpoints",
@@ -125,7 +125,7 @@ func TestOperatorOnlyEndpoints(t *testing.T) {
 					"s3:*",
 				},
 			},
-			want: 14,
+			want: 15,
 		},
 		{
 			name: "Operator Only - all admin and s3 endpoints",
@@ -135,14 +135,14 @@ func TestOperatorOnlyEndpoints(t *testing.T) {
 					"s3:*",
 				},
 			},
-			want: 14,
+			want: 15,
 		},
 		{
 			name: "Operator Only - default endpoints",
 			args: args{
 				[]string{},
 			},
-			want: 14,
+			want: 15,
 		},
 	}
 

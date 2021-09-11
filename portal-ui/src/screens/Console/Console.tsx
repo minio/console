@@ -341,6 +341,10 @@ const Console = ({
     },
     {
       component: TenantDetails,
+      path: "/namespaces/:tenantNamespace/tenants/:tenantName/volumes",
+    },
+    {
+      component: TenantDetails,
       path: "/namespaces/:tenantNamespace/tenants/:tenantName/license",
     },
     {

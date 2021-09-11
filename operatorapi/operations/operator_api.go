@@ -117,6 +117,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		OperatorAPIListPVCsHandler: operator_api.ListPVCsHandlerFunc(func(params operator_api.ListPVCsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.ListPVCs has not yet been implemented")
 		}),
+		OperatorAPIListPVCsForTenantHandler: operator_api.ListPVCsForTenantHandlerFunc(func(params operator_api.ListPVCsForTenantParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.ListPVCsForTenant has not yet been implemented")
+		}),
 		OperatorAPIListTenantsHandler: operator_api.ListTenantsHandlerFunc(func(params operator_api.ListTenantsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.ListTenants has not yet been implemented")
 		}),
@@ -262,6 +265,8 @@ type OperatorAPI struct {
 	OperatorAPIListNodeLabelsHandler operator_api.ListNodeLabelsHandler
 	// OperatorAPIListPVCsHandler sets the operation handler for the list p v cs operation
 	OperatorAPIListPVCsHandler operator_api.ListPVCsHandler
+	// OperatorAPIListPVCsForTenantHandler sets the operation handler for the list p v cs for tenant operation
+	OperatorAPIListPVCsForTenantHandler operator_api.ListPVCsForTenantHandler
 	// OperatorAPIListTenantsHandler sets the operation handler for the list tenants operation
 	OperatorAPIListTenantsHandler operator_api.ListTenantsHandler
 	// UserAPILoginHandler sets the operation handler for the login operation
@@ -436,6 +441,9 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.OperatorAPIListPVCsHandler == nil {
 		unregistered = append(unregistered, "operator_api.ListPVCsHandler")
+	}
+	if o.OperatorAPIListPVCsForTenantHandler == nil {
+		unregistered = append(unregistered, "operator_api.ListPVCsForTenantHandler")
 	}
 	if o.OperatorAPIListTenantsHandler == nil {
 		unregistered = append(unregistered, "operator_api.ListTenantsHandler")
@@ -667,6 +675,10 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/list-pvcs"] = operator_api.NewListPVCs(o.context, o.OperatorAPIListPVCsHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/pvcs"] = operator_api.NewListPVCsForTenant(o.context, o.OperatorAPIListPVCsForTenantHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

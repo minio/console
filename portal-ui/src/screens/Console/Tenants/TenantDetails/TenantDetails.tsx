@@ -42,6 +42,7 @@ import TenantSummary from "./TenantSummary";
 import TenantLicense from "./TenantLicense";
 import PoolsSummary from "./PoolsSummary";
 import PodsSummary from "./PodsSummary";
+import VolumesSummary from "./VolumesSummary";
 import TenantMetrics from "./TenantMetrics";
 import TenantSecurity from "./TenantSecurity";
 import List from "@material-ui/core/List";
@@ -191,6 +192,7 @@ const TenantDetails = ({
       case "pools":
       case "pods":
       case ":podName":
+      case "volumes":
       case "metrics":
       case "license":
       case "security":
@@ -382,6 +384,15 @@ const TenantDetails = ({
               <ListItemText primary="Pods" />
             </ListItem>
             <ListItem
+                button
+                selected={currentTab === "volumes"}
+                onClick={() => {
+                  changeRoute("volumes");
+                }}
+            >
+              <ListItemText primary="Volumes" />
+            </ListItem>
+            <ListItem
               button
               selected={currentTab === "license"}
               onClick={() => {
@@ -418,6 +429,10 @@ const TenantDetails = ({
               <Route
                 path="/namespaces/:tenantNamespace/tenants/:tenantName/pods"
                 component={PodsSummary}
+              />
+              <Route
+                path="/namespaces/:tenantNamespace/tenants/:tenantName/volumes"
+                component={VolumesSummary}
               />
               <Route
                 path="/namespaces/:tenantNamespace/tenants/:tenantName/license"

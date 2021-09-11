@@ -18,6 +18,7 @@ package operatorapi
 
 import (
 	"context"
+	"fmt"
 
 	miniov1 "github.com/minio/operator/pkg/apis/minio.min.io/v1"
 
@@ -39,6 +40,16 @@ func registerVolumesHandlers(api *operations.OperatorAPI) {
 
 		return operator_api.NewListPVCsOK().WithPayload(payload)
 	})
+
+	api.OperatorAPIListPVCsForTenantHandler = operator_api.ListPVCsForTenantHandlerFunc(func(params operator_api.ListPVCsForTenantParams, session *models.Principal) middleware.Responder {
+		payload, err := getPVCsForTenantResponse(session, params)
+
+		if err != nil {
+			return operator_api.NewListPVCsForTenantDefault(int(err.Code)).WithPayload(err)
+		}
+
+		return operator_api.NewListPVCsForTenantOK().WithPayload(payload)
+	})
 }
 
 func getPVCsResponse(session *models.Principal) (*models.ListPVCsResponse, *models.Error) {
@@ -56,6 +67,49 @@ func getPVCsResponse(session *models.Principal) (*models.ListPVCsResponse, *mode
 
 	// List all PVCs
 	listAllPvcs, err2 := clientset.CoreV1().PersistentVolumeClaims("").List(ctx, listOpts)
+
+	if err2 != nil {
+		return nil, prepareError(err2)
+	}
+
+	var ListPVCs []*models.PvcsListResponse
+
+	for _, pvc := range listAllPvcs.Items {
+		pvcResponse := models.PvcsListResponse{
+			Name:         pvc.Name,
+			Age:          pvc.CreationTimestamp.String(),
+			Capacity:     pvc.Status.Capacity.Storage().String(),
+			Namespace:    pvc.Namespace,
+			Status:       string(pvc.Status.Phase),
+			StorageClass: *pvc.Spec.StorageClassName,
+			Volume:       pvc.Spec.VolumeName,
+			Tenant:       pvc.Labels["v1.min.io/tenant"],
+		}
+		ListPVCs = append(ListPVCs, &pvcResponse)
+	}
+
+	PVCsResponse := models.ListPVCsResponse{
+		Pvcs: ListPVCs,
+	}
+
+	return &PVCsResponse, nil
+}
+
+func getPVCsForTenantResponse(session *models.Principal, params operator_api.ListPVCsForTenantParams) (*models.ListPVCsResponse, *models.Error) {
+	ctx := context.Background()
+	clientset, err := cluster.K8sClient(session.STSSessionToken)
+
+	if err != nil {
+		return nil, prepareError(err)
+	}
+
+	// Filter Tenant PVCs. They keep their v1 tenant annotation
+	listOpts := metav1.ListOptions{
+		LabelSelector: fmt.Sprintf("v1.min.io/tenant=%s", params.Tenant),
+	}
+
+	// List all PVCs
+	listAllPvcs, err2 := clientset.CoreV1().PersistentVolumeClaims(params.Namespace).List(ctx, listOpts)
 
 	if err2 != nil {
 		return nil, prepareError(err2)
