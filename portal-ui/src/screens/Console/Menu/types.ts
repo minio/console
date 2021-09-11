@@ -16,14 +16,6 @@
 
 import { userLoggedIn } from "../../../actions";
 
-export interface IMenuProps {
-  classes: any;
-  userLoggedIn: typeof userLoggedIn;
-  pages: string[];
-  operatorMode: boolean;
-  distributedSetup: boolean;
-}
-
 export interface IMenuItem {
   group: string;
   type: string;
