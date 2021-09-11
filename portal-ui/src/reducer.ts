@@ -31,12 +31,17 @@ import {
   GLOBAL_SET_DISTRIBUTED_SETUP,
 } from "./types";
 
+// determine whether we have the sidebar state stored on localstorage
+const initSideBarOpen = localStorage.getItem("sidebarOpen")
+  ? JSON.parse(localStorage.getItem("sidebarOpen")!)["open"]
+  : true;
+
 const initialState: SystemState = {
   loggedIn: false,
   operatorMode: false,
   session: "",
   userName: "",
-  sidebarOpen: true,
+  sidebarOpen: initSideBarOpen,
   serverNeedsRestart: false,
   serverIsLoading: false,
   loadingProgress: 100,
@@ -70,6 +75,11 @@ export function systemReducer(
         operatorMode: action.operatorMode,
       };
     case MENU_OPEN:
+      // persist preference to local storage
+      localStorage.setItem(
+        "sidebarOpen",
+        JSON.stringify({ open: action.open })
+      );
       return {
         ...state,
         sidebarOpen: action.open,

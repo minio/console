@@ -1,13 +1,12 @@
-import React from "react";
+import React, { Fragment } from "react";
 import Grid from "@material-ui/core/Grid";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-
-interface IPageHeader {
-  classes: any;
-  label: any;
-  actions?: any;
-}
+import { AppState } from "../../../../store";
+import { connect } from "react-redux";
+import { setMenuOpen, userLoggedIn } from "../../../../actions";
+import OperatorLogo from "../../../../icons/OperatorLogo";
+import ConsoleLogo from "../../../../icons/ConsoleLogo";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -37,9 +36,28 @@ const styles = (theme: Theme) =>
       marginTop: 16,
       marginRight: 8,
     },
+    logo: {
+      marginLeft: 34,
+      fill: theme.palette.primary.main,
+      width: 120,
+    },
   });
 
-const PageHeader = ({ classes, label, actions }: IPageHeader) => {
+interface IPageHeader {
+  classes: any;
+  sidebarOpen?: boolean;
+  operatorMode?: boolean;
+  label: any;
+  actions?: any;
+}
+
+const PageHeader = ({
+  classes,
+  label,
+  actions,
+  sidebarOpen,
+  operatorMode,
+}: IPageHeader) => {
   return (
     <Grid
       container
@@ -47,6 +65,11 @@ const PageHeader = ({ classes, label, actions }: IPageHeader) => {
       justify={"space-between"}
     >
       <Grid item className={classes.label}>
+        {!sidebarOpen && (
+          <div className={classes.logo}>
+            {operatorMode ? <OperatorLogo /> : <ConsoleLogo />}
+          </div>
+        )}
         <Typography variant="h4" className={classes.labelStyle}>
           {label}
         </Typography>
@@ -60,4 +83,11 @@ const PageHeader = ({ classes, label, actions }: IPageHeader) => {
   );
 };
 
-export default withStyles(styles)(PageHeader);
+const mapState = (state: AppState) => ({
+  sidebarOpen: state.system.sidebarOpen,
+  operatorMode: state.system.operatorMode,
+});
+
+const connector = connect(mapState, null);
+
+export default connector(withStyles(styles)(PageHeader));
