@@ -104,10 +104,10 @@ const ServerInfoCard = ({ classes, server }: ICardProps) => {
     }
   };
 
-  const networkKeys = Object.keys(get(server, "network", []));
+  const networkKeys = Object.keys(get(server, "network", {}));
 
   const networkTotal = networkKeys.length;
-  const totalDrives = server.drives.length;
+  const totalDrives = server.drives ? server.drives.length : 0;
 
   const activeNetwork = networkKeys.reduce((acc: number, currValue: string) => {
     const item = server.network[currValue];
@@ -117,9 +117,9 @@ const ServerInfoCard = ({ classes, server }: ICardProps) => {
     return acc;
   }, 0);
 
-  const activeDisks = server.drives.filter(
+  const activeDisks = server.drives ? server.drives.filter(
     (element) => element.state === "ok"
-  ).length;
+  ).length : 0;
 
   return (
     <Card>
@@ -137,7 +137,7 @@ const ServerInfoCard = ({ classes, server }: ICardProps) => {
             </div>
           </div>
         }
-        title={server.endpoint}
+        title={server.endpoint || ""}
         subheader={
           <Grid item xs={12} className={classes.stateContainer}>
             <span className={classes.infoValue}>
@@ -165,7 +165,7 @@ const ServerInfoCard = ({ classes, server }: ICardProps) => {
               </span>
             </span>
             <span className={classes.infoValue}>
-              <strong>Uptime:</strong> {niceDays(server.uptime)}
+              <strong>Uptime:</strong> {server.uptime ? niceDays(server.uptime) : "N/A"}
             </span>
           </Grid>
         }

@@ -14,19 +14,25 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import { connect } from "react-redux";
 import { NavLink } from "react-router-dom";
-import { Divider, withStyles } from "@material-ui/core";
+import {
+  Divider,
+  Drawer,
+  IconButton,
+  Tooltip,
+  withStyles,
+} from "@material-ui/core";
 import { createStyles, Theme } from "@material-ui/core/styles";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
 import { AppState } from "../../../store";
-import { userLoggedIn } from "../../../actions";
+import { setMenuOpen, userLoggedIn } from "../../../actions";
 import { menuGroups } from "./utils";
-import { IMenuItem, IMenuProps } from "./types";
+import { IMenuItem } from "./types";
 import {
   BucketsIcon,
   DashboardIcon,
@@ -52,6 +58,12 @@ import LogsIcon from "../../../icons/LogsIcon";
 import SettingsIcon from "../../../icons/SettingsIcon";
 import StorageIcon from "../../../icons/StorageIcon";
 import TenantsOutlinedIcon from "../../../icons/TenantsOutlineIcon";
+import MenuIcon from "@material-ui/icons/Menu";
+
+import clsx from "clsx";
+import { ChevronLeft } from "@material-ui/icons";
+
+const drawerWidth = 245;
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -59,9 +71,39 @@ const styles = (theme: Theme) =>
       paddingTop: 25,
       marginBottom: 30,
       paddingLeft: 45,
+      transition: theme.transitions.create("paddingLeft", {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
       "& img": {
         width: 120,
       },
+      "& .MuiIconButton-root": {
+        color: "#ffffff",
+        float: "right",
+      },
+    },
+    logoClosed: {
+      paddingTop: 25,
+      marginBottom: 30,
+      paddingLeft: 34,
+      transition: theme.transitions.create("paddingLeft", {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+      "& .MuiIconButton-root": {
+        color: "#ffffff",
+      },
+    },
+    logoSvg: {
+      width: 40,
+    },
+    logoSvgClosed: {
+      width: 0,
+      transition: theme.transitions.create("width", {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
     },
     menuList: {
       "& .active": {
@@ -147,6 +189,80 @@ const styles = (theme: Theme) =>
     selectorArrowOpen: {
       transform: "rotateZ(180deg)",
     },
+    //new
+    appBar: {
+      zIndex: theme.zIndex.drawer + 1,
+      transition: theme.transitions.create(["width", "margin"], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+    },
+    appBarShift: {
+      marginLeft: drawerWidth,
+      width: `calc(100% - ${drawerWidth}px)`,
+      transition: theme.transitions.create(["width", "margin"], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+    },
+    menuButton: {
+      marginRight: 36,
+    },
+    hide: {
+      display: "none",
+    },
+    drawer: {
+      width: drawerWidth,
+      flexShrink: 0,
+      whiteSpace: "nowrap",
+      background:
+        "transparent linear-gradient(90deg, #073052 0%, #081C42 100%) 0% 0% no-repeat padding-box !important",
+      boxShadow: "0px 3px 7px #00000014",
+      "& .MuiPaper-root": {
+        backgroundColor: "inherit",
+      },
+    },
+    drawerOpen: {
+      width: drawerWidth,
+      transition: theme.transitions.create("width", {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+    },
+    drawerClose: {
+      transition: theme.transitions.create("width", {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+      overflowX: "hidden",
+      width: 115,
+      [theme.breakpoints.up("sm")]: {
+        width: 115,
+      },
+      "& .logo": {
+        background: "red",
+      },
+      "& .MuiListItem-root": {
+        padding: "2px 0 2px 16px",
+        marginLeft: 36,
+        height: 50,
+        width: "48px",
+        transition: theme.transitions.create("marginLeft", {
+          easing: theme.transitions.easing.sharp,
+          duration: theme.transitions.duration.leavingScreen,
+        }),
+        "& .MuiListItemText-root": {
+          display: "none",
+        },
+      },
+    },
+    logoIcon: {
+      float: "left",
+      "& svg": {
+        fill: "white",
+        width: 120,
+      },
+    },
   });
 
 // Menu State builder for groups
@@ -161,15 +277,25 @@ const menuStateBuilder = () => {
   return elements;
 };
 
+interface IMenuProps {
+  classes: any;
+  userLoggedIn: typeof userLoggedIn;
+  pages: string[];
+  operatorMode: boolean;
+  distributedSetup: boolean;
+  sidebarOpen: boolean;
+  setMenuOpen: typeof setMenuOpen;
+}
+
 const Menu = ({
   userLoggedIn,
   classes,
   pages,
   operatorMode,
   distributedSetup,
+  sidebarOpen,
+  setMenuOpen,
 }: IMenuProps) => {
-  const [menuOpen, setMenuOpen] = useState<any>(menuStateBuilder());
-
   const logout = () => {
     const deleteSession = () => {
       clearSession();
@@ -385,91 +511,130 @@ const Menu = ({
       item.fsHidden !== false
   );
 
-  const setMenuCollapse = (menuClicked: string) => {
-    let newMenu: any = { ...menuOpen };
+  const handleDrawerOpen = () => {
+    setMenuOpen(true);
+  };
 
-    newMenu[menuClicked] = !newMenu[menuClicked];
-
-    setMenuOpen(newMenu);
+  const handleDrawerClose = () => {
+    setMenuOpen(false);
   };
 
   return (
     <React.Fragment>
-      <div className={classes.logo}>
-        {operatorMode ? <OperatorLogo /> : <ConsoleLogo />}
-      </div>
-      <List className={classes.menuList}>
-        {menuGroups.map((groupMember, index) => {
-          const filterByGroup = (allowedItems || []).filter(
-            (item: any) => item.group === groupMember.group
-          );
-
-          const countableElements = filterByGroup.filter(
-            (menuItem: any) => menuItem.type !== "title"
-          );
-
-          if (countableElements.length === 0) {
-            return null;
-          }
-
-          return (
-            <React.Fragment key={`menuElem-${index.toString()}`}>
-              <Divider className={classes.menuDivider} />
-              {filterByGroup.map((page: IMenuItem) => {
-                switch (page.type) {
-                  case "item": {
-                    return (
-                      <ListItem
-                        key={page.to}
-                        button
-                        onClick={page.onClick}
-                        component={page.component}
-                        to={page.to}
-                        className={
-                          page.extraMargin ? classes.extraMargin : null
-                        }
-                      >
-                        {page.icon && <ListItemIcon>{page.icon}</ListItemIcon>}
-                        {page.name && <ListItemText primary={page.name} />}
-                      </ListItem>
-                    );
-                  }
-                  case "title": {
-                    return (
-                      <ListItem
-                        key={page.name}
-                        component={page.component}
-                        className={classes.subTitleMenu}
-                      >
-                        {page.name}
-                      </ListItem>
-                    );
-                  }
-                  default:
-                    return null;
-                }
-              })}
-            </React.Fragment>
-          );
+      <Drawer
+        variant="permanent"
+        className={clsx(classes.drawer, {
+          [classes.drawerOpen]: sidebarOpen,
+          [classes.drawerClose]: !sidebarOpen,
         })}
-        <Divider className={classes.menuDivider} />
-        <ListItem button onClick={logout}>
-          <ListItemIcon>
-            <LogoutIcon />
-          </ListItemIcon>
-          <ListItemText primary="Logout" />
-        </ListItem>
-      </List>
+        classes={{
+          paper: clsx({
+            [classes.drawerOpen]: sidebarOpen,
+            [classes.drawerClose]: !sidebarOpen,
+          }),
+        }}
+      >
+        <div
+          className={clsx({
+            [classes.logo]: sidebarOpen,
+            [classes.logoClosed]: !sidebarOpen,
+          })}
+        >
+          {sidebarOpen && (
+            <span className={classes.logoIcon}>
+              {operatorMode ? <OperatorLogo /> : <ConsoleLogo />}
+            </span>
+          )}
+
+          <IconButton
+            onClick={() => {
+              if (sidebarOpen) {
+                setMenuOpen(false);
+              } else {
+                setMenuOpen(true);
+              }
+            }}
+          >
+            {sidebarOpen ? <ChevronLeft /> : <MenuIcon />}
+          </IconButton>
+        </div>
+        <List className={classes.menuList}>
+          {menuGroups.map((groupMember, index) => {
+            const filterByGroup = (allowedItems || []).filter(
+              (item: any) => item.group === groupMember.group
+            );
+
+            const countableElements = filterByGroup.filter(
+              (menuItem: any) => menuItem.type !== "title"
+            );
+
+            if (countableElements.length === 0) {
+              return null;
+            }
+
+            return (
+              <React.Fragment key={`menuElem-${index.toString()}`}>
+                <Divider className={classes.menuDivider} />
+                {filterByGroup.map((page: IMenuItem) => {
+                  switch (page.type) {
+                    case "item": {
+                      return (
+                        <ListItem
+                          key={page.to}
+                          button
+                          onClick={page.onClick}
+                          component={page.component}
+                          to={page.to}
+                          className={
+                            page.extraMargin ? classes.extraMargin : null
+                          }
+                        >
+                          {page.icon && (
+                            <Tooltip title={page.name}>
+                              <ListItemIcon>{page.icon}</ListItemIcon>
+                            </Tooltip>
+                          )}
+                          {page.name && <ListItemText primary={page.name} />}
+                        </ListItem>
+                      );
+                    }
+                    case "title": {
+                      return (
+                        <ListItem
+                          key={page.name}
+                          component={page.component}
+                          className={classes.subTitleMenu}
+                        >
+                          {page.name}
+                        </ListItem>
+                      );
+                    }
+                    default:
+                      return null;
+                  }
+                })}
+              </React.Fragment>
+            );
+          })}
+          <Divider className={classes.menuDivider} />
+          <ListItem button onClick={logout}>
+            <ListItemIcon>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText primary="Logout" />
+          </ListItem>
+        </List>
+      </Drawer>
     </React.Fragment>
   );
 };
 
 const mapState = (state: AppState) => ({
-  open: state.system.loggedIn,
+  sidebarOpen: state.system.sidebarOpen,
   operatorMode: state.system.operatorMode,
   distributedSetup: state.system.distributedSetup,
 });
 
-const connector = connect(mapState, { userLoggedIn });
+const connector = connect(mapState, { userLoggedIn, setMenuOpen });
 
 export default connector(withStyles(styles)(Menu));
