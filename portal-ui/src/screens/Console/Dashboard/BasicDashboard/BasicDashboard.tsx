@@ -166,7 +166,7 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
             <Grid container spacing={1} className={classes.cardsContainer}>
               {serverArray.map((server, index) =>
                 server.drives.map((drive) => (
-                  <Grid item xs={12}>
+                  <Grid item xs={12} key={drive.uuid}>
                     <DriveInfoCard drive={drive} />
                   </Grid>
                 ))

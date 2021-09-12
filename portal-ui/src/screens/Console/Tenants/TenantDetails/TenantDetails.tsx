@@ -384,11 +384,11 @@ const TenantDetails = ({
               <ListItemText primary="Pods" />
             </ListItem>
             <ListItem
-                button
-                selected={currentTab === "volumes"}
-                onClick={() => {
-                  changeRoute("volumes");
-                }}
+              button
+              selected={currentTab === "volumes"}
+              onClick={() => {
+                changeRoute("volumes");
+              }}
             >
               <ListItemText primary="Volumes" />
             </ListItem>
