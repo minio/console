@@ -455,7 +455,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `sum by (server) (rate(minio_s3_traffic_received_bytes{job="${jobid}"}[$__interval]))`,
+				Expr:         `sum by (server) (rate(minio_s3_traffic_received_bytes{job="${jobid}"}[$__rate_interval]))`,
 				LegendFormat: "Data Received [{{server}}]",
 			},
 		},
@@ -472,7 +472,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `sum by (server) (rate(minio_s3_traffic_sent_bytes{job="${jobid}"}[$__interval]))`,
+				Expr:         `sum by (server) (rate(minio_s3_traffic_sent_bytes{job="${jobid}"}[$__rate_interval]))`,
 				LegendFormat: "Data Sent [{{server}}]",
 			},
 		},
@@ -618,7 +618,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `sum by (server,api) (rate(minio_s3_requests_total{job="${jobid}"}[$__interval]))`,
+				Expr:         `sum by (server,api) (increase(minio_s3_requests_total{job="${jobid}"}[$__rate_interval]))`,
 				LegendFormat: "{{server,api}}",
 			},
 		},
@@ -635,7 +635,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `rate(minio_s3_requests_errors_total{job="${jobid}"}[$__interval])`,
+				Expr:         `sum by (server,api) (increase(minio_s3_requests_errors_total{job="${jobid}"}[$__rate_interval]))`,
 				LegendFormat: "{{server,api}}",
 			},
 		},
@@ -652,13 +652,13 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `rate(minio_inter_node_traffic_sent_bytes{job="${jobid}"}[$__interval])`,
+				Expr:         `rate(minio_inter_node_traffic_sent_bytes{job="${jobid}"}[$__rate_interval])`,
 				LegendFormat: "Internode Bytes Received [{{server}}]",
 				Step:         4,
 			},
 
 			{
-				Expr:         `rate(minio_inter_node_traffic_sent_bytes{job="${jobid}"}[$__interval])`,
+				Expr:         `rate(minio_inter_node_traffic_sent_bytes{job="${jobid}"}[$__rate_interval])`,
 				LegendFormat: "Internode Bytes Received [{{server}}]",
 			},
 		},
@@ -675,7 +675,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `rate(minio_node_process_cpu_total_seconds{job="${jobid}"}[$__interval])`,
+				Expr:         `rate(minio_node_process_cpu_total_seconds{job="${jobid}"}[$__rate_interval])`,
 				LegendFormat: "CPU Usage Rate [{{server}}]",
 			},
 		},
@@ -743,13 +743,13 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `rate(minio_node_syscall_read_total{job="${jobid}"}[$__interval])`,
+				Expr:         `rate(minio_node_syscall_read_total{job="${jobid}"}[$__rate_interval])`,
 				LegendFormat: "Read Syscalls [{{server}}]",
 				Step:         60,
 			},
 
 			{
-				Expr:         `rate(minio_node_syscall_read_total{job="${jobid}"}[$__interval])`,
+				Expr:         `rate(minio_node_syscall_read_total{job="${jobid}"}[$__rate_interval])`,
 				LegendFormat: "Read Syscalls [{{server}}]",
 			},
 		},
@@ -783,12 +783,12 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `rate(minio_node_io_rchar_bytes{job="${jobid}"}[$__interval])`,
+				Expr:         `rate(minio_node_io_rchar_bytes{job="${jobid}"}[$__rate_interval])`,
 				LegendFormat: "Node RChar [{{server}}]",
 			},
 
 			{
-				Expr:         `rate(minio_node_io_rchar_bytes{job="${jobid}"}[$__interval])`,
+				Expr:         `rate(minio_node_io_rchar_bytes{job="${jobid}"}[$__rate_interval])`,
 				LegendFormat: "Node RChar [{{server}}]",
 			},
 		},
@@ -1009,8 +1009,8 @@ LabelsWaitLoop:
 					extraParamters = fmt.Sprintf("&start=%d&end=%d&step=%d", *inStart, *inEnd, *inStep)
 				}
 
-				// replace the `$__interval` global for step with unit (s for seconds)
-				queryExpr := strings.ReplaceAll(target.Expr, "$__interval", fmt.Sprintf("%ds", 120))
+				// replace the `$__rate_interval` global for step with unit (s for seconds)
+				queryExpr := strings.ReplaceAll(target.Expr, "$__rate_interval", fmt.Sprintf("%ds", 240))
 				if strings.Contains(queryExpr, "$") {
 					var re = regexp.MustCompile(`\$([a-z]+)`)
 
