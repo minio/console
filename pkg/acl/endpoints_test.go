@@ -110,7 +110,7 @@ func TestOperatorOnlyEndpoints(t *testing.T) {
 		{
 			name: "Operator Only - all admin endpoints",
 			args: args{},
-			want: 16,
+			want: 17,
 		},
 	}
 
