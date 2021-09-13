@@ -65,6 +65,7 @@ const styles = (theme: Theme) =>
       },
     },
     paddedContentGrid: {
+      marginTop: 8,
       padding: "0 10px",
     },
     stepsLabel: {
