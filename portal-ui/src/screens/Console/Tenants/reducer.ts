@@ -61,7 +61,7 @@ const initialState: ITenantState = {
         selectedStorageClass: "",
       },
       configure: {
-        customImage: false,
+        customImage: true,
         imageName: "",
         customDockerhub: false,
         imageRegistry: "",

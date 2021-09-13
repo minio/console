@@ -31,9 +31,8 @@ import {
 } from "../../../../../utils/validationFunctions";
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
 
-interface IConfigureProps {
+interface IImagesProps {
   updateAddField: typeof updateAddField;
   isPageValid: typeof isPageValid;
   storageClasses: any;
@@ -73,7 +72,7 @@ const styles = (theme: Theme) =>
     ...wizardCommon,
   });
 
-const Configure = ({
+const Images = ({
   classes,
   storageClasses,
   customImage,
@@ -102,7 +101,7 @@ const Configure = ({
   updateAddField,
   isPageValid,
   selectedStorageClass,
-}: IConfigureProps) => {
+}: IImagesProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
 
   // Common
@@ -306,165 +305,188 @@ const Configure = ({
   return (
     <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Configure</h3>
+        <h3 className={classes.h3Section}>Container Images</h3>
         <span className={classes.descriptionText}>
-          Basic configurations for tenant management
+          Images used by the Tenant Deployment
         </span>
       </div>
-      <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Expose Services</h3>
-        <span className={classes.descriptionText}>
-          Whether the tenant's services should request an external IP.
-        </span>
-      </div>
-      <Grid item xs={12}>
-        <FormSwitchWrapper
-          value="expose_minio"
-          id="expose_minio"
-          name="expose_minio"
-          checked={exposeMinIO}
-          onChange={(e) => {
-            const targetD = e.target;
-            const checked = targetD.checked;
 
-            updateField("exposeMinIO", checked);
-          }}
-          label={"Expose MiniO Service"}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <FormSwitchWrapper
-          value="expose_console"
-          id="expose_console"
-          name="expose_console"
-          checked={exposeConsole}
-          onChange={(e) => {
-            const targetD = e.target;
-            const checked = targetD.checked;
+      <Fragment>
+        <Grid item xs={12}>
+          <InputBoxWrapper
+            id="image"
+            name="image"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              updateField("imageName", e.target.value);
+              cleanValidation("image");
+            }}
+            label="MinIO's Image"
+            value={imageName}
+            error={validationErrors["image"] || ""}
+            placeholder="E.g. minio/minio:RELEASE.2021-08-20T18-32-01Z"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <InputBoxWrapper
+            id="logSearchImage"
+            name="logSearchImage"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              updateField("logSearchImage", e.target.value);
+              cleanValidation("logSearchImage");
+            }}
+            label="Log Search API's Image"
+            value={logSearchImage}
+            error={validationErrors["logSearchImage"] || ""}
+            placeholder="E.g. minio/logsearchapi:v4.1.1"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <InputBoxWrapper
+            id="kesImage"
+            name="kesImage"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              updateField("kesImage", e.target.value);
+              cleanValidation("kesImage");
+            }}
+            label="KES Image"
+            value={kesImage}
+            error={validationErrors["kesImage"] || ""}
+            placeholder="E.g. minio/kes:v0.14.0"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <InputBoxWrapper
+            id="logSearchPostgresImage"
+            name="logSearchPostgresImage"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              updateField("logSearchPostgresImage", e.target.value);
+              cleanValidation("logSearchPostgresImage");
+            }}
+            label="Log Search Postgres's Image"
+            value={logSearchPostgresImage}
+            error={validationErrors["logSearchPostgresImage"] || ""}
+            placeholder="E.g. library/postgres:13"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <InputBoxWrapper
+            id="logSearchPostgresInitImage"
+            name="logSearchPostgresInitImage"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              updateField("logSearchPostgresInitImage", e.target.value);
+              cleanValidation("logSearchPostgresInitImage");
+            }}
+            label="Log Search Postgres's Init Image"
+            value={logSearchPostgresInitImage}
+            error={validationErrors["logSearchPostgresInitImage"] || ""}
+            placeholder="E.g. library/busybox:1.33.1"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <InputBoxWrapper
+            id="prometheusImage"
+            name="prometheusImage"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              updateField("prometheusImage", e.target.value);
+              cleanValidation("prometheusImage");
+            }}
+            label="Prometheus Image"
+            value={prometheusImage}
+            error={validationErrors["prometheusImage"] || ""}
+            placeholder="E.g. quay.io/prometheus/prometheus:latest"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <InputBoxWrapper
+            id="prometheusSidecarImage"
+            name="prometheusSidecarImage"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              updateField("prometheusSidecarImage", e.target.value);
+              cleanValidation("prometheusSidecarImage");
+            }}
+            label="Prometheus Sidecar Image"
+            value={prometheusSidecarImage}
+            error={validationErrors["prometheusSidecarImage"] || ""}
+            placeholder="E.g. quay.io/prometheus/prometheus:latest"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <InputBoxWrapper
+            id="prometheusInitImage"
+            name="prometheusInitImage"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              updateField("prometheusInitImage", e.target.value);
+              cleanValidation("prometheusInitImage");
+            }}
+            label="Prometheus Init Image"
+            value={prometheusInitImage}
+            error={validationErrors["prometheusInitImage"] || ""}
+            placeholder="E.g. quay.io/prometheus/prometheus:latest"
+          />
+        </Grid>
+      </Fragment>
 
-            updateField("exposeConsole", checked);
-          }}
-          label={"Expose Console Service"}
-        />
-      </Grid>
-
-      <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Additional Configurations</h3>
-        <span className={classes.descriptionText}>
-          Configure Storage Classes & Storage size for Log Search and Prometheus
-          add-ons
-        </span>
-      </div>
-      <Grid item xs={12}>
-        <FormSwitchWrapper
-          value="logSearchConfig"
-          id="log_search_configuration"
-          name="log_search_configuration"
-          checked={logSearchCustom}
-          onChange={(e) => {
-            const targetD = e.target;
-            const checked = targetD.checked;
-
-            updateField("logSearchCustom", checked);
-          }}
-          label={"Override Log Search defaults"}
-        />
-      </Grid>
-      {logSearchCustom && (
+      {customImage && (
         <Fragment>
           <Grid item xs={12}>
-            <SelectWrapper
-              id="log_search_storage_class"
-              name="log_search_storage_class"
-              onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                updateField(
-                  "logSearchSelectedStorageClass",
-                  e.target.value as string
-                );
+            <FormSwitchWrapper
+              value="custom_docker_hub"
+              id="custom_docker_hub"
+              name="custom_docker_hub"
+              checked={customDockerhub}
+              onChange={(e) => {
+                const targetD = e.target;
+                const checked = targetD.checked;
+
+                updateField("customDockerhub", checked);
               }}
-              label="Log Search Storage Class"
-              value={logSearchSelectedStorageClass}
-              options={storageClasses}
-              disabled={storageClasses.length < 1}
+              label={"Set/Update Image Registry"}
             />
           </Grid>
-          <Grid item xs={12}>
-            <div className={classes.multiContainer}>
-              <div>
-                <InputBoxWrapper
-                  type="number"
-                  id="log_search_volume_size"
-                  name="log_search_volume_size"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("logSearchVolumeSize", e.target.value);
-                    cleanValidation("log_search_volume_size");
-                  }}
-                  label="Storage Size [Gi]"
-                  value={logSearchVolumeSize}
-                  required
-                  error={validationErrors["log_search_volume_size"] || ""}
-                  min="0"
-                />
-              </div>
-            </div>
-          </Grid>
-          <br />
         </Fragment>
       )}
-      <Grid item xs={12}>
-        <FormSwitchWrapper
-          value="prometheusConfig"
-          id="prometheus_configuration"
-          name="prometheus_configuration"
-          checked={prometheusCustom}
-          onChange={(e) => {
-            const targetD = e.target;
-            const checked = targetD.checked;
-
-            updateField("prometheusCustom", checked);
-          }}
-          label={"Override Prometheus defaults"}
-        />
-      </Grid>
-      {prometheusCustom && (
+      {customDockerhub && (
         <Fragment>
           <Grid item xs={12}>
-            <SelectWrapper
-              id="prometheus_storage_class"
-              name="prometheus_storage_class"
-              onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                updateField(
-                  "prometheusSelectedStorageClass",
-                  e.target.value as string
-                );
+            <InputBoxWrapper
+              id="registry"
+              name="registry"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("imageRegistry", e.target.value);
               }}
-              label="Prometheus Storage Class"
-              value={prometheusSelectedStorageClass}
-              options={storageClasses}
-              disabled={storageClasses.length < 1}
+              label="Endpoint"
+              value={imageRegistry}
+              error={validationErrors["registry"] || ""}
+              placeholder="E.g. https://index.docker.io/v1/"
+              required
             />
           </Grid>
           <Grid item xs={12}>
-            <div className={classes.multiContainer}>
-              <div>
-                <InputBoxWrapper
-                  type="number"
-                  id="prometheus_volume_size"
-                  name="prometheus_volume_size"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateField("prometheusVolumeSize", e.target.value);
-                    cleanValidation("prometheus_volume_size");
-                  }}
-                  label="Storage Size [Gi]"
-                  value={prometheusVolumeSize}
-                  required
-                  error={validationErrors["prometheus_volume_size"] || ""}
-                  min="0"
-                />
-              </div>
-            </div>
+            <InputBoxWrapper
+              id="registryUsername"
+              name="registryUsername"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("imageRegistryUsername", e.target.value);
+              }}
+              label="Username"
+              value={imageRegistryUsername}
+              error={validationErrors["registryUsername"] || ""}
+              required
+            />
           </Grid>
-          <br />
+          <Grid item xs={12}>
+            <InputBoxWrapper
+              id="registryPassword"
+              name="registryPassword"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                updateField("imageRegistryPassword", e.target.value);
+              }}
+              label="Password"
+              value={imageRegistryPassword}
+              error={validationErrors["registryPassword"] || ""}
+              required
+            />
+          </Grid>
         </Fragment>
       )}
     </Paper>
@@ -518,4 +540,4 @@ const connector = connect(mapState, {
   isPageValid,
 });
 
-export default withStyles(styles)(connector(Configure));
+export default withStyles(styles)(connector(Images));

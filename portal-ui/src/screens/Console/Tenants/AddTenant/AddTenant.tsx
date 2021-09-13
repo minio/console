@@ -40,24 +40,26 @@ import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt"
 import NameTenant from "./Steps/NameTenant";
 import { AppState } from "../../../../store";
 import { ICertificatesItems, IFieldStore } from "../types";
-import { updateAddField } from "../actions";
+import { resetAddTenantForm, updateAddField } from "../actions";
 import Configure from "./Steps/Configure";
 import IdentityProvider from "./Steps/IdentityProvider";
 import Security from "./Steps/Security";
 import Encryption from "./Steps/Encryption";
-import TenantSize from "./Steps/TenantSize";
 import Preview from "./Steps/Preview";
 import Affinity from "./Steps/Affinity";
+import PageHeader from "../../Common/PageHeader/PageHeader";
+import history from "../../../../history";
+import Images from "./Steps/Images";
 
 interface IAddTenantProps {
-  closeAndRefresh: (reloadData: boolean) => any;
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
+  resetAddTenantForm: typeof resetAddTenantForm;
   updateAddField: typeof updateAddField;
   fields: IFieldStore;
   certificates: ICertificatesItems;
+  selectedStorageClass: string;
   namespace: string;
   validPages: string[];
-  advancedMode: boolean;
   classes: any;
 }
 
@@ -73,13 +75,13 @@ const styles = (theme: Theme) =>
 
 const AddTenant = ({
   classes,
-  advancedMode,
   fields,
   certificates,
+  selectedStorageClass,
   namespace,
   validPages,
   setModalErrorSnackMessage,
-  closeAndRefresh,
+  resetAddTenantForm,
 }: IAddTenantProps) => {
   // Modals
   const [showNewCredentials, setShowNewCredentials] = useState<boolean>(false);
@@ -605,144 +607,80 @@ const AddTenant = ({
     type: "other",
     enabled: true,
     action: () => {
-      closeAndRefresh(false);
+      history.push("/tenants");
+    },
+  };
+
+  const createButton = {
+    label: "Create",
+    type: "submit",
+    enabled:
+      !addSending &&
+      selectedStorageClass !== "" &&
+      validPages.includes("tenantSize"),
+    action: () => {
+      setAddSending(true);
     },
   };
 
   const wizardSteps: IWizardElement[] = [
     {
-      label: "Name Tenant",
+      label: "Setup",
       componentRender: <NameTenant />,
-      buttons: [
-        cancelButton,
-        {
-          label: "Next",
-          type: "next",
-          enabled: validPages.includes("nameTenant"),
-        },
-      ],
+      buttons: [cancelButton, createButton],
     },
     {
       label: "Configure",
       advancedOnly: true,
       componentRender: <Configure />,
-      buttons: [
-        cancelButton,
-        { label: "Back", type: "back", enabled: true },
-        {
-          label: "Next",
-          type: "next",
-          enabled: validPages.includes("configure"),
-        },
-      ],
+      buttons: [cancelButton, createButton],
     },
     {
-      label: "Pod Affinity",
+      label: "Images",
+      advancedOnly: true,
+      componentRender: <Images />,
+      buttons: [cancelButton, createButton],
+    },
+    {
+      label: "Pod Placement",
       advancedOnly: true,
       componentRender: <Affinity />,
-      buttons: [
-        cancelButton,
-        { label: "Back", type: "back", enabled: true },
-        {
-          label: "Next",
-          type: "next",
-          enabled: validPages.includes("affinity"),
-        },
-      ],
+      buttons: [cancelButton, createButton],
     },
     {
       label: "Identity Provider",
       advancedOnly: true,
       componentRender: <IdentityProvider />,
-      buttons: [
-        cancelButton,
-        { label: "Back", type: "back", enabled: true },
-        {
-          label: "Next",
-          type: "next",
-          enabled: validPages.includes("identityProvider"),
-        },
-      ],
+      buttons: [cancelButton, createButton],
     },
     {
       label: "Security",
       advancedOnly: true,
       componentRender: <Security />,
-      buttons: [
-        cancelButton,
-        { label: "Back", type: "back", enabled: true },
-        {
-          label: "Next",
-          type: "next",
-          enabled: validPages.includes("security"),
-        },
-      ],
+      buttons: [cancelButton, createButton],
     },
     {
       label: "Encryption",
       advancedOnly: true,
       componentRender: <Encryption />,
-      buttons: [
-        cancelButton,
-        { label: "Back", type: "back", enabled: true },
-        {
-          label: "Next",
-          type: "next",
-          enabled: validPages.includes("encryption"),
-        },
-      ],
+      buttons: [cancelButton, createButton],
     },
     {
-      label: "Tenant Size",
-      componentRender: <TenantSize />,
-      buttons: [
-        cancelButton,
-        { label: "Back", type: "back", enabled: true },
-        {
-          label: "Next",
-          type: "next",
-          enabled: validPages.includes("tenantSize"),
-        },
-      ],
-    },
-    {
-      label: "Preview Configuration",
+      label: "Review",
       componentRender: <Preview />,
-      buttons: [
-        cancelButton,
-        { label: "Back", type: "back", enabled: true },
-        {
-          label: "Create",
-          type: "submit",
-          enabled: !addSending,
-          action: () => {
-            setAddSending(true);
-          },
-        },
-      ],
+      buttons: [cancelButton, createButton],
     },
   ];
 
   let filteredWizardSteps = wizardSteps;
 
-  if (!advancedMode) {
-    filteredWizardSteps = wizardSteps.filter((step) => !step.advancedOnly);
-  }
-
   const closeCredentialsModal = () => {
-    closeAndRefresh(true);
+    resetAddTenantForm();
+    history.push("/tenants");
   };
 
   return (
     <Fragment>
-      <Grid item xs={12} className={classes.customTitle}>
-        Create New Tenant
-      </Grid>
-      {addSending && (
-        <Grid item xs={12}>
-          <LinearProgress />
-        </Grid>
-      )}
       {showNewCredentials && (
         <CredentialsPrompt
           newServiceAccount={createdAccount}
@@ -753,7 +691,13 @@ const AddTenant = ({
           entity="Tenant"
         />
       )}
-      <Grid container>
+      <PageHeader label={"Create New Tenant"} />
+      <Grid container className={classes.container}>
+        {addSending && (
+          <Grid item xs={12}>
+            <LinearProgress />
+          </Grid>
+        )}
         <Grid item xs={12}>
           <GenericWizard wizardSteps={filteredWizardSteps} />
         </Grid>
@@ -763,16 +707,18 @@ const AddTenant = ({
 };
 
 const mapState = (state: AppState) => ({
-  advancedMode: state.tenants.createTenant.advancedModeOn,
   namespace: state.tenants.createTenant.fields.nameTenant.namespace,
   validPages: state.tenants.createTenant.validPages,
   fields: state.tenants.createTenant.fields,
   certificates: state.tenants.createTenant.certificates,
+  selectedStorageClass:
+    state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
 });
 
 const connector = connect(mapState, {
   setModalErrorSnackMessage,
   updateAddField,
+  resetAddTenantForm,
 });
 
 export default withStyles(styles)(connector(AddTenant));

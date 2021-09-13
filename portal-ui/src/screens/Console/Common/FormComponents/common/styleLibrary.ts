@@ -587,6 +587,9 @@ export const wizardCommon = {
       },
     },
   },
+  paperWrapper: {
+    padding: 12,
+  },
 };
 
 export const buttonsStyles = {

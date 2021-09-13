@@ -17,7 +17,7 @@
 import React, { useEffect, useCallback, Fragment } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, Divider, Grid, Typography } from "@material-ui/core";
+import { Button, Divider, Grid, Paper, Typography } from "@material-ui/core";
 import {
   modalBasic,
   wizardCommon,
@@ -106,7 +106,7 @@ const Security = ({
   }, [enableTLS, enableAutoCert, enableCustomCerts, isPageValid]);
 
   return (
-    <Fragment>
+    <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
         <h3 className={classes.h3Section}>Security</h3>
       </div>
@@ -286,7 +286,7 @@ const Security = ({
           )}
         </Fragment>
       )}
-    </Fragment>
+    </Paper>
   );
 };
 

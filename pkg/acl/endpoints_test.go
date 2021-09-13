@@ -19,8 +19,6 @@ package acl
 import (
 	"reflect"
 	"testing"
-
-	iampolicy "github.com/minio/pkg/iam/policy"
 )
 
 type args struct {
@@ -111,80 +109,10 @@ func TestOperatorOnlyEndpoints(t *testing.T) {
 	tests := []endpoint{
 		{
 			name: "Operator Only - all admin endpoints",
-			args: args{
-				[]string{
-					"admin:*",
-				},
-			},
-			want: 15,
-		},
-		{
-			name: "Operator Only - all s3 endpoints",
-			args: args{
-				[]string{
-					"s3:*",
-				},
-			},
-			want: 15,
-		},
-		{
-			name: "Operator Only - all admin and s3 endpoints",
-			args: args{
-				[]string{
-					"admin:*",
-					"s3:*",
-				},
-			},
-			want: 15,
-		},
-		{
-			name: "Operator Only - default endpoints",
-			args: args{
-				[]string{},
-			},
-			want: 15,
+			args: args{},
+			want: 17,
 		},
 	}
 
 	validateEndpoints(t, tests)
-}
-
-func TestGetActionsStringFromPolicy(t *testing.T) {
-	type args struct {
-		policy *iampolicy.Policy
-	}
-	tests := []struct {
-		name string
-		args args
-		want int
-	}{
-		{
-			name: "parse ReadOnly policy",
-			args: args{
-				policy: &iampolicy.ReadOnly,
-			},
-			want: 2,
-		},
-		{
-			name: "parse WriteOnly policy",
-			args: args{
-				policy: &iampolicy.WriteOnly,
-			},
-			want: 1,
-		},
-		{
-			name: "parse AdminDiagnostics policy",
-			args: args{
-				policy: &iampolicy.AdminDiagnostics,
-			},
-			want: 8,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := GetActionsStringFromPolicy(tt.args.policy); !reflect.DeepEqual(len(got), tt.want) {
-				t.Errorf("GetActionsStringFromPolicy() = %v, want %v", len(got), tt.want)
-			}
-		})
-	}
 }

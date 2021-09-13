@@ -26,6 +26,7 @@ import {
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
+import { Paper } from "@material-ui/core";
 
 interface IPreviewProps {
   classes: any;
@@ -62,7 +63,7 @@ const Preview = ({
   enableTLS,
 }: IPreviewProps) => {
   return (
-    <Fragment>
+    <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
         <h3 className={classes.h3Section}>Review</h3>
         <span className={classes.descriptionText}>
@@ -125,7 +126,7 @@ const Preview = ({
           )}
         </TableBody>
       </Table>
-    </Fragment>
+    </Paper>
   );
 };
 

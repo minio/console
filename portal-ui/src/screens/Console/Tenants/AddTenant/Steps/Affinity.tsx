@@ -17,7 +17,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Grid, IconButton } from "@material-ui/core";
+import { Grid, IconButton, Paper } from "@material-ui/core";
 import { AppState } from "../../../../../store";
 import { isPageValid, updateAddField } from "../../actions";
 import { setModalErrorSnackMessage } from "../../../../../actions";
@@ -190,9 +190,9 @@ const Affinity = ({
   }, [isPageValid, podAffinity, nodeSelectorLabels]);
 
   return (
-    <Fragment>
+    <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Pod Affinity</h3>
+        <h3 className={classes.h3Section}>Pod Placement</h3>
         <span className={classes.descriptionText}>
           Configure how pods will be assigned to nodes
         </span>
@@ -208,11 +208,11 @@ const Affinity = ({
           }}
           selectorOptions={[
             { label: "None", value: "none" },
-            { label: "Default (Pod Anti-afinnity)", value: "default" },
+            { label: "Default (Pod Anti-Affinnity)", value: "default" },
             { label: "Node Selector", value: "nodeSelector" },
           ]}
         />
-        MinIO supports multiple configurations for Pod Afinnity
+        MinIO supports multiple configurations for Pod Affinity
       </Grid>
       {podAffinity === "nodeSelector" && (
         <Fragment>
@@ -371,7 +371,7 @@ const Affinity = ({
           </Grid>
         </Fragment>
       )}
-    </Fragment>
+    </Paper>
   );
 };
 

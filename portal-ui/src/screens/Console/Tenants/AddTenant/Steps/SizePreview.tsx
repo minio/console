@@ -23,16 +23,17 @@ import {
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
-import Grid from "@material-ui/core/Grid";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableRow from "@material-ui/core/TableRow";
 import {
   calculateDistribution,
   erasureCodeCalc,
   getBytes,
-  k8sfactorForDropdown,
   niceBytes,
   setMemoryResource,
 } from "../../../../../common/utils";
-import { clearValidationError } from "../../utils";
 import { ecListTransform, Opts } from "../../ListTenants/utils";
 import { IMemorySize } from "../../ListTenants/types";
 import {
@@ -42,10 +43,9 @@ import {
 } from "../../../../../common/types";
 import { commonFormValidation } from "../../../../../utils/validationFunctions";
 import api from "../../../../../common/api";
-import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import { Divider } from "@material-ui/core";
 
-interface ITenantSizeProps {
+interface ISizePreviewProps {
   classes: any;
   updateAddField: typeof updateAddField;
   isPageValid: typeof isPageValid;
@@ -71,11 +71,19 @@ const styles = (theme: Theme) =>
     buttonContainer: {
       textAlign: "right",
     },
+    root: {
+      margin: 4,
+    },
+    table: {
+      "& .MuiTableCell-root": {
+        fontSize: 13,
+      },
+    },
     ...modalBasic,
     ...wizardCommon,
   });
 
-const TenantSize = ({
+const SizePreview = ({
   classes,
   updateAddField,
   isPageValid,
@@ -94,10 +102,12 @@ const TenantSize = ({
   ecParityCalc,
   limitSize,
   selectedStorageClass,
-}: ITenantSizeProps) => {
-  const [validationErrors, setValidationErrors] = useState<any>({});
+}: ISizePreviewProps) => {
   const [errorFlag, setErrorFlag] = useState<boolean>(false);
   const [nodeError, setNodeError] = useState<string>("");
+  const usableInformation = ecParityCalc.storageFactors.find(
+    (element) => element.erasureCode === ecParity
+  );
 
   // Common
   const updateField = useCallback(
@@ -106,10 +116,6 @@ const TenantSize = ({
     },
     [updateAddField]
   );
-
-  const cleanValidation = (fieldName: string) => {
-    setValidationErrors(clearValidationError(validationErrors, fieldName));
-  };
 
   /*Debounce functions*/
 
@@ -268,8 +274,6 @@ const TenantSize = ({
         ecParityCalc.error === 0 &&
         memorySize.error === ""
     );
-
-    setValidationErrors(commonValidation);
   }, [
     nodes,
     volumeSize,
@@ -289,131 +293,87 @@ const TenantSize = ({
   /* End Validation of pages */
 
   return (
-    <Fragment>
-      <Grid item xs={12}>
-        <div className={classes.headerElement}>
-          <h3 className={classes.h3Section}>Tenant Size</h3>
-          <span className={classes.descriptionText}>
-            Please select the desired capacity
-          </span>
-        </div>
-      </Grid>
-      {distribution.error !== "" && (
-        <Grid item xs={12}>
-          <div className={classes.error}>{distribution.error}</div>
-        </Grid>
+    <div className={classes.root}>
+      <h4>Resource Allocation</h4>
+      <Divider />
+      <Table className={classes.table} aria-label="simple table" size={"small"}>
+        <TableBody>
+          <TableRow>
+            <TableCell scope="row">Number of Servers</TableCell>
+            <TableCell align="right">
+              {parseInt(nodes) > 0 ? nodes : "-"}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell scope="row">Drives per Server</TableCell>
+            <TableCell align="right">
+              {distribution ? distribution.disks : "-"}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell scope="row">Drive Capacity</TableCell>
+            <TableCell align="right">
+              {distribution ? niceBytes(distribution.pvSize) : "-"}
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell scope="row">Total Volumes</TableCell>
+            <TableCell align="right">
+              {distribution ? distribution.persistentVolumes : "-"}
+            </TableCell>
+          </TableRow>
+          {!advancedMode && (
+            <TableRow>
+              <TableCell scope="row">Memory per Node</TableCell>
+              <TableCell align="right">{memoryNode} Gi</TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+      {ecParityCalc.error === 0 && usableInformation && (
+        <Fragment>
+          <h4>Erasure Code Configuration</h4>
+          <Divider />
+          <Table
+            className={classes.table}
+            aria-label="simple table"
+            size={"small"}
+          >
+            <TableBody>
+              <TableRow>
+                <TableCell scope="row">EC Parity</TableCell>
+                <TableCell align="right">
+                  {ecParity !== "" ? ecParity : "-"}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell scope="row">Raw Capacity</TableCell>
+                <TableCell align="right">
+                  {niceBytes(ecParityCalc.rawCapacity)}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell scope="row">Usable Capacity</TableCell>
+                <TableCell align="right">
+                  {niceBytes(usableInformation.maxCapacity)}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell scope="row">Server Failures Tolerated</TableCell>
+                <TableCell align="right">
+                  {distribution
+                    ? Math.floor(
+                        usableInformation.maxFailureTolerations /
+                          distribution.disks
+                      )
+                    : "-"}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </Fragment>
       )}
-      {memorySize.error !== "" && (
-        <Grid item xs={12}>
-          <div className={classes.error}>{memorySize.error}</div>
-        </Grid>
-      )}
-      <Grid item xs={12}>
-        <InputBoxWrapper
-          id="nodes"
-          name="nodes"
-          type="number"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            updateField("nodes", e.target.value);
-            cleanValidation("nodes");
-          }}
-          label="Number of Servers"
-          disabled={selectedStorageClass === ""}
-          value={nodes}
-          min="4"
-          required
-          error={validationErrors["nodes"] || ""}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <InputBoxWrapper
-          id="drivesps"
-          name="drivesps"
-          type="number"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            updateField("drivesPerServer", e.target.value);
-            cleanValidation("drivesps");
-          }}
-          label="Number of Drives per Server"
-          value={drivesPerServer}
-          disabled={selectedStorageClass === ""}
-          min="1"
-          required
-          error={validationErrors["drivesps"] || ""}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <div className={classes.multiContainer}>
-          <div>
-            <InputBoxWrapper
-              type="number"
-              id="volume_size"
-              name="volume_size"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                updateField("volumeSize", e.target.value);
-                cleanValidation("volume_size");
-              }}
-              label="Total Size"
-              value={volumeSize}
-              disabled={selectedStorageClass === ""}
-              required
-              error={validationErrors["volume_size"] || ""}
-              min="0"
-            />
-          </div>
-          <div className={classes.sizeFactorContainer}>
-            <SelectWrapper
-              label={"Unit"}
-              id="size_factor"
-              name="size_factor"
-              value={sizeFactor}
-              disabled={selectedStorageClass === ""}
-              onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-                updateField("sizeFactor", e.target.value as string);
-              }}
-              options={k8sfactorForDropdown()}
-            />
-          </div>
-        </div>
-      </Grid>
-
-      <Fragment>
-        <Grid item xs={12}>
-          <InputBoxWrapper
-            type="number"
-            id="memory_per_node"
-            name="memory_per_node"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              updateField("memoryNode", e.target.value);
-              cleanValidation("memory_per_node");
-            }}
-            label="Memory per Node [Gi]"
-            value={memoryNode}
-            disabled={selectedStorageClass === ""}
-            required
-            error={validationErrors["memory_per_node"] || ""}
-            min="2"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <SelectWrapper
-            id="ec_parity"
-            name="ec_parity"
-            onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-              updateField("ecParity", e.target.value as string);
-            }}
-            label="Erasure Code Parity"
-            disabled={selectedStorageClass === ""}
-            value={ecParity}
-            options={ecParityChoices}
-          />
-          <span className={classes.descriptionText}>
-            Please select the desired parity. This setting will change the max
-            usable capacity in the cluster
-          </span>
-        </Grid>
-      </Fragment>
-    </Fragment>
+    </div>
   );
 };
 
@@ -442,4 +402,4 @@ const connector = connect(mapState, {
   isPageValid,
 });
 
-export default withStyles(styles)(connector(TenantSize));
+export default withStyles(styles)(connector(SizePreview));

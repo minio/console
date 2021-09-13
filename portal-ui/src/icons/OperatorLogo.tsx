@@ -27,9 +27,6 @@ const OperatorLogo = ({ width = 120 }: IOperatorLogo) => {
       viewBox="0 0 606.583 134.691"
       width={width}
     >
-      <defs>
-        <style>{".prefix__cls-1{fill:#fff}"}</style>
-      </defs>
       <g id="prefix__Layer_2" data-name="Layer 2">
         <g id="prefix__Layer_1-2" data-name="Layer 1">
           <path

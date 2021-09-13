@@ -42,6 +42,8 @@ var (
 	serviceAccounts       = "/account"
 	changePassword        = "/account/change-password"
 	tenants               = "/tenants"
+	tenantsAdd            = "/tenants/add"
+	tenantsAddSub         = "/tenants/add/*"
 	tenantsDetail         = "/namespaces/:tenantNamespace/tenants/:tenantName"
 	tenantHop             = "/namespaces/:tenantNamespace/tenants/:tenantName/hop"
 	podsDetail            = "/namespaces/:tenantNamespace/tenants/:tenantName/pods/:podName"
@@ -317,6 +319,8 @@ var endpointRules = map[string]ConfigurationActionSet{
 // operatorRules contains the mapping between endpoints and ActionSets for operator only mode
 var operatorRules = map[string]ConfigurationActionSet{
 	tenants:               tenantsActionSet,
+	tenantsAdd:            tenantsActionSet,
+	tenantsAddSub:         tenantsActionSet,
 	tenantsDetail:         tenantsActionSet,
 	tenantHop:             tenantsActionSet,
 	tenantsDetailSummary:  tenantsActionSet,

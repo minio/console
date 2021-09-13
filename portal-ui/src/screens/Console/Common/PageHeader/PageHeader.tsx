@@ -1,10 +1,9 @@
-import React, { Fragment } from "react";
+import React from "react";
 import Grid from "@material-ui/core/Grid";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { AppState } from "../../../../store";
 import { connect } from "react-redux";
-import { setMenuOpen, userLoggedIn } from "../../../../actions";
 import OperatorLogo from "../../../../icons/OperatorLogo";
 import ConsoleLogo from "../../../../icons/ConsoleLogo";
 

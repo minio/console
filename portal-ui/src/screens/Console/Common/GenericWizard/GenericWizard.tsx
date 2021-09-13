@@ -18,7 +18,9 @@ import React, { useState, Fragment } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { IWizardMain } from "./types";
 import WizardPage from "./WizardPage";
-import { Grid } from "@material-ui/core";
+import { Grid, List } from "@material-ui/core";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -28,31 +30,9 @@ const styles = (theme: Theme) =>
       height: "100%",
       flexGrow: 1,
     },
-    wizFromContainer: {
-      height: "calc(100vh - 270px)",
-      minHeight: 450,
-      padding: "0 30px",
-    },
+    wizFromContainer: {},
     wizFromModal: {
       position: "relative",
-    },
-    wizardSteps: {
-      minWidth: 180,
-      marginRight: 10,
-      borderRight: "#eaeaea 1px solid",
-      display: "flex",
-      flexGrow: 1,
-      flexDirection: "column",
-      height: "100%",
-      "& ul": {
-        padding: "0 15px 0 40px",
-        marginTop: 0,
-
-        "& li": {
-          listStyle: "lower-roman",
-          marginBottom: 12,
-        },
-      },
     },
     modalWizardSteps: {
       padding: 5,
@@ -85,6 +65,7 @@ const styles = (theme: Theme) =>
       },
     },
     paddedContentGrid: {
+      marginTop: 8,
       padding: "0 10px",
     },
     stepsLabel: {
@@ -159,6 +140,26 @@ const GenericWizard = ({
 
   const stepsList = () => {
     return (
+      <Fragment>
+        <List component="nav" dense={true}>
+          {wizardSteps.map((step, index) => {
+            return (
+              <ListItem
+                button
+                onClick={() => pageChange(index)}
+                key={`wizard-${index.toString()}`}
+                selected={currentStep === index}
+              >
+                <ListItemText primary={step.label} />
+              </ListItem>
+            );
+          })}
+        </List>
+      </Fragment>
+    );
+  };
+  const stepsListModal = () => {
+    return (
       <ul>
         {wizardSteps.map((step, index) => {
           return (
@@ -186,16 +187,13 @@ const GenericWizard = ({
         <Fragment>
           <div className={classes.stepsMasterContainer}>
             <div className={`${classes.stepsLabel} stepsModalTitle`}>Steps</div>
-            <div className={classes.modalWizardSteps}>{stepsList()}</div>
+            <div className={classes.modalWizardSteps}>{stepsListModal()}</div>
           </div>
         </Fragment>
       ) : (
         <Fragment>
-          <Grid item xs={12} sm={3} md={3} lg={3} xl={2}>
-            <div className={classes.wizardSteps}>
-              <span className={classes.stepsLabel}>Steps</span>
-              {stepsList()}
-            </div>
+          <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
+            {stepsList()}
           </Grid>
         </Fragment>
       )}
@@ -203,9 +201,9 @@ const GenericWizard = ({
       <Grid
         item
         xs={12}
-        sm={forModal ? 12 : 9}
-        md={forModal ? 12 : 9}
-        lg={forModal ? 12 : 9}
+        sm={forModal ? 12 : 10}
+        md={forModal ? 12 : 10}
+        lg={forModal ? 12 : 10}
         xl={forModal ? 12 : 10}
         className={forModal ? "" : classes.paddedContentGrid}
       >

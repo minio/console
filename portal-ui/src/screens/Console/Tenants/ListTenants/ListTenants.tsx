@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import { Button, IconButton } from "@material-ui/core";
+import { IconButton } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { ITenant, ITenantsResponse } from "./types";
 import { niceBytes } from "../../../../common/utils";
@@ -27,77 +27,28 @@ import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
 import {
   actionsTray,
   searchField,
-  settingsCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { setErrorSnackMessage } from "../../../../actions";
-import { AddIcon, CircleIcon } from "../../../../icons";
-import { resetAddTenantForm } from "../actions";
+import { CircleIcon, CreateIcon } from "../../../../icons";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import DeleteTenant from "./DeleteTenant";
-import AddTenant from "../AddTenant/AddTenant";
 import CredentialsPrompt from "../../Common/CredentialsPrompt/CredentialsPrompt";
 import history from "../../../../history";
-import SlideOptions from "../../Common/SlideOptions/SlideOptions";
-import BackSettingsIcon from "../../../../icons/BackSettingsIcon";
 import RefreshIcon from "../../../../icons/RefreshIcon";
 import SearchIcon from "../../../../icons/SearchIcon";
 
 interface ITenantsList {
   classes: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
-  resetAddTenantForm: typeof resetAddTenantForm;
 }
 
 const styles = (theme: Theme) =>
   createStyles({
     ...actionsTray,
     ...searchField,
-    ...settingsCommon,
-    settingsOptionsContainer: {
-      ...settingsCommon.settingsOptionsContainer,
-      height: "calc(100vh - 150px)",
-    },
-    seeMore: {
-      marginTop: theme.spacing(3),
-    },
-    paper: {
-      display: "flex",
-      overflow: "auto",
-      flexDirection: "column",
-    },
 
-    addSideBar: {
-      width: "320px",
-      padding: "20px",
-    },
-    tableToolbar: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(0),
-    },
-    minTableHeader: {
-      color: "#393939",
-      "& tr": {
-        "& th": {
-          fontWeight: "bold",
-        },
-      },
-    },
-    actionsTray: {
-      ...actionsTray.actionsTray,
-      padding: "0 38px",
-    },
-    tenantsContainer: {
-      padding: "15px 0",
-    },
-    customConfigurationPage: {
-      height: "calc(100vh - 260px)",
-      scrollbarWidth: "none" as const,
-      "&::-webkit-scrollbar": {
-        display: "none",
-      },
-    },
     redState: {
       color: theme.palette.error.main,
       "& .MuiSvgIcon-root": {
@@ -136,12 +87,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-const ListTenants = ({
-  classes,
-  setErrorSnackMessage,
-  resetAddTenantForm,
-}: ITenantsList) => {
-  const [currentPanel, setCurrentPanel] = useState<number>(0);
+const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [selectedTenant, setSelectedTenant] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -150,15 +96,6 @@ const ListTenants = ({
   const [showNewCredentials, setShowNewCredentials] = useState<boolean>(false);
   const [createdAccount, setCreatedAccount] =
     useState<NewServiceAccount | null>(null);
-
-  const closeAddModalAndRefresh = (reloadData: boolean) => {
-    setCurrentPanel(0);
-    resetAddTenantForm();
-
-    if (reloadData) {
-      setIsLoading(true);
-    }
-  };
 
   const closeDeleteModalAndRefresh = (reloadData: boolean) => {
     setDeleteOpen(false);
@@ -181,11 +118,6 @@ const ListTenants = ({
   const closeCredentialsModal = () => {
     setShowNewCredentials(false);
     setCreatedAccount(null);
-  };
-
-  const backClick = () => {
-    setCurrentPanel(currentPanel - 1);
-    resetAddTenantForm();
   };
 
   const tableActions = [
@@ -240,10 +172,6 @@ const ListTenants = ({
     setIsLoading(true);
   }, []);
 
-  const createTenant = () => {
-    setCurrentPanel(1);
-  };
-
   const healthStatusToClass = (health_status: string) => {
     switch (health_status) {
       case "red":
@@ -277,104 +205,74 @@ const ListTenants = ({
         />
       )}
       <Grid container>
+        <Grid item xs={12} className={classes.actionsTray}>
+          <TextField
+            placeholder="Search Tenants"
+            className={classes.searchField}
+            id="search-resource"
+            label=""
+            onChange={(val) => {
+              setFilterTenants(val.target.value);
+            }}
+            InputProps={{
+              disableUnderline: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <IconButton
+            color="primary"
+            aria-label="Refresh Tenant List"
+            component="span"
+            onClick={() => {
+              setIsLoading(true);
+            }}
+          >
+            <RefreshIcon />
+          </IconButton>
+          <IconButton
+            color="primary"
+            aria-label="Create Tenant"
+            component="span"
+            onClick={() => {
+              history.push("/tenants/add");
+            }}
+          >
+            <CreateIcon />
+          </IconButton>
+        </Grid>
         <Grid item xs={12}>
-          <div className={classes.settingsOptionsContainer}>
-            <SlideOptions
-              slideOptions={[
-                <Fragment>
-                  <Grid item xs={12} className={classes.tenantsContainer}>
-                    <Grid item xs={12} className={classes.actionsTray}>
-                      <TextField
-                        placeholder="Search Tenants"
-                        className={classes.searchField}
-                        id="search-resource"
-                        label=""
-                        onChange={(val) => {
-                          setFilterTenants(val.target.value);
-                        }}
-                        InputProps={{
-                          disableUnderline: true,
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <SearchIcon />
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                      <IconButton
-                        color="primary"
-                        aria-label="Refresh Tenant List"
-                        component="span"
-                        onClick={() => {
-                          setIsLoading(true);
-                        }}
-                      >
-                        <RefreshIcon />
-                      </IconButton>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        startIcon={<AddIcon />}
-                        onClick={createTenant}
-                      >
-                        Create Tenant
-                      </Button>
-                    </Grid>
-                    <Grid item xs={12} className={classes.tenantsContainer}>
-                      <TableWrapper
-                        itemActions={tableActions}
-                        columns={[
-                          {
-                            label: "Name",
-                            elementKey: "name",
-                            renderFullObject: true,
-                            renderFunction: (t) => {
-                              return (
-                                <React.Fragment>
-                                  <div
-                                    className={healthStatusToClass(
-                                      t.health_status
-                                    )}
-                                  >
-                                    <CircleIcon />
-                                  </div>
-                                  <div>{t.name}</div>
-                                </React.Fragment>
-                              );
-                            },
-                          },
-                          { label: "Namespace", elementKey: "namespace" },
-                          { label: "Capacity", elementKey: "capacity" },
-                          { label: "# of Pools", elementKey: "pool_count" },
-                          { label: "State", elementKey: "currentState" },
-                        ]}
-                        isLoading={isLoading}
-                        records={filteredRecords}
-                        entityName="Tenants"
-                        idField="name"
-                        customPaperHeight={classes.customConfigurationPage}
-                        noBackground
-                      />
-                    </Grid>
-                  </Grid>
-                </Fragment>,
-                <Fragment>
-                  <Grid item xs={12} className={classes.backContainer}>
-                    <button onClick={backClick} className={classes.backButton}>
-                      <BackSettingsIcon />
-                      Back To Tenants List
-                    </button>
-                  </Grid>
-                  <Grid item xs={12}>
-                    {currentPanel === 1 && (
-                      <AddTenant closeAndRefresh={closeAddModalAndRefresh} />
-                    )}
-                  </Grid>
-                </Fragment>,
-              ]}
-              currentSlide={currentPanel}
-            />
-          </div>
+          <TableWrapper
+            itemActions={tableActions}
+            columns={[
+              {
+                label: "Name",
+                elementKey: "name",
+                renderFullObject: true,
+                renderFunction: (t) => {
+                  return (
+                    <React.Fragment>
+                      <div className={healthStatusToClass(t.health_status)}>
+                        <CircleIcon />
+                      </div>
+                      <div>{t.name}</div>
+                    </React.Fragment>
+                  );
+                },
+              },
+              { label: "Namespace", elementKey: "namespace" },
+              { label: "Capacity", elementKey: "capacity" },
+              { label: "# of Pools", elementKey: "pool_count" },
+              { label: "State", elementKey: "currentState" },
+            ]}
+            isLoading={isLoading}
+            records={filteredRecords}
+            entityName="Tenants"
+            idField="name"
+          />
         </Grid>
       </Grid>
     </Fragment>
@@ -383,7 +281,6 @@ const ListTenants = ({
 
 const connector = connect(null, {
   setErrorSnackMessage,
-  resetAddTenantForm,
 });
 
 export default withStyles(styles)(connector(ListTenants));
