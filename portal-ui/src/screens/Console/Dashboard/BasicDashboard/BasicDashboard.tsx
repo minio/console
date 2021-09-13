@@ -28,6 +28,7 @@ import {
   ServersIcon,
   StorageIcon,
   TotalObjectsIcon,
+  VersionIcon,
 } from "../../../../icons";
 import { Card, CardHeader } from "@material-ui/core";
 
@@ -143,7 +144,7 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
                 {usage
                   ? usage.servers.length !== 0 && (
                       <CardHeader
-                        avatar={<TotalObjectsIcon />}
+                        avatar={<VersionIcon />}
                         title="MinIO Version"
                         subheader={usage ? usage.servers[0].version : 0}
                       />
