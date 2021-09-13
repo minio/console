@@ -117,9 +117,9 @@ const ServerInfoCard = ({ classes, server }: ICardProps) => {
     return acc;
   }, 0);
 
-  const activeDisks = server.drives ? server.drives.filter(
-    (element) => element.state === "ok"
-  ).length : 0;
+  const activeDisks = server.drives
+    ? server.drives.filter((element) => element.state === "ok").length
+    : 0;
 
   return (
     <Card>
@@ -165,7 +165,8 @@ const ServerInfoCard = ({ classes, server }: ICardProps) => {
               </span>
             </span>
             <span className={classes.infoValue}>
-              <strong>Uptime:</strong> {server.uptime ? niceDays(server.uptime) : "N/A"}
+              <strong>Uptime:</strong>{" "}
+              {server.uptime ? niceDays(server.uptime) : "N/A"}
             </span>
           </Grid>
         }

@@ -120,14 +120,19 @@ const DriveInfoCard = ({ classes, drive }: ICardProps) => {
             <Grid item xs={12} className={classes.stateContainer}>
               <span className={classes.infoValue}>
                 <strong>Capacity:</strong>{" "}
-                {niceBytes(drive.totalSpace ? drive.totalSpace.toString() : "0")}
+                {niceBytes(
+                  drive.totalSpace ? drive.totalSpace.toString() : "0"
+                )}
               </span>
               <span className={classes.infoValue}>
-                <strong>Used:</strong> {niceBytes(drive.usedSpace ? drive.usedSpace.toString() :  "0")}
+                <strong>Used:</strong>{" "}
+                {niceBytes(drive.usedSpace ? drive.usedSpace.toString() : "0")}
               </span>
               <span className={classes.infoValue}>
                 <strong>Available:</strong>{" "}
-                {niceBytes(drive.availableSpace ? drive.availableSpace.toString() : "0")}
+                {niceBytes(
+                  drive.availableSpace ? drive.availableSpace.toString() : "0"
+                )}
               </span>
             </Grid>
           }

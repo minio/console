@@ -40,7 +40,7 @@ export const extensionPreview = (
   const imageExtensions = ["jpg", "jpeg", "gif", "png"];
   const textExtensions = ["pdf", "txt"];
   const audioExtensions = ["wav", "mp3", "aac"];
-  const videoExtensions = ["mp4", ".avi", ".mpg"];
+  const videoExtensions = ["mp4", "avi", "mpg", "webm"];
 
   const fileExtension = fileName.split(".").pop();
 
