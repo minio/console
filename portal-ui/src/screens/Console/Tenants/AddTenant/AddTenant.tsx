@@ -642,7 +642,7 @@ const AddTenant = ({
       buttons: [cancelButton, createButton],
     },
     {
-      label: "Pod Affinity",
+      label: "Pod Placement",
       advancedOnly: true,
       componentRender: <Affinity />,
       buttons: [cancelButton, createButton],

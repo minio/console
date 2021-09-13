@@ -192,7 +192,7 @@ const Affinity = ({
   return (
     <Paper className={classes.paperWrapper}>
       <div className={classes.headerElement}>
-        <h3 className={classes.h3Section}>Pod Affinity</h3>
+        <h3 className={classes.h3Section}>Pod Placement</h3>
         <span className={classes.descriptionText}>
           Configure how pods will be assigned to nodes
         </span>
@@ -208,11 +208,11 @@ const Affinity = ({
           }}
           selectorOptions={[
             { label: "None", value: "none" },
-            { label: "Default (Pod Anti-afinnity)", value: "default" },
+            { label: "Default (Pod Anti-Affinnity)", value: "default" },
             { label: "Node Selector", value: "nodeSelector" },
           ]}
         />
-        MinIO supports multiple configurations for Pod Afinnity
+        MinIO supports multiple configurations for Pod Affinity
       </Grid>
       {podAffinity === "nodeSelector" && (
         <Fragment>
