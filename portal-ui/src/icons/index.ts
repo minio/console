@@ -76,3 +76,4 @@ export { default as TotalObjectsIcon } from "./TotalObjectsIcon";
 export { default as CircleIcon } from "./CircleIcon";
 export { default as PreviewIcon } from "./PreviewIcon";
 export { default as LockIcon } from "./LockIcon";
+export { default as VersionIcon } from "./VersionIcon";
