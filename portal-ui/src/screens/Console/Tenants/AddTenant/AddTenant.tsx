@@ -49,6 +49,7 @@ import Preview from "./Steps/Preview";
 import Affinity from "./Steps/Affinity";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import history from "../../../../history";
+import Images from "./Steps/Images";
 
 interface IAddTenantProps {
   setModalErrorSnackMessage: typeof setModalErrorSnackMessage;
@@ -632,6 +633,12 @@ const AddTenant = ({
       label: "Configure",
       advancedOnly: true,
       componentRender: <Configure />,
+      buttons: [cancelButton, createButton],
+    },
+    {
+      label: "Images",
+      advancedOnly: true,
+      componentRender: <Images />,
       buttons: [cancelButton, createButton],
     },
     {
