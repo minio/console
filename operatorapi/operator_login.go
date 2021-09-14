@@ -185,7 +185,7 @@ func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
 	loginStrategy := models.LoginDetailsLoginStrategyServiceDashAccount
 	redirectURL := ""
 
-	if oauth2.IsIdpEnabled() {
+	if oauth2.IsIDPEnabled() {
 		loginStrategy = models.LoginDetailsLoginStrategyRedirect
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil, restapi.GetConsoleHTTPClient())

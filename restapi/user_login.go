@@ -183,7 +183,7 @@ func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
 	loginStrategy := models.LoginDetailsLoginStrategyForm
 	redirectURL := ""
 
-	if oauth2.IsIdpEnabled() {
+	if oauth2.IsIDPEnabled() {
 		loginStrategy = models.LoginDetailsLoginStrategyRedirect
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil, GetConsoleHTTPClient())
@@ -215,7 +215,7 @@ func verifyUserAgainstIDP(ctx context.Context, provider auth.IdentityProviderI, 
 func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.LoginResponse, *models.Error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
-	if oauth2.IsIdpEnabled() {
+	if oauth2.IsIDPEnabled() {
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil, GetConsoleHTTPClient())
 		if err != nil {

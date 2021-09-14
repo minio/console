@@ -19,12 +19,12 @@ require (
 	github.com/minio/cli v1.22.0
 	github.com/minio/direct-csi v1.3.5-0.20210601185811-f7776f7961bf
 	github.com/minio/kes v0.11.0
-	github.com/minio/madmin-go v1.0.17
+	github.com/minio/madmin-go v1.1.5
 	github.com/minio/mc v0.0.0-20210626002108-cebf3318546f
-	github.com/minio/minio-go/v7 v7.0.13-0.20210715203016-9e713532886e
+	github.com/minio/minio-go/v7 v7.0.14
 	github.com/minio/operator v0.0.0-20210812082324-26350f153661
 	github.com/minio/operator/logsearchapi v0.0.0-20210812082324-26350f153661
-	github.com/minio/pkg v1.0.8
+	github.com/minio/pkg v1.1.3
 	github.com/minio/selfupdate v0.3.1
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
