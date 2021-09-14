@@ -132,7 +132,7 @@ const SetUserPolicies = ({
           className={classes.clearButton}
           onClick={resetSelection}
         >
-          Clear
+          Reset
         </button>
         <Button
           type="button"
