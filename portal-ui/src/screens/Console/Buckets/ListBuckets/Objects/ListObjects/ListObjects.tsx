@@ -79,6 +79,23 @@ import FolderIcon from "../../../../../../icons/FolderIcon";
 import RefreshIcon from "../../../../../../icons/RefreshIcon";
 import SearchIcon from "../../../../../../icons/SearchIcon";
 import UploadIcon from "../../../../../../icons/UploadIcon";
+import {
+  FileBookIcon,
+  FileCodeIcon,
+  FileConfigIcon,
+  FileDbIcon,
+  FileFontIcon,
+  FileImageIcon,
+  FileLockIcon,
+  FileMissingIcon,
+  FileMusicIcon,
+  FilePdfIcon,
+  FilePptIcon,
+  FileTxtIcon,
+  FileVideoIcon,
+  FileXlsIcon,
+  FileZipIcon,
+} from "../../../../../../icons";
 
 const commonIcon = {
   backgroundRepeat: "no-repeat",
@@ -657,6 +674,92 @@ const ListObjects = ({
     if (element.endsWith("/")) {
       icon = <ObjectBrowserFolderIcon />;
       elementString = element.substr(0, element.length - 1);
+    }
+
+    interface IExtToIcon {
+      icon: any;
+      extensions: string[];
+    }
+
+    const extensionToIcon: IExtToIcon[] = [
+      {
+        icon: <FileVideoIcon />,
+        extensions: ["mp4", "mov", "avi", "mpeg", "mpg"],
+      },
+      {
+        icon: <FileMusicIcon />,
+        extensions: ["mp3", "m4a", "aac"],
+      },
+      {
+        icon: <FilePdfIcon />,
+        extensions: ["pdf"],
+      },
+      {
+        icon: <FilePptIcon />,
+        extensions: ["ppt", "pptx"],
+      },
+      {
+        icon: <FileXlsIcon />,
+        extensions: ["xls", "xlsx"],
+      },
+      {
+        icon: <FileLockIcon />,
+        extensions: ["cer", "crt", "pem"],
+      },
+      {
+        icon: <FileCodeIcon />,
+        extensions: [
+          "html",
+          "xml",
+          "css",
+          "py",
+          "go",
+          "php",
+          "cpp",
+          "h",
+          "java",
+        ],
+      },
+      {
+        icon: <FileConfigIcon />,
+        extensions: ["cfg", "yaml"],
+      },
+      {
+        icon: <FileDbIcon />,
+        extensions: ["sql"],
+      },
+      {
+        icon: <FileFontIcon />,
+        extensions: ["ttf", "otf"],
+      },
+      {
+        icon: <FileTxtIcon />,
+        extensions: ["txt"],
+      },
+      {
+        icon: <FileZipIcon />,
+        extensions: ["zip", "rar", "tar", "gz"],
+      },
+      {
+        icon: <FileBookIcon />,
+        extensions: ["epub", "mobi", "azw", "azw3"],
+      },
+      {
+        icon: <FileImageIcon />,
+        extensions: ["jpeg", "jpg", "gif", "tiff", "png", "heic", "dng"],
+      },
+    ];
+    const lowercaseElement = element.toLowerCase();
+    for (const etc of extensionToIcon) {
+      for (const ext of etc.extensions) {
+        if (lowercaseElement.endsWith(`.${ext}`)) {
+          icon = etc.icon;
+        }
+      }
+    }
+
+    if (element.indexOf(".") < 0) {
+      icon = <FileMissingIcon />;
     }
 
     const splitItem = elementString.split("/");
