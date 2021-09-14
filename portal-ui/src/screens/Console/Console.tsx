@@ -253,7 +253,7 @@ const Console = ({
     },
     {
       component: Policies,
-      path: "/policies/:policyName",
+      path: "/policies/*",
     },
     {
       component: Policies,
