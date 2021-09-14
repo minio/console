@@ -48,7 +48,7 @@ func NewSetPolicyMultiple(ctx *middleware.Context, handler SetPolicyMultipleHand
 	return &SetPolicyMultiple{Context: ctx, Handler: handler}
 }
 
-/* SetPolicyMultiple swagger:route PUT /set-policy-multi/{name} AdminAPI setPolicyMultiple
+/* SetPolicyMultiple swagger:route PUT /set-policy-multi AdminAPI setPolicyMultiple
 
 Set policy to multiple users/groups
 
