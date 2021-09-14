@@ -730,7 +730,7 @@ const ListObjects = ({
       },
       {
         icon: <FileFontIcon />,
-        extensions: ["ttf"],
+        extensions: ["ttf", "otf"],
       },
       {
         icon: <FileTxtIcon />,
@@ -749,10 +749,10 @@ const ListObjects = ({
         extensions: ["jpeg", "jpg", "gif", "tiff", "png", "heic", "dng"],
       },
     ];
-
+    const lowercaseElement = element.toLowerCase();
     for (const etc of extensionToIcon) {
       for (const ext of etc.extensions) {
-        if (element.endsWith(`.${ext}`)) {
+        if (lowercaseElement.endsWith(`.${ext}`)) {
           icon = etc.icon;
         }
       }
