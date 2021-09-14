@@ -31,7 +31,7 @@ require (
 	github.com/rs/xid v1.2.1
 	github.com/secure-io/sio-go v0.3.1
 	github.com/stretchr/testify v1.7.0
-	github.com/unrolled/secure v1.0.7
+	github.com/unrolled/secure v1.0.9
 	golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b
 	golang.org/x/net v0.0.0-20210421230115-4e50805a0758
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d

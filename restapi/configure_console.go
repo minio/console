@@ -24,12 +24,15 @@ import (
 	"io"
 	"io/fs"
 	"log"
+	"net"
 	"net/http"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
 
 	portal_ui "github.com/minio/console/portal-ui"
+	"github.com/minio/pkg/mimedb"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
@@ -150,6 +153,15 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	next := AuthenticationMiddleware(handler)
 	// serve static files
 	next = FileServerMiddleware(next)
+
+	sslHostFn := secure.SSLHostFunc(func(host string) string {
+		h, _, err := net.SplitHostPort(host)
+		if err != nil {
+			return host
+		}
+		return net.JoinHostPort(h, TLSPort)
+	})
+
 	// Secure middleware, this middleware wrap all the previous handlers and add
 	// HTTP security headers
 	secureOptions := secure.Options{
@@ -157,12 +169,12 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 		AllowedHostsAreRegex:            GetSecureAllowedHostsAreRegex(),
 		HostsProxyHeaders:               GetSecureHostsProxyHeaders(),
 		SSLRedirect:                     GetTLSRedirect() == "on" && len(GlobalPublicCerts) > 0,
+		SSLHostFunc:                     &sslHostFn,
 		SSLHost:                         GetSecureTLSHost(),
 		STSSeconds:                      GetSecureSTSSeconds(),
 		STSIncludeSubdomains:            GetSecureSTSIncludeSubdomains(),
 		STSPreload:                      GetSecureSTSPreload(),
-		SSLTemporaryRedirect:            GetSecureTLSTemporaryRedirect(),
-		SSLHostFunc:                     nil,
+		SSLTemporaryRedirect:            false,
 		ForceSTSHeader:                  GetSecureForceSTSHeader(),
 		FrameDeny:                       GetSecureFrameDeny(),
 		ContentTypeNosniff:              GetSecureContentTypeNonSniff(),
@@ -216,6 +228,8 @@ func FileServerMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+var reHrefIndex = regexp.MustCompile(`(?m)((href|src)="(.\/).*?")`)
+
 type notFoundRedirectRespWr struct {
 	http.ResponseWriter // We embed http.ResponseWriter
 	status              int
@@ -235,38 +249,51 @@ func (w *notFoundRedirectRespWr) Write(p []byte) (int, error) {
 	return len(p), nil // Lie that we successfully wrote it
 }
 
-var reHrefIndex = regexp.MustCompile(`(?m)((href|src)="(.\/).*?")`)
+func handleSPA(w http.ResponseWriter, r *http.Request) {
+	basePath := "/"
+	// For SPA mode we will replace relative paths with absolute unless we receive query param cp=y
+	if v := r.URL.Query().Get("cp"); v == "y" {
+		basePath = "./"
+	}
+
+	indexPage, err := portal_ui.GetStaticAssets().Open("build/index.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	indexPageBytes, err := io.ReadAll(indexPage)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if basePath != "./" {
+		indexPageStr := string(indexPageBytes)
+		for _, match := range reHrefIndex.FindAllStringSubmatch(indexPageStr, -1) {
+			toReplace := strings.Replace(match[1], match[3], basePath, 1)
+			indexPageStr = strings.Replace(indexPageStr, match[1], toReplace, 1)
+		}
+		indexPageBytes = []byte(indexPageStr)
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	http.ServeContent(w, r, "index.html", time.Now(), bytes.NewReader(indexPageBytes))
+}
 
 // wrapHandlerSinglePageApplication handles a http.FileServer returning a 404 and overrides it with index.html
 func wrapHandlerSinglePageApplication(h http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// This is used to enforce application/javascript MIME on Windows (https://github.com/golang/go/issues/32350)
-		if strings.HasSuffix(r.URL.Path, ".js") {
-			w.Header().Set("Content-Type", "application/javascript")
+		if r.URL.Path == "/" {
+			handleSPA(w, r)
+			return
 		}
 
-		nfrw := &notFoundRedirectRespWr{ResponseWriter: w}
-		h.ServeHTTP(nfrw, r)
-		if nfrw.status == 404 || r.URL.String() == "/" {
-			basePath := "/"
-			// For SPA mode we will replace relative paths with absolute unless we receive query param cp=y
-			if val, ok := r.URL.Query()["cp"]; ok && len(val) > 0 && val[0] == "y" {
-				basePath = "./"
-			}
-
-			indexPage, _ := portal_ui.GetStaticAssets().Open("build/index.html")
-			indexPageBytes, _ := io.ReadAll(indexPage)
-			if basePath != "./" {
-				indexPageStr := string(indexPageBytes)
-				for _, match := range reHrefIndex.FindAllStringSubmatch(indexPageStr, -1) {
-					toReplace := strings.Replace(match[1], match[3], basePath, 1)
-					indexPageStr = strings.Replace(indexPageStr, match[1], toReplace, 1)
-				}
-				indexPageBytes = []byte(indexPageStr)
-			}
-
-			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			http.ServeContent(w, r, "index.html", time.Now(), bytes.NewReader(indexPageBytes))
+		w.Header().Set("Content-Type", mimedb.TypeByExtension(filepath.Ext(r.URL.Path)))
+		nfw := &notFoundRedirectRespWr{ResponseWriter: w}
+		h.ServeHTTP(nfw, r)
+		if nfw.status == http.StatusNotFound {
+			handleSPA(w, r)
 		}
 	}
 }
