@@ -37,16 +37,43 @@ export const download = (
 export const extensionPreview = (
   fileName: string
 ): "image" | "text" | "audio" | "video" | "none" => {
-  const imageExtensions = ["jpg", "jpeg", "gif", "png"];
+  const imageExtensions = [
+    "jif",
+    "jfif",
+    "apng",
+    "avif",
+    "svg",
+    "webp",
+    "bmp",
+    "ico",
+    "jpg",
+    "jpe",
+    "jpeg",
+    "gif",
+    "png",
+  ];
   const textExtensions = ["pdf", "txt"];
-  const audioExtensions = ["wav", "mp3", "aac"];
-  const videoExtensions = ["mp4", "avi", "mpg", "webm"];
+  const audioExtensions = ["wav", "mp3", "alac", "aiff", "dsd", "pcm"];
+  const videoExtensions = [
+    "mp4",
+    "avi",
+    "mpg",
+    "webm",
+    "mov",
+    "flv",
+    "mkv",
+    "wmv",
+    "avchd",
+    "mpeg-4",
+  ];
 
-  const fileExtension = fileName.split(".").pop();
+  let fileExtension = fileName.split(".").pop();
 
   if (!fileExtension) {
     return "none";
   }
+
+  fileExtension = fileExtension.toLowerCase();
 
   if (imageExtensions.includes(fileExtension)) {
     return "image";
