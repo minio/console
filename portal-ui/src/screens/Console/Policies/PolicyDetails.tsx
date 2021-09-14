@@ -193,8 +193,6 @@ const PolicyDetails = ({
   const [groupList, setGroupList] = useState<string[]>([]);
   const [addLoading, setAddLoading] = useState<boolean>(false);
   const [policyName, setPolicyName] = useState<string>(match.params[0]);
-  console.log(match);
-  console.log(policyName);
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
   const [loadingPolicy, setLoadingPolicy] = useState<boolean>(true);
   const [filterUsers, setFilterUsers] = useState<string>("");
