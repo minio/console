@@ -27,7 +27,7 @@ var (
 	usersDetail           = "/users/:userName+"
 	groups                = "/groups"
 	iamPolicies           = "/policies"
-	policiesDetail        = "/policies/:policyName"
+	policiesDetail        = "/policies/*"
 	dashboard             = "/dashboard"
 	metrics               = "/metrics"
 	profiling             = "/profiling"

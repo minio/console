@@ -26,16 +26,11 @@ import (
 	"errors"
 	"net/url"
 	golangswaggerpaths "path"
-	"strings"
 )
 
 // SetPolicyMultipleURL generates an URL for the set policy multiple operation
 type SetPolicyMultipleURL struct {
-	Name string
-
 	_basePath string
-	// avoid unkeyed usage
-	_ struct{}
 }
 
 // WithBasePath sets the base path for this url builder, only required when it's different from the
@@ -57,14 +52,7 @@ func (o *SetPolicyMultipleURL) SetBasePath(bp string) {
 func (o *SetPolicyMultipleURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/set-policy-multi/{name}"
-
-	name := o.Name
-	if name != "" {
-		_path = strings.Replace(_path, "{name}", name, -1)
-	} else {
-		return nil, errors.New("name is required on SetPolicyMultipleURL")
-	}
+	var _path = "/set-policy-multi"
 
 	_basePath := o._basePath
 	if _basePath == "" {

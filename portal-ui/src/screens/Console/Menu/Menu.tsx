@@ -40,6 +40,7 @@ import {
   IAMPoliciesIcon,
   TraceIcon,
   UsersIcon,
+  VersionIcon,
 } from "../../../icons";
 import { ErrorResponseHandler } from "../../../common/types";
 import { clearSession } from "../../../common/utils";
@@ -85,7 +86,7 @@ const styles = (theme: Theme) =>
     },
     logoClosed: {
       paddingTop: 25,
-      marginBottom: 30,
+      marginBottom: 0,
       paddingLeft: 34,
       transition: theme.transitions.create("paddingLeft", {
         easing: theme.transitions.easing.sharp,
@@ -262,6 +263,10 @@ const styles = (theme: Theme) =>
         fill: "white",
         width: 120,
       },
+    },
+    logoIconClosed: {
+      color: "white",
+      marginLeft: 11,
     },
   });
 
@@ -525,7 +530,11 @@ const Menu = ({
               {operatorMode ? <OperatorLogo /> : <ConsoleLogo />}
             </span>
           )}
-
+          {!sidebarOpen && (
+            <div className={classes.logoIconClosed}>
+              <VersionIcon />
+            </div>
+          )}
           <IconButton
             onClick={() => {
               if (sidebarOpen) {

@@ -192,9 +192,7 @@ const PolicyDetails = ({
   const [userList, setUserList] = useState<string[]>([]);
   const [groupList, setGroupList] = useState<string[]>([]);
   const [addLoading, setAddLoading] = useState<boolean>(false);
-  const [policyName, setPolicyName] = useState<string>(
-    match.params["policyName"]
-  );
+  const [policyName, setPolicyName] = useState<string>(match.params[0]);
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
   const [loadingPolicy, setLoadingPolicy] = useState<boolean>(true);
   const [filterUsers, setFilterUsers] = useState<string>("");
@@ -227,7 +225,10 @@ const PolicyDetails = ({
     const loadUsersForPolicy = () => {
       if (loadingUsers) {
         api
-          .invoke("GET", `/api/v1/policies/${policyName}/users`)
+          .invoke(
+            "GET",
+            `/api/v1/policies/${encodeURIComponent(policyName)}/users`
+          )
           .then((result: any) => {
             setUserList(result);
             setLoadingUsers(false);
@@ -241,7 +242,10 @@ const PolicyDetails = ({
     const loadGroupsForPolicy = () => {
       if (loadingGroups) {
         api
-          .invoke("GET", `/api/v1/policies/${policyName}/groups`)
+          .invoke(
+            "GET",
+            `/api/v1/policies/${encodeURIComponent(policyName)}/groups`
+          )
           .then((result: any) => {
             setGroupList(result);
             setLoadingGroups(false);
@@ -255,7 +259,10 @@ const PolicyDetails = ({
     const loadPolicyDetails = () => {
       if (loadingPolicy) {
         api
-          .invoke("GET", `/api/v1/policy?name=${policyName}`)
+          .invoke(
+            "GET",
+            `/api/v1/policy?name=${encodeURIComponent(policyName)}`
+          )
           .then((result: any) => {
             if (result) {
               setPolicy(result);
