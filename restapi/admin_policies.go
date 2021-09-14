@@ -21,6 +21,7 @@ import (
 	"context"
 	"encoding/json"
 	"sort"
+	"strings"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -63,14 +64,14 @@ func registersPoliciesHandler(api *operations.ConsoleAPI) {
 	})
 	// Set Policy
 	api.AdminAPISetPolicyHandler = admin_api.SetPolicyHandlerFunc(func(params admin_api.SetPolicyParams, session *models.Principal) middleware.Responder {
-		if err := getSetPolicyResponse(session, params.Name, params.Body); err != nil {
+		if err := getSetPolicyResponse(session, params.Body); err != nil {
 			return admin_api.NewSetPolicyDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewSetPolicyNoContent()
 	})
 	// Set Policy Multiple User/Groups
 	api.AdminAPISetPolicyMultipleHandler = admin_api.SetPolicyMultipleHandlerFunc(func(params admin_api.SetPolicyMultipleParams, session *models.Principal) middleware.Responder {
-		if err := getSetPolicyMultipleResponse(session, params.Name, params.Body); err != nil {
+		if err := getSetPolicyMultipleResponse(session, params.Body); err != nil {
 			return admin_api.NewSetPolicyMultipleDefault(int(err.Code)).WithPayload(err)
 		}
 		return admin_api.NewSetPolicyMultipleNoContent()
@@ -429,11 +430,12 @@ func setPolicy(ctx context.Context, client MinioAdmin, name, entityName string, 
 }
 
 // getSetPolicyResponse() performs setPolicy() and serializes it to the handler's output
-func getSetPolicyResponse(session *models.Principal, name string, params *models.SetPolicyRequest) *models.Error {
+func getSetPolicyResponse(session *models.Principal, params *models.SetPolicyNameRequest) *models.Error {
 	ctx := context.Background()
-	if name == "" {
-		return prepareError(errPolicyNameNotInRequest)
-	}
+	// if len(params.Name) == 0 {
+	//   return prepareError(errPolicyNameNotInRequest)
+	// }
+	// Removing this section
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
 		return prepareError(err)
@@ -442,13 +444,13 @@ func getSetPolicyResponse(session *models.Principal, name string, params *models
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	if err := setPolicy(ctx, adminClient, name, *params.EntityName, *params.EntityType); err != nil {
+	if err := setPolicy(ctx, adminClient, strings.Join(params.Name, ","), *params.EntityName, *params.EntityType); err != nil {
 		return prepareError(err)
 	}
 	return nil
 }
 
-func getSetPolicyMultipleResponse(session *models.Principal, name string, params *models.SetPolicyMultipleRequest) *models.Error {
+func getSetPolicyMultipleResponse(session *models.Principal, params *models.SetPolicyMultipleNameRequest) *models.Error {
 	ctx := context.Background()
 	mAdmin, err := NewMinioAdminClient(session)
 	if err != nil {
@@ -458,7 +460,7 @@ func getSetPolicyMultipleResponse(session *models.Principal, name string, params
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	if err := setPolicyMultipleEntities(ctx, adminClient, name, params.Users, params.Groups); err != nil {
+	if err := setPolicyMultipleEntities(ctx, adminClient, strings.Join(params.Name, ","), params.Users, params.Groups); err != nil {
 		return prepareError(err)
 	}
 	return nil
