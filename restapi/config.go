@@ -171,7 +171,11 @@ func GetSecureHostsProxyHeaders() []string {
 
 // TLSHost is the host name that is used to redirect HTTP requests to HTTPS. Default is "", which indicates to use the same host.
 func GetSecureTLSHost() string {
-	return env.Get(ConsoleSecureTLSHost, net.JoinHostPort(Hostname, TLSPort))
+	tlsHost := env.Get(ConsoleSecureTLSHost, "")
+	if tlsHost == "" && Hostname != "" {
+		return net.JoinHostPort(Hostname, TLSPort)
+	}
+	return ""
 }
 
 // STSSeconds is the max-age of the Strict-Transport-Security header. Default is 0, which would NOT include the header.
