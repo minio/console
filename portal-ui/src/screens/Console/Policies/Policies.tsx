@@ -22,7 +22,8 @@ const Users = () => {
   return (
     <Router history={history}>
       <Switch>
-        <Route path="/policies/:policyName" component={PolicyDetails} />
+        <Route path="/policies/" exact={true} component={ListPolicies} />
+        <Route path="/policies/*" component={PolicyDetails} />
         <Route path="/" component={ListPolicies} />
         <Route component={NotFoundPage} />
       </Switch>
