@@ -22,6 +22,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/go-openapi/swag"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -278,6 +280,12 @@ func getUserInfoResponse(session *models.Principal, params admin_api.GetUserInfo
 
 	user, err := getUserInfo(ctx, adminClient, params.Name)
 	if err != nil {
+		// User doesn't exist, return 404
+		if madmin.ToErrorResponse(err).Code == "XMinioAdminNoSuchUser" {
+			var errorCode int32 = 404
+			errorMessage := "User doesn't exist"
+			return nil, &models.Error{Code: errorCode, Message: swag.String(errorMessage), DetailedMessage: swag.String(err.Error())}
+		}
 		return nil, prepareError(err)
 	}
 
