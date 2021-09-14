@@ -88,7 +88,9 @@ type Provider struct {
 	//   often available via site-specific packages, such as
 	//   google.Endpoint or github.Endpoint.
 	// - Scopes specifies optional requested permissions.
-	ClientID       string
+	ClientID string
+	// if enabled means that we need extrace access_token as well
+	UserInfo       bool
 	oauth2Config   Configuration
 	oidcProvider   *oidc.Provider
 	provHTTPClient *http.Client
@@ -97,7 +99,7 @@ type Provider struct {
 // derivedKey is the key used to compute the HMAC for signing the oauth state parameter
 // its derived using pbkdf on CONSOLE_IDP_HMAC_PASSPHRASE with CONSOLE_IDP_HMAC_SALT
 var derivedKey = func() []byte {
-	return pbkdf2.Key([]byte(getPassphraseForIdpHmac()), []byte(getSaltForIdpHmac()), 4096, 32, sha1.New)
+	return pbkdf2.Key([]byte(getPassphraseForIDPHmac()), []byte(getSaltForIDPHmac()), 4096, 32, sha1.New)
 }
 
 // NewOauth2ProviderClient instantiates a new oauth2 client using the configured credentials
@@ -105,34 +107,30 @@ var derivedKey = func() []byte {
 // oauth2 authentication flow
 func NewOauth2ProviderClient(ctx context.Context, scopes []string, httpClient *http.Client) (*Provider, error) {
 	customCtx := oidc.ClientContext(ctx, httpClient)
-	provider, err := oidc.NewProvider(customCtx, GetIdpURL())
+	provider, err := oidc.NewProvider(customCtx, GetIDPURL())
 	if err != nil {
 		return nil, err
 	}
-	// if google, change scopes
-	u, err := url.Parse(GetIdpURL())
-	if err != nil {
-		return nil, err
-	}
-	// below verification should not be necessary if the user configure exactly the
-	// scopes he need, will be removed on a future release
-	if u.Host == "google.com" {
-		scopes = []string{oidc.ScopeOpenID}
-	}
+
 	// If provided scopes are empty we use a default list or the user configured list
 	if len(scopes) == 0 {
-		scopes = strings.Split(getIdpScopes(), ",")
+		scopes = strings.Split(getIDPScopes(), ",")
 	}
+
+	// add "openid" scope always.
+	scopes = append(scopes, oidc.ScopeOpenID)
+
 	client := new(Provider)
 	client.oauth2Config = &xoauth2.Config{
-		ClientID:     GetIdpClientID(),
-		ClientSecret: GetIdpSecret(),
-		RedirectURL:  GetIdpCallbackURL(),
+		ClientID:     GetIDPClientID(),
+		ClientSecret: GetIDPSecret(),
+		RedirectURL:  GetIDPCallbackURL(),
 		Endpoint:     provider.Endpoint(),
 		Scopes:       scopes,
 	}
 	client.oidcProvider = provider
-	client.ClientID = GetIdpClientID()
+	client.ClientID = GetIDPClientID()
+	client.UserInfo = GetIDPUserInfo()
 	client.provHTTPClient = httpClient
 
 	return client, nil
@@ -184,18 +182,26 @@ func (client *Provider) VerifyIdentity(ctx context.Context, code, state string) 
 
 		// check if user configured a hardcoded expiration for console via env variables
 		// and override the incoming expiration
-		userConfiguredExpiration := getIdpTokenExpiration()
+		userConfiguredExpiration := getIDPTokenExpiration()
 		if userConfiguredExpiration != "" {
 			expiration, _ = strconv.Atoi(userConfiguredExpiration)
 		}
 		idToken := oauth2Token.Extra("id_token")
 		if idToken == nil {
-			return nil, errors.New("returned token is missing id_token claim")
+			return nil, errors.New("missing id_token")
 		}
-		return &credentials.WebIdentityToken{
+		token := &credentials.WebIdentityToken{
 			Token:  idToken.(string),
 			Expiry: expiration,
-		}, nil
+		}
+		if client.UserInfo { // look for access_token only if userinfo is requested.
+			accessToken := oauth2Token.Extra("access_token")
+			if accessToken == nil {
+				return nil, errors.New("missing access_token")
+			}
+			token.AccessToken = accessToken.(string)
+		}
+		return token, nil
 	}
 	stsEndpoint := GetSTSEndpoint()
 	sts := credentials.New(&credentials.STSWebIdentity{

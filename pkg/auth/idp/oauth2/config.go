@@ -29,49 +29,53 @@ func GetSTSEndpoint() string {
 	return strings.TrimSpace(env.Get(ConsoleMinIOServer, "http://localhost:9000"))
 }
 
-func GetIdpURL() string {
-	return env.Get(ConsoleIdpURL, "")
+func GetIDPURL() string {
+	return env.Get(ConsoleIDPURL, "")
 }
 
-func GetIdpClientID() string {
-	return env.Get(ConsoleIdpClientID, "")
+func GetIDPClientID() string {
+	return env.Get(ConsoleIDPClientID, "")
 }
 
-func GetIdpSecret() string {
-	return env.Get(ConsoleIdpSecret, "")
+func GetIDPUserInfo() bool {
+	return env.Get(ConsoleIDPUserInfo, "") == "on"
+}
+
+func GetIDPSecret() string {
+	return env.Get(ConsoleIDPSecret, "")
 }
 
 // Public endpoint used by the identity oidcProvider when redirecting the user after identity verification
-func GetIdpCallbackURL() string {
-	return env.Get(ConsoleIdpCallbackURL, "")
+func GetIDPCallbackURL() string {
+	return env.Get(ConsoleIDPCallbackURL, "")
 }
 
-func IsIdpEnabled() bool {
-	return GetIdpURL() != "" &&
-		GetIdpClientID() != "" &&
-		GetIdpCallbackURL() != ""
+func IsIDPEnabled() bool {
+	return GetIDPURL() != "" &&
+		GetIDPClientID() != "" &&
+		GetIDPCallbackURL() != ""
 }
 
-var defaultPassphraseForIdpHmac = utils.RandomCharString(64)
+var defaultPassphraseForIDPHmac = utils.RandomCharString(64)
 
-// GetPassphraseForIdpHmac returns passphrase for the pbkdf2 function used to sign the oauth2 state parameter
-func getPassphraseForIdpHmac() string {
-	return env.Get(ConsoleIdpHmacPassphrase, defaultPassphraseForIdpHmac)
+// GetPassphraseForIDPHmac returns passphrase for the pbkdf2 function used to sign the oauth2 state parameter
+func getPassphraseForIDPHmac() string {
+	return env.Get(ConsoleIDPHmacPassphrase, defaultPassphraseForIDPHmac)
 }
 
-var defaultSaltForIdpHmac = utils.RandomCharString(64)
+var defaultSaltForIDPHmac = utils.RandomCharString(64)
 
-// GetSaltForIdpHmac returns salt for the pbkdf2 function used to sign the oauth2 state parameter
-func getSaltForIdpHmac() string {
-	return env.Get(ConsoleIdpHmacSalt, defaultSaltForIdpHmac)
+// GetSaltForIDPHmac returns salt for the pbkdf2 function used to sign the oauth2 state parameter
+func getSaltForIDPHmac() string {
+	return env.Get(ConsoleIDPHmacSalt, defaultSaltForIDPHmac)
 }
 
-// getIdpScopes return default scopes during the IDP login request
-func getIdpScopes() string {
+// getIDPScopes return default scopes during the IDP login request
+func getIDPScopes() string {
 	return env.Get(ConsoleIDPScopes, "openid,profile,email")
 }
 
-// getIdpTokenExpiration return default token expiration for access token (in seconds)
-func getIdpTokenExpiration() string {
+// getIDPTokenExpiration return default token expiration for access token (in seconds)
+func getIDPTokenExpiration() string {
 	return env.Get(ConsoleIDPTokenExpiration, "3600")
 }
