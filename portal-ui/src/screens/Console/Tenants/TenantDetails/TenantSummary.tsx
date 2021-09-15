@@ -93,6 +93,26 @@ const styles = (theme: Theme) =>
     centerAlign: {
       textAlign: "center",
     },
+    detailSection: {
+      "& div": {
+        "& b,i": {
+          minWidth: 80,
+          display: "block",
+          float: "left",
+        },
+        "& i": {
+          fontStyle: "normal",
+          wordWrap: "break-word",
+          overflowWrap: "break-word",
+        },
+        "& div": {
+          clear: "both",
+        },
+        clear: "both",
+        marginBottom: 2,
+      },
+    },
+
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -200,83 +220,101 @@ const TenantSummary = ({
       <h1 className={classes.sectionTitle}>Summary</h1>
       <Paper className={classes.paperContainer}>
         <Grid container>
-          <Grid item xs={8}>
-            <table width={"100%"}>
-              <tbody>
-                <tr>
-                  <td colSpan={4}>
-                    <h2>Details</h2>
-                    <hr className={classes.hrClass} />
-                  </td>
-                </tr>
-                {loadingTenant ? (
-                  <tr>
-                    <td colSpan={4} className={classes.centerAlign}>
-                      <CircularProgress />
-                    </td>
-                  </tr>
-                ) : (
-                  <Fragment>
-                    <tr>
-                      <td className={classes.titleCol}>Capacity:</td>
-                      <td>{niceBytes(capacity.toString(10))}</td>
-                      <td className={classes.titleCol}>Clusters:</td>
-                      <td>{poolCount}</td>
-                    </tr>
-                    <tr>
-                      <td className={classes.titleCol}>Instances:</td>
-                      <td>{instances}</td>
-                      <td className={classes.titleCol}>Volumes:</td>
-                      <td>{volumes}</td>
-                    </tr>
-                    {tenant?.endpoints && (
-                      <tr>
-                        <td className={classes.titleCol}>Endpoint:</td>
-                        <td>
-                          <a
-                            href={tenant?.endpoints.minio}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {tenant?.endpoints.minio}
-                          </a>
-                        </td>
-                        <td className={classes.titleCol}>Console:</td>
-                        <td>
-                          <a
-                            href={tenant?.endpoints.console}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {tenant?.endpoints.console}
-                          </a>
-                        </td>
-                      </tr>
-                    )}
-                    <tr>
-                      <td className={classes.titleCol}>MinIO:</td>
-                      <td colSpan={3}>
-                        <Button
-                          color="primary"
-                          className={classes.anchorButton}
-                          onClick={() => {
-                            setUpdateMinioVersion(true);
-                          }}
-                        >
-                          {tenant ? tenant.image : ""}
-                        </Button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className={classes.titleCol}>State:</td>
-                      <td colSpan={3}>{tenant?.currentState}</td>
-                    </tr>
-                  </Fragment>
-                )}
-              </tbody>
-            </table>
+          <Grid item xs={12} sm={8}>
+            <Grid container>
+              <Grid item xs={12}>
+                <h2>Details</h2>
+                <hr className={classes.hrClass} />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                md={6}
+                className={classes.detailSection}
+              >
+                <div>
+                  <b>Capacity:</b>
+                  <i>{niceBytes(capacity.toString(10))}</i>
+                  <div />
+                </div>
+                <div>
+                  <b>Instances:</b>
+                  <i>{instances}</i>
+                  <div />
+                </div>
+                <div>
+                  <b>Endpoint:</b>
+                  <i>
+                    <a
+                      href={tenant?.endpoints.minio}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {tenant?.endpoints.minio}
+                    </a>
+                  </i>
+                  <div />
+                </div>
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                md={6}
+                className={classes.detailSection}
+              >
+                <div>
+                  <b>Clusters:</b>
+                  <i>{poolCount}</i>
+                  <div />
+                </div>
+                <div>
+                  <b>Volumes:</b>
+                  <i>{volumes}</i>
+                  <div />
+                </div>
+                <div>
+                  <b>Console:</b>
+                  <i>
+                    <a
+                      href={tenant?.endpoints.console}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {tenant?.endpoints.console}
+                    </a>
+                  </i>
+                  <div />
+                </div>
+              </Grid>
+              <Grid item xs={12} className={classes.detailSection}>
+                <div>
+                  <b>MinIO:</b>
+                  <i>
+                    <Button
+                      color="primary"
+                      className={classes.anchorButton}
+                      onClick={() => {
+                        setUpdateMinioVersion(true);
+                      }}
+                    >
+                      {tenant ? tenant.image : ""}
+                    </Button>
+                  </i>
+                  <div />
+                </div>
+              </Grid>
+              <Grid item xs={12} className={classes.detailSection}>
+                <div>
+                  <b>State:</b>
+                  <i>{tenant?.currentState}</i>
+                  <div />
+                </div>
+              </Grid>
+            </Grid>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={12} sm={4}>
             {loadingTenant ? (
               <div className={classes.centerAlign}>
                 <CircularProgress />
@@ -354,91 +392,87 @@ const TenantSummary = ({
       <Paper className={classes.paperContainer}>
         <Grid container>
           <Grid item xs={12}>
-            <table width={"100%"}>
-              <tbody>
-                <tr>
-                  <td colSpan={4}>
-                    <h2>Features</h2>
-                    <hr className={classes.hrClass} />
-                  </td>
-                </tr>
-                {loadingTenant ? (
-                  <tr>
-                    <td className={classes.centerAlign} colSpan={4}>
-                      <CircularProgress />
-                    </td>
-                  </tr>
-                ) : (
-                  <Fragment>
-                    <tr>
-                      <td className={classes.titleCol}>Logs:</td>
-                      <td>
-                        <Button
-                          color="primary"
-                          className={classes.anchorButton}
-                        >
-                          {logEnabled ? "Enabled" : "Disabled"}
-                        </Button>
-                      </td>
-                      <td className={classes.titleCol}>Monitoring:</td>
-                      <td>
-                        <Button
-                          color="primary"
-                          className={classes.anchorButton}
-                        >
-                          {monitoringEnabled ? "Enabled" : "Disabled"}
-                        </Button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className={classes.titleCol}>MinIO TLS:</td>
-                      <td>
-                        <Button
-                          color="primary"
-                          className={classes.anchorButton}
-                        >
-                          {minioTLS ? "Enabled" : "Disabled"}
-                        </Button>
-                      </td>
-                      <td className={classes.titleCol}>Encryption:</td>
-                      <td>
-                        <Button
-                          color="primary"
-                          className={classes.anchorButton}
-                        >
-                          {encryptionEnabled ? "Enabled" : "Disabled"}
-                        </Button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <React.Fragment>
-                        <td className={classes.titleCol}>Active Directory:</td>
-                        <td>
-                          <Button
-                            color="primary"
-                            className={classes.anchorButton}
-                          >
-                            {adEnabled ? "Enabled" : "Disabled"}
-                          </Button>
-                        </td>
-                      </React.Fragment>
-                      <React.Fragment>
-                        <td className={classes.titleCol}>OpenID:</td>
-                        <td>
-                          <Button
-                            color="primary"
-                            className={classes.anchorButton}
-                          >
-                            {oidcEnabled ? "Enabled" : "Disabled"}
-                          </Button>
-                        </td>
-                      </React.Fragment>
-                    </tr>
-                  </Fragment>
-                )}
-              </tbody>
-            </table>
+            <h2>Features</h2>
+            <hr className={classes.hrClass} />
           </Grid>
+          {loadingTenant ? (
+            <Grid item xs={12} className={classes.centerAlign}>
+              <CircularProgress />
+            </Grid>
+          ) : (
+            <Fragment>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                md={6}
+                className={classes.detailSection}
+              >
+                <div>
+                  <b>Logs:</b>
+                  <i>
+                    <Button color="primary" className={classes.anchorButton}>
+                      {logEnabled ? "Enabled" : "Disabled"}
+                    </Button>
+                  </i>
+                  <div />
+                </div>
+                <div>
+                  <b>MinIO TLS:</b>
+                  <i>
+                    <Button color="primary" className={classes.anchorButton}>
+                      {minioTLS ? "Enabled" : "Disabled"}
+                    </Button>
+                  </i>
+                  <div />
+                </div>
+                <div>
+                  <b>AD/LDAP:</b>
+                  <i>
+                    <Button color="primary" className={classes.anchorButton}>
+                      {adEnabled ? "Enabled" : "Disabled"}
+                    </Button>
+                  </i>
+                  <div />
+                </div>
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={12}
+                md={6}
+                className={classes.detailSection}
+              >
+                <div>
+                  <b>Monitoring:</b>
+                  <i>
+                    <Button color="primary" className={classes.anchorButton}>
+                      {monitoringEnabled ? "Enabled" : "Disabled"}
+                    </Button>
+                  </i>
+                  <div />
+                </div>
+                <div>
+                  <b>Encryption:</b>
+                  <i>
+                    <Button color="primary" className={classes.anchorButton}>
+                      {encryptionEnabled ? "Enabled" : "Disabled"}
+                    </Button>
+                  </i>
+                  <div />
+                </div>
+                <div>
+                  <b>OpenID:</b>
+                  <i>
+                    <Button color="primary" className={classes.anchorButton}>
+                      {oidcEnabled ? "Enabled" : "Disabled"}
+                    </Button>
+                  </i>
+                  <div />
+                </div>
+              </Grid>
+            </Fragment>
+          )}
         </Grid>
       </Paper>
     </Fragment>

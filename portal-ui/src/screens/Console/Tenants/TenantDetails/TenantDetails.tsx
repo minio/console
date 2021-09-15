@@ -18,7 +18,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Link, Redirect, Route, Router, Switch } from "react-router-dom";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { IconButton, Tooltip } from "@material-ui/core";
+import { Box, IconButton, Tab, Tabs, Tooltip } from "@material-ui/core";
 import get from "lodash/get";
 import Grid from "@material-ui/core/Grid";
 import { setErrorSnackMessage, setSnackBarMessage } from "../../../../actions";
@@ -242,6 +242,94 @@ const TenantDetails = ({
       : classes.greyState;
   };
 
+  interface ListMenuItem {
+    label: string;
+    value: string;
+    onclick: (val: string) => void;
+    selected: () => boolean;
+  }
+
+  const menu: ListMenuItem[] = [
+    {
+      label: "Summary",
+      value: "summary",
+      onclick: (val) => {
+        changeRoute(val);
+      },
+      selected: () => {
+        return currentTab === "summary";
+      },
+    },
+    {
+      label: "Metrics",
+      value: "metrics",
+      onclick: (val) => {
+        changeRoute("metrics");
+      },
+      selected: () => {
+        return currentTab === "metrics";
+      },
+    },
+    {
+      label: "Security",
+      value: "security",
+      onclick: (val) => {
+        changeRoute("security");
+      },
+      selected: () => {
+        return currentTab === "security";
+      },
+    },
+    {
+      label: "Pools",
+      value: "pools",
+      onclick: (val) => {
+        changeRoute("pools");
+      },
+      selected: () => {
+        return currentTab === "pools";
+      },
+    },
+    {
+      label: "Pods",
+      value: "pods",
+      onclick: (val) => {
+        changeRoute("pods");
+      },
+      selected: () => {
+        return currentTab === "pods" || currentTab === ":podName";
+      },
+    },
+    {
+      label: "Volumes",
+      value: "volumes",
+      onclick: (val) => {
+        changeRoute("volumes");
+      },
+      selected: () => {
+        return currentTab === "volumes";
+      },
+    },
+    {
+      label: "License",
+      value: "license",
+      onclick: (val) => {
+        changeRoute("license");
+      },
+      selected: () => {
+        return currentTab === "license";
+      },
+    },
+  ];
+
+  let value = menu[0].value;
+  for (const mli of menu) {
+    if (mli.selected()) {
+      value = mli.value;
+      break;
+    }
+  }
+
   return (
     <Fragment>
       {yamlScreenOpen && (
@@ -336,74 +424,48 @@ const TenantDetails = ({
             }
           />
         </Grid>
-        <Grid item xs={2}>
-          <List component="nav" dense={true}>
-            <ListItem
-              button
-              selected={currentTab === "summary"}
-              onClick={() => {
-                changeRoute("summary");
-              }}
+        <Grid item xs={12} sm={12} md={2}>
+          <Box display={{ xs: "none", sm: "none", md: "block" }}>
+            <List component="nav" dense={true}>
+              {menu.map((mli) => {
+                return (
+                  <ListItem
+                    button
+                    selected={mli.selected()}
+                    onClick={() => {
+                      mli.onclick(mli.value);
+                    }}
+                  >
+                    <ListItemText primary={mli.label} />
+                  </ListItem>
+                );
+              })}
+            </List>
+          </Box>
+          <Box display={{ xs: "block", sm: "block", md: "none" }}>
+            <Tabs
+              value={value}
+              indicatorColor="primary"
+              textColor="primary"
+              variant="scrollable"
+              scrollButtons="auto"
+              aria-label="scrollable auto tabs example"
             >
-              <ListItemText primary="Summary" />
-            </ListItem>
-            <ListItem
-              button
-              selected={currentTab === "metrics"}
-              onClick={() => {
-                changeRoute("metrics");
-              }}
-            >
-              <ListItemText primary="Metrics" />
-            </ListItem>
-            <ListItem
-              button
-              selected={currentTab === "security"}
-              onClick={() => {
-                changeRoute("security");
-              }}
-            >
-              <ListItemText primary="Security" />
-            </ListItem>
-            <ListItem
-              button
-              selected={currentTab === "pools"}
-              onClick={() => {
-                changeRoute("pools");
-              }}
-            >
-              <ListItemText primary="Pools" />
-            </ListItem>
-            <ListItem
-              button
-              selected={currentTab === "pods" || currentTab === ":podName"}
-              onClick={() => {
-                changeRoute("pods");
-              }}
-            >
-              <ListItemText primary="Pods" />
-            </ListItem>
-            <ListItem
-              button
-              selected={currentTab === "volumes"}
-              onClick={() => {
-                changeRoute("volumes");
-              }}
-            >
-              <ListItemText primary="Volumes" />
-            </ListItem>
-            <ListItem
-              button
-              selected={currentTab === "license"}
-              onClick={() => {
-                changeRoute("license");
-              }}
-            >
-              <ListItemText primary="License" />
-            </ListItem>
-          </List>
+              {menu.map((mli) => {
+                return (
+                  <Tab
+                    label={mli.label}
+                    value={mli.value}
+                    onClick={() => {
+                      mli.onclick(mli.value);
+                    }}
+                  />
+                );
+              })}
+            </Tabs>
+          </Box>
         </Grid>
-        <Grid item xs={10}>
+        <Grid item xs={12} sm={12} md={10}>
           <Router history={history}>
             <Switch>
               <Route
