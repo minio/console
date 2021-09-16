@@ -5,7 +5,6 @@ go 1.16
 require (
 	github.com/blang/semver/v4 v4.0.0
 	github.com/cheggaaa/pb/v3 v3.0.6
-	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/dustin/go-humanize v1.0.0
 	github.com/go-openapi/errors v0.19.9
 	github.com/go-openapi/loads v0.20.2
@@ -27,7 +26,6 @@ require (
 	github.com/minio/pkg v1.1.3
 	github.com/minio/selfupdate v0.3.1
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/rs/xid v1.2.1
 	github.com/secure-io/sio-go v0.3.1
 	github.com/stretchr/testify v1.7.0
