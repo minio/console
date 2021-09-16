@@ -1358,13 +1358,10 @@ definitions:
         type: object
         required:
           - configuration_url
-          - url
           - client_id
           - secret_id
           - claim_name
         properties:
-          url:
-            type: string
           configuration_url:
             type: string
           client_id:

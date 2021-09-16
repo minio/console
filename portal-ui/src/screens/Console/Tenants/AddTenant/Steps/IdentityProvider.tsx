@@ -47,7 +47,6 @@ interface IIdentityProviderProps {
   idpSelection: string;
   accessKeys: string[];
   secretKeys: string[];
-  openIDURL: string;
   openIDConfigurationURL: string;
   openIDClientID: string;
   openIDSecretID: string;
@@ -98,7 +97,6 @@ const IdentityProvider = ({
   idpSelection,
   accessKeys,
   secretKeys,
-  openIDURL,
   openIDConfigurationURL,
   openIDClientID,
   openIDSecretID,
@@ -178,11 +176,6 @@ const IdentityProvider = ({
       customIDPValidation = [
         ...customIDPValidation,
         {
-          fieldKey: "openID_URL",
-          required: true,
-          value: openIDURL,
-        },
-        {
           fieldKey: "openID_CONFIGURATION_URL",
           required: true,
           value: openIDConfigurationURL,
@@ -233,7 +226,6 @@ const IdentityProvider = ({
     idpSelection,
     accessKeys,
     secretKeys,
-    openIDURL,
     openIDClientID,
     openIDSecretID,
     ADURL,
@@ -416,21 +408,6 @@ const IdentityProvider = ({
       )}
       {idpSelection === "OpenID" && (
         <Fragment>
-          <Grid item xs={12}>
-            <InputBoxWrapper
-              id="openID_URL"
-              name="openID_URL"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                updateField("openIDURL", e.target.value);
-                cleanValidation("openID_URL");
-              }}
-              label="URL"
-              value={openIDURL}
-              placeholder="https://your-identity-provider.com/"
-              error={validationErrors["openID_URL"] || ""}
-              required
-            />
-          </Grid>
           <Grid item xs={12}>
             <InputBoxWrapper
               id="openID_CONFIGURATION_URL"
@@ -710,7 +687,6 @@ const mapState = (state: AppState) => ({
   idpSelection: state.tenants.createTenant.fields.identityProvider.idpSelection,
   accessKeys: state.tenants.createTenant.fields.identityProvider.accessKeys,
   secretKeys: state.tenants.createTenant.fields.identityProvider.secretKeys,
-  openIDURL: state.tenants.createTenant.fields.identityProvider.openIDURL,
   openIDConfigurationURL:
     state.tenants.createTenant.fields.identityProvider.openIDConfigurationURL,
   openIDClientID:

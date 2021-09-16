@@ -178,15 +178,13 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.E
 
 // getLoginDetailsResponse returns information regarding the Console authentication mechanism.
 func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-	defer cancel()
 	loginStrategy := models.LoginDetailsLoginStrategyForm
 	redirectURL := ""
 
 	if oauth2.IsIDPEnabled() {
 		loginStrategy = models.LoginDetailsLoginStrategyRedirect
 		// initialize new oauth2 client
-		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil, GetConsoleHTTPClient())
+		oauth2Client, err := oauth2.NewOauth2ProviderClient(nil, GetConsoleHTTPClient())
 		if err != nil {
 			return nil, prepareError(err)
 		}
@@ -217,7 +215,7 @@ func getLoginOauth2AuthResponse(lr *models.LoginOauth2AuthRequest) (*models.Logi
 	defer cancel()
 	if oauth2.IsIDPEnabled() {
 		// initialize new oauth2 client
-		oauth2Client, err := oauth2.NewOauth2ProviderClient(ctx, nil, GetConsoleHTTPClient())
+		oauth2Client, err := oauth2.NewOauth2ProviderClient(nil, GetConsoleHTTPClient())
 		if err != nil {
 			return nil, prepareError(err)
 		}

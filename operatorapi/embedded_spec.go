@@ -1970,7 +1970,6 @@ func init() {
           "type": "object",
           "required": [
             "configuration_url",
-            "url",
             "client_id",
             "secret_id",
             "claim_name"
@@ -1992,9 +1991,6 @@ func init() {
               "type": "string"
             },
             "secret_id": {
-              "type": "string"
-            },
-            "url": {
               "type": "string"
             }
           }
@@ -4763,7 +4759,6 @@ func init() {
       "type": "object",
       "required": [
         "configuration_url",
-        "url",
         "client_id",
         "secret_id",
         "claim_name"
@@ -4785,9 +4780,6 @@ func init() {
           "type": "string"
         },
         "secret_id": {
-          "type": "string"
-        },
-        "url": {
           "type": "string"
         }
       }
@@ -5713,7 +5705,6 @@ func init() {
           "type": "object",
           "required": [
             "configuration_url",
-            "url",
             "client_id",
             "secret_id",
             "claim_name"
@@ -5735,9 +5726,6 @@ func init() {
               "type": "string"
             },
             "secret_id": {
-              "type": "string"
-            },
-            "url": {
               "type": "string"
             }
           }

@@ -247,11 +247,11 @@ const TenantSummary = ({
                   <b>Endpoint:</b>
                   <i>
                     <a
-                      href={tenant?.endpoints.minio}
+                      href={tenant?.endpoints?.minio}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      {tenant?.endpoints.minio}
+                      {tenant?.endpoints?.minio}
                     </a>
                   </i>
                   <div />
@@ -278,11 +278,11 @@ const TenantSummary = ({
                   <b>Console:</b>
                   <i>
                     <a
-                      href={tenant?.endpoints.console}
+                      href={tenant?.endpoints?.console}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      {tenant?.endpoints.console}
+                      {tenant?.endpoints?.console}
                     </a>
                   </i>
                   <div />
@@ -333,7 +333,7 @@ const TenantSummary = ({
                   {tenant && tenant.status && (
                     <span
                       className={healthStatusToClass(
-                        tenant.status.health_status
+                        tenant?.status?.health_status
                       )}
                     >
                       <CircleIcon />
