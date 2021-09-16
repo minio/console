@@ -20,65 +20,12 @@ import Grid from "@material-ui/core/Grid";
 import { IDriveInfo } from "../types";
 import { niceBytes } from "../../../../common/utils";
 import { Card, CardHeader } from "@material-ui/core";
-import { CircleIcon, StorageIcon } from "../../../../icons";
+import { CircleIcon } from "../../../../icons";
+import { commonDashboardInfocard } from "../../Common/FormComponents/common/styleLibrary";
 
 const styles = (theme: Theme) =>
   createStyles({
-    cardIconContainer: {
-      display: "flex",
-      position: "relative",
-      alignItems: "center",
-    },
-    stateContainer: {
-      display: "flex",
-      flexWrap: "wrap",
-      justifyContent: "space-between",
-    },
-    infoValue: {
-      fontWeight: 500,
-      color: "#777777",
-      fontSize: 14,
-      margin: "5px 4px",
-      display: "inline-flex",
-      "& strong": {
-        marginRight: 4,
-      },
-    },
-    redState: {
-      color: theme.palette.error.main,
-    },
-    greenState: {
-      color: theme.palette.success.main,
-    },
-    yellowState: {
-      color: theme.palette.warning.main,
-    },
-    greyState: {
-      color: "grey",
-    },
-    healthStatusIcon: {
-      position: "absolute",
-      fontSize: 10,
-      left: 18,
-      height: 10,
-      bottom: 2,
-      "& .MuiSvgIcon-root": {
-        width: 10,
-        height: 10,
-      },
-    },
-    innerState: {
-      fontSize: 10,
-      marginLeft: 5,
-      display: "flex",
-      alignItems: "center",
-      marginTop: -3,
-    },
-    cardHeader: {
-      "& .MuiCardHeader-title": {
-        fontWeight: "bolder",
-      },
-    },
+    ...commonDashboardInfocard,
   });
 
 interface ICardProps {
@@ -100,22 +47,19 @@ const DriveInfoCard = ({ classes, drive }: ICardProps) => {
 
   return (
     <Fragment>
-      <Card>
+      <Card className={classes.cardContainer}>
         <CardHeader
           className={classes.cardHeader}
-          avatar={
-            <div className={classes.cardIconContainer}>
-              <StorageIcon className="computerIcon" />
-              <div className={classes.healthStatusIcon}>
-                {drive.state && (
-                  <span className={driveStatusToClass(drive.state)}>
-                    <CircleIcon />
-                  </span>
-                )}
-              </div>
+          title={
+            <div className={classes.referenceTitle}>
+              {drive.state && (
+                <span className={driveStatusToClass(drive.state)}>
+                  <CircleIcon />
+                </span>
+              )}
+              {drive.endpoint || ""}
             </div>
           }
-          title={drive.endpoint || ""}
           subheader={
             <Grid item xs={12} className={classes.stateContainer}>
               <span className={classes.infoValue}>

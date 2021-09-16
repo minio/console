@@ -16,83 +16,28 @@
 
 import React from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import ComputerIcon from "@material-ui/icons/Computer";
 import Grid from "@material-ui/core/Grid";
 import { ServerInfo } from "../types";
 import { niceDays } from "../../../../common/utils";
 import { Card, CardHeader } from "@material-ui/core";
-import { CircleIcon } from "../../../../icons";
+import { CircleIcon, VersionIcon } from "../../../../icons";
 import get from "lodash/get";
+import { commonDashboardInfocard } from "../../Common/FormComponents/common/styleLibrary";
+
+
 
 const styles = (theme: Theme) =>
   createStyles({
-    cardIconContainer: {
-      display: "flex",
-      position: "relative",
-      alignItems: "center",
-    },
-    stateContainer: {
-      display: "flex",
-      flexWrap: "wrap",
-      justifyContent: "space-between",
-    },
-    infoValue: {
-      fontWeight: 500,
-      color: "#777777",
-      fontSize: 14,
-      margin: "5px 4px",
-      display: "inline-flex",
-      "& strong": {
-        marginRight: 4,
-      },
-      "& .MuiSvgIcon-root": {
-        width: 16,
-        height: 16,
-      },
-    },
-    redState: {
-      color: theme.palette.error.main,
-    },
-    greenState: {
-      color: theme.palette.success.main,
-    },
-    yellowState: {
-      color: theme.palette.warning.main,
-    },
-    greyState: {
-      color: "grey",
-    },
-    healthStatusIcon: {
-      position: "absolute",
-      fontSize: 10,
-      left: 18,
-      height: 10,
-      bottom: 2,
-      "& .MuiSvgIcon-root": {
-        width: 10,
-        height: 10,
-      },
-    },
-    innerState: {
-      fontSize: 10,
-      marginLeft: 5,
-      display: "flex",
-      alignItems: "center",
-      marginTop: -3,
-    },
-    cardHeader: {
-      "& .MuiCardHeader-title": {
-        fontWeight: "bolder",
-      },
-    },
+    ...commonDashboardInfocard,
   });
 
 interface ICardProps {
   classes: any;
   server: ServerInfo;
+  index: number;
 }
 
-const ServerInfoCard = ({ classes, server }: ICardProps) => {
+const ServerInfoCard = ({ classes, server, index }: ICardProps) => {
   const serverStatusToClass = (health_status: string) => {
     switch (health_status) {
       case "offline":
@@ -122,26 +67,25 @@ const ServerInfoCard = ({ classes, server }: ICardProps) => {
     : 0;
 
   return (
-    <Card>
+    <Card className={classes.cardContainer}>
       <CardHeader
         className={classes.cardHeader}
-        avatar={
-          <div className={classes.cardIconContainer}>
-            <ComputerIcon className="computerIcon" />
-            <div className={classes.healthStatusIcon}>
+        title={
+          <div>
+            <div className={classes.cardNumber}>Server {index}</div>
+            <div className={classes.referenceTitle}>
               {server.state && (
                 <span className={serverStatusToClass(server.state)}>
                   <CircleIcon />
                 </span>
               )}
+              {server.endpoint || ""}
             </div>
           </div>
         }
-        title={server.endpoint || ""}
         subheader={
           <Grid item xs={12} className={classes.stateContainer}>
             <span className={classes.infoValue}>
-              <strong>Drives:</strong> {activeDisks}/{totalDrives}{" "}
               <span
                 className={`${classes.innerState} ${
                   activeDisks <= totalDrives / 2 && classes.redState
@@ -151,9 +95,9 @@ const ServerInfoCard = ({ classes, server }: ICardProps) => {
               >
                 <CircleIcon />
               </span>
+              Drives: {activeDisks}/{totalDrives}{" "}
             </span>
             <span className={classes.infoValue}>
-              <strong>Network:</strong> {activeNetwork}/{networkTotal}{" "}
               <span
                 className={`${classes.innerState} ${
                   activeNetwork <= networkTotal / 2 && classes.redState
@@ -163,10 +107,14 @@ const ServerInfoCard = ({ classes, server }: ICardProps) => {
               >
                 <CircleIcon />
               </span>
+              Network: {activeNetwork}/{networkTotal}{" "}
             </span>
             <span className={classes.infoValue}>
-              <strong>Uptime:</strong>{" "}
-              {server.uptime ? niceDays(server.uptime) : "N/A"}
+              Uptime: {server.uptime ? niceDays(server.uptime) : "N/A"}
+            </span>
+            <span className={classes.infoValue}>
+              <VersionIcon />
+              <strong>Version</strong> {server.version ? server.version : "N/A"}
             </span>
           </Grid>
         }

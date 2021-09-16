@@ -508,7 +508,7 @@ export const calculateBytes = (
   const bytes = parseInt(x, 10);
 
   if (bytes === 0) {
-    return { total: 0, unit: k8sCalcUnits[0] };
+    return { total: 0, unit: units[0] };
   }
 
   // Gi : GiB
@@ -525,7 +525,7 @@ export const calculateBytes = (
 
   // Get Unit parsed
   const unitParsed = parseFloat(roundedUnit.toFixed(fractionDigits));
-  const finalUnit = k8sCalcUnits[i];
+  const finalUnit = units[i];
 
   return { total: unitParsed, unit: finalUnit };
 };
