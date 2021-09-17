@@ -270,7 +270,7 @@ func parseDiscoveryDoc(ustr string) (DiscoveryDoc, error) {
 		return d, err
 	}
 	clnt := http.Client{
-		Transport: http.DefaultTransport,
+		Transport: GetConsoleHTTPClient().Transport,
 	}
 	resp, err := clnt.Do(req)
 	if err != nil {
