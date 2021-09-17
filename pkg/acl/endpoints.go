@@ -61,6 +61,7 @@ var (
 	tenantsDetailPods           = "/namespaces/:tenantNamespace/tenants/:tenantName/pods"
 	tenantsDetailPools          = "/namespaces/:tenantNamespace/tenants/:tenantName/pools"
 	tenantsDetailVolumes        = "/namespaces/:tenantNamespace/tenants/:tenantName/volumes"
+	tenantsMonitoring           = "/namespaces/:tenantNamespace/tenants/:tenantName/monitoring"
 	tenantsDetailLicense        = "/namespaces/:tenantNamespace/tenants/:tenantName/license"
 	tenantsDetailSecurity       = "/namespaces/:tenantNamespace/tenants/:tenantName/security"
 	storage                     = "/storage"
@@ -372,6 +373,7 @@ var operatorRules = map[string]ConfigurationActionSet{
 	tenantsDetailPods:     tenantsActionSet,
 	tenantsDetailPools:    tenantsActionSet,
 	tenantsDetailVolumes:  tenantsActionSet,
+	tenantsMonitoring:     tenantsActionSet,
 	tenantsDetailLicense:  tenantsActionSet,
 	tenantsDetailSecurity: tenantsActionSet,
 	podsDetail:            tenantsActionSet,

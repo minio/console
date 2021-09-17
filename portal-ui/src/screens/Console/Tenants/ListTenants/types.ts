@@ -83,6 +83,23 @@ export interface ITenantStatus {
   usage?: ITenantStatusUsage;
 }
 
+export interface IMonitoringInfo {
+  prometheusEnabled: boolean;
+}
+
+export interface ITenantMonitoringStruct {
+  image: string;
+  sidecarImage: string;
+  initImage: string;
+  storageClassName: string;
+  labels: IKeyValue[];
+  annotations: IKeyValue[];
+  nodeSelector: IKeyValue[];
+  diskCapacityGB: string;
+  serviceAccountName: string;
+  prometheusEnabled: boolean;
+}
+
 export interface ITenant {
   total_size: number;
   name: string;
@@ -120,6 +137,11 @@ export interface ITenant {
 
 export interface ITenantsResponse {
   tenants: ITenant[];
+}
+
+export interface IKeyValue {
+  key: string;
+  value: string;
 }
 
 export interface IMemorySize {
