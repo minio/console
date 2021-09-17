@@ -2343,6 +2343,42 @@ definitions:
         format: int64
       access:
         $ref: "#/definitions/bucketAccess"
+      rw_access:
+        type: object
+        properties:
+          write:
+            type: boolean
+          read:
+            type: boolean
+      objects:
+        type: integer
+        format: int64
+      details:
+        type: object
+        properties:
+          versioning:
+            type: boolean
+          versioningSuspended:
+            type: boolean
+          locking:
+            type: boolean
+          replication:
+            type: boolean
+          tags:
+            type: object
+            additionalProperties:
+              type: string
+          quota:
+            type: object
+            properties:
+              quota:
+                type: integer
+                format: int64
+              type:
+                type: string
+                enum:
+                  - fifo
+                  - hard
       creation_date:
         type: string
 

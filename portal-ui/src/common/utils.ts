@@ -548,3 +548,11 @@ export const textToRGBColor = (text: string) => {
 
   return `#${hashColored.padStart(6, "0")}`;
 };
+
+export const prettyNumber = (usage: number | undefined) => {
+  if (usage === undefined) {
+    return 0;
+  }
+
+  return usage.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};

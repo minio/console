@@ -100,7 +100,9 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
 
   const serverArray = makeServerArray(usage);
 
-  const usageToRepresent = prettyUsage(usage ? usage.usage.toString() : "0");
+  const usageToRepresent = prettyUsage(
+    usage && usage.usage ? usage.usage.toString() : "0"
+  );
 
   let allDrivesArray: IDriveInfo[] = [];
 

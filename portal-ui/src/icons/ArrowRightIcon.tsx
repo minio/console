@@ -14,8 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface ITabOption {
-  label: string;
-  value?: string;
-  disabled?: boolean;
-}
+import * as React from "react";
+import { SvgIcon, SvgIconProps } from "@material-ui/core";
+
+const ArrowRightIcon = (props: SvgIconProps) => {
+  return (
+    <SvgIcon {...props}>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 255.338 154.163">
+        <path d="M19.745 57.063c-26.326 0-26.326 40.032 0 40.032H187l-22.68 22.669c-18.608 18.622 9.7 46.922 28.308 28.316l56.73-56.732a20.027 20.027 0 000-28.548l-56.73-56.716c-18.608-18.6-46.916 9.684-28.308 28.3L187 57.064H19.745z" />
+      </svg>
+    </SvgIcon>
+  );
+};
+
+export default ArrowRightIcon;

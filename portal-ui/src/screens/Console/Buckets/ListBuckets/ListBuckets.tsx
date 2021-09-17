@@ -17,13 +17,13 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button } from "@material-ui/core";
+import { Box, Button, OutlinedInput, Typography } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import { Bucket, BucketList, HasPermissionResponse } from "../types";
-import { AddIcon } from "../../../../icons";
+import { AddIcon, WatchIcon } from "../../../../icons";
 import { AppState } from "../../../../store";
 import { addBucketOpen, addBucketReset } from "../actions";
 import { setErrorSnackMessage } from "../../../../actions";
@@ -68,14 +68,39 @@ const styles = (theme: Theme) =>
         },
       },
     },
-    bucketsIconsContainer: {
-      display: "flex",
-      flexWrap: "wrap",
-      flexDirection: "row",
-      justifyContent: "flex-start",
+    buttonTray: {
+      textAlign: "right",
+      "& .MuiButton-root": {
+        fontSize: 12,
+        borderColor: theme.palette.grey["300"],
+        color: theme.palette.grey["300"],
+        textTransform: "capitalize",
+        marginRight: 6,
+      },
+      "& .MuiButton-contained": {
+        color: "white",
+      },
     },
-    ...actionsTray,
-    ...searchField,
+    theaderSearchLabel: {
+      color: theme.palette.grey["400"],
+    },
+    theaderSearch: {
+      borderColor: theme.palette.grey["200"],
+      "& .MuiInputBase-input": {
+        paddingTop: 10,
+        paddingBottom: 10,
+      },
+      "& .MuiInputBase-root": {
+        "& .MuiInputAdornment-root": {
+          "& .MuiSvgIcon-root": {
+            color: theme.palette.grey["400"],
+            height: 14,
+          },
+        },
+      },
+      marginRight: 10,
+      marginLeft: 10,
+    },
     ...containerForHeader(theme.spacing(4)),
   });
 
@@ -106,6 +131,8 @@ const ListBuckets = ({
   const [selectedBuckets, setSelectedBuckets] = useState<string[]>([]);
   const [replicationModalOpen, setReplicationModalOpen] =
     useState<boolean>(false);
+
+  const [bulkSelect, setBulkSelect] = useState<boolean>(false);
 
   // check the permissions for creating bucket
   useEffect(() => {
@@ -223,27 +250,6 @@ const ListBuckets = ({
     }
   };
 
-  /*
-  [
-                { label: "Name", elementKey: "name" },
-                {
-                  label: "Creation Date",
-                  elementKey: "creation_date",
-                  renderFunction: displayParsedDate,
-                },
-                {
-                  label: "Size",
-                  elementKey: "size",
-                  renderFunction: niceBytes,
-                  width: 60,
-                  contentTextAlign: "right",
-                },
-              ]
-
-
-  
-  */
-
   return (
     <Fragment>
       {addBucketModalOpen && (
@@ -268,55 +274,114 @@ const ListBuckets = ({
           closeModalAndRefresh={closeBulkReplicationModal}
         />
       )}
-      <PageHeader label={"Buckets"} />
+      <PageHeader
+        label={"Buckets"}
+        actions={
+          <Fragment>
+            <Grid
+              container
+              direction="row-reverse"
+              justifyContent="flex-end"
+              alignItems="center"
+            >
+              {canCreateBucket && (
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    endIcon={<AddIcon />}
+                    onClick={() => {
+                      addBucketOpen(true);
+                    }}
+                  >
+                    Create Bucket
+                  </Button>
+                </Grid>
+              )}
+
+              <Grid item>
+                <Box display={{ xs: "block", sm: "block", md: "none" }}>
+                  <TextField
+                    className={classes.theaderSearch}
+                    variant={"outlined"}
+                    id="search-resource"
+                    placeholder={"Search Buckets"}
+                    labelWidth={0}
+                    onChange={(val) => {
+                      setFilterBuckets(val.target.value);
+                    }}
+                    InputProps={{
+                      disableUnderline: true,
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Box>
+                <Box display={{ xs: "none", sm: "none", md: "block" }}>
+                  <TextField
+                    className={classes.theaderSearch}
+                    variant={"outlined"}
+                    id="search-resource"
+                    labelWidth={0}
+                    onChange={(val) => {
+                      setFilterBuckets(val.target.value);
+                    }}
+                    InputProps={{
+                      disableUnderline: true,
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Box>
+              </Grid>
+              <Box display={{ xs: "none", sm: "none", md: "block" }}>
+                <Grid item>
+                  <div className={classes.theaderSearchLabel}>
+                    Search Buckets:
+                  </div>
+                </Grid>
+              </Box>
+            </Grid>
+          </Fragment>
+        }
+      />
       <Grid container>
         <Grid item xs={12} className={classes.container}>
-          <Grid item xs={12} className={classes.actionsTray}>
-            <TextField
-              placeholder="Filter Buckets"
-              className={classes.searchField}
-              id="search-resource"
-              label=""
-              onChange={(val) => {
-                setFilterBuckets(val.target.value);
-              }}
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
+          <Grid item xs={12} className={classes.buttonTray}>
             <Button
-              variant="contained"
-              color="primary"
-              startIcon={<FileCopyIcon />}
+              variant={bulkSelect ? "contained" : "outlined"}
+              onClick={() => {
+                setBulkSelect(!bulkSelect);
+              }}
+              endIcon={<WatchIcon />}
+              size={"small"}
+            >
+              Bulk Select
+            </Button>
+
+            <Button
+              variant="outlined"
+              endIcon={<FileCopyIcon />}
               onClick={() => {
                 setReplicationModalOpen(true);
               }}
               disabled={selectedBuckets.length === 0}
+              size={"small"}
             >
               Set Replication
             </Button>
-            {canCreateBucket && (
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<AddIcon />}
-                onClick={() => {
-                  addBucketOpen(true);
-                }}
-              >
-                Create Bucket
-              </Button>
-            )}
           </Grid>
+
           <Grid item xs={12}>
             <br />
           </Grid>
-          <Grid item xs={12} className={classes.bucketsIconsContainer}>
+          <Grid item xs={12}>
             {filteredRecords.map((bucket, index) => {
               return (
                 <BucketListItem
@@ -325,6 +390,7 @@ const ListBuckets = ({
                   onDelete={confirmDeleteBucket}
                   onSelect={selectListBuckets}
                   selected={selectedBuckets.includes(bucket.name)}
+                  bulkSelect={bulkSelect}
                 />
               );
             })}

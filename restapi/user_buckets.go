@@ -307,11 +307,38 @@ func getAccountInfo(ctx context.Context, client MinioAdmin) ([]*models.Bucket, e
 
 	var bucketInfos []*models.Bucket
 	for _, bucket := range info.Buckets {
+
 		bucketElem := &models.Bucket{
-			Name:         swag.String(bucket.Name),
-			Size:         int64(bucket.Size),
 			CreationDate: bucket.Created.Format(time.RFC3339),
+			Details: &models.BucketDetails{
+				Quota: nil,
+			},
+			RwAccess: &models.BucketRwAccess{
+				Read:  bucket.Access.Read,
+				Write: bucket.Access.Write,
+			},
+			Name:    swag.String(bucket.Name),
+			Objects: int64(bucket.Objects),
+			Size:    int64(bucket.Size),
 		}
+
+		if bucket.Details != nil {
+			if bucket.Details.Tagging != nil {
+				bucketElem.Details.Tags = bucket.Details.Tagging.ToMap()
+			}
+
+			bucketElem.Details.Locking = bucket.Details.Locking
+			bucketElem.Details.Replication = bucket.Details.Replication
+			bucketElem.Details.Versioning = bucket.Details.Versioning
+			bucketElem.Details.VersioningSuspended = bucket.Details.VersioningSuspended
+			if bucket.Details.Quota != nil {
+				bucketElem.Details.Quota = &models.BucketDetailsQuota{
+					Quota: int64(bucket.Details.Quota.Quota),
+					Type:  string(bucket.Details.Quota.Type),
+				}
+			}
+		}
+
 		bucketInfos = append(bucketInfos, bucketElem)
 	}
 	return bucketInfos, nil

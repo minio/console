@@ -446,25 +446,23 @@ const Console = ({
                 }}
               />
             </div>
-            <Container className={classes.container}>
-              <Router history={history}>
-                <Switch>
-                  {allowedRoutes.map((route: any) => (
-                    <Route
-                      key={route.path}
-                      exact
-                      path={route.path}
-                      children={(routerProps) => (
-                        <route.component {...routerProps} {...route.props} />
-                      )}
-                    />
-                  ))}
-                  {allowedRoutes.length > 0 ? (
-                    <Redirect to={allowedRoutes[0].path} />
-                  ) : null}
-                </Switch>
-              </Router>
-            </Container>
+            <Router history={history}>
+              <Switch>
+                {allowedRoutes.map((route: any) => (
+                  <Route
+                    key={route.path}
+                    exact
+                    path={route.path}
+                    children={(routerProps) => (
+                      <route.component {...routerProps} {...route.props} />
+                    )}
+                  />
+                ))}
+                {allowedRoutes.length > 0 ? (
+                  <Redirect to={allowedRoutes[0].path} />
+                ) : null}
+              </Switch>
+            </Router>
           </main>
         </div>
       ) : null}

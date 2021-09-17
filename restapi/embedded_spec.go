@@ -3623,9 +3623,63 @@ func init() {
         "creation_date": {
           "type": "string"
         },
+        "details": {
+          "type": "object",
+          "properties": {
+            "locking": {
+              "type": "boolean"
+            },
+            "quota": {
+              "type": "object",
+              "properties": {
+                "quota": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "fifo",
+                    "hard"
+                  ]
+                }
+              }
+            },
+            "replication": {
+              "type": "boolean"
+            },
+            "tags": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "versioning": {
+              "type": "boolean"
+            },
+            "versioningSuspended": {
+              "type": "boolean"
+            }
+          }
+        },
         "name": {
           "type": "string",
           "minLength": 3
+        },
+        "objects": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "rw_access": {
+          "type": "object",
+          "properties": {
+            "read": {
+              "type": "boolean"
+            },
+            "write": {
+              "type": "boolean"
+            }
+          }
         },
         "size": {
           "type": "integer",
@@ -8974,6 +9028,72 @@ func init() {
     }
   },
   "definitions": {
+    "BucketDetails": {
+      "type": "object",
+      "properties": {
+        "locking": {
+          "type": "boolean"
+        },
+        "quota": {
+          "type": "object",
+          "properties": {
+            "quota": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "fifo",
+                "hard"
+              ]
+            }
+          }
+        },
+        "replication": {
+          "type": "boolean"
+        },
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "versioning": {
+          "type": "boolean"
+        },
+        "versioningSuspended": {
+          "type": "boolean"
+        }
+      }
+    },
+    "BucketDetailsQuota": {
+      "type": "object",
+      "properties": {
+        "quota": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "fifo",
+            "hard"
+          ]
+        }
+      }
+    },
+    "BucketRwAccess": {
+      "type": "object",
+      "properties": {
+        "read": {
+          "type": "boolean"
+        },
+        "write": {
+          "type": "boolean"
+        }
+      }
+    },
     "WidgetDetailsOptions": {
       "type": "object",
       "properties": {
@@ -9237,9 +9357,63 @@ func init() {
         "creation_date": {
           "type": "string"
         },
+        "details": {
+          "type": "object",
+          "properties": {
+            "locking": {
+              "type": "boolean"
+            },
+            "quota": {
+              "type": "object",
+              "properties": {
+                "quota": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "fifo",
+                    "hard"
+                  ]
+                }
+              }
+            },
+            "replication": {
+              "type": "boolean"
+            },
+            "tags": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "versioning": {
+              "type": "boolean"
+            },
+            "versioningSuspended": {
+              "type": "boolean"
+            }
+          }
+        },
         "name": {
           "type": "string",
           "minLength": 3
+        },
+        "objects": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "rw_access": {
+          "type": "object",
+          "properties": {
+            "read": {
+              "type": "boolean"
+            },
+            "write": {
+              "type": "boolean"
+            }
+          }
         },
         "size": {
           "type": "integer",
