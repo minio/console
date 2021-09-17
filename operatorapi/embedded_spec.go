@@ -709,6 +709,83 @@ func init() {
         }
       }
     },
+    "/namespaces/{namespace}/tenants/{tenant}/monitoring": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Get Prometheus Monitoring config info For The Tenant",
+        "operationId": "GetTenantMonitoring",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/tenantMonitoringInfo"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Configure Prometheus monitoring on tenant",
+        "operationId": "ConfigureMonitoring",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/configureTenantRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
     "/namespaces/{namespace}/tenants/{tenant}/pods": {
       "get": {
         "tags": [
@@ -1520,6 +1597,14 @@ func init() {
         },
         "serialNumber": {
           "type": "string"
+        }
+      }
+    },
+    "configureTenantRequest": {
+      "type": "object",
+      "properties": {
+        "prometheusEnabled": {
+          "type": "boolean"
         }
       }
     },
@@ -2943,6 +3028,14 @@ func init() {
         }
       }
     },
+    "tenantMonitoringInfo": {
+      "type": "object",
+      "properties": {
+        "prometheusEnabled": {
+          "type": "boolean"
+        }
+      }
+    },
     "tenantPod": {
       "type": "object",
       "required": [
@@ -3877,6 +3970,83 @@ func init() {
             "required": true,
             "schema": {
               "$ref": "#/definitions/encryptionConfiguration"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      }
+    },
+    "/namespaces/{namespace}/tenants/{tenant}/monitoring": {
+      "get": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Get Prometheus Monitoring config info For The Tenant",
+        "operationId": "GetTenantMonitoring",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/tenantMonitoringInfo"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "OperatorAPI"
+        ],
+        "summary": "Configure Prometheus monitoring on tenant",
+        "operationId": "ConfigureMonitoring",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "namespace",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "tenant",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/configureTenantRequest"
             }
           }
         ],
@@ -5432,6 +5602,14 @@ func init() {
         }
       }
     },
+    "configureTenantRequest": {
+      "type": "object",
+      "properties": {
+        "prometheusEnabled": {
+          "type": "boolean"
+        }
+      }
+    },
     "createTenantRequest": {
       "type": "object",
       "required": [
@@ -6702,6 +6880,14 @@ func init() {
         },
         "volume_count": {
           "type": "integer"
+        }
+      }
+    },
+    "tenantMonitoringInfo": {
+      "type": "object",
+      "properties": {
+        "prometheusEnabled": {
+          "type": "boolean"
         }
       }
     },

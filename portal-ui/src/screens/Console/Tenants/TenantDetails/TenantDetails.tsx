@@ -45,6 +45,7 @@ import TenantLicense from "./TenantLicense";
 import PoolsSummary from "./PoolsSummary";
 import PodsSummary from "./PodsSummary";
 import VolumesSummary from "./VolumesSummary";
+import MonitoringDetails from "./MonitoringDetails";
 import TenantMetrics from "./TenantMetrics";
 import TenantSecurity from "./TenantSecurity";
 import List from "@mui/material/List";
@@ -221,6 +222,7 @@ const TenantDetails = ({
       case "volumes":
       case "metrics":
       case "license":
+      case "monitoring":
       case "security":
         setTenantTab(section);
         break;
@@ -346,6 +348,16 @@ const TenantDetails = ({
         return currentTab === "license";
       },
     },
+    {
+      label: "Monitoring",
+      value: "Monitioring",
+      onclick: (val) => {
+        changeRoute("monitoring");
+      },
+      selected: () => {
+        return currentTab === "monitoring";
+      },
+    },
   ];
 
   let value = menu[0].value;
@@ -453,46 +465,18 @@ const TenantDetails = ({
             }
           />
         </Grid>
-        <Grid item xs={12} sm={12} md={2}>
-          <Box display={{ xs: "none", sm: "none", md: "block" }}>
-            <List component="nav" dense={true}>
-              {menu.map((mli) => {
-                return (
-                  <ListItem
-                    button
-                    selected={mli.selected()}
-                    onClick={() => {
-                      mli.onclick(mli.value);
-                    }}
-                  >
-                    <ListItemText primary={mli.label} />
-                  </ListItem>
-                );
-              })}
-            </List>
-          </Box>
-          <Box display={{ xs: "block", sm: "block", md: "none" }}>
-            <Tabs
-              value={value}
-              indicatorColor="primary"
-              textColor="primary"
-              variant="scrollable"
-              scrollButtons="auto"
-              aria-label="scrollable auto tabs example"
-            >
-              {menu.map((mli) => {
-                return (
-                  <Tab
-                    label={mli.label}
-                    value={mli.value}
-                    onClick={() => {
-                      mli.onclick(mli.value);
-                    }}
-                  />
-                );
-              })}
-            </Tabs>
-          </Box>
+        <Grid item xs={2}>
+          {menu.map((mli) => {
+            return (
+              <Tab
+                label={mli.label}
+                value={mli.value}
+                onClick={() => {
+                  mli.onclick(mli.value);
+                }}
+              />
+            );
+          })}
         </Grid>
         <Grid item xs={12} sm={12} md={10}>
           <Router history={history}>
@@ -524,6 +508,10 @@ const TenantDetails = ({
               <Route
                 path="/namespaces/:tenantNamespace/tenants/:tenantName/volumes"
                 component={VolumesSummary}
+              />
+              <Route
+                path="/namespaces/:tenantNamespace/tenants/:tenantName/monitoring"
+                component={MonitoringDetails}
               />
               <Route
                 path="/namespaces/:tenantNamespace/tenants/:tenantName/license"

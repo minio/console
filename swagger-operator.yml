@@ -665,6 +665,57 @@ paths:
       tags:
         - OperatorAPI
 
+  /namespaces/{namespace}/tenants/{tenant}/monitoring:
+    get:
+      summary: Get Prometheus Monitoring config info For The Tenant
+      operationId: GetTenantMonitoring
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+              $ref: "#/definitions/tenantMonitoringInfo"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI 
+    post:
+      summary: Configure Prometheus monitoring on tenant
+      operationId: ConfigureMonitoring
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          type: string
+        - name: tenant
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/configureTenantRequest"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/error"
+      tags:
+        - OperatorAPI    
+
   /namespaces/{namespace}/tenants/{tenant}/certificates:
     put:
       summary: Tenant Update Certificates
@@ -2331,6 +2382,18 @@ definitions:
     type: array
     items:
       $ref: "#/definitions/eventListElement"
+
+  configureTenantRequest:
+    type: object
+    properties:
+      prometheusEnabled:
+        type: boolean    
+        
+  tenantMonitoringInfo:
+    type: object
+    properties:
+      prometheusEnabled:
+        type: boolean    
 
   eventListElement:
     type: object

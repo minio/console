@@ -2372,7 +2372,7 @@ func init() {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Logout from Console.",
+        "summary": "Logout from Operator.",
         "operationId": "Logout",
         "responses": {
           "200": {
@@ -7980,7 +7980,7 @@ func init() {
         "tags": [
           "UserAPI"
         ],
-        "summary": "Logout from Console.",
+        "summary": "Logout from Operator.",
         "operationId": "Logout",
         "responses": {
           "200": {

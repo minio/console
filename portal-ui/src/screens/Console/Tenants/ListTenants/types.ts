@@ -83,6 +83,14 @@ export interface ITenantStatus {
   usage?: ITenantStatusUsage;
 }
 
+export interface IMonitoringInfo {
+  prometheusEnabled: boolean;
+}
+
+export interface IMonitoringInfo {
+  prometheusEnabled: boolean;
+}
+
 export interface ITenant {
   total_size: number;
   name: string;
