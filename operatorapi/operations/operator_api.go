@@ -99,6 +99,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		OperatorAPIGetResourceQuotaHandler: operator_api.GetResourceQuotaHandlerFunc(func(params operator_api.GetResourceQuotaParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.GetResourceQuota has not yet been implemented")
 		}),
+		OperatorAPIGetTenantMonitoringHandler: operator_api.GetTenantMonitoringHandlerFunc(func(params operator_api.GetTenantMonitoringParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.GetTenantMonitoring has not yet been implemented")
+		}),
 		OperatorAPIGetTenantPodsHandler: operator_api.GetTenantPodsHandlerFunc(func(params operator_api.GetTenantPodsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.GetTenantPods has not yet been implemented")
 		}),
@@ -140,6 +143,9 @@ func NewOperatorAPI(spec *loads.Document) *OperatorAPI {
 		}),
 		UserAPISessionCheckHandler: user_api.SessionCheckHandlerFunc(func(params user_api.SessionCheckParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user_api.SessionCheck has not yet been implemented")
+		}),
+		OperatorAPISetTenantMonitoringHandler: operator_api.SetTenantMonitoringHandlerFunc(func(params operator_api.SetTenantMonitoringParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation operator_api.SetTenantMonitoring has not yet been implemented")
 		}),
 		OperatorAPISubscriptionActivateHandler: operator_api.SubscriptionActivateHandlerFunc(func(params operator_api.SubscriptionActivateParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation operator_api.SubscriptionActivate has not yet been implemented")
@@ -250,6 +256,8 @@ type OperatorAPI struct {
 	OperatorAPIGetPodLogsHandler operator_api.GetPodLogsHandler
 	// OperatorAPIGetResourceQuotaHandler sets the operation handler for the get resource quota operation
 	OperatorAPIGetResourceQuotaHandler operator_api.GetResourceQuotaHandler
+	// OperatorAPIGetTenantMonitoringHandler sets the operation handler for the get tenant monitoring operation
+	OperatorAPIGetTenantMonitoringHandler operator_api.GetTenantMonitoringHandler
 	// OperatorAPIGetTenantPodsHandler sets the operation handler for the get tenant pods operation
 	OperatorAPIGetTenantPodsHandler operator_api.GetTenantPodsHandler
 	// OperatorAPIGetTenantUsageHandler sets the operation handler for the get tenant usage operation
@@ -278,6 +286,8 @@ type OperatorAPI struct {
 	OperatorAPIPutTenantYAMLHandler operator_api.PutTenantYAMLHandler
 	// UserAPISessionCheckHandler sets the operation handler for the session check operation
 	UserAPISessionCheckHandler user_api.SessionCheckHandler
+	// OperatorAPISetTenantMonitoringHandler sets the operation handler for the set tenant monitoring operation
+	OperatorAPISetTenantMonitoringHandler operator_api.SetTenantMonitoringHandler
 	// OperatorAPISubscriptionActivateHandler sets the operation handler for the subscription activate operation
 	OperatorAPISubscriptionActivateHandler operator_api.SubscriptionActivateHandler
 	// OperatorAPISubscriptionInfoHandler sets the operation handler for the subscription info operation
@@ -419,6 +429,9 @@ func (o *OperatorAPI) Validate() error {
 	if o.OperatorAPIGetResourceQuotaHandler == nil {
 		unregistered = append(unregistered, "operator_api.GetResourceQuotaHandler")
 	}
+	if o.OperatorAPIGetTenantMonitoringHandler == nil {
+		unregistered = append(unregistered, "operator_api.GetTenantMonitoringHandler")
+	}
 	if o.OperatorAPIGetTenantPodsHandler == nil {
 		unregistered = append(unregistered, "operator_api.GetTenantPodsHandler")
 	}
@@ -460,6 +473,9 @@ func (o *OperatorAPI) Validate() error {
 	}
 	if o.UserAPISessionCheckHandler == nil {
 		unregistered = append(unregistered, "user_api.SessionCheckHandler")
+	}
+	if o.OperatorAPISetTenantMonitoringHandler == nil {
+		unregistered = append(unregistered, "operator_api.SetTenantMonitoringHandler")
 	}
 	if o.OperatorAPISubscriptionActivateHandler == nil {
 		unregistered = append(unregistered, "operator_api.SubscriptionActivateHandler")
@@ -646,6 +662,10 @@ func (o *OperatorAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/monitoring"] = operator_api.NewGetTenantMonitoring(o.context, o.OperatorAPIGetTenantMonitoringHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/namespaces/{namespace}/tenants/{tenant}/pods"] = operator_api.NewGetTenantPods(o.context, o.OperatorAPIGetTenantPodsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -699,6 +719,10 @@ func (o *OperatorAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/session"] = user_api.NewSessionCheck(o.context, o.UserAPISessionCheckHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/namespaces/{namespace}/tenants/{tenant}/monitoring"] = operator_api.NewSetTenantMonitoring(o.context, o.OperatorAPISetTenantMonitoringHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
