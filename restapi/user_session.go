@@ -17,38 +17,39 @@
 package restapi
 
 import (
-	"context"
+	"net/http"
+	"net/url"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/acl"
 	"github.com/minio/console/restapi/operations"
 	"github.com/minio/console/restapi/operations/user_api"
-	"github.com/minio/madmin-go"
 )
 
-func validateDistributedMode(session *models.Principal) bool {
-	ctx := context.Background()
-	mAdmin, err := NewMinioAdminClient(session)
-
-	// We couldn't create the client, return false
+func isErasureMode() bool {
+	u, err := url.Parse(getMinIOServer())
 	if err != nil {
+		panic(err)
+	}
+	u.Path = "/minio/health/cluster"
+
+	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
+	if err != nil {
+		panic(err)
+	}
+
+	clnt := GetConsoleHTTPClient()
+	resp, err := clnt.Do(req)
+	if err != nil {
+		panic(err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
 		return false
 	}
-	// create a minioClient interface implementation
-	client := AdminClient{Client: mAdmin}
 
-	info, err := client.AccountInfo(ctx)
-
-	// We couldn't retrieve admin information, default to true for legacy reasons
-	// TODO: Revert to false after August 15th 2021
-	if err != nil {
-		return true
-	}
-
-	backendInfo := info.Server
-
-	return backendInfo.Type == madmin.Erasure
+	return resp.Header.Get("x-minio-write-quorum") != ""
 }
 
 func registerSessionHandlers(api *operations.ConsoleAPI) {
@@ -74,7 +75,7 @@ func getSessionResponse(session *models.Principal) (*models.SessionResponse, *mo
 		Features:        getListOfEnabledFeatures(),
 		Status:          models.SessionResponseStatusOk,
 		Operator:        false,
-		DistributedMode: validateDistributedMode(session),
+		DistributedMode: isErasureMode(),
 	}
 	return sessionResp, nil
 }
