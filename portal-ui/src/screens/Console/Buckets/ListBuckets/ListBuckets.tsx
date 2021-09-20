@@ -276,10 +276,54 @@ const ListBuckets = ({
           <Fragment>
             <Grid
               container
-              direction="row-reverse"
+              direction="row"
               justifyContent="flex-end"
               alignItems="center"
             >
+              <Box display={{ xs: "none", sm: "none", md: "block" }}>
+                <Grid item>
+                  <div className={classes.theaderSearchLabel}>
+                    Search Buckets:
+                  </div>
+                </Grid>
+              </Box>
+              <Box display={{ xs: "block", sm: "block", md: "none" }}>
+                <TextField
+                  className={classes.theaderSearch}
+                  variant={"outlined"}
+                  id="search-resource"
+                  placeholder={"Search Buckets"}
+                  onChange={(val) => {
+                    setFilterBuckets(val.target.value);
+                  }}
+                  inputProps={{
+                    disableUnderline: true,
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Box>
+              <Box display={{ xs: "none", sm: "none", md: "block" }}>
+                <TextField
+                  className={classes.theaderSearch}
+                  variant={"outlined"}
+                  id="search-resource"
+                  onChange={(val) => {
+                    setFilterBuckets(val.target.value);
+                  }}
+                  inputProps={{
+                    disableUnderline: true,
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Box>
               {canCreateBucket && (
                 <Grid item>
                   <Button
@@ -294,53 +338,6 @@ const ListBuckets = ({
                   </Button>
                 </Grid>
               )}
-
-              <Grid item>
-                <Box display={{ xs: "block", sm: "block", md: "none" }}>
-                  <TextField
-                    className={classes.theaderSearch}
-                    variant={"outlined"}
-                    id="search-resource"
-                    placeholder={"Search Buckets"}
-                    onChange={(val) => {
-                      setFilterBuckets(val.target.value);
-                    }}
-                    inputProps={{
-                      disableUnderline: true,
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <SearchIcon />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Box>
-                <Box display={{ xs: "none", sm: "none", md: "block" }}>
-                  <TextField
-                    className={classes.theaderSearch}
-                    variant={"outlined"}
-                    id="search-resource"
-                    onChange={(val) => {
-                      setFilterBuckets(val.target.value);
-                    }}
-                    inputProps={{
-                      disableUnderline: true,
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <SearchIcon />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Box>
-              </Grid>
-              <Box display={{ xs: "none", sm: "none", md: "block" }}>
-                <Grid item>
-                  <div className={classes.theaderSearchLabel}>
-                    Search Buckets:
-                  </div>
-                </Grid>
-              </Box>
             </Grid>
           </Fragment>
         }
