@@ -127,10 +127,10 @@ export const radioIcons = {
 
 export const containerForHeader = (bottomSpacing: any) => ({
   container: {
-    padding: "82px 8px 0",
+    padding: "8px 16px 0",
     "& h6": {
       color: "#777777",
-      fontSize: 14,
+      fontSize: 30,
     },
     "& p": {
       "& span:not(*[class*='smallUnit'])": {
@@ -735,7 +735,7 @@ const commonStateIcon = {
   marginRight: 10,
   lineHeight: 1,
   display: "inline-flex",
-  marginTop: 6 ,
+  marginTop: 6,
 };
 
 export const commonDashboardInfocard = {
@@ -804,7 +804,6 @@ export const commonDashboardInfocard = {
     },
   },
   cardContainer: {
-    border: "#EEF1F4 2px solid",
     borderRadius: 10,
     boxShadow: "0 0 15px #00000029",
     maxWidth: 1185,
@@ -826,7 +825,6 @@ export const commonDashboardInfocard = {
     alignItems: "center" as const,
     lineHeight: 1,
     fontWeight: "bold" as const,
-    textTransform: "capitalize" as const,
     "& .MuiSvgIcon-root": {
       width: 10,
       height: 10,

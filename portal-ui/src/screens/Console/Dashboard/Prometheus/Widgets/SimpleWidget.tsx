@@ -43,8 +43,8 @@ const styles = (theme: Theme) =>
       marginRight: 10,
     },
     widgetValue: {
-        marginRight: 25,
-    }
+      marginRight: 25,
+    },
   });
 
 const SimpleWidget = ({ classes, iconWidget, label, value }: ISimpleWidget) => {

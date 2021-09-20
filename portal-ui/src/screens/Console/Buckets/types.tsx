@@ -14,10 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+export interface RwAccess {
+  write: boolean;
+  read: boolean;
+}
+
 export interface Bucket {
   name: string;
   creation_date: Date;
-  size?: string;
+  size?: number;
+  objects?: number;
+  rw_access?: RwAccess;
 }
 
 export interface BucketEncryptionInfo {
