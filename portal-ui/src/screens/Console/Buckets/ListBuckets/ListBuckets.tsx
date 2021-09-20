@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState, Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Box, Button, OutlinedInput, Typography } from "@material-ui/core";
+import { Box, Button } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -27,11 +27,7 @@ import { AddIcon, WatchIcon } from "../../../../icons";
 import { AppState } from "../../../../store";
 import { addBucketOpen, addBucketReset } from "../actions";
 import { setErrorSnackMessage } from "../../../../actions";
-import {
-  actionsTray,
-  containerForHeader,
-  searchField,
-} from "../../Common/FormComponents/common/styleLibrary";
+import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../common/types";
 import api from "../../../../common/api";
 import AddBucket from "./AddBucket";
@@ -306,11 +302,10 @@ const ListBuckets = ({
                     variant={"outlined"}
                     id="search-resource"
                     placeholder={"Search Buckets"}
-                    labelWidth={0}
                     onChange={(val) => {
                       setFilterBuckets(val.target.value);
                     }}
-                    InputProps={{
+                    inputProps={{
                       disableUnderline: true,
                       endAdornment: (
                         <InputAdornment position="end">
@@ -325,11 +320,10 @@ const ListBuckets = ({
                     className={classes.theaderSearch}
                     variant={"outlined"}
                     id="search-resource"
-                    labelWidth={0}
                     onChange={(val) => {
                       setFilterBuckets(val.target.value);
                     }}
-                    InputProps={{
+                    inputProps={{
                       disableUnderline: true,
                       endAdornment: (
                         <InputAdornment position="end">
