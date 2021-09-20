@@ -287,11 +287,11 @@ func getBucketVersionedResponse(session *models.Principal, bucketName string) (*
 	return bucketVResponse, nil
 }
 
-var serverBackend madmin.BackendInfo
+var serverBackendType madmin.BackendType
 var serverBackendOnce sync.Once
 
 func isErasureBackend() bool {
-	return serverBackend.Type == madmin.Erasure
+	return serverBackendType == madmin.Erasure
 }
 
 // getAccountInfo fetches a list of all buckets allowed to that particular client from MinIO Servers
@@ -302,7 +302,7 @@ func getAccountInfo(ctx context.Context, client MinioAdmin) ([]*models.Bucket, e
 	}
 
 	serverBackendOnce.Do(func() {
-		serverBackend = info.Server
+		serverBackendType = info.Server.Type
 	})
 
 	var bucketInfos []*models.Bucket
