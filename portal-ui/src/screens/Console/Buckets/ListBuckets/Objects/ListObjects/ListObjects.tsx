@@ -96,6 +96,7 @@ import {
   FileXlsIcon,
   FileZipIcon,
 } from "../../../../../../icons";
+import ShareFile from "../ObjectDetails/ShareFile";
 
 const commonIcon = {
   backgroundRepeat: "no-repeat",
@@ -263,6 +264,7 @@ const ListObjects = ({
   const [selectedPreview, setSelectedPreview] = useState<BucketObject | null>(
     null
   );
+  const [shareFileModalOpen, setShareFileModalOpen] = useState<boolean>(false);
 
   const internalPaths = get(match.params, "subpaths", "");
   const bucketName = match.params["bucketName"];
@@ -628,8 +630,17 @@ const ListObjects = ({
 
   const openPreview = (fileObject: BucketObject) => {
     setSelectedPreview(fileObject);
-
     setPreviewOpen(true);
+  };
+
+  const openShare = (fileObject: BucketObject) => {
+    setSelectedPreview(fileObject);
+    setShareFileModalOpen(true);
+  };
+
+  const closeShareModal = () => {
+    setShareFileModalOpen(false);
+    setSelectedPreview(null);
   };
 
   const tableActions = [
@@ -639,6 +650,11 @@ const ListObjects = ({
       onClick: openPreview,
       disableButtonFunction: (item: string) =>
         extensionPreview(item) === "none",
+    },
+    {
+      type: "share",
+      onClick: openShare,
+      disableButtonFunction: (item: string) => item.endsWith("/"),
     },
     {
       type: "download",
@@ -788,13 +804,11 @@ const ListObjects = ({
 
   const rewindCloseModal = (refresh: boolean) => {
     setRewindSelect(false);
-
-    if (refresh) {
-    }
   };
 
   const closePreviewWindow = () => {
     setPreviewOpen(false);
+    setSelectedPreview(null);
   };
 
   const selectListObjects = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -873,6 +887,18 @@ const ListObjects = ({
 
   return (
     <React.Fragment>
+      {shareFileModalOpen && selectedPreview && (
+        <ShareFile
+          open={shareFileModalOpen}
+          closeModalAndRefresh={closeShareModal}
+          bucketName={bucketName}
+          dataObject={{
+            name: selectedPreview.name,
+            last_modified: "",
+            version_id: selectedPreview.version_id,
+          }}
+        />
+      )}
       {deleteOpen && (
         <DeleteObject
           deleteOpen={deleteOpen}
