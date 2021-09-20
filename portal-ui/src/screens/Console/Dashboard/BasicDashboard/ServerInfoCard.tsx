@@ -24,8 +24,6 @@ import { CircleIcon, VersionIcon } from "../../../../icons";
 import get from "lodash/get";
 import { commonDashboardInfocard } from "../../Common/FormComponents/common/styleLibrary";
 
-
-
 const styles = (theme: Theme) =>
   createStyles({
     ...commonDashboardInfocard,
