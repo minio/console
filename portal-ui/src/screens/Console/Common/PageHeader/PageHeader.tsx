@@ -62,7 +62,6 @@ const PageHeader = ({
       container
       className={classes.headerContainer}
       direction="row"
-      justifyContent="flex-end"
       alignItems="center"
     >
       <Box display={{ xs: "block", sm: "block", md: "none" }}>
