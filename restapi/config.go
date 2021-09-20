@@ -20,6 +20,7 @@ import (
 	"crypto/x509"
 	"io/ioutil"
 	"net"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -59,27 +60,19 @@ func GetMinIORegion() string {
 }
 
 func getMinIOEndpoint() string {
-	server := getMinIOServer()
-	if strings.Contains(server, "://") {
-		parts := strings.Split(server, "://")
-		if len(parts) > 1 {
-			server = parts[1]
-		}
+	u, err := url.Parse(getMinIOServer())
+	if err != nil {
+		panic(err)
 	}
-	return server
+	return u.Host
 }
 
 func getMinIOEndpointIsSecure() bool {
-	server := getMinIOServer()
-	if strings.Contains(server, "://") {
-		parts := strings.Split(server, "://")
-		if len(parts) > 1 {
-			if parts[0] == "https" {
-				return true
-			}
-		}
+	u, err := url.Parse(getMinIOServer())
+	if err != nil {
+		panic(err)
 	}
-	return false
+	return u.Scheme == "https"
 }
 
 // GetHostname gets console hostname set on env variable,
