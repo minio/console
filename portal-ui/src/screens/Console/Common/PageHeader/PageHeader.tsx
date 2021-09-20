@@ -6,13 +6,14 @@ import { AppState } from "../../../../store";
 import { connect } from "react-redux";
 import OperatorLogo from "../../../../icons/OperatorLogo";
 import ConsoleLogo from "../../../../icons/ConsoleLogo";
+import { Box } from "@material-ui/core";
 
 const styles = (theme: Theme) =>
   createStyles({
     headerContainer: {
-      position: "absolute",
+      // position: "absolute",
       width: "100%",
-      height: 77,
+      minHeight: 77,
       display: "flex",
       backgroundColor: "#fff",
       borderBottom: "2px solid",
@@ -32,8 +33,7 @@ const styles = (theme: Theme) =>
       marginTop: 8,
     },
     rightMenu: {
-      marginTop: 16,
-      marginRight: 8,
+      textAlign: "right",
     },
     logo: {
       marginLeft: 34,
@@ -61,9 +61,15 @@ const PageHeader = ({
     <Grid
       container
       className={classes.headerContainer}
-      justify={"space-between"}
+      direction="row"
+      alignItems="center"
     >
-      <Grid item className={classes.label}>
+      <Box display={{ xs: "block", sm: "block", md: "none" }}>
+        <Grid item xs={12} style={{ height: 10 }}>
+          &nbsp;
+        </Grid>
+      </Box>
+      <Grid item xs={12} sm={12} md={6} className={classes.label}>
         {!sidebarOpen && (
           <div className={classes.logo}>
             {operatorMode ? <OperatorLogo /> : <ConsoleLogo />}
@@ -74,7 +80,7 @@ const PageHeader = ({
         </Typography>
       </Grid>
       {actions && (
-        <Grid item className={classes.rightMenu}>
+        <Grid item xs={12} sm={12} md={6} className={classes.rightMenu}>
           {actions}
         </Grid>
       )}

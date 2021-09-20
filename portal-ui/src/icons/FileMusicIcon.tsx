@@ -20,12 +20,7 @@ import { SvgIcon, SvgIconProps } from "@material-ui/core";
 const FileMusicIcon = (props: SvgIconProps) => {
   return (
     <SvgIcon {...props}>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="1em"
-        height="1em"
-        viewBox="0 0 217.438 256"
-      >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 217.438 256">
         <g data-name="Grupo 1552">
           <path
             data-name="Trazado 470"

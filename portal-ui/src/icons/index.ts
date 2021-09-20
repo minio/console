@@ -31,7 +31,6 @@ export { default as HealIcon } from "./HealIcon";
 export { default as OperatorLogo } from "./OperatorLogo";
 export { default as DeleteIcon } from "./DeleteIcon";
 export { default as ReportedUsageIcon } from "./ReportedUsageIcon";
-export { default as UsageIcon } from "./UsageIcon";
 export { default as PermissionIcon } from "./PermissionIcon";
 export { default as AccountIcon } from "./AccountIcon";
 export { default as DiagnosticIcon } from "./DiagnosticIcon";
@@ -96,3 +95,6 @@ export { default as FilePptIcon } from "./FilePptIcon";
 export { default as FileDbIcon } from "./FileDbIcon";
 export { default as FileTxtIcon } from "./FileTxtIcon";
 export { default as FileVideoIcon } from "./FileVideoIcon";
+
+export { default as ArrowRightIcon } from "./ArrowRightIcon";
+export { default as CalendarIcon } from "./CalendarIcon";

@@ -4,12 +4,7 @@ import { SvgIcon, SvgIconProps } from "@material-ui/core";
 const FileZipIcon = (props: SvgIconProps) => {
   return (
     <SvgIcon {...props}>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="1em"
-        height="1em"
-        viewBox="0 0 217.439 256"
-      >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 217.439 256">
         <g transform="translate(3467.334 -3812.007)">
           <path
             data-name="Trazado 436"

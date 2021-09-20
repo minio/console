@@ -13,70 +13,117 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React, { Fragment } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { BucketsIcon } from "../../../../icons";
-import DeleteIcon from "@material-ui/icons/Delete";
+import {
+  ArrowRightIcon,
+  BucketsIcon,
+  CalendarIcon,
+  LockIcon,
+  ReportedUsageIcon,
+  SettingsIcon,
+  TotalObjectsIcon,
+} from "../../../../icons";
 import { Bucket } from "../types";
-import { niceBytes } from "../../../../common/utils";
-import { IconButton, Tooltip } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Grid,
+  Typography,
+} from "@material-ui/core";
+import { niceBytes, prettyNumber } from "../../../../common/utils";
 import CheckboxWrapper from "../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
-    linkContainer: {
-      textDecoration: "none",
-      position: "relative",
-      color: "initial",
-      textAlign: "center",
-      border: "#EAEDEE 1px solid",
-      borderRadius: 3,
-      padding: 15,
-      backgroundColor: "#fff",
-      width: 200,
-      margin: 10,
-      zIndex: 200,
-      "&:hover": {
-        backgroundColor: "#EAEAEA",
-        "& .innerElement": {
-          visibility: "visible",
+    root: {
+      marginBottom: 30,
+      border: 0,
+      borderRadius: 10,
+      color: theme.palette.primary.main,
+      boxShadow: "0px 0px 15px #00000029",
+      "& .MuiSvgIcon-root": {
+        height: 13,
+      },
+      "& .MuiCardHeader-content": {
+        wordWrap: "break-word",
+        overflowWrap: "break-word",
+        wordBreak: "break-all",
+        // height: 90,
+        font: "normal normal bold 24px/27px Lato",
+        color: theme.palette.primary.main,
+
+        "& .MuiTypography-root": {
+          fontSize: 19,
+          fontWeight: "bold",
+          "& .MuiSvgIcon-root": {
+            position: "relative",
+            top: 4,
+            marginRight: 4,
+            height: "24px !important",
+          },
         },
       },
-      "& .innerElement": {
-        visibility: "hidden",
+      "& .MuiCardHeader-root": {
+        background:
+          "transparent linear-gradient(0deg, #EEF1F44E 0%, #FFFFFF 100%) 0% 0% no-repeat padding-box",
       },
     },
-    bucketName: {
-      fontSize: 14,
-      fontWeight: "bold",
-      whiteSpace: "nowrap",
-      textOverflow: "ellipsis",
-      overflow: "hidden",
-      width: "100%",
-      display: "block",
-    },
-    bucketsIcon: {
-      width: 40,
-      height: 40,
-      color: "#393939",
-    },
-    bucketSize: {
-      color: "#777",
-      fontSize: 10,
-    },
-    deleteButton: {
-      position: "absolute",
-      zIndex: 300,
-      top: 0,
-      right: 0,
-    },
     checkBoxElement: {
-      zIndex: 500,
-      position: "absolute",
-      display: "block",
-      bottom: 0,
-      left: 0,
+      width: 32,
+      height: 32,
+      float: "left",
+      overflow: "hidden",
+      "& div": {
+        position: "absolute",
+      },
+    },
+    buttonTray: {
+      textAlign: "right",
+    },
+    viewButton: {
+      width: 111,
+      color: "white",
+      backgroundColor: "#C83B51",
+      fontSize: 12,
+      fontWeight: "normal",
+      boxShadow: "unset",
+      borderRadius: 4,
+    },
+    manageButton: {
+      borderRadius: 4,
+      width: 111,
+      color: theme.palette.grey["700"],
+      textTransform: "unset",
+      fontSize: 12,
+      fontWeight: "normal",
+      "& .MuiButton-endIcon": {
+        "& .MuiSvgIcon-root": {
+          fontSize: 18,
+        },
+      },
+    },
+    divider: {
+      backgroundColor: theme.palette.grey["200"],
+      marginTop: 10,
+      marginBottom: 4,
+    },
+    metricLabel: {
+      fontSize: 16,
+      fontWeight: "bold",
+    },
+    metricText: {
+      fontSize: 50,
+      fontWeight: "bold",
+      marginBottom: 10,
+    },
+    unit: {
+      fontSize: 12,
+      fontWeight: "normal",
     },
   });
 
@@ -86,6 +133,7 @@ interface IBucketListItem {
   onDelete: (bucketName: string) => void;
   onSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   selected: boolean;
+  bulkSelect: boolean;
 }
 
 const BucketListItem = ({
@@ -94,61 +142,124 @@ const BucketListItem = ({
   onDelete,
   onSelect,
   selected,
+  bulkSelect,
 }: IBucketListItem) => {
-  const onDeleteClick = (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onDelete(bucket.name);
-  };
+  const usage = niceBytes(`${bucket.size}` || "0");
+  const usageScalar = usage.split(" ")[0];
+  const usageUnit = usage.split(" ")[1];
 
+  const accessToStr = (bucket: Bucket): string => {
+    if (bucket.rw_access?.read && !bucket.rw_access?.write) {
+      return "R";
+    } else if (!bucket.rw_access?.read && bucket.rw_access?.write) {
+      return "W";
+    } else if (bucket.rw_access?.read && bucket.rw_access?.write) {
+      return "R/W";
+    }
+    return "";
+  };
   const onCheckboxClick = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
     onSelect(e);
   };
 
   return (
-    <Fragment>
-      <Link
-        to={`/buckets/${bucket.name}/browse`}
-        className={classes.linkContainer}
-      >
-        <Tooltip title={`Delete ${bucket.name} bucket`}>
-          <IconButton
-            color="secondary"
-            aria-label="Delete Bucket"
-            component="span"
-            onClick={onDeleteClick}
-            className={`innerElement ${classes.deleteButton}`}
-          >
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-        <BucketsIcon width={40} height={40} className={classes.bucketsIcon} />
-        <br />
-        <Tooltip title={bucket.name}>
-          <span className={classes.bucketName}>{bucket.name}</span>
-        </Tooltip>
-        <span className={classes.bucketSize}>
-          <strong>Used Space:</strong> {niceBytes(bucket.size || "0")}
-        </span>
-        <span
-          className={classes.checkBoxElement}
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-        >
-          <CheckboxWrapper
-            checked={selected}
-            id={`select-${bucket.name}`}
-            label={""}
-            name={`select-${bucket.name}`}
-            onChange={onCheckboxClick}
-            value={bucket.name}
-          />
-        </span>
-      </Link>
-    </Fragment>
+    <Card className={classes.root}>
+      <CardHeader
+        disableTypography={true}
+        title={
+          <Typography variant={"body1"}>
+            {bulkSelect && (
+              <div
+                className={classes.checkBoxElement}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <CheckboxWrapper
+                  checked={selected}
+                  id={`select-${bucket.name}`}
+                  label={""}
+                  name={`select-${bucket.name}`}
+                  onChange={onCheckboxClick}
+                  value={bucket.name}
+                />
+              </div>
+            )}
+
+            <BucketsIcon />
+            {bucket.name}
+          </Typography>
+        }
+      />
+      <CardContent>
+        <Grid container>
+          <Grid item xs={12} sm={8} md={10}>
+            <Grid container>
+              <Grid item xs={12} md={6}>
+                <Typography variant="body2">
+                  <CalendarIcon /> Created: <b>{bucket.creation_date}</b>
+                </Typography>
+                <Typography variant="body2">
+                  <LockIcon /> Access: <b> {accessToStr(bucket)}</b>
+                </Typography>
+              </Grid>
+              <Grid item xs={6} md={3}>
+                <Typography variant="body1" className={classes.metricLabel}>
+                  <ReportedUsageIcon /> USAGE
+                </Typography>
+                <div className={classes.metricText}>
+                  {usageScalar}
+                  <span className={classes.unit}>{usageUnit}</span>
+                </div>
+              </Grid>
+              <Grid item xs={6} md={3}>
+                <Typography variant="body1" className={classes.metricLabel}>
+                  <TotalObjectsIcon /> OBJECTS
+                </Typography>
+                <div className={classes.metricText}>
+                  {bucket.objects ? prettyNumber(bucket.objects) : 0}
+                </div>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} sm={4} md={2} className={classes.buttonTray}>
+            <Grid container>
+              <Grid item xs={6} sm={12} md={12}>
+                <Link
+                  to={`/buckets/${bucket.name}/browse`}
+                  style={{ textDecoration: "none" }}
+                >
+                  <Button
+                    variant="contained"
+                    endIcon={<ArrowRightIcon />}
+                    className={classes.viewButton}
+                  >
+                    Browse
+                  </Button>
+                </Link>
+                <Box display={{ xs: "none", sm: "block" }}>
+                  <div style={{ marginBottom: 10 }} />
+                </Box>
+              </Grid>
+              <Grid item xs={6} sm={12} md={12}>
+                <Link
+                  to={`/buckets/${bucket.name}/admin`}
+                  style={{ textDecoration: "none" }}
+                >
+                  <Button
+                    variant={"outlined"}
+                    endIcon={<SettingsIcon />}
+                    className={classes.manageButton}
+                  >
+                    Manage
+                  </Button>
+                </Link>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </CardContent>
+    </Card>
   );
 };
 

@@ -24,6 +24,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -42,10 +43,19 @@ type Bucket struct {
 	// creation date
 	CreationDate string `json:"creation_date,omitempty"`
 
+	// details
+	Details *BucketDetails `json:"details,omitempty"`
+
 	// name
 	// Required: true
 	// Min Length: 3
 	Name *string `json:"name"`
+
+	// objects
+	Objects int64 `json:"objects,omitempty"`
+
+	// rw access
+	RwAccess *BucketRwAccess `json:"rw_access,omitempty"`
 
 	// size
 	Size int64 `json:"size,omitempty"`
@@ -59,7 +69,15 @@ func (m *Bucket) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateDetails(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRwAccess(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -86,6 +104,23 @@ func (m *Bucket) validateAccess(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *Bucket) validateDetails(formats strfmt.Registry) error {
+	if swag.IsZero(m.Details) { // not required
+		return nil
+	}
+
+	if m.Details != nil {
+		if err := m.Details.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("details")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *Bucket) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
@@ -99,11 +134,36 @@ func (m *Bucket) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *Bucket) validateRwAccess(formats strfmt.Registry) error {
+	if swag.IsZero(m.RwAccess) { // not required
+		return nil
+	}
+
+	if m.RwAccess != nil {
+		if err := m.RwAccess.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("rw_access")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 // ContextValidate validate this bucket based on the context it is used
 func (m *Bucket) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.contextValidateAccess(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateDetails(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRwAccess(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -127,6 +187,34 @@ func (m *Bucket) contextValidateAccess(ctx context.Context, formats strfmt.Regis
 	return nil
 }
 
+func (m *Bucket) contextValidateDetails(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Details != nil {
+		if err := m.Details.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("details")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Bucket) contextValidateRwAccess(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.RwAccess != nil {
+		if err := m.RwAccess.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("rw_access")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 // MarshalBinary interface implementation
 func (m *Bucket) MarshalBinary() ([]byte, error) {
 	if m == nil {
@@ -138,6 +226,239 @@ func (m *Bucket) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *Bucket) UnmarshalBinary(b []byte) error {
 	var res Bucket
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// BucketDetails bucket details
+//
+// swagger:model BucketDetails
+type BucketDetails struct {
+
+	// locking
+	Locking bool `json:"locking,omitempty"`
+
+	// quota
+	Quota *BucketDetailsQuota `json:"quota,omitempty"`
+
+	// replication
+	Replication bool `json:"replication,omitempty"`
+
+	// tags
+	Tags map[string]string `json:"tags,omitempty"`
+
+	// versioning
+	Versioning bool `json:"versioning,omitempty"`
+
+	// versioning suspended
+	VersioningSuspended bool `json:"versioningSuspended,omitempty"`
+}
+
+// Validate validates this bucket details
+func (m *BucketDetails) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateQuota(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *BucketDetails) validateQuota(formats strfmt.Registry) error {
+	if swag.IsZero(m.Quota) { // not required
+		return nil
+	}
+
+	if m.Quota != nil {
+		if err := m.Quota.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("details" + "." + "quota")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this bucket details based on the context it is used
+func (m *BucketDetails) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateQuota(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *BucketDetails) contextValidateQuota(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Quota != nil {
+		if err := m.Quota.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("details" + "." + "quota")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *BucketDetails) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *BucketDetails) UnmarshalBinary(b []byte) error {
+	var res BucketDetails
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// BucketDetailsQuota bucket details quota
+//
+// swagger:model BucketDetailsQuota
+type BucketDetailsQuota struct {
+
+	// quota
+	Quota int64 `json:"quota,omitempty"`
+
+	// type
+	// Enum: [fifo hard]
+	Type string `json:"type,omitempty"`
+}
+
+// Validate validates this bucket details quota
+func (m *BucketDetailsQuota) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var bucketDetailsQuotaTypeTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["fifo","hard"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		bucketDetailsQuotaTypeTypePropEnum = append(bucketDetailsQuotaTypeTypePropEnum, v)
+	}
+}
+
+const (
+
+	// BucketDetailsQuotaTypeFifo captures enum value "fifo"
+	BucketDetailsQuotaTypeFifo string = "fifo"
+
+	// BucketDetailsQuotaTypeHard captures enum value "hard"
+	BucketDetailsQuotaTypeHard string = "hard"
+)
+
+// prop value enum
+func (m *BucketDetailsQuota) validateTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, bucketDetailsQuotaTypeTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *BucketDetailsQuota) validateType(formats strfmt.Registry) error {
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateTypeEnum("details"+"."+"quota"+"."+"type", "body", m.Type); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this bucket details quota based on context it is used
+func (m *BucketDetailsQuota) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *BucketDetailsQuota) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *BucketDetailsQuota) UnmarshalBinary(b []byte) error {
+	var res BucketDetailsQuota
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// BucketRwAccess bucket rw access
+//
+// swagger:model BucketRwAccess
+type BucketRwAccess struct {
+
+	// read
+	Read bool `json:"read,omitempty"`
+
+	// write
+	Write bool `json:"write,omitempty"`
+}
+
+// Validate validates this bucket rw access
+func (m *BucketRwAccess) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this bucket rw access based on context it is used
+func (m *BucketRwAccess) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *BucketRwAccess) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *BucketRwAccess) UnmarshalBinary(b []byte) error {
+	var res BucketRwAccess
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
