@@ -103,7 +103,6 @@ const AddTenant = ({
     const exposeMinIO = fields.configure.exposeMinIO;
     const exposeConsole = fields.configure.exposeConsole;
     const idpSelection = fields.identityProvider.idpSelection;
-    const openIDURL = fields.identityProvider.openIDURL;
     const openIDConfigurationURL =
       fields.identityProvider.openIDConfigurationURL;
     const openIDClientID = fields.identityProvider.openIDClientID;
@@ -525,7 +524,6 @@ const AddTenant = ({
         case "OpenID":
           dataIDP = {
             oidc: {
-              url: openIDURL,
               configuration_url: openIDConfigurationURL,
               client_id: openIDClientID,
               secret_id: openIDSecretID,

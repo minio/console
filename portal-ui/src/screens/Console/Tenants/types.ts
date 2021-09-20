@@ -151,7 +151,6 @@ export interface IIdentityProviderFields {
   idpSelection: string;
   accessKeys: string[];
   secretKeys: string[];
-  openIDURL: string;
   openIDConfigurationURL: string;
   openIDClientID: string;
   openIDSecretID: string;

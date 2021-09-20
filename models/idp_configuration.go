@@ -407,10 +407,6 @@ type IdpConfigurationOidc struct {
 	// secret id
 	// Required: true
 	SecretID *string `json:"secret_id"`
-
-	// url
-	// Required: true
-	URL *string `json:"url"`
 }
 
 // Validate validates this idp configuration oidc
@@ -430,10 +426,6 @@ func (m *IdpConfigurationOidc) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateSecretID(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateURL(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -473,15 +465,6 @@ func (m *IdpConfigurationOidc) validateConfigurationURL(formats strfmt.Registry)
 func (m *IdpConfigurationOidc) validateSecretID(formats strfmt.Registry) error {
 
 	if err := validate.Required("oidc"+"."+"secret_id", "body", m.SecretID); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *IdpConfigurationOidc) validateURL(formats strfmt.Registry) error {
-
-	if err := validate.Required("oidc"+"."+"url", "body", m.URL); err != nil {
 		return err
 	}
 

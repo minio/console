@@ -1058,13 +1058,13 @@ func getTenantCreatedResponse(session *models.Principal, params operator_api.Cre
 		} else if tenantReq.Idp.Oidc != nil {
 			tenantExternalIDPConfigured = true
 			// Enable IDP (OIDC) for MinIO
-			url := *tenantReq.Idp.Oidc.ConfigurationURL
+			configurationURL := *tenantReq.Idp.Oidc.ConfigurationURL
 			clientID := *tenantReq.Idp.Oidc.ClientID
 			secretID := *tenantReq.Idp.Oidc.SecretID
 			claimName := *tenantReq.Idp.Oidc.ClaimName
 			scopes := tenantReq.Idp.Oidc.Scopes
 			callbackURL := tenantReq.Idp.Oidc.CallbackURL
-			tenantConfigurationENV["MINIO_IDENTITY_OPENID_CONFIG_URL"] = url
+			tenantConfigurationENV["MINIO_IDENTITY_OPENID_CONFIG_URL"] = configurationURL
 			tenantConfigurationENV["MINIO_IDENTITY_OPENID_CLIENT_ID"] = clientID
 			tenantConfigurationENV["MINIO_IDENTITY_OPENID_CLIENT_SECRET"] = secretID
 			tenantConfigurationENV["MINIO_IDENTITY_OPENID_CLAIM_NAME"] = claimName

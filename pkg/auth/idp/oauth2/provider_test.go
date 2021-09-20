@@ -21,7 +21,6 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/coreos/go-oidc"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/oauth2"
 )
@@ -58,7 +57,6 @@ func TestGenerateLoginURL(t *testing.T) {
 	funcAssert := assert.New(t)
 	oauth2Provider := Provider{
 		oauth2Config: Oauth2configMock{},
-		oidcProvider: &oidc.Provider{},
 	}
 	// Test-1 : GenerateLoginURL() generates URL correctly with provided state
 	oauth2ConfigAuthCodeURLMock = func(state string, opts ...oauth2.AuthCodeOption) string {

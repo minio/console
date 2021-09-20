@@ -20,6 +20,7 @@ import (
 	"context"
 	"crypto/sha1"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -30,7 +31,6 @@ import (
 
 	"github.com/minio/minio-go/v7/pkg/credentials"
 
-	"github.com/coreos/go-oidc"
 	"github.com/minio/console/pkg/auth/utils"
 	"golang.org/x/crypto/pbkdf2"
 	"golang.org/x/oauth2"
@@ -47,6 +47,24 @@ type Configuration interface {
 
 type Config struct {
 	xoauth2.Config
+}
+
+// DiscoveryDoc - parses the output from openid-configuration
+// for example https://accounts.google.com/.well-known/openid-configuration
+type DiscoveryDoc struct {
+	Issuer                           string   `json:"issuer,omitempty"`
+	AuthEndpoint                     string   `json:"authorization_endpoint,omitempty"`
+	TokenEndpoint                    string   `json:"token_endpoint,omitempty"`
+	UserInfoEndpoint                 string   `json:"userinfo_endpoint,omitempty"`
+	RevocationEndpoint               string   `json:"revocation_endpoint,omitempty"`
+	JwksURI                          string   `json:"jwks_uri,omitempty"`
+	ResponseTypesSupported           []string `json:"response_types_supported,omitempty"`
+	SubjectTypesSupported            []string `json:"subject_types_supported,omitempty"`
+	IDTokenSigningAlgValuesSupported []string `json:"id_token_signing_alg_values_supported,omitempty"`
+	ScopesSupported                  []string `json:"scopes_supported,omitempty"`
+	TokenEndpointAuthMethods         []string `json:"token_endpoint_auth_methods_supported,omitempty"`
+	ClaimsSupported                  []string `json:"claims_supported,omitempty"`
+	CodeChallengeMethodsSupported    []string `json:"code_challenge_methods_supported,omitempty"`
 }
 
 func (ac Config) Exchange(ctx context.Context, code string, opts ...xoauth2.AuthCodeOption) (*xoauth2.Token, error) {
@@ -92,7 +110,6 @@ type Provider struct {
 	// if enabled means that we need extrace access_token as well
 	UserInfo       bool
 	oauth2Config   Configuration
-	oidcProvider   *oidc.Provider
 	provHTTPClient *http.Client
 }
 
@@ -105,9 +122,9 @@ var derivedKey = func() []byte {
 // NewOauth2ProviderClient instantiates a new oauth2 client using the configured credentials
 // it returns a *Provider object that contains the necessary configuration to initiate an
 // oauth2 authentication flow
-func NewOauth2ProviderClient(ctx context.Context, scopes []string, httpClient *http.Client) (*Provider, error) {
-	customCtx := oidc.ClientContext(ctx, httpClient)
-	provider, err := oidc.NewProvider(customCtx, GetIDPURL())
+func NewOauth2ProviderClient(scopes []string, httpClient *http.Client) (*Provider, error) {
+
+	ddoc, err := parseDiscoveryDoc(GetIDPURL(), httpClient)
 	if err != nil {
 		return nil, err
 	}
@@ -118,17 +135,20 @@ func NewOauth2ProviderClient(ctx context.Context, scopes []string, httpClient *h
 	}
 
 	// add "openid" scope always.
-	scopes = append(scopes, oidc.ScopeOpenID)
+	scopes = append(scopes, "openid")
 
 	client := new(Provider)
 	client.oauth2Config = &xoauth2.Config{
 		ClientID:     GetIDPClientID(),
 		ClientSecret: GetIDPSecret(),
 		RedirectURL:  GetIDPCallbackURL(),
-		Endpoint:     provider.Endpoint(),
-		Scopes:       scopes,
+		Endpoint: oauth2.Endpoint{
+			AuthURL:  ddoc.AuthEndpoint,
+			TokenURL: ddoc.TokenEndpoint,
+		},
+		Scopes: scopes,
 	}
-	client.oidcProvider = provider
+
 	client.ClientID = GetIDPClientID()
 	client.UserInfo = GetIDPUserInfo()
 	client.provHTTPClient = httpClient
@@ -239,6 +259,32 @@ func validateOauth2State(state string) error {
 		return fmt.Errorf("oauth2 state is invalid, expected %s, got %s", calculatedHmac, incomingHmac)
 	}
 	return nil
+}
+
+// parseDiscoveryDoc parses a discovery doc from an OAuth provider
+// into a DiscoveryDoc struct that have the correct endpoints
+func parseDiscoveryDoc(ustr string, httpClient *http.Client) (DiscoveryDoc, error) {
+	d := DiscoveryDoc{}
+	req, err := http.NewRequest(http.MethodGet, ustr, nil)
+	if err != nil {
+		return d, err
+	}
+	clnt := http.Client{
+		Transport: httpClient.Transport,
+	}
+	resp, err := clnt.Do(req)
+	if err != nil {
+		return d, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return d, err
+	}
+	dec := json.NewDecoder(resp.Body)
+	if err = dec.Decode(&d); err != nil {
+		return d, err
+	}
+	return d, nil
 }
 
 // GetRandomStateWithHMAC computes message + hmac(message, pbkdf2(key, salt)) to be used as state during the oauth authorization
