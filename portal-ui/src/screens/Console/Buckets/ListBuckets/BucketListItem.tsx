@@ -159,8 +159,6 @@ const BucketListItem = ({
     return "";
   };
   const onCheckboxClick = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
     onSelect(e);
   };
 

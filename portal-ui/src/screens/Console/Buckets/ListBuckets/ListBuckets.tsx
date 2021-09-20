@@ -77,6 +77,14 @@ const styles = (theme: Theme) =>
         color: "white",
       },
     },
+    bulkSelect: {
+      "&:hover": {
+        backgroundColor: theme.palette.primary.main,
+      },
+      "&.MuiButton-contained": {
+        backgroundColor: theme.palette.primary.main,
+      },
+    },
     theaderSearchLabel: {
       color: theme.palette.grey["400"],
     },
@@ -92,6 +100,14 @@ const styles = (theme: Theme) =>
             color: theme.palette.grey["400"],
             height: 14,
           },
+        },
+      },
+      addBucket: {
+        marginRight: 8,
+      },
+      actionHeaderItems: {
+        "@media (min-width: 320px)": {
+          marginTop: 8,
         },
       },
       marginRight: 10,
@@ -279,6 +295,7 @@ const ListBuckets = ({
               direction="row"
               justifyContent="flex-end"
               alignItems="center"
+              className={classes.actionHeaderItems}
             >
               <Box display={{ xs: "none", sm: "none", md: "block" }}>
                 <Grid item>
@@ -333,6 +350,7 @@ const ListBuckets = ({
                     onClick={() => {
                       addBucketOpen(true);
                     }}
+                    className={classes.addBucket}
                   >
                     Create Bucket
                   </Button>
@@ -352,6 +370,7 @@ const ListBuckets = ({
               }}
               endIcon={<WatchIcon />}
               size={"small"}
+              className={classes.bulkSelect}
             >
               Bulk Select
             </Button>
