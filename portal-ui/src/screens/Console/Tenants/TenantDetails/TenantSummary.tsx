@@ -175,32 +175,10 @@ const TenantSummary = ({
 
   useEffect(() => {
     if (tenant) {
-      const res = tenant;
-
-      const resPools = !res.pools ? [] : res.pools;
-
-      let totalInstances = 0;
-      let totalVolumes = 0;
-      let poolNamedIndex = 0;
-      for (let pool of resPools) {
-        const cap =
-          pool.volumes_per_server *
-          pool.servers *
-          pool.volume_configuration.size;
-        pool.label = `pool-${poolNamedIndex}`;
-        if (pool.name === undefined || pool.name === "") {
-          pool.name = pool.label;
-        }
-        pool.capacity = niceBytes(cap + "");
-        pool.volumes = pool.servers * pool.volumes_per_server;
-        totalInstances += pool.servers;
-        totalVolumes += pool.volumes;
-        poolNamedIndex += 1;
-      }
-      setCapacity(res.total_size || 0);
-      setPoolCount(resPools.length);
-      setVolumes(totalVolumes);
-      setInstances(totalInstances);
+      setCapacity(tenant.total_size || 0);
+      setPoolCount(tenant.pools.length);
+      setVolumes(tenant.total_volumes || 0);
+      setInstances(tenant.total_instances || 0);
     }
   }, [tenant]);
 
