@@ -74,6 +74,10 @@ interface IEncryptionProps {
   vaultSecret: string;
   vaultRetry: string;
   vaultPing: string;
+  azureEndpoint: string;
+  azureTenantID: string;
+  azureClientID: string;
+  azureClientSecret: string;
   gcpProjectID: string;
   gcpEndpoint: string;
   gcpClientEmail: string;
@@ -132,6 +136,10 @@ const Encryption = ({
   vaultSecret,
   vaultRetry,
   vaultPing,
+  azureEndpoint,
+  azureTenantID,
+  azureClientID,
+  azureClientSecret,
   gcpProjectID,
   gcpEndpoint,
   gcpClientEmail,
@@ -293,6 +301,32 @@ const Encryption = ({
           },
         ];
       }
+
+      if (encryptionType === "azure") {
+        encryptionValidation = [
+          ...encryptionValidation,
+          {
+            fieldKey: "azure_endpoint",
+            required: true,
+            value: azureEndpoint,
+          },
+          {
+            fieldKey: "azure_tenant_id",
+            required: true,
+            value: azureTenantID,
+          },
+          {
+            fieldKey: "azure_client_id",
+            required: true,
+            value: azureClientID,
+          },
+          {
+            fieldKey: "azure_client_secret",
+            required: true,
+            value: azureClientSecret,
+          },
+        ];
+      }
     }
 
     const commonVal = commonFormValidation(encryptionValidation);
@@ -318,6 +352,15 @@ const Encryption = ({
     gemaltoDomain,
     gemaltoRetry,
     gcpProjectID,
+    gcpEndpoint,
+    gcpClientEmail,
+    gcpClientID,
+    gcpPrivateKeyID,
+    gcpPrivateKey,
+    azureEndpoint,
+    azureTenantID,
+    azureClientID,
+    azureClientSecret,
     isPageValid,
     enableAutoCert,
     enableCustomCerts,
@@ -367,6 +410,7 @@ const Encryption = ({
                 { label: "AWS", value: "aws" },
                 { label: "Gemalto", value: "gemalto" },
                 { label: "GCP", value: "gcp" },
+                { label: "Azure", value: "azure" },
               ]}
             />
           </Grid>
@@ -626,6 +670,63 @@ const Encryption = ({
                   label="Ping (Seconds)"
                   value={vaultPing}
                   error={validationErrors["vault_ping"] || ""}
+                />
+              </Grid>
+            </Fragment>
+          )}
+          {encryptionType === "azure" && (
+            <Fragment>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="azure_endpoint"
+                  name="azure_endpoint"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    updateField("azureEndpoint", e.target.value);
+                    cleanValidation("azure_endpoint");
+                  }}
+                  label="Endpoint"
+                  value={azureEndpoint}
+                  error={validationErrors["azure_endpoint"] || ""}
+                />
+              </Grid>
+              <h5>Credentials</h5>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="azure_tenant_id"
+                  name="azure_tenant_id"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    updateField("azureTenantID", e.target.value);
+                    cleanValidation("azure_tenant_id");
+                  }}
+                  label="Tenant ID"
+                  value={azureTenantID}
+                  error={validationErrors["azure_tenant_id"] || ""}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="azure_client_id"
+                  name="azure_client_id"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    updateField("azureClientID", e.target.value);
+                    cleanValidation("azure_client_id");
+                  }}
+                  label="Client ID"
+                  value={azureClientID}
+                  error={validationErrors["azure_client_id"] || ""}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <InputBoxWrapper
+                  id="azure_client_secret"
+                  name="azure_client_secret"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    updateField("azureClientSecret", e.target.value);
+                    cleanValidation("azure_client_secret");
+                  }}
+                  label="Client Secret"
+                  value={azureClientSecret}
+                  error={validationErrors["azure_client_secret"] || ""}
                 />
               </Grid>
             </Fragment>
@@ -890,6 +991,11 @@ const mapState = (state: AppState) => ({
   vaultSecret: state.tenants.createTenant.fields.encryption.vaultSecret,
   vaultRetry: state.tenants.createTenant.fields.encryption.vaultRetry,
   vaultPing: state.tenants.createTenant.fields.encryption.vaultPing,
+  azureEndpoint: state.tenants.createTenant.fields.encryption.azureEndpoint,
+  azureTenantID: state.tenants.createTenant.fields.encryption.azureTenantID,
+  azureClientID: state.tenants.createTenant.fields.encryption.azureClientID,
+  azureClientSecret:
+    state.tenants.createTenant.fields.encryption.azureClientSecret,
   gcpProjectID: state.tenants.createTenant.fields.encryption.gcpProjectID,
   gcpEndpoint: state.tenants.createTenant.fields.encryption.gcpEndpoint,
   gcpClientEmail: state.tenants.createTenant.fields.encryption.gcpClientEmail,

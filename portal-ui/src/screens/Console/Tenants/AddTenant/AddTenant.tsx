@@ -157,6 +157,10 @@ const AddTenant = ({
     const vaultSecret = fields.encryption.vaultSecret;
     const vaultRetry = fields.encryption.vaultRetry;
     const vaultPing = fields.encryption.vaultPing;
+    const azureEndpoint = fields.encryption.azureEndpoint;
+    const azureTenantID = fields.encryption.azureTenantID;
+    const azureClientID = fields.encryption.azureClientID;
+    const azureClientSecret = fields.encryption.azureClientSecret;
     const gcpProjectID = fields.encryption.gcpProjectID;
     const gcpEndpoint = fields.encryption.gcpEndpoint;
     const gcpClientEmail = fields.encryption.gcpClientEmail;
@@ -401,6 +405,20 @@ const AddTenant = ({
                     accesskey: awsAccessKey,
                     secretkey: awsSecretKey,
                     token: awsToken,
+                  },
+                },
+              },
+            };
+            break;
+          case "azure":
+            insertEncrypt = {
+              azure: {
+                keyvault: {
+                  endpoint: azureEndpoint,
+                  credentials: {
+                    tenant_id: azureTenantID,
+                    client_id: azureClientID,
+                    client_secret: azureClientSecret,
                   },
                 },
               },

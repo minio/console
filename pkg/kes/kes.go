@@ -130,12 +130,28 @@ type Gcp struct {
 	SecretManager *GcpSecretManager `yaml:"secretmanager,omitempty"`
 }
 
+type AzureCredentials struct {
+	TenantID     string `yaml:"tenant_id"`
+	ClientID     string `yaml:"client_id"`
+	ClientSecret string `yaml:"client_secret"`
+}
+
+type AzureKeyVault struct {
+	Endpoint    string            `yaml:"endpoint,omitempty"`
+	Credentials *AzureCredentials `yaml:"credentials,omitempty"`
+}
+
+type Azure struct {
+	KeyVault *AzureKeyVault `yaml:"keyvault,omitempty"`
+}
+
 type Keys struct {
 	Fs      *Fs      `yaml:"fs,omitempty"`
 	Vault   *Vault   `yaml:"vault,omitempty"`
 	Aws     *Aws     `yaml:"aws,omitempty"`
 	Gemalto *Gemalto `yaml:"gemalto,omitempty"`
 	Gcp     *Gcp     `yaml:"gcp,omitempty"`
+	Azure   *Azure   `yaml:"azure,omitempty"`
 }
 
 type ServerConfig struct {

@@ -201,6 +201,10 @@ export interface IEncryptionFields {
   vaultSecret: string;
   vaultRetry: string;
   vaultPing: string;
+  azureEndpoint: string;
+  azureTenantID: string;
+  azureClientID: string;
+  azureClientSecret: string;
   gcpProjectID: string;
   gcpEndpoint: string;
   gcpClientEmail: string;

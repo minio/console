@@ -39,6 +39,9 @@ type EncryptionConfiguration struct {
 	// aws
 	Aws *AwsConfiguration `json:"aws,omitempty"`
 
+	// azure
+	Azure *AzureConfiguration `json:"azure,omitempty"`
+
 	// client
 	Client *KeyPairConfiguration `json:"client,omitempty"`
 
@@ -74,6 +77,8 @@ func (m *EncryptionConfiguration) UnmarshalJSON(raw []byte) error {
 	var dataAO1 struct {
 		Aws *AwsConfiguration `json:"aws,omitempty"`
 
+		Azure *AzureConfiguration `json:"azure,omitempty"`
+
 		Client *KeyPairConfiguration `json:"client,omitempty"`
 
 		Gcp *GcpConfiguration `json:"gcp,omitempty"`
@@ -93,6 +98,8 @@ func (m *EncryptionConfiguration) UnmarshalJSON(raw []byte) error {
 	}
 
 	m.Aws = dataAO1.Aws
+
+	m.Azure = dataAO1.Azure
 
 	m.Client = dataAO1.Client
 
@@ -123,6 +130,8 @@ func (m EncryptionConfiguration) MarshalJSON() ([]byte, error) {
 	var dataAO1 struct {
 		Aws *AwsConfiguration `json:"aws,omitempty"`
 
+		Azure *AzureConfiguration `json:"azure,omitempty"`
+
 		Client *KeyPairConfiguration `json:"client,omitempty"`
 
 		Gcp *GcpConfiguration `json:"gcp,omitempty"`
@@ -139,6 +148,8 @@ func (m EncryptionConfiguration) MarshalJSON() ([]byte, error) {
 	}
 
 	dataAO1.Aws = m.Aws
+
+	dataAO1.Azure = m.Azure
 
 	dataAO1.Client = m.Client
 
@@ -172,6 +183,10 @@ func (m *EncryptionConfiguration) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateAws(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateAzure(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -211,6 +226,24 @@ func (m *EncryptionConfiguration) validateAws(formats strfmt.Registry) error {
 		if err := m.Aws.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("aws")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EncryptionConfiguration) validateAzure(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Azure) { // not required
+		return nil
+	}
+
+	if m.Azure != nil {
+		if err := m.Azure.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("azure")
 			}
 			return err
 		}
@@ -322,6 +355,10 @@ func (m *EncryptionConfiguration) ContextValidate(ctx context.Context, formats s
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateAzure(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateClient(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -354,6 +391,20 @@ func (m *EncryptionConfiguration) contextValidateAws(ctx context.Context, format
 		if err := m.Aws.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("aws")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EncryptionConfiguration) contextValidateAzure(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Azure != nil {
+		if err := m.Azure.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("azure")
 			}
 			return err
 		}
