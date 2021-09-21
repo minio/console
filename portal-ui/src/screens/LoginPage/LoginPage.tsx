@@ -29,19 +29,18 @@ import {
   Theme,
   withStyles,
 } from "@material-ui/core/styles";
-import request from "superagent";
-import ErrorIcon from "@material-ui/icons/Error";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { ILoginDetails, loginStrategyType } from "./types";
 import { SystemState } from "../../types";
-import { userLoggedIn } from "../../actions";
+import { setErrorSnackMessage, userLoggedIn } from "../../actions";
 import { ErrorResponseHandler } from "../../common/types";
 import api from "../../common/api";
 import history from "../../history";
 import RefreshIcon from "../../icons/RefreshIcon";
+import MainError from "../Console/Common/MainError/MainError";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -180,13 +179,14 @@ const mapState = (state: SystemState) => ({
   loggedIn: state.loggedIn,
 });
 
-const connector = connect(mapState, { userLoggedIn });
+const connector = connect(mapState, { userLoggedIn, setErrorSnackMessage });
 
 // The inferred type will look like:
 // {isOn: boolean, toggleOn: () => void}
 
 interface ILoginProps {
   userLoggedIn: typeof userLoggedIn;
+  setErrorSnackMessage: typeof setErrorSnackMessage;
   classes: any;
 }
 
@@ -198,16 +198,21 @@ interface LoginStrategyPayload {
   [key: string]: any;
 }
 
-const Login = ({ classes, userLoggedIn }: ILoginProps) => {
+const Login = ({
+  classes,
+  userLoggedIn,
+  setErrorSnackMessage,
+}: ILoginProps) => {
   const [accessKey, setAccessKey] = useState<string>("");
   const [jwt, setJwt] = useState<string>("");
   const [secretKey, setSecretKey] = useState<string>("");
-  const [error, setError] = useState<ErrorResponseHandler | null>(null);
   const [loginStrategy, setLoginStrategy] = useState<ILoginDetails>({
     loginStrategy: loginStrategyType.unknown,
     redirect: "",
   });
   const [loginSending, setLoginSending] = useState<boolean>(false);
+  const [loadingFetchConfiguration, setLoadingFetchConfiguration] =
+    useState<boolean>(false);
 
   const loginStrategyEndpoints: LoginStrategyRoutes = {
     form: "/api/v1/login",
@@ -219,51 +224,39 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
   };
 
   const fetchConfiguration = () => {
+    setLoadingFetchConfiguration(true);
     api
       .invoke("GET", "/api/v1/login")
       .then((loginDetails: ILoginDetails) => {
         setLoginStrategy(loginDetails);
-        setError(null);
-        if (
-          loginDetails.loginStrategy === "redirect" &&
-          loginDetails.redirect !== ""
-        ) {
-          //location.href = loginDetails.redirect;
-        }
+        setLoadingFetchConfiguration(false);
       })
       .catch((err: ErrorResponseHandler) => {
-        setError(err);
+        setErrorSnackMessage(err);
+        setLoadingFetchConfiguration(false);
       });
   };
 
   const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoginSending(true);
-    request
-      .post(
-        loginStrategyEndpoints[loginStrategy.loginStrategy] || "/api/v1/login"
+    api
+      .invoke(
+        "POST",
+        loginStrategyEndpoints[loginStrategy.loginStrategy] || "/api/v1/login",
+        loginStrategyPayload[loginStrategy.loginStrategy]
       )
-      .send(loginStrategyPayload[loginStrategy.loginStrategy])
-      .then((res: any) => {
-        const bodyResponse = res.body;
-        if (bodyResponse.error) {
-          setLoginSending(false);
-          // throw will be moved to catch block once bad login returns 403
-          throw bodyResponse.error;
-        }
-      })
       .then(() => {
         // We set the state in redux
         userLoggedIn(true);
         if (loginStrategy.loginStrategy === loginStrategyType.form) {
           localStorage.setItem("userLoggedIn", btoa(accessKey));
         }
-
         history.push("/");
       })
       .catch((err) => {
         setLoginSending(false);
-        setError({ detailedError: "", errorMessage: err.message });
+        setErrorSnackMessage(err);
       });
   };
 
@@ -409,12 +402,12 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
     default:
       loginComponent = (
         <div className={classes.loaderAlignment}>
-          {error === null ? (
+          {loadingFetchConfiguration ? (
             <CircularProgress className={classes.loadingLoginStrategy} />
           ) : (
             <React.Fragment>
               <div>
-                <p>An error has ocurred, the backend cannot be reached.</p>
+                <p>An error has occurred, the backend cannot be reached.</p>
               </div>
               <div>
                 <Button
@@ -436,13 +429,8 @@ const Login = ({ classes, userLoggedIn }: ILoginProps) => {
 
   return (
     <React.Fragment>
-      {error !== null && (
-        <div className={classes.errorBlock}>
-          <ErrorIcon fontSize="small" className={classes.errorIconStyle} />{" "}
-          {error.errorMessage}
-        </div>
-      )}
       <Paper className={classes.paper}>
+        <MainError customStyle={{ marginTop: -140 }} />
         <Grid container className={classes.mainContainer}>
           <Grid item xs={7} className={classes.theOcean}>
             <div className={classes.oceanBg} />

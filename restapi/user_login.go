@@ -163,11 +163,11 @@ func getLoginResponse(lr *models.LoginRequest) (*models.LoginResponse, *models.E
 	// prepare console credentials
 	consolCreds, err := getConsoleCredentials(ctx, *lr.AccessKey, *lr.SecretKey)
 	if err != nil {
-		return nil, prepareError(errInvalidCredentials, nil, err)
+		return nil, prepareError(err, errInvalidCredentials, err)
 	}
 	sessionID, err := login(consolCreds)
 	if err != nil {
-		return nil, prepareError(errInvalidCredentials, nil, err)
+		return nil, prepareError(err, errInvalidCredentials, err)
 	}
 	// serialize output
 	loginResponse := &models.LoginResponse{
@@ -186,7 +186,7 @@ func getLoginDetailsResponse() (*models.LoginDetails, *models.Error) {
 		// initialize new oauth2 client
 		oauth2Client, err := oauth2.NewOauth2ProviderClient(nil, GetConsoleHTTPClient())
 		if err != nil {
-			return nil, prepareError(err)
+			return nil, prepareError(err, errOauth2Provider)
 		}
 		// Validate user against IDP
 		identityProvider := &auth.IdentityProvider{Client: oauth2Client}

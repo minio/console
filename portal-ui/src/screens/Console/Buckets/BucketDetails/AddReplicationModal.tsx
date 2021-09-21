@@ -344,8 +344,6 @@ const AddReplicationModal = ({
                 name="deleteMarker"
                 label="Delete Marker"
                 onChange={(e) => {
-                  console.log(e);
-                  console.log(e.target.checked);
                   setRepDeleteMarker(e.target.checked);
                 }}
                 value={repDeleteMarker}
