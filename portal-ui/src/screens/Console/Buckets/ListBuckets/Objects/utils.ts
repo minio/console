@@ -51,6 +51,7 @@ export const extensionPreview = (
     "jpeg",
     "gif",
     "png",
+    "heic",
   ];
   const textExtensions = ["pdf", "txt"];
   const audioExtensions = ["wav", "mp3", "alac", "aiff", "dsd", "pcm"];
