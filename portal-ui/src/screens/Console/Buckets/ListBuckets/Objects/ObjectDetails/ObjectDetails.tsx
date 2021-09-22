@@ -247,7 +247,6 @@ const ObjectDetails = ({
   const [deleteTagModalOpen, setDeleteTagModalOpen] = useState<boolean>(false);
   const [selectedTag, setSelectedTag] = useState<string[]>(["", ""]);
   const [legalholdOpen, setLegalholdOpen] = useState<boolean>(false);
-  // const [actualInfo, setActualInfo] = useState<IFileInfo | null>(emptyFile);
   const [actualInfo, setActualInfo] = useState<IFileInfo | null>(null);
   const [versions, setVersions] = useState<IFileInfo[]>([]);
   const [filterVersion, setFilterVersion] = useState<string>("");
