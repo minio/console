@@ -103,6 +103,8 @@ export interface ITenant {
   // computed
   capacity: string;
   subnet_license: LicenseInfo;
+  total_instances?: number;
+  total_volumes?: number;
 }
 
 export interface ITenantsResponse {

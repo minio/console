@@ -166,6 +166,30 @@ const TenantDetails = ({
           `/api/v1/namespaces/${tenantNamespace}/tenants/${tenantName}`
         )
         .then((res: ITenant) => {
+          // add computed fields
+          const resPools = !res.pools ? [] : res.pools;
+
+          let totalInstances = 0;
+          let totalVolumes = 0;
+          let poolNamedIndex = 0;
+          for (let pool of resPools) {
+            const cap =
+              pool.volumes_per_server *
+              pool.servers *
+              pool.volume_configuration.size;
+            pool.label = `pool-${poolNamedIndex}`;
+            if (pool.name === undefined || pool.name === "") {
+              pool.name = pool.label;
+            }
+            pool.capacity = niceBytes(cap + "");
+            pool.volumes = pool.servers * pool.volumes_per_server;
+            totalInstances += pool.servers;
+            totalVolumes += pool.volumes;
+            poolNamedIndex += 1;
+          }
+          res.total_instances = totalInstances;
+          res.total_volumes = totalVolumes;
+
           setTenantInfo(res);
           setTenantDetailsLoad(false);
         })
