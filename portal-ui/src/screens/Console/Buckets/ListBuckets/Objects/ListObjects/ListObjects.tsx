@@ -794,7 +794,8 @@ const ListObjects = ({
     if (filterObjects === "") {
       return true;
     } else {
-      if (b.name.indexOf(filterObjects) >= 0) {
+      const objectName = b.name.toLowerCase();
+      if (objectName.indexOf(filterObjects.toLowerCase()) >= 0) {
         return true;
       } else {
         return false;
