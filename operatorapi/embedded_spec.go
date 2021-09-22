@@ -1465,6 +1465,44 @@ func init() {
         }
       }
     },
+    "azureConfiguration": {
+      "type": "object",
+      "required": [
+        "keyvault"
+      ],
+      "properties": {
+        "keyvault": {
+          "type": "object",
+          "required": [
+            "endpoint"
+          ],
+          "properties": {
+            "credentials": {
+              "type": "object",
+              "required": [
+                "tenant_id",
+                "client_id",
+                "client_secret"
+              ],
+              "properties": {
+                "client_id": {
+                  "type": "string"
+                },
+                "client_secret": {
+                  "type": "string"
+                },
+                "tenant_id": {
+                  "type": "string"
+                }
+              }
+            },
+            "endpoint": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "certificateInfo": {
       "type": "object",
       "properties": {
@@ -1671,6 +1709,10 @@ func init() {
             "aws": {
               "type": "object",
               "$ref": "#/definitions/awsConfiguration"
+            },
+            "azure": {
+              "type": "object",
+              "$ref": "#/definitions/azureConfiguration"
             },
             "client": {
               "type": "object",
@@ -4567,6 +4609,55 @@ func init() {
         }
       }
     },
+    "AzureConfigurationKeyvault": {
+      "type": "object",
+      "required": [
+        "endpoint"
+      ],
+      "properties": {
+        "credentials": {
+          "type": "object",
+          "required": [
+            "tenant_id",
+            "client_id",
+            "client_secret"
+          ],
+          "properties": {
+            "client_id": {
+              "type": "string"
+            },
+            "client_secret": {
+              "type": "string"
+            },
+            "tenant_id": {
+              "type": "string"
+            }
+          }
+        },
+        "endpoint": {
+          "type": "string"
+        }
+      }
+    },
+    "AzureConfigurationKeyvaultCredentials": {
+      "type": "object",
+      "required": [
+        "tenant_id",
+        "client_id",
+        "client_secret"
+      ],
+      "properties": {
+        "client_id": {
+          "type": "string"
+        },
+        "client_secret": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        }
+      }
+    },
     "GcpConfigurationSecretmanager": {
       "type": "object",
       "required": [
@@ -5212,6 +5303,44 @@ func init() {
         }
       }
     },
+    "azureConfiguration": {
+      "type": "object",
+      "required": [
+        "keyvault"
+      ],
+      "properties": {
+        "keyvault": {
+          "type": "object",
+          "required": [
+            "endpoint"
+          ],
+          "properties": {
+            "credentials": {
+              "type": "object",
+              "required": [
+                "tenant_id",
+                "client_id",
+                "client_secret"
+              ],
+              "properties": {
+                "client_id": {
+                  "type": "string"
+                },
+                "client_secret": {
+                  "type": "string"
+                },
+                "tenant_id": {
+                  "type": "string"
+                }
+              }
+            },
+            "endpoint": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "certificateInfo": {
       "type": "object",
       "properties": {
@@ -5418,6 +5547,10 @@ func init() {
             "aws": {
               "type": "object",
               "$ref": "#/definitions/awsConfiguration"
+            },
+            "azure": {
+              "type": "object",
+              "$ref": "#/definitions/azureConfiguration"
             },
             "client": {
               "type": "object",

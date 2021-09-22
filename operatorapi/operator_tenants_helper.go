@@ -498,6 +498,21 @@ func createOrReplaceKesConfigurationSecrets(ctx context.Context, clientSet K8sCl
 				}
 			}
 		}
+	} else if encryptionCfg.Azure != nil {
+		// Initialize Azure
+		kesConfig.Keys.Azure = &kes.Azure{
+			KeyVault: &kes.AzureKeyVault{},
+		}
+		if encryptionCfg.Azure.Keyvault != nil {
+			kesConfig.Keys.Azure.KeyVault.Endpoint = *encryptionCfg.Azure.Keyvault.Endpoint
+			if encryptionCfg.Azure.Keyvault.Credentials != nil {
+				kesConfig.Keys.Azure.KeyVault.Credentials = &kes.AzureCredentials{
+					TenantID:     *encryptionCfg.Azure.Keyvault.Credentials.TenantID,
+					ClientID:     *encryptionCfg.Azure.Keyvault.Credentials.ClientID,
+					ClientSecret: *encryptionCfg.Azure.Keyvault.Credentials.ClientSecret,
+				}
+			}
+		}
 	}
 	imm := true
 	// if mTLSCertificates contains elements we create the kubernetes secret
