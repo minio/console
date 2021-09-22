@@ -559,8 +559,8 @@ const ListObjects = ({
 
     for (let file of files) {
       const fileName = file.name;
-      const blobFile = new Blob([file]);
-      formData.append(fileName, blobFile);
+      const blobFile = new Blob([file], { type: file.type });
+      formData.append(file.size, blobFile, fileName);
     }
 
     xhr.send(formData);

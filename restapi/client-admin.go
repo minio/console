@@ -297,9 +297,9 @@ func (ac AdminClient) deleteServiceAccount(ctx context.Context, serviceAccount s
 	return ac.Client.DeleteServiceAccount(ctx, serviceAccount)
 }
 
-// AccountInfo implements madmin.AccountingUsageInfo()
+// AccountInfo implements madmin.AccountInfo()
 func (ac AdminClient) AccountInfo(ctx context.Context) (madmin.AccountInfo, error) {
-	return ac.Client.AccountInfo(ctx)
+	return ac.Client.AccountInfo(ctx, madmin.AccountOpts{})
 }
 
 func (ac AdminClient) heal(ctx context.Context, bucket, prefix string, healOpts madmin.HealOpts, clientToken string,
