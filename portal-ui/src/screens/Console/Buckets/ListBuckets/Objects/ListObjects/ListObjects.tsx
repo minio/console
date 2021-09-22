@@ -774,7 +774,7 @@ const ListObjects = ({
       }
     }
 
-    if (element.indexOf(".") < 0) {
+    if (!element.endsWith("/") && element.indexOf(".") < 0) {
       icon = <FileMissingIcon />;
     }
 
