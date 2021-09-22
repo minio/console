@@ -26,6 +26,7 @@ import { setErrorSnackMessage } from "../../../../actions";
 import { snackBarMessage } from "../../../../types";
 
 interface IMainErrorProps {
+  customStyle?: any;
   classes: any;
   snackBar: snackBarMessage;
   displayErrorMessage: typeof setErrorSnackMessage;
@@ -130,6 +131,7 @@ const MainError = ({
   classes,
   snackBar,
   displayErrorMessage,
+  customStyle,
 }: IMainErrorProps) => {
   const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
   const [displayErrorMsg, setDisplayErrorMsg] = useState<boolean>(false);
@@ -171,6 +173,7 @@ const MainError = ({
         className={`${classes.mainErrorContainer} ${
           displayErrorMsg ? classes.mainErrorShow : ""
         }`}
+        style={customStyle}
         onMouseOver={stopHideTimer}
         onMouseLeave={() => startHideTimer(closeErrorMessage)}
       >
