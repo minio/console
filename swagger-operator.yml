@@ -1449,6 +1449,9 @@ definitions:
           gcp:
             type: object
             $ref: "#/definitions/gcpConfiguration"
+          azure:
+            type: object
+            $ref: "#/definitions/azureConfiguration"
 
   vaultConfiguration:
     type: object
@@ -1584,6 +1587,32 @@ definitions:
               private_key_id:
                 type: string
               private_key:
+                type: string
+
+  azureConfiguration:
+    type: object
+    required:
+      - keyvault
+    properties:
+      keyvault:
+        type: object
+        required:
+          - endpoint
+        properties:
+          endpoint:
+            type: string
+          credentials:
+            type: object
+            required:
+              - tenant_id
+              - client_id
+              - client_secret
+            properties:
+              tenant_id:
+                type: string
+              client_id:
+                type: string
+              client_secret:
                 type: string
 
   createTenantResponse:

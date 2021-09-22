@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	// ErrorGeneric is a heneric error message
+	// ErrorGeneric is a generic error message
 	ErrorGeneric               = errors.New("an error occurred, please try again")
 	errInvalidCredentials      = errors.New("invalid Login")
 	errorGenericInvalidSession = errors.New("invalid session")
@@ -33,6 +33,7 @@ var (
 	errLicenseNotFound              = errors.New("license not found")
 	errAvoidSelfAccountDelete       = errors.New("logged in user cannot be deleted by itself")
 	errAccessDenied                 = errors.New("access denied")
+	errOauth2Provider               = errors.New("error contacting the external identity provider")
 )
 
 // Tiering errors
@@ -134,7 +135,7 @@ func prepareError(err ...error) *models.Error {
 			errorCode = 401
 			errorMessage = errorGenericInvalidSession.Error()
 		}
-		// if we received a second error take that as friendly message but dont override the code
+		// if we received a second error take that as friendly message but don't override the code
 		if len(err) > 1 && err[1] != nil {
 			LogError("friendly error: %v", err[1].Error())
 			errorMessage = err[1].Error()
