@@ -23,6 +23,7 @@ import {
   makeStyles,
 } from "@material-ui/core/styles";
 import React, { Fragment } from "react";
+import { widgetCommon } from "../Common/FormComponents/common/styleLibrary";
 
 export interface ISubInterface {
   message: string;
@@ -30,7 +31,6 @@ export interface ISubInterface {
 }
 
 interface ICommonCard {
-  avatar: any;
   title: string;
   metricValue: any;
   metricUnit?: string;
@@ -42,12 +42,10 @@ interface ICommonCard {
 
 const styles = (theme: Theme) =>
   createStyles({
+    ...widgetCommon,
     cardRoot: {
-      border: "#eef1f4 2px solid",
-      borderRadius: 10,
+      ...widgetCommon.singleValueContainer,
       maxWidth: 280,
-      width: "100%",
-      margin: 10,
     },
     cardsContainer: {
       maxHeight: 440,
@@ -94,15 +92,9 @@ const styles = (theme: Theme) =>
   });
 
 const cardSubStyles = makeStyles({
-  root: { backgroundColor: "#fff" },
+  root: { backgroundColor: "#fff", padding: 0 },
   title: {
-    color: "#404144",
-    fontSize: 14,
-    textTransform: "uppercase",
-    fontWeight: "bold",
-    borderBottom: "#eef1f4 1px solid",
-    paddingBottom: 14,
-    marginBottom: 5,
+    ...widgetCommon.titleContainer
   },
   content: {
     maxWidth: "100%",
@@ -110,7 +102,6 @@ const cardSubStyles = makeStyles({
 });
 
 const CommonCard = ({
-  avatar,
   title,
   metricValue,
   metricUnit,

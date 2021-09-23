@@ -34,6 +34,7 @@ interface IDateTimePicker {
   tooltip?: string;
   id: string;
   disabled?: boolean;
+  noInputIcon?: boolean;
 }
 
 const styles = (theme: Theme) =>
@@ -93,18 +94,27 @@ const DateTimePickerWrapper = ({
   required,
   id,
   disabled = false,
+  noInputIcon = false,
 }: IDateTimePicker) => {
+  let adornment = {};
+
+  if (!noInputIcon) {
+    adornment = {
+      startAdornment: (
+        <InputAdornment position="start">
+          <ScheduleIcon />
+        </InputAdornment>
+      ),
+    };
+  }
+
   const inputItem = (
     <MuiPickersUtilsProvider utils={MomentUtils}>
       <DateTimePicker
         value={value}
         onChange={onChange}
         InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <ScheduleIcon />
-            </InputAdornment>
-          ),
+          ...adornment,
           className: forSearchBlock ? classes.dateSelectorOverride : "",
         }}
         label=""

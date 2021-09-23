@@ -25,18 +25,21 @@ import {
 export enum widgetType {
   singleValue = "singleValue",
   linearGraph = "linearGraph",
+  areaGraph = "areaGraph",
   barChart = "barChart",
   pieChart = "pieChart",
   singleRep = "singleRep",
+  simpleWidget = "simpleWidget",
 }
 
 export interface IDashboardPanel {
   id: number;
+  mergedPanels?: IDashboardPanel[];
   title: string;
-  data: string | object[] | IDataSRep[];
+  data?: string | object[] | IDataSRep[];
   dataOuter?: string | object[];
-  type: widgetType;
-  layoutIdentifier: string;
+  type?: widgetType;
+  widgetIcon?: any;
   widgetConfiguration?:
     | ILinearGraphConfiguration[]
     | IBarChartConfiguration[]

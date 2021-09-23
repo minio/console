@@ -14,14 +14,27 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import React, { Fragment, useEffect, useState } from "react";
+import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
+import { CircularProgress } from "@material-ui/core";
+import api from "../../../../../common/api";
+import { widgetDetailsToPanel } from "../utils";
+import { IDashboardPanel } from "../types";
+import { setErrorSnackMessage } from "../../../../../actions";
+import { ErrorResponseHandler } from "../../../../../common/types";
 
 interface ISimpleWidget {
   classes: any;
   iconWidget: any;
-  label: string;
-  value: string;
+  title: string;
+  panelItem: IDashboardPanel;
+  timeStart: MaterialUiPickersDate;
+  timeEnd: MaterialUiPickersDate;
+  propLoading: boolean;
+  displayErrorMessage: any;
+  apiPrefix: string;
 }
 
 const styles = (theme: Theme) =>
@@ -47,14 +60,80 @@ const styles = (theme: Theme) =>
     },
   });
 
-const SimpleWidget = ({ classes, iconWidget, label, value }: ISimpleWidget) => {
+const SimpleWidget = ({
+  classes,
+  iconWidget,
+  title,
+  panelItem,
+  timeStart,
+  timeEnd,
+  propLoading,
+  displayErrorMessage,
+  apiPrefix,
+}: ISimpleWidget) => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [data, setData] = useState<string>("");
+
+  useEffect(() => {
+    if (propLoading) {
+      setLoading(true);
+    }
+  }, [propLoading]);
+
+  useEffect(() => {
+    if (loading) {
+      let stepCalc = 0;
+      if (timeStart !== null && timeEnd !== null) {
+        const secondsInPeriod = timeEnd.unix() - timeStart.unix();
+        const periods = Math.floor(secondsInPeriod / 60);
+
+        stepCalc = periods < 1 ? 15 : periods;
+      }
+
+      api
+        .invoke(
+          "GET",
+          `/api/v1/${apiPrefix}/info/widgets/${
+            panelItem.id
+          }/?step=${stepCalc}&${
+            timeStart !== null ? `&start=${timeStart.unix()}` : ""
+          }${timeStart !== null && timeEnd !== null ? "&" : ""}${
+            timeEnd !== null ? `end=${timeEnd.unix()}` : ""
+          }`
+        )
+        .then((res: any) => {
+          const widgetsWithValue = widgetDetailsToPanel(res, panelItem);
+          setData(widgetsWithValue.data);
+          setLoading(false);
+        })
+        .catch((err: ErrorResponseHandler) => {
+          displayErrorMessage(err);
+          setLoading(false);
+        });
+    }
+  }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
+
   return (
-    <span className={classes.mainWidgetContainer}>
-      <span className={classes.icon}>{iconWidget ? iconWidget : null}</span>
-      <span className={classes.widgetLabel}>{label}: </span>
-      <span className={classes.widgetValue}>{value}</span>
-    </span>
+    <Fragment>
+      {loading && (
+        <div className={classes.loadingAlign}>
+          <CircularProgress />
+        </div>
+      )}
+      {!loading && (
+        <span className={classes.mainWidgetContainer}>
+          <span className={classes.icon}>{iconWidget ? iconWidget : null}</span>
+          <span className={classes.widgetLabel}>{title}: </span>
+          <span className={classes.widgetValue}>{data}</span>
+        </span>
+      )}
+    </Fragment>
   );
 };
 
-export default withStyles(styles)(SimpleWidget);
+const connector = connect(null, {
+  displayErrorMessage: setErrorSnackMessage,
+});
+
+
+export default withStyles(styles)(connector(SimpleWidget));
