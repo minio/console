@@ -32,8 +32,8 @@ import { AppState } from "../../../../../../store";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import api from "../../../../../../common/api";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
-import DateSelector from "../../../../Common/FormComponents/DateSelector/DateSelector";
 import PredefinedList from "../../../../Common/FormComponents/PredefinedList/PredefinedList";
+import DaysSelector from "../../../../Common/FormComponents/DaysSelector/DaysSelector";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -72,6 +72,8 @@ const ShareFile = ({
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [dateValid, setDateValid] = useState<boolean>(true);
 
+  const initialDate = new Date();
+
   const dateChanged = (newDate: string, isValid: boolean) => {
     setDateValid(isValid);
     if (isValid) {
@@ -79,6 +81,7 @@ const ShareFile = ({
       return;
     }
     setSelectedDate("");
+    setShareURL("");
   };
 
   useEffect(() => {
@@ -86,54 +89,33 @@ const ShareFile = ({
       setIsLoadingFile(true);
       setShareURL("");
 
-      const slDate = new Date(`${selectedDate}T23:59:59`);
+      const slDate = new Date(`${selectedDate}`);
       const currDate = new Date();
 
       const diffDate = slDate.getTime() - currDate.getTime();
 
-      const versID = distributedSetup ? dataObject.version_id : "null";
+      if (diffDate > 0) {
+        const versID = distributedSetup ? dataObject.version_id : "null";
 
-      if (diffDate < 0) {
-        setModalErrorSnackMessage({
-          errorMessage: "Selected date must be greater than current time.",
-          detailedError: "",
-        });
-        setShareURL("");
-        setIsLoadingFile(false);
-
-        return;
+        api
+          .invoke(
+            "GET",
+            `/api/v1/buckets/${bucketName}/objects/share?prefix=${
+              dataObject.name
+            }&version_id=${versID || "null"}${
+              selectedDate !== "" ? `&expires=${diffDate}ms` : ""
+            }`
+          )
+          .then((res: string) => {
+            setShareURL(res);
+            setIsLoadingFile(false);
+          })
+          .catch((error: ErrorResponseHandler) => {
+            setModalErrorSnackMessage(error);
+            setShareURL("");
+            setIsLoadingFile(false);
+          });
       }
-
-      if (diffDate > 604800000) {
-        setModalErrorSnackMessage({
-          errorMessage: "You can share a file only for less than 7 days.",
-          detailedError: "",
-        });
-        setShareURL("");
-        setIsLoadingFile(false);
-
-        return;
-      }
-
-      api
-        .invoke(
-          "GET",
-          `/api/v1/buckets/${bucketName}/objects/share?prefix=${
-            dataObject.name
-          }&version_id=${versID}${
-            selectedDate !== "" ? `&expires=${diffDate}ms` : ""
-          }`
-        )
-        .then((res: string) => {
-          setShareURL(res);
-          setIsLoadingFile(false);
-        })
-        .catch((error: ErrorResponseHandler) => {
-          setModalErrorSnackMessage(error);
-          setShareURL("");
-          setIsLoadingFile(false);
-        });
-      return;
     }
   }, [
     dataObject,
@@ -155,13 +137,20 @@ const ShareFile = ({
         }}
       >
         <Grid container className={classes.modalContent}>
+          <Grid item xs={12} className={classes.moduleDescription}>
+            This module generates a temporary URL with integrated access
+            credentials for sharing objects for up to 7 days.
+            <br />
+            The temporary URL expires after the configured time limit.
+          </Grid>
           <Grid item xs={12} className={classes.dateContainer}>
-            <DateSelector
+            <DaysSelector
+              initialDate={initialDate}
               id="date"
-              label="Active until"
-              borderBottom={false}
-              addSwitch={true}
-              onDateChange={dateChanged}
+              label="Active for"
+              maxDays={7}
+              onChange={dateChanged}
+              entity="Link"
             />
           </Grid>
           <Grid container item xs={12}>

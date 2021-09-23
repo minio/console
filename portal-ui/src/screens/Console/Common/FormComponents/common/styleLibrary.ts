@@ -84,6 +84,11 @@ export const modalBasic = {
     height: 170,
     maxWidth: 840,
   },
+  moduleDescription: {
+    color: "#848484",
+    fontSize: 12,
+    fontStyle: "italic" as string,
+  },
 };
 
 export const tooltipHelper = {

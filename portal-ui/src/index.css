@@ -9,3 +9,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+/* Chrome, Safari, Edge, Opera */
+input.removeArrows::-webkit-outer-spin-button,
+input.removeArrows::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input.removeArrows[type=number] {
+  -moz-appearance: textfield;
+}
