@@ -135,5 +135,4 @@ const connector = connect(null, {
   displayErrorMessage: setErrorSnackMessage,
 });
 
-
 export default withStyles(styles)(connector(SimpleWidget));

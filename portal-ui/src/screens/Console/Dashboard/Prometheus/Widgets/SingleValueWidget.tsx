@@ -71,7 +71,7 @@ const styles = (theme: Theme) =>
       "& .unitText": {
         color: "#767676",
         fontSize: 12,
-      }
+      },
     },
   });
 

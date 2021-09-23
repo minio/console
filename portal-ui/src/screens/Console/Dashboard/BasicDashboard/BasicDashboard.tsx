@@ -133,20 +133,24 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
           <CommonCard
             title={"All Buckets"}
             metricValue={usage ? prettyNumber(usage.buckets) : 0}
+            extraMargin
           />
           <CommonCard
             title={"Usage"}
             metricValue={usageToRepresent.total}
             metricUnit={usageToRepresent.unit}
+            extraMargin
           />
           <CommonCard
             title={"Total Objects"}
             metricValue={usage ? prettyNumber(usage.objects) : 0}
+            extraMargin
           />
           <CommonCard
             title={"Servers"}
             metricValue={usage ? prettyNumber(serverArray.length) : 0}
             subMessage={{ message: "Total" }}
+            extraMargin
           />
         </Grid>
         <Grid item xs={12}>

@@ -107,7 +107,7 @@ const SingleRepWidget = ({
         });
     }
   }, [loading, panelItem, timeEnd, timeStart, displayErrorMessage, apiPrefix]);
-  const gradientID= `colorGradient-${title.split(" ").join('-')}`;
+  const gradientID = `colorGradient-${title.split(" ").join("-")}`;
 
   return (
     <div className={classes.singleValueContainer}>
