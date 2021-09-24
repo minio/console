@@ -77,7 +77,6 @@ import EditIcon from "../../../../../../icons/EditIcon";
 import SearchIcon from "../../../../../../icons/SearchIcon";
 import ObjectBrowserIcon from "../../../../../../icons/ObjectBrowserIcon";
 import PreviewFileContent from "../Preview/PreviewFileContent";
-import { BucketObject } from "../ListObjects/types";
 
 const styles = (theme: Theme) =>
   createStyles({
