@@ -37,6 +37,7 @@ interface ICommonCard {
   subMessage?: ISubInterface;
   moreLink?: string;
   rightComponent?: any;
+  extraMargin?: boolean;
   classes: any;
 }
 
@@ -89,12 +90,15 @@ const styles = (theme: Theme) =>
         color: "#C83B51",
       },
     },
+    extraMargin: {
+      margin: "10px 20px 10px 0",
+    },
   });
 
 const cardSubStyles = makeStyles({
   root: { backgroundColor: "#fff", padding: 0 },
   title: {
-    ...widgetCommon.titleContainer
+    ...widgetCommon.titleContainer,
   },
   content: {
     maxWidth: "100%",
@@ -108,6 +112,7 @@ const CommonCard = ({
   subMessage,
   moreLink,
   rightComponent,
+  extraMargin = false,
   classes,
 }: ICommonCard) => {
   const subStyles = cardSubStyles();
@@ -157,7 +162,11 @@ const CommonCard = ({
 
   return (
     <Fragment>
-      <Card className={classes.cardRoot}>
+      <Card
+        className={`${classes.cardRoot} ${
+          extraMargin ? classes.extraMargin : ""
+        }`}
+      >
         {metricValue !== "" && (
           <CardHeader
             title={<Header />}

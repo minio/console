@@ -86,7 +86,7 @@ const TenantVolumes = ({
           setErrorSnackMessage(err);
         });
     }
-  }, [loading, setErrorSnackMessage]);
+  }, [loading, setErrorSnackMessage, tenantName, tenantNamespace]);
 
   const filteredRecords: IStoragePVCs[] = records.filter((elementItem) =>
     elementItem.name.includes(filter)

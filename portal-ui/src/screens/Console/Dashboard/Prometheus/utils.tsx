@@ -28,8 +28,6 @@ import HealIcon from "../../../../icons/HealIcon";
 import DiagnosticsIcon from "../../../../icons/DiagnosticsIcon";
 import HistoryIcon from "../../../../icons/HistoryIcon";
 
-const dLocalStorageV = "dashboardConfig";
-
 const colorsMain = [
   "#C4D4E9",
   "#DCD1EE",
