@@ -23,6 +23,7 @@ import {
   Tooltip,
 } from "@material-ui/core";
 import { OutlinedInputProps } from "@material-ui/core/OutlinedInput";
+import { InputProps as StandardInputProps } from "@material-ui/core/Input";
 import {
   createStyles,
   makeStyles,
@@ -56,6 +57,7 @@ interface InputBoxProps {
   max?: string;
   overlayIcon?: any;
   overlayAction?: () => void;
+  extraInputProps?: StandardInputProps['inputProps'];
 }
 
 const styles = (theme: Theme) =>
@@ -125,10 +127,11 @@ const InputBoxWrapper = ({
   min,
   max,
   overlayIcon = null,
+  extraInputProps = {},
   overlayAction,
   classes,
 }: InputBoxProps) => {
-  let inputProps: any = { "data-index": index };
+  let inputProps: any = { "data-index": index, ...extraInputProps };
 
   if (type === "number" && min) {
     inputProps["min"] = min;
