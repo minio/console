@@ -32,6 +32,7 @@ import {
 import FormSwitchWrapper from "../../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import InputBoxWrapper from "../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import { ISecurityContext } from "../../types";
 
 interface IConfigureProps {
   updateAddField: typeof updateAddField;
@@ -47,6 +48,7 @@ interface IConfigureProps {
   exposeMinIO: boolean;
   exposeConsole: boolean;
   prometheusCustom: boolean;
+  tenantCustom: boolean;
   logSearchCustom: boolean;
   logSearchVolumeSize: string;
   logSearchSizeFactor: string;
@@ -62,6 +64,10 @@ interface IConfigureProps {
   prometheusSidecarImage: string;
   prometheusInitImage: string;
   selectedStorageClass: string;
+  tenantSecurityContext: ISecurityContext;
+  logSearchSecurityContext: ISecurityContext;
+  logSearchPostgresSecurityContext: ISecurityContext;
+  prometheusSecurityContext: ISecurityContext;
 }
 
 const styles = (theme: Theme) =>
@@ -85,6 +91,7 @@ const Configure = ({
   exposeMinIO,
   exposeConsole,
   prometheusCustom,
+  tenantCustom,
   logSearchCustom,
   logSearchVolumeSize,
   logSearchSizeFactor,
@@ -102,6 +109,10 @@ const Configure = ({
   updateAddField,
   isPageValid,
   selectedStorageClass,
+  tenantSecurityContext,
+  logSearchSecurityContext,
+  logSearchPostgresSecurityContext,
+  prometheusSecurityContext,
 }: IConfigureProps) => {
   const [validationErrors, setValidationErrors] = useState<any>({});
 
@@ -116,7 +127,38 @@ const Configure = ({
   // Validation
   useEffect(() => {
     let customAccountValidation: IValidation[] = [];
-
+    if (tenantCustom) {
+      customAccountValidation = [
+        ...customAccountValidation,
+        {
+          fieldKey: "tenant_securityContext_runAsUser",
+          required: true,
+          value: tenantSecurityContext.runAsUser,
+          customValidation:
+            tenantSecurityContext.runAsUser === "" ||
+            parseInt(tenantSecurityContext.runAsUser) < 0,
+          customValidationMessage: `runAsUser must be present and be 0 or more`,
+        },
+        {
+          fieldKey: "tenant_securityContext_runAsGroup",
+          required: true,
+          value: tenantSecurityContext.runAsGroup,
+          customValidation:
+            tenantSecurityContext.runAsGroup === "" ||
+            parseInt(tenantSecurityContext.runAsGroup) < 0,
+          customValidationMessage: `runAsGroup must be present and be 0 or more`,
+        },
+        {
+          fieldKey: "tenant_securityContext_fsGroup",
+          required: true,
+          value: tenantSecurityContext.fsGroup,
+          customValidation:
+            tenantSecurityContext.fsGroup === "" ||
+            parseInt(tenantSecurityContext.fsGroup) < 0,
+          customValidationMessage: `fsGroup must be present and be 0 or more`,
+        },
+      ];
+    }
     if (prometheusCustom) {
       customAccountValidation = [
         ...customAccountValidation,
@@ -133,7 +175,34 @@ const Configure = ({
           value: prometheusVolumeSize,
           customValidation:
             prometheusVolumeSize === "" || parseInt(prometheusVolumeSize) <= 0,
-          customValidationMessage: `Volume size must be present and be greatter than 0`,
+          customValidationMessage: `Volume size must be present and be greater than 0`,
+        },
+        {
+          fieldKey: "prometheus_securityContext_runAsUser",
+          required: true,
+          value: prometheusSecurityContext.runAsUser,
+          customValidation:
+            prometheusSecurityContext.runAsUser === "" ||
+            parseInt(prometheusSecurityContext.runAsUser) < 0,
+          customValidationMessage: `runAsUser must be present and be 0 or more`,
+        },
+        {
+          fieldKey: "prometheus_securityContext_runAsGroup",
+          required: true,
+          value: prometheusSecurityContext.runAsGroup,
+          customValidation:
+            prometheusSecurityContext.runAsGroup === "" ||
+            parseInt(prometheusSecurityContext.runAsGroup) < 0,
+          customValidationMessage: `runAsGroup must be present and be 0 or more`,
+        },
+        {
+          fieldKey: "prometheus_securityContext_fsGroup",
+          required: true,
+          value: prometheusSecurityContext.fsGroup,
+          customValidation:
+            prometheusSecurityContext.fsGroup === "" ||
+            parseInt(prometheusSecurityContext.fsGroup) < 0,
+          customValidationMessage: `fsGroup must be present and be 0 or more`,
         },
       ];
     }
@@ -154,6 +223,60 @@ const Configure = ({
           customValidation:
             logSearchVolumeSize === "" || parseInt(logSearchVolumeSize) <= 0,
           customValidationMessage: `Volume size must be present and be greatter than 0`,
+        },
+        {
+          fieldKey: "logSearch_securityContext_runAsUser",
+          required: true,
+          value: logSearchSecurityContext.runAsUser,
+          customValidation:
+            logSearchSecurityContext.runAsUser === "" ||
+            parseInt(logSearchSecurityContext.runAsUser) < 0,
+          customValidationMessage: `runAsUser must be present and be 0 or more`,
+        },
+        {
+          fieldKey: "logSearch_securityContext_runAsGroup",
+          required: true,
+          value: logSearchSecurityContext.runAsGroup,
+          customValidation:
+            logSearchSecurityContext.runAsGroup === "" ||
+            parseInt(logSearchSecurityContext.runAsGroup) < 0,
+          customValidationMessage: `runAsGroup must be present and be 0 or more`,
+        },
+        {
+          fieldKey: "logSearch_securityContext_fsGroup",
+          required: true,
+          value: logSearchSecurityContext.fsGroup,
+          customValidation:
+            logSearchSecurityContext.fsGroup === "" ||
+            parseInt(logSearchSecurityContext.fsGroup) < 0,
+          customValidationMessage: `fsGroup must be present and be 0 or more`,
+        },
+        {
+          fieldKey: "postgres_securityContext_runAsUser",
+          required: true,
+          value: logSearchPostgresSecurityContext.runAsUser,
+          customValidation:
+            logSearchPostgresSecurityContext.runAsUser === "" ||
+            parseInt(logSearchPostgresSecurityContext.runAsUser) < 0,
+          customValidationMessage: `runAsUser must be present and be 0 or more`,
+        },
+        {
+          fieldKey: "postgres_securityContext_runAsGroup",
+          required: true,
+          value: prometheusSecurityContext.runAsGroup,
+          customValidation:
+            logSearchPostgresSecurityContext.runAsGroup === "" ||
+            parseInt(logSearchPostgresSecurityContext.runAsGroup) < 0,
+          customValidationMessage: `runAsGroup must be present and be 0 or more`,
+        },
+        {
+          fieldKey: "postgres_securityContext_fsGroup",
+          required: true,
+          value: logSearchPostgresSecurityContext.fsGroup,
+          customValidation:
+            logSearchPostgresSecurityContext.fsGroup === "" ||
+            parseInt(logSearchPostgresSecurityContext.fsGroup) < 0,
+          customValidationMessage: `fsGroup must be present and be 0 or more`,
         },
       ];
     }
@@ -267,11 +390,16 @@ const Configure = ({
     imageRegistryPassword,
     isPageValid,
     prometheusCustom,
+    tenantCustom,
     logSearchCustom,
     prometheusSelectedStorageClass,
     prometheusVolumeSize,
     logSearchSelectedStorageClass,
     logSearchVolumeSize,
+    tenantSecurityContext,
+    logSearchSecurityContext,
+    logSearchPostgresSecurityContext,
+    prometheusSecurityContext,
   ]);
 
   useEffect(() => {
@@ -351,10 +479,121 @@ const Configure = ({
       <div className={classes.headerElement}>
         <h3 className={classes.h3Section}>Additional Configurations</h3>
         <span className={classes.descriptionText}>
-          Configure Storage Classes & Storage size for Log Search and Prometheus
-          add-ons
+          Configure SecurityContext, Storage Classes & Storage size for Log
+          Search, Prometheus add-ons and your Tenant
         </span>
       </div>
+      <Grid item xs={12}>
+        <FormSwitchWrapper
+          value="tenantConfig"
+          id="tenant_configuration"
+          name="tenant_configuration"
+          checked={tenantCustom}
+          onChange={(e) => {
+            const targetD = e.target;
+            const checked = targetD.checked;
+
+            updateField("tenantCustom", checked);
+          }}
+          label={"Override Tenant defaults"}
+        />
+      </Grid>
+      {tenantCustom && (
+        <Fragment>
+          <span className={classes.descriptionText}>
+            SecurityContext for MinIO
+          </span>
+          <br />
+          <br />
+          <Grid item xs={12}>
+            <div className={classes.multiContainer}>
+              <div>
+                <InputBoxWrapper
+                  type="number"
+                  id="tenant_securityContext_runAsUser"
+                  name="tenant_securityContext_runAsUser"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    updateField("tenantSecurityContext", {
+                      ...tenantSecurityContext,
+                      runAsUser: e.target.value,
+                    });
+                    cleanValidation("tenant_securityContext_runAsUser");
+                  }}
+                  label="Run As User"
+                  value={tenantSecurityContext.runAsUser}
+                  required
+                  error={
+                    validationErrors["tenant_securityContext_runAsUser"] || ""
+                  }
+                  min="0"
+                />
+              </div>
+              <div>
+                <InputBoxWrapper
+                  type="number"
+                  id="tenant_securityContext_runAsGroup"
+                  name="tenant_securityContext_runAsGroup"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    updateField("tenantSecurityContext", {
+                      ...tenantSecurityContext,
+                      runAsGroup: e.target.value,
+                    });
+                    cleanValidation("tenant_securityContext_runAsGroup");
+                  }}
+                  label="Run As Group"
+                  value={tenantSecurityContext.runAsGroup}
+                  required
+                  error={
+                    validationErrors["tenant_securityContext_runAsGroup"] || ""
+                  }
+                  min="0"
+                />
+              </div>
+              <div>
+                <InputBoxWrapper
+                  type="number"
+                  id="tenant_securityContext_fsGroup"
+                  name="tenant_securityContext_fsGroup"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    updateField("tenantSecurityContext", {
+                      ...tenantSecurityContext,
+                      fsGroup: e.target.value,
+                    });
+                    cleanValidation("tenant_securityContext_fsGroup");
+                  }}
+                  label="FsGroup"
+                  value={tenantSecurityContext.fsGroup}
+                  required
+                  error={
+                    validationErrors["tenant_securityContext_fsGroup"] || ""
+                  }
+                  min="0"
+                />
+              </div>
+            </div>
+          </Grid>
+          <br />
+          <Grid item xs={12}>
+            <div className={classes.multiContainer}>
+              <FormSwitchWrapper
+                value="tenantSecurityContextRunAsNonRoot"
+                id="tenant_securityContext_runAsNonRoot"
+                name="tenant_securityContext_runAsNonRoot"
+                checked={tenantSecurityContext.runAsNonRoot}
+                onChange={(e) => {
+                  const targetD = e.target;
+                  const checked = targetD.checked;
+                  updateField("tenantSecurityContext", {
+                    ...tenantSecurityContext,
+                    runAsNonRoot: checked,
+                  });
+                }}
+                label={"Do not run as Root"}
+              />
+            </div>
+          </Grid>
+        </Fragment>
+      )}
       <Grid item xs={12}>
         <FormSwitchWrapper
           value="logSearchConfig"
@@ -408,7 +647,200 @@ const Configure = ({
               </div>
             </div>
           </Grid>
-          <br />
+          <Fragment>
+            <span className={classes.descriptionText}>
+              SecurityContext for LogSearch
+            </span>
+            <br />
+            <br />
+            <Grid item xs={12}>
+              <div className={classes.multiContainer}>
+                <div>
+                  <InputBoxWrapper
+                    type="number"
+                    id="logSearch_securityContext_runAsUser"
+                    name="logSearch_securityContext_runAsUser"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      updateField("logSearchSecurityContext", {
+                        ...logSearchSecurityContext,
+                        runAsUser: e.target.value,
+                      });
+                      cleanValidation("logSearch_securityContext_runAsUser");
+                    }}
+                    label="Run As User"
+                    value={logSearchSecurityContext.runAsUser}
+                    required
+                    error={
+                      validationErrors["logSearch_securityContext_runAsUser"] ||
+                      ""
+                    }
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <InputBoxWrapper
+                    type="number"
+                    id="logSearch_securityContext_runAsGroup"
+                    name="logSearch_securityContext_runAsGroup"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      updateField("logSearchSecurityContext", {
+                        ...logSearchSecurityContext,
+                        runAsGroup: e.target.value,
+                      });
+                      cleanValidation("logSearch_securityContext_runAsGroup");
+                    }}
+                    label="Run As Group"
+                    value={logSearchSecurityContext.runAsGroup}
+                    required
+                    error={
+                      validationErrors[
+                        "logSearch_securityContext_runAsGroup"
+                      ] || ""
+                    }
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <InputBoxWrapper
+                    type="number"
+                    id="logSearch_securityContext_fsGroup"
+                    name="logSearch_securityContext_fsGroup"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      updateField("logSearchSecurityContext", {
+                        ...logSearchSecurityContext,
+                        fsGroup: e.target.value,
+                      });
+                      cleanValidation("logSearch_securityContext_fsGroup");
+                    }}
+                    label="FsGroup"
+                    value={logSearchSecurityContext.fsGroup}
+                    required
+                    error={
+                      validationErrors["logSearch_securityContext_fsGroup"] ||
+                      ""
+                    }
+                    min="0"
+                  />
+                </div>
+              </div>
+            </Grid>
+            <br />
+            <Grid item xs={12}>
+              <div className={classes.multiContainer}>
+                <FormSwitchWrapper
+                  value="logSearchSecurityContextRunAsNonRoot"
+                  id="logSearch_securityContext_runAsNonRoot"
+                  name="logSearch_securityContext_runAsNonRoot"
+                  checked={logSearchSecurityContext.runAsNonRoot}
+                  onChange={(e) => {
+                    const targetD = e.target;
+                    const checked = targetD.checked;
+                    updateField("logSearchSecurityContext", {
+                      ...logSearchSecurityContext,
+                      runAsNonRoot: checked,
+                    });
+                  }}
+                  label={"Do not run as Root"}
+                />
+              </div>
+            </Grid>
+          </Fragment>
+          <Fragment>
+            <span className={classes.descriptionText}>
+              SecurityContext for PostgreSQL
+            </span>
+            <br />
+            <br />
+            <Grid item xs={12}>
+              <div className={classes.multiContainer}>
+                <div>
+                  <InputBoxWrapper
+                    type="number"
+                    id="postgres_securityContext_runAsUser"
+                    name="postgres_securityContext_runAsUser"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      updateField("logSearchPostgresSecurityContext", {
+                        ...logSearchPostgresSecurityContext,
+                        runAsUser: e.target.value,
+                      });
+                      cleanValidation("postgres_securityContext_runAsUser");
+                    }}
+                    label="Run As User"
+                    value={logSearchPostgresSecurityContext.runAsUser}
+                    required
+                    error={
+                      validationErrors["postgres_securityContext_runAsUser"] ||
+                      ""
+                    }
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <InputBoxWrapper
+                    type="number"
+                    id="postgres_securityContext_runAsGroup"
+                    name="postgres_securityContext_runAsGroup"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      updateField("logSearchPostgresSecurityContext", {
+                        ...logSearchPostgresSecurityContext,
+                        runAsGroup: e.target.value,
+                      });
+                      cleanValidation("postgres_securityContext_runAsGroup");
+                    }}
+                    label="Run As Group"
+                    value={logSearchPostgresSecurityContext.runAsGroup}
+                    required
+                    error={
+                      validationErrors["postgres_securityContext_runAsGroup"] ||
+                      ""
+                    }
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <InputBoxWrapper
+                    type="number"
+                    id="postgres_securityContext_fsGroup"
+                    name="postgres_securityContext_fsGroup"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      updateField("logSearchPostgresSecurityContext", {
+                        ...logSearchPostgresSecurityContext,
+                        fsGroup: e.target.value,
+                      });
+                      cleanValidation("postgres_securityContext_fsGroup");
+                    }}
+                    label="FsGroup"
+                    value={logSearchPostgresSecurityContext.fsGroup}
+                    required
+                    error={
+                      validationErrors["postgres_securityContext_fsGroup"] || ""
+                    }
+                    min="0"
+                  />
+                </div>
+              </div>
+            </Grid>
+            <br />
+            <Grid item xs={12}>
+              <div className={classes.multiContainer}>
+                <FormSwitchWrapper
+                  value="postgresSecurityContextRunAsNonRoot"
+                  id="postgres_securityContext_runAsNonRoot"
+                  name="postgres_securityContext_runAsNonRoot"
+                  checked={logSearchPostgresSecurityContext.runAsNonRoot}
+                  onChange={(e) => {
+                    const targetD = e.target;
+                    const checked = targetD.checked;
+                    updateField("logSearchPostgresSecurityContext", {
+                      ...logSearchPostgresSecurityContext,
+                      runAsNonRoot: checked,
+                    });
+                  }}
+                  label={"Do not run as Root"}
+                />
+              </div>
+            </Grid>
+          </Fragment>
         </Fragment>
       )}
       <Grid item xs={12}>
@@ -464,7 +896,105 @@ const Configure = ({
               </div>
             </div>
           </Grid>
-          <br />
+          <Fragment>
+            <span className={classes.descriptionText}>
+              SecurityContext for Prometheus
+            </span>
+            <br />
+            <br />
+            <Grid item xs={12}>
+              <div className={classes.multiContainer}>
+                <div>
+                  <InputBoxWrapper
+                    type="number"
+                    id="prometheus_securityContext_runAsUser"
+                    name="prometheus_securityContext_runAsUser"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      updateField("prometheusSecurityContext", {
+                        ...prometheusSecurityContext,
+                        runAsUser: e.target.value,
+                      });
+                      cleanValidation("prometheus_securityContext_runAsUser");
+                    }}
+                    label="Run As User"
+                    value={prometheusSecurityContext.runAsUser}
+                    required
+                    error={
+                      validationErrors[
+                        "prometheus_securityContext_runAsUser"
+                      ] || ""
+                    }
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <InputBoxWrapper
+                    type="number"
+                    id="prometheus_securityContext_runAsGroup"
+                    name="prometheus_securityContext_runAsGroup"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      updateField("prometheusSecurityContext", {
+                        ...prometheusSecurityContext,
+                        runAsGroup: e.target.value,
+                      });
+                      cleanValidation("prometheus_securityContext_runAsGroup");
+                    }}
+                    label="Run As Group"
+                    value={prometheusSecurityContext.runAsGroup}
+                    required
+                    error={
+                      validationErrors[
+                        "prometheus_securityContext_runAsGroup"
+                      ] || ""
+                    }
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <InputBoxWrapper
+                    type="number"
+                    id="prometheus_securityContext_fsGroup"
+                    name="prometheus_securityContext_fsGroup"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      updateField("prometheusSecurityContext", {
+                        ...prometheusSecurityContext,
+                        fsGroup: e.target.value,
+                      });
+                      cleanValidation("prometheus_securityContext_fsGroup");
+                    }}
+                    label="FsGroup"
+                    value={prometheusSecurityContext.fsGroup}
+                    required
+                    error={
+                      validationErrors["prometheus_securityContext_fsGroup"] ||
+                      ""
+                    }
+                    min="0"
+                  />
+                </div>
+              </div>
+            </Grid>
+            <br />
+            <Grid item xs={12}>
+              <div className={classes.multiContainer}>
+                <FormSwitchWrapper
+                  value="prometheusSecurityContextRunAsNonRoot"
+                  id="prometheus_securityContext_runAsNonRoot"
+                  name="prometheus_securityContext_runAsNonRoot"
+                  checked={prometheusSecurityContext.runAsNonRoot}
+                  onChange={(e) => {
+                    const targetD = e.target;
+                    const checked = targetD.checked;
+                    updateField("prometheusSecurityContext", {
+                      ...prometheusSecurityContext,
+                      runAsNonRoot: checked,
+                    });
+                  }}
+                  label={"Do not run as Root"}
+                />
+              </div>
+            </Grid>
+          </Fragment>
         </Fragment>
       )}
     </Paper>
@@ -485,6 +1015,7 @@ const mapState = (state: AppState) => ({
   exposeConsole: state.tenants.createTenant.fields.configure.exposeConsole,
   prometheusCustom:
     state.tenants.createTenant.fields.configure.prometheusCustom,
+  tenantCustom: state.tenants.createTenant.fields.configure.tenantCustom,
   logSearchCustom: state.tenants.createTenant.fields.configure.logSearchCustom,
   logSearchVolumeSize:
     state.tenants.createTenant.fields.configure.logSearchVolumeSize,
@@ -511,6 +1042,15 @@ const mapState = (state: AppState) => ({
     state.tenants.createTenant.fields.configure.prometheusInitImage,
   selectedStorageClass:
     state.tenants.createTenant.fields.nameTenant.selectedStorageClass,
+  tenantSecurityContext:
+    state.tenants.createTenant.fields.configure.tenantSecurityContext,
+  logSearchSecurityContext:
+    state.tenants.createTenant.fields.configure.logSearchSecurityContext,
+  logSearchPostgresSecurityContext:
+    state.tenants.createTenant.fields.configure
+      .logSearchPostgresSecurityContext,
+  prometheusSecurityContext:
+    state.tenants.createTenant.fields.configure.prometheusSecurityContext,
 });
 
 const connector = connect(mapState, {

@@ -14,7 +14,10 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { ILabelKeyPair } from "../screens/Console/Tenants/types";
+import {
+  ILabelKeyPair,
+  ISecurityContext,
+} from "../screens/Console/Tenants/types";
 
 export interface ITenantsObject {
   tenants: ITenant[];
@@ -323,6 +326,7 @@ export interface IPoolModel {
   affinity?: IAffinityModel;
   tolerations?: ITolerationModel[];
   resources?: IResourceModel;
+  securityContext?: ISecurityContext | null;
 }
 
 export interface IUpdatePool {
@@ -370,6 +374,8 @@ export interface LogSearchConfiguration {
   image: string;
   postgres_image: string;
   postgres_init_image: string;
+  securityContext?: ISecurityContext;
+  postgres_securityContext?: ISecurityContext;
 }
 
 export interface PrometheusConfiguration {
@@ -378,6 +384,7 @@ export interface PrometheusConfiguration {
   image: string;
   sidecar_image: string;
   init_image: string;
+  securityContext?: ISecurityContext;
 }
 
 export interface AffinityConfiguration {

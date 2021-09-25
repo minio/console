@@ -135,9 +135,6 @@ const Affinity = ({
         .map((kvp) => `${kvp.key}=${kvp.value}`)
         .filter((kvs, i, a) => a.indexOf(kvs) === i);
       const vl = vlr.join("&");
-
-      console.log(vl);
-
       updateField("nodeSelectorLabels", vl);
     }
   }, [keyValuePairs, updateField]);

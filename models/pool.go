@@ -48,6 +48,9 @@ type Pool struct {
 	// resources
 	Resources *PoolResources `json:"resources,omitempty"`
 
+	// security context
+	SecurityContext *SecurityContext `json:"securityContext,omitempty"`
+
 	// servers
 	// Required: true
 	Servers *int64 `json:"servers"`
@@ -73,6 +76,10 @@ func (m *Pool) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateResources(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSecurityContext(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -124,6 +131,23 @@ func (m *Pool) validateResources(formats strfmt.Registry) error {
 		if err := m.Resources.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("resources")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Pool) validateSecurityContext(formats strfmt.Registry) error {
+	if swag.IsZero(m.SecurityContext) { // not required
+		return nil
+	}
+
+	if m.SecurityContext != nil {
+		if err := m.SecurityContext.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("securityContext")
 			}
 			return err
 		}
@@ -195,6 +219,10 @@ func (m *Pool) ContextValidate(ctx context.Context, formats strfmt.Registry) err
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateSecurityContext(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateTolerations(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -229,6 +257,20 @@ func (m *Pool) contextValidateResources(ctx context.Context, formats strfmt.Regi
 		if err := m.Resources.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("resources")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Pool) contextValidateSecurityContext(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.SecurityContext != nil {
+		if err := m.SecurityContext.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("securityContext")
 			}
 			return err
 		}
