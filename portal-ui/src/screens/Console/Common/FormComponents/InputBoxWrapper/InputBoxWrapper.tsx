@@ -57,7 +57,7 @@ interface InputBoxProps {
   max?: string;
   overlayIcon?: any;
   overlayAction?: () => void;
-  extraInputProps?: StandardInputProps['inputProps'];
+  extraInputProps?: StandardInputProps["inputProps"];
 }
 
 const styles = (theme: Theme) =>

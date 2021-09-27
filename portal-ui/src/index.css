@@ -18,6 +18,6 @@ input.removeArrows::-webkit-inner-spin-button {
 }
 
 /* Firefox */
-input.removeArrows[type=number] {
+input.removeArrows[type="number"] {
   -moz-appearance: textfield;
 }
