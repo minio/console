@@ -132,6 +132,7 @@ export const radioIcons = {
 
 export const containerForHeader = (bottomSpacing: any) => ({
   container: {
+    position: "relative" as const,
     padding: "8px 16px 0",
     "& h6": {
       color: "#777777",
@@ -417,6 +418,7 @@ export const widgetCommon = {
     minWidth: 280,
     maxWidth: 1185,
     border: "#eef1f4 2px solid",
+    backgroundColor: "#fff",
     borderRadius: 10,
     width: "100%",
     padding: 16,
@@ -467,6 +469,19 @@ export const widgetCommon = {
     whiteSpace: "nowrap" as const,
     overflow: "hidden" as const,
     textOverflow: "ellipsis" as const,
+  },
+};
+
+export const widgetContainerCommon = {
+  widgetPanelDelimiter: {
+    padding: 10,
+  },
+  dashboardRow: {
+    display: "flex" as const,
+    flexDirection: "row" as const,
+    justifyContent: "flex-start" as const,
+    flexWrap: "wrap" as const,
+    maxWidth: 1180,
   },
 };
 

@@ -181,7 +181,7 @@ const LinearGraphWidget = ({
         {!loading && (
           <React.Fragment>
             <div className={classes.chartCont}>
-              <ResponsiveContainer>
+              <ResponsiveContainer width="99%">
                 <AreaChart
                   data={data}
                   margin={{
