@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { isNullOrUndefined } from "util";
-
 export const download = (
   bucketName: string,
   objectPath: string,
@@ -25,9 +23,9 @@ export const download = (
 ) => {
   const anchor = document.createElement("a");
   document.body.appendChild(anchor);
-  const encodedPath = encodeURIComponent(objectPath);
+  const encodedPath = btoa(objectPath);
   let path = `/api/v1/buckets/${bucketName}/objects/download?prefix=${encodedPath}`;
-  if (!isNullOrUndefined(versionID) && versionID !== "null") {
+  if (versionID) {
     path = path.concat(`&version_id=${versionID}`);
   }
   window.location.href = path;

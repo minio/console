@@ -100,9 +100,9 @@ const ShareFile = ({
         api
           .invoke(
             "GET",
-            `/api/v1/buckets/${bucketName}/objects/share?prefix=${
+            `/api/v1/buckets/${bucketName}/objects/share?prefix=${btoa(
               dataObject.name
-            }&version_id=${versID || "null"}${
+            )}&version_id=${versID || "null"}${
               selectedDate !== "" ? `&expires=${diffDate}ms` : ""
             }`
           )

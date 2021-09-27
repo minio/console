@@ -88,6 +88,9 @@ const styles = (theme: Theme) =>
     theaderSearchLabel: {
       color: theme.palette.grey["400"],
     },
+    addBucket: {
+      marginRight: 8,
+    },
     theaderSearch: {
       borderColor: theme.palette.grey["200"],
       "& .MuiInputBase-input": {
@@ -101,9 +104,6 @@ const styles = (theme: Theme) =>
             height: 14,
           },
         },
-      },
-      addBucket: {
-        marginRight: 8,
       },
       actionHeaderItems: {
         "@media (min-width: 320px)": {

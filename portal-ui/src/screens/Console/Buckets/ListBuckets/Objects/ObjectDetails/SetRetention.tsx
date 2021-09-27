@@ -119,7 +119,9 @@ const SetRetention = ({
     api
       .invoke(
         "PUT",
-        `/api/v1/buckets/${bucketName}/objects/retention?prefix=${selectedObject}&version_id=${versionId}`,
+        `/api/v1/buckets/${bucketName}/objects/retention?prefix=${btoa(
+          selectedObject
+        )}&version_id=${versionId}`,
         {
           expires: expireDate,
           mode: type,
@@ -142,7 +144,9 @@ const SetRetention = ({
     api
       .invoke(
         "DELETE",
-        `/api/v1/buckets/${bucketName}/objects/retention?prefix=${selectedObject}&version_id=${versionId}`
+        `/api/v1/buckets/${bucketName}/objects/retention?prefix=${btoa(
+          selectedObject
+        )}&version_id=${versionId}`
       )
       .then(() => {
         setIsSaving(false);

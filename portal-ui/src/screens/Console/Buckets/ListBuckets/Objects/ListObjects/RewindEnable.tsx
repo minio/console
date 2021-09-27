@@ -107,7 +107,7 @@ const RewindEnable = ({
               name="status"
               checked={rewindEnableButton}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setRewindEnableButton(false);
+                setRewindEnableButton(e.target.checked);
               }}
               label={"Current Status"}
               indicatorLabels={["Enabled", "Disabled"]}
