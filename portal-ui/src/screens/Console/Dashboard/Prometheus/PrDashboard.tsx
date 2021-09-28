@@ -298,11 +298,11 @@ const PrDashboard = ({
   }, [loading, fetchUsage]);
 
   const summaryPanels = [
+    [66, 44, 500, 501],
+    [50, 502],
     [80, 81, 1],
     [68, 52],
     [63, 70],
-    [66, 50, 44, 500],
-    [501, 502, 61, 62],
   ];
   const resourcesPanels = [
     [76, 77],
@@ -359,7 +359,7 @@ const PrDashboard = ({
             setCurTab(newValue);
           }}
           tabOptions={[
-            { label: "Summary" },
+            { label: "Usage" },
             { label: "Traffic" },
             { label: "Resources" },
           ]}

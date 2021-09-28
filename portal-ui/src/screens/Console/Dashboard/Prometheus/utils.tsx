@@ -59,7 +59,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
   },
   {
     id: 50,
-    title: "Current Usable Capacity",
+    title: "Capacity",
     data: [],
     dataOuter: [{ name: "outer", value: 100 }],
     widgetConfiguration: {
@@ -143,7 +143,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
   },
   {
     id: 66,
-    title: "Number of Buckets",
+    title: "Buckets",
     data: [],
     innerLabel: "N/A",
     type: widgetType.singleRep,
@@ -152,7 +152,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
   },
   {
     id: 44,
-    title: "Number of Objects",
+    title: "Objects",
     data: [],
     innerLabel: "N/A",
     type: widgetType.singleRep,
@@ -161,7 +161,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
   },
   {
     id: 63,
-    title: "S3 API Data Received Rate",
+    title: "API Data Received Rate",
     data: [],
     widgetConfiguration: [
       {
@@ -213,7 +213,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
   },
   {
     id: 60,
-    title: "S3 API Request Rate",
+    title: "API Request Rate",
     data: [],
     widgetConfiguration: [
       {
@@ -229,7 +229,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
   },
   {
     id: 70,
-    title: "S3 API Data Sent Rate",
+    title: "API Data Sent Rate",
     data: [],
     widgetConfiguration: [
       {
@@ -296,7 +296,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
   },
   {
     id: 71,
-    title: "S3 API Request Error Rate",
+    title: "API Request Error Rate",
     data: [],
     widgetConfiguration: [
       {
@@ -398,13 +398,13 @@ export const panelsConfiguration: IDashboardPanel[] = [
     mergedPanels: [
       {
         id: 53,
-        title: "Online Servers",
+        title: "Online",
         data: "N/A",
         type: widgetType.singleValue,
       },
       {
         id: 69,
-        title: "Offline Servers",
+        title: "Offline",
         data: "N/A",
         type: widgetType.singleValue,
       },
@@ -416,25 +416,25 @@ export const panelsConfiguration: IDashboardPanel[] = [
     mergedPanels: [
       {
         id: 9,
-        title: "Online Disks",
+        title: "Online",
         data: "N/A",
         type: widgetType.singleValue,
       },
       {
         id: 78,
-        title: "Offline Disks",
+        title: "Offline",
         data: "N/A",
         type: widgetType.singleValue,
       },
     ],
-    title: "Disks",
+    title: "Drives",
   },
   {
     id: 502,
     mergedPanels: [
       {
         id: 65,
-        title: "Inbound Traffic",
+        title: "Upload",
         data: "N/A",
         type: widgetType.singleValue,
 
@@ -442,14 +442,14 @@ export const panelsConfiguration: IDashboardPanel[] = [
       },
       {
         id: 64,
-        title: "Outbound Traffic",
+        title: "Download",
         data: "N/A",
         type: widgetType.singleValue,
 
         labelDisplayFunction: niceBytes,
       },
     ],
-    title: "Total S3 Traffic",
+    title: "Network",
   },
 ];
 
