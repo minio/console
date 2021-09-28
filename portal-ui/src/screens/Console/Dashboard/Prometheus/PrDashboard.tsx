@@ -20,8 +20,11 @@ import Grid from "@material-ui/core/Grid";
 import ScheduleIcon from "@material-ui/icons/Schedule";
 import WatchLaterIcon from "@material-ui/icons/WatchLater";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button } from "@material-ui/core";
-import { actionsTray } from "../../Common/FormComponents/common/styleLibrary";
+import { Button, GridSize } from "@material-ui/core";
+import {
+  actionsTray,
+  widgetContainerCommon,
+} from "../../Common/FormComponents/common/styleLibrary";
 import { IDashboardPanel, widgetType } from "./types";
 import { getWidgetsWithValue, panelsConfiguration } from "./utils";
 import { TabPanel } from "../../../shared/tabs";
@@ -48,13 +51,7 @@ interface IPrDashboard {
 const styles = (theme: Theme) =>
   createStyles({
     ...actionsTray,
-    widgetsContainer: {
-      position: "relative",
-      display: "flex",
-      flexGrow: 1,
-      width: "100%",
-      height: "100%",
-    },
+    ...widgetContainerCommon,
     syncButton: {
       "&.MuiButton-root .MuiButton-iconSizeMedium > *:first-child": {
         fontSize: 18,
@@ -70,9 +67,6 @@ const styles = (theme: Theme) =>
       justifyContent: "flex-start",
       flexWrap: "wrap",
       maxWidth: 1180,
-    },
-    widgetPanelDelimiter: {
-      margin: 10,
     },
     schedulerIcon: {
       opacity: 0.4,
@@ -183,7 +177,13 @@ const PrDashboard = ({
       return filterPanels?.map((panelLine, indexLine) => {
         const totalPanelsContained = panelLine.length;
 
-        const perc = 100 / totalPanelsContained;
+        let perc = Math.floor(12 / totalPanelsContained);
+
+        if (perc < 1) {
+          perc = 1;
+        } else if (perc > 12) {
+          perc = 12;
+        }
 
         return (
           <Grid
@@ -198,33 +198,39 @@ const PrDashboard = ({
               );
 
               return (
-                <div
+                <Grid
                   key={`widget-${panelInline}-${indexPanel}`}
                   className={classes.widgetPanelDelimiter}
-                  style={{ width: `calc(${perc}% - 20px)` }}
+                  item
+                  xs={7}
+                  sm={8}
+                  md={6}
+                  lg={perc as GridSize}
                 >
-                  {panelInfo ? (
-                    <Fragment>
-                      {panelInfo.mergedPanels ? (
-                        <Fragment>
-                          <MergedWidgets
-                            title={panelInfo.title}
-                            leftComponent={componentToUse(
-                              panelInfo.mergedPanels[0],
-                              0
-                            )}
-                            rightComponent={componentToUse(
-                              panelInfo.mergedPanels[1],
-                              1
-                            )}
-                          />
-                        </Fragment>
-                      ) : (
-                        componentToUse(panelInfo, indexPanel)
-                      )}
-                    </Fragment>
-                  ) : null}
-                </div>
+                  <Grid item xs={12}>
+                    {panelInfo ? (
+                      <Fragment>
+                        {panelInfo.mergedPanels ? (
+                          <Fragment>
+                            <MergedWidgets
+                              title={panelInfo.title}
+                              leftComponent={componentToUse(
+                                panelInfo.mergedPanels[0],
+                                0
+                              )}
+                              rightComponent={componentToUse(
+                                panelInfo.mergedPanels[1],
+                                1
+                              )}
+                            />
+                          </Fragment>
+                        ) : (
+                          componentToUse(panelInfo, indexPanel)
+                        )}
+                      </Fragment>
+                    ) : null}
+                  </Grid>
+                </Grid>
               );
             })}
           </Grid>

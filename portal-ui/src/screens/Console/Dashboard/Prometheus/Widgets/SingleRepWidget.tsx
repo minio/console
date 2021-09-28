@@ -119,7 +119,7 @@ const SingleRepWidget = ({
       )}
       {!loading && (
         <div className={classes.contentContainer}>
-          <ResponsiveContainer>
+          <ResponsiveContainer width="99%">
             <AreaChart data={data}>
               <defs>
                 <linearGradient id={gradientID} x1="0" y1="0" x2="0" y2="1">

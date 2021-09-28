@@ -46,7 +46,9 @@ const styles = (theme: Theme) =>
     ...widgetCommon,
     cardRoot: {
       ...widgetCommon.singleValueContainer,
-      maxWidth: 280,
+      "&.MuiPaper-root": {
+        borderRadius: 10,
+      },
     },
     cardsContainer: {
       maxHeight: 440,
