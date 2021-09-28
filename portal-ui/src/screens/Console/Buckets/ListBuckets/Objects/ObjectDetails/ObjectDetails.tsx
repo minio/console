@@ -247,6 +247,7 @@ const ObjectDetails = ({
   const [selectedTag, setSelectedTag] = useState<string[]>(["", ""]);
   const [legalholdOpen, setLegalholdOpen] = useState<boolean>(false);
   const [actualInfo, setActualInfo] = useState<IFileInfo | null>(null);
+  const [objectToShare, setObjectToShare] = useState<IFileInfo | null>(null);
   const [versions, setVersions] = useState<IFileInfo[]>([]);
   const [filterVersion, setFilterVersion] = useState<string>("");
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
@@ -255,17 +256,23 @@ const ObjectDetails = ({
   const [selectedTab, setSelectedTab] = useState<number>(0);
 
   const internalPaths = get(match.params, "subpaths", "");
+  const internalPathsDecoded = atob(internalPaths) || "";
   const bucketName = match.params["bucketName"];
-  const allPathData = internalPaths.split("/");
-  const currentItem = allPathData.pop();
+  const allPathData = internalPathsDecoded.split("/");
+  const currentItem = allPathData.pop() || "";
+
+  // calculate object name to display
+  let objectNameArray: string[] = [];
+  if (actualInfo) {
+    objectNameArray = actualInfo.name.split("/");
+  }
 
   useEffect(() => {
     if (loadObjectData) {
-      const encodedPath = encodeURIComponent(internalPaths);
       api
         .invoke(
           "GET",
-          `/api/v1/buckets/${bucketName}/objects?prefix=${encodedPath}${
+          `/api/v1/buckets/${bucketName}/objects?prefix=${internalPaths}${
             distributedSetup ? "&with_versions=true" : ""
           }`
         )
@@ -299,11 +306,10 @@ const ObjectDetails = ({
 
   useEffect(() => {
     if (metadataLoad) {
-      const encodedPath = encodeURIComponent(internalPaths);
       api
         .invoke(
           "GET",
-          `/api/v1/buckets/${bucketName}/objects?prefix=${encodedPath}&with_metadata=true`
+          `/api/v1/buckets/${bucketName}/objects?prefix=${internalPaths}&with_metadata=true`
         )
         .then((res: FileInfoResponse) => {
           const fileData = res.objects[0];
@@ -340,6 +346,7 @@ const ObjectDetails = ({
   };
 
   const closeShareModal = () => {
+    setObjectToShare(null);
     setShareFileModalOpen(false);
   };
 
@@ -367,8 +374,11 @@ const ObjectDetails = ({
   const tableActions: ItemActions[] = [
     {
       type: "share",
-      onClick: shareObject,
-      sendOnlyId: true,
+      onClick: (item: any) => {
+        setObjectToShare(item);
+        shareObject();
+      },
+      sendOnlyId: false,
       disableButtonFunction: (item: string) => {
         const element = versions.find((elm) => elm.version_id === item);
         if (element && element.is_delete_marker) {
@@ -445,7 +455,7 @@ const ObjectDetails = ({
           open={shareFileModalOpen}
           closeModalAndRefresh={closeShareModal}
           bucketName={bucketName}
-          dataObject={actualInfo}
+          dataObject={objectToShare || actualInfo}
         />
       )}
       {retentionModalOpen && actualInfo && (
@@ -479,7 +489,7 @@ const ObjectDetails = ({
         <DeleteTagModal
           deleteOpen={deleteTagModalOpen}
           currentTags={actualInfo.tags}
-          selectedObject={internalPaths}
+          selectedObject={actualInfo.name}
           versionId={actualInfo.version_id}
           bucketName={bucketName}
           onCloseAndUpdate={closeDeleteTagModal}
@@ -490,7 +500,7 @@ const ObjectDetails = ({
         <SetLegalHoldModal
           open={legalholdOpen}
           closeModalAndRefresh={closeLegalholdModal}
-          objectName={internalPaths}
+          objectName={actualInfo.name}
           bucketName={bucketName}
           actualInfo={actualInfo}
         />
@@ -512,12 +522,16 @@ const ObjectDetails = ({
                     <ObjectBrowserIcon width={40} />
                   </Fragment>
                 }
-                title={currentItem}
+                title={
+                  objectNameArray.length > 0
+                    ? objectNameArray[objectNameArray.length - 1]
+                    : actualInfo.name
+                }
                 subTitle={
                   <Fragment>
                     <BrowserBreadcrumbs
                       bucketName={bucketName}
-                      internalPaths={internalPaths}
+                      internalPaths={actualInfo.name}
                     />
                   </Fragment>
                 }
@@ -655,7 +669,7 @@ const ObjectDetails = ({
                               <td className={classes.capitalizeFirst}>
                                 {actualInfo.retention_mode
                                   ? actualInfo.retention_mode.toLowerCase()
-                                  : "Undefined"}
+                                  : "None"}
                                 <IconButton
                                   color="primary"
                                   aria-label="retention"
