@@ -72,7 +72,7 @@ const PreviewFile = ({
   let path = "";
 
   if (object) {
-    const encodedPath = encodeURIComponent(object.name);
+    const encodedPath = btoa(object.name);
     path = `${window.location.origin}/api/v1/buckets/${bucketName}/objects/download?preview=true&prefix=${encodedPath}`;
     if (object.version_id) {
       path = path.concat(`&version_id=${object.version_id}`);

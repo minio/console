@@ -325,12 +325,18 @@ const ListObjects = ({
       if (rewindDate) {
         setLoadingRewind(true);
         const rewindParsed = rewindDate.toISOString();
-
+        let pathPrefix = "";
+        if (internalPaths) {
+          const decodedPath = atob(internalPaths);
+          pathPrefix = decodedPath.endsWith("/")
+            ? decodedPath
+            : decodedPath + "/";
+        }
         api
           .invoke(
             "GET",
-            `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}?prefix=${
-              internalPaths ? `${internalPaths}/` : ""
+            `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}${
+              pathPrefix ? `?prefix=${btoa(pathPrefix)}` : ``
             }`
           )
           .then((res: RewindObjectList) => {
@@ -364,17 +370,24 @@ const ListObjects = ({
 
   useEffect(() => {
     if (loading) {
-      let extraPath = "";
+      let pathPrefix = "";
       if (internalPaths) {
-        extraPath = `?prefix=${internalPaths}/`;
+        const decodedPath = atob(internalPaths);
+        pathPrefix = decodedPath.endsWith("/")
+          ? decodedPath
+          : decodedPath + "/";
       }
 
-      let currentTimestamp = Date.now() + 0;
+      let currentTimestamp = Date.now();
       setLoadingStartTime(currentTimestamp);
       setLoadingMessage(defLoading);
-
       api
-        .invoke("GET", `/api/v1/buckets/${bucketName}/objects${extraPath}`)
+        .invoke(
+          "GET",
+          `/api/v1/buckets/${bucketName}/objects${
+            pathPrefix ? `?prefix=${btoa(pathPrefix)}` : ``
+          }`
+        )
         .then((res: BucketObjectsList) => {
           const records: BucketObject[] = res.objects || [];
           const folders: BucketObject[] = [];
@@ -389,19 +402,26 @@ const ListObjects = ({
               files.push(record);
             }
           });
-
           const recordsInElement = [...folders, ...files];
-
           setRecords(recordsInElement);
           // In case no objects were retrieved, We check if item is a file
-          if (!res.objects && extraPath !== "") {
+          if (!res.objects && pathPrefix !== "") {
             if (rewindEnabled) {
               const rewindParsed = rewindDate.toISOString();
+
+              let pathPrefix = "";
+              if (internalPaths) {
+                const decodedPath = atob(internalPaths);
+                pathPrefix = decodedPath.endsWith("/")
+                  ? decodedPath
+                  : decodedPath + "/";
+              }
+
               api
                 .invoke(
                   "GET",
-                  `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}?prefix=${
-                    internalPaths ? `${internalPaths}/` : ""
+                  `/api/v1/buckets/${bucketName}/rewind/${rewindParsed}${
+                    pathPrefix ? `?prefix=${btoa(pathPrefix)}` : ``
                   }`
                 )
                 .then((res: RewindObjectList) => {
@@ -426,7 +446,9 @@ const ListObjects = ({
               api
                 .invoke(
                   "GET",
-                  `/api/v1/buckets/${bucketName}/objects?prefix=${internalPaths}`
+                  `/api/v1/buckets/${bucketName}/objects${
+                    internalPaths ? `?prefix=${internalPaths}` : ``
+                  }`
                 )
                 .then((res: BucketObjectsList) => {
                   //It is a file since it has elements in the object, setting file flag and waiting for component mount
@@ -497,7 +519,7 @@ const ListObjects = ({
     setCreateFolderOpen(false);
   };
 
-  const upload = (e: any, bucketName: string, path: string) => {
+  const upload = (e: any, bucketName: string, encodedPath: string) => {
     if (
       e === null ||
       e === undefined ||
@@ -509,12 +531,11 @@ const ListObjects = ({
     e.preventDefault();
     let files = e.target.files;
     let uploadUrl = `${baseUrl}/api/v1/buckets/${bucketName}/objects/upload`;
-    if (path !== "") {
-      const encodedPath = encodeURIComponent(path);
+    if (encodedPath !== "") {
       uploadUrl = `${uploadUrl}?prefix=${encodedPath}`;
     }
     let xhr = new XMLHttpRequest();
-    const areMultipleFiles = files.length > 1 ? true : false;
+    const areMultipleFiles = files.length > 1;
     const errorMessage = `An error occurred while uploading the file${
       areMultipleFiles ? "s" : ""
     }.`;
@@ -602,30 +623,20 @@ const ListObjects = ({
   };
 
   const openPath = (idElement: string) => {
-    const currentPath = get(match, "url", `/buckets/${bucketName}`);
-
-    // Element is a folder, we redirect to it
-    if (idElement.endsWith("/")) {
-      const idElementClean = idElement
-        .substr(0, idElement.length - 1)
-        .split("/");
-      const lastIndex = idElementClean.length - 1;
-      const newPath = `${currentPath}/${idElementClean[lastIndex]}`;
-
-      history.push(newPath);
-      return;
-    }
-    // Element is a file. we open details here
-    const pathInArray = idElement.split("/");
-    const fileName = pathInArray[pathInArray.length - 1];
-    const newPath = `${currentPath}/${fileName}`;
-
+    const newPath = `/buckets/${bucketName}/browse${
+      idElement ? `/${btoa(idElement)}` : ``
+    }`;
     history.push(newPath);
     return;
   };
 
   const uploadObject = (e: any): void => {
-    upload(e, bucketName, `${internalPaths}/`);
+    let pathPrefix = "";
+    if (internalPaths) {
+      const decodedPath = atob(internalPaths);
+      pathPrefix = decodedPath.endsWith("/") ? decodedPath : decodedPath + "/";
+    }
+    upload(e, bucketName, btoa(pathPrefix));
   };
 
   const openPreview = (fileObject: BucketObject) => {
@@ -884,7 +895,10 @@ const ListObjects = ({
 
   const ccPath = internalPaths.split("/").pop();
 
-  const pageTitle = ccPath !== "" ? ccPath : "/";
+  const pageTitle = ccPath !== "" ? atob(ccPath) : "/";
+  // console.log("pageTitle", pageTitle);
+  const currentPath = pageTitle.split("/").filter((i: string) => i !== "");
+  // console.log("currentPath", currentPath);
 
   return (
     <React.Fragment>
@@ -896,7 +910,7 @@ const ListObjects = ({
           dataObject={{
             name: selectedPreview.name,
             last_modified: "",
-            version_id: selectedPreview.version_id,
+            version_id: selectedPreview.version_id || null,
           }}
         />
       )}
@@ -948,12 +962,14 @@ const ListObjects = ({
                 <FolderIcon width={40} />
               </Fragment>
             }
-            title={pageTitle}
+            title={
+              currentPath.length > 0 ? currentPath[currentPath.length - 1] : "/"
+            }
             subTitle={
               <Fragment>
                 <BrowserBreadcrumbs
                   bucketName={bucketName}
-                  internalPaths={internalPaths}
+                  internalPaths={pageTitle}
                 />
               </Fragment>
             }

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import { Button, Grid } from "@material-ui/core";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
@@ -54,23 +54,50 @@ const CreateFolderModal = ({
   classes,
 }: ICreateFolder) => {
   const [pathUrl, setPathUrl] = useState("");
+  const [nameInputError, setNameInputError] = useState<string>("");
+  const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
-  const currentPath = `${bucketName}/${folderName}`;
+  const currentPath = `${bucketName}/${atob(folderName)}`;
 
   const resetForm = () => {
     setPathUrl("");
   };
 
   const createProcess = () => {
-    const newPath = `/buckets/${bucketName}/browse/${
-      folderName !== "" ? `${folderName}/` : ""
-    }${pathUrl}`;
-
+    let folderPath = "";
+    if (folderName !== "") {
+      const decodedFolderName = atob(folderName);
+      folderPath = decodedFolderName.endsWith("/")
+        ? decodedFolderName
+        : `${decodedFolderName}/`;
+    }
+    const newPath = `/buckets/${bucketName}/browse/${btoa(
+      `${folderPath}${pathUrl}`
+    )}/`;
     history.push(newPath);
-
     setFileModeEnabled(false);
     onClose();
   };
+
+  const validPathURL = useCallback(() => {
+    const patternAgainst = /^[a-zA-Z0-9*'#-\[\]_/&.@\s()]+$/; // Only allow uppercase, numbers, dashes and underscores
+    if (patternAgainst.test(pathUrl)) {
+      setNameInputError("");
+      return true;
+    }
+    setNameInputError(
+      "Please verify the folder path contains valid characters only (letters, numbers and some special characters)."
+    );
+    return false;
+  }, [pathUrl]);
+
+  useEffect(() => {
+    let valid = true;
+    if (pathUrl.trim().length === 0 || !validPathURL()) {
+      valid = false;
+    }
+    setIsFormValid(valid);
+  }, [pathUrl]);
 
   return (
     <React.Fragment>
@@ -91,6 +118,8 @@ const CreateFolderModal = ({
               onChange={(e) => {
                 setPathUrl(e.target.value);
               }}
+              required
+              error={nameInputError}
             />
           </Grid>
           <Grid item xs={12} className={classes.buttonContainer}>
@@ -106,7 +135,7 @@ const CreateFolderModal = ({
               type="submit"
               variant="contained"
               color="primary"
-              disabled={pathUrl.trim() === ""}
+              disabled={!isFormValid}
               onClick={createProcess}
             >
               Go
