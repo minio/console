@@ -27,6 +27,7 @@ import {
 import HealIcon from "../../../../icons/HealIcon";
 import DiagnosticsIcon from "../../../../icons/DiagnosticsIcon";
 import HistoryIcon from "../../../../icons/HistoryIcon";
+import { UptimeIcon } from "../../../../icons";
 
 const colorsMain = [
   "#C4D4E9",
@@ -54,7 +55,7 @@ export const panelsConfiguration: IDashboardPanel[] = [
     title: "Uptime",
     data: "N/A",
     type: widgetType.simpleWidget,
-    widgetIcon: <HistoryIcon />,
+    widgetIcon: <UptimeIcon />,
     labelDisplayFunction: niceDays,
   },
   {
