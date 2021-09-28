@@ -96,7 +96,7 @@ const BasicDashboard = ({ classes, usage }: IDashboardProps) => {
         return 0;
       });
     }
-    
+
     return [];
   };
 
