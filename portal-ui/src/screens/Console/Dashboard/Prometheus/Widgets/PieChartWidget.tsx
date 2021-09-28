@@ -143,7 +143,7 @@ const PieChartWidget = ({
             {middleLabel && splitSizeMetric(middleLabel)}
           </span>
           <div className={classes.chartContainer}>
-            <ResponsiveContainer>
+            <ResponsiveContainer width="99%">
               <PieChart margin={{ top: 5, bottom: 5 }}>
                 {dataOuter && (
                   <Pie

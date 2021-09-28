@@ -156,7 +156,7 @@ const BarChartWidget = ({
       )}
       {!loading && (
         <div className={classes.contentContainer}>
-          <ResponsiveContainer>
+          <ResponsiveContainer width="99%">
             <BarChart
               data={data as object[]}
               layout={"vertical"}
