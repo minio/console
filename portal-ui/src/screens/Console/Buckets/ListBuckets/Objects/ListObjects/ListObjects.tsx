@@ -910,7 +910,7 @@ const ListObjects = ({
           dataObject={{
             name: selectedPreview.name,
             last_modified: "",
-            version_id: selectedPreview.version_id || null,
+            version_id: selectedPreview.version_id,
           }}
         />
       )}
