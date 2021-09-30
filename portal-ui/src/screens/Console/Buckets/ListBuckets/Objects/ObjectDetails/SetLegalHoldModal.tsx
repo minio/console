@@ -76,7 +76,9 @@ const SetLegalHoldModal = ({
     api
       .invoke(
         "PUT",
-        `/api/v1/buckets/${bucketName}/objects/legalhold?prefix=${objectName}&version_id=${versionId}`,
+        `/api/v1/buckets/${bucketName}/objects/legalhold?prefix=${btoa(
+          objectName
+        )}&version_id=${versionId}`,
         { status: legalHoldEnabled ? "enabled" : "disabled" }
       )
       .then(() => {

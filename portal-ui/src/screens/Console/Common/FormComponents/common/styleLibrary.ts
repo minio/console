@@ -84,6 +84,11 @@ export const modalBasic = {
     height: 170,
     maxWidth: 840,
   },
+  moduleDescription: {
+    color: "#848484",
+    fontSize: 12,
+    fontStyle: "italic" as string,
+  },
 };
 
 export const tooltipHelper = {
@@ -127,6 +132,7 @@ export const radioIcons = {
 
 export const containerForHeader = (bottomSpacing: any) => ({
   container: {
+    position: "relative" as const,
     padding: "8px 16px 0",
     "& h6": {
       color: "#777777",
@@ -148,9 +154,17 @@ export const containerForHeader = (bottomSpacing: any) => ({
 });
 
 export const actionsTray = {
+  filterTitle: {
+    color: "#848484",
+    fontSize: 13,
+    alignSelf: "center" as const,
+    whiteSpace: "nowrap" as const,
+    "&:not(:first-of-type)": {
+      marginLeft: 10,
+    },
+  },
   label: {
-    color: "#393939",
-    fontWeight: 600,
+    color: "#07193E",
     fontSize: 13,
     alignSelf: "center" as const,
     whiteSpace: "nowrap" as const,
@@ -160,6 +174,7 @@ export const actionsTray = {
   },
   timeContainers: {
     height: 40,
+    maxWidth: 1185,
   },
   actionsTray: {
     display: "flex" as const,
@@ -399,29 +414,30 @@ export const logsCommon = {
 
 export const widgetCommon = {
   singleValueContainer: {
-    position: "relative" as const,
-    flexGrow: 1,
-    width: "100%",
-    height: "100%",
-    border: "#EAEAEA 1px solid",
-    borderRadius: 5,
+    height: 200,
+    minWidth: 280,
+    maxWidth: 1185,
+    border: "#eef1f4 2px solid",
     backgroundColor: "#fff",
+    borderRadius: 10,
+    width: "100%",
+    padding: 16,
   },
   titleContainer: {
-    color: "#393939",
-    fontWeight: 600,
-    height: 15,
-    textAlign: "center" as const,
-    fontSize: 10,
+    color: "#404143",
+    fontSize: 14,
+    textTransform: "uppercase" as const,
+    fontWeight: 800,
+    borderBottom: "#eef1f4 1px solid",
+    paddingBottom: 14,
+    marginBottom: 5,
   },
   contentContainer: {
-    flexGrow: 2,
     justifyContent: "center" as const,
     alignItems: "center" as const,
     display: "flex" as const,
-    position: "absolute" as const,
     width: "100%",
-    height: "calc(100% - 15px)",
+    height: 140,
   },
   contentContainerWithLabel: {
     height: "calc(100% - 25px)",
@@ -445,7 +461,6 @@ export const widgetCommon = {
     width: 8,
     height: 8,
     minWidth: 8,
-    borderRadius: "100%",
     marginRight: 5,
   },
   legendLabel: {
@@ -454,6 +469,19 @@ export const widgetCommon = {
     whiteSpace: "nowrap" as const,
     overflow: "hidden" as const,
     textOverflow: "ellipsis" as const,
+  },
+};
+
+export const widgetContainerCommon = {
+  widgetPanelDelimiter: {
+    padding: 10,
+  },
+  dashboardRow: {
+    display: "flex" as const,
+    flexDirection: "row" as const,
+    justifyContent: "flex-start" as const,
+    flexWrap: "wrap" as const,
+    maxWidth: 1180,
   },
 };
 

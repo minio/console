@@ -23,6 +23,7 @@ import { snackBarCommon } from "../FormComponents/common/styleLibrary";
 import { AppState } from "../../../../store";
 import { snackBarMessage } from "../../../../types";
 import { setModalSnackMessage } from "../../../../actions";
+import ModalError from "../FormComponents/ModalError/ModalError";
 
 interface IModalProps {
   classes: any;
@@ -125,13 +126,19 @@ const ModalWrapper = ({
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
 
   useEffect(() => {
+    setModalSnackMessage("");
+  }, [setModalSnackMessage]);
+
+  useEffect(() => {
     if (modalSnackMessage) {
       if (modalSnackMessage.message === "") {
         setOpenSnackbar(false);
         return;
       }
       // Open SnackBar
-      setOpenSnackbar(true);
+      if(modalSnackMessage.type !== "error") {
+        setOpenSnackbar(true);
+      }
     }
   }, [modalSnackMessage]);
 
@@ -169,6 +176,7 @@ const ModalWrapper = ({
       {...customSize}
     >
       <div className={classes.dialogContainer}>
+        <ModalError />
         <Snackbar
           open={openSnackbar}
           className={classes.snackBarModal}

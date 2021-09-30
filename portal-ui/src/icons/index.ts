@@ -98,3 +98,4 @@ export { default as FileVideoIcon } from "./FileVideoIcon";
 
 export { default as ArrowRightIcon } from "./ArrowRightIcon";
 export { default as CalendarIcon } from "./CalendarIcon";
+export { default as UptimeIcon } from "./UptimeIcon";

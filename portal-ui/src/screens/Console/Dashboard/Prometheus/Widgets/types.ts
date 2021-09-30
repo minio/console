@@ -25,6 +25,7 @@ export interface IBarChartConfiguration {
   dataKey: string;
   color: string;
   background?: object;
+  greatestColor?: string;
 }
 
 export interface IPieChartConfiguration {

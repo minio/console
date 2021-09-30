@@ -23,6 +23,7 @@ import {
   makeStyles,
 } from "@material-ui/core/styles";
 import React, { Fragment } from "react";
+import { widgetCommon } from "../Common/FormComponents/common/styleLibrary";
 
 export interface ISubInterface {
   message: string;
@@ -30,24 +31,24 @@ export interface ISubInterface {
 }
 
 interface ICommonCard {
-  avatar: any;
   title: string;
   metricValue: any;
   metricUnit?: string;
   subMessage?: ISubInterface;
   moreLink?: string;
   rightComponent?: any;
+  extraMargin?: boolean;
   classes: any;
 }
 
 const styles = (theme: Theme) =>
   createStyles({
+    ...widgetCommon,
     cardRoot: {
-      border: "#eef1f4 2px solid",
-      borderRadius: 10,
-      maxWidth: 280,
-      width: "100%",
-      margin: 10,
+      ...widgetCommon.singleValueContainer,
+      "&.MuiPaper-root": {
+        borderRadius: 10,
+      },
     },
     cardsContainer: {
       maxHeight: 440,
@@ -91,18 +92,15 @@ const styles = (theme: Theme) =>
         color: "#C83B51",
       },
     },
+    extraMargin: {
+      margin: "10px 20px 10px 0",
+    },
   });
 
 const cardSubStyles = makeStyles({
-  root: { backgroundColor: "#fff" },
+  root: { backgroundColor: "#fff", padding: 0 },
   title: {
-    color: "#404144",
-    fontSize: 14,
-    textTransform: "uppercase",
-    fontWeight: "bold",
-    borderBottom: "#eef1f4 1px solid",
-    paddingBottom: 14,
-    marginBottom: 5,
+    ...widgetCommon.titleContainer,
   },
   content: {
     maxWidth: "100%",
@@ -110,13 +108,13 @@ const cardSubStyles = makeStyles({
 });
 
 const CommonCard = ({
-  avatar,
   title,
   metricValue,
   metricUnit,
   subMessage,
   moreLink,
   rightComponent,
+  extraMargin = false,
   classes,
 }: ICommonCard) => {
   const subStyles = cardSubStyles();
@@ -166,7 +164,11 @@ const CommonCard = ({
 
   return (
     <Fragment>
-      <Card className={classes.cardRoot}>
+      <Card
+        className={`${classes.cardRoot} ${
+          extraMargin ? classes.extraMargin : ""
+        }`}
+      >
         {metricValue !== "" && (
           <CardHeader
             title={<Header />}

@@ -473,10 +473,10 @@ const AddBulkReplicationModal = ({
             ],
           },
           {
-            label: "Buckets Assignation",
+            label: "Bucket Assignments",
             componentRender: (
               <Fragment>
-                <h3>Remote Buckets Assignation</h3>
+                <h3>Remote Bucket Assignments</h3>
                 <span className={classes.descriptionText}>
                   Please select / type the desired remote bucket were you want
                   the local data to be replicated.

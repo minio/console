@@ -55,20 +55,16 @@ const BrowserBreadcrumbs = ({
     paths = `/${internalPaths}`;
   }
 
-  const splitPaths = paths.split("/");
-
+  const splitPaths = paths.split("/").filter((path) => path !== "");
   const listBreadcrumbs = splitPaths.map(
     (objectItem: string, index: number) => {
-      const subSplit = splitPaths.slice(1, index + 1).join("/");
-
-      const route = `/buckets/${bucketName}/browse${
-        objectItem !== "" ? `/${subSplit}` : ""
+      const subSplit = splitPaths.slice(0, index + 1).join("/");
+      const route = `/buckets/${bucketName}/browse/${
+        subSplit ? `${btoa(subSplit)}` : ``
       }`;
-      const label = objectItem === "" ? bucketName : objectItem;
-
       return (
         <React.Fragment key={`breadcrumbs-${index.toString()}`}>
-          <Link to={route}>{label}</Link>
+          <Link to={route}>{objectItem}</Link>
           {index < splitPaths.length - 1 && <span> / </span>}
         </React.Fragment>
       );
@@ -95,6 +91,10 @@ const BrowserBreadcrumbs = ({
       )}
 
       <Grid item xs={12} className={classes.breadcrumbs}>
+        <React.Fragment>
+          <Link to={`/buckets/${bucketName}/browse`}>{bucketName}</Link>
+          {listBreadcrumbs.length > 0 && <span> / </span>}
+        </React.Fragment>
         {listBreadcrumbs}
       </Grid>
     </React.Fragment>

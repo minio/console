@@ -18,7 +18,6 @@ import React, { Fragment, useEffect, useState } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, LinearProgress } from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import Container from "@material-ui/core/Container";
 import Snackbar from "@material-ui/core/Snackbar";
 import history from "../../history";
 import { Redirect, Route, Router, Switch, useLocation } from "react-router-dom";

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import get from "lodash/get";
 import { connect } from "react-redux";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
@@ -32,8 +32,9 @@ import { AppState } from "../../../../../../store";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import api from "../../../../../../common/api";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
-import DateSelector from "../../../../Common/FormComponents/DateSelector/DateSelector";
 import PredefinedList from "../../../../Common/FormComponents/PredefinedList/PredefinedList";
+import DaysSelector from "../../../../Common/FormComponents/DaysSelector/DaysSelector";
+import { LinearProgress } from "@material-ui/core";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -68,9 +69,13 @@ const ShareFile = ({
   setModalErrorSnackMessage,
 }: IShareFileProps) => {
   const [shareURL, setShareURL] = useState<string>("");
+  const [isLoadingVersion, setIsLoadingVersion] = useState<boolean>(true);
   const [isLoadingFile, setIsLoadingFile] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [dateValid, setDateValid] = useState<boolean>(true);
+  const [versionID, setVersionID] = useState<string>("null");
+
+  const initialDate = new Date();
 
   const dateChanged = (newDate: string, isValid: boolean) => {
     setDateValid(isValid);
@@ -79,61 +84,81 @@ const ShareFile = ({
       return;
     }
     setSelectedDate("");
+    setShareURL("");
   };
 
   useEffect(() => {
-    if (dateValid) {
+    // In case version is undefined, we get the latest version of the object
+    if (dataObject.version_id === undefined) {
+      // In case it is not distributed setup, then we default to "null";
+      if (distributedSetup) {
+        api
+          .invoke(
+            "GET",
+            `/api/v1/buckets/${bucketName}/objects?prefix=${btoa(
+              dataObject.name
+            )}${distributedSetup ? "&with_versions=true" : ""}`
+          )
+          .then((res: IFileInfo[]) => {
+            const result = get(res, "objects", []);
+
+            const latestVersion = result.find(
+              (elem: IFileInfo) => elem.is_latest
+            );
+
+            if (latestVersion) {
+              setVersionID(latestVersion.version_id);
+              return;
+            }
+
+            // Version couldn't ve retrieved, we default
+            setVersionID("null");
+          })
+          .catch((error: ErrorResponseHandler) => {
+            setModalErrorSnackMessage(error);
+          });
+
+        setIsLoadingVersion(false);
+        return;
+      }
+      setVersionID("null");
+      setIsLoadingVersion(false);
+      return;
+    }
+    setVersionID(dataObject.version_id || "null");
+    setIsLoadingVersion(false);
+  }, [bucketName, dataObject, distributedSetup, setModalErrorSnackMessage]);
+
+  useEffect(() => {
+    if (dateValid && !isLoadingVersion) {
       setIsLoadingFile(true);
       setShareURL("");
 
-      const slDate = new Date(`${selectedDate}T23:59:59`);
+      const slDate = new Date(`${selectedDate}`);
       const currDate = new Date();
 
       const diffDate = slDate.getTime() - currDate.getTime();
 
-      const versID = distributedSetup ? dataObject.version_id : "null";
-
-      if (diffDate < 0) {
-        setModalErrorSnackMessage({
-          errorMessage: "Selected date must be greater than current time.",
-          detailedError: "",
-        });
-        setShareURL("");
-        setIsLoadingFile(false);
-
-        return;
+      if (diffDate > 0) {
+        api
+          .invoke(
+            "GET",
+            `/api/v1/buckets/${bucketName}/objects/share?prefix=${btoa(
+              dataObject.name
+            )}&version_id=${versionID}${
+              selectedDate !== "" ? `&expires=${diffDate}ms` : ""
+            }`
+          )
+          .then((res: string) => {
+            setShareURL(res);
+            setIsLoadingFile(false);
+          })
+          .catch((error: ErrorResponseHandler) => {
+            setModalErrorSnackMessage(error);
+            setShareURL("");
+            setIsLoadingFile(false);
+          });
       }
-
-      if (diffDate > 604800000) {
-        setModalErrorSnackMessage({
-          errorMessage: "You can share a file only for less than 7 days.",
-          detailedError: "",
-        });
-        setShareURL("");
-        setIsLoadingFile(false);
-
-        return;
-      }
-
-      api
-        .invoke(
-          "GET",
-          `/api/v1/buckets/${bucketName}/objects/share?prefix=${
-            dataObject.name
-          }&version_id=${versID}${
-            selectedDate !== "" ? `&expires=${diffDate}ms` : ""
-          }`
-        )
-        .then((res: string) => {
-          setShareURL(res);
-          setIsLoadingFile(false);
-        })
-        .catch((error: ErrorResponseHandler) => {
-          setModalErrorSnackMessage(error);
-          setShareURL("");
-          setIsLoadingFile(false);
-        });
-      return;
     }
   }, [
     dataObject,
@@ -143,6 +168,8 @@ const ShareFile = ({
     setShareURL,
     setModalErrorSnackMessage,
     distributedSetup,
+    isLoadingVersion,
+    versionID,
   ]);
 
   return (
@@ -155,35 +182,51 @@ const ShareFile = ({
         }}
       >
         <Grid container className={classes.modalContent}>
-          <Grid item xs={12} className={classes.dateContainer}>
-            <DateSelector
-              id="date"
-              label="Active until"
-              borderBottom={false}
-              addSwitch={true}
-              onDateChange={dateChanged}
-            />
-          </Grid>
-          <Grid container item xs={12}>
-            <Grid item xs={10}>
-              <PredefinedList content={shareURL} />
+          {isLoadingVersion && (
+            <Grid item xs={12}>
+              <LinearProgress />
             </Grid>
-            <Grid item xs={2} className={classes.copyButtonContainer}>
-              <CopyToClipboard text={shareURL}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<CopyIcon />}
-                  onClick={() => {
-                    setModalSnackMessage("Share URL Copied to clipboard");
-                  }}
-                  disabled={shareURL === "" || isLoadingFile}
-                >
-                  Copy
-                </Button>
-              </CopyToClipboard>
-            </Grid>
-          </Grid>
+          )}
+          {!isLoadingVersion && (
+            <Fragment>
+              <Grid item xs={12} className={classes.moduleDescription}>
+                This module generates a temporary URL with integrated access
+                credentials for sharing objects for up to 7 days.
+                <br />
+                The temporary URL expires after the configured time limit.
+              </Grid>
+              <Grid item xs={12} className={classes.dateContainer}>
+                <DaysSelector
+                  initialDate={initialDate}
+                  id="date"
+                  label="Active for"
+                  maxDays={7}
+                  onChange={dateChanged}
+                  entity="Link"
+                />
+              </Grid>
+              <Grid container item xs={12}>
+                <Grid item xs={10}>
+                  <PredefinedList content={shareURL} />
+                </Grid>
+                <Grid item xs={2} className={classes.copyButtonContainer}>
+                  <CopyToClipboard text={shareURL}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      startIcon={<CopyIcon />}
+                      onClick={() => {
+                        setModalSnackMessage("Share URL Copied to clipboard");
+                      }}
+                      disabled={shareURL === "" || isLoadingFile}
+                    >
+                      Copy
+                    </Button>
+                  </CopyToClipboard>
+                </Grid>
+              </Grid>
+            </Fragment>
+          )}
         </Grid>
       </ModalWrapper>
     </React.Fragment>
