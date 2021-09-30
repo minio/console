@@ -66,6 +66,7 @@ import Tools from "./Tools/Tools";
 import ErrorLogs from "./Logs/ErrorLogs/ErrorLogs";
 import LogsSearchMain from "./Logs/LogSearch/LogsSearchMain";
 import GroupsDetails from "./Groups/GroupsDetails";
+import Speedtest from "./Speedtest/Speedtest";
 
 const drawerWidth = 245;
 
@@ -249,6 +250,10 @@ const Console = ({
     {
       component: Watch,
       path: "/tools/watch",
+    },
+    {
+      component: Speedtest,
+      path: "/tools/speedtest",
     },
     {
       component: Users,

@@ -18,6 +18,7 @@ package restapi
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"net/http"
 	"strconv"
@@ -28,6 +29,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/auth"
+	"github.com/minio/madmin-go"
 )
 
 var upgrader = websocket.Upgrader{
@@ -212,6 +214,23 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		go wsS3Client.watch(wOptions)
+	case strings.HasPrefix(wsPath, `/speedtest`):
+		fmt.Println("Speedtest triggered")
+		speedtestOpts, err := getSpeedtestOptionsFromReq(req)
+
+		if err != nil {
+			LogError("error getting speedtest options: %v", err)
+			closeWsConn(conn)
+			return
+		}
+
+		wsAdminClient, err := newWebSocketAdminClient(conn, session)
+		if err != nil {
+			closeWsConn(conn)
+			return
+		}
+		go wsAdminClient.speedtest(speedtestOpts)
+
 	default:
 		// path not found
 		closeWsConn(conn)
@@ -370,6 +389,21 @@ func (wsc *wsAdminClient) healthInfo(deadline *time.Duration) {
 	ctx := wsReadClientCtx(wsc.conn)
 
 	err := startHealthInfo(ctx, wsc.conn, wsc.client, deadline)
+
+	sendWsCloseMessage(wsc.conn, err)
+}
+
+func (wsc *wsAdminClient) speedtest(opts *madmin.SpeedtestOpts) {
+	defer func() {
+		LogInfo("speedtest stopped")
+		// close connection after return
+		wsc.conn.close()
+	}()
+	LogInfo("speedtest started")
+
+	ctx := wsReadClientCtx(wsc.conn)
+
+	err := startSpeedtest(ctx, wsc.conn, wsc.client, opts)
 
 	sendWsCloseMessage(wsc.conn, err)
 }

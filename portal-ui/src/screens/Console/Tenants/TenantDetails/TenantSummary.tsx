@@ -35,7 +35,7 @@ import { AppState } from "../../../../store";
 import history from "./../../../../history";
 import { CircleIcon } from "../../../../icons";
 import { tenantIsOnline } from "../ListTenants/utils";
-import AButton from "../../Common/AButton";
+import AButton from "../../Common/AButton/AButton";
 
 interface ITenantsSummary {
   classes: any;

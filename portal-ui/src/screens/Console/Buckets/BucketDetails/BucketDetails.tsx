@@ -53,7 +53,7 @@ import { BucketsIcon, DeleteIcon, FolderIcon } from "../../../../icons";
 import DeleteBucket from "../ListBuckets/DeleteBucket";
 import AccessRulePanel from "./AccessRulePanel";
 import RefreshIcon from "../../../../icons/RefreshIcon";
-import BoxIconButton from "../../Common/BoxIconButton";
+import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import {
   ADMIN_GET_POLICY,
   ADMIN_LIST_USER_POLICIES,

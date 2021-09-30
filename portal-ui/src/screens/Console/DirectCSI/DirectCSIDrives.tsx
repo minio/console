@@ -43,7 +43,7 @@ import FormatDrives from "./FormatDrives";
 import FormatErrorsResult from "./FormatErrorsResult";
 import RefreshIcon from "../../../icons/RefreshIcon";
 import SearchIcon from "../../../icons/SearchIcon";
-import BoxIconButton from "../Common/BoxIconButton";
+import BoxIconButton from "../Common/BoxIconButton/BoxIconButton";
 
 interface IDirectCSIMain {
   classes: any;

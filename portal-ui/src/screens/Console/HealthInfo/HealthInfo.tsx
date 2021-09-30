@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import {
   ICloseEvent,
   IMessageEvent,
@@ -46,6 +46,7 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 import { setServerDiagStat, setSnackBarMessage } from "../../../actions";
 import CircularProgress from "@mui/material/CircularProgress";
 import BackLink from "../../../common/BackLink";
+import TestWrapper from "../Common/TestWrapper/TestWrapper";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -72,6 +73,26 @@ const styles = (theme: Theme) =>
       borderRadius: 2,
       padding: 40,
       backgroundColor: "#fff",
+    },
+    localMessage: {
+      fontSize: 24,
+      color: "#07193E",
+      fontWeight: "bold",
+      textAlign: "center",
+      marginBottom: 10,
+    },
+    startDiagnostic: {
+      textAlign: "center",
+      marginBottom: 25,
+    },
+    progressResult: {
+      textAlign: "center",
+      marginBottom: 25,
+    },
+    diagNew: {
+      textAlign: "right",
+      margin: 25,
+      marginBottom: 0,
     },
     ...actionsTray,
     ...containerForHeader(theme.spacing(4)),
@@ -115,7 +136,27 @@ const HealthInfo = ({
   serverDiagnosticStatus,
 }: IHealthInfo) => {
   const [startDiagnostic, setStartDiagnostic] = useState(false);
+  const [diagStarted, setDiagStarted] = useState<boolean>(false);
   const [downloadDisabled, setDownloadDisabled] = useState(true);
+  const [localMessage, setMessage] = useState<string>("");
+  const [title, setTitle] = useState<string>("Start new Diagnostic");
+
+  useEffect(() => {
+    if (serverDiagnosticStatus === DiagStatInProgress) {
+      setTitle("Diagnostic in progress...");
+      return;
+    }
+
+    if (serverDiagnosticStatus === DiagStatSuccess && diagStarted) {
+      setTitle("Diagnostic complete");
+      return;
+    }
+
+    if (serverDiagnosticStatus === DiagStatError) {
+      setTitle("Error");
+      return;
+    }
+  }, [serverDiagnosticStatus, startDiagnostic, diagStarted]);
 
   useEffect(() => {
     if (
@@ -155,7 +196,8 @@ const HealthInfo = ({
           interval = setInterval(() => {
             c.send("ok");
           }, 10 * 1000);
-          setSnackBarMessage(
+          setDiagStarted(true);
+          setMessage(
             "Diagnostic started. Please do not refresh page during diagnosis."
           );
           setServerDiagStat(DiagStatInProgress);
@@ -163,6 +205,7 @@ const HealthInfo = ({
         c.onmessage = (message: IMessageEvent) => {
           let m: HealthInfoMessage = JSON.parse(message.data.toString());
           m.timestamp = new Date(m.timestamp.toString());
+
           healthInfoMessageReceived(m);
         };
         c.onerror = (error: Error) => {
@@ -180,13 +223,12 @@ const HealthInfo = ({
           ) {
             // handle close with error
             console.log("connection closed by server with code:", event.code);
-            setSnackBarMessage(
-              "An error occurred while getting Diagnostic file."
-            );
+            setMessage("An error occurred while getting Diagnostic file.");
             setServerDiagStat(DiagStatError);
           } else {
             console.log("connection closed by server");
-            setSnackBarMessage("Diagnostic file is ready to be downloaded.");
+
+            setMessage("Diagnostic file is ready to be downloaded.");
             setServerDiagStat(DiagStatSuccess);
           }
         };
@@ -204,7 +246,7 @@ const HealthInfo = ({
   ]);
 
   return (
-    <React.Fragment>
+    <Fragment>
       <PageHeader label="Diagnostic" />
 
       <Grid container className={classes.container}>
@@ -212,44 +254,76 @@ const HealthInfo = ({
           <BackLink to="/tools" label="Return to Tools" />
         </Grid>
         <Grid item xs={12} className={classes.boxy}>
-          <Grid container className={classes.buttons}>
-            <Grid key="start-diag" item>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={startDiagnostic}
-                onClick={() => setStartDiagnostic(true)}
-              >
-                Start Diagnostic
-              </Button>
-            </Grid>
-            <Grid key="start-download" item>
-              {serverDiagnosticStatus === DiagStatInProgress ? (
-                <div className={classes.loading}>
-                  <CircularProgress size={25} />
-                </div>
-              ) : (
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
-                    download(
-                      "diagnostic.json",
-                      JSON.stringify(message, null, 2)
-                    );
-                  }}
-                  disabled={downloadDisabled}
+          <TestWrapper title={title} advancedVisible={false}>
+            <Grid container className={classes.buttons}>
+              {!diagStarted && (
+                <Grid
+                  key="start-diag"
+                  item
+                  xs={12}
+                  className={classes.startDiagnostic}
                 >
-                  Download
-                </Button>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    disabled={startDiagnostic}
+                    onClick={() => setStartDiagnostic(true)}
+                  >
+                    Start Diagnostic
+                  </Button>
+                </Grid>
+              )}
+              {diagStarted && (
+                <Grid
+                  key="start-download"
+                  item
+                  xs={12}
+                  className={classes.progressResult}
+                >
+                  <div className={classes.localMessage}>{localMessage}</div>
+                  {serverDiagnosticStatus === DiagStatInProgress ? (
+                    <div className={classes.loading}>
+                      <CircularProgress size={25} />
+                    </div>
+                  ) : (
+                    <Fragment>
+                      {serverDiagnosticStatus !== DiagStatError && (
+                        <Button
+                          type="submit"
+                          variant="contained"
+                          color="primary"
+                          onClick={() => {
+                            download(
+                              "diagnostic.json",
+                              JSON.stringify(message, null, 2)
+                            );
+                          }}
+                          disabled={downloadDisabled}
+                        >
+                          Download
+                        </Button>
+                      )}
+                      <Grid item xs={12} className={classes.diagNew}>
+                        <Button
+                          type="submit"
+                          variant="contained"
+                          color="primary"
+                          disabled={startDiagnostic}
+                          onClick={() => setStartDiagnostic(true)}
+                        >
+                          Start new Diagnostic
+                        </Button>
+                      </Grid>
+                    </Fragment>
+                  )}
+                </Grid>
               )}
             </Grid>
-          </Grid>
+          </TestWrapper>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

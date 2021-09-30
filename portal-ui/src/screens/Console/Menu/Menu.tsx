@@ -18,6 +18,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { Divider, Drawer, IconButton, Tooltip } from "@mui/material";
+import { ChevronLeft } from "@mui/icons-material";
 import withStyles from "@mui/styles/withStyles";
 import { Theme } from "@mui/material/styles";
 import createStyles from "@mui/styles/createStyles";
@@ -25,6 +26,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import List from "@mui/material/List";
+import clsx from "clsx";
 import { AppState } from "../../../store";
 import { setMenuOpen, userLoggedIn } from "../../../actions";
 import { menuGroups } from "./utils";
@@ -32,6 +34,7 @@ import { IMenuItem } from "./types";
 import {
   BucketsIcon,
   DashboardIcon,
+  DiagnosticsIcon,
   GroupsIcon,
   IAMPoliciesIcon,
   LambdaIcon,
@@ -55,9 +58,6 @@ import SettingsIcon from "../../../icons/SettingsIcon";
 import StorageIcon from "../../../icons/StorageIcon";
 import TenantsOutlinedIcon from "../../../icons/TenantsOutlineIcon";
 import MenuIcon from "@mui/icons-material/Menu";
-
-import clsx from "clsx";
-import { ChevronLeft } from "@mui/icons-material";
 
 const drawerWidth = 245;
 
@@ -396,7 +396,14 @@ const Menu = ({
       icon: <HealIcon />,
       fsHidden: distributedSetup,
     },
-
+    {
+      group: "Tools",
+      type: "item",
+      component: NavLink,
+      to: "/health-info",
+      name: "Diagnostic",
+      icon: <DiagnosticsIcon />,
+    },
     {
       group: "Operator",
       type: "item",

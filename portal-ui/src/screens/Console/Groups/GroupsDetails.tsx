@@ -28,7 +28,7 @@ import SetPolicy from "../Policies/SetPolicy";
 import AddGroupMember from "./AddGroupMember";
 import { ErrorResponseHandler } from "../../../common/types";
 import DeleteGroup from "./DeleteGroup";
-import PanelTitle from "../Common/PanelTitle";
+import PanelTitle from "../Common/PanelTitle/PanelTitle";
 
 const styles = (theme: Theme) =>
   createStyles({

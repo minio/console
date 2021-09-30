@@ -45,7 +45,7 @@ import {
   S3_GET_REPLICATION_CONFIGURATION,
   S3_PUT_REPLICATION_CONFIGURATION,
 } from "../../../../types";
-import PanelTitle from "../../Common/PanelTitle";
+import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 
 interface IBucketReplicationProps {
   classes: any;

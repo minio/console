@@ -68,7 +68,7 @@ import {
   S3_PUT_BUCKET_VERSIONING,
   S3_PUT_OBJECT_RETENTION,
 } from "../../../../types";
-import PanelTitle from "../../Common/PanelTitle";
+import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 
 interface IBucketSummaryProps {
   classes: any;

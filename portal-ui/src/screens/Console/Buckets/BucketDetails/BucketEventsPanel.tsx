@@ -42,7 +42,7 @@ import {
   S3_GET_BUCKET_NOTIFICATIONS,
   S3_PUT_BUCKET_NOTIFICATIONS,
 } from "../../../../types";
-import PanelTitle from "../../Common/PanelTitle";
+import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 
 const styles = (theme: Theme) =>
   createStyles({

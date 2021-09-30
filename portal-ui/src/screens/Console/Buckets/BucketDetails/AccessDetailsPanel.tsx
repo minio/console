@@ -40,7 +40,7 @@ import {
   ADMIN_LIST_USER_POLICIES,
   ADMIN_LIST_USERS,
 } from "../../../../types";
-import PanelTitle from "../../Common/PanelTitle";
+import PanelTitle from "../../Common/PanelTitle/PanelTitle";
 
 const styles = (theme: Theme) => createStyles({});
 

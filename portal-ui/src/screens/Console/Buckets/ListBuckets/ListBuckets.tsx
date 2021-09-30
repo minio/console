@@ -43,9 +43,9 @@ import { ISessionResponse } from "../../types";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "../../../../icons/SearchIcon";
-import BoxIconButton from "../../Common/BoxIconButton";
+import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
 import RefreshIcon from "../../../../icons/RefreshIcon";
-import AButton from "../../Common/AButton";
+import AButton from "../../Common/AButton/AButton";
 
 const styles = (theme: Theme) =>
   createStyles({

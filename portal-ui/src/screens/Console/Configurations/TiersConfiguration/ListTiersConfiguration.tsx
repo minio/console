@@ -43,8 +43,8 @@ import RefreshIcon from "../../../../icons/RefreshIcon";
 import SearchIcon from "../../../../icons/SearchIcon";
 import PageHeader from "../../Common/PageHeader/PageHeader";
 import HelpBox from "../../../../common/HelpBox";
-import BoxIconButton from "../../Common/BoxIconButton";
-import AButton from "../../Common/AButton";
+import BoxIconButton from "../../Common/BoxIconButton/BoxIconButton";
+import AButton from "../../Common/AButton/AButton";
 
 interface IListTiersConfig {
   classes: any;

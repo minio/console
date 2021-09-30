@@ -145,6 +145,14 @@ func init() {
         ],
         "summary": "Returns information about the deployment",
         "operationId": "AdminInfo",
+        "parameters": [
+          {
+            "type": "boolean",
+            "default": false,
+            "name": "defaultOnly",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -5846,6 +5854,14 @@ func init() {
         ],
         "summary": "Returns information about the deployment",
         "operationId": "AdminInfo",
+        "parameters": [
+          {
+            "type": "boolean",
+            "default": false,
+            "name": "defaultOnly",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "description": "A successful response.",

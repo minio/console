@@ -74,6 +74,7 @@ var (
 	tools                       = "/tools"
 	logs                        = "/tools/logs"
 	auditLogs                   = "/tools/audit-logs"
+	speedtest                   = "/tools/speedtest"
 	healthInfo                  = "/tools/diagnostics"
 )
 
@@ -294,6 +295,16 @@ var healthInfoActionSet = ConfigurationActionSet{
 	),
 }
 
+// logsActionSet contains the list of admin actions required for this endpoint to work
+var speedtestActionSet = ConfigurationActionSet{
+	actionTypes: iampolicy.NewActionSet(
+		iampolicy.AllAdminActions,
+	),
+	actions: iampolicy.NewActionSet(
+		iampolicy.HealthInfoAdminAction,
+	),
+}
+
 var displayRules = map[string]func() bool{
 	// disable users page if LDAP is enabled
 	users: func() bool {
@@ -344,6 +355,7 @@ var endpointRules = map[string]ConfigurationActionSet{
 	auditLogs:                   logsActionSet,
 	tools:                       toolsActionSet,
 	healthInfo:                  healthInfoActionSet,
+	speedtest:                   speedtestActionSet,
 }
 
 // operatorRules contains the mapping between endpoints and ActionSets for operator only mode
