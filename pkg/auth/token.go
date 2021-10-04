@@ -287,6 +287,7 @@ func decrypt(ciphertext []byte, associatedData []byte) ([]byte, error) {
 func GetTokenFromRequest(r *http.Request) (string, error) {
 	// Token might come either as a Cookie or as a Header
 	// if not set in cookie, check if it is set on Header.
+
 	tokenCookie, err := r.Cookie("token")
 	if err != nil {
 		return "", ErrNoAuthToken
@@ -295,7 +296,16 @@ func GetTokenFromRequest(r *http.Request) (string, error) {
 	if tokenCookie.Expires.After(currentTime) {
 		return "", errTokenExpired
 	}
-	return strings.TrimSpace(tokenCookie.Value), nil
+
+	mergeToken := strings.TrimSpace(tokenCookie.Value)
+	for _, cookie := range r.Cookies() {
+		if cookie.Name != "token" && strings.HasPrefix(cookie.Name, "token") {
+			mergeToken = fmt.Sprintf("%s%s", mergeToken, strings.TrimSpace(cookie.Value))
+		}
+	}
+
+	return mergeToken, nil
+
 }
 
 func GetClaimsFromTokenInRequest(req *http.Request) (*models.Principal, error) {
