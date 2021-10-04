@@ -76,6 +76,9 @@ export const deleteCookie = (name: string) => {
 export const clearSession = () => {
   storage.removeItem("token");
   deleteCookie("token");
+  for (let i = 1; i < 10; i++) {
+    deleteCookie(`token${i}`);
+  }
 };
 
 // timeFromDate gets time string from date input

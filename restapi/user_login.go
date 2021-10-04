@@ -53,8 +53,10 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 		}
 		// Custom response writer to set the session cookies
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
-			cookie := NewSessionCookieForConsole(loginResponse.SessionID)
-			http.SetCookie(w, &cookie)
+			cookies := NewSessionCookieForConsole(loginResponse.SessionID)
+			for _, cookie := range cookies {
+				http.SetCookie(w, &cookie)
+			}
 			user_api.NewLoginCreated().WithPayload(loginResponse).WriteResponse(w, p)
 		})
 	})
@@ -65,8 +67,10 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 		}
 		// Custom response writer to set the session cookies
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
-			cookie := NewSessionCookieForConsole(loginResponse.SessionID)
-			http.SetCookie(w, &cookie)
+			cookies := NewSessionCookieForConsole(loginResponse.SessionID)
+			for _, cookie := range cookies {
+				http.SetCookie(w, &cookie)
+			}
 			user_api.NewLoginOauth2AuthCreated().WithPayload(loginResponse).WriteResponse(w, p)
 		})
 	})
@@ -77,8 +81,10 @@ func registerLoginHandlers(api *operations.ConsoleAPI) {
 		}
 		// Custom response writer to set the session cookies
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
-			cookie := NewSessionCookieForConsole(loginResponse.SessionID)
-			http.SetCookie(w, &cookie)
+			cookies := NewSessionCookieForConsole(loginResponse.SessionID)
+			for _, cookie := range cookies {
+				http.SetCookie(w, &cookie)
+			}
 			user_api.NewLoginOperatorCreated().WithPayload(loginResponse).WriteResponse(w, p)
 		})
 	})

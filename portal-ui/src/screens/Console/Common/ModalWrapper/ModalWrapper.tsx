@@ -136,7 +136,7 @@ const ModalWrapper = ({
         return;
       }
       // Open SnackBar
-      if(modalSnackMessage.type !== "error") {
+      if (modalSnackMessage.type !== "error") {
         setOpenSnackbar(true);
       }
     }
