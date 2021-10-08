@@ -21,6 +21,7 @@ import {
   getTimeFromTimestamp,
   niceBytes,
   niceDays,
+  representationNumber,
   textToRGBColor,
   units,
 } from "../../../../common/utils";
@@ -792,15 +793,29 @@ export const widgetDetailsToPanel = (
   return panelItem;
 };
 
+const verifyNumeric = (item: string) => {
+  return !isNaN(parseFloat(item));
+};
+
 export const splitSizeMetric = (val: string) => {
   const splittedText = val.split(" ");
   // Value is not a size metric, we return as common string
+
+  const singleValue = () => {
+    let vl = val;
+
+    if (verifyNumeric(val)) {
+      vl = representationNumber(parseFloat(val));
+    }
+    return <Fragment>{vl}</Fragment>;
+  };
+
   if (splittedText.length !== 2) {
-    return <Fragment>{val}</Fragment>;
+    return singleValue();
   }
 
   if (!units.includes(splittedText[1])) {
-    return <Fragment>{val}</Fragment>;
+    return singleValue();
   }
 
   return (
