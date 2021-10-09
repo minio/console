@@ -431,6 +431,8 @@ export const widgetCommon = {
     borderBottom: "#eef1f4 1px solid",
     paddingBottom: 14,
     marginBottom: 5,
+    display: "flex" as const,
+    justifyContent: "space-between" as const,
   },
   contentContainer: {
     justifyContent: "center" as const,
@@ -469,6 +471,26 @@ export const widgetCommon = {
     whiteSpace: "nowrap" as const,
     overflow: "hidden" as const,
     textOverflow: "ellipsis" as const,
+  },
+  zoomChartCont: {
+    position: "relative" as const,
+    height: 340,
+    width: "100%",
+  },
+  zoomChartIcon: {
+    backgroundColor: "transparent",
+    border: 0,
+    padding: 0,
+    cursor: "pointer",
+    "& svg": {
+      color: "#D0D0D0",
+      height: 16,
+    },
+    "&:hover": {
+      "& svg": {
+        color: "#404143",
+      },
+    },
   },
 };
 

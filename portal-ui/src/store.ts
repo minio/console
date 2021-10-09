@@ -26,6 +26,7 @@ import { bucketsReducer } from "./screens/Console/Buckets/reducers";
 import { objectBrowserReducer } from "./screens/Console/ObjectBrowser/reducers";
 import { tenantsReducer } from "./screens/Console/Tenants/reducer";
 import { directCSIReducer } from "./screens/Console/DirectCSI/reducer";
+import { dashboardReducer } from "./screens/Console/Dashboard/reducer";
 
 const globalReducer = combineReducers({
   system: systemReducer,
@@ -38,6 +39,7 @@ const globalReducer = combineReducers({
   healthInfo: healthInfoReducer,
   tenants: tenantsReducer,
   directCSI: directCSIReducer,
+  dashboard: dashboardReducer,
 });
 
 declare global {
