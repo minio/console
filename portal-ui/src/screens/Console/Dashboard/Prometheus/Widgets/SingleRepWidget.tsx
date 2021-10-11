@@ -27,6 +27,10 @@ import { widgetDetailsToPanel } from "../utils";
 import { CircularProgress } from "@material-ui/core";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
+import {
+  prettyNumber,
+  representationNumber,
+} from "../../../../../common/utils";
 
 interface ISingleRepWidget {
   classes: any;
@@ -144,10 +148,12 @@ const SingleRepWidget = ({
                 textAnchor="start"
                 dominantBaseline="auto"
                 fontWeight={700}
-                fontSize={70}
+                fontSize={65}
                 fill={"#07193E"}
               >
-                {result ? result.innerLabel : ""}
+                {result
+                  ? representationNumber(parseInt(result.innerLabel || "0"))
+                  : ""}
               </text>
             </AreaChart>
           </ResponsiveContainer>
