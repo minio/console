@@ -135,7 +135,6 @@ const AddUser = ({
           setModalErrorSnackMessage(err);
         });
     } else {
-     
       api
         .invoke("POST", "/api/v1/users", {
           accessKey,

@@ -215,11 +215,9 @@ func getUserAddResponse(session *models.Principal, params admin_api.AddUserParam
 	adminClient := AdminClient{Client: mAdmin}
 	var userExists bool
 
-	userList, err := adminClient.listUsers(ctx)
-	for accessKey := range userList {
-		if accessKey == *params.Body.AccessKey {
-			userExists = true
-		}
+	_, err = adminClient.getUserInfo(ctx, *params.Body.AccessKey)
+	if err == nil {
+		userExists = true
 	}
 
 	if userExists {
