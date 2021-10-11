@@ -216,9 +216,7 @@ func getUserAddResponse(session *models.Principal, params admin_api.AddUserParam
 	var userExists bool
 
 	_, err = adminClient.getUserInfo(ctx, *params.Body.AccessKey)
-	if err == nil {
-		userExists = true
-	}
+	userExists = err == nil
 
 	if userExists {
 		return nil, prepareError(errNonUniqueAccessKey)
