@@ -34,6 +34,7 @@ var (
 	errAvoidSelfAccountDelete       = errors.New("logged in user cannot be deleted by itself")
 	errAccessDenied                 = errors.New("access denied")
 	errOauth2Provider               = errors.New("error contacting the external identity provider")
+	errNonUniqueAccessKey           = errors.New("error access key already in use")
 )
 
 // Tiering errors
