@@ -104,7 +104,7 @@ const AddUser = ({
 
     if (secretKey.length < 8) {
       setModalErrorSnackMessage({
-        errorMessage: "Passwords must be at least 8 characters long and blue",
+        errorMessage: "Passwords must be at least 8 characters long",
         detailedError: "",
       });
       setAddLoading(false);
@@ -135,26 +135,7 @@ const AddUser = ({
           setModalErrorSnackMessage(err);
         });
     } else {
-      //check if accessKey is already in use
-      api
-        .invoke("GET", `/api/v1/user?name=${encodeURI(accessKey)}`)
-        .then((res) => {
-          console.log("this is your GET");
-          if (res.response == 200) {
-            setModalErrorSnackMessage({
-              errorMessage:
-                "Access Key already in use, please select a unique access key",
-              detailedError: "",
-            });
-            setAddLoading(false);
-            return;
-          }
-        })
-        .catch((err: ErrorResponseHandler) => {
-          setAddLoading(false);
-          setModalErrorSnackMessage(err);
-        });
-
+     
       api
         .invoke("POST", "/api/v1/users", {
           accessKey,
