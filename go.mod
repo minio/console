@@ -23,7 +23,7 @@ require (
 	github.com/minio/minio-go/v7 v7.0.14
 	github.com/minio/operator v0.0.0-20210812082324-26350f153661
 	github.com/minio/operator/logsearchapi v0.0.0-20210812082324-26350f153661
-	github.com/minio/pkg v1.1.3
+	github.com/minio/pkg v1.1.5
 	github.com/minio/selfupdate v0.3.1
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/rs/xid v1.2.1
