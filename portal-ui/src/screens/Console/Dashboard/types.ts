@@ -49,6 +49,6 @@ export interface IDriveInfo {
 }
 
 export interface zoomState {
-  openZoom: boolean,
-  widgetRender: null | IDashboardPanel,
+  openZoom: boolean;
+  widgetRender: null | IDashboardPanel;
 }

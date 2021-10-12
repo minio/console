@@ -15,7 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { zoomState } from "./types";
-import { ZoomActionTypes, DASHBOARD_OPEN_ZOOM, DASHBOARD_CLOSE_ZOOM } from "./actions";
+import {
+  ZoomActionTypes,
+  DASHBOARD_OPEN_ZOOM,
+  DASHBOARD_CLOSE_ZOOM,
+} from "./actions";
 
 export interface DashboardState {
   zoom: zoomState;
