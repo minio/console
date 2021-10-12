@@ -27,7 +27,6 @@ import {
 } from "../../../../common/utils";
 import HealIcon from "../../../../icons/HealIcon";
 import DiagnosticsIcon from "../../../../icons/DiagnosticsIcon";
-import HistoryIcon from "../../../../icons/HistoryIcon";
 import { UptimeIcon } from "../../../../icons";
 
 const colorsMain = [
