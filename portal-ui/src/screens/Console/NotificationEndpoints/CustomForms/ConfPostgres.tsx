@@ -19,13 +19,14 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import RadioGroupSelector from "../../Common/FormComponents/RadioGroupSelector/RadioGroupSelector";
-import { IElementValue } from "../types";
+import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
+import { IElementValue } from "../../Configurations/types";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import CommentBoxWrapper from "../../Common/FormComponents/CommentBoxWrapper/CommentBoxWrapper";
 import FormSwitchWrapper from "../../Common/FormComponents/FormSwitchWrapper/FormSwitchWrapper";
 import PredefinedList from "../../Common/FormComponents/PredefinedList/PredefinedList";
 
-interface IConfMySqlProps {
+interface IConfPostgresProps {
   onChange: (newValue: IElementValue[]) => void;
   classes: any;
 }
@@ -35,15 +36,17 @@ const styles = (theme: Theme) =>
     ...modalBasic,
   });
 
-const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
+const ConfPostgres = ({ onChange, classes }: IConfPostgresProps) => {
   //Local States
-  const [useDsnString, setUseDsnString] = useState<boolean>(false);
-  const [dsnString, setDsnString] = useState<string>("");
+  const [useConnectionString, setUseConnectionString] =
+    useState<boolean>(false);
+  const [connectionString, setConnectionString] = useState<string>("");
   const [host, setHostname] = useState<string>("");
   const [dbName, setDbName] = useState<string>("");
   const [port, setPort] = useState<string>("");
   const [user, setUser] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [sslMode, setSslMode] = useState<string>(" ");
 
   const [table, setTable] = useState<string>("");
   const [format, setFormat] = useState<string>("namespace");
@@ -51,45 +54,92 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
   const [queueLimit, setQueueLimit] = useState<string>("");
   const [comment, setComment] = useState<string>("");
 
-  // dsn_string*  (string)             MySQL data-source-name connection string e.g. "<user>:<password>@tcp(<host>:<port>)/<database>"
-  // table*       (string)             DB table name to store/update events, table is auto-created
-  // format*      (namespace*|access)  'namespace' reflects current bucket/object list and 'access' reflects a journal of object operations, defaults to 'namespace'
-  // queue_dir    (path)               staging dir for undelivered messages e.g. '/home/events'
-  // queue_limit  (number)             maximum limit for undelivered messages, defaults to '100000'
-  // comment      (sentence)           optionally add a comment to this setting
+  // connection_string*  (string)             Postgres server connection-string e.g. "host=localhost port=5432 dbname=minio_events user=postgres password=password sslmode=disable"
 
-  const parseDsnString = (
+  //  "host=localhost
+  // port=5432
+  //dbname=minio_events
+  //user=postgres
+  //password=password
+  //sslmode=disable"
+
+  // table*              (string)             DB table name to store/update events, table is auto-created
+  // format*             (namespace*|access)  'namespace' reflects current bucket/object list and 'access' reflects a journal of object operations, defaults to 'namespace'
+  // queue_dir           (path)               staging dir for undelivered messages e.g. '/home/events'
+  // queue_limit         (number)             maximum limit for undelivered messages, defaults to '10000'
+  // comment             (sentence)           optionally add a comment to this setting
+
+  const KvSeparator = "=";
+  const parseConnectionString = (
     input: string,
     keys: string[]
   ): Map<string, string> => {
-    let kvFields: Map<string, string> = new Map();
-    const regex = /(.*?):(.*?)@tcp\((.*?):(.*?)\)\/(.*?)$/gm;
-    let m;
+    let valueIndexes: number[] = [];
 
-    while ((m = regex.exec(input)) !== null) {
-      // This is necessary to avoid infinite loops with zero-width matches
-      if (m.index === regex.lastIndex) {
-        regex.lastIndex++;
+    for (const key of keys) {
+      const i = input.indexOf(key + KvSeparator);
+      if (i === -1) {
+        continue;
       }
+      valueIndexes.push(i);
+    }
+    valueIndexes.sort((n1, n2) => n1 - n2);
 
-      kvFields.set("user", m[1]);
-      kvFields.set("password", m[2]);
-      kvFields.set("host", m[3]);
-      kvFields.set("port", m[4]);
-      kvFields.set("dbname", m[5]);
+    let kvFields = new Map<string, string>();
+    let fields: string[] = new Array<string>(valueIndexes.length);
+    for (let i = 0; i < valueIndexes.length; i++) {
+      const j = i + 1;
+      if (j < valueIndexes.length) {
+        fields[i] = input.substr(
+          valueIndexes[i],
+          valueIndexes[j] - valueIndexes[i]
+        );
+      } else {
+        fields[i] = input.substr(valueIndexes[i]);
+      }
     }
 
+    for (let field of fields) {
+      if (field === undefined) {
+        continue;
+      }
+      const key = field.substr(0, field.indexOf("="));
+      const value = field.substr(field.indexOf("=") + 1).trim();
+      kvFields.set(key, value);
+    }
     return kvFields;
   };
 
-  const configToDsnString = useCallback((): string => {
-    return `${user}:${password}@tcp(${host}:${port})/${dbName}`;
-  }, [user, password, host, port, dbName]);
+  const configToString = useCallback((): string => {
+    let strValue = "";
+    if (host !== "") {
+      strValue = `${strValue} host=${host}`;
+    }
+    if (dbName !== "") {
+      strValue = `${strValue} dbname=${dbName}`;
+    }
+    if (user !== "") {
+      strValue = `${strValue} user=${user}`;
+    }
+    if (password !== "") {
+      strValue = `${strValue} password=${password}`;
+    }
+    if (port !== "") {
+      strValue = `${strValue} port=${port}`;
+    }
+    if (sslMode !== " ") {
+      strValue = `${strValue} sslmode=${sslMode}`;
+    }
+
+    strValue = `${strValue} `;
+
+    return strValue.trim();
+  }, [host, dbName, user, password, port, sslMode]);
 
   useEffect(() => {
-    if (dsnString !== "") {
+    if (connectionString !== "") {
       const formValues = [
-        { key: "dsn_string", value: dsnString },
+        { key: "connection_string", value: connectionString },
         { key: "table", value: table },
         { key: "format", value: format },
         { key: "queue_dir", value: queueDir },
@@ -99,60 +149,82 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
 
       onChange(formValues);
     }
-  }, [dsnString, table, format, queueDir, queueLimit, comment, onChange]);
+  }, [
+    connectionString,
+    table,
+    format,
+    queueDir,
+    queueLimit,
+    comment,
+    onChange,
+  ]);
 
   useEffect(() => {
-    const cs = configToDsnString();
-    setDsnString(cs);
-  }, [user, dbName, password, port, host, setDsnString, configToDsnString]);
+    const cs = configToString();
+    setConnectionString(cs);
+  }, [
+    user,
+    dbName,
+    password,
+    port,
+    sslMode,
+    host,
+    setConnectionString,
+    configToString,
+  ]);
 
-  const switcherChangeEvt = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      // build dsn_string
-      const cs = configToDsnString();
-      setDsnString(cs);
-    } else {
-      // parse dsn_string
-      const kv = parseDsnString(dsnString, [
-        "host",
-        "port",
-        "dbname",
-        "user",
-        "password",
-      ]);
-      setHostname(kv.get("host") ? kv.get("host") + "" : "");
-      setPort(kv.get("port") ? kv.get("port") + "" : "");
-      setDbName(kv.get("dbname") ? kv.get("dbname") + "" : "");
-      setUser(kv.get("user") ? kv.get("user") + "" : "");
-      setPassword(kv.get("password") ? kv.get("password") + "" : "");
+  useEffect(() => {
+    if (useConnectionString) {
+      // build connection_string
+      const cs = configToString();
+      setConnectionString(cs);
+
+      return;
     }
+    // parse connection_string
+    const kv = parseConnectionString(connectionString, [
+      "host",
+      "port",
+      "dbname",
+      "user",
+      "password",
+      "sslmode",
+    ]);
+    setHostname(kv.get("host") ? kv.get("host") + "" : "");
+    setPort(kv.get("port") ? kv.get("port") + "" : "");
+    setDbName(kv.get("dbname") ? kv.get("dbname") + "" : "");
+    setUser(kv.get("user") ? kv.get("user") + "" : "");
+    setPassword(kv.get("password") ? kv.get("password") + "" : "");
+    setSslMode(kv.get("sslmode") ? kv.get("sslmode") + "" : " ");
 
-    setUseDsnString(event.target.checked);
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [useConnectionString]);
 
   return (
     <Grid container>
       <Grid item xs={12}>
         <FormSwitchWrapper
-          label={"Enter DNS String"}
-          checked={useDsnString}
-          id="checkedB"
-          name="checkedB"
-          onChange={switcherChangeEvt}
-          value={"dnsString"}
+          label={"Manually Configure String"}
+          checked={useConnectionString}
+          id="manualString"
+          name="manualString"
+          onChange={(e) => {
+            setUseConnectionString(e.target.checked);
+          }}
+          value={"manualString"}
           indicatorLabels={["On", "Off"]}
         />
       </Grid>
-      {useDsnString ? (
+      {useConnectionString ? (
         <React.Fragment>
           <Grid item xs={12}>
             <InputBoxWrapper
-              id="dsn-string"
-              name="dsn_string"
-              label="DSN String"
-              value={dsnString}
+              id="connection-string"
+              name="connection_string"
+              label="Connection String"
+              value={connectionString}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setDsnString(e.target.value);
+                setConnectionString(e.target.value);
               }}
             />
           </Grid>
@@ -197,7 +269,26 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
                   }}
                 />
               </Grid>
-
+              <Grid item xs={12}>
+                <SelectWrapper
+                  value={sslMode}
+                  label=""
+                  id="sslmode"
+                  name="sslmode"
+                  onChange={(e): void => {
+                    if (e.target.value !== undefined) {
+                      setSslMode(e.target.value + "");
+                    }
+                  }}
+                  options={[
+                    { label: "Enter SSL Mode", value: " " },
+                    { label: "Require", value: "require" },
+                    { label: "Disable", value: "disable" },
+                    { label: "Verify CA", value: "verify-ca" },
+                    { label: "Verify Full", value: "verify-full" },
+                  ]}
+                />
+              </Grid>
               <Grid item xs={12}>
                 <InputBoxWrapper
                   id="user"
@@ -215,8 +306,8 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
                   id="password"
                   name="password"
                   label=""
-                  placeholder="Enter Password"
                   type="password"
+                  placeholder="Enter Password"
                   value={password}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setPassword(e.target.value);
@@ -225,7 +316,10 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
               </Grid>
             </Grid>
           </Grid>
-          <PredefinedList label={"Connection String"} content={dsnString} />
+          <PredefinedList
+            label={"Connection String"}
+            content={connectionString}
+          />
           <Grid item xs={12}>
             <br />
           </Grid>
@@ -236,7 +330,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
           id="table"
           name="table"
           label="Table"
-          placeholder="Enter Table Name"
+          placeholder={"Enter Table Name"}
           value={table}
           tooltip="DB table name to store/update events, table is auto-created"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -265,7 +359,7 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
           id="queue-dir"
           name="queue_dir"
           label="Queue Dir"
-          placeholder="Enter Queue Dir"
+          placeholder="Enter Queue Directory"
           value={queueDir}
           tooltip="staging dir for undelivered messages e.g. '/home/events'"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -303,4 +397,4 @@ const ConfMySql = ({ onChange, classes }: IConfMySqlProps) => {
   );
 };
 
-export default withStyles(styles)(ConfMySql);
+export default withStyles(styles)(ConfPostgres);

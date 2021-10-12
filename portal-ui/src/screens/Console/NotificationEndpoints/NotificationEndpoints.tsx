@@ -19,16 +19,13 @@ import PageHeader from "../Common/PageHeader/PageHeader";
 import { Grid } from "@material-ui/core";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
-import ConfigurationsList from "./ConfigurationPanels/ConfigurationsList";
-import ListTiersConfiguration from "./TiersConfiguration/ListTiersConfiguration";
+
 import { AppState } from "../../../store";
 import { connect } from "react-redux";
 import { ISessionResponse } from "../types";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
+import ListNotificationEndpoints from "./ListNotificationEndpoints";
 
-interface IConfigurationMain {
+interface INotificationEndpoints {
   classes: any;
   session: ISessionResponse;
   distributedSetup: boolean;
@@ -45,52 +42,19 @@ const styles = (theme: Theme) =>
     ...containerForHeader(theme.spacing(4)),
   });
 
-const ConfigurationMain = ({
+const NotificationEndpoints = ({
   classes,
   session,
   distributedSetup,
-}: IConfigurationMain) => {
+}: INotificationEndpoints) => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
 
   return (
     <Fragment>
-      <PageHeader label="Settings" />
+      <PageHeader label="Notification Endpoints" />
       <Grid container className={classes.container}>
-        <Grid item xs={2}>
-          <List component="nav" dense={true}>
-            <ListItem
-              button
-              selected={selectedTab === 0}
-              onClick={() => {
-                setSelectedTab(0);
-              }}
-            >
-              <ListItemText primary="Configurations" />
-            </ListItem>
-            <ListItem
-              button
-              selected={selectedTab === 2}
-              onClick={() => {
-                setSelectedTab(2);
-              }}
-            >
-              <ListItemText primary="Tiers" />
-            </ListItem>
-          </List>
-        </Grid>
-        <Grid item xs={10}>
-          {selectedTab === 0 && (
-            <Grid item xs={12}>
-              <h1 className={classes.sectionTitle}>Configurations</h1>
-              <ConfigurationsList />
-            </Grid>
-          )}
-          {selectedTab === 2 && distributedSetup && (
-            <Grid item xs={12}>
-              <h1 className={classes.sectionTitle}>Tiers</h1>
-              <ListTiersConfiguration />
-            </Grid>
-          )}
+        <Grid item xs={12}>
+          <ListNotificationEndpoints />
         </Grid>
       </Grid>
     </Fragment>
@@ -104,4 +68,4 @@ const mapState = (state: AppState) => ({
 
 const connector = connect(mapState, {});
 
-export default withStyles(styles)(connector(ConfigurationMain));
+export default withStyles(styles)(connector(NotificationEndpoints));

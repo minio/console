@@ -22,7 +22,7 @@ import history from "../../../../history";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
 import { configurationElements } from "../utils";
 import { IConfigurationElement } from "../types";
-import EditConfiguration from "../CustomForms/EditConfiguration";
+import EditConfiguration from "../../NotificationEndpoints/CustomForms/EditConfiguration";
 import {
   actionsTray,
   containerForHeader,

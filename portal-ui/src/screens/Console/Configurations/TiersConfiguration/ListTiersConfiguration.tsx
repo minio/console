@@ -41,6 +41,7 @@ import AddTierConfiguration from "./AddTierConfiguration";
 import UpdateTierCredentiasModal from "./UpdateTierCredentiasModal";
 import RefreshIcon from "../../../../icons/RefreshIcon";
 import SearchIcon from "../../../../icons/SearchIcon";
+import history from "../../../../history";
 
 interface IListTiersConfig {
   classes: any;
@@ -341,11 +342,17 @@ const ListTiersConfiguration = ({
                                   typeSelect("minio");
                                 }}
                               >
-                                <img
-                                  src={"/minioTier.png"}
-                                  className={classes.logoButton}
-                                  alt={"MinIO"}
-                                />
+                                <div className={classes.lambdaNotifIcon}>
+                                  <img
+                                    src={"/minioTier.png"}
+                                    className={classes.logoButton}
+                                    alt={"MinIO"}
+                                  />
+                                </div>
+
+                                <div className={classes.lambdaNotifTitle}>
+                                  <b>MinIO</b>
+                                </div>
                               </button>
                               <button
                                 className={classes.lambdaNotif}
@@ -353,23 +360,36 @@ const ListTiersConfiguration = ({
                                   typeSelect("gcs");
                                 }}
                               >
-                                <img
-                                  src={"/gcs.png"}
-                                  className={classes.logoButton}
-                                  alt={"GCS"}
-                                />
+                                <div className={classes.lambdaNotifIcon}>
+                                  <img
+                                    src={"/gcs.png"}
+                                    className={classes.logoButton}
+                                    alt={"GCS"}
+                                  />
+                                </div>
+
+                                <div className={classes.lambdaNotifTitle}>
+                                  <b>Google Cloud Storage</b>
+                                </div>
                               </button>
+
                               <button
                                 className={classes.lambdaNotif}
                                 onClick={() => {
                                   typeSelect("s3");
                                 }}
                               >
-                                <img
-                                  src={"/amazon.png"}
-                                  className={classes.logoButton}
-                                  alt={"s3"}
-                                />
+                                <div className={classes.lambdaNotifIcon}>
+                                  <img
+                                    src={"/amazon.png"}
+                                    className={classes.logoButton}
+                                    alt={"s3"}
+                                  />
+                                </div>
+
+                                <div className={classes.lambdaNotifTitle}>
+                                  <b>AWS S3</b>
+                                </div>
                               </button>
                               <button
                                 className={classes.lambdaNotif}
@@ -377,11 +397,17 @@ const ListTiersConfiguration = ({
                                   typeSelect("azure");
                                 }}
                               >
-                                <img
-                                  src={"/azure.png"}
-                                  className={classes.logoButton}
-                                  alt={"Azure"}
-                                />
+                                <div className={classes.lambdaNotifIcon}>
+                                  <img
+                                    src={"/azure.png"}
+                                    className={classes.logoButton}
+                                    alt={"Azure"}
+                                  />
+                                </div>
+
+                                <div className={classes.lambdaNotifTitle}>
+                                  <b>Azure Blob Storage</b>
+                                </div>
                               </button>
                             </div>
                           </Grid>

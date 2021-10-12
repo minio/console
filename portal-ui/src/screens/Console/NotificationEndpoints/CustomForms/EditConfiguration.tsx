@@ -27,8 +27,14 @@ import {
   fieldBasic,
   settingsCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
-import { fieldsConfigurations, removeEmptyFields } from "../utils";
-import { IConfigurationElement, IElementValue } from "../types";
+import {
+  fieldsConfigurations,
+  removeEmptyFields,
+} from "../../Configurations/utils";
+import {
+  IConfigurationElement,
+  IElementValue,
+} from "../../Configurations/types";
 import { ErrorResponseHandler } from "../../../../common/types";
 
 const styles = (theme: Theme) =>

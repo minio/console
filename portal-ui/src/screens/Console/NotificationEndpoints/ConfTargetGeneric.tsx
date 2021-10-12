@@ -17,7 +17,7 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import { IElementValue, KVField } from "./types";
+import { IElementValue, KVField } from "../Configurations/types";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import CSVMultiSelector from "../Common/FormComponents/CSVMultiSelector/CSVMultiSelector";

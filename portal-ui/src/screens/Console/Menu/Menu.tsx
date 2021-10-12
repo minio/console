@@ -38,6 +38,7 @@ import {
   DashboardIcon,
   GroupsIcon,
   IAMPoliciesIcon,
+  LambdaIcon,
   TraceIcon,
   UsersIcon,
   VersionIcon,
@@ -365,6 +366,14 @@ const Menu = ({
       to: "/settings",
       name: "Settings",
       icon: <SettingsIcon />,
+    },
+    {
+      group: "common",
+      type: "item",
+      component: NavLink,
+      to: "/notification-endpoints",
+      name: "Notification Endpoints",
+      icon: <LambdaIcon />,
     },
     {
       group: "Tools",

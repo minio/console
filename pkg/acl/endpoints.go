@@ -22,49 +22,52 @@ import (
 
 // endpoints definition
 var (
-	configuration         = "/settings"
-	users                 = "/users"
-	usersDetail           = "/users/:userName+"
-	groups                = "/groups"
-	iamPolicies           = "/policies"
-	policiesDetail        = "/policies/*"
-	dashboard             = "/dashboard"
-	metrics               = "/metrics"
-	profiling             = "/profiling"
-	buckets               = "/buckets"
-	bucketsGeneral        = "/buckets/*"
-	bucketsAdmin          = "/buckets/:bucketName/admin/*"
-	bucketsAdminMain      = "/buckets/:bucketName/admin"
-	bucketsBrowserMenu    = "/buckets"
-	bucketsBrowserList    = "/buckets/*"
-	bucketsBrowser        = "/buckets/:bucketName/browse/*"
-	bucketsBrowserMain    = "/buckets/:bucketName/browse"
-	serviceAccounts       = "/account"
-	changePassword        = "/account/change-password"
-	tenants               = "/tenants"
-	tenantsAdd            = "/tenants/add"
-	tenantsAddSub         = "/tenants/add/*"
-	tenantsDetail         = "/namespaces/:tenantNamespace/tenants/:tenantName"
-	tenantHop             = "/namespaces/:tenantNamespace/tenants/:tenantName/hop"
-	podsDetail            = "/namespaces/:tenantNamespace/tenants/:tenantName/pods/:podName"
-	tenantsDetailSummary  = "/namespaces/:tenantNamespace/tenants/:tenantName/summary"
-	tenantsDetailMetrics  = "/namespaces/:tenantNamespace/tenants/:tenantName/metrics"
-	tenantsDetailPods     = "/namespaces/:tenantNamespace/tenants/:tenantName/pods"
-	tenantsDetailPools    = "/namespaces/:tenantNamespace/tenants/:tenantName/pools"
-	tenantsDetailVolumes  = "/namespaces/:tenantNamespace/tenants/:tenantName/volumes"
-	tenantsDetailLicense  = "/namespaces/:tenantNamespace/tenants/:tenantName/license"
-	tenantsDetailSecurity = "/namespaces/:tenantNamespace/tenants/:tenantName/security"
-	storage               = "/storage"
-	storageVolumes        = "/storage/volumes"
-	storageDrives         = "/storage/drives"
-	remoteBuckets         = "/remote-buckets"
-	replication           = "/replication"
-	license               = "/license"
-	watch                 = "/watch"
-	heal                  = "/heal"
-	trace                 = "/trace"
-	logs                  = "/logs"
-	healthInfo            = "/health-info"
+	configuration               = "/settings"
+	notificationEndpoints       = "/notification-endpoints"
+	notificationEndpointsAddAny = "/notification-endpoints/add/:service"
+	notificationEndpointsAdd    = "/notification-endpoints/add"
+	users                       = "/users"
+	usersDetail                 = "/users/:userName+"
+	groups                      = "/groups"
+	iamPolicies                 = "/policies"
+	policiesDetail              = "/policies/*"
+	dashboard                   = "/dashboard"
+	metrics                     = "/metrics"
+	profiling                   = "/profiling"
+	buckets                     = "/buckets"
+	bucketsGeneral              = "/buckets/*"
+	bucketsAdmin                = "/buckets/:bucketName/admin/*"
+	bucketsAdminMain            = "/buckets/:bucketName/admin"
+	bucketsBrowserMenu          = "/buckets"
+	bucketsBrowserList          = "/buckets/*"
+	bucketsBrowser              = "/buckets/:bucketName/browse/*"
+	bucketsBrowserMain          = "/buckets/:bucketName/browse"
+	serviceAccounts             = "/account"
+	changePassword              = "/account/change-password"
+	tenants                     = "/tenants"
+	tenantsAdd                  = "/tenants/add"
+	tenantsAddSub               = "/tenants/add/*"
+	tenantsDetail               = "/namespaces/:tenantNamespace/tenants/:tenantName"
+	tenantHop                   = "/namespaces/:tenantNamespace/tenants/:tenantName/hop"
+	podsDetail                  = "/namespaces/:tenantNamespace/tenants/:tenantName/pods/:podName"
+	tenantsDetailSummary        = "/namespaces/:tenantNamespace/tenants/:tenantName/summary"
+	tenantsDetailMetrics        = "/namespaces/:tenantNamespace/tenants/:tenantName/metrics"
+	tenantsDetailPods           = "/namespaces/:tenantNamespace/tenants/:tenantName/pods"
+	tenantsDetailPools          = "/namespaces/:tenantNamespace/tenants/:tenantName/pools"
+	tenantsDetailVolumes        = "/namespaces/:tenantNamespace/tenants/:tenantName/volumes"
+	tenantsDetailLicense        = "/namespaces/:tenantNamespace/tenants/:tenantName/license"
+	tenantsDetailSecurity       = "/namespaces/:tenantNamespace/tenants/:tenantName/security"
+	storage                     = "/storage"
+	storageVolumes              = "/storage/volumes"
+	storageDrives               = "/storage/drives"
+	remoteBuckets               = "/remote-buckets"
+	replication                 = "/replication"
+	license                     = "/license"
+	watch                       = "/watch"
+	heal                        = "/heal"
+	trace                       = "/trace"
+	logs                        = "/logs"
+	healthInfo                  = "/health-info"
 )
 
 type ConfigurationActionSet struct {
@@ -287,33 +290,36 @@ var displayRules = map[string]func() bool{
 
 // endpointRules contains the mapping between endpoints and ActionSets, additional rules can be added here
 var endpointRules = map[string]ConfigurationActionSet{
-	configuration:      configurationActionSet,
-	users:              usersActionSet,
-	usersDetail:        usersActionSet,
-	groups:             groupsActionSet,
-	iamPolicies:        iamPoliciesActionSet,
-	policiesDetail:     iamPoliciesActionSet,
-	dashboard:          dashboardActionSet,
-	metrics:            dashboardActionSet,
-	profiling:          profilingActionSet,
-	buckets:            bucketsActionSet,
-	bucketsGeneral:     bucketsActionSet,
-	bucketsAdmin:       bucketsActionSet,
-	bucketsAdminMain:   bucketsActionSet,
-	serviceAccounts:    serviceAccountsActionSet,
-	changePassword:     changePasswordActionSet,
-	remoteBuckets:      remoteBucketsActionSet,
-	replication:        replicationActionSet,
-	bucketsBrowser:     objectBrowserActionSet,
-	bucketsBrowserMenu: objectBrowserActionSet,
-	bucketsBrowserList: objectBrowserActionSet,
-	bucketsBrowserMain: objectBrowserActionSet,
-	license:            licenseActionSet,
-	watch:              watchActionSet,
-	heal:               healActionSet,
-	trace:              traceActionSet,
-	logs:               logsActionSet,
-	healthInfo:         healthInfoActionSet,
+	configuration:               configurationActionSet,
+	notificationEndpoints:       configurationActionSet,
+	notificationEndpointsAdd:    configurationActionSet,
+	notificationEndpointsAddAny: configurationActionSet,
+	users:                       usersActionSet,
+	usersDetail:                 usersActionSet,
+	groups:                      groupsActionSet,
+	iamPolicies:                 iamPoliciesActionSet,
+	policiesDetail:              iamPoliciesActionSet,
+	dashboard:                   dashboardActionSet,
+	metrics:                     dashboardActionSet,
+	profiling:                   profilingActionSet,
+	buckets:                     bucketsActionSet,
+	bucketsGeneral:              bucketsActionSet,
+	bucketsAdmin:                bucketsActionSet,
+	bucketsAdminMain:            bucketsActionSet,
+	serviceAccounts:             serviceAccountsActionSet,
+	changePassword:              changePasswordActionSet,
+	remoteBuckets:               remoteBucketsActionSet,
+	replication:                 replicationActionSet,
+	bucketsBrowser:              objectBrowserActionSet,
+	bucketsBrowserMenu:          objectBrowserActionSet,
+	bucketsBrowserList:          objectBrowserActionSet,
+	bucketsBrowserMain:          objectBrowserActionSet,
+	license:                     licenseActionSet,
+	watch:                       watchActionSet,
+	heal:                        healActionSet,
+	trace:                       traceActionSet,
+	logs:                        logsActionSet,
+	healthInfo:                  healthInfoActionSet,
 }
 
 // operatorRules contains the mapping between endpoints and ActionSets for operator only mode
