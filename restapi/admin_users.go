@@ -213,7 +213,14 @@ func getUserAddResponse(session *models.Principal, params admin_api.AddUserParam
 	// create a minioClient interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
+	var userExists bool
 
+	_, err = adminClient.getUserInfo(ctx, *params.Body.AccessKey)
+	userExists = err == nil
+
+	if userExists {
+		return nil, prepareError(errNonUniqueAccessKey)
+	}
 	user, err := addUser(
 		ctx,
 		adminClient,
