@@ -299,7 +299,8 @@ func GetTokenFromRequest(r *http.Request) (string, error) {
 
 	mergeToken := strings.TrimSpace(tokenCookie.Value)
 	for _, cookie := range r.Cookies() {
-		if cookie.Name != "token" && strings.HasPrefix(cookie.Name, "token") {
+		// any cookie with token%d structure
+		if cookie.Name != "token" && !strings.HasPrefix(cookie.Name, "token-") && strings.HasPrefix(cookie.Name, "token") {
 			mergeToken = fmt.Sprintf("%s%s", mergeToken, strings.TrimSpace(cookie.Value))
 		}
 	}
