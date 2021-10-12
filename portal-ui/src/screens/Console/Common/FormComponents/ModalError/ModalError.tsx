@@ -42,7 +42,6 @@ import { setErrorSnackMessage } from "../../../../../actions";
 import { snackBarMessage } from "../../../../../types";
 import {
   setModalErrorSnackMessage,
-  setModalSnackMessage,
 } from "../../../../../actions";
 
 interface ImodalErrorProps {

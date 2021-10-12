@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import {
   Area,
@@ -28,6 +28,7 @@ import {
 import { CircularProgress } from "@material-ui/core";
 import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import ZoomOutMapIcon from "@material-ui/icons/ZoomOutMap";
 import { ILinearGraphConfiguration } from "./types";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import { IDashboardPanel } from "../types";
@@ -36,6 +37,7 @@ import { widgetDetailsToPanel } from "../utils";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
 import LineChartTooltip from "./tooltips/LineChartTooltip";
+import { openZoomPage } from "../../actions";
 
 interface ILinearGraphWidget {
   classes: any;
@@ -50,6 +52,8 @@ interface ILinearGraphWidget {
   yAxisFormatter?: (item: string) => string;
   xAxisFormatter?: (item: string) => string;
   areaWidget?: boolean;
+  zoomActivated?: boolean;
+  openZoomPage: typeof openZoomPage;
 }
 
 const styles = (theme: Theme) =>
@@ -61,6 +65,9 @@ const styles = (theme: Theme) =>
       height: "100%",
       flexGrow: 1,
     },
+    verticalAlignment: {
+      flexDirection: "column",
+    },
     chartCont: {
       position: "relative",
       height: 140,
@@ -70,7 +77,7 @@ const styles = (theme: Theme) =>
       display: "flex",
       flexDirection: "column",
       flex: "0 1 auto",
-      height: 130,
+      maxHeight: 130,
       margin: 0,
       overflowY: "auto",
       position: "relative",
@@ -99,6 +106,8 @@ const LinearGraphWidget = ({
   areaWidget = false,
   yAxisFormatter = (item: string) => item,
   xAxisFormatter = (item: string) => item,
+  zoomActivated = false,
+  openZoomPage,
 }: ILinearGraphWidget) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<object[]>([]);
@@ -174,13 +183,33 @@ const LinearGraphWidget = ({
   };
 
   return (
-    <div className={classes.singleValueContainer}>
-      <div className={classes.titleContainer}>{title}</div>
-      <div className={classes.containerElements}>
+    <div className={zoomActivated ? "" : classes.singleValueContainer}>
+      {!zoomActivated && (
+        <div className={classes.titleContainer}>
+          {title}{" "}
+          <button
+            onClick={() => {
+              openZoomPage(panelItem);
+            }}
+            className={classes.zoomChartIcon}
+          >
+            <ZoomOutMapIcon />
+          </button>
+        </div>
+      )}
+      <div
+        className={
+          zoomActivated ? classes.verticalAlignment : classes.containerElements
+        }
+      >
         {loading && <CircularProgress className={classes.loadingAlign} />}
         {!loading && (
           <React.Fragment>
-            <div className={classes.chartCont}>
+            <div
+              className={
+                zoomActivated ? classes.zoomChartCont : classes.chartCont
+              }
+            >
               <ResponsiveContainer width="99%">
                 <AreaChart
                   data={data}
@@ -267,24 +296,33 @@ const LinearGraphWidget = ({
               </ResponsiveContainer>
             </div>
             {!areaWidget && (
-              <div className={classes.legendChart}>
-                {linearConfiguration.map((section, index) => {
-                  return (
-                    <div
-                      className={classes.singleLegendContainer}
-                      key={`legend-${section.keyLabel}-${index.toString()}`}
-                    >
+              <Fragment>
+                {zoomActivated && (
+                  <Fragment>
+                    <strong>Series</strong>
+                    <br />
+                    <br />
+                  </Fragment>
+                )}
+                <div className={classes.legendChart}>
+                  {linearConfiguration.map((section, index) => {
+                    return (
                       <div
-                        className={classes.colorContainer}
-                        style={{ backgroundColor: section.lineColor }}
-                      />
-                      <div className={classes.legendLabel}>
-                        {section.keyLabel}
+                        className={classes.singleLegendContainer}
+                        key={`legend-${section.keyLabel}-${index.toString()}`}
+                      >
+                        <div
+                          className={classes.colorContainer}
+                          style={{ backgroundColor: section.lineColor }}
+                        />
+                        <div className={classes.legendLabel}>
+                          {section.keyLabel}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              </Fragment>
             )}
           </React.Fragment>
         )}
@@ -295,6 +333,7 @@ const LinearGraphWidget = ({
 
 const connector = connect(null, {
   displayErrorMessage: setErrorSnackMessage,
+  openZoomPage: openZoomPage,
 });
 
 export default withStyles(styles)(connector(LinearGraphWidget));
