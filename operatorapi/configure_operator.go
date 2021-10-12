@@ -65,7 +65,6 @@ func configureAPI(api *operations.OperatorAPI) http.Handler {
 		}
 		return &models.Principal{
 			STSAccessKeyID:     claims.STSAccessKeyID,
-			Actions:            claims.Actions,
 			STSSecretAccessKey: claims.STSSecretAccessKey,
 			STSSessionToken:    claims.STSSessionToken,
 			AccountAccessKey:   claims.AccountAccessKey,

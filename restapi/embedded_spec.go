@@ -4797,12 +4797,6 @@ func init() {
         },
         "accountAccessKey": {
           "type": "string"
-        },
-        "actions": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     },
@@ -10531,12 +10525,6 @@ func init() {
         },
         "accountAccessKey": {
           "type": "string"
-        },
-        "actions": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     },

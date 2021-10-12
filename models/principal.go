@@ -45,9 +45,6 @@ type Principal struct {
 
 	// account access key
 	AccountAccessKey string `json:"accountAccessKey,omitempty"`
-
-	// actions
-	Actions []string `json:"actions"`
 }
 
 // Validate validates this principal

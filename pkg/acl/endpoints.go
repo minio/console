@@ -394,7 +394,6 @@ func GetAuthorizedEndpoints(actions []string) []string {
 	if operatorOnly {
 		rangeTake = operatorRules
 	}
-
 	// Prepare new ActionSet structure that will hold all the user actions
 	userAllowedAction := actionsStringToActionSet(actions)
 	var allowedEndpoints []string
