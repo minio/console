@@ -40,9 +40,7 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { AppState } from "../../../../../store";
 import { setErrorSnackMessage } from "../../../../../actions";
 import { snackBarMessage } from "../../../../../types";
-import {
-  setModalErrorSnackMessage,
-} from "../../../../../actions";
+import { setModalErrorSnackMessage } from "../../../../../actions";
 
 interface ImodalErrorProps {
   customStyle?: any;
