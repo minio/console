@@ -70,7 +70,7 @@ func TestGetAuthorizedEndpoints(t *testing.T) {
 					"admin:*",
 				},
 			},
-			want: 23,
+			want: 26,
 		},
 		{
 			name: "all s3 endpoints",
@@ -89,7 +89,7 @@ func TestGetAuthorizedEndpoints(t *testing.T) {
 					"s3:*",
 				},
 			},
-			want: 25,
+			want: 28,
 		},
 		{
 			name: "Console User - default endpoints",
