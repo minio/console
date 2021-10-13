@@ -359,8 +359,8 @@ export const typesSelection = {
   iconContainer: {
     display: "flex" as const,
     flexDirection: "row" as const,
-    maxWidth: 455,
-    justifyContent: "space-between" as const,
+    maxWidth: 1180,
+    justifyContent: "start" as const,
     flexWrap: "wrap" as const,
     width: "100%",
   },
@@ -388,20 +388,39 @@ export const typesSelection = {
     height: "80px",
   },
   lambdaNotif: {
-    backgroundColor: "#fff",
-    border: "#393939 1px solid",
+    background:
+      "linear-gradient(90deg, rgba(249,249,250,1) 0%, rgba(250,250,251,1) 68%, rgba(254,254,254,1) 100%)",
+    border: "#E5E5E5 1px solid",
     borderRadius: 5,
-    width: 101,
-    height: 91,
+    width: 250,
+    height: 80,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "start",
+    marginBottom: 16,
+    marginRight: 8,
+    cursor: "pointer",
+    padding: 0,
+    overflow: "hidden",
+  },
+  lambdaNotifIcon: {
+    backgroundColor: "#FEFEFE",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 16,
-    cursor: "pointer",
+    width: 80,
+    height: 80,
+
     "& img": {
-      maxWidth: 71,
-      maxHeight: 71,
+      maxWidth: 46,
+      maxHeight: 46,
     },
+  },
+  lambdaNotifTitle: {
+    color: "#07193E",
+    fontSize: 16,
+    fontFamily: "Lato,sans-serif",
+    paddingLeft: 18,
   },
 };
 

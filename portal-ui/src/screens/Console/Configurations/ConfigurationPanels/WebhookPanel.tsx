@@ -23,7 +23,7 @@ import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import AddIcon from "@material-ui/icons/Add";
 import TableWrapper from "../../Common/TableWrapper/TableWrapper";
-import EditConfiguration from "../CustomForms/EditConfiguration";
+import EditConfiguration from "../../NotificationEndpoints/CustomForms/EditConfiguration";
 import SearchIcon from "../../../../icons/SearchIcon";
 
 interface IMatchParams {

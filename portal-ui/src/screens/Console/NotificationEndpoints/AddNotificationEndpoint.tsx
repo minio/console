@@ -20,24 +20,27 @@ import get from "lodash/get";
 import Grid from "@material-ui/core/Grid";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
-import ConfPostgres from "../CustomForms/ConfPostgres";
-import api from "../../../../common/api";
-import { serverNeedsRestart, setErrorSnackMessage } from "../../../../actions";
+import ConfPostgres from "./CustomForms/ConfPostgres";
+import api from "../../../common/api";
+import { serverNeedsRestart, setErrorSnackMessage } from "../../../actions";
 import {
   notificationEndpointsFields,
   notifyMysql,
   notifyPostgres,
   removeEmptyFields,
-} from "../utils";
-import { IElementValue } from "../types";
+} from "./utils";
 import {
   modalBasic,
   settingsCommon,
-} from "../../Common/FormComponents/common/styleLibrary";
+} from "../Common/FormComponents/common/styleLibrary";
 import { servicesList } from "./utils";
-import { ErrorResponseHandler } from "../../../../common/types";
-import ConfMySql from "../CustomForms/ConfMySql";
-import ConfTargetGeneric from "../ConfTargetGeneric";
+import { ErrorResponseHandler } from "../../../common/types";
+import ConfMySql from "./CustomForms/ConfMySql";
+import ConfTargetGeneric from "./ConfTargetGeneric";
+import { IElementValue } from "../Configurations/types";
+import PageHeader from "../Common/PageHeader/PageHeader";
+import { BackSettingsIcon } from "../../../icons";
+import history from "../../../history";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -60,14 +63,52 @@ const styles = (theme: Theme) =>
       ...settingsCommon.customTitle,
       marginTop: 0,
     },
-    settingsFormContainer: {
-      ...settingsCommon.settingsFormContainer,
-      height: "calc(100vh - 422px)",
+    lambdaNotif: {
+      background:
+        "linear-gradient(90deg, rgba(249,249,250,1) 0%, rgba(250,250,251,1) 68%, rgba(254,254,254,1) 100%)",
+      border: "#E5E5E5 1px solid",
+      borderRadius: 5,
+      height: 80,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "start",
+      marginBottom: 16,
+      marginRight: 8,
+      cursor: "pointer",
+      padding: 0,
+      overflow: "hidden",
+    },
+    lambdaNotifIcon: {
+      backgroundColor: "#FEFEFE",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      width: 80,
+      height: 80,
+
+      "& img": {
+        maxWidth: 46,
+        maxHeight: 46,
+      },
+    },
+    lambdaNotifTitle: {
+      color: "#07193E",
+      fontSize: 16,
+      fontFamily: "Lato,sans-serif",
+      paddingLeft: 18,
+    },
+    mainCont: {
+      maxWidth: 1180,
+      paddingLeft: 38,
+      paddingRight: 38,
+    },
+    backTo: {
+      margin: "20px 0px 0",
     },
   });
 
 interface IAddNotificationEndpointProps {
-  service: string;
+  match: any;
   saveAndRefresh: any;
   serverNeedsRestart: typeof serverNeedsRestart;
   setErrorSnackMessage: typeof setErrorSnackMessage;
@@ -75,7 +116,7 @@ interface IAddNotificationEndpointProps {
 }
 
 const AddNotificationEndpoint = ({
-  service,
+  match,
   saveAndRefresh,
   serverNeedsRestart,
   classes,
@@ -84,7 +125,7 @@ const AddNotificationEndpoint = ({
   //Local States
   const [valuesArr, setValueArr] = useState<IElementValue[]>([]);
   const [saving, setSaving] = useState<boolean>(false);
-
+  const service = match.params["service"];
   //Effects
 
   useEffect(() => {
@@ -97,7 +138,7 @@ const AddNotificationEndpoint = ({
         .then(() => {
           setSaving(false);
           serverNeedsRestart(true);
-          saveAndRefresh();
+          history.push("/notification-endpoints");
         })
         .catch((err: ErrorResponseHandler) => {
           setSaving(false);
@@ -151,36 +192,63 @@ const AddNotificationEndpoint = ({
 
   return (
     <Fragment>
-      {service !== "" && (
-        <Fragment>
-          <form noValidate onSubmit={submitForm}>
-            <Grid item xs={12} className={classes.customTitle}>
-              {targetElement ? targetElement.targetTitle : ""} - Add Lambda
-              Notification Target
-            </Grid>
-            <Grid item xs={12} className={classes.settingsFormContainer}>
-              {srvComponent}
-            </Grid>
-            <Grid item xs={12} className={classes.settingsButtonContainer}>
-              <Grid
-                item
-                xs={12}
-                className={classes.innerSettingsButtonContainer}
-              >
+      <PageHeader label="Notification Endpoints" />
+      <form noValidate onSubmit={submitForm}>
+        <Grid container className={classes.mainCont}>
+          <Grid item xs={12} className={classes.backTo}>
+            <button
+              onClick={() => {
+                history.push("/notification-endpoints/add");
+              }}
+              className={classes.backButton}
+            >
+              <BackSettingsIcon />
+              Back To Supported Services
+            </button>
+          </Grid>
+
+          {service !== "" && (
+            <Fragment>
+              <Grid item xs={12}>
+                {targetElement && (
+                  <div
+                    key={`icon-${targetElement.targetTitle}`}
+                    className={classes.lambdaNotif}
+                  >
+                    <div className={classes.lambdaNotifIcon}>
+                      <img
+                        src={targetElement.logo}
+                        className={classes.logoButton}
+                        alt={targetElement.targetTitle}
+                      />
+                    </div>
+
+                    <div className={classes.lambdaNotifTitle}>
+                      <b>
+                        {targetElement ? targetElement.targetTitle : ""} Lambda
+                        Notification Target
+                      </b>
+                    </div>
+                  </div>
+                )}
+              </Grid>
+              <Grid item xs={12}>
+                {srvComponent}
+              </Grid>
+              <Grid item xs={12} className={classes.settingsButtonContainer}>
                 <Button
                   type="submit"
                   variant="contained"
                   color="primary"
                   disabled={saving}
                 >
-                  Save
+                  Save Notification Target
                 </Button>
               </Grid>
-            </Grid>
-            <Grid item xs={9} />
-          </form>
-        </Fragment>
-      )}
+            </Fragment>
+          )}
+        </Grid>
+      </form>
     </Fragment>
   );
 };

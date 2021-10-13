@@ -56,6 +56,9 @@ import Metrics from "./Dashboard/Metrics";
 import Hop from "./Tenants/TenantDetails/hop/Hop";
 import MainError from "./Common/MainError/MainError";
 import AddTenant from "./Tenants/AddTenant/AddTenant";
+import NotificationEndpoints from "./NotificationEndpoints/NotificationEndpoints";
+import AddNotificationEndpoint from "./NotificationEndpoints/AddNotificationEndpoint";
+import NotificationTypeSelector from "./NotificationEndpoints/NotificationTypeSelector";
 
 const drawerWidth = 245;
 
@@ -277,6 +280,18 @@ const Console = ({
     {
       component: ConfigurationMain,
       path: "/settings",
+    },
+    {
+      component: AddNotificationEndpoint,
+      path: "/notification-endpoints/add/:service",
+    },
+    {
+      component: NotificationTypeSelector,
+      path: "/notification-endpoints/add",
+    },
+    {
+      component: NotificationEndpoints,
+      path: "/notification-endpoints",
     },
     {
       component: Account,

@@ -29,23 +29,24 @@ import {
   TransformedEndpointItem,
 } from "./types";
 import { notificationTransform } from "./utils";
-import { AddIcon } from "../../../../icons";
-import TableWrapper from "../../Common/TableWrapper/TableWrapper";
+import { AddIcon } from "../../../icons";
+import TableWrapper from "../Common/TableWrapper/TableWrapper";
 import AddNotificationEndpoint from "./AddNotificationEndpoint";
-import { setErrorSnackMessage } from "../../../../actions";
+import { setErrorSnackMessage } from "../../../actions";
 import {
   actionsTray,
   containerForHeader,
   searchField,
   settingsCommon,
-} from "../../Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler } from "../../../../common/types";
-import api from "../../../../common/api";
-import SlideOptions from "../../Common/SlideOptions/SlideOptions";
-import BackSettingsIcon from "../../../../icons/BackSettingsIcon";
+} from "../Common/FormComponents/common/styleLibrary";
+import { ErrorResponseHandler } from "../../../common/types";
+import api from "../../../common/api";
+import SlideOptions from "../Common/SlideOptions/SlideOptions";
+import BackSettingsIcon from "../../../icons/BackSettingsIcon";
 import NotificationTypeSelector from "./NotificationTypeSelector";
-import RefreshIcon from "../../../../icons/RefreshIcon";
-import SearchIcon from "../../../../icons/SearchIcon";
+import RefreshIcon from "../../../icons/RefreshIcon";
+import SearchIcon from "../../../icons/SearchIcon";
+import history from "../../../history";
 
 interface IListNotificationEndpoints {
   classes: any;
@@ -76,10 +77,6 @@ const styles = (theme: Theme) =>
     },
     lambdaContainer: {
       padding: "15px 0",
-    },
-    actionsTray: {
-      ...actionsTray.actionsTray,
-      padding: "0 38px",
     },
   });
 
@@ -163,6 +160,45 @@ const ListNotificationEndpoints = ({
   return (
     <Fragment>
       <Grid container>
+        <Grid item xs={12} className={classes.actionsTray}>
+          <TextField
+            placeholder="Filter"
+            className={classes.searchField}
+            id="search-resource"
+            label=""
+            onChange={(event) => {
+              setFilter(event.target.value);
+            }}
+            InputProps={{
+              disableUnderline: true,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <IconButton
+            color="primary"
+            aria-label="Refresh List"
+            component="span"
+            onClick={() => {
+              setIsLoading(true);
+            }}
+          >
+            <RefreshIcon />
+          </IconButton>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={() => {
+              history.push("/notification-endpoints/add");
+            }}
+          >
+            Add Notification Target
+          </Button>
+        </Grid>
         <Grid item xs={12}>
           <Grid item xs={12}>
             <div className={classes.settingsOptionsContainer}>
@@ -170,43 +206,6 @@ const ListNotificationEndpoints = ({
                 slideOptions={[
                   <Fragment>
                     <Grid item xs={12} className={classes.lambdaContainer}>
-                      <Grid item xs={12} className={classes.actionsTray}>
-                        <TextField
-                          placeholder="Filter"
-                          className={classes.searchField}
-                          id="search-resource"
-                          label=""
-                          onChange={(event) => {
-                            setFilter(event.target.value);
-                          }}
-                          InputProps={{
-                            disableUnderline: true,
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                <SearchIcon />
-                              </InputAdornment>
-                            ),
-                          }}
-                        />
-                        <IconButton
-                          color="primary"
-                          aria-label="Refresh List"
-                          component="span"
-                          onClick={() => {
-                            setIsLoading(true);
-                          }}
-                        >
-                          <RefreshIcon />
-                        </IconButton>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          startIcon={<AddIcon />}
-                          onClick={openNewLambdaSelector}
-                        >
-                          Add Notification Target
-                        </Button>
-                      </Grid>
                       <Grid item xs={12}>
                         <TableWrapper
                           itemActions={[]}
@@ -240,29 +239,7 @@ const ListNotificationEndpoints = ({
                       </button>
                     </Grid>
                     <Grid item xs={12}>
-                      <NotificationTypeSelector
-                        setService={(serviceName: string) => {
-                          setService(serviceName);
-                          setCurrentPanel(2);
-                        }}
-                      />
-                    </Grid>
-                  </Fragment>,
-                  <Fragment>
-                    <Grid item xs={12} className={classes.backContainer}>
-                      <button
-                        onClick={backClick}
-                        className={classes.backButton}
-                      >
-                        <BackSettingsIcon />
-                        Back To Supported Services
-                      </button>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <AddNotificationEndpoint
-                        service={service}
-                        saveAndRefresh={saveAndRefresh}
-                      />
+                      <NotificationTypeSelector />
                     </Grid>
                   </Fragment>,
                 ]}
