@@ -39,10 +39,8 @@ func registerAccountHandlers(api *operations.ConsoleAPI) {
 		}
 		// Custom response writer to update the session cookies
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
-			cookies := NewSessionCookieForConsole(changePasswordResponse.SessionID)
-			for _, cookie := range cookies {
-				http.SetCookie(w, &cookie)
-			}
+			cookie := NewSessionCookieForConsole(changePasswordResponse.SessionID)
+			http.SetCookie(w, &cookie)
 			user_api.NewLoginCreated().WithPayload(changePasswordResponse).WriteResponse(w, p)
 		})
 	})
@@ -88,7 +86,7 @@ func getChangePasswordResponse(session *models.Principal, params user_api.Accoun
 	}
 	// user credentials are updated at this point, we need to generate a new admin client and authenticate using
 	// the new credentials
-	credentials, err := getConsoleCredentials(ctx, accessKey, newSecretKey)
+	credentials, err := getConsoleCredentials(accessKey, newSecretKey)
 	if err != nil {
 		return nil, prepareError(errInvalidCredentials, nil, err)
 	}

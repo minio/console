@@ -17,8 +17,10 @@
 package restapi
 
 import (
+	"context"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/models"
@@ -65,13 +67,40 @@ func registerSessionHandlers(api *operations.ConsoleAPI) {
 
 // getSessionResponse parse the token of the current session and returns a list of allowed actions to render in the UI
 func getSessionResponse(session *models.Principal) (*models.SessionResponse, *models.Error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
 	// serialize output
 	if session == nil {
 		return nil, prepareError(errorGenericInvalidSession)
 	}
 
+	// initialize admin client
+	mAdminClient, err := NewMinioAdminClient(&models.Principal{
+		STSAccessKeyID:     session.STSAccessKeyID,
+		STSSecretAccessKey: session.STSSecretAccessKey,
+		STSSessionToken:    session.STSSessionToken,
+	})
+	if err != nil {
+		return nil, prepareError(err, errorGenericInvalidSession)
+	}
+	userAdminClient := AdminClient{Client: mAdminClient}
+	// Obtain the current policy assigned to this user
+	// necessary for generating the list of allowed endpoints
+	policy, err := getAccountPolicy(ctx, userAdminClient)
+	if err != nil {
+		return nil, prepareError(err, errorGenericInvalidSession)
+	}
+	// by default every user starts with an empty array of available actions
+	// therefore we would have access only to pages that doesn't require any privilege
+	// ie: service-account page
+	var actions []string
+	// if a policy is assigned to this user we parse the actions from there
+	if policy != nil {
+		actions = acl.GetActionsStringFromPolicy(policy)
+	}
+
 	sessionResp := &models.SessionResponse{
-		Pages:           acl.GetAuthorizedEndpoints(session.Actions),
+		Pages:           acl.GetAuthorizedEndpoints(actions),
 		Features:        getListOfEnabledFeatures(),
 		Status:          models.SessionResponseStatusOk,
 		Operator:        false,

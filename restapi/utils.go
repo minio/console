@@ -18,7 +18,6 @@ package restapi
 
 import (
 	"crypto/rand"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -106,73 +105,20 @@ func FileExists(filename string) bool {
 	return !info.IsDir()
 }
 
-func NewSessionCookieForConsole(token string) []http.Cookie {
-	const CookieChunk = 3800
-
-	expiration := time.Now().Add(SessionDuration)
-	var cookies []http.Cookie
-
-	i := 0
-	cookieIndex := 0
-
-	for i < len(token) {
-		var until int
-		if i+CookieChunk < len(token) {
-			until = i + CookieChunk
-		} else {
-			until = len(token)
-		}
-
-		cookieName := "token"
-		if len(cookies) > 0 {
-			cookieName = fmt.Sprintf("token%d", len(cookies))
-		}
-
-		cookie := http.Cookie{
-			Path:     "/",
-			Name:     cookieName,
-			Value:    token[i:until],
-			MaxAge:   int(SessionDuration.Seconds()), // 45 minutes
-			Expires:  expiration,
-			HttpOnly: true,
-			// if len(GlobalPublicCerts) > 0 is true, that means Console is running with TLS enable and the browser
-			// should not leak any cookie if we access the site using HTTP
-			Secure: len(GlobalPublicCerts) > 0,
-			// read more: https://web.dev/samesite-cookies-explained/
-			SameSite: http.SameSiteLaxMode,
-		}
-
-		cookies = append(cookies, cookie)
-		i += until
-		cookieIndex++
+func NewSessionCookieForConsole(token string) http.Cookie {
+	return http.Cookie{
+		Path:     "/",
+		Name:     "token",
+		Value:    token,
+		MaxAge:   int(SessionDuration.Seconds()), // 45 minutes
+		Expires:  time.Now().Add(SessionDuration),
+		HttpOnly: true,
+		// if len(GlobalPublicCerts) > 0 is true, that means Console is running with TLS enable and the browser
+		// should not leak any cookie if we access the site using HTTP
+		Secure: len(GlobalPublicCerts) > 0,
+		// read more: https://web.dev/samesite-cookies-explained/
+		SameSite: http.SameSiteLaxMode,
 	}
-
-	// clear old cookies
-	expiredDuration := time.Now().Add(-1 * time.Second)
-	for i := cookieIndex; i < 10; i++ {
-		cookieName := "token"
-		if len(cookies) > 0 {
-			cookieName = fmt.Sprintf("token%d", i)
-		}
-
-		cookie := http.Cookie{
-			Path:     "/",
-			Name:     cookieName,
-			Value:    "",
-			MaxAge:   0, // 45 minutes
-			Expires:  expiredDuration,
-			HttpOnly: true,
-			// if len(GlobalPublicCerts) > 0 is true, that means Console is running with TLS enable and the browser
-			// should not leak any cookie if we access the site using HTTP
-			Secure: len(GlobalPublicCerts) > 0,
-			// read more: https://web.dev/samesite-cookies-explained/
-			SameSite: http.SameSiteLaxMode,
-		}
-
-		cookies = append(cookies, cookie)
-	}
-
-	return cookies
 }
 
 func ExpireSessionCookie() http.Cookie {

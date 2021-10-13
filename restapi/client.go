@@ -262,18 +262,12 @@ type ConsoleCredentialsI interface {
 	Get() (credentials.Value, error)
 	Expire()
 	GetAccountAccessKey() string
-	GetActions() []string
 }
 
 // Interface implementation
 type ConsoleCredentials struct {
 	ConsoleCredentials *credentials.Credentials
 	AccountAccessKey   string
-	Actions            []string
-}
-
-func (c ConsoleCredentials) GetActions() []string {
-	return c.Actions
 }
 
 func (c ConsoleCredentials) GetAccountAccessKey() string {
