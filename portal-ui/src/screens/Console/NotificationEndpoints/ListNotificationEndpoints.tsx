@@ -31,7 +31,6 @@ import {
 import { notificationTransform } from "./utils";
 import { AddIcon } from "../../../icons";
 import TableWrapper from "../Common/TableWrapper/TableWrapper";
-import AddNotificationEndpoint from "./AddNotificationEndpoint";
 import { setErrorSnackMessage } from "../../../actions";
 import {
   actionsTray,
@@ -41,9 +40,6 @@ import {
 } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
 import api from "../../../common/api";
-import SlideOptions from "../Common/SlideOptions/SlideOptions";
-import BackSettingsIcon from "../../../icons/BackSettingsIcon";
-import NotificationTypeSelector from "./NotificationTypeSelector";
 import RefreshIcon from "../../../icons/RefreshIcon";
 import SearchIcon from "../../../icons/SearchIcon";
 import history from "../../../history";
@@ -88,8 +84,6 @@ const ListNotificationEndpoints = ({
   const [records, setRecords] = useState<TransformedEndpointItem[]>([]);
   const [filter, setFilter] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [currentPanel, setCurrentPanel] = useState<number>(0);
-  const [service, setService] = useState<string>("");
 
   //Effects
   // load records on mount
@@ -142,21 +136,6 @@ const ListNotificationEndpoints = ({
     );
   };
 
-  const openNewLambdaSelector = () => {
-    setCurrentPanel(1);
-  };
-
-  const backClick = () => {
-    setService("");
-    setCurrentPanel(currentPanel - 1);
-  };
-
-  const saveAndRefresh = () => {
-    setIsLoading(true);
-    setCurrentPanel(0);
-    setService("");
-  };
-
   return (
     <Fragment>
       <Grid container>
@@ -202,49 +181,30 @@ const ListNotificationEndpoints = ({
         <Grid item xs={12}>
           <Grid item xs={12}>
             <div className={classes.settingsOptionsContainer}>
-              <SlideOptions
-                slideOptions={[
-                  <Fragment>
-                    <Grid item xs={12} className={classes.lambdaContainer}>
-                      <Grid item xs={12}>
-                        <TableWrapper
-                          itemActions={[]}
-                          columns={[
-                            {
-                              label: "Status",
-                              elementKey: "status",
-                              renderFunction: statusDisplay,
-                              width: 150,
-                            },
-                            { label: "Service", elementKey: "service_name" },
-                          ]}
-                          isLoading={isLoading}
-                          records={filteredRecords}
-                          entityName="Lambda Notification Targets"
-                          idField="service_name"
-                          customPaperHeight={classes.customConfigurationPage}
-                          noBackground
-                        />
-                      </Grid>
-                    </Grid>
-                  </Fragment>,
-                  <Fragment>
-                    <Grid item xs={12} className={classes.backContainer}>
-                      <button
-                        onClick={backClick}
-                        className={classes.backButton}
-                      >
-                        <BackSettingsIcon />
-                        Back To Lambda Notifications
-                      </button>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <NotificationTypeSelector />
-                    </Grid>
-                  </Fragment>,
-                ]}
-                currentSlide={currentPanel}
-              />
+              <Fragment>
+                <Grid item xs={12} className={classes.lambdaContainer}>
+                  <Grid item xs={12}>
+                    <TableWrapper
+                      itemActions={[]}
+                      columns={[
+                        {
+                          label: "Status",
+                          elementKey: "status",
+                          renderFunction: statusDisplay,
+                          width: 150,
+                        },
+                        { label: "Service", elementKey: "service_name" },
+                      ]}
+                      isLoading={isLoading}
+                      records={filteredRecords}
+                      entityName="Notification Endpoints"
+                      idField="service_name"
+                      customPaperHeight={classes.customConfigurationPage}
+                      noBackground
+                    />
+                  </Grid>
+                </Grid>
+              </Fragment>
             </div>
           </Grid>
         </Grid>
