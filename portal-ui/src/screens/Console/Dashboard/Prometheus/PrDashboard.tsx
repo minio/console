@@ -17,8 +17,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
-import ScheduleIcon from "@material-ui/icons/Schedule";
-import WatchLaterIcon from "@material-ui/icons/WatchLater";
+
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button, GridSize } from "@material-ui/core";
 import {
@@ -32,12 +31,13 @@ import { ErrorResponseHandler } from "../../../../common/types";
 import { setErrorSnackMessage } from "../../../../actions";
 import DateTimePickerWrapper from "../../Common/FormComponents/DateTimePickerWrapper/DateTimePickerWrapper";
 import api from "../../../../common/api";
-import SyncIcon from "../../../../icons/SyncIcon";
+
 import TabSelector from "../../Common/TabSelector/TabSelector";
 import MergedWidgets from "./MergedWidgets";
 import { componentToUse } from "./widgetUtils";
 import ZoomWidget from "./ZoomWidget";
 import { AppState } from "../../../../store";
+import DateRangeSelector from "../../Common/FormComponents/DateRangeSelector/DateRangeSelector";
 
 interface IPrDashboard {
   classes: any;
@@ -254,45 +254,13 @@ const PrDashboard = ({
           apiPrefix={apiPrefix}
         />
       )}
-      <Grid
-        item
-        xs={12}
-        className={`${classes.actionsTray} ${classes.timeContainers}`}
-      >
-        <span className={classes.filterTitle}>Filter:</span>
-        <span className={`${classes.filterTitle} ${classes.schedulerIcon}`}>
-          <ScheduleIcon />
-        </span>
-        <span className={classes.label}>Start Time:</span>
-        <DateTimePickerWrapper
-          value={timeStart}
-          onChange={setTimeStart}
-          forSearchBlock
-          id="stTime"
-          noInputIcon
-        />
-        <span className={`${classes.filterTitle} ${classes.schedulerIcon}`}>
-          <WatchLaterIcon />
-        </span>
-        <span className={classes.label}>End Time:</span>
-        <DateTimePickerWrapper
-          value={timeEnd}
-          onChange={setTimeEnd}
-          forSearchBlock
-          id="endTime"
-          noInputIcon
-        />
-        <Button
-          type="button"
-          variant="contained"
-          color="primary"
-          onClick={triggerLoad}
-          endIcon={<SyncIcon />}
-          className={classes.syncButton}
-        >
-          Sync
-        </Button>
-      </Grid>
+      <DateRangeSelector
+        timeStart={timeStart}
+        setTimeStart={setTimeStart}
+        timeEnd={timeEnd}
+        setTimeEnd={setTimeEnd}
+        triggerSync={triggerLoad}
+      />
       <Grid item xs={12}>
         <TabSelector
           selectedTab={curTab}
