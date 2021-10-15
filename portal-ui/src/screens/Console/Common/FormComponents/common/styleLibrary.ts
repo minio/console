@@ -133,7 +133,7 @@ export const radioIcons = {
 export const containerForHeader = (bottomSpacing: any) => ({
   container: {
     position: "relative" as const,
-    padding: "8px 16px 0",
+    padding: "20px 35px 0",
     "& h6": {
       color: "#777777",
       fontSize: 30,
@@ -173,8 +173,18 @@ export const actionsTray = {
     },
   },
   timeContainers: {
+    display: "flex" as const,
+    "& button": {
+      flexGrow: 0,
+      marginLeft: 15,
+    },
     height: 40,
     maxWidth: 1185,
+    marginBottom: 15, 
+    justifyContent: "flex-start" as const,
+    "& > *": {
+      marginRight: 15,
+    }
   },
   actionsTray: {
     display: "flex" as const,
@@ -184,6 +194,19 @@ export const actionsTray = {
       marginLeft: 15,
     },
   },
+  filterContainer: {
+    backgroundColor: "#fff",
+    border: "#EEF1F4 2px solid",
+    borderRadius: 2,
+    display: "flex",
+    alignItems: "center",
+    padding: "0 12px",
+  },
+  divisorLine: {
+    borderRight: "#EEF1F4 1px solid",
+    height: 20,
+    margin: "0 15px",
+  }
 };
 
 export const searchField = {
@@ -434,7 +457,6 @@ export const logsCommon = {
 export const widgetCommon = {
   singleValueContainer: {
     height: 200,
-    minWidth: 280,
     maxWidth: 1185,
     border: "#eef1f4 2px solid",
     backgroundColor: "#fff",
