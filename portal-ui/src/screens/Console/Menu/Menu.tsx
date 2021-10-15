@@ -39,6 +39,7 @@ import {
   GroupsIcon,
   IAMPoliciesIcon,
   LambdaIcon,
+  TiersIcon,
   TraceIcon,
   UsersIcon,
   VersionIcon,
@@ -374,6 +375,14 @@ const Menu = ({
       to: "/notification-endpoints",
       name: "Notification Endpoints",
       icon: <LambdaIcon />,
+    },
+    {
+      group: "common",
+      type: "item",
+      component: NavLink,
+      to: "/tiers",
+      name: "Tiers",
+      icon: <TiersIcon />,
     },
     {
       group: "Tools",

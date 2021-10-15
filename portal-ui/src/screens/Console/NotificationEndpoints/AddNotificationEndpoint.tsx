@@ -225,8 +225,8 @@ const AddNotificationEndpoint = ({
 
                     <div className={classes.lambdaNotifTitle}>
                       <b>
-                        {targetElement ? targetElement.targetTitle : ""} Lambda
-                        Notification Target
+                        {targetElement ? targetElement.targetTitle : ""} 
+                        Notification Endpoint
                       </b>
                     </div>
                   </div>

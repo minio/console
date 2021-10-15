@@ -376,6 +376,17 @@ export const settingsCommon = {
   backContainer: {
     margin: "20px 38px 0",
   },
+  mainCont: {
+    paddingLeft: 50,
+    paddingRight: 50,
+  },
+  mainTitle: {
+    fontSize: 18,
+    color: "#000",
+    fontWeight: 600,
+    marginBottom: 10,
+    marginTop: 10,
+  },
 };
 
 export const typesSelection = {

@@ -16,18 +16,28 @@
 
 import React, { Fragment, useEffect, useState, useCallback } from "react";
 import { connect } from "react-redux";
+import get from "lodash/get";
 import Grid from "@material-ui/core/Grid";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
-import api from "../../../../common/api";
 import { setErrorSnackMessage } from "../../../../actions";
 import {
   modalBasic,
   settingsCommon,
 } from "../../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../../common/types";
+import api from "../../../../common/api";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import FileSelector from "../../Common/FormComponents/FileSelector/FileSelector";
+import BackSettingsIcon from "../../../../icons/BackSettingsIcon";
+import PageHeader from "../../Common/PageHeader/PageHeader";
+import {
+  azureServiceName,
+  gcsServiceName,
+  minioServiceName,
+  s3ServiceName,
+  tierTypes,
+} from "./utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -50,20 +60,62 @@ const styles = (theme: Theme) =>
       ...settingsCommon.settingsFormContainer,
       height: "calc(100vh - 422px)",
     },
+    lambdaNotif: {
+      background:
+        "linear-gradient(90deg, rgba(249,249,250,1) 0%, rgba(250,250,251,1) 68%, rgba(254,254,254,1) 100%)",
+      border: "#E5E5E5 1px solid",
+      borderRadius: 5,
+      height: 80,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "start",
+      marginBottom: 16,
+      marginRight: 8,
+      cursor: "pointer",
+      padding: 0,
+      overflow: "hidden",
+    },
+    lambdaNotifIcon: {
+      backgroundColor: "#FEFEFE",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      width: 80,
+      height: 80,
+
+      "& img": {
+        maxWidth: 46,
+        maxHeight: 46,
+      },
+    },
+    lambdaNotifTitle: {
+      color: "#07193E",
+      fontSize: 16,
+      fontFamily: "Lato,sans-serif",
+      paddingLeft: 18,
+    },
+    mainCont: {
+      maxWidth: 1180,
+      paddingLeft: 38,
+      paddingRight: 38,
+    },
+    backTo: {
+      margin: "20px 0px 0",
+    },
   });
 
 interface IAddNotificationEndpointProps {
-  saveAndRefresh: any;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   classes: any;
-  type: string;
+  match: any;
+  history: any;
 }
 
 const AddTierConfiguration = ({
-  saveAndRefresh,
   classes,
   setErrorSnackMessage,
-  type,
+  match,
+  history,
 }: IAddNotificationEndpointProps) => {
   //Local States
   const [saving, setSaving] = useState<boolean>(false);
@@ -86,6 +138,8 @@ const AddTierConfiguration = ({
   const [accountKey, setAccountKey] = useState<string>("");
 
   const [titleSelection, setTitleSelection] = useState<string>("");
+
+  const type = get(match, "params.service", "s3");
 
   // Validations
   const [isFormValid, setIsFormValid] = useState<boolean>(true);
@@ -164,7 +218,8 @@ const AddTierConfiguration = ({
         .invoke("POST", `/api/v1/admin/tiers`, payload)
         .then(() => {
           setSaving(false);
-          saveAndRefresh();
+
+          history.push("/tiers");
         })
         .catch((err: ErrorResponseHandler) => {
           setSaving(false);
@@ -178,10 +233,10 @@ const AddTierConfiguration = ({
     bucket,
     encodedCreds,
     endpoint,
+    history,
     name,
     prefix,
     region,
-    saveAndRefresh,
     saving,
     secretKey,
     setErrorSnackMessage,
@@ -283,158 +338,206 @@ const AddTierConfiguration = ({
     setName(e.target.value.toUpperCase());
   };
 
+  const backClick = () => {
+    history.push("/tiers/add");
+  };
+
+  const targetElement = tierTypes.find((item) => item.serviceName === type);
+
   return (
     <Fragment>
-      <form noValidate onSubmit={submitForm}>
-        <Grid item xs={12} className={classes.customTitle}>
-          {titleSelection} - Add Tier Configuration
+      <PageHeader label="Tiers" />
+      <Grid container className={classes.mainCont}>
+        <Grid item xs={12} className={classes.backTo}>
+          <button onClick={backClick} className={classes.backButton}>
+            <BackSettingsIcon />
+            Back To Tier Type Selection
+          </button>
         </Grid>
-        <Grid item xs={12} className={classes.settingsFormContainer}>
-          <Grid container>
-            {type !== "" && (
-              <Fragment>
-                <InputBoxWrapper
-                  id="name"
-                  name="name"
-                  label="Name"
-                  placeholder="Enter Name (Eg. REMOTE-TIER)"
-                  value={name}
-                  onChange={updateTierName}
-                  error={nameInputError}
-                />
-                <InputBoxWrapper
-                  id="endpoint"
-                  name="endpoint"
-                  label="Endpoint"
-                  placeholder="Enter Endpoint"
-                  value={endpoint}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setEndpoint(e.target.value);
-                  }}
-                />
-                {(type === "s3" || type === "minio") && (
+        {type !== "" && (
+          <Fragment>
+            <Grid item xs={12}>
+              {targetElement && (
+                <div
+                  key={`icon-${targetElement.targetTitle}`}
+                  className={classes.lambdaNotif}
+                >
+                  <div className={classes.lambdaNotifIcon}>
+                    <img
+                      src={targetElement.logo}
+                      className={classes.logoButton}
+                      alt={targetElement.targetTitle}
+                    />
+                  </div>
+
+                  <div className={classes.lambdaNotifTitle}>
+                    <b>
+                      {titleSelection ? titleSelection : ""} Tier Configuration
+                    </b>
+                  </div>
+                </div>
+              )}
+            </Grid>
+          </Fragment>
+        )}
+        <Grid item xs={12}>
+          <form noValidate onSubmit={submitForm}>
+            <Grid item xs={12}>
+              <Grid container>
+                {type !== "" && (
                   <Fragment>
                     <InputBoxWrapper
-                      id="accessKey"
-                      name="accessKey"
-                      label="Access Key"
-                      placeholder="Enter Access Key"
-                      value={accessKey}
+                      id="name"
+                      name="name"
+                      label="Name"
+                      placeholder="Enter Name (Eg. REMOTE-TIER)"
+                      value={name}
+                      onChange={updateTierName}
+                      error={nameInputError}
+                    />
+                    <InputBoxWrapper
+                      id="endpoint"
+                      name="endpoint"
+                      label="Endpoint"
+                      placeholder="Enter Endpoint"
+                      value={endpoint}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setAccessKey(e.target.value);
+                        setEndpoint(e.target.value);
+                      }}
+                    />
+                    {(type === s3ServiceName || type === minioServiceName) && (
+                      <Fragment>
+                        <InputBoxWrapper
+                          id="accessKey"
+                          name="accessKey"
+                          label="Access Key"
+                          placeholder="Enter Access Key"
+                          value={accessKey}
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            setAccessKey(e.target.value);
+                          }}
+                        />
+                        <InputBoxWrapper
+                          id="secretKey"
+                          name="secretKey"
+                          label="Secret Key"
+                          placeholder="Enter Secret Key"
+                          value={secretKey}
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            setSecretKey(e.target.value);
+                          }}
+                        />
+                      </Fragment>
+                    )}
+                    {type === gcsServiceName && (
+                      <Fragment>
+                        <FileSelector
+                          accept=".json"
+                          id="creds"
+                          label="Credentials"
+                          name="creds"
+                          onChange={(encodedValue, fileName) => {
+                            setEncodedCreds(encodedValue);
+                            setCreds(fileName);
+                          }}
+                          value={creds}
+                        />
+                      </Fragment>
+                    )}
+                    {type === azureServiceName && (
+                      <Fragment>
+                        <InputBoxWrapper
+                          id="accountName"
+                          name="accountName"
+                          label="Account Name"
+                          placeholder="Enter Account Name"
+                          value={accountName}
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            setAccountName(e.target.value);
+                          }}
+                        />
+                        <InputBoxWrapper
+                          id="accountKey"
+                          name="accountKey"
+                          label="Account Key"
+                          placeholder="Enter Account Key"
+                          value={accountKey}
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            setAccountKey(e.target.value);
+                          }}
+                        />
+                      </Fragment>
+                    )}
+                    <InputBoxWrapper
+                      id="bucket"
+                      name="bucket"
+                      label="Bucket"
+                      placeholder="Enter Bucket"
+                      value={bucket}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setBucket(e.target.value);
                       }}
                     />
                     <InputBoxWrapper
-                      id="secretKey"
-                      name="secretKey"
-                      label="Secret Key"
-                      placeholder="Enter Secret Key"
-                      value={secretKey}
+                      id="prefix"
+                      name="prefix"
+                      label="Prefix"
+                      placeholder="Enter Prefix"
+                      value={prefix}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setSecretKey(e.target.value);
+                        setPrefix(e.target.value);
                       }}
                     />
+                    <InputBoxWrapper
+                      id="region"
+                      name="region"
+                      label="Region"
+                      placeholder="Enter Region"
+                      value={region}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setRegion(e.target.value);
+                      }}
+                    />
+                    {type === s3ServiceName ||
+                      (type === minioServiceName && (
+                        <InputBoxWrapper
+                          id="storageClass"
+                          name="storageClass"
+                          label="Storage Class"
+                          placeholder="Enter Storage Class"
+                          value={storageClass}
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            setStorageClass(e.target.value);
+                          }}
+                        />
+                      ))}
                   </Fragment>
                 )}
-                {type === "gcs" && (
-                  <Fragment>
-                    <FileSelector
-                      accept=".json"
-                      id="creds"
-                      label="Credentials"
-                      name="creds"
-                      onChange={(encodedValue, fileName) => {
-                        setEncodedCreds(encodedValue);
-                        setCreds(fileName);
-                      }}
-                      value={creds}
-                    />
-                  </Fragment>
-                )}
-                {type === "azure" && (
-                  <Fragment>
-                    <InputBoxWrapper
-                      id="accountName"
-                      name="accountName"
-                      label="Account Name"
-                      placeholder="Enter Account Name"
-                      value={accountName}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setAccountName(e.target.value);
-                      }}
-                    />
-                    <InputBoxWrapper
-                      id="accountKey"
-                      name="accountKey"
-                      label="Account Key"
-                      placeholder="Enter Account Key"
-                      value={accountKey}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setAccountKey(e.target.value);
-                      }}
-                    />
-                  </Fragment>
-                )}
-                <InputBoxWrapper
-                  id="bucket"
-                  name="bucket"
-                  label="Bucket"
-                  placeholder="Enter Bucket"
-                  value={bucket}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setBucket(e.target.value);
-                  }}
-                />
-                <InputBoxWrapper
-                  id="prefix"
-                  name="prefix"
-                  label="Prefix"
-                  placeholder="Enter Prefix"
-                  value={prefix}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setPrefix(e.target.value);
-                  }}
-                />
-                <InputBoxWrapper
-                  id="region"
-                  name="region"
-                  label="Region"
-                  placeholder="Enter Region"
-                  value={region}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    setRegion(e.target.value);
-                  }}
-                />
-                {type === "s3" ||
-                  (type === "minio" && (
-                    <InputBoxWrapper
-                      id="storageClass"
-                      name="storageClass"
-                      label="Storage Class"
-                      placeholder="Enter Storage Class"
-                      value={storageClass}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setStorageClass(e.target.value);
-                      }}
-                    />
-                  ))}
-              </Fragment>
-            )}
-          </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={12} className={classes.settingsButtonContainer}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={saving || !isFormValid}
+              >
+                Save
+              </Button>
+            </Grid>
+          </form>
         </Grid>
-        <Grid item xs={12} className={classes.settingsButtonContainer}>
-          <Grid item xs={12} className={classes.innerSettingsButtonContainer}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={saving || !isFormValid}
-            >
-              Save
-            </Button>
-          </Grid>
-        </Grid>
-      </form>
+      </Grid>
     </Fragment>
   );
 };

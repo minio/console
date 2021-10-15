@@ -26,6 +26,9 @@ var (
 	notificationEndpoints       = "/notification-endpoints"
 	notificationEndpointsAddAny = "/notification-endpoints/add/:service"
 	notificationEndpointsAdd    = "/notification-endpoints/add"
+	tiers                       = "/tiers"
+	tiersAddAny                 = "/tiers/add/:service"
+	tiersAdd                    = "/tiers/add"
 	users                       = "/users"
 	usersDetail                 = "/users/:userName+"
 	groups                      = "/groups"
@@ -294,6 +297,9 @@ var endpointRules = map[string]ConfigurationActionSet{
 	notificationEndpoints:       configurationActionSet,
 	notificationEndpointsAdd:    configurationActionSet,
 	notificationEndpointsAddAny: configurationActionSet,
+	tiers:                       configurationActionSet,
+	tiersAdd:                    configurationActionSet,
+	tiersAddAny:                 configurationActionSet,
 	users:                       usersActionSet,
 	usersDetail:                 usersActionSet,
 	groups:                      groupsActionSet,

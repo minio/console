@@ -27,10 +27,7 @@ import { widgetDetailsToPanel } from "../utils";
 import { CircularProgress } from "@material-ui/core";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import api from "../../../../../common/api";
-import {
-  prettyNumber,
-  representationNumber,
-} from "../../../../../common/utils";
+import { representationNumber } from "../../../../../common/utils";
 
 interface ISingleRepWidget {
   classes: any;

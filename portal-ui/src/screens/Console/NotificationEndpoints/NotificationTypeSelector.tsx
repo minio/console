@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import Grid from "@material-ui/core/Grid";
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import { servicesList } from "./utils";
@@ -34,17 +34,6 @@ const withLogos = servicesList.filter((elService) => elService.logo !== "");
 const styles = (theme: Theme) =>
   createStyles({
     ...settingsCommon,
-    mainCont: {
-      paddingLeft: 50,
-      paddingRight: 50,
-    },
-    mainTitle: {
-      fontSize: 18,
-      color: "#000",
-      fontWeight: 600,
-      marginBottom: 10,
-      marginTop: 10,
-    },
     ...typesSelection,
   });
 
