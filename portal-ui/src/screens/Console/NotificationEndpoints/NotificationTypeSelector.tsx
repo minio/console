@@ -56,7 +56,7 @@ const NotificationTypeSelector = ({ classes }: INotificationTypeSelector) => {
         <Grid item xs={12} className={classes.mainTitle}>
           <BackLink
             to="/notification-endpoints"
-            label="Pick a supported service"
+            label="Return to Configured Endpoints"
           />
         </Grid>
         <Grid item xs={12} className={classes.centerElements}>

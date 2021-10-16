@@ -90,7 +90,7 @@ const TierTypeSelector = ({ classes, history }: ITypeTiersConfig) => {
       <Grid container className={classes.mainCont}>
         <Grid item xs={12}>
           <Grid item xs={12} className={classes.mainTitle}>
-            <BackLink to="/tiers" label="Pick an object store" />
+            <BackLink to="/tiers" label="Return to Configured Tiers" />
           </Grid>
           <Grid item xs={12}>
             <Grid item xs={12}>

@@ -36,6 +36,7 @@ import BackSettingsIcon from "../../../../icons/BackSettingsIcon";
 
 interface IListConfiguration {
   classes: any;
+  history: any;
 }
 
 const styles = (theme: Theme) =>
@@ -67,7 +68,7 @@ const initialConfiguration = {
   configuration_label: "",
 };
 
-const ConfigurationsList = ({ classes }: IListConfiguration) => {
+const ConfigurationsList = ({ classes, history }: IListConfiguration) => {
   const [selectedConfiguration, setSelectedConfiguration] =
     useState(initialConfiguration);
   const [currentConfiguration, setCurrentConfiguration] = useState<number>(0);
@@ -131,9 +132,7 @@ const ConfigurationsList = ({ classes }: IListConfiguration) => {
                     <Grid item xs={12}>
                       {currentConfiguration === 1 ? (
                         <EditConfiguration
-                          closeModalAndRefresh={() => {
-                            setCurrentConfiguration(0);
-                          }}
+                          history={history}
                           selectedConfiguration={selectedConfiguration}
                         />
                       ) : null}

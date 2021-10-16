@@ -44,7 +44,6 @@ import Account from "./Account/Account";
 import Users from "./Users/Users";
 import Groups from "./Groups/Groups";
 import ConfigurationMain from "./Configurations/ConfigurationMain";
-import WebhookPanel from "./Configurations/ConfigurationPanels/WebhookPanel";
 import TenantsMain from "./Tenants/TenantsMain";
 import TenantDetails from "./Tenants/TenantDetails/TenantDetails";
 import License from "./License/License";
@@ -287,6 +286,10 @@ const Console = ({
       path: "/settings",
     },
     {
+      component: ConfigurationMain,
+      path: "/settings/:option",
+    },
+    {
       component: AddNotificationEndpoint,
       path: "/notification-endpoints/add/:service",
     },
@@ -316,14 +319,6 @@ const Console = ({
       props: {
         changePassword: session.pages.includes("/account/change-password"),
       },
-    },
-    {
-      component: WebhookPanel,
-      path: "/webhook/logger",
-    },
-    {
-      component: WebhookPanel,
-      path: "/webhook/audit",
     },
     {
       component: TenantsMain,

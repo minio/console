@@ -63,19 +63,19 @@ const styles = (theme: Theme) =>
   });
 
 interface IAddNotificationEndpointProps {
-  closeModalAndRefresh: any;
   serverNeedsRestart: typeof serverNeedsRestart;
   setErrorSnackMessage: typeof setErrorSnackMessage;
   selectedConfiguration: IConfigurationElement;
   classes: any;
+  history: any;
 }
 
 const EditConfiguration = ({
-  closeModalAndRefresh,
   serverNeedsRestart,
   selectedConfiguration,
   setErrorSnackMessage,
   classes,
+  history,
 }: IAddNotificationEndpointProps) => {
   //Local States
   const [valuesObj, setValueObj] = useState<IElementValue[]>([]);
@@ -116,7 +116,7 @@ const EditConfiguration = ({
           setSaving(false);
           serverNeedsRestart(true);
 
-          closeModalAndRefresh();
+          history.push("/settings");
         })
         .catch((err: ErrorResponseHandler) => {
           setSaving(false);
@@ -125,10 +125,10 @@ const EditConfiguration = ({
     }
   }, [
     saving,
+    history,
     serverNeedsRestart,
     selectedConfiguration,
     valuesObj,
-    closeModalAndRefresh,
     setErrorSnackMessage,
   ]);
 
@@ -147,39 +147,32 @@ const EditConfiguration = ({
 
   return (
     <Fragment>
-      <Grid item xs={12} className={classes.customTitle}>
-        {selectedConfiguration.configuration_label}
-      </Grid>
-      <Fragment>
-        <form noValidate onSubmit={submitForm}>
-          <Grid item xs={12} className={classes.settingsFormContainer}>
-            {loadingConfig && (
-              <Grid item xs={12}>
-                <LinearProgress />
-              </Grid>
-            )}
-            <ConfTargetGeneric
-              fields={
-                fieldsConfigurations[selectedConfiguration.configuration_id]
-              }
-              onChange={onValueChange}
-              defaultVals={configValues}
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.settingsButtonContainer}>
-            <Grid item xs={12} className={classes.innerSettingsButtonContainer}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={saving}
-              >
-                Save
-              </Button>
+      <form noValidate onSubmit={submitForm}>
+        <Grid item xs={12} className={classes.settingsFormContainer}>
+          {loadingConfig && (
+            <Grid item xs={12}>
+              <LinearProgress />
             </Grid>
-          </Grid>
-        </form>
-      </Fragment>
+          )}
+          <ConfTargetGeneric
+            fields={
+              fieldsConfigurations[selectedConfiguration.configuration_id]
+            }
+            onChange={onValueChange}
+            defaultVals={configValues}
+          />
+        </Grid>
+        <Grid item xs={12} className={classes.settingsButtonContainer}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={saving}
+          >
+            Save
+          </Button>
+        </Grid>
+      </form>
     </Fragment>
   );
 };
