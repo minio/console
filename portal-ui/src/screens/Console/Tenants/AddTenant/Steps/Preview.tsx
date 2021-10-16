@@ -16,17 +16,19 @@
 
 import React, { Fragment } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableRow from "@material-ui/core/TableRow";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableRow from "@mui/material/TableRow";
 import { AppState } from "../../../../../store";
 import {
   modalBasic,
   wizardCommon,
 } from "../../../Common/FormComponents/common/styleLibrary";
-import { Paper } from "@material-ui/core";
+import { Paper } from "@mui/material";
 
 interface IPreviewProps {
   classes: any;

@@ -1,4 +1,4 @@
-FROM node:10 as uilayer
+FROM node:14 as uilayer
 
 WORKDIR /app
 

@@ -14,15 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { useState } from "react";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import SelectWrapper from "../../Common/FormComponents/SelectWrapper/SelectWrapper";
-import { Button, LinearProgress } from "@material-ui/core";
+import { Button, LinearProgress, SelectChangeEvent } from "@mui/material";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
-import Tab from "@material-ui/core/Tab";
-import Tabs from "@material-ui/core/Tabs";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
 
 interface IReplicationProps {
   classes: any;
@@ -90,7 +92,7 @@ const ReplicationSetup = ({
           <SelectWrapper
             label="Source Bucket"
             options={sourceBuckets}
-            onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+            onChange={(e: SelectChangeEvent<string>) => {
               setSourceBucket(e.target.value as string);
             }}
             value={sourceBucket}
@@ -123,7 +125,7 @@ const ReplicationSetup = ({
               <SelectWrapper
                 label="Cluster"
                 options={clustersList}
-                onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                onChange={(e: SelectChangeEvent<string>) => {
                   setClusterSelected(e.target.value as string);
                 }}
                 value={clusterSelected}
@@ -135,7 +137,7 @@ const ReplicationSetup = ({
               <SelectWrapper
                 label="Destination Bucket"
                 options={destinationBuckets}
-                onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                onChange={(e: SelectChangeEvent<string>) => {
                   setDestinationBucket(e.target.value as string);
                 }}
                 value={destinationBucket}

@@ -21,14 +21,17 @@ import React, {
   useEffect,
 } from "react";
 import clsx from "clsx";
-import Grid from "@material-ui/core/Grid";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import InputLabel from "@material-ui/core/InputLabel";
-import Tooltip from "@material-ui/core/Tooltip";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import InputBase from "@material-ui/core/InputBase";
+import Grid from "@mui/material/Grid";
+import { SelectChangeEvent } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import InputLabel from "@mui/material/InputLabel";
+import Tooltip from "@mui/material/Tooltip";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import InputBase from "@mui/material/InputBase";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 import HelpIcon from "../../../../../icons/HelpIcon";
 import FormSwitchWrapper from "../FormSwitchWrapper/FormSwitchWrapper";
@@ -145,21 +148,15 @@ const DateSelector = forwardRef(
       }
     };
 
-    const onMonthChange = (
-      e: React.ChangeEvent<{ name?: string | undefined; value: unknown }>
-    ) => {
+    const onMonthChange = (e: SelectChangeEvent<string>) => {
       setMonth(e.target.value as string);
     };
 
-    const onDayChange = (
-      e: React.ChangeEvent<{ name?: string | undefined; value: unknown }>
-    ) => {
+    const onDayChange = (e: SelectChangeEvent<string>) => {
       setDay(e.target.value as string);
     };
 
-    const onYearChange = (
-      e: React.ChangeEvent<{ name?: string | undefined; value: unknown }>
-    ) => {
+    const onYearChange = (e: SelectChangeEvent<string>) => {
       setYear(e.target.value as string);
     };
 

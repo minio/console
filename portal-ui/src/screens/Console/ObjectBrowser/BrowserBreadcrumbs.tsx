@@ -16,11 +16,12 @@
 
 import React from "react";
 import get from "lodash/get";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import Moment from "react-moment";
 import { connect } from "react-redux";
-import { withStyles } from "@material-ui/core";
-import { createStyles, Theme } from "@material-ui/core/styles";
+import withStyles from "@mui/styles/withStyles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
 import { ObjectBrowserState } from "./reducers";
 import { objectBrowserCommon } from "../Common/FormComponents/common/styleLibrary";
 import { Link } from "react-router-dom";

@@ -14,11 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
-import { Button, Grid } from "@material-ui/core";
+import { Button, Grid } from "@mui/material";
 import InputBoxWrapper from "../../../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { modalBasic } from "../../../../Common/FormComponents/common/styleLibrary";
 import { connect } from "react-redux";
 import { setFileModeEnabled } from "../../../../ObjectBrowser/actions";

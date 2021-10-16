@@ -14,16 +14,18 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { useEffect, useState } from "react";
-import { Button, Grid, TextField, InputBase } from "@material-ui/core";
+import { Button, Grid, TextField, InputBase } from "@mui/material";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { AppState } from "../../../store";
 import { watchMessageReceived, watchResetMessages } from "./actions";
 import { EventInfo, BucketList, Bucket } from "./types";
 import { niceBytes, timeFromDate } from "../../../common/utils";
 import { wsProtocol } from "../../../utils/wsUtils";
-import { FormControl, MenuItem, Select } from "@material-ui/core";
+import { FormControl, MenuItem, Select } from "@mui/material";
 import {
   actionsTray,
   containerForHeader,
@@ -225,6 +227,7 @@ const Watch = ({
               onChange={(e) => {
                 setPrefix(e.target.value);
               }}
+              variant="standard"
             />
             <TextField
               placeholder="Suffix"
@@ -238,6 +241,7 @@ const Watch = ({
               onChange={(e) => {
                 setSuffix(e.target.value);
               }}
+              variant="standard"
             />
             <Button
               type="submit"

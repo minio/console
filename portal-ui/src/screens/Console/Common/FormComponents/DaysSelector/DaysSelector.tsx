@@ -15,10 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState, useEffect, Fragment } from "react";
-import Grid from "@material-ui/core/Grid";
-import InputLabel from "@material-ui/core/InputLabel";
+import Grid from "@mui/material/Grid";
+import InputLabel from "@mui/material/InputLabel";
 import moment from "moment/moment";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { fieldBasic, tooltipHelper } from "../common/styleLibrary";
 import InputBoxWrapper from "../InputBoxWrapper/InputBoxWrapper";
 
@@ -62,6 +64,9 @@ const styles = (theme: Theme) =>
       height: 20,
       textAlign: "right",
       color: "#848484",
+    },
+    dateInputContainer: {
+      margin: "0 10px",
     },
   });
 
@@ -148,6 +153,16 @@ const DaysSelector = ({
     selectedMinutes,
   ]);
 
+  const extraInputProps = {
+    style: {
+      textAlign: "center" as const,
+      paddingRight: 10,
+      paddingLeft: 10,
+      width: 25,
+    },
+    className: "removeArrows" as const,
+  };
+
   return (
     <Fragment>
       <Grid item xs={12} className={classes.fieldContainer}>
@@ -157,7 +172,7 @@ const DaysSelector = ({
               <span>{label}</span>
             </InputLabel>
           </Grid>
-          <Grid item xs={2}>
+          <Grid item className={classes.dateInputContainer}>
             <InputBoxWrapper
               id={id}
               type="number"
@@ -169,16 +184,11 @@ const DaysSelector = ({
                 setSelectedDays(parseInt(e.target.value));
               }}
               value={selectedDays.toString()}
-              extraInputProps={{
-                style: {
-                  textAlign: "center",
-                  paddingRight: 5,
-                },
-                className: "removeArrows",
-              }}
+              extraInputProps={extraInputProps}
+              noLabelMinWidth
             />
           </Grid>
-          <Grid item xs={2}>
+          <Grid item className={classes.dateInputContainer}>
             <InputBoxWrapper
               id={id}
               type="number"
@@ -190,16 +200,11 @@ const DaysSelector = ({
                 setSelectedHours(parseInt(e.target.value));
               }}
               value={selectedHours.toString()}
-              extraInputProps={{
-                style: {
-                  textAlign: "center",
-                  paddingRight: 5,
-                },
-                className: "removeArrows",
-              }}
+              extraInputProps={extraInputProps}
+              noLabelMinWidth
             />
           </Grid>
-          <Grid item xs={2}>
+          <Grid item className={classes.dateInputContainer}>
             <InputBoxWrapper
               id={id}
               type="number"
@@ -211,13 +216,8 @@ const DaysSelector = ({
                 setSelectedMinutes(parseInt(e.target.value));
               }}
               value={selectedMinutes.toString()}
-              extraInputProps={{
-                style: {
-                  textAlign: "center",
-                  paddingRight: 5,
-                },
-                className: "removeArrows",
-              }}
+              extraInputProps={extraInputProps}
+              noLabelMinWidth
             />
           </Grid>
         </Grid>

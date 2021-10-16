@@ -15,14 +15,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import Grid from "@mui/material/Grid";
 import { containerForHeader } from "../../Common/FormComponents/common/styleLibrary";
-import { Button, Typography } from "@material-ui/core";
+import { Button, Typography } from "@mui/material";
 import { niceBytes } from "../../../../common/utils";
 import Moment from "react-moment";
 import { Link } from "react-router-dom";
-import Paper from "@material-ui/core/Paper";
+import Paper from "@mui/material/Paper";
 import { ITenant } from "../ListTenants/types";
 import { LicenseInfo } from "../../License/types";
 

@@ -22,8 +22,10 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-} from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+} from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { connect } from "react-redux";
 import api from "../../../../common/api";

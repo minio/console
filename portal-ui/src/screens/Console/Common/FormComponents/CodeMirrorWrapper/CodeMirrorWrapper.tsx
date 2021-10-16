@@ -15,10 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { Controlled as CodeMirror } from "react-codemirror2";
-import { InputLabel, Tooltip } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { InputLabel, Tooltip } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import HelpIcon from "../../../../../icons/HelpIcon";
 import { fieldBasic } from "../common/styleLibrary";
 import "./ConsoleCodeMirror.css";

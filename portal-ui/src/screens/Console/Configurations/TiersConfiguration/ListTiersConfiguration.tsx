@@ -14,20 +14,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, {
-  useEffect,
-  useState,
-  Fragment,
-  ReactComponentElement,
-  Component,
-} from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import get from "lodash/get";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { IconButton, TextField } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
-import InputAdornment from "@material-ui/core/InputAdornment";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { IconButton, TextField } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
+import InputAdornment from "@mui/material/InputAdornment";
 import {
   actionsTray,
   containerForHeader,
@@ -46,7 +42,6 @@ import UpdateTierCredentiasModal from "./UpdateTierCredentiasModal";
 import RefreshIcon from "../../../../icons/RefreshIcon";
 import SearchIcon from "../../../../icons/SearchIcon";
 import PageHeader from "../../Common/PageHeader/PageHeader";
-import theme from "../../../../theme/main";
 import HelpBox from "../../../../common/HelpBox";
 
 interface IListTiersConfig {
@@ -194,97 +189,104 @@ const ListTiersConfiguration = ({
       )}
       <PageHeader label="Tiers" />
       <Grid container className={classes.container}>
-        <Grid item xs={12} className={classes.actionsTray}>
-          <TextField
-            placeholder="Filter"
-            className={classes.searchField}
-            id="search-resource"
-            label=""
-            onChange={(event) => {
-              setFilter(event.target.value);
-            }}
-            InputProps={{
-              disableUnderline: true,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <IconButton
-            color="primary"
-            aria-label="Refresh List"
-            component="span"
-            onClick={() => {
-              setIsLoading(true);
-            }}
-          >
-            <RefreshIcon />
-          </IconButton>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            onClick={addTier}
-          >
-            Add Tier
-          </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <TableWrapper
-            itemActions={[
-              {
-                type: "edit",
-                onClick: (tierData: ITierElement) => {
-                  setSelectedTier(tierData);
-                  setUpdateCredentialsOpen(true);
+        <Grid item xs={12} className={classes.lambdaContainer}>
+          <Grid item xs={12} className={classes.actionsTray}>
+            <TextField
+              placeholder="Filter"
+              className={classes.searchField}
+              id="search-resource"
+              label=""
+              onChange={(event) => {
+                setFilter(event.target.value);
+              }}
+              InputProps={{
+                disableUnderline: true,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+              variant="standard"
+            />
+            <IconButton
+              color="primary"
+              aria-label="Refresh List"
+              component="span"
+              onClick={() => {
+                setIsLoading(true);
+              }}
+              size="large"
+            >
+              <RefreshIcon />
+            </IconButton>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              onClick={addTier}
+            >
+              Add Tier
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            <br />
+          </Grid>
+          <Grid item xs={12}>
+            <TableWrapper
+              itemActions={[
+                {
+                  type: "edit",
+                  onClick: (tierData: ITierElement) => {
+                    setSelectedTier(tierData);
+                    setUpdateCredentialsOpen(true);
+                  },
                 },
-              },
-            ]}
-            columns={[
-              {
-                label: "Tier Name",
-                elementKey: "type",
-                renderFunction: renderTierName,
-                renderFullObject: true,
-              },
-              {
-                label: "Type",
-                elementKey: "type",
-                width: 150,
-              },
-              {
-                label: "Endpoint",
-                elementKey: "type",
-                renderFunction: renderTierEndpoint,
-                renderFullObject: true,
-              },
-              {
-                label: "Bucket",
-                elementKey: "type",
-                renderFunction: renderTierBucket,
-                renderFullObject: true,
-              },
-              {
-                label: "Prefix",
-                elementKey: "type",
-                renderFunction: renderTierPrefix,
-                renderFullObject: true,
-              },
-              {
-                label: "Region",
-                elementKey: "type",
-                renderFunction: renderTierRegion,
-                renderFullObject: true,
-              },
-            ]}
-            isLoading={isLoading}
-            records={filteredRecords}
-            entityName="Tiers"
-            idField="service_name"
-            customPaperHeight={classes.customConfigurationPage}
-          />
+              ]}
+              columns={[
+                {
+                  label: "Tier Name",
+                  elementKey: "type",
+                  renderFunction: renderTierName,
+                  renderFullObject: true,
+                },
+                {
+                  label: "Type",
+                  elementKey: "type",
+                  width: 150,
+                },
+                {
+                  label: "Endpoint",
+                  elementKey: "type",
+                  renderFunction: renderTierEndpoint,
+                  renderFullObject: true,
+                },
+                {
+                  label: "Bucket",
+                  elementKey: "type",
+                  renderFunction: renderTierBucket,
+                  renderFullObject: true,
+                },
+                {
+                  label: "Prefix",
+                  elementKey: "type",
+                  renderFunction: renderTierPrefix,
+                  renderFullObject: true,
+                },
+                {
+                  label: "Region",
+                  elementKey: "type",
+                  renderFunction: renderTierRegion,
+                  renderFullObject: true,
+                },
+              ]}
+              isLoading={isLoading}
+              records={filteredRecords}
+              entityName="Tiers"
+              idField="service_name"
+              customPaperHeight={classes.customConfigurationPage}
+            />
+          </Grid>
         </Grid>
         <Grid item xs={12}>
           <HelpBox
@@ -302,6 +304,7 @@ const ListTiersConfiguration = ({
                 <a
                   href="https://docs.min.io/minio/baremetal/lifecycle-management/lifecycle-management-overview.html?ref=con"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   documentation
                 </a>

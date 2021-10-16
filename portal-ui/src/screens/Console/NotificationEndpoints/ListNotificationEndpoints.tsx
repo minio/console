@@ -16,13 +16,15 @@
 
 import React, { useEffect, useState, Fragment } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { IconButton, TextField } from "@material-ui/core";
-import { red } from "@material-ui/core/colors";
-import Grid from "@material-ui/core/Grid";
-import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
-import Button from "@material-ui/core/Button";
-import InputAdornment from "@material-ui/core/InputAdornment";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { IconButton, TextField } from "@mui/material";
+import { red } from "@mui/material/colors";
+import Grid from "@mui/material/Grid";
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+import Button from "@mui/material/Button";
+import InputAdornment from "@mui/material/InputAdornment";
 import {
   NotificationEndpointItem,
   NotificationEndpointsList,
@@ -153,6 +155,7 @@ const ListNotificationEndpoints = ({
                 </InputAdornment>
               ),
             }}
+            variant="standard"
           />
           <IconButton
             color="primary"
@@ -161,6 +164,7 @@ const ListNotificationEndpoints = ({
             onClick={() => {
               setIsLoading(true);
             }}
+            size="large"
           >
             <RefreshIcon />
           </IconButton>
@@ -209,6 +213,7 @@ const ListNotificationEndpoints = ({
                 <a
                   href="https://docs.min.io/minio/baremetal/monitoring/bucket-notifications/bucket-notifications.html?ref=con"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   documentation
                 </a>

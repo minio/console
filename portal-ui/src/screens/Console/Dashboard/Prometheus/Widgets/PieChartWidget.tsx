@@ -16,9 +16,10 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
-import { CircularProgress } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { CircularProgress } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 import { IPieChartConfiguration } from "./types";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
@@ -33,8 +34,8 @@ interface IPieChartWidget {
   classes: any;
   title: string;
   panelItem: IDashboardPanel;
-  timeStart: MaterialUiPickersDate;
-  timeEnd: MaterialUiPickersDate;
+  timeStart: any;
+  timeEnd: any;
   propLoading: boolean;
   displayErrorMessage: any;
   apiPrefix: string;

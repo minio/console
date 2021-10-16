@@ -16,9 +16,11 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import Grid from "@material-ui/core/Grid";
-import { Button, LinearProgress } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import Grid from "@mui/material/Grid";
+import { Button, LinearProgress } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { modalBasic } from "../Common/FormComponents/common/styleLibrary";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { setModalErrorSnackMessage } from "../../../actions";
@@ -47,6 +49,9 @@ const styles = (theme: Theme) =>
     containerScrollable: {
       maxHeight: "calc(100vh - 300px)" as const,
       overflowY: "auto" as const,
+    },
+    codeMirrorContainer: {
+      marginBottom: 20,
     },
     ...modalBasic,
   });
@@ -176,7 +181,7 @@ const AddServiceAccount = ({
             />
           </Grid>
           {isRestrictedByPolicy && (
-            <Grid item xs={12}>
+            <Grid item xs={12} className={classes.codeMirrorContainer}>
               <CodeMirrorWrapper
                 value={policyDefinition}
                 onBeforeChange={(editor, data, value) => {

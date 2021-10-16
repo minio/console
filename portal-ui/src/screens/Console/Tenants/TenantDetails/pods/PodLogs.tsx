@@ -16,11 +16,13 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { TextField } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import InputAdornment from "@material-ui/core/InputAdornment";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { TextField } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import InputAdornment from "@mui/material/InputAdornment";
 import api from "../../../../../common/api";
 import {
   actionsTray,
@@ -186,6 +188,7 @@ const PodLogs = ({
               </InputAdornment>
             ),
           }}
+          variant="standard"
         />
       </Grid>
       <Grid item xs={12}>

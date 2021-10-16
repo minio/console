@@ -15,10 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, LinearProgress } from "@material-ui/core";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Snackbar from "@material-ui/core/Snackbar";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Button, LinearProgress } from "@mui/material";
+import CssBaseline from "@mui/material/CssBaseline";
+import Snackbar from "@mui/material/Snackbar";
 import history from "../../history";
 import { Redirect, Route, Router, Switch, useLocation } from "react-router-dom";
 import { connect } from "react-redux";

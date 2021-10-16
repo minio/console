@@ -16,11 +16,13 @@
 
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { LinearProgress, TextField } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { LinearProgress, TextField } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 import { SubscriptionActivateRequest } from "../Buckets/types";
 import { setModalErrorSnackMessage } from "../../../actions";
@@ -28,8 +30,8 @@ import { ErrorResponseHandler } from "../../../common/types";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import InputBoxWrapper from "../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";
 import api from "../../../common/api";
-import PersonOutlineOutlinedIcon from "@material-ui/icons/PersonOutlineOutlined";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
 const styles = (theme: Theme) =>
   createStyles({

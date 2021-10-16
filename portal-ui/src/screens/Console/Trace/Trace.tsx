@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useState, Fragment } from "react";
-import { Grid, Button, TextField } from "@material-ui/core";
+import { Grid, Button, TextField } from "@mui/material";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { AppState } from "../../../store";
 import { connect } from "react-redux";
@@ -25,7 +25,9 @@ import {
   setTraceStarted,
 } from "./actions";
 import { TraceMessage } from "./types";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { niceBytes, timeFromDate } from "../../../common/utils";
 import { wsProtocol } from "../../../utils/wsUtils";
 import {
@@ -206,6 +208,7 @@ const Trace = ({
                 setStatusCode(e.target.value);
               }}
               disabled={traceStarted}
+              variant="standard"
             />
             <TextField
               placeholder="Method"
@@ -220,6 +223,7 @@ const Trace = ({
                 setMethod(e.target.value);
               }}
               disabled={traceStarted}
+              variant="standard"
             />
             <TextField
               placeholder="Function Name"
@@ -234,6 +238,7 @@ const Trace = ({
               onChange={(e) => {
                 setFunc(e.target.value);
               }}
+              variant="standard"
             />
             <TextField
               placeholder="Path"
@@ -248,6 +253,7 @@ const Trace = ({
               onChange={(e) => {
                 setPath(e.target.value);
               }}
+              variant="standard"
             />
             <TextField
               type="number"
@@ -265,6 +271,7 @@ const Trace = ({
               onChange={(e) => {
                 setThreshold(parseInt(e.target.value));
               }}
+              variant="standard"
             />
           </Grid>
           <Grid item xs={12} className={classes.inlineCheckboxes}>

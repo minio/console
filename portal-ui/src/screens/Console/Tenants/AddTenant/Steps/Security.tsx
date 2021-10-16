@@ -16,8 +16,10 @@
 
 import React, { useEffect, useCallback, Fragment } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, Divider, Grid, Paper, Typography } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Button, Divider, Grid, Paper, Typography } from "@mui/material";
 import {
   modalBasic,
   wizardCommon,

@@ -15,8 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState, useEffect } from "react";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Grid, ListItem, ListItemText } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Grid, ListItem, ListItemText } from "@mui/material";
 import { Route, Router, Switch, Redirect } from "react-router-dom";
 import {
   actionsTray,
@@ -27,7 +29,7 @@ import history from "../../../history";
 import PageHeader from "../Common/PageHeader/PageHeader";
 import StoragePVCs from "./StoragePVCs";
 import DirectCSIDrives from "../DirectCSI/DirectCSIDrives";
-import List from "@material-ui/core/List";
+import List from "@mui/material/List";
 
 interface IStorageProps {
   classes: any;

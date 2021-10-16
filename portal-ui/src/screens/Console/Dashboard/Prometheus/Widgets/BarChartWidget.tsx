@@ -25,10 +25,11 @@ import {
   YAxis,
   Cell,
 } from "recharts";
-import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
-import { CircularProgress } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import ZoomOutMapIcon from "@material-ui/icons/ZoomOutMap";
+import { CircularProgress } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
 import { IBarChartConfiguration } from "./types";
 import { widgetCommon } from "../../../Common/FormComponents/common/styleLibrary";
 import BarChartTooltip from "./tooltips/BarChartTooltip";
@@ -43,8 +44,8 @@ interface IBarChartWidget {
   classes: any;
   title: string;
   panelItem: IDashboardPanel;
-  timeStart: MaterialUiPickersDate;
-  timeEnd: MaterialUiPickersDate;
+  timeStart: any;
+  timeEnd: any;
   propLoading: boolean;
   displayErrorMessage: any;
   apiPrefix: string;

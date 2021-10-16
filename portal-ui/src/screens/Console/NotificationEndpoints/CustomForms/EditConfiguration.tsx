@@ -17,9 +17,11 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import get from "lodash/get";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, LinearProgress } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Button, LinearProgress } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import api from "../../../../common/api";
 import ConfTargetGeneric from "../ConfTargetGeneric";
 import { serverNeedsRestart, setErrorSnackMessage } from "../../../../actions";

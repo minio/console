@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from "react";
-import { SvgIcon } from "@material-ui/core";
+import { SvgIcon } from "@mui/material";
 const HelpIcon = (props: any) => {
   return (
     <SvgIcon {...props} viewBox={"0 0 12 12"}>

@@ -15,8 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import TextField from "@mui/material/TextField";
 import { searchField } from "../common/styleLibrary";
 
 interface IFilterInputWrapper {

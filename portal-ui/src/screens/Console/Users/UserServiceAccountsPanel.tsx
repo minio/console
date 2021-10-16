@@ -16,7 +16,9 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import {
   actionsTray,
   searchField,
@@ -32,7 +34,7 @@ import AddUserServiceAccount from "./AddUserServiceAccount";
 import DeleteServiceAccount from "../Account/DeleteServiceAccount";
 import CredentialsPrompt from "../Common/CredentialsPrompt/CredentialsPrompt";
 import { AddIcon } from "../../../icons";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 
 interface IUserServiceAccountsProps {
   classes: any;

@@ -17,11 +17,13 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { HorizontalBar } from "react-chartjs-2";
-import { Button, Grid, TextField, InputBase } from "@material-ui/core";
+import { Button, Grid, TextField, InputBase } from "@mui/material";
 import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { wsProtocol } from "../../../utils/wsUtils";
-import { FormControl, MenuItem, Select } from "@material-ui/core";
+import { FormControl, MenuItem, Select } from "@mui/material";
 import { BucketList, Bucket } from "../Watch/types";
 import { HealStatus, colorH } from "./types";
 import { niceBytes } from "../../../common/utils";
@@ -278,6 +280,7 @@ const Heal = ({ classes, distributedSetup }: IHeal) => {
               onChange={(e) => {
                 setPrefix(e.target.value);
               }}
+              variant="standard"
             />
             <Button
               type="submit"

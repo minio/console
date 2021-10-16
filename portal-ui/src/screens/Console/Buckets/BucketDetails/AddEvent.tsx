@@ -16,16 +16,18 @@
 
 import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import Grid from "@material-ui/core/Grid";
-import { Button, LinearProgress } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import Grid from "@mui/material/Grid";
+import { Button, LinearProgress } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import api from "../../../../common/api";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
-import TableBody from "@material-ui/core/TableBody";
-import Checkbox from "@material-ui/core/Checkbox";
-import Table from "@material-ui/core/Table";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
+import TableBody from "@mui/material/TableBody";
+import Checkbox from "@mui/material/Checkbox";
+import Table from "@mui/material/Table";
 import { ArnList } from "../types";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../actions";

@@ -15,11 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment } from "react";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import Grid from "@mui/material/Grid";
 import { IDriveInfo } from "../types";
 import { niceBytes } from "../../../../common/utils";
-import { Card, CardHeader } from "@material-ui/core";
+import { Card, CardHeader } from "@mui/material";
 import { CircleIcon } from "../../../../icons";
 import { commonDashboardInfocard } from "../../Common/FormComponents/common/styleLibrary";
 

@@ -15,7 +15,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React from "react";
 import { Link } from "react-router-dom";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import {
   ArrowRightIcon,
   BucketsIcon,
@@ -34,7 +36,7 @@ import {
   CardHeader,
   Grid,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import { niceBytes, prettyNumber } from "../../../../common/utils";
 import CheckboxWrapper from "../../Common/FormComponents/CheckboxWrapper/CheckboxWrapper";
 

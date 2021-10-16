@@ -16,12 +16,14 @@
 
 import React from "react";
 import get from "lodash/get";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { NewServiceAccount } from "./types";
-import { Button } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
+import { Button } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import ModalWrapper from "../ModalWrapper/ModalWrapper";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 
 const styles = (theme: Theme) =>
   createStyles({

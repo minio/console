@@ -16,8 +16,10 @@
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Grid, Paper } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Grid, Paper, SelectChangeEvent } from "@mui/material";
 import {
   modalBasic,
   wizardCommon,
@@ -615,7 +617,7 @@ const Configure = ({
             <SelectWrapper
               id="log_search_storage_class"
               name="log_search_storage_class"
-              onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+              onChange={(e: SelectChangeEvent<string>) => {
                 updateField(
                   "logSearchSelectedStorageClass",
                   e.target.value as string
@@ -864,7 +866,7 @@ const Configure = ({
             <SelectWrapper
               id="prometheus_storage_class"
               name="prometheus_storage_class"
-              onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+              onChange={(e: SelectChangeEvent<string>) => {
                 updateField(
                   "prometheusSelectedStorageClass",
                   e.target.value as string

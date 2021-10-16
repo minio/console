@@ -16,12 +16,14 @@
 
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { withRouter } from "react-router-dom";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import get from "lodash/get";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
 import {
   BucketObject,
   BucketObjectsList,
@@ -43,13 +45,7 @@ import {
   objectBrowserCommon,
   searchField,
 } from "../../../../Common/FormComponents/common/styleLibrary";
-import {
-  Badge,
-  Button,
-  IconButton,
-  Tooltip,
-  Typography,
-} from "@material-ui/core";
+import { Badge, Button, IconButton, Tooltip, Typography } from "@mui/material";
 import * as reactMoment from "react-moment";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import {
@@ -70,7 +66,7 @@ import {
 import { BucketVersioning } from "../../../types";
 import { ErrorResponseHandler } from "../../../../../../common/types";
 import RewindEnable from "./RewindEnable";
-import DeleteIcon from "@material-ui/icons/Delete";
+import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteMultipleObjects from "./DeleteMultipleObjects";
 import PreviewFileModal from "../Preview/PreviewFileModal";
 import { baseUrl } from "../../../../../../history";
@@ -984,6 +980,7 @@ const ListObjects = ({
                       setCreateFolderOpen(true);
                     }}
                     disabled={rewindEnabled}
+                    size="large"
                   >
                     <AddFolderIcon />
                   </IconButton>
@@ -1000,6 +997,7 @@ const ListObjects = ({
                       }
                     }}
                     disabled={rewindEnabled}
+                    size="large"
                   >
                     <UploadIcon />
                   </IconButton>
@@ -1029,6 +1027,7 @@ const ListObjects = ({
                         setRewindSelect(true);
                       }}
                       disabled={!isVersioned}
+                      size="large"
                     >
                       <HistoryIcon />
                     </IconButton>
@@ -1043,6 +1042,7 @@ const ListObjects = ({
                       setLoading(true);
                     }}
                     disabled={rewindEnabled}
+                    size="large"
                   >
                     <RefreshIcon />
                   </IconButton>
@@ -1068,6 +1068,7 @@ const ListObjects = ({
                 </InputAdornment>
               ),
             }}
+            variant="standard"
           />
 
           <Button

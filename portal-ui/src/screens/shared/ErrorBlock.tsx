@@ -1,11 +1,14 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import Typography from "@mui/material/Typography";
+import { Theme } from "@mui/material/styles";
+
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 
 const styles = (theme: Theme) =>
   createStyles({
     errorBlock: {
-      color: theme.palette.error.main,
+      color: theme.palette?.error.main || "#C83B51",
     },
   });
 

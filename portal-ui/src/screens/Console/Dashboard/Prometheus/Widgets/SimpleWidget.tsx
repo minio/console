@@ -16,9 +16,10 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
-import { CircularProgress } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { CircularProgress } from "@mui/material";
 import api from "../../../../../common/api";
 import { widgetDetailsToPanel } from "../utils";
 import { IDashboardPanel } from "../types";
@@ -30,8 +31,8 @@ interface ISimpleWidget {
   iconWidget: any;
   title: string;
   panelItem: IDashboardPanel;
-  timeStart: MaterialUiPickersDate;
-  timeEnd: MaterialUiPickersDate;
+  timeStart: any;
+  timeEnd: any;
   propLoading: boolean;
   displayErrorMessage: any;
   apiPrefix: string;

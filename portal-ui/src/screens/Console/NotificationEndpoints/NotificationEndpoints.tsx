@@ -16,8 +16,9 @@
 
 import React, { Fragment } from "react";
 import PageHeader from "../Common/PageHeader/PageHeader";
-import { Grid } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { containerForHeader } from "../Common/FormComponents/common/styleLibrary";
 
 import { AppState } from "../../../store";

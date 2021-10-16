@@ -16,11 +16,13 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { connect } from "react-redux";
-import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import { IconButton } from "@material-ui/core";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import Grid from "@mui/material/Grid";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import { IconButton } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { ITenant, ITenantsResponse } from "./types";
 import { niceBytes } from "../../../../common/utils";
 import { NewServiceAccount } from "../../Common/CredentialsPrompt/types";
@@ -222,6 +224,7 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
                 </InputAdornment>
               ),
             }}
+            variant="standard"
           />
           <IconButton
             color="primary"
@@ -230,6 +233,7 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
             onClick={() => {
               setIsLoading(true);
             }}
+            size="large"
           >
             <RefreshIcon />
           </IconButton>
@@ -240,6 +244,7 @@ const ListTenants = ({ classes, setErrorSnackMessage }: ITenantsList) => {
             onClick={() => {
               history.push("/tenants/add");
             }}
+            size="large"
           >
             <CreateIcon />
           </IconButton>

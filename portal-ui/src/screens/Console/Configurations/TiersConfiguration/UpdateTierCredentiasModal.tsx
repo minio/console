@@ -17,9 +17,11 @@
 import React, { useState, useEffect, Fragment } from "react";
 import get from "lodash/get";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, LinearProgress } from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Button, LinearProgress } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../actions";
 import InputBoxWrapper from "../../Common/FormComponents/InputBoxWrapper/InputBoxWrapper";

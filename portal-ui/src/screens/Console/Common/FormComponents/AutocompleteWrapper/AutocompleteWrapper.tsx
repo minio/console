@@ -14,18 +14,20 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { useState } from "react";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import {
   FormControl,
   InputLabel,
-  makeStyles,
   OutlinedInputProps,
   TextField,
   TextFieldProps,
   Tooltip,
-} from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import Autocomplete from "@mui/material/Autocomplete";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import {
   fieldBasic,
   inputFieldStyles,
@@ -115,7 +117,7 @@ const AutocompleteWrapper = ({
             id={id}
             options={options}
             getOptionLabel={(option) => option.label}
-            getOptionSelected={(option) => option.value === value}
+            isOptionEqualToValue={(option) => option.value === value}
             disabled={disabled}
             renderInput={(params) => <InputField {...params} name={name} />}
             value={internalValue}

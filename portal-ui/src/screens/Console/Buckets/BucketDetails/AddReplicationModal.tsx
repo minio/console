@@ -16,10 +16,12 @@
 
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
-import { Button, LinearProgress } from "@material-ui/core";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
+import { Button, LinearProgress, SelectChangeEvent } from "@mui/material";
 import get from "lodash/get";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { modalBasic } from "../../Common/FormComponents/common/styleLibrary";
 import { BulkReplicationResponse } from "../types";
 import { setModalErrorSnackMessage } from "../../../../actions";
@@ -243,7 +245,7 @@ const AddReplicationModal = ({
               <SelectWrapper
                 id="replication_mode"
                 name="replication_mode"
-                onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                onChange={(e: SelectChangeEvent<string>) => {
                   setReplicationMode(e.target.value as string);
                 }}
                 label="Replication Mode"
@@ -277,7 +279,7 @@ const AddReplicationModal = ({
                       id="bandwidth_unit"
                       name="bandwidth_unit"
                       value={bandwidthUnit}
-                      onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
+                      onChange={(e: SelectChangeEvent<string>) => {
                         setBandwidthUnit(e.target.value as string);
                       }}
                       options={k8sfactorForDropdown()}

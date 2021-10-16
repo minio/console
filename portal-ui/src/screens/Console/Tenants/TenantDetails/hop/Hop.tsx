@@ -15,12 +15,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useState } from "react";
-import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+import createStyles from "@mui/styles/createStyles";
+import withStyles from "@mui/styles/withStyles";
 import { Link } from "react-router-dom";
-import { CircularProgress, IconButton } from "@material-ui/core";
+import { CircularProgress, IconButton } from "@mui/material";
 import PageHeader from "../../../Common/PageHeader/PageHeader";
 import { containerForHeader } from "../../../Common/FormComponents/common/styleLibrary";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import history from "./../../../../../history";
 import RefreshIcon from "../../../../../icons/RefreshIcon";
 
@@ -110,6 +112,7 @@ const Hop = ({ classes, match }: IHopSimple) => {
                   }
                 }
               }}
+              size="large"
             >
               <RefreshIcon />
             </IconButton>
@@ -122,6 +125,7 @@ const Hop = ({ classes, match }: IHopSimple) => {
                   `/namespaces/${tenantNamespace}/tenants/${tenantName}`
                 );
               }}
+              size="large"
             >
               <ExitToAppIcon />
             </IconButton>
