@@ -107,7 +107,7 @@ const AddTagModal = ({
       >
         <Grid container>
           <h3 className={classes.pathLabel}>
-            Selected Object: {selectedObject}
+            Selected Object: {atob(selectedObject)}
           </h3>
           <Grid item xs={12}>
             <InputBoxWrapper

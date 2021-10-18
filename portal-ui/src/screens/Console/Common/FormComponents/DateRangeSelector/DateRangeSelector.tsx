@@ -50,12 +50,12 @@ const styles = (theme: Theme) =>
       },
     },
     selectorLabel: {
-        color: "#9D9E9D",
-        fontWeight: "bold",
-        whiteSpace: "nowrap",
-        marginLeft: 10,
-        fontSize: 12,
-    }
+      color: "#9D9E9D",
+      fontWeight: "bold",
+      whiteSpace: "nowrap",
+      marginLeft: 10,
+      fontSize: 12,
+    },
   });
 
 const DateRangeSelector = ({
