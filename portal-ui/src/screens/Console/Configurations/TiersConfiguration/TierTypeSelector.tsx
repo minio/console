@@ -69,7 +69,6 @@ const styles = (theme: Theme) =>
   });
 
 const TierTypeSelector = ({ classes, history }: ITypeTiersConfig) => {
-  
   const typeSelect = (selectName: string) => {
     history.push(`/tiers/add/${selectName}`);
   };
