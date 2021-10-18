@@ -214,7 +214,7 @@ const BucketSummary = ({
         .catch((err: ErrorResponseHandler) => {
           setErrorSnackMessage(err);
           setQuotaEnabled(false);
-          setLoadingVersioning(false);
+          setLoadingQuota(false);
         });
     }
   }, [
