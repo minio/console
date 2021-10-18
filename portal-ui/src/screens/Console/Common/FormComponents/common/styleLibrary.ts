@@ -180,11 +180,11 @@ export const actionsTray = {
     },
     height: 40,
     maxWidth: 1185,
-    marginBottom: 15, 
+    marginBottom: 15,
     justifyContent: "flex-start" as const,
     "& > *": {
       marginRight: 15,
-    }
+    },
   },
   actionsTray: {
     display: "flex" as const,
@@ -206,7 +206,7 @@ export const actionsTray = {
     borderRight: "#EEF1F4 1px solid",
     height: 20,
     margin: "0 15px",
-  }
+  },
 };
 
 export const searchField = {
