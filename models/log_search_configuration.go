@@ -25,6 +25,7 @@ package models
 import (
 	"context"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -43,6 +44,12 @@ type LogSearchConfiguration struct {
 	// postgres init image
 	PostgresInitImage string `json:"postgres_init_image,omitempty"`
 
+	// postgres security context
+	PostgresSecurityContext *SecurityContext `json:"postgres_securityContext,omitempty"`
+
+	// security context
+	SecurityContext *SecurityContext `json:"securityContext,omitempty"`
+
 	// storage class
 	StorageClass string `json:"storageClass,omitempty"`
 
@@ -52,11 +59,99 @@ type LogSearchConfiguration struct {
 
 // Validate validates this log search configuration
 func (m *LogSearchConfiguration) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validatePostgresSecurityContext(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSecurityContext(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 
-// ContextValidate validates this log search configuration based on context it is used
+func (m *LogSearchConfiguration) validatePostgresSecurityContext(formats strfmt.Registry) error {
+	if swag.IsZero(m.PostgresSecurityContext) { // not required
+		return nil
+	}
+
+	if m.PostgresSecurityContext != nil {
+		if err := m.PostgresSecurityContext.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("postgres_securityContext")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *LogSearchConfiguration) validateSecurityContext(formats strfmt.Registry) error {
+	if swag.IsZero(m.SecurityContext) { // not required
+		return nil
+	}
+
+	if m.SecurityContext != nil {
+		if err := m.SecurityContext.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("securityContext")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this log search configuration based on the context it is used
 func (m *LogSearchConfiguration) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidatePostgresSecurityContext(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSecurityContext(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *LogSearchConfiguration) contextValidatePostgresSecurityContext(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.PostgresSecurityContext != nil {
+		if err := m.PostgresSecurityContext.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("postgres_securityContext")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *LogSearchConfiguration) contextValidateSecurityContext(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.SecurityContext != nil {
+		if err := m.SecurityContext.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("securityContext")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

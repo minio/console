@@ -46,6 +46,7 @@ interface IImagesProps {
   exposeMinIO: boolean;
   exposeConsole: boolean;
   prometheusCustom: boolean;
+  tenantCustom: boolean;
   logSearchCustom: boolean;
   logSearchVolumeSize: string;
   logSearchSizeFactor: string;
@@ -84,6 +85,7 @@ const Images = ({
   exposeMinIO,
   exposeConsole,
   prometheusCustom,
+  tenantCustom,
   logSearchCustom,
   logSearchVolumeSize,
   logSearchSizeFactor,
@@ -266,6 +268,7 @@ const Images = ({
     imageRegistryPassword,
     isPageValid,
     prometheusCustom,
+    tenantCustom,
     logSearchCustom,
     prometheusSelectedStorageClass,
     prometheusVolumeSize,
@@ -507,6 +510,7 @@ const mapState = (state: AppState) => ({
   exposeConsole: state.tenants.createTenant.fields.configure.exposeConsole,
   prometheusCustom:
     state.tenants.createTenant.fields.configure.prometheusCustom,
+  tenantCustom: state.tenants.createTenant.fields.configure.tenantCustom,
   logSearchCustom: state.tenants.createTenant.fields.configure.logSearchCustom,
   logSearchVolumeSize:
     state.tenants.createTenant.fields.configure.logSearchVolumeSize,

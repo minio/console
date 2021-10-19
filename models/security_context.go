@@ -38,11 +38,11 @@ type SecurityContext struct {
 
 	// fs group
 	// Required: true
-	FsGroup *int64 `json:"fsGroup"`
+	FsGroup *string `json:"fsGroup"`
 
 	// run as group
 	// Required: true
-	RunAsGroup *int64 `json:"runAsGroup"`
+	RunAsGroup *string `json:"runAsGroup"`
 
 	// run as non root
 	// Required: true
@@ -50,7 +50,7 @@ type SecurityContext struct {
 
 	// run as user
 	// Required: true
-	RunAsUser *int64 `json:"runAsUser"`
+	RunAsUser *string `json:"runAsUser"`
 }
 
 // Validate validates this security context

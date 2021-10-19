@@ -43,6 +43,7 @@ import {
   TENANT_DETAILS_SET_CURRENT_TENANT,
   TENANT_DETAILS_SET_TENANT,
   TENANT_DETAILS_SET_TAB,
+  ISecurityContext,
 } from "./types";
 import { KeyPair } from "./ListTenants/utils";
 import { getRandomString } from "./utils";
@@ -50,7 +51,16 @@ import { getRandomString } from "./utils";
 const initialState: ITenantState = {
   createTenant: {
     page: 0,
-    validPages: [],
+    // We can assume all the other pages are valid with default configuration except for 'nameTenant'
+    // because the user still have to choose a namespace and a name for the tenant
+    validPages: [
+      "tenantSize",
+      "configure",
+      "affinity",
+      "identityProvider",
+      "security",
+      "encryption",
+    ],
     advancedModeOn: false,
     storageClasses: [],
     limitSize: {},
@@ -69,6 +79,7 @@ const initialState: ITenantState = {
         imageRegistryPassword: "",
         exposeMinIO: true,
         exposeConsole: true,
+        tenantCustom: false,
         logSearchCustom: false,
         prometheusCustom: false,
         logSearchVolumeSize: "5",
@@ -84,6 +95,30 @@ const initialState: ITenantState = {
         prometheusImage: "",
         prometheusSidecarImage: "",
         prometheusInitImage: "",
+        tenantSecurityContext: {
+          runAsUser: "1000",
+          runAsGroup: "1000",
+          fsGroup: "1000",
+          runAsNonRoot: true,
+        },
+        logSearchSecurityContext: {
+          runAsUser: "1000",
+          runAsGroup: "1000",
+          fsGroup: "1000",
+          runAsNonRoot: true,
+        },
+        logSearchPostgresSecurityContext: {
+          runAsUser: "999",
+          runAsGroup: "999",
+          fsGroup: "999",
+          runAsNonRoot: true,
+        },
+        prometheusSecurityContext: {
+          runAsUser: "1000",
+          runAsGroup: "1000",
+          fsGroup: "1000",
+          runAsNonRoot: true,
+        },
       },
       identityProvider: {
         idpSelection: "Built-in",
@@ -148,6 +183,13 @@ const initialState: ITenantState = {
         gcpPrivateKeyID: "",
         gcpPrivateKey: "",
         enableCustomCertsForKES: false,
+        replicas: "1",
+        kesSecurityContext: {
+          runAsUser: "1000",
+          runAsGroup: "1000",
+          fsGroup: "1000",
+          runAsNonRoot: true,
+        },
       },
       tenantSize: {
         volumeSize: "100",
@@ -523,7 +565,16 @@ export function tenantsReducer(
         ...state,
         createTenant: {
           page: 0,
-          validPages: [],
+          // We can assume all the other pages are valid with default configuration except for 'nameTenant'
+          // because the user still have to choose a namespace and a name for the tenant
+          validPages: [
+            "tenantSize",
+            "configure",
+            "affinity",
+            "identityProvider",
+            "security",
+            "encryption",
+          ],
           advancedModeOn: false,
           storageClasses: [],
           limitSize: {},
@@ -542,6 +593,7 @@ export function tenantsReducer(
               imageRegistryPassword: "",
               exposeMinIO: true,
               exposeConsole: true,
+              tenantCustom: false,
               logSearchCustom: false,
               prometheusCustom: false,
               logSearchVolumeSize: "5",
@@ -557,6 +609,30 @@ export function tenantsReducer(
               prometheusImage: "",
               prometheusSidecarImage: "",
               prometheusInitImage: "",
+              tenantSecurityContext: {
+                runAsUser: "1000",
+                runAsGroup: "1000",
+                fsGroup: "1000",
+                runAsNonRoot: true,
+              },
+              logSearchSecurityContext: {
+                runAsUser: "1000",
+                runAsGroup: "1000",
+                fsGroup: "1000",
+                runAsNonRoot: true,
+              },
+              logSearchPostgresSecurityContext: {
+                runAsUser: "999",
+                runAsGroup: "999",
+                fsGroup: "999",
+                runAsNonRoot: true,
+              },
+              prometheusSecurityContext: {
+                runAsUser: "1000",
+                runAsGroup: "1000",
+                fsGroup: "1000",
+                runAsNonRoot: true,
+              },
             },
             identityProvider: {
               idpSelection: "Built-in",
@@ -621,6 +697,13 @@ export function tenantsReducer(
               gcpPrivateKeyID: "",
               gcpPrivateKey: "",
               enableCustomCertsForKES: false,
+              replicas: "1",
+              kesSecurityContext: {
+                runAsUser: "1000",
+                runAsGroup: "1000",
+                fsGroup: "1000",
+                runAsNonRoot: true,
+              },
             },
             tenantSize: {
               volumeSize: "100",
